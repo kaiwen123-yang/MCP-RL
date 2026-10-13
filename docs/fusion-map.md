@@ -1,6 +1,6 @@
 # MPC 与 RL 的融合方法地图
 
-本页是面向阅读的接口整理。八个文献目录是本仓库的组织方式，不是某一篇综述的原始分类。
+本页是面向阅读的接口整理。八个文献目录是本仓库的组织方式，不是某一篇综述的原始分类。主库按 2024—2026 年近期研究组织；经典只在需要解释方法来源时回查。具体顺序见 [近期阅读路线](reading-plan.md)。
 
 ## 先看三个不同维度
 
@@ -48,8 +48,10 @@ flowchart LR
 |---|---|---|---|
 | Actor / Critic 帮助 MPC | 学习策略与价值 | 策略初值、终端价值与在线优化 | MR029 AC4MPC |
 | MPC 是结构化策略 | 通过回报更新 MPC 参数 | 由参数化优化问题产生动作 | MR008 Data-Driven Economic NMPC；MR086 AC-MPC |
-| 学习模型中的在线规划 | 联合学习模型、奖励、策略与价值，并规划收集数据 | 短时域规划与终端价值 | MR022 TD-MPC；MR026 TD-MPC2 |
-| MPC 教师帮助学习 | 优化数据或轨迹改进参与策略更新 | 通常可仅用策略 | MPC-Net、MoPAC、Guided Policy Search 系列 |
+| 学习模型中的在线规划 | 联合学习模型、奖励、策略与价值，并规划收集数据 | 短时域规划与终端价值 | MR026 TD-MPC2；MR119 TD-M(PC)²；MR122 BMPC |
+| MPC 教师帮助学习 | 优化数据或轨迹改进参与策略更新 | 取决于方法：可只用策略，也可继续在线规划 | MR122 BMPC；MR095 MPC-Net、MR088 Guided Policy Search 为经典回查 |
+
+近期方法还在追问这些接口是否匹配：BMPC 用规划器产生的行为训练策略，再让策略帮助规划；TD-M(PC)² 针对规划策略与价值函数所评估策略之间的失配；DEQ-MPC（MR163）把网络推断与优化必要条件写成联合不动点问题。这些例子用于定位阅读问题，不能据此认定方法已经在所有任务上解决了价值偏差、收敛或安全问题。[BMPC 正式记录](https://proceedings.iclr.cc/paper_files/paper/2025/hash/8636419dea1aa9fbd25fc4248e702da4-Abstract-Conference.html)、[TD-M(PC)² 正式记录](https://proceedings.mlr.press/v331/lin26a.html)、[DEQ-MPC 正式记录](https://proceedings.mlr.press/v305/gurumurthy25a.html)。
 
 ## 容易混淆的边界
 

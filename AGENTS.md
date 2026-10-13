@@ -1,9 +1,16 @@
-# Research collaboration guidance
+# 研究协作约定
 
-- Work primarily in clear, professional Simplified Chinese. Preserve exact English paper titles and identifiers.
-- Current sequence: understand MPC–RL methods and theory, run focused general tests, then choose robot deployment. Do not preselect the final research direction without supporting evidence.
-- Separate bibliographic screening, initial reading, proof verification, reproduction and new experimental findings. Do not mark all 100 papers as read because the bibliography exists.
-- Distinguish author claims and explicit future work from the reader's deductions. Keep theory assumptions, comparison conditions and data/compute costs visible.
-- A useful innovation may extend an existing method by solving a consequential remaining problem. Neither adding modules nor prior work on a topic settles novelty or value.
-- Keep stable `MRxxx` bibliography identifiers. Update the index, structured metadata and reading-state links consistently.
-- Commit public bibliographic data and original notes. Local PDFs, application state and intermediate research files live under ignored directories.
+- 主要使用清楚、专业的简体中文；英文论文题名、DOI和稳定编号保持准确。
+- 当前顺序为：先理解MPC与RL融合的方法和理论，再开展有判别力的通用仿真测试，最后由研究问题决定机器人平台。不要提前锁定创新方向。
+- 主文献库采用近期优先的v2口径：90篇2024—2026年正式发表论文，加最多10篇确有奠基作用的经典。旧论文不能仅因相关、知名或容易获取就占用经典名额。
+- 近期年份按正式刊会记录统计；最早已核公开年份和版本关系另行记录。不得把新期刊卷期、预印本更新日期或扩展版题名当作方法首次提出的年份。
+- 对未知首稿年份明确保留未知；对早年会议的期刊扩展说明继承关系与待核实增量，不以新排版包装旧方法。
+- 优先从最新综述、TD-MPC2／BMPC／TD-M(PC)²、DMPO／DEQ-MPC／GPU可微MPC及近期终端价值、安全工作展开。经典用于解释具体前提，不要求先按年代读完旧论文。
+- 分开记录书目筛选、初读、证明核验、复现和新实验发现。建立100篇清单、下载全文或生成笔记均不等于完成100篇精读。
+- 区分作者主张、作者明确的未来工作和阅读者推断；保留理论假设、比较条件、信息使用和数据／计算成本。
+- 创新可以解决已有方法未解决的重要问题。已有研究不自动否定后续价值，增加模块、换网络或换平台也不自动构成创新。
+- 期刊分区使用2025年中科院升级版大类分区，Top单列；公开转录信息保留待官方复核边界。会议记录正式刊会来源，不套用期刊分区。
+- 保留稳定MR编号；退出主清单的编号不回收给其他论文。同步更新索引、结构化元数据和阅读状态链接。
+- 首版完整书目保留于 literature/archive/v1-2026-10-13/。当前主JSON与索引使用v2，历史资料和笔记保持可追溯。
+- PDF覆盖率以本次实际核验报告为准；不要沿用旧版覆盖数字，也不要将候选下载链接视为已取得全文。
+- 公开提交仅包含公开书目信息、来源链接和原创研究材料。原始PDF、应用状态、私人标识和中间文件留在忽略目录。
