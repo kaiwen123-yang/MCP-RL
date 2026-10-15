@@ -20,7 +20,11 @@
 
 用户已授权 **小规模学习验证**，仍禁止大规模训练。正在把可实现性约束和响应—策略联合更新接入实际SPlaTES/LayeredRL工程代码，并建立独立算法。
 
-并行任务：工程适配、独立联合更新数学、同容量/同预算实验协议。正在建立隔离Python环境；尚未把本轮工程源码存在等同运行成功，尚未得到共同学习收益。
+已完成隔离CPU运行环境、实际SPlaTES CEMPlanner/LayeredRL Hierarchy接入、合法score联合梯度和soft-slack近端QP。接口smoke真实执行800个低层转移；51个QP数值核验通过。详见[算法与推导](../notes/learning-pilot-2026-10-15/algorithm-theory.md)、[接入核验](../notes/learning-pilot-2026-10-15/integration-audit.md)、[运行说明](../src/response_codesign/README.md)。
+
+正式微型试验正在运行：3个种子（11/23/37），J/B/F/I/T五组加4倍主训练预算的固定响应搜索F+；实际[冻结协议](../notes/learning-pilot-2026-10-15/protocol.md)已保存。尚未报告共同学习成功。开发种子101/103不进入正式统计。
+
+MATLAB/Simulink的神经反馈导出链路在开发数据上已验证，正式权重的核验仍待完成。所有物理状态由仿真推进、动作由实时网络计算，高层命令日志回放不等于Simulink独立运行MPC。
 
 本轮需要比较充分整定固定响应、独立训练策略后充分辨识，以及能区分纯响应调参与真实策略共同学习的对照。所有组使用相同观测、actor容量、真实交互及规划预算；调参、辨识、候选筛选成本均入账。
 
