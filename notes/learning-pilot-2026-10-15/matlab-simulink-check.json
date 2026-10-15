@@ -1,0 +1,73 @@
+{
+  "scope": "Frozen full-action actor plus actual nonlinear/actuator feedback; recorded MPC commands, no high-level planner re-execution",
+  "samples": 100,
+  "dt_seconds": 0.02,
+  "rk4_substeps": 2,
+  "precision": "single",
+  "physical": {
+    "dt": 0.02,
+    "tau": 0.12,
+    "k": 1,
+    "d": 0.2,
+    "drag": 0.1,
+    "U": 1.2,
+    "W": 0.04
+  },
+  "actor_parameter_count": 1505,
+  "actions_recomputed_from_simulated_state": true,
+  "high_level_mpc_rerun": false,
+  "realization_trace_check": {
+    "tracking_q1_mean": 1.6314827007590793e-05,
+    "input_q2_mean": 0.1060519590973854,
+    "scope": "One frozen evaluation episode; empirical means, not a domain-wide certificate",
+    "macro_steps": 10,
+    "response_jerk_limit": 8,
+    "response_ranges": [
+      [
+        1.2,
+        3
+      ],
+      [
+        0.7,
+        1.4
+      ],
+      [
+        3,
+        14
+      ],
+      [
+        0,
+        0.5
+      ]
+    ],
+    "python_q1_mean": 1.631484155950602e-05,
+    "python_q2_mean": 0.10605194419622421,
+    "tracking_q1_budget": 0.0002,
+    "input_q2_budget": 0.03,
+    "q1_empirical_budget_satisfied": true,
+    "q2_empirical_budget_satisfied": false,
+    "q1_cross_language_abs_error": 1.4551915228366852e-11,
+    "q2_cross_language_abs_error": 1.4901161193847656e-08,
+    "formula_consistency_passed": true
+  },
+  "matlab_python_state_max_error": 1.1920928955078125e-07,
+  "matlab_python_action_max_error": 2.384185791015625e-07,
+  "simulink_python_state_max_error": 1.1920928955078125e-07,
+  "simulink_python_action_max_error": 2.384185791015625e-07,
+  "simulink_matlab_state_max_error": 0,
+  "simulink_matlab_action_max_error": 0,
+  "sample_time_max_error": 0,
+  "numeric_tolerance": 5e-05,
+  "passed": true,
+  "run_identity": {
+    "seed": 11,
+    "arm": "joint",
+    "evaluation_batch": 0,
+    "environment_index": 0,
+    "formal": true
+  },
+  "matlab_release": "R2025b",
+  "export_sha256": "110a62b8edc8f02d817b4ab10354b23be50f44c45390f08a6932676a86db8f0f",
+  "realization_constraints_empirically_satisfied": false,
+  "interpretation": "Numerical feedback and q1/q2 formula equivalence passed; realization constraints did not both pass on this episode. This is not an independent high-level MPC implementation or a domain-wide guarantee."
+}

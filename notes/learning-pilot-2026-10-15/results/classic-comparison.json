@@ -1,0 +1,1487 @@
+{
+  "manifest": {
+    "stage": "before_run",
+    "seeds": [
+      11,
+      23,
+      37
+    ],
+    "test_batches": 8,
+    "gains": [
+      {
+        "name": "shared_teacher",
+        "kp": 4.0,
+        "kv": 3.0,
+        "ka": 8.0,
+        "rho": 1.0
+      },
+      {
+        "name": "slower",
+        "kp": 3.0,
+        "kv": 3.0,
+        "ka": 7.0,
+        "rho": 1.0
+      },
+      {
+        "name": "faster",
+        "kp": 5.0,
+        "kv": 3.5,
+        "ka": 9.0,
+        "rho": 1.0
+      },
+      {
+        "name": "more_damped",
+        "kp": 4.0,
+        "kv": 4.0,
+        "ka": 8.0,
+        "rho": 1.0
+      }
+    ],
+    "physical": {
+      "dt": 0.02,
+      "tau": 0.12,
+      "k": 1.0,
+      "d": 0.2,
+      "drag": 0.1,
+      "U": 1.2,
+      "W": 0.04,
+      "substeps": 2
+    },
+    "thresholds": {
+      "action_std": 0.12,
+      "design_std": 0.25,
+      "alpha": 0.01,
+      "trust_radius": 0.08,
+      "design_metric_inverse": 8.0,
+      "task_scale": 0.05,
+      "tracking_budget": 0.0002,
+      "input_residual_budget": 0.03
+    },
+    "batch": 8,
+    "episode_steps": 100,
+    "calibration_batches_per_candidate": 5,
+    "identification_updates_per_candidate": 100,
+    "validation_batches_per_candidate": 1,
+    "actor_training_updates": 0,
+    "planned_physical_steps": 76800,
+    "calibration_seeds": "200000 + seed*1000 + index; index=0..4",
+    "validation_seed": "300000 + seed",
+    "test_seeds": "500000 + seed*1000 + index",
+    "selection": "Original pilot select_feasible; freeze pair before test",
+    "actor": "Analytic static backstepping full action, no neural network",
+    "known_physics_scope": "Known nominal physics used structurally; not a model-free sample-efficiency comparison",
+    "source_sha256": {
+      "classic_comparator.py": "d2b0a8a1d29c5471e3f7704ad75d8686fe83a7cd410a96cf9a53be14f7929dc4",
+      "pilot.py": "b75852acc25af8ccd2e4871e6fc42e2ab1a8a20cc0e72e578af7306725129a3b",
+      "learning.py": "9e0d3c54caec1c6898486f4b3c3be92424441e7e8b29b1a226ac5795ed86d053",
+      "dynamics.py": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+      "splates_bridge.py": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c"
+    }
+  },
+  "teacher_identity_max_error": 2.384185791015625e-07,
+  "wall_seconds": 68.71405760000016,
+  "seeds": [
+    {
+      "seed": 11,
+      "selected_candidate": 1,
+      "selected_gains": {
+        "name": "slower",
+        "kp": 3.0,
+        "kv": 3.0,
+        "ka": 7.0,
+        "rho": 1.0
+      },
+      "selection": {
+        "validation_mean_feasible": true,
+        "feasible_candidates": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "candidate_violation_scores": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_metrics": [
+          {
+            "task_cost": 0.03376452997326851,
+            "realization_mse": 5.279287051962456e-07,
+            "input_response_mse": 0.0012408627662807703,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 0.9100794792175293,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4915009999999711,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          {
+            "task_cost": 0.032882142812013626,
+            "realization_mse": 5.163208243175177e-07,
+            "input_response_mse": 0.001103309798054397,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0254664421081543,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4809273000000758,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          {
+            "task_cost": 0.037513405084609985,
+            "realization_mse": 5.410120706983435e-07,
+            "input_response_mse": 0.001901731826364994,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.00125,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4680916000002071,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          {
+            "task_cost": 0.03570921719074249,
+            "realization_mse": 6.608310059164069e-07,
+            "input_response_mse": 0.0033558630384504795,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.188138723373413,
+            "near_saturation_fraction": 0.00125,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4804472999999234,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          }
+        ]
+      },
+      "candidates": [
+        {
+          "candidate_index": 0,
+          "gains": {
+            "name": "shared_teacher",
+            "kp": 4.0,
+            "kv": 3.0,
+            "ka": 8.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -0.9400408864021301,
+            -2.152743101119995,
+            0.9808293581008911,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.7056057453155518,
+            0.7728525996208191,
+            11.0,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -0.8865197896957397,
+            -2.1125848293304443,
+            1.394555687904358,
+            -3.7679717540740967
+          ],
+          "fitted_response": [
+            1.7252914905548096,
+            0.7755157351493835,
+            11.81450366973877,
+            0.011288677342236042
+          ],
+          "calibration": {
+            "task_cost": 0.052032686024904254,
+            "realization_mse": 2.653992078194278e-06,
+            "input_response_mse": 0.020083358883857726,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.225,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.0675,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20000,
+            "objective_calls": 150,
+            "response_transitions": 400000,
+            "wall_seconds": 2.940758900000219,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 2.5078519684029743e-05,
+            "wall_seconds": 2.7289577000001373,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.03376452997326851,
+            "realization_mse": 5.279287051962456e-07,
+            "input_response_mse": 0.0012408627662807703,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 0.9100794792175293,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4915009999999711,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        },
+        {
+          "candidate_index": 1,
+          "gains": {
+            "name": "slower",
+            "kp": 3.0,
+            "kv": 3.0,
+            "ka": 7.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -1.8285608291625977,
+            -1.1955938339233398,
+            0.5596157312393188,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.4491376876831055,
+            0.8625819683074951,
+            10.0,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -1.7659788131713867,
+            -1.1089608669281006,
+            0.6075876951217651,
+            -3.56658673286438
+          ],
+          "fitted_response": [
+            1.462877631187439,
+            0.8736452460289001,
+            10.121294021606445,
+            0.01373793464154005
+          ],
+          "calibration": {
+            "task_cost": 0.05014432594180107,
+            "realization_mse": 5.794180879092892e-07,
+            "input_response_mse": 0.0016773547627963125,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.176732063293457,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20000,
+            "objective_calls": 150,
+            "response_transitions": 400000,
+            "wall_seconds": 2.376763799999935,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 5.331356078386307e-06,
+            "wall_seconds": 1.3707830000003014,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.032882142812013626,
+            "realization_mse": 5.163208243175177e-07,
+            "input_response_mse": 0.001103309798054397,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0254664421081543,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4809273000000758,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        },
+        {
+          "candidate_index": 2,
+          "gains": {
+            "name": "faster",
+            "kp": 5.0,
+            "kv": 3.5,
+            "ka": 9.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -0.45814526081085205,
+            -1.9064083099365234,
+            1.8458267450332642,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.8973667621612549,
+            0.7905694246292114,
+            12.5,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -0.44630753993988037,
+            -2.1093153953552246,
+            3.1524577140808105,
+            -3.9273734092712402
+          ],
+          "fitted_response": [
+            1.9024302959442139,
+            0.7757362723350525,
+            13.549059867858887,
+            0.009657461196184158
+          ],
+          "calibration": {
+            "task_cost": 0.053525876998901364,
+            "realization_mse": 6.47456627120846e-06,
+            "input_response_mse": 0.05222642123699188,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.65,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.201,
+            "nominal_infeasible_fraction": 0.01,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20032,
+            "objective_calls": 154,
+            "response_transitions": 400640,
+            "wall_seconds": 2.4132425000002513,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 8.395910117542371e-05,
+            "wall_seconds": 1.33852109999998,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.037513405084609985,
+            "realization_mse": 5.410120706983435e-07,
+            "input_response_mse": 0.001901731826364994,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.00125,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4680916000002071,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        },
+        {
+          "candidate_index": 3,
+          "gains": {
+            "name": "more_damped",
+            "kp": 4.0,
+            "kv": 4.0,
+            "ka": 8.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -1.1496567726135254,
+            -0.624858021736145,
+            1.504077434539795,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.632993221282959,
+            0.9440741539001465,
+            12.0,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -1.0661331415176392,
+            -0.5222778916358948,
+            2.2352797985076904,
+            -3.7088634967803955
+          ],
+          "fitted_response": [
+            1.66105055809021,
+            0.9606238007545471,
+            12.937105178833008,
+            0.011959603987634182
+          ],
+          "calibration": {
+            "task_cost": 0.05113578289747238,
+            "realization_mse": 2.3658257305214646e-06,
+            "input_response_mse": 0.019099309109151363,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.225,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.06225000000000001,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20000,
+            "objective_calls": 150,
+            "response_transitions": 400000,
+            "wall_seconds": 2.3521397999998044,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 1.9254139260738157e-05,
+            "wall_seconds": 1.4118720999999823,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.03570921719074249,
+            "realization_mse": 6.608310059164069e-07,
+            "input_response_mse": 0.0033558630384504795,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.188138723373413,
+            "near_saturation_fraction": 0.00125,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4804472999999234,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        }
+      ],
+      "evaluation": {
+        "task_cost": 0.030380073003470898,
+        "realization_mse": 5.428609171076459e-07,
+        "input_response_mse": 0.001379340850689914,
+        "tracking_episode_violation_fraction": 0.0,
+        "input_episode_violation_fraction": 0.0,
+        "max_actual_input": 1.091105341911316,
+        "near_saturation_fraction": 0.0,
+        "nominal_infeasible_fraction": 0.0,
+        "physical_steps": 6400,
+        "planner_batch_calls": 80,
+        "planner_instance_calls": 640,
+        "candidate_sequences": 32000,
+        "objective_calls": 240,
+        "response_transitions": 640000,
+        "wall_seconds": 4.09449689999974,
+        "actor_parameter_count": 0.0,
+        "response_parameter_count": 4.0
+      },
+      "budget": {
+        "physical_steps": 25600,
+        "planner_batch_calls": 320,
+        "planner_instance_calls": 2560,
+        "candidate_sequences": 128032,
+        "objective_calls": 964,
+        "response_transitions": 2560640,
+        "actor_training_updates": 0,
+        "response_identification_updates": 400,
+        "identification_model_response_transitions": 256000,
+        "rollout_wall_seconds": 16.098369100000127,
+        "identification_wall_seconds": 6.850133900000401
+      },
+      "scope": "Four predeclared classical gains; validation-selected pair, not continuous optimum"
+    },
+    {
+      "seed": 23,
+      "selected_candidate": 1,
+      "selected_gains": {
+        "name": "slower",
+        "kp": 3.0,
+        "kv": 3.0,
+        "ka": 7.0,
+        "rho": 1.0
+      },
+      "selection": {
+        "validation_mean_feasible": true,
+        "feasible_candidates": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "candidate_violation_scores": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_metrics": [
+          {
+            "task_cost": 0.040824197232723236,
+            "realization_mse": 4.910636448585137e-07,
+            "input_response_mse": 0.0008623169269412756,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0779823064804077,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.510386699999799,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          {
+            "task_cost": 0.03851993381977081,
+            "realization_mse": 6.491468411695678e-07,
+            "input_response_mse": 0.002626820234581828,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0464788675308228,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4835023000000547,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          {
+            "task_cost": 0.04296630993485451,
+            "realization_mse": 4.531821105047129e-07,
+            "input_response_mse": 0.0013065185630694032,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.120755672454834,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.47420850000025894,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          {
+            "task_cost": 0.04252054542303085,
+            "realization_mse": 4.949586127622752e-07,
+            "input_response_mse": 0.001167398877441883,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.1189695596694946,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.47112060000017664,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          }
+        ]
+      },
+      "candidates": [
+        {
+          "candidate_index": 0,
+          "gains": {
+            "name": "shared_teacher",
+            "kp": 4.0,
+            "kv": 3.0,
+            "ka": 8.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -0.9400408864021301,
+            -2.152743101119995,
+            0.9808293581008911,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.7056057453155518,
+            0.7728525996208191,
+            11.0,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -0.9032428860664368,
+            -2.2224488258361816,
+            1.2882946729660034,
+            -3.581793785095215
+          ],
+          "fitted_response": [
+            1.7190922498703003,
+            0.7684268355369568,
+            11.622442245483398,
+            0.013536215759813786
+          ],
+          "calibration": {
+            "task_cost": 0.04988272115588188,
+            "realization_mse": 3.7150062325963516e-06,
+            "input_response_mse": 0.02568701095879078,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.325,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.08775,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20000,
+            "objective_calls": 150,
+            "response_transitions": 400000,
+            "wall_seconds": 2.465492699999686,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 0.00011098087998107076,
+            "wall_seconds": 1.4969711999997344,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.040824197232723236,
+            "realization_mse": 4.910636448585137e-07,
+            "input_response_mse": 0.0008623169269412756,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0779823064804077,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.510386699999799,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        },
+        {
+          "candidate_index": 1,
+          "gains": {
+            "name": "slower",
+            "kp": 3.0,
+            "kv": 3.0,
+            "ka": 7.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -1.8285608291625977,
+            -1.1955938339233398,
+            0.5596157312393188,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.4491376876831055,
+            0.8625819683074951,
+            10.0,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -1.7390283346176147,
+            -1.1356918811798096,
+            0.5818063020706177,
+            -3.809783935546875
+          ],
+          "fitted_response": [
+            1.4689855575561523,
+            0.8701785206794739,
+            10.056312561035156,
+            0.010836423374712467
+          ],
+          "calibration": {
+            "task_cost": 0.04804884120821953,
+            "realization_mse": 7.323439717765723e-07,
+            "input_response_mse": 0.0026893163099884986,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.00225,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20000,
+            "objective_calls": 150,
+            "response_transitions": 400000,
+            "wall_seconds": 2.4267061999998987,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 8.832651474222075e-06,
+            "wall_seconds": 1.4177817999998297,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.03851993381977081,
+            "realization_mse": 6.491468411695678e-07,
+            "input_response_mse": 0.002626820234581828,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0464788675308228,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4835023000000547,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        },
+        {
+          "candidate_index": 2,
+          "gains": {
+            "name": "faster",
+            "kp": 5.0,
+            "kv": 3.5,
+            "ka": 9.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -0.45814526081085205,
+            -1.9064083099365234,
+            1.8458267450332642,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.8973667621612549,
+            0.7905694246292114,
+            12.5,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -0.506427526473999,
+            -2.543057918548584,
+            2.730499267578125,
+            -4.172763347625732
+          ],
+          "fitted_response": [
+            1.8768565654754639,
+            0.7510259747505188,
+            13.326828002929688,
+            0.007587883155792952
+          ],
+          "calibration": {
+            "task_cost": 0.05143237113952637,
+            "realization_mse": 8.333790628967108e-06,
+            "input_response_mse": 0.06027941256761551,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.825,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.23149999999999998,
+            "nominal_infeasible_fraction": 0.0075000000000000015,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20024,
+            "objective_calls": 153,
+            "response_transitions": 400480,
+            "wall_seconds": 2.524063300000307,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 0.0002591264492366463,
+            "wall_seconds": 1.4177999999997155,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.04296630993485451,
+            "realization_mse": 4.531821105047129e-07,
+            "input_response_mse": 0.0013065185630694032,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.120755672454834,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.47420850000025894,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        },
+        {
+          "candidate_index": 3,
+          "gains": {
+            "name": "more_damped",
+            "kp": 4.0,
+            "kv": 4.0,
+            "ka": 8.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -1.1496567726135254,
+            -0.624858021736145,
+            1.504077434539795,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.632993221282959,
+            0.9440741539001465,
+            12.0,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -1.07866370677948,
+            -0.5718076825141907,
+            2.051905870437622,
+            -3.686566114425659
+          ],
+          "fitted_response": [
+            1.6567661762237549,
+            0.9525738954544067,
+            12.747541427612305,
+            0.01222267560660839
+          ],
+          "calibration": {
+            "task_cost": 0.04926472380757332,
+            "realization_mse": 2.9614896220664376e-06,
+            "input_response_mse": 0.022131387144327164,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.3,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.081,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20000,
+            "objective_calls": 150,
+            "response_transitions": 400000,
+            "wall_seconds": 2.385621099999753,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 8.870844612829387e-05,
+            "wall_seconds": 1.4112082000001465,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.04252054542303085,
+            "realization_mse": 4.949586127622752e-07,
+            "input_response_mse": 0.001167398877441883,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.1189695596694946,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.47112060000017664,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        }
+      ],
+      "evaluation": {
+        "task_cost": 0.032988378778100014,
+        "realization_mse": 5.621251411014327e-07,
+        "input_response_mse": 0.001389421013300307,
+        "tracking_episode_violation_fraction": 0.0,
+        "input_episode_violation_fraction": 0.0,
+        "max_actual_input": 1.060089349746704,
+        "near_saturation_fraction": 0.0,
+        "nominal_infeasible_fraction": 0.0,
+        "physical_steps": 6400,
+        "planner_batch_calls": 80,
+        "planner_instance_calls": 640,
+        "candidate_sequences": 32000,
+        "objective_calls": 240,
+        "response_transitions": 640000,
+        "wall_seconds": 3.8212484000005134,
+        "actor_parameter_count": 0.0,
+        "response_parameter_count": 4.0
+      },
+      "budget": {
+        "physical_steps": 25600,
+        "planner_batch_calls": 320,
+        "planner_instance_calls": 2560,
+        "candidate_sequences": 128024,
+        "objective_calls": 963,
+        "response_transitions": 2560480,
+        "actor_training_updates": 0,
+        "response_identification_updates": 400,
+        "identification_model_response_transitions": 256000,
+        "rollout_wall_seconds": 15.562349800000447,
+        "identification_wall_seconds": 5.743761199999426
+      },
+      "scope": "Four predeclared classical gains; validation-selected pair, not continuous optimum"
+    },
+    {
+      "seed": 37,
+      "selected_candidate": 1,
+      "selected_gains": {
+        "name": "slower",
+        "kp": 3.0,
+        "kv": 3.0,
+        "ka": 7.0,
+        "rho": 1.0
+      },
+      "selection": {
+        "validation_mean_feasible": true,
+        "feasible_candidates": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "candidate_violation_scores": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_metrics": [
+          {
+            "task_cost": 0.03339706361293793,
+            "realization_mse": 5.109008611725585e-07,
+            "input_response_mse": 0.001235279836691916,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 0.9969261288642883,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.5610884999996415,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          {
+            "task_cost": 0.032647520303726196,
+            "realization_mse": 5.175409114599461e-07,
+            "input_response_mse": 0.0016167417634278536,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0270971059799194,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.48702389999971274,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          {
+            "task_cost": 0.03767656162381172,
+            "realization_mse": 5.282345796331356e-07,
+            "input_response_mse": 0.0013284939341247082,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0639008283615112,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.6572571000001517,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          {
+            "task_cost": 0.03499336913228035,
+            "realization_mse": 4.925861958327005e-07,
+            "input_response_mse": 0.0011458969675004482,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0251928567886353,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4994165999996767,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          }
+        ]
+      },
+      "candidates": [
+        {
+          "candidate_index": 0,
+          "gains": {
+            "name": "shared_teacher",
+            "kp": 4.0,
+            "kv": 3.0,
+            "ka": 8.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -0.9400408864021301,
+            -2.152743101119995,
+            0.9808293581008911,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.7056057453155518,
+            0.7728525996208191,
+            11.0,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -0.8829070925712585,
+            -1.9748446941375732,
+            1.295172095298767,
+            -3.8618431091308594
+          ],
+          "fitted_response": [
+            1.7266364097595215,
+            0.7853085994720459,
+            11.635234832763672,
+            0.010298042558133602
+          ],
+          "calibration": {
+            "task_cost": 0.045723802596330645,
+            "realization_mse": 2.5258583036702477e-06,
+            "input_response_mse": 0.019678102806210518,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.225,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.0665,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20000,
+            "objective_calls": 150,
+            "response_transitions": 400000,
+            "wall_seconds": 2.411287799999627,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 6.236926856217906e-05,
+            "wall_seconds": 1.8816201999998157,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.03339706361293793,
+            "realization_mse": 5.109008611725585e-07,
+            "input_response_mse": 0.001235279836691916,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 0.9969261288642883,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.5610884999996415,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        },
+        {
+          "candidate_index": 1,
+          "gains": {
+            "name": "slower",
+            "kp": 3.0,
+            "kv": 3.0,
+            "ka": 7.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -1.8285608291625977,
+            -1.1955938339233398,
+            0.5596157312393188,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.4491376876831055,
+            0.8625819683074951,
+            10.0,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -1.7271955013275146,
+            -1.0907164812088013,
+            0.5485054850578308,
+            -3.5330750942230225
+          ],
+          "fitted_response": [
+            1.4717040061950684,
+            0.8760383725166321,
+            9.97167682647705,
+            0.014192826114594936
+          ],
+          "calibration": {
+            "task_cost": 0.04420258775353432,
+            "realization_mse": 5.934334694757126e-07,
+            "input_response_mse": 0.0016587410238571465,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.0005,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20000,
+            "objective_calls": 150,
+            "response_transitions": 400000,
+            "wall_seconds": 3.2141014999997424,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 8.78061655384954e-06,
+            "wall_seconds": 1.3685215000000426,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.032647520303726196,
+            "realization_mse": 5.175409114599461e-07,
+            "input_response_mse": 0.0016167417634278536,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0270971059799194,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.48702389999971274,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        },
+        {
+          "candidate_index": 2,
+          "gains": {
+            "name": "faster",
+            "kp": 5.0,
+            "kv": 3.5,
+            "ka": 9.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -0.45814526081085205,
+            -1.9064083099365234,
+            1.8458267450332642,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.8973667621612549,
+            0.7905694246292114,
+            12.5,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -0.4445236921310425,
+            -1.9723484516143799,
+            2.9860317707061768,
+            -4.262716293334961
+          ],
+          "fitted_response": [
+            1.9031944274902344,
+            0.7854957580566406,
+            13.471329689025879,
+            0.0069441949017345905
+          ],
+          "calibration": {
+            "task_cost": 0.046865418553352356,
+            "realization_mse": 6.7765837229671885e-06,
+            "input_response_mse": 0.05413725972175598,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.75,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.20350000000000001,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20000,
+            "objective_calls": 150,
+            "response_transitions": 400000,
+            "wall_seconds": 2.502924599999915,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 0.00013739321730099618,
+            "wall_seconds": 1.525641600000199,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.03767656162381172,
+            "realization_mse": 5.282345796331356e-07,
+            "input_response_mse": 0.0013284939341247082,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0639008283615112,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.6572571000001517,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        },
+        {
+          "candidate_index": 3,
+          "gains": {
+            "name": "more_damped",
+            "kp": 4.0,
+            "kv": 4.0,
+            "ka": 8.0,
+            "rho": 1.0
+          },
+          "initial_mean": [
+            -1.1496567726135254,
+            -0.624858021736145,
+            1.504077434539795,
+            -3.178053855895996
+          ],
+          "initial_response": [
+            1.632993221282959,
+            0.9440741539001465,
+            12.0,
+            0.019999999552965164
+          ],
+          "fitted_mean": [
+            -1.0653589963912964,
+            -0.5093241930007935,
+            2.0488386154174805,
+            -3.7464711666107178
+          ],
+          "fitted_response": [
+            1.6613160371780396,
+            0.9627463817596436,
+            12.744132041931152,
+            0.011528361588716507
+          ],
+          "calibration": {
+            "task_cost": 0.04512631520628929,
+            "realization_mse": 2.2296545921562937e-06,
+            "input_response_mse": 0.01873066034168005,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.25,
+            "max_actual_input": 1.1999999284744263,
+            "near_saturation_fraction": 0.06225000000000001,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 4000,
+            "planner_batch_calls": 50,
+            "planner_instance_calls": 400,
+            "candidate_sequences": 20000,
+            "objective_calls": 150,
+            "response_transitions": 400000,
+            "wall_seconds": 3.241746300000159,
+            "actor_parameter_count": 0.0,
+            "response_parameter_count": 4.0
+          },
+          "identification": {
+            "identification_updates": 100,
+            "identification_segments": 400,
+            "last_identification_loss": 4.731849185191095e-05,
+            "wall_seconds": 1.5090336000002935,
+            "model_response_transitions": 64000
+          },
+          "validation": {
+            "task_cost": 0.03499336913228035,
+            "realization_mse": 4.925861958327005e-07,
+            "input_response_mse": 0.0011458969675004482,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.0,
+            "max_actual_input": 1.0251928567886353,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 800,
+            "planner_batch_calls": 10,
+            "planner_instance_calls": 80,
+            "candidate_sequences": 4000,
+            "objective_calls": 30,
+            "response_transitions": 80000,
+            "wall_seconds": 0.4994165999996767,
+            "actor_parameter_count": 0,
+            "response_parameter_count": 4
+          },
+          "actor_training_updates": 0,
+          "actor_parameter_count": 0,
+          "feedback_gain_count": 4
+        }
+      ],
+      "evaluation": {
+        "task_cost": 0.0313652865588665,
+        "realization_mse": 5.760343455563088e-07,
+        "input_response_mse": 0.0014335382074932568,
+        "tracking_episode_violation_fraction": 0.0,
+        "input_episode_violation_fraction": 0.0,
+        "max_actual_input": 1.0434767007827759,
+        "near_saturation_fraction": 0.0,
+        "nominal_infeasible_fraction": 0.0,
+        "physical_steps": 6400,
+        "planner_batch_calls": 80,
+        "planner_instance_calls": 640,
+        "candidate_sequences": 32000,
+        "objective_calls": 240,
+        "response_transitions": 640000,
+        "wall_seconds": 4.55225640000026,
+        "actor_parameter_count": 0.0,
+        "response_parameter_count": 4.0
+      },
+      "budget": {
+        "physical_steps": 25600,
+        "planner_batch_calls": 320,
+        "planner_instance_calls": 2560,
+        "candidate_sequences": 128000,
+        "objective_calls": 960,
+        "response_transitions": 2560000,
+        "actor_training_updates": 0,
+        "response_identification_updates": 400,
+        "identification_model_response_transitions": 256000,
+        "rollout_wall_seconds": 18.127102699998886,
+        "identification_wall_seconds": 6.284816900000351
+      },
+      "scope": "Four predeclared classical gains; validation-selected pair, not continuous optimum"
+    }
+  ],
+  "total_physical_steps": 76800
+}

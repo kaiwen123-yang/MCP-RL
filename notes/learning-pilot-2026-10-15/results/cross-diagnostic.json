@@ -1,0 +1,619 @@
+{
+  "status": "post_hoc_mechanism_diagnostic_no_method_change",
+  "interpretation": "Costs are lower-is-better. Negative JJ-JT-TJ+TT is favorable interaction for these frozen factors; neither sign proves a universal coupling theorem or satisfies an unmet feasibility constraint.",
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "actor_rows": {
+    "J": "joint trained actor",
+    "T": "tuning_only frozen common actor"
+  },
+  "response_columns": {
+    "J": "joint selected response",
+    "T": "tuning_only selected response"
+  },
+  "grid_axes": {
+    "position": [
+      -0.3,
+      0.0,
+      0.3
+    ],
+    "velocity": [
+      -0.5,
+      0.0,
+      0.5
+    ],
+    "actuator_output": [
+      -0.8,
+      0.0,
+      0.8
+    ],
+    "command": [
+      -0.35,
+      0.0,
+      0.35
+    ]
+  },
+  "physical_configuration": {
+    "dt": 0.02,
+    "tau": 0.12,
+    "k": 1.0,
+    "d": 0.2,
+    "drag": 0.1,
+    "U": 1.2,
+    "W": 0.04,
+    "substeps": 2
+  },
+  "source_sha256": "3784bdb4803e4a2e86409950f590dcbb3b11a325a71d9628b85065bfc78dc9c1",
+  "budget": {
+    "physical_steps": 38400,
+    "planner_batch_calls": 480,
+    "planner_instance_calls": 3840,
+    "candidate_sequences": 192040,
+    "objective_calls": 1445,
+    "response_transitions": 3840800,
+    "wall_seconds": 22.555844099998467,
+    "actor_grid_point_evaluations": 486,
+    "training_updates": 0,
+    "physical_integrator_substeps": 76800,
+    "reused_diagonal_physical_steps_charged_here": 0
+  },
+  "total_wall_seconds": 22.644547599999896,
+  "interaction_summary": {
+    "task_cost": {
+      "per_seed": [
+        5.232379771769047e-05,
+        -0.00877996627241373,
+        -0.002825960051268339
+      ],
+      "mean": -0.0038512008419881263,
+      "sample_std": 0.004504517286008827,
+      "negative_count": 2
+    },
+    "input_response_mse": {
+      "per_seed": [
+        0.0008107046596705914,
+        -0.05268923833500594,
+        -0.10452450346201658
+      ],
+      "mean": -0.052134345712450646,
+      "sample_std": 0.05266979634360392,
+      "negative_count": 2
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 11,
+      "diagonal_status": "read_existing_evaluation_not_rerun",
+      "diagonals": {
+        "JJ": {
+          "task_cost": 0.0363700152374804,
+          "realization_mse": 1.6909491478145355e-05,
+          "input_response_mse": 0.09889151807874441,
+          "tracking_episode_violation_fraction": 0.0,
+          "input_episode_violation_fraction": 1.0,
+          "max_actual_input": 1.1503599882125854,
+          "near_saturation_fraction": 0.0,
+          "nominal_infeasible_fraction": 0.0,
+          "physical_steps": 6400,
+          "planner_batch_calls": 80,
+          "planner_instance_calls": 640,
+          "candidate_sequences": 32000,
+          "objective_calls": 240,
+          "response_transitions": 640000,
+          "wall_seconds": 3.7172059000004083,
+          "actor_parameter_count": 1505.0,
+          "response_parameter_count": 4.0
+        },
+        "TT": {
+          "task_cost": 0.032031082548201084,
+          "realization_mse": 1.1248201758462528e-05,
+          "input_response_mse": 0.06492638820782304,
+          "tracking_episode_violation_fraction": 0.0,
+          "input_episode_violation_fraction": 1.0,
+          "max_actual_input": 1.1571005582809448,
+          "near_saturation_fraction": 0.0,
+          "nominal_infeasible_fraction": 0.0,
+          "physical_steps": 6400,
+          "planner_batch_calls": 80,
+          "planner_instance_calls": 640,
+          "candidate_sequences": 32000,
+          "objective_calls": 240,
+          "response_transitions": 640000,
+          "wall_seconds": 3.719713600000432,
+          "actor_parameter_count": 1505.0,
+          "response_parameter_count": 4.0
+        }
+      },
+      "T_actor_change_norm_recorded": 0.0,
+      "raw_response_logits": {
+        "J": [
+          -1.4128843545913696,
+          -1.9856436252593994,
+          1.1391183137893677,
+          -3.4879822731018066
+        ],
+        "T": [
+          -1.5035932064056396,
+          -2.7724454402923584,
+          0.3990113437175751,
+          -3.0100595951080322
+        ]
+      },
+      "bounded_response_parameters": {
+        "J": [
+          1.552403211593628,
+          0.7845029234886169,
+          11.332695007324219,
+          0.014828057028353214
+        ],
+        "T": [
+          1.527402400970459,
+          0.7411820292472839,
+          9.582951545715332,
+          0.02348673902451992
+        ]
+      },
+      "off_diagonals": {
+        "JT": {
+          "actor_source": "J",
+          "response_source": "T",
+          "metrics": {
+            "task_cost": 0.03314194153062999,
+            "realization_mse": 1.659921645114082e-05,
+            "input_response_mse": 0.09774865116924047,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 1.0,
+            "max_actual_input": 1.158255696296692,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 6400,
+            "planner_batch_calls": 80,
+            "planner_instance_calls": 640,
+            "candidate_sequences": 32000,
+            "objective_calls": 240,
+            "response_transitions": 640000,
+            "wall_seconds": 4.22676089999959,
+            "actor_parameter_count": 1505.0,
+            "response_parameter_count": 4.0
+          },
+          "parameter_updates": 0
+        },
+        "TJ": {
+          "actor_source": "T",
+          "response_source": "J",
+          "metrics": {
+            "task_cost": 0.0352068324573338,
+            "realization_mse": 1.1247891620769224e-05,
+            "input_response_mse": 0.06525855045765638,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 1.0,
+            "max_actual_input": 1.134763479232788,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 6400,
+            "planner_batch_calls": 80,
+            "planner_instance_calls": 640,
+            "candidate_sequences": 32000,
+            "objective_calls": 240,
+            "response_transitions": 640000,
+            "wall_seconds": 3.6727650999991965,
+            "actor_parameter_count": 1505.0,
+            "response_parameter_count": 4.0
+          },
+          "parameter_updates": 0
+        }
+      },
+      "action_map": {
+        "points": 81,
+        "physical_interactions": 0,
+        "actor_forward_point_evaluations": 162,
+        "action_rms_difference": 0.5279948711395264,
+        "action_max_absolute_difference": 1.2453341484069824,
+        "action_mean_absolute_difference": 0.37339046597480774,
+        "points_differing_above_1e_6": 81,
+        "actor_parameter_l2_difference": 0.2305174320936203,
+        "input_limit": 1.2,
+        "interpretation": "Different physical actions on common observations refute identical-function parameter relabeling on these probes; they do not prove useful coadaptation."
+      },
+      "contrasts": {
+        "task_cost": {
+          "cells": {
+            "JJ": 0.0363700152374804,
+            "JT": 0.03314194153062999,
+            "TJ": 0.0352068324573338,
+            "TT": 0.032031082548201084
+          },
+          "interaction_JJ_minus_JT_minus_TJ_plus_TT": 5.232379771769047e-05,
+          "J_actor_effect_with_T_response": 0.0011108589824289083,
+          "J_actor_effect_with_J_response": 0.0011631827801465988,
+          "J_response_effect_with_T_actor": 0.003175749909132719,
+          "J_response_effect_with_J_actor": 0.0032280737068504095,
+          "combined_JJ_minus_TT": 0.004338932689279318
+        },
+        "input_response_mse": {
+          "cells": {
+            "JJ": 0.09889151807874441,
+            "JT": 0.09774865116924047,
+            "TJ": 0.06525855045765638,
+            "TT": 0.06492638820782304
+          },
+          "interaction_JJ_minus_JT_minus_TJ_plus_TT": 0.0008107046596705914,
+          "J_actor_effect_with_T_response": 0.03282226296141744,
+          "J_actor_effect_with_J_response": 0.03363296762108803,
+          "J_response_effect_with_T_actor": 0.0003321622498333454,
+          "J_response_effect_with_J_actor": 0.0011428669095039368,
+          "combined_JJ_minus_TT": 0.03396512987092137
+        }
+      },
+      "additional_budget": {
+        "physical_steps": 12800,
+        "planner_batch_calls": 160,
+        "planner_instance_calls": 1280,
+        "candidate_sequences": 64000,
+        "objective_calls": 480,
+        "response_transitions": 1280000,
+        "wall_seconds": 7.899525999998787,
+        "actor_grid_point_evaluations": 162,
+        "training_updates": 0,
+        "reused_diagonal_physical_steps_charged_here": 0
+      }
+    },
+    {
+      "seed": 23,
+      "diagonal_status": "read_existing_evaluation_not_rerun",
+      "diagonals": {
+        "JJ": {
+          "task_cost": 0.03901021555066109,
+          "realization_mse": 2.3221045012178365e-05,
+          "input_response_mse": 0.14038185216486454,
+          "tracking_episode_violation_fraction": 0.0,
+          "input_episode_violation_fraction": 1.0,
+          "max_actual_input": 1.179599404335022,
+          "near_saturation_fraction": 0.0,
+          "nominal_infeasible_fraction": 0.0,
+          "physical_steps": 6400,
+          "planner_batch_calls": 80,
+          "planner_instance_calls": 640,
+          "candidate_sequences": 32000,
+          "objective_calls": 240,
+          "response_transitions": 640000,
+          "wall_seconds": 3.7129227000000355,
+          "actor_parameter_count": 1505.0,
+          "response_parameter_count": 4.0
+        },
+        "TT": {
+          "task_cost": 0.0351439849473536,
+          "realization_mse": 3.2697765846023685e-06,
+          "input_response_mse": 0.01626857148949057,
+          "tracking_episode_violation_fraction": 0.0,
+          "input_episode_violation_fraction": 0.0,
+          "max_actual_input": 1.0519263744354248,
+          "near_saturation_fraction": 0.0,
+          "nominal_infeasible_fraction": 0.0,
+          "physical_steps": 6400,
+          "planner_batch_calls": 80,
+          "planner_instance_calls": 640,
+          "candidate_sequences": 32000,
+          "objective_calls": 240,
+          "response_transitions": 640000,
+          "wall_seconds": 3.697117800000342,
+          "actor_parameter_count": 1505.0,
+          "response_parameter_count": 4.0
+        }
+      },
+      "T_actor_change_norm_recorded": 0.0,
+      "raw_response_logits": {
+        "J": [
+          -1.3646290302276611,
+          -1.702095866203308,
+          0.31235256791114807,
+          -3.3523428440093994
+        ],
+        "T": [
+          -0.8493285179138184,
+          -2.1276371479034424,
+          0.8487619161605835,
+          -3.5918900966644287
+        ]
+      },
+      "bounded_response_parameters": {
+        "J": [
+          1.5662802457809448,
+          0.8079342246055603,
+          9.352052688598633,
+          0.016909264028072357
+        ],
+        "T": [
+          1.7392327785491943,
+          0.7745076417922974,
+          10.703380584716797,
+          0.013403881341218948
+        ]
+      },
+      "off_diagonals": {
+        "JT": {
+          "actor_source": "J",
+          "response_source": "T",
+          "metrics": {
+            "task_cost": 0.050652763806283474,
+            "realization_mse": 2.8449463798096986e-05,
+            "input_response_mse": 0.1660864446312189,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 1.0,
+            "max_actual_input": 1.1578863859176636,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0078125,
+            "physical_steps": 6400,
+            "planner_batch_calls": 80,
+            "planner_instance_calls": 640,
+            "candidate_sequences": 32040,
+            "objective_calls": 245,
+            "response_transitions": 640800,
+            "wall_seconds": 3.7042254999996658,
+            "actor_parameter_count": 1505.0,
+            "response_parameter_count": 4.0
+          },
+          "parameter_updates": 0
+        },
+        "TJ": {
+          "actor_source": "T",
+          "response_source": "J",
+          "metrics": {
+            "task_cost": 0.032281402964144945,
+            "realization_mse": 8.150903568093781e-06,
+            "input_response_mse": 0.04325321735814214,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 0.828125,
+            "max_actual_input": 1.1337944269180298,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 6400,
+            "planner_batch_calls": 80,
+            "planner_instance_calls": 640,
+            "candidate_sequences": 32000,
+            "objective_calls": 240,
+            "response_transitions": 640000,
+            "wall_seconds": 3.6549893999999767,
+            "actor_parameter_count": 1505.0,
+            "response_parameter_count": 4.0
+          },
+          "parameter_updates": 0
+        }
+      },
+      "action_map": {
+        "points": 81,
+        "physical_interactions": 0,
+        "actor_forward_point_evaluations": 162,
+        "action_rms_difference": 0.4255855977535248,
+        "action_max_absolute_difference": 1.1456623077392578,
+        "action_mean_absolute_difference": 0.2918151915073395,
+        "points_differing_above_1e_6": 81,
+        "actor_parameter_l2_difference": 0.2650716304779053,
+        "input_limit": 1.2,
+        "interpretation": "Different physical actions on common observations refute identical-function parameter relabeling on these probes; they do not prove useful coadaptation."
+      },
+      "contrasts": {
+        "task_cost": {
+          "cells": {
+            "JJ": 0.03901021555066109,
+            "JT": 0.050652763806283474,
+            "TJ": 0.032281402964144945,
+            "TT": 0.0351439849473536
+          },
+          "interaction_JJ_minus_JT_minus_TJ_plus_TT": -0.00877996627241373,
+          "J_actor_effect_with_T_response": 0.015508778858929873,
+          "J_actor_effect_with_J_response": 0.006728812586516142,
+          "J_response_effect_with_T_actor": -0.0028625819832086563,
+          "J_response_effect_with_J_actor": -0.011642548255622387,
+          "combined_JJ_minus_TT": 0.0038662306033074856
+        },
+        "input_response_mse": {
+          "cells": {
+            "JJ": 0.14038185216486454,
+            "JT": 0.1660864446312189,
+            "TJ": 0.04325321735814214,
+            "TT": 0.01626857148949057
+          },
+          "interaction_JJ_minus_JT_minus_TJ_plus_TT": -0.05268923833500594,
+          "J_actor_effect_with_T_response": 0.14981787314172834,
+          "J_actor_effect_with_J_response": 0.0971286348067224,
+          "J_response_effect_with_T_actor": 0.02698464586865157,
+          "J_response_effect_with_J_actor": -0.02570459246635437,
+          "combined_JJ_minus_TT": 0.12411328067537397
+        }
+      },
+      "additional_budget": {
+        "physical_steps": 12800,
+        "planner_batch_calls": 160,
+        "planner_instance_calls": 1280,
+        "candidate_sequences": 64040,
+        "objective_calls": 485,
+        "response_transitions": 1280800,
+        "wall_seconds": 7.3592148999996425,
+        "actor_grid_point_evaluations": 162,
+        "training_updates": 0,
+        "reused_diagonal_physical_steps_charged_here": 0
+      }
+    },
+    {
+      "seed": 37,
+      "diagonal_status": "read_existing_evaluation_not_rerun",
+      "diagonals": {
+        "JJ": {
+          "task_cost": 0.03200657293200493,
+          "realization_mse": 5.378214211759769e-06,
+          "input_response_mse": 0.030361596262082458,
+          "tracking_episode_violation_fraction": 0.0,
+          "input_episode_violation_fraction": 0.484375,
+          "max_actual_input": 1.1004582643508911,
+          "near_saturation_fraction": 0.0,
+          "nominal_infeasible_fraction": 0.0,
+          "physical_steps": 6400,
+          "planner_batch_calls": 80,
+          "planner_instance_calls": 640,
+          "candidate_sequences": 32000,
+          "objective_calls": 240,
+          "response_transitions": 640000,
+          "wall_seconds": 3.6778395999999702,
+          "actor_parameter_count": 1505.0,
+          "response_parameter_count": 4.0
+        },
+        "TT": {
+          "task_cost": 0.03479373408481479,
+          "realization_mse": 3.3665002092675422e-06,
+          "input_response_mse": 0.01707392162643373,
+          "tracking_episode_violation_fraction": 0.0,
+          "input_episode_violation_fraction": 0.0,
+          "max_actual_input": 1.0549198389053345,
+          "near_saturation_fraction": 0.0,
+          "nominal_infeasible_fraction": 0.0,
+          "physical_steps": 6400,
+          "planner_batch_calls": 80,
+          "planner_instance_calls": 640,
+          "candidate_sequences": 32000,
+          "objective_calls": 240,
+          "response_transitions": 640000,
+          "wall_seconds": 4.0786213999999745,
+          "actor_parameter_count": 1505.0,
+          "response_parameter_count": 4.0
+        }
+      },
+      "T_actor_change_norm_recorded": 0.0,
+      "raw_response_logits": {
+        "J": [
+          -2.3109748363494873,
+          -2.053135871887207,
+          1.174525499343872,
+          -3.889894723892212
+        ],
+        "T": [
+          -0.9577012062072754,
+          -2.352670669555664,
+          1.366626262664795,
+          -3.4898483753204346
+        ]
+      },
+      "bounded_response_parameters": {
+        "J": [
+          1.3623926639556885,
+          0.7796151041984558,
+          11.403582572937012,
+          0.010018887929618359
+        ],
+        "T": [
+          1.6992096900939941,
+          0.7607976198196411,
+          11.765179634094238,
+          0.014801230281591415
+        ]
+      },
+      "off_diagonals": {
+        "JT": {
+          "actor_source": "J",
+          "response_source": "T",
+          "metrics": {
+            "task_cost": 0.03970425250008702,
+            "realization_mse": 1.4212494193088787e-05,
+            "input_response_mse": 0.07979461224749684,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 1.0,
+            "max_actual_input": 0.9563582539558411,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 6400,
+            "planner_batch_calls": 80,
+            "planner_instance_calls": 640,
+            "candidate_sequences": 32000,
+            "objective_calls": 240,
+            "response_transitions": 640000,
+            "wall_seconds": 3.6535671000006005,
+            "actor_parameter_count": 1505.0,
+            "response_parameter_count": 4.0
+          },
+          "parameter_updates": 0
+        },
+        "TJ": {
+          "actor_source": "T",
+          "response_source": "J",
+          "metrics": {
+            "task_cost": 0.029922014568001032,
+            "realization_mse": 1.3014073374506552e-05,
+            "input_response_mse": 0.07216540910303593,
+            "tracking_episode_violation_fraction": 0.0,
+            "input_episode_violation_fraction": 1.0,
+            "max_actual_input": 1.1585168838500977,
+            "near_saturation_fraction": 0.0,
+            "nominal_infeasible_fraction": 0.0,
+            "physical_steps": 6400,
+            "planner_batch_calls": 80,
+            "planner_instance_calls": 640,
+            "candidate_sequences": 32000,
+            "objective_calls": 240,
+            "response_transitions": 640000,
+            "wall_seconds": 3.6435360999994373,
+            "actor_parameter_count": 1505.0,
+            "response_parameter_count": 4.0
+          },
+          "parameter_updates": 0
+        }
+      },
+      "action_map": {
+        "points": 81,
+        "physical_interactions": 0,
+        "actor_forward_point_evaluations": 162,
+        "action_rms_difference": 0.3269804120063782,
+        "action_max_absolute_difference": 1.1011170148849487,
+        "action_mean_absolute_difference": 0.21227115392684937,
+        "points_differing_above_1e_6": 81,
+        "actor_parameter_l2_difference": 0.3425426185131073,
+        "input_limit": 1.2,
+        "interpretation": "Different physical actions on common observations refute identical-function parameter relabeling on these probes; they do not prove useful coadaptation."
+      },
+      "contrasts": {
+        "task_cost": {
+          "cells": {
+            "JJ": 0.03200657293200493,
+            "JT": 0.03970425250008702,
+            "TJ": 0.029922014568001032,
+            "TT": 0.03479373408481479
+          },
+          "interaction_JJ_minus_JT_minus_TJ_plus_TT": -0.002825960051268339,
+          "J_actor_effect_with_T_response": 0.004910518415272236,
+          "J_actor_effect_with_J_response": 0.0020845583640038967,
+          "J_response_effect_with_T_actor": -0.004871719516813755,
+          "J_response_effect_with_J_actor": -0.007697679568082094,
+          "combined_JJ_minus_TT": -0.0027871611528098583
+        },
+        "input_response_mse": {
+          "cells": {
+            "JJ": 0.030361596262082458,
+            "JT": 0.07979461224749684,
+            "TJ": 0.07216540910303593,
+            "TT": 0.01707392162643373
+          },
+          "interaction_JJ_minus_JT_minus_TJ_plus_TT": -0.10452450346201658,
+          "J_actor_effect_with_T_response": 0.06272069062106311,
+          "J_actor_effect_with_J_response": -0.04180381284095347,
+          "J_response_effect_with_T_actor": 0.0550914874766022,
+          "J_response_effect_with_J_actor": -0.049433015985414386,
+          "combined_JJ_minus_TT": 0.013287674635648727
+        }
+      },
+      "additional_budget": {
+        "physical_steps": 12800,
+        "planner_batch_calls": 160,
+        "planner_instance_calls": 1280,
+        "candidate_sequences": 64000,
+        "objective_calls": 480,
+        "response_transitions": 1280000,
+        "wall_seconds": 7.297103200000038,
+        "actor_grid_point_evaluations": 162,
+        "training_updates": 0,
+        "reused_diagonal_physical_steps_charged_here": 0
+      }
+    }
+  ]
+}

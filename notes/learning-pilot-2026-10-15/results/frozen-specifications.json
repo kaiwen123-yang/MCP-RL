@@ -1,0 +1,308 @@
+[
+  {
+    "seeds": [
+      11
+    ],
+    "updates": 40,
+    "common_updates": 16,
+    "test_batches": 8,
+    "batch": 8,
+    "episode_steps": 100,
+    "actor": "12-32-32-1 tanh full action; no response design/reference/target observation",
+    "physical": {
+      "dt": 0.02,
+      "tau": 0.12,
+      "k": 1.0,
+      "d": 0.2,
+      "drag": 0.1,
+      "U": 1.2,
+      "W": 0.04,
+      "substeps": 2
+    },
+    "update": {
+      "action_std": 0.12,
+      "design_std": 0.25,
+      "alpha": 0.01,
+      "trust_radius": 0.08,
+      "design_metric_inverse": 8.0,
+      "task_scale": 0.05,
+      "tracking_budget": 0.0002,
+      "input_residual_budget": 0.03
+    },
+    "response": {
+      "ranges": [
+        [
+          1.2,
+          3.0
+        ],
+        [
+          0.7,
+          1.4
+        ],
+        [
+          3.0,
+          14.0
+        ],
+        [
+          0.0,
+          0.5
+        ]
+      ],
+      "jerk_limit": 8.0,
+      "initial_mean": [
+        -0.9400408864021301,
+        -2.152743101119995,
+        0.9808293581008911,
+        -3.178053855895996
+      ],
+      "candidate_offsets": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.6000000238418579,
+          0.0,
+          0.0,
+          -0.4000000059604645
+        ],
+        [
+          0.4000000059604645,
+          0.4000000059604645,
+          -0.4000000059604645,
+          0.4000000059604645
+        ],
+        [
+          0.0,
+          -0.4000000059604645,
+          0.4000000059604645,
+          -0.4000000059604645
+        ]
+      ]
+    },
+    "fixed_search": "four fixed responses, separate actor training with full updates each; charged separately",
+    "planner": {
+      "upstream": "SPlaTES CEMPlanner + Hierarchy",
+      "horizon": 5,
+      "samples": 24,
+      "iterations": 2,
+      "command_steps": 10
+    },
+    "scope": "small nonlinear learning pilot; not original SPlaTES reproduction; empirical constraints",
+    "source_sha256": {
+      "check_learning_math.py": "09134e1c1eacca3fe46091e262133363fd85817d0127ee0d35e3e19f91c6cb1c",
+      "dynamics.py": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+      "export_matlab.py": "51ad7e5f0687c7e45657f8d548847169a8a55a10f9f99a16a8196dfec12d9c62",
+      "learning.py": "9e0d3c54caec1c6898486f4b3c3be92424441e7e8b29b1a226ac5795ed86d053",
+      "pilot.py": "b75852acc25af8ccd2e4871e6fc42e2ab1a8a20cc0e72e578af7306725129a3b",
+      "splates_bridge.py": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+      "__init__.py": "586f0d96898fb643815c5bbb1a16db2266c27dda8e79c292dff2b4536ec45cd6"
+    }
+  },
+  {
+    "seeds": [
+      23
+    ],
+    "updates": 40,
+    "common_updates": 16,
+    "test_batches": 8,
+    "batch": 8,
+    "episode_steps": 100,
+    "actor": "12-32-32-1 tanh full action; no response design/reference/target observation",
+    "physical": {
+      "dt": 0.02,
+      "tau": 0.12,
+      "k": 1.0,
+      "d": 0.2,
+      "drag": 0.1,
+      "U": 1.2,
+      "W": 0.04,
+      "substeps": 2
+    },
+    "update": {
+      "action_std": 0.12,
+      "design_std": 0.25,
+      "alpha": 0.01,
+      "trust_radius": 0.08,
+      "design_metric_inverse": 8.0,
+      "task_scale": 0.05,
+      "tracking_budget": 0.0002,
+      "input_residual_budget": 0.03
+    },
+    "response": {
+      "ranges": [
+        [
+          1.2,
+          3.0
+        ],
+        [
+          0.7,
+          1.4
+        ],
+        [
+          3.0,
+          14.0
+        ],
+        [
+          0.0,
+          0.5
+        ]
+      ],
+      "jerk_limit": 8.0,
+      "initial_mean": [
+        -0.9400408864021301,
+        -2.152743101119995,
+        0.9808293581008911,
+        -3.178053855895996
+      ],
+      "candidate_offsets": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.6000000238418579,
+          0.0,
+          0.0,
+          -0.4000000059604645
+        ],
+        [
+          0.4000000059604645,
+          0.4000000059604645,
+          -0.4000000059604645,
+          0.4000000059604645
+        ],
+        [
+          0.0,
+          -0.4000000059604645,
+          0.4000000059604645,
+          -0.4000000059604645
+        ]
+      ]
+    },
+    "fixed_search": "four fixed responses, separate actor training with full updates each; charged separately",
+    "planner": {
+      "upstream": "SPlaTES CEMPlanner + Hierarchy",
+      "horizon": 5,
+      "samples": 24,
+      "iterations": 2,
+      "command_steps": 10
+    },
+    "scope": "small nonlinear learning pilot; not original SPlaTES reproduction; empirical constraints",
+    "source_sha256": {
+      "check_learning_math.py": "09134e1c1eacca3fe46091e262133363fd85817d0127ee0d35e3e19f91c6cb1c",
+      "dynamics.py": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+      "export_matlab.py": "51ad7e5f0687c7e45657f8d548847169a8a55a10f9f99a16a8196dfec12d9c62",
+      "learning.py": "9e0d3c54caec1c6898486f4b3c3be92424441e7e8b29b1a226ac5795ed86d053",
+      "pilot.py": "b75852acc25af8ccd2e4871e6fc42e2ab1a8a20cc0e72e578af7306725129a3b",
+      "splates_bridge.py": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+      "__init__.py": "586f0d96898fb643815c5bbb1a16db2266c27dda8e79c292dff2b4536ec45cd6"
+    }
+  },
+  {
+    "seeds": [
+      37
+    ],
+    "updates": 40,
+    "common_updates": 16,
+    "test_batches": 8,
+    "batch": 8,
+    "episode_steps": 100,
+    "actor": "12-32-32-1 tanh full action; no response design/reference/target observation",
+    "physical": {
+      "dt": 0.02,
+      "tau": 0.12,
+      "k": 1.0,
+      "d": 0.2,
+      "drag": 0.1,
+      "U": 1.2,
+      "W": 0.04,
+      "substeps": 2
+    },
+    "update": {
+      "action_std": 0.12,
+      "design_std": 0.25,
+      "alpha": 0.01,
+      "trust_radius": 0.08,
+      "design_metric_inverse": 8.0,
+      "task_scale": 0.05,
+      "tracking_budget": 0.0002,
+      "input_residual_budget": 0.03
+    },
+    "response": {
+      "ranges": [
+        [
+          1.2,
+          3.0
+        ],
+        [
+          0.7,
+          1.4
+        ],
+        [
+          3.0,
+          14.0
+        ],
+        [
+          0.0,
+          0.5
+        ]
+      ],
+      "jerk_limit": 8.0,
+      "initial_mean": [
+        -0.9400408864021301,
+        -2.152743101119995,
+        0.9808293581008911,
+        -3.178053855895996
+      ],
+      "candidate_offsets": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.6000000238418579,
+          0.0,
+          0.0,
+          -0.4000000059604645
+        ],
+        [
+          0.4000000059604645,
+          0.4000000059604645,
+          -0.4000000059604645,
+          0.4000000059604645
+        ],
+        [
+          0.0,
+          -0.4000000059604645,
+          0.4000000059604645,
+          -0.4000000059604645
+        ]
+      ]
+    },
+    "fixed_search": "four fixed responses, separate actor training with full updates each; charged separately",
+    "planner": {
+      "upstream": "SPlaTES CEMPlanner + Hierarchy",
+      "horizon": 5,
+      "samples": 24,
+      "iterations": 2,
+      "command_steps": 10
+    },
+    "scope": "small nonlinear learning pilot; not original SPlaTES reproduction; empirical constraints",
+    "source_sha256": {
+      "check_learning_math.py": "09134e1c1eacca3fe46091e262133363fd85817d0127ee0d35e3e19f91c6cb1c",
+      "dynamics.py": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+      "export_matlab.py": "51ad7e5f0687c7e45657f8d548847169a8a55a10f9f99a16a8196dfec12d9c62",
+      "learning.py": "9e0d3c54caec1c6898486f4b3c3be92424441e7e8b29b1a226ac5795ed86d053",
+      "pilot.py": "b75852acc25af8ccd2e4871e6fc42e2ab1a8a20cc0e72e578af7306725129a3b",
+      "splates_bridge.py": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+      "__init__.py": "586f0d96898fb643815c5bbb1a16db2266c27dda8e79c292dff2b4536ec45cd6"
+    }
+  }
+]
