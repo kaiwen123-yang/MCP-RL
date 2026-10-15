@@ -1,0 +1,181 @@
+{
+  "scope": "Mathematical audit only; no learning or robot performance claims",
+  "matlabRelease": "2025b",
+  "symbolic": {
+    "errorRecursionVerified": true,
+    "invertibleCommandMapVerified": true,
+    "twoStepResponseVerified": true,
+    "matchedEndpointError": "noise0 + noise1 - gain*noise0",
+    "assumptions": "plantB and refB nonzero; gain differs from 2 in endpoint matching"
+  },
+  "boxRealizability": {
+    "parametersOrder": [
+      "referenceA",
+      "referenceB",
+      "feedback"
+    ],
+    "plantA": 1.05,
+    "plantB": 0.8,
+    "stateRadius": 1,
+    "commandRadius": 0.6,
+    "errorRadius": 0.2,
+    "noiseRadius": 0.04,
+    "inputLimit": 1,
+    "cases": [
+      {
+        "label": "feasible",
+        "parameters": [
+          0.7,
+          0.4,
+          0.5
+        ],
+        "maximumInput": 0.8625,
+        "maximumNextError": 0.15000000000000002,
+        "maximumReferenceState": 0.94,
+        "inputFeasible": true,
+        "errorInvariant": true,
+        "referenceInvariant": true,
+        "vertexFormulaResidual": 0
+      },
+      {
+        "label": "input_violation",
+        "parameters": [
+          0.2,
+          1.2,
+          0.5
+        ],
+        "maximumInput": 2.0875,
+        "maximumNextError": 0.15000000000000002,
+        "maximumReferenceState": 0.91999999999999993,
+        "inputFeasible": false,
+        "errorInvariant": true,
+        "referenceInvariant": true,
+        "vertexFormulaResidual": 0
+      },
+      {
+        "label": "error_invariance_violation",
+        "parameters": [
+          0.7,
+          0.4,
+          0.1
+        ],
+        "maximumInput": 0.76250000000000007,
+        "maximumNextError": 0.23000000000000004,
+        "maximumReferenceState": 0.94,
+        "inputFeasible": true,
+        "errorInvariant": false,
+        "referenceInvariant": true,
+        "vertexFormulaResidual": 0
+      }
+    ]
+  },
+  "coordinateEquivalence": {
+    "horizon": 18,
+    "physicalCost": 8.162462855228803,
+    "maximumInputDifference": 7.39761585322185E-11,
+    "maximumAbsoluteCostGap": 1.2434497875801753E-14,
+    "cases": [
+      {
+        "referenceA": 0.4,
+        "referenceB": 0.4,
+        "cost": 8.1624628552288065,
+        "costGap": 3.5527136788005009E-15,
+        "inputDifference": 7.39761585322185E-11,
+        "stateDifference": 1.3310463842231002E-11,
+        "virtualPhysicalMismatch": 8.8817841970012523E-16,
+        "solverExit": 1
+      },
+      {
+        "referenceA": 0.4,
+        "referenceB": 0.9,
+        "cost": 8.1624628552287923,
+        "costGap": -1.0658141036401503E-14,
+        "inputDifference": 1.2398637672106361E-11,
+        "stateDifference": 2.2424284651378912E-12,
+        "virtualPhysicalMismatch": 1.1102230246251565E-15,
+        "solverExit": 1
+      },
+      {
+        "referenceA": 0.8,
+        "referenceB": 0.4,
+        "cost": 8.1624628552288065,
+        "costGap": 3.5527136788005009E-15,
+        "inputDifference": 7.39752703537988E-11,
+        "stateDifference": 1.3310463842231002E-11,
+        "virtualPhysicalMismatch": 1.2212453270876722E-15,
+        "solverExit": 1
+      },
+      {
+        "referenceA": 0.8,
+        "referenceB": 0.9,
+        "cost": 8.16246285522879,
+        "costGap": -1.2434497875801753E-14,
+        "inputDifference": 1.2395751092242335E-11,
+        "stateDifference": 2.2419843759280411E-12,
+        "virtualPhysicalMismatch": 1.1102230246251565E-15,
+        "solverExit": 1
+      },
+      {
+        "referenceA": 1.1,
+        "referenceB": 0.4,
+        "cost": 8.1624628552288083,
+        "costGap": 5.3290705182007514E-15,
+        "inputDifference": 7.3959949276058978E-11,
+        "stateDifference": 1.3307799306971901E-11,
+        "virtualPhysicalMismatch": 1.3322676295501878E-15,
+        "solverExit": 1
+      },
+      {
+        "referenceA": 1.1,
+        "referenceB": 0.9,
+        "cost": 8.1624628552287923,
+        "costGap": -1.0658141036401503E-14,
+        "inputDifference": 1.2436052188036228E-11,
+        "stateDifference": 2.2486457140757921E-12,
+        "virtualPhysicalMismatch": 1.7763568394002505E-15,
+        "solverExit": 1
+      }
+    ],
+    "conclusion": "Changing an invertible command coordinate gives no added control capability."
+  },
+  "causalFeedback": {
+    "model": "x(j+1)=x(j)+u(j)+w(j); u(j)=command-gain*x(j); x(0)=0; two fast steps",
+    "noiseRadius": 0.1,
+    "inputLimit": 1,
+    "target": 1.5,
+    "terminalTolerance": 0.15,
+    "cases": [
+      {
+        "gain": 0,
+        "command": 0.75,
+        "nominalEndpoint": 1.5,
+        "worstEndpointError": 0.20000000000000018,
+        "maximumInput": 0.75,
+        "inputFeasible": true,
+        "terminalFeasible": false
+      },
+      {
+        "gain": 0.5,
+        "command": 1,
+        "nominalEndpoint": 1.5,
+        "worstEndpointError": 0.15000000000000013,
+        "maximumInput": 1,
+        "inputFeasible": true,
+        "terminalFeasible": true
+      },
+      {
+        "gain": 1,
+        "command": 1.5,
+        "nominalEndpoint": 1.5,
+        "worstEndpointError": 0.10000000000000009,
+        "maximumInput": 1.5,
+        "inputFeasible": false,
+        "terminalFeasible": true
+      }
+    ],
+    "optimalClassicalGain": 0.50000000000000022,
+    "maximumClassicalTarget": 1.4999999999999998,
+    "claimedAdvantageOverOptimallyTunedClassicalControl": 0,
+    "conclusion": "Fast feedback changes disturbance response after matching nominal endpoints; this alone is not an RL innovation."
+  }
+}

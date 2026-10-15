@@ -1,14 +1,26 @@
 # 100 篇方法与理论文献索引 · v2
 
+2026-10-15控制理论结合：[11谱系检索与非线性原型](../notes/nonlinear-prototype-2026-10-15/INDEX.md)、[16条来源层级记录](supplements/control-theory-connections-2026-10-15.json)。其中2条复用、14条新检索登记，新增全文精读0；不改变MR和主库名额。实际MATLAB/Simulink结果见[非线性报告](../docs/nonlinear-prototype-report-2026-10-15.md)。
+
+2026-10-15已确认主线专题：[闭环动力学共同设计的6篇补充全文与研究决策](../notes/codesign-decision-2026-10-15/INDEX.md)、[CD01—CD06结构化记录](supplements/codesign-decision-2026-10-15.json)。不改变主库名额/MR编号；MR-ARL只读可取得预印本，AAMAS正式与长版计同一篇。[当前实施报告](../docs/codesign-research-plan-2026-10-15.md)确定SPlaTES主代码底座与T-RO目标，并记录MATLAB数学核验。
+
+2026-10-15专题补读：[πMPC及πⁿMPC/MPC-RL全文记录](../notes/pimpc-2026-10-15/INDEX.md)、[结构化来源](supplements/pimpc-2026-10-15.json)。两篇指定版本已完整读取，CUDA MPC仅局部核查；不改变主清单数量与MR编号。
+
 快照日期：2026-10-13。新版包括 **90 篇正式发表于 2024–2026 的近期论文 + 10 篇经典奠基例外**。2024 年 27 篇、2025 年 33 篇、2026 年 30 篇的统计采用正式刊会年份，不能理解为首次公开年份；已知首稿、在线版或扩展版信息列在各条目中。
 
 结构化书目见 [papers.json](papers.json)，导入文件见 [papers.ris](papers.ris)，筛选口径见 [selection-method.md](selection-method.md)，本轮改版见 [修订说明](../docs/library-v2-revision.md)，旧版见 [v1 历史归档](archive/v1-2026-10-13/README.md)。
 
-当前为 **5 篇初读、95 篇书目与相关性筛选**，尚无已完成复现的条目。初读也不等于全文精读或逐条证明复核。先理解方法与理论，再做聚焦仿真，最后选择机器人应用；创新包括推进已有方法尚未解决的重要问题。
+当前完成 **100 篇指定主版本文字通读**，另有 **0 篇未完成**。详见[实际逐页覆盖与笔记](../notes/fulltext-2026-10-13/INDEX.md)。全部条目尚未完成独立全篇证明核验或复现。先理解方法与理论，再做聚焦仿真，最后选择机器人应用。
+
+专题补读不改变主库数量：[七组方法全文对照](../notes/seven-paper-audit-2026-10-14/INDEX.md)与[Costate／TaskMet／GPS结构化记录](supplements/costate-taskmet-gps-2026-10-14.json)记录最新完整阅读和版本边界；[当前研究方案v3](../docs/compact-response-codesign-v3-2026-10-14.md)明确哪些思想已有先例、哪些仍是待验证贡献。
+
+进一步的基础耦合查新见[核心机制与理论索引](../notes/core-coupling-audit-2026-10-14/INDEX.md)、[相关章节来源登记](supplements/core-coupling-2026-10-14.json)和[当前研究v4](../docs/core-mpc-rl-coupling-v4-2026-10-14.md)。新增论文的相关章节核查不计为全文完成；NX部署与训练预算不再作为选题主导条件。
+
+上述直接近邻随后已补齐指定全文：[全文索引](../notes/direct-neighbor-full-2026-10-14/INDEX.md)、[结构化全文状态](supplements/direct-neighbor-full-2026-10-14.json)。[最新研究判断](../docs/direct-neighbor-verdict-2026-10-14.md)将v4双QP降为技术备选，保留原执行能力共同学习主线；所有新增专题阅读仍不改变主库100篇。
 
 以下八个主题是本仓库的导航目录，互有交叉，不是某篇综述的原始分类。论文既包括直接 MPC–RL 融合，也包括明确服务于该主线的模型学习、规划、优化和控制理论。各条“阅读边界”说明后续需核对的条件，不冒充对所有论文完成了审稿。
 
-期刊的 2025 年中科院大类分区来自公开转录核对，待官方复核；会议不套用期刊分区。2026-10-13 已回读核验 Zotero 主库100条、v2选篇笔记100条、本地PDF覆盖89/100；历史库100条及原有笔记、附件保留。全文取得不等于精读；此处不表示云端附件同步已完成。
+期刊的 2025 年中科院大类分区来自公开转录核对，待官方复核；会议不套用期刊分区。本次核验：Zotero原有89篇PDF，本地补齐9篇正式PDF，合计98/100篇有已验证PDF；MR105与MR156通过正常出版社HTML访问完成全文文字阅读。补齐文件未导入或上传Zotero，不代表云端附件同步；阅读与证明/复现状态分开记录。
 
 ## 01 综述与统一框架 · 近期 3 篇
 
@@ -26,7 +38,7 @@
 
 [公开全文来源（有本轮获取记录）](https://albertboai.com/assets/pdf/2025_scirobotics.adt1497.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第一批.md)。
 
 ### MR004 · Synthesis of model predictive control and reinforcement learning: Survey and classification
 
@@ -42,7 +54,7 @@
 
 [公开全文来源（有本轮获取记录）](https://publications.syscop.de/Reiter2026.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：初读，未复现 · [初读笔记](../notes/MR004-survey.md)。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR004-survey-part2.md)。
 
 ### MR157 · A view on learning robust goal-conditioned value functions: Interplay between RL and MPC
 
@@ -58,7 +70,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2502.06996)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR157-value-interface.md)。
 
 ## 02 MPC与RL的理论联系 · 近期 4 篇
 
@@ -76,7 +88,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2407.04143)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR118-全文精读.md)。
 
 ### MR144 · Convergence guarantees for adaptive model predictive control with kinky inference
 
@@ -92,7 +104,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.mlr.press/v242/zuliani24a/zuliani24a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/安全理论第二批-MR144.md)。
 
 ### MR145 · Mapping back and forth between model predictive control and neural networks
 
@@ -108,7 +120,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.mlr.press/v242/drummond24a/drummond24a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR145-全文精读.md)。
 
 ### MR146 · Increasing information for model predictive control with semi-Markov decision processes
 
@@ -124,7 +136,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.mlr.press/v242/hosseinkhan-boucher24a/hosseinkhan-boucher24a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR146-全文精读.md)。
 
 ## 03 策略与长期价值辅助规划 · 近期 17 篇
 
@@ -142,7 +154,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.mlr.press/v242/alboni24a/alboni24a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划.md)。
 
 ### MR025 · Reinforcement Learning-Based Model Predictive Control for Discrete-Time Systems
 
@@ -152,13 +164,13 @@
 
 **阅读边界：** 须辨明策略和价值进入规划的接口、训练目标及数据条件；有限任务收益不等于普遍优于独立MPC或RL。
 
-**版本与首稿：** 首稿年份尚未单独确认；目前已核公开记录最早为 2024 年，不能据此断言无更早版本。 正式发表年份已核；是否有更早预印本尚未全面追溯。
+**版本与首稿：** 正式PDF首页明确Date of publication 2023-05-19，current version 2024-03-01；2024为35(3)卷期年。尚未核实更早预印本，不把卷期年当方法首次公开年。
 
 [DOI：10.1109/tnnls.2023.3273590](https://doi.org/10.1109/tnnls.2023.3273590) · [正式论文入口](https://doi.org/10.1109/tnnls.2023.3273590) · [书目核验](https://api.crossref.org/works/10.1109/tnnls.2023.3273590)
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR025-全文精读.md)。
 
 ### MR026 · TD-MPC2: Scalable, Robust World Models for Continuous Control
 
@@ -174,7 +186,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2310.16828)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：初读，未复现 · [初读笔记](../notes/MR022-MR026-tdmpc.md)。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划.md)。
 
 ### MR027 · Dynamic Non-Prehensile Object Transport via Model-Predictive Reinforcement Learning
 
@@ -190,7 +202,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2412.00086)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划第二批.md)。
 
 ### MR028 · PIP-Loco: A Proprioceptive Infinite Horizon Planning Framework for Quadrupedal Robot Locomotion
 
@@ -206,7 +218,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2409.09441)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划第二批.md)。
 
 ### MR029 · AC4MPC: Actor-Critic Reinforcement Learning for Guiding Model Predictive Control
 
@@ -222,7 +234,7 @@
 
 [公开全文来源（有本轮获取记录）](https://publications.syscop.de/Reiter2025a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：初读，未复现 · [初读笔记](../notes/MR029-ac4mpc.md)。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/理论安全-MR029.md)。
 
 ### MR030 · Residual MPC: Blending Reinforcement Learning With GPU-Parallelized Model Predictive Control
 
@@ -238,7 +250,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2510.12717)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR030-Residual-MPC.md)。
 
 ### MR105 · Neural critic learning with accelerated value iteration for nonlinear model predictive control
 
@@ -254,7 +266,7 @@
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR105-全文精读.md)。
 
 ### MR107 · Adaptive parameterized model predictive control based on reinforcement learning: A synthesis framework
 
@@ -270,7 +282,7 @@
 
 [公开全文来源（有本轮获取记录）](https://repository.tudelft.nl/file/File_5f230ded-4f1a-456f-b3e4-4337cd8f90ec)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR107-adaptive-PMPC.md)。
 
 ### MR119 · TD-M(PC)$^2$: Improving Temporal Difference MPC Through Policy Constraint
 
@@ -286,7 +298,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v331/main/assets/lin26a/lin26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划.md)。
 
 ### MR120 · M^3PC: Test-time Model Predictive Control using Pretrained Masked Trajectory Model
 
@@ -302,7 +314,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.iclr.cc/paper_files/paper/2025/file/5d8201b37e165a131f5c6c6ad5230f58-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR120-M3PC.md)。
 
 ### MR122 · Bootstrapped Model Predictive Control
 
@@ -318,7 +330,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.iclr.cc/paper_files/paper/2025/file/8636419dea1aa9fbd25fc4248e702da4-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划.md)。
 
 ### MR130 · Model-based Reinforcement Learning for Parameterized Action Spaces
 
@@ -334,7 +346,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v235/main/assets/zhang24r/zhang24r.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR130-DLPA.md)。
 
 ### MR136 · The Surprising Difficulty of Search in Model-Based Reinforcement Learning
 
@@ -350,7 +362,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v306/main/assets/chang26a/chang26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划.md)。
 
 ### MR142 · The Edge-of-Reach Problem in Offline Model-Based Reinforcement Learning
 
@@ -366,7 +378,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.neurips.cc/paper_files/paper/2024/file/7314e20a73542bbfff25030d1185ce88-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划.md)。
 
 ### MR156 · A characterization method of terminal ingredients for nonlinear MPC using value-based reinforcement learning
 
@@ -382,7 +394,7 @@
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR156.md)。
 
 ### MR167 · Learning soft constrained MPC value functions: Efficient MPC design and implementation providing stability and safety guarantees
 
@@ -398,7 +410,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.mlr.press/v242/chatzikiriakos24a/chatzikiriakos24a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/理论安全-MR167.md)。
 
 ## 04 学习模型与不确定性 · 近期 19 篇
 
@@ -416,7 +428,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2310.09442)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第一批.md)。
 
 ### MR049 · Calibrated Value-Aware Model Learning with Probabilistic Environment Models
 
@@ -432,7 +444,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2505.22772)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划.md)。
 
 ### MR106 · Recurrent Convex Difference Neural Networks for Safety-Critical Model Predictive Control
 
@@ -448,7 +460,7 @@
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第一批.md)。
 
 ### MR108 · Lifelong Learning-Based MPC for Uncertain Multi-Task Manipulation
 
@@ -464,7 +476,7 @@
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第一批.md)。
 
 ### MR109 · Variable-Frequency Model Learning and Predictive Control for Jumping Maneuvers on Legged Robots
 
@@ -480,7 +492,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2407.14749)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第一批.md)。
 
 ### MR110 · Adaptive Legged Locomotion via Online Learning for Model Predictive Control
 
@@ -496,7 +508,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2510.15626)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第一批.md)。
 
 ### MR112 · Compound Learning-Based Model Predictive Control Approach for Ducted-Fan Aerial Vehicles
 
@@ -512,7 +524,7 @@
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第一批.md)。
 
 ### MR113 · Meta-Learning Enhanced Model Predictive Contouring Control for Agile and Precise Quadrotor Flight
 
@@ -528,7 +540,7 @@
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第二批.md)。
 
 ### MR116 · Controlling diverse robots by inferring Jacobian fields with deep networks
 
@@ -544,7 +556,7 @@
 
 [公开全文来源（已获取并核验题名）](https://www.nature.com/articles/s41586-025-09170-0.pdf)。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第二批.md)。
 
 ### MR121 · Discrete Codebook World Models for Continuous Control
 
@@ -560,7 +572,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.iclr.cc/paper_files/paper/2025/file/1dd85d064697ec1a258cd2b8755b8c6d-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/长篇模型补完.md)。
 
 ### MR123 · Bisimulation Metric for Model Predictive Control
 
@@ -576,7 +588,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.iclr.cc/paper_files/paper/2025/file/ea0206fdf3afc2ff0578a230816a9e15-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划.md)。
 
 ### MR125 · COPlanner: Plan to Roll Out Conservatively but to Explore Optimistically for Model-Based RL
 
@@ -592,7 +604,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.iclr.cc/paper_files/paper/2024/file/4a32a646254d2e37fc74a38d65796552-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划.md)。
 
 ### MR126 · Continual Reinforcement Learning by Planning with Online World Models
 
@@ -608,7 +620,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v267/main/assets/liu25p/liu25p.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第二批.md)。
 
 ### MR127 · DINO-WM: World Models on Pre-trained Visual Features enable Zero-shot Planning
 
@@ -624,7 +636,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v267/main/assets/zhou25t/zhou25t.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第二批.md)。
 
 ### MR129 · Trajectory World Models for Heterogeneous Environments
 
@@ -640,7 +652,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v267/main/assets/yin25f/yin25f.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/模型第二批.md)。
 
 ### MR133 · Learning Massively Multitask World Models for Continuous Control
 
@@ -656,7 +668,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.iclr.cc/paper_files/paper/2026/file/092359ce5cf60a80e882378944bf1be4-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/长篇模型补完.md)。
 
 ### MR138 · Reflect-then-Plan: Offline Model-Based Planning through a Doubly Bayesian Lens
 
@@ -672,7 +684,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v267/main/assets/jeong25a/jeong25a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/价值规划第二批.md)。
 
 ### MR155 · Choose Wisely: Data-driven Predictive Control for Nonlinear Systems Using Online Data Selection
 
@@ -688,7 +700,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v331/main/assets/naf26a/naf26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师与模型第一批.md)。
 
 ### MR158 · MAKO: Meta-Adaptive Koopman Operators for learning-based model predictive control of parametrically uncertain nonlinear systems
 
@@ -704,7 +716,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2510.09042)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师与模型第一批.md)。
 
 ## 05 安全约束与稳定性 · 近期 9 篇
 
@@ -722,7 +734,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.iclr.cc/paper_files/paper/2024/file/ece182f93af26c64187ba3f7dfd4309a-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR124-SafeDreamer.md)。
 
 ### MR143 · Safe learning in nonlinear model predictive control
 
@@ -738,7 +750,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.mlr.press/v242/buerger24a/buerger24a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/理论安全-MR143.md)。
 
 ### MR147 · Learning for Layered Safety-Critical Control with Predictive Control Barrier Functions
 
@@ -754,7 +766,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v283/main/assets/compton25a/compton25a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/理论安全-MR147.md)。
 
 ### MR159 · Safety Filtering While Training: Improving the Performance and Sample Efficiency of Reinforcement Learning Agents
 
@@ -770,7 +782,7 @@
 
 [公开全文来源（有本轮获取记录）](https://www.dynsyslab.org/wp-content/papercite-data/pdf/pizarro-ral25.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/安全理论第二批-MR159.md)。
 
 ### MR161 · Shielded Planning Guided Data-Efficient and Safe Reinforcement Learning
 
@@ -786,7 +798,7 @@
 
 [公开全文来源（有本轮获取记录）](http://staff.ustc.edu.cn/~zkan/Papers/Journals/%5B65%5D_2025TNNLS.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/安全理论第二批-MR161.md)。
 
 ### MR162 · Stability Mechanisms for Predictive Safety Filters
 
@@ -802,7 +814,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2404.05496)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/安全理论第二批-MR162.md)。
 
 ### MR165 · Safety Beyond the Training Data: Robust Out-of-Distribution MPC via Conformalized System Level Synthesis
 
@@ -818,7 +830,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v331/main/assets/srinivasan26a/srinivasan26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/安全理论第二批-MR165.md)。
 
 ### MR170 · Dynamic Model Predictive Shielding for Provably Safe Reinforcement Learning
 
@@ -834,7 +846,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.neurips.cc/paper_files/paper/2024/file/b589d92785e39486e978fa273d0dc343-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR170-全文精读.md)。
 
 ### MR171 · Safe, Out-of-Distribution-Adaptive MPC with Conformalized Neural Network Ensembles
 
@@ -850,7 +862,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v283/main/assets/contreras25a/contreras25a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/安全理论第二批-MR171.md)。
 
 ## 06 采样优化与实时计算 · 近期 15 篇
 
@@ -868,7 +880,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2310.04590)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR077-DMPO.md)。
 
 ### MR078 · Learning a Generalizable Trajectory Sampling Distribution for Model Predictive Control
 
@@ -878,13 +890,13 @@
 
 **阅读边界：** 须同时比较控制质量、计算预算与实时求解条件；优化器或采样效率提升本身不能证明端到端任务收益。
 
-**版本与首稿：** 首稿年份尚未单独确认；目前已核公开记录最早为 2024 年，不能据此断言无更早版本。 正式发表年份已核；是否有更早预印本尚未全面追溯。
+**版本与首稿：** 2024 T-RO期刊版明确扩展RSS2022工作；新增iCEM对照、成本条件采样、平滑处理及机械臂实验。前稿与期刊全部增量尚未逐行版本对照，不能把2024当整套方法首次提出。
 
 [DOI：10.1109/TRO.2024.3370026](https://doi.org/10.1109/TRO.2024.3370026) · [正式论文入口](https://doi.org/10.1109/TRO.2024.3370026) · [书目核验](https://doi.org/10.1109/TRO.2024.3370026)
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR078-flow-sampling.md)。
 
 ### MR079 · RT-HCP: Dealing with Inference Delays and Sample Efficiency to Learn Directly on Robotic Platforms
 
@@ -900,7 +912,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2509.06714)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR079-real-time-delays.md)。
 
 ### MR080 · SIT-LMPC: Safe Information-Theoretic Learning Model Predictive Control for Iterative Tasks
 
@@ -916,7 +928,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2602.16187)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR080-SIT-LMPC.md)。
 
 ### MR111 · Primal-Dual iLQR for GPU-Accelerated Learning and Control in Legged Robots
 
@@ -932,7 +944,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2506.07823)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR111-primal-dual-ilqr.md)。
 
 ### MR131 · Parallel Stochastic Gradient-Based Planning for World Models
 
@@ -948,7 +960,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v306/main/assets/psenka26a/psenka26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR131-GRASP.md)。
 
 ### MR132 · Sparse Imagination for Efficient Visual World Model Planning
 
@@ -964,7 +976,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.iclr.cc/paper_files/paper/2026/file/a750d52284ff70c6d6bab8072c392d74-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR132-Sparse-Imagination.md)。
 
 ### MR135 · Model-Based Diffusion Sampling for Predictive Control in Offline Decision Making
 
@@ -980,7 +992,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v306/main/assets/balim26a/balim26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR135-MPDiffuser.md)。
 
 ### MR137 · Dream-MPC: Gradient-Based Model Predictive Control with Latent Imagination
 
@@ -996,7 +1008,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v306/main/assets/spieler26a/spieler26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR137-Dream-MPC.md)。
 
 ### MR139 · DiffuserLite: Towards Real-time Diffusion Planning
 
@@ -1012,7 +1024,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.neurips.cc/paper_files/paper/2024/file/dd6a47bc0aad6f34aa5e77706d90cdc4-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR139-DiffuserLite.md)。
 
 ### MR140 · Model-based Diffusion for Trajectory Optimization
 
@@ -1028,7 +1040,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.neurips.cc/paper_files/paper/2024/file/6a5c38a730b17f3827c09cf6b192be04-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR140-MBD.md)。
 
 ### MR149 · Toward Near-Globally Optimal Nonlinear Model Predictive Control via Diffusion Models
 
@@ -1044,7 +1056,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v283/main/assets/huang25a/huang25a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR149-diffusion-global.md)。
 
 ### MR150 · Diffusion Predictive Control with Constraints
 
@@ -1060,7 +1072,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v283/main/assets/romer25a/romer25a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR150-DPCC.md)。
 
 ### MR153 · Warm-starting active-set solvers using graph neural networks
 
@@ -1076,7 +1088,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v331/main/assets/schmidtobreick26a/schmidtobreick26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR153-active-set-warmstart.md)。
 
 ### MR164 · Data-driven Acceleration of MPC with Guarantees
 
@@ -1092,7 +1104,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v331/main/assets/castellano26a/castellano26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR164-nonparametric-acceleration.md)。
 
 ## 07 可微MPC与结构化策略 · 近期 13 篇
 
@@ -1110,7 +1122,7 @@
 
 [公开全文来源（有本轮获取记录）](https://www.roboticsproceedings.org/rss20/p003.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/可微MPC补充批.md)。
 
 ### MR086 · Actor–Critic Model Predictive Control: Differentiable Optimization Meets Reinforcement Learning for Agile Flight
 
@@ -1126,7 +1138,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2306.09852v8)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/可微MPC补充批.md)。
 
 ### MR087 · Differentiable Model Predictive Control on the GPU
 
@@ -1142,7 +1154,7 @@
 
 [全文入口（访问条件未核验）](https://openreview.net/pdf?id=bFYfV6c9zu)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR087-GPU-DiffMPC.md)。
 
 ### MR101 · LeTac-MPC: Learning Model Predictive Control for Tactile-Reactive Grasping
 
@@ -1158,7 +1170,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2403.04934)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/可微MPC补充批.md)。
 
 ### MR102 · DiffTune-MPC: Closed-Loop Learning for Model Predictive Control
 
@@ -1174,7 +1186,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2312.11384)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/可微MPC补充批.md)。
 
 ### MR141 · DiffTORI: Differentiable Trajectory Optimization for Deep Reinforcement and Imitation Learning
 
@@ -1190,7 +1202,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.neurips.cc/paper_files/paper/2024/file/c592fc7e6207f82560ed45fece8d6937-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/可微MPC补充批.md)。
 
 ### MR148 · DeePC-Hunt: Data-enabled Predictive Control Hyperparameter Tuning via Differentiable Optimization
 
@@ -1206,7 +1218,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v283/main/assets/cummins25b/cummins25b.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR148-DeePC-Hunt.md)。
 
 ### MR151 · Imperative MPC: An End-to-End Self-Supervised Learning with Differentiable MPC for UAV Attitude Control
 
@@ -1222,7 +1234,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v283/main/assets/he25a/he25a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/可微MPC补充批.md)。
 
 ### MR152 · Zero-Shot Function Encoder-Based Differentiable Predictive Control
 
@@ -1238,7 +1250,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v331/main/assets/iqbal26a/iqbal26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/可微MPC补充批.md)。
 
 ### MR154 · Policy Optimization for Unknown Systems using Differentiable MPC
 
@@ -1254,7 +1266,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v331/main/assets/zuliani26a/zuliani26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR154-unknown-systems.md)。
 
 ### MR160 · Differentiable Weights-Varying Nonlinear MPC via Gradient-Based Policy Learning: An Autonomous Vehicle Guidance Example
 
@@ -1270,7 +1282,7 @@
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR160-diff-wmpc.md)。
 
 ### MR163 · DEQ-MPC : Deep Equilibrium Model Predictive Control
 
@@ -1286,7 +1298,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v305/main/assets/gurumurthy25a/gurumurthy25a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR163-DEQ-MPC.md)。
 
 ### MR168 · Computationally efficient Gauss–Newton reinforcement learning for model predictive control
 
@@ -1302,7 +1314,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2508.02441)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR168-gauss-newton.md)。
 
 ## 08 规划教师与分层学习 · 近期 10 篇
 
@@ -1320,7 +1332,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2604.05828)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR100-全文精读.md)。
 
 ### MR103 · Inverse Model Predictive Control: Learning Optimal Control Cost Functions for MPC
 
@@ -1336,7 +1348,7 @@
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师与模型第一批.md)。
 
 ### MR104 · Enhanced Imitation Learning of Model Predictive Control Through Importance Weighting
 
@@ -1352,7 +1364,7 @@
 
 [公开全文来源（有本轮获取记录）](https://backend.orbit.dtu.dk/ws/portalfiles/portal/374845924/berat_Enhanced_Imitation_Learning_of_Model_Predictive_Control_Through_Importance_Weighting.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师与模型第一批.md)。
 
 ### MR114 · Toward Scalable Multirobot Control: Fast Policy Learning in Distributed MPC
 
@@ -1362,13 +1374,13 @@
 
 **阅读边界：** 须区分训练时规划教师与部署时在线规划，核对蒸馏、模仿或分层接口；模仿成功不自动继承教师的约束保证。
 
-**版本与首稿：** 已识别首稿或早期公开年份：2024。 已核arXiv首稿公开于2024年（2412.19669）；正式发表年份2025。未把晚刊年份当作首次提出年份。 作者正文称有先行会议工作，当前期刊增加快速显式分布式策略、理论和规模实验；先行会议年份及增量仍需全文版本对照。
+**版本与首稿：** 2024预印本、2025 T-RO正式版；全文参考确认继承ICRA2022 Barrier function-based safe reinforcement learning for formation control of mobile robots（DOI 10.1109/ICRA46639.2022.9811604）。已识别谱系，尚未逐行对照会议全文以确认全部新增内容。
 
 [DOI：10.1109/tro.2025.3531818](https://doi.org/10.1109/tro.2025.3531818) · [正式论文入口](https://doi.org/10.1109/tro.2025.3531818) · [书目核验](https://api.crossref.org/works/10.1109%2FTRO.2025.3531818) · [早期版本依据](https://arxiv.org/abs/2412.19669)
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2412.19669)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师与模型第一批.md)。
 
 ### MR115 · Sample-Efficient Learning-Based Dynamic Environment Navigation With Transferring Experience From Optimization-Based Planner
 
@@ -1384,7 +1396,7 @@
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师补完批.md)。
 
 ### MR117 · Generative Predictive Control: Flow Matching Policies for Dynamic, Difficult-to-Demonstrate Tasks
 
@@ -1400,7 +1412,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2502.13406)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师补完批.md)。
 
 ### MR128 · Reward-free World Models for Online Imitation Learning
 
@@ -1416,7 +1428,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v267/main/assets/li25af/li25af.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师补完批.md)。
 
 ### MR134 · Model Predictive Adversarial Imitation Learning for Planning from Observation
 
@@ -1432,7 +1444,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.iclr.cc/paper_files/paper/2026/file/e59783120660eb4e847550d4584e74d6-Paper-Conference.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR134-全文精读.md)。
 
 ### MR166 · Learning to Plan, Planning to Learn: Adaptive Hierarchical RL-MPC for Sample-Efficient Decision Making
 
@@ -1448,7 +1460,7 @@
 
 [公开全文来源（有本轮获取记录）](https://raw.githubusercontent.com/mlresearch/v331/main/assets/hori26a/hori26a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR166-adaptive-hierarchical.md)。
 
 ### MR169 · Learning the MPC objective function from human preferences
 
@@ -1464,7 +1476,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/2511.22502)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师补完批.md)。
 
 ## 经典奠基例外 · 10 篇
 
@@ -1486,7 +1498,7 @@
 
 全文入口：独立公开全文地址尚未确认；可从上述正式论文入口查询访问条件。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/理论安全-MR005.md)。
 
 ### MR007 · Learning Model Predictive Control for Iterative Tasks. A Data-Driven Control Framework
 
@@ -1504,7 +1516,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/1609.01387)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR007-全文精读.md)。
 
 ### MR008 · Data-Driven Economic NMPC Using Reinforcement Learning
 
@@ -1522,7 +1534,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/1904.04152)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：初读，未复现 · [初读笔记](../notes/MR008-economic-nmpc.md)。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/理论安全-MR008.md)。
 
 ### MR022 · Temporal Difference Learning for Model Predictive Control
 
@@ -1540,7 +1552,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.mlr.press/v162/hansen22a/hansen22a.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：初读，未复现 · [初读笔记](../notes/MR022-MR026-tdmpc.md)。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR022-TD-MPC.md)。
 
 ### MR033 · Deep Reinforcement Learning in a Handful of Trials using Probabilistic Dynamics Models
 
@@ -1558,7 +1570,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.neurips.cc/paper_files/paper/2018/file/3de568f8597b94bda53149c7d7f5958c-Paper.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师与模型第一批.md)。
 
 ### MR054 · A predictive safety filter for learning-based control of constrained nonlinear dynamical systems
 
@@ -1576,7 +1588,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/1812.05506)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/理论安全-MR054.md)。
 
 ### MR066 · Information-Theoretic Model Predictive Control: Theory and Applications to Autonomous Driving
 
@@ -1594,7 +1606,7 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/1707.02342)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR066-information-theoretic-mpc.md)。
 
 ### MR081 · Differentiable MPC for End-to-end Planning and Control
 
@@ -1612,7 +1624,7 @@
 
 [公开全文来源（有本轮获取记录）](https://papers.neurips.cc/paper_files/paper/2018/file/ba6d843eb4251a4526ce65d1807a9309-Paper.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/MR081-differentiable-mpc.md)。
 
 ### MR088 · Guided Policy Search
 
@@ -1630,7 +1642,7 @@
 
 [公开全文来源（有本轮获取记录）](https://proceedings.mlr.press/v28/levine13.pdf)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师补完批.md)。
 
 ### MR095 · MPC-Net: A First Principles Guided Policy Search
 
@@ -1648,4 +1660,4 @@
 
 [公开全文来源（有本轮获取记录）](https://arxiv.org/pdf/1909.05197)。全文入口不代表已完成阅读或附件导入。
 
-阅读状态：书目与相关性已核验，待初读。
+阅读状态：指定主版本文字通读；关键视觉核查已记录，未独立完成全篇证明核验或复现 · [本轮阅读笔记](../notes/fulltext-2026-10-13/教师补完批.md)。
