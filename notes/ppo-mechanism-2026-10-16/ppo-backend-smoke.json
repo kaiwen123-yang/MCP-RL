@@ -1,0 +1,59 @@
+{
+  "status": "passed",
+  "purpose": "64 synthetic transitions; 12 genuine upstream PPO optimizer steps; no performance claim",
+  "provenance": {
+    "tianshou": "0.5.1",
+    "torch": "2.7.1+cpu",
+    "learner_class": "tianshou.policy.modelfree.ppo.PPOPolicy",
+    "learn_method": "tianshou.policy.modelfree.ppo.PPOPolicy.learn",
+    "upstream_file": "tianshou/policy/modelfree/ppo.py",
+    "upstream_file_sha256": "59e12218d75799872a306ce43d9385d230fa6097fe8a1f73f6ace297d6f4fd73",
+    "adapter_file_sha256": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+    "actor_parameters": 354,
+    "critic_parameters": 353,
+    "config": {
+      "obs_dim": 3,
+      "action_dim": 1,
+      "action_bound": 1.2,
+      "hidden": [
+        16,
+        16
+      ],
+      "learning_rate": 0.0003,
+      "initial_std": 0.35,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_epsilon": 0.2,
+      "value_coef": 0.5,
+      "entropy_coef": 0.0,
+      "max_grad_norm": 0.5,
+      "epochs": 3,
+      "minibatch_size": 16,
+      "device": "cpu"
+    },
+    "gae": "local tensor adapter, upstream semantics independently checked",
+    "entropy": "latent Gaussian entropy; not physical tanh-action entropy",
+    "action_mapping": "u = action_bound * tanh(raw Gaussian action); PPO uses raw action ratios"
+  },
+  "gae_max_error_vs_upstream": 1.4325535047099436e-07,
+  "truncation_bootstrap_error": 0.0,
+  "terminal_bootstrap_error": 1.4901161193847656e-08,
+  "tanh_physical_vs_raw_logratio_error": 1.4901161193847656e-08,
+  "maximum_action": 0.9021909236907959,
+  "actor_parameter_delta_l2": 0.019613558426499367,
+  "critic_parameter_delta_l2": 0.057145290076732635,
+  "metrics": {
+    "loss": 0.11684548575431108,
+    "loss/clip": -0.0005844189630200466,
+    "loss/vf": 0.23485981114208698,
+    "loss/ent": 0.3676656385262807,
+    "optimizer_steps": 12,
+    "samples": 64,
+    "behavior_logprob_max_error": 0.0,
+    "approx_kl": 4.146993160247803e-05,
+    "clip_fraction": 0.0,
+    "advantage_mean": -0.2847142219543457,
+    "update_count": 1
+  },
+  "gpu_execution": "not tested; installed PyTorch is CPU-only"
+}
