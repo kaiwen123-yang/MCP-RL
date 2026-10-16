@@ -2,7 +2,9 @@
 
 **换对话接续先读：[CURRENT_STATE](docs/CURRENT_STATE.md)。** 该页区分已完成证据、当前任务、实验边界与GitHub同步约定。
 
-**2026-10-16当前阶段：** [三篇指定全文与2026 TAC/Automatica补查](notes/control-frontier-2026-10-16/INDEX.md)已形成逐篇证据；PhyFilter、FLAIR为正式全文与补充，Koopman为完整14页公开稿，正式PDF未取得。[控制帮助RL学出可规划能力的机制报告](docs/control-informed-coupling-2026-10-16.md)保持原主线，明确实际反馈变化、任务响应目标和输入资源必须联动。当前局部一致性仍不等于新算法，先补可计算实现关系，不启动新训练。
+**当前接续优先级：** 按[最新算法交接要求](docs/research-handoff-control-rl-coupling-2026-10-16.md)完成联合更新与理论，先不训练。本机已完成的[MATLAB/Simulink有限诊断](docs/capability-probe-report-2026-10-16.md)补充了反馈方向、输入资源及任务取舍证据；原生Simulink两组各在线求解MPC60次，状态一致性≤8.89e−16。这是经典反馈机制探针，**不是RL学习或已成立创新**，不再追加网格替代算法。[源码与运行入口](matlab/capability/README.md)。
+
+**2026-10-16前一阅读阶段：** [三篇指定全文与2026 TAC/Automatica补查](notes/control-frontier-2026-10-16/INDEX.md)已形成逐篇证据；PhyFilter、FLAIR为正式全文与补充，Koopman为完整14页公开稿，正式PDF未取得。[控制帮助RL学出可规划能力的机制报告](docs/control-informed-coupling-2026-10-16.md)保持原主线，明确实际反馈变化、任务响应目标和输入资源必须联动。当前局部一致性仍不等于新算法，先补可计算实现关系，不启动新训练。
 
 **2026-10-16前一小试阶段：** [近期10篇控制文献](notes/advanced-control-2026-10-16/INDEX.md)指定稿200页阅读、成熟Tianshou PPO、输入受限实现关系和MATLAB核验已完成。[四组同容量同预算试验报告](docs/ppo-realization-report-2026-10-16.md)显示：解析动作支持保持了条件实现关系，但共同响应更新的长测收益约0.0052%，且PPO未胜同响应的无学习区间中点。当前作为结构基线保留，未形成论文主算法，不扩大训练。主实验与中点合计3440640物理转移，未开展机器人/GPU大规模训练。
 
