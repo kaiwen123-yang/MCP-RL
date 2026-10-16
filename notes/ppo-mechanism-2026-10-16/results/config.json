@@ -1,0 +1,183 @@
+{
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "arms": [
+    "joint_support",
+    "fixed_support",
+    "joint_penalty",
+    "fixed_penalty"
+  ],
+  "environment": {
+    "dt": 0.02,
+    "tau": 0.12,
+    "input_bound": 1.2,
+    "disturbance_bound": 0.04,
+    "rho": 0.98,
+    "delta": 4e-06,
+    "command_steps": 10,
+    "horizon": 8,
+    "candidates": 16,
+    "iterations": 2,
+    "target_steps": 64,
+    "violation_weight": 100.0,
+    "empty_penalty": 0.1,
+    "reference_bounds": [
+      0.6311721,
+      0.9401247,
+      1.2
+    ],
+    "actual_bounds": [
+      0.65,
+      1.0,
+      1.2
+    ],
+    "tube_budget": 0.0002,
+    "device": "cpu"
+  },
+  "ppo": {
+    "obs_dim": 17,
+    "action_dim": 1,
+    "action_bound": 1.2,
+    "hidden": [
+      64,
+      64
+    ],
+    "learning_rate": 0.0003,
+    "initial_std": 0.35,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_epsilon": 0.2,
+    "value_coef": 0.5,
+    "entropy_coef": 0.0,
+    "max_grad_norm": 0.5,
+    "epochs": 4,
+    "minibatch_size": 256,
+    "device": "cpu"
+  },
+  "design_update": {
+    "std": 0.2,
+    "learning_rate": 0.25,
+    "max_step_norm": 0.05,
+    "fixed_arm": "same Gaussian randomization, distribution mean frozen",
+    "score_cost": "same total cost as PPO"
+  },
+  "updates": 40,
+  "environments": 16,
+  "train_steps": 256,
+  "test_batches": 4,
+  "short_steps": 256,
+  "long_steps": 1024,
+  "source_hashes": {
+    "src/response_ppo/ppo_backend.py": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+    "src/response_ppo/env.py": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+    "src/response_ppo/pilot.py": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+    "src/response_ppo/realization.py": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+    "src/response_codesign/splates_bridge.py": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+    "src/response_codesign/dynamics.py": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8"
+  },
+  "upstream_ppo": {
+    "tianshou": "0.5.1",
+    "torch": "2.7.1+cpu",
+    "learner_class": "tianshou.policy.modelfree.ppo.PPOPolicy",
+    "learn_method": "tianshou.policy.modelfree.ppo.PPOPolicy.learn",
+    "upstream_file": "tianshou/policy/modelfree/ppo.py",
+    "upstream_file_sha256": "59e12218d75799872a306ce43d9385d230fa6097fe8a1f73f6ace297d6f4fd73"
+  },
+  "fixed_metric": {
+    "A": [
+      [
+        1.0,
+        0.02,
+        0.0
+      ],
+      [
+        -0.02,
+        0.996,
+        0.02
+      ],
+      [
+        0.0,
+        0.0,
+        0.8333333333333333
+      ]
+    ],
+    "B": [
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.16666666666666669
+      ]
+    ],
+    "Q": [
+      [
+        2.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.5,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.02
+      ]
+    ],
+    "R": [
+      [
+        0.05
+      ]
+    ],
+    "P_trace_normalized": [
+      [
+        0.810611060059122,
+        0.21200174149153875,
+        0.0148971965334373
+      ],
+      [
+        0.21200174149153875,
+        0.18747187080965477,
+        0.015089111784143006
+      ],
+      [
+        0.0148971965334373,
+        0.015089111784143006,
+        0.0019170691312233217
+      ]
+    ],
+    "nominal_K": [
+      [
+        -4.519553885855005,
+        -4.746000477917906,
+        -0.5881414944494395
+      ]
+    ],
+    "nominal_closed_loop_eigenvalue_magnitudes": [
+      0.8115233506118127,
+      0.9601805936376354,
+      0.9601805936376354
+    ],
+    "nominal_metric_contraction": 0.9666465179607783,
+    "note": "Nominal linearization calculation, not a nonlinear whole-tube certificate"
+  },
+  "action_mapping": {
+    "support": "midpoint + halfwidth * tanh(raw); empty support uses logged minimax fallback",
+    "penalty": "input_bound * tanh(raw)"
+  },
+  "notes": [
+    "PPO is common infrastructure, not the claimed innovation.",
+    "Support is analytic and independent of policy weights.",
+    "Reference model is analytic known-model-compatible dynamics with four design parameters.",
+    "Short and long experiments are independently sampled at their fixed lengths, not paired prefixes.",
+    "High-level planning uses persistent nominal z; true x enters low-level feedback."
+  ]
+}
