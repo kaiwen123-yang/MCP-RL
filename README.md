@@ -2,7 +2,9 @@
 
 **换对话接续先读：[CURRENT_STATE](docs/CURRENT_STATE.md)。** 该页区分已完成证据、当前任务、实验边界与GitHub同步约定。
 
-**当前接续优先级：** 按[最新算法交接要求](docs/research-handoff-control-rl-coupling-2026-10-16.md)完成联合更新与理论，先不训练。本机已完成的[MATLAB/Simulink有限诊断](docs/capability-probe-report-2026-10-16.md)补充了反馈方向、输入资源及任务取舍证据；原生Simulink两组各在线求解MPC60次，状态一致性≤8.89e−16。这是经典反馈机制探针，**不是RL学习或已成立创新**，不再追加网格替代算法。[源码与运行入口](matlab/capability/README.md)。
+**当前阶段：** 已按`ffcdcf2`要求形成[具体联合更新算法](docs/joint-update-algorithm-2026-10-16.md)：执行器记忆/共享资源关系进入MPC需求、候选策略统计与模型配对；[理论、近邻比较和固定数据见证](notes/joint-update-2026-10-16/INDEX.md)已完成。**本轮未训练、未新仿真、未扫描增益。**旧PPO完整batch未保存，故数值见证只验证人工声明需求的控制关系，不冒充实际PPO更新或自动MPC需求；算法是已定义的研究候选，未证明创新或性能优势。
+
+**前一阶段接续要求：** 按[最新算法交接要求](docs/research-handoff-control-rl-coupling-2026-10-16.md)完成联合更新与理论，先不训练。本机已完成的[MATLAB/Simulink有限诊断](docs/capability-probe-report-2026-10-16.md)补充了反馈方向、输入资源及任务取舍证据；原生Simulink两组各在线求解MPC60次，状态一致性≤8.89e−16。这是经典反馈机制探针，**不是RL学习或已成立创新**，不再追加网格替代算法。[源码与运行入口](matlab/capability/README.md)。
 
 **2026-10-16前一阅读阶段：** [三篇指定全文与2026 TAC/Automatica补查](notes/control-frontier-2026-10-16/INDEX.md)已形成逐篇证据；PhyFilter、FLAIR为正式全文与补充，Koopman为完整14页公开稿，正式PDF未取得。[控制帮助RL学出可规划能力的机制报告](docs/control-informed-coupling-2026-10-16.md)保持原主线，明确实际反馈变化、任务响应目标和输入资源必须联动。当前局部一致性仍不等于新算法，先补可计算实现关系，不启动新训练。
 

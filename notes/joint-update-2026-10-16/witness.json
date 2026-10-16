@@ -1,0 +1,318 @@
+{
+  "date": "2026-10-16",
+  "scope": "One declared local request projected through an exact actuator-memory/input relation using one fixed historical segment",
+  "source": {
+    "path": "work/capability-probe-2026-10-16/study.mat",
+    "sha256": "076c3e11416c8c87dc3fe59a10940f97cefbb5c99476789e089a0fe1e99a0a01",
+    "matlab_cell": "evaluation{1,1}",
+    "case": "case3 linear_current_mpc",
+    "start_index_zero_based": 45,
+    "K": 5,
+    "selection_rule": "first disturbance onset at t=0.9; fixed before numerical comparison; no segment search",
+    "identity": "classical-feedback data, not PPO batch",
+    "verification_this_run": {
+      "mode": "excerpt",
+      "excerpt_path": "notes/joint-update-2026-10-16/source-segment.json",
+      "excerpt_sha256": "42e6c3623d808de882277c6e22c4cf8f30b38de4c54430105a130301c97d2bca",
+      "original_mat_verified_this_run": false,
+      "original_mat_matches_excerpt_this_run": null,
+      "explanation": "Recomputed from public excerpt only; original MAT hash was not reverified this run"
+    }
+  },
+  "segment": {
+    "time": [
+      0.9,
+      0.92,
+      0.9400000000000001,
+      0.96,
+      0.98,
+      1.0
+    ],
+    "x": [
+      [
+        0.3390828590218394,
+        0.0,
+        0.625498164228948,
+        0.0,
+        0.09912977821632829,
+        0.09912977821632829
+      ],
+      [
+        0.3515921398479385,
+        -0.0002996902369406184,
+        0.625644339988937,
+        -0.029953048003379872,
+        0.16352819526486445,
+        0.16352819526486445
+      ],
+      [
+        0.3641163791436693,
+        -0.0011968627650807751,
+        0.6269541026185329,
+        -0.0597186582310053,
+        0.2244862913951155,
+        0.2078716451098318
+      ],
+      [
+        0.37667656341020855,
+        -0.002686081764741838,
+        0.6292042036055109,
+        -0.08913232833658903,
+        0.28231105821815006,
+        0.23493094308599582
+      ],
+      [
+        0.38928951888057556,
+        -0.004758861445926585,
+        0.632201292929399,
+        -0.11805297708996584,
+        0.33731946369440274,
+        0.24713563775001343
+      ],
+      [
+        0.4019684762490355,
+        -0.007404101158705568,
+        0.6357786466713895,
+        -0.14635970374794233,
+        0.389826174663288,
+        0.24661599092422148
+      ]
+    ],
+    "actual_u": [
+      [
+        0.454393681503122,
+        0.454393681503122
+      ],
+      [
+        0.49981303207758626,
+        0.4081557466727194
+      ],
+      [
+        0.5434856287967933,
+        0.35714847922777515
+      ],
+      [
+        0.5857734993577711,
+        0.30226004313972066
+      ],
+      [
+        0.6269809172282469,
+        0.24426892505547163
+      ]
+    ],
+    "f": [
+      0.454393681503122,
+      0.45398438937515284,
+      0.4503170540122842,
+      0.4440167712487459,
+      0.43562492114185924
+    ],
+    "g": [
+      0.0,
+      0.04582864270243342,
+      0.09316857478450907,
+      0.14175672810902523,
+      0.19135599608638765
+    ],
+    "actuator_difference": [
+      0.0,
+      0.0,
+      0.008307323142641848,
+      0.023690057566077116,
+      0.045091912972194656,
+      0.07160509186953326
+    ],
+    "command": [
+      0.7352628471147254,
+      0.7352628471147254,
+      0.7352628471147254,
+      0.7352628471147254,
+      0.7352628471147254
+    ],
+    "disturbance": [
+      -1.5,
+      -1.5,
+      -1.5,
+      -1.5,
+      -1.5
+    ]
+  },
+  "actuator_relation": {
+    "U": 1.8,
+    "dt": 0.02,
+    "tau": [
+      0.1,
+      0.1
+    ],
+    "rk4_substeps": 4,
+    "rk4_step": 0.005,
+    "alpha_rk": 0.8187307619695058,
+    "alpha_continuous_zoh_not_used": 0.8187307530779818,
+    "beta": [
+      0.08144952248877015,
+      0.09948267033821773,
+      0.12150840662064073,
+      0.14841070137433823,
+      0.18126923803049422
+    ],
+    "initial_memory_alphaK_a0": 0.0,
+    "recorded_endpoint": 0.07160509186953326,
+    "reconstructed_old_endpoint": 0.07160509186953337,
+    "old_endpoint_identity_residual": -1.1102230246251565e-16,
+    "A": 1.1378169699344298,
+    "old_d": 0.07160509186953337,
+    "old_b": 0.2817532733998571,
+    "fixed_b_positive_d_max": 0.8560636965345727
+  },
+  "request": {
+    "features": [
+      "d = weighted differential input = aK - alpha^K a0",
+      "b = weighted absolute common-mode input"
+    ],
+    "target": [
+      1.0,
+      0.2817532733998571
+    ],
+    "planner_demand_origin": "declared fixed local request, not measured MPC request",
+    "d_request_reason": "Explicit unit input d_req=1.0 to expose an active deadline/resource constraint; not fitted from or selected by task performance",
+    "b_request_reason": "Keep the time-weighted forward input usage of the fixed existing segment",
+    "objective": "0.5 * [(d - 1.0)^2 + (b - b0)^2]",
+    "weights": [
+      1.0,
+      1.0
+    ],
+    "weights_selected_by_search": false
+  },
+  "independent_endpoint_matching": {
+    "solution": [
+      1.0,
+      0.2817532733998571
+    ],
+    "objective": 0.0,
+    "coupled_resource_violation": 0.1439363034654273,
+    "meaning": "Algebraic reference omitting the deadline/resource relation; not a measured PPO step or a universal characterization of ordinary co-training"
+  },
+  "coupled_projection": {
+    "constraint": "d + b <= A; d >= 0; b >= 0 (this positive-sector example)",
+    "solution": [
+      0.9280318482672864,
+      0.20978512166714347
+    ],
+    "delta_from_request": [
+      -0.07196815173271365,
+      -0.07196815173271365
+    ],
+    "objective": 0.0051794148638228945,
+    "lagrange_multiplier": 0.07196815173271365,
+    "kkt_stationarity": [
+      0.0,
+      0.0
+    ],
+    "kkt_primal_violation": 0.0,
+    "kkt_complementarity": 0.0,
+    "f_new_existence_witness": [
+      0.33832804357034324,
+      0.33802329680439686,
+      0.3352927077822712,
+      0.33060170430203634,
+      0.32435338187993196
+    ],
+    "g_new_existence_witness": [
+      1.4616719564296567,
+      1.4619767031956032,
+      1.4647072922177289,
+      1.4693982956979637,
+      1.475646618120068
+    ],
+    "u_new_existence_witness": [
+      [
+        1.8,
+        -1.1233439128593135
+      ],
+      [
+        1.8,
+        -1.1239534063912064
+      ],
+      [
+        1.8,
+        -1.1294145844354577
+      ],
+      [
+        1.8,
+        -1.1387965913959273
+      ],
+      [
+        1.8,
+        -1.151293236240136
+      ]
+    ],
+    "reconstructed_features": [
+      0.9280318482672865,
+      0.20978512166714347
+    ],
+    "reconstruction_error": [
+      1.1102230246251565e-16,
+      0.0
+    ],
+    "predicted_endpoint_from_actuator_identity": 0.9280318482672865,
+    "input_peak": 1.8,
+    "minimum_input_margin": 0.0,
+    "release_status": "not executed, not policy realizability proof, not published to MPC as learned capability"
+  },
+  "same_constraint_ordinary_solver": {
+    "method": "SciPy SLSQP on the identical convex two-variable quadratic problem",
+    "success": true,
+    "solution": [
+      0.9280318482672864,
+      0.20978512166714347
+    ],
+    "objective": 0.0051794148638228945,
+    "iterations": 2,
+    "maximum_difference_from_closed_form": 0.0,
+    "interpretation": "Equivalent solutions; no solver novelty is claimed"
+  },
+  "timing_information_check": {
+    "profiles": [
+      "recorded g order",
+      "recorded g reversed"
+    ],
+    "recorded_g": [
+      0.0,
+      0.04582864270243342,
+      0.09316857478450907,
+      0.14175672810902523,
+      0.19135599608638765
+    ],
+    "reversed_g": [
+      0.19135599608638765,
+      0.14175672810902523,
+      0.09316857478450907,
+      0.04582864270243342,
+      0.0
+    ],
+    "unweighted_sum_original": 0.47210994168235537,
+    "unweighted_sum_reversed": 0.47210994168235537,
+    "weighted_d_original": 0.07160509186953337,
+    "weighted_d_reversed": 0.04781041843297756,
+    "difference": 0.023794673436555815,
+    "reversed_profile_input_peak_with_same_f": 0.6457496775895096,
+    "meaning": "Two algebraic actuator-memory moments; no second physical trajectory was simulated"
+  },
+  "budget": {
+    "training_steps": 0,
+    "learning_optimizer_steps": 0,
+    "new_physical_transitions": 0,
+    "new_mpc_calls": 0,
+    "parameter_scan_candidates": 0,
+    "capability_projection_solver_iterations": 2,
+    "fixed_timing_profiles": 2,
+    "ppo_batch_replay": false
+  },
+  "limitations": [
+    "Demand is declared, not generated by MPC; a real PPO batch was not persisted and cannot be replayed.",
+    "Constructed input vectors prove finite-segment actuator feasibility only; they are not a learned causal feedback policy.",
+    "For stochastic feedback, jointly learned distributional response/resource statistics and current batch score estimates remain required.",
+    "Positive-sector actuator relation does not establish whole-system nonlinear stability, full-task improvement, or recursive feasibility.",
+    "The request projection can sacrifice forward input usage; benefit must later be assessed against actual task cost and matched baselines."
+  ]
+}
