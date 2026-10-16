@@ -12,6 +12,12 @@
 
 用户授权补读近五年高水平控制论文、接入成熟PPO并做同容量同预算小试；仍不大规模训练。
 
+**用户随后指出2026覆盖不足，已确认是本轮筛选缺口。** 十篇中九篇正式2022—2025，仅一篇2026录用/未来卷期稿，不能代表2026前沿已经系统审查。此前读过πMPC、πⁿMPC、ReCo及MR-ARL相关版本，不等于此次控制理论选文已经覆盖充分。不能用“都在近五年内”回避用户要求。
+
+已重新核到三项2026正式文献并登记为**候选、非已精读**：npj Robotics的PhyFilter（2026-09-04，非Nature主刊）；Nature Communications的FLAIR（Published2026-03-09，version of record2026-04-23）；Automatica189的Learning stable Koopman embeddings（July2026，首个arXiv在2024）。源链接和真实读取状态见[2026补查记录](../literature/supplements/control-2026-screening-2026-10-16.json)。此次只核出版信息、摘要/方法定位，没有新训练。下一次机制定型前须补足2026直接近邻，不把该候选清单当成已读结论。
+
+给用户解释本轮结果时先说清：当前解析接口已经承担大部分控制，移除低层神经策略并取允许输入的中点后效果几乎不变；所以尚未检验出“RL学出更好能力、规划利用该能力”的收益。不能用一大串证书与数据量替代这句话，也不能把该小原型负结果扩大为整个主线失败。
+
 - [10篇专题阅读](../notes/advanced-control-2026-10-16/INDEX.md)已完成指定稿200页文字及关键原页核查，含所附方法/附录。九篇正式2022—2025；一篇Automatica已录用、未来Nov2026卷期且online日期待核。主MR库不改，中科院2025分区未冒称官方验证。
 - 真实Tianshou 0.5.1 `PPOPolicy.learn`已接入；原版clip、value、minibatch和Adam执行，张量GAE与上游对照通过。[接口与核验](../notes/ppo-mechanism-2026-10-16/ppo-backend.md)。旧2026-10-15原型不是PPO的事实保留，不混写。
 - [实现关系推导](../notes/ppo-mechanism-2026-10-16/realization-proof.md)：对声明离散输入仿射对象，将全扰动一步耗散条件转为精确输入区间；给PPO在区间内的随机动作参数化。[整管束见证与近邻](../notes/ppo-mechanism-2026-10-16/mechanism-neighbor-audit.md)及MATLAB复算已完成，最坏二次差2.93049e-6<4e-6，见证输入1.1901132<1.2。只是模型/域前提下的条件结果，不是机器人或完整MPC递归可行证明。
