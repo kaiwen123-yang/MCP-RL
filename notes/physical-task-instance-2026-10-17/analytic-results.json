@@ -1,0 +1,654 @@
+{
+  "date": "2026-10-17",
+  "status": "completed_analytic_verification",
+  "protocol_sha256": "601de70ea7af7aa5b76af8daa2f3fa40f2ad36a0c84faf6af4a06c335c62d021",
+  "script_sha256": "41e55827eb8f5d4cdec2e3ddc84fdc2521d8013f17b0d96c63e5a2bd80556008",
+  "config": {
+    "a": 1.0,
+    "v0": 1.0,
+    "b": 1.0,
+    "L": 4.0,
+    "gate_x": 2.0
+  },
+  "units": "Explicit normalized mathematical construction, not robot measurements",
+  "assumptions": [
+    "Known exact planar acceleration model with closed input ball",
+    "Initial transverse impulse already observed; no subsequent disturbance",
+    "Free lateral endpoint within clearance band, NOT y=0 docking",
+    "Continuous ideal feedback switching; no claims for unmeasured robot sampling/actuator dynamics"
+  ],
+  "allocation_limits": {
+    "clearance_bound": 0.8660254037844386,
+    "stopping_bound": 0.8888888888888888
+  },
+  "cases": {
+    "frozen_lateral_first": [
+      {
+        "r": 0.0,
+        "observed_impulse_sign": -1,
+        "duration": 5.0,
+        "recovery_duration": 1.0,
+        "occupied_lateral_clearance": 0.5,
+        "squared_acceleration_integral": 5.0,
+        "resource_units": "acceleration^2 * time; NOT measured electrical energy or actuator torque loss",
+        "terminal_position": [
+          4.0,
+          -0.5
+        ],
+        "terminal_velocity": [
+          0.0,
+          0.0
+        ],
+        "gate_events": [
+          {
+            "t": 2.9999999999999996,
+            "y": -0.5,
+            "vx": 1.9999999999999996,
+            "vy": 0.0
+          }
+        ],
+        "max_input_norm": 1.0,
+        "moment_identity_error": 0.0,
+        "checks": {
+          "terminal_x": true,
+          "terminal_velocity": true,
+          "whole_path_clearance": true,
+          "input_ball": true,
+          "gate_crossed": true,
+          "nonnegative_forward_path": true,
+          "moment_identity": true,
+          "time_identity": true,
+          "stopping_surface_identity": true
+        },
+        "segments": [
+          {
+            "phase": "observed_disturbance_recovery",
+            "start_time": 0.0,
+            "duration": 1.0,
+            "p_start": [
+              0.0,
+              0.0
+            ],
+            "v_start": [
+              0.0,
+              -1.0
+            ],
+            "u": [
+              0.0,
+              1.0
+            ],
+            "p_end": [
+              0.0,
+              -0.5
+            ],
+            "v_end": [
+              0.0,
+              0.0
+            ],
+            "position_min": [
+              0.0,
+              -0.5
+            ],
+            "position_max": [
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "phase": "forward_before_stopping_surface",
+            "start_time": 1.0,
+            "duration": 2.0,
+            "p_start": [
+              0.0,
+              -0.5
+            ],
+            "v_start": [
+              0.0,
+              0.0
+            ],
+            "u": [
+              1.0,
+              0.0
+            ],
+            "p_end": [
+              2.0,
+              -0.5
+            ],
+            "v_end": [
+              2.0,
+              0.0
+            ],
+            "position_min": [
+              0.0,
+              -0.5
+            ],
+            "position_max": [
+              2.0,
+              -0.5
+            ]
+          },
+          {
+            "phase": "brake_on_stopping_surface",
+            "start_time": 3.0,
+            "duration": 2.0,
+            "p_start": [
+              2.0,
+              -0.5
+            ],
+            "v_start": [
+              2.0,
+              0.0
+            ],
+            "u": [
+              -1.0,
+              0.0
+            ],
+            "p_end": [
+              4.0,
+              -0.5
+            ],
+            "v_end": [
+              0.0,
+              0.0
+            ],
+            "position_min": [
+              2.0,
+              -0.5
+            ],
+            "position_max": [
+              4.0,
+              -0.5
+            ]
+          }
+        ]
+      },
+      {
+        "r": 0.0,
+        "observed_impulse_sign": 1,
+        "duration": 5.0,
+        "recovery_duration": 1.0,
+        "occupied_lateral_clearance": 0.5,
+        "squared_acceleration_integral": 5.0,
+        "resource_units": "acceleration^2 * time; NOT measured electrical energy or actuator torque loss",
+        "terminal_position": [
+          4.0,
+          0.5
+        ],
+        "terminal_velocity": [
+          0.0,
+          0.0
+        ],
+        "gate_events": [
+          {
+            "t": 2.9999999999999996,
+            "y": 0.5,
+            "vx": 1.9999999999999996,
+            "vy": 0.0
+          }
+        ],
+        "max_input_norm": 1.0,
+        "moment_identity_error": 0.0,
+        "checks": {
+          "terminal_x": true,
+          "terminal_velocity": true,
+          "whole_path_clearance": true,
+          "input_ball": true,
+          "gate_crossed": true,
+          "nonnegative_forward_path": true,
+          "moment_identity": true,
+          "time_identity": true,
+          "stopping_surface_identity": true
+        },
+        "segments": [
+          {
+            "phase": "observed_disturbance_recovery",
+            "start_time": 0.0,
+            "duration": 1.0,
+            "p_start": [
+              0.0,
+              0.0
+            ],
+            "v_start": [
+              0.0,
+              1.0
+            ],
+            "u": [
+              0.0,
+              -1.0
+            ],
+            "p_end": [
+              0.0,
+              0.5
+            ],
+            "v_end": [
+              0.0,
+              0.0
+            ],
+            "position_min": [
+              0.0,
+              0.0
+            ],
+            "position_max": [
+              0.0,
+              0.5
+            ]
+          },
+          {
+            "phase": "forward_before_stopping_surface",
+            "start_time": 1.0,
+            "duration": 2.0,
+            "p_start": [
+              0.0,
+              0.5
+            ],
+            "v_start": [
+              0.0,
+              0.0
+            ],
+            "u": [
+              1.0,
+              0.0
+            ],
+            "p_end": [
+              2.0,
+              0.5
+            ],
+            "v_end": [
+              2.0,
+              0.0
+            ],
+            "position_min": [
+              0.0,
+              0.5
+            ],
+            "position_max": [
+              2.0,
+              0.5
+            ]
+          },
+          {
+            "phase": "brake_on_stopping_surface",
+            "start_time": 3.0,
+            "duration": 2.0,
+            "p_start": [
+              2.0,
+              0.5
+            ],
+            "v_start": [
+              2.0,
+              0.0
+            ],
+            "u": [
+              -1.0,
+              0.0
+            ],
+            "p_end": [
+              4.0,
+              0.5
+            ],
+            "v_end": [
+              0.0,
+              0.0
+            ],
+            "position_min": [
+              2.0,
+              0.5
+            ],
+            "position_max": [
+              4.0,
+              0.5
+            ]
+          }
+        ]
+      }
+    ],
+    "geometry_derived_joint_feedback": [
+      {
+        "r": 0.8660254037844386,
+        "observed_impulse_sign": -1,
+        "duration": 4.15019039690625,
+        "recovery_duration": 1.9999999999999996,
+        "occupied_lateral_clearance": 0.9999999999999998,
+        "squared_acceleration_integral": 4.15019039690625,
+        "resource_units": "acceleration^2 * time; NOT measured electrical energy or actuator torque loss",
+        "terminal_position": [
+          3.9999999999999996,
+          -0.9999999999999998
+        ],
+        "terminal_velocity": [
+          0.0,
+          0.0
+        ],
+        "gate_events": [
+          {
+            "t": 2.14834765681633,
+            "y": -0.9999999999999998,
+            "vx": 1.8803984643852072,
+            "vy": 0.0
+          }
+        ],
+        "max_input_norm": 1.0,
+        "moment_identity_error": 4.440892098500626e-16,
+        "checks": {
+          "terminal_x": true,
+          "terminal_velocity": true,
+          "whole_path_clearance": true,
+          "input_ball": true,
+          "gate_crossed": true,
+          "nonnegative_forward_path": true,
+          "moment_identity": true,
+          "time_identity": true,
+          "stopping_surface_identity": true
+        },
+        "segments": [
+          {
+            "phase": "observed_disturbance_recovery",
+            "start_time": 0.0,
+            "duration": 1.9999999999999996,
+            "p_start": [
+              0.0,
+              0.0
+            ],
+            "v_start": [
+              0.0,
+              -1.0
+            ],
+            "u": [
+              0.8660254037844386,
+              0.5000000000000001
+            ],
+            "p_end": [
+              1.7320508075688765,
+              -0.9999999999999998
+            ],
+            "v_end": [
+              1.7320508075688767,
+              0.0
+            ],
+            "position_min": [
+              0.0,
+              -0.9999999999999998
+            ],
+            "position_max": [
+              1.7320508075688763,
+              0.0
+            ]
+          },
+          {
+            "phase": "forward_before_stopping_surface",
+            "start_time": 1.9999999999999996,
+            "duration": 0.20906979466868703,
+            "p_start": [
+              1.7320508075688765,
+              -0.9999999999999998
+            ],
+            "v_start": [
+              1.7320508075688767,
+              0.0
+            ],
+            "u": [
+              1.0,
+              0.0
+            ],
+            "p_end": [
+              2.116025403784439,
+              -0.9999999999999998
+            ],
+            "v_end": [
+              1.9411206022375638,
+              0.0
+            ],
+            "position_min": [
+              1.7320508075688765,
+              -0.9999999999999998
+            ],
+            "position_max": [
+              2.116025403784439,
+              -0.9999999999999998
+            ]
+          },
+          {
+            "phase": "brake_on_stopping_surface",
+            "start_time": 2.209069794668687,
+            "duration": 1.9411206022375638,
+            "p_start": [
+              2.116025403784439,
+              -0.9999999999999998
+            ],
+            "v_start": [
+              1.9411206022375638,
+              0.0
+            ],
+            "u": [
+              -1.0,
+              0.0
+            ],
+            "p_end": [
+              3.9999999999999996,
+              -0.9999999999999998
+            ],
+            "v_end": [
+              0.0,
+              0.0
+            ],
+            "position_min": [
+              2.116025403784439,
+              -0.9999999999999998
+            ],
+            "position_max": [
+              3.9999999999999996,
+              -0.9999999999999998
+            ]
+          }
+        ]
+      },
+      {
+        "r": 0.8660254037844386,
+        "observed_impulse_sign": 1,
+        "duration": 4.15019039690625,
+        "recovery_duration": 1.9999999999999996,
+        "occupied_lateral_clearance": 0.9999999999999998,
+        "squared_acceleration_integral": 4.15019039690625,
+        "resource_units": "acceleration^2 * time; NOT measured electrical energy or actuator torque loss",
+        "terminal_position": [
+          3.9999999999999996,
+          0.9999999999999998
+        ],
+        "terminal_velocity": [
+          0.0,
+          0.0
+        ],
+        "gate_events": [
+          {
+            "t": 2.14834765681633,
+            "y": 0.9999999999999998,
+            "vx": 1.8803984643852072,
+            "vy": 0.0
+          }
+        ],
+        "max_input_norm": 1.0,
+        "moment_identity_error": 4.440892098500626e-16,
+        "checks": {
+          "terminal_x": true,
+          "terminal_velocity": true,
+          "whole_path_clearance": true,
+          "input_ball": true,
+          "gate_crossed": true,
+          "nonnegative_forward_path": true,
+          "moment_identity": true,
+          "time_identity": true,
+          "stopping_surface_identity": true
+        },
+        "segments": [
+          {
+            "phase": "observed_disturbance_recovery",
+            "start_time": 0.0,
+            "duration": 1.9999999999999996,
+            "p_start": [
+              0.0,
+              0.0
+            ],
+            "v_start": [
+              0.0,
+              1.0
+            ],
+            "u": [
+              0.8660254037844386,
+              -0.5000000000000001
+            ],
+            "p_end": [
+              1.7320508075688765,
+              0.9999999999999998
+            ],
+            "v_end": [
+              1.7320508075688767,
+              0.0
+            ],
+            "position_min": [
+              0.0,
+              0.0
+            ],
+            "position_max": [
+              1.7320508075688763,
+              0.9999999999999998
+            ]
+          },
+          {
+            "phase": "forward_before_stopping_surface",
+            "start_time": 1.9999999999999996,
+            "duration": 0.20906979466868703,
+            "p_start": [
+              1.7320508075688765,
+              0.9999999999999998
+            ],
+            "v_start": [
+              1.7320508075688767,
+              0.0
+            ],
+            "u": [
+              1.0,
+              0.0
+            ],
+            "p_end": [
+              2.116025403784439,
+              0.9999999999999998
+            ],
+            "v_end": [
+              1.9411206022375638,
+              0.0
+            ],
+            "position_min": [
+              1.7320508075688765,
+              0.9999999999999998
+            ],
+            "position_max": [
+              2.116025403784439,
+              0.9999999999999998
+            ]
+          },
+          {
+            "phase": "brake_on_stopping_surface",
+            "start_time": 2.209069794668687,
+            "duration": 1.9411206022375638,
+            "p_start": [
+              2.116025403784439,
+              0.9999999999999998
+            ],
+            "v_start": [
+              1.9411206022375638,
+              0.0
+            ],
+            "u": [
+              -1.0,
+              0.0
+            ],
+            "p_end": [
+              3.9999999999999996,
+              0.9999999999999998
+            ],
+            "v_end": [
+              0.0,
+              0.0
+            ],
+            "position_min": [
+              2.116025403784439,
+              0.9999999999999998
+            ],
+            "position_max": [
+              3.9999999999999996,
+              0.9999999999999998
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "comparison": {
+    "frozen_with_exact_model_and_optimal_suffix_time": 5.0,
+    "finite_feedback_change_time": 4.15019039690625,
+    "time_reduction_fraction": 0.16996192061874993,
+    "clearance_occupancy_change": 0.4999999999999998,
+    "same_class_standard_TO_allocation": 0.8660254037844386,
+    "same_class_standard_TO_time": 4.15019039690625,
+    "same_class_time_difference": 0.0,
+    "same_class_TO_upper_bound_multiplier": 1.1457713281746245,
+    "model_only_optimism_if_old_behavior_is_mislabeled_as_new": 0.8498096030937496,
+    "same_class_algorithm_advantage_established": false,
+    "general_time_varying_free_control_optimum_computed": false
+  },
+  "credit_packet": {
+    "anchor_r": 0.0,
+    "response_order": [
+      "recovery_time",
+      "x_end",
+      "vx_end",
+      "abs_y_end"
+    ],
+    "response": [
+      1.0,
+      0.0,
+      0.0,
+      0.5
+    ],
+    "response_derivative": [
+      0.0,
+      0.5,
+      1.0,
+      0.0
+    ],
+    "downstream_task_covector": [
+      1.0,
+      -0.5,
+      -1.0,
+      0.0
+    ],
+    "contract_covector_clearance": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "contract_derivative_clearance": 0.0,
+    "local_recovery_only_derivative": 0.0,
+    "complete_task_derivative_by_packet": -1.25,
+    "complete_task_direct_derivative": -1.25,
+    "complex_step_identity_derivative": -1.25,
+    "interpretation": "Model/physical-task credit in one declared finite feedback coordinate; not a PPO batch or a robot NN gradient."
+  },
+  "budget": {
+    "signed_policy_cases": 4,
+    "exact_polynomial_segment_maps": 12,
+    "independent_terminal_moment_checks": 4,
+    "packet_gradient_checks": 1,
+    "complex_analytic_expression_checks": 1,
+    "gain_sweep_points": 0,
+    "numerical_optimizer_calls": 0,
+    "robot_environment_rollouts": 0,
+    "RL_batches": 0,
+    "actor_weight_updates": 0,
+    "checkpoint_reads": 0,
+    "checkpoint_writes": 0,
+    "wall_seconds": 0.0013614999988931231
+  },
+  "decision": "Finite causal feedback can trade clearance for time in this analytic task, but standard same-class TO gives the same solution and credit. No independent learning/algorithm advantage or robot capability established."
+}
