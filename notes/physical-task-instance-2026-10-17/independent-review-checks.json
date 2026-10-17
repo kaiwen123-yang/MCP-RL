@@ -1,0 +1,136 @@
+{
+  "reviewed_commit": "bd97045",
+  "scope": "Pure arithmetic only, no optimizer, actor, model integration, data collection, or parameter mutation. PPO entries are declared mathematical numbers, not a real or reconstructed batch.",
+  "analytic_recalculation": {
+    "T0": 5,
+    "T1": 4.15019039690625,
+    "time_reduction_fraction": 0.16996192061874993,
+    "task_credit": -1.25,
+    "cache_prediction": 3.401923788646685,
+    "cache_optimism": 0.7482666082595655,
+    "stored_task_error": 0.0,
+    "stored_cache_error": 4.440892098500626e-16
+  },
+  "ppo_acceptance_counterexample": {
+    "behavior_mean": 0,
+    "fixed_std": 1,
+    "raw_actions": [
+      0.5,
+      -0.5,
+      1.5,
+      -1.5
+    ],
+    "declared_advantages": [
+      1.0,
+      1.0,
+      -1.0,
+      -1.0
+    ],
+    "theta_P": 0,
+    "surrogate_at_theta_P": 0,
+    "surrogate_formula": "0.5*exp(-d*d/2)*(cosh(0.5*d)-cosh(1.5*d))",
+    "deployment_test_objective": "1-d, chosen only to demonstrate logical conflict; not robot task performance",
+    "base_proposal_d": 0.08944271909999159,
+    "backtracks": [
+      {
+        "backtrack": 1.0,
+        "hypothetical_mean": 0.08944271909999159,
+        "ratio_min": 0.8709557747735834,
+        "ratio_max": 1.1390152560788205,
+        "clip_inactive": true,
+        "surrogate": -0.003990676040233898,
+        "closed_form_error": 3.903127820947816e-17,
+        "gaussian_kl": 0.004,
+        "behavior_metric_half_norm": 0.005,
+        "deployment_objective_1_minus_mean": 0.9105572809000084,
+        "strict_surrogate_accepts": false
+      },
+      {
+        "backtrack": 0.5,
+        "hypothetical_mean": 0.044721359549995794,
+        "ratio_min": 0.9341838306225041,
+        "ratio_max": 1.0683143573597318,
+        "clip_inactive": true,
+        "surrogate": -0.0009994168131780001,
+        "closed_form_error": 2.42861286636753e-17,
+        "gaussian_kl": 0.001,
+        "behavior_metric_half_norm": 0.00125,
+        "deployment_objective_1_minus_mean": 0.9552786404500042,
+        "strict_surrogate_accepts": false
+      },
+      {
+        "backtrack": 0.25,
+        "hypothetical_mean": 0.022360679774997897,
+        "ratio_min": 0.9667735201846701,
+        "ratio_max": 1.0338513665416154,
+        "clip_inactive": true,
+        "surrogate": -0.00024996354395606657,
+        "closed_form_error": 4.9439619065339e-17,
+        "gaussian_kl": 0.00025,
+        "behavior_metric_half_norm": 0.0003125,
+        "deployment_objective_1_minus_mean": 0.9776393202250021,
+        "strict_surrogate_accepts": false
+      },
+      {
+        "backtrack": 0.125,
+        "hypothetical_mean": 0.011180339887498949,
+        "ratio_min": 0.98330787367331,
+        "ratio_max": 1.0168483692467296,
+        "clip_inactive": true,
+        "surrogate": -6.249772138991472e-05,
+        "closed_form_error": 9.974659986866641e-18,
+        "gaussian_kl": 6.25e-05,
+        "behavior_metric_half_norm": 7.8125e-05,
+        "deployment_objective_1_minus_mean": 0.988819660112501,
+        "strict_surrogate_accepts": false
+      }
+    ],
+    "interpretation": "For all nonzero sufficiently small d the clipped surrogate is lower although the declared deterministic objective improves. The guard can block the added task step; not evidence that a real PPO run reached this condition.",
+    "empirical_behavior_metric": 1.25,
+    "delta_D": 0.005,
+    "local_subproblem": "min -d + D*d*d/2 subject to D*d*d<=.01; gS=0, no physical active constraints"
+  },
+  "symmetric_max_case": {
+    "source": "Same two-sign ideal task, clearance abs(y)-b",
+    "r": 0.5,
+    "margins": [
+      -0.42264973081037416,
+      -0.42264973081037416
+    ],
+    "gradients": [
+      0.3849001794597505,
+      0.3849001794597505
+    ],
+    "max_is_differentiable": true,
+    "specified_strict_tie_rule": "NO_MODEL_STEP",
+    "interpretation": "Rejecting all ties is a conservative design choice that can reject smooth identical physical branches, including this task family."
+  },
+  "budget_arithmetic": {
+    "planned_forward_microsteps": 5572608,
+    "planned_backward_step_rhs": 460800,
+    "planned_macro_calls": 13565952,
+    "proposed_derivative_forward": 153600,
+    "full_entry_direct_derivative_forward": 122880,
+    "proposed_derivative_reverse": 460800,
+    "full_entry_direct_derivative_reverse": 368640,
+    "derivative_stage_ratio": 1.25,
+    "interpretation": "Operation comparison only for declared derivative paths; not measured wall time, total-runtime ratio, or full solver comparison."
+  },
+  "new_environment_steps": 0,
+  "new_model_propagations": 0,
+  "training_updates": 0,
+  "weight_writes": 0,
+  "packet_direction_counterexample": {
+    "response_covectors": [
+      1,
+      1
+    ],
+    "response_parameter_jacobians": [
+      1,
+      -1
+    ],
+    "full_equal_weight_parameter_gradient": 0,
+    "representative_parameter_gradient_if_first_selected": 1,
+    "interpretation": "Identical response-space demand directions need not imply similar parameter-space effects; finite all-entry recheck limits harm but does not prove useful compression."
+  }
+}
