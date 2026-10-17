@@ -1,0 +1,5999 @@
+{
+  "date": "2026-10-17",
+  "status": "completed",
+  "scope": "Fixed first-short deterministic PPO evaluation resimulation; no training or weight updates",
+  "protocol": {
+    "path": "notes/neural-demand-audit-2026-10-17/replay-protocol.md",
+    "sha256_bytes": "5aa134ab63ba113567ecc8e850fdd662e3f3085d0ff0db8661556473df654a99",
+    "sha256_canonical_lf": "5aa134ab63ba113567ecc8e850fdd662e3f3085d0ff0db8661556473df654a99"
+  },
+  "script": {
+    "path": "scripts/replay_existing_ppo_audit.py",
+    "sha256_bytes": "6dee43af11287e1f6e892b8aebeb5b904da53c07089413006208533533783ab4",
+    "sha256_canonical_lf": "6dee43af11287e1f6e892b8aebeb5b904da53c07089413006208533533783ab4"
+  },
+  "planned_cases": 12,
+  "recorded_cases": 12,
+  "passed_cases": 12,
+  "all_cases_passed": true,
+  "cases": [
+    {
+      "seed": 17,
+      "arm": "joint_support",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 175000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-17/seed-17/joint_support.pt",
+        "before": {
+          "sha256_bytes": "ed73c0f4aa04902b629c48400ce978fb9192ddc6188dc56ffc9711fb77f282ad",
+          "sha256_canonical_lf": "ed73c0f4aa04902b629c48400ce978fb9192ddc6188dc56ffc9711fb77f282ad"
+        },
+        "after": {
+          "sha256_bytes": "ed73c0f4aa04902b629c48400ce978fb9192ddc6188dc56ffc9711fb77f282ad",
+          "sha256_canonical_lf": "ed73c0f4aa04902b629c48400ce978fb9192ddc6188dc56ffc9711fb77f282ad"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-17/seed-17/joint_support-short-trace.npz",
+        "sha256_bytes": "09e4adcb2aada28eb40e3840d4aebd12c649e24df8ac4df9c5a9ba9376ce5b76",
+        "sha256_canonical_lf": "1cdf4fb227ca02d60f66a2e6fe56cfb31d13a8b3ff242a1a01595a86b7897f09"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/17-joint_support.npz",
+        "sha256_bytes": "f13bb2f6e7b5b50ac994691a7d0bb9d86841b3021eaa7f7a6b0ccf5639abf865",
+        "sha256_canonical_lf": "d3053010e2216c18a2d0928d871375b4a240d742fb042d8d85efdfbe80b55dd9",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.5565409999999247,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 17,
+      "arm": "fixed_support",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 175000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-17/seed-17/fixed_support.pt",
+        "before": {
+          "sha256_bytes": "d0a67217c1937831cd09b346c4eeba22e40f65cedb243a325c9d0fdef66695ab",
+          "sha256_canonical_lf": "251a07f3e54be333642403d90ca9cfc742744e3a4a9c8cb27b83c5f7d1e48843"
+        },
+        "after": {
+          "sha256_bytes": "d0a67217c1937831cd09b346c4eeba22e40f65cedb243a325c9d0fdef66695ab",
+          "sha256_canonical_lf": "251a07f3e54be333642403d90ca9cfc742744e3a4a9c8cb27b83c5f7d1e48843"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-17/seed-17/fixed_support-short-trace.npz",
+        "sha256_bytes": "e7d64f9f79b7c11fc726d6be5e6fa33b45706bee5bf8dcc2543e21a48c480fb0",
+        "sha256_canonical_lf": "09e847fb17584c2fc071e05efe182ea5ae57747095079948948c339ec9be12a1"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/17-fixed_support.npz",
+        "sha256_bytes": "262ee216c38378fc29be74b853bfa017f0b03659a12aa750f3ec6c5380c2bb46",
+        "sha256_canonical_lf": "c70245d45d1f0e48bc75838cecfeb9b61d81311cc35ebe9c84854e2a8c99fe40",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.465638200000285,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 17,
+      "arm": "joint_penalty",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 175000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-17/seed-17/joint_penalty.pt",
+        "before": {
+          "sha256_bytes": "be6dabb36437d793149a86fd6803065428df2925c76b4407fdbddaf462e468ff",
+          "sha256_canonical_lf": "be6dabb36437d793149a86fd6803065428df2925c76b4407fdbddaf462e468ff"
+        },
+        "after": {
+          "sha256_bytes": "be6dabb36437d793149a86fd6803065428df2925c76b4407fdbddaf462e468ff",
+          "sha256_canonical_lf": "be6dabb36437d793149a86fd6803065428df2925c76b4407fdbddaf462e468ff"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-17/seed-17/joint_penalty-short-trace.npz",
+        "sha256_bytes": "ddd5e6c236096df3fe9956c64a4c41fe78bc0ebe8819bbf51ea514f158116ea4",
+        "sha256_canonical_lf": "046bb07f269154f49405dea39e7bd6ab83a2ef068d4e38ba5dc8accc583fbc25"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/17-joint_penalty.npz",
+        "sha256_bytes": "09e3c06e834955dfb7173363269b4c36a20dd5a6e680157761c869df78c97004",
+        "sha256_canonical_lf": "5b9872f737d22e03f61ea80360c8ce1d92f42a363ff48af311f8441f82e14f68",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.4310630999998466,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 17,
+      "arm": "fixed_penalty",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 175000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-17/seed-17/fixed_penalty.pt",
+        "before": {
+          "sha256_bytes": "d2be401a9d6db9ed70eed934b080741e118afcf9f5e9becdd81ef0a84db93678",
+          "sha256_canonical_lf": "d2be401a9d6db9ed70eed934b080741e118afcf9f5e9becdd81ef0a84db93678"
+        },
+        "after": {
+          "sha256_bytes": "d2be401a9d6db9ed70eed934b080741e118afcf9f5e9becdd81ef0a84db93678",
+          "sha256_canonical_lf": "d2be401a9d6db9ed70eed934b080741e118afcf9f5e9becdd81ef0a84db93678"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-17/seed-17/fixed_penalty-short-trace.npz",
+        "sha256_bytes": "56c399dcf6cbf79a2a31c26b6b6e3db4158938a0f8d3e2a800572d1151ba831b",
+        "sha256_canonical_lf": "56c399dcf6cbf79a2a31c26b6b6e3db4158938a0f8d3e2a800572d1151ba831b"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/17-fixed_penalty.npz",
+        "sha256_bytes": "6852e3155ec0cd9edbb8efebd770f40ef744fe95b2f8131479df32fdfae98705",
+        "sha256_canonical_lf": "f1f93e884fe9f5ab3c4dcfcf8938eb73221dfa9c63072f51ac4982042e4c87e7",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.430389600000126,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 29,
+      "arm": "joint_support",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 295000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-29/seed-29/joint_support.pt",
+        "before": {
+          "sha256_bytes": "0f902d4f4d4420138dd858b2e6a554499d804871f65c57dd3210384e3652fa0b",
+          "sha256_canonical_lf": "0f902d4f4d4420138dd858b2e6a554499d804871f65c57dd3210384e3652fa0b"
+        },
+        "after": {
+          "sha256_bytes": "0f902d4f4d4420138dd858b2e6a554499d804871f65c57dd3210384e3652fa0b",
+          "sha256_canonical_lf": "0f902d4f4d4420138dd858b2e6a554499d804871f65c57dd3210384e3652fa0b"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-29/seed-29/joint_support-short-trace.npz",
+        "sha256_bytes": "49baa57a32f5330d0ab1ff4284c7dd8b847efca6b51c8242fa5ee5a1351ab046",
+        "sha256_canonical_lf": "49baa57a32f5330d0ab1ff4284c7dd8b847efca6b51c8242fa5ee5a1351ab046"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/29-joint_support.npz",
+        "sha256_bytes": "4bc64182e9bf7493f196694e67110305b7adfe4f096b1890bb00be5af37687fa",
+        "sha256_canonical_lf": "950197cbe9ace242b94571ae74bae0658c2baa65ab287917137bd93a3a3f463b",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.4374714000005042,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 29,
+      "arm": "fixed_support",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 295000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-29/seed-29/fixed_support.pt",
+        "before": {
+          "sha256_bytes": "ae06157857327f59cd1cc3f768dee0fb549aed77a9761936431ffb26f4673d29",
+          "sha256_canonical_lf": "863f4d08d030a0f2f788eec5bcd3fa80f692bb7bddd0e9e752596d353fa9f953"
+        },
+        "after": {
+          "sha256_bytes": "ae06157857327f59cd1cc3f768dee0fb549aed77a9761936431ffb26f4673d29",
+          "sha256_canonical_lf": "863f4d08d030a0f2f788eec5bcd3fa80f692bb7bddd0e9e752596d353fa9f953"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-29/seed-29/fixed_support-short-trace.npz",
+        "sha256_bytes": "0481474b32e895a8f457c31b7980614020133c404bfa898d3c14923d4be393bb",
+        "sha256_canonical_lf": "9455c6982fd1e3deea71620f89d22ffc7a65f80d6bbbe5fef4150a47ff7180cd"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/29-fixed_support.npz",
+        "sha256_bytes": "5d4f1e8d11b29e02494ea86c8aeb15d361d0d2dc17c0b6e22ed7d84f9726937f",
+        "sha256_canonical_lf": "ed6e001c9e9ba0c1bc1f2dd07dfda9f8264991bf6bee7cec1d808a3c3291db72",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.4520511999999144,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 29,
+      "arm": "joint_penalty",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 295000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-29/seed-29/joint_penalty.pt",
+        "before": {
+          "sha256_bytes": "ef97232aa9a2423ac4dd3d40297474a586db9922c764b0e22220bbf1698af510",
+          "sha256_canonical_lf": "ef97232aa9a2423ac4dd3d40297474a586db9922c764b0e22220bbf1698af510"
+        },
+        "after": {
+          "sha256_bytes": "ef97232aa9a2423ac4dd3d40297474a586db9922c764b0e22220bbf1698af510",
+          "sha256_canonical_lf": "ef97232aa9a2423ac4dd3d40297474a586db9922c764b0e22220bbf1698af510"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-29/seed-29/joint_penalty-short-trace.npz",
+        "sha256_bytes": "71dc1bc9305fa08b42c235049a7408a376478925160fa6cc0b3490330302961c",
+        "sha256_canonical_lf": "9700600a69fa77ea0bfb8be08b3d5ac2339123f21bc5e6993a8e762d523d93cd"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/29-joint_penalty.npz",
+        "sha256_bytes": "6b4469a9005cb4ff05bcb5e3cb1dd35a974701914758af4df2823180c0627b06",
+        "sha256_canonical_lf": "5bedd9c0af6a0fd1a23fe1982050cc4b44c2ebbb699829cd4ae62917d944f1a2",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.4552432999998928,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 29,
+      "arm": "fixed_penalty",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 295000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-29/seed-29/fixed_penalty.pt",
+        "before": {
+          "sha256_bytes": "0dafc46006f4f0ebc5b29919c01233330613575fbcd6620db850e3a426e9f8eb",
+          "sha256_canonical_lf": "65c42f1654bb51cea2221a994ae158abf72b3f4534b34aa1b635901a00296ec0"
+        },
+        "after": {
+          "sha256_bytes": "0dafc46006f4f0ebc5b29919c01233330613575fbcd6620db850e3a426e9f8eb",
+          "sha256_canonical_lf": "65c42f1654bb51cea2221a994ae158abf72b3f4534b34aa1b635901a00296ec0"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-29/seed-29/fixed_penalty-short-trace.npz",
+        "sha256_bytes": "c31ac2e9182acd6ed9e5ae6a3976a0fffedca2c60ea110994de4b204c257e07e",
+        "sha256_canonical_lf": "c31ac2e9182acd6ed9e5ae6a3976a0fffedca2c60ea110994de4b204c257e07e"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/29-fixed_penalty.npz",
+        "sha256_bytes": "81d2feae318050cc74febe2dc212529acc46141a730bb9ca7607bb71a3dcfd02",
+        "sha256_canonical_lf": "150a946c5065800e7cd4531ac5a0c625a4fea851d6af40b9d5f2057903a76753",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.52669109999988,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 43,
+      "arm": "joint_support",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 435000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-43/seed-43/joint_support.pt",
+        "before": {
+          "sha256_bytes": "ba5069b883a8869c2d886830678473ec94c9a1ae81f8a3ec93734c8ec9cb77a5",
+          "sha256_canonical_lf": "ba5069b883a8869c2d886830678473ec94c9a1ae81f8a3ec93734c8ec9cb77a5"
+        },
+        "after": {
+          "sha256_bytes": "ba5069b883a8869c2d886830678473ec94c9a1ae81f8a3ec93734c8ec9cb77a5",
+          "sha256_canonical_lf": "ba5069b883a8869c2d886830678473ec94c9a1ae81f8a3ec93734c8ec9cb77a5"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-43/seed-43/joint_support-short-trace.npz",
+        "sha256_bytes": "57712cc571877db0de84b2c25e6e64519b09400821c88f5ef438d2eea4082597",
+        "sha256_canonical_lf": "63615846bee1bbeb5824fe533a10f907d7fb96b3b1329c2eda40d31fda32ac3a"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/43-joint_support.npz",
+        "sha256_bytes": "0a4de31326dd0bda896708340a6e177e3c837f22229a0e68f99389e9b60df18a",
+        "sha256_canonical_lf": "577466dd87f8b08b1bb0efa5ab0fa530ca158267553eb6282f2dfcba73476a83",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.4684033000003183,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 43,
+      "arm": "fixed_support",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 435000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-43/seed-43/fixed_support.pt",
+        "before": {
+          "sha256_bytes": "b6d259966ad3255847becfd1b86b8d5b85297338fd421126cfa8364b4546e5eb",
+          "sha256_canonical_lf": "b6d259966ad3255847becfd1b86b8d5b85297338fd421126cfa8364b4546e5eb"
+        },
+        "after": {
+          "sha256_bytes": "b6d259966ad3255847becfd1b86b8d5b85297338fd421126cfa8364b4546e5eb",
+          "sha256_canonical_lf": "b6d259966ad3255847becfd1b86b8d5b85297338fd421126cfa8364b4546e5eb"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-43/seed-43/fixed_support-short-trace.npz",
+        "sha256_bytes": "f23a3d3c98924f653c837a8ed82ae01ca73df9561ec9d5b0b7f814e0756a92fb",
+        "sha256_canonical_lf": "f23a3d3c98924f653c837a8ed82ae01ca73df9561ec9d5b0b7f814e0756a92fb"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/43-fixed_support.npz",
+        "sha256_bytes": "b7e51526c5a4faec9c156ae45a1274ef4fd73aad4f6d85e432afe1286853d99c",
+        "sha256_canonical_lf": "23754980a175982b6489731ba9cfc47af655eb39728e314e96d9ac1a6693444c",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.4413468000002467,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 43,
+      "arm": "joint_penalty",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 435000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-43/seed-43/joint_penalty.pt",
+        "before": {
+          "sha256_bytes": "8b4650dfd204498c81d47445f1f3b0d29db149e72c06836504a22f6a089e7c5d",
+          "sha256_canonical_lf": "8b4650dfd204498c81d47445f1f3b0d29db149e72c06836504a22f6a089e7c5d"
+        },
+        "after": {
+          "sha256_bytes": "8b4650dfd204498c81d47445f1f3b0d29db149e72c06836504a22f6a089e7c5d",
+          "sha256_canonical_lf": "8b4650dfd204498c81d47445f1f3b0d29db149e72c06836504a22f6a089e7c5d"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-43/seed-43/joint_penalty-short-trace.npz",
+        "sha256_bytes": "531c1e7eabe0290cf1b03aa57eabbc4bbfa963758034a9eb4386956ab142ea55",
+        "sha256_canonical_lf": "c9494d4ebfba6966aacf34a7b85d9913747b1375761112de568a84b42a566966"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/43-joint_penalty.npz",
+        "sha256_bytes": "90e4fc9136abb9cfcf361dbbd879b8c62f88f7f9f40eea242fa1570d855b284e",
+        "sha256_canonical_lf": "1b25bef4dd28914d25a8635211434d9227d303e0812fd2c7ea4e893554feb298",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.4605074999999488,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    },
+    {
+      "seed": 43,
+      "arm": "fixed_penalty",
+      "status": "exact_replay_pass",
+      "evaluation_seed": 435000,
+      "completed_steps": 256,
+      "environments": 16,
+      "source_checks": [
+        {
+          "path": "src/response_ppo/ppo_backend.py",
+          "recorded_sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_bytes": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "sha256_canonical_lf": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/env.py",
+          "recorded_sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_bytes": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "sha256_canonical_lf": "226ba0672beeb03cf1d21a9da71d398d1df4bddd4b85a42218b0a2f4a33cacc1",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/pilot.py",
+          "recorded_sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_bytes": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "sha256_canonical_lf": "7e70d4ffb486096a768b8cd7ff1830434a49c0baef289611f4eaf1ccbf25ad06",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_ppo/realization.py",
+          "recorded_sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_bytes": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "sha256_canonical_lf": "1fed41430bf2d5ea954edb834d6bf1d4f5b01163dbd43449cf0a1b23dbb096cd",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/splates_bridge.py",
+          "recorded_sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_bytes": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "sha256_canonical_lf": "339b7a04237ed75a4feee9b585197abb69297d68da125498caa063b6472daa5c",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        },
+        {
+          "path": "src/response_codesign/dynamics.py",
+          "recorded_sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_bytes": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "sha256_canonical_lf": "f8e89e44cb7d053d9f9c8e2fe585e7dba5aae540257ce6aa9e6d9c5434c824a8",
+          "bytes_match_recorded": true,
+          "source_matches_up_to_line_endings": true
+        }
+      ],
+      "checkpoint": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-43/seed-43/fixed_penalty.pt",
+        "before": {
+          "sha256_bytes": "46713880fe726221b2722e848e370bcaefa096d392bb06311102028e5c3dc9cf",
+          "sha256_canonical_lf": "46713880fe726221b2722e848e370bcaefa096d392bb06311102028e5c3dc9cf"
+        },
+        "after": {
+          "sha256_bytes": "46713880fe726221b2722e848e370bcaefa096d392bb06311102028e5c3dc9cf",
+          "sha256_canonical_lf": "46713880fe726221b2722e848e370bcaefa096d392bb06311102028e5c3dc9cf"
+        },
+        "bytes_unchanged": true,
+        "actor_tensors_unchanged": true
+      },
+      "original_trace": {
+        "path": "work/ppo-mechanism-2026-10-16/formal/seedrun-43/seed-43/fixed_penalty-short-trace.npz",
+        "sha256_bytes": "893c271b61d5fc253108b0891b6dfd461ac882f582709f4b8cc813d4f017b1b9",
+        "sha256_canonical_lf": "c896f2d9458ba48389837ce8e23a12d6fd1c806f4329ead25eea12147863a5c7"
+      },
+      "reconstructed_trace": {
+        "path": "work/neural-demand-audit-2026-10-17/replays/43-fixed_penalty.npz",
+        "sha256_bytes": "7697250e7002a2ee132f91c21b86b888b5feab1a3a311025f6814f088cf4c3b7",
+        "sha256_canonical_lf": "311447f7581355d67e737b21c2a52017f3499c2b9ae708cd1ae5d452a08b02e7",
+        "fields": {
+          "obs": {
+            "shape": [
+              256,
+              16,
+              17
+            ],
+            "dtype": "float32"
+          },
+          "x": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "z": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "command": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "raw_design": {
+            "shape": [
+              256,
+              16,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "interval_lo": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_hi": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "interval_feasible": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "bool"
+          },
+          "interval_discriminant": {
+            "shape": [
+              256,
+              16,
+              2
+            ],
+            "dtype": "float32"
+          },
+          "znext": {
+            "shape": [
+              256,
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "uref": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "mean": {
+            "shape": [
+              256,
+              16,
+              1
+            ],
+            "dtype": "float32"
+          },
+          "task": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "total": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "V": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "excess": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "empty": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "action": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_input": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "support_width": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_position": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "actual_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "reference_domain_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "tube_violation": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "target": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "geometric_bound": {
+            "shape": [
+              256,
+              16
+            ],
+            "dtype": "float32"
+          },
+          "step_index": {
+            "shape": [
+              256
+            ],
+            "dtype": "int64"
+          },
+          "terminal_x": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "terminal_z": {
+            "shape": [
+              16,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "P": {
+            "shape": [
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "B": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "E": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "actor_log_std": {
+            "shape": [
+              1
+            ],
+            "dtype": "float32"
+          },
+          "evaluation_seed": {
+            "shape": [],
+            "dtype": "int64"
+          }
+        },
+        "identity": "New deterministic resimulation of the fixed existing evaluation, with new complete native observations; not original logged observations or training batch"
+      },
+      "metric_comparison": {
+        "task": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "total": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "V": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "excess": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "empty": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "action": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_input": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "support_width": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_position": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "actual_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "reference_domain_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "tube_violation": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "target": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        },
+        "geometric_bound": {
+          "shape": [
+            256,
+            16
+          ],
+          "dtype": "float32",
+          "numeric_exact": true,
+          "bytes_exact": true,
+          "max_abs_error": 0.0
+        }
+      },
+      "first_mismatch": null,
+      "wall_seconds": 1.4576339000004737,
+      "planner_batch_calls": 26,
+      "budget": {
+        "simulated_physical_transitions": 4096,
+        "planner_instances": 416,
+        "objective_calls": 78,
+        "candidate_sequences": 14144,
+        "candidate_macro_steps": 113152,
+        "candidate_low_level_steps": 1131520,
+        "training_updates": 0,
+        "actor_weight_updates": 0,
+        "gradient_optimizer_steps": 0,
+        "checkpoint_writes": 0
+      }
+    }
+  ],
+  "budget": {
+    "simulated_physical_transitions": 49152,
+    "planner_instances": 4992,
+    "objective_calls": 936,
+    "candidate_sequences": 169728,
+    "candidate_macro_steps": 1357824,
+    "candidate_low_level_steps": 13578240,
+    "training_updates": 0,
+    "actor_weight_updates": 0,
+    "gradient_optimizer_steps": 0,
+    "checkpoint_writes": 0
+  },
+  "fingerprint_convention": "Byte fingerprints and LF content fingerprints are both retained; source guards accept only exact bytes or LF/CRLF-equivalent source text.",
+  "boundary": "The complete native observations were newly reconstructed by deterministic simulation and checked against all old metrics. This does not recover the missing stochastic PPO training batch, old advantages or raw sampled actions."
+}
