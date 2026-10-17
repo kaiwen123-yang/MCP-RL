@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "notes/feedback-sensitivity-2026-10-17"
 SOURCE = ROOT / "notes/joint-update-2026-10-16/source-segment.json"
 PROTOCOL = OUT / "protocol.md"
-SOURCE_HASH = "42e6c3623d808de882277c6e22c4cf8f30b38de4c54430105a130301c97d2bca"
+SOURCE_HASH = "992a5c37adf4fc24ee52279acba35063611ad0d51d6e8d991004f23afe7b511c"
 PROTOCOL_HASH = "06db73e7345b27d04e618f3c87717db3ae5d7341250b053c57b868cc971bd1c2"
 DT, K, U, QMAX, SIGMA = 0.02, 5, 1.8, 0.35, 0.35
 FD_EPS = (1e-5, 1e-6)
@@ -31,6 +31,11 @@ COUNTS = {"response_matrix_calls": 0, "response_matrix_steps": 0,
           "finite_difference_objective_evaluations": 0}
 torch.set_default_dtype(torch.float64)
 torch.set_num_threads(1)
+
+
+def text_content_hash(path):
+    """Hash UTF-8 text with LF newlines; Git/Windows line endings are equivalent."""
+    return hashlib.sha256(path.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
 
 
 def tt(value):
@@ -197,8 +202,8 @@ def adjoint_check(transfer, states, closed, gains, bd):
 
 
 def main():
-    assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == SOURCE_HASH
-    assert hashlib.sha256(PROTOCOL.read_bytes()).hexdigest() == PROTOCOL_HASH
+    assert text_content_hash(SOURCE) == SOURCE_HASH
+    assert text_content_hash(PROTOCOL) == PROTOCOL_HASH
     source = json.loads(SOURCE.read_text(encoding='utf-8'))
     xbar, ubar = np.asarray(source["x"]), np.asarray(source["u"])
     ac, bc, ec, ad, bd, ed = affine_model()
@@ -253,7 +258,10 @@ def main():
     result = {
         "date": "2026-10-17", "identity": "Frozen historical-center, deterministic mean-feedback jet sensitivity; no training or eta update",
         "source": {"path": str(SOURCE.relative_to(ROOT)).replace('\\', '/'), "sha256": SOURCE_HASH,
-                   "protocol_sha256": PROTOCOL_HASH, "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                   "hash_convention": "sha256/protocol_sha256/script_sha256 hash UTF-8 text after CRLF-to-LF normalization; byte hashes are separate",
+                   "source_file_byte_sha256": hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
+                   "protocol_sha256": PROTOCOL_HASH, "protocol_file_byte_sha256": hashlib.sha256(PROTOCOL.read_bytes()).hexdigest(),
+                   "script_sha256": text_content_hash(Path(__file__)),
                    "original_mat_sha256_recorded": source['source_mat_sha256'], "original_mat_verified_this_run": False,
                    "time": source['t'], "xbar": xbar, "ubar": ubar,
                    "condition_identity": "Historical data, not a PPO batch; j and xbar_j are fixed public policy conditions shared by all comparisons"},
@@ -347,6 +355,8 @@ def write_report(r):
 ## 1. 数据和策略身份
 
 使用原公开`t=.9→1.0`完整五步记录，未另选更有利状态；相位和各`xbar_j`为所有方法共同已知的固定局部策略条件。基准K0由已使用的经典反馈实际Jacobian给出，不是神经PPO权重。潜动作均值定义为`atanh(ubar/U)+D_j^−1(K0,j+η)(x−xbar_j)`，`D_j=U diag(1−(ubar/U)^2)`；协方差固定`.35²I`。
+
+原冻结协议中的片段hash是当时Windows工作区的字节hash`42e6c362…`。跨平台复算现使用仅将CRLF统一为LF的内容hash`992a5c37…`，同时保留实际字节hash；JSON数据、冻结协议内容及数值设计均未改变。协议和源码也采用相同内容hash口径，避免Git换行转换误报。
 
 在每个记录中心，所有η的潜动作条件分布完全一致。中心score最大绝对值`{identity['centered_score_max']:.3g}`、Fisher trace=`{identity['centered_fisher_trace']:.3g}`；因此任何只在这些固定记录条件上计算、采用固定advantage的样本PPO方向为0。**这个零向量由密度恒等式对任意固定advantage推出，未计算原PPO优势或重放原PPO梯度。** Fisher是解析`J_muᵀΣ^−1J_mu`，不是四个固定残差的经验协方差。这不等于随机策略新rollout的总体梯度为0：离开中心后，策略可出现不同状态和动作，普通PPO也可能获得反馈信用。
 
