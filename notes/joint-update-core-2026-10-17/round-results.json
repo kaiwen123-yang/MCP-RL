@@ -1,0 +1,5874 @@
+{
+  "date": "2026-10-17",
+  "status": "completed_functional_rounds",
+  "protocol_sha256": "2e483471805be13f722ca7c5b12c03fac287bdf3d31075ac3e24482403e66556",
+  "script_sha256": "af9f0b5287333179a465f66a1d2b6c7f4cebbf2ea5fc1319e21106e466e86fb0",
+  "core_sha256": "b69c3295b89443def2be497f15067ef4300c63603ebe722d8cca7c7313328710",
+  "source_review_sha256": "6bc653e872f62fb9352b37b137a231fd22a391308d74fa900827a9029eed1b57",
+  "rounds": {
+    "supported": {
+      "status": "ACCEPTED_ANALYTIC_CASESET",
+      "deployed_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "anchor_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "proposal": {
+        "gradient": [
+          -1.25
+        ],
+        "individual_parameter_credits": [
+          [
+            -1.25
+          ],
+          [
+            -1.25
+          ]
+        ],
+        "proposal_scope": [
+          "positive_impulse",
+          "negative_impulse"
+        ],
+        "scope_weight_in_full_cases": 1.0,
+        "rows_before_merge": [
+          {
+            "facet": "clearance",
+            "value": -0.5,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          },
+          {
+            "facet": "input_norm",
+            "value": 0.0,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          },
+          {
+            "facet": "clearance",
+            "value": -0.5,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "negative_impulse"
+            ]
+          },
+          {
+            "facet": "input_norm",
+            "value": 0.0,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "negative_impulse"
+            ]
+          }
+        ],
+        "rows_after_merge": [
+          {
+            "facet": "clearance",
+            "value": -0.5,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse",
+              "negative_impulse"
+            ]
+          },
+          {
+            "facet": "input_norm",
+            "value": 0.0,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse",
+              "negative_impulse"
+            ]
+          }
+        ],
+        "local_gradient_span_rank": 1,
+        "metric": "identity on analytic coordinate, not empirical PPO Fisher",
+        "trust_radius": 0.1,
+        "trust_is_not_PPO_KL": true,
+        "solver": {
+          "success": true,
+          "message": "Optimization terminated successfully",
+          "nit": 2,
+          "nfev": 2
+        },
+        "step": [
+          0.1
+        ],
+        "status": "PROPOSAL_AVAILABLE",
+        "candidate": {
+          "r": 0.1,
+          "kind": "analytic_constant_force_allocation"
+        }
+      },
+      "anchor_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  -1.0
+                ],
+                "input": [
+                  0.0,
+                  1.0
+                ],
+                "position_end": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              -0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        }
+      ],
+      "old_deployment_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  -1.0
+                ],
+                "input": [
+                  0.0,
+                  1.0
+                ],
+                "position_end": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              -0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        }
+      ],
+      "requests": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "response_jacobian": [
+            [
+              0.0
+            ],
+            [
+              0.5
+            ],
+            [
+              1.0
+            ],
+            [
+              0.0
+            ]
+          ],
+          "task_covector": [
+            1.0,
+            -0.5,
+            -1.0,
+            0.0
+          ],
+          "prefix_direct": [
+            0.0
+          ],
+          "suffix_direct": [
+            0.0
+          ],
+          "direct_term_reason": "Recovery time is already in Y; this analytic suffix has no separate r dependence. Not assumed for a shared neural actor.",
+          "constraints": [
+            {
+              "facet": "clearance",
+              "value": -0.5,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            },
+            {
+              "facet": "input_norm",
+              "value": 0.0,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "response_jacobian": [
+            [
+              0.0
+            ],
+            [
+              0.5
+            ],
+            [
+              1.0
+            ],
+            [
+              0.0
+            ]
+          ],
+          "task_covector": [
+            1.0,
+            -0.5,
+            -1.0,
+            0.0
+          ],
+          "prefix_direct": [
+            0.0
+          ],
+          "suffix_direct": [
+            0.0
+          ],
+          "direct_term_reason": "Recovery time is already in Y; this analytic suffix has no separate r dependence. Not assumed for a shared neural actor.",
+          "constraints": [
+            {
+              "facet": "clearance",
+              "value": -0.5,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "negative_impulse"
+              ]
+            },
+            {
+              "facet": "input_norm",
+              "value": 0.0,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "negative_impulse"
+              ]
+            }
+          ]
+        }
+      ],
+      "attempts": [
+        {
+          "alpha": 1.0,
+          "candidate": {
+            "r": 0.1,
+            "kind": "analytic_constant_force_allocation"
+          },
+          "candidate_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+          "outcomes": [
+            {
+              "case_id": "positive_impulse",
+              "weight": 0.5,
+              "sign": 1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": 4.881741825410992,
+              "response": [
+                1.005037815259212,
+                0.05050505050505051,
+                0.10050378152592121,
+                0.502518907629606
+              ],
+              "constraints": {
+                "clearance": -0.49748109237039395,
+                "input_norm": 0.0
+              },
+              "details": {
+                "suffix_plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 1.8881001143129295,
+                  "brake_duration": 1.9886038958388508,
+                  "brake_position": 2.0227272727272725,
+                  "brake_start_time": 2.8931379295721413,
+                  "completion_time": 4.881741825410992,
+                  "lateral_endpoint_magnitude": 0.502518907629606
+                },
+                "phases": [
+                  {
+                    "t_start": 0.0,
+                    "duration": 1.005037815259212,
+                    "position_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      1.0
+                    ],
+                    "input": [
+                      0.1,
+                      -0.99498743710662
+                    ],
+                    "position_end": [
+                      0.05050505050505051,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      0.10050378152592121,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 1.005037815259212,
+                    "duration": 1.8881001143129295,
+                    "position_start": [
+                      0.05050505050505051,
+                      0.502518907629606
+                    ],
+                    "velocity_start": [
+                      0.10050378152592121,
+                      0.0
+                    ],
+                    "input": [
+                      1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      2.0227272727272725,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      1.9886038958388506,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 2.8931379295721413,
+                    "duration": 1.9886038958388508,
+                    "position_start": [
+                      2.0227272727272725,
+                      0.502518907629606
+                    ],
+                    "velocity_start": [
+                      1.9886038958388506,
+                      0.0
+                    ],
+                    "input": [
+                      -1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      3.999999999999999,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      -2.220446049250313e-16,
+                      0.0
+                    ]
+                  }
+                ],
+                "terminal_position": [
+                  3.999999999999999,
+                  0.502518907629606
+                ],
+                "terminal_velocity": [
+                  -2.220446049250313e-16,
+                  0.0
+                ],
+                "diagnostic_path_end_time": 4.881741825410992,
+                "gate_crossed": true,
+                "no_overshoot_is_family_property_not_task_requirement": true
+              },
+              "status": "COMPLETED",
+              "reason": "full_declared_task_completed"
+            },
+            {
+              "case_id": "negative_impulse",
+              "weight": 0.5,
+              "sign": -1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": 4.881741825410992,
+              "response": [
+                1.005037815259212,
+                0.05050505050505051,
+                0.10050378152592121,
+                0.502518907629606
+              ],
+              "constraints": {
+                "clearance": -0.49748109237039395,
+                "input_norm": 0.0
+              },
+              "details": {
+                "suffix_plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 1.8881001143129295,
+                  "brake_duration": 1.9886038958388508,
+                  "brake_position": 2.0227272727272725,
+                  "brake_start_time": 2.8931379295721413,
+                  "completion_time": 4.881741825410992,
+                  "lateral_endpoint_magnitude": 0.502518907629606
+                },
+                "phases": [
+                  {
+                    "t_start": 0.0,
+                    "duration": 1.005037815259212,
+                    "position_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      -1.0
+                    ],
+                    "input": [
+                      0.1,
+                      0.99498743710662
+                    ],
+                    "position_end": [
+                      0.05050505050505051,
+                      -0.502518907629606
+                    ],
+                    "velocity_end": [
+                      0.10050378152592121,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 1.005037815259212,
+                    "duration": 1.8881001143129295,
+                    "position_start": [
+                      0.05050505050505051,
+                      -0.502518907629606
+                    ],
+                    "velocity_start": [
+                      0.10050378152592121,
+                      0.0
+                    ],
+                    "input": [
+                      1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      2.0227272727272725,
+                      -0.502518907629606
+                    ],
+                    "velocity_end": [
+                      1.9886038958388506,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 2.8931379295721413,
+                    "duration": 1.9886038958388508,
+                    "position_start": [
+                      2.0227272727272725,
+                      -0.502518907629606
+                    ],
+                    "velocity_start": [
+                      1.9886038958388506,
+                      0.0
+                    ],
+                    "input": [
+                      -1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      3.999999999999999,
+                      -0.502518907629606
+                    ],
+                    "velocity_end": [
+                      -2.220446049250313e-16,
+                      0.0
+                    ]
+                  }
+                ],
+                "terminal_position": [
+                  3.999999999999999,
+                  -0.502518907629606
+                ],
+                "terminal_velocity": [
+                  -2.220446049250313e-16,
+                  0.0
+                ],
+                "diagnostic_path_end_time": 4.881741825410992,
+                "gate_crossed": true,
+                "no_overshoot_is_family_property_not_task_requirement": true
+              },
+              "status": "COMPLETED",
+              "reason": "full_declared_task_completed"
+            }
+          ],
+          "against_anchor": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 4.881741825410992,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 2,
+            "common_completed_fraction": 1.0,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": true,
+            "reason": "AVERAGE_TASK_IMPROVEMENT"
+          },
+          "against_deployed": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 4.881741825410992,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 2,
+            "common_completed_fraction": 1.0,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": true,
+            "reason": "AVERAGE_TASK_IMPROVEMENT"
+          },
+          "supported_subset_only": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 4.881741825410992,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 2,
+            "common_completed_fraction": 1.0,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": true,
+            "reason": "AVERAGE_TASK_IMPROVEMENT"
+          },
+          "pair_check": {
+            "status": "PAIRED",
+            "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+            "response_max_error": 0.0,
+            "label_origin": "exact analytic recomputation from this virtual feedback, not learned G or robot data",
+            "scope": [
+              "positive_impulse",
+              "negative_impulse"
+            ],
+            "predictions": [
+              {
+                "case_id": "positive_impulse",
+                "status": "COMPLETED",
+                "response": [
+                  1.005037815259212,
+                  0.05050505050505051,
+                  0.10050378152592121,
+                  0.502518907629606
+                ],
+                "plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 1.8881001143129295,
+                  "brake_duration": 1.9886038958388508,
+                  "brake_position": 2.0227272727272725,
+                  "brake_start_time": 2.8931379295721413,
+                  "completion_time": 4.881741825410992,
+                  "lateral_endpoint_magnitude": 0.502518907629606
+                }
+              },
+              {
+                "case_id": "negative_impulse",
+                "status": "COMPLETED",
+                "response": [
+                  1.005037815259212,
+                  0.05050505050505051,
+                  0.10050378152592121,
+                  0.502518907629606
+                ],
+                "plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 1.8881001143129295,
+                  "brake_duration": 1.9886038958388508,
+                  "brake_position": 2.0227272727272725,
+                  "brake_start_time": 2.8931379295721413,
+                  "completion_time": 4.881741825410992,
+                  "lateral_endpoint_magnitude": 0.502518907629606
+                }
+              }
+            ]
+          },
+          "accepted": true
+        }
+      ],
+      "accepted_feedback": {
+        "r": 0.1,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "active_feedback": {
+        "r": 0.1,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "active_response_pair": {
+        "status": "PAIRED",
+        "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+        "response_max_error": 0.0,
+        "label_origin": "exact analytic recomputation from this virtual feedback, not learned G or robot data",
+        "scope": [
+          "positive_impulse",
+          "negative_impulse"
+        ],
+        "predictions": [
+          {
+            "case_id": "positive_impulse",
+            "status": "COMPLETED",
+            "response": [
+              1.005037815259212,
+              0.05050505050505051,
+              0.10050378152592121,
+              0.502518907629606
+            ],
+            "plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 1.8881001143129295,
+              "brake_duration": 1.9886038958388508,
+              "brake_position": 2.0227272727272725,
+              "brake_start_time": 2.8931379295721413,
+              "completion_time": 4.881741825410992,
+              "lateral_endpoint_magnitude": 0.502518907629606
+            }
+          },
+          {
+            "case_id": "negative_impulse",
+            "status": "COMPLETED",
+            "response": [
+              1.005037815259212,
+              0.05050505050505051,
+              0.10050378152592121,
+              0.502518907629606
+            ],
+            "plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 1.8881001143129295,
+              "brake_duration": 1.9886038958388508,
+              "brake_position": 2.0227272727272725,
+              "brake_start_time": 2.8931379295721413,
+              "completion_time": 4.881741825410992,
+              "lateral_endpoint_magnitude": 0.502518907629606
+            }
+          }
+        ]
+      },
+      "next_planning_decisions": [
+        {
+          "case_id": "positive_impulse",
+          "active_policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+          "plan": {
+            "status": "PLAN_AVAILABLE",
+            "accelerate_duration": 1.8881001143129295,
+            "brake_duration": 1.9886038958388508,
+            "brake_position": 2.0227272727272725,
+            "brake_start_time": 2.8931379295721413,
+            "completion_time": 4.881741825410992,
+            "lateral_endpoint_magnitude": 0.502518907629606
+          }
+        },
+        {
+          "case_id": "negative_impulse",
+          "active_policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+          "plan": {
+            "status": "PLAN_AVAILABLE",
+            "accelerate_duration": 1.8881001143129295,
+            "brake_duration": 1.9886038958388508,
+            "brake_position": 2.0227272727272725,
+            "brake_start_time": 2.8931379295721413,
+            "completion_time": 4.881741825410992,
+            "lateral_endpoint_magnitude": 0.502518907629606
+          }
+        }
+      ],
+      "ppo_surrogate": "No genuine PPO batch or actor distribution exists for this analytic coordinate; no KL/advantage is fabricated.",
+      "model_fitting": "None. Pairing is exact functional recomputation, not trained system identification.",
+      "budget": {
+        "case_evaluations": 6,
+        "completed_path_evaluations": 6,
+        "exact_phase_maps": 18,
+        "response_evaluations": 6,
+        "demand_pullbacks": 2,
+        "constraint_rows_before_merge": 4,
+        "constraint_rows_after_merge": 2,
+        "qp_calls": 1,
+        "qp_objective_evaluations": 2,
+        "qp_gradient_evaluations": 2,
+        "qp_constraint_evaluations": 3,
+        "qp_constraint_jacobian_evaluations": 2,
+        "pairing_model_predictions": 2,
+        "candidate_vectors": 1,
+        "next_plan_evaluations": 10
+      },
+      "scope": "Only the fixed finite analytic cases. Not robot deployment, PPO learning or a global guarantee."
+    },
+    "unsafe_external_candidate": {
+      "status": "NO_FULL_SCOPE_UPDATE",
+      "deployed_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "anchor_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "proposal": {
+        "status": "EXTERNAL_FINITE_CANDIDATE",
+        "candidate": {
+          "r": 0.8888888888888888,
+          "kind": "analytic_constant_force_allocation"
+        },
+        "source": "predeclared negative control, not generated by local QP"
+      },
+      "anchor_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  -1.0
+                ],
+                "input": [
+                  0.0,
+                  1.0
+                ],
+                "position_end": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              -0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        }
+      ],
+      "old_deployment_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  -1.0
+                ],
+                "input": [
+                  0.0,
+                  1.0
+                ],
+                "position_end": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              -0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        }
+      ],
+      "requests": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "response_jacobian": [
+            [
+              0.0
+            ],
+            [
+              0.5
+            ],
+            [
+              1.0
+            ],
+            [
+              0.0
+            ]
+          ],
+          "task_covector": [
+            1.0,
+            -0.5,
+            -1.0,
+            0.0
+          ],
+          "prefix_direct": [
+            0.0
+          ],
+          "suffix_direct": [
+            0.0
+          ],
+          "direct_term_reason": "Recovery time is already in Y; this analytic suffix has no separate r dependence. Not assumed for a shared neural actor.",
+          "constraints": [
+            {
+              "facet": "clearance",
+              "value": -0.5,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            },
+            {
+              "facet": "input_norm",
+              "value": 0.0,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "response_jacobian": [
+            [
+              0.0
+            ],
+            [
+              0.5
+            ],
+            [
+              1.0
+            ],
+            [
+              0.0
+            ]
+          ],
+          "task_covector": [
+            1.0,
+            -0.5,
+            -1.0,
+            0.0
+          ],
+          "prefix_direct": [
+            0.0
+          ],
+          "suffix_direct": [
+            0.0
+          ],
+          "direct_term_reason": "Recovery time is already in Y; this analytic suffix has no separate r dependence. Not assumed for a shared neural actor.",
+          "constraints": [
+            {
+              "facet": "clearance",
+              "value": -0.5,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "negative_impulse"
+              ]
+            },
+            {
+              "facet": "input_norm",
+              "value": 0.0,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "negative_impulse"
+              ]
+            }
+          ]
+        }
+      ],
+      "attempts": [
+        {
+          "alpha": 1.0,
+          "candidate": {
+            "r": 0.8888888888888888,
+            "kind": "analytic_constant_force_allocation"
+          },
+          "candidate_identity": "970179c24ab54d6f52035202357988e13e1d790d2ca41e031a725db01744ebe2",
+          "outcomes": [
+            {
+              "case_id": "positive_impulse",
+              "weight": 0.5,
+              "sign": 1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "970179c24ab54d6f52035202357988e13e1d790d2ca41e031a725db01744ebe2",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": null,
+              "response": [
+                2.1828206253269964,
+                2.117647058823529,
+                1.9402850002906635,
+                1.0914103126634982
+              ],
+              "constraints": {
+                "clearance": 0.0914103126634982,
+                "input_norm": 0.0
+              },
+              "details": {
+                "suffix_plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 2.220446049250313e-16,
+                  "brake_duration": 1.9402850002906638,
+                  "brake_position": 2.1176470588235294,
+                  "brake_start_time": 2.182820625326997,
+                  "completion_time": 4.123105625617661,
+                  "lateral_endpoint_magnitude": 1.0914103126634982
+                },
+                "phases": [
+                  {
+                    "t_start": 0.0,
+                    "duration": 2.1828206253269964,
+                    "position_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      1.0
+                    ],
+                    "input": [
+                      0.8888888888888888,
+                      -0.45812284729085123
+                    ],
+                    "position_end": [
+                      2.1176470588235285,
+                      1.0914103126634982
+                    ],
+                    "velocity_end": [
+                      1.9402850002906633,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 2.1828206253269964,
+                    "duration": 2.220446049250313e-16,
+                    "position_start": [
+                      2.1176470588235285,
+                      1.0914103126634982
+                    ],
+                    "velocity_start": [
+                      1.9402850002906633,
+                      0.0
+                    ],
+                    "input": [
+                      1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      2.117647058823529,
+                      1.0914103126634982
+                    ],
+                    "velocity_end": [
+                      1.9402850002906635,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 2.182820625326997,
+                    "duration": 1.9402850002906638,
+                    "position_start": [
+                      2.117647058823529,
+                      1.0914103126634982
+                    ],
+                    "velocity_start": [
+                      1.9402850002906635,
+                      0.0
+                    ],
+                    "input": [
+                      -1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      3.9999999999999987,
+                      1.0914103126634982
+                    ],
+                    "velocity_end": [
+                      -2.220446049250313e-16,
+                      0.0
+                    ]
+                  }
+                ],
+                "terminal_position": [
+                  3.9999999999999987,
+                  1.0914103126634982
+                ],
+                "terminal_velocity": [
+                  -2.220446049250313e-16,
+                  0.0
+                ],
+                "diagnostic_path_end_time": 4.123105625617661,
+                "gate_crossed": true,
+                "no_overshoot_is_family_property_not_task_requirement": true
+              },
+              "status": "HARD_CONSTRAINT_FAIL",
+              "reason": "lateral_clearance"
+            },
+            {
+              "case_id": "negative_impulse",
+              "weight": 0.5,
+              "sign": -1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "970179c24ab54d6f52035202357988e13e1d790d2ca41e031a725db01744ebe2",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": null,
+              "response": [
+                2.1828206253269964,
+                2.117647058823529,
+                1.9402850002906635,
+                1.0914103126634982
+              ],
+              "constraints": {
+                "clearance": 0.0914103126634982,
+                "input_norm": 0.0
+              },
+              "details": {
+                "suffix_plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 2.220446049250313e-16,
+                  "brake_duration": 1.9402850002906638,
+                  "brake_position": 2.1176470588235294,
+                  "brake_start_time": 2.182820625326997,
+                  "completion_time": 4.123105625617661,
+                  "lateral_endpoint_magnitude": 1.0914103126634982
+                },
+                "phases": [
+                  {
+                    "t_start": 0.0,
+                    "duration": 2.1828206253269964,
+                    "position_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      -1.0
+                    ],
+                    "input": [
+                      0.8888888888888888,
+                      0.45812284729085123
+                    ],
+                    "position_end": [
+                      2.1176470588235285,
+                      -1.0914103126634982
+                    ],
+                    "velocity_end": [
+                      1.9402850002906633,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 2.1828206253269964,
+                    "duration": 2.220446049250313e-16,
+                    "position_start": [
+                      2.1176470588235285,
+                      -1.0914103126634982
+                    ],
+                    "velocity_start": [
+                      1.9402850002906633,
+                      0.0
+                    ],
+                    "input": [
+                      1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      2.117647058823529,
+                      -1.0914103126634982
+                    ],
+                    "velocity_end": [
+                      1.9402850002906635,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 2.182820625326997,
+                    "duration": 1.9402850002906638,
+                    "position_start": [
+                      2.117647058823529,
+                      -1.0914103126634982
+                    ],
+                    "velocity_start": [
+                      1.9402850002906635,
+                      0.0
+                    ],
+                    "input": [
+                      -1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      3.9999999999999987,
+                      -1.0914103126634982
+                    ],
+                    "velocity_end": [
+                      -2.220446049250313e-16,
+                      0.0
+                    ]
+                  }
+                ],
+                "terminal_position": [
+                  3.9999999999999987,
+                  -1.0914103126634982
+                ],
+                "terminal_velocity": [
+                  -2.220446049250313e-16,
+                  0.0
+                ],
+                "diagnostic_path_end_time": 4.123105625617661,
+                "gate_crossed": true,
+                "no_overshoot_is_family_property_not_task_requirement": true
+              },
+              "status": "HARD_CONSTRAINT_FAIL",
+              "reason": "lateral_clearance"
+            }
+          ],
+          "against_anchor": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "HARD_CONSTRAINT_FAIL": 2
+              },
+              "completed_ids": [],
+              "known_completion_fraction": 0.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                0.0,
+                0.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": null
+            },
+            "rescued": [],
+            "lost": [
+              "negative_impulse",
+              "positive_impulse"
+            ],
+            "common_completed_count": 0,
+            "common_completed_fraction": 0.0,
+            "common_completed_cost_delta": null,
+            "passed": false,
+            "reason": "REJECT_HARD_CONTRACT"
+          },
+          "against_deployed": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "HARD_CONSTRAINT_FAIL": 2
+              },
+              "completed_ids": [],
+              "known_completion_fraction": 0.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                0.0,
+                0.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": null
+            },
+            "rescued": [],
+            "lost": [
+              "negative_impulse",
+              "positive_impulse"
+            ],
+            "common_completed_count": 0,
+            "common_completed_fraction": 0.0,
+            "common_completed_cost_delta": null,
+            "passed": false,
+            "reason": "REJECT_HARD_CONTRACT"
+          },
+          "supported_subset_only": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "HARD_CONSTRAINT_FAIL": 2
+              },
+              "completed_ids": [],
+              "known_completion_fraction": 0.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                0.0,
+                0.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": null
+            },
+            "rescued": [],
+            "lost": [
+              "negative_impulse",
+              "positive_impulse"
+            ],
+            "common_completed_count": 0,
+            "common_completed_fraction": 0.0,
+            "common_completed_cost_delta": null,
+            "passed": false,
+            "reason": "REJECT_HARD_CONTRACT"
+          },
+          "pair_check": {
+            "status": "PAIRED",
+            "policy_identity": "970179c24ab54d6f52035202357988e13e1d790d2ca41e031a725db01744ebe2",
+            "response_max_error": 0.0,
+            "label_origin": "exact analytic recomputation from this virtual feedback, not learned G or robot data",
+            "scope": [
+              "positive_impulse",
+              "negative_impulse"
+            ],
+            "predictions": [
+              {
+                "case_id": "positive_impulse",
+                "status": "HARD_CONSTRAINT_FAIL",
+                "response": [
+                  2.1828206253269964,
+                  2.117647058823529,
+                  1.9402850002906635,
+                  1.0914103126634982
+                ],
+                "plan": {
+                  "status": "NO_VERIFIED_PLAN",
+                  "reason": "HARD_CONSTRAINT_FAIL"
+                }
+              },
+              {
+                "case_id": "negative_impulse",
+                "status": "HARD_CONSTRAINT_FAIL",
+                "response": [
+                  2.1828206253269964,
+                  2.117647058823529,
+                  1.9402850002906635,
+                  1.0914103126634982
+                ],
+                "plan": {
+                  "status": "NO_VERIFIED_PLAN",
+                  "reason": "HARD_CONSTRAINT_FAIL"
+                }
+              }
+            ]
+          },
+          "accepted": false
+        }
+      ],
+      "accepted_feedback": null,
+      "active_feedback": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "active_response_pair": {
+        "status": "PAIRED",
+        "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+        "response_max_error": 0.0,
+        "label_origin": "exact analytic recomputation from this virtual feedback, not learned G or robot data",
+        "scope": [
+          "positive_impulse",
+          "negative_impulse"
+        ],
+        "predictions": [
+          {
+            "case_id": "positive_impulse",
+            "status": "COMPLETED",
+            "response": [
+              1.0,
+              0.0,
+              0.0,
+              0.5
+            ],
+            "plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            }
+          },
+          {
+            "case_id": "negative_impulse",
+            "status": "COMPLETED",
+            "response": [
+              1.0,
+              0.0,
+              0.0,
+              0.5
+            ],
+            "plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            }
+          }
+        ]
+      },
+      "next_planning_decisions": [
+        {
+          "case_id": "positive_impulse",
+          "active_policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "plan": {
+            "status": "PLAN_AVAILABLE",
+            "accelerate_duration": 2.0,
+            "brake_duration": 2.0,
+            "brake_position": 2.0,
+            "brake_start_time": 3.0,
+            "completion_time": 5.0,
+            "lateral_endpoint_magnitude": 0.5
+          }
+        },
+        {
+          "case_id": "negative_impulse",
+          "active_policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "plan": {
+            "status": "PLAN_AVAILABLE",
+            "accelerate_duration": 2.0,
+            "brake_duration": 2.0,
+            "brake_position": 2.0,
+            "brake_start_time": 3.0,
+            "completion_time": 5.0,
+            "lateral_endpoint_magnitude": 0.5
+          }
+        }
+      ],
+      "ppo_surrogate": "No genuine PPO batch or actor distribution exists for this analytic coordinate; no KL/advantage is fabricated.",
+      "model_fitting": "None. Pairing is exact functional recomputation, not trained system identification.",
+      "budget": {
+        "case_evaluations": 8,
+        "completed_path_evaluations": 8,
+        "exact_phase_maps": 24,
+        "response_evaluations": 8,
+        "demand_pullbacks": 2,
+        "constraint_rows_before_merge": 0,
+        "constraint_rows_after_merge": 0,
+        "qp_calls": 0,
+        "qp_objective_evaluations": 0,
+        "qp_gradient_evaluations": 0,
+        "qp_constraint_evaluations": 0,
+        "qp_constraint_jacobian_evaluations": 0,
+        "pairing_model_predictions": 4,
+        "candidate_vectors": 1,
+        "next_plan_evaluations": 14
+      },
+      "scope": "Only the fixed finite analytic cases. Not robot deployment, PPO learning or a global guarantee."
+    },
+    "model_only": {
+      "status": "NO_FULL_SCOPE_UPDATE",
+      "deployed_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "anchor_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "proposal": {
+        "status": "EXTERNAL_FINITE_CANDIDATE",
+        "candidate": {
+          "r": 0.0,
+          "kind": "analytic_constant_force_allocation"
+        },
+        "source": "predeclared negative control, not generated by local QP"
+      },
+      "anchor_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  -1.0
+                ],
+                "input": [
+                  0.0,
+                  1.0
+                ],
+                "position_end": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              -0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        }
+      ],
+      "old_deployment_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  -1.0
+                ],
+                "input": [
+                  0.0,
+                  1.0
+                ],
+                "position_end": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  -0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  -0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              -0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        }
+      ],
+      "requests": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "response_jacobian": [
+            [
+              0.0
+            ],
+            [
+              0.5
+            ],
+            [
+              1.0
+            ],
+            [
+              0.0
+            ]
+          ],
+          "task_covector": [
+            1.0,
+            -0.5,
+            -1.0,
+            0.0
+          ],
+          "prefix_direct": [
+            0.0
+          ],
+          "suffix_direct": [
+            0.0
+          ],
+          "direct_term_reason": "Recovery time is already in Y; this analytic suffix has no separate r dependence. Not assumed for a shared neural actor.",
+          "constraints": [
+            {
+              "facet": "clearance",
+              "value": -0.5,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            },
+            {
+              "facet": "input_norm",
+              "value": 0.0,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "response_jacobian": [
+            [
+              0.0
+            ],
+            [
+              0.5
+            ],
+            [
+              1.0
+            ],
+            [
+              0.0
+            ]
+          ],
+          "task_covector": [
+            1.0,
+            -0.5,
+            -1.0,
+            0.0
+          ],
+          "prefix_direct": [
+            0.0
+          ],
+          "suffix_direct": [
+            0.0
+          ],
+          "direct_term_reason": "Recovery time is already in Y; this analytic suffix has no separate r dependence. Not assumed for a shared neural actor.",
+          "constraints": [
+            {
+              "facet": "clearance",
+              "value": -0.5,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "negative_impulse"
+              ]
+            },
+            {
+              "facet": "input_norm",
+              "value": 0.0,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "negative_impulse"
+              ]
+            }
+          ]
+        }
+      ],
+      "attempts": [
+        {
+          "alpha": 1.0,
+          "candidate": {
+            "r": 0.0,
+            "kind": "analytic_constant_force_allocation"
+          },
+          "candidate_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "outcomes": [
+            {
+              "case_id": "positive_impulse",
+              "weight": 0.5,
+              "sign": 1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": 5.0,
+              "response": [
+                1.0,
+                0.0,
+                0.0,
+                0.5
+              ],
+              "constraints": {
+                "clearance": -0.5,
+                "input_norm": 0.0
+              },
+              "details": {
+                "suffix_plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 2.0,
+                  "brake_duration": 2.0,
+                  "brake_position": 2.0,
+                  "brake_start_time": 3.0,
+                  "completion_time": 5.0,
+                  "lateral_endpoint_magnitude": 0.5
+                },
+                "phases": [
+                  {
+                    "t_start": 0.0,
+                    "duration": 1.0,
+                    "position_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      1.0
+                    ],
+                    "input": [
+                      0.0,
+                      -1.0
+                    ],
+                    "position_end": [
+                      0.0,
+                      0.5
+                    ],
+                    "velocity_end": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 1.0,
+                    "duration": 2.0,
+                    "position_start": [
+                      0.0,
+                      0.5
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "input": [
+                      1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      2.0,
+                      0.5
+                    ],
+                    "velocity_end": [
+                      2.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 3.0,
+                    "duration": 2.0,
+                    "position_start": [
+                      2.0,
+                      0.5
+                    ],
+                    "velocity_start": [
+                      2.0,
+                      0.0
+                    ],
+                    "input": [
+                      -1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      4.0,
+                      0.5
+                    ],
+                    "velocity_end": [
+                      0.0,
+                      0.0
+                    ]
+                  }
+                ],
+                "terminal_position": [
+                  4.0,
+                  0.5
+                ],
+                "terminal_velocity": [
+                  0.0,
+                  0.0
+                ],
+                "diagnostic_path_end_time": 5.0,
+                "gate_crossed": true,
+                "no_overshoot_is_family_property_not_task_requirement": true
+              },
+              "status": "COMPLETED",
+              "reason": "full_declared_task_completed"
+            },
+            {
+              "case_id": "negative_impulse",
+              "weight": 0.5,
+              "sign": -1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": 5.0,
+              "response": [
+                1.0,
+                0.0,
+                0.0,
+                0.5
+              ],
+              "constraints": {
+                "clearance": -0.5,
+                "input_norm": 0.0
+              },
+              "details": {
+                "suffix_plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 2.0,
+                  "brake_duration": 2.0,
+                  "brake_position": 2.0,
+                  "brake_start_time": 3.0,
+                  "completion_time": 5.0,
+                  "lateral_endpoint_magnitude": 0.5
+                },
+                "phases": [
+                  {
+                    "t_start": 0.0,
+                    "duration": 1.0,
+                    "position_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      -1.0
+                    ],
+                    "input": [
+                      0.0,
+                      1.0
+                    ],
+                    "position_end": [
+                      0.0,
+                      -0.5
+                    ],
+                    "velocity_end": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 1.0,
+                    "duration": 2.0,
+                    "position_start": [
+                      0.0,
+                      -0.5
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "input": [
+                      1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      2.0,
+                      -0.5
+                    ],
+                    "velocity_end": [
+                      2.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 3.0,
+                    "duration": 2.0,
+                    "position_start": [
+                      2.0,
+                      -0.5
+                    ],
+                    "velocity_start": [
+                      2.0,
+                      0.0
+                    ],
+                    "input": [
+                      -1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      4.0,
+                      -0.5
+                    ],
+                    "velocity_end": [
+                      0.0,
+                      0.0
+                    ]
+                  }
+                ],
+                "terminal_position": [
+                  4.0,
+                  -0.5
+                ],
+                "terminal_velocity": [
+                  0.0,
+                  0.0
+                ],
+                "diagnostic_path_end_time": 5.0,
+                "gate_crossed": true,
+                "no_overshoot_is_family_property_not_task_requirement": true
+              },
+              "status": "COMPLETED",
+              "reason": "full_declared_task_completed"
+            }
+          ],
+          "against_anchor": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 2,
+            "common_completed_fraction": 1.0,
+            "common_completed_cost_delta": 0.0,
+            "passed": false,
+            "reason": "NO_CLEAR_TASK_GAIN"
+          },
+          "against_deployed": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 2,
+            "common_completed_fraction": 1.0,
+            "common_completed_cost_delta": 0.0,
+            "passed": false,
+            "reason": "NO_CLEAR_TASK_GAIN"
+          },
+          "supported_subset_only": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 2
+              },
+              "completed_ids": [
+                "positive_impulse",
+                "negative_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 2,
+            "common_completed_fraction": 1.0,
+            "common_completed_cost_delta": 0.0,
+            "passed": false,
+            "reason": "NO_CLEAR_TASK_GAIN"
+          },
+          "pair_check": {
+            "status": "REJECT_MODEL_POLICY_MISMATCH",
+            "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+            "response_max_error": 1.7320508075688767,
+            "label_origin": "exact analytic recomputation from this virtual feedback, not learned G or robot data",
+            "scope": [
+              "positive_impulse",
+              "negative_impulse"
+            ],
+            "predictions": [
+              {
+                "case_id": "positive_impulse",
+                "status": "COMPLETED",
+                "response": [
+                  1.9999999999999996,
+                  1.7320508075688765,
+                  1.7320508075688767,
+                  0.9999999999999998
+                ],
+                "plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 0.20906979466868703,
+                  "brake_duration": 1.9411206022375638,
+                  "brake_position": 2.116025403784439,
+                  "brake_start_time": 2.209069794668687,
+                  "completion_time": 4.15019039690625,
+                  "lateral_endpoint_magnitude": 0.9999999999999998
+                }
+              },
+              {
+                "case_id": "negative_impulse",
+                "status": "COMPLETED",
+                "response": [
+                  1.9999999999999996,
+                  1.7320508075688765,
+                  1.7320508075688767,
+                  0.9999999999999998
+                ],
+                "plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 0.20906979466868703,
+                  "brake_duration": 1.9411206022375638,
+                  "brake_position": 2.116025403784439,
+                  "brake_start_time": 2.209069794668687,
+                  "completion_time": 4.15019039690625,
+                  "lateral_endpoint_magnitude": 0.9999999999999998
+                }
+              }
+            ]
+          },
+          "accepted": false
+        }
+      ],
+      "accepted_feedback": null,
+      "active_feedback": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "active_response_pair": {
+        "status": "PAIRED",
+        "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+        "response_max_error": 0.0,
+        "label_origin": "exact analytic recomputation from this virtual feedback, not learned G or robot data",
+        "scope": [
+          "positive_impulse",
+          "negative_impulse"
+        ],
+        "predictions": [
+          {
+            "case_id": "positive_impulse",
+            "status": "COMPLETED",
+            "response": [
+              1.0,
+              0.0,
+              0.0,
+              0.5
+            ],
+            "plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            }
+          },
+          {
+            "case_id": "negative_impulse",
+            "status": "COMPLETED",
+            "response": [
+              1.0,
+              0.0,
+              0.0,
+              0.5
+            ],
+            "plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            }
+          }
+        ]
+      },
+      "next_planning_decisions": [
+        {
+          "case_id": "positive_impulse",
+          "active_policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "plan": {
+            "status": "PLAN_AVAILABLE",
+            "accelerate_duration": 2.0,
+            "brake_duration": 2.0,
+            "brake_position": 2.0,
+            "brake_start_time": 3.0,
+            "completion_time": 5.0,
+            "lateral_endpoint_magnitude": 0.5
+          }
+        },
+        {
+          "case_id": "negative_impulse",
+          "active_policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "plan": {
+            "status": "PLAN_AVAILABLE",
+            "accelerate_duration": 2.0,
+            "brake_duration": 2.0,
+            "brake_position": 2.0,
+            "brake_start_time": 3.0,
+            "completion_time": 5.0,
+            "lateral_endpoint_magnitude": 0.5
+          }
+        }
+      ],
+      "ppo_surrogate": "No genuine PPO batch or actor distribution exists for this analytic coordinate; no KL/advantage is fabricated.",
+      "model_fitting": "None. Pairing is exact functional recomputation, not trained system identification.",
+      "budget": {
+        "case_evaluations": 6,
+        "completed_path_evaluations": 6,
+        "exact_phase_maps": 18,
+        "response_evaluations": 6,
+        "demand_pullbacks": 2,
+        "constraint_rows_before_merge": 0,
+        "constraint_rows_after_merge": 0,
+        "qp_calls": 0,
+        "qp_objective_evaluations": 0,
+        "qp_gradient_evaluations": 0,
+        "qp_constraint_evaluations": 0,
+        "qp_constraint_jacobian_evaluations": 0,
+        "pairing_model_predictions": 4,
+        "candidate_vectors": 1,
+        "next_plan_evaluations": 12
+      },
+      "scope": "Only the fixed finite analytic cases. Not robot deployment, PPO learning or a global guarantee."
+    },
+    "MODEL_UNSUPPORTED": {
+      "status": "NO_FULL_SCOPE_UPDATE",
+      "deployed_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "anchor_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "proposal": {
+        "gradient": [
+          -1.25
+        ],
+        "individual_parameter_credits": [
+          [
+            -1.25
+          ]
+        ],
+        "proposal_scope": [
+          "positive_impulse"
+        ],
+        "scope_weight_in_full_cases": 0.5,
+        "rows_before_merge": [
+          {
+            "facet": "clearance",
+            "value": -0.5,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          },
+          {
+            "facet": "input_norm",
+            "value": 0.0,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          }
+        ],
+        "rows_after_merge": [
+          {
+            "facet": "clearance",
+            "value": -0.5,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          },
+          {
+            "facet": "input_norm",
+            "value": 0.0,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          }
+        ],
+        "local_gradient_span_rank": 1,
+        "metric": "identity on analytic coordinate, not empirical PPO Fisher",
+        "trust_radius": 0.1,
+        "trust_is_not_PPO_KL": true,
+        "solver": {
+          "success": true,
+          "message": "Optimization terminated successfully",
+          "nit": 2,
+          "nfev": 2
+        },
+        "step": [
+          0.1
+        ],
+        "status": "PROPOSAL_AVAILABLE",
+        "candidate": {
+          "r": 0.1,
+          "kind": "analytic_constant_force_allocation"
+        }
+      },
+      "anchor_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": null,
+          "response": null,
+          "constraints": {},
+          "details": {},
+          "status": "MODEL_UNSUPPORTED",
+          "reason": "declared_evidence_availability_intervention"
+        }
+      ],
+      "old_deployment_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": null,
+          "response": null,
+          "constraints": {},
+          "details": {},
+          "status": "MODEL_UNSUPPORTED",
+          "reason": "declared_evidence_availability_intervention"
+        }
+      ],
+      "requests": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "response_jacobian": [
+            [
+              0.0
+            ],
+            [
+              0.5
+            ],
+            [
+              1.0
+            ],
+            [
+              0.0
+            ]
+          ],
+          "task_covector": [
+            1.0,
+            -0.5,
+            -1.0,
+            0.0
+          ],
+          "prefix_direct": [
+            0.0
+          ],
+          "suffix_direct": [
+            0.0
+          ],
+          "direct_term_reason": "Recovery time is already in Y; this analytic suffix has no separate r dependence. Not assumed for a shared neural actor.",
+          "constraints": [
+            {
+              "facet": "clearance",
+              "value": -0.5,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            },
+            {
+              "facet": "input_norm",
+              "value": 0.0,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            }
+          ]
+        }
+      ],
+      "attempts": [
+        {
+          "alpha": 1.0,
+          "candidate": {
+            "r": 0.1,
+            "kind": "analytic_constant_force_allocation"
+          },
+          "candidate_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+          "outcomes": [
+            {
+              "case_id": "positive_impulse",
+              "weight": 0.5,
+              "sign": 1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": 4.881741825410992,
+              "response": [
+                1.005037815259212,
+                0.05050505050505051,
+                0.10050378152592121,
+                0.502518907629606
+              ],
+              "constraints": {
+                "clearance": -0.49748109237039395,
+                "input_norm": 0.0
+              },
+              "details": {
+                "suffix_plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 1.8881001143129295,
+                  "brake_duration": 1.9886038958388508,
+                  "brake_position": 2.0227272727272725,
+                  "brake_start_time": 2.8931379295721413,
+                  "completion_time": 4.881741825410992,
+                  "lateral_endpoint_magnitude": 0.502518907629606
+                },
+                "phases": [
+                  {
+                    "t_start": 0.0,
+                    "duration": 1.005037815259212,
+                    "position_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      1.0
+                    ],
+                    "input": [
+                      0.1,
+                      -0.99498743710662
+                    ],
+                    "position_end": [
+                      0.05050505050505051,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      0.10050378152592121,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 1.005037815259212,
+                    "duration": 1.8881001143129295,
+                    "position_start": [
+                      0.05050505050505051,
+                      0.502518907629606
+                    ],
+                    "velocity_start": [
+                      0.10050378152592121,
+                      0.0
+                    ],
+                    "input": [
+                      1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      2.0227272727272725,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      1.9886038958388506,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 2.8931379295721413,
+                    "duration": 1.9886038958388508,
+                    "position_start": [
+                      2.0227272727272725,
+                      0.502518907629606
+                    ],
+                    "velocity_start": [
+                      1.9886038958388506,
+                      0.0
+                    ],
+                    "input": [
+                      -1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      3.999999999999999,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      -2.220446049250313e-16,
+                      0.0
+                    ]
+                  }
+                ],
+                "terminal_position": [
+                  3.999999999999999,
+                  0.502518907629606
+                ],
+                "terminal_velocity": [
+                  -2.220446049250313e-16,
+                  0.0
+                ],
+                "diagnostic_path_end_time": 4.881741825410992,
+                "gate_crossed": true,
+                "no_overshoot_is_family_property_not_task_requirement": true
+              },
+              "status": "COMPLETED",
+              "reason": "full_declared_task_completed"
+            },
+            {
+              "case_id": "negative_impulse",
+              "weight": 0.5,
+              "sign": -1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": null,
+              "response": null,
+              "constraints": {},
+              "details": {},
+              "status": "MODEL_UNSUPPORTED",
+              "reason": "declared_evidence_availability_intervention"
+            }
+          ],
+          "against_anchor": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "MODEL_UNSUPPORTED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "MODEL_UNSUPPORTED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 1,
+            "common_completed_fraction": 0.5,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": false,
+            "reason": "DEFER_UNKNOWN_FULL_SCOPE"
+          },
+          "against_deployed": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "MODEL_UNSUPPORTED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "MODEL_UNSUPPORTED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 1,
+            "common_completed_fraction": 0.5,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": false,
+            "reason": "DEFER_UNKNOWN_FULL_SCOPE"
+          },
+          "supported_subset_only": {
+            "reference": {
+              "total_cases": 1,
+              "status_counts": {
+                "COMPLETED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 1,
+              "status_counts": {
+                "COMPLETED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 4.881741825410992,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 1,
+            "common_completed_fraction": 1.0,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": true,
+            "reason": "AVERAGE_TASK_IMPROVEMENT"
+          },
+          "pair_check": {
+            "status": "PAIR_DEFERRED_UNKNOWN",
+            "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde"
+          },
+          "accepted": false
+        }
+      ],
+      "accepted_feedback": null,
+      "active_feedback": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "active_response_pair": {
+        "status": "PAIR_DEFERRED_UNKNOWN",
+        "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3"
+      },
+      "next_planning_decisions": [
+        {
+          "case_id": "positive_impulse",
+          "active_policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "plan": {
+            "status": "PLAN_AVAILABLE",
+            "accelerate_duration": 2.0,
+            "brake_duration": 2.0,
+            "brake_position": 2.0,
+            "brake_start_time": 3.0,
+            "completion_time": 5.0,
+            "lateral_endpoint_magnitude": 0.5
+          }
+        },
+        {
+          "case_id": "negative_impulse",
+          "active_policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "plan": {
+            "status": "NO_VERIFIED_PLAN",
+            "reason": "MODEL_UNSUPPORTED"
+          }
+        }
+      ],
+      "ppo_surrogate": "No genuine PPO batch or actor distribution exists for this analytic coordinate; no KL/advantage is fabricated.",
+      "model_fitting": "None. Pairing is exact functional recomputation, not trained system identification.",
+      "budget": {
+        "case_evaluations": 4,
+        "completed_path_evaluations": 2,
+        "exact_phase_maps": 6,
+        "response_evaluations": 2,
+        "demand_pullbacks": 1,
+        "constraint_rows_before_merge": 2,
+        "constraint_rows_after_merge": 2,
+        "qp_calls": 1,
+        "qp_objective_evaluations": 2,
+        "qp_gradient_evaluations": 2,
+        "qp_constraint_evaluations": 3,
+        "qp_constraint_jacobian_evaluations": 2,
+        "pairing_model_predictions": 0,
+        "candidate_vectors": 1,
+        "next_plan_evaluations": 3
+      },
+      "scope": "Only the fixed finite analytic cases. Not robot deployment, PPO learning or a global guarantee."
+    },
+    "SEARCH_UNRESOLVED": {
+      "status": "NO_FULL_SCOPE_UPDATE",
+      "deployed_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "anchor_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "proposal": {
+        "gradient": [
+          -1.25
+        ],
+        "individual_parameter_credits": [
+          [
+            -1.25
+          ]
+        ],
+        "proposal_scope": [
+          "positive_impulse"
+        ],
+        "scope_weight_in_full_cases": 0.5,
+        "rows_before_merge": [
+          {
+            "facet": "clearance",
+            "value": -0.5,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          },
+          {
+            "facet": "input_norm",
+            "value": 0.0,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          }
+        ],
+        "rows_after_merge": [
+          {
+            "facet": "clearance",
+            "value": -0.5,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          },
+          {
+            "facet": "input_norm",
+            "value": 0.0,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          }
+        ],
+        "local_gradient_span_rank": 1,
+        "metric": "identity on analytic coordinate, not empirical PPO Fisher",
+        "trust_radius": 0.1,
+        "trust_is_not_PPO_KL": true,
+        "solver": {
+          "success": true,
+          "message": "Optimization terminated successfully",
+          "nit": 2,
+          "nfev": 2
+        },
+        "step": [
+          0.1
+        ],
+        "status": "PROPOSAL_AVAILABLE",
+        "candidate": {
+          "r": 0.1,
+          "kind": "analytic_constant_force_allocation"
+        }
+      },
+      "anchor_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": null,
+          "response": null,
+          "constraints": {},
+          "details": {},
+          "status": "SEARCH_UNRESOLVED",
+          "reason": "declared_evidence_availability_intervention"
+        }
+      ],
+      "old_deployment_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": null,
+          "response": null,
+          "constraints": {},
+          "details": {},
+          "status": "SEARCH_UNRESOLVED",
+          "reason": "declared_evidence_availability_intervention"
+        }
+      ],
+      "requests": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "response_jacobian": [
+            [
+              0.0
+            ],
+            [
+              0.5
+            ],
+            [
+              1.0
+            ],
+            [
+              0.0
+            ]
+          ],
+          "task_covector": [
+            1.0,
+            -0.5,
+            -1.0,
+            0.0
+          ],
+          "prefix_direct": [
+            0.0
+          ],
+          "suffix_direct": [
+            0.0
+          ],
+          "direct_term_reason": "Recovery time is already in Y; this analytic suffix has no separate r dependence. Not assumed for a shared neural actor.",
+          "constraints": [
+            {
+              "facet": "clearance",
+              "value": -0.5,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            },
+            {
+              "facet": "input_norm",
+              "value": 0.0,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            }
+          ]
+        }
+      ],
+      "attempts": [
+        {
+          "alpha": 1.0,
+          "candidate": {
+            "r": 0.1,
+            "kind": "analytic_constant_force_allocation"
+          },
+          "candidate_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+          "outcomes": [
+            {
+              "case_id": "positive_impulse",
+              "weight": 0.5,
+              "sign": 1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": 4.881741825410992,
+              "response": [
+                1.005037815259212,
+                0.05050505050505051,
+                0.10050378152592121,
+                0.502518907629606
+              ],
+              "constraints": {
+                "clearance": -0.49748109237039395,
+                "input_norm": 0.0
+              },
+              "details": {
+                "suffix_plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 1.8881001143129295,
+                  "brake_duration": 1.9886038958388508,
+                  "brake_position": 2.0227272727272725,
+                  "brake_start_time": 2.8931379295721413,
+                  "completion_time": 4.881741825410992,
+                  "lateral_endpoint_magnitude": 0.502518907629606
+                },
+                "phases": [
+                  {
+                    "t_start": 0.0,
+                    "duration": 1.005037815259212,
+                    "position_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      1.0
+                    ],
+                    "input": [
+                      0.1,
+                      -0.99498743710662
+                    ],
+                    "position_end": [
+                      0.05050505050505051,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      0.10050378152592121,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 1.005037815259212,
+                    "duration": 1.8881001143129295,
+                    "position_start": [
+                      0.05050505050505051,
+                      0.502518907629606
+                    ],
+                    "velocity_start": [
+                      0.10050378152592121,
+                      0.0
+                    ],
+                    "input": [
+                      1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      2.0227272727272725,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      1.9886038958388506,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 2.8931379295721413,
+                    "duration": 1.9886038958388508,
+                    "position_start": [
+                      2.0227272727272725,
+                      0.502518907629606
+                    ],
+                    "velocity_start": [
+                      1.9886038958388506,
+                      0.0
+                    ],
+                    "input": [
+                      -1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      3.999999999999999,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      -2.220446049250313e-16,
+                      0.0
+                    ]
+                  }
+                ],
+                "terminal_position": [
+                  3.999999999999999,
+                  0.502518907629606
+                ],
+                "terminal_velocity": [
+                  -2.220446049250313e-16,
+                  0.0
+                ],
+                "diagnostic_path_end_time": 4.881741825410992,
+                "gate_crossed": true,
+                "no_overshoot_is_family_property_not_task_requirement": true
+              },
+              "status": "COMPLETED",
+              "reason": "full_declared_task_completed"
+            },
+            {
+              "case_id": "negative_impulse",
+              "weight": 0.5,
+              "sign": -1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": null,
+              "response": null,
+              "constraints": {},
+              "details": {},
+              "status": "SEARCH_UNRESOLVED",
+              "reason": "declared_evidence_availability_intervention"
+            }
+          ],
+          "against_anchor": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "SEARCH_UNRESOLVED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "SEARCH_UNRESOLVED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 1,
+            "common_completed_fraction": 0.5,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": false,
+            "reason": "DEFER_UNKNOWN_FULL_SCOPE"
+          },
+          "against_deployed": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "SEARCH_UNRESOLVED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "SEARCH_UNRESOLVED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 1,
+            "common_completed_fraction": 0.5,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": false,
+            "reason": "DEFER_UNKNOWN_FULL_SCOPE"
+          },
+          "supported_subset_only": {
+            "reference": {
+              "total_cases": 1,
+              "status_counts": {
+                "COMPLETED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 1,
+              "status_counts": {
+                "COMPLETED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 4.881741825410992,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 1,
+            "common_completed_fraction": 1.0,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": true,
+            "reason": "AVERAGE_TASK_IMPROVEMENT"
+          },
+          "pair_check": {
+            "status": "PAIR_DEFERRED_UNKNOWN",
+            "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde"
+          },
+          "accepted": false
+        }
+      ],
+      "accepted_feedback": null,
+      "active_feedback": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "active_response_pair": {
+        "status": "PAIR_DEFERRED_UNKNOWN",
+        "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3"
+      },
+      "next_planning_decisions": [
+        {
+          "case_id": "positive_impulse",
+          "active_policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "plan": {
+            "status": "PLAN_AVAILABLE",
+            "accelerate_duration": 2.0,
+            "brake_duration": 2.0,
+            "brake_position": 2.0,
+            "brake_start_time": 3.0,
+            "completion_time": 5.0,
+            "lateral_endpoint_magnitude": 0.5
+          }
+        },
+        {
+          "case_id": "negative_impulse",
+          "active_policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "plan": {
+            "status": "NO_VERIFIED_PLAN",
+            "reason": "SEARCH_UNRESOLVED"
+          }
+        }
+      ],
+      "ppo_surrogate": "No genuine PPO batch or actor distribution exists for this analytic coordinate; no KL/advantage is fabricated.",
+      "model_fitting": "None. Pairing is exact functional recomputation, not trained system identification.",
+      "budget": {
+        "case_evaluations": 4,
+        "completed_path_evaluations": 2,
+        "exact_phase_maps": 6,
+        "response_evaluations": 2,
+        "demand_pullbacks": 1,
+        "constraint_rows_before_merge": 2,
+        "constraint_rows_after_merge": 2,
+        "qp_calls": 1,
+        "qp_objective_evaluations": 2,
+        "qp_gradient_evaluations": 2,
+        "qp_constraint_evaluations": 3,
+        "qp_constraint_jacobian_evaluations": 2,
+        "pairing_model_predictions": 0,
+        "candidate_vectors": 1,
+        "next_plan_evaluations": 3
+      },
+      "scope": "Only the fixed finite analytic cases. Not robot deployment, PPO learning or a global guarantee."
+    },
+    "EVALUATION_TRUNCATED": {
+      "status": "NO_FULL_SCOPE_UPDATE",
+      "deployed_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "anchor_input": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "proposal": {
+        "gradient": [
+          -1.25
+        ],
+        "individual_parameter_credits": [
+          [
+            -1.25
+          ]
+        ],
+        "proposal_scope": [
+          "positive_impulse"
+        ],
+        "scope_weight_in_full_cases": 0.5,
+        "rows_before_merge": [
+          {
+            "facet": "clearance",
+            "value": -0.5,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          },
+          {
+            "facet": "input_norm",
+            "value": 0.0,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          }
+        ],
+        "rows_after_merge": [
+          {
+            "facet": "clearance",
+            "value": -0.5,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          },
+          {
+            "facet": "input_norm",
+            "value": 0.0,
+            "gradient": [
+              0.0
+            ],
+            "origins": [
+              "positive_impulse"
+            ]
+          }
+        ],
+        "local_gradient_span_rank": 1,
+        "metric": "identity on analytic coordinate, not empirical PPO Fisher",
+        "trust_radius": 0.1,
+        "trust_is_not_PPO_KL": true,
+        "solver": {
+          "success": true,
+          "message": "Optimization terminated successfully",
+          "nit": 2,
+          "nfev": 2
+        },
+        "step": [
+          0.1
+        ],
+        "status": "PROPOSAL_AVAILABLE",
+        "candidate": {
+          "r": 0.1,
+          "kind": "analytic_constant_force_allocation"
+        }
+      },
+      "anchor_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": null,
+          "response": null,
+          "constraints": {},
+          "details": {},
+          "status": "EVALUATION_TRUNCATED",
+          "reason": "declared_evidence_availability_intervention"
+        }
+      ],
+      "old_deployment_outcomes": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "sign": 1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": 5.0,
+          "response": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "constraints": {
+            "clearance": -0.5,
+            "input_norm": 0.0
+          },
+          "details": {
+            "suffix_plan": {
+              "status": "PLAN_AVAILABLE",
+              "accelerate_duration": 2.0,
+              "brake_duration": 2.0,
+              "brake_position": 2.0,
+              "brake_start_time": 3.0,
+              "completion_time": 5.0,
+              "lateral_endpoint_magnitude": 0.5
+            },
+            "phases": [
+              {
+                "t_start": 0.0,
+                "duration": 1.0,
+                "position_start": [
+                  0.0,
+                  0.0
+                ],
+                "velocity_start": [
+                  0.0,
+                  1.0
+                ],
+                "input": [
+                  0.0,
+                  -1.0
+                ],
+                "position_end": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 1.0,
+                "duration": 2.0,
+                "position_start": [
+                  0.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  0.0,
+                  0.0
+                ],
+                "input": [
+                  1.0,
+                  0.0
+                ],
+                "position_end": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  2.0,
+                  0.0
+                ]
+              },
+              {
+                "t_start": 3.0,
+                "duration": 2.0,
+                "position_start": [
+                  2.0,
+                  0.5
+                ],
+                "velocity_start": [
+                  2.0,
+                  0.0
+                ],
+                "input": [
+                  -1.0,
+                  0.0
+                ],
+                "position_end": [
+                  4.0,
+                  0.5
+                ],
+                "velocity_end": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "terminal_position": [
+              4.0,
+              0.5
+            ],
+            "terminal_velocity": [
+              0.0,
+              0.0
+            ],
+            "diagnostic_path_end_time": 5.0,
+            "gate_crossed": true,
+            "no_overshoot_is_family_property_not_task_requirement": true
+          },
+          "status": "COMPLETED",
+          "reason": "full_declared_task_completed"
+        },
+        {
+          "case_id": "negative_impulse",
+          "weight": 0.5,
+          "sign": -1,
+          "evidence_class": "ANALYTIC_MODEL",
+          "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "task_version": "normalized-stop-band-v1",
+          "task_time": null,
+          "response": null,
+          "constraints": {},
+          "details": {},
+          "status": "EVALUATION_TRUNCATED",
+          "reason": "declared_evidence_availability_intervention"
+        }
+      ],
+      "requests": [
+        {
+          "case_id": "positive_impulse",
+          "weight": 0.5,
+          "response_jacobian": [
+            [
+              0.0
+            ],
+            [
+              0.5
+            ],
+            [
+              1.0
+            ],
+            [
+              0.0
+            ]
+          ],
+          "task_covector": [
+            1.0,
+            -0.5,
+            -1.0,
+            0.0
+          ],
+          "prefix_direct": [
+            0.0
+          ],
+          "suffix_direct": [
+            0.0
+          ],
+          "direct_term_reason": "Recovery time is already in Y; this analytic suffix has no separate r dependence. Not assumed for a shared neural actor.",
+          "constraints": [
+            {
+              "facet": "clearance",
+              "value": -0.5,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            },
+            {
+              "facet": "input_norm",
+              "value": 0.0,
+              "gradient": [
+                0.0
+              ],
+              "origins": [
+                "positive_impulse"
+              ]
+            }
+          ]
+        }
+      ],
+      "attempts": [
+        {
+          "alpha": 1.0,
+          "candidate": {
+            "r": 0.1,
+            "kind": "analytic_constant_force_allocation"
+          },
+          "candidate_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+          "outcomes": [
+            {
+              "case_id": "positive_impulse",
+              "weight": 0.5,
+              "sign": 1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": 4.881741825410992,
+              "response": [
+                1.005037815259212,
+                0.05050505050505051,
+                0.10050378152592121,
+                0.502518907629606
+              ],
+              "constraints": {
+                "clearance": -0.49748109237039395,
+                "input_norm": 0.0
+              },
+              "details": {
+                "suffix_plan": {
+                  "status": "PLAN_AVAILABLE",
+                  "accelerate_duration": 1.8881001143129295,
+                  "brake_duration": 1.9886038958388508,
+                  "brake_position": 2.0227272727272725,
+                  "brake_start_time": 2.8931379295721413,
+                  "completion_time": 4.881741825410992,
+                  "lateral_endpoint_magnitude": 0.502518907629606
+                },
+                "phases": [
+                  {
+                    "t_start": 0.0,
+                    "duration": 1.005037815259212,
+                    "position_start": [
+                      0.0,
+                      0.0
+                    ],
+                    "velocity_start": [
+                      0.0,
+                      1.0
+                    ],
+                    "input": [
+                      0.1,
+                      -0.99498743710662
+                    ],
+                    "position_end": [
+                      0.05050505050505051,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      0.10050378152592121,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 1.005037815259212,
+                    "duration": 1.8881001143129295,
+                    "position_start": [
+                      0.05050505050505051,
+                      0.502518907629606
+                    ],
+                    "velocity_start": [
+                      0.10050378152592121,
+                      0.0
+                    ],
+                    "input": [
+                      1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      2.0227272727272725,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      1.9886038958388506,
+                      0.0
+                    ]
+                  },
+                  {
+                    "t_start": 2.8931379295721413,
+                    "duration": 1.9886038958388508,
+                    "position_start": [
+                      2.0227272727272725,
+                      0.502518907629606
+                    ],
+                    "velocity_start": [
+                      1.9886038958388506,
+                      0.0
+                    ],
+                    "input": [
+                      -1.0,
+                      0.0
+                    ],
+                    "position_end": [
+                      3.999999999999999,
+                      0.502518907629606
+                    ],
+                    "velocity_end": [
+                      -2.220446049250313e-16,
+                      0.0
+                    ]
+                  }
+                ],
+                "terminal_position": [
+                  3.999999999999999,
+                  0.502518907629606
+                ],
+                "terminal_velocity": [
+                  -2.220446049250313e-16,
+                  0.0
+                ],
+                "diagnostic_path_end_time": 4.881741825410992,
+                "gate_crossed": true,
+                "no_overshoot_is_family_property_not_task_requirement": true
+              },
+              "status": "COMPLETED",
+              "reason": "full_declared_task_completed"
+            },
+            {
+              "case_id": "negative_impulse",
+              "weight": 0.5,
+              "sign": -1,
+              "evidence_class": "ANALYTIC_MODEL",
+              "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde",
+              "task_version": "normalized-stop-band-v1",
+              "task_time": null,
+              "response": null,
+              "constraints": {},
+              "details": {},
+              "status": "EVALUATION_TRUNCATED",
+              "reason": "declared_evidence_availability_intervention"
+            }
+          ],
+          "against_anchor": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "EVALUATION_TRUNCATED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "EVALUATION_TRUNCATED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 1,
+            "common_completed_fraction": 0.5,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": false,
+            "reason": "DEFER_UNKNOWN_FULL_SCOPE"
+          },
+          "against_deployed": {
+            "reference": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "EVALUATION_TRUNCATED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 2,
+              "status_counts": {
+                "COMPLETED": 1,
+                "EVALUATION_TRUNCATED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 0.5,
+              "unknown_fraction": 0.5,
+              "case_completion_interval": [
+                0.5,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": null,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 1,
+            "common_completed_fraction": 0.5,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": false,
+            "reason": "DEFER_UNKNOWN_FULL_SCOPE"
+          },
+          "supported_subset_only": {
+            "reference": {
+              "total_cases": 1,
+              "status_counts": {
+                "COMPLETED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 5.0,
+              "known_completed_conditional_mean": 5.0
+            },
+            "candidate": {
+              "total_cases": 1,
+              "status_counts": {
+                "COMPLETED": 1
+              },
+              "completed_ids": [
+                "positive_impulse"
+              ],
+              "known_completion_fraction": 1.0,
+              "unknown_fraction": 0.0,
+              "case_completion_interval": [
+                1.0,
+                1.0
+              ],
+              "interval_kind": "finite-case logical interval, not a probability confidence interval",
+              "full_mean_task_time": 4.881741825410992,
+              "known_completed_conditional_mean": 4.881741825410992
+            },
+            "rescued": [],
+            "lost": [],
+            "common_completed_count": 1,
+            "common_completed_fraction": 1.0,
+            "common_completed_cost_delta": -0.11825817458900811,
+            "passed": true,
+            "reason": "AVERAGE_TASK_IMPROVEMENT"
+          },
+          "pair_check": {
+            "status": "PAIR_DEFERRED_UNKNOWN",
+            "policy_identity": "19b0de432135a406ab9f37203ea7fb269c49d75a5dc0684c69bb224f1f3d2dde"
+          },
+          "accepted": false
+        }
+      ],
+      "accepted_feedback": null,
+      "active_feedback": {
+        "r": 0.0,
+        "kind": "analytic_constant_force_allocation"
+      },
+      "active_response_pair": {
+        "status": "PAIR_DEFERRED_UNKNOWN",
+        "policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3"
+      },
+      "next_planning_decisions": [
+        {
+          "case_id": "positive_impulse",
+          "active_policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "plan": {
+            "status": "PLAN_AVAILABLE",
+            "accelerate_duration": 2.0,
+            "brake_duration": 2.0,
+            "brake_position": 2.0,
+            "brake_start_time": 3.0,
+            "completion_time": 5.0,
+            "lateral_endpoint_magnitude": 0.5
+          }
+        },
+        {
+          "case_id": "negative_impulse",
+          "active_policy_identity": "b565265cfa9fda4c52cf52d5cd08ef8dcbd1fbbf791b697fdc55e3eeb41dfde3",
+          "plan": {
+            "status": "NO_VERIFIED_PLAN",
+            "reason": "EVALUATION_TRUNCATED"
+          }
+        }
+      ],
+      "ppo_surrogate": "No genuine PPO batch or actor distribution exists for this analytic coordinate; no KL/advantage is fabricated.",
+      "model_fitting": "None. Pairing is exact functional recomputation, not trained system identification.",
+      "budget": {
+        "case_evaluations": 4,
+        "completed_path_evaluations": 2,
+        "exact_phase_maps": 6,
+        "response_evaluations": 2,
+        "demand_pullbacks": 1,
+        "constraint_rows_before_merge": 2,
+        "constraint_rows_after_merge": 2,
+        "qp_calls": 1,
+        "qp_objective_evaluations": 2,
+        "qp_gradient_evaluations": 2,
+        "qp_constraint_evaluations": 3,
+        "qp_constraint_jacobian_evaluations": 2,
+        "pairing_model_predictions": 0,
+        "candidate_vectors": 1,
+        "next_plan_evaluations": 3
+      },
+      "scope": "Only the fixed finite analytic cases. Not robot deployment, PPO learning or a global guarantee."
+    }
+  },
+  "review_semantic_falsifiers": {
+    "source": "Previously declared independent-review mathematical counterexamples, not a PPO batch.",
+    "same_lambda_opposite_j": {
+      "individual": [
+        [
+          1.0
+        ],
+        [
+          -1.0
+        ]
+      ],
+      "aggregate": [
+        0.0
+      ]
+    },
+    "zero_j_and_zero_direct": [
+      0.0
+    ],
+    "zero_j_nonzero_suffix_direct": [
+      2.0
+    ],
+    "different_active_gradients_retained": [
+      {
+        "facet": "review_active_max",
+        "value": 0.0,
+        "gradient": [
+          1.0
+        ],
+        "origins": [
+          "first"
+        ]
+      },
+      {
+        "facet": "review_active_max",
+        "value": 0.0,
+        "gradient": [
+          -1.0
+        ],
+        "origins": [
+          "second"
+        ]
+      }
+    ],
+    "ppo_guard_replay": {
+      "source_delta_D": 0.005,
+      "original_strict_guard_rejections": 4,
+      "all_original_surrogates_decrease": true,
+      "all_original_KL_below_limit": true,
+      "new_task_priority_comparisons": [
+        {
+          "hypothetical_mean": 0.08944271909999159,
+          "surrogate": -0.003990676040233898,
+          "gaussian_kl": 0.004,
+          "task_comparison": "AVERAGE_TASK_IMPROVEMENT",
+          "task_comparison_passed": true
+        },
+        {
+          "hypothetical_mean": 0.044721359549995794,
+          "surrogate": -0.0009994168131780001,
+          "gaussian_kl": 0.001,
+          "task_comparison": "AVERAGE_TASK_IMPROVEMENT",
+          "task_comparison_passed": true
+        },
+        {
+          "hypothetical_mean": 0.022360679774997897,
+          "surrogate": -0.00024996354395606657,
+          "gaussian_kl": 0.00025,
+          "task_comparison": "AVERAGE_TASK_IMPROVEMENT",
+          "task_comparison_passed": true
+        },
+        {
+          "hypothetical_mean": 0.011180339887498949,
+          "surrogate": -6.249772138991472e-05,
+          "gaussian_kl": 6.25e-05,
+          "task_comparison": "AVERAGE_TASK_IMPROVEMENT",
+          "task_comparison_passed": true
+        }
+      ],
+      "replacement_rule": "No S-loss tolerance was added. Deterministic task is the final quality objective; S is monitored, stochastic improvement not guaranteed."
+    }
+  },
+  "input_policy_values_unchanged": true,
+  "budget": {
+    "case_evaluations": 32,
+    "completed_path_evaluations": 26,
+    "exact_phase_maps": 78,
+    "response_evaluations": 26,
+    "demand_pullbacks": 9,
+    "constraint_rows_before_merge": 10,
+    "constraint_rows_after_merge": 8,
+    "qp_calls": 4,
+    "qp_objective_evaluations": 8,
+    "qp_gradient_evaluations": 8,
+    "qp_constraint_evaluations": 12,
+    "qp_constraint_jacobian_evaluations": 8,
+    "pairing_model_predictions": 10,
+    "candidate_vectors": 6,
+    "next_plan_evaluations": 45
+  },
+  "wall_seconds": 0.005114499999763211,
+  "review_arithmetic_budget": {
+    "parameter_contributions": 4,
+    "merge_input_rows": 2,
+    "task_comparator_calls_on_existing_logical_records": 4
+  },
+  "zero_operations": {
+    "RL_training": 0,
+    "new_RL_batch": 0,
+    "neural_actor_evaluations": 0,
+    "neural_weight_updates": 0,
+    "checkpoint_reads": 0,
+    "checkpoint_writes": 0,
+    "robot_environment_rollouts": 0,
+    "hardware_operations": 0
+  },
+  "interpretation": "The core actually proposes/evaluates/accepts or defers immutable analytic feedback values and pairs their responses. It is not PPO training or a robot learning result."
+}
