@@ -2,6 +2,11 @@
 
 **换对话接续先读：[CURRENT_STATE](docs/CURRENT_STATE.md)。** 该页区分已完成证据、当前任务、实验边界与GitHub同步约定。
 
+**2026-10-17整体复核：科学问题保留，主算法尚未获独立增量支持。** 已做过真实小规模共同学习与PPO，结果未支持可靠收益；最近解析核心、接口及资产检查不能代替方法研究。下一主交付应回到任务驱动的反馈与紧凑可规划响应共同学习，平台评价作为支撑。详见[主线与实际进展复核](docs/research-direction-audit-2026-10-17.md)。本轮未启动新训练或机器人仿真。
+
+<details>
+<summary>历次阶段记录（其中“当前”“最新”“下一步”只描述原写作时点）</summary>
+
 **当前阶段（2026-10-17）：** [实际执行闭环MPC接口](docs/execution-aware-mpc-interface-2026-10-17.md)已实现：同时推进实际x和持续参考z，逐步调用当前PPO执行映射，按实际任务成本规划。历史一步/80步预测精确吻合；12组原任务梯度非零且与标准BPTT/伴随一致；独立全池shooting得到相同赢家。[完整证据](notes/closed-loop-interface-2026-10-17/INDEX.md)。冻结actor的12组新评估task成本均下降，简单均值约1.84%，但penalty组存在tube/total代价恶化；**这是预测/规划效果，不是RL学习收益或同信息强方法优势**。本轮有明确计账的模型/MPC/反事实仿真，训练和权重更新为0。双平台范围与已确认问题保持，待手动复审。
 
 **前一核查阶段（2026-10-17）：** [真实神经方向与旧MPC需求审计](docs/neural-demand-verification-2026-10-17.md)发现12个PPO检查点有128锚点局部反馈方向，但所选方向均不保持剩余3968条件；旧原生planner固定design时不依赖actor，直接需求为0。[原协议与负结果](notes/neural-demand-audit-2026-10-17/INDEX.md)保留。新接口独立新增，旧基线源码未覆盖。
@@ -48,9 +53,11 @@
 
 **当前判断：[双QP的真实定位、RL必要性与原研究主线](docs/direct-neighbor-verdict-2026-10-14.md)。** Gros/Zanon、COCP与分段反馈直接近邻已补齐全文，另核基础与非线性桥接。[全文证据索引](notes/direct-neighbor-full-2026-10-14/INDEX.md)记录版本、附录及视觉范围。v4归类为结构化MPC参数／表达学习，双QP降为技术备选；原“共同学习执行能力，规划理解并利用能力”主线保留，不以新术语掩盖研究对象变化。不开始训练。
 
+</details>
+
 ## 从这里开始
 
-1. 阅读 [当前研究思路](docs/research-brief.md)，确认方法理论、通用仿真、机器人验证的阶段顺序。
+1. 先读 [当前研究状态](docs/CURRENT_STATE.md) 和 [整体复核](docs/research-direction-audit-2026-10-17.md)；[早期研究思路](docs/research-brief.md)用于追溯，不以其中历史阶段表替代现状。
 2. 阅读 [融合方法地图](docs/fusion-map.md)，看清模型、策略、价值、优化器与训练数据的不同接口。
 3. 按 [近期优先阅读路线](docs/reading-plan.md)，从最新综述、价值与规划协同，再到学习优化和安全理论展开。
 4. 在 [100篇主清单](literature/INDEX.md) 中查找相邻工作；经典在遇到具体理论问题时查阅。
