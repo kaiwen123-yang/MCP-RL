@@ -2,6 +2,14 @@
 
 本目录调用Tianshou0.5.1原版PPOPolicy.learn。它是2026-10-16的受控研究原型，未复现完整SPlaTES或ReCo；[完整结果](../../docs/ppo-realization-report-2026-10-16.md)没有支持共同学习的实质收益。`response_codesign`保留上一轮原型，不覆盖。
 
+2026-10-17新增[实际执行闭环预测接口](../../docs/execution-aware-mpc-interface-2026-10-17.md)，保留原训练器和`ResponseServo`：
+
+- `closed_loop_prediction.py`：`NativeContext`、`native_step`、`predict_timeline`、`predict_macro_commands`，显式推进实际x与持续参考z，逐步重建17维观测和完整动作映射。名义预测w=0，support W保持原值。
+- `execution_aware_env.py`：独立`ExecutionAwareServo(..., actor_mean=...)`，以当前x/z/design运行原CEM bridge；构造时会执行首次规划。默认主选择门槛仍是原reference域，actual/input/tube诊断必须一起读取，不能把它当作全约束安全MPC。
+- 无训练核验入口：`scripts/validate_closed_loop_interface.py`会执行历史映射核验及全部12组固定actor的原任务反事实评估；`scripts/audit_closed_loop_mpc_demand.py`会重建原候选池并计算实际任务导数。需要已有本地checkpoint、原评估文件和上一阶段重建记录；调用会产生已计账的离线模型/MPC计算，不更新权重。
+
+当前精确展开是分析基准，尚非机器人在线架构或新学习算法。12组实际任务梯度非零且与同目标标准伴随一致；部分penalty组任务成本下降伴随tube/total代价恶化。具体结果与停止条件以当前状态和接口报告为准。下面训练命令仅保留原型复现说明，本阶段没有执行。
+
 使用仓库原有[依赖与固定上游准备流程](../response_codesign/README.md)，同一个`requirements-pilot.txt`即可。当前已验证Python3.12、Torch2.7.1+cpu、Tianshou0.5.1；GPU路径没有端到端验证。
 
 在仓库根目录运行开发检查：

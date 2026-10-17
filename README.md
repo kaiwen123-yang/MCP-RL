@@ -2,7 +2,9 @@
 
 **换对话接续先读：[CURRENT_STATE](docs/CURRENT_STATE.md)。** 该页区分已完成证据、当前任务、实验边界与GitHub同步约定。
 
-**当前阶段（2026-10-17）：** 已核查[真实神经方向、实际MPC需求与同信息比较](docs/neural-demand-verification-2026-10-17.md)。12个正式PPO检查点在原生任务上精确重放原评估后，全部存在128锚点的局部值保持反馈方向，但所选方向均不保持剩余3968条件。原native MPC固定design时不依赖actor，直接反馈需求为0；同原预测问题换鲁棒PO/TO也不会产生该通路。[协议/数值/源码](notes/neural-demand-audit-2026-10-17/INDEX.md)已保存。**无训练或权重更新**；有49,152次已计账的原评估重放仿真转移。当前应先解决实际执行闭环的规划预测接口，不能宣称有效共同学习或基线优势。
+**当前阶段（2026-10-17）：** [实际执行闭环MPC接口](docs/execution-aware-mpc-interface-2026-10-17.md)已实现：同时推进实际x和持续参考z，逐步调用当前PPO执行映射，按实际任务成本规划。历史一步/80步预测精确吻合；12组原任务梯度非零且与标准BPTT/伴随一致；独立全池shooting得到相同赢家。[完整证据](notes/closed-loop-interface-2026-10-17/INDEX.md)。冻结actor的12组新评估task成本均下降，简单均值约1.84%，但penalty组存在tube/total代价恶化；**这是预测/规划效果，不是RL学习收益或同信息强方法优势**。本轮有明确计账的模型/MPC/反事实仿真，训练和权重更新为0。双平台范围与已确认问题保持，待手动复审。
+
+**前一核查阶段（2026-10-17）：** [真实神经方向与旧MPC需求审计](docs/neural-demand-verification-2026-10-17.md)发现12个PPO检查点有128锚点局部反馈方向，但所选方向均不保持剩余3968条件；旧原生planner固定design时不依赖actor，直接需求为0。[原协议与负结果](notes/neural-demand-audit-2026-10-17/INDEX.md)保留。新接口独立新增，旧基线源码未覆盖。
 
 **前一机制阶段（2026-10-17）：** 提出[反馈微分能力机制](docs/feedback-sensitivity-mechanism-2026-10-17.md)：任务选择扰动响应方向、actor通过混合导数学习、同一响应供MPC使用。[解析核算](notes/feedback-sensitivity-2026-10-17/INDEX.md)证明局部控制信息通道存在，但当时未检查真实神经网络或实际MPC需求。收缩学习、Sobolev策略学习与SLS-MPC已有直接先例，不把该通道本身称为首创。
 
