@@ -2,6 +2,8 @@
 
 这套代码已在服务器MuJoCo 3.3.7/CPU上实际运行。结果和边界见[主报告](../../docs/go2-frozen-run-2026-10-19.md)。没有硬件接口或自动调度。
 
+后续的[紧凑事实模型比较](../../docs/go2-compact-response-2026-10-19.md)也已完成：`compact.py`提供26534参数的递推响应，`scripts/fit_go2_compact.py`只拟合模型；两种固定最终检查点在[artifacts](../../artifacts/go2-compact-2026-10-19/README.md)。普通单步和多步模型均保住3/3成功及低于200ms，但多步模型没有任务cost优势。策略保持冻结。
+
 - `policy.py`：完整TorchScript estimator+actor、六帧历史、previous action、固定观测/动作缩放和关节顺序。
 - `simulation.py`：实际5ms MuJoCo/PD、20ms策略，完整状态与历史复制、全部碰撞几何、力矩与机械功积分。预测与执行使用同一适配。
 - `task.py`：连续路点/门/终点条件，真实时间戳停稳，明确剩余任务启发式。
@@ -31,7 +33,7 @@ L_g=\mathbb{E}\|g_\phi(h,c)-Y_{\mathrm{executed}}\|_W^2,
 
 其中实际响应Y与任务J均来自真实执行，参考版本固定，必要条件信息必须对actor/critic可见。代码用完整实际cost-to-go和真实采样动作的log probability计算score/PPO目标。确定性导出策略没有行为密度，本轮只接事实指标与实际回报，不伪造PPO样本。
 
-与相同目标/数据/模型信息下的标准PO相同，不包装成新优化原理。与命令TO不同的可学习变量是反馈参数，但本轮冻结反馈；命令MPC结果不属于反馈学习增益。完整随机Go2采集/critic/训练器、紧凑模型拟合和共同学习收益仍未运行，导出权重也不等于可续训checkpoint。
+与相同目标/数据/模型信息下的标准PO相同，不包装成新优化原理。与命令TO不同的可学习变量是反馈参数，但当前冻结反馈；命令MPC结果不属于反馈学习增益。紧凑响应模型拟合已经在后续轮次完成；随机Go2策略采集/critic/训练器与共同学习收益仍未运行，导出策略权重不等于可续训checkpoint。
 
 ## 使用
 
