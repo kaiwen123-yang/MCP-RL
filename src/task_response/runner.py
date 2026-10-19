@@ -296,6 +296,7 @@ def _round(policy, model, optimizer, planner, arm, learning, config,
 
 
 def _evaluate_pair(policy, model, learning, planner_config, config, round_number, budget, planner_name="cem"):
+    import torch
     from .collection import collect
     from .learning import ARMS
     from .planner import CEMPlanner, GradientPlanner
@@ -308,7 +309,24 @@ def _evaluate_pair(policy, model, learning, planner_config, config, round_number
         started = time.perf_counter()
         collected = collect(policy, model, planner, ARMS["ordinary"], learning,
                             config["experiment"]["evaluation_environments"], eval_seed, deterministic=True)
+        # Evidence only: retain the already scheduled evaluation, without
+        # extra sampling or a change to any update/selection rule.
+        evidence_path = budget.output / f"evaluation-round-{round_number}-seed-{eval_seed}-{planner_name}.pt"
+        evidence_path.parent.mkdir(parents=True, exist_ok=True)
+        torch.save({"trace": collected.trace.detach().cpu(),
+                    "actions": collected.actions.detach().cpu(),
+                    "macro_starts": collected.response.starts.detach().cpu(),
+                    "macro_contexts": collected.response.contexts.detach().cpu(),
+                    "commands": collected.response.commands.detach().cpu(),
+                    "observed_response": collected.response.observations.detach().cpu(),
+                    "initial_state": collected.response.initial_state.detach().cpu(),
+                    "initial_context": collected.response.initial_context.detach().cpu(),
+                    "actor": {k: v.detach().cpu() for k, v in policy.actor.state_dict().items()},
+                    "response_model": {k: v.detach().cpu() for k, v in model.state_dict().items()},
+                    "config": config, "round": round_number, "evaluation_seed": eval_seed}, evidence_path)
         details = {"evaluation_seed": eval_seed, "planner": planner_name,
+                   "retained_evidence": evidence_path.name,
+                   "retained_evidence_sha256": hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
                    "deterministic": True, "training_shaping_disabled": True,
                    **_collection_details(collected)}
         budget.record("evaluation", round_number, started, collected.work, details)
