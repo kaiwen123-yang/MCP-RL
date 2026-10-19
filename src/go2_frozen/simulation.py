@@ -152,8 +152,9 @@ class Go2Simulation:
         return self.state()
 
     def snapshot(self):
-        saved_data = self.mj.MjData(self.model)
-        self.mj.mj_copyData(saved_data, self.model, self.data)
+        # MuJoCo 3.3.7 exposes complete MjData copying through __copy__,
+        # not a Python-level mj_copyData function.
+        saved_data = copy.copy(self.data)
         self.counters["snapshots"] += 1
         return SimulationSnapshot(self.model, saved_data, self.policy.snapshot(), self.ticks,
                                   self.command.copy(), self.target_position.copy(),
@@ -163,7 +164,7 @@ class Go2Simulation:
     def restore(self, saved):
         if saved.model is not self.model:
             raise ValueError("Restore snapshots only into the same immutable model or its clone")
-        self.mj.mj_copyData(self.data, self.model, saved.data)
+        self.data = copy.copy(saved.data)
         self.policy.restore(saved.policy_state)
         self.ticks = saved.ticks
         self.command, self.target_position = saved.command.copy(), saved.target_position.copy()
