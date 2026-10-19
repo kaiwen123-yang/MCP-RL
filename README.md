@@ -2,7 +2,7 @@
 
 **换对话接续先读：[CURRENT_STATE](docs/CURRENT_STATE.md)。** 该页区分已完成证据、当前任务、实验边界与GitHub同步约定。
 
-**独立实验分支 `codex/go2-frozen-long-task`：**[Go2冻结策略完整任务与普通MPC基线](docs/go2-frozen-baseline-2026-10-19.md)已经实际运行。完整Go2接触仿真中，三条件×两控制器共六条轨迹均完成预声明任务；参考跟随器更快，当前MPC更贴参考路线。策略和模型训练更新均0，没有操作实机；未合并主线，不据此宣称PINN或共同学习收益。[复现入口](src/go2_frozen/README.md) · [证据与图表](notes/go2-frozen-2026-10-19/INDEX.md)。
+**独立实验分支 `codex/go2-frozen-long-task`：**[Go2公平对照](docs/go2-fair-comparison-2026-10-19.md)已完成18条主对照＋4条模型诊断，22/22按原任务判据成功。共同快速速度条件下，nominal跟随器/跟踪MPC/任务MPC为11.30/11.66/11.48 s，原明显速度差基本消失；完整物理候选排序未带来整体提速。场景和公开策略冻结，训练更新为0，未加PINN，PR #1保持未合并。[全部证据与图](notes/go2-fair-2026-10-19/INDEX.md) · [复现入口](src/go2_frozen/README.md) · [保留的旧六条基线](docs/go2-frozen-baseline-2026-10-19.md)。
 
 **最新研究顺序：Go2研发优先。** [二维诊断的边界与Go2推进](docs/go2-research-transition-2026-10-19.md)明确：无需在二维对象先取得明显优势，再允许进入Go2。下一阶段在Go2整机仿真复现可信基线、建立完整任务测试，并与方法修正并行迭代；二维保留理论与诊断用途，已有结构性负结论继续有效。本轮未启动新训练或实机操作。
 
