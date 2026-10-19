@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-19",
+  "scope": "Method implementation and no-training verification only",
+  "python": "3.12.10",
+  "ast_files_passed": 9,
+  "source_sha256": {
+    "src/task_response/collection.py": "17164b637a73d741adceb8b18ca120237a6b256944db237f89785d389000ba76",
+    "src/task_response/environment.py": "6d6e532c6ee2cc756265267213f8f4c37f13a9e324d2fca89492d0de7188d9ad",
+    "src/task_response/learning.py": "fc62b8c31d761ca5d2e1041971a436d913810329a12bb56fce12348b53123e56",
+    "src/task_response/models.py": "8876c588ae4bac9afb7c4638d6dfe3dea1077638f18079ea34077ca0ece5b243",
+    "src/task_response/planner.py": "2037fa393a98379c31701e5097f1051bc0426f06ab51744ba036be02d20eae09",
+    "src/task_response/runner.py": "6286e1baeb7ebeec9c6422cabc6ac7b4d2dd30c65ab148472a22e8c218db048c",
+    "src/task_response/verification.py": "53e32c0a1d2a6c7502110141210a828a5faba93fa149bc17a5923a8234c58d1e",
+    "src/task_response/__init__.py": "38582d3f647e2321718ba46434b08abb8634229ea6deb91b0be8b277d643afaf",
+    "scripts/task_response.py": "67315faa30d58d24041527cfc6c30009b7212c5cc7f04ee2f084952f0c5be6fc",
+    "src/response_ppo/ppo_backend.py": "3a439a9fe202d8042ddadb0e16c0be70ea382d46d0fa683f09e01b1f4e242cea",
+    "configs/task_response_pilot.json": "71a74d471df9b7bc56fe61c1bbe63d9fa600a6358374a965e8b543d59fad6c32"
+  },
+  "final_integrated_check_physical_steps": 320,
+  "earlier_root_checks_physical_steps": 480,
+  "environment_agent_fixed_input_physical_steps": 2,
+  "total_actual_synthetic_plant_steps_this_round": 802,
+  "earlier_check_repair": "Deterministic batched vs per-tick float32 GEMM differed by 3.26e-9; exact equality assertion changed to 5e-6 numerical tolerance. No learning step was performed.",
+  "implementation_repairs": [
+    "Use integer remaining ticks to avoid float32 extra suffix macro",
+    "Deep-copy shared Adam states into each comparison branch",
+    "Serialize missing first-reach time as null"
+  ],
+  "policy_optimizer_steps": 0,
+  "model_optimizer_steps": 0,
+  "checkpoint_writes": 0,
+  "server_connections": 0,
+  "training_branch_execution": "NOT_RUN",
+  "method_effectiveness": "UNTESTED",
+  "same_objective_PO_advantage": "NOT_CLAIMED",
+  "robot_task_evaluation": "NOT_RUN",
+  "automatic_monitoring": "NOT_ENABLED",
+  "latex_compile": "UNAVAILABLE_WINDOWS_RESTRICTED_RUNTIME",
+  "latex_static_labels_and_environments": "CHECKED",
+  "source_hash_policy": "SHA256 of source bytes normalized from CRLF to LF; portable across Git checkouts"
+}

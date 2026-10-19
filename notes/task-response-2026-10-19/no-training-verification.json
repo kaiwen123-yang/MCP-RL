@@ -1,0 +1,216 @@
+{
+  "status": "FORWARD_AND_GRADIENT_CHECK_PASSED_NO_TRAINING",
+  "scope": "Random untrained neural actor/model; full 80-step synthetic task only. No learning benefit, robot ability, or server runtime claim.",
+  "config": {
+    "environment": {
+      "dt": 0.05,
+      "macro_steps": 4,
+      "horizon": 80,
+      "input_bound": 1.5,
+      "tau": 0.18,
+      "linear_drag": 0.12,
+      "speed_drag": 0.1,
+      "cross_drag": 0.08,
+      "goal_x": 2.0,
+      "go_velocity": 0.6,
+      "corridor_halfwidth": 0.65,
+      "position_weight": 0.2,
+      "velocity_weight": 0.1,
+      "resource_weight": 0.025,
+      "geometry_weight": 80.0,
+      "terminal_position_weight": 4.0,
+      "terminal_velocity_weight": 1.5,
+      "position_tolerance": 0.15,
+      "velocity_tolerance": 0.18
+    },
+    "planner_verification_only": {
+      "horizon": 2,
+      "candidates": 4,
+      "elites": 2,
+      "iterations": 1,
+      "initial_std": 0.65,
+      "min_std": 0.05,
+      "smoothing": 0.2,
+      "gradient_iterations": 2,
+      "gradient_step_size": 0.15,
+      "gradient_starts": 2,
+      "seed": 20261019,
+      "environment": {
+        "dt": 0.05,
+        "macro_steps": 4,
+        "horizon": 80,
+        "input_bound": 1.5,
+        "tau": 0.18,
+        "linear_drag": 0.12,
+        "speed_drag": 0.1,
+        "cross_drag": 0.08,
+        "goal_x": 2.0,
+        "go_velocity": 0.6,
+        "corridor_halfwidth": 0.65,
+        "position_weight": 0.2,
+        "velocity_weight": 0.1,
+        "resource_weight": 0.025,
+        "geometry_weight": 80.0,
+        "terminal_position_weight": 4.0,
+        "terminal_velocity_weight": 1.5,
+        "position_tolerance": 0.15,
+        "velocity_tolerance": 0.18
+      }
+    }
+  },
+  "work": {
+    "physical_steps": 320,
+    "actor_forwards": 320,
+    "critic_forwards": 320,
+    "planner_calls": 80,
+    "planner_model_steps": 3200,
+    "planner_reverse_model_steps": 0,
+    "planner_trajectory_evaluations": 400,
+    "target_model_steps": 320,
+    "metric_forward_model_steps": 3360,
+    "metric_reverse_model_steps": 3360,
+    "policy_optimizer_steps": 0,
+    "model_optimizer_steps": 0,
+    "planner_wall_seconds": 0.15641049999794632
+  },
+  "collection_modes": {
+    "deployment_model_data": "deterministic_mean",
+    "ppo_data": "stochastic"
+  },
+  "deterministic_raw_action_error": 3.259629011154175e-09,
+  "additional_command_to_work": {
+    "trajectory_evaluations": 12,
+    "encoder_evaluations": 12,
+    "model_steps": 96,
+    "reverse_model_steps": 64,
+    "optimizer_steps": 2,
+    "model_information": "learned_response_only"
+  },
+  "additional_objective_forward_model_steps": 1280,
+  "additional_objective_reverse_model_steps": 1280,
+  "gradient_call_note": "One likelihood-ratio actor gradient; four model objective gradients; no gradients applied.",
+  "weights_unchanged": {
+    "actor": true,
+    "critic": true,
+    "model": true
+  },
+  "policy_optimizer_steps": 0,
+  "model_optimizer_steps": 0,
+  "checkpoint_writes": 0,
+  "server_connections": 0,
+  "real_task_cost_recalculation_error": 1.52587890625e-05,
+  "metric_trace_error": 9.5367431640625e-07,
+  "metric_eigenvalue_range": [
+    0.5555553436279297,
+    2.7777774333953857
+  ],
+  "behavior_log_probability_error": 2.384185791015625e-07,
+  "model_objectives": {
+    "ordinary": {
+      "model_objective": 0.08429321646690369,
+      "model_gradient_norm": 0.5615358948707581,
+      "terms": {
+        "model_loss": 0.08429321646690369,
+        "local_realization": 0.05422860011458397,
+        "long_realization": 0.12025846540927887,
+        "predicted_task": 2.9378128051757812,
+        "task_coefficient": 0.0
+      }
+    },
+    "uniform": {
+      "model_objective": 0.3780744969844818,
+      "model_gradient_norm": 9.980659484863281,
+      "terms": {
+        "model_loss": 0.3780744969844818,
+        "local_realization": 0.05422860011458397,
+        "long_realization": 0.12025846540927887,
+        "predicted_task": 2.9378128051757812,
+        "task_coefficient": 0.10000000149011612
+      }
+    },
+    "weighted_id": {
+      "model_objective": 0.08027264475822449,
+      "model_gradient_norm": 1.4228770732879639,
+      "terms": {
+        "model_loss": 0.08027264475822449,
+        "local_realization": 0.030148888006806374,
+        "long_realization": 0.20049503445625305,
+        "predicted_task": 2.9378128051757812,
+        "task_coefficient": 0.0
+      }
+    },
+    "codesign": {
+      "model_objective": 0.3740539252758026,
+      "model_gradient_norm": 10.120923042297363,
+      "terms": {
+        "model_loss": 0.3740539252758026,
+        "local_realization": 0.030148888006806374,
+        "long_realization": 0.20049503445625305,
+        "predicted_task": 2.9378128051757812,
+        "task_coefficient": 0.10000000149011612
+      }
+    }
+  },
+  "actor_surrogate_gradient_norm": 1.1812199354171753,
+  "untrained_fixture_metrics_not_performance": {
+    "success": [
+      false,
+      false
+    ],
+    "success_rate": 0.0,
+    "completed_horizon": [
+      true,
+      true
+    ],
+    "evaluation_truncated": [
+      false,
+      false
+    ],
+    "endpoint_conditions_met": [
+      false,
+      false
+    ],
+    "first_reach_time": [
+      null,
+      null
+    ],
+    "terminal_position_error": [
+      1.4781432151794434,
+      1.8186384439468384
+    ],
+    "terminal_velocity_error": [
+      0.6377673745155334,
+      0.2744186222553253
+    ],
+    "corridor_violation_count": [
+      36,
+      52
+    ],
+    "maximum_corridor_excess": [
+      0.45683813095092773,
+      1.0480149984359741
+    ],
+    "max_applied_input_norm": [
+      1.3151055574417114,
+      1.2968389987945557
+    ],
+    "max_requested_input_norm": [
+      1.3151055574417114,
+      1.2968389987945557
+    ],
+    "normalized_input_integral": [
+      0.8611578941345215,
+      0.8432251811027527
+    ],
+    "task_cost": [
+      38.426326751708984,
+      192.24822998046875
+    ],
+    "planner_batch_latency_p50_seconds": 0.004309200000079727,
+    "planner_batch_latency_p95_seconds": 0.004769059999534875,
+    "planner_batch_latency_max_seconds": 0.005264200000056007
+  },
+  "wall_seconds_local_check": 1.3289672999999311,
+  "training_branch_execution": "NOT_RUN",
+  "server_experiment": "NOT_RUN"
+}

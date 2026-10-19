@@ -1,0 +1,258 @@
+% Insert into an existing LaTeX document.
+% Required packages: amsmath, amssymb, amsthm.
+% Define a proposition environment in the parent document if needed.
+% These are standard identities and conditional bounds instantiated for the
+% candidate method. They are not claims of original theory or trained results.
+
+\section{Conditional properties of task-weighted response shaping}
+\label{sec:task-response-theory}
+
+The physical state is $x=(p,v,a)\in\mathbb R^6$. The response model uses
+$z=(\hat p,\hat v,m)$, initialized by
+$E_\phi(x)=(p,v,e_\phi(x))$. The latent memory $m$ is not the measured
+actuator state $a$. With $\Delta t=0.05$ and $K=4$, its recursion is
+\begin{align}
+ \hat p^+&=\hat p+\Delta t\hat v,\qquad
+ \hat v^+=\hat v+\Delta t m,\nonumber\\
+ m^+&=m+\frac{\Delta t}{\tau}\bigl(h_\phi(z,c,\kappa)-m\bigr).
+ \label{eq:tr-model}
+\end{align}
+The response $b_j\in\mathbb R^5$ contains normalized physical position,
+velocity, and the realized resource $\rho_j=\|u_j\|^2/U^2$. It contains
+neither $a_j$ nor $m_j$. Let $B=(b_0,\ldots,b_{K-1})$, let $Q$ be a
+frozen open-loop model prediction from the same physical initial state,
+and let $\mathcal W=\operatorname{diag}(W_0,\ldots,W_{K-1})$.
+
+\paragraph{Implemented alternating soft objectives.}
+For $N$ complete episodes with $M$ macro intervals each, define
+\begin{align}
+ L_{\mathrm{local}}&=\frac{\Delta t}{MN}\sum_{m,n,j}
+       \|b_{mjn}-q_{\phi,mjn}\|_{W_{mjn}}^2,\nonumber\\
+ L_{\mathrm{long}}&=\frac{\Delta t}{MN}\sum_{m,n,j}
+       \|b_{mjn}-\bar q_{\phi,mjn}\|_{W_{mjn}}^2,\nonumber\\
+ L_{\mathrm{model}}&=L_{\mathrm{local}}+0.25L_{\mathrm{long}}
+       +\lambda_{\mathrm{task}}J_g(\phi;\bar C_{\mathrm{recorded}},\kappa_0).
+ \label{eq:tr-model-objective}
+\end{align}
+The local prediction starts from each actual macro initial state. The
+long prediction is encoded only once at the episode initial state and
+uses that episode's frozen executed command sequence. The task term
+uses the same complete recorded sequence and includes integrated stage
+and terminal costs; it does not call MPC to generate a new plan.
+The proposal uses $\lambda_{\mathrm{task}}=0.1$ only in enabled arms.
+Metrics instead use each macro's online plan, extended to the remaining
+task endpoint by holding its final command. The two task surrogates
+share the model and task-cost definition, but need not share a command
+sequence or gradient.
+
+The actor reward, with global microstep index $t=mK+j$ and environment
+index omitted, is
+\begin{equation}
+ r_{m,j}=-\Delta t\,\ell_{\mathrm{task}}(x_{t+1},u_t,\kappa_{t+1})
+     -\Delta t\,\beta\|b_{mj}-q_{\phi,mj}\|_{W_{mj}}^2
+     -\mathbf 1_{\{t=MK-1\}}
+       \ell_{\mathrm{terminal}}(x_{t+1},\kappa_{t+1}),\qquad\beta=0.2.
+ \label{eq:tr-shaped-reward}
+\end{equation}
+Batch A uses the deterministic-mean actor and supports a model proposal;
+fresh batch B uses stochastic exploration under the frozen proposal model
+and supplies shaped returns for PPO; fresh batch C uses the new
+deterministic-mean actor and supports identification-only calibration with
+$\lambda_{\mathrm{task}}=0$. Every arm uses these same collection modes.
+The calibrated model is used by the next MPC iteration and targets the
+deterministic deployment response. Matching in stochastic batch B still
+penalizes exploration-response variance; its mean is not identified with
+the deterministic response. All three batches and calibration work must
+be counted.
+Targets and metrics are saved at each macro start and remain fixed
+through the actor batch and PPO epochs. These are soft consistency
+penalties, not hard realization constraints. The alternating procedure
+has not been proved to be exact coordinate descent of a single fixed
+population objective. No parameter updates are run in this implementation
+verification stage.
+
+\begin{proposition}[Trace-normalized bounded task metric]
+\label{prop:tr-metric}
+For $v\in\mathbb R^d$ and $\alpha\ge0$, define
+\begin{equation}
+ A=I+\frac{\alpha}{1+\|v\|^2}vv^T,\qquad
+ W=\frac{dA}{\operatorname{tr}(A)}.
+ \label{eq:tr-metric}
+\end{equation}
+Write $r=\|v\|^2$ and $s=\alpha r/(1+r)$. Then
+\begin{equation}
+ \operatorname{tr}(W)=d,\qquad
+ \frac{d}{d+\alpha}I\preceq W
+ \preceq\frac{d(1+\alpha)}{d+\alpha}I.
+ \label{eq:tr-metric-bounds}
+\end{equation}
+Moreover,
+\begin{equation}
+ v^TW^{-1}v=\frac{r(d+s)}{d(1+s)},\qquad
+ W^{-1}=\frac{d+s}{d}\left(I-
+ \frac{\alpha vv^T}{1+(1+\alpha)r}\right).
+ \label{eq:tr-dualnorm}
+\end{equation}
+\end{proposition}
+\begin{proof}
+The matrix $A$ has eigenvalue one orthogonal to $v$, eigenvalue $1+s$
+parallel to $v$, and trace $d+s$. Hence $W$ has eigenvalues $d/(d+s)$
+and $d(1+s)/(d+s)$ in the respective directions. The first decreases
+with $s$ and the second is nondecreasing for integer $d\ge1$.
+Using $0\le s\le\alpha$ proves the bounds. Dividing $r$ by the parallel
+eigenvalue proves the quadratic-form identity, with value zero at $v=0$.
+The inverse formula follows by inverting the same rank-one update.
+\end{proof}
+For $d=5$ and $\alpha=4$, the spectral interval is $[5/9,25/9]$.
+The trace is five, matching the uniform metric's average weight.
+This removes a simultaneous increase in total metric weight but does not
+make covariance-weighted penalties identical across different metrics.
+
+\begin{proposition}[Mean matching and response variance]
+\label{prop:tr-variance}
+Fix a macro initial condition and command context $\xi$. Let $Q$ and
+$\mathcal W$ be deterministic and frozen conditional on $\xi$. If $B$
+has finite second moments under the policy, then
+\begin{equation}
+ \mathbb E_\theta[\|B-Q\|_{\mathcal W}^2\mid\xi]
+ =\|\mu_\theta-Q\|_{\mathcal W}^2
+  +\operatorname{tr}(\mathcal W\Sigma_\theta),
+ \label{eq:tr-variance}
+\end{equation}
+where $\mu_\theta=\mathbb E_\theta[B\mid\xi]$ and
+$\Sigma_\theta=\operatorname{Cov}_\theta(B\mid\xi)$.
+\end{proposition}
+\begin{proof}
+Expand $B-Q=(B-\mu_\theta)+(\mu_\theta-Q)$. The cross term has zero
+conditional expectation, while the centered quadratic term is
+$\operatorname{tr}(\mathcal W\Sigma_\theta)$.
+\end{proof}
+
+Under common support, differentiation--integration interchange,
+parameter-independent environment transitions, and a fixed latent-action
+map, the conditional score identity is
+\begin{equation}
+ \nabla_\theta\mathbb E_\theta[A(B)\mid\xi]
+ =\mathbb E_\theta\left[
+ (A(B)-b_{\mathrm{base}}(\xi))\sum_{j=0}^{K-1}
+ \nabla_\theta\log\pi_\theta(\zeta_j\mid x_j,c,\kappa_j)
+ \,\middle|\,\xi\right],
+ \label{eq:tr-score}
+\end{equation}
+where $A(B)=\|B-Q\|_{\mathcal W}^2$ and the baseline $b_{\mathrm{base}}$ does not
+depend on the sampled actions. This follows by differentiating the
+trajectory density; the expected conditional score is zero. It does not
+differentiate the physical transition map. A clipped PPO surrogate over
+multiple epochs is not the exact finite-change identity in
+\eqref{eq:tr-score}, nor a guarantee of improvement in the unshaped task.
+In particular, \eqref{eq:tr-variance} retains a variance penalty even when
+$Q=\mu_\theta$.
+
+\begin{proposition}[Local task interpretation of response error]
+\label{prop:tr-taskerror}
+Let $V$ be twice continuously differentiable on a convex neighborhood
+$\mathcal N$ containing $q,b$, with
+$\|\nabla^2V(y)\|_2\le H$ for all $y\in\mathcal N$. Define
+$v=\nabla V(q)$ and $W$ by \eqref{eq:tr-metric}. Then
+\begin{equation}
+ |V(b)-V(q)|
+ \le\sqrt{v^TW^{-1}v}\,\|b-q\|_W
+       +\frac H2\|b-q\|_2^2.
+ \label{eq:tr-taskerror}
+\end{equation}
+If $B\in\mathcal N$ almost surely and the required moments are finite,
+\begin{equation}
+ \mathbb E|V(B)-V(q)|
+ \le\sqrt{v^TW^{-1}v}\sqrt{\mathbb E\|B-q\|_W^2}
+       +\frac H2\mathbb E\|B-q\|_2^2.
+ \label{eq:tr-taskerror-mean}
+\end{equation}
+\end{proposition}
+\begin{proof}
+Taylor's formula gives $V(b)-V(q)=v^T(b-q)+r$, with
+$|r|\le H\|b-q\|_2^2/2$. Weighted Cauchy--Schwarz gives
+$|v^Te|\le\sqrt{v^TW^{-1}v}\sqrt{e^TWe}$. This proves
+\eqref{eq:tr-taskerror}. Taking expectations and using
+$\mathbb E\sqrt X\le\sqrt{\mathbb EX}$ for $X\ge0$ proves
+\eqref{eq:tr-taskerror-mean}.
+\end{proof}
+
+If the metric instead uses an approximate gradient $\tilde v$, the
+same argument adds $\|v-\tilde v\|_2\|b-q\|_2$ to the bound with
+$\tilde v$ in its first term. Further residuals are required when the
+observable response does not determine the true continuation task, or
+when a frozen-command model continuation is substituted for actual
+receding-horizon execution. The omitted latent-memory direction, encoder
+reset discrepancies, branch changes, and discrete completion events are
+not controlled by this proposition.
+Specifically, if $C_{\mathrm{real}}=V(b)+r_{\mathrm{real}}$ and
+$C_g=V(q)+r_g$, a bound
+$|r_{\mathrm{real}}-r_g|\le\varepsilon_{\mathrm{repr}}$ must be added
+separately. Writing this decomposition does not establish that
+$\varepsilon_{\mathrm{repr}}$ is small.
+
+\begin{proposition}[Finite-candidate planning comparison]
+\label{prop:tr-planning}
+Fix a physical policy, a common initial/task/disturbance distribution,
+and a nonempty finite command-candidate set $\mathcal C$. Suppose the
+actual expected candidate cost $Q$ and model cost $\hat Q$ satisfy
+$\sup_{C\in\mathcal C}|Q(C)-\hat Q(C)|\le\varepsilon$. If
+$\hat Q(\hat C)\le\min_{C\in\mathcal C}\hat Q(C)+\delta$, then
+\begin{equation}
+ Q(\hat C)-\min_{C\in\mathcal C}Q(C)\le2\varepsilon+\delta.
+ \label{eq:tr-planning}
+\end{equation}
+\end{proposition}
+\begin{proof}
+For $C^*\in\arg\min_{C\in\mathcal C}Q(C)$,
+\begin{align*}
+ Q(\hat C)&\le\hat Q(\hat C)+\varepsilon\\
+ &\le\hat Q(C^*)+\delta+\varepsilon\\
+ &\le Q(C^*)+\delta+2\varepsilon.
+\end{align*}
+\end{proof}
+The result concerns a common finite candidate set and a fixed physical
+policy. It establishes neither continuous-space global CEM optimality
+nor actual state-constraint feasibility. It is not a full-task bound for
+an evolving policy and a sequence of replanning decisions.
+
+\begin{proposition}[Conditional full-task pair improvement]
+\label{prop:tr-pair}
+For each $i\in\{-,+\}$, let $\mathcal K_i$ be the complete controller
+consisting of its policy and MPC with its paired response model. Use a
+common evaluation distribution, horizon, completion rule, and task-cost
+definition. If actual and corresponding complete model-evaluation costs
+satisfy $|J_i^{\mathrm{real}}-\hat J_i|\le B_i$, then
+\begin{equation}
+ J_+^{\mathrm{real}}-J_-^{\mathrm{real}}
+ \le \hat J_+-\hat J_-+B_++B_-.
+ \label{eq:tr-pair}
+\end{equation}
+Thus $\hat J_--\hat J_+>B_-+B_+$ implies actual task improvement.
+\end{proposition}
+\begin{proof}
+Use $J_+^{\mathrm{real}}\le\hat J_++B_+$ and
+$J_-^{\mathrm{real}}\ge\hat J_--B_-$ and subtract.
+\end{proof}
+The model evaluation in Proposition~\ref{prop:tr-pair} must describe the
+same complete replanning controller. Using the training surrogate for a
+single frozen remaining command plan requires an additional discrepancy
+term. No numerical $B_i$ has been established here. Stochastic-policy
+training and deterministic-mean deployment require separate controller
+definitions, calibration, and bounds; nonlinear dynamics do not commute
+with policy averaging.
+
+\paragraph{Scope and prior work.}
+These arguments are standard identities and conditional comparisons.
+SPlaTES already couples predictable skills and planning; ReCo already
+combines response shaping and policy-aware MPC; guided policy search
+already imposes bidirectional policy--trajectory consistency;
+costate-focused RL and TaskMet already use task-sensitive model losses.
+The candidate must therefore demonstrate its value in task performance,
+response predictability, or finite data/computation, rather than claim a
+new gradient or optimizer. An ordinary optimizer with the same soft
+objective, information, variables, data, derivatives, and constraints may
+produce the same update; under the same parameterization and update
+rules it can be identical. Command-only trajectory optimization does not
+stand in for a comparator allowed to update policy parameters. The soft
+penalty alone establishes no independent method advantage.

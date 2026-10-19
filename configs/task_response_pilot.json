@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "name": "task_response_matched_pilot_v1",
+  "scope": "Synthetic planar plant; proposed server pilot, not a robot result or established algorithm advantage",
+  "environment": {
+    "dt": 0.05, "macro_steps": 4, "horizon": 80, "input_bound": 1.5, "tau": 0.18,
+    "linear_drag": 0.12, "speed_drag": 0.10, "cross_drag": 0.08,
+    "goal_x": 2.0, "go_velocity": 0.6, "corridor_halfwidth": 0.65,
+    "position_weight": 0.2, "velocity_weight": 0.1, "resource_weight": 0.025,
+    "geometry_weight": 80.0, "terminal_position_weight": 4.0,
+    "terminal_velocity_weight": 1.5, "position_tolerance": 0.15,
+    "velocity_tolerance": 0.18
+  },
+  "model": {"hidden": 32},
+  "planner": {
+    "horizon": 5, "candidates": 24, "elites": 6, "iterations": 2,
+    "initial_std": 0.65, "min_std": 0.05, "smoothing": 0.2,
+    "gradient_iterations": 12, "gradient_step_size": 0.15,
+    "gradient_starts": 4, "seed": 500003
+  },
+  "learning": {
+    "response_weight": 0.2, "metric_alpha": 4.0, "model_task_weight": 0.1,
+    "long_response_weight": 0.25, "model_learning_rate": 0.0003,
+    "model_steps": 4, "model_grad_norm": 1.0
+  },
+  "ppo": {
+    "obs_dim": 14, "action_dim": 2, "action_bound": 1.5,
+    "hidden": [64, 64], "learning_rate": 0.0003, "initial_std": 0.35,
+    "gamma": 1.0, "gae_lambda": 0.95, "clip_epsilon": 0.2,
+    "value_coef": 0.5, "entropy_coef": 0.0, "max_grad_norm": 0.5,
+    "epochs": 4, "minibatch_size": 256
+  },
+  "experiment": {
+    "training_seeds": [11, 23, 37],
+    "arms": ["ordinary", "uniform", "weighted_id", "codesign"],
+    "environments": 8,
+    "common_warmup_rounds": 8,
+    "comparison_rounds": 16,
+    "evaluation_every_rounds": 8,
+    "evaluation_environments": 8,
+    "evaluation_seeds": [91001],
+    "evaluation_deterministic": true,
+    "common_warmup_wall_seconds": 1800.0,
+    "per_arm_wall_seconds": 1800.0,
+    "seed_recipe": "seed*100000 + (10000000 warmup or 20000000 comparison) + round*10 + stage_index; evaluation uses fixed separate seeds",
+    "stage_order": ["A_collect", "model_proposal", "B_collect", "ppo_update", "C_collect", "model_calibration"],
+    "collection_policy_modes": {"A": "deterministic_mean", "B": "stochastic_ppo", "C": "deterministic_mean"},
+    "warmup_arm": "ordinary",
+    "model_calibration_steps": 4,
+    "wall_budget_semantics": "Stop at the first stage boundary after the cap; report actual overrun; incomplete warmup prevents all comparisons",
+    "frozen_arm_status": "Optional diagnostic only; not a sufficiently optimized independent strong baseline"
+  }
+}

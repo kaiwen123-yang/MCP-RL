@@ -1,0 +1,95 @@
+{
+  "status": "PLANNED_NOT_RUN",
+  "name": "task_response_matched_pilot_v1",
+  "training_seeds": [
+    11,
+    23,
+    37
+  ],
+  "arms": [
+    "ordinary",
+    "uniform",
+    "weighted_id",
+    "codesign"
+  ],
+  "common_warmup": {
+    "arm": "ordinary",
+    "rounds_per_seed": 8,
+    "physical_steps_total": 46080,
+    "shared_once_per_seed": true,
+    "clone": [
+      "actor",
+      "critic",
+      "response_model",
+      "policy_optimizer",
+      "model_optimizer",
+      "policy_update_count",
+      "PPO_rng_state"
+    ],
+    "comparison_planner_stream": "same fresh seed and call counter for every arm"
+  },
+  "comparison": {
+    "rounds_per_arm_seed": 16,
+    "physical_steps_total": 368640,
+    "fresh_collections_each_round": [
+      "A: deterministic current actor before model proposal",
+      "B: stochastic PPO actor under the proposed model",
+      "C: deterministic updated actor before model calibration"
+    ],
+    "collection_policy_modes": {
+      "A": "deterministic_mean",
+      "B": "stochastic_ppo",
+      "C": "deterministic_mean"
+    },
+    "response_identity": "Predict deterministic mean-actor execution; do not equate it to the mean stochastic trajectory"
+  },
+  "training_physical_steps": 414720,
+  "evaluation": {
+    "rounds": [
+      0,
+      8,
+      16
+    ],
+    "seeds": [
+      91001
+    ],
+    "environments": 8,
+    "deterministic": true,
+    "batches": 36,
+    "physical_steps": 23040,
+    "metric_derivatives": 0,
+    "response_shaping": false,
+    "real_task_metrics_separate_from_training_reward": true
+  },
+  "total_physical_steps_including_evaluation": 437760,
+  "configured_model_work": {
+    "training_planner_model_steps": 101606400,
+    "evaluation_planner_model_steps": 5644800,
+    "collection_target_model_steps": 437760,
+    "fit_forward_model_steps": 2211840,
+    "fit_reverse_model_steps": 2211840,
+    "metric_forward_model_steps": 1935360,
+    "metric_reverse_model_steps": 1935360,
+    "total_forward_model_steps": 111836160,
+    "ordinary_uniform_metric_derivative_steps": 0,
+    "model_optimizer_steps": 1728,
+    "policy_optimizer_steps": 1728,
+    "ppo_minibatches_per_epoch": 2,
+    "counting_note": "Model microsteps are work counters, not equal-cost FLOPs or measured runtime; encoder/NN overhead also occurs"
+  },
+  "wall_limits": {
+    "warmup_seconds_per_seed": 1800.0,
+    "seconds_per_arm_seed_including_evaluation": 1800.0,
+    "stop": "first stage boundary after cap; actual overrun recorded",
+    "incomplete_warmup": "no comparison arm starts"
+  },
+  "not_verified_by_plan": [
+    "training update branches",
+    "task success",
+    "algorithm advantage",
+    "server throughput",
+    "robot transfer",
+    "NX real-time performance"
+  ],
+  "training_authorized_by_execution": "Only an explicit future train command runs training"
+}
