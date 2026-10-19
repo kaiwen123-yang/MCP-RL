@@ -33,6 +33,7 @@ def main():
     parser.add_argument("--mode", choices=["locomotion", "tasks"], default="tasks")
     parser.add_argument("--methods", nargs="+")
     parser.add_argument("--conditions", nargs="+")
+    parser.add_argument("--response-model-root", type=Path)
     args = parser.parse_args()
     config = json.loads(args.config.read_text(encoding="utf-8"))
     args.output.mkdir(parents=True, exist_ok=False)
@@ -57,6 +58,7 @@ def main():
               "versions": {x: importlib.metadata.version(x) for x in ("mujoco", "torch", "numpy", "PyYAML")},
               "cpu_affinity": sorted(os.sched_getaffinity(0)), "nice": os.getpriority(os.PRIO_PROCESS, 0),
               "gpu_used": False, "automatic_monitoring": False, "training_updates": 0,
+              "policy_updates": 0, "response_model_updates_during_evaluation": 0,
               "policy_sha256_before": policy_sha,
               "config_sha256": hashlib.sha256(args.config.read_bytes()).hexdigest(),
               "cases": []}
@@ -84,7 +86,8 @@ def main():
                 sim.reset(settle_seconds=config["settle_seconds"])
                 initial = sim.state()
                 task_start_time = float(initial["time"])
-                planner = None if method == "waypoint" else CommandMPC(sim, config, method)
+                checkpoint = args.response_model_root/(method+".pt") if args.response_model_root and method in ("id_one_step", "compact_multistep") else None
+                planner = None if method == "waypoint" else CommandMPC(sim, config, method, checkpoint)
                 stage, hold, gate_crossed, all_clear, pushed = 0, 0.0, False, False, False
                 hold_tracker = TerminalHold()
                 collided, invalid_ground, fallen, success = False, False, False, False
@@ -189,6 +192,9 @@ def main():
                         "planning_candidates": planner.total_candidates if planner else 0,
                         "prediction_physics_steps": planner.predictor.counters["physics_steps"] if planner and planner.predictor else 0,
                         "prediction_policy_calls": planner.predictor.counters["policy_inferences"] if planner and planner.predictor else 0,
+                        "compact_response_steps": planner.compact.counters["response_steps"] if planner and planner.compact else 0,
+                        "compact_encoder_calls": planner.compact.counters["encoder_calls"] if planner and planner.compact else 0,
+                        "response_checkpoint_sha256": hashlib.sha256(checkpoint.read_bytes()).hexdigest() if checkpoint else None,
                         "training_updates": 0}
                 folder = args.output/(method+"--"+condition["name"])
                 folder.mkdir()

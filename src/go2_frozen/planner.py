@@ -12,9 +12,17 @@ from .task import (advance_stage, nominal_command, running_cost, terminal_surrog
 
 
 class CommandMPC:
-    def __init__(self, simulation, config, kind):
+    def __init__(self, simulation, config, kind, response_checkpoint=None):
+        if kind not in ("kinematic_mpc", "policy_rollout_mpc", "id_one_step", "compact_multistep"):
+            raise ValueError(f"Unknown response model: {kind}")
         self.config, self.kind = config, kind
         self.predictor = simulation.clone() if kind == "policy_rollout_mpc" else None
+        self.compact = None
+        if kind in ("id_one_step", "compact_multistep"):
+            from .compact import CompactPredictor
+            if response_checkpoint is None:
+                raise ValueError("Learned factual responses require their fixed checkpoint")
+            self.compact = CompactPredictor(response_checkpoint, device="cpu")
         self.rng = np.random.default_rng(config["planner"]["seed"])
         self.warm = np.zeros((config["planner"]["horizon"], 3))
         self.total_candidates = 0
@@ -23,6 +31,7 @@ class CommandMPC:
         cfg, state, cost = self.config, initial_state, 0.0
         if self.predictor is not None:
             self.predictor.restore(snapshot)
+        compact_state = snapshot if self.compact is not None else None
         first_command = first_feature = None
         for residual in residuals:
             stage = advance_stage(state, stage, cfg)
@@ -31,7 +40,11 @@ class CommandMPC:
             if fixed_command is not None:
                 command = fixed_command
             if self.predictor is None:
-                state = kinematic_step(state, command, cfg["macro_dt"])
+                if self.compact is None:
+                    state = kinematic_step(state, command, cfg["macro_dt"])
+                else:
+                    compact_state = self.compact.step(compact_state, command)
+                    state = compact_state.as_state()
                 # Heading-aware nominal rectangle only: it is not a guaranteed
                 # full-leg envelope. Final scoring uses actual full-body contact.
                 c, s = abs(np.cos(state["yaw"])), abs(np.sin(state["yaw"]))
@@ -57,6 +70,8 @@ class CommandMPC:
         cfg, p = self.config, self.config["planner"]
         state = simulation.state()
         snapshot = simulation.snapshot() if self.predictor is not None else None
+        if self.compact is not None:
+            snapshot = self.compact.start(state)
         mean = self.warm.copy()
         std = np.tile(p["residual_std"], (p["horizon"], 1))
         best = None
