@@ -1,0 +1,309 @@
+{
+  "check": "two deterministic 0.4 s physical branches from one complete nominal Go2 snapshot",
+  "checks": {
+    "same_snapshot_replay_bitwise_equal": true,
+    "states_bitwise_equal": true,
+    "caller_state_unchanged_after_first": true,
+    "caller_state_unchanged_after_second": true,
+    "weight_tensor_hash_unchanged": true,
+    "weight_file_hash_unchanged": true,
+    "old_simulator_source_unchanged": true,
+    "governor_called_only_at_two_command_boundaries_per_rollout": true,
+    "all_extra_physics_steps_counted": true,
+    "all_extra_inferences_counted": true,
+    "both_rollouts_preserve_scene_and_no_contact_or_fall": true,
+    "states_include_initial_and_two_boundaries": true,
+    "observations_include_initial_and_20_policy_outputs": true
+  },
+  "passed": true,
+  "snapshot_state": {
+    "array_hashes": {
+      "integration": "3227e669cfa60aaf2cb977c37bee792d8cbc6fa0c6fcb8482096f82c4116c621",
+      "sensor": "9fdef5c152cc7959429047612973eda0404d71971b363cd4e198eaa51dae5bac",
+      "qacc": "a55b11248523a9f867689304875e09d6185c9996ba83aeea6e47028f56bb83b5",
+      "warmstart": "a55b11248523a9f867689304875e09d6185c9996ba83aeea6e47028f56bb83b5",
+      "constraint_force": "5d8c9671b4007f4ed00089ccf3ea287efecdb3d2df3c666dc54f0ff117ffa33e",
+      "contact_position": "09dc970413d05d2aa99d20e09799442d415478f292a5cc126d15bfd871afeed0",
+      "last_action": "728b68732850c9c6d630facba43ecf4b4971eb9101510385b78f22ce358d7d10",
+      "history": "10b2a66888c58a54b277fe2e68fb6e87150c3cd2c537b7f6a2d84559017438c7",
+      "command": "9d908ecfb6b256def8b49a7c504e6c889c4b0e41fe6ce3e01863dd7b61a20aa0",
+      "q_des": "be51f4fdf35c67521b5a3a98e718be806e1019c5671c7d51138082afeb839138",
+      "last_tau_command": "d9ed5e7640378a4c0c0029277e60e9c2f6165ca0baa7e01793d2e0b500e0e613"
+    },
+    "policy_calls": 50,
+    "physics_steps": 2000,
+    "time": 1.9999999999998905,
+    "task_start_time": 1.9999999999998905,
+    "obstacle_contact_ever": false,
+    "fallen_ever": false
+  },
+  "nominal_scene_task_spec": {
+    "name": "nominal",
+    "start_y": 0.0,
+    "straight_length": 2.35,
+    "turn_radius": 0.65,
+    "door_y": 2.0,
+    "door_opening": 1.0,
+    "goal_y": 3.6,
+    "corridor_half_width": 0.9,
+    "timeout": 35.0,
+    "goal_position_tolerance": 0.22,
+    "goal_speed_tolerance": 0.12,
+    "goal_yaw_tolerance": 0.2,
+    "stop_hold_seconds": 1.0,
+    "footprint_half_length": 0.32,
+    "footprint_half_width": 0.18
+  },
+  "physics_interval": 0.001,
+  "policy_interval": 0.02,
+  "initial_warmup_physics_steps": 2000,
+  "initial_warmup_policy_inferences": 50,
+  "actual_task_physics_steps": 0,
+  "branches": [
+    {
+      "physics_steps": 400,
+      "policy_inference_calls": 20,
+      "simulation_seconds": 0.4,
+      "wall_seconds": 0.025148800001261407,
+      "obstacle_contact_ever": false,
+      "fallen_ever": false
+    },
+    {
+      "physics_steps": 400,
+      "policy_inference_calls": 20,
+      "simulation_seconds": 0.4,
+      "wall_seconds": 0.024594700000307057,
+      "obstacle_contact_ever": false,
+      "fallen_ever": false
+    }
+  ],
+  "diagnostic_budget": {
+    "purpose": "privileged same-state physical candidate diagnostic",
+    "rollouts_attempted": 2,
+    "rollouts_completed": 2,
+    "physics_steps": 800,
+    "policy_inference_calls": 40,
+    "wall_seconds": 0.04988400000002002,
+    "policy_training_updates": 0,
+    "model_training_updates": 0
+  },
+  "governor_call_task_times": [
+    0.0,
+    0.1999999999999782,
+    0.0,
+    0.1999999999999782
+  ],
+  "provenance": {
+    "policy_name": "robot_lab",
+    "weight_file": "policy.pt",
+    "weight_sha256_before": "9f14cb95e74ac9e5e30954da0fc0c33eaa41e337852ebed19fcee869279ade0b",
+    "weight_sha256_after": "9f14cb95e74ac9e5e30954da0fc0c33eaa41e337852ebed19fcee869279ade0b",
+    "tensor_sha256_before": "ba0d1767eefdf30b04210741aaa2566f11ac0870ee2c64da3c8740a9f4e03739",
+    "tensor_sha256_after": "ba0d1767eefdf30b04210741aaa2566f11ac0870ee2c64da3c8740a9f4e03739",
+    "config_sha256": "c7a89149d0dccd60ee63fed5c07aae7b9ec77c56f6de5689fb3325299c765832",
+    "base_config_sha256": "2b75dd70ed4e7924e732659ae501912d22f5b5210663764706e1cedd29a81a67",
+    "inference_calls": 50,
+    "training": false,
+    "any_parameter_requires_grad": false,
+    "optimizer_updates": 0,
+    "joint_names": [
+      "FR_hip_joint",
+      "FR_thigh_joint",
+      "FR_calf_joint",
+      "FL_hip_joint",
+      "FL_thigh_joint",
+      "FL_calf_joint",
+      "RR_hip_joint",
+      "RR_thigh_joint",
+      "RR_calf_joint",
+      "RL_hip_joint",
+      "RL_thigh_joint",
+      "RL_calf_joint"
+    ],
+    "observation_terms": [
+      "ang_vel",
+      "gravity_vec",
+      "commands",
+      "dof_pos",
+      "dof_vel",
+      "actions"
+    ],
+    "robot_mjcf_sha256": "08e3993fb2584b1a256d362fa260efe29c3782ca001b7c19a6aa5b80ff51bed4",
+    "physics_interval": 0.001,
+    "pd_interval": 0.005,
+    "policy_interval": 0.02,
+    "physics_steps": 2000,
+    "actuator_ctrlrange_policy_order": [
+      [
+        -23.7,
+        23.7
+      ],
+      [
+        -23.7,
+        23.7
+      ],
+      [
+        -45.43,
+        45.43
+      ],
+      [
+        -23.7,
+        23.7
+      ],
+      [
+        -23.7,
+        23.7
+      ],
+      [
+        -45.43,
+        45.43
+      ],
+      [
+        -23.7,
+        23.7
+      ],
+      [
+        -23.7,
+        23.7
+      ],
+      [
+        -45.43,
+        45.43
+      ],
+      [
+        -23.7,
+        23.7
+      ],
+      [
+        -23.7,
+        23.7
+      ],
+      [
+        -45.43,
+        45.43
+      ]
+    ],
+    "obstacles": [
+      {
+        "name": "south_wall",
+        "pos": [
+          1.5099999999999998,
+          -0.96,
+          0.45
+        ],
+        "size": [
+          2.51,
+          0.06,
+          0.45
+        ],
+        "rgba": [
+          0.35,
+          0.45,
+          0.55,
+          1.0
+        ]
+      },
+      {
+        "name": "east_wall",
+        "pos": [
+          3.96,
+          1.8,
+          0.45
+        ],
+        "size": [
+          0.05999999999999983,
+          2.7,
+          0.45
+        ],
+        "rgba": [
+          0.35,
+          0.45,
+          0.55,
+          1.0
+        ]
+      },
+      {
+        "name": "inner_horizontal",
+        "pos": [
+          0.55,
+          0.96,
+          0.45
+        ],
+        "size": [
+          1.55,
+          0.06,
+          0.45
+        ],
+        "rgba": [
+          0.35,
+          0.45,
+          0.55,
+          1.0
+        ]
+      },
+      {
+        "name": "inner_vertical",
+        "pos": [
+          2.04,
+          2.7,
+          0.45
+        ],
+        "size": [
+          0.06000000000000005,
+          1.8,
+          0.45
+        ],
+        "rgba": [
+          0.35,
+          0.45,
+          0.55,
+          1.0
+        ]
+      },
+      {
+        "name": "door_left",
+        "pos": [
+          2.3,
+          2.0,
+          0.65
+        ],
+        "size": [
+          0.19999999999999996,
+          0.06999999999999995,
+          0.65
+        ],
+        "rgba": [
+          0.35,
+          0.45,
+          0.55,
+          1.0
+        ]
+      },
+      {
+        "name": "door_right",
+        "pos": [
+          3.7,
+          2.0,
+          0.65
+        ],
+        "size": [
+          0.19999999999999996,
+          0.06999999999999995,
+          0.65
+        ],
+        "rgba": [
+          0.35,
+          0.45,
+          0.55,
+          1.0
+        ]
+      }
+    ],
+    "mujoco_version": "3.16.0",
+    "torch_version": "2.14.1+cpu",
+    "warmup_actual_seconds": 1.9999999999998905,
+    "fallen_ever": false,
+    "obstacle_contact_ever": false
+  },
+  "total_wall_seconds": 0.369776899999124
+}
