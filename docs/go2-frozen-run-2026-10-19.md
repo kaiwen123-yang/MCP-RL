@@ -8,6 +8,8 @@
 
 三个学习目标机制测试在服务器通过，无optimizer step。路点命令与理想速度MPC各三个连续完整工况已完成，6/6成功。策略闭环MPC在构造预测副本时发现MuJoCo 3.3.7不暴露Python级`mj_copyData`；改为该版本支持的`copy.copy(MjData)`完整复制。初次日志及6个已完成结果保留，仅续跑尚未执行的三个策略闭环MPC工况；不改任务、参数或既有结果。
 
+九条结果随后经独立轨迹复核，发现初版hold首个合格样本就加20ms：其中6条合格样本首末跨度已≥1秒，`waypoint/push_negative_y`、`kinematic_mpc/push_positive_y`、`policy_rollout_mpc/nominal`只有0.98秒。已改为实际时间戳差，仅补跑这三个受影响工况；旧记录完整保留为初版实现结果，其余六条无需重跑。成功严格指50Hz合格样本覆盖至少1秒，不声称采样间连续时间证明。另一个最终stdout数组序列化错误发生在三个policy-rollout结果与COMPLETED文件均写入之后，已修打印，不因此重跑。
+
 ## 冻结对象与可复现入口
 
 - 策略：`fan-ziqi/rl_sar@376d42c9b128f963ab08579762d5a216a976ce39` 的 `policy/go2/himloco/himloco.pt`、同目录配置和上层`base.yaml`。权重SHA256 `d9945f85a39944aaf241a67f7d2b25a15326a0222d0e503aeb05a7f188430509`。社区Go2适配，非HIM作者原生Go2检查点，非用户实机版本。

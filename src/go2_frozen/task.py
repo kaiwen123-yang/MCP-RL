@@ -61,6 +61,23 @@ def terminal_ok(state, config):
                 and abs(state["angular_velocity_world"][2]) <= limits["yaw_rate_tolerance"])
 
 
+class TerminalHold:
+    """Elapsed time between qualifying samples, not frame-count times dt."""
+    def __init__(self):
+        self.start_time = None
+        self.elapsed = 0.0
+
+    def observe(self, timestamp, qualifies):
+        if not qualifies:
+            self.start_time = None
+            self.elapsed = 0.0
+        else:
+            if self.start_time is None:
+                self.start_time = timestamp
+            self.elapsed = float(timestamp-self.start_time)
+        return self.elapsed
+
+
 def is_fallen(state, config):
     return bool(state["position"][2] < config["fall"]["minimum_height"]
                 or state["tilt"] > config["fall"]["maximum_tilt"])

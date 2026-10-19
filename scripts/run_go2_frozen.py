@@ -46,7 +46,7 @@ def main():
     torch.set_num_interop_threads(1)
     from go2_frozen.simulation import Go2Simulation
     from go2_frozen.task import (feature, advance_stage, nominal_command, running_cost,
-                                 terminal_ok, terminal_surrogate, is_fallen, kinematic_step, wrap)
+                                 terminal_ok, terminal_surrogate, is_fallen, kinematic_step, wrap, TerminalHold)
     from go2_frozen.planner import CommandMPC
     from go2_frozen.realized_learning import (ExecutionIdentity, ExecutedMacroBatch, PredictedMacroBatch,
                                               factual_response_loss, realized_macro_costs, realized_return_to_go)
@@ -86,6 +86,7 @@ def main():
                 task_start_time = float(initial["time"])
                 planner = None if method == "waypoint" else CommandMPC(sim, config, method)
                 stage, hold, gate_crossed, all_clear, pushed = 0, 0.0, False, False, False
+                hold_tracker = TerminalHold()
                 collided, invalid_ground, fallen, success = False, False, False, False
                 rows, traces, planned, actual, costs, resources, latencies = [], [], [], [], [], [], []
                 case_start = time.perf_counter()
@@ -127,7 +128,7 @@ def main():
                             gate_crossed = True
                         prior_y = y
                         all_clear = gate_crossed and frame["collision_aabb_min"][1] > config["gate"]["y"]+config["gate"]["half_thickness"]
-                        hold = hold + sim.policy_dt if stage == len(config["route"])-1 and all_clear and terminal_ok(frame, config) else 0.0
+                        hold = hold_tracker.observe(frame["time"], stage == len(config["route"])-1 and all_clear and terminal_ok(frame, config))
                         fallen |= is_fallen(frame, config)
                     traces.extend(frame_states)
                     measured_cost = config["macro_dt"]*running_cost(state, stage, config)
@@ -203,7 +204,7 @@ def main():
                   max_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
                   policy_sha256_after=hashlib.sha256(policy_path.read_bytes()).hexdigest())
     write_json(args.output/"execution.json", record)
-    print(json.dumps({k: v for k, v in record.items() if k != "cases" and k != "locomotion"}), flush=True)
+    print(json.dumps(plain({k: v for k, v in record.items() if k != "cases" and k != "locomotion"})), flush=True)
 
 
 if __name__ == "__main__":
