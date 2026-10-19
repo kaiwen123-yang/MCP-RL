@@ -1,0 +1,23 @@
+{
+  "protocol_id": "go2-compact-factual-v1",
+  "base_task_config": "configs/go2_frozen_tasks.json",
+  "policy_updates": 0,
+  "scene_changes": false,
+  "collection": {
+    "train_seeds": [101, 102, 103, 104, 105, 106],
+    "validation_seeds": [201, 202],
+    "seconds_per_episode": 30.0,
+    "command_noise_std": [0.18, 0.12, 0.3],
+    "noise_ar_coefficient": 0.65,
+    "force_condition": "nominal",
+    "terminate_on_fall": true,
+    "replace_failed_episodes": false,
+    "old_evaluation_trajectories_used_for_fitting": false
+  },
+  "model": {"history_shape": [6, 45], "sensors": 42, "context": 6, "encoder_width": 64, "hidden_size": 32, "response_outputs": 6, "ideal_response_residual": true},
+  "fit": {"initialization_seed": 311, "batch_seed": 419, "updates_per_model": 800, "batch_size": 64, "horizon": 5, "learning_rate": 0.001, "latent_consistency_weight": 1.0, "masked_suffix_windows": true, "checkpoint_selection": "fixed final update", "methods": ["id_one_step", "compact_multistep"], "normalization": "training episodes only"},
+  "evaluation_methods": ["id_one_step", "compact_multistep", "kinematic_mpc", "policy_rollout_mpc"],
+  "resource_budget": {"torch_threads": 1, "cpu_affinity": [6, 7], "nice": 10, "gpu": false},
+  "acceptance": {"complete_successes": 3, "macro_compute_budget_seconds": 0.2, "report_latency_p50_p95_max_and_all_misses": true, "report_task_time_cost_and_mechanical_resources": true},
+  "interpretation": "Both learned models are factual system identification, not joint policy learning. Known three-condition development task, not unseen-scene generalization. No task-self-cost in fitting. Full-state exact rollout remains privileged and uses full geometry; other three use the same nominal footprint."
+}
