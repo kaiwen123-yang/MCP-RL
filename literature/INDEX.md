@@ -1,5 +1,7 @@
 # 100 篇方法与理论文献索引 · v2
 
+2026-10-19独立专题：[PINN与传统模型控制、RL运动控制入门调研（2022—2026）](../notes/pinn-control-2026-10-19/INDEX.md)，[23项结构化登记](supplements/pinn-control-2026-10-19.json)。14篇主候选与9篇综述/理论/概念边界补充分开；2025大类分区为公开转录待官方复核；部分PINN机制待全文核查。未改主库/MR编号，未做复现或新实验。
+
 2026-10-16当前专题：[PhyFilter、FLAIR、Stable Koopman指定版本全文及2026 TAC/Automatica定向补查](../notes/control-frontier-2026-10-16/INDEX.md)。[三篇状态](supplements/control-2026-screening-2026-10-16.json)与[十项补查登记](supplements/control-frontier-2026-10-16.json)分别记录全文/关键段/元数据范围。Koopman正式PDF仍未取得；不改变主库数量或MR编号。
 
 2026-10-15控制理论结合：[11谱系检索与非线性原型](../notes/nonlinear-prototype-2026-10-15/INDEX.md)、[16条来源层级记录](supplements/control-theory-connections-2026-10-15.json)。其中2条复用、14条新检索登记，新增全文精读0；不改变MR和主库名额。实际MATLAB/Simulink结果见[非线性报告](../docs/nonlinear-prototype-report-2026-10-15.md)。
