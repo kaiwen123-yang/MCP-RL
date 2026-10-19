@@ -204,7 +204,30 @@ ESWA综述R01可在前后穿插，建立广义PIRL分类。RA-L双足B04很贴�
 
 上述为既有候选及版本线索的问答补核，不改变23项登记数、14篇主候选数量或阅读状态。
 
-## 检索与证据边界说明
+## 同日轻量创新空间筛查
+
+用户仅要求“大概看看”，本轮采用问题、失败分析、简单替代三种视角做定向查新，不扩成完整选题或实验计划。结论是仍有研究空间，但没有确认任何候选为文献空白；不以“PINN＋MPC/RL＋新平台”作为独立贡献，不改变已有主线，也不启动训练。
+
+最重要的新近邻是[Physics-informed Goal-Conditioned Reinforcement Learning under Hybrid Contact Dynamics](https://arxiv.org/abs/2605.30503)，2026-05-28预印本。作者已经处理Eikonal价值正则在接触任务中的失配，提出可控方向正则与分层表示，并有UR5e抓放实测。作者明确留下力/执行器约束、顺应性与阻抗适应等问题。因此“接触感知PINN/RL”或“给接触正则补实机”不能作为空白主张。[全文方法、实机与局限](https://arxiv.org/html/2605.30503v1)已做关键段核查，未复现或独立验算。
+
+| 候选问题（阅读者推断） | 可能有价值的具体推进 | 必须面对的强替代与停止条件 |
+|---|---|---|
+| 未知刚度/摩擦下，自由运动—接触—脱离如何限制真实力峰值并完成操作 | 物理约束进入学习/执行，使力限制与任务完成同时改善；不能仅加一个安全过滤器就归功于PINN | 阻抗/导纳＋在线辨识、自适应接触隐式MPC、残差RL＋相同安全层。若简单方法已消除问题或收益全来自安全层，不支持PINN机制 |
+| 物理先验失准后，如何用有限交互恢复有效控制 | 让可用物理与失配项的判断真正影响动作/学习，并解释适应代价与任务后果 | 参数辨识、名义模型＋小MLP/GP残差、同预算MBRL/PPO。只调物理loss权重或加ensemble不够 |
+| 哪些预测误差会改变动作选择，如何有针对性地修正 | 在可解释失配下研究动作排序/敏感度/任务后果，同时保持模型对真实数据的校准 | 普通辨识、任务导向模型、解析策略梯度与同信息PO/TO。与已有任务加权/共同学习高度相邻，具体机制未明确前暂缓；不能以PINN重新包装旧负结果 |
+
+已核近邻进一步压缩这些候选的泛化表述：
+
+- [Adaptive Contact-Implicit Model Predictive Control with Online Residual Learning](https://arxiv.org/abs/2310.09893)，ICRA2024、初稿2023：接触互补模型在线适应与Franka实机，未知接触＋在线残差＋MPC已有先例。
+- [Fast Contact-Implicit Model Predictive Control](https://doi.org/10.1109/TRO.2024.3351554)，T-RO2024、初稿2021：接触模式/时刻/力优化及四足实机，非PINN强对照。
+- [Physics-informed adaptive Kalman filter for contact force estimation in industrial robots considering model uncertainty](https://doi.org/10.1016/j.rcim.2026.103292)，RCIM2026：PINN动力学/摩擦与接触力观测，不能把“估计接触力”当空白。
+- [Correcting model misspecification in physics-informed neural networks (PINNs)](https://doi.org/10.1016/j.jcp.2024.112918)，JCP2024、初稿2023：残差DNN修正错误物理并表达不确定性，非机器人控制收益的自动证明。
+- [Where-to-Learn](https://arxiv.org/abs/2603.27317)，RA-L2026，DOI10.1109/LRA.2026.3678143：解析模型梯度引导PPO探索与机器人验证，属于广义物理学习，不能将“模型提供任务信号”泛称新机制。
+- [Co-Learning Port-Hamiltonian Systems and Optimal Energy-Shaping Control](https://arxiv.org/abs/2604.26172)，2026预印本：策略感知数据采集、模型与控制器交替共同学习已有先例。
+
+以上为增量查新来源，未占原23条入门书目名额。当前判断只支持继续核第一/第二类具体问题；第三类更贴近既有MPC规划/RL执行科学问题，但尚未形成新机制，保留已有负结果。既有方法的存在不否定后续问题价值，但需要具体方法差异与相同数据、信息和总计算预算下的完整任务证据。
+
+## 检索执行范围
 
 采用出版社/IEEE/正式会议论文集、作者机构库、arXiv版本记录与Crossref书目交叉核对，查询PINN+MPC、optimal control、passivity、Lyapunov、offline RL、AUV、biped、HJB/Eikonal等组合，并单独查Nature/Science域和顶会记录。没有宣称进行WoS/Scopus穷尽系统检索；学术检索专用MCP本会话未挂载，使用可用网页工具与公开原始来源。
 
