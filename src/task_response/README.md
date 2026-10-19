@@ -22,7 +22,9 @@ performance comparison. Its smaller planner budget is explicitly recorded.
 
 The explicit `train` command implements shared warmup, matched branches, fresh
 A/B/C collections, PPO/model updates, calibration, logging and checkpoints.
-**This branch has not been executed in the 2026-10-19 delivery.**
+The later authorized 2026-10-19 server pilot executed this branch for all four
+arms and three seeds. The candidate did not outperform uniform joint training;
+see [actual results](../../docs/server-pilot-results-2026-10-19.md).
 `evaluate` requires a checkpoint and can use `--planner cem` or `--planner to`.
 Those planners have different recorded work budgets; no automatic wall-time
 equivalence is implied. See the protocol for later authorized server commands.
