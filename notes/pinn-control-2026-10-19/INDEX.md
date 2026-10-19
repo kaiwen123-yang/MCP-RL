@@ -193,7 +193,18 @@ Eikonal与HJB精确等价依赖特殊动力学等条件，对一般机器人是�
 
 ESWA综述R01可在前后穿插，建立广义PIRL分类。RA-L双足B04很贴近运动控制，但先核清PINN形式再决定深入优先级。
 
-## 检索与证据边界
+## 后续问答 研究定位与机器狗机械臂先例
+
+同日补核：PINN更适合定位为物理信息学习/数值求解技术，通常嵌入MPC、非线性反馈或RL；本轮判断其为活跃交叉研究分支，不声称已形成与MPC等并列的成熟通用机器人控制体系。该判断不是产业份额统计。[足式MPC综述](https://doi.org/10.1080/01691864.2023.2168134)、[机器人PINN综述预印本](https://doi.org/10.2139/ssrn.5125543)提供分类背景。
+
+- **Kirin四足实机**：[Physics-informed Neural Network Predictive Control for Quadruped Locomotion，arXiv2503.06995v1](https://arxiv.org/html/2503.06995v1)，2025预印本。核到Eq23–24的拟合/物理残差和IV节实机；主实验为50kg负载前向0.2m/s小跑。辨识阶段才是垂直升降。不是只有仿真或静态姿态测试，也不外推为复杂地形、高速跳跃能力。与RA-L A06的精确版本关系仍待原始来源确认，不计为第二篇独立正式论文。
+- **Franka Panda实机**：[Liu等2024作者全文](https://arxiv.org/html/2305.05375v3)，Sec6.2/Fig17–20确认关节周期轨迹与末端螺旋轨迹跟踪；Eq3–8确认Lagrangian/Hamiltonian结构扩展及耗散、驱动建模。作为广义结构式物理学习先例，不改称经典配点残差PINN。
+- **Unitree A1实机**：[Phy-DRL ICLR2024正式全文](https://proceedings.iclr.cc/paper_files/paper/2024/file/1018ac24d7555bfab7b183afbd845d93-Paper-Conference.pdf)，Sec7.2、Appendix L、致谢部署说明及演示链接支持实机先例；是物理结构/模型控制器加RL，不是严格残差PINN。
+- **4DOF机械臂**：B05出版社摘要明确仿真和实机，但具体PINN残差仍未核；B01的PandaGym结果仍是仿真，不混同Franka实机。
+
+上述为既有候选及版本线索的问答补核，不改变23项登记数、14篇主候选数量或阅读状态。
+
+## 检索与证据边界说明
 
 采用出版社/IEEE/正式会议论文集、作者机构库、arXiv版本记录与Crossref书目交叉核对，查询PINN+MPC、optimal control、passivity、Lyapunov、offline RL、AUV、biped、HJB/Eikonal等组合，并单独查Nature/Science域和顶会记录。没有宣称进行WoS/Scopus穷尽系统检索；学术检索专用MCP本会话未挂载，使用可用网页工具与公开原始来源。
 
