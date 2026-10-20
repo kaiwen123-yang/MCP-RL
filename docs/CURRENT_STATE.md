@@ -4,7 +4,7 @@
 
 ## 当前结论与最新纠偏
 
-**正在执行：用户已授权一次固定服务器三组比较，尚无最终结果。** 北京时间2026-10-20 19:24开始，原`ddd8578`算法及配置保持，3seed×3组×4轮；独立环境、单线程CPU与低优先级，无GPU、自动检测或PR合并。进度与最终结果在[PR执行记录](https://github.com/kaiwen123-yang/MCP-RL/blob/codex/go2-frozen-long-task/docs/go2-adjoint-server-results-2026-10-20.md)。下文“尚未训练”是本次授权前的交付身份，不覆盖这一次固定运行；不得自动启动重复或扩展实验。
+**当前：旧服务器比较已停止，三组结果因优化器历史共享而不可公平比较。** `ddd8578`的common_state被Adam状态张量别名污染，网络起点哈希相同不足以证明完整初始化相同。另有BrokenPipe输出中断；已仅停止旧续接实验进程、保留全部结果与成本。用户已在项目对话中明确授权修复后按原3seed×3组×4轮完整重跑一次，不改场景、奖励、超参或预算，保留原参考跟随器参照。新运行尚未启动，PR保持Draft。详见[PR执行记录](https://github.com/kaiwen123-yang/MCP-RL/blob/codex/go2-frozen-long-task/docs/go2-adjoint-server-results-2026-10-20.md)。下文“尚未训练”属于更早交付身份；旧受污染数据也不能被写成科学负结果。
 
 **最新交付：第三组机制与统一可训练Go2已在未合并PR中实现，尚未训练。** 用户在审查后明确授权设计第三组、落实同套体系和公平方案，保持不训练、不改场景、不合并PR。实现位于[PR #1](https://github.com/kaiwen123-yang/MCP-RL/pull/1)，提交[`ddd8578`](https://github.com/kaiwen123-yang/MCP-RL/commit/ddd85783a75895f95bdb7f170edf92a08ca8cf6c)，没有把PR源码合入main。
 
