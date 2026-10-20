@@ -2,15 +2,20 @@
 
 更新：2026-10-20（Asia/Shanghai）。先读最新裁决与[本轮主线/PR审查](research-direction-audit-2026-10-20.md)。10月17日前逐轮历史原样保存在[历史快照](CURRENT_STATE_HISTORY_2026-10-17.md)；下文历史记录的“当前”“下一步”和阶段性禁令不自动成为本轮指令。
 
-## 当前结论与最新纠偏
 
-**当前：初始化独立性修复后的全新固定重跑正在执行，尚无最终结论。** 旧`ddd8578`批次因Adam状态跨组共享而不可公平比较，另有BrokenPipe输出中断；旧进程停止、全部记录与2301.821秒活跃成本保留。按用户新增授权，`c72ce05`修复完整状态深拷贝后，于20:43开始全新3seed×3组×4轮，原配置SHA、场景、奖励、超参及预算不变，不使用旧污染检查点。原跟随器同服务器三条件3/3成功，11.48/11.46/11.50秒，单列成本保留性能参照。PR保持Draft，输出写服务器文件、CPU资源限制不变，无自动检测。详见[新运行](https://github.com/kaiwen123-yang/MCP-RL/blob/codex/go2-frozen-long-task/docs/go2-adjoint-rerun-results-2026-10-20.md)与[旧失效记录](https://github.com/kaiwen123-yang/MCP-RL/blob/codex/go2-frozen-long-task/docs/go2-adjoint-server-results-2026-10-20.md)。
+## 当前：固定三组小试完成，当前伴随候选无稳定增益
 
-**最新交付：第三组机制与统一可训练Go2已在未合并PR中实现，尚未训练。** 用户在审查后明确授权设计第三组、落实同套体系和公平方案，保持不训练、不改场景、不合并PR。实现位于[PR #1](https://github.com/kaiwen123-yang/MCP-RL/pull/1)，提交[`ddd8578`](https://github.com/kaiwen123-yang/MCP-RL/commit/ddd85783a75895f95bdb7f170edf92a08ca8cf6c)，没有把PR源码合入main。
+修复后的有效批次完成3seed×3组×4轮，末轮均9/9成功；冻结/普通任务条件PPO＋辨识/伴随平均任务时间为13.529/13.084/13.904秒。候选较普通慢6.27%，机械功代理高2.03%；两个seed小幅改善，一个明显退化。同服务器原参考跟随器3/3成功、均值11.480秒，全部27条末轮轨迹均慢于对应参照。**停止当前候选追加训练及正增益主张，保留统一可训练体系与MPC规划、RL执行主线。** [完整结果与学习曲线](https://github.com/kaiwen123-yang/MCP-RL/blob/codex/go2-frozen-long-task/docs/go2-adjoint-rerun-results-2026-10-20.md) · [全部证据](https://github.com/kaiwen123-yang/MCP-RL/blob/codex/go2-frozen-long-task/notes/go2-adjoint-rerun-2026-10-20/INDEX.md)。
 
-具体候选为**规划续接伴随方向辅助PPO信用估计**：旧事实动作模型、旧反馈及余程价值给出当前12关节动作方向，在原PPO目标外加入带解析均值补偿的控制变量；f/g仍只拟合实际转移。普通组享有相同任务信息、actor容量、实际完整回报与模型/规划接口，候选改变有限数据的梯度估计，不改变理论目标或冒称新通用PG。[完整方法与证明](https://github.com/kaiwen123-yang/MCP-RL/blob/ddd85783a75895f95bdb7f170edf92a08ca8cf6c/docs/go2-adjoint-learning-method-2026-10-20.md)已明确Q-Prop/MFPG近邻和不保证降方差的边界。
+**学习效率和计算已经实际记录。** 两学习组全部24轮触发原KL停止，普通/伴随实际actor更新14/12次，不能称充分收敛；45个评价检查点均3/3成功，早期改善未稳定保持。干净批次含全部站立、采样、校准与评价共8,474,920物理步，活跃3690.286秒；伴随额外计算7.784秒。旧批次、新批次及原参照合计活跃约99.98分钟，全部已记录物理投入下界13,711,340步，旧中断未保存部分保持未知。没有扩训、场景/奖励/超参修改或自动检测，实验进程已退出，原项目环境版本一致。
 
-实现包含原生任务actor、共同MPC、Gaussian采集、跨阶段return、PPO、当前策略事实再辨识及评价循环。[三组协议](https://github.com/kaiwen123-yang/MCP-RL/blob/ddd85783a75895f95bdb7f170edf92a08ca8cf6c/docs/go2-adjoint-experiment-2026-10-20.md)为三seed、三组、四轮，状态PLANNED_NOT_RUN。唯一新增物理执行是一条原nominal无更新贯通：11.48秒完成、含站立13480物理步，actor/f/g/V参数前后相同，优化器/模型拟合均0。f/V未训练、方向为0，不能当第三组学习结果；更新分支已实现但未执行。[证据与运行入口](https://github.com/kaiwen123-yang/MCP-RL/blob/ddd85783a75895f95bdb7f170edf92a08ca8cf6c/notes/go2-adjoint-2026-10-20/INDEX.md)。
+**旧失效批次与干净结果分开。** 原`ddd8578`批次存在Adam状态跨组共享，另有BrokenPipe输出中断，旧结果与返工成本保留但不能排名。按用户新增授权，以`c72ce059eeecff376bea0649523f40b78c682a87`修复完整深拷贝后从新公共数据完整重跑一次。九个实际起点的网络与完整优化器状态均对应同seed common，配置SHA仍为`724e5385cb92c2bdfbc0a9b783ed5340f0634b66e65254223907135ab375ce20`。[旧失效记录](https://github.com/kaiwen123-yang/MCP-RL/blob/codex/go2-frozen-long-task/docs/go2-adjoint-server-results-2026-10-20.md)。
+
+**当前缺口是学习/模型/规划更新未稳定改善整程，而不是缺少局部检查。** 普通组已有相同任务信息、实际完整回报、容量与规划接口；第三组额外改变有限样本信用估计，不能以梯度非零替代任务收益。过门后的终点接近与停稳拖延有保存轨迹支持，但没有分离actor、模型及规划更新的因果份额。新实验需先明确改变机制的理由和可判别预期，本轮不自动开始，不加新模块掩盖结果。代码和证据在[Draft PR #1](https://github.com/kaiwen123-yang/MCP-RL/pull/1)，未合并；main只同步研究接续入口。
+
+### 本日机制设计的保留结论
+
+统一实现包括原生可训练actor、19维共同任务上下文、微步事实f、宏步事实g、余程V、共同MPC、Gaussian采集、跨阶段return、PPO、当前策略事实再辨识与完整评价。候选由旧事实模型、旧反馈和规划续接计算动作方向，用带解析补偿的控制变量辅助PPO；f/g只拟合事实，继承Q-Prop思想，不保证降方差或扩大最优策略集合。[方法规范](https://github.com/kaiwen123-yang/MCP-RL/blob/codex/go2-frozen-long-task/docs/go2-adjoint-learning-method-2026-10-20.md) · [固定协议](https://github.com/kaiwen123-yang/MCP-RL/blob/codex/go2-frozen-long-task/docs/go2-adjoint-experiment-2026-10-20.md)。设计交付时未训练，随后用户授权了上述小试；以下历史“未训练”和“下一步”不覆盖最新事实。
 
 ### 同日审查结论（上述机制交付之前）
 
