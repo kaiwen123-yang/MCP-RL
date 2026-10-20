@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "status": "READ_ONLY_SAVED_BATCH_KL_DIAGNOSIS",
+  "saved_run_config_file_sha256": "73190978c695fff8b9858fe986d4181a60293943bef79e39020bae8181a15413",
+  "fixed_source_configuration_sha256": "724e5385cb92c2bdfbc0a9b783ed5340f0634b66e65254223907135ab375ce20",
+  "saved_config_semantically_equals_fixed_source": true,
+  "config_hash_note": "The runner reserializes its copy of config.json; file bytes differ from the fixed source while parsed configuration is identical.",
+  "rounds": 24,
+  "one_update_rounds": 22,
+  "first_rejection_reconstruction_scope": "22 one-update rounds; two two-update rounds use post actor at the inferred final stop location without recreating intermediate actors",
+  "early_stopped_rounds": 24,
+  "all_batch_exact_kl_above_threshold": 24,
+  "trigger_exact_kl_above_threshold": 24,
+  "trigger_estimated_kl_above_threshold": 24,
+  "all_batch_exact_kl_range": [
+    0.02047179054162055,
+    0.11714269990205936
+  ],
+  "trigger_estimated_kl_range": [
+    0.023853976279497147,
+    0.11146703362464905
+  ],
+  "max_std_fraction": 4.0252572207752266e-07,
+  "max_stored_mean_old_logp_error": 2.86102294921875e-06,
+  "max_recomputed_old_mean_error": 8.58306884765625e-06,
+  "max_recomputed_old_logp_error": 0.0002689361572265625,
+  "max_last_metric_reconstruction_error": 2.637505531311035e-06,
+  "max_saved_adam_delta_rounding_residual": 2.366012281261861e-07,
+  "actual_actor_updates_total": 26,
+  "available_minibatch_slots_total": 2016,
+  "round1_same_batch_each_seed": {
+    "11": true,
+    "23": true,
+    "37": true
+  },
+  "arm_summaries": {
+    "ordinary": {
+      "rounds": 12,
+      "one_update_rounds": 10,
+      "analytic_kl_mean": 0.047644680693830495,
+      "analytic_kl_median": 0.037919007299833205,
+      "normalized_mean_shift_rms_median": 0.0794001761098076
+    },
+    "adjoint": {
+      "rounds": 12,
+      "one_update_rounds": 12,
+      "analytic_kl_mean": 0.05181067744959896,
+      "analytic_kl_median": 0.04916194007088897,
+      "normalized_mean_shift_rms_median": 0.09046892698025903
+    }
+  },
+  "interpretation_limits": [
+    "Analytic KL is old raw Gaussian to final raw Gaussian, averaged over saved old-policy states; it is not the KL of clipped physical actions.",
+    "The first rejected minibatch is reconstructed in 22 one-update rounds using the original per-branch generator. In two-update rounds only the final stop location is inferred from the update count and re-evaluated with the saved final actor; intermediate actors and the full earlier check sequence are not reconstructed.",
+    "In 22 one-update rounds the final actor directly exposes the one actual update. Two-update rounds expose only their cumulative change; intermediate policy weights were not saved or recreated.",
+    "Round1 arm pairs share data and initialization. Later arm differences also include different learned policies, optimizer histories and visited states.",
+    "This diagnoses the actual fixed run. It does not test alternative learning rates, standard deviations, rewards, normalization or KL thresholds."
+  ],
+  "additional_physics_steps": 0,
+  "optimizer_steps": 0,
+  "model_fits": 0,
+  "script_sha256": "31fe11b70948c0482e4f65f12e023b4a97a8cd2a3e90a76aff9987fe62d18b77"
+}
