@@ -146,7 +146,81 @@ def state_dict(system):
     })
 
 
+def optimizer_state_summary(system):
+    """Fingerprint every saved optimizer value, including Adam moments/steps.
+
+    Parameter identifiers are the deterministic indices in state_dict(), not
+    Python object addresses. Tensor bytes include dtype and shape, so the
+    fingerprint compares complete initial state without publishing the moments.
+    """
+    import torch
+
+    updater = system["updater"]
+    optimizers = {
+        "actor_optimizer": updater.actor_optimizer,
+        "value_optimizer": updater.value_optimizer,
+        "f_optimizer": system["f_optimizer"],
+        "g_optimizer": system["g_optimizer"],
+    }
+    result = {}
+    for name, optimizer in optimizers.items():
+        saved = optimizer.state_dict()
+        digest = hashlib.sha256()
+        tensor_count = 0
+
+        def visit(value):
+            nonlocal tensor_count
+            if isinstance(value, torch.Tensor):
+                tensor = value.detach().cpu().contiguous()
+                digest.update(b"tensor")
+                digest.update(str(tensor.dtype).encode())
+                digest.update(json.dumps(list(tensor.shape)).encode())
+                digest.update(tensor.reshape(-1).view(torch.uint8).numpy().tobytes())
+                tensor_count += 1
+            elif isinstance(value, dict):
+                digest.update(b"dict")
+                for key in sorted(value, key=lambda item: (type(item).__name__, repr(item))):
+                    visit(key)
+                    visit(value[key])
+            elif isinstance(value, (list, tuple)):
+                digest.update(type(value).__name__.encode())
+                digest.update(str(len(value)).encode())
+                for item in value:
+                    visit(item)
+            else:
+                digest.update(type(value).__name__.encode())
+                digest.update(json.dumps(value, allow_nan=False, separators=(",", ":")).encode())
+            digest.update(b"\0")
+
+        visit(saved)
+        steps = [
+            float(parameter_state["step"].item())
+            if isinstance(parameter_state["step"], torch.Tensor)
+            else float(parameter_state["step"])
+            for parameter_state in saved["state"].values() if "step" in parameter_state
+        ]
+        histogram = {}
+        for step in steps:
+            key = str(int(step)) if step.is_integer() else str(step)
+            histogram[key] = histogram.get(key, 0) + 1
+        result[name] = {
+            "sha256": digest.hexdigest(),
+            "parameter_groups": len(saved["param_groups"]),
+            "parameters_in_groups": sum(len(group["params"]) for group in saved["param_groups"]),
+            "initialized_parameter_states": len(saved["state"]),
+            "state_tensor_count": tensor_count,
+            "step_min": min(steps) if steps else None,
+            "step_max": max(steps) if steps else None,
+            "step_histogram": histogram,
+        }
+    return result
+
+
 def load_state(system, state):
+    # Optimizer.load_state_dict may retain same-device tensors from its input.
+    # Each branch owns its entire copy: neither the immutable template nor any
+    # other loaded branch can acquire this branch's Adam moments or step count.
+    state = copy.deepcopy(state)
     for name in ("actor", "dynamics", "response", "value"):
         system[name].load_state_dict(state[name])
     updater = system["updater"]
@@ -236,14 +310,24 @@ def train(config, assets, output):
                                     "calibration")
         common_fact_fit = fit_phase(common, config, behavior, calibration, seed + 2)
         common_state = state_dict(common)
+        common_optimizer_state = optimizer_state_summary(common)
         torch.save(common_state, prefix / "initialization.pt")
         write_json(prefix / "fit.json", {"value": common_value_fit, "facts": common_fact_fit})
+        write_json(prefix / "initialization_optimizer_state.json", common_optimizer_state)
         for arm in config["arms"]:
             system = make_system(config, assets, seed)
             load_state(system, common_state)
             arm_root = root / f"seed{seed}" / arm
             arm_root.mkdir(parents=True, exist_ok=False)
             write_json(arm_root / "initialization_hashes.json", hashes(system))
+            loaded_optimizer_state = optimizer_state_summary(system)
+            optimizer_matches = loaded_optimizer_state == common_optimizer_state
+            write_json(arm_root / "initialization_optimizer_state.json", {
+                "matches_common": optimizer_matches,
+                "optimizers": loaded_optimizer_state,
+            })
+            if not optimizer_matches:
+                raise RuntimeError("Loaded branch optimizer state differs from the common initialization")
             started, records, capped = perf_counter(), [], False
             collect_phase(system, config, assets, arm_root / "evaluation_round0",
                           seed + 20000, "evaluation")
