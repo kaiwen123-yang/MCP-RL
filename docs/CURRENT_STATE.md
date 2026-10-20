@@ -4,6 +4,8 @@
 
 ## 当前结论与最新纠偏
 
+**正在执行：用户已授权一次固定服务器三组比较，尚无最终结果。** 北京时间2026-10-20 19:24开始，原`ddd8578`算法及配置保持，3seed×3组×4轮；独立环境、单线程CPU与低优先级，无GPU、自动检测或PR合并。进度与最终结果在[PR执行记录](https://github.com/kaiwen123-yang/MCP-RL/blob/codex/go2-frozen-long-task/docs/go2-adjoint-server-results-2026-10-20.md)。下文“尚未训练”是本次授权前的交付身份，不覆盖这一次固定运行；不得自动启动重复或扩展实验。
+
 **最新交付：第三组机制与统一可训练Go2已在未合并PR中实现，尚未训练。** 用户在审查后明确授权设计第三组、落实同套体系和公平方案，保持不训练、不改场景、不合并PR。实现位于[PR #1](https://github.com/kaiwen123-yang/MCP-RL/pull/1)，提交[`ddd8578`](https://github.com/kaiwen123-yang/MCP-RL/commit/ddd85783a75895f95bdb7f170edf92a08ca8cf6c)，没有把PR源码合入main。
 
 具体候选为**规划续接伴随方向辅助PPO信用估计**：旧事实动作模型、旧反馈及余程价值给出当前12关节动作方向，在原PPO目标外加入带解析均值补偿的控制变量；f/g仍只拟合实际转移。普通组享有相同任务信息、actor容量、实际完整回报与模型/规划接口，候选改变有限数据的梯度估计，不改变理论目标或冒称新通用PG。[完整方法与证明](https://github.com/kaiwen123-yang/MCP-RL/blob/ddd85783a75895f95bdb7f170edf92a08ca8cf6c/docs/go2-adjoint-learning-method-2026-10-20.md)已明确Q-Prop/MFPG近邻和不保证降方差的边界。
