@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "identity": "Read-only localization in three existing fixed-final-round episode records",
+  "observations": [
+    {
+      "seed": 11,
+      "arm": "ordinary",
+      "round": 4,
+      "case": "nominal",
+      "success": true,
+      "source": "work/server-adjoint-20261020-r2/preserved/results/seed11/ordinary/round4/evaluation/summary.json",
+      "source_sha256": "72f8ba96b31389f2326ae87414e1d1b8374f46be8794dfc21503959e6005dd39",
+      "source_sha256_lf": "72f8ba96b31389f2326ae87414e1d1b8374f46be8794dfc21503959e6005dd39",
+      "episode_json_pointer": "/episodes/0",
+      "door_clear_event": {
+        "json_pointer": "/episodes/0/stage_exits/2",
+        "from": "door",
+        "to": "stop",
+        "time_seconds": 8.29999999999984
+      },
+      "complete_event": {
+        "json_pointer": "/episodes/0/stage_exits/3",
+        "from": "stop",
+        "to": "complete",
+        "time_seconds": 13.759999999996815
+      },
+      "completion_seconds": 13.759999999996815,
+      "door_clear_to_complete_seconds": 5.459999999996974
+    },
+    {
+      "seed": 11,
+      "arm": "adjoint",
+      "round": 4,
+      "case": "nominal",
+      "success": true,
+      "source": "work/server-adjoint-20261020-r2/preserved/results/seed11/adjoint/round4/evaluation/summary.json",
+      "source_sha256": "91c451dc91807f92311cf0c15be8618fc4c816dae509c8ef397a404aba23a29a",
+      "source_sha256_lf": "91c451dc91807f92311cf0c15be8618fc4c816dae509c8ef397a404aba23a29a",
+      "episode_json_pointer": "/episodes/0",
+      "door_clear_event": {
+        "json_pointer": "/episodes/0/stage_exits/2",
+        "from": "door",
+        "to": "stop",
+        "time_seconds": 8.439999999999763
+      },
+      "complete_event": {
+        "json_pointer": "/episodes/0/stage_exits/3",
+        "from": "stop",
+        "to": "complete",
+        "time_seconds": 26.440000000011885
+      },
+      "completion_seconds": 26.440000000011885,
+      "door_clear_to_complete_seconds": 18.000000000012122
+    },
+    {
+      "seed": 11,
+      "arm": "frozen",
+      "round": 4,
+      "case": "narrow",
+      "success": true,
+      "source": "work/server-adjoint-20261020-r2/preserved/results/seed11/frozen/round4/evaluation/summary.json",
+      "source_sha256": "e629a45c3c31fd5850f203c613a26d35146c131ccd64f9b335efa277a76f89f7",
+      "source_sha256_lf": "e629a45c3c31fd5850f203c613a26d35146c131ccd64f9b335efa277a76f89f7",
+      "episode_json_pointer": "/episodes/1",
+      "door_clear_event": {
+        "json_pointer": "/episodes/1/stage_exits/2",
+        "from": "door",
+        "to": "stop",
+        "time_seconds": 8.519999999999719
+      },
+      "complete_event": {
+        "json_pointer": "/episodes/1/stage_exits/3",
+        "from": "stop",
+        "to": "complete",
+        "time_seconds": 23.020000000007705
+      },
+      "completion_seconds": 23.020000000007705,
+      "door_clear_to_complete_seconds": 14.500000000007987
+    }
+  ],
+  "seed11_nominal_adjoint_minus_ordinary": {
+    "door_clear_seconds": 0.1399999999999224,
+    "completion_seconds": 12.68000000001507,
+    "door_clear_to_complete_seconds": 12.540000000015148
+  },
+  "interpretation": [
+    "The original Task calls the phase after the door-clear gate stop; it includes final goal approach and the one-second terminal hold. Its duration is not time spent motionless or braking alone.",
+    "These are selected descriptive observations from saved complete trajectories, not new interventions, independent repeats, or a causal allocation to actor, model, value or planner.",
+    "The frozen-actor example also has a prolonged final phase; this does not identify which shared update caused it."
+  ],
+  "additional_physics_steps": 0,
+  "additional_training_updates": 0
+}

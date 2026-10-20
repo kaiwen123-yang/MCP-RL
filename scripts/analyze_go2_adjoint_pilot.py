@@ -45,6 +45,12 @@ EPISODE_FIELDS = (
     "mechanical_work_proxy_J", "torque_squared_integral", "path_rms_m",
     "policy_steps", "source",
 )
+COLLECTION_EPISODE_FIELDS = (
+    "seed", "arm", "round", "phase", "behavior_mode", "case", "episode",
+    "complete", "success", "reason", "elapsed_seconds", "completion_seconds",
+    "real_return", "mechanical_work_proxy_J", "torque_squared_integral",
+    "path_rms_m", "policy_steps", "source",
+)
 
 
 def number(value):
@@ -119,6 +125,182 @@ def comparison_validity(evidence, explicit_reason=None):
             "Descriptive execution facts and costs only. No fair method ranking, "
             "learning-advantage claim, or paired causal/statistical inference is supported."),
     }
+
+
+def all_known_matches(values):
+    values = list(values)
+    if any(value is False for value in values):
+        return False
+    return True if values and all(value is True for value in values) else None
+
+
+def network_hash_match(left, right):
+    names = ("actor", "dynamics", "response", "value")
+    if not isinstance(left, dict) or not isinstance(right, dict):
+        return None
+    if any(not isinstance(item.get(name), str) or not item[name]
+           for item in (left, right) for name in names):
+        return None
+    return all(left[name] == right[name] for name in names)
+
+
+def optimizer_steps_match(item, expected):
+    if not isinstance(item, dict):
+        return None
+    states = number(item.get("initialized_parameter_states"))
+    if states is None:
+        return None
+    if expected == 0:
+        return (states == 0 and item.get("state_tensor_count") == 0
+                and item.get("step_min") is None and item.get("step_max") is None
+                and item.get("step_histogram") == {})
+    minimum, maximum = number(item.get("step_min")), number(item.get("step_max"))
+    histogram = item.get("step_histogram")
+    if minimum is None or maximum is None or not isinstance(histogram, dict):
+        return None
+    return (states > 0 and minimum == maximum == expected
+            and histogram == {str(expected): states})
+
+
+def audit_initializations(evidence, config):
+    """Compare saved startup JSON; no tensor/checkpoint loading."""
+    proof = evidence.read("initialization-checkpoint-proof.json")
+    proof_networks = (proof or {}).get("common_network_hashes", {})
+    expected_steps = {
+        "actor_optimizer": 0,
+        "value_optimizer": (
+            int(config["ppo"]["epochs"])
+            * math.ceil(len(config["cases"]) * int(config["common_warmup_steps_per_case"])
+                        / int(config["ppo"]["minibatch_size"]))),
+        "f_optimizer": int(config["model_fit_steps"]),
+        "g_optimizer": int(config["model_fit_steps"]),
+    }
+    seed_rows, branch_rows = [], []
+    for seed in config["seeds"]:
+        base = f"seed{seed}/common"
+        common_optimizer = evidence.read(f"{base}/initialization_optimizer_state.json")
+        common_network = evidence.read(f"{base}/initialization_hashes.json")
+        network_source = f"{base}/initialization_hashes.json" if common_network else None
+        if common_network is None and isinstance(proof_networks, dict):
+            common_network = proof_networks.get(str(seed))
+            if isinstance(common_network, dict):
+                network_source = "initialization-checkpoint-proof.json"
+        networks, optimizers = {}, {}
+        for arm in config["arms"]:
+            networks[arm] = evidence.read(f"seed{seed}/{arm}/initialization_hashes.json")
+            optimizers[arm] = evidence.read(f"seed{seed}/{arm}/initialization_optimizer_state.json")
+        reference_arm = next((arm for arm in config["arms"] if networks[arm] is not None), None)
+        reference_network = networks.get(reference_arm)
+        common_step_checks = {
+            name: optimizer_steps_match((common_optimizer or {}).get(name), step)
+            for name, step in expected_steps.items()}
+        seed_rows.append({
+            "seed": seed,
+            "common_optimizer_file_present": common_optimizer is not None,
+            "common_network_hashes_present": common_network is not None,
+            "common_network_hash_source": network_source,
+            "common_optimizer_summaries": common_optimizer,
+            "common_expected_step_checks": common_step_checks,
+            "common_expected_steps_match": all_known_matches(common_step_checks.values()),
+            "first_available_network_reference_arm": reference_arm,
+        })
+        for arm in config["arms"]:
+            payload = optimizers[arm]
+            actual = payload.get("optimizers") if isinstance(payload, dict) else None
+            loaded = actual if isinstance(actual, dict) else {}
+            row = {
+                "seed": seed, "arm": arm,
+                "network_hash_file_present": networks[arm] is not None,
+                "optimizer_state_file_present": payload is not None,
+                "common_optimizer_file_present": common_optimizer is not None,
+                "common_network_hashes_present": common_network is not None,
+                "common_network_hash_source": network_source,
+                "network_hashes_match_common": network_hash_match(networks[arm], common_network),
+                "network_hashes_match_first_available_arm": network_hash_match(
+                    networks[arm], reference_network),
+                "network_reference_arm": reference_arm,
+                "reported_optimizer_matches_common": (
+                    payload.get("matches_common") if isinstance(payload, dict) else None),
+            }
+            hash_checks, summary_checks, step_checks = [], [], []
+            for name, expected in expected_steps.items():
+                left, right = loaded.get(name), (common_optimizer or {}).get(name)
+                actual_hash = left.get("sha256") if isinstance(left, dict) else None
+                common_hash = right.get("sha256") if isinstance(right, dict) else None
+                hash_match = (actual_hash == common_hash if actual_hash and common_hash else None)
+                summary_match = (left == right if isinstance(left, dict)
+                                 and isinstance(right, dict) else None)
+                step_match = optimizer_steps_match(left, expected)
+                hash_checks.append(hash_match)
+                summary_checks.append(summary_match)
+                step_checks.append(step_match)
+                row.update({
+                    f"{name}_sha256": actual_hash,
+                    f"{name}_matches_common_hash": hash_match,
+                    f"{name}_matches_common_summary": summary_match,
+                    f"{name}_expected_step": expected,
+                    f"{name}_initialized_parameter_states": (
+                        left.get("initialized_parameter_states") if isinstance(left, dict) else None),
+                    f"{name}_step_min": left.get("step_min") if isinstance(left, dict) else None,
+                    f"{name}_step_max": left.get("step_max") if isinstance(left, dict) else None,
+                    f"{name}_expected_step_match": step_match,
+                })
+            row["actor_optimizer_empty"] = optimizer_steps_match(
+                loaded.get("actor_optimizer"), 0)
+            row["optimizer_hashes_match_common"] = all_known_matches(hash_checks)
+            row["optimizer_summaries_match_common"] = all_known_matches(summary_checks)
+            row["all_expected_warmup_steps_match"] = all_known_matches(step_checks)
+            reported = row["reported_optimizer_matches_common"]
+            calculated = row["optimizer_summaries_match_common"]
+            row["reported_matches_flag_agrees"] = (
+                reported == calculated if isinstance(reported, bool)
+                and isinstance(calculated, bool) else None)
+            row["network_and_optimizer_startup_matches_common"] = all_known_matches((
+                row["network_hashes_match_common"], row["optimizer_hashes_match_common"],
+                row["optimizer_summaries_match_common"], row["all_expected_warmup_steps_match"],
+                row["reported_optimizer_matches_common"],
+                row["reported_matches_flag_agrees"]))
+            branch_rows.append(row)
+    expected_count = len(config["seeds"]) * len(config["arms"])
+    full_checks = [row["network_and_optimizer_startup_matches_common"] for row in branch_rows]
+    any_mismatch = any(
+        row[key] is False for row in branch_rows for key in
+        ("network_hashes_match_common", "network_hashes_match_first_available_arm",
+         "optimizer_hashes_match_common", "optimizer_summaries_match_common",
+         "all_expected_warmup_steps_match", "reported_matches_flag_agrees"))
+    count_present = sum(row["network_hash_file_present"] and row["optimizer_state_file_present"]
+                        for row in branch_rows)
+    status = ("STARTUP_MISMATCH" if any_mismatch else
+              "ALL_DECLARED_STARTUP_RECORDS_MATCH" if all_known_matches(full_checks) is True
+              and count_present == expected_count else
+              "PARTIAL_STARTUP_EVIDENCE" if count_present else "MISSING_OPTIMIZER_STARTUP_EVIDENCE")
+    return {
+        "status": status,
+        "expected_branch_count": expected_count,
+        "branch_network_files_present": sum(row["network_hash_file_present"] for row in branch_rows),
+        "branch_optimizer_files_present": sum(row["optimizer_state_file_present"] for row in branch_rows),
+        "branches_with_both_files": count_present,
+        "all_declared_branches_have_both_files": count_present == expected_count,
+        "branches_optimizer_hash_match_common": sum(
+            row["optimizer_hashes_match_common"] is True for row in branch_rows),
+        "branches_network_hash_match_common": sum(
+            row["network_hashes_match_common"] is True for row in branch_rows),
+        "branches_with_all_expected_warmup_steps": sum(
+            row["all_expected_warmup_steps_match"] is True for row in branch_rows),
+        "all_declared_startup_records_match_common": all_known_matches(full_checks),
+        "expected_optimizer_steps": expected_steps,
+        "expected_steps_basis": "Fixed common B sample count, PPO epochs/minibatches and common model_fit_steps.",
+        "common_by_seed": seed_rows,
+        "branches": branch_rows,
+        "interpretation": [
+            "Missing files/comparisons remain null and cannot pass the nine-branch startup check.",
+            "Network hashes may be compared with a separate common checkpoint proof JSON; this analyzer never opens checkpoints.",
+            "First-available-branch network equality is reported separately and never substitutes for a missing common network fingerprint.",
+            "Startup hashes compare saved values; alone they do not prove absence of later tensor aliasing.",
+            "Old invalidated runs remain invalid even when some available network hashes match.",
+        ],
+        "checkpoint_or_pickle_loading": False,
+    }, branch_rows
 
 
 class Evidence:
@@ -468,6 +650,83 @@ def evaluation_rows(seed, arm, round_number, config, collection, source):
     return rows
 
 
+def saved_collection_episode_rows(seed, arm, round_number, phase, collection, source):
+    """Include actual saved episodes only, never slots inferred from the protocol."""
+    if collection is None or source is None:
+        return []
+    rows = []
+    for episode in collection.get("episodes", []):
+        complete = episode.get("complete") is True
+        reason = episode.get("reason")
+        success = (bool(episode.get("success"))
+                   if complete and reason != "sampling_cut" else None)
+        rows.append({
+            "seed": seed, "arm": arm, "round": round_number, "phase": phase,
+            "behavior_mode": collection.get("behavior"),
+            "case": episode.get("case"), "episode": episode.get("episode"),
+            "complete": complete, "success": success, "reason": reason,
+            "elapsed_seconds": number(episode.get("elapsed_seconds")),
+            "completion_seconds": (
+                number(episode.get("completion_seconds")) if success is True else None),
+            "real_return": number(episode.get("real_return")),
+            "mechanical_work_proxy_J": number(episode.get("mechanical_work_proxy_J")),
+            "torque_squared_integral": number(episode.get("torque_squared_integral")),
+            "path_rms_m": number(episode.get("path_rms_m")),
+            "policy_steps": number(episode.get("policy_steps")),
+            "source": source,
+        })
+    return rows
+
+
+def summarize_collection_episodes(rows):
+    groups = {}
+    for row in rows:
+        groups.setdefault((row["phase"], row["arm"], row["behavior_mode"]), []).append(row)
+    result = []
+    for (phase, arm, mode), group in sorted(groups.items(), key=lambda item: str(item[0])):
+        successes = [row for row in group if row["success"] is True]
+        failures = [row for row in group if row["success"] is False]
+        completed_outcomes = len(successes) + len(failures)
+        reasons = Counter(row["reason"] or "unspecified" for row in group)
+        result.append({
+            "phase": phase, "arm": arm, "behavior_mode": mode,
+            "phase_identity": (
+                "stochastic behavior B, not an independent test set" if phase == "behavior"
+                else "deterministic mean calibration C, not the held-out evaluation"
+                if phase == "calibration" else
+                "declared deterministic complete-task evaluation"),
+            "recorded_episode_rows": len(group),
+            "saved_collection_summary_count": len({row["source"] for row in group}),
+            "seeds_present": json.dumps(sorted({row["seed"] for row in group})),
+            "complete_episode_rows": sum(row["complete"] for row in group),
+            "successful_complete_episodes": len(successes),
+            "failed_complete_episodes": len(failures),
+            "sampling_cut_episodes": reasons.get("sampling_cut", 0),
+            "other_incomplete_or_unknown_outcomes": sum(
+                row["success"] is None and row["reason"] != "sampling_cut" for row in group),
+            "success_fraction_observed_completed_only": (
+                len(successes) / completed_outcomes if completed_outcomes else None),
+            "successful_completion_mean_seconds": mean(
+                row["completion_seconds"] for row in successes),
+            "observed_elapsed_sum_seconds_including_cuts": total(
+                row["elapsed_seconds"] for row in group),
+            "observed_return_sum_including_cuts": total(row["real_return"] for row in group),
+            "completed_return_mean": mean(
+                row["real_return"] for row in (*successes, *failures)),
+            "observed_work_sum_J_including_cuts": total(
+                row["mechanical_work_proxy_J"] for row in group),
+            "observed_torque_squared_sum_including_cuts": total(
+                row["torque_squared_integral"] for row in group),
+            "observed_policy_steps_including_cuts": total(row["policy_steps"] for row in group),
+            **{f"reason_{reason}": reasons.get(reason, 0)
+               for reason in ("success", "collision", "fall", "deadline", "sampling_cut", "unspecified")},
+            "reason_counts": json.dumps(dict(reasons), ensure_ascii=False, sort_keys=True),
+            "independent_test_sample_count": None,
+            "interpretation": "Descriptive episode inventory; episodes across training rounds/cases are not independent test replicates.",
+        })
+    return result
+
+
 def aggregate_evaluation(rows):
     completed = [r for r in rows if r["status"] == "COMPLETED"]
     successes = [r for r in completed if r["success"]]
@@ -601,17 +860,21 @@ def analyze(runs, output, config_override=None, execution_dir=None,
         config_path = config_override or ROOT / "configs/go2_adjoint_learning.json"
         config = json.loads(config_path.read_text(encoding="utf-8"))
         config_source = "declared_config_fallback; run config unavailable"
+    optimizer_initialization, initialization_rows = audit_initializations(evidence, config)
     failure = evidence.read("execution_failure.json")
     run_source = evidence.read("source.json")
     expected_final = int(config["rounds"])
     cases, seeds, arms = config["cases"], config["seeds"], config["arms"]
     eval_rows, round_rows, ledger, branches, common_rows, initializations = [], [], [], [], [], []
+    all_collection_episodes = []
     for seed in seeds:
         common_base = f"seed{seed}/common"
         common_ledger = []
         for phase in ("behavior", "calibration"):
             relative = f"{common_base}/{phase}/summary.json"
             collection = evidence.read(relative)
+            all_collection_episodes.extend(saved_collection_episode_rows(
+                seed, "common", 0, phase, collection, relative))
             common_ledger.append(execution.row(
                 seed, "common", 0, phase, "collection",
                 collection.get("stats") if collection else None, relative,
@@ -653,6 +916,8 @@ def analyze(runs, output, config_override=None, execution_dir=None,
                 else:
                     collection_path = f"{base}/round{round_number}/evaluation/summary.json"
                 collection, collection_source = load_collection(evidence, collection_path, record, "evaluation")
+                all_collection_episodes.extend(saved_collection_episode_rows(
+                    seed, arm, round_number, "evaluation", collection, collection_source))
                 source = collection_source or (record_source if collection else None)
                 rows = evaluation_rows(seed, arm, round_number, config, collection, source)
                 eval_rows.extend(rows)
@@ -665,6 +930,8 @@ def analyze(runs, output, config_override=None, execution_dir=None,
                     for phase in ("behavior", "calibration"):
                         relative = f"{base}/round{round_number}/{phase}/summary.json"
                         other, other_source = load_collection(evidence, relative, record, phase)
+                        all_collection_episodes.extend(saved_collection_episode_rows(
+                            seed, arm, round_number, phase, other, other_source))
                         phase_ledger.append(execution.row(
                             seed, arm, round_number, phase, "collection",
                             other.get("stats") if other else None, other_source or record_source,
@@ -863,7 +1130,9 @@ def analyze(runs, output, config_override=None, execution_dir=None,
                         "FAILED_OR_INTERRUPTED" if current_failure else
                         "PARTIAL_SNAPSHOT" if any_evidence else "NOT_RUN")
     status = execution_status if comparison_valid else "INVALID_COMPARISON"
-    for rows in (eval_rows, round_rows, by_arm, branches):
+    collection_by_phase_arm = summarize_collection_episodes(all_collection_episodes)
+    for rows in (eval_rows, round_rows, by_arm, branches,
+                 all_collection_episodes, collection_by_phase_arm):
         for row in rows:
             row["comparison_valid"] = comparison_valid
             row["not_inferential"] = not comparison_valid
@@ -911,6 +1180,22 @@ def analyze(runs, output, config_override=None, execution_dir=None,
         "sum_recorded_branch_wall_seconds_excluding_shared_common": total(
             b["reported_branch_wall_seconds_including_round0"] for b in branches),
         "initialization_parameter_identity": initializations,
+        "initialization_network_and_optimizer_identity": optimizer_initialization,
+        "all_saved_collection_episodes": {
+            "recorded_episode_rows": len(all_collection_episodes),
+            "saved_collection_summary_count": len({row["source"] for row in all_collection_episodes}),
+            "successful_complete_episodes": sum(row["success"] is True for row in all_collection_episodes),
+            "failed_complete_episodes": sum(row["success"] is False for row in all_collection_episodes),
+            "sampling_cut_episodes": sum(row["reason"] == "sampling_cut" for row in all_collection_episodes),
+            "by_phase_and_arm": collection_by_phase_arm,
+            "interpretation": [
+                "Only episodes in saved collection summary.json files are included; no missing slots are invented.",
+                "Common and branch behavior B use stochastic Gaussian actions; calibration C and evaluation use the deterministic mean.",
+                "Sampling cuts retain elapsed time, return and resource usage but have null success and completion time.",
+                "Unfinished or unsaved episodes in interrupted phases remain unknown, not zero or failed episodes.",
+                "Training/calibration episodes and repeated known cases are not independent held-out test samples.",
+            ],
+        },
         "root_failure": ({"status": failure.get("status"),
                           "exception_type": failure.get("exception_type")} if failure else None),
         "evidence_issues": [*evidence.issues, *execution.issues,
@@ -929,6 +1214,10 @@ def analyze(runs, output, config_override=None, execution_dir=None,
     write_csv(output / "cost_ledger.csv", ledger)
     write_csv(output / "branch_costs.csv", branches)
     write_csv(output / "shared_common_costs.csv", common_rows)
+    write_csv(output / "initialization_startups.csv", initialization_rows)
+    write_csv(output / "all_collection_episodes.csv", all_collection_episodes, COLLECTION_EPISODE_FIELDS)
+    write_csv(output / "all_collection_episodes_by_phase_arm.csv", collection_by_phase_arm,
+              ("phase", "arm", "behavior_mode", "recorded_episode_rows"))
     write_csv(output / "execution_event_reconciliation.csv", execution.comparisons,
               ("path", "operation", "field", "runner_value", "event_value", "matched",
                "runner_source", "event_source"))

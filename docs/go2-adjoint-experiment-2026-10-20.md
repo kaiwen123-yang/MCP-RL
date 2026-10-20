@@ -1,6 +1,6 @@
 # Go2伴随信用候选：三组公平比较方案
 
-日期：2026-10-20。状态：**方案与训练入口已实现，PLANNED_NOT_RUN。** 本轮禁止训练与模型拟合；没有改变场景、原成功判据或合并PR。配置：[go2_adjoint_learning.json](../configs/go2_adjoint_learning.json)；方法：[主说明](go2-adjoint-learning-method-2026-10-20.md)。
+日期：2026-10-20。状态：**预先固定协议，已按后续用户授权完成小试。** 本文参数与比较口径保持运行前版本；设计阶段曾禁止训练，之后执行与修复重跑见[最终报告](go2-adjoint-rerun-results-2026-10-20.md)。没有改变场景、原成功判据或合并PR。配置：[go2_adjoint_learning.json](../configs/go2_adjoint_learning.json)；方法：[主说明](go2-adjoint-learning-method-2026-10-20.md)。
 
 ## 科学问题与主比较
 

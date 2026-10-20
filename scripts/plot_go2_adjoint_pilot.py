@@ -2,6 +2,7 @@
 
 Example:
   python scripts/plot_go2_adjoint_pilot.py --analysis notes/pilot/analysis --output notes/pilot/figures
+  # Optionally add --reference <same-environment-follower.json>.
 
 Each column is one training seed. Cases are known development conditions, not
 independent generalization trials. Failed elapsed times never become completion
@@ -125,6 +126,51 @@ def load_analysis(directory):
                     "common_wall_basis": row.get("common_wall_basis") or None,
                 })
     return summary, points, (summary_path, rounds_path), len(rows)
+
+
+def load_reference(path, protocol):
+    if path is None:
+        return None
+    record = json.loads(path.read_text(encoding="utf-8-sig"))
+    cases = record.get("cases")
+    if not isinstance(cases, list) or not cases:
+        raise ValueError("--reference must contain a nonempty cases array.")
+    names = [case["case"] for case in cases]
+    if len(names) != len(set(names)) or set(names) != set(protocol["known_cases"]):
+        raise ValueError("Reference must contain each declared development case exactly once.")
+    normalized, times = [], []
+    for case in cases:
+        if not isinstance(case.get("success"), bool):
+            raise ValueError("Each reference case must declare a boolean success.")
+        time = numeric(case.get("completion_seconds")) if case["success"] else None
+        if case["success"] and (time is None or time <= 0):
+            raise ValueError("A successful reference case requires its actual completion_seconds.")
+        if time is not None:
+            times.append(time)
+        normalized.append({"case": case["case"], "success": case["success"],
+                           "completion_seconds": time})
+    calculated = sum(times) / len(times) if times else None
+    reported = numeric(record.get("mean_success_completion_seconds"))
+    if reported is not None and (calculated is None or not math.isclose(
+            reported, calculated, rel_tol=1e-8, abs_tol=1e-8)):
+        raise ValueError("Reference mean disagrees with its successful-case completion times.")
+    return {
+        "label": record.get("label", "Fixed follower"),
+        "case_count": len(cases),
+        "success_count": len(times),
+        "cases": normalized,
+        "mean_success_completion_seconds": calculated,
+        "measurement_identity": record.get("measurement_identity", record.get("identity")),
+        "separate_cost_record": record.get("cost", record.get("costs", record.get("budget"))),
+        "source_file": path.name,
+        "source_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "training_cost_added_to_method_axes": False,
+        "independent_reference_evaluations": len(cases),
+        "interpretation": (
+            "One fixed, untrained evaluation of the declared cases in the current server/runtime. "
+            "The same horizontal guide is repeated across seed panels, not counted as new "
+            "seed-level replicates or nine evaluations. Its measurement cost is separate."),
+    }
 
 
 def style_for(arm, index):
@@ -255,7 +301,7 @@ def layout_check(figure):
             "visual_inspection_required": True}
 
 
-def make_figure(summary, points, budget):
+def make_figure(summary, points, budget, reference=None):
     protocol, spec = summary["protocol"], AXES[budget]
     seeds, arms = protocol["seeds"], protocol["arms"]
     columns = len(seeds)
@@ -279,6 +325,12 @@ def make_figure(summary, points, budget):
                               markersize=4.3))
     handles.append(Line2D([], [], color="#222222", marker="x", linestyle="none",
                           markersize=5, label="At least one failed case"))
+    reference_time = (reference["mean_success_completion_seconds"] if reference else None)
+    reference_style = dict(color="#009E73", linestyle="-.", linewidth=1.1)
+    if reference_time is not None:
+        handles.append(Line2D([], [], **reference_style, label=(
+            f"Fixed follower ({reference_time:.2f} s; "
+            f"{reference['success_count']}/{reference['case_count']})")))
     figure.legend(handles=handles, loc="upper center",
                   bbox_to_anchor=(0.5, 0.905), ncol=2, frameon=False,
                   columnspacing=2.2, handlelength=2.8)
@@ -289,6 +341,8 @@ def make_figure(summary, points, budget):
     observed_times = [p["successful_completion_mean_seconds"] for p in points
                       if p["complete_evaluation"] and p[budget] is not None
                       and p["successful_completion_mean_seconds"] is not None]
+    if reference_time is not None:
+        observed_times.append(reference_time)
     maximum_time = max(observed_times, default=1.0)
     expected = len(protocol["known_cases"]) * int(protocol["evaluation_episodes_per_case"])
     ticks = np.linspace(0.0, 1.0, expected + 1) if expected <= 6 else np.linspace(0, 1, 5)
@@ -352,6 +406,8 @@ def make_figure(summary, points, budget):
         upper.set_ylim(-0.06, 1.06)
         upper.set_yticks(ticks, labels)
         lower.set_ylim(0.0, maximum_time * 1.13)
+        if reference_time is not None:
+            lower.axhline(reference_time, **reference_style, zorder=2)
         lower.yaxis.set_major_locator(MaxNLocator(4, min_n_ticks=2))
         lower.set_xlabel(spec["label"], labelpad=5)
         if not has_success_axis_point:
@@ -372,7 +428,7 @@ def make_figure(summary, points, budget):
                    "calibration, evaluation and all stand warmups."
                    if budget == "physics" else
                    "Method elapsed intervals + one shared preparation interval; "
-                   "unlogged loading/setup is excluded.")
+                   "loading/setup and recovery downtime are excluded.")
     footer = (
         f"Points: rounds 0–{protocol['rounds']}; each seed has {expected} known-case evaluations per round.\n"
         "Lines break for NOT_RUN, incomplete evaluation, missing cost or no successful time. "
@@ -381,7 +437,10 @@ def make_figure(summary, points, budget):
         "Successful-time means are conditional on success; read with the success panel. "
         "No seed pooling or confidence intervals."
     )
-    figure.text(0.105, 0.13, footer, ha="left", va="top", fontsize=6.7,
+    if reference is not None:
+        footer += (f"\nFollower reference: the same {reference['case_count']} fixed cases once, "
+                   "no training; repeated guide, not extra seed replicates. Cost is separate.")
+    figure.text(0.105, 0.15 if reference else 0.13, footer, ha="left", va="top", fontsize=6.7,
                 linespacing=1.5, color="#444444")
     return figure, counts
 
@@ -391,7 +450,7 @@ def write_json(path, value):
                     encoding="utf-8")
 
 
-def plot_analysis(analysis, output, dpi):
+def plot_analysis(analysis, output, dpi, reference_path=None):
     summary, points, input_paths, raw_rows = load_analysis(analysis)
     if summary.get("comparison_valid") is False or summary.get("status") == "INVALID_COMPARISON":
         reasons = summary.get("comparison_validity", {}).get("reasons", [])
@@ -399,14 +458,19 @@ def plot_analysis(analysis, output, dpi):
         raise ValueError(
             f"INVALID_COMPARISON: no method-comparison figures will be generated. {detail} "
             "Retain the descriptive CSV files and cost ledger; use a separate analysis directory for the repaired run.")
+    if summary.get("comparison_valid") is not True:
+        raise ValueError(
+            "Analysis lacks an explicit comparison_valid field. Re-run the current analyzer "
+            "with the saved comparison-validity marker before generating method figures.")
     if not any(p["complete_evaluation"] for p in points):
         raise ValueError("No complete actual evaluation is available; no result figures generated.")
+    reference = load_reference(reference_path, summary["protocol"])
     setup_style()
     output.mkdir(parents=True, exist_ok=True)
     prefix = "" if summary["status"] == "COMPLETED" else "snapshot_"
     plots, layout = {}, {}
     for budget in AXES:
-        figure, counts = make_figure(summary, points, budget)
+        figure, counts = make_figure(summary, points, budget, reference)
         check = layout_check(figure)
         if check["text_outside_canvas"]:
             plt.close(figure)
@@ -436,6 +500,7 @@ def plot_analysis(analysis, output, dpi):
         "plot_script_sha256_lf": hashlib.sha256(
             Path(__file__).read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
         "profile": data_profile(summary, points, raw_rows),
+        "fixed_same_environment_reference": reference,
         "plots": plots,
         "layout_check": layout,
         "interpretation": [
@@ -466,6 +531,8 @@ def main():
     parser.add_argument("--output", type=Path, required=True,
                         help="Figure directory; use a distinct directory for snapshots")
     parser.add_argument("--dpi", type=int, default=600)
+    parser.add_argument("--reference", type=Path,
+                        help="Separate same-server/runtime fixed follower JSON; costs are not added to training axes")
     args = parser.parse_args()
     if not args.analysis.is_dir():
         parser.error("--analysis must be an existing analysis directory")
@@ -473,7 +540,7 @@ def main():
         parser.error("--output must differ from --analysis")
     if args.dpi < 300:
         parser.error("--dpi must be at least 300")
-    result = plot_analysis(args.analysis, args.output, args.dpi)
+    result = plot_analysis(args.analysis, args.output, args.dpi, args.reference)
     print(json.dumps({"source_status": result["source_status"],
                       "plots": result["plots"], "additional_physics_steps": 0},
                      ensure_ascii=False))
