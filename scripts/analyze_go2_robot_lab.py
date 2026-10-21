@@ -23,7 +23,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from go2_frozen.task import Task, TaskSpec, wrap_angle
+from go2_robot_lab.task import Task, TaskSpec, wrap_angle
 
 COLORS = {"mpc": "#0072B2", "follower": "#D55E00"}
 STYLES = {"mpc": "-", "follower": "--"}
@@ -362,7 +362,7 @@ def write_readme(out, metrics, stages):
                   "- 图 3：nominal 真实执行与沿同一实际记录命令的名义模型开环回放；下方分别是每 0.2 s 从实际状态重置和从初态单次开始的误差。回放不是另一条完整机器人仿真，也没有执行未采纳的候选计划。",
                   "- `figure_layout_audit.json`：出图布局检查；PNG 600 dpi、SVG 矢量和灰度预览并存。", "",
                   "真实求解时延只说明本机这次计算低于 0.2 s 指令周期。仿真物理时钟在求解时暂停，尚未验证带计算延迟的墙钟闭环部署。`planner_model_steps` / `cem_candidate_model_steps` 只计 CEM 候选评分，控制器每次另有 20 步反馈初值和 20 步最终最优序列预测；这些 40 步在 `other_controller_model_steps` 单列，真实求解耗时已包含。runner 为日志评价另做的两次名义步不在控制器求解预算内。真值机体位姿/速度由仿真器提供；公开策略原观测接口保持不变。", "",
-                  "```powershell", "work/venv/Scripts/python.exe scripts/analyze_go2_frozen.py", "```", "",
+                  "```powershell", "work/venv/Scripts/python.exe scripts/analyze_go2_robot_lab.py", "```", "",
                   "图型按 SciPilot 科研绘图工作流选择：完整路径与连续时间线直接展示原始结果，避免小样本均值柱、显著性与双 Y 轴。无训练、无新仿真、无新增物理约束。"])
     (out / "README.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 

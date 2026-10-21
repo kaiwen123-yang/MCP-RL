@@ -4,6 +4,8 @@
 
 已实现并实际运行过策略学习、真实响应再辨识、完整任务评价及后续不训练的MPC修复。旧文中的“学习未运行”“没有检查点”只描述10月20日实现交付时点，不能作为当前状态。
 
+当前实现依赖独立的 [`go2_robot_lab`](../go2_robot_lab/README.md) 模块，使用 robot_lab 的45维单帧策略接口。main 原有 HIM 的六帧历史接口保留在 `go2_frozen`；两套策略、物理适配与结果分别保留。下方历史记录中的旧模块名和已保存结果的来源哈希维持原时点身份。
+
 - 当前研究决定：[CURRENT_STATE](../../docs/CURRENT_STATE.md)。
 - 固定任务与预算：[go2_continuation.json](../../configs/go2_continuation.json)。
 - 现有检查点的完整评价入口：[validate_go2_mpc_repair.py](../../scripts/validate_go2_mpc_repair.py)，默认先验MPC；`--response-mode local_response`使用实测校正的局部学得响应。两种方式均不训练。

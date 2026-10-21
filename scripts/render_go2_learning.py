@@ -26,8 +26,8 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 import torch
 
-from go2_frozen.simulator import Go2Sim
-from go2_frozen.task import Task, make_cases
+from go2_robot_lab.simulator import Go2Sim
+from go2_robot_lab.task import Task, make_cases
 
 
 ARMS = (("initial", "共同起点", "initial/evaluation", "#91a4b6"),

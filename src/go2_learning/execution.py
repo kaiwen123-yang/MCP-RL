@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from go2_frozen.simulator import Go2Sim
+from go2_robot_lab.simulator import Go2Sim
 
 
 class LearningGo2Sim(Go2Sim):

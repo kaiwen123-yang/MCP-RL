@@ -1,4 +1,6 @@
-# Frozen Go2 task baseline
+# Frozen Go2 robot_lab task baseline
+
+The current Python package is `go2_robot_lab`; the runner and saved-result analyzer are `scripts/run_go2_robot_lab.py` and `scripts/analyze_go2_robot_lab.py`. This route uses the public robot_lab policy with a 45-dimensional observation and the rl_sar_zoo robot model. The separate HIM implementation keeps the `go2_frozen` package and its original entry points. Historical evidence retains the package paths and source hashes recorded when each experiment ran.
 
 This directory runs the **complete floating-base Go2 / 12-joint / contact simulation**, with a frozen public locomotion policy. No policy/model training, external disturbance, robot SDK, hardware connection, or automatic background job is included.
 
@@ -14,7 +16,7 @@ From the repository root, Windows PowerShell:
 python -m venv work/go2-venv
 & work/go2-venv/Scripts/python.exe -m pip install -r requirements-go2-frozen.txt
 & work/go2-venv/Scripts/python.exe scripts/prepare_go2_frozen_assets.py
-& work/go2-venv/Scripts/python.exe scripts/run_go2_frozen.py --controller mpc --case nominal --output outputs/go2-reproduction --raw-output work/go2-reproduction --video
+& work/go2-venv/Scripts/python.exe scripts/run_go2_robot_lab.py --controller mpc --case nominal --output outputs/go2-reproduction --raw-output work/go2-reproduction --video
 ```
 
 Asset preparation clones two pinned public repositories into ignored `work/go2-public-assets/`. It reads inference weights and robot descriptions but does not execute upstream deployment scripts. Use an authenticated git/gh setup. The source policy and model have separate provenance; this is a newly constructed frozen evaluation, not the policy author's original training-environment reproduction or the user's physical robot.
@@ -24,7 +26,7 @@ Use a fresh output root for each complete evaluation. Existing run directories a
 ```powershell
 foreach ($caseName in @('nominal','narrow','wide')) {
   foreach ($controllerName in @('mpc','follower')) {
-    & work/go2-venv/Scripts/python.exe scripts/run_go2_frozen.py --controller $controllerName --case $caseName --output outputs/go2-six-runs --raw-output work/go2-six-runs --video
+    & work/go2-venv/Scripts/python.exe scripts/run_go2_robot_lab.py --controller $controllerName --case $caseName --output outputs/go2-six-runs --raw-output work/go2-six-runs --video
     if ($LASTEXITCODE -ne 0) { throw "Evaluation failed" }
   }
 }

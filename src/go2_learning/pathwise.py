@@ -18,7 +18,7 @@ from time import perf_counter
 
 import torch
 
-from go2_frozen.task import Task, make_cases
+from go2_robot_lab.task import Task, make_cases
 
 from .mission import mission_cost
 from .state import advance_memory, task_active, task_context

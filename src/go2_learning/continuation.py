@@ -11,7 +11,7 @@ from dataclasses import dataclass
 import numpy as np
 import torch
 
-from go2_frozen.task import Task, TaskSpec, make_cases, wrap_angle
+from go2_robot_lab.task import Task, TaskSpec, make_cases, wrap_angle
 
 
 @dataclass(frozen=True)

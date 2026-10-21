@@ -2,7 +2,7 @@
 
 No training is performed on import, by plan, or by verify. Raw trajectories and
 derived policy checkpoints stay in work/. The original scene and success rules
-are imported unchanged from go2_frozen.task.
+are imported unchanged from go2_robot_lab.task.
 """
 from __future__ import annotations
 
@@ -48,9 +48,9 @@ def identity():
              ROOT / "configs/go2_long_horizon.json",
              ROOT / "scripts/run_go2_learning.py",
              *sorted((ROOT / "src/go2_learning").glob("*.py")),
-             ROOT / "src/go2_frozen/task.py",
-             ROOT / "src/go2_frozen/simulator.py",
-             ROOT / "src/go2_frozen/fair_control.py"]
+             ROOT / "src/go2_robot_lab/task.py",
+             ROOT / "src/go2_robot_lab/simulator.py",
+             ROOT / "src/go2_robot_lab/fair_control.py"]
     return {str(p.relative_to(ROOT)).replace("\\", "/"):
             hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
             for p in paths}
@@ -247,7 +247,7 @@ def load_state(system, state):
 
 def directions(system, batch, config):
     import torch
-    from go2_frozen.task import make_cases
+    from go2_robot_lab.task import make_cases
     from .learning import continuation_direction
     result = torch.zeros_like(batch["raw_action"])
     counters = {"adjoint_forward_steps": 0, "adjoint_reverse_steps": 0,
@@ -281,7 +281,7 @@ def save_collection(path, collection):
 
 
 def collect_phase(system, config, assets, path, seed, mode):
-    from go2_frozen.planner import MPCConfig
+    from go2_robot_lab.planner import MPCConfig
     from .collection import collect
     stochastic = mode in ("warmup", "behavior")
     steps = (config["common_warmup_steps_per_case"] if mode == "warmup"
@@ -474,7 +474,7 @@ def compare_one_round(config, assets, output, checkpoint, seed):
 def verify(config, assets, output, run_physics=False):
     """No optimizer step, no checkpoint write; optionally one complete mission."""
     import torch
-    from go2_frozen.task import make_cases
+    from go2_robot_lab.task import make_cases
     from .learning import continuation_direction
     from .state import task_context
     root = Path(output)

@@ -12,7 +12,7 @@ import torch
 from torch import nn
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from go2_frozen.task import TaskSpec
+from go2_robot_lab.task import TaskSpec
 from go2_learning.learning import actual_returns, continuation_direction, ppo_objective
 
 

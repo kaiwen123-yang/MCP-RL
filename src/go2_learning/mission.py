@@ -13,8 +13,8 @@ from functools import lru_cache
 import numpy as np
 import torch
 
-from go2_frozen.fair_control import MISSION_WEIGHTS, SPEED_BANDS
-from go2_frozen.task import Task
+from go2_robot_lab.fair_control import MISSION_WEIGHTS, SPEED_BANDS
+from go2_robot_lab.task import Task
 
 from .state import task_active
 

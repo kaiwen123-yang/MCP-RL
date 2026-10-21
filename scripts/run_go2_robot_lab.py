@@ -19,9 +19,9 @@ sys.path.insert(0, str(ROOT / "src"))
 
 import numpy as np
 
-from go2_frozen.planner import CommandMPC, MPCConfig, ReferenceFollower, observation_state
-from go2_frozen.simulator import Go2Sim
-from go2_frozen.task import Task, make_cases, wrap_angle
+from go2_robot_lab.planner import CommandMPC, MPCConfig, ReferenceFollower, observation_state
+from go2_robot_lab.simulator import Go2Sim
+from go2_robot_lab.task import Task, make_cases, wrap_angle
 
 
 def serial(value):
@@ -66,7 +66,7 @@ def csv_write(path, rows):
 
 
 def source_identity():
-    files = [ROOT / "scripts/run_go2_frozen.py", *sorted((ROOT / "src/go2_frozen").glob("*.py"))]
+    files = [ROOT / "scripts/run_go2_robot_lab.py", *sorted((ROOT / "src/go2_robot_lab").glob("*.py"))]
     return {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
             for p in files}
 

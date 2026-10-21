@@ -7,7 +7,7 @@ from time import perf_counter
 import numpy as np
 import torch
 
-from go2_frozen.task import Task, make_cases
+from go2_robot_lab.task import Task, make_cases
 
 from .execution import LearningGo2Sim
 from .planner import LearnedMPC

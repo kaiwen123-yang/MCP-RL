@@ -21,8 +21,8 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from go2_frozen.fair_control import FairController
-from go2_frozen.task import Task, TaskSpec, wrap_angle
+from go2_robot_lab.fair_control import FairController
+from go2_robot_lab.task import Task, TaskSpec, wrap_angle
 
 CASES = ("nominal", "narrow", "wide")
 SPEEDS = ("standard", "fast")

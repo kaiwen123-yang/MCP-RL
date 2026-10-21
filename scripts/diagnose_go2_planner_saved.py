@@ -19,9 +19,9 @@ import torch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from go2_frozen.task import Task, make_cases
-from go2_frozen.planner import MPCConfig
-from go2_frozen.fair_control import MISSION_WEIGHTS
+from go2_robot_lab.task import Task, make_cases
+from go2_robot_lab.planner import MPCConfig
+from go2_robot_lab.fair_control import MISSION_WEIGHTS
 from go2_learning.models import CommandResponse, ValueNet
 from go2_learning.planner import LearnedMPC
 from go2_learning.state import advance_memory, planar_state, task_context

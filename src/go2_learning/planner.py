@@ -14,8 +14,8 @@ from time import perf_counter
 import numpy as np
 import torch
 
-from go2_frozen.fair_control import FairController, SPEED_BANDS
-from go2_frozen.planner import MPCConfig
+from go2_robot_lab.fair_control import FairController, SPEED_BANDS
+from go2_robot_lab.planner import MPCConfig
 
 from .mission import mission_cost
 from .state import (

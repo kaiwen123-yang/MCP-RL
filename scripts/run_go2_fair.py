@@ -14,13 +14,13 @@ sys.path.insert(0, str(ROOT / "src"))
 
 import numpy as np
 
-from go2_frozen.counterfactual import CounterfactualRollouts
-from go2_frozen.fair_bank import CandidateBankController
-from go2_frozen.fair_control import FairController
-from go2_frozen.planner import observation_state
-from go2_frozen.simulator import Go2Sim
-from go2_frozen.task import Task, make_cases, wrap_angle
-from run_go2_frozen import csv_write, flatten, serial
+from go2_robot_lab.counterfactual import CounterfactualRollouts
+from go2_robot_lab.fair_bank import CandidateBankController
+from go2_robot_lab.fair_control import FairController
+from go2_robot_lab.planner import observation_state
+from go2_robot_lab.simulator import Go2Sim
+from go2_robot_lab.task import Task, make_cases, wrap_angle
+from run_go2_robot_lab import csv_write, flatten, serial
 
 
 def compact_pretty(value, depth=0):
@@ -39,8 +39,8 @@ def write_json(path, value):
 
 
 def identity():
-    files = [ROOT / "scripts/run_go2_fair.py", ROOT / "scripts/run_go2_frozen.py",
-             ROOT / "configs/go2_fair_comparison.json", *sorted((ROOT / "src/go2_frozen").glob("*.py"))]
+    files = [ROOT / "scripts/run_go2_fair.py", ROOT / "scripts/run_go2_robot_lab.py",
+             ROOT / "configs/go2_fair_comparison.json", *sorted((ROOT / "src/go2_robot_lab").glob("*.py"))]
     return {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
             for p in files}
 
