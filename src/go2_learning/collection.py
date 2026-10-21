@@ -12,6 +12,7 @@ from go2_frozen.task import Task, make_cases
 from .execution import LearningGo2Sim
 from .planner import LearnedMPC
 from .state import memory_from_task, state_from_observation, task_context
+from .continuation import make_task
 
 
 def stack_rows(rows):
@@ -33,12 +34,13 @@ def _collect_case(payload):
 
 def collect_cases(actor, response, value, assets, output, *, case_names, seed,
                   stochastic, steps_per_case=None, speed="fast", episodes_per_case=1,
-                  planner_config=None, workers=1, threads=1):
+                  planner_config=None, workers=1, threads=1, case_specs=None, controller_mode="mpc"):
     """Run independent complete task cases on CPU workers with fixed case streams."""
     from concurrent.futures import ProcessPoolExecutor
     import multiprocessing
     kwargs = dict(stochastic=stochastic, steps_per_case=steps_per_case, speed=speed,
-                  episodes_per_case=episodes_per_case, planner_config=planner_config)
+                  episodes_per_case=episodes_per_case, planner_config=planner_config,
+                  case_specs=case_specs, controller_mode=controller_mode)
     if workers <= 1 or len(case_names) == 1:
         torch.set_num_threads(threads)
         return collect(actor, response, value, assets, output,
@@ -69,7 +71,7 @@ def collect_cases(actor, response, value, assets, output, *, case_names, seed,
 
 def collect(actor, response, value, assets, output, *, case_names, seed,
             stochastic, steps_per_case=None, speed="fast",
-            episodes_per_case=1, planner_config=None):
+            episodes_per_case=1, planner_config=None, case_specs=None, controller_mode="mpc"):
     """Collect exact policy-step caps, or complete deterministic episodes.
 
     Warmup is the unchanged public deterministic stand procedure and is never
@@ -86,10 +88,10 @@ def collect(actor, response, value, assets, output, *, case_names, seed,
              "planner_calls": 0, "planner_seconds": 0.0,
              "planner_model_steps": 0, "planner_value_calls": 0, "actor_calls": 0}
     start = perf_counter()
-    cases = {s.name: s for s in make_cases()}
+    cases = {s.name: s for s in (case_specs or make_cases())}
     for case_index, name in enumerate(case_names):
         spec, case_steps, episode = cases[name], 0, 0
-        task = Task(spec)
+        task = make_task(spec)
         sim = LearningGo2Sim(
             Path(assets) / "rl_sar/policy/go2",
             Path(assets) / "rl_sar_zoo/go2_description/mjcf",
@@ -97,11 +99,12 @@ def collect(actor, response, value, assets, output, *, case_names, seed,
         macro_steps = round(0.2 / sim.policy_interval)
         while ((steps_per_case is not None and case_steps < steps_per_case) or
                (steps_per_case is None and episode < episodes_per_case)):
-            task = Task(spec)
+            task = make_task(spec)
             obs = sim.reset(y=spec.start_y, warmup_seconds=2.0)
             metrics = task.update(obs)
             stats["warmup_physics_steps"] += sim.physics_steps
-            controller = LearnedMPC(response, value, speed=speed, config=planner_config)
+            controller = LearnedMPC(response, value, speed=speed, config=planner_config,
+                                    controller_mode=controller_mode)
             # All arms share streams and solver settings; trajectories may diverge.
             controller.rng = np.random.default_rng(seed + 1000 * case_index + episode)
             ep_steps = 0

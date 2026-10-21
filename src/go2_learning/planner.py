@@ -9,11 +9,12 @@ differentiate through CEM or update networks.
 from __future__ import annotations
 
 import math
+from time import perf_counter
 
 import numpy as np
 import torch
 
-from go2_frozen.fair_control import FairController
+from go2_frozen.fair_control import FairController, SPEED_BANDS
 from go2_frozen.planner import MPCConfig
 
 from .mission import mission_cost
@@ -37,7 +38,7 @@ class LearnedMPC(FairController):
     """
 
     def __init__(self, response, value, actor=None, spec=None, speed="fast",
-                 config: MPCConfig | None = None):
+                 config: MPCConfig | None = None, controller_mode="mpc"):
         super().__init__(mode="mission", speed_band=speed, config=config or MPCConfig())
         if not math.isclose(float(response.dt), self.config.dt):
             raise ValueError("CommandResponse.dt must match the MPC macro interval")
@@ -47,6 +48,7 @@ class LearnedMPC(FairController):
         # uses g directly.  This reference is never queried as a hidden oracle.
         self.actor = actor
         self.spec = spec
+        self.controller_mode = controller_mode
         self.current_state = None
         self.current_memory = None
         self.response_steps = 0
@@ -87,6 +89,58 @@ class LearnedMPC(FairController):
         self.current_state = self._tensor(state).reshape(1, 48)
         self.current_memory = self._tensor(memory).reshape(1, 3)
 
+    def _stop_target(self, state, task, memory=None):
+        from .continuation import next_stop_y
+        if memory is None:
+            memory = self._tensor([task.stage_index, 0., -1.])
+        target_y = next_stop_y(memory, task.spec).detach().cpu().numpy()
+        target_y = np.broadcast_to(target_y, np.asarray(state).shape[:-1])
+        return np.stack((np.full_like(target_y, task.spec.goal_x), target_y), -1)
+
+    def _stop_cap(self, state, task, memory=None):
+        state = np.asarray(state, dtype=float)
+        target = self._stop_target(state, task, memory)
+        progress = task.project(state[..., :2])
+        stop_progress = task.spec.straight_length + task.spec.arc_length + target[..., 1] - task.spec.turn_radius
+        remaining = stop_progress - progress
+        cruise, turn = SPEED_BANDS[self.speed_band]
+        turning = ((progress > task.spec.straight_length - .35)
+                   & (progress < task.spec.straight_length + task.spec.arc_length + .15))
+        cap = np.minimum(np.where(turning, turn, cruise), np.sqrt(np.maximum(0., .7 * remaining)))
+        distance = np.linalg.norm(state[..., :2] - target, axis=-1)
+        cap = np.where(remaining <= 0., np.minimum(cruise, np.sqrt(.7 * distance)), cap)
+        return np.where(remaining < .35, np.maximum(cap, .06), cap)
+
+    def govern(self, state, raw_command, task, memory=None):
+        if not hasattr(task.spec, "checkpoints"):
+            return super().govern(state, raw_command, task)
+        command = np.clip(np.asarray(raw_command, dtype=float),
+                          self.config.command_min, self.config.command_max).copy()
+        norm = np.linalg.norm(command[..., :2], axis=-1)
+        cap = self._stop_cap(state, task, memory)
+        command[..., :2] *= np.minimum(1., cap / np.maximum(norm, 1e-12))[..., None]
+        return command
+
+    def feedback_command(self, state, task, memory=None):
+        if not hasattr(task.spec, "checkpoints"):
+            return super().feedback_command(state, task)
+        state = np.asarray(state, dtype=float)
+        target = self._stop_target(state, task, memory).reshape(2)
+        progress = float(task.project(state[:2]))
+        stop_progress = task.spec.straight_length + task.spec.arc_length + target[1] - task.spec.turn_radius
+        ref = task.reference(min(stop_progress, progress + .22))
+        tangent = np.array([np.cos(ref[2]), np.sin(ref[2])])
+        error = ref[:2] - state[:2]
+        desired = float(np.asarray(self._stop_cap(state, task, memory)).item()) * tangent
+        desired += 1.1 * (error - np.dot(error, tangent) * tangent)
+        if stop_progress - progress < .35:
+            desired = 1.2 * (target - state[:2])
+        c, s = np.cos(state[2]), np.sin(state[2])
+        angle = ref[2] - state[2]
+        raw = np.array([c * desired[0] + s * desired[1], -s * desired[0] + c * desired[1],
+                        1.8 * np.arctan2(np.sin(angle), np.cos(angle))])
+        return self.govern(state, raw, task, memory)
+
     @torch.no_grad()
     def _full_rollout(self, raw_commands, task):
         commands = np.asarray(raw_commands, dtype=float)
@@ -97,7 +151,7 @@ class LearnedMPC(FairController):
         planar_trace, issued_trace, full_trace, memory_trace = [], [], [], []
         for index in range(commands.shape[1]):
             planar = planar_state(full).cpu().numpy()
-            issued = self.govern(planar, commands[:, index], task)
+            issued = self.govern(planar, commands[:, index], task, memory)
             command = self._tensor(issued)
             context = task_context(full, memory, task.spec)
             active = task_active(memory, task.spec).unsqueeze(-1)
@@ -127,7 +181,7 @@ class LearnedMPC(FairController):
         states, commands = [], []
         for _ in range(self.config.horizon):
             planar = planar_state(full)[0].cpu().numpy()
-            issued = self.feedback_command(planar, task)
+            issued = self.feedback_command(planar, task, memory[0])
             context = task_context(full, memory, task.spec)
             active = task_active(memory, task.spec).unsqueeze(-1)
             proposed = self.response(full, context, self._tensor(issued).reshape(1, 3))
@@ -162,6 +216,7 @@ class LearnedMPC(FairController):
         return (costs, states) if return_states else costs
 
     def plan(self, obs, task):
+        start = perf_counter()
         state = (obs["learning_state48"] if "learning_state48" in obs
                  else state_from_observation(obs))
         memory = (obs["learning_memory3"] if "learning_memory3" in obs
@@ -172,6 +227,13 @@ class LearnedMPC(FairController):
         # the same full state propagated by g, including when an adapter uses
         # the explicit learning_state48/learning_memory3 observation fields.
         planar = planar_state(self.current_state)[0].detach().cpu().numpy()
+        if self.controller_mode == "follower":
+            command = self.feedback_command(planar, task, self.current_memory[0])
+            self.last_command = command.copy()
+            return command, {"controller": "geometric_follower", "solve_seconds": perf_counter() - start,
+                             "predicted_cost": None, "response_model_steps_including_proposals": 0,
+                             "terminal_value_evaluations": 0,
+                             "command_sequence": np.tile(command, (self.config.horizon, 1)).tolist()}
         planning_obs = {
             "position": self.current_state[0, :3].detach().cpu().numpy(),
             "yaw": float(planar[2]),

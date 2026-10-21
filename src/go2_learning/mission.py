@@ -144,7 +144,7 @@ def mission_cost(states, memories, commands, initial_memory, previous_command,
     spatial = spatial + footprint_penalty(states, task, collision_margin)
     running = active_dt * weight["time_per_second"] + (active_dt / 0.2) * spatial
     total = torch.where(alive, running, torch.zeros_like(running)).sum(-1)
-    deadline_failure = alive & (memories[..., 0] < 4) & (memories[..., 1] >= spec.timeout)
+    deadline_failure = alive & (memories[..., 0] < getattr(spec, "complete_stage", 4)) & (memories[..., 1] >= spec.timeout)
     total = total + (2.0 * spec.timeout) * deadline_failure.to(states.dtype).sum(-1)
 
     terminal = states[:, -1]
@@ -159,5 +159,15 @@ def mission_cost(states, memories, commands, initial_memory, previous_command,
     terminal_cost = terminal_cost + near_goal.to(states.dtype) * (
         weight["goal_position_per_m2_terminal"] * position_excess.square()
         + weight["goal_velocity_per_m2s2_terminal"] * speed_excess.square())
+    if hasattr(spec, "checkpoints"):
+        from .continuation import next_stop_y
+        stop_y = next_stop_y(memories[:, -1], spec)
+        stop_goal = torch.stack((torch.full_like(stop_y, spec.goal_x), stop_y), -1)
+        stop_distance = torch.linalg.vector_norm(terminal[:, :2] - stop_goal, dim=-1)
+        stop_progress = spec.straight_length + spec.arc_length + stop_y - spec.turn_radius
+        intermediate = (stop_y < spec.goal_y) & (stop_progress - progress[:, -1] < weight["terminal_goal_zone_m"])
+        terminal_cost = terminal_cost + intermediate.to(states.dtype) * (
+            weight["goal_position_per_m2_terminal"] * (stop_distance - spec.goal_position_tolerance).clamp_min(0).square()
+            + weight["goal_velocity_per_m2s2_terminal"] * speed_excess.square())
     unfinished = task_active(memories[:, -1], spec)
     return total + torch.where(unfinished, terminal_cost, torch.zeros_like(terminal_cost))

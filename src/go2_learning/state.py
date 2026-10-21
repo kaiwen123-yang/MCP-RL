@@ -28,7 +28,7 @@ def _field(spec, name):
 def task_active(memory: Tensor, spec) -> Tensor:
     """True only before success and before the original task deadline."""
     spec = getattr(spec, "spec", spec)
-    return (memory[..., 0] < 4) & (memory[..., 1] < float(_field(spec, "timeout")))
+    return (memory[..., 0] < getattr(spec, "complete_stage", 4)) & (memory[..., 1] < float(_field(spec, "timeout")))
 
 
 def state_from_observation(obs) -> np.ndarray:
@@ -83,7 +83,9 @@ def task_context(state: Tensor, memory: Tensor, spec) -> Tensor:
     body_y = -sine[..., None] * delta[..., 0] + cosine[..., None] * delta[..., 1]
     relative_gates = torch.stack((body_x, body_y), dim=-1).flatten(-2) / 5.0
     stage = memory[..., 0]
-    one_hot = torch.stack([(stage == i).to(state.dtype) for i in range(4)], dim=-1)
+    visible_stage = stage.clamp(max=3) if hasattr(spec, "checkpoints") else stage
+    one_hot = torch.stack([(visible_stage == i).to(state.dtype) for i in range(4)], dim=-1)
+    one_hot = one_hot * (stage < getattr(spec, "complete_stage", 4)).unsqueeze(-1)
     yaw_error = torch.pi / 2.0 - yaw
     orientation = torch.stack((torch.sin(yaw_error), torch.cos(yaw_error)), dim=-1)
     timeout = float(_field(spec, "timeout"))
@@ -93,9 +95,13 @@ def task_context(state: Tensor, memory: Tensor, spec) -> Tensor:
     vx, vy = state[..., 6], state[..., 7]
     body_velocity = torch.stack((cosine * vx + sine * vy,
                                  -sine * vx + cosine * vy), dim=-1)
-    return torch.cat((one_hot, relative_gates, orientation,
+    context = torch.cat((one_hot, relative_gates, orientation,
                       torch.stack((remaining, hold, opening), dim=-1),
                       body_velocity), dim=-1)
+    if hasattr(spec, "checkpoints"):
+        from .continuation import future_features
+        context = torch.cat((context, future_features(state, memory, spec)), -1)
+    return context
 
 
 def advance_memory(state_after: Tensor, memory: Tensor, spec, dt: float) -> Tensor:
@@ -109,6 +115,9 @@ def advance_memory(state_after: Tensor, memory: Tensor, spec, dt: float) -> Tens
     Geometric memory does not certify collision-free or fall-free completion;
     the collector checks those persistent physical flags separately.
     """
+    if hasattr(spec, "checkpoints"):
+        from .continuation import advance_checkpoint_memory
+        return advance_checkpoint_memory(state_after, memory, spec, dt)
     stage = memory[..., 0]
     # Task.update converts observed coordinates to NumPy float64 before its
     # gates. Promote only the event predicates likewise, so a float32 number

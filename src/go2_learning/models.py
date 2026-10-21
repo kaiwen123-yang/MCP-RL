@@ -120,7 +120,7 @@ class CommandResponse(nn.Module):
 
     def __init__(self, dt: float = 0.2, hidden: int = 128,
                  velocity_time_constant: float = 0.25,
-                 yaw_time_constant: float = 0.20):
+                 yaw_time_constant: float = 0.20, context_dim: int = CONTEXT_DIM):
         super().__init__()
         self.dt = float(dt)
         self.velocity_time_constant = float(velocity_time_constant)
@@ -128,7 +128,7 @@ class CommandResponse(nn.Module):
         self.register_buffer("state_scale", state_scales())
         self.register_buffer("command_scale", torch.tensor([0.70, 0.30, 0.90]))
         self.register_buffer("delta_scale", self.state_scale.clone() * self.dt)
-        self.network = _mlp(STATE_DIM + CONTEXT_DIM + COMMAND_DIM, STATE_DIM, hidden)
+        self.network = _mlp(STATE_DIM + context_dim + COMMAND_DIM, STATE_DIM, hidden)
 
     def prior(self, state: torch.Tensor, command: torch.Tensor) -> torch.Tensor:
         yaw = state[..., 5]
@@ -176,11 +176,11 @@ class ValueNet(nn.Module):
     same continuation under different remaining command-hold durations.
     """
 
-    def __init__(self, hidden: int = 128):
+    def __init__(self, hidden: int = 128, context_dim: int = CONTEXT_DIM):
         super().__init__()
         self.register_buffer("state_scale", state_scales())
         self.register_buffer("command_scale", torch.tensor([0.70, 0.30, 0.90]))
-        self.network = _mlp(STATE_DIM + CONTEXT_DIM + COMMAND_DIM + 1, 1, hidden)
+        self.network = _mlp(STATE_DIM + context_dim + COMMAND_DIM + 1, 1, hidden)
 
     def forward(self, state: torch.Tensor, context: torch.Tensor,
                 command: torch.Tensor, phase=None) -> torch.Tensor:

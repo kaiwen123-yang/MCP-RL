@@ -20,7 +20,7 @@ from .state import CONTEXT_DIM
 
 class TaskActor(nn.Module):
     def __init__(self, export_path: str | Path, merged_policy_config: dict,
-                 log_std_init: float = -2.3):
+                 log_std_init: float = -2.3, context_dim: int = CONTEXT_DIM):
         super().__init__()
         self.config = copy.deepcopy(merged_policy_config)
         if self.config.get("observations_history"):
@@ -32,7 +32,7 @@ class TaskActor(nn.Module):
             if tuple(weights[f"actor.{index}.weight"].shape) != shape:
                 raise ValueError("Export does not match the robot_lab 45-512-256-128-12 actor.")
         self.actor = nn.Sequential(
-            nn.Linear(45 + CONTEXT_DIM, 512), nn.ELU(),
+            nn.Linear(45 + context_dim, 512), nn.ELU(),
             nn.Linear(512, 256), nn.ELU(),
             nn.Linear(256, 128), nn.ELU(),
             nn.Linear(128, 12),

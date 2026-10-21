@@ -121,10 +121,12 @@ def make_system(config, assets, seed):
     base = yaml.safe_load((policy_root / "base.yaml").read_text(encoding="utf-8"))["go2"]
     specific = yaml.safe_load((policy_root / "robot_lab/config.yaml").read_text(encoding="utf-8"))["go2/robot_lab"]
     actor = TaskActor(policy_root / "robot_lab" / specific["model_name"],
-                      {**base, **specific}, config["initial_log_std"])
+                      {**base, **specific}, config["initial_log_std"],
+                      context_dim=config.get("context_dim", 19))
     dynamics = ActionDynamics(dt=config["policy_dt"], hidden=config["model_hidden"])
-    response = CommandResponse(dt=config["macro_dt"], hidden=config["model_hidden"])
-    value = ValueNet(hidden=config["value_hidden"])
+    response = CommandResponse(dt=config["macro_dt"], hidden=config["model_hidden"],
+                               context_dim=config.get("context_dim", 19))
+    value = ValueNet(hidden=config["value_hidden"], context_dim=config.get("context_dim", 19))
     device = torch.device(runtime.get("device", "cpu"))
     for module in (actor, dynamics, response, value):
         module.to(device)
@@ -289,16 +291,20 @@ def collect_phase(system, config, assets, path, seed, mode):
     # MuJoCo and small per-step feedback run on CPUs; GPU parameters are copied
     # once per phase, never shuttled across devices at every physical step.
     from .collection import collect_cases
+    from .continuation import resolve_cases
     actors = [copy.deepcopy(system[name]).cpu().eval()
               for name in ("actor", "response", "value")]
     runtime = config.get("runtime", {})
     collection = collect_cases(*actors, assets, path,
-                               case_names=config["cases"], seed=seed,
+                               case_names=(config.get("evaluation_cases", config["cases"])
+                                           if mode == "evaluation" else config["cases"]), seed=seed,
                                stochastic=stochastic, steps_per_case=steps,
                                speed=config["speed_band"], episodes_per_case=episodes,
                                planner_config=MPCConfig(**config["planner"]),
                                workers=int(runtime.get("collection_workers", 1)),
-                               threads=int(runtime.get("inference_threads", 1)))
+                               threads=int(runtime.get("inference_threads", 1)),
+                               case_specs=resolve_cases(config),
+                               controller_mode=runtime.get("controller_mode", "mpc"))
     save_collection(path, collection)
     return collection
 

@@ -22,6 +22,7 @@ from go2_frozen.task import Task, make_cases
 
 from .mission import mission_cost
 from .state import advance_memory, task_active, task_context
+from .continuation import make_task, resolve_cases
 
 
 def _frozen(module):
@@ -86,7 +87,7 @@ def planned_task_loss(actor, old_actor, dynamics, response, value, states,
     states_out = torch.stack(state_trace, dim=1)
     memories_out = torch.stack(memory_trace, dim=1)
     cost = mission_cost(states_out, memories_out, plans, memories,
-                        previous_commands, Task(spec), response.dt,
+                        previous_commands, make_task(spec), response.dt,
                         speed_band=speed_band, collision_margin=collision_margin)
     unfinished = task_active(memory, spec)
     tail = value(x, task_context(x, memory, spec), plans[:, -1])
@@ -112,7 +113,7 @@ class PlannedResponseLoss:
         self.batch_size = int(settings["anchors_per_update"])
         self.speed_band = config["speed_band"]
         self.collision_margin = float(config["planner"].get("collision_margin", 0.04))
-        cases = {case.name: case for case in make_cases()}
+        cases = {case.name: case for case in resolve_cases(config)}
         self.specs = [cases[name] for name in config["cases"]]
         # Cycle through all cases and throughout the actual episode, rather
         # than repeatedly learning from the first straight segment.
