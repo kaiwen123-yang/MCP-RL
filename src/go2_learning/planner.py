@@ -59,6 +59,10 @@ class LearnedMPC(FairController):
         self._last_terminal = None
         self._last_full_trace = None
         self._last_memory_trace = None
+        self._previous_measured_state = None
+        self._previous_issued_command = None
+        self._velocity_offset = None
+        self._reference_residual = None
 
     def metadata(self):
         return {
@@ -84,7 +88,75 @@ class LearnedMPC(FairController):
     def _predict_response(self, state, context, command):
         if self.response_mode == "prior":
             return self.response.prior(state, command)
+        if self.response_mode == "local_response":
+            return self._local_response(state, command)
         return self.response(state, context, command)
+
+    @staticmethod
+    def _body_velocity(state, reference_yaw):
+        planar = planar_state(state)
+        c, s = reference_yaw.cos(), reference_yaw.sin()
+        return torch.stack((c * planar[..., 3] + s * planar[..., 4],
+                            -s * planar[..., 3] + c * planar[..., 4], planar[..., 5]), -1)
+
+    def _learned_velocity_residual(self, command):
+        """Frozen checkpoint command dependence at the CURRENT measured state.
+
+        Non-planar states and task features are measured scheduling variables,
+        not autonomous 4-second predictions of joint phase or body attitude.
+        """
+        state = self.current_state.expand(command.shape[0], -1)
+        memory = self.current_memory.expand(command.shape[0], -1)
+        context = task_context(state, memory, self.spec)
+        actual_yaw = state[:, 5]
+        predicted = self.response(state, context, command)
+        prior = self.response.prior(state, command)
+        return self._body_velocity(predicted, actual_yaw) - self._body_velocity(prior, actual_yaw)
+
+    @torch.no_grad()
+    def _update_velocity_offset(self):
+        """Measured disturbance state, never a network/optimizer update.
+
+        Anchor the velocity intercept to the latest completed 200 ms execution.
+        Filtering uses the response's existing physical time constants.
+        """
+        if self._velocity_offset is None:
+            self._velocity_offset = self.current_state.new_zeros((1, 3))
+        if self._previous_measured_state is not None:
+            previous = self._previous_measured_state
+            prior = self.response.prior(previous, self._previous_issued_command)
+            observed = (self._body_velocity(self.current_state, previous[:, 5])
+                        - self._body_velocity(prior, previous[:, 5]))
+            time_constants = self.current_state.new_tensor([
+                self.response.velocity_time_constant, self.response.velocity_time_constant,
+                self.response.yaw_time_constant])
+            gain = 1 - torch.exp(-self.response.dt / time_constants)
+            self._velocity_offset = self._velocity_offset + gain * (observed - self._velocity_offset)
+        reference_command = self._tensor(self.last_command).reshape(1, 3)
+        self._reference_residual = self._learned_velocity_residual(reference_command)
+
+    def _local_response(self, state, command):
+        """Offset-corrected local command response with consistent kinematics.
+
+        The learned model supplies changes with command, not an extrapolated
+        absolute position bias. Current measured joint/attitude context stays
+        fixed while planar motion evolves. Every real replan refreshes it.
+        """
+        prior = self.response.prior(state, command)
+        correction = (self._learned_velocity_residual(command)
+                      - self._reference_residual + self._velocity_offset)
+        yaw = state[:, 5]
+        c, s = yaw.cos(), yaw.sin()
+        world_correction = torch.stack((c * correction[:, 0] - s * correction[:, 1],
+                                         s * correction[:, 0] + c * correction[:, 1]), -1)
+        velocity = prior[:, 6:8] + world_correction
+        yaw_rate = planar_state(prior)[:, 5] + correction[:, 2]
+        next_yaw = yaw + self.response.dt * yaw_rate
+        next_yaw = torch.atan2(next_yaw.sin(), next_yaw.cos())
+        roll, pitch = state[:, 3], state[:, 4]
+        wz = (pitch.cos() * yaw_rate - roll.sin() * state[:, 10]) / roll.cos()
+        return torch.cat((state[:, :2] + self.response.dt * velocity, state[:, 2:5],
+                           next_yaw[:, None], velocity, state[:, 8:11], wz[:, None], state[:, 12:]), -1)
 
     def _initial_batch(self, batch):
         if self.current_state is None or self.current_memory is None:
@@ -232,6 +304,9 @@ class LearnedMPC(FairController):
         memory = (obs["learning_memory3"] if "learning_memory3" in obs
                   else memory_from_task(obs, task))
         self.set_state(state, memory)
+        self.spec = task.spec
+        if self.response_mode == "local_response":
+            self._update_velocity_offset()
         steps_before, values_before = self.response_steps, self.value_calls
         # The inherited CEM only needs a planar observation.  Derive it from
         # the same full state propagated by g, including when an adapter uses
@@ -250,7 +325,10 @@ class LearnedMPC(FairController):
             "velocity_world": self.current_state[0, 6:9].detach().cpu().numpy(),
             "yaw_rate": float(planar[5]),
         }
+        feedback_first = self.feedback_command(planar, task, self.current_memory[0])
         command, info = super().plan(planning_obs, task)
+        self._previous_measured_state = self.current_state.detach().clone()
+        self._previous_issued_command = self._tensor(command).reshape(1, 3).clone()
         full, predicted_memory, tail_command = self._last_terminal
         info.update({
             "controller": "shared_factual_response_mission_mpc",
@@ -259,6 +337,7 @@ class LearnedMPC(FairController):
             "terminal_applied_command": tail_command[0].cpu().tolist(),
             "terminal_value_coefficient": float(self.use_terminal_value),
             "response_mode": self.response_mode,
+            "first_command_delta_from_feedback": float(np.linalg.norm(command - feedback_first)),
             "terminal_value_macro_phase": 1.0,
             "response_model_steps_including_proposals": self.response_steps - steps_before,
             "terminal_value_evaluations": self.value_calls - values_before,

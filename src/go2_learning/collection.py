@@ -88,7 +88,8 @@ def collect(actor, response, value, assets, output, *, case_names, seed,
     rows, macro_rows, plan_rows, episodes, decisions = [], [], [], [], []
     stats = {"policy_steps": 0, "physics_steps": 0, "warmup_physics_steps": 0,
              "planner_calls": 0, "planner_seconds": 0.0,
-             "planner_model_steps": 0, "planner_value_calls": 0, "actor_calls": 0}
+             "planner_model_steps": 0, "planner_value_calls": 0, "actor_calls": 0,
+             "mpc_candidate_evaluations": 0, "mpc_non_follower_first_commands": 0}
     start = perf_counter()
     cases = {s.name: s for s in (case_specs or make_cases())}
     for case_index, name in enumerate(case_names):
@@ -120,6 +121,8 @@ def collect(actor, response, value, assets, output, *, case_names, seed,
                 stats["planner_seconds"] += detail["solve_seconds"]
                 stats["planner_model_steps"] += detail["response_model_steps_including_proposals"]
                 stats["planner_value_calls"] += detail["terminal_value_evaluations"]
+                stats["mpc_candidate_evaluations"] += detail.get("candidate_rollouts", 0)
+                stats["mpc_non_follower_first_commands"] += int(detail.get("first_command_delta_from_feedback", 0) > 1e-6)
                 ep_decisions.append({"time": current_obs["time"],
                                      "command": command.tolist(),
                                      "solve_seconds": detail["solve_seconds"],
