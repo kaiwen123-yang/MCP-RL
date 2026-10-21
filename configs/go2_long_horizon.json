@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "name": "go2_whole_plan_feedback_learning",
+  "frozen_task_source_commit": "6835ea43e3a55bd24f7f371e5f612c92a728295a",
+  "cases": [
+    "nominal",
+    "narrow",
+    "wide"
+  ],
+  "speed_band": "fast",
+  "arms": [
+    "frozen",
+    "ordinary",
+    "pathwise"
+  ],
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "rounds": 4,
+  "policy_dt": 0.02,
+  "macro_dt": 0.2,
+  "common_warmup_steps_per_case": 1750,
+  "stochastic_steps_per_case_per_round": 1750,
+  "calibration_complete_episodes_per_case": 1,
+  "evaluation_complete_episodes_per_case": 1,
+  "wall_seconds_per_arm_seed": 7200,
+  "model_fit_steps": 128,
+  "model_fit_batch_size": 256,
+  "model_learning_rate": 0.0003,
+  "model_hidden": 128,
+  "value_hidden": 128,
+  "initial_log_std": -2.3,
+  "adjoint_batch_size": 64,
+  "planner": {
+    "dt": 0.2,
+    "horizon": 20,
+    "samples": 256,
+    "iterations": 3,
+    "elites": 24,
+    "seed": 20261019
+  },
+  "ppo": {
+    "epochs": 4,
+    "minibatch_size": 256,
+    "actor_lr": 3e-05,
+    "value_lr": 0.0003,
+    "clip": 0.2,
+    "max_grad_norm": 0.5,
+    "target_kl": 0.02,
+    "entropy_coefficient": 0.0,
+    "gamma": 1.0,
+    "cv_alpha": 0.25
+  },
+  "training_reward": {
+    "actual_seconds_coefficient": -1.0,
+    "failure_penalty_in_deadlines": 2.0,
+    "model_cost_used_as_reward": false,
+    "stage_transition_terminates_return": false,
+    "advantage_normalization": false
+  },
+  "selection": {
+    "checkpoint": "fixed final round; retain every intermediate evaluation",
+    "primary": "ordered success, then successful completion time",
+    "secondary": [
+      "path RMS",
+      "mechanical work proxy",
+      "torque squared integral",
+      "total physical steps including calibration and warmup",
+      "wall time including model and adjoint costs"
+    ],
+    "known_development_conditions_only": true,
+    "result_dependent_tuning": false
+  },
+  "scene_changes": false,
+  "disturbances_added": false,
+  "merge_pr": false,
+  "pathwise": {
+    "coefficient": 0.1,
+    "anchors_per_update": 4,
+    "anchor_seed": 20261020,
+    "response": "factual g plus current minus old 10-step policy response under frozen f",
+    "rollout": "entire selected MPC plan; actual-return V beyond its horizon",
+    "task_loss": "shared MPC task proxy; actual PPO return is unchanged"
+  }
+}

@@ -25,6 +25,48 @@ def concatenate_batches(*batches):
     return {k: torch.cat([b[k] for b in present], dim=0) for k in present[0]}
 
 
+def _collect_case(payload):
+    modules, assets, output, kwargs, threads = payload
+    torch.set_num_threads(threads)
+    return collect(*modules, assets, output, **kwargs)
+
+
+def collect_cases(actor, response, value, assets, output, *, case_names, seed,
+                  stochastic, steps_per_case=None, speed="fast", episodes_per_case=1,
+                  planner_config=None, workers=1, threads=1):
+    """Run independent complete task cases on CPU workers with fixed case streams."""
+    from concurrent.futures import ProcessPoolExecutor
+    import multiprocessing
+    kwargs = dict(stochastic=stochastic, steps_per_case=steps_per_case, speed=speed,
+                  episodes_per_case=episodes_per_case, planner_config=planner_config)
+    if workers <= 1 or len(case_names) == 1:
+        torch.set_num_threads(threads)
+        return collect(actor, response, value, assets, output,
+                       case_names=case_names, seed=seed, **kwargs)
+    output = Path(output)
+    output.mkdir(parents=True, exist_ok=False)
+    started = perf_counter()
+    payloads = [((actor, response, value), assets, output / f"case-{name}",
+                 dict(kwargs, case_names=[name], seed=seed + 1000 * index), threads)
+                for index, name in enumerate(case_names)]
+    with ProcessPoolExecutor(max_workers=min(workers, len(case_names)),
+                             mp_context=multiprocessing.get_context("spawn")) as pool:
+        collections = list(pool.map(_collect_case, payloads))
+    for index, result in enumerate(collections):
+        result["batch"]["case_index"].fill_(index)
+        result["plans"]["case_index"].fill_(index)
+    stats = {key: sum(result["stats"][key] for result in collections)
+             for key in collections[0]["stats"]}
+    stats["worker_collection_seconds_sum"] = stats["collection_seconds"]
+    stats["collection_seconds"] = perf_counter() - started
+    stats["collection_workers"] = min(workers, len(case_names))
+    return {**{key: concatenate_batches(*(r[key] for r in collections))
+               for key in ("batch", "macro", "plans")},
+            "episodes": [episode for r in collections for episode in r["episodes"]],
+            "decisions": [decision for r in collections for decision in r["decisions"]],
+            "stats": stats, "behavior": collections[0]["behavior"]}
+
+
 def collect(actor, response, value, assets, output, *, case_names, seed,
             stochastic, steps_per_case=None, speed="fast",
             episodes_per_case=1, planner_config=None):
@@ -39,7 +81,7 @@ def collect(actor, response, value, assets, output, *, case_names, seed,
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     generator = torch.Generator().manual_seed(int(seed))
-    rows, macro_rows, episodes, decisions = [], [], [], []
+    rows, macro_rows, plan_rows, episodes, decisions = [], [], [], [], []
     stats = {"policy_steps": 0, "physics_steps": 0, "warmup_physics_steps": 0,
              "planner_calls": 0, "planner_seconds": 0.0,
              "planner_model_steps": 0, "planner_value_calls": 0, "actor_calls": 0}
@@ -67,6 +109,7 @@ def collect(actor, response, value, assets, output, *, case_names, seed,
             ep_decisions, stage_exits = [], []
 
             def plan(current_obs):
+                previous_command = controller.last_command.copy()
                 command, detail = controller.plan(current_obs, task)
                 stats["planner_calls"] += 1
                 stats["planner_seconds"] += detail["solve_seconds"]
@@ -76,6 +119,15 @@ def collect(actor, response, value, assets, output, *, case_names, seed,
                                      "command": command.tolist(),
                                      "solve_seconds": detail["solve_seconds"],
                                      "predicted_cost": detail["predicted_cost"]})
+                # Save what MPC knew and selected at this decision. Later
+                # actual replans are not substituted as future training input.
+                plan_rows.append({
+                    "state": state_from_observation(current_obs),
+                    "memory": memory_from_task(current_obs, task),
+                    "command_sequence": np.asarray(detail["command_sequence"], dtype=np.float32),
+                    "previous_command": np.asarray(previous_command, dtype=np.float32),
+                    "case_index": case_index, "episode": episode,
+                })
                 return command, detail
 
             command, plan_info = plan(obs)
@@ -181,5 +233,6 @@ def collect(actor, response, value, assets, output, *, case_names, seed,
         stats["physics_steps"] + stats["warmup_physics_steps"])
     stats["collection_seconds"] = perf_counter() - start
     return {"batch": stack_rows(rows), "macro": stack_rows(macro_rows),
+            "plans": stack_rows(plan_rows),
             "episodes": episodes, "decisions": decisions, "stats": stats,
             "behavior": "gaussian_raw_actions" if stochastic else "deterministic_mean"}

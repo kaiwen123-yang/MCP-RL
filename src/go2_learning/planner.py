@@ -1,10 +1,10 @@
-"""Common finite-candidate MPC for all three Go2 learning comparison arms.
+"""Common finite-candidate MPC using the feedback learner's mission proxy.
 
-The original mission proxy, command governor, CEM budget and warm-start rule
-are retained.  A factual 48-state command response replaces the planar model;
-the same actual-return critic adds a terminal continuation term in every arm.
-The selected CEM sequence is frozen when a separate actor-credit calculation
-uses it.  This module does not differentiate through CEM or update networks.
+The command governor, CEM budget and warm-start rule are retained. A factual
+48-state command response supplies predictions and the actual-return critic
+supplies active continuation value. Mission costs stop at predicted completion
+or deadline failure and respect the actual goal tolerance. This module does not
+differentiate through CEM or update networks.
 """
 from __future__ import annotations
 
@@ -16,17 +16,19 @@ import torch
 from go2_frozen.fair_control import FairController
 from go2_frozen.planner import MPCConfig
 
+from .mission import mission_cost
 from .state import (
     advance_memory,
     memory_from_task,
     planar_state,
     state_from_observation,
+    task_active,
     task_context,
 )
 
 
 class LearnedMPC(FairController):
-    """Original mission CEM with factual response and shared continuation value.
+    """Mission CEM with factual response, shared cost and continuation value.
 
     ``plan(obs, task)`` reads the actual complete state and task memory.  The
     optional observation fields ``learning_state48`` and ``learning_memory3``
@@ -50,6 +52,8 @@ class LearnedMPC(FairController):
         self.response_steps = 0
         self.value_calls = 0
         self._last_terminal = None
+        self._last_full_trace = None
+        self._last_memory_trace = None
 
     def metadata(self):
         return {
@@ -60,7 +64,9 @@ class LearnedMPC(FairController):
             "terminal_value_inputs": "predicted full48, predicted task memory, final applied command, macro phase 1",
             "cem_policy": "original deterministic seed and shifted warm sequence",
             "policy_used_inside_mpc": False,
-            "actor_credit": "separate fixed-plan local derivative; CEM is not differentiated",
+            "actor_credit": "shared mission proxy; CEM is not differentiated",
+            "mission_cost": "go2_learning.mission.mission_cost; success/deadline absorbing, tolerance-region terminal",
+            "hold_prediction": "macro endpoints only; not a continuous 20 ms hold certificate",
             "zero_update_prior": "original planar lag plus non-planar identity; critic zero",
             "response_steps": self.response_steps,
             "value_calls": self.value_calls,
@@ -88,19 +94,24 @@ class LearnedMPC(FairController):
         if single:
             commands = commands[None]
         full, memory = self._initial_batch(len(commands))
-        planar_trace, issued_trace = [], []
+        planar_trace, issued_trace, full_trace, memory_trace = [], [], [], []
         for index in range(commands.shape[1]):
             planar = planar_state(full).cpu().numpy()
             issued = self.govern(planar, commands[:, index], task)
             command = self._tensor(issued)
             context = task_context(full, memory, task.spec)
-            full = self.response(full, context, command)
+            active = task_active(memory, task.spec).unsqueeze(-1)
+            full = torch.where(active, self.response(full, context, command), full)
             memory = advance_memory(full, memory, task.spec, self.config.dt)
             planar_trace.append(planar_state(full).cpu().numpy())
             issued_trace.append(issued)
+            full_trace.append(full)
+            memory_trace.append(memory)
         self.response_steps += len(commands) * commands.shape[1]
         states = np.stack(planar_trace, axis=1)
         applied = np.stack(issued_trace, axis=1)
+        self._last_full_trace = torch.stack(full_trace, dim=1)
+        self._last_memory_trace = torch.stack(memory_trace, dim=1)
         return states, applied, full, memory, single
 
     def nominal_rollout(self, initial, raw_commands, task):
@@ -118,7 +129,9 @@ class LearnedMPC(FairController):
             planar = planar_state(full)[0].cpu().numpy()
             issued = self.feedback_command(planar, task)
             context = task_context(full, memory, task.spec)
-            full = self.response(full, context, self._tensor(issued).reshape(1, 3))
+            active = task_active(memory, task.spec).unsqueeze(-1)
+            proposed = self.response(full, context, self._tensor(issued).reshape(1, 3))
+            full = torch.where(active, proposed, full)
             memory = advance_memory(full, memory, task.spec, self.config.dt)
             commands.append(issued)
             states.append(planar_state(full)[0].cpu().numpy())
@@ -132,15 +145,18 @@ class LearnedMPC(FairController):
         self.value_calls += int(full.shape[0])
         # The real episode has no continuation after completion or timeout.
         # Predicted geometric completion does not certify collision feasibility.
-        terminal = (memory[..., 0] >= 4) | (memory[..., 1] >= task.spec.timeout)
-        return torch.where(terminal, torch.zeros_like(values), values)
+        return torch.where(task_active(memory, task.spec), values, torch.zeros_like(values))
 
     def score(self, initial, commands, task, refs=None, speeds=None, return_states=False):
         states, applied, full, memory, single = self._full_rollout(commands, task)
-        costs = self.score_trajectory(states, applied, task, initial,
-                                      self.last_command, objective="mission")
+        batch = full.shape[0]
+        costs = mission_cost(
+            self._last_full_trace, self._last_memory_trace, self._tensor(applied),
+            self.current_memory.expand(batch, -1),
+            self._tensor(self.last_command).expand(batch, -1), task, self.config.dt,
+            speed_band=self.speed_band, collision_margin=self.config.collision_margin)
         values = self._continuation(full, memory, self._tensor(applied[:, -1]), task)
-        costs = np.asarray(costs) - values.cpu().numpy()
+        costs = (costs - values).detach().cpu().numpy()
         if single:
             return (float(costs[0]), states[0]) if return_states else float(costs[0])
         return (costs, states) if return_states else costs

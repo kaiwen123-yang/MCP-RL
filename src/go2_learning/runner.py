@@ -45,6 +45,7 @@ def write_json(path, data):
 
 def identity():
     paths = [ROOT / "configs/go2_adjoint_learning.json",
+             ROOT / "configs/go2_long_horizon.json",
              ROOT / "scripts/run_go2_learning.py",
              *sorted((ROOT / "src/go2_learning").glob("*.py")),
              ROOT / "src/go2_frozen/task.py",
@@ -65,8 +66,11 @@ def plan(config):
     per_round_stochastic = count_cases * config["stochastic_steps_per_case_per_round"]
     per_arm_cap = (config["rounds"] * (per_round_stochastic + calibration_cap + eval_cap)
                    + eval_cap)
+    pathwise = "pathwise" in config["arms"]
     return {
-        "status": "PLANNED_NOT_RUN", "method": "continuation-adjoint control variate PPO",
+        "status": "PLANNED_NOT_RUN",
+        "method": ("whole-plan feedback learning with factual response differences"
+                   if pathwise else "continuation-adjoint control variate PPO"),
         "task_source": config["frozen_task_source_commit"],
         "arms": config["arms"], "seeds": config["seeds"],
         "shared_once_per_seed": {
@@ -89,9 +93,13 @@ def plan(config):
             common_stochastic + calibration_cap + len(config["arms"]) * per_arm_cap),
         "physical_budget_note": "One policy step is 20 one-ms physics steps; each episode has an additional recorded 2 s public stand warmup. Actual calibration/evaluation lengths differ and must be reported.",
         "comparison": "Equal stochastic sample budgets and deterministic episode caps; NOT automatically equal wall/FLOP/total executed-transition counts.",
-        "learning_signal": "same real time/failure return and same full task information; adjoint changes only gradient estimator",
-        "cv_alpha": config["ppo"]["cv_alpha"],
-        "fairness": "report performance versus all physics steps and end-to-end wall time; extra adjoint work is charged",
+        "learning_signal": (
+            "real full-task PPO plus shared MPC task proxy across the whole selected plan; "
+            "f/g/old actor/V remain frozen in the auxiliary objective"
+            if pathwise else
+            "same real time/failure return and full task information; adjoint changes only gradient estimator"),
+        "auxiliary": config.get("pathwise", {"cv_alpha": config["ppo"]["cv_alpha"]}),
+        "fairness": "report performance versus all physics steps and end-to-end wall time, including auxiliary model work",
         "not_established": ["learning improvement", "variance reduction", "novel algorithm",
                             "held-out task composition generalization", "real-time deployment"],
     }
@@ -107,7 +115,8 @@ def make_system(config, assets, seed):
 
     torch.manual_seed(seed)
     np.random.seed(seed)
-    torch.set_num_threads(1)
+    runtime = config.get("runtime", {})
+    torch.set_num_threads(int(runtime.get("torch_threads", 1)))
     policy_root = Path(assets) / "rl_sar/policy/go2"
     base = yaml.safe_load((policy_root / "base.yaml").read_text(encoding="utf-8"))["go2"]
     specific = yaml.safe_load((policy_root / "robot_lab/config.yaml").read_text(encoding="utf-8"))["go2/robot_lab"]
@@ -116,6 +125,9 @@ def make_system(config, assets, seed):
     dynamics = ActionDynamics(dt=config["policy_dt"], hidden=config["model_hidden"])
     response = CommandResponse(dt=config["macro_dt"], hidden=config["model_hidden"])
     value = ValueNet(hidden=config["value_hidden"])
+    device = torch.device(runtime.get("device", "cpu"))
+    for module in (actor, dynamics, response, value):
+        module.to(device)
     updater = PPOUpdater(actor, value, PPOSettings(**config["ppo"]), seed + 71)
     return {"actor": actor, "dynamics": dynamics, "response": response, "value": value,
             "updater": updater,
@@ -259,10 +271,11 @@ def directions(system, batch, config):
 
 def save_collection(path, collection):
     import torch
-    torch.save({"batch": collection["batch"], "macro": collection["macro"]},
+    torch.save({"batch": collection["batch"], "macro": collection["macro"],
+                "plans": collection["plans"]},
                Path(path) / "transitions.pt")
     write_json(Path(path) / "summary.json", {k: v for k, v in collection.items()
-                                           if k not in ("batch", "macro")})
+                                           if k not in ("batch", "macro", "plans")})
 
 
 def collect_phase(system, config, assets, path, seed, mode):
@@ -273,11 +286,19 @@ def collect_phase(system, config, assets, path, seed, mode):
              else config["stochastic_steps_per_case_per_round"] if stochastic else None)
     episodes = (config["calibration_complete_episodes_per_case"] if mode == "calibration"
                 else config["evaluation_complete_episodes_per_case"])
-    collection = collect(system["actor"], system["response"], system["value"],
-                         assets, path, case_names=config["cases"], seed=seed,
-                         stochastic=stochastic, steps_per_case=steps,
-                         speed=config["speed_band"], episodes_per_case=episodes,
-                         planner_config=MPCConfig(**config["planner"]))
+    # MuJoCo and small per-step feedback run on CPUs; GPU parameters are copied
+    # once per phase, never shuttled across devices at every physical step.
+    from .collection import collect_cases
+    actors = [copy.deepcopy(system[name]).cpu().eval()
+              for name in ("actor", "response", "value")]
+    runtime = config.get("runtime", {})
+    collection = collect_cases(*actors, assets, path,
+                               case_names=config["cases"], seed=seed,
+                               stochastic=stochastic, steps_per_case=steps,
+                               speed=config["speed_band"], episodes_per_case=episodes,
+                               planner_config=MPCConfig(**config["planner"]),
+                               workers=int(runtime.get("collection_workers", 1)),
+                               threads=int(runtime.get("inference_threads", 1)))
     save_collection(path, collection)
     return collection
 
@@ -289,6 +310,44 @@ def fit_phase(system, config, behavior, calibration, seed):
     return fit_facts(system["dynamics"], system["response"], system["f_optimizer"],
                      system["g_optimizer"], micro, calibration["macro"],
                      config["model_fit_steps"], config["model_fit_batch_size"], seed)
+
+
+def learn_round(system, config, assets, phase_root, seed, round_index, arm):
+    """One closed loop: actual B -> feedback update -> actual C -> facts -> task."""
+    import torch
+    behavior = collect_phase(system, config, assets, phase_root / "behavior",
+                             seed + 100 * round_index + 10, "behavior")
+    batch = behavior["batch"]
+    derivative_stats = {"adjoint_forward_steps": 0,
+                        "adjoint_reverse_steps": 0, "adjoint_seconds": 0.0}
+    if arm == "adjoint":
+        d, derivative_stats = directions(system, batch, config)
+    else:
+        d = torch.zeros_like(batch["raw_action"])
+    auxiliary = None
+    if arm == "pathwise":
+        from .pathwise import PlannedResponseLoss
+        auxiliary = PlannedResponseLoss(system, behavior["plans"], config)
+    # All auxiliary models and the tail value are frozen at the B batch's
+    # policy version. V updates below cannot change the pathwise teacher.
+    update = system["updater"].update(batch, d, arm, actor_auxiliary=auxiliary)
+    if auxiliary is not None:
+        derivative_stats = auxiliary.statistics()
+        del auxiliary
+    calibration = collect_phase(system, config, assets, phase_root / "calibration",
+                                seed + 100 * round_index + 11, "calibration")
+    fact_update = fit_phase(system, config, behavior, calibration,
+                            seed + 100 * round_index + 12)
+    evaluation = collect_phase(system, config, assets, phase_root / "evaluation",
+                               seed + 20000, "evaluation")
+    torch.save(state_dict(system), phase_root / "checkpoint.pt")
+    record = {"round": round_index + 1, "arm": arm, "ppo": update, "facts": fact_update,
+              "derivatives": derivative_stats, "parameter_hashes": hashes(system),
+              "behavior": behavior["stats"], "calibration": calibration["stats"],
+              "evaluation": evaluation["stats"],
+              "evaluation_episodes": evaluation["episodes"]}
+    write_json(phase_root / "record.json", record)
+    return record
 
 
 def train(config, assets, output):
@@ -336,31 +395,8 @@ def train(config, assets, output):
                     capped = True
                     break
                 phase_root = arm_root / f"round{round_index + 1}"
-                # f/g/V and actor stay unchanged through collection and direction construction.
-                behavior = collect_phase(system, config, assets, phase_root / "behavior",
-                                         seed + 100 * round_index + 10, "behavior")
-                batch = behavior["batch"]
-                if arm == "adjoint":
-                    d, derivative_stats = directions(system, batch, config)
-                else:
-                    d = torch.zeros_like(batch["raw_action"])
-                    derivative_stats = {"adjoint_forward_steps": 0,
-                                        "adjoint_reverse_steps": 0, "adjoint_seconds": 0.0}
-                # No current-batch fitting precedes the pre-action CV calculation.
-                update = system["updater"].update(batch, d, arm)
-                calibration = collect_phase(system, config, assets, phase_root / "calibration",
-                                            seed + 100 * round_index + 11, "calibration")
-                fact_update = fit_phase(system, config, behavior, calibration,
-                                        seed + 100 * round_index + 12)
-                evaluation = collect_phase(system, config, assets, phase_root / "evaluation",
-                                           seed + 20000, "evaluation")
-                torch.save(state_dict(system), phase_root / "checkpoint.pt")
-                record = {"round": round_index + 1, "ppo": update, "facts": fact_update,
-                          "derivatives": derivative_stats, "parameter_hashes": hashes(system),
-                          "behavior": behavior["stats"], "calibration": calibration["stats"],
-                          "evaluation": evaluation["stats"],
-                          "evaluation_episodes": evaluation["episodes"],
-                          "wall_seconds_including_initial_evaluation": perf_counter() - started}
+                record = learn_round(system, config, assets, phase_root, seed, round_index, arm)
+                record["wall_seconds_including_initial_evaluation"] = perf_counter() - started
                 records.append(record)
                 write_json(phase_root / "record.json", record)
             write_json(arm_root / "result.json", {
@@ -371,6 +407,61 @@ def train(config, assets, output):
                 "value_updates": system["updater"].value_updates,
                 "wall_seconds": perf_counter() - started,
             })
+
+
+def resume(config, assets, output, checkpoint, seed, *, update=False, arm="pathwise"):
+    """Evaluate a saved policy, or execute exactly one existing-budget iteration."""
+    import torch
+    root = Path(output)
+    root.mkdir(parents=True, exist_ok=False)
+    system = make_system(config, assets, seed)
+    load_state(system, torch.load(checkpoint, map_location="cpu", weights_only=True))
+    write_json(root / "config.json", config)
+    write_json(root / "source.json", identity())
+    started = perf_counter()
+    if update:
+        record = learn_round(system, config, assets, root / "round1", seed, 0, arm)
+        write_json(root / "result.json", {
+            "status": "COMPLETED_SINGLE_ITERATION", "arm": arm, "seed": seed,
+            "initial_checkpoint": str(checkpoint), "wall_seconds": perf_counter() - started,
+            "record": record,
+        })
+    else:
+        before = hashes(system)
+        collected = collect_phase(system, config, assets, root / "evaluation",
+                                  seed + 20000, "evaluation")
+        write_json(root / "result.json", {
+            "status": "COMPLETED_EVALUATION", "seed": seed,
+            "initial_checkpoint": str(checkpoint), "episodes": collected["episodes"],
+            "stats": collected["stats"], "parameters_unchanged": before == hashes(system),
+            "wall_seconds": perf_counter() - started,
+        })
+
+
+def compare_one_round(config, assets, output, checkpoint, seed):
+    """One matched ordinary/pathwise iteration, using the existing sample budget."""
+    root = Path(output)
+    root.mkdir(parents=True, exist_ok=False)
+    started = perf_counter()
+    print("Evaluating the shared starting policy on all complete tasks", flush=True)
+    resume(config, assets, root / "initial", checkpoint, seed)
+    for arm in ("ordinary", "pathwise"):
+        print(f"Starting {arm}: actual B, feedback update, actual C, facts, evaluation", flush=True)
+        resume(config, assets, root / arm, checkpoint, seed, update=True, arm=arm)
+        result = json.loads((root / arm / "result.json").read_text())
+        episodes = result["record"]["evaluation_episodes"]
+        print(json.dumps({"arm": arm, "complete_tasks": [
+            {k: ep[k] for k in ("case", "success", "completion_seconds", "reason")}
+            for ep in episodes]}, ensure_ascii=False), flush=True)
+    write_json(root / "comparison.json", {
+        "status": "COMPLETED", "seed": seed, "rounds_per_arm": 1,
+        "arms": ["ordinary", "pathwise"], "cases": config["cases"],
+        "stochastic_policy_steps_per_arm": len(config["cases"]) * config["stochastic_steps_per_case_per_round"],
+        "wall_seconds": perf_counter() - started,
+        "initial": json.loads((root / "initial/result.json").read_text()),
+        **{arm: json.loads((root / arm / "result.json").read_text())
+           for arm in ("ordinary", "pathwise")},
+    })
 
 
 def verify(config, assets, output, run_physics=False):
@@ -446,14 +537,27 @@ def verify(config, assets, output, run_physics=False):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("plan", "verify", "train"))
-    parser.add_argument("--config", type=Path, default=ROOT / "configs/go2_adjoint_learning.json")
+    parser.add_argument("action", choices=("plan", "verify", "train", "evaluate", "iterate", "compare"))
+    parser.add_argument("--config", type=Path, default=ROOT / "configs/go2_long_horizon.json")
     parser.add_argument("--assets", type=Path, default=ROOT / "work/go2-public-assets")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--checkpoint", type=Path,
+                        help="evaluate/iterate: existing complete actor/f/g/V checkpoint")
+    parser.add_argument("--seed", type=int, default=11)
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
+    parser.add_argument("--workers", type=int, default=1,
+                        help="parallel CPU complete-task cases")
+    parser.add_argument("--torch-threads", type=int, default=1)
+    parser.add_argument("--inference-threads", type=int, default=1)
+    parser.add_argument("--arm", choices=("ordinary", "adjoint", "pathwise"), default="pathwise",
+                        help="iterate only: update mechanism")
     parser.add_argument("--with-physics", action="store_true",
                         help="verify only: one no-update original nominal mission")
     args = parser.parse_args()
     config = read_config(args.config)
+    config["runtime"] = {"device": args.device, "collection_workers": args.workers,
+                         "torch_threads": args.torch_threads,
+                         "inference_threads": args.inference_threads}
     if args.action == "plan":
         result = plan(config)
         if args.output:
@@ -466,6 +570,14 @@ def main():
     try:
         if args.action == "verify":
             verify(config, args.assets, args.output, args.with_physics)
+        elif args.action in ("evaluate", "iterate", "compare"):
+            if args.checkpoint is None:
+                parser.error("evaluate/iterate/compare requires --checkpoint")
+            if args.action == "compare":
+                compare_one_round(config, args.assets, args.output, args.checkpoint, args.seed)
+            else:
+                resume(config, args.assets, args.output, args.checkpoint, args.seed,
+                       update=args.action == "iterate", arm=args.arm)
         else:
             if args.with_physics:
                 parser.error("--with-physics belongs only to no-update verify")

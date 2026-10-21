@@ -25,6 +25,12 @@ def _field(spec, name):
     return spec[name] if isinstance(spec, Mapping) else getattr(spec, name)
 
 
+def task_active(memory: Tensor, spec) -> Tensor:
+    """True only before success and before the original task deadline."""
+    spec = getattr(spec, "spec", spec)
+    return (memory[..., 0] < 4) & (memory[..., 1] < float(_field(spec, "timeout")))
+
+
 def state_from_observation(obs) -> np.ndarray:
     """Return pos/rpy/world velocity/body omega/q/dq/last applied action."""
     return np.concatenate((
@@ -97,8 +103,10 @@ def advance_memory(state_after: Tensor, memory: Tensor, spec, dt: float) -> Tens
 
     At most one spatial stage is crossed per call, as in ``Task.update``.
     The first settled sample starts the timer at zero rather than adding dt.
-    Stage 4 is absorbing, including its elapsed time and hold timer. This
-    geometric memory does not certify collision-free or fall-free completion;
+    Success and deadline failure are absorbing, including their hold timer.
+    An observation after the deadline cannot establish a new gate/hold event;
+    success exactly at the deadline takes priority over deadline failure.
+    Geometric memory does not certify collision-free or fall-free completion;
     the collector checks those persistent physical flags separately.
     """
     stage = memory[..., 0]
@@ -132,11 +140,17 @@ def advance_memory(state_after: Tensor, memory: Tensor, spec, dt: float) -> Tens
         & (speed <= float(_field(spec, "goal_speed_tolerance")))
         & (yaw_error <= float(_field(spec, "goal_yaw_tolerance")))
     )
-    elapsed = memory[..., 1] + dt
+    timeout = float(_field(spec, "timeout"))
+    requested_elapsed = memory[..., 1] + dt
+    within_deadline = requested_elapsed <= timeout
+    elapsed = requested_elapsed.clamp(max=timeout)
     continued_hold = torch.where(memory[..., 2] < 0.0,
                                  torch.zeros_like(elapsed), memory[..., 2] + dt)
     hold = torch.where(settled, continued_hold, -torch.ones_like(elapsed))
-    complete = settled & (hold >= float(_field(spec, "stop_hold_seconds")))
+    complete = (within_deadline & settled
+                & (hold >= float(_field(spec, "stop_hold_seconds"))))
     next_stage = torch.where(complete, torch.full_like(next_stage, 4.0), next_stage)
+    next_stage = torch.where(within_deadline, next_stage, stage)
+    hold = torch.where(within_deadline, hold, memory[..., 2])
     advanced = torch.stack((next_stage, elapsed, hold), dim=-1)
-    return torch.where((stage == 4).unsqueeze(-1), memory, advanced)
+    return torch.where(task_active(memory, spec).unsqueeze(-1), advanced, memory)
