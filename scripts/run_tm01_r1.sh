@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -eu
+source "$(dirname "$0")/tm01_env.sh"
+cd "$TM01_ROOT"
+device="${1:-gpu}"
+run="${2:-r1-v4}"
+for pair in "fig3 acados" "fig4 acados" "table1 acados" "fig3 naive" "fig3 mppi" "fig4 adaptive" "table1 naive" "table1 adaptive"; do
+    read -r experiment method <<< "$pair"
+    python -u scripts/run_tm01_r1.py --experiment "$experiment" --method "$method" --device "$device" --run "$run"
+done
+python scripts/plot_tm01_r1.py --run "$run"
+python scripts/video_tm01_r1.py --run "$run"

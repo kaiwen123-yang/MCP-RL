@@ -1,0 +1,238 @@
+#!/usr/bin/env python3
+"""TM01 full MuJoCo experiments; all outcomes and 500 Hz states are retained."""
+import argparse
+import csv
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import subprocess
+import sys
+import time
+
+ROOT = Path(__file__).resolve().parents[1]
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument("--experiment", choices=["fig3", "fig4", "table1"], required=True)
+PARSER.add_argument("--method", choices=["acados", "naive", "mppi", "adaptive"], required=True)
+PARSER.add_argument("--device", choices=["cpu", "gpu"], default="gpu")
+PARSER.add_argument("--run", default="r1-v4")
+PARSER.add_argument("--config", default=str(ROOT / "experiments/tm01/r1.json"))
+ARGS = PARSER.parse_args()
+os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
+os.environ["JAX_PLATFORMS"] = "cpu" if ARGS.device == "cpu" or ARGS.method == "acados" else "cuda"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+
+import numpy as np
+import mujoco
+from gym_quadruped.quadruped_env import QuadrupedEnv
+from gym_quadruped.robot_cfgs import get_robot_config
+from gym_quadruped.utils.quadruped_utils import LegsAttr
+from quadruped_pympc import config as cfg
+
+C = json.loads(Path(ARGS.config).read_text())
+E = C[ARGS.experiment]
+LEGS = ("FL", "FR", "RL", "RR")
+cfg.robot = C["robot"]
+rc = get_robot_config(robot_name=cfg.robot)
+cfg.robot_cfg = rc
+cfg.robot_leg_joints, cfg.robot_feet_geom_names = rc.leg_joints, rc.feet_geom_names
+cfg.qpos0_js, cfg.hip_height = rc.qpos0_js, rc.hip_height
+cfg.hip_offset_x, cfg.hip_offset_y = 0.0, 0.083
+cfg.mpc_params.update(
+    type="nominal" if ARGS.method == "acados" else "sampling",
+    sampling_method="mppi" if ARGS.method == "mppi" else "random_sampling",
+    device=ARGS.device, horizon=C["mpc"]["horizon"], dt=C["mpc"]["dt"],
+    num_parallel_computations=C["mpc"]["rollouts"],
+    num_sampling_iterations=C["mpc"]["iterations"],
+    temperature_mppi=C["mpc"]["lambda_mppi"], sigma_mppi=C["mpc"]["sigma_mppi"],
+    sigma_random_sampling=C["mpc"]["sigma_naive"], paper_Q=C["mpc"]["Q_sampling"], paper_input_cost=C["mpc"]["include_input_cost"],
+    control_parametrization="cubic_spline", num_splines=C["mpc"]["num_cubic_splines"],
+    optimize_step_freq=ARGS.method == "adaptive", step_freq_available=C["locomotion"]["candidate_hz"],
+    use_inertia_recomputation=False, gradient_refinement_steps=0, use_riccati_feedback=False,
+    use_foothold_optimization=False, use_foothold_constraints=False, use_integrators=False,
+    external_wrenches_compensation=False, use_RTI=False, num_qp_iterations=1,
+    use_nonuniform_discretization=False, shift_solution=False,
+    mu=C["locomotion"]["friction"],
+)
+cfg.locomotion_params.update(
+    swing_generator=C["locomotion"]["swing_generator"], swing_position_gain_fb=C["locomotion"]["swing_kp"],
+    swing_velocity_gain_fb=C["locomotion"]["swing_kd"],
+    step_height=C["locomotion"]["step_height_fraction"] * cfg.hip_height,
+    ref_z=cfg.hip_height, reflex_trigger_mode=False,
+    reflex_next_steps_height_enhancement=False, velocity_modulator=False,
+    start_and_stop_activated=False, use_friction_compensation=False,
+    visual_foothold_adaptation="blind", gait="trot",
+)
+cfg.locomotion_params["gait_params"]["trot"].update(
+    step_freq=C["locomotion"]["frequency_hz"], duty_factor=C["locomotion"]["duty_factor"])
+cfg.simulation_params.update(scene="flat", dt=C["locomotion"]["dt"], mpc_frequency=C["mpc"]["frequency_hz"])
+dt = cfg.simulation_params["dt"]
+env = QuadrupedEnv(robot=cfg.robot, scene="flat", sim_dt=dt,
+    ref_base_lin_vel=0.0, ref_base_ang_vel=0.0,
+    ground_friction_coeff=C["locomotion"]["friction"], base_vel_command_type="forward",
+    state_obs_names=())
+env.reset(seed=0, random=False)
+cfg.mass = float(np.sum(env.mjModel.body_mass))
+cfg.inertia = env.get_base_inertia()
+cfg.mpc_params["grf_max"] = cfg.mass * cfg.gravity_constant
+# The task is flat locomotion, with no artificial finite-map termination.
+env.terrain_limits = (1000.0, -1000.0, 1000.0, -1000.0)
+
+from quadruped_pympc.quadruped_pympc_wrapper import QuadrupedPyMPC_Wrapper
+from quadruped_pympc.interfaces.wb_interface import WBInterface
+wrapper = QuadrupedPyMPC_Wrapper(env.feet_pos, legs_order=LEGS, feet_geom_id=env._feet_geom_id)
+interface = wrapper.srbd_controller_interface
+controller = interface.controller
+if ARGS.method != "acados":
+    import jax
+    import jax.numpy as jnp
+    # The chosen runtime is explicit: a failed GPU allocation is not a CPU experiment.
+    device_name = str(jax.devices()[0])
+else:
+    device_name = "CPU"
+runroot = ROOT / "outputs/terrain_memory/reproduction/pympc" / ARGS.run / ARGS.experiment / ARGS.method
+smallroot = ROOT / "results/terrain_memory/reproduction/pympc" / ARGS.run / ARGS.experiment / ARGS.method
+runroot.mkdir(parents=True, exist_ok=True)
+smallroot.mkdir(parents=True, exist_ok=True)
+raw_compute = interface.compute_control
+last = {}
+first_solve = True
+
+def timed_compute(*args, **kwargs):
+    global first_solve
+    t0 = time.perf_counter()
+    result = raw_compute(*args, **kwargs)
+    # SRBD interface already transfers the chosen GRFs to numpy, synchronizing JAX.
+    last["solve_seconds"] = time.perf_counter() - t0
+    last["compile_included"] = first_solve and ARGS.method != "acados"
+    first_solve = False
+    state, ref = args[:2]
+    last["state"] = np.concatenate([state[k] for k in ("position","linear_velocity","orientation","angular_velocity")])
+    last["reference"] = np.concatenate([ref[k] for k in ("ref_position","ref_linear_velocity","ref_orientation","ref_angular_velocity")])
+    last["status"] = controller.previous_status if ARGS.method == "acados" else 0
+    return result
+
+interface.compute_control = timed_compute
+source_paths = [ROOT/"scripts/run_tm01_r1.py", Path(ARGS.config).resolve(), ROOT/"experiments/tm01/author.patch"]
+for source_path in source_paths:
+    (runroot/source_path.name).write_bytes(source_path.read_bytes())
+meta = dict(command=sys.argv, paper=C["paper"], experiment=ARGS.experiment, method=ARGS.method,
+    configuration=C, source_commit=subprocess.check_output(["git","rev-parse","HEAD"], cwd=ROOT,text=True).strip(),
+    source_sha256={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in source_paths},
+    platform=platform.platform(), cpu=platform.processor(), device=device_name,
+    actual_model_mass_kg=cfg.mass, actual_model_inertia=cfg.inertia.tolist(),
+    hip_height=cfg.hip_height, output_directory=str(runroot.relative_to(ROOT)), completed_episodes=0)
+meta["packages"] = subprocess.check_output([sys.executable,"-m","pip","freeze"],text=True).splitlines()
+(smallroot/"run.json").write_text(json.dumps(meta,indent=2)+"\n")
+mujoco.mj_saveLastXML(str(runroot/"model.xml"),env.mjModel)
+base_id = int(env.mjModel.jnt_bodyid[0])
+rows = []
+for seed in E["seeds"]:
+    env.reset(seed=seed,random=False)
+    # Independent episodes require resetting warm starts and all low-level history.
+    wrapper.wb_interface = WBInterface(env.feet_pos(frame="world"), LEGS, env._feet_geom_id)
+    wrapper.last_mpc_step_num = None
+    wrapper.best_sample_freq = C["locomotion"]["frequency_hz"]
+    interface.previous_contact_mpc = np.ones(4)
+    wrapper.nmpc_GRFs = LegsAttr(*[np.zeros(3) for _ in LEGS])
+    if ARGS.method == "acados":
+        controller.reset()
+        controller.previous_status = -1
+        controller.previous_contact_sequence[:] = 0
+        controller.integral_errors[:] = 0
+        controller.previous_optimal_GRF[:] = 0
+    else:
+        controller.best_control_parameters = jnp.zeros(controller.num_control_parameters,dtype=jnp.float32)
+        controller.master_key = jax.random.PRNGKey(seed+100000)
+        controller.sampling_key = controller.master_key
+    last.clear()
+    rng = np.random.default_rng(seed)
+    nw = int(np.ceil(E["seconds"] / 2))+1
+    schedule = rng.uniform(-E.get("wrench_limit",0), E.get("wrench_limit",0), (nw,6))
+    nsteps = round(E["seconds"]/dt)
+    ref_v = np.array(E["velocity"],dtype=float)
+    ref_w = np.zeros(3)
+    tau = LegsAttr(*[np.zeros(3) for _ in LEGS])
+    hist = {k:[] for k in ("time","qpos","qvel","com","velocity","orientation","angular_velocity",
+        "command","wrench","torque","feet","planned_grf","actual_grf","contact","frequency",
+        "phase","solve_seconds","compile_included","solver_status","reference_state","quadratic_cost")}
+    t_start = time.perf_counter()
+    reason = ""
+    for step in range(nsteps):
+        t = step*dt
+        if ARGS.experiment == "fig4":
+            wrench = np.array(E["wrench"],float) if E["wrench_start"]<=t<E["wrench_end"] else np.zeros(6)
+        else:
+            wrench = schedule[int((t-E["wrench_start"])//E["wrench_period"])] if t>=E["wrench_start"] else np.zeros(6)
+        env.mjData.qfrc_applied[:] = 0
+        mujoco.mj_applyFT(env.mjModel, env.mjData, wrench[:3], wrench[3:], env.com, base_id, env.mjData.qfrc_applied)
+        feet = env.feet_pos(frame="world")
+        v = env.base_lin_vel(frame="world").copy()
+        ori = env.base_ori_euler_xyz.copy()
+        omega = env.base_ang_vel(frame="base").copy()
+        com = env.com.copy()
+        last["solve_seconds"] = np.nan
+        last["compile_included"] = False
+        tau = wrapper.compute_actions(
+            com, env.base_pos.copy(), v, ori, omega, feet, env.hip_positions(frame="world"),
+            env.legs_qvel_idx, None, LEGS, dt, ref_v.copy(), ref_w.copy(), env.step_num,
+            env.mjData.qpos, env.mjData.qvel,
+            env.feet_jacobians(frame="world",return_rot_jac=False),
+            env.feet_jacobians_dot(frame="world",return_rot_jac=False),
+            env.feet_vel(frame="world"), env.legs_qfrc_passive, env.legs_qfrc_bias,
+            env.legs_mass_matrix, env.legs_qpos_idx, env.legs_qvel_idx, tau,
+            cfg.inertia.flatten(), env.mjData.contact)
+        action=np.zeros(env.mjModel.nu)
+        for leg in LEGS:
+            idx=env.legs_tau_idx[leg]
+            bounds=0.9*env.mjModel.actuator_ctrlrange[idx]
+            action[idx]=np.clip(tau[leg],bounds[:,0],bounds[:,1])
+        actual_contact, _, actual_grf=env.feet_contact_state(ground_reaction_forces=True)
+        grf=np.array([wrapper.nmpc_GRFs[l] for l in LEGS])
+        contact=wrapper.wb_interface.current_contact.copy()
+        ref_force=np.zeros((4,3))
+        ref_force[:,2]=cfg.mass*9.81*contact/max(contact.sum(),1)
+        state=np.concatenate([com,v,ori,omega])
+        err=state-last["reference"]
+        quadratic=float(np.sum(np.array(C["mpc"]["Q"])*err**2) +
+            np.sum((grf-ref_force)**2*np.array(C["mpc"]["R_force"])))
+        data=dict(time=t,qpos=env.mjData.qpos.copy(),qvel=env.mjData.qvel.copy(),com=com,
+            velocity=v,orientation=ori,angular_velocity=omega,command=ref_v.copy(),wrench=wrench,
+            torque=action,feet=np.array([feet[l] for l in LEGS]),planned_grf=grf,
+            actual_grf=np.array([actual_grf[l] for l in LEGS]),
+            contact=np.array([actual_contact[l] for l in LEGS]),
+            frequency=float(wrapper.wb_interface.pgg.step_freq),phase=wrapper.wb_interface.pgg.phase_signal,
+            solve_seconds=last["solve_seconds"],compile_included=last["compile_included"],
+            solver_status=last["status"],reference_state=last["reference"].copy(),quadratic_cost=quadratic)
+        for key,value in data.items(): hist[key].append(value)
+        _,_,terminated,truncated,info=env.step(action)
+        if terminated: reason="environment:"+",".join(info["invalid_contacts"]) if info["invalid_contacts"] else "environment_bounds"
+        if reason: break
+    hist={k:np.asarray(v) for k,v in hist.items()}
+    hist["wrench_schedule"]=schedule
+    hist["final_qpos"]=env.mjData.qpos.copy()
+    hist["final_qvel"]=env.mjData.qvel.copy()
+    trace=runroot/f"seed-{seed:03d}.npz"
+    np.savez_compressed(trace,**hist)
+    error=np.linalg.norm(hist["velocity"]-hist["command"],axis=1)
+    solve=hist["solve_seconds"]
+    steady=solve[np.isfinite(solve)&~hist["compile_included"]]
+    row=dict(experiment=ARGS.experiment,method=ARGS.method,seed=seed,success=int(not reason),
+        termination=reason or "completed",duration_s=(step+1)*dt,requested_duration_s=E["seconds"],
+        velocity_error_mean_m_s=float(error.mean()),velocity_error_rmse_m_s=float(np.sqrt(np.mean(error**2))),
+        quadratic_cost_mean=float(hist["quadratic_cost"].mean()),
+        quadratic_cost_integral=float(hist["quadratic_cost"].sum()*dt),
+        solve_mean_ms=float(steady.mean()*1000),solve_median_ms=float(np.median(steady)*1000),
+        max_frequency_hz=float(hist["frequency"].max()),wall_seconds=time.perf_counter()-t_start,
+        trajectory=str(trace.relative_to(ROOT)),sha256=hashlib.sha256(trace.read_bytes()).hexdigest())
+    rows.append(row)
+    with (smallroot/"episodes.csv").open("w",newline="") as f:
+        writer=csv.DictWriter(f,fieldnames=list(row));writer.writeheader();writer.writerows(rows)
+    meta["completed_episodes"]=len(rows)
+    meta["successes"]=sum(r["success"] for r in rows)
+    (smallroot/"run.json").write_text(json.dumps(meta,indent=2)+"\n")
+    print(json.dumps(row),flush=True)
+env.close()

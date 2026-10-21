@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""Render continuous videos by replaying recorded MuJoCo trajectories, including falls."""
+import argparse,csv,json,os
+from pathlib import Path
+os.environ["MUJOCO_GL"]="egl"
+import numpy as np
+import mujoco
+import imageio.v2 as imageio
+from PIL import Image,ImageDraw,ImageFont
+from gym_quadruped.quadruped_env import QuadrupedEnv
+ROOT=Path(__file__).resolve().parents[1]
+p=argparse.ArgumentParser()
+p.add_argument("--run",default="r1-v4")
+p.add_argument("--experiment",choices=["fig4","table1"])
+a=p.parse_args()
+R=ROOT/"results/terrain_memory/reproduction/pympc"/a.run
+O=ROOT/"outputs/terrain_memory/reproduction/pympc"/a.run
+config=json.loads((ROOT/"experiments/tm01/r1.json").read_text())
+V=config["video"]
+env=QuadrupedEnv(robot="aliengo",scene="flat",sim_dt=config["locomotion"]["dt"],
+    ref_base_lin_vel=0.,ref_base_ang_vel=0.,ground_friction_coeff=config["locomotion"]["friction"],
+    base_vel_command_type="forward",state_obs_names=())
+env.reset(random=False)
+env.mjModel.vis.global_.offwidth=V["width"]
+env.mjModel.vis.global_.offheight=V["height"]
+renderer=mujoco.Renderer(env.mjModel,height=V["height"],width=V["width"])
+camera=mujoco.MjvCamera()
+camera.type=mujoco.mjtCamera.mjCAMERA_FREE
+camera.distance=2.6
+camera.azimuth=135
+camera.elevation=-22
+font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",20)
+selection=[]
+for experiment,methods in [("fig4",["acados","adaptive"]),("table1",["acados","naive","adaptive"])]:
+    if a.experiment and experiment != a.experiment:continue
+    for method in methods:
+        with (R/experiment/method/"episodes.csv").open() as f:rr=list(csv.DictReader(f))
+        chosen={0}
+        if experiment=="table1":
+            for outcome in ("0","1"):
+                matches=[int(x["seed"]) for x in rr if x["success"]==outcome]
+                if matches:chosen.add(min(matches))
+        for seed in sorted(chosen):
+            row=next(x for x in rr if int(x["seed"])==seed)
+            d=np.load(ROOT/row["trajectory"])
+            dest=O/"videos";dest.mkdir(exist_ok=True)
+            name=f"{experiment}-{method}-seed-{seed:03d}"
+            video=dest/(name+".mp4")
+            status="COMPLETED" if row["success"]=="1" else "FAILED: "+row["termination"]
+            frames=int(np.ceil(float(row["duration_s"])*V["fps"]))
+            writer=imageio.get_writer(video,fps=V["fps"],codec="libx264",quality=7,
+                pixelformat="yuv420p",macro_block_size=None,ffmpeg_log_level="error")
+            for frame in range(frames+1):
+                time=frame/V["fps"]
+                k=min(np.searchsorted(d["time"],time,side="right")-1,len(d["time"])-1)
+                env.mjData.qpos[:]=d["final_qpos"] if frame==frames else d["qpos"][k]
+                env.mjData.qvel[:]=d["final_qvel"] if frame==frames else d["qvel"][k]
+                mujoco.mj_forward(env.mjModel,env.mjData)
+                camera.lookat[:]=env.com
+                renderer.update_scene(env.mjData,camera)
+                force=d["wrench"][k,:3]
+                if np.linalg.norm(force)>0:
+                    geom=renderer.scene.geoms[renderer.scene.ngeom]
+                    mujoco.mjv_initGeom(geom,mujoco.mjtGeom.mjGEOM_ARROW,np.zeros(3),
+                        np.zeros(3),np.eye(3).ravel(),np.array([.85,.2,.1,1]))
+                    start=env.com.copy()+np.array([0,0,.12])
+                    mujoco.mjv_connector(geom,mujoco.mjtGeom.mjGEOM_ARROW,.018,start,start+.012*force)
+                    renderer.scene.ngeom+=1
+                im=Image.fromarray(renderer.render())
+                draw=ImageDraw.Draw(im)
+                draw.rectangle((0,0,V["width"],112),fill=(242,244,247))
+                line1=f"TM01 {experiment} | {method} | seed {seed} | t={min(time,float(row['duration_s'])):.2f}s"
+                line2=f"f={d['frequency'][k]:.1f} Hz | external F=({force[0]:.1f}, {force[1]:.1f}, {force[2]:.1f}) N"
+                line3=status if frame==frames else "Recorded trajectory replay | 1x simulation time"
+                draw.text((18,10),line1,font=font,fill=(20,30,45))
+                draw.text((18,44),line2,font=font,fill=(20,30,45))
+                draw.text((18,78),line3,font=font,fill=(150,30,20) if "FAILED" in line3 else (20,70,50))
+                writer.append_data(np.asarray(im))
+                if frame==min(frames,round(3*V["fps"])):im.save(dest/(name+"-preview.png"))
+            writer.close()
+            selection.append(dict(experiment=experiment,method=method,seed=seed,success=int(row["success"]),
+                duration_s=float(row["duration_s"]),video=str(video.relative_to(ROOT)),frames=frames+1,
+                fps=V["fps"],trajectory=row["trajectory"],selection_rule=V["selection"]))
+            print(json.dumps(selection[-1]),flush=True)
+renderer.close();env.close()
+(R/"videos.json").write_text(json.dumps(selection,indent=2)+"\n")
