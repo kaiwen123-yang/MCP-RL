@@ -34,13 +34,14 @@ def _collect_case(payload):
 
 def collect_cases(actor, response, value, assets, output, *, case_names, seed,
                   stochastic, steps_per_case=None, speed="fast", episodes_per_case=1,
-                  planner_config=None, workers=1, threads=1, case_specs=None, controller_mode="mpc"):
+                  planner_config=None, workers=1, threads=1, case_specs=None, controller_mode="mpc",
+                  planner_options=None):
     """Run independent complete task cases on CPU workers with fixed case streams."""
     from concurrent.futures import ProcessPoolExecutor
     import multiprocessing
     kwargs = dict(stochastic=stochastic, steps_per_case=steps_per_case, speed=speed,
                   episodes_per_case=episodes_per_case, planner_config=planner_config,
-                  case_specs=case_specs, controller_mode=controller_mode)
+                  case_specs=case_specs, controller_mode=controller_mode, planner_options=planner_options)
     if workers <= 1 or len(case_names) == 1:
         torch.set_num_threads(threads)
         return collect(actor, response, value, assets, output,
@@ -71,7 +72,8 @@ def collect_cases(actor, response, value, assets, output, *, case_names, seed,
 
 def collect(actor, response, value, assets, output, *, case_names, seed,
             stochastic, steps_per_case=None, speed="fast",
-            episodes_per_case=1, planner_config=None, case_specs=None, controller_mode="mpc"):
+            episodes_per_case=1, planner_config=None, case_specs=None, controller_mode="mpc",
+            planner_options=None):
     """Collect exact policy-step caps, or complete deterministic episodes.
 
     Warmup is the unchanged public deterministic stand procedure and is never
@@ -104,7 +106,7 @@ def collect(actor, response, value, assets, output, *, case_names, seed,
             metrics = task.update(obs)
             stats["warmup_physics_steps"] += sim.physics_steps
             controller = LearnedMPC(response, value, speed=speed, config=planner_config,
-                                    controller_mode=controller_mode)
+                                    controller_mode=controller_mode, **(planner_options or {}))
             # All arms share streams and solver settings; trajectories may diverge.
             controller.rng = np.random.default_rng(seed + 1000 * case_index + episode)
             ep_steps = 0

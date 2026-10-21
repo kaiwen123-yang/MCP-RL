@@ -304,7 +304,8 @@ def collect_phase(system, config, assets, path, seed, mode):
                                workers=int(runtime.get("collection_workers", 1)),
                                threads=int(runtime.get("inference_threads", 1)),
                                case_specs=resolve_cases(config),
-                               controller_mode=runtime.get("controller_mode", "mpc"))
+                               controller_mode=runtime.get("controller_mode", "mpc"),
+                               planner_options=runtime.get("planner_options", {}))
     save_collection(path, collection)
     return collection
 

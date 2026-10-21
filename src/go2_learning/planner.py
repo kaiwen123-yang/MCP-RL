@@ -38,7 +38,8 @@ class LearnedMPC(FairController):
     """
 
     def __init__(self, response, value, actor=None, spec=None, speed="fast",
-                 config: MPCConfig | None = None, controller_mode="mpc"):
+                 config: MPCConfig | None = None, controller_mode="mpc",
+                 response_mode="learned", use_terminal_value=True):
         super().__init__(mode="mission", speed_band=speed, config=config or MPCConfig())
         if not math.isclose(float(response.dt), self.config.dt):
             raise ValueError("CommandResponse.dt must match the MPC macro interval")
@@ -49,6 +50,8 @@ class LearnedMPC(FairController):
         self.actor = actor
         self.spec = spec
         self.controller_mode = controller_mode
+        self.response_mode = response_mode
+        self.use_terminal_value = bool(use_terminal_value)
         self.current_state = None
         self.current_memory = None
         self.response_steps = 0
@@ -77,6 +80,11 @@ class LearnedMPC(FairController):
     def _tensor(self, value):
         return torch.as_tensor(value, dtype=self.response.state_scale.dtype,
                                device=self.response.state_scale.device)
+
+    def _predict_response(self, state, context, command):
+        if self.response_mode == "prior":
+            return self.response.prior(state, command)
+        return self.response(state, context, command)
 
     def _initial_batch(self, batch):
         if self.current_state is None or self.current_memory is None:
@@ -155,7 +163,7 @@ class LearnedMPC(FairController):
             command = self._tensor(issued)
             context = task_context(full, memory, task.spec)
             active = task_active(memory, task.spec).unsqueeze(-1)
-            full = torch.where(active, self.response(full, context, command), full)
+            full = torch.where(active, self._predict_response(full, context, command), full)
             memory = advance_memory(full, memory, task.spec, self.config.dt)
             planar_trace.append(planar_state(full).cpu().numpy())
             issued_trace.append(issued)
@@ -184,7 +192,7 @@ class LearnedMPC(FairController):
             issued = self.feedback_command(planar, task, memory[0])
             context = task_context(full, memory, task.spec)
             active = task_active(memory, task.spec).unsqueeze(-1)
-            proposed = self.response(full, context, self._tensor(issued).reshape(1, 3))
+            proposed = self._predict_response(full, context, self._tensor(issued).reshape(1, 3))
             full = torch.where(active, proposed, full)
             memory = advance_memory(full, memory, task.spec, self.config.dt)
             commands.append(issued)
@@ -194,6 +202,8 @@ class LearnedMPC(FairController):
 
     @torch.no_grad()
     def _continuation(self, full, memory, command, task):
+        if not self.use_terminal_value:
+            return full.new_zeros(full.shape[0])
         context = task_context(full, memory, task.spec)
         values = self.value(full, context, command)
         self.value_calls += int(full.shape[0])
@@ -247,7 +257,8 @@ class LearnedMPC(FairController):
             "terminal_predicted_full_state": full[0].cpu().tolist(),
             "terminal_predicted_memory": predicted_memory[0].cpu().tolist(),
             "terminal_applied_command": tail_command[0].cpu().tolist(),
-            "terminal_value_coefficient": 1.0,
+            "terminal_value_coefficient": float(self.use_terminal_value),
+            "response_mode": self.response_mode,
             "terminal_value_macro_phase": 1.0,
             "response_model_steps_including_proposals": self.response_steps - steps_before,
             "terminal_value_evaluations": self.value_calls - values_before,
