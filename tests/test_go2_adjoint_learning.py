@@ -58,9 +58,13 @@ class MechanismTests(unittest.TestCase):
 
     def test_adjoint_includes_future_feedback_jacobian(self):
         class Actor(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.gain = nn.Parameter(torch.tensor(-2., dtype=torch.float64))
+
             def mean(self, state, context, command):
                 out = torch.zeros_like(state[..., :12])
-                return torch.cat((-2 * state[..., :1], out[..., 1:]), -1)
+                return torch.cat((self.gain * state[..., :1], out[..., 1:]), -1)
 
         class Dynamics(nn.Module):
             dt = .02
