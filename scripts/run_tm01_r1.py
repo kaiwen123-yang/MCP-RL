@@ -14,10 +14,10 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 PARSER = argparse.ArgumentParser(description=__doc__)
 PARSER.add_argument("--experiment", choices=["fig3", "fig4", "table1"], required=True)
-PARSER.add_argument("--method", choices=["acados", "naive", "mppi", "adaptive"], required=True)
+PARSER.add_argument("--method", choices=["acados", "naive", "mppi", "adaptive_fixed", "adaptive"], required=True)
 PARSER.add_argument("--device", choices=["cpu", "gpu"], default="gpu")
-PARSER.add_argument("--run", default="r1-v4")
-PARSER.add_argument("--config", default=str(ROOT / "experiments/tm01/r1.json"))
+PARSER.add_argument("--run", default="r1-foothold-restored")
+PARSER.add_argument("--config", default=str(ROOT / "experiments/tm01/r1-foothold-restored.json"))
 PARSER.add_argument("--seed-start", type=int)
 PARSER.add_argument("--seed-stop", type=int)
 ARGS = PARSER.parse_args()
@@ -44,7 +44,11 @@ rc = get_robot_config(robot_name=cfg.robot)
 cfg.robot_cfg = rc
 cfg.robot_leg_joints, cfg.robot_feet_geom_names = rc.leg_joints, rc.feet_geom_names
 cfg.qpos0_js, cfg.hip_height = rc.qpos0_js, rc.hip_height
-cfg.hip_offset_x, cfg.hip_offset_y = 0.0, 0.083
+# Old configurations retain their actual .083 m / body-frame execution.
+cfg.hip_offset_x, cfg.hip_offset_y = 0.0, C["locomotion"].get("hip_offset_y", 0.083)
+adaptive_family = ARGS.method in ("adaptive_fixed", "adaptive")
+candidate_hz = ([C["locomotion"]["frequency_hz"]] if ARGS.method == "adaptive_fixed"
+                else C["locomotion"]["candidate_hz"])
 cfg.mpc_params.update(
     type="nominal" if ARGS.method == "acados" else "sampling",
     sampling_method="mppi" if ARGS.method == "mppi" else "random_sampling",
@@ -54,7 +58,7 @@ cfg.mpc_params.update(
     temperature_mppi=C["mpc"]["lambda_mppi"], sigma_mppi=C["mpc"]["sigma_mppi"],
     sigma_random_sampling=C["mpc"]["sigma_naive"], paper_Q=C["mpc"]["Q_sampling"], paper_input_cost=C["mpc"]["include_input_cost"],
     control_parametrization="cubic_spline", num_splines=C["mpc"]["num_cubic_splines"],
-    optimize_step_freq=ARGS.method == "adaptive", step_freq_available=C["locomotion"]["candidate_hz"],
+    optimize_step_freq=adaptive_family, step_freq_available=candidate_hz,
     use_inertia_recomputation=False, gradient_refinement_steps=0, use_riccati_feedback=False,
     use_foothold_optimization=False, use_foothold_constraints=False, use_integrators=False,
     external_wrenches_compensation=False, use_RTI=False, num_qp_iterations=1,
@@ -62,6 +66,7 @@ cfg.mpc_params.update(
     mu=C["locomotion"]["friction"],
 )
 cfg.locomotion_params.update(
+    liftoff_frame=C["locomotion"].get("liftoff_frame", "body"),
     phase_consistent_swing=C["locomotion"]["phase_consistent_swing"],
     swing_generator=C["locomotion"]["swing_generator"], swing_position_gain_fb=C["locomotion"]["swing_kp"],
     swing_velocity_gain_fb=C["locomotion"]["swing_kd"],
@@ -128,9 +133,20 @@ def timed_compute(*args, **kwargs):
     return result
 
 interface.compute_control = timed_compute
-source_paths = [ROOT/"scripts/run_tm01_r1.py", Path(ARGS.config).resolve(), ROOT/"experiments/tm01/author.patch"]
+source_paths = [ROOT/"scripts/run_tm01_r1.py", Path(ARGS.config).resolve(),
+    ROOT/"experiments/tm01/author.patch", ROOT/"experiments/tm01/foothold-2024.patch",
+    ROOT/"scripts/patch_tm01_gym.py", ROOT/"scripts/prepare_tm01_2024_model.py"]
 for source_path in source_paths:
     (runroot/source_path.name).write_bytes(source_path.read_bytes())
+upstream = ROOT/"work/terrain-memory/upstreams/Quadruped-PyMPC"
+source_files = {p.name: p.read_bytes() for p in source_paths}
+# Runs made between commits must retain the actual code in the small Git results.
+source_files["upstream.patch"] = subprocess.check_output(["git", "diff", "--binary", "HEAD"], cwd=upstream)
+source_id = hashlib.sha256(b"".join(name.encode()+b"\0"+data for name,data in sorted(source_files.items()))).hexdigest()
+snapshot = ROOT/"results/terrain_memory/reproduction/pympc/run-sources"/source_id[:16]
+snapshot.mkdir(parents=True, exist_ok=True)
+for name,data in source_files.items():
+    (snapshot/name).write_bytes(data)
 meta = dict(command=sys.argv, paper=C["paper"], experiment=ARGS.experiment, method=ARGS.method,
     seeds=E["seeds"], configuration=str(Path(ARGS.config).resolve().relative_to(ROOT)), configuration_sha256=hashlib.sha256(Path(ARGS.config).read_bytes()).hexdigest(), source_commit=subprocess.check_output(["git","rev-parse","HEAD"], cwd=ROOT,text=True).strip(),
     source_sha256={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in source_paths},
@@ -142,6 +158,13 @@ meta = dict(command=sys.argv, paper=C["paper"], experiment=ARGS.experiment, meth
     actual_joint_armature=env.mjModel.dof_armature.tolist(),
     actual_torque_limits=env.mjModel.actuator_ctrlrange.tolist(),
     output_directory=str(runroot.relative_to(ROOT)), completed_episodes=0)
+meta["source_snapshot"] = str(snapshot.relative_to(ROOT))
+meta["source_snapshot_sha256"] = {name:hashlib.sha256(data).hexdigest() for name,data in source_files.items()}
+meta["upstream_commit"] = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=upstream, text=True).strip()
+meta["controller_class"] = type(controller).__module__ + "." + type(controller).__name__
+meta["candidate_hz"] = candidate_hz if adaptive_family else [C["locomotion"]["frequency_hz"]]
+meta["hip_offset_y"] = cfg.hip_offset_y
+meta["liftoff_frame"] = cfg.locomotion_params["liftoff_frame"]
 meta["dependency_versions"] = "experiments/tm01/packages.json"
 if ARGS.device=="gpu" and ARGS.method!="acados":
     meta["gpu"] = subprocess.check_output(["nvidia-smi","--query-gpu=name,driver_version,memory.total","--format=csv,noheader"],text=True).strip()
@@ -170,14 +193,14 @@ for seed in E["seeds"]:
         controller.sampling_key = controller.master_key
     last.clear()
     rng = np.random.default_rng(seed)
-    nw = int(np.ceil(E["seconds"] / 2))+1
+    nw = int(np.ceil(E["seconds"] / E.get("wrench_period", 2)))+1
     schedule = rng.uniform(-E.get("wrench_limit",0), E.get("wrench_limit",0), (nw,6))
     nsteps = round(E["seconds"]/dt)
     ref_v = np.array(E["velocity"],dtype=float)
     ref_w = np.zeros(3)
     tau = LegsAttr(*[np.zeros(3) for _ in LEGS])
     hist = {k:[] for k in ("time","qpos","qvel","com","velocity","orientation","angular_velocity",
-        "command","wrench","torque","feet","planned_grf","actual_grf","contact","frequency",
+        "command","wrench","torque","feet","planned_grf","actual_grf","contact","planned_contact","frequency",
         "phase","swing_time","solve_seconds","compile_included","solver_status","reference_state","quadratic_cost")}
     t_start = time.perf_counter()
     reason = ""
@@ -186,7 +209,9 @@ for seed in E["seeds"]:
         if ARGS.experiment == "fig4":
             wrench = np.array(E["wrench"],float) if E["wrench_start"]<=t<E["wrench_end"] else np.zeros(6)
         else:
-            wrench = schedule[int((t-E["wrench_start"])//E["wrench_period"])] if t>=E["wrench_start"] else np.zeros(6)
+            elapsed = t-E["wrench_start"]
+            active = elapsed>=0 and elapsed%E["wrench_period"]<E["wrench_duration"]
+            wrench = schedule[int(elapsed//E["wrench_period"])] if active else np.zeros(6)
         env.mjData.qfrc_applied[:] = 0
         mujoco.mj_applyFT(env.mjModel, env.mjData, wrench[:3], wrench[3:], env.com, base_id, env.mjData.qfrc_applied)
         feet = env.feet_pos(frame="world")
@@ -223,8 +248,8 @@ for seed in E["seeds"]:
             velocity=v,orientation=ori,angular_velocity=omega,command=ref_v.copy(),wrench=wrench,
             torque=action,feet=np.array([feet[l] for l in LEGS]),planned_grf=grf,
             actual_grf=np.array([actual_grf[l] for l in LEGS]),
-            contact=np.array([actual_contact[l] for l in LEGS]),
-            frequency=float(wrapper.wb_interface.pgg.step_freq),phase=wrapper.wb_interface.pgg.phase_signal,swing_time=np.array(wrapper.wb_interface.stc.swing_time),
+            contact=np.array([actual_contact[l] for l in LEGS]),planned_contact=contact.copy(),
+            frequency=float(wrapper.wb_interface.pgg.step_freq),phase=wrapper.wb_interface.pgg.phase_signal.copy(),swing_time=np.array(wrapper.wb_interface.stc.swing_time),
             solve_seconds=last["solve_seconds"],compile_included=last["compile_included"],
             solver_status=last["status"],reference_state=last["reference"].copy(),quadratic_cost=quadratic)
         for key,value in data.items(): hist[key].append(value)

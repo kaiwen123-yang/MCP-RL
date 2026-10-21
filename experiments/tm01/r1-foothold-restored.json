@@ -1,0 +1,221 @@
+{
+  "paper": "arXiv:2403.11383v2",
+  "upstream_commit": "c46cb9a3960554cffc467a71c6674b65c0f4a2c8",
+  "experiment_kind": "Unvalidated method-reproduction experiment restoring historical foothold behavior on pinned modern author code; not a certified original 2024 release.",
+  "robot": "aliengo",
+  "nominal_mass_kg": 24.638,
+  "mpc": {
+    "horizon": 12,
+    "dt": 0.02,
+    "frequency_hz": 100,
+    "rollouts": 10000,
+    "iterations": 1,
+    "lambda_mppi": 1.0,
+    "sigma_mppi": 3.0,
+    "sigma_naive": [
+      0.2,
+      3.0,
+      10.0
+    ],
+    "num_cubic_splines": 1,
+    "Q": [
+      0,
+      0,
+      1500,
+      200,
+      200,
+      200,
+      500,
+      500,
+      0,
+      20,
+      20,
+      50
+    ],
+    "R_force": [
+      0.001,
+      0.001,
+      0.001
+    ],
+    "gait_regularizer_rho": 100,
+    "Q_sampling": [
+      0,
+      0,
+      111500,
+      5000,
+      5000,
+      200,
+      11200,
+      11200,
+      0,
+      20,
+      20,
+      600
+    ],
+    "control_parameterization": "one historical cubic segment, four knots per force, 48 total parameters",
+    "horizontal_force_scale": 1.0,
+    "include_input_cost": true
+  },
+  "locomotion": {
+    "dt": 0.002,
+    "frequency_hz": 1.3,
+    "candidate_hz": [
+      1.3,
+      2.0,
+      2.4
+    ],
+    "duty_factor": 0.65,
+    "swing_kp": 5000,
+    "swing_kd": 100,
+    "step_height_fraction": 0.3,
+    "friction": 0.5,
+    "swing_generator": "scipy",
+    "phase_consistent_swing": false,
+    "hip_offset_y": 0.1,
+    "liftoff_frame": "world"
+  },
+  "fig3": {
+    "methods": [
+      "acados",
+      "naive",
+      "mppi"
+    ],
+    "seeds": [
+      0
+    ],
+    "seconds": 60,
+    "velocity": [
+      0.5,
+      0,
+      0
+    ],
+    "wrench_limit": 5,
+    "wrench_start": 2,
+    "wrench_period": 2,
+    "wrench_duration": 2
+  },
+  "fig4": {
+    "methods": [
+      "acados",
+      "adaptive"
+    ],
+    "seeds": [
+      0
+    ],
+    "seconds": 8,
+    "velocity": [
+      0,
+      0.1,
+      0
+    ],
+    "wrench": [
+      0,
+      40,
+      0,
+      0,
+      0,
+      0
+    ],
+    "wrench_start": 2,
+    "wrench_end": 5
+  },
+  "table1": {
+    "methods": [
+      "acados",
+      "naive",
+      "adaptive_fixed",
+      "adaptive"
+    ],
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ],
+    "seconds": 60,
+    "velocity": [
+      0.5,
+      0,
+      0
+    ],
+    "wrench_limit": 20,
+    "wrench_start": 2,
+    "wrench_period": 2,
+    "wrench_duration": 2
+  },
+  "failure": {
+    "environment_termination": true,
+    "description": "Native gym_quadruped invalid non-leg/foot ground contact; no added roll/pitch or height cutoff"
+  },
+  "video": {
+    "fps": 30,
+    "width": 960,
+    "height": 720,
+    "selection": "all fig4; seed 0 and lowest-index failed and successful table1 episodes for each method, without cutting"
+  },
+  "implementation_choices": [
+    "Use the pinned modern author code c46cb9a3960554cffc467a71c6674b65c0f4a2c8 with the dated gym-quadruped Aliengo model efb7217b9515613b238405846dcdbc92cf07f488 and explicit source patches. This is a configured, not yet validated baseline candidate; neither snapshot is certified as the exact original paper release.",
+    "Relative to r1-v7-paper-model, restore two documented foothold behaviors from historical author source 5c763068126499255c5e80898999aa83f3226ff8: lateral hip-to-foot offset 0.1 m per side instead of 0.083 m, and world-frame lift-off points fixed throughout each swing instead of moving with the body. Preserve the modern API; do not claim that these changes restore the entire 2024 control chain or have already improved results.",
+    "Keep phase_consistent_swing=false, as in r1-v7-paper-model. The separate swing-clock repair is not combined with the foothold restoration, so its effect is not attributed to these two changes.",
+    "The fixed naive and adaptive author controllers use different force-spline time parameterizations. Add adaptive_fixed using the same adaptive controller implementation, cost, sampling, and low-level execution as adaptive, while restricting candidate frequency to [1.3] Hz. Compare adaptive_fixed against adaptive to isolate the benefit of permitting frequency optimization; preserve naive for the paper-style comparison.",
+    "Paper omits numerical Q/R/covariance. Use historical sampling Q, sigma, and one-segment cubic interpolation; nominal acados retains its different author Q/R. Compare common physical task metrics rather than treating different optimizer costs as equivalent.",
+    "The historical and modern naive samplers use two Gaussians plus a uniform component at fixed scales, retaining the previous mean as a candidate. Preserve the actual author implementation and disclose its difference from the paper description of multiple Gaussian distributions.",
+    "Enable the sampling input-force cost specified in the paper, using nominal acados force weights 0.001 and masking nominal stance load on swing legs. Historical and modern sampling source comment out this term; its inclusion is a paper-method reimplementation choice, not literal historical-code reproduction.",
+    "Use absolute MPPI lambda=1 without cost-spread normalization. Disable OT-MPC, gradient refinement, Riccati feedback, foothold optimization, integrators, external wrench compensation, reflexes, velocity modulation, and friction compensation.",
+    "Use historical SciPy cubic swing, gains 5000/100, step height 0.3*hip_height, velocity averaging, and 5 cm velocity-error correction clipping. Preserve modern CoM-based SRBD state and corresponding base-height reference adjustment; historical source used base position. Modern initial gait phase is fixed rather than the historical random global phase.",
+    "Adaptive prediction starts at the actual current contact phase; frequency decisions occur at swing apex. These explicit phase-consistency choices remain distinct from certification of an original paper snapshot.",
+    "Paper states 21 kg, while dated and modern author models are approximately 24.638 kg. Use the actual MJCF mass and initial-pose inertia consistently in all controllers. The dated model retains its damping, friction, armature, torque limits, contact options, and home pose; the massless foot-body adapter only supports the modern feet-position API.",
+    "Figure 4 uses the explicitly declared world-frame velocity [0, 0.1, 0] m/s and world-y 40 N from 2 to 5 s. The paper gives inconsistent push durations and does not fully specify the forward command despite showing forward displacement; this is a declared push-response reconstruction, not a certified identical trajectory.",
+    "Table I omits episode duration, command, complete wrench schedule, and failure threshold. Use 60 s, the Figure 3 forward command, 2 s wrench holds, and native gym-quadruped invalid-contact termination. All four methods use the same 50 disturbance seeds. Do not tune these conditions to force the published success percentages; the reported 37 percent also cannot correspond exactly to 50 integer Bernoulli outcomes.",
+    "Paper Mean Cost/tracking-error scalar is not fully defined. Retain linear-velocity error norm, RMSE, common quadratic state/input metrics, task duration, and all success/failure outcomes separately. Do not equate lower error on a prematurely terminated episode with better full-task performance.",
+    "Separate first-solve JIT compilation from steady-state solve time while retaining it in raw trajectories. Actual hardware, command, source/configuration versions, and output paths must accompany new runs; no previous trajectory is relabeled as the restored-foothold condition."
+  ],
+  "historical_reference_commit": "5c763068126499255c5e80898999aa83f3226ff8",
+  "model_mjcf": "work/terrain-memory/aliengo-2024/aliengo-paper-2024.xml"
+}

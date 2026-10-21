@@ -11,11 +11,13 @@ from gym_quadruped.quadruped_env import QuadrupedEnv
 ROOT=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser()
 p.add_argument("--run",default="r1-v4")
+p.add_argument("--config",default="experiments/tm01/r1.json")
+p.add_argument("--methods",nargs="+",default=["acados","naive","adaptive"])
 p.add_argument("--experiment",choices=["fig4","table1"])
 a=p.parse_args()
 R=ROOT/"results/terrain_memory/reproduction/pympc"/a.run
 O=ROOT/"outputs/terrain_memory/reproduction/pympc"/a.run
-config=json.loads((ROOT/"experiments/tm01/r1.json").read_text())
+config=json.loads((ROOT/a.config).read_text())
 V=config["video"]
 camera=mujoco.MjvCamera()
 camera.type=mujoco.mjtCamera.mjCAMERA_FREE
@@ -24,7 +26,7 @@ camera.azimuth=135
 camera.elevation=-22
 font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",20)
 selection=[]
-for experiment,methods in [("fig4",["acados","adaptive"]),("table1",["acados","naive","adaptive"])]:
+for experiment,methods in [("fig4",["acados","adaptive"]),("table1",a.methods)]:
     if a.experiment and experiment != a.experiment:continue
     for method in methods:
         with (R/experiment/method/"episodes.csv").open() as f:rr=list(csv.DictReader(f))

@@ -32,7 +32,17 @@ R1 与 R2 都有实际结果后进入主机制仿真。不能把软件启动、�
 
 ## Codex 下一次立即执行
 
-先取得选定全文和固定作者代码：
+继续 R1 的完整控制基线收敛，执行 [计划中的现有结果接续任务](docs/TERRAIN_MEMORY_PLAN.md#r1-现有结果之后的执行入口)。已有逐回合结果的入口是 [R1 结果索引](results/terrain_memory/reproduction/pympc/index.json)；它明确列出了未复现的结论。生成图表或跑满回合数不能自动将 R1 判为成功。
+
+本次接续使用 `r1-foothold-restored.json` 恢复已查明的历史落足行为，并增加同一个 adaptive 控制器固定 1.3 Hz 的机制对照。新条件尚无运行结果；必须在原 GPU 实验环境完成整组运行，不能将旧轨迹改名充当新结果。执行入口：
+
+```bash
+bash scripts/run_tm01_r1.sh gpu r1-foothold-restored experiments/tm01/r1-foothold-restored.json
+```
+
+已有 R1 环境须先按计划一次性应用新增的 `foothold-2024.patch`；新安装由 `setup_tm01_r1.sh` 依次应用两份补丁。先直接分析已有失败轨迹中的接触、力矩与求解状态，针对已知差异完成整组实验，不增加工程小测或无上限调参。
+
+首次准备资料时使用：
 
 ```bash
 python scripts/prepare_terrain_memory_sources.py
@@ -40,7 +50,7 @@ python scripts/prepare_terrain_memory_sources.py
 
 该脚本实际下载 [固定来源清单](literature/terrain_memory_sources.json) 中的 PDF，并取得固定提交的 Quadruped-PyMPC。下载位置为 `work/terrain-memory/`，来源与文件指纹写入该目录的 `sources.lock.json`。也可用 `--papers-only` 或 `--upstream-only` 分步取得。
 
-随后按执行计划 R1 阅读原文方法、实验及附录，并把对应参数落实到作者代码和实际实验配置；在独立环境运行完整复现。原仓库入口是 `simulation/simulation.py`，普通启动不代表已经实现论文的批量评价。
+按执行计划 R1 阅读原文方法、实验及附录，并把对应参数落实到作者代码和实际实验配置。原作者入口为 `simulation/simulation.py`，本仓库的整组复现入口为上述 `scripts/run_tm01_r1.sh`。
 
 **当前作者代码默认包含原论文之后加入的方法和参数变化。R1 必须恢复论文中的 naïve sampling / MPPI / acados 比较，不能直接拿当前默认 OT-MPC 的结果冒充 2024 论文复现。** 机器人模型及依赖差异随实际结果说明。先完成 Aliengo 方法复现，Go2 作为后续移植。
 

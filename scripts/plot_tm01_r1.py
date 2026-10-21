@@ -9,14 +9,15 @@ import matplotlib.pyplot as plt
 ROOT=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser()
 p.add_argument("--run",default="r1-v4")
+p.add_argument("--methods",nargs="+",default=["acados","naive","adaptive"])
 p.add_argument("--figures-only", action="store_true")
 a=p.parse_args()
 R=ROOT/"results/terrain_memory/reproduction/pympc"/a.run
 O=ROOT/"outputs/terrain_memory/reproduction/pympc"/a.run
 plt.rcParams.update({"font.family":"DejaVu Sans","font.size":9,"axes.spines.top":False,
  "axes.spines.right":False,"svg.fonttype":"none","savefig.dpi":220})
-colors={"acados":"#0072B2","naive":"#E69F00","mppi":"#009E73","adaptive":"#CC79A7"}
-names={"acados":"acados","naive":"Naive, fixed gait","mppi":"MPPI, fixed gait","adaptive":"Naive, adaptive gait"}
+colors={"acados":"#0072B2","naive":"#E69F00","mppi":"#009E73","adaptive_fixed":"#56B4E9","adaptive":"#CC79A7"}
+names={"acados":"acados","naive":"Naive, fixed gait","mppi":"MPPI, fixed gait","adaptive_fixed":"Adaptive implementation, 1.3 Hz","adaptive":"Naive, adaptive gait"}
 def save(fig,name):
     fig.savefig(R/(name+".png"),bbox_inches="tight")
     fig.savefig(R/(name+".svg"),bbox_inches="tight")
@@ -82,7 +83,7 @@ if a.figures_only:
     raise SystemExit(0)
 summary=[]
 allrows=[]
-for m in ["acados","naive","adaptive"]:
+for m in a.methods:
     rr=rows("table1",m);allrows+=rr
     n=len(rr);k=sum(int(x["success"]) for x in rr);phat=k/n;z=1.96
     centre=(phat+z*z/(2*n))/(1+z*z/n)
@@ -108,15 +109,17 @@ for i,s in enumerate(summary):
 ax[0].set(ylabel="Completed episodes (%)",ylim=(-5,110))
 ax[1].set_ylabel("Episode mean velocity error (m/s)")
 for axis in ax:
-    axis.set_xticks(range(3),["acados","Naive","Adaptive"]);axis.grid(axis="y",alpha=.2)
-f.suptitle("TM01 Table I experiment | 50 shared seeds per controller")
+    axis.set_xticks(range(len(a.methods)),["Adaptive\nfixed 1.3 Hz" if m=="adaptive_fixed" else m for m in a.methods]);axis.grid(axis="y",alpha=.2)
+f.suptitle("TM01 Table I + frequency ablation | 50 shared seeds" if "adaptive_fixed" in a.methods
+           else "TM01 Table I experiment | 50 shared seeds per controller")
 f.supxlabel("95% Wilson intervals. Each dot is one episode; failed episodes retain their observed duration.",fontsize=8)
 save(f,"table1")
 # Show the entire declared horizon, so no post-hoc choice of a favorable cutoff is needed.
 f,ax=plt.subplots(figsize=(7.16,3.8),layout="constrained")
 grid=np.linspace(0,60,601)
 survival=[]
-for method,ls in [("acados","-"),("naive","--"),("adaptive","-.")]:
+for method in a.methods:
+    ls={"acados":"-","naive":"--","adaptive_fixed":":","adaptive":"-."}[method]
     rr=rows("table1",method)
     duration=np.array([float(row["duration_s"]) for row in rr])
     completed=np.array([int(row["success"]) for row in rr],dtype=bool)
@@ -135,7 +138,7 @@ index=dict(run=a.run,
  paper_success_percent={"acados":32,"naive":37,"adaptive":80},
  summary=summary,figures=["fig3.png","fig3.svg","fig3_timeseries.png","fig4.png","fig4.svg","table1.png","table1.csv","table1_survival.png","table1_survival.csv"],
  notes=["Fixed author version method reproduction, not identical paper hardware/model.",
- "All 150 random-wrench outcomes retained. Means are episode means over their actual durations.",
+ "All configured random-wrench outcomes retained. Means cover each episode's observed duration, not a common full-task horizon.",
  "The paper's 0.12/0.14/0.08 Mean Cost has no fully specified scalar definition; these metrics are explicitly defined."])
 (R/"index.json").write_text(json.dumps(index,indent=2)+"\n")
 print(json.dumps(summary,indent=2))

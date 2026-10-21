@@ -19,6 +19,7 @@ mkdir -p "$ACADOS_SOURCE_DIR/bin"
 curl -fL https://github.com/acados/tera_renderer/releases/download/v0.0.34/t_renderer-v0.0.34-linux -o "$ACADOS_SOURCE_DIR/bin/t_renderer"
 chmod u+x "$ACADOS_SOURCE_DIR/bin/t_renderer"
 git -C "$upstream" apply "$root/experiments/tm01/author.patch"
+git -C "$upstream" apply "$root/experiments/tm01/foothold-2024.patch"
 
 git clone https://github.com/iit-DLSLab/gym-quadruped.git work/terrain-memory/upstreams/gym-quadruped-history
 python scripts/prepare_tm01_2024_model.py
