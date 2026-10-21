@@ -1,0 +1,220 @@
+{
+  "paper": "arXiv:2403.11383v2",
+  "upstream_commit": "c46cb9a3960554cffc467a71c6674b65c0f4a2c8",
+  "experiment_kind": "paper methods restored on pinned modern author code",
+  "robot": "aliengo",
+  "nominal_mass_kg": 24.638,
+  "mpc": {
+    "horizon": 12,
+    "dt": 0.02,
+    "frequency_hz": 100,
+    "rollouts": 10000,
+    "iterations": 1,
+    "lambda_mppi": 1.0,
+    "sigma_mppi": 3.0,
+    "sigma_naive": [
+      0.2,
+      3.0,
+      10.0
+    ],
+    "num_cubic_splines": 1,
+    "Q": [
+      0,
+      0,
+      1500,
+      200,
+      200,
+      200,
+      500,
+      500,
+      0,
+      20,
+      20,
+      50
+    ],
+    "R_force": [
+      0.001,
+      0.001,
+      0.001
+    ],
+    "gait_regularizer_rho": 100,
+    "Q_sampling": [
+      0,
+      0,
+      111500,
+      5000,
+      5000,
+      200,
+      11200,
+      11200,
+      0,
+      20,
+      20,
+      600
+    ],
+    "control_parameterization": "one historical cubic segment, four knots per force, 48 total parameters",
+    "horizontal_force_scale": 1.0,
+    "include_input_cost": true
+  },
+  "locomotion": {
+    "dt": 0.002,
+    "frequency_hz": 1.3,
+    "candidate_hz": [
+      1.3,
+      2.0,
+      2.4
+    ],
+    "duty_factor": 0.65,
+    "swing_kp": 5000,
+    "swing_kd": 100,
+    "step_height_fraction": 0.3,
+    "friction": 0.5,
+    "swing_generator": "scipy",
+    "phase_consistent_swing": false
+  },
+  "fig3": {
+    "methods": [
+      "acados",
+      "naive",
+      "mppi"
+    ],
+    "seeds": [
+      0
+    ],
+    "seconds": 60,
+    "velocity": [
+      0.5,
+      0,
+      0
+    ],
+    "wrench_limit": 5,
+    "wrench_start": 2,
+    "wrench_period": 2,
+    "wrench_duration": 2
+  },
+  "fig4": {
+    "methods": [
+      "acados",
+      "adaptive"
+    ],
+    "seeds": [
+      0
+    ],
+    "seconds": 8,
+    "velocity": [
+      0,
+      0.1,
+      0
+    ],
+    "wrench": [
+      0,
+      40,
+      0,
+      0,
+      0,
+      0
+    ],
+    "wrench_start": 2,
+    "wrench_end": 5
+  },
+  "table1": {
+    "methods": [
+      "acados",
+      "naive",
+      "adaptive"
+    ],
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ],
+    "seconds": 60,
+    "velocity": [
+      0.5,
+      0,
+      0
+    ],
+    "wrench_limit": 20,
+    "wrench_start": 2,
+    "wrench_period": 2,
+    "wrench_duration": 2
+  },
+  "failure": {
+    "environment_termination": true,
+    "description": "Native gym_quadruped invalid non-leg/foot ground contact; no added roll/pitch or height cutoff"
+  },
+  "video": {
+    "fps": 30,
+    "width": 960,
+    "height": 720,
+    "selection": "all fig4; seed 0 and lowest-index failed and successful table1 episodes for each method, without cutting"
+  },
+  "implementation_choices": [
+    "Paper omits numerical Q/R/covariance and episode duration. Restore sampling Q, sigma and one-segment cubic interpolation from historical author commit 5c763068; keep acados Q/R from the same source (unchanged in pinned version). Their internal Q differs; compare common physical task metrics, not optimizer cost.",
+    "Paper says 21 kg; both pinned modern and historical author configuration say approximately 24.638 kg. Keep actual MJCF and measure total mass/inertia from initial pose for both controllers; do not rescale only the optimizer.",
+    "Historical and modern author naive sampler use two Gaussians plus a uniform component at fixed scales. Preserve this actual author implementation despite V-A's shorthand 'multiple Gaussian distributions'; previous mean is retained as one candidate.",
+    "Enable the paper's input-force cost in sampling, with the pinned nominal acados 0.001 force weights; paper gives no R values and both historical/modern sampling code comment out this term. Mask nominal stance load on swing legs. Common reported quadratic metric uses nominal acados Q/R, independently of sampling optimizer Q.",
+    "Disable foothold optimization, integrators, external wrench compensation, reflexes, velocity modulation, gradient refinement, Riccati feedback, and OT-MPC.",
+    "Restore historical scipy cubic swing, gains 5000/100, step height 0.3*hip_height. Preserve author's foothold velocity average and 5 cm velocity-error correction clipping (implementation detail omitted from Eq.3).",
+    "Correct adaptive prediction contact phase to begin at current phase, as non-adaptive execution does. Frequency updates at swing apex follow historical author implementation.",
+    "Figure 4: explicit world-y command 0.1 m/s; world-y 40 N from 2 to 5 s. Native environment contact termination only; no invented early abort for orientation/height.",
+    "Table I omits episode duration, command, wrench schedule and failure threshold. Use 60 s author simulation default, Fig.3 command and 2 s wrench holds, and native gym_quadruped invalid-contact termination. Exact numerical reproduction cannot be claimed.",
+    "Reported paper success 37 percent is incompatible with 50 integer Bernoulli episodes. Preserve integer outcomes; do not force match.",
+    "Paper Mean Cost/tracking error scalar is not fully defined. Report linear-velocity error norm (m/s), RMSE, integrated quadratic state/input cost and success counts separately.",
+    "JIT compilation first solve is retained in raw data and separated from steady-state solve-time boxplot; no dummy warm-up runs.",
+    "The initial modern-weight r1-v1 Fig.3 run failed at 5.308 s (naive) and 1.484 s (MPPI). This source-restoration revision replaces modern weights/scales/splines with the fixed historical author's values, not a fitted parameter search. All earlier outcomes remain under r1-v1.",
+    "r1-v2 included author-Q restoration, but still used modern swing gains and custom early orientation/height termination. r1-v3 restores historical low-level settings and uses native contact termination. Completed and interrupted r1-v2 data retained; not pooled with final results.",
+    "Remove post-paper horizontal-force scaling introduced by 6e7eb08 on 2025-04-14; historical force parameters directly represent N in all three axes. r1-v3 sampling batches interrupted when this omitted restoration was found; all completed episodes retained, then full affected batches rerun as r1-v4.",
+    "Acados data from r1-v3 have identical robot, task, low-level and optimizer conditions; only the sampling implementation changed in r1-v4. Reuse those original trajectories with explicit origin in the final comparison.",
+    "Restore author gym model efb7217 (2024-09-04): joint damping 3, frictionloss .2, armature .01, torque limit 44.4 Nm, elliptical cone/impratio 100 and original home pose. Modern 2026 identified model changes these substantially. Massless foot-body adapter preserves all physical inertias and collision locations."
+  ],
+  "historical_reference_commit": "5c763068126499255c5e80898999aa83f3226ff8",
+  "model_mjcf": "work/terrain-memory/aliengo-2024/aliengo-paper-2024.xml"
+}

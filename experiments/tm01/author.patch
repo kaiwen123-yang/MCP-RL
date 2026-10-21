@@ -1,3 +1,15 @@
+diff --git a/quadruped_pympc/config.py b/quadruped_pympc/config.py
+index f517ba6..c655f7f 100644
+--- a/quadruped_pympc/config.py
++++ b/quadruped_pympc/config.py
+@@ -250,6 +250,7 @@ mpc_params = {
+ # -----------------------------------------------------------------------
+ 
+ locomotion_params = {
++    'phase_consistent_swing': False,  # explicit R1 timing-repair comparison
+     'swing_generator':             'hermite',  # 'scipy', 'hermite', 'bezier'
+     'swing_position_gain_fb':      500,
+     'swing_velocity_gain_fb':      10,
 diff --git a/quadruped_pympc/controllers/sampling/centroidal_model_jax.py b/quadruped_pympc/controllers/sampling/centroidal_model_jax.py
 index 35ecf84..4e43656 100644
 --- a/quadruped_pympc/controllers/sampling/centroidal_model_jax.py
@@ -473,6 +485,28 @@ index 3a07acf..23e5315 100644
  
  
  class Gait:
+diff --git a/quadruped_pympc/helpers/swing_trajectory_controller.py b/quadruped_pympc/helpers/swing_trajectory_controller.py
+index 452f987..fb0c363 100644
+--- a/quadruped_pympc/helpers/swing_trajectory_controller.py
++++ b/quadruped_pympc/helpers/swing_trajectory_controller.py
+@@ -1,4 +1,5 @@
+ import numpy as np
++from quadruped_pympc import config as cfg
+ 
+ 
+ class SwingTrajectoryController:
+@@ -32,6 +33,11 @@ class SwingTrajectoryController:
+         self.rising_edge_detected = False
+ 
+     def regenerate_swing_trajectory_generator(self, step_height: float, swing_period: float) -> None:
++        # IV-C defines swing duration from frequency. Preserve normalized swing
++        # phase when it changes at the apex, otherwise the foot reference jumps
++        # from mid-swing to near touchdown without physical elapsed time.
++        if cfg.locomotion_params["phase_consistent_swing"]:
++            self.swing_time = [t * swing_period / self.swing_period for t in self.swing_time]
+         if self.generator == "scipy":
+             from .swing_generators.scipy_swing_trajectory_generator import SwingTrajectoryGenerator
+             self.swing_generator = SwingTrajectoryGenerator(swing_period=swing_period, step_height=step_height)
 diff --git a/quadruped_pympc/interfaces/wb_interface.py b/quadruped_pympc/interfaces/wb_interface.py
 index 74afe73..5c68c0f 100644
 --- a/quadruped_pympc/interfaces/wb_interface.py

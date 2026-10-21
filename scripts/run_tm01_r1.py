@@ -18,6 +18,8 @@ PARSER.add_argument("--method", choices=["acados", "naive", "mppi", "adaptive"],
 PARSER.add_argument("--device", choices=["cpu", "gpu"], default="gpu")
 PARSER.add_argument("--run", default="r1-v4")
 PARSER.add_argument("--config", default=str(ROOT / "experiments/tm01/r1.json"))
+PARSER.add_argument("--seed-start", type=int)
+PARSER.add_argument("--seed-stop", type=int)
 ARGS = PARSER.parse_args()
 os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
 os.environ["JAX_PLATFORMS"] = "cpu" if ARGS.device == "cpu" or ARGS.method == "acados" else "cuda"
@@ -34,6 +36,8 @@ from quadruped_pympc import config as cfg
 
 C = json.loads(Path(ARGS.config).read_text())
 E = C[ARGS.experiment]
+if "model_mjcf" in C:
+    os.environ["TM01_ROBOT_XML"] = str(ROOT/C["model_mjcf"])
 LEGS = ("FL", "FR", "RL", "RR")
 cfg.robot = C["robot"]
 rc = get_robot_config(robot_name=cfg.robot)
@@ -58,6 +62,7 @@ cfg.mpc_params.update(
     mu=C["locomotion"]["friction"],
 )
 cfg.locomotion_params.update(
+    phase_consistent_swing=C["locomotion"]["phase_consistent_swing"],
     swing_generator=C["locomotion"]["swing_generator"], swing_position_gain_fb=C["locomotion"]["swing_kp"],
     swing_velocity_gain_fb=C["locomotion"]["swing_kd"],
     step_height=C["locomotion"]["step_height_fraction"] * cfg.hip_height,
@@ -97,6 +102,13 @@ runroot = ROOT / "outputs/terrain_memory/reproduction/pympc" / ARGS.run / ARGS.e
 smallroot = ROOT / "results/terrain_memory/reproduction/pympc" / ARGS.run / ARGS.experiment / ARGS.method
 runroot.mkdir(parents=True, exist_ok=True)
 smallroot.mkdir(parents=True, exist_ok=True)
+if ARGS.seed_start is not None:
+    batch=f"batch-{ARGS.seed_start:03d}-{ARGS.seed_stop:03d}"
+    runroot=runroot/batch
+    smallroot=smallroot/batch
+    runroot.mkdir(parents=True,exist_ok=True)
+    smallroot.mkdir(parents=True,exist_ok=True)
+    E["seeds"]=[seed for seed in E["seeds"] if ARGS.seed_start<=seed<ARGS.seed_stop]
 raw_compute = interface.compute_control
 last = {}
 first_solve = True
@@ -120,14 +132,22 @@ source_paths = [ROOT/"scripts/run_tm01_r1.py", Path(ARGS.config).resolve(), ROOT
 for source_path in source_paths:
     (runroot/source_path.name).write_bytes(source_path.read_bytes())
 meta = dict(command=sys.argv, paper=C["paper"], experiment=ARGS.experiment, method=ARGS.method,
-    configuration=C, source_commit=subprocess.check_output(["git","rev-parse","HEAD"], cwd=ROOT,text=True).strip(),
+    seeds=E["seeds"], configuration=str(Path(ARGS.config).resolve().relative_to(ROOT)), configuration_sha256=hashlib.sha256(Path(ARGS.config).read_bytes()).hexdigest(), source_commit=subprocess.check_output(["git","rev-parse","HEAD"], cwd=ROOT,text=True).strip(),
     source_sha256={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in source_paths},
-    platform=platform.platform(), cpu=platform.processor(), device=device_name,
+    platform=platform.platform(), cpu=next(x.split(":",1)[1].strip() for x in Path("/proc/cpuinfo").read_text().splitlines() if x.startswith("model name")), device=device_name,
     actual_model_mass_kg=cfg.mass, actual_model_inertia=cfg.inertia.tolist(),
-    hip_height=cfg.hip_height, output_directory=str(runroot.relative_to(ROOT)), completed_episodes=0)
-meta["packages"] = subprocess.check_output([sys.executable,"-m","pip","freeze"],text=True).splitlines()
+    hip_height=cfg.hip_height,
+    actual_joint_damping=env.mjModel.dof_damping.tolist(),
+    actual_joint_friction=env.mjModel.dof_frictionloss.tolist(),
+    actual_joint_armature=env.mjModel.dof_armature.tolist(),
+    actual_torque_limits=env.mjModel.actuator_ctrlrange.tolist(),
+    output_directory=str(runroot.relative_to(ROOT)), completed_episodes=0)
+meta["dependency_versions"] = "experiments/tm01/packages.json"
+if ARGS.device=="gpu" and ARGS.method!="acados":
+    meta["gpu"] = subprocess.check_output(["nvidia-smi","--query-gpu=name,driver_version,memory.total","--format=csv,noheader"],text=True).strip()
 (smallroot/"run.json").write_text(json.dumps(meta,indent=2)+"\n")
 mujoco.mj_saveLastXML(str(runroot/"model.xml"),env.mjModel)
+mujoco.mj_saveModel(env.mjModel, str(runroot/"model.mjb"), None)
 base_id = int(env.mjModel.jnt_bodyid[0])
 rows = []
 for seed in E["seeds"]:
@@ -158,7 +178,7 @@ for seed in E["seeds"]:
     tau = LegsAttr(*[np.zeros(3) for _ in LEGS])
     hist = {k:[] for k in ("time","qpos","qvel","com","velocity","orientation","angular_velocity",
         "command","wrench","torque","feet","planned_grf","actual_grf","contact","frequency",
-        "phase","solve_seconds","compile_included","solver_status","reference_state","quadratic_cost")}
+        "phase","swing_time","solve_seconds","compile_included","solver_status","reference_state","quadratic_cost")}
     t_start = time.perf_counter()
     reason = ""
     for step in range(nsteps):
@@ -204,7 +224,7 @@ for seed in E["seeds"]:
             torque=action,feet=np.array([feet[l] for l in LEGS]),planned_grf=grf,
             actual_grf=np.array([actual_grf[l] for l in LEGS]),
             contact=np.array([actual_contact[l] for l in LEGS]),
-            frequency=float(wrapper.wb_interface.pgg.step_freq),phase=wrapper.wb_interface.pgg.phase_signal,
+            frequency=float(wrapper.wb_interface.pgg.step_freq),phase=wrapper.wb_interface.pgg.phase_signal,swing_time=np.array(wrapper.wb_interface.stc.swing_time),
             solve_seconds=last["solve_seconds"],compile_included=last["compile_included"],
             solver_status=last["status"],reference_state=last["reference"].copy(),quadratic_cost=quadratic)
         for key,value in data.items(): hist[key].append(value)

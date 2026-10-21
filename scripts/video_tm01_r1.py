@@ -17,13 +17,6 @@ R=ROOT/"results/terrain_memory/reproduction/pympc"/a.run
 O=ROOT/"outputs/terrain_memory/reproduction/pympc"/a.run
 config=json.loads((ROOT/"experiments/tm01/r1.json").read_text())
 V=config["video"]
-env=QuadrupedEnv(robot="aliengo",scene="flat",sim_dt=config["locomotion"]["dt"],
-    ref_base_lin_vel=0.,ref_base_ang_vel=0.,ground_friction_coeff=config["locomotion"]["friction"],
-    base_vel_command_type="forward",state_obs_names=())
-env.reset(random=False)
-env.mjModel.vis.global_.offwidth=V["width"]
-env.mjModel.vis.global_.offheight=V["height"]
-renderer=mujoco.Renderer(env.mjModel,height=V["height"],width=V["width"])
 camera=mujoco.MjvCamera()
 camera.type=mujoco.mjtCamera.mjCAMERA_FREE
 camera.distance=2.6
@@ -42,7 +35,13 @@ for experiment,methods in [("fig4",["acados","adaptive"]),("table1",["acados","n
                 if matches:chosen.add(min(matches))
         for seed in sorted(chosen):
             row=next(x for x in rr if int(x["seed"])==seed)
-            d=np.load(ROOT/row["trajectory"])
+            trajectory=ROOT/row["trajectory"]
+            d=np.load(trajectory)
+            model=mujoco.MjModel.from_binary_path(str(trajectory.parent/"model.mjb"))
+            model.vis.global_.offwidth=V["width"]
+            model.vis.global_.offheight=V["height"]
+            data=mujoco.MjData(model)
+            renderer=mujoco.Renderer(model,height=V["height"],width=V["width"])
             dest=O/"videos";dest.mkdir(exist_ok=True)
             name=f"{experiment}-{method}-seed-{seed:03d}"
             video=dest/(name+".mp4")
@@ -53,17 +52,17 @@ for experiment,methods in [("fig4",["acados","adaptive"]),("table1",["acados","n
             for frame in range(frames+1):
                 time=frame/V["fps"]
                 k=min(np.searchsorted(d["time"],time,side="right")-1,len(d["time"])-1)
-                env.mjData.qpos[:]=d["final_qpos"] if frame==frames else d["qpos"][k]
-                env.mjData.qvel[:]=d["final_qvel"] if frame==frames else d["qvel"][k]
-                mujoco.mj_forward(env.mjModel,env.mjData)
-                camera.lookat[:]=env.com
-                renderer.update_scene(env.mjData,camera)
+                data.qpos[:]=d["final_qpos"] if frame==frames else d["qpos"][k]
+                data.qvel[:]=d["final_qvel"] if frame==frames else d["qvel"][k]
+                mujoco.mj_forward(model,data)
+                camera.lookat[:]=data.subtree_com[1]
+                renderer.update_scene(data,camera)
                 force=d["wrench"][k,:3]
                 if np.linalg.norm(force)>0:
                     geom=renderer.scene.geoms[renderer.scene.ngeom]
                     mujoco.mjv_initGeom(geom,mujoco.mjtGeom.mjGEOM_ARROW,np.zeros(3),
                         np.zeros(3),np.eye(3).ravel(),np.array([.85,.2,.1,1]))
-                    start=env.com.copy()+np.array([0,0,.12])
+                    start=data.subtree_com[1].copy()+np.array([0,0,.12])
                     mujoco.mjv_connector(geom,mujoco.mjtGeom.mjGEOM_ARROW,.018,start,start+.012*force)
                     renderer.scene.ngeom+=1
                 im=Image.fromarray(renderer.render())
@@ -78,9 +77,9 @@ for experiment,methods in [("fig4",["acados","adaptive"]),("table1",["acados","n
                 writer.append_data(np.asarray(im))
                 if frame==min(frames,round(3*V["fps"])):im.save(dest/(name+"-preview.png"))
             writer.close()
+            renderer.close()
             selection.append(dict(experiment=experiment,method=method,seed=seed,success=int(row["success"]),
                 duration_s=float(row["duration_s"]),video=str(video.relative_to(ROOT)),frames=frames+1,
                 fps=V["fps"],trajectory=row["trajectory"],selection_rule=V["selection"]))
             print(json.dumps(selection[-1]),flush=True)
-renderer.close();env.close()
 (R/"videos.json").write_text(json.dumps(selection,indent=2)+"\n")
