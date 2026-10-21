@@ -1,6 +1,6 @@
 # 当前研究入口
 
-更新：2026-10-21（Asia/Shanghai）。用户已授权整合PR #1的已完成底座与证据，并纠正下一阶段方向。
+更新：2026-10-21（Asia/Shanghai）。[PR #1](https://github.com/kaiwen123-yang/MCP-RL/pull/1)已按用户授权合并，合并提交为`ab152ba4f240ca35591e7abdfab3427f7e5826db`，远端已核验。下一阶段采用用户纠正后的复杂地形连续技能方向。
 
 ## 主线与当前决定
 
@@ -9,7 +9,7 @@
 - 当前CV和四秒pathwise辅助候选停止作为主攻，源码和全部结果保留。
 - 固定27.32米平地起停任务保留为完整回归基准，尚未确立值得专门学习的新能力。
 - 本轮曾提出的热负荷方向已被用户否定，不继续按该方向开发。
-- 先不训练、不扩大训练、不上实机、不启动自动任务。PR #1可以合并已有底座；合并不意味着旧算法有效或新训练获授权。
+- 先不训练、不扩大训练、不上实机、不启动自动任务。PR #1已合并已有底座；合并不意味着旧算法有效或新训练获授权。
 - [执行边界与保留项](RESEARCH_BOUNDARIES.md) · [复杂地形连续执行问题](complex-terrain-research.md)。
 
 ## 已完成且必须保留的事实
@@ -35,3 +35,5 @@ Robot Parkour Learning、ANYmal Parkour、Extreme Parkour及SPlaTES是直接近�
 当前没有新的复杂地形训练、Go2多技能整程成功或论文增量结论。新来源与可复用检查点的具体核验见[复杂地形问题](complex-terrain-research.md)。
 
 旧状态全文保留在[10月21日历史快照](CURRENT_STATE_HISTORY_2026-10-21.md)，更早文档只描述原日期事实，不自动作为执行授权。
+
+公开底座核验进展：官方Robot Parkour Learning的Go1视觉混合策略包已取得，覆盖crawl/jump/leap，未证明含tilt/stairs；Go2有配置但未取得该体系Go2权重。Extreme Parkour官方网页另有Go2 teacher演示资产来源，属于Isaac Lab复现而非原论文A1权重，可覆盖跨越/台阶但未覆盖受限姿态。当前不将这些不同平台和来源拼成一套已跑通系统。[固定来源及文件哈希](../notes/complex-terrain-2026-10-21/public-baseline.json)。

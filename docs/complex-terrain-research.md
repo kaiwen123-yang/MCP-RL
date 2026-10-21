@@ -66,3 +66,11 @@ a_t=\pi_\theta(o_t,\mathcal G_t,m_k,p_k,e_k).
 当前不训练，不上实机。下一项实际工作优先核实并复用一个公开的多技能整程基线，在固定任务下识别失败属于感知、单技能能力还是接续；不先重写整套训练器，不先添加辅助损失。
 
 当前优先复用[Robot Parkour Learning官方实现](https://github.com/ZiwenZhuang/parkour)。已核有Go1公开检查点压缩包及Go2配置/部署示例；不能把Go1检查点当Go2同等能力，包内技能范围、完整环境和实际运行结果分别记录。Go2复杂地形整程尚未运行。
+
+### 已取得的公开执行底座
+
+已实际下载并核对Robot Parkour Learning固定版本`5e1f4136f7fec9dac2741add63ca58d32090666f`的两个Go1权重ZIP，未加载模型或运行。视觉混合包的实际障碍选项是crawl/jump/jump/leap，没有tilt/stairs。Go2示例有更多地形配置，但不能据此认定已有对应预训练能力。原文件保存在忽略目录，公开[来源清单](../notes/complex-terrain-2026-10-21/public-baseline.json)只含公开链接、配置结论和哈希。
+
+[Extreme Parkour官方站点的Go2演示来源](https://github.com/extreme-parkour/extreme-parkour.github.io/commit/9699af12f9aa0bd044cfc9aaf4f053e97648f706)是Isaac Lab复现的teacher与MuJoCo WASM演示，不是原论文A1权重。已核有可取得的模型资产与跨沟/台阶/斜坡场景，本轮未下载或执行；没有低姿/侧倾受限空间能力证据。它可作Go2跨越与踏阶基线候选，不能冒充完整目标链。
+
+下一项具体工程工作是保持官方Go1包自身身份建立冻结完整混合任务评价，并核实同一Go2上受限姿态技能的可用来源；不把Go1权重替换URDF后直接算作Go2复现。现有技能缺失与技能接续问题分别识别，最终研究目标仍是用户提出的整条地形链。
