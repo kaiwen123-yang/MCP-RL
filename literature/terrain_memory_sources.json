@@ -1,0 +1,105 @@
+{
+  "research_problem": "面向重复踩踏的四足机器人地面记忆辨识与跨步协同控制",
+  "selection_date": "2026-10-21",
+  "papers": [
+    {
+      "id": "TM01",
+      "title": "On the Benefits of GPU Sample-Based Stochastic Predictive Controllers for Legged Locomotion",
+      "role": "R1：首篇四足 MPC 方法复现",
+      "publication": "IROS 2024",
+      "doi": "10.1109/IROS58592.2024.10801698",
+      "version": "arXiv:2403.11383v2",
+      "url": "https://arxiv.org/html/2403.11383v2",
+      "pdf_url": "https://arxiv.org/pdf/2403.11383v2",
+      "filename": "TM01_pympc_2403.11383v2.pdf",
+      "read_for_execution": "全文；实现重点为 III、IV-A 至 IV-D、V-A/V-B，图 3/4 与表 I；V-C 留作实机对照依据",
+      "code_url": "https://github.com/iit-DLSLab/Quadruped-PyMPC",
+      "reproduction_targets": ["图 3：三种控制器的跟踪和计算时间", "图 4：步频适应", "表 I：50 回合随机扰动统计"]
+    },
+    {
+      "id": "TM02",
+      "title": "Viscoelasticty with physics-augmented neural networks: Model formulation and training methods without prescribed internal variables",
+      "role": "R2：参考本构与隐变量学习，依据论文重实现",
+      "version": "arXiv:2401.14270v1",
+      "url": "https://arxiv.org/html/2401.14270v1",
+      "pdf_url": "https://arxiv.org/pdf/2401.14270v1",
+      "filename": "TM02_viscoelastic_2401.14270v1.pdf",
+      "read_for_execution": "全文；重点为 2、3.2、4.2/4.3、5.1、5.2.2 与附录 C；公式 26–30、表 1、图 8–10",
+      "code_status": "本次未核到官方训练代码；必须标为论文方法重实现",
+      "reproduction_targets": ["参考材料的完整历史响应", "不提供隐变量标签时的未见加载路径预测"]
+    },
+    {
+      "id": "TM03",
+      "title": "STANCE: Locomotion Adaptation over Soft Terrain",
+      "role": "S 阶段软接触与在线柔顺估计强对照",
+      "url": "https://iit-dlslab.github.io/papers/fahmi19tro.pdf",
+      "pdf_url": "https://iit-dlslab.github.io/papers/fahmi19tro.pdf",
+      "filename": "TM03_STANCE.pdf",
+      "read_for_execution": "足地 Kelvin–Voigt 模型、接触一致控制和在线辨识；不把复现整套 HyQ 系统作为 R1 前置"
+    },
+    {
+      "id": "TM04",
+      "title": "Quadruped Locomotion on Non-Rigid Terrain using Reinforcement Learning",
+      "role": "S 阶段非刚性地面与历史观测 RL 对照",
+      "version": "arXiv:2107.02955v1",
+      "url": "https://arxiv.org/html/2107.02955v1",
+      "pdf_url": "https://arxiv.org/pdf/2107.02955v1",
+      "filename": "TM04_nonrigid_rl_2107.02955v1.pdf",
+      "read_for_execution": "地面模型、观测历史、训练设置与评价；区分弹性地块和本项目材料内变量"
+    },
+    {
+      "id": "TM05",
+      "title": "Data-Driven Physics Embedded Dynamics with Predictive Control and Reinforcement Learning for Quadrupeds",
+      "role": "PINN/物理结构模型与 RL–MPC 的创新边界参考",
+      "version": "arXiv:2603.14333v1",
+      "url": "https://arxiv.org/html/2603.14333v1",
+      "pdf_url": "https://arxiv.org/pdf/2603.14333v1",
+      "filename": "TM05_PEPC_2603.14333v1.pdf",
+      "read_for_execution": "LNN、策略/价值与 MPPI 接口；LNN 不能自动称为狭义 PINN",
+      "code_status": "本轮未核到完整算法实现，不作为必须先跑通的复现依赖"
+    },
+    {
+      "id": "TM06",
+      "title": "A Foot Resistive Force Model for Legged Locomotion on Muddy Terrains",
+      "role": "材料历史、松弛与吸力的直接近邻，限定创新表述",
+      "version": "arXiv:2604.12006v1",
+      "url": "https://arxiv.org/html/2604.12006v1",
+      "pdf_url": "https://arxiv.org/pdf/2604.12006v1",
+      "filename": "TM06_mud_2604.12006v1.pdf",
+      "read_for_execution": "II、补充材料的本构辨识；触变泥地不等同首版黏弹性地层，不在首版引入全部泥地机制"
+    }
+  ],
+  "upstream": {
+    "url": "https://github.com/iit-DLSLab/Quadruped-PyMPC.git",
+    "commit": "c46cb9a3960554cffc467a71c6674b65c0f4a2c8",
+    "path": "work/terrain-memory/upstreams/Quadruped-PyMPC",
+    "license": "BSD-3-Clause",
+    "role": "固定的现代作者代码底座；恢复 2024 论文方法和设置后进行 R1，不宣称这是原论文发布快照",
+    "installation": "https://github.com/iit-DLSLab/Quadruped-PyMPC/blob/c46cb9a3960554cffc467a71c6674b65c0f4a2c8/README_install.md",
+    "entrypoint": "simulation/simulation.py",
+    "configuration": "quadruped_pympc/config.py",
+    "known_differences": [
+      "当前默认采样方法为 OT-MPC，原论文比较 naive sampling 和 MPPI",
+      "当前包含后加的 gradient refinement / feedback 等选项，R1 应关闭",
+      "原文 MPPI 温度 lambda=1，当前实现按 cost spread 额外缩放；须按原文恢复更新式，不能只改温度数值",
+      "原论文名义步频 1.3 Hz，当前默认 trot 为 1.4 Hz",
+      "原论文称 Aliengo 为 21 kg，当前配置质量 24.638 kg；须核对实际模型并如实处理差异",
+      "没有核实一条现成命令可自动精确生成原论文表 I，需落实批量实验入口"
+    ],
+    "historical_reference_commit": "5c763068126499255c5e80898999aa83f3226ff8"
+  },
+  "additional_primary_sources": [
+    {
+      "title": "Mitigating memory effects during undulatory locomotion on hysteretic materials",
+      "url": "https://elifesciences.org/articles/51412",
+      "role": "材料记忆及正负影响的已有物理证据"
+    },
+    {
+      "title": "Terramechanics-Aware Adaptive Quadrupedal Locomotion via Foot-Terrain Interaction Model",
+      "doi": "10.1109/LRA.2026.3732903",
+      "url": "https://ieeexplore.ieee.org/abstract/document/11685272/",
+      "role": "最新直接近邻；正式创新表述前取得全文逐项比较",
+      "access_note": "本轮只核到公开摘要/索引，全文未取得；不得写成已排除重合，不阻止 R1/R2 实际复现"
+    }
+  ]
+}
