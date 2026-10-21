@@ -69,6 +69,8 @@ class LearnedMPC(FairController):
             **super().metadata(),
             "controller": "shared_factual_response_mission_mpc",
             "model": "full48_command_response_fitted_only_to_actual_transitions",
+            "prediction_closure": self.response_mode,
+            "learned_terminal_value_enabled": self.use_terminal_value,
             "terminal_value": "minus actual-return critic; coefficient 1 in all arms",
             "terminal_value_inputs": "predicted full48, predicted task memory, final applied command, macro phase 1",
             "cem_policy": "original deterministic seed and shifted warm sequence",
