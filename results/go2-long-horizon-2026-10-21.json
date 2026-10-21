@@ -1,0 +1,400 @@
+{
+  "date": "2026-10-21",
+  "status": "COMPLETED",
+  "scope": "one matched complete learning iteration, three existing task conditions, seed 11",
+  "initialization": "previous fixed pilot seed11/common/initialization.pt; same checkpoint for both arms",
+  "task_geometry_changed": false,
+  "training_return_changed": false,
+  "cpu_priority": "normal",
+  "cpu_affinity": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "collection_workers": 3,
+  "inference_threads_per_worker": 2,
+  "training_device": "cuda:0",
+  "gpu_model": "NVIDIA GeForce RTX 5080",
+  "runtime": {
+    "python": "3.11",
+    "torch": "2.7.0+cu128",
+    "mujoco": "3.16.0",
+    "numpy": "1.26.0",
+    "PyYAML": "6.0.3"
+  },
+  "wall_seconds": 103.31066130899853,
+  "source_sha256": {
+    "configs/go2_adjoint_learning.json": "724e5385cb92c2bdfbc0a9b783ed5340f0634b66e65254223907135ab375ce20",
+    "configs/go2_long_horizon.json": "c856a6667df96fbbd3eb6b0abf7a2bd098d32593cdc8aae831a03699cf7b165f",
+    "scripts/run_go2_learning.py": "41fad43344e4cdbfe3eae00451112101fe7e07e81de78b2ca2bc84afe657e71a",
+    "src/go2_learning/__init__.py": "5398b4c699eeed19fdee78c1f2f14a8ec5b086bb79236aa6cf9cd4eba00c6293",
+    "src/go2_learning/collection.py": "69f9c3829fb2cad10717b5d206f501ca2ef711f64ea128664f90a9719b82f408",
+    "src/go2_learning/execution.py": "f00fb67acf8bf6730106261fd273d067aa331f8f55d336d11b1c1eeeb75d4f3a",
+    "src/go2_learning/learning.py": "ebc989704c057834b98b437225805e268b9cd39689478e98c940c77fad050f91",
+    "src/go2_learning/mission.py": "fe291163fe17b3099864f5e0348460895fc9d3b638e31536eb0a40b4e2089bdc",
+    "src/go2_learning/models.py": "d246a37b1cd67658afeaa32b32d0a5dc3d0d518ff4c578cd242877ee8efb262b",
+    "src/go2_learning/pathwise.py": "8bc2b195c20e2c1debd46d90b1bb215bdda88e06baf97d7a520da0e2b967e1a3",
+    "src/go2_learning/planner.py": "a1777b7c7730aaacdd6bd23f10ff708aa640f453976200f0fd5caa2c3057104c",
+    "src/go2_learning/policy.py": "637d49ef3d6207e49a3a995dc935d859da0cc3489eaaab2e3423fdf5e83adb06",
+    "src/go2_learning/runner.py": "e6b11aa493a26b8fe92fb6cc09acaa5843e14be28edd04058d94f0e329842009",
+    "src/go2_learning/state.py": "e16fa3c7c000e652cf6597d59aafa0d4f88ebf3fb33f355ce98223b54389423e",
+    "src/go2_frozen/task.py": "739aab5c0d0996668e93e7ab644529a41e9b6f3e3f0fc524d0e4fad64f56de32",
+    "src/go2_frozen/simulator.py": "2ab17ccf4db019a606fe1c1aa6356b6dbabb89c056af86f4f4df282c4574a881",
+    "src/go2_frozen/fair_control.py": "6922b08724b768dd8eab1f951e21393b846f85c12465feea2dfc397a5a6aba79"
+  },
+  "initial": {
+    "episodes": [
+      {
+        "case": "nominal",
+        "success": true,
+        "completion_seconds": 11.27999999999819,
+        "mechanical_work_proxy_J": 787.6251784187965,
+        "torque_squared_integral": 4254.768325238366,
+        "path_rms_m": 0.06975623612399537,
+        "stage_times": {
+          "turn": 4.000000000000448,
+          "door": 5.520000000000955,
+          "stop": 8.31999999999983,
+          "complete": 11.27999999999819
+        }
+      },
+      {
+        "case": "narrow",
+        "success": true,
+        "completion_seconds": 11.45999999999809,
+        "mechanical_work_proxy_J": 768.4918155078199,
+        "torque_squared_integral": 4147.204564353698,
+        "path_rms_m": 0.07395260250880627,
+        "stage_times": {
+          "turn": 3.920000000000421,
+          "door": 5.280000000000875,
+          "stop": 8.219999999999885,
+          "complete": 11.45999999999809
+        }
+      },
+      {
+        "case": "wide",
+        "success": true,
+        "completion_seconds": 11.239999999998211,
+        "mechanical_work_proxy_J": 752.6723039234917,
+        "torque_squared_integral": 4065.2262292709297,
+        "path_rms_m": 0.06298573550887793,
+        "stage_times": {
+          "turn": 4.000000000000448,
+          "door": 5.560000000000969,
+          "stop": 8.31999999999983,
+          "complete": 11.239999999998211
+        }
+      }
+    ],
+    "stats": {
+      "policy_steps": 1699,
+      "physics_steps": 33980,
+      "warmup_physics_steps": 6000,
+      "planner_calls": 172,
+      "planner_seconds": 11.743749574994581,
+      "planner_model_steps": 2648800,
+      "planner_value_calls": 132096,
+      "actor_calls": 1699,
+      "warmup_and_execution_physics_steps": 39980,
+      "collection_seconds": 6.595729009000934,
+      "worker_collection_seconds_sum": 17.496018875997834,
+      "collection_workers": 3
+    },
+    "mean_completion_seconds": 11.32666666666483
+  },
+  "arms": {
+    "ordinary": {
+      "episodes": [
+        {
+          "case": "nominal",
+          "success": true,
+          "completion_seconds": 11.379999999998134,
+          "mechanical_work_proxy_J": 725.7869728941773,
+          "torque_squared_integral": 4130.483341886156,
+          "path_rms_m": 0.05842748045724022,
+          "stage_times": {
+            "turn": 4.000000000000448,
+            "door": 5.540000000000962,
+            "stop": 8.459999999999752,
+            "complete": 11.379999999998134
+          }
+        },
+        {
+          "case": "narrow",
+          "success": true,
+          "completion_seconds": 11.339999999998156,
+          "mechanical_work_proxy_J": 750.4608499493945,
+          "torque_squared_integral": 4128.104852602938,
+          "path_rms_m": 0.039310102359739744,
+          "stage_times": {
+            "turn": 3.980000000000441,
+            "door": 5.480000000000942,
+            "stop": 8.599999999999675,
+            "complete": 11.339999999998156
+          }
+        },
+        {
+          "case": "wide",
+          "success": true,
+          "completion_seconds": 12.17999999999769,
+          "mechanical_work_proxy_J": 799.5973926194667,
+          "torque_squared_integral": 4461.586791359852,
+          "path_rms_m": 0.04337425463204696,
+          "stage_times": {
+            "turn": 4.180000000000508,
+            "door": 5.840000000001062,
+            "stop": 8.659999999999641,
+            "complete": 12.17999999999769
+          }
+        }
+      ],
+      "mean_completion_seconds": 11.633333333331327,
+      "ppo": {
+        "ordinary_surrogate": -2.130850076675415,
+        "cv_surrogate": 0.0,
+        "linear_cv_rms": 0.0,
+        "clip_fraction": 0.29230770468711853,
+        "entropy": -10.57207202911377,
+        "value_loss": 2.329429864883423,
+        "last_minibatch_approx_kl": 0.018998460844159126,
+        "approx_kl": 0.019993249852539766,
+        "full_batch_kl": 0.019993249852539766,
+        "max_accepted_full_batch_kl": 0.019993249852539766,
+        "last_attempt_full_batch_kl": 0.020058599991615966,
+        "actor_updates": 42,
+        "actor_step_attempts": 141,
+        "actor_step_rejections": 99,
+        "actor_step_max_attempts": 6,
+        "last_accepted_actor_lr": 9.375e-07,
+        "min_accepted_actor_lr": 9.375e-07,
+        "actor_auxiliary_calls": 0,
+        "actor_auxiliary_loss_mean": 0.0,
+        "value_updates": 84,
+        "kl_early_stop": true,
+        "ppo_seconds": 1.3345614030004072,
+        "samples": 5250,
+        "advantage_normalization": false
+      },
+      "facts": {
+        "action_model_loss": 0.014850063249468803,
+        "command_model_loss": 0.03683348745107651,
+        "action_model_updates": 128,
+        "command_model_updates": 128,
+        "action_model_fitting_seconds": 0.1339342439932807,
+        "command_model_fitting_seconds": 0.14186968299691216,
+        "fitting_seconds": 0.27626392399906763,
+        "micro_samples": 6932,
+        "macro_samples": 167,
+        "fitting_has_task_cost": false
+      },
+      "derivatives": {
+        "adjoint_forward_steps": 0,
+        "adjoint_reverse_steps": 0,
+        "adjoint_seconds": 0.0
+      },
+      "behavior": {
+        "policy_steps": 5250,
+        "physics_steps": 105000,
+        "warmup_physics_steps": 22000,
+        "planner_calls": 531,
+        "planner_seconds": 36.41452093899352,
+        "planner_model_steps": 8177400,
+        "planner_value_calls": 407808,
+        "actor_calls": 5250,
+        "warmup_and_execution_physics_steps": 127000,
+        "collection_seconds": 18.599612412999704,
+        "worker_collection_seconds_sum": 53.42408508700464,
+        "collection_workers": 3
+      },
+      "calibration": {
+        "policy_steps": 1682,
+        "physics_steps": 33640,
+        "warmup_physics_steps": 6000,
+        "planner_calls": 170,
+        "planner_seconds": 11.595943909993366,
+        "planner_model_steps": 2618000,
+        "planner_value_calls": 130560,
+        "actor_calls": 1682,
+        "warmup_and_execution_physics_steps": 39640,
+        "collection_seconds": 6.679847414998221,
+        "worker_collection_seconds_sum": 17.31797579599879,
+        "collection_workers": 3
+      },
+      "evaluation": {
+        "policy_steps": 1745,
+        "physics_steps": 34900,
+        "warmup_physics_steps": 6000,
+        "planner_calls": 175,
+        "planner_seconds": 11.953653776989086,
+        "planner_model_steps": 2695000,
+        "planner_value_calls": 134400,
+        "actor_calls": 1745,
+        "warmup_and_execution_physics_steps": 40900,
+        "collection_seconds": 6.940094472000055,
+        "worker_collection_seconds_sum": 17.858255380000628,
+        "collection_workers": 3
+      },
+      "parameter_hashes": {
+        "actor": "fc84251e1af0652857916f88bb810b5d68815c591915fbfbb0e0d91316ad3d08",
+        "dynamics": "c5b3056f663df3fd92a5fa0835bd663a8fd758090b82d33f913fa1c945fea0a7",
+        "response": "ed9a418a613753b19961e0f6f8719520d7f5b1424795d5d6c5e9882b39413a4f",
+        "value": "0cf06c9b2fe68d2bd2173f10e0ac096a90b860d42dd5d5ef0fe42e868dabc4d0"
+      },
+      "wall_seconds": 33.857993814999645
+    },
+    "pathwise": {
+      "episodes": [
+        {
+          "case": "nominal",
+          "success": true,
+          "completion_seconds": 11.45999999999809,
+          "mechanical_work_proxy_J": 785.0016547874181,
+          "torque_squared_integral": 4195.6054127402585,
+          "path_rms_m": 0.04972053557755024,
+          "stage_times": {
+            "turn": 3.920000000000421,
+            "door": 5.620000000000989,
+            "stop": 8.49999999999973,
+            "complete": 11.45999999999809
+          }
+        },
+        {
+          "case": "narrow",
+          "success": true,
+          "completion_seconds": 12.239999999997657,
+          "mechanical_work_proxy_J": 766.248241140705,
+          "torque_squared_integral": 4493.906860794919,
+          "path_rms_m": 0.06197161080327133,
+          "stage_times": {
+            "turn": 3.9600000000004343,
+            "door": 5.420000000000922,
+            "stop": 8.199999999999896,
+            "complete": 12.239999999997657
+          }
+        },
+        {
+          "case": "wide",
+          "success": true,
+          "completion_seconds": 11.239999999998211,
+          "mechanical_work_proxy_J": 756.544918941447,
+          "torque_squared_integral": 4088.5573229633283,
+          "path_rms_m": 0.062136979763506864,
+          "stage_times": {
+            "turn": 3.980000000000441,
+            "door": 5.520000000000955,
+            "stop": 8.29999999999984,
+            "complete": 11.239999999998211
+          }
+        }
+      ],
+      "mean_completion_seconds": 11.646666666664652,
+      "ppo": {
+        "ordinary_surrogate": -2.3751957416534424,
+        "cv_surrogate": 0.0,
+        "linear_cv_rms": 0.0,
+        "clip_fraction": 0.32307693362236023,
+        "entropy": -10.572684288024902,
+        "value_loss": 2.329429864883423,
+        "last_minibatch_approx_kl": 0.02587723359465599,
+        "actor_auxiliary_future_task_cost": 32.9044189453125,
+        "actor_auxiliary_future_actor_loss": 0.8226104974746704,
+        "actor_auxiliary_future_plan_seconds": 4.0,
+        "actor_auxiliary_future_anchor_count": 4.0,
+        "approx_kl": 0.019893242714146227,
+        "full_batch_kl": 0.019893242714146227,
+        "max_accepted_full_batch_kl": 0.019969225639576482,
+        "last_attempt_full_batch_kl": 0.020096360146986687,
+        "actor_updates": 12,
+        "actor_step_attempts": 55,
+        "actor_step_rejections": 43,
+        "actor_step_max_attempts": 6,
+        "last_accepted_actor_lr": 9.375e-07,
+        "min_accepted_actor_lr": 9.375e-07,
+        "actor_auxiliary_calls": 13,
+        "actor_auxiliary_loss_mean": 1.0239141904390776,
+        "value_updates": 84,
+        "kl_early_stop": true,
+        "ppo_seconds": 28.454563831000996,
+        "samples": 5250,
+        "advantage_normalization": false
+      },
+      "facts": {
+        "action_model_loss": 0.014585395343601704,
+        "command_model_loss": 0.03738847002387047,
+        "action_model_updates": 128,
+        "command_model_updates": 128,
+        "action_model_fitting_seconds": 0.12727512498531723,
+        "command_model_fitting_seconds": 0.14451094099786133,
+        "fitting_seconds": 0.2722690800001146,
+        "micro_samples": 7019,
+        "macro_samples": 175,
+        "fitting_has_task_cost": false
+      },
+      "derivatives": {
+        "pathwise_calls": 13,
+        "pathwise_macro_steps": 1040,
+        "pathwise_micro_steps_both_policies": 20800,
+        "pathwise_forward_seconds": 12.649092483003187,
+        "model_task_updates": 0,
+        "response_rule": "factual_g_plus_current_minus_old_closed_loop_f_response",
+        "task_cost": "shared planning geometry and completion proxy minus actual-return V"
+      },
+      "behavior": {
+        "policy_steps": 5250,
+        "physics_steps": 105000,
+        "warmup_physics_steps": 22000,
+        "planner_calls": 531,
+        "planner_seconds": 36.424485919927974,
+        "planner_model_steps": 8177400,
+        "planner_value_calls": 407808,
+        "actor_calls": 5250,
+        "warmup_and_execution_physics_steps": 127000,
+        "collection_seconds": 18.79200176499944,
+        "worker_collection_seconds_sum": 53.339493717998266,
+        "collection_workers": 3
+      },
+      "calibration": {
+        "policy_steps": 1769,
+        "physics_steps": 35380,
+        "warmup_physics_steps": 6000,
+        "planner_calls": 178,
+        "planner_seconds": 12.1036330590141,
+        "planner_model_steps": 2741200,
+        "planner_value_calls": 136704,
+        "actor_calls": 1769,
+        "warmup_and_execution_physics_steps": 41380,
+        "collection_seconds": 6.94712055799755,
+        "worker_collection_seconds_sum": 18.028030615001626,
+        "collection_workers": 3
+      },
+      "evaluation": {
+        "policy_steps": 1747,
+        "physics_steps": 34940,
+        "warmup_physics_steps": 6000,
+        "planner_calls": 177,
+        "planner_seconds": 12.120076972983952,
+        "planner_model_steps": 2725800,
+        "planner_value_calls": 135936,
+        "actor_calls": 1747,
+        "warmup_and_execution_physics_steps": 40940,
+        "collection_seconds": 6.99386241799948,
+        "worker_collection_seconds_sum": 18.03389279300245,
+        "collection_workers": 3
+      },
+      "parameter_hashes": {
+        "actor": "206ede1ecc0178c06e547c048088783afccc42ccd6bb2b52260ae341a5bc358a",
+        "dynamics": "b960bf441add2b9431b56576f944ec9a00d67370cbf55a638e018ea6961cd3f0",
+        "response": "a31dd7faed25e7533b508e841995a0ada2a102d645a78bb7d50e962056844b1f",
+        "value": "0cf06c9b2fe68d2bd2173f10e0ac096a90b860d42dd5d5ef0fe42e868dabc4d0"
+      },
+      "wall_seconds": 61.562242645999504
+    }
+  },
+  "actual_stochastic_policy_steps_total": 10500,
+  "all_physics_steps": 456840,
+  "archive_sha256": "9174128deddd83200a68924dd7fc0cb9275afdcb93236124f92992ca8d6db33f"
+}

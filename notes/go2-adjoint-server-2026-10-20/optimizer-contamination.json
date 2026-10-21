@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "date": "2026-10-20",
+  "status": "INVALID_FAIR_COMPARISON_OPTIMIZER_STATE_ALIASING",
+  "algorithm_commit": "ddd85783a75895f95bdb7f170edf92a08ca8cf6c",
+  "configuration_sha256": "724e5385cb92c2bdfbc0a9b783ed5340f0634b66e65254223907135ab375ce20",
+  "evidence_method": "Read four preserved checkpoint files with torch.load(map_location='cpu', weights_only=True) in the original runtime; inspect optimizer step tensors and checkpoint counters without any optimizer or simulation step.",
+  "runtime": {
+    "torch": "2.14.1+cpu",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "mujoco": "3.16.0",
+    "PyYAML": "6.0.3"
+  },
+  "checkpoint_path_base": "preserved original run output directory",
+  "expected_step_basis": {
+    "common_actor_optimizer": "empty state; zero actor updates",
+    "common_value_optimizer": 84,
+    "common_f_optimizer": 128,
+    "common_g_optimizer": 128,
+    "value_steps_per_completed_round": 84,
+    "f_steps_per_completed_round": 128,
+    "g_steps_per_completed_round": 128,
+    "actor_steps": "Use the observed actor update counter; the common KL stop can reduce actor updates and does not skip value epochs.",
+    "value_steps_explanation": "5250 behavior samples, minibatch size 256, four epochs: ceil(5250/256)*4 = 84."
+  },
+  "checkpoints": [
+    {
+      "label": "common_initialization",
+      "checkpoint": "seed11/common/initialization.pt",
+      "completed_branch_rounds": 0,
+      "checkpoint_counters": {"actor_updates": 0, "value_updates": 84},
+      "optimizers": {
+        "actor_optimizer": {"populated_states": 0, "observed_step_min": null, "observed_step_max": null, "expected_step_min": null, "expected_step_max": null},
+        "value_optimizer": {"populated_states": 6, "observed_step_min": 84, "observed_step_max": 84, "expected_step_min": 84, "expected_step_max": 84},
+        "f_optimizer": {"populated_states": 6, "observed_step_min": 128, "observed_step_max": 128, "expected_step_min": 128, "expected_step_max": 128},
+        "g_optimizer": {"populated_states": 6, "observed_step_min": 128, "observed_step_max": 128, "expected_step_min": 128, "expected_step_max": 128}
+      }
+    },
+    {
+      "label": "frozen_round4",
+      "checkpoint": "seed11/frozen/round4/checkpoint.pt",
+      "completed_branch_rounds": 4,
+      "checkpoint_counters": {"actor_updates": 0, "value_updates": 420},
+      "optimizers": {
+        "actor_optimizer": {"populated_states": 0, "observed_step_min": null, "observed_step_max": null, "expected_step_min": null, "expected_step_max": null},
+        "value_optimizer": {"populated_states": 6, "observed_step_min": 420, "observed_step_max": 420, "expected_step_min": 420, "expected_step_max": 420},
+        "f_optimizer": {"populated_states": 6, "observed_step_min": 640, "observed_step_max": 640, "expected_step_min": 640, "expected_step_max": 640},
+        "g_optimizer": {"populated_states": 6, "observed_step_min": 640, "observed_step_max": 640, "expected_step_min": 640, "expected_step_max": 640}
+      }
+    },
+    {
+      "label": "ordinary_round1",
+      "checkpoint": "seed11/ordinary/round1/checkpoint.pt",
+      "completed_branch_rounds": 1,
+      "checkpoint_counters": {"actor_updates": 1, "value_updates": 168},
+      "optimizers": {
+        "actor_optimizer": {"populated_states": 9, "observed_step_min": 1, "observed_step_max": 1, "expected_step_min": 1, "expected_step_max": 1},
+        "value_optimizer": {"populated_states": 6, "observed_step_min": 504, "observed_step_max": 504, "expected_step_min": 168, "expected_step_max": 168},
+        "f_optimizer": {"populated_states": 6, "observed_step_min": 768, "observed_step_max": 768, "expected_step_min": 256, "expected_step_max": 256},
+        "g_optimizer": {"populated_states": 6, "observed_step_min": 768, "observed_step_max": 768, "expected_step_min": 256, "expected_step_max": 256}
+      }
+    },
+    {
+      "label": "adjoint_round1",
+      "checkpoint": "seed11/adjoint/round1/checkpoint.pt",
+      "completed_branch_rounds": 1,
+      "checkpoint_counters": {"actor_updates": 1, "value_updates": 168},
+      "optimizers": {
+        "actor_optimizer": {"populated_states": 9, "observed_step_min": 1, "observed_step_max": 1, "expected_step_min": 1, "expected_step_max": 1},
+        "value_optimizer": {"populated_states": 6, "observed_step_min": 840, "observed_step_max": 840, "expected_step_min": 168, "expected_step_max": 168},
+        "f_optimizer": {"populated_states": 6, "observed_step_min": 1280, "observed_step_max": 1280, "expected_step_min": 256, "expected_step_max": 256},
+        "g_optimizer": {"populated_states": 6, "observed_step_min": 1280, "observed_step_max": 1280, "expected_step_min": 256, "expected_step_max": 256}
+      }
+    }
+  ],
+  "interpretation": {
+    "observed": "The later ordinary and adjoint branches have optimizer ages inconsistent with their own recorded value-update counters and the required shared initialization.",
+    "source_mechanism": "The old load_state passed the shared CPU Adam state dictionaries directly to optimizer.load_state_dict. Optimizer tensors could share storage with the in-memory common template; earlier branch updates then changed the optimizer initialization seen by later branches. Default network load_state_dict copied network values, so matching network hashes did not detect this optimizer-state contamination.",
+    "scope": "Actual trajectories and costs remain preserved execution records. Cross-arm method rankings from the old suite do not satisfy the declared initialization contract and cannot establish a scientific positive or negative result for the candidate.",
+    "independent_io_failure": "The recorded BrokenPipeError is a separate transport/log-output failure. Resuming its saved checkpoint and random stream did not remove the optimizer contamination already present.",
+    "actor_state_boundary": "The common actor optimizer was empty. The checked ordinary and adjoint actor step values match their own recorded update counters; this does not repair contamination of f/g/V."
+  },
+  "required_rerun_initialization_checks": {
+    "actor_optimizer_populated_states": 0,
+    "actor_updates": 0,
+    "value_updates": 84,
+    "value_optimizer_step_min_max": [84, 84],
+    "f_optimizer_step_min_max": [128, 128],
+    "g_optimizer_step_min_max": [128, 128],
+    "state_isolation": "Every loaded branch must have independent optimizer tensor storage from both the common template and other branches.",
+    "identity": "All branches of the same seed must begin with matching network and optimizer contents. Preserve the original configuration hash; record the repaired source commit separately.",
+    "mutation_test": "A small isolated optimizer-state test may update one toy branch and must leave the common template and another loaded branch unchanged; this is not robot training."
+  }
+}

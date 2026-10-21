@@ -1,0 +1,55 @@
+{
+  "status": "PLANNED_NOT_RUN",
+  "method": "continuation-adjoint control variate PPO",
+  "task_source": "6835ea43e3a55bd24f7f371e5f612c92a728295a",
+  "arms": [
+    "frozen",
+    "ordinary",
+    "adjoint"
+  ],
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "shared_once_per_seed": {
+    "actor_training_updates": 0,
+    "stochastic_policy_steps": 5250,
+    "deterministic_calibration_steps_upper": 5250,
+    "learned_before_branching": [
+      "action_dynamics",
+      "command_response",
+      "actual_return_value"
+    ],
+    "copy_exactly": [
+      "actor",
+      "f",
+      "g",
+      "V",
+      "all optimizer states",
+      "update counters"
+    ]
+  },
+  "per_arm_seed": {
+    "rounds": 4,
+    "exact_stochastic_policy_steps": 21000,
+    "calibration_policy_steps_upper": 21000,
+    "evaluation_policy_steps_upper": 26250,
+    "total_policy_steps_upper_excluding_stand_warmups": 68250,
+    "wall_seconds": 7200,
+    "wall_check": "before each round; one round may overrun; initial evaluation included"
+  },
+  "all_policy_steps_upper_excluding_stand_warmups": 645750,
+  "physical_budget_note": "One policy step is 20 one-ms physics steps; each episode has an additional recorded 2 s public stand warmup. Actual calibration/evaluation lengths differ and must be reported.",
+  "comparison": "Equal stochastic sample budgets and deterministic episode caps; NOT automatically equal wall/FLOP/total executed-transition counts.",
+  "learning_signal": "same real time/failure return and same full task information; adjoint changes only gradient estimator",
+  "cv_alpha": 0.25,
+  "fairness": "report performance versus all physics steps and end-to-end wall time; extra adjoint work is charged",
+  "not_established": [
+    "learning improvement",
+    "variance reduction",
+    "novel algorithm",
+    "held-out task composition generalization",
+    "real-time deployment"
+  ]
+}

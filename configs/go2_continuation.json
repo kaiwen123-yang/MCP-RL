@@ -1,0 +1,236 @@
+{
+  "schema": 1,
+  "name": "go2_shared_prefix_stop_or_continue",
+  "frozen_task_source_commit": "6835ea43e3a55bd24f7f371e5f612c92a728295a",
+  "cases": [
+    "continue",
+    "stop"
+  ],
+  "speed_band": "fast",
+  "arms": [
+    "frozen",
+    "ordinary",
+    "pathwise"
+  ],
+  "seeds": [
+    11
+  ],
+  "rounds": 1,
+  "policy_dt": 0.02,
+  "macro_dt": 0.2,
+  "common_warmup_steps_per_case": 0,
+  "stochastic_steps_per_case_per_round": 2625,
+  "calibration_complete_episodes_per_case": 1,
+  "evaluation_complete_episodes_per_case": 1,
+  "wall_seconds_per_arm_seed": 7200,
+  "model_fit_steps": 128,
+  "model_fit_batch_size": 256,
+  "model_learning_rate": 0.0003,
+  "model_hidden": 128,
+  "value_hidden": 128,
+  "initial_log_std": -2.3,
+  "adjoint_batch_size": 64,
+  "planner": {
+    "dt": 0.2,
+    "horizon": 20,
+    "samples": 256,
+    "iterations": 3,
+    "elites": 24,
+    "seed": 20261019
+  },
+  "ppo": {
+    "epochs": 4,
+    "minibatch_size": 256,
+    "actor_lr": 3e-05,
+    "value_lr": 0.0003,
+    "clip": 0.2,
+    "max_grad_norm": 0.5,
+    "target_kl": 0.02,
+    "entropy_coefficient": 0.0,
+    "gamma": 1.0,
+    "cv_alpha": 0.25
+  },
+  "training_reward": {
+    "actual_seconds_coefficient": -1.0,
+    "failure_penalty_in_deadlines": 2.0,
+    "model_cost_used_as_reward": false,
+    "stage_transition_terminates_return": false,
+    "advantage_normalization": false
+  },
+  "selection": {
+    "checkpoint": "single fixed round; no best checkpoint selection",
+    "primary": "ordered success, then successful completion time",
+    "secondary": [
+      "path RMS",
+      "mechanical work proxy",
+      "torque squared integral",
+      "total physical steps including calibration and warmup",
+      "wall time including model and adjoint costs"
+    ],
+    "known_development_conditions_only": false,
+    "result_dependent_tuning": false
+  },
+  "scene_changes": "new declared paired tasks; identical world within each pair; immutable after first run",
+  "disturbances_added": false,
+  "merge_pr": false,
+  "pathwise": {
+    "coefficient": 0.1,
+    "anchors_per_update": 4,
+    "anchor_seed": 20261020,
+    "response": "factual g plus current minus old 10-step policy response under frozen f",
+    "rollout": "entire selected MPC plan; actual-return V beyond its horizon",
+    "task_loss": "shared MPC task proxy; actual PPO return is unchanged"
+  },
+  "context_dim": 27,
+  "evaluation_cases": [
+    "continue",
+    "stop",
+    "long_continue_first",
+    "long_stop_first"
+  ],
+  "task_specs": {
+    "continue": {
+      "goal_y": 6.6,
+      "checkpoints": [
+        [
+          3.6,
+          "pass"
+        ],
+        [
+          6.6,
+          "stop"
+        ]
+      ]
+    },
+    "stop": {
+      "goal_y": 6.6,
+      "checkpoints": [
+        [
+          3.6,
+          "stop"
+        ],
+        [
+          6.6,
+          "stop"
+        ]
+      ]
+    },
+    "long_continue_first": {
+      "goal_y": 24.6,
+      "timeout": 120.0,
+      "extra_doors": [
+        8.0,
+        14.0,
+        20.0
+      ],
+      "checkpoints": [
+        [
+          3.6,
+          "pass"
+        ],
+        [
+          6.6,
+          "stop"
+        ],
+        [
+          9.6,
+          "pass"
+        ],
+        [
+          12.6,
+          "stop"
+        ],
+        [
+          15.6,
+          "pass"
+        ],
+        [
+          18.6,
+          "stop"
+        ],
+        [
+          21.6,
+          "pass"
+        ],
+        [
+          24.6,
+          "stop"
+        ]
+      ]
+    },
+    "long_stop_first": {
+      "goal_y": 24.6,
+      "timeout": 120.0,
+      "extra_doors": [
+        8.0,
+        14.0,
+        20.0
+      ],
+      "checkpoints": [
+        [
+          3.6,
+          "stop"
+        ],
+        [
+          6.6,
+          "pass"
+        ],
+        [
+          9.6,
+          "stop"
+        ],
+        [
+          12.6,
+          "pass"
+        ],
+        [
+          15.6,
+          "stop"
+        ],
+        [
+          18.6,
+          "pass"
+        ],
+        [
+          21.6,
+          "stop"
+        ],
+        [
+          24.6,
+          "stop"
+        ]
+      ]
+    }
+  },
+  "protocol": {
+    "locked_before_run": true,
+    "actor_training_steps_per_arm": 5250,
+    "trainable_arms": [
+      "ordinary",
+      "pathwise"
+    ],
+    "frozen_actor_arm": "frozen uses matched 5250 steps for critic and factual fitting only",
+    "seeds": [
+      11
+    ],
+    "rounds": 1,
+    "common_initialization": "public actor and previous seed11 factual f/g; zero added context weights; fresh critic; fresh common optimizer states",
+    "common_calibration": "one complete deterministic episode per training condition; fit current response and actual-return critic; no actor update",
+    "evaluation": "one complete episode per arm and case; long cases never used for fitting, learning or selection",
+    "primary": "ordered complete success, then full completion time within the same task",
+    "secondary": [
+      "work proxy",
+      "path RMS",
+      "checkpoint states",
+      "all physical steps",
+      "wall time"
+    ],
+    "reference": "same public actor with geometric follower on all complete cases; additional practical reference",
+    "learning_signal": "actual undiscounted episode return; pathwise additionally uses unchanged 0.1 whole-plan loss with explicit future stop/pass context",
+    "continuity": "no physics, action history or return reset at intermediate stops; only task checkpoint index and hold timer advance",
+    "speed_permissions": "same 0.69 straight / 0.55 turn command ceilings and stop braking/recovery rule for every arm",
+    "long_task_length_m": 27.321017612416686,
+    "long_task_timeout_s": 120.0,
+    "no_result_dependent_changes": true
+  }
+}
