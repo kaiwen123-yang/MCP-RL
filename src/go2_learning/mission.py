@@ -86,6 +86,28 @@ def remaining_reference_time(position, task, speed_band="fast"):
     return torch.where(inside, torch.zeros_like(seconds), seconds)
 
 
+def ordered_remaining_time(position, memory, task, speed_band="fast"):
+    """Unfulfilled stops block route credit, even after physical overshoot.
+
+    Counting progress beyond a mandatory stop would reward skipping an
+    unfinished requirement. Travel credit saturates at entry to its legal
+    stopping region. An overshoot beyond the far boundary adds the reference
+    return travel time, using the same permitted cruise speed as the planner.
+    """
+    if not hasattr(task.spec, "checkpoints"):
+        return remaining_reference_time(position, task, speed_band)
+    from .continuation import next_stop_y
+    spec = task.spec
+    stop_y = next_stop_y(memory, spec)
+    stop_progress = spec.straight_length + spec.arc_length + stop_y - spec.turn_radius
+    progress = route_progress(position, task)
+    credited = torch.minimum(progress, stop_progress - spec.goal_position_tolerance)
+    credited_position = _reference(credited, spec)[..., :2]
+    overshoot = (progress - stop_progress - spec.goal_position_tolerance).clamp_min(0.)
+    return (remaining_reference_time(credited_position, task, speed_band)
+            + overshoot / SPEED_BANDS[speed_band][0])
+
+
 def footprint_penalty(states, task, collision_margin=0.04):
     """Original OBB/AABB separating-axis body penalty in Torch."""
     spec = getattr(task, "spec", task)
@@ -153,8 +175,8 @@ def mission_cost(states, memories, commands, initial_memory, previous_command,
     speed = torch.linalg.vector_norm(terminal[:, 6:8], dim=-1)
     position_excess = (distance - spec.goal_position_tolerance).clamp_min(0.0)
     speed_excess = (speed - spec.goal_speed_tolerance).clamp_min(0.0)
-    terminal_cost = weight["remaining_reference_seconds_terminal"] * remaining_reference_time(
-        terminal[:, :2], task, speed_band)
+    terminal_cost = weight["remaining_reference_seconds_terminal"] * ordered_remaining_time(
+        terminal[:, :2], memories[:, -1], task, speed_band)
     near_goal = spec.total_length - progress[:, -1] < weight["terminal_goal_zone_m"]
     terminal_cost = terminal_cost + near_goal.to(states.dtype) * (
         weight["goal_position_per_m2_terminal"] * position_excess.square()
