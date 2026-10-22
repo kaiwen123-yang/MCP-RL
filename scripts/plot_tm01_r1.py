@@ -99,6 +99,7 @@ for m in ["acados","adaptive"]:
         ax[0].plot(d["com"][-1,0],d["com"][-1,1],"x",color=colors[m],ms=9)
         ax[2].plot(d["time"][-1],d["velocity"][-1,1],"x",color=colors[m],ms=9)
 ax[0].set(xlabel="CoM x (m)",ylabel="CoM y (m)")
+ax[0].set_aspect("equal",adjustable="datalim")
 ax[0].legend(fontsize=8);ax[0].set_title("Thick segment: applied 40 N push; x: terminated episode",fontsize=9)
 ax[1].set(ylabel="Step frequency (Hz)",ylim=(1.2,2.5),yticks=[1.3,2.0,2.4])
 ax[2].axhline(.1,color="black",ls="--",lw=.8,label="Command")

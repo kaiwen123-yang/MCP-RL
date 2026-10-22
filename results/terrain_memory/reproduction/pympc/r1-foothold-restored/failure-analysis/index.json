@@ -56,5 +56,6 @@
   ],
   "event_definition": "First event after 2 s: tilt >20 degrees for 100 ms; any joint at 39.96 N m for 50 ms; at least one planned stance foot absent for 100 ms; total measured Fz <0.5 mg for 100 ms. Descriptive events only, not failure criteria or causal proof.",
   "old_contact_reconstruction": "phase < 0.65, matching the executed PeriodicGaitGenerator; v7/v8 did not save planned_contact, liftoff, desired feet, or pre-clipping torque.",
-  "retained_limit": "An event can precede a later recovered episode. Ordering alone does not establish that an implementation difference caused failure. All outcomes retained; no post-fall tracking error is invented."
+  "retained_limit": "An event can precede a later recovered episode. Ordering alone does not establish that an implementation difference caused failure. All outcomes retained; no post-fall tracking error is invented.",
+  "force_realizability_definition": "Before |roll| or |pitch| reaches 20 degrees (samples after 2 s): planned load is Fz >20 N, absent contact is the measured foot-contact flag, and the circular cone is hypot(Fx,Fy)<=0.5 Fz. Author controllers constrain each tangential axis separately; the saved MuJoCo model uses an elliptic cone. This records a retained model approximation, not an independently isolated cause of failure."
 }

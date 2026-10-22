@@ -32,15 +32,23 @@
 
 ## Codex 下一次立即执行
 
-继续 R1 的完整控制基线收敛，执行 [计划中的现有结果接续任务](docs/TERRAIN_MEMORY_PLAN.md#r1-现有结果之后的执行入口)。已有逐回合结果的入口是 [R1 结果索引](results/terrain_memory/reproduction/pympc/index.json)；它明确列出了未复现的结论。生成图表或跑满回合数不能自动将 R1 判为成功。
+实际结果从 [R1 结果索引](results/terrain_memory/reproduction/pympc/index.json) 取用，索引包含完成判定、原始数据下载、逐回合结果、图表和连续视频。`r1-foothold-restored` 的 205 个新回合已经完成：图 3 三方法各 60 秒、图 4 两方法各 8 秒、表 I 四方法各 50 回合。
 
-本次接续使用 `r1-foothold-restored.json` 恢复已查明的历史落足行为，并增加同一个 adaptive 控制器固定 1.3 Hz 的机制对照。新条件尚无运行结果；必须在原 GPU 实验环境完成整组运行，不能将旧轨迹改名充当新结果。执行入口：
+完整轨迹进一步确认了步频切换时的摆腿目标跳变，因此另按固定预算完成 `r1-foothold-clock-repaired` 的 101 个新回合：同实现固定/变步频各 50 回合及图 4 自适应组。未受该时钟调用影响的 acados、naïve、MPPI 明确引用上一批原始轨迹，不改名充当新运行。两次实验及失败结果全部保留；实机仍未复现。
+
+原历史落足恢复整组入口为：
 
 ```bash
 bash scripts/run_tm01_r1.sh gpu r1-foothold-restored experiments/tm01/r1-foothold-restored.json
 ```
 
-已有 R1 环境须先按计划一次性应用新增的 `foothold-2024.patch`；新安装由 `setup_tm01_r1.sh` 依次应用两份补丁。先直接分析已有失败轨迹中的接触、力矩与求解状态，针对已知差异完成整组实验，不增加工程小测或无上限调参。
+时钟修正完整对照的可重跑入口如下；复跑使用新的输出标识以保留已完成数据。该脚本合并了本轮实际分步执行的控制运行和结果生成命令，预算与配置相同。
+
+```bash
+bash scripts/run_tm01_r1_clock.sh gpu my-clock-reproduction shared-throughput
+```
+
+原服务器环境已应用 `author.patch` 和一次 `foothold-2024.patch`，不要重复应用。新安装由 `setup_tm01_r1.sh` 应用两份补丁。共享 GPU 的实测耗时保留并注明负载，不能将它解释为独占设备上的算法速度排名。
 
 首次准备资料时使用：
 

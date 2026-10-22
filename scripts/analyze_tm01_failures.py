@@ -182,6 +182,9 @@ def analyze(run):
             time = s["time"]
             tail = time >= max(2, time[-1]-2)
             native_failures = np.flatnonzero(np.isin(d["solver_status"], [1, 3, 4]))
+            pre20 = (time >= 2) & (s["tilt"] < 20)
+            loaded_plan = (d["planned_grf"][:, :, 2] > 20) & pre20[:, None]
+            circular_violation = np.linalg.norm(d["planned_grf"][:, :, :2], axis=2) > .5*d["planned_grf"][:, :, 2]+.01
             events = dict(run=run, method=method_dir.name, seed=int(row["seed"]),
                 success=int(row["success"]), duration_s=float(row["duration_s"]),
                 first_tilt20_100ms_s=first_sustained(time, s["tilt"] > 20, .1),
@@ -194,6 +197,9 @@ def analyze(run):
                 status2_fraction=float((d["solver_status"] == 2).mean()),
                 first_native_solver_failure_s=float(time[native_failures[0]]) if len(native_failures) else None,
                 tilt_at_native_solver_failure_deg=float(s["tilt"][native_failures[0]]) if len(native_failures) else None,
+                pre20_planned_load_on_absent_contact_fraction=float((loaded_plan & ~s["actual"]).sum()/loaded_plan.sum()),
+                pre20_planned_force_outside_circular_mu05_fraction=float((loaded_plan & circular_violation).sum()/loaded_plan.sum()),
+                pre20_any_torque_limit_fraction=float(s["saturation"][pre20].mean()),
                 max_reference_pitch_deg=float(np.abs(np.rad2deg(d["reference_state"][:, 7])).max()),
                 trajectory=row["trajectory"], sha256=digest)
             event_rows.append(events)
@@ -221,7 +227,8 @@ def analyze(run):
         unique_episode_count=len(event_rows), summaries=summaries, figures=figures,
         event_definition="First event after 2 s: tilt >20 degrees for 100 ms; any joint at 39.96 N m for 50 ms; at least one planned stance foot absent for 100 ms; total measured Fz <0.5 mg for 100 ms. Descriptive events only, not failure criteria or causal proof.",
         old_contact_reconstruction="phase < 0.65, matching the executed PeriodicGaitGenerator; v7/v8 did not save planned_contact, liftoff, desired feet, or pre-clipping torque.",
-        retained_limit="An event can precede a later recovered episode. Ordering alone does not establish that an implementation difference caused failure. All outcomes retained; no post-fall tracking error is invented."
+        retained_limit="An event can precede a later recovered episode. Ordering alone does not establish that an implementation difference caused failure. All outcomes retained; no post-fall tracking error is invented.",
+        force_realizability_definition="Before |roll| or |pitch| reaches 20 degrees (samples after 2 s): planned load is Fz >20 N, absent contact is the measured foot-contact flag, and the circular cone is hypot(Fx,Fy)<=0.5 Fz. Author controllers constrain each tangential axis separately; the saved MuJoCo model uses an elliptic cone. This records a retained model approximation, not an independently isolated cause of failure."
         ))
     (out/"index.json").write_text(json.dumps(record, indent=2)+"\n")
     print(json.dumps(dict(run=run, summaries=summaries), indent=2))

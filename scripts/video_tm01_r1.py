@@ -87,7 +87,7 @@ for experiment,methods in [("fig3",["acados","naive","mppi"]),("fig4",[m for m i
             renderer.close()
             selection.append(dict(experiment=experiment,method=method,seed=seed,success=int(row["success"]),
                 duration_s=float(row["duration_s"]),video=str(video.relative_to(ROOT)),frames=frames+1,
-                fps=V["fps"],trajectory=row["trajectory"],selection_rule="All Figure 3 episodes; "+V["selection"]))
+                fps=V["fps"],trajectory=row["trajectory"],selection_rule="All Figure 3 episodes" if experiment=="fig3" else V["selection"]))
             print(json.dumps(selection[-1]),flush=True)
 previous=json.loads((R/"videos.json").read_text()) if (R/"videos.json").exists() else []
 keys={(item["experiment"],item["method"],item["seed"]) for item in selection}

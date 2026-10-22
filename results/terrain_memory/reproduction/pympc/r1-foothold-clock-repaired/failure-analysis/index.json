@@ -1,0 +1,37 @@
+{
+  "run": "r1-foothold-clock-repaired",
+  "command": "python scripts/analyze_tm01_failures.py --runs r1-foothold-clock-repaired",
+  "unique_episode_count": 100,
+  "summaries": [
+    {
+      "method": "adaptive",
+      "episodes": 50,
+      "failures": 28,
+      "success": 22,
+      "mean_time_without_fall_s": 42.71999999999999,
+      "median_duration_s": 49.802,
+      "missing_before_tilt": 11,
+      "saturation_before_tilt": 10,
+      "median_tail_missing_fraction": 0.6013986013986015
+    },
+    {
+      "method": "adaptive_fixed",
+      "episodes": 50,
+      "failures": 50,
+      "success": 0,
+      "mean_time_without_fall_s": 7.93536,
+      "median_duration_s": 6.144,
+      "missing_before_tilt": 23,
+      "saturation_before_tilt": 17,
+      "median_tail_missing_fraction": 0.5193878116343491
+    }
+  ],
+  "figures": [
+    "adaptive-seed-000.png",
+    "adaptive_fixed-seed-000.png"
+  ],
+  "event_definition": "First event after 2 s: tilt >20 degrees for 100 ms; any joint at 39.96 N m for 50 ms; at least one planned stance foot absent for 100 ms; total measured Fz <0.5 mg for 100 ms. Descriptive events only, not failure criteria or causal proof.",
+  "old_contact_reconstruction": "phase < 0.65, matching the executed PeriodicGaitGenerator; v7/v8 did not save planned_contact, liftoff, desired feet, or pre-clipping torque.",
+  "retained_limit": "An event can precede a later recovered episode. Ordering alone does not establish that an implementation difference caused failure. All outcomes retained; no post-fall tracking error is invented.",
+  "force_realizability_definition": "Before |roll| or |pitch| reaches 20 degrees (samples after 2 s): planned load is Fz >20 N, absent contact is the measured foot-contact flag, and the circular cone is hypot(Fx,Fy)<=0.5 Fz. Author controllers constrain each tangential axis separately; the saved MuJoCo model uses an elliptic cone. This records a retained model approximation, not an independently isolated cause of failure."
+}

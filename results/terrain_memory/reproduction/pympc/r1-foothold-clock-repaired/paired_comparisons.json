@@ -1,0 +1,71 @@
+{
+  "command": "python scripts/compare_tm01_runs.py --run r1-foothold-clock-repaired --clock-comparison",
+  "comparisons": [
+    {
+      "contrast": "fixed_clock",
+      "episodes": 50,
+      "completed_a": 0,
+      "completed_b": 0,
+      "mean_time_without_fall_a_s": 8.09216,
+      "mean_time_without_fall_b_s": 7.93536,
+      "paired_mean_difference_s": -0.15680000000000002,
+      "paired_mean_difference_ci95_low_s": -0.73157,
+      "paired_mean_difference_ci95_high_s": 0.3554459999999999,
+      "longer_b": 12,
+      "shorter_b": 16,
+      "tied": 22,
+      "gained_completion": 0,
+      "lost_completion": 0
+    },
+    {
+      "contrast": "adaptive_clock",
+      "episodes": 50,
+      "completed_a": 17,
+      "completed_b": 22,
+      "mean_time_without_fall_a_s": 38.02248,
+      "mean_time_without_fall_b_s": 42.71999999999999,
+      "paired_mean_difference_s": 4.697520000000002,
+      "paired_mean_difference_ci95_low_s": -1.705042,
+      "paired_mean_difference_ci95_high_s": 10.927367999999987,
+      "longer_b": 23,
+      "shorter_b": 14,
+      "tied": 13,
+      "gained_completion": 9,
+      "lost_completion": 4
+    },
+    {
+      "contrast": "frequency_only",
+      "episodes": 50,
+      "completed_a": 0,
+      "completed_b": 22,
+      "mean_time_without_fall_a_s": 7.93536,
+      "mean_time_without_fall_b_s": 42.71999999999999,
+      "paired_mean_difference_s": 34.784639999999996,
+      "paired_mean_difference_ci95_low_s": 29.169468,
+      "paired_mean_difference_ci95_high_s": 40.388957,
+      "longer_b": 48,
+      "shorter_b": 2,
+      "tied": 0,
+      "gained_completion": 22,
+      "lost_completion": 0
+    },
+    {
+      "contrast": "phase_consistent_footholds",
+      "episodes": 50,
+      "completed_a": 6,
+      "completed_b": 22,
+      "mean_time_without_fall_a_s": 26.761719999999997,
+      "mean_time_without_fall_b_s": 42.71999999999999,
+      "paired_mean_difference_s": 15.958279999999997,
+      "paired_mean_difference_ci95_low_s": 9.783930999999999,
+      "paired_mean_difference_ci95_high_s": 22.286822999999995,
+      "longer_b": 38,
+      "shorter_b": 7,
+      "tied": 5,
+      "gained_completion": 17,
+      "lost_completion": 1
+    }
+  ],
+  "interpretation": "Completion and mean time without a fall use the same complete 60 s task. Common-prefix error in paired_durations.csv is diagnostic only; it does not assign an error after a fall or rank unequal surviving intervals as full-task performance.",
+  "intervention": "Clock contrasts change phase_consistent_swing only. Both new frequency groups use the same corrected clock; v8 already used that clock and its contrast measures the combined foothold changes. The frequency-only contrast uses the same adaptive controller with [1.3] versus [1.3,2.0,2.4] Hz."
+}

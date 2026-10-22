@@ -1,41 +1,37 @@
 {
-  "primary": "r1-v7-paper-model/index.json",
-  "timing_repair_comparison": "r1-v8-phase-consistent/index.json",
-  "scope": "Method reproduction on pinned author code with dated 2024 Aliengo physics; not a certified original release or numerical reproduction.",
+  "primary": "r1-foothold-clock-repaired/index.json",
+  "foothold_restoration": "r1-foothold-restored/index.json",
+  "historical_primary": "r1-v7-paper-model/index.json",
+  "historical_clock_comparison": "r1-v8-phase-consistent/index.json",
+  "r1_complete": false,
+  "new_experiments_this_work": 306,
+  "new_continuous_videos": 14,
+  "scope": "Pinned-author-version method reproduction and all declared core simulation comparisons, including two verified execution corrections; not a certified original 2024 release.",
   "primary_table1": {
     "episodes_per_method": 50,
     "requested_seconds": 60,
     "successes": {
       "acados": 0,
       "naive": 0,
-      "adaptive": 7
-    }
-  },
-  "timing_repair_table1": {
-    "new_adaptive_episodes": 50,
-    "successes": 6,
-    "claim": "No success-rate gain over author timing was established."
+      "adaptive_fixed": 0,
+      "adaptive": 22
+    },
+    "reference_groups": "acados and naive retain their original foothold-restored trajectory paths; the corrected adaptive pair consists of 100 new episodes."
   },
   "supported_findings": [
-    "All three methods completed the 60 s Figure 3 tracking experiment.",
-    "10,000-rollout naive/MPPI solved in about 0.96 ms on this RTX 5080; acados about 1.09 ms on this CPU.",
-    "Frequency increased under the 40 N push and returned to nominal; adaptive tracking error was lower.",
-    "The adaptive controller implementation improved 60 s completion and time to fall on the 50 matched seeds; paired exact McNemar p=0.015625, Holm p=0.03125 for the two controls. This comparison does not isolate frequency optimization: fixed and adaptive author controllers also differ in force-spline time parameterization."
+    "All original three base methods complete 60 s Figure 3 tracking in the fixed +/-5 N/Nm reconstruction.",
+    "Corrected adaptive frequency increases under the 40 N push and returns to nominal; both compared controllers survive the declared 8 s reconstruction.",
+    "The corrected same-implementation frequency contrast improves 60 s no-fall outcomes from 0/50 to 22/50 and mean time without a fall from 7.93536 to 42.72 s; 48/50 paired seeds last longer.",
+    "Clock correction reduces >3 cm continuing-swing reference jumps from 71.83 percent to 0.206 percent. Its +4.70 s paired mean lifetime change has a 95 percent interval spanning zero; a reliable lifetime improvement from that correction alone is not established."
   ],
-  "not_reproduced": [
-    "Published Table I success rates 32/37/80 percent; the paper omits episode duration and complete wrench schedule.",
-    "The Figure 4 acados fall; both methods survived our declared world-y command and 2-5 s push.",
-    "The claimed 21 kg mass; both historical and modern author models are about 24.638 kg.",
-    "A same-implementation fixed-frequency control has not been run in these results; neither a frequency-only causal benefit nor a fully restored 2024 execution chain is established.",
-    "Raw trajectories, model binaries, videos and intermediate runner snapshots are referenced in ignored outputs paths, without a public download URL in this index."
+  "remaining_gap": "The paper-specific strong-disturbance comparison is not fully explained: our declared Figure 4 reconstruction does not produce the acados fall, and the original Table I episode length, command, complete wrench schedule and scoring/configuration snapshot are unavailable in the selected paper/source. The new data establish frequency benefit and expose execution limits, but do not identify how much of the remaining difference comes from those unpublished conditions versus retained modern author implementation choices.",
+  "required_external_evidence": [
+    "Original Figure 4 full velocity command, push timing and controller/helper configuration.",
+    "Original Table I episode duration, reset/phase settings, wrench generation/timing, failure definition, and controller/model parameter snapshot."
   ],
-  "provenance": [
-    "experiments/tm01/r1-2024-model.json",
-    "experiments/tm01/aliengo-2024-source.json",
-    "experiments/tm01/paper-source.json"
-  ],
-  "primary_videos": "r1-v7-paper-model/videos.json",
-  "raw_data": "outputs/terrain_memory/reproduction/pympc/",
+  "real_robot_status": "Original Aliengo experiments unperformed; later H stage.",
+  "release": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm01-r1-evidence-20261022",
+  "original_source_snapshots": "run-sources/",
   "historical_negative_batches": [
     "r1-v1",
     "r1-v2",

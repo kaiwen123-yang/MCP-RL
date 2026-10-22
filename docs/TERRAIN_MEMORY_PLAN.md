@@ -94,7 +94,7 @@ python scripts/prepare_terrain_memory_sources.py
 
 复现目标是方法和科学结论在可对齐条件下得到支持，不是逐位匹配硬件耗时或强凑 32%/37%/80%。论文未披露的协议、模型差异及未支持的结论应保留在同一结果索引中；不能自行把“无法确认”改成“已经复现”。若完整预算结束后仍有核心缺口，R1 保持未完成，继续处理明确原因或说明具体信息/环境阻塞；不无限加跑、不降低难度，也不擅自进入 R2。
 
-当前 v7/v8 是部分方法复现，历史落足补丁和新配置尚无完整新结果；它们都不满足上述条件。
+v7/v8 保留为历史部分复现。历史落足恢复的 205 回合和随后归一化摆腿时钟对照的 101 回合均已实际完成；结果、未支持的原文比较及 R1 完成判定见[结果索引](../results/terrain_memory/reproduction/pympc/index.json)。不要重复启动已完成的批次，也不要将完整回合数等同于上述科研完成条件。
 
 ### R1 现有结果之后的执行入口
 
@@ -104,7 +104,7 @@ python scripts/prepare_terrain_memory_sources.py
 
 新条件固定为 `experiments/tm01/r1-foothold-restored.json`：左右落足偏移恢复为历史作者的 0.1 m，摆腿离地点保持世界坐标不变；其他条件沿用 v7，包括原摆腿时钟。现有现代 CoM 状态与接口保留，不声称完整还原认证过的 2024 发布版。全部方法均受落足恢复影响，所以全部生成新轨迹，不复用 v7/v8 充当新条件。
 
-在已经按本仓库安装、应用过 `author.patch` 的 R1 环境中，**新增落足补丁只应用一次**：
+原 GPU 实验环境已经应用过 `author.patch` 和一次 `foothold-2024.patch`，不得重复应用。下面命令只适用于尚未加入落足补丁的既有 R1 环境，**新增落足补丁只应用一次**：
 
 ```bash
 git -C work/terrain-memory/upstreams/Quadruped-PyMPC apply "$PWD/experiments/tm01/foothold-2024.patch"

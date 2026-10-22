@@ -1,0 +1,219 @@
+{
+  "run": "r1-foothold-clock-repaired",
+  "reference_run": "r1-foothold-restored",
+  "newly_executed_episode_count": 101,
+  "referenced_groups": {
+    "fig3": [
+      "acados",
+      "naive",
+      "mppi"
+    ],
+    "fig4": [
+      "acados"
+    ],
+    "table1": [
+      "acados",
+      "naive"
+    ]
+  },
+  "fig3_latency_comparison_complete": false,
+  "fig3_observed_timing_recorded": true,
+  "fig3_timing_contexts": {
+    "acados": "shared-throughput",
+    "naive": "shared-throughput",
+    "mppi": "shared-throughput"
+  },
+  "fig3_summary": [
+    {
+      "method": "acados",
+      "completed": true,
+      "duration_s": 60.0,
+      "velocity_error_mean_m_s": 0.10036836601155272,
+      "velocity_error_rmse_m_s": 0.11194133395922443,
+      "observed_mpc_interface_median_ms": 0.9801554988371208,
+      "timing_context": "shared-throughput"
+    },
+    {
+      "method": "naive",
+      "completed": true,
+      "duration_s": 60.0,
+      "velocity_error_mean_m_s": 0.1381330598506177,
+      "velocity_error_rmse_m_s": 0.15358948408151232,
+      "observed_mpc_interface_median_ms": 1.0689179907785729,
+      "timing_context": "shared-throughput"
+    },
+    {
+      "method": "mppi",
+      "completed": true,
+      "duration_s": 60.0,
+      "velocity_error_mean_m_s": 0.13202214274925242,
+      "velocity_error_rmse_m_s": 0.14646876521836777,
+      "observed_mpc_interface_median_ms": 1.0821840114658698,
+      "timing_context": "shared-throughput"
+    }
+  ],
+  "fig4_summary": [
+    {
+      "method": "acados",
+      "completed": true,
+      "velocity_error_rmse_m_s": 0.19527023955453718,
+      "first_above_nominal_after_push_s": null,
+      "settled_nominal_after_push_s": 5.0,
+      "median_frequency_before_push_hz": 1.3,
+      "median_frequency_during_push_hz": 1.3,
+      "median_frequency_last_second_hz": 1.3
+    },
+    {
+      "method": "adaptive",
+      "completed": true,
+      "velocity_error_rmse_m_s": 0.14012258252796914,
+      "first_above_nominal_after_push_s": 2.29,
+      "settled_nominal_after_push_s": 6.32,
+      "median_frequency_before_push_hz": 1.2999999523162842,
+      "median_frequency_during_push_hz": 2.4000000953674316,
+      "median_frequency_last_second_hz": 1.2999999523162842
+    }
+  ],
+  "included_episode_count": 205,
+  "table1_episode_count": 200,
+  "videos": "videos.json",
+  "paper_success_percent": {
+    "acados": 32,
+    "naive": 37,
+    "adaptive": 80
+  },
+  "summary": [
+    {
+      "method": "acados",
+      "episodes": 50,
+      "successes": 0,
+      "success_percent": 0.0,
+      "success_ci95_low": 0.0,
+      "success_ci95_high": 7.135003417431873,
+      "mean_episode_velocity_error_m_s": 0.36792577254427344,
+      "mean_episode_quadratic_cost": 367.34402065830005,
+      "median_duration_s": 6.323,
+      "mean_time_without_fall_s": 8.883159999999998,
+      "mean_episode_solve_ms": 1.3150948463043153
+    },
+    {
+      "method": "naive",
+      "episodes": 50,
+      "successes": 0,
+      "success_percent": 0.0,
+      "success_ci95_low": 0.0,
+      "success_ci95_high": 7.135003417431873,
+      "mean_episode_velocity_error_m_s": 0.3614859099925972,
+      "mean_episode_quadratic_cost": 403.06743796073533,
+      "median_duration_s": 5.884,
+      "mean_time_without_fall_s": 7.353480000000001,
+      "mean_episode_solve_ms": 1.5404992162374105
+    },
+    {
+      "method": "adaptive_fixed",
+      "episodes": 50,
+      "successes": 0,
+      "success_percent": 0.0,
+      "success_ci95_low": 0.0,
+      "success_ci95_high": 7.135003417431873,
+      "mean_episode_velocity_error_m_s": 0.3529422624576437,
+      "mean_episode_quadratic_cost": 414.8934969767948,
+      "median_duration_s": 6.144,
+      "mean_time_without_fall_s": 7.93536,
+      "mean_episode_solve_ms": 1.478261706533377
+    },
+    {
+      "method": "adaptive",
+      "episodes": 50,
+      "successes": 22,
+      "success_percent": 44.0,
+      "success_ci95_low": 31.161987210235342,
+      "success_ci95_high": 57.69421319985648,
+      "mean_episode_velocity_error_m_s": 0.24425262340678258,
+      "mean_episode_quadratic_cost": 158.62416803787755,
+      "median_duration_s": 49.802,
+      "mean_time_without_fall_s": 42.71999999999999,
+      "mean_episode_solve_ms": 1.581457491215763
+    }
+  ],
+  "figures": [
+    "fig3.png",
+    "fig3.svg",
+    "fig3_timeseries.png",
+    "fig4.png",
+    "fig4.svg",
+    "table1.png",
+    "table1.csv",
+    "table1_survival.png",
+    "table1_survival.csv",
+    "matched_durations.png",
+    "matched_durations.svg",
+    "clock-analysis/first_change.png",
+    "failure-analysis/adaptive-seed-000.png"
+  ],
+  "notes": [
+    "Fixed author version method reproduction, not identical paper hardware/model.",
+    "All configured random-wrench outcomes retained. Means cover each episode's observed duration, not a common full-task horizon.",
+    "The paper's 0.12/0.14/0.08 Mean Cost has no fully specified scalar definition; these metrics are explicitly defined."
+  ],
+  "r1_complete": false,
+  "scope": "Pinned-author-version method reproduction and all declared core simulation comparisons, including two verified execution corrections; not a certified original 2024 release.",
+  "new_experiments_completed": {
+    "foothold_restored": 205,
+    "clock_repaired": 101,
+    "total_new_episodes_this_work": 306
+  },
+  "completed_execution_corrections": [
+    "Historical 0.1 m lateral foothold offset and world-fixed lift-off references.",
+    "Normalized swing phase retained at frequency changes; complete same-implementation fixed/variable-frequency cohorts executed."
+  ],
+  "experiment_command": "bash scripts/run_tm01_r1_clock.sh gpu NEW_RUN_ID shared-throughput",
+  "command_provenance": "The wrapper consolidates the individually executed run_tm01_r1.py, plot, analysis and video commands recorded in each actual run.json. It uses the same fixed budget and configuration.",
+  "primary_configuration": "experiments/tm01/r1-foothold-clock-repaired.json",
+  "reference_configuration": "experiments/tm01/r1-foothold-restored.json",
+  "failure_evidence": "failure-analysis/index.json",
+  "clock_evidence": "clock-analysis/index.json",
+  "paired_evidence": "paired_comparisons.json",
+  "r1_remaining_gap": "The paper-specific strong-disturbance comparison is not fully explained: our declared Figure 4 reconstruction does not produce the acados fall, and the original Table I episode length, command, complete wrench schedule and scoring/configuration snapshot are unavailable in the selected paper/source. The new data establish frequency benefit and expose execution limits, but do not identify how much of the remaining difference comes from those unpublished conditions versus retained modern author implementation choices.",
+  "required_external_evidence": [
+    "Original Figure 4 full velocity command, push timing and controller/helper configuration.",
+    "Original Table I episode duration, reset/phase settings, wrench generation/timing, failure definition, and controller/model parameter snapshot."
+  ],
+  "supported": [
+    "All original three base methods complete 60 s Figure 3 tracking in the fixed +/-5 N/Nm reconstruction.",
+    "Corrected adaptive frequency increases under the 40 N push and returns to nominal; both compared controllers survive the declared 8 s reconstruction.",
+    "The corrected same-implementation frequency contrast improves 60 s no-fall outcomes from 0/50 to 22/50 and mean time without a fall from 7.93536 to 42.72 s; 48/50 paired seeds last longer.",
+    "Clock correction reduces >3 cm continuing-swing reference jumps from 71.83 percent to 0.206 percent. Its +4.70 s paired mean lifetime change has a 95 percent interval spanning zero; a reliable lifetime improvement from that correction alone is not established."
+  ],
+  "not_reproduced": [
+    "The Figure 4 acados fall under the paper-specific undocumented full command.",
+    "The original Table I percentages and undefined Mean Cost; matching these numbers was not the tuning objective.",
+    "Isolated algorithm speed ranking or real-hardware 500 Hz deadline compliance; timings are shared-load observations.",
+    "Original Aliengo hardware experiments are unperformed and belong to the later H stage, not a claim of this R1 result."
+  ],
+  "retained_implementation_choices": [
+    "Numerical Q/R/covariances use the fixed historical/modern author choices declared in the configurations; the paper does not provide them.",
+    "Retain modern CoM position/interface and the author terrain-reference implementation. The current helper disables terrain roll, filters pitch with 0.01 new-value weight and estimates height from all retained lift-off heights; the historical helper used different filters and planned-contact weighting. This is a recorded version difference, not a separately demonstrated cause of failure.",
+    "Author tangential force constraints bound x and y separately, while the saved model uses an elliptic friction cone. The pre20 force-realizability columns quantify this retained approximation; it is not isolated as the cause of all failures.",
+    "A one-iteration SQP budget preserves the historical acados setting; status 2 denotes that iteration limit and is present during stable motion. The few status-4 events occur after major attitude loss."
+  ],
+  "local_model_and_trajectory_archive": "outputs/terrain_memory/reproduction/pympc/archives/r1-clock-repaired-raw.tar",
+  "reference_downloads": "../r1-foothold-restored/index.json",
+  "scientific_scope": "The reproducible controller is usable in the demonstrated tracking/push conditions. The six-axis +/-20 N/Nm, 60 s task remains a failure envelope, not a reliable all-seed operating regime. R2 has not started.",
+  "downloads": [
+    {
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm01-r1-evidence-20261022/TM01-R1-clock-repaired-data.tar",
+      "bytes": 1165527040,
+      "sha256": "97b694f346568a55899f2f2645070ac385653825d4b521017326fa3e8ab33b10",
+      "contents": "All 101 newly executed clock-corrected episodes, their actual runner/configuration files, and all 4 selected continuous videos. Original paths are retained."
+    }
+  ],
+  "method_mapping": {
+    "III-B naive": "controllers/sampling/centroidal_nmpc_jax.py:compute_control_random_sampling",
+    "III-C MPPI": "controllers/sampling/centroidal_nmpc_jax.py:compute_control_mppi (absolute lambda=1)",
+    "IV-A SRBD": "controllers/sampling/centroidal_model_jax.py:fd and controllers/gradient/nominal/centroidal_model_nominal.py",
+    "IV-B force splines": "compute_cubic_spline and compute_first_stage_grfs, 48 parameters",
+    "IV-C frequency": "centroidal_nmpc_jax_gait_adaptive.py, periodic_gait_generator_jax.py, and the recorded current phase",
+    "IV-D execution": "foothold_reference_generator.py, swing_trajectory_controller.py, wb_interface.py and the runner torque clipping; paths are relative to quadruped_pympc/ unless a runner is named"
+  }
+}

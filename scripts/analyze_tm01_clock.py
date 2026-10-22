@@ -51,10 +51,12 @@ for run in args.runs:
             fraction_jumps_over_3cm=float(np.mean([e["reference_jump_m"]>.03 for e in group]))))
         if int(row["seed"])==0:
             first=next(e for e in group if e["frequency_after_hz"]>e["frequency_before_hz"])
-            centre=first["time_s"];leg=LEGS.index(first["leg"])
+            # Plot the same right-rear leg across conditions, even if the other
+            # member of the diagonal pair has a slightly larger residual step.
+            centre=first["time_s"];leg=LEGS.index("RR")
             event_i=np.searchsorted(time,centre)
             component=int(np.argmax(np.abs(d["swing_target"][event_i,leg]-d["swing_target"][event_i-1,leg])))
-            indices=[j for j,name in enumerate(meta["actuator_names"]) if name.startswith(first["leg"]+"_")]
+            indices=[j for j,name in enumerate(meta["actuator_names"]) if name.startswith("RR_")]
             mask=(time>=centre-.1)&(time<=centre+.16)
             f,ax=plt.subplots(3,1,figsize=(7.16,6.3),sharex=True,layout="constrained")
             ax[0].step(time[mask],frequency[mask],where="post",color="#0072B2")
@@ -68,7 +70,7 @@ for run in args.runs:
             ax[2].set(ylabel="Max leg torque (N m)",xlabel="Simulation time (s)");ax[2].legend()
             for axis in ax:
                 axis.axvline(centre,color="gray",ls=":",lw=.8);axis.grid(alpha=.2)
-            f.suptitle(f"{run} | seed 0 | first frequency increase | {first['leg']}")
+            f.suptitle(f"{run} | seed 0 | first frequency increase | RR")
             f.supxlabel("Same continuing swing on both sides of the change; data at 500 Hz.\n"
                 "This window is selected by the first frequency increase, not by a failure or a large jump.",fontsize=8)
             for extension in ("png","svg"):f.savefig(out/("first_change."+extension),dpi=220,bbox_inches="tight")
@@ -82,6 +84,7 @@ for run in args.runs:
         low_tilt_jumps_over_3cm=sum(e["reference_jump_m"]>.03 and e["body_tilt_deg"]<20 for e in events),
         episode_median_jump_median_m=float(np.median([r["median_reference_jump_m"] for r in episodes])),
         first_change_seed0=next(e for e in events if e["seed"]==0 and e["frequency_after_hz"]>e["frequency_before_hz"]),
+        example_plot_leg="RR in both conditions; event rows identify the largest-changing leg independently",
         source="quadruped_pympc/helpers/swing_trajectory_controller.py:35-42; swing_time is scaled by new_period/old_period only when phase_consistent_swing is enabled.",
         interpretation="A measured reference discontinuity and ensuing torque request are implementation evidence; their contribution to full-episode failure must be assessed with the complete paired clock-correction cohorts.")
     (out/"index.json").write_text(json.dumps(summary,indent=2)+"\n")
