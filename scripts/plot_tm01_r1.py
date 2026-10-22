@@ -11,6 +11,7 @@ p=argparse.ArgumentParser()
 p.add_argument("--run",default="r1-v4")
 p.add_argument("--methods",nargs="+",default=["acados","naive","adaptive"])
 p.add_argument("--figures-only", action="store_true")
+p.add_argument("--fig3-only", action="store_true", help="Summarize the three Figure 3 runs without requiring Figure 4 or Table I data.")
 p.add_argument("--reference-run", help="Explicitly reuse unchanged acados/naive/MPPI groups for a clock-only follow-up.")
 a=p.parse_args()
 R=ROOT/"results/terrain_memory/reproduction/pympc"/a.run
@@ -86,6 +87,30 @@ ax[0].set_ylabel("Forward speed (m/s)");ax[1].set_ylabel("Velocity error (m/s)")
 ax[2].set_ylabel("External force (N)");ax[2].set_xlabel("Simulation time (s)")
 for axis in ax:axis.grid(alpha=.2)
 save(f,"fig3_timeseries")
+fig3_summary=[]
+for method in ["acados","naive","mppi"]:
+    row=rows("fig3",method)[0]
+    fig3_summary.append(dict(method=method,completed=bool(int(row["success"])),
+        duration_s=float(row["duration_s"]),velocity_error_mean_m_s=float(row["velocity_error_mean_m_s"]),
+        velocity_error_rmse_m_s=float(row["velocity_error_rmse_m_s"]),
+        observed_mpc_interface_median_ms=float(row["solve_median_ms"]),
+        timing_context=timing_contexts[method]))
+if a.fig3_only:
+    index=dict(run=a.run,scope="Figure 3 tracking and observed timing only",
+        reference_run=a.reference_run,source_run=a.reference_run or a.run,
+        newly_executed_episode_count=0 if a.reference_run else len(fig3_summary),
+        included_episode_count=len(fig3_summary),r1_completion_assessed=False,
+        fig3_latency_comparison_complete=timing_comparable,
+        fig3_observed_timing_recorded=bool(timing_rows),
+        fig3_timing_contexts=timing_contexts,fig3_summary=fig3_summary,
+        figures=["fig3.png","fig3.svg","fig3_timeseries.png","fig3_timeseries.svg"],
+        timing_data="fig3_timing.csv",
+        notes=["Only the three Figure 3 groups are assessed; this does not establish R1 completion.",
+            "Timing comparability uses the recorded resource context; setting a label does not reserve exclusive hardware.",
+            "Simulation sampling frequency is not evidence of a hardware real-time deadline."])
+    (R/"index.json").write_text(json.dumps(index,indent=2)+"\n")
+    print(json.dumps(index,indent=2))
+    raise SystemExit(0)
 f,ax=plt.subplots(3,1,figsize=(7.16,8),layout="constrained")
 for m in ["acados","adaptive"]:
     d=trace("fig4",m);label=names[m]
@@ -165,14 +190,6 @@ ax.set_title("Complete 60 s evaluation: survival over the full horizon")
 save(f,"table1_survival")
 with (R/"table1_survival.csv").open("w",newline="") as output:
     writer=csv.DictWriter(output,fieldnames=list(survival[0]));writer.writeheader();writer.writerows(survival)
-fig3_summary=[]
-for method in ["acados","naive","mppi"]:
-    row=rows("fig3",method)[0]
-    fig3_summary.append(dict(method=method,completed=bool(int(row["success"])),
-        duration_s=float(row["duration_s"]),velocity_error_mean_m_s=float(row["velocity_error_mean_m_s"]),
-        velocity_error_rmse_m_s=float(row["velocity_error_rmse_m_s"]),
-        observed_mpc_interface_median_ms=float(row["solve_median_ms"]),
-        timing_context=timing_contexts[method]))
 fig4_summary=[]
 for method in ["acados","adaptive"]:
     d=trace("fig4",method);time=d["time"];frequency=d["frequency"]

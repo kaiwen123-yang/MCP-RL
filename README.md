@@ -28,27 +28,35 @@
 | S：本课题完整仿真 | 同一机器狗连续完成进入软地带、穿越、停留、转向、返程；保留地块状态，产出强基线、三项机制消融和完整任务视频。 |
 | H：实机验证 | 材料标定 → 前后足重访 → 完整往返，使用仿真阶段确定的算法、指标与对照。 |
 
-**先完成 R1 的论文方法及全部核心仿真实验，满足[进入 R2 的条件](docs/TERRAIN_MEMORY_PLAN.md#r1-完成范围与进入-r2-的条件)，再进入 R2。** R1 与 R2 均完成对应成果后进入主机制仿真。当前 v7/v8 的部分复现以及新补丁推送均不代表 R1 已完成。不能把软件启动、一次行走演示、若干短跑或跑满回合称为复现成功。原论文实机部分留到 H，未完成前不称“全文全部复现”。
+**先完成 R1 的论文方法及全部核心仿真实验，满足[进入 R2 的条件](docs/TERRAIN_MEMORY_PLAN.md#r1-完成范围与进入-r2-的条件)，再进入 R2。** R1 与 R2 均完成对应成果后进入主机制仿真。第二轮已有完整闭环结果，但现有实验边界与未支持的原文比较仍需收尾，R1 尚未完成。不能把软件启动、一次行走演示、若干短跑或跑满回合称为复现成功。原论文实机部分留到 H，未完成前不称“全文全部复现”。
 
 ## Codex 下一次立即执行
 
-实际结果从 [R1 结果索引](results/terrain_memory/reproduction/pympc/index.json) 取用，索引包含完成判定、原始数据下载、逐回合结果、图表和连续视频。`r1-foothold-restored` 的 205 个新回合已经完成：图 3 三方法各 60 秒、图 4 两方法各 8 秒、表 I 四方法各 50 回合。
+直接执行[下一轮 R1 的具体计划](docs/TERRAIN_MEMORY_PLAN.md#r1-现有结果之后的执行入口)，启动提示词在[计划第 7 节](docs/TERRAIN_MEMORY_PLAN.md#7-下一次交给-codex-的明确任务)。本轮计划和入口已准备，**尚无本轮新实验结果**。
 
-完整轨迹进一步确认了步频切换时的摆腿目标跳变，因此另按固定预算完成 `r1-foothold-clock-repaired` 的 101 个新回合：同实现固定/变步频各 50 回合及图 4 自适应组。未受该时钟调用影响的 acados、naïve、MPPI 明确引用上一批原始轨迹，不改名充当新运行。两次实验及失败结果全部保留；实机仍未复现。
+已有结果见 [R1 结果索引](results/terrain_memory/reproduction/pympc/index.json)：历史落足恢复 205 回合、时钟修正 101 回合均已完成，不重跑。最新同实现对照为固定 1.3 Hz 完成 0/50、自适应完成 22/50；它尚未回答自适应是否优于始终固定较高步频。
 
-原历史落足恢复整组入口为：
+| 本轮任务 | 新实验预算 | 配置 |
+|---|---:|---|
+| 固定 2.0 Hz，同一 adaptive 实现 | 50 个 seed × 最长 60 秒 | [r1-fixed-2p0.json](experiments/tm01/r1-fixed-2p0.json) |
+| 固定 2.4 Hz，同一 adaptive 实现 | 50 个 seed × 最长 60 秒 | [r1-fixed-2p4.json](experiments/tm01/r1-fixed-2p4.json) |
+| 图 3 独占计时，acados/naïve/MPPI | 各 seed 0 × 60 秒，共 3 回合 | [r1-fig3-isolated.json](experiments/tm01/r1-fig3-isolated.json) |
+
+在已有 R1 环境中使用新的输出前缀启动；下面前缀尚未使用时可以直接执行：
 
 ```bash
-bash scripts/run_tm01_r1.sh gpu r1-foothold-restored experiments/tm01/r1-foothold-restored.json
+bash scripts/run_tm01_r1_closeout.sh frequency r1-closeout-20261022
 ```
 
-时钟修正完整对照的可重跑入口如下；复跑使用新的输出标识以保留已完成数据。该脚本合并了本轮实际分步执行的控制运行和结果生成命令，预算与配置相同。
+独占 CPU/GPU 资源窗口安排好后，再执行计时组；`isolated` 标签不会自动独占设备，不能停止他人的任务来取得窗口：
 
 ```bash
-bash scripts/run_tm01_r1_clock.sh gpu my-clock-reproduction shared-throughput
+bash scripts/run_tm01_r1_closeout.sh timing r1-closeout-20261022
 ```
 
-原服务器环境已应用 `author.patch` 和一次 `foothold-2024.patch`，不要重复应用。新安装由 `setup_tm01_r1.sh` 应用两份补丁。共享 GPU 的实测耗时保留并注明负载，不能将它解释为独占设备上的算法速度排名。
+两个入口共执行 103 个新回合，分别生成新轨迹和连续视频，计时入口同时重画图 3。随后按计划完成四频率组比较、必要的机械功分析、原协议定向核实和成果发布；不能以脚本退出代替这些交付。现有固定 1.3 Hz、自适应与原论文其他组保留原始来源，引用不算新运行。
+
+原服务器环境已应用 `author.patch` 和一次 `foothold-2024.patch`，不要重复应用或重新安装环境。中断后只接续未完成回合；不要从头重跑整批。新环境才使用 `setup_tm01_r1.sh`。共享 GPU 的既有耗时保留为共享负载观测，不用于独占速度排名。
 
 首次准备资料时使用：
 
@@ -58,7 +66,7 @@ python scripts/prepare_terrain_memory_sources.py
 
 该脚本实际下载 [固定来源清单](literature/terrain_memory_sources.json) 中的 PDF，并取得固定提交的 Quadruped-PyMPC。下载位置为 `work/terrain-memory/`，来源与文件指纹写入该目录的 `sources.lock.json`。也可用 `--papers-only` 或 `--upstream-only` 分步取得。
 
-按执行计划 R1 阅读原文方法、实验及附录，并把对应参数落实到作者代码和实际实验配置。原作者入口为 `simulation/simulation.py`，本仓库的整组复现入口为上述 `scripts/run_tm01_r1.sh`。
+按执行计划 R1 阅读原文方法、实验及附录，并把对应参数落实到作者代码和实际实验配置。原作者入口为 `simulation/simulation.py`；历史整组复跑入口 `scripts/run_tm01_r1.sh` 和 `scripts/run_tm01_r1_clock.sh` 保留，当前立即执行入口是上面的 `scripts/run_tm01_r1_closeout.sh`。已有资料无需重复下载。
 
 **当前作者代码默认包含原论文之后加入的方法和参数变化。R1 必须恢复论文中的 naïve sampling / MPPI / acados 比较，不能直接拿当前默认 OT-MPC 的结果冒充 2024 论文复现。** 机器人模型及依赖差异随实际结果说明。先完成 Aliengo 方法复现，Go2 作为后续移植。
 
