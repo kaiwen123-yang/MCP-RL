@@ -27,14 +27,19 @@ def rows(experiment,method):
 def trace(experiment,method,seed=0):
     return np.load(ROOT / next(x["trajectory"] for x in rows(experiment,method) if int(x["seed"])==seed))
 methods=["acados","naive","mppi"]
-f,ax=plt.subplots(2,1,figsize=(7.16,6.3),layout="constrained")
+timing_contexts={m:json.loads((R/"fig3"/m/"run.json").read_text()).get("timing_context","legacy-unrecorded") for m in methods}
+timing_comparable=all(value=="isolated" for value in timing_contexts.values())
+f,ax=plt.subplots(2 if timing_comparable else 1,1,
+    figsize=(7.16,6.3 if timing_comparable else 3.8),layout="constrained",squeeze=False)
+ax=ax[:,0]
 solve,errors=[],[]
 for method in methods:
     d=trace("fig3",method)
     keep=np.isfinite(d["solve_seconds"]) & ~d["compile_included"]
     solve.append(1000*d["solve_seconds"][keep])
     errors.append(np.linalg.norm(d["velocity"]-d["command"],axis=1))
-for axis,data,ylabel in zip(ax,[solve,errors],["MPC solve wall time (ms)","Linear velocity error norm (m/s)"]):
+panels=([solve,errors],["MPC interface wall time (ms)","Linear velocity error norm (m/s)"]) if timing_comparable else ([errors],["Linear velocity error norm (m/s)"])
+for axis,data,ylabel in zip(ax,*panels):
     bp=axis.boxplot(data, tick_labels=[names[m]+"\n"+json.loads((R/"fig3"/m/"run.json").read_text())["device"]+" | "+format(float(rows("fig3",m)[0]["duration_s"]),".3f")+" s" for m in methods],showmeans=True,showfliers=False,
         patch_artist=True,meanprops={"marker":"^","markerfacecolor":"black","markeredgecolor":"black","markersize":4},
         medianprops={"color":"black"})
@@ -42,7 +47,8 @@ for axis,data,ylabel in zip(ax,[solve,errors],["MPC solve wall time (ms)","Linea
     axis.set_ylabel(ylabel)
     axis.grid(axis="y",alpha=.2)
 f.suptitle("TM01 Fig. 3 | 0.5 m/s, +/-5 N / N m")
-f.supxlabel("One attempted 60 s episode per method; falls retained; samples are correlated time points.\nBoxes: IQR; line: median; triangle: mean; whiskers: 1.5 IQR. JIT shown only in raw data.",fontsize=8)
+f.supxlabel("One attempted 60 s episode per method; falls retained; samples are correlated time points.\nBoxes: IQR; line: median; triangle: mean; whiskers: 1.5 IQR.\n"+
+    ("JIT shown only in raw data." if timing_comparable else "Shared/uncertified device timing is excluded from the latency comparison."),fontsize=8)
 save(f,"fig3")
 f,ax=plt.subplots(3,1,figsize=(7.16,7.0),sharex=True,layout="constrained")
 for m in methods:
@@ -135,6 +141,8 @@ save(f,"table1_survival")
 with (R/"table1_survival.csv").open("w",newline="") as output:
     writer=csv.DictWriter(output,fieldnames=list(survival[0]));writer.writeheader();writer.writerows(survival)
 index=dict(run=a.run,
+ fig3_latency_comparison_complete=timing_comparable,
+ fig3_timing_contexts=timing_contexts,
  included_episode_count=sum(s["episodes"] for s in summary)+5,
  table1_episode_count=sum(s["episodes"] for s in summary),videos="videos.json",
  paper_success_percent={"acados":32,"naive":37,"adaptive":80},

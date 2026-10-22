@@ -119,6 +119,32 @@ def plot_episode(d, row, dest):
     plt.close(fig)
 
 
+def plot_liftoff_drift(output, run):
+    rows = csv_rows(output/"touchdowns.csv")
+    methods = sorted({row["method"] for row in rows})
+    fig, axes = plt.subplots(1, 2, figsize=(8.6, 3.6), layout="constrained")
+    for j, method in enumerate(methods):
+        episodes = {}
+        for row in rows:
+            if row["method"] == method and float(row["planned_touchdown_s"]) >= 2 and float(row["body_tilt_deg"]) < 20:
+                episodes.setdefault(int(row["seed"]), []).append(row)
+        for axis, key in zip(axes, ["liftoff_drift_z_m", "liftoff_drift_xy_m"]):
+            values = [np.median([abs(float(row[key]))*1000 for row in episode]) for episode in episodes.values()]
+            axis.scatter(j+np.linspace(-.12, .12, len(values)), values, s=15, alpha=.65, color=COLORS[j])
+            axis.plot(j, np.median(values), "k_", markersize=18, markeredgewidth=2)
+    for axis in axes:
+        axis.set_xticks(range(len(methods)), methods)
+        axis.grid(axis="y", alpha=.2)
+    axes[0].set_ylabel("Vertical lift-off drift (mm)")
+    axes[1].set_ylabel("Horizontal lift-off drift (mm)")
+    fig.suptitle(run+" | lift-off reference displacement")
+    fig.supxlabel("Each point: episode median at planned touchdowns after 2 s, while |roll| and |pitch| <20 deg.\n"
+        "Black bar: median across episodes. These are reference displacements, not foot slip.", fontsize=8)
+    for extension in ("png", "svg"):
+        fig.savefig(output/("liftoff_drift."+extension), dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
 def analyze(run):
     folder = BASE / run
     out = folder / "failure-analysis"
@@ -145,6 +171,7 @@ def analyze(run):
             s = signals(d)
             time = s["time"]
             tail = time >= max(2, time[-1]-2)
+            native_failures = np.flatnonzero(np.isin(d["solver_status"], [1, 3, 4]))
             events = dict(run=run, method=method_dir.name, seed=int(row["seed"]),
                 success=int(row["success"]), duration_s=float(row["duration_s"]),
                 first_tilt20_100ms_s=first_sustained(time, s["tilt"] > 20, .1),
@@ -155,6 +182,8 @@ def analyze(run):
                 tail_missing_stance_fraction=float((s["missing"][tail] >= 1).mean()),
                 tail_loaded_slip_fraction=float(s["loaded_slip"][tail].mean()),
                 status2_fraction=float((d["solver_status"] == 2).mean()),
+                first_native_solver_failure_s=float(time[native_failures[0]]) if len(native_failures) else None,
+                tilt_at_native_solver_failure_deg=float(s["tilt"][native_failures[0]]) if len(native_failures) else None,
                 max_reference_pitch_deg=float(np.abs(np.rad2deg(d["reference_state"][:, 7])).max()),
                 trajectory=row["trajectory"], sha256=digest)
             event_rows.append(events)
@@ -177,17 +206,24 @@ def analyze(run):
             median_tail_missing_fraction=float(np.median([r["tail_missing_stance_fraction"] for r in failed]))
             if failed else None))
     write_csv(out/"events.csv", event_rows)
-    (out/"index.json").write_text(json.dumps(dict(run=run, command=f"python scripts/analyze_tm01_failures.py --runs {run}",
+    record = json.loads((out/"index.json").read_text()) if (out/"index.json").exists() else {}
+    record.update(dict(run=run, command=f"python scripts/analyze_tm01_failures.py --runs {run}",
         unique_episode_count=len(event_rows), summaries=summaries, figures=figures,
         event_definition="First event after 2 s: tilt >20 degrees for 100 ms; any joint at 39.96 N m for 50 ms; at least one planned stance foot absent for 100 ms; total measured Fz <0.5 mg for 100 ms. Descriptive events only, not failure criteria or causal proof.",
         old_contact_reconstruction="phase < 0.65, matching the executed PeriodicGaitGenerator; v7/v8 did not save planned_contact, liftoff, desired feet, or pre-clipping torque.",
         retained_limit="An event can precede a later recovered episode. Ordering alone does not establish that an implementation difference caused failure. All outcomes retained; no post-fall tracking error is invented."
-        ), indent=2)+"\n")
+        ))
+    (out/"index.json").write_text(json.dumps(record, indent=2)+"\n")
     print(json.dumps(dict(run=run, summaries=summaries), indent=2))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runs", nargs="+", required=True)
-    for run_name in parser.parse_args().runs:
-        analyze(run_name)
+    parser.add_argument("--reference-figures-only", action="store_true")
+    args = parser.parse_args()
+    for run_name in args.runs:
+        if args.reference_figures_only:
+            plot_liftoff_drift(BASE/run_name/"failure-analysis", run_name)
+        else:
+            analyze(run_name)
