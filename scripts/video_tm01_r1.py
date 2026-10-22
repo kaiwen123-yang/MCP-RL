@@ -13,7 +13,7 @@ p=argparse.ArgumentParser()
 p.add_argument("--run",default="r1-v4")
 p.add_argument("--config",default="experiments/tm01/r1.json")
 p.add_argument("--methods",nargs="+",default=["acados","naive","adaptive"])
-p.add_argument("--experiment",choices=["fig4","table1"])
+p.add_argument("--experiment",choices=["fig3","fig4","table1"])
 a=p.parse_args()
 R=ROOT/"results/terrain_memory/reproduction/pympc"/a.run
 O=ROOT/"outputs/terrain_memory/reproduction/pympc"/a.run
@@ -26,7 +26,7 @@ camera.azimuth=135
 camera.elevation=-22
 font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",20)
 selection=[]
-for experiment,methods in [("fig4",["acados","adaptive"]),("table1",a.methods)]:
+for experiment,methods in [("fig3",["acados","naive","mppi"]),("fig4",["acados","adaptive"]),("table1",a.methods)]:
     if a.experiment and experiment != a.experiment:continue
     for method in methods:
         with (R/experiment/method/"episodes.csv").open() as f:rr=list(csv.DictReader(f))
@@ -69,19 +69,22 @@ for experiment,methods in [("fig4",["acados","adaptive"]),("table1",a.methods)]:
                     renderer.scene.ngeom+=1
                 im=Image.fromarray(renderer.render())
                 draw=ImageDraw.Draw(im)
-                draw.rectangle((0,0,V["width"],112),fill=(242,244,247))
+                draw.rectangle((0,0,V["width"],146),fill=(242,244,247))
                 line1=f"TM01 {experiment} | {method} | seed {seed} | t={min(time,float(row['duration_s'])):.2f}s"
                 line2=f"f={d['frequency'][k]:.1f} Hz | external F=({force[0]:.1f}, {force[1]:.1f}, {force[2]:.1f}) N"
-                line3=status if frame==frames else "Recorded trajectory replay | 1x simulation time"
+                moment=d["wrench"][k,3:]
+                line3=f"external M=({moment[0]:.1f}, {moment[1]:.1f}, {moment[2]:.1f}) N m"
+                line4=status if frame==frames else "Recorded trajectory replay | 1x simulation time"
                 draw.text((18,10),line1,font=font,fill=(20,30,45))
                 draw.text((18,44),line2,font=font,fill=(20,30,45))
-                draw.text((18,78),line3,font=font,fill=(150,30,20) if "FAILED" in line3 else (20,70,50))
+                draw.text((18,78),line3,font=font,fill=(20,30,45))
+                draw.text((18,112),line4,font=font,fill=(150,30,20) if "FAILED" in line4 else (20,70,50))
                 writer.append_data(np.asarray(im))
                 if frame==min(frames,round(3*V["fps"])):im.save(dest/(name+"-preview.png"))
             writer.close()
             renderer.close()
             selection.append(dict(experiment=experiment,method=method,seed=seed,success=int(row["success"]),
                 duration_s=float(row["duration_s"]),video=str(video.relative_to(ROOT)),frames=frames+1,
-                fps=V["fps"],trajectory=row["trajectory"],selection_rule=V["selection"]))
+                fps=V["fps"],trajectory=row["trajectory"],selection_rule="All Figure 3 episodes; "+V["selection"]))
             print(json.dumps(selection[-1]),flush=True)
 (R/"videos.json").write_text(json.dumps(selection,indent=2)+"\n")

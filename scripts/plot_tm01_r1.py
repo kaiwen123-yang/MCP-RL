@@ -93,6 +93,7 @@ for m in a.methods:
         mean_episode_velocity_error_m_s=float(np.mean([float(x["velocity_error_mean_m_s"]) for x in rr])),
         mean_episode_quadratic_cost=float(np.mean([float(x["quadratic_cost_mean"]) for x in rr])),
         median_duration_s=float(np.median([float(x["duration_s"]) for x in rr])),
+        mean_time_without_fall_s=float(np.mean([float(x["duration_s"]) for x in rr])),
         mean_episode_solve_ms=float(np.mean([float(x["solve_mean_ms"]) for x in rr]))))
 for filename,data in [("table1.csv",summary),("episodes.csv",allrows)]:
     with (R/filename).open("w",newline="") as f:
@@ -103,16 +104,17 @@ for i,s in enumerate(summary):
     ax[0].errorbar(i,rate,yerr=[[rate-s["success_ci95_low"]],[s["success_ci95_high"]-rate]],
         fmt="o",capsize=5,color=colors[s["method"]])
     ax[0].annotate(f'{s["successes"]}/{s["episodes"]}',(i,rate),xytext=(0,10),textcoords="offset points",ha="center")
-    rr=rows("table1",s["method"]);err=np.array([float(x["velocity_error_mean_m_s"]) for x in rr])
-    jitter=np.linspace(-.13,.13,len(err))
-    ax[1].scatter(i+jitter,err,c=[colors[s["method"]]],s=12,alpha=.7)
+    rr=rows("table1",s["method"]);duration=np.array([float(x["duration_s"]) for x in rr])
+    jitter=np.linspace(-.13,.13,len(duration))
+    ax[1].scatter(i+jitter,duration,c=[colors[s["method"]]],s=12,alpha=.7)
+    ax[1].plot(i,s["mean_time_without_fall_s"],"_",color="black",markersize=18,markeredgewidth=2)
 ax[0].set(ylabel="Completed episodes (%)",ylim=(-5,110))
-ax[1].set_ylabel("Episode mean velocity error (m/s)")
+ax[1].set(ylabel="Time without a fall (s)",ylim=(0,63))
 for axis in ax:
     axis.set_xticks(range(len(a.methods)),["Adaptive\nfixed 1.3 Hz" if m=="adaptive_fixed" else m for m in a.methods]);axis.grid(axis="y",alpha=.2)
 f.suptitle("TM01 Table I + frequency ablation | 50 shared seeds" if "adaptive_fixed" in a.methods
            else "TM01 Table I experiment | 50 shared seeds per controller")
-f.supxlabel("95% Wilson intervals. Each dot is one episode; failed episodes retain their observed duration.",fontsize=8)
+f.supxlabel("95% Wilson intervals. Each dot is one of 50 episodes; black bar: mean time without a fall.\n60 s is the fixed horizon. Errors on different surviving intervals are not ranked as full-task performance.",fontsize=8)
 save(f,"table1")
 # Show the entire declared horizon, so no post-hoc choice of a favorable cutoff is needed.
 f,ax=plt.subplots(figsize=(7.16,3.8),layout="constrained")

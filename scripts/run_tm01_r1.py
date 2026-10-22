@@ -3,6 +3,7 @@
 import argparse
 import csv
 import hashlib
+import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -20,6 +21,8 @@ PARSER.add_argument("--run", default="r1-foothold-restored")
 PARSER.add_argument("--config", default=str(ROOT / "experiments/tm01/r1-foothold-restored.json"))
 PARSER.add_argument("--seed-start", type=int)
 PARSER.add_argument("--seed-stop", type=int)
+PARSER.add_argument("--timing-context", choices=["isolated", "shared-throughput"], default="isolated",
+    help="Shared-device trajectories are valid physical experiments, but not latency comparisons.")
 ARGS = PARSER.parse_args()
 os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
 os.environ["JAX_PLATFORMS"] = "cpu" if ARGS.device == "cpu" or ARGS.method == "acados" else "cuda"
@@ -118,6 +121,18 @@ raw_compute = interface.compute_control
 last = {}
 first_solve = True
 
+if ARGS.method != "acados":
+    raw_optimizer = controller.jitted_compute_control
+
+    def timed_optimizer(*args, **kwargs):
+        start = time.perf_counter()
+        result = raw_optimizer(*args, **kwargs)
+        jax.block_until_ready(result)
+        last["optimizer_seconds"] = time.perf_counter() - start
+        return result
+
+    controller.jitted_compute_control = timed_optimizer
+
 def timed_compute(*args, **kwargs):
     global first_solve
     t0 = time.perf_counter()
@@ -130,6 +145,8 @@ def timed_compute(*args, **kwargs):
     last["state"] = np.concatenate([state[k] for k in ("position","linear_velocity","orientation","angular_velocity")])
     last["reference"] = np.concatenate([ref[k] for k in ("ref_position","ref_linear_velocity","ref_orientation","ref_angular_velocity")])
     last["status"] = controller.previous_status if ARGS.method == "acados" else 0
+    if ARGS.method == "acados":
+        last["optimizer_seconds"] = float(controller.acados_ocp_solver.get_stats("time_tot"))
     return result
 
 interface.compute_control = timed_compute
@@ -165,12 +182,38 @@ meta["controller_class"] = type(controller).__module__ + "." + type(controller).
 meta["candidate_hz"] = candidate_hz if adaptive_family else [C["locomotion"]["frequency_hz"]]
 meta["hip_offset_y"] = cfg.hip_offset_y
 meta["liftoff_frame"] = cfg.locomotion_params["liftoff_frame"]
+meta["active_foothold_offset_y"] = wrapper.wb_interface.frg.hip_offset_y
+meta["active_controller_parameters"] = dict(horizon=controller.horizon, dt=controller.dt,
+    swing_kp=cfg.locomotion_params["swing_position_gain_fb"],
+    swing_kd=cfg.locomotion_params["swing_velocity_gain_fb"],
+    grf_max=cfg.mpc_params["grf_max"], mu=cfg.mpc_params["mu"],
+    phase_consistent_swing=cfg.locomotion_params["phase_consistent_swing"])
+if ARGS.method != "acados":
+    meta["active_controller_parameters"].update(rollouts=controller.num_parallel_computations,
+        Q_diagonal=np.diag(controller.Q).tolist(), R_diagonal=np.diag(controller.R).tolist(),
+        control_parameters=controller.num_control_parameters, sampling_method=controller.sampling_method,
+        controller_device=str(controller.device), model_device=str(controller.robot.device))
 meta["dependency_versions"] = "experiments/tm01/packages.json"
+meta["installed_versions"] = {p.metadata["Name"]: p.version for p in importlib.metadata.distributions()}
+meta["timing_context"] = ARGS.timing_context
+meta["timing_definitions"] = {
+    "optimizer_seconds": "acados native time_tot, or synchronized JAX optimizer call; excludes interface conversion",
+    "solve_seconds": "SRBD interface including state conversion, optimizer, and output transfer",
+    "control_seconds": "state acquisition through clipped joint torque, including MPC and whole-body control",
+    "physics_seconds": "MuJoCo environment step",
+    "closed_loop_seconds": "control_seconds + physics_seconds; excludes trajectory serialization and diagnostic extraction",
+    "solver_status": "acados native status; sampling zero is a placeholder, not an optimality certificate",
+}
+meta["actuator_names"] = [mujoco.mj_id2name(env.mjModel, mujoco.mjtObj.mjOBJ_ACTUATOR, i) for i in range(env.mjModel.nu)]
+meta["upstream_submodules"] = subprocess.check_output(["git", "submodule", "status"], cwd=upstream, text=True).strip()
+meta["compute_processes_at_start"] = subprocess.check_output(
+    ["nvidia-smi", "--query-compute-apps=pid,process_name,used_memory", "--format=csv,noheader"], text=True).strip()
 if ARGS.device=="gpu" and ARGS.method!="acados":
     meta["gpu"] = subprocess.check_output(["nvidia-smi","--query-gpu=name,driver_version,memory.total","--format=csv,noheader"],text=True).strip()
 (smallroot/"run.json").write_text(json.dumps(meta,indent=2)+"\n")
 mujoco.mj_saveLastXML(str(runroot/"model.xml"),env.mjModel)
 mujoco.mj_saveModel(env.mjModel, str(runroot/"model.mjb"), None)
+meta["model_binary_sha256"] = hashlib.sha256((runroot/"model.mjb").read_bytes()).hexdigest()
 base_id = int(env.mjModel.jnt_bodyid[0])
 rows = []
 for seed in E["seeds"]:
@@ -201,7 +244,9 @@ for seed in E["seeds"]:
     tau = LegsAttr(*[np.zeros(3) for _ in LEGS])
     hist = {k:[] for k in ("time","qpos","qvel","com","velocity","orientation","angular_velocity",
         "command","wrench","torque","feet","planned_grf","actual_grf","contact","planned_contact","frequency",
-        "phase","swing_time","solve_seconds","compile_included","solver_status","reference_state","quadratic_cost")}
+        "phase","swing_time","solve_seconds","optimizer_seconds","control_seconds","physics_seconds","closed_loop_seconds",
+        "compile_included","solver_status","reference_state","quadratic_cost","requested_torque",
+        "liftoff","foothold_target","swing_target","feet_velocity")}
     t_start = time.perf_counter()
     reason = ""
     for step in range(nsteps):
@@ -214,12 +259,14 @@ for seed in E["seeds"]:
             wrench = schedule[int(elapsed//E["wrench_period"])] if active else np.zeros(6)
         env.mjData.qfrc_applied[:] = 0
         mujoco.mj_applyFT(env.mjModel, env.mjData, wrench[:3], wrench[3:], env.com, base_id, env.mjData.qfrc_applied)
+        control_start = time.perf_counter()
         feet = env.feet_pos(frame="world")
         v = env.base_lin_vel(frame="world").copy()
         ori = env.base_ori_euler_xyz.copy()
         omega = env.base_ang_vel(frame="base").copy()
         com = env.com.copy()
         last["solve_seconds"] = np.nan
+        last["optimizer_seconds"] = np.nan
         last["compile_included"] = False
         tau = wrapper.compute_actions(
             com, env.base_pos.copy(), v, ori, omega, feet, env.hip_positions(frame="world"),
@@ -231,10 +278,13 @@ for seed in E["seeds"]:
             env.legs_mass_matrix, env.legs_qpos_idx, env.legs_qvel_idx, tau,
             cfg.inertia.flatten(), env.mjData.contact)
         action=np.zeros(env.mjModel.nu)
+        requested_torque=np.zeros(env.mjModel.nu)
         for leg in LEGS:
             idx=env.legs_tau_idx[leg]
+            requested_torque[idx]=tau[leg]
             bounds=0.9*env.mjModel.actuator_ctrlrange[idx]
             action[idx]=np.clip(tau[leg],bounds[:,0],bounds[:,1])
+        control_seconds = time.perf_counter() - control_start
         actual_contact, _, actual_grf=env.feet_contact_state(ground_reaction_forces=True)
         grf=np.array([wrapper.nmpc_GRFs[l] for l in LEGS])
         contact=wrapper.wb_interface.current_contact.copy()
@@ -244,16 +294,25 @@ for seed in E["seeds"]:
         err=state-last["reference"]
         quadratic=float(np.sum(np.array(C["mpc"]["Q"])*err**2) +
             np.sum((grf-ref_force)**2*np.array(C["mpc"]["R_force"])))
+        recorded_feet_velocity = env.feet_vel(frame="world")
         data=dict(time=t,qpos=env.mjData.qpos.copy(),qvel=env.mjData.qvel.copy(),com=com,
             velocity=v,orientation=ori,angular_velocity=omega,command=ref_v.copy(),wrench=wrench,
-            torque=action,feet=np.array([feet[l] for l in LEGS]),planned_grf=grf,
+            torque=action,requested_torque=requested_torque,feet=np.array([feet[l] for l in LEGS]),planned_grf=grf,
+            liftoff=np.array([wrapper.wb_interface.frg.lift_off_positions[l] for l in LEGS]),
+            foothold_target=np.array([wrapper.nmpc_footholds[l] for l in LEGS]),
+            swing_target=np.array([wrapper.wb_interface.last_des_foot_pos[l] for l in LEGS]),
+            feet_velocity=np.array([recorded_feet_velocity[l] for l in LEGS]),
             actual_grf=np.array([actual_grf[l] for l in LEGS]),
             contact=np.array([actual_contact[l] for l in LEGS]),planned_contact=contact.copy(),
             frequency=float(wrapper.wb_interface.pgg.step_freq),phase=wrapper.wb_interface.pgg.phase_signal.copy(),swing_time=np.array(wrapper.wb_interface.stc.swing_time),
             solve_seconds=last["solve_seconds"],compile_included=last["compile_included"],
+            optimizer_seconds=last["optimizer_seconds"],control_seconds=control_seconds,
             solver_status=last["status"],reference_state=last["reference"].copy(),quadratic_cost=quadratic)
-        for key,value in data.items(): hist[key].append(value)
+        physics_start = time.perf_counter()
         _,_,terminated,truncated,info=env.step(action)
+        data["physics_seconds"] = time.perf_counter() - physics_start
+        data["closed_loop_seconds"] = control_seconds + data["physics_seconds"]
+        for key,value in data.items(): hist[key].append(value)
         if terminated: reason="environment:"+",".join(info["invalid_contacts"]) if info["invalid_contacts"] else "environment_bounds"
         if reason: break
     hist={k:np.asarray(v) for k,v in hist.items()}

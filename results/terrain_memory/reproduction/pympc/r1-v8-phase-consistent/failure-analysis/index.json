@@ -1,0 +1,45 @@
+{
+  "run": "r1-v8-phase-consistent",
+  "command": "python scripts/analyze_tm01_failures.py --runs r1-v8-phase-consistent",
+  "unique_episode_count": 50,
+  "summaries": [
+    {
+      "method": "adaptive",
+      "episodes": 50,
+      "failures": 44,
+      "success": 6,
+      "mean_time_without_fall_s": 26.761719999999997,
+      "median_duration_s": 22.317,
+      "missing_before_tilt": 13,
+      "saturation_before_tilt": 18,
+      "median_tail_missing_fraction": 0.6033966033966034
+    }
+  ],
+  "figures": [
+    "adaptive-seed-000.png",
+    "adaptive-seed-002.png"
+  ],
+  "event_definition": "First event after 2 s: tilt >20 degrees for 100 ms; any joint at 39.96 N m for 50 ms; at least one planned stance foot absent for 100 ms; total measured Fz <0.5 mg for 100 ms. Descriptive events only, not failure criteria or causal proof.",
+  "old_contact_reconstruction": "phase < 0.65, matching the executed PeriodicGaitGenerator; v7/v8 did not save planned_contact, liftoff, desired feet, or pre-clipping torque.",
+  "retained_limit": "An event can precede a later recovered episode. Ordering alone does not establish that an implementation difference caused failure. All outcomes retained; no post-fall tracking error is invented.",
+  "reference_replay": {
+    "command": "python scripts/replay_tm01_footholds.py --runs r1-v8-phase-consistent",
+    "episodes": 50,
+    "max_pitch_rmse_rad": 0.0,
+    "max_height_rmse_m": 1.1150119312148253e-17,
+    "touchdown_rows": 11546,
+    "data": [
+      "reference_replay.csv",
+      "touchdowns.csv"
+    ],
+    "meaning": "Actual author foothold and terrain helpers replay saved states and phases; agreement with recorded MPC references establishes reference identity, not a new closed-loop outcome."
+  },
+  "source_locations": {
+    "liftoff_update": "quadruped_pympc/helpers/foothold_reference_generator.py:155-184",
+    "terrain_reference": "quadruped_pympc/interfaces/wb_interface.py:163-169,274-307",
+    "stance_torque": "quadruped_pympc/interfaces/wb_interface.py:387-389",
+    "swing_torque": "quadruped_pympc/helpers/swing_trajectory_controller.py:74-95",
+    "torque_execution": "scripts/run_tm01_r1.py",
+    "single_sqp_iteration": "quadruped_pympc/controllers/gradient/nominal/centroidal_nmpc_nominal.py:253-255"
+  }
+}

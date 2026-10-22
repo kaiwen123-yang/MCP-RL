@@ -1,0 +1,87 @@
+{
+  "run": "r1-v7-paper-model",
+  "command": "python scripts/analyze_tm01_failures.py --runs r1-v7-paper-model",
+  "unique_episode_count": 150,
+  "summaries": [
+    {
+      "method": "acados",
+      "episodes": 50,
+      "failures": 50,
+      "success": 0,
+      "mean_time_without_fall_s": 7.469640000000001,
+      "median_duration_s": 5.638,
+      "missing_before_tilt": 44,
+      "saturation_before_tilt": 38,
+      "median_tail_missing_fraction": 0.5950707187549293
+    },
+    {
+      "method": "adaptive",
+      "episodes": 50,
+      "failures": 43,
+      "success": 7,
+      "mean_time_without_fall_s": 25.451800000000006,
+      "median_duration_s": 20.384,
+      "missing_before_tilt": 23,
+      "saturation_before_tilt": 16,
+      "median_tail_missing_fraction": 0.5994005994005994
+    },
+    {
+      "method": "naive",
+      "episodes": 50,
+      "failures": 50,
+      "success": 0,
+      "mean_time_without_fall_s": 6.0960399999999995,
+      "median_duration_s": 5.486000000000001,
+      "missing_before_tilt": 20,
+      "saturation_before_tilt": 18,
+      "median_tail_missing_fraction": 0.5509490509490509
+    }
+  ],
+  "figures": [
+    "acados-seed-000.png",
+    "adaptive-seed-000.png",
+    "naive-seed-000.png"
+  ],
+  "event_definition": "First event after 2 s: tilt >20 degrees for 100 ms; any joint at 39.96 N m for 50 ms; at least one planned stance foot absent for 100 ms; total measured Fz <0.5 mg for 100 ms. Descriptive events only, not failure criteria or causal proof.",
+  "old_contact_reconstruction": "phase < 0.65, matching the executed PeriodicGaitGenerator; v7/v8 did not save planned_contact, liftoff, desired feet, or pre-clipping torque.",
+  "retained_limit": "An event can precede a later recovered episode. Ordering alone does not establish that an implementation difference caused failure. All outcomes retained; no post-fall tracking error is invented.",
+  "reference_replay": {
+    "command": "python scripts/replay_tm01_footholds.py --runs r1-v7-paper-model",
+    "episodes": 150,
+    "max_pitch_rmse_rad": 0.0,
+    "max_height_rmse_m": 1.6782711210246504e-17,
+    "touchdown_rows": 14426,
+    "data": [
+      "reference_replay.csv",
+      "touchdowns.csv"
+    ],
+    "meaning": "Actual author foothold and terrain helpers replay saved states and phases; agreement with recorded MPC references establishes reference identity, not a new closed-loop outcome."
+  },
+  "source_locations": {
+    "liftoff_update": "quadruped_pympc/helpers/foothold_reference_generator.py:155-184",
+    "terrain_reference": "quadruped_pympc/interfaces/wb_interface.py:163-169,274-307",
+    "stance_torque": "quadruped_pympc/interfaces/wb_interface.py:387-389",
+    "swing_torque": "quadruped_pympc/helpers/swing_trajectory_controller.py:74-95",
+    "torque_execution": "scripts/run_tm01_r1.py",
+    "single_sqp_iteration": "quadruped_pympc/controllers/gradient/nominal/centroidal_nmpc_nominal.py:253-255"
+  },
+  "seed0_acados_evidence": {
+    "wrench_2_to_4_s": [
+      5.47846749,
+      -9.20853145,
+      -18.36105904,
+      -19.33889458,
+      12.53080957,
+      16.51022309
+    ],
+    "planned_touchdown_s": 2.692,
+    "RR_original_liftoff_z_m": 0.03261106591985982,
+    "RR_liftoff_drift_z_m": 0.010837790896103844,
+    "RR_actual_z_m": 0.05644224697803904,
+    "RR_loaded_contact_delay_s": 0.156,
+    "sustained_torque_limit_s": 2.7,
+    "low_support_s": 3.296,
+    "termination_s": 4.83,
+    "interpretation": "External roll/pitch wrench first changes attitude; moving lift-off reference raises touchdown height, while the scheduled stance assumes contact. Missing support and clipped torque accompany later large attitude loss. Restore both known foothold changes in complete matched episodes to estimate their combined effect."
+  }
+}

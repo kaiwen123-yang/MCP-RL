@@ -1,0 +1,27 @@
+diff --git a/quadruped_pympc/helpers/foothold_reference_generator.py b/quadruped_pympc/helpers/foothold_reference_generator.py
+--- a/quadruped_pympc/helpers/foothold_reference_generator.py
++++ b/quadruped_pympc/helpers/foothold_reference_generator.py
+@@ -177,8 +177,10 @@
+                 self.lift_off_positions[leg_name] = feet_pos[leg_name]
+                 self.lift_off_positions_h[leg_name] = R_W2H @ (self.lift_off_positions[leg_name] - base_position)
+ 
+-            elif previous_contact[leg_id] == 0 and current_contact[leg_id] == 0:
+-                # Update lift-offs in world frame
++            elif (previous_contact[leg_id] == 0 and current_contact[leg_id] == 0
++                  and cfg.locomotion_params["liftoff_frame"] == "body"):
++                # Historical world-frame lift-off stays fixed until the next lift-off.
++                # Retain the modern moving-body behavior only when explicitly selected.
+                 self.lift_off_positions[leg_name] = R_W2H.T @ self.lift_off_positions_h[leg_name] + base_position
+ 
+     def update_touch_down_positions(
+diff --git a/quadruped_pympc/config.py b/quadruped_pympc/config.py
+--- a/quadruped_pympc/config.py
++++ b/quadruped_pympc/config.py
+@@ -251,6 +251,7 @@
+ 
+ locomotion_params = {
+     'phase_consistent_swing': False,  # explicit R1 timing-repair comparison
++    'liftoff_frame': 'body',  # modern default; R1 historical footholds select 'world'
+     'swing_generator':             'hermite',  # 'scipy', 'hermite', 'bezier'
+     'swing_position_gain_fb':      500,
+     'swing_velocity_gain_fb':      10,
