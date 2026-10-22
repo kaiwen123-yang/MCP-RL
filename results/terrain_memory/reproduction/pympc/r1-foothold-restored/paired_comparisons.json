@@ -1,0 +1,71 @@
+{
+  "command": "python scripts/compare_tm01_runs.py --run r1-foothold-restored",
+  "comparisons": [
+    {
+      "contrast": "acados_footholds",
+      "episodes": 50,
+      "completed_a": 0,
+      "completed_b": 0,
+      "mean_time_without_fall_a_s": 7.469640000000001,
+      "mean_time_without_fall_b_s": 8.883159999999998,
+      "paired_mean_difference_s": 1.41352,
+      "paired_mean_difference_ci95_low_s": 0.04550600000000012,
+      "paired_mean_difference_ci95_high_s": 2.9186749999999995,
+      "longer_b": 41,
+      "shorter_b": 9,
+      "tied": 0,
+      "gained_completion": 0,
+      "lost_completion": 0
+    },
+    {
+      "contrast": "naive_footholds",
+      "episodes": 50,
+      "completed_a": 0,
+      "completed_b": 0,
+      "mean_time_without_fall_a_s": 6.0960399999999995,
+      "mean_time_without_fall_b_s": 7.353480000000001,
+      "paired_mean_difference_s": 1.2574400000000001,
+      "paired_mean_difference_ci95_low_s": 0.2325590000000003,
+      "paired_mean_difference_ci95_high_s": 2.4810519999999996,
+      "longer_b": 37,
+      "shorter_b": 13,
+      "tied": 0,
+      "gained_completion": 0,
+      "lost_completion": 0
+    },
+    {
+      "contrast": "adaptive_footholds",
+      "episodes": 50,
+      "completed_a": 7,
+      "completed_b": 17,
+      "mean_time_without_fall_a_s": 25.451800000000006,
+      "mean_time_without_fall_b_s": 38.02248,
+      "paired_mean_difference_s": 12.570680000000003,
+      "paired_mean_difference_ci95_low_s": 6.785317000000001,
+      "paired_mean_difference_ci95_high_s": 18.301607999999995,
+      "longer_b": 36,
+      "shorter_b": 9,
+      "tied": 5,
+      "gained_completion": 12,
+      "lost_completion": 2
+    },
+    {
+      "contrast": "frequency_only",
+      "episodes": 50,
+      "completed_a": 0,
+      "completed_b": 17,
+      "mean_time_without_fall_a_s": 8.09216,
+      "mean_time_without_fall_b_s": 38.02248,
+      "paired_mean_difference_s": 29.930320000000002,
+      "paired_mean_difference_ci95_low_s": 24.113469000000002,
+      "paired_mean_difference_ci95_high_s": 35.659124,
+      "longer_b": 48,
+      "shorter_b": 2,
+      "tied": 0,
+      "gained_completion": 17,
+      "lost_completion": 0
+    }
+  ],
+  "interpretation": "Completion and mean time without a fall use the same complete 60 s task. Common-prefix error in paired_durations.csv is diagnostic only; it does not assign an error after a fall or rank unequal surviving intervals as full-task performance.",
+  "intervention": "The foothold contrasts change two declared behaviors together: 0.083 to 0.1 m lateral offset and body-following to world-fixed lift-off. They do not separate the two contributions. The frequency-only contrast uses the same adaptive controller with [1.3] versus [1.3,2.0,2.4] Hz."
+}

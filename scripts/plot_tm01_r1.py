@@ -11,6 +11,7 @@ p=argparse.ArgumentParser()
 p.add_argument("--run",default="r1-v4")
 p.add_argument("--methods",nargs="+",default=["acados","naive","adaptive"])
 p.add_argument("--figures-only", action="store_true")
+p.add_argument("--reference-run", help="Explicitly reuse unchanged acados/naive/MPPI groups for a clock-only follow-up.")
 a=p.parse_args()
 R=ROOT/"results/terrain_memory/reproduction/pympc"/a.run
 O=ROOT/"outputs/terrain_memory/reproduction/pympc"/a.run
@@ -22,15 +23,18 @@ def save(fig,name):
     fig.savefig(R/(name+".png"),bbox_inches="tight")
     fig.savefig(R/(name+".svg"),bbox_inches="tight")
     plt.close(fig)
+def data_dir(experiment,method):
+    # Clock normalization is never called by these non-adaptive controllers.
+    reference=a.reference_run and (experiment=="fig3" or method in ("acados","naive","mppi"))
+    return (ROOT/"results/terrain_memory/reproduction/pympc"/a.reference_run if reference else R)/experiment/method
 def rows(experiment,method):
-    with (R/experiment/method/"episodes.csv").open() as f:return list(csv.DictReader(f))
+    with (data_dir(experiment,method)/"episodes.csv").open() as f:return list(csv.DictReader(f))
 def trace(experiment,method,seed=0):
     return np.load(ROOT / next(x["trajectory"] for x in rows(experiment,method) if int(x["seed"])==seed))
 methods=["acados","naive","mppi"]
-timing_contexts={m:json.loads((R/"fig3"/m/"run.json").read_text()).get("timing_context","legacy-unrecorded") for m in methods}
+timing_contexts={m:json.loads((data_dir("fig3",m)/"run.json").read_text()).get("timing_context","legacy-unrecorded") for m in methods}
 timing_comparable=all(value=="isolated" for value in timing_contexts.values())
-f,ax=plt.subplots(2 if timing_comparable else 1,1,
-    figsize=(7.16,6.3 if timing_comparable else 3.8),layout="constrained",squeeze=False)
+f,ax=plt.subplots(2,1,figsize=(7.16,6.3),layout="constrained",squeeze=False)
 ax=ax[:,0]
 solve,errors=[],[]
 for method in methods:
@@ -38,18 +42,37 @@ for method in methods:
     keep=np.isfinite(d["solve_seconds"]) & ~d["compile_included"]
     solve.append(1000*d["solve_seconds"][keep])
     errors.append(np.linalg.norm(d["velocity"]-d["command"],axis=1))
-panels=([solve,errors],["MPC interface wall time (ms)","Linear velocity error norm (m/s)"]) if timing_comparable else ([errors],["Linear velocity error norm (m/s)"])
+panels=([solve,errors],["Observed MPC interface time (ms)","Linear velocity error norm (m/s)"])
 for axis,data,ylabel in zip(ax,*panels):
-    bp=axis.boxplot(data, tick_labels=[names[m]+"\n"+json.loads((R/"fig3"/m/"run.json").read_text())["device"]+" | "+format(float(rows("fig3",m)[0]["duration_s"]),".3f")+" s" for m in methods],showmeans=True,showfliers=False,
+    bp=axis.boxplot(data, tick_labels=[names[m]+"\n"+json.loads((data_dir("fig3",m)/"run.json").read_text())["device"]+" | "+format(float(rows("fig3",m)[0]["duration_s"]),".3f")+" s" for m in methods],showmeans=True,showfliers=False,
         patch_artist=True,meanprops={"marker":"^","markerfacecolor":"black","markeredgecolor":"black","markersize":4},
         medianprops={"color":"black"})
     for box,m in zip(bp["boxes"],methods):box.set_facecolor(colors[m]);box.set_alpha(.45)
     axis.set_ylabel(ylabel)
     axis.grid(axis="y",alpha=.2)
-f.suptitle("TM01 Fig. 3 | 0.5 m/s, +/-5 N / N m")
+f.suptitle("TM01 Fig. 3 | 0.5 m/s, +/-5 N / N m"+("\nUnchanged groups from "+a.reference_run if a.reference_run else ""))
 f.supxlabel("One attempted 60 s episode per method; falls retained; samples are correlated time points.\nBoxes: IQR; line: median; triangle: mean; whiskers: 1.5 IQR.\n"+
-    ("JIT shown only in raw data." if timing_comparable else "Shared/uncertified device timing is excluded from the latency comparison."),fontsize=8)
+    ("JIT shown only in raw data." if timing_comparable else "Concurrent workload present: times describe these runs, not an isolated algorithm speed ranking."),fontsize=8)
 save(f,"fig3")
+timing_rows=[]
+for method in methods:
+    d=trace("fig3",method)
+    steady=~d["compile_included"]
+    solve_ticks=np.isfinite(d["solve_seconds"])
+    for field in ["optimizer_seconds","solve_seconds","control_seconds","physics_seconds","closed_loop_seconds"]:
+        if field not in d:
+            continue
+        for label,mask in [("mpc_ticks",steady&solve_ticks),("non_mpc_ticks",steady&~solve_ticks)]:
+            values=d[field][mask]
+            values=values[np.isfinite(values)]*1000
+            if len(values):
+                timing_rows.append(dict(method=method,component=field,ticks=label,count=len(values),
+                    mean_ms=float(values.mean()),median_ms=float(np.median(values)),
+                    p95_ms=float(np.quantile(values,.95)),p99_ms=float(np.quantile(values,.99)),
+                    timing_context=timing_contexts[method],isolated_comparison=timing_comparable))
+if timing_rows:
+    with (R/"fig3_timing.csv").open("w",newline="") as stream:
+        writer=csv.DictWriter(stream,fieldnames=list(timing_rows[0]));writer.writeheader();writer.writerows(timing_rows)
 f,ax=plt.subplots(3,1,figsize=(7.16,7.0),sharex=True,layout="constrained")
 for m in methods:
     d=trace("fig3",m)
@@ -83,7 +106,7 @@ ax[2].set(xlabel="Simulation time (s)",ylabel="Lateral speed (m/s)")
 for axis in ax[1:]:
     axis.axvspan(2,5,color="gray",alpha=.15);axis.set_xlim(0,8)
 for axis in ax:axis.grid(alpha=.2)
-f.suptitle("TM01 Fig. 4 | world-y command 0.1 m/s; 40 N at 2-5 s")
+f.suptitle("TM01 Fig. 4 | world-y command 0.1 m/s; 40 N at 2-5 s"+("\nAcados reference from "+a.reference_run if a.reference_run else ""))
 save(f,"fig4")
 if a.figures_only:
     raise SystemExit(0)
@@ -118,8 +141,9 @@ ax[0].set(ylabel="Completed episodes (%)",ylim=(-5,110))
 ax[1].set(ylabel="Time without a fall (s)",ylim=(0,63))
 for axis in ax:
     axis.set_xticks(range(len(a.methods)),["Adaptive\nfixed 1.3 Hz" if m=="adaptive_fixed" else m for m in a.methods]);axis.grid(axis="y",alpha=.2)
-f.suptitle("TM01 Table I + frequency ablation | 50 shared seeds" if "adaptive_fixed" in a.methods
-           else "TM01 Table I experiment | 50 shared seeds per controller")
+f.suptitle(("TM01 Table I + frequency ablation | 50 shared seeds" if "adaptive_fixed" in a.methods
+           else "TM01 Table I experiment | 50 shared seeds per controller")+
+           ("\nAcados/naive reference: "+a.reference_run if a.reference_run else ""))
 f.supxlabel("95% Wilson intervals. Each dot is one of 50 episodes; black bar: mean time without a fall.\n60 s is the fixed horizon. Errors on different surviving intervals are not ranked as full-task performance.",fontsize=8)
 save(f,"table1")
 # Show the entire declared horizon, so no post-hoc choice of a favorable cutoff is needed.
@@ -140,9 +164,35 @@ ax.set_title("Complete 60 s evaluation: survival over the full horizon")
 save(f,"table1_survival")
 with (R/"table1_survival.csv").open("w",newline="") as output:
     writer=csv.DictWriter(output,fieldnames=list(survival[0]));writer.writeheader();writer.writerows(survival)
+fig3_summary=[]
+for method in ["acados","naive","mppi"]:
+    row=rows("fig3",method)[0]
+    fig3_summary.append(dict(method=method,completed=bool(int(row["success"])),
+        duration_s=float(row["duration_s"]),velocity_error_mean_m_s=float(row["velocity_error_mean_m_s"]),
+        velocity_error_rmse_m_s=float(row["velocity_error_rmse_m_s"]),
+        observed_mpc_interface_median_ms=float(row["solve_median_ms"]),
+        timing_context=timing_contexts[method]))
+fig4_summary=[]
+for method in ["acados","adaptive"]:
+    d=trace("fig4",method);time=d["time"];frequency=d["frequency"]
+    returned=np.logical_and.accumulate((frequency<=1.30001)[::-1])[::-1]
+    return_indices=np.flatnonzero((time>=5)&returned)
+    increased=np.flatnonzero((time>=2)&(frequency>1.30001))
+    fig4_summary.append(dict(method=method,completed=bool(int(rows("fig4",method)[0]["success"])),
+        velocity_error_rmse_m_s=float(rows("fig4",method)[0]["velocity_error_rmse_m_s"]),
+        first_above_nominal_after_push_s=float(time[increased[0]]) if len(increased) else None,
+        settled_nominal_after_push_s=float(time[return_indices[0]]) if len(return_indices) else None,
+        median_frequency_before_push_hz=float(np.median(frequency[time<2])),
+        median_frequency_during_push_hz=float(np.median(frequency[(time>=2)&(time<5)])),
+        median_frequency_last_second_hz=float(np.median(frequency[time>=7]))))
 index=dict(run=a.run,
+ reference_run=a.reference_run,
+ newly_executed_episode_count=(sum(s["episodes"] for s in summary if s["method"] in ("adaptive_fixed","adaptive"))+len(rows("fig4","adaptive"))) if a.reference_run else sum(s["episodes"] for s in summary)+5,
+ referenced_groups={"fig3":["acados","naive","mppi"],"fig4":["acados"],"table1":["acados","naive"]} if a.reference_run else {},
  fig3_latency_comparison_complete=timing_comparable,
+ fig3_observed_timing_recorded=bool(timing_rows),
  fig3_timing_contexts=timing_contexts,
+ fig3_summary=fig3_summary,fig4_summary=fig4_summary,
  included_episode_count=sum(s["episodes"] for s in summary)+5,
  table1_episode_count=sum(s["episodes"] for s in summary),videos="videos.json",
  paper_success_percent={"acados":32,"naive":37,"adaptive":80},

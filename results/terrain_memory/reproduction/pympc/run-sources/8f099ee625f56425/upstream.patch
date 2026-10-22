@@ -1,0 +1,540 @@
+diff --git a/quadruped_pympc/config.py b/quadruped_pympc/config.py
+index f517ba6..4e5a25a 100644
+--- a/quadruped_pympc/config.py
++++ b/quadruped_pympc/config.py
+@@ -250,6 +250,8 @@ mpc_params = {
+ # -----------------------------------------------------------------------
+ 
+ locomotion_params = {
++    'phase_consistent_swing': False,  # explicit R1 timing-repair comparison
++    'liftoff_frame': 'body',  # modern default; R1 historical footholds select 'world'
+     'swing_generator':             'hermite',  # 'scipy', 'hermite', 'bezier'
+     'swing_position_gain_fb':      500,
+     'swing_velocity_gain_fb':      10,
+diff --git a/quadruped_pympc/controllers/sampling/centroidal_model_jax.py b/quadruped_pympc/controllers/sampling/centroidal_model_jax.py
+index 35ecf84..4e43656 100644
+--- a/quadruped_pympc/controllers/sampling/centroidal_model_jax.py
++++ b/quadruped_pympc/controllers/sampling/centroidal_model_jax.py
+@@ -25,14 +25,8 @@ class Centroidal_Model_JAX:
+ 
+         self.dt = dt
+ 
+-        if device == "gpu":
+-            try:
+-                self.device = jax.devices("gpu")[0]
+-            except:
+-                self.device = jax.devices("cpu")[0]
+-                print("GPU not available, using CPU")
+-        else:
+-            self.device = jax.devices("cpu")[0]
++        # Sampling_MPC passes the selected JAX Device, not a backend-name string.
++        self.device = device
+ 
+         # Mass and Inertia robot dependant
+         self.mass = config.mass
+diff --git a/quadruped_pympc/controllers/sampling/centroidal_nmpc_jax.py b/quadruped_pympc/controllers/sampling/centroidal_nmpc_jax.py
+index 69db9ae..96a0873 100644
+--- a/quadruped_pympc/controllers/sampling/centroidal_nmpc_jax.py
++++ b/quadruped_pympc/controllers/sampling/centroidal_nmpc_jax.py
+@@ -2,7 +2,7 @@ import numpy as np
+ np.set_printoptions(precision=3, suppress=True)
+ 
+ import os
+-os.environ['XLA_FLAGS'] = '--xla_gpu_triton_gemm_any=True'
++# Runtime selects CPU/GPU explicitly; preserve the experiment's XLA settings.
+ 
+ import jax
+ import jax.numpy as jnp
+@@ -36,8 +36,8 @@ class Sampling_MPC:
+         self.control_dim = 24
+         self.reference_dim = self.state_dim
+ 
+-        self.max_sampling_forces_x = 10
+-        self.max_sampling_forces_y = 10
++        self.max_sampling_forces_x = 30  # TM01: remove post-paper 2025 x/y scaling
++        self.max_sampling_forces_y = 30
+         self.max_sampling_forces_z = 30
+ 
+         if device == "gpu":
+@@ -65,15 +65,10 @@ class Sampling_MPC:
+             self.spline_fun_RR = self.compute_linear_spline
+ 
+         elif self.control_parametrization == "cubic_spline":
+-            # Along the horizon, we have N cubic splines per control input (3 forces)
+-            # Consecutive splines share a knot, so we have N+1 knots per force
+-            self.num_spline = config.mpc_params['num_splines']
+-            self.num_control_parameters_single_leg = (self.num_spline + 1) * 3
+-
+-            # In totale we have 4 legs
+-            self.num_control_parameters = self.num_control_parameters_single_leg * 4
+-
+-            # We have 4 different spline functions, one for each leg
++            # Historical cubic_spline_1: four neighboring knots per force axis.
++            self.num_spline = 1
++            self.num_control_parameters_single_leg = 12
++            self.num_control_parameters = 48
+             self.spline_fun_FL = self.compute_cubic_spline
+             self.spline_fun_FR = self.compute_cubic_spline
+             self.spline_fun_RL = self.compute_cubic_spline
+@@ -128,19 +123,8 @@ class Sampling_MPC:
+         self.robot = Centroidal_Model_JAX(self.dt, self.device)
+ 
+         # Initialize the cost function matrices
+-        self.Q = jnp.identity(self.state_dim, dtype=dtype_general) * 0
+-        self.Q = self.Q.at[0, 0].set(0.0)
+-        self.Q = self.Q.at[1, 1].set(0.0)
+-        self.Q = self.Q.at[2, 2].set(1500)  # com_z
+-        self.Q = self.Q.at[3, 3].set(200)  # com_vel_x
+-        self.Q = self.Q.at[4, 4].set(200)  # com_vel_y
+-        self.Q = self.Q.at[5, 5].set(200)  # com_vel_z
+-        self.Q = self.Q.at[6, 6].set(1000)  # base_angle_roll
+-        self.Q = self.Q.at[7, 7].set(1000)  # base_angle_pitch
+-        self.Q = self.Q.at[8, 8].set(0.0)  # base_angle_yaw
+-        self.Q = self.Q.at[9, 9].set(20)  # base_angle_rates_x
+-        self.Q = self.Q.at[10, 10].set(20)  # base_angle_rates_y
+-        self.Q = self.Q.at[11, 11].set(50)  # base_angle_rates_z
++        # TM01 recovery: numerical weights from fixed historical author source.
++        self.Q = jnp.diag(jnp.array(config.mpc_params["paper_Q"] + [0.0] * 12, dtype=dtype_general))
+ 
+         self.R = jnp.identity(self.control_dim, dtype=dtype_general)
+         self.R = self.R.at[0, 0].set(0.0)  # foot_pos_x_FL
+@@ -156,17 +140,17 @@ class Sampling_MPC:
+         self.R = self.R.at[10, 10].set(0.0)  # foot_pos_y_RR
+         self.R = self.R.at[11, 11].set(0.0)  # foot_pos_z_RR
+ 
+-        self.R = self.R.at[12, 12].set(0.1)  # foot_force_x_FL
+-        self.R = self.R.at[13, 13].set(0.1)  # foot_force_y_FL
++        self.R = self.R.at[12, 12].set(0.001)  # foot_force_x_FL
++        self.R = self.R.at[13, 13].set(0.001)  # foot_force_y_FL
+         self.R = self.R.at[14, 14].set(0.001)  # foot_force_z_FL
+-        self.R = self.R.at[15, 15].set(0.1)  # foot_force_x_FR
+-        self.R = self.R.at[16, 16].set(0.1)  # foot_force_y_FR
++        self.R = self.R.at[15, 15].set(0.001)  # foot_force_x_FR
++        self.R = self.R.at[16, 16].set(0.001)  # foot_force_y_FR
+         self.R = self.R.at[17, 17].set(0.001)  # foot_force_z_FR
+-        self.R = self.R.at[18, 18].set(0.1)  # foot_force_x_RL
+-        self.R = self.R.at[19, 19].set(0.1)  # foot_force_y_RL
++        self.R = self.R.at[18, 18].set(0.001)  # foot_force_x_RL
++        self.R = self.R.at[19, 19].set(0.001)  # foot_force_y_RL
+         self.R = self.R.at[20, 20].set(0.001)  # foot_force_z_RL
+-        self.R = self.R.at[21, 21].set(0.1)  # foot_force_x_RR
+-        self.R = self.R.at[22, 22].set(0.1)  # foot_force_y_RR
++        self.R = self.R.at[21, 21].set(0.001)  # foot_force_x_RR
++        self.R = self.R.at[22, 22].set(0.001)  # foot_force_y_RR
+         self.R = self.R.at[23, 23].set(0.001)  # foot_force_z_RR
+ 
+         # temperature of the MPPI update, relative to the spread of the costs
+@@ -235,37 +219,29 @@ class Sampling_MPC:
+ 
+     def compute_cubic_spline(self, parameters, step, horizon_leg):
+         """
+-        Compute the cubic spline parametrization of the GRF (N splines).
+-        Consecutive splines share their knots, and the tangents are computed from the
+-        neighbouring knots (Catmull-Rom, one-sided at the extremes), so the force is
+-        continuous together with its derivative along the horizon.
+-        """
++        Compute the cubic spline parametrization of the GRF
++        """  
+ 
+-        # Find the spline index and the local coordinate q in [0, 1] inside it
+-        tau = step / (horizon_leg / self.num_spline)
+-        index = jnp.clip(jnp.floor(tau).astype(jnp.int32), 0, self.num_spline - 1)
+-        q = tau - index
+-
+-        # Hermite basis
+-        a = 2 * q * q * q - 3 * q * q + 1
+-        b = q * q * q - 2 * q * q + q
+-        c = -2 * q * q * q + 3 * q * q
+-        d = q * q * q - q * q
++        tau = step/(horizon_leg)
++        q = (tau - 0.0)/(1.0-0.0)
++        a = 2*q*q*q - 3*q*q + 1
++        b = (q*q*q - 2*q*q + q)*1.0
++        c = -2*q*q*q + 3*q*q
++        d = (q*q*q - q*q)*1.0  
+ 
+-        # Neighbouring knots used for the tangents at the start and end of the spline
+-        index_prev = jnp.maximum(index - 1, 0)
+-        index_next = jnp.minimum(index + 2, self.num_spline)
++        phi = (1./2.)*(((parameters[2] - parameters[1])/1.0) + ((parameters[1] - parameters[0])/1.0))
++        phi_next = (1./2.)*(((parameters[3] - parameters[2])/1.0) + ((parameters[2] - parameters[1])/1.0))
++        f_x = a*parameters[1] + b*phi + c*parameters[2] + d*phi_next
+ 
+-        def interpolate(knots):
+-            tangent = (knots[index + 1] - knots[index_prev]) / (index + 1 - index_prev)
+-            tangent_next = (knots[index_next] - knots[index]) / (index_next - index)
+-            return a * knots[index] + b * tangent + c * knots[index + 1] + d * tangent_next
++        phi = (1./2.)*(((parameters[6] - parameters[5])/1.0) + ((parameters[5] - parameters[4])/1.0))
++        phi_next = (1./2.)*(((parameters[7] - parameters[6])/1.0) + ((parameters[6] - parameters[5])/1.0))
++        f_y = a*parameters[5] + b*phi + c*parameters[6] + d*phi_next
+ 
+-        shift = self.num_spline + 1
+-        f_x = interpolate(parameters[0:shift])
+-        f_y = interpolate(parameters[shift : shift * 2])
+-        f_z = interpolate(parameters[shift * 2 : shift * 3])
+ 
++        phi = (1./2.)*(((parameters[10] - parameters[9])/1.0) + ((parameters[9] - parameters[8])/1.0))
++        phi_next = (1./2.)*(((parameters[11] - parameters[10])/1.0) + ((parameters[10] - parameters[9])/1.0))
++        f_z = a*parameters[9] + b*phi + c*parameters[10] + d*phi_next
++       
+         return f_x, f_y, f_z
+ 
+     def compute_zero_order_spline(self, parameters, step, horizon_leg):
+@@ -468,7 +444,7 @@ class Sampling_MPC:
+             error_cost = state_error.T @ self.Q @ state_error
+ 
+             # Calculate cost regulation input
+-            """input_for_cost = jnp.array(
++            input_for_cost = jnp.array(
+                 [
+                     jnp.float32(0),
+                     jnp.float32(0),
+@@ -484,21 +460,22 @@ class Sampling_MPC:
+                     jnp.float32(0),
+                     f_x_FL,
+                     f_y_FL,
+-                    f_z_FL - reference_force_stance_legs,
++                    f_z_FL - reference_force_stance_legs * contact_sequence[0][n],
+                     f_x_FR,
+                     f_y_FR,
+-                    f_z_FR - reference_force_stance_legs,
++                    f_z_FR - reference_force_stance_legs * contact_sequence[1][n],
+                     f_x_RL,
+                     f_y_RL,
+-                    f_z_RL - reference_force_stance_legs,
++                    f_z_RL - reference_force_stance_legs * contact_sequence[2][n],
+                     f_x_RR,
+                     f_y_RR,
+-                    f_z_RR - reference_force_stance_legs,
++                    f_z_RR - reference_force_stance_legs * contact_sequence[3][n],
+                 ],
+                 dtype=dtype_general,
+             )
+ 
+-            error_cost += input_for_cost.T@self.R@input_for_cost"""
++            if config.mpc_params["paper_input_cost"]:
++                error_cost += input_for_cost.T @ self.R @ input_for_cost
+ 
+             # Saturate in the case of NaN
+             # state_next = jnp.where(jnp.isnan(state_next), 100, state_next)
+@@ -808,10 +785,8 @@ class Sampling_MPC:
+             1 + int(self.num_parallel_computations / 3) * 2 : int(self.num_parallel_computations)
+         ].set(
+             jax.random.uniform(
+-                key=key_uniform,
+-                minval=-max_sampling_forces,
+-                maxval=max_sampling_forces,
+-                shape=(num_samples_uniform, self.num_control_parameters),
++                key=key_uniform, minval=-max_sampling_forces, maxval=max_sampling_forces,
++                shape=(num_samples_uniform, self.num_control_parameters)
+             )
+         )
+ 
+@@ -893,7 +868,7 @@ class Sampling_MPC:
+         # rollouts), so the temperature does not depend on the scale of the cost function
+         beta = best_cost
+         temperature = self.temperature_mppi
+-        cost_spread = jnp.maximum(jnp.median(costs) - beta, 1e-6)
++        cost_spread = 1.0  # TM01 Algorithm 4: absolute lambda, no spread scaling
+         exp_costs = jnp.exp((-1.0 / temperature) * (costs - beta) / cost_spread)
+         denom = jnp.sum(exp_costs)
+         weights = exp_costs / denom
+@@ -985,7 +960,7 @@ class Sampling_MPC:
+         # rollouts), so the temperature does not depend on the scale of the cost function
+         beta = best_cost
+         temperature = self.temperature_mppi
+-        cost_spread = jnp.maximum(jnp.median(costs) - beta, 1e-6)
++        cost_spread = 1.0  # TM01 Algorithm 4: absolute lambda, no spread scaling
+         exp_costs = jnp.exp((-1.0 / temperature) * (costs - beta) / cost_spread)
+         denom = jnp.sum(exp_costs)
+         weights = exp_costs / denom
+diff --git a/quadruped_pympc/controllers/sampling/centroidal_nmpc_jax_gait_adaptive.py b/quadruped_pympc/controllers/sampling/centroidal_nmpc_jax_gait_adaptive.py
+index 7038306..f966b41 100644
+--- a/quadruped_pympc/controllers/sampling/centroidal_nmpc_jax_gait_adaptive.py
++++ b/quadruped_pympc/controllers/sampling/centroidal_nmpc_jax_gait_adaptive.py
+@@ -2,7 +2,7 @@ import numpy as np
+ np.set_printoptions(precision=3, suppress=True)
+ 
+ import os
+-os.environ['XLA_FLAGS'] = '--xla_gpu_triton_gemm_any=True'
++# Runtime selects CPU/GPU explicitly; preserve the experiment's XLA settings.
+ 
+ import jax
+ import jax.numpy as jnp
+@@ -38,8 +38,8 @@ class Sampling_MPC:
+         self.control_dim = 24
+         self.reference_dim = self.state_dim
+ 
+-        self.max_sampling_forces_x = 10
+-        self.max_sampling_forces_y = 10
++        self.max_sampling_forces_x = 30  # TM01: remove post-paper 2025 x/y scaling
++        self.max_sampling_forces_y = 30
+         self.max_sampling_forces_z = 30
+ 
+         if device == "gpu":
+@@ -69,15 +69,10 @@ class Sampling_MPC:
+ 
+ 
+         elif self.control_parametrization == "cubic_spline":
+-            # Along the horizon, we have N cubic splines per control input (3 forces)
+-            # Consecutive splines share a knot, so we have N+1 knots per force
+-            self.num_spline = config.mpc_params['num_splines']
+-            self.num_control_parameters_single_leg = (self.num_spline + 1) * 3
+-
+-            # In totale we have 4 legs
+-            self.num_control_parameters = self.num_control_parameters_single_leg * 4
+-
+-            # We have 4 different spline functions, one for each leg
++            # Historical cubic_spline_1: four neighboring knots per force axis.
++            self.num_spline = 1
++            self.num_control_parameters_single_leg = 12
++            self.num_control_parameters = 48
+             self.spline_fun_FL = self.compute_cubic_spline
+             self.spline_fun_FR = self.compute_cubic_spline
+             self.spline_fun_RL = self.compute_cubic_spline
+@@ -122,19 +117,8 @@ class Sampling_MPC:
+         self.robot = Centroidal_Model_JAX(self.dt, self.device)
+ 
+         # Initialize the cost function matrices
+-        self.Q = jnp.identity(self.state_dim, dtype=dtype_general) * 0
+-        self.Q = self.Q.at[0, 0].set(0.0)
+-        self.Q = self.Q.at[1, 1].set(0.0)
+-        self.Q = self.Q.at[2, 2].set(1500)  # com_z
+-        self.Q = self.Q.at[3, 3].set(200)  # com_vel_x
+-        self.Q = self.Q.at[4, 4].set(200)  # com_vel_y
+-        self.Q = self.Q.at[5, 5].set(200)  # com_vel_z
+-        self.Q = self.Q.at[6, 6].set(500)  # base_angle_roll
+-        self.Q = self.Q.at[7, 7].set(500)  # base_angle_pitch
+-        self.Q = self.Q.at[8, 8].set(0.0)  # base_angle_yaw
+-        self.Q = self.Q.at[9, 9].set(20)  # base_angle_rates_x
+-        self.Q = self.Q.at[10, 10].set(20)  # base_angle_rates_y
+-        self.Q = self.Q.at[11, 11].set(50)  # base_angle_rates_z
++        # TM01 recovery: numerical weights from fixed historical author source.
++        self.Q = jnp.diag(jnp.array(config.mpc_params["paper_Q"] + [0.0] * 12, dtype=dtype_general))
+ 
+         self.R = jnp.identity(self.control_dim, dtype=dtype_general)
+         self.R = self.R.at[0, 0].set(0.0)  # foot_pos_x_FL
+@@ -150,17 +134,17 @@ class Sampling_MPC:
+         self.R = self.R.at[10, 10].set(0.0)  # foot_pos_y_RR
+         self.R = self.R.at[11, 11].set(0.0)  # foot_pos_z_RR
+ 
+-        self.R = self.R.at[12, 12].set(0.1)  # foot_force_x_FL
+-        self.R = self.R.at[13, 13].set(0.1)  # foot_force_y_FL
++        self.R = self.R.at[12, 12].set(0.001)  # foot_force_x_FL
++        self.R = self.R.at[13, 13].set(0.001)  # foot_force_y_FL
+         self.R = self.R.at[14, 14].set(0.001)  # foot_force_z_FL
+-        self.R = self.R.at[15, 15].set(0.1)  # foot_force_x_FR
+-        self.R = self.R.at[16, 16].set(0.1)  # foot_force_y_FR
++        self.R = self.R.at[15, 15].set(0.001)  # foot_force_x_FR
++        self.R = self.R.at[16, 16].set(0.001)  # foot_force_y_FR
+         self.R = self.R.at[17, 17].set(0.001)  # foot_force_z_FR
+-        self.R = self.R.at[18, 18].set(0.1)  # foot_force_x_RL
+-        self.R = self.R.at[19, 19].set(0.1)  # foot_force_y_RL
++        self.R = self.R.at[18, 18].set(0.001)  # foot_force_x_RL
++        self.R = self.R.at[19, 19].set(0.001)  # foot_force_y_RL
+         self.R = self.R.at[20, 20].set(0.001)  # foot_force_z_RL
+-        self.R = self.R.at[21, 21].set(0.1)  # foot_force_x_RR
+-        self.R = self.R.at[22, 22].set(0.1)  # foot_force_y_RR
++        self.R = self.R.at[21, 21].set(0.001)  # foot_force_x_RR
++        self.R = self.R.at[22, 22].set(0.001)  # foot_force_y_RR
+         self.R = self.R.at[23, 23].set(0.001)  # foot_force_z_RR
+ 
+         # temperature of the MPPI update, relative to the spread of the costs
+@@ -231,37 +215,29 @@ class Sampling_MPC:
+ 
+     def compute_cubic_spline(self, parameters, step, horizon_leg):
+         """
+-        Compute the cubic spline parametrization of the GRF (N splines).
+-        Consecutive splines share their knots, and the tangents are computed from the
+-        neighbouring knots (Catmull-Rom, one-sided at the extremes), so the force is
+-        continuous together with its derivative along the horizon.
+-        """
++        Compute the cubic spline parametrization of the GRF
++        """  
+ 
+-        # Find the spline index and the local coordinate q in [0, 1] inside it
+-        tau = step / (horizon_leg / self.num_spline)
+-        index = jnp.clip(jnp.floor(tau).astype(jnp.int32), 0, self.num_spline - 1)
+-        q = tau - index
+-
+-        # Hermite basis
+-        a = 2 * q * q * q - 3 * q * q + 1
+-        b = q * q * q - 2 * q * q + q
+-        c = -2 * q * q * q + 3 * q * q
+-        d = q * q * q - q * q
++        tau = step/(horizon_leg)
++        q = (tau - 0.0)/(1.0-0.0)
++        a = 2*q*q*q - 3*q*q + 1
++        b = (q*q*q - 2*q*q + q)*1.0
++        c = -2*q*q*q + 3*q*q
++        d = (q*q*q - q*q)*1.0  
+ 
+-        # Neighbouring knots used for the tangents at the start and end of the spline
+-        index_prev = jnp.maximum(index - 1, 0)
+-        index_next = jnp.minimum(index + 2, self.num_spline)
++        phi = (1./2.)*(((parameters[2] - parameters[1])/1.0) + ((parameters[1] - parameters[0])/1.0))
++        phi_next = (1./2.)*(((parameters[3] - parameters[2])/1.0) + ((parameters[2] - parameters[1])/1.0))
++        f_x = a*parameters[1] + b*phi + c*parameters[2] + d*phi_next
+ 
+-        def interpolate(knots):
+-            tangent = (knots[index + 1] - knots[index_prev]) / (index + 1 - index_prev)
+-            tangent_next = (knots[index_next] - knots[index]) / (index_next - index)
+-            return a * knots[index] + b * tangent + c * knots[index + 1] + d * tangent_next
++        phi = (1./2.)*(((parameters[6] - parameters[5])/1.0) + ((parameters[5] - parameters[4])/1.0))
++        phi_next = (1./2.)*(((parameters[7] - parameters[6])/1.0) + ((parameters[6] - parameters[5])/1.0))
++        f_y = a*parameters[5] + b*phi + c*parameters[6] + d*phi_next
+ 
+-        shift = self.num_spline + 1
+-        f_x = interpolate(parameters[0:shift])
+-        f_y = interpolate(parameters[shift : shift * 2])
+-        f_z = interpolate(parameters[shift * 2 : shift * 3])
+ 
++        phi = (1./2.)*(((parameters[10] - parameters[9])/1.0) + ((parameters[9] - parameters[8])/1.0))
++        phi_next = (1./2.)*(((parameters[11] - parameters[10])/1.0) + ((parameters[10] - parameters[9])/1.0))
++        f_z = a*parameters[9] + b*phi + c*parameters[10] + d*phi_next
++       
+         return f_x, f_y, f_z
+ 
+     def compute_zero_order_spline(self, parameters, step, horizon_leg):
+@@ -473,22 +449,23 @@ class Sampling_MPC:
+                     jnp.float32(0),
+                     f_x_FL,
+                     f_y_FL,
+-                    f_z_FL - reference_force_stance_legs,
++                    f_z_FL - reference_force_stance_legs * contact_sequence[0][n],
+                     f_x_FR,
+                     f_y_FR,
+-                    f_z_FR - reference_force_stance_legs,
++                    f_z_FR - reference_force_stance_legs * contact_sequence[1][n],
+                     f_x_RL,
+                     f_y_RL,
+-                    f_z_RL - reference_force_stance_legs,
++                    f_z_RL - reference_force_stance_legs * contact_sequence[2][n],
+                     f_x_RR,
+                     f_y_RR,
+-                    f_z_RR - reference_force_stance_legs,
++                    f_z_RR - reference_force_stance_legs * contact_sequence[3][n],
+                 ],
+                 dtype=dtype_general,
+             )
+ 
+             # Calculate cost regulation input
+-            # error_cost += input_for_cost.T@self.R@input_for_cost
++            if config.mpc_params["paper_input_cost"]:
++                error_cost += input_for_cost.T @ self.R @ input_for_cost
+ 
+             # saturate in the case of NaN
+             # state_next = jnp.where(jnp.isnan(state_next), 100, state_next)
+@@ -768,10 +745,8 @@ class Sampling_MPC:
+             1 + int(self.num_parallel_computations / 3) * 2 : int(self.num_parallel_computations)
+         ].set(
+             jax.random.uniform(
+-                key=key_uniform,
+-                minval=-max_sampling_forces,
+-                maxval=max_sampling_forces,
+-                shape=(num_samples_uniform, self.num_control_parameters),
++                key=key_uniform, minval=-max_sampling_forces, maxval=max_sampling_forces,
++                shape=(num_samples_uniform, self.num_control_parameters)
+             )
+         )
+ 
+@@ -874,7 +849,7 @@ class Sampling_MPC:
+         # rollouts), so the temperature does not depend on the scale of the cost function
+         beta = best_cost
+         temperature = self.temperature_mppi
+-        cost_spread = jnp.maximum(jnp.median(costs) - beta, 1e-6)
++        cost_spread = 1.0  # TM01 Algorithm 4: absolute lambda, no spread scaling
+         exp_costs = jnp.exp((-1.0 / temperature) * (costs - beta) / cost_spread)
+         denom = jnp.sum(exp_costs)
+         weights = exp_costs / denom
+@@ -982,7 +957,7 @@ class Sampling_MPC:
+         # rollouts), so the temperature does not depend on the scale of the cost function
+         beta = best_cost
+         temperature = self.temperature_mppi
+-        cost_spread = jnp.maximum(jnp.median(costs) - beta, 1e-6)
++        cost_spread = 1.0  # TM01 Algorithm 4: absolute lambda, no spread scaling
+         exp_costs = jnp.exp((-1.0 / temperature) * (costs - beta) / cost_spread)
+         denom = jnp.sum(exp_costs)
+         weights = exp_costs / denom
+diff --git a/quadruped_pympc/helpers/foothold_reference_generator.py b/quadruped_pympc/helpers/foothold_reference_generator.py
+index 30a0f46..ff54322 100644
+--- a/quadruped_pympc/helpers/foothold_reference_generator.py
++++ b/quadruped_pympc/helpers/foothold_reference_generator.py
+@@ -177,8 +177,10 @@ class FootholdReferenceGenerator:
+                 self.lift_off_positions[leg_name] = feet_pos[leg_name]
+                 self.lift_off_positions_h[leg_name] = R_W2H @ (self.lift_off_positions[leg_name] - base_position)
+ 
+-            elif previous_contact[leg_id] == 0 and current_contact[leg_id] == 0:
+-                # Update lift-offs in world frame
++            elif (previous_contact[leg_id] == 0 and current_contact[leg_id] == 0
++                  and cfg.locomotion_params["liftoff_frame"] == "body"):
++                # Historical world-frame lift-off stays fixed until the next lift-off.
++                # Retain the modern moving-body behavior only when explicitly selected.
+                 self.lift_off_positions[leg_name] = R_W2H.T @ self.lift_off_positions_h[leg_name] + base_position
+ 
+     def update_touch_down_positions(
+diff --git a/quadruped_pympc/helpers/periodic_gait_generator_jax.py b/quadruped_pympc/helpers/periodic_gait_generator_jax.py
+index 3a07acf..23e5315 100644
+--- a/quadruped_pympc/helpers/periodic_gait_generator_jax.py
++++ b/quadruped_pympc/helpers/periodic_gait_generator_jax.py
+@@ -134,21 +134,10 @@ class PeriodicGaitGeneratorJax:
+         return contact_sequence, new_t"""
+ 
+     def compute_contact_sequence(self, simulation_dt, t, step_freq):
+-        t_init = jnp.array(t)
+-
+-        contact_sequence = jnp.zeros((self.n_contact, self.horizon))
+-        new_t = t_init
+-
+-        def body_fn(n, carry):
+-            new_t, contact_sequence = carry
+-            new_contact_sequence, new_t = self.run(new_t, step_freq)
+-            contact_sequence = contact_sequence.at[:, n].set(new_contact_sequence)
+-            return (new_t, contact_sequence)  # , None
+-
+-        init_carry = (new_t, contact_sequence)
+-        new_t, contact_sequence = jax.lax.fori_loop(0, self.horizon, body_fn, init_carry)
+-
+-        return contact_sequence, new_t
++        # TM01 IV-C: same phase at prediction step zero and actual torque execution.
++        phase = (jnp.asarray(t)[:, None] + jnp.arange(self.horizon)[None, :] * self.mpc_dt * step_freq) % 1.0
++        contact_sequence = (phase < self.duty_factor).astype(jnp.float32)
++        return contact_sequence, phase[:, -1]
+ 
+ 
+ class Gait:
+diff --git a/quadruped_pympc/helpers/swing_trajectory_controller.py b/quadruped_pympc/helpers/swing_trajectory_controller.py
+index 452f987..fb0c363 100644
+--- a/quadruped_pympc/helpers/swing_trajectory_controller.py
++++ b/quadruped_pympc/helpers/swing_trajectory_controller.py
+@@ -1,4 +1,5 @@
+ import numpy as np
++from quadruped_pympc import config as cfg
+ 
+ 
+ class SwingTrajectoryController:
+@@ -32,6 +33,11 @@ class SwingTrajectoryController:
+         self.rising_edge_detected = False
+ 
+     def regenerate_swing_trajectory_generator(self, step_height: float, swing_period: float) -> None:
++        # IV-C defines swing duration from frequency. Preserve normalized swing
++        # phase when it changes at the apex, otherwise the foot reference jumps
++        # from mid-swing to near touchdown without physical elapsed time.
++        if cfg.locomotion_params["phase_consistent_swing"]:
++            self.swing_time = [t * swing_period / self.swing_period for t in self.swing_time]
+         if self.generator == "scipy":
+             from .swing_generators.scipy_swing_trajectory_generator import SwingTrajectoryGenerator
+             self.swing_generator = SwingTrajectoryGenerator(swing_period=swing_period, step_height=step_height)
+diff --git a/quadruped_pympc/interfaces/wb_interface.py b/quadruped_pympc/interfaces/wb_interface.py
+index 74afe73..5c68c0f 100644
+--- a/quadruped_pympc/interfaces/wb_interface.py
++++ b/quadruped_pympc/interfaces/wb_interface.py
+@@ -310,7 +310,7 @@ class WBInterface:
+         if cfg.mpc_params['optimize_step_freq']:
+             # we can always optimize the step freq, or just at the apex of the swing
+             # to avoid possible jittering in the solution
+-            optimize_swing = self.stc.check_touch_down_condition(self.current_contact, self.previous_contact, contact_sequence, lookahead=3)
++            optimize_swing = self.stc.check_apex_condition(self.current_contact)
+         else:
+             optimize_swing = 0
+ 

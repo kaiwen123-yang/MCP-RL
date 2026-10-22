@@ -1,0 +1,60 @@
+{
+  "run": "r1-foothold-restored",
+  "command": "python scripts/analyze_tm01_failures.py --runs r1-foothold-restored",
+  "unique_episode_count": 200,
+  "summaries": [
+    {
+      "method": "acados",
+      "episodes": 50,
+      "failures": 50,
+      "success": 0,
+      "mean_time_without_fall_s": 8.883159999999998,
+      "median_duration_s": 6.323,
+      "missing_before_tilt": 44,
+      "saturation_before_tilt": 39,
+      "median_tail_missing_fraction": 0.6069151216375522
+    },
+    {
+      "method": "adaptive",
+      "episodes": 50,
+      "failures": 33,
+      "success": 17,
+      "mean_time_without_fall_s": 38.02248,
+      "median_duration_s": 41.574,
+      "missing_before_tilt": 16,
+      "saturation_before_tilt": 16,
+      "median_tail_missing_fraction": 0.6413586413586414
+    },
+    {
+      "method": "adaptive_fixed",
+      "episodes": 50,
+      "failures": 50,
+      "success": 0,
+      "mean_time_without_fall_s": 8.09216,
+      "median_duration_s": 6.246,
+      "missing_before_tilt": 24,
+      "saturation_before_tilt": 18,
+      "median_tail_missing_fraction": 0.5216265728731102
+    },
+    {
+      "method": "naive",
+      "episodes": 50,
+      "failures": 50,
+      "success": 0,
+      "mean_time_without_fall_s": 7.353480000000001,
+      "median_duration_s": 5.884,
+      "missing_before_tilt": 18,
+      "saturation_before_tilt": 14,
+      "median_tail_missing_fraction": 0.487012987012987
+    }
+  ],
+  "figures": [
+    "acados-seed-000.png",
+    "adaptive-seed-000.png",
+    "adaptive_fixed-seed-000.png",
+    "naive-seed-000.png"
+  ],
+  "event_definition": "First event after 2 s: tilt >20 degrees for 100 ms; any joint at 39.96 N m for 50 ms; at least one planned stance foot absent for 100 ms; total measured Fz <0.5 mg for 100 ms. Descriptive events only, not failure criteria or causal proof.",
+  "old_contact_reconstruction": "phase < 0.65, matching the executed PeriodicGaitGenerator; v7/v8 did not save planned_contact, liftoff, desired feet, or pre-clipping torque.",
+  "retained_limit": "An event can precede a later recovered episode. Ordering alone does not establish that an implementation difference caused failure. All outcomes retained; no post-fall tracking error is invented."
+}

@@ -34,7 +34,10 @@ for run in a.runs:
         if run == "r1-v8-phase-consistent" and method_dir.name != "adaptive":
             continue
         rows = list(csv.DictReader((method_dir/"episodes.csv").open()))
-        frame = "world" if run == "r1-foothold-restored" else "body"
+        meta = json.loads((method_dir/"run.json").read_text())
+        # v7/v8 predate the explicit frame field; their executed helper followed
+        # the body. Later runs record the actual choice in the runtime metadata.
+        frame = "body" if run in ("r1-v7-paper-model", "r1-v8-phase-consistent") else meta["liftoff_frame"]
         cfg.locomotion_params["liftoff_frame"] = frame
         cfg.hip_offset_x, cfg.hip_offset_y = 0., .1 if frame == "world" else .083
         for row in rows:

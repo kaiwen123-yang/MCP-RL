@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT/"results/terrain_memory/reproduction/pympc"
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument("--run", default="r1-foothold-restored")
+p.add_argument("--clock-comparison", action="store_true")
 a = p.parse_args()
 dest = BASE/a.run
 contrasts = [
@@ -22,6 +23,13 @@ contrasts = [
     ("adaptive_footholds", "r1-v7-paper-model", "adaptive", a.run, "adaptive"),
     ("frequency_only", a.run, "adaptive_fixed", a.run, "adaptive"),
 ]
+if a.clock_comparison:
+    contrasts = [
+        ("fixed_clock", "r1-foothold-restored", "adaptive_fixed", a.run, "adaptive_fixed"),
+        ("adaptive_clock", "r1-foothold-restored", "adaptive", a.run, "adaptive"),
+        ("frequency_only", a.run, "adaptive_fixed", a.run, "adaptive"),
+        ("phase_consistent_footholds", "r1-v8-phase-consistent", "adaptive", a.run, "adaptive"),
+    ]
 
 
 def rows(run, method):
@@ -78,9 +86,11 @@ for axis, (name, run0, method0, run1, method1) in zip(axes.flat, contrasts):
     axis.scatter([row["duration_a_s"] for row in group], [row["duration_b_s"] for row in group],
         s=23, color="#0072B2", alpha=.7, edgecolor="white", linewidth=.3)
     axis.plot([0, 60], [0, 60], "k--", lw=.8)
+    label0 = ("v8 adaptive" if name == "phase_consistent_footholds" else "Restored "+method0) if a.clock_comparison else "v7 "+method0
+    label1 = ("Clock repaired " if a.clock_comparison else "Restored ")+method1
     axis.set(xlim=(0, 62), ylim=(0, 62),
-        xlabel=("Adaptive implementation at 1.3 Hz" if name == "frequency_only" else "v7 "+method0)+" (s)",
-        ylabel=("Adaptive implementation, variable Hz" if name == "frequency_only" else "Restored "+method1)+" (s)")
+        xlabel=("Adaptive implementation at 1.3 Hz" if name == "frequency_only" else label0)+" (s)",
+        ylabel=("Adaptive implementation, variable Hz" if name == "frequency_only" else label1)+" (s)")
     axis.set_title(f"{s['completed_a']}/50 to {s['completed_b']}/50 completed\n"
         f"Paired mean time change {delta.mean():+.2f} s [{ci[0]:+.2f}, {ci[1]:+.2f}]", fontsize=9)
     axis.grid(alpha=.2)
@@ -93,8 +103,8 @@ plt.close(fig)
 dump_csv(dest/"paired_durations.csv", pairs)
 dump_csv(dest/"paired_comparisons.csv", summary)
 (dest/"paired_comparisons.json").write_text(json.dumps(dict(
-    command=f"python scripts/compare_tm01_runs.py --run {a.run}", comparisons=summary,
+    command=f"python scripts/compare_tm01_runs.py --run {a.run}"+(" --clock-comparison" if a.clock_comparison else ""), comparisons=summary,
     interpretation="Completion and mean time without a fall use the same complete 60 s task. Common-prefix error in paired_durations.csv is diagnostic only; it does not assign an error after a fall or rank unequal surviving intervals as full-task performance.",
-    intervention="The foothold contrasts change two declared behaviors together: 0.083 to 0.1 m lateral offset and body-following to world-fixed lift-off. They do not separate the two contributions. The frequency-only contrast uses the same adaptive controller with [1.3] versus [1.3,2.0,2.4] Hz."
+    intervention=("Clock contrasts change phase_consistent_swing only. Both new frequency groups use the same corrected clock; v8 already used that clock and its contrast measures the combined foothold changes." if a.clock_comparison else "The foothold contrasts change two declared behaviors together: 0.083 to 0.1 m lateral offset and body-following to world-fixed lift-off. They do not separate the two contributions.")+" The frequency-only contrast uses the same adaptive controller with [1.3] versus [1.3,2.0,2.4] Hz."
     ), indent=2)+"\n")
 print(json.dumps(summary, indent=2))

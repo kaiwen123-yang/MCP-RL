@@ -101,6 +101,16 @@ def plot_episode(d, row, dest):
         ax[7].step(time, d["solver_status"], color=COLORS[0], lw=.8, label="acados status" if row["method"] == "acados" else "sampling placeholder")
         for i, axis in enumerate(ax):
             axis.set_xlim(left, right)
+            if column == 1:
+                values = []
+                for line in axis.lines:
+                    x, y = np.asarray(line.get_xdata()), np.asarray(line.get_ydata())
+                    values.extend(y[(x >= left) & (x <= right)] if len(x) == len(time) else y)
+                values = np.asarray(values, dtype=float)
+                values = values[np.isfinite(values)]
+                low, high = values.min(), values.max()
+                margin = .08*(high-low) if high > low else .1
+                axis.set_ylim(low-margin, high+margin)
             axis.grid(alpha=.2)
             axis.legend(loc="upper left", fontsize=6.6, ncol=4 if i in (0, 5) else 3,
                 bbox_to_anchor=(0, 1.26), frameon=False)

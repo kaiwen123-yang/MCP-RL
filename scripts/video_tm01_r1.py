@@ -26,7 +26,7 @@ camera.azimuth=135
 camera.elevation=-22
 font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",20)
 selection=[]
-for experiment,methods in [("fig3",["acados","naive","mppi"]),("fig4",["acados","adaptive"]),("table1",a.methods)]:
+for experiment,methods in [("fig3",["acados","naive","mppi"]),("fig4",[m for m in ["acados","adaptive"] if m in a.methods]),("table1",a.methods)]:
     if a.experiment and experiment != a.experiment:continue
     for method in methods:
         with (R/experiment/method/"episodes.csv").open() as f:rr=list(csv.DictReader(f))
@@ -38,7 +38,9 @@ for experiment,methods in [("fig3",["acados","naive","mppi"]),("fig4",["acados",
         for seed in sorted(chosen):
             row=next(x for x in rr if int(x["seed"])==seed)
             trajectory=ROOT/row["trajectory"]
-            d=np.load(trajectory)
+            # Avoid decompressing a full 500 Hz array again for every video frame.
+            with np.load(trajectory) as archive:
+                d={key:archive[key] for key in ("time","qpos","qvel","final_qpos","final_qvel","wrench","frequency")}
             model=mujoco.MjModel.from_binary_path(str(trajectory.parent/"model.mjb"))
             model.vis.global_.offwidth=V["width"]
             model.vis.global_.offheight=V["height"]
@@ -87,4 +89,7 @@ for experiment,methods in [("fig3",["acados","naive","mppi"]),("fig4",["acados",
                 duration_s=float(row["duration_s"]),video=str(video.relative_to(ROOT)),frames=frames+1,
                 fps=V["fps"],trajectory=row["trajectory"],selection_rule="All Figure 3 episodes; "+V["selection"]))
             print(json.dumps(selection[-1]),flush=True)
+previous=json.loads((R/"videos.json").read_text()) if (R/"videos.json").exists() else []
+keys={(item["experiment"],item["method"],item["seed"]) for item in selection}
+selection=[item for item in previous if (item["experiment"],item["method"],item["seed"]) not in keys]+selection
 (R/"videos.json").write_text(json.dumps(selection,indent=2)+"\n")

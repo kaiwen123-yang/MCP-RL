@@ -201,7 +201,8 @@ meta["timing_definitions"] = {
     "solve_seconds": "SRBD interface including state conversion, optimizer, and output transfer",
     "control_seconds": "state acquisition through clipped joint torque, including MPC and whole-body control",
     "physics_seconds": "MuJoCo environment step",
-    "closed_loop_seconds": "control_seconds + physics_seconds; excludes trajectory serialization and diagnostic extraction",
+    "control_and_physics_seconds": "control_seconds + physics_seconds, excluding diagnostic extraction",
+    "closed_loop_seconds": "entire online step: perturbation application, state acquisition, controller, torque clipping, diagnostic extraction, and physics; excludes list append and end-of-episode serialization",
     "solver_status": "acados native status; sampling zero is a placeholder, not an optimality certificate",
 }
 meta["actuator_names"] = [mujoco.mj_id2name(env.mjModel, mujoco.mjtObj.mjOBJ_ACTUATOR, i) for i in range(env.mjModel.nu)]
@@ -244,12 +245,13 @@ for seed in E["seeds"]:
     tau = LegsAttr(*[np.zeros(3) for _ in LEGS])
     hist = {k:[] for k in ("time","qpos","qvel","com","velocity","orientation","angular_velocity",
         "command","wrench","torque","feet","planned_grf","actual_grf","contact","planned_contact","frequency",
-        "phase","swing_time","solve_seconds","optimizer_seconds","control_seconds","physics_seconds","closed_loop_seconds",
+        "phase","swing_time","solve_seconds","optimizer_seconds","control_seconds","physics_seconds","closed_loop_seconds","control_and_physics_seconds",
         "compile_included","solver_status","reference_state","quadratic_cost","requested_torque",
         "liftoff","foothold_target","swing_target","feet_velocity")}
     t_start = time.perf_counter()
     reason = ""
     for step in range(nsteps):
+        loop_start = time.perf_counter()
         t = step*dt
         if ARGS.experiment == "fig4":
             wrench = np.array(E["wrench"],float) if E["wrench_start"]<=t<E["wrench_end"] else np.zeros(6)
@@ -311,7 +313,8 @@ for seed in E["seeds"]:
         physics_start = time.perf_counter()
         _,_,terminated,truncated,info=env.step(action)
         data["physics_seconds"] = time.perf_counter() - physics_start
-        data["closed_loop_seconds"] = control_seconds + data["physics_seconds"]
+        data["control_and_physics_seconds"] = control_seconds + data["physics_seconds"]
+        data["closed_loop_seconds"] = time.perf_counter() - loop_start
         for key,value in data.items(): hist[key].append(value)
         if terminated: reason="environment:"+",".join(info["invalid_contacts"]) if info["invalid_contacts"] else "environment_bounds"
         if reason: break

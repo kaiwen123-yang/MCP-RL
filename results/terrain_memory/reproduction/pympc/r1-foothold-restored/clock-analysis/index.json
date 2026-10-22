@@ -1,0 +1,30 @@
+{
+  "run": "r1-foothold-restored",
+  "command": "python scripts/analyze_tm01_clock.py --runs r1-foothold-restored",
+  "episodes": 50,
+  "frequency_changes": 6155,
+  "median_jump_m": 0.042423429257527304,
+  "fraction_jumps_over_3cm": 0.7182778229082047,
+  "low_tilt_jumps_over_3cm": 4013,
+  "episode_median_jump_median_m": 0.04395316300718305,
+  "first_change_seed0": {
+    "seed": 0,
+    "time_s": 0.23,
+    "frequency_before_hz": 1.3,
+    "frequency_after_hz": 2.0,
+    "leg": "RR",
+    "continuing_swing": true,
+    "reference_jump_m": 0.09531519199775176,
+    "swing_time_before_s": 0.11600000000000009,
+    "swing_time_after_s": 0.11800000000000009,
+    "target_z_before_m": 0.11896523388477583,
+    "target_z_after_m": 0.10543588112953765,
+    "actual_z_m": 0.11619929519548614,
+    "leg_requested_torque_max_Nm": 202.84825912613906,
+    "all_requested_torque_max_Nm": 202.84825912613906,
+    "body_tilt_deg": 0.5539068945097743,
+    "trajectory": "outputs/terrain_memory/reproduction/pympc/r1-foothold-restored/table1/adaptive/seed-000.npz"
+  },
+  "source": "quadruped_pympc/helpers/swing_trajectory_controller.py:35-42; swing_time is scaled by new_period/old_period only when phase_consistent_swing is enabled.",
+  "interpretation": "A measured reference discontinuity and ensuing torque request are implementation evidence; their contribution to full-episode failure must be assessed with the complete paired clock-correction cohorts."
+}
