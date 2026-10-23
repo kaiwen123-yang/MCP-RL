@@ -4,17 +4,34 @@
 
 同一空间地块的材料状态跨腿、跨步、跨返程持续演化；后续支撑需求反过来约束当前踩踏。第一版从具有可测恢复过程的黏弹性材料开始。
 
-## 当前执行：R2 多历史材料复现
+## 已交付：R2 多历史材料复现
 
-**第一轮 R2 已有真实训练与预测成果；下一轮补材料泛化证据，暂不直接启动整机 RL。** 唯一执行约定为 [AGENTS.md](AGENTS.md)；固定数据、预算、交付及启动词在 [TERRAIN_MEMORY_PLAN.md](docs/TERRAIN_MEMORY_PLAN.md) 第 4、7 节。
+**第二轮固定预算已执行完毕：50 个新模型、2,000 次留出预测、50 次已知困难路径预测和 24 条新增重访，积分失败为零。** [多历史结果索引](results/terrain_memory/reproduction/material/tm02-multihistory-20261023/index.json)、[同协议重访比较](results/terrain_memory/transfer/material/tm02-multihistory-20261023/index.json)与[全部权重和数组归档](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-multihistory-evidence-20261023)提供命令、配置、源码版本、硬件、seed 和哈希。唯一执行约定仍为 [AGENTS.md](AGENTS.md)；本轮协议见 [TERRAIN_MEMORY_PLAN.md](docs/TERRAIN_MEMORY_PLAN.md) 第 4 节。S、整机 RL 和实机未启动。
+
+100 条完整历史各 100 步；ideal/noisy 各 25 初始化，每模型完成 20,000 次完整数据集 Adam 更新。按最终训练损失选中 ideal seed 0、noisy seed 10。以下误差均使用 MPa，不横比不同训练尺度的 NRMSE；留出物理工况为 **20 条历史**。
+
+| 已执行比较 | ideal 旧 → 新 | noisy 旧 → 新 |
+|---|---:|---:|
+| 选中模型的 20 路径 MAE 中位数 / MPa | 0.2345 → 0.0350 | 0.6802 → 0.3654 |
+| 选中模型的 20 路径 RMSE 中位数 / MPa | 0.3785 → 0.0504 | 0.9132 → 0.5264 |
+| RMSE 改善的留出路径 | 20/20 | 19/20 |
+| 25 初始化的平均路径 RMSE 中位数 / MPa | 0.5373 → 0.0715 | 1.1064 → 0.5502 |
+| 已知困难路径 RMSE / MPa | 2.5127 → 0.2127 | 3.5363 → 0.7465 |
+| 12 条重访峰值压缩相对误差中位数 | 2.31% → 1.49% | 7.43% → **11.42%** |
+
+**含噪重访的负结果保留：新 noisy 的峰值误差在 12/12 条历史中变差，最大误差为 22.64%。** 两组 5 s 恢复的预测动作差仍是平局，响应约为参考的 3.4%，低于旧模型约 12.1%。ideal 排序仍为 6/6，noisy 仍为 4/6 加两组平局；恒定 always-early 同样 6/6、零遗憾。多历史覆盖改善了留出应力预测，没有解决含噪应力控制恢复和动作响应问题，也没有建立历史依赖决策或整机收益。
+
+noisy 唯一总 RMSE 退步为 path 10（seed 24016010）：0.54093 → 0.54730 MPa。该路径全部 250 个增量都位于新训练六个可观测不变量的边缘范围内，不能把全部剩余误差归因于范围外推。逐分量、静水/偏应力、全部初始化和完整响应见结果表与 56 组 PNG/SVG 图。
+
+### 冻结第一轮
 
 [第一轮原方法结果](results/terrain_memory/reproduction/material/tm02-rnn-20261023/index.json)、[重访结果](results/terrain_memory/transfer/material/tm02-rnn-20261023/index.json)和[可下载归档](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-r2-evidence-20261023)已包含 50 次实际训练的最终模型、完整曲线与 36 条重访推演。这里的 50 次自由预测来自 **50 个模型对同一条独立路径**，不是 50 个独立评价工况。
 
 按最终训练损失选出的 ideal seed 13、noisy seed 0，在该独立路径上的 RMSE 为 **2.513、3.536 MPa**；同一训练历史的自由预测 RMSE 为 0.093、0.352 MPa。评价路径的 231/250 个增量超出训练体积应变范围，误差集中在静水/法向应力；优先检验完整加载历史覆盖不足。材料方法链条已运行，不宣称达到原文预测效果或整机收益。
 
-重访峰值压缩误差中位数为 ideal **2.31%**、noisy **7.43%**。排序是 6/6、4/6，但六组参考都偏好早加载，恒定 always-early 也有 6/6；noisy 的另外两组是微小差异被预测成平局。下一轮同时比较幅值与动作后果，不能靠凑齐排序通过来宣布成功。
+第一轮重访峰值压缩误差中位数为 ideal **2.31%**、noisy **7.43%**。排序是 6/6、4/6，但六组参考都偏好早加载，恒定 always-early 也有 6/6；noisy 的另外两组是微小差异被预测成平局。第一轮模型、归一化、实际数组及历史判定保持冻结。
 
-### 下一轮固定交付
+### 本轮固定交付与复跑
 
 | 工作 | 固定预算 | 目的 |
 |---|---|---|
@@ -24,10 +41,10 @@
 | 同协议重访比较 | 新选中 ideal/noisy 各 12 条，共新增 24 条；旧 36 条复用 | 比较完整响应、候选中心偏差与动作响应差 |
 | S/H | 本轮不启动 | 材料证据形成后再接触映射、持续地块状态、跨步控制与实机 |
 
-新配置：[r2-multihistory.json](experiments/tm02/r2-multihistory.json)。现有 [训练器](scripts/run_tm02_r2.py) 仍需扩展多序列数据、状态、归一化、完整梯度累积与评价维度，**本次计划提交不包含该扩展或新训练结果**。实现后使用现有项目环境：
+实际配置：[r2-multihistory.json](experiments/tm02/r2-multihistory.json)。[训练器](scripts/run_tm02_r2.py)已扩展多序列数据、独立状态、全训练集归一化和完整梯度累积。实际采用 50 初始化 × 10 路径微批，累计全部 100 条历史的平均梯度后执行一次 Adam。使用原项目环境接续已有检查点和预测数组：
 
 ```bash
-work/envs/tm02/bin/python scripts/run_tm02_r2.py --config experiments/tm02/r2-multihistory.json --run tm02-multihistory-20261023
+bash scripts/run_tm02_r2_server.sh tm02-multihistory-20261023 experiments/tm02/r2-multihistory.json
 ```
 
 先在各路径内求应变率，再汇总训练尺度；每条完整历史独立初态，历史内部不重置。微批只改变内存占用，累计全部 100 条路径的平均梯度后执行一次 Adam。模型选择仅看最终训练损失；旧模型保留原归一化。旧 [r2-rnn.json](experiments/tm02/r2-rnn.json)、[r2-revisit.json](experiments/tm02/r2-revisit.json)及历史产物保持原样，不能重复训练旧批次。

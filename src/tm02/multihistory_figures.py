@@ -149,21 +149,28 @@ def _paired(compact, pairs):
     metrics = [('RMSE_MPa', 'Stress RMSE'), ('hydrostatic_RMSE_MPa', 'Hydrostatic RMSE'),
                ('deviatoric_component_RMSE_MPa', 'Deviatoric component RMSE')]
     for row, condition in enumerate(('ideal', 'noisy')):
-        selected = [p for p in pairs if p['condition'] == condition and p['paired_complete']]
+        selected = sorted((p for p in pairs if p['condition'] == condition and p['paired_complete']),
+                          key=lambda p: p['path_id'])
         for ax, (metric, label) in zip(axes[row], metrics):
-            old = np.array([p[f'old_{metric}'] for p in selected])
-            new = np.array([p[f'new_{metric}'] for p in selected])
-            maximum = float(max(old.max(), new.max())) if len(old) else 1.
-            ax.plot([0, maximum], [0, maximum], color='#777777', linewidth=.8)
-            ax.scatter(old, new, color=COLORS[condition], marker='o' if condition == 'ideal' else '^', s=27)
-            for x, y, path in zip(old, new, selected):
-                ax.annotate(str(path['path_id']), (x, y), xytext=(3, 3), textcoords='offset points', fontsize=7)
-            ax.set_xlabel('Old selected model (MPa)')
-            ax.set_ylabel('New selected model (MPa)')
+            path_ids = np.array([p['path_id'] for p in selected])
+            improvement = np.array([p[f'old_{metric}'] - p[f'new_{metric}'] for p in selected])
+            ax.axhline(0, color='#555555', linewidth=.9)
+            ax.scatter(path_ids, improvement, color=COLORS[condition],
+                       marker='o' if condition == 'ideal' else '^', s=27, zorder=3)
+            for offset, index in enumerate(np.flatnonzero(improvement < 0)):
+                ax.annotate(f'{improvement[index]:.4f}', (path_ids[index], improvement[index]),
+                            xytext=(0, -13 - 12 * (offset % 2)), textcoords='offset points',
+                            ha='center', va='top', fontsize=7, color=COLORS[condition])
+            ax.set_xlim(-.7, 19.7)
+            ax.set_xticks(range(20))
+            ax.tick_params(axis='x', labelrotation=90, labelsize=7)
+            ax.margins(y=.18)
+            ax.set_xlabel('Fixed held-out path ID')
+            ax.set_ylabel('Improvement: old − new (MPa)')
             ax.set_title(f'{condition}: {label}\n{len(selected)}/20 complete pairs')
             ax.grid(alpha=.18)
     fig.suptitle('Path axis: 20 paired loading histories, selected using training loss only\n'
-                 'Numbers identify fixed paths; points below identity have lower new-model error')
+                 'Positive improvement means lower new-model error; negative values are labeled')
     _save(fig, compact, 'selected-paired-path-errors')
 
 

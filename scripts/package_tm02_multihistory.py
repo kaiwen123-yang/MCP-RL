@@ -143,6 +143,9 @@ def main():
         packaged_current_source_sha256={p.relative_to(ROOT).as_posix(): sha256(p) for p in source_files},
         packaged_config_sha256={p.relative_to(ROOT).as_posix(): sha256(p) for p in config_files},
         frozen_artifact_dependency=config['comparison'],
+        evaluation_cpu={row['field'].rstrip(':'): row['data'] for row in
+            json.loads(subprocess.check_output(['lscpu', '-J'], text=True))['lscpu']
+            if row['field'] in ('Model name:', 'CPU(s):', 'Thread(s) per core:')},
         archive_index_snapshot='Both compact indexes are included before adding this archive SHA256 and byte count. '
                                'The external checksum sidecar authenticates the archive; its internal file manifest '
                                'authenticates the included index snapshots and other files.',
@@ -165,6 +168,11 @@ def main():
         current['artifact_archive'] = archive_location
         current['artifact_checksum'] = checksum_location
     index['artifact_package'] = metadata
+    index['revisit_comparison'] = dict(
+        index=(transfer_compact / 'index.json').relative_to(ROOT).as_posix(),
+        new_histories=transfer_index['new_model_histories'],
+        successful_new_histories=transfer_index['successful_new_histories'],
+        summaries=transfer_index['summaries'], scope=transfer_index['scope'])
     transfer_index['artifact_package'] = dict(completion=completion,
         original_method_index=(compact / 'index.json').relative_to(ROOT).as_posix(),
         archive_index_snapshot=metadata['archive_index_snapshot'])
