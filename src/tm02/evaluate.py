@@ -98,6 +98,7 @@ def evaluate(config, out, compact):
                           RMSE_MPa=float(np.sqrt(np.mean(error**2))),
                           normalized_RMSE=float(np.sqrt(np.mean(error**2))/norm['s_s']),
                           per_component_MAE_MPa=mae.tolist(), per_component_RMSE_MPa=rmse.tolist(),
+                          per_component_normalized_RMSE=(rmse/norm['s_s']).tolist(),
                           max_residual_MPa=float(np.max(result['residual'])),
                           max_Newton_iterations=int(np.max(result['newton_iterations'])))
         records.append(record)
@@ -113,6 +114,7 @@ def evaluate(config, out, compact):
         for i, component in enumerate(COMPONENTS):
             for metric in ('MAE', 'RMSE'):
                 flat[f'{metric}_{component}_MPa'] = row[f'per_component_{metric}_MPa'][i] if row['integration_complete'] else None
+            flat[f'normalized_RMSE_{component}'] = row['per_component_normalized_RMSE'][i] if row['integration_complete'] else None
         flatrows.append(flat)
     write_csv(compact/'all_initializations.csv', flatrows)
     selected = {}
@@ -230,7 +232,9 @@ def revisit(config, protocol, source, root, run):
                                    reload_strain_MAE=float(np.mean(np.abs(result['strain'][probe]-truth['strain'][probe]))),
                                    reload_epsilon11_MAE=float(np.mean(np.abs(result['strain'][probe,0]-truth['strain'][probe,0]))),
                                    peak_compression_error=float(np.max(compression)-np.max(true_compression)),
+                                   absolute_peak_compression_error=float(abs(np.max(compression)-np.max(true_compression))),
                                    integrated_compression_error_s=integral-true_integral,
+                                   absolute_integrated_compression_error_s=abs(integral-true_integral),
                                    max_residual_MPa=float(np.max(result['residual'])))
                     records.append(row)
                     print(json.dumps(row), flush=True)
