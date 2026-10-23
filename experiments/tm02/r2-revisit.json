@@ -1,0 +1,200 @@
+{
+  "purpose": "Bounded material transfer after R2 original-method results; not a completed experiment or robot-control claim",
+  "stage": "R2_material_revisit_transfer",
+  "reference_protocol": "Same 3D nonlinear reference material and interpretation as r2-rnn.json",
+  "additional_training_runs": 0,
+  "models": [
+    "independent_analytical_reference",
+    "ideal_model_selected_by_final_training_loss",
+    "noisy_model_selected_by_final_training_loss"
+  ],
+  "number_of_complete_histories": 12,
+  "number_of_material_rollouts": 36,
+  "dt_s": 0.01,
+  "initial_state": "independently initialized virgin equilibrium for each complete history",
+  "boundary": {
+    "type": "uniaxial_stress_control",
+    "loaded_component": "sigma_11",
+    "other_stress_components_MPa": 0,
+    "compression_sign": "negative",
+    "predicted_response": "all six symmetric strain components",
+    "free_recovery": "zero external stress with strain and internal state solved; never clamp strain to zero"
+  },
+  "interpolation": "piecewise_linear stress commands; times below are local to each phase",
+  "preloading_histories": [
+    {
+      "id": "preload_3MPa",
+      "duration_s": 1,
+      "points_t_s_sigma11_MPa": [
+        [
+          0,
+          0
+        ],
+        [
+          0.1,
+          -3
+        ],
+        [
+          0.4,
+          -3
+        ],
+        [
+          0.5,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "preload_6MPa",
+      "duration_s": 1,
+      "points_t_s_sigma11_MPa": [
+        [
+          0,
+          0
+        ],
+        [
+          0.1,
+          -6
+        ],
+        [
+          0.4,
+          -6
+        ],
+        [
+          0.5,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    }
+  ],
+  "current_action_candidates": [
+    {
+      "id": "early",
+      "duration_s": 1,
+      "points_t_s_sigma11_MPa": [
+        [
+          0,
+          0
+        ],
+        [
+          0.1,
+          -6
+        ],
+        [
+          0.4,
+          -6
+        ],
+        [
+          0.5,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "late",
+      "duration_s": 1,
+      "points_t_s_sigma11_MPa": [
+        [
+          0,
+          0
+        ],
+        [
+          0.5,
+          0
+        ],
+        [
+          0.6,
+          -6
+        ],
+        [
+          0.9,
+          -6
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    }
+  ],
+  "candidate_comparison": "same 1 s window, peak stress and absolute stress-time integral (2.4 MPa*s); only timing differs",
+  "recovery_delays_s": [
+    0.05,
+    0.5,
+    5
+  ],
+  "recovery_delay_note": "Fixed project delays after the common candidate window; not a constant material tau. Assess reference recovery from the actual response without selecting favorable learned-model results.",
+  "common_reload_probe": {
+    "duration_s": 1,
+    "points_t_s_sigma11_MPa": [
+      [
+        0,
+        0
+      ],
+      [
+        0.1,
+        -4
+      ],
+      [
+        0.4,
+        -4
+      ],
+      [
+        0.5,
+        0
+      ],
+      [
+        1,
+        0
+      ]
+    ]
+  },
+  "sequence": [
+    "preloading_history",
+    "current_action_candidate",
+    "zero_stress_recovery_delay",
+    "common_reload_probe"
+  ],
+  "state_rules": [
+    "run the full observable prefix separately in each model",
+    "branch from each model's own physically reached state",
+    "no resets within the history",
+    "no true internal-variable injection"
+  ],
+  "metrics": {
+    "full_histories": true,
+    "prediction": [
+      "reload_strain_MAE",
+      "peak_compressive_strain_error",
+      "integrated_compressive_strain_error"
+    ],
+    "candidate_pairs": 6,
+    "rank_score": "peak max(0,-epsilon_11) during common reload probe; smaller means less future compression, not full robot utility",
+    "report": [
+      "reference_candidate_difference",
+      "predicted_candidate_difference",
+      "ranking_and_ties_for_all_six_pairs",
+      "recovery_interval_dependence",
+      "actual_solver_failures"
+    ],
+    "ranking_tie_tolerance_absolute_strain": 0.000001
+  },
+  "protocol_provenance": "Project transfer experiment, not an original TM02 figure or SuperMimic reproduction. Freeze before evaluation; no evaluation-based path or parameter selection.",
+  "outputs": {
+    "compact_root": "results/terrain_memory/transfer/material",
+    "large_root": "outputs/terrain_memory/transfer/material",
+    "create_only_after_actual_run": true
+  }
+}

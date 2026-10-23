@@ -54,17 +54,24 @@ def get_upstream(upstream):
 
 
 def main():
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     parser = argparse.ArgumentParser(description=__doc__)
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--papers-only", action="store_true")
     mode.add_argument("--upstream-only", action="store_true")
+    parser.add_argument(
+        "--paper-id", action="append", choices=[paper["id"] for paper in manifest["papers"]],
+        help="Limit PDF downloads to these IDs; repeat for multiple papers.",
+    )
     args = parser.parse_args()
-    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     WORK.mkdir(parents=True, exist_ok=True)
     lock_path = WORK / "sources.lock.json"
     records = json.loads(lock_path.read_text(encoding="utf-8")) if lock_path.exists() else {}
     if not args.upstream_only:
-        records["papers"] = get_papers(manifest["papers"])
+        selected = [paper for paper in manifest["papers"] if not args.paper_id or paper["id"] in args.paper_id]
+        paper_records = {paper["id"]: paper for paper in records.get("papers", [])}
+        paper_records.update({paper["id"]: paper for paper in get_papers(selected)})
+        records["papers"] = list(paper_records.values())
         lock_path.write_text(json.dumps(records, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     if not args.papers_only:
         records["upstream"] = get_upstream(manifest["upstream"])

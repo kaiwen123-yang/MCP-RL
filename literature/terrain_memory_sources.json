@@ -14,7 +14,11 @@
       "filename": "TM01_pympc_2403.11383v2.pdf",
       "read_for_execution": "全文；实现重点为 III、IV-A 至 IV-D、V-A/V-B，图 3/4 与表 I；V-C 留作实机对照依据",
       "code_url": "https://github.com/iit-DLSLab/Quadruped-PyMPC",
-      "reproduction_targets": ["图 3：三种控制器的跟踪和计算时间", "图 4：步频适应", "表 I：50 回合随机扰动统计"]
+      "reproduction_targets": [
+        "图 3：三种控制器的跟踪和计算时间",
+        "图 4：步频适应",
+        "表 I：50 回合随机扰动统计"
+      ]
     },
     {
       "id": "TM02",
@@ -24,9 +28,12 @@
       "url": "https://arxiv.org/html/2401.14270v1",
       "pdf_url": "https://arxiv.org/pdf/2401.14270v1",
       "filename": "TM02_viscoelastic_2401.14270v1.pdf",
-      "read_for_execution": "全文；重点为 2、3.2、4.2/4.3、5.1、5.2.2 与附录 C；公式 26–30、表 1、图 8–10",
+      "read_for_execution": "全文；重点为 3.2、4.3、5.1.1/5.1.2、5.2.2、附录 A/C；式 23–30、表 1/4、图 8–10 中 RNN 对应部分",
       "code_status": "本次未核到官方训练代码；必须标为论文方法重实现",
-      "reproduction_targets": ["参考材料的完整历史响应", "不提供隐变量标签时的未见加载路径预测"]
+      "reproduction_targets": [
+        "参考材料的完整历史响应",
+        "不提供隐变量标签时的未见加载路径预测"
+      ]
     },
     {
       "id": "TM03",
@@ -67,6 +74,23 @@
       "pdf_url": "https://arxiv.org/pdf/2604.12006v1",
       "filename": "TM06_mud_2604.12006v1.pdf",
       "read_for_execution": "II、补充材料的本构辨识；触变泥地不等同首版黏弹性地层，不在首版引入全部泥地机制"
+    },
+    {
+      "id": "TM07",
+      "title": "SuperMimic: Scaling Humanoid Whole-Body Control with One Differentiable World Model",
+      "role": "R2 原方法之后的完整材料推演与 S 阶段机制参考；不要求复现整个人形动作模仿系统",
+      "version": "arXiv:2610.28480v1",
+      "url": "https://arxiv.org/abs/2610.28480",
+      "pdf_url": "https://arxiv.org/pdf/2610.28480v1",
+      "filename": "TM07_SuperMimic_2610.28480v1.pdf",
+      "project_url": "https://supermimic.github.io/",
+      "read_for_execution": "3.2/3.3 的多步模型与想象展开、终端价值和模型/策略更新；6 的适用边界",
+      "transfer_targets": [
+        "冻结材料模型的完整加载—恢复—重访自由推演",
+        "当前动作对后续支撑的响应差与候选排序",
+        "S 阶段的地块记忆和剩余任务条件化终端价值"
+      ],
+      "scope_note": "原文是已知仿真 context 下的人形动作跟踪；不代表已解决未知软地、跨足共享状态或本课题 MPC 问题"
     }
   ],
   "upstream": {

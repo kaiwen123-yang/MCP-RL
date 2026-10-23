@@ -1,0 +1,183 @@
+{
+  "purpose": "R2 selected-method execution contract; not a completed experiment",
+  "source": {
+    "paper_id": "TM02",
+    "version": "2401.14270v1",
+    "url": "https://arxiv.org/html/2401.14270v1",
+    "scope": "Sections 4.3 and 5.2.2 auxiliary RNN method; not all methods in the paper"
+  },
+  "target_entrypoint": "scripts/run_tm02_r2.py",
+  "entrypoint_state_at_plan_commit": "to_be_implemented_and_executed",
+  "reference_material": {
+    "equations": [
+      26,
+      27,
+      28,
+      29,
+      30
+    ],
+    "table": 1,
+    "strain_space": "3D symmetric small strain",
+    "independent_components": 6,
+    "parameters": {
+      "K_eq_MPa": 500,
+      "G_eq_MPa": 300,
+      "K_ov_MPa": 1000,
+      "G_ov_MPa": 700,
+      "eta_K_table_value": 400,
+      "eta_D_table_value": 200,
+      "a_MPa": 10,
+      "b": 2,
+      "o": 0.1
+    },
+    "constitutive_interpretation": "Implementation must explicitly record the tensor interpretation of Eq.29 and viscosity units; do not present a dimensionally consistent interpretation as verified author code.",
+    "viscosity": "state_dependent_as_reference; do_not_replace_with_constant_tau"
+  },
+  "data": {
+    "source_section": "5.1.2",
+    "initial_time_s": 0,
+    "initial_strain": 0,
+    "spline_knot_dt_s": [
+      0.2,
+      1
+    ],
+    "spline_knot_strain_increment_normal_std": 0.005,
+    "knot_strain_absolute_bound": 0.02,
+    "bound_rule": "resample increment when the proposed knot exceeds the paper's bound",
+    "interpolation": "cubic_spline",
+    "spline_boundary_condition": "natural",
+    "train": {
+      "paths_per_condition": 1,
+      "increments": 200,
+      "dt_uniform_s": [
+        0.03,
+        0.07
+      ],
+      "strain_seed": 24014270,
+      "reuse_strain_path_across_conditions": true
+    },
+    "stress_noise": {
+      "ideal_std_MPa": 0,
+      "noisy_std_MPa": 1.5,
+      "mean_MPa": 0,
+      "seed": 24014272,
+      "distribution": "independent Gaussian per stress component"
+    },
+    "evaluation": {
+      "paths": 1,
+      "increments": 250,
+      "dt_s": 0.05,
+      "strain_seed": 24014271,
+      "reference": "noise_free_reference_stress_for_both_conditions"
+    },
+    "save_actual_arrays": true,
+    "project_choices": "Seeds, natural spline boundary condition and same underlying path for ideal/noisy are fixed project choices, not recovered author data."
+  },
+  "model": {
+    "free_energy": {
+      "networks": 2,
+      "type": "invariant_FICNN",
+      "inputs_each": 3,
+      "hidden_layers_each": 1,
+      "hidden_width_each": 10,
+      "outputs_each": 1,
+      "activation": "softplus"
+    },
+    "dissipation": {
+      "type": "PICNN",
+      "convex_inputs": 3,
+      "nonconvex_inputs": 3,
+      "hidden_layers_each_branch": 1,
+      "hidden_width_each_branch": 10,
+      "outputs": 1,
+      "nonconvex_activation": "tanh",
+      "convex_activation": "softplus",
+      "convex_activation_provenance": "project choice permitted by Appendix A.2; Table 4 leaves this entry unspecified"
+    },
+    "auxiliary": {
+      "type": "standard_LSTM_then_linear",
+      "input_dim": 13,
+      "hidden_dim": 50,
+      "output_dim": 6,
+      "input_definition": "Section 4.3",
+      "standard_sigmoid_gates": true
+    },
+    "corrections": "Preserve free-energy zero-state and dissipation zero-rate corrections as defined in the paper.",
+    "normalization": "Appendix A.3, training data only; internal-variable scales estimated from strain and strain rate, not reference internal variables."
+  },
+  "training": {
+    "conditions": [
+      "ideal",
+      "noisy"
+    ],
+    "initialization_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "iterations_per_initialization": 20000,
+    "total_training_runs": 50,
+    "optimizer": "Adam",
+    "initial_learning_rate": 0.01,
+    "lr_decay_every_iterations": 4000,
+    "lr_decay_factor": 0.1,
+    "loss": {
+      "equations": [
+        23,
+        24,
+        25
+      ],
+      "stress": "MAE",
+      "internal_force": "Biot consistency MAE",
+      "note": "Implement the RNN equations directly; do not substitute the FNN loss normalization."
+    },
+    "selection": "minimum_final_training_loss_within_each_condition",
+    "retain": "all_final_weights_optimizer_states_and_loss_curves",
+    "resume": "continue_real_existing_checkpoints",
+    "budget_provenance": "25 initializations and final-training-loss selection follow Section 5.2.2. 20,000 iterations are the fixed project budget; the learning-rate schedule is borrowed from the explicitly stated Section 5.2.1 schedule.",
+    "no_additional_training_losses": true
+  },
+  "prediction": {
+    "auxiliary_RNN_used": false,
+    "reference_internal_state_used": false,
+    "evaluation_stress_labels_used": false,
+    "state_update": "implicit_Euler_and_Newton_Raphson_from_learned_potentials",
+    "evaluate_all_final_models": true,
+    "figures": "8–10 corresponding to selected RNN method",
+    "metrics": [
+      "per_component_MAE",
+      "per_component_RMSE",
+      "RMSE_normalized_by_recorded_training_scale",
+      "full_path_response",
+      "actual_integration_failures"
+    ],
+    "record_actual_solver_settings": true
+  },
+  "outputs": {
+    "compact_root": "results/terrain_memory/reproduction/material",
+    "large_root": "outputs/terrain_memory/reproduction/material",
+    "create_only_after_actual_run": true
+  }
+}
