@@ -28,11 +28,12 @@
       "url": "https://arxiv.org/html/2401.14270v1",
       "pdf_url": "https://arxiv.org/pdf/2401.14270v1",
       "filename": "TM02_viscoelastic_2401.14270v1.pdf",
-      "read_for_execution": "全文；重点为 3.2、4.3、5.1.1/5.1.2、5.2.2、附录 A/C；式 23–30、表 1/4、图 8–10 中 RNN 对应部分",
+      "read_for_execution": "全文；本轮重点为 4.3、5.2.2/Fig.14 的 100x100 ideal 多历史扩展，结合 3.2、5.1.1/5.1.2、附录 A/C；不复现其他训练方法",
       "code_status": "本次未核到官方训练代码；必须标为论文方法重实现",
       "reproduction_targets": [
         "参考材料的完整历史响应",
-        "不提供隐变量标签时的未见加载路径预测"
+        "不提供隐变量标签时的未见加载路径预测",
+        "Fig.14：同一 RNN 辅助方法在 100 条完整历史、每条 100 个增量上的 ideal 训练与独立预测；noisy 标为项目扩展"
       ]
     },
     {
@@ -91,6 +92,39 @@
         "S 阶段的地块记忆和剩余任务条件化终端价值"
       ],
       "scope_note": "原文是已知仿真 context 下的人形动作跟踪；不代表已解决未知软地、跨足共享状态或本课题 MPC 问题"
+    },
+    {
+      "id": "TM08",
+      "title": "Calibration of neural viscoelastic models via full-field data",
+      "role": "R2 多加载历史与后续 S/H 可观测材料标定的直接参考，不新增整套 FEM 复现阶段",
+      "version": "arXiv:2609.03645v1",
+      "published": "2026-09-03",
+      "url": "https://arxiv.org/html/2609.03645v1",
+      "pdf_url": "https://arxiv.org/pdf/2609.03645v1",
+      "filename": "TM08_full_field_viscoelastic_2609.03645v1.pdf",
+      "read_for_execution": "第 3–5 节：从可测反力/表面位移标定、独立加载验证；附录 C 的 backward adjoint 仅作后续隐式材料训练参考",
+      "transfer_targets": [
+        "用多个完整加载历史检验材料预测与覆盖",
+        "后续从可测力/位移识别材料，不依赖真隐变量",
+        "后续确有需要时研究隐式伴随梯度"
+      ],
+      "scope_note": "原文参考材料是线性黏弹模型；不将本项目非线性参考替换为较易拟合材料，也不把全场标定实验说成本项目已完成"
+    },
+    {
+      "id": "TM09",
+      "title": "When Low Prediction Error Misleads Planning: Diagnosing Representation, Dynamics, and Decision Failures in Latent World Models",
+      "role": "R2 同前史候选后果的评价借鉴；分开共同偏差和动作响应差",
+      "version": "arXiv:2610.05550v1",
+      "published": "2026-10-04",
+      "url": "https://arxiv.org/html/2610.05550v1",
+      "pdf_url": "https://arxiv.org/pdf/2610.05550v1",
+      "filename": "TM09_prediction_error_planning_2610.05550v1.pdf",
+      "read_for_execution": "第 3–5 节的 same-start branches、center/response 分解及 response scale；第 7.4/8 节的闭环收益边界",
+      "transfer_targets": [
+        "对现有 early/late 材料候选计算中心偏差及动作响应差",
+        "同时报告幅值、候选排序、平局和恒定策略遗憾"
+      ],
+      "scope_note": "借鉴物理结果评价，不新增 latent world model 或排序损失；原文的增量闭环规划收益未确认，不称借鉴后已证明机器人收益"
     }
   ],
   "upstream": {
