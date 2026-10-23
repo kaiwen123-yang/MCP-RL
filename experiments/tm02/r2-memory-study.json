@@ -2,7 +2,16 @@
   "purpose": "R2 task-applicability study after a bounded TM02 Fig.14 reimplementation: separate data quantity from recovery excitation, then evaluate complete physical histories. This is a plan, not completed training.",
   "run_id": "tm02-memory-study-20261023",
   "target_entrypoint": "scripts/run_tm02_memory_study.py",
-  "implementation_note": "Implement a small study entrypoint by reusing existing TM02 material, reference, multihistory training and deployment solvers. The entrypoint does not yet exist in this plan commit.",
+  "implementation_note": "The study entrypoint reuses the existing TM02 material, reference, multihistory trainer and deployment solvers; completion is recorded only in the actual result index.",
+  "execution": {
+    "host": "fy-5080",
+    "environment": "work/envs/tm02",
+    "checkpoint_every_iterations": 250,
+    "initialization_batch_size": 20,
+    "path_microbatch_size": 25,
+    "evaluation_workers": 6,
+    "grouping_note": "20 models x 25 histories per microbatch for B/C; all arm histories contribute to one Adam update. Grouping changes no scientific budget."
+  },
   "base": {
     "config": "experiments/tm02/r2-multihistory.json",
     "results_commit": "b2fedb9360a432f7660b0c5d0825e44626f42faa",

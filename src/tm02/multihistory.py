@@ -62,7 +62,7 @@ def prepare_data(config, out):
     print('Saved fixed 100 x 100 training and 20 x 250 held-out histories before training.', flush=True)
 
 
-def train(config, out):
+def train(config, out, *, fixed_norms=None):
     obs = np.load(out/'observations.npz')
     tc = config['training']
     runs = [(condition, seed) for condition in tc['conditions']
@@ -74,9 +74,11 @@ def train(config, out):
     e = obs['train_strain']
     dt = np.diff(obs['train_time'], axis=1)
     paths, steps = dt.shape
-    # These scales are computed once using the entire training set only.
-    norms = {condition: normalization(e, obs[f'{condition}_stress'], dt)
-             for condition in tc['conditions']}
+    # The memory study supplies the frozen second-round scales. The original
+    # run continues to estimate its scales once from its entire training set.
+    norms = fixed_norms if fixed_norms is not None else {
+        condition: normalization(e, obs[f'{condition}_stress'], dt)
+        for condition in tc['conditions']}
     write_json(out/'normalization.json', {
         condition: {key: np.asarray(value).tolist() for key, value in norm.items()}
         for condition, norm in norms.items()})
@@ -199,4 +201,4 @@ def train(config, out):
         elapsed_s=elapsed_total, rule=tc['selection'], total_optimizer_updates=total*len(runs),
         paths_per_update=paths, full_sequence_increments=steps,
         initialization_batch_size=group_size, path_microbatch_size=micro_size))
-    print('All 50 final models, optimizer states and complete loss curves saved.', flush=True)
+    print(f'All {len(runs)} final models, optimizer states and complete loss curves saved.', flush=True)
