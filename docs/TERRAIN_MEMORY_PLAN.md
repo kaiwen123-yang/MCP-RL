@@ -122,7 +122,7 @@ tau_sigma=0 = eta * (M_eq + M_ov) / (M_eq * M_ov),  M = K or G
 
 ### 4.3 三臂训练：固定方法，区分数据量和激励
 
-唯一当前配置为 [r2-memory-study.json](../experiments/tm02/r2-memory-study.json)，运行名 `tm02-memory-study-20261023`。复用 `material.py`、`reference.py`、`multihistory.py` 及现有预测/应力控制模块，实现简洁入口 `scripts/run_tm02_memory_study.py`；**该入口在本次计划提交中尚未实现**。不重写材料模型或通用训练框架。
+本轮配置为 [r2-memory-study.json](../experiments/tm02/r2-memory-study.json)，运行名 `tm02-memory-study-20261023`。入口 `scripts/run_tm02_memory_study.py` 已复用现有材料、参考、训练与部署模块实现，固定实验已经执行；真实结果及适用域见[统一结果索引](../results/terrain_memory/reproduction/material/tm02-memory-study-20261023/index.json)。本节保留原固定协议，已完成批次不再重跑。
 
 保留式 26–30/表 1 的原参考、式 29 原解释、两个 FICNN、一个 PICNN、辅助 LSTM、式 23–25 损失、Adam 和学习率日程。保持非线性黏度，禁止换更易拟合材料。训练每条历史 100 个增量、含初态 101 个采样点，完整反向传播，历史之间独立初态，历史内部连续推进。
 
@@ -181,7 +181,7 @@ tau_sigma=0 = eta * (M_eq + M_ov) / (M_eq * M_ov),  M = K or G
 
 ### 4.6 实现、执行和交付
 
-先实现并使用现有独立环境执行下列入口；入口尚未实现不等于需要再次请求启动许可：
+已实现并在现有独立环境执行的入口如下；复跑只接续真实检查点和已有产物：
 
 ```bash
 work/envs/tm02/bin/python scripts/run_tm02_memory_study.py --config experiments/tm02/r2-memory-study.json --run tm02-memory-study-20261023
@@ -277,7 +277,7 @@ R1 的随机刚体外扰轨迹不提供材料变形与恢复标签，不能充�
 
 ## 7. 下一次交给 Codex 的启动词
 
-以下任务对应本轮固定配置。此提交只有计划与配置，后续 Codex 必须实现入口并完成实际成果。
+以下启动词对应已经执行完成的第三轮固定配置，保留为协议记录。实际训练、完整评价及产物见本轮结果索引；不要重复启动已经完成的批次，也不自动进入 S/RL/H。
 
 ```text
 继续 kaiwen123-yang/MCP-RL 的第三轮 R2：材料记忆适用性实验。先同步最新 main，读 AGENTS.md、README.md、docs/TERRAIN_MEMORY_PLAN.md 第 4 节和 experiments/tm02/r2-memory-study.json，按需读 TM02 源码与 TM08–11 指定部分。任务是实际实现、训练、完整评价并推送成果，不再写计划、审查报告或状态日报。
