@@ -149,6 +149,13 @@ def main():
     references = read_json(out / 'final_reference/catalog.json')['histories']
     final_summary = read_json(out / 'final_predictions/evaluation.json')
     diagnostic_summary = read_json(out / 'diagnostics/predictions/evaluation.json')
+    def evaluation_record(summary, relative):
+        return dict(summary_file=relative, sha256=sha256(out / relative),
+                    **{key: summary[key] for key in ('model_count', 'physical_conditions',
+                       'complete_reference_histories', 'model_history_cells', 'successful_histories',
+                       'newly_executed_histories', 'reused_old_histories', 'elapsed_s',
+                       'accumulated_integration_process_seconds')},
+                    failures=len(summary['failures']))
 
     # Count the requested scientific deliverables, retaining failed predictions.
     runs = training['runs']
@@ -198,7 +205,8 @@ def main():
         diagnostic_prediction_arrays=len(diagnostic_arrays),
         diagnostic_model_directories=len({p.parent.name for p in diagnostic_arrays}),
         failed_diagnostic_predictions=sum(not r['integration_complete'] for r in diagnostic_records),
-        final_evaluation=final_summary, known_diagnostics=diagnostic_summary,
+        final_evaluation=evaluation_record(final_summary, 'final_predictions/evaluation.json'),
+        known_diagnostics=evaluation_record(diagnostic_summary, 'diagnostics/predictions/evaluation.json'),
         failed_rollouts_retained=True)
     tc = config['training']
     fc = config['final_evaluation']
