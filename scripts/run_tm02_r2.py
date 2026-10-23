@@ -159,9 +159,12 @@ def main():
     if not (out/'run.json').exists():
         source_files = [Path(__file__), *sorted((ROOT/'src/tm02').glob('*.py'))]
         write_json(out/'run.json', dict(command=' '.join(sys.argv),
-            config=config, source_commit=subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip(),
+            config=config, config_sha256=hashlib.sha256((ROOT/args.config).read_bytes()).hexdigest(),
+            source_commit=subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip(),
             source_sha256={str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in source_files},
             host=platform.node(), python=sys.version, jax=jax.__version__, devices=[str(d) for d in jax.devices()],
+            hardware=subprocess.check_output(['nvidia-smi', '--query-gpu=name,memory.total,driver_version',
+                '--format=csv,noheader'], text=True).strip(),
             start_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), output=str(out)))
         (out/'requirements-lock.txt').write_text(subprocess.check_output([sys.executable,'-m','pip','freeze'], text=True))
     if args.phase in ('all', 'train'):
