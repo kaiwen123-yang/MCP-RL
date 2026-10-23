@@ -138,9 +138,8 @@ def _error_figures(records, paired, compact):
                         ax.set_ylim(bottom=0)
                         ax.set_ylabel(f'Full-history {statistic} ({unit})')
                     note = '5 base-seed clusters' if clustered else '100 prescribed conditions'
-                    ax.set_title(FAMILY_TITLES[family]+'\n'+note)
-                    ax.text(.03, .97, 'Complete: '+', '.join(f'{a}/{b}' for a, b in counts),
-                            transform=ax.transAxes, va='top', fontsize=7)
+                    completeness = 'Complete: '+', '.join(f'{a}/{b}' for a, b in counts)
+                    ax.set_title(FAMILY_TITLES[family]+'\n'+note+'\n'+completeness, fontsize=8)
                     ax.yaxis.set_major_locator(MaxNLocator(5))
                     ax.ticklabel_format(axis='y', style='sci', scilimits=(-3, 3))
                 prefix = 'paired-changes' if is_paired else 'physical-errors'
