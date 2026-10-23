@@ -28,7 +28,7 @@
       "url": "https://arxiv.org/html/2401.14270v1",
       "pdf_url": "https://arxiv.org/pdf/2401.14270v1",
       "filename": "TM02_viscoelastic_2401.14270v1.pdf",
-      "read_for_execution": "全文；本轮重点为 4.3、5.2.2/Fig.14 的 100x100 ideal 多历史扩展，结合 3.2、5.1.1/5.1.2、附录 A/C；不复现其他训练方法",
+      "read_for_execution": "已有全文与所选方法重实现复用；本轮仅核对第 3/4.3 节的隐变量与损失、5.2.2/Fig.14 和附录 A 的尺度/零态修正，不重启全文所有方法复现",
       "code_status": "本次未核到官方训练代码；必须标为论文方法重实现",
       "reproduction_targets": [
         "参考材料的完整历史响应",
@@ -125,6 +125,37 @@
         "同时报告幅值、候选排序、平局和恒定策略遗憾"
       ],
       "scope_note": "借鉴物理结果评价，不新增 latent world model 或排序损失；原文的增量闭环规划收益未确认，不称借鉴后已证明机器人收益"
+    },
+    {
+      "id": "TM10",
+      "title": "A Neural-Network Framework to Learn History-Dependent Constitutive Laws and Identifiability of Internal Variables",
+      "role": "R2 可辨识性与未来可观测响应依据；不新增另一套训练方法的复现",
+      "version": "arXiv:2605.14179v1",
+      "url": "https://arxiv.org/html/2605.14179v1",
+      "pdf_url": "https://arxiv.org/pdf/2605.14179v1",
+      "filename": "TM10_history_identifiability_2605.14179v1.pdf",
+      "read_for_execution": "模型结构与第 4 节，尤其 4.3 的严格凸性、可达性等假设及内部变量等价类；只借鉴可观测响应与辨识条件",
+      "transfer_targets": [
+        "学习隐变量无需逐值等于参考坐标；主要比较未见完整历史上的可观测应力/应变及动作后果",
+        "区分训练路径包络覆盖与对恢复机制的充分激励",
+        "用既有重访历史做应变控制/应力控制双边界重放，定位任务相关响应偏差"
+      ],
+      "scope_note": "原文理论依赖特定结构和假设，不能据此声称本项目网络内部变量已唯一可辨识；双边界诊断是本项目设计。版本以固定 arXiv ID 为准。"
+    },
+    {
+      "id": "TM11",
+      "title": "Accelerating Bayesian Optimal Experimental Design via Local Radial Basis Functions: Application to Soft Material Characterization",
+      "role": "R2 从数据数量转向物理信息覆盖的实验设计借鉴",
+      "version": "arXiv:2505.13283v1",
+      "url": "https://arxiv.org/html/2505.13283v1",
+      "pdf_url": "https://arxiv.org/pdf/2505.13283v1",
+      "filename": "TM11_soft_material_experimental_design_2505.13283v1.pdf",
+      "read_for_execution": "Bayesian optimal experimental design 与 soft material characterization 的实验条件/信息量关系；不复现全部算法",
+      "transfer_targets": [
+        "明确比较 A 随机100、B 随机1000 与 C 随机50加恢复50",
+        "按恢复、松弛、压剪循环及重访机制固定独立完整评价历史"
+      ],
+      "scope_note": "原文是软材料空化表征与预期信息增益/RBF 加速；本轮只借鉴信息性激励，不实施 BOED/RBF/激光空化，不声称 C 是原文最优设计或新算法贡献。"
     }
   ],
   "upstream": {

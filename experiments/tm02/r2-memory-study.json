@@ -1,0 +1,508 @@
+{
+  "purpose": "R2 task-applicability study after a bounded TM02 Fig.14 reimplementation: separate data quantity from recovery excitation, then evaluate complete physical histories. This is a plan, not completed training.",
+  "run_id": "tm02-memory-study-20261023",
+  "target_entrypoint": "scripts/run_tm02_memory_study.py",
+  "implementation_note": "Implement a small study entrypoint by reusing existing TM02 material, reference, multihistory training and deployment solvers. The entrypoint does not yet exist in this plan commit.",
+  "base": {
+    "config": "experiments/tm02/r2-multihistory.json",
+    "results_commit": "b2fedb9360a432f7660b0c5d0825e44626f42faa",
+    "run": "tm02-multihistory-20261023",
+    "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-multihistory-evidence-20261023",
+    "archive_filename": "tm02-multihistory-20261023-evidence.tar.gz",
+    "archive_sha256": "b738c0fb0116d4b11d82153d56efb0e3a54839bedfbbd9a2902648d030b948af",
+    "inherit": "Reference Table 1 parameters and Eq.29 interpretation, potentials, auxiliary LSTM, losses, Adam schedule, tensor convention and deployment solver.",
+    "preserve_all_historical_results": true
+  },
+  "scientific_questions": [
+    "Does adding 900 random histories repair the observed noisy recovery bias?",
+    "Does replacing 50 random histories with 50 recovery-informative histories repair it at the same observation-increment budget?",
+    "Do changes persist across three training-noise realizations and unseen physical loading conditions?"
+  ],
+  "training": {
+    "initialization_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "conditions": [
+      "ideal",
+      "noisy"
+    ],
+    "noise_realizations_for_noisy": [
+      0,
+      1,
+      2
+    ],
+    "ideal_repetitions": "one set of five initializations per arm; do not duplicate clean data for noise realization IDs",
+    "increments_per_history": 100,
+    "iterations_per_model": 20000,
+    "optimizer": "Adam",
+    "initial_learning_rate": 0.01,
+    "lr_decay_every_iterations": 4000,
+    "lr_decay_factor": 0.1,
+    "loss": "Existing Eq.23-25 stress MAE plus Biot consistency MAE; equal mean over histories, time increments and six components.",
+    "full_history_backpropagation": true,
+    "optimizer_update": "Accumulate the correctly averaged gradient of the complete arm dataset before one Adam update. B uses all 1000 histories per update.",
+    "normalization": "Reuse all saved norm fields from the second-round ideal/noisy weights, per condition, identically for all arms and all noise realizations. No evaluation-derived scales, no re-estimation, no clipping outside normalized [-1,1].",
+    "selection": "Within each arm and each ideal/noisy-realization cell, minimum final training loss among the fixed five initializations. Do not select across noise realizations.",
+    "selected_models": 12,
+    "study_models_including_reused": 60,
+    "reused_models": 10,
+    "new_training_runs": 50,
+    "new_model_optimizer_updates": 1000000,
+    "new_reference_100_history_training_equivalents": 230,
+    "relative_data_gradient_work_vs_second_round": 4.6,
+    "compute_note": "B is a fixed-update data-scale comparison and uses about 10x history-gradient work per update; do not claim equal-compute superiority. Record actual runtime.",
+    "additional_losses_or_networks": false,
+    "automatic_extra_training": false
+  },
+  "arms": [
+    {
+      "id": "A_random100",
+      "histories": 100,
+      "source": "Reuse every original 100x100 training time/strain/clean-stress array from the second-round archive.",
+      "ideal_models": "reuse seeds 0..4",
+      "noisy_realization_0_models": "reuse seeds 0..4",
+      "new_training_runs": 10
+    },
+    {
+      "id": "B_random1000",
+      "histories": 1000,
+      "source": "First 100 histories are exact archived A arrays; append 900 histories using the unchanged random generator.",
+      "additional_strain_seed_start": 24015100,
+      "additional_strain_seed_count": 900,
+      "new_training_runs": 20
+    },
+    {
+      "id": "C_mixed100",
+      "histories": 100,
+      "source": "Reuse exact A history indices 0..49; replace indices 50..99 with the 50 full stress-controlled histories below. Train on observed strain/stress/time, not reference internal state.",
+      "random_histories": 50,
+      "recovery_histories": 50,
+      "new_training_runs": 20
+    }
+  ],
+  "training_noise": {
+    "std_MPa": 1.5,
+    "mean_MPa": 0,
+    "definition": "Independent Gaussian observation noise per time increment and stress component, including unloaded portions. Ideal remains clean.",
+    "realizations": [
+      {
+        "id": 0,
+        "random_seed_start": 24017000,
+        "random_path_count": 1000,
+        "first_100": "Reuse the archived noise arrays exactly.",
+        "recovery_seed_start": 24417000
+      },
+      {
+        "id": 1,
+        "random_seed_start": 24217000,
+        "random_path_count": 1000,
+        "recovery_seed_start": 24517000
+      },
+      {
+        "id": 2,
+        "random_seed_start": 24317000,
+        "random_path_count": 1000,
+        "recovery_seed_start": 24617000
+      }
+    ],
+    "pairing": "A/B shared 100 histories and A/C shared 50 histories reuse identical noise arrays per realization. Fixed arrays are shared by all five initializations.",
+    "independent_noise_datasets": 3,
+    "scope": "Three noise realizations give limited training-noise sensitivity evidence, not deployment sensor-noise robustness or fifteen independent noise datasets."
+  },
+  "recovery_training": {
+    "history_count": 50,
+    "parameter_seed_start": 24120000,
+    "dt_s": 0.05,
+    "increments": 100,
+    "total_time_s": 5,
+    "mode_counts": {
+      "uniaxial_compression": 20,
+      "volumetric_compression": 15,
+      "pure_shear": 15
+    },
+    "stress_directions": {
+      "uniaxial_compression": [
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "volumetric_compression": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "pure_shear": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    "amplitude_definition": "a is a physical stress component amplitude, not equal Frobenius tensor norm across modes",
+    "preload_amplitude_uniform_MPa": [
+      0.75,
+      5.5
+    ],
+    "probe_amplitude_uniform_MPa": [
+      0.75,
+      4.5
+    ],
+    "zero_stress_recovery_delays_s": [
+      2,
+      2.5,
+      3,
+      3.5,
+      4
+    ],
+    "delay_assignment": "cycle the five delays within each mode; draw the two amplitudes using the corresponding independent parameter seed",
+    "preload_unit_envelope": [
+      [
+        0,
+        0
+      ],
+      [
+        0.1,
+        1
+      ],
+      [
+        0.3,
+        1
+      ],
+      [
+        0.4,
+        0
+      ]
+    ],
+    "probe_start": "0.4 + recovery_delay_s",
+    "probe_unit_envelope": [
+      [
+        0,
+        0
+      ],
+      [
+        0.1,
+        1
+      ],
+      [
+        0.3,
+        1
+      ],
+      [
+        0.4,
+        0
+      ]
+    ],
+    "remainder": "zero external stress until exactly 5 s",
+    "state": "virgin equilibrium only at the beginning; preserve each material state's complete evolution through unload, recovery and probe",
+    "generation": "Independent Reference under prescribed stress produces observable strain and stress; noise is then applied to observed stress. Do not clamp strain during zero-load recovery.",
+    "sample_count_including_initial_state": 101
+  },
+  "known_diagnostics": {
+    "random_histories": "Reuse original second-round 20 evaluation histories; these are now development diagnostics, not fresh tests.",
+    "revisit_histories": "Reuse all 12 original reference stress-control histories.",
+    "models": "All 60 study models, retaining initialization and noise-realization axes.",
+    "dual_boundary_replay": "For each original stress-control history, replay its reference strain as prescribed strain to predict stress, and separately replay its prescribed stress to predict strain. Both predictions independently propagate their own q from the virgin start; do not inject reference q or intermediate state.",
+    "response_outputs": "Full curves, recovery-tail and reload errors, candidate center and difference; local zero-state tangent moduli, viscosity and observable free-recovery poles from learned potentials.",
+    "do_not_select_from_diagnostics": true,
+    "reuse_identical_existing_predictions": true
+  },
+  "final_evaluation": {
+    "freeze_protocol_and_arrays_before_training": true,
+    "open_model_results_only_after_training_and_selection_frozen": true,
+    "reference_material": "Fixed original Table 1 parameters; this is not cross-material or real-terrain robustness.",
+    "model_count": 12,
+    "physical_condition_count": 600,
+    "complete_reference_histories": 700,
+    "learned_model_history_predictions": 8400,
+    "selected_model_rule": "one ideal plus one per each of three noisy realizations, for each of three arms",
+    "default_dt_s": 0.01,
+    "record_actual_endpoints_and_time_grid": true,
+    "families": [
+      {
+        "id": "F1_random_original",
+        "conditions": 100,
+        "histories": 100,
+        "mode": "strain_control",
+        "strain_seed_start": 24700000,
+        "increments": 250,
+        "dt_s": 0.05,
+        "generator": "Unchanged original random spline generator; use a fresh disjoint seed set."
+      },
+      {
+        "id": "F2_low_amplitude_rate",
+        "conditions": 100,
+        "histories": 100,
+        "mode": "strain_control",
+        "base_path_seeds": [
+          24701000,
+          24701001,
+          24701002,
+          24701003,
+          24701004
+        ],
+        "amplitude_factors": [
+          0.05,
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "time_scale_factors": [
+          0.25,
+          0.5,
+          1,
+          2
+        ],
+        "generator": "Generate each base path with the F1 250x0.05 s rule, apply one amplitude and time scale, evaluate its same continuous spline on dt=0.01 s with an exact final endpoint.",
+        "statistical_unit": "5 base path seeds reused across the 20 factor combinations; cluster by base path, not 100 independent random samples."
+      },
+      {
+        "id": "F3_strain_relaxation",
+        "conditions": 100,
+        "histories": 100,
+        "mode": "strain_control",
+        "directions": [
+          [
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            -1,
+            -1,
+            -1,
+            0,
+            0,
+            0
+          ],
+          [
+            -1,
+            0.5,
+            0.5,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        ],
+        "component_amplitudes": [
+          0.001,
+          0.002,
+          0.005,
+          0.01,
+          0.02
+        ],
+        "hold_times_s": [
+          0.1,
+          0.5,
+          1,
+          5,
+          20
+        ],
+        "ramp_time_s": 0.1,
+        "unload_time_s": 0.1,
+        "post_unload_strain_zero_hold_s": 5,
+        "note": "This is strain-constrained relaxation; the post-unload stress can be nonzero. Do not label it zero-stress free recovery."
+      },
+      {
+        "id": "F4_stress_creep_recovery",
+        "conditions": 100,
+        "histories": 100,
+        "mode": "stress_control",
+        "direction": [
+          -1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "peak_component_stress_MPa": [
+          1,
+          2,
+          3,
+          4,
+          6
+        ],
+        "hold_times_s": [
+          0.1,
+          0.5,
+          1,
+          2,
+          5
+        ],
+        "ramp_times_s": [
+          0.05,
+          0.1,
+          0.2,
+          0.5
+        ],
+        "unload": "same duration as the ramp",
+        "zero_external_stress_recovery_s": 20
+      },
+      {
+        "id": "F5_compression_shear_cycles",
+        "conditions": 100,
+        "histories": 100,
+        "mode": "stress_control",
+        "normal_peaks_MPa": [
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "shear_to_normal_ratios": [
+          0.25,
+          0.5
+        ],
+        "cycle_counts": [
+          5,
+          20
+        ],
+        "prefix_seeds": [
+          24705000,
+          24705001,
+          24705002,
+          24705003,
+          24705004
+        ],
+        "prefix": "Each seed defines a 1 s uniaxial preload with peak drawn uniformly from [0.75,5.5] MPa and the old [0,.1,.4,.5,1] s envelope. Reuse it across its grid cells.",
+        "cycle_period_s": 0.5,
+        "cycle_unit_envelope": [
+          [
+            0,
+            0
+          ],
+          [
+            0.05,
+            1
+          ],
+          [
+            0.2,
+            1
+          ],
+          [
+            0.25,
+            0
+          ],
+          [
+            0.5,
+            0
+          ]
+        ],
+        "directions": "sigma11 negative; sigma12 alternates sign each cycle at the specified ratio; all other prescribed stresses zero",
+        "zero_external_stress_recovery_s": 5,
+        "statistical_unit": "5 independent prefix seeds with a prescribed parameter grid; cluster comparisons by prefix seed."
+      },
+      {
+        "id": "F6_revisit_pairs",
+        "conditions": 100,
+        "histories": 200,
+        "mode": "stress_control",
+        "preload_peaks_MPa": [
+          1,
+          2,
+          3,
+          4,
+          6
+        ],
+        "recovery_delays_s": [
+          0.08,
+          0.3,
+          1.5,
+          7,
+          20
+        ],
+        "common_probe_peaks_MPa": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "preload_and_probe_template": "Use the original r2-revisit.json 1 s envelopes, changing only their peaks.",
+        "candidates": "Use the unchanged early/late 1 s candidates from r2-revisit.json: equal peak 6 MPa, equal integral 2.4 MPa*s.",
+        "note": "100 same-prefix candidate pairs, not 200 independent physical starts. Reference may still always prefer early; preserve that outcome.",
+        "heldout_note": "The five delays differ from all original diagnostic delays (0.05,0.5,5 s); no final full waveform duplicates the known twelve revisit histories.",
+        "near_equilibrium_rule": "If the reference candidate gap is at or below 1e-6 strain, classify it as reference near-tie / decayed memory. Do not count it as strong ordering evidence or compute a response ratio."
+      }
+    ],
+    "metrics": {
+      "strain_control": [
+        "stress_MAE_MPa",
+        "stress_RMSE_MPa",
+        "component_and_hydrostatic_deviatoric_errors",
+        "relaxation_full_history_and_tail_errors"
+      ],
+      "stress_control": [
+        "full_history_strain_MAE_RMSE",
+        "peak_compression_error",
+        "reload_error",
+        "free_recovery_residual_strain",
+        "recovery_integral_error",
+        "actual_solver_failures"
+      ],
+      "revisit": [
+        "candidate_center_bias",
+        "early_minus_late_difference",
+        "absolute_response_error",
+        "ranking_and_ties",
+        "always_early",
+        "expected_and_worst_regret_under_explicit_uniform_tie_choice"
+      ],
+      "ranking_tolerance_absolute_strain": 0.000001,
+      "ratio_rule": "For dimensionless strain response or recovery ratios, require |reference| > 1e-6 strain; otherwise report absolute errors and ties. Keep dimensional integral errors as primary and do not divide them by the strain floor.",
+      "primary_comparison": "Report each family and each noise realization separately, plus paired arm differences. Raw MPa and strain units are primary; no model-specific NRMSE comparison.",
+      "statistics": "600 fixed physical conditions are not 600 IID draws. Do not count models, adjacent time points or two candidates as independent replications. Any aggregate represents only the declared family weighting.",
+      "failure_policy": "Retain all failed model-history cells with the last complete time and stated reason; do not delete or silently replace a family.",
+      "ratio_reference_absolute_strain_floor": 0.000001
+    }
+  },
+  "interpretation": {
+    "paper_scope": "Selected original TM02 ideal multi-history method can be frozen as bounded reproduction; this study is a project extension, not a new paper-method reproduction or a new algorithm claim.",
+    "A_vs_B": "effect of 10x random training-history amount under the fixed update rule, with extra compute disclosed",
+    "A_vs_C": "effect of replacing half the history budget with recovery excitation, with the same number of observed increments and the same network/loss/scales",
+    "if_C_helps": "supports information/coverage explanation, not algorithm novelty",
+    "if_B_helps": "supports data quantity as an effective remedy; retain that result without forcing C to win",
+    "if_neither_helps": "retain failure and focus the next single study on noise-related identification; do not automatically add losses, networks or more runs",
+    "S_boundary": "No robot, MPC or RL benefit is claimed. After this bounded study, use an explicitly supported material domain for contact mapping and oracle task evaluation before full closed-loop learning."
+  },
+  "outputs": {
+    "compact_reproduction_root": "results/terrain_memory/reproduction/material",
+    "compact_transfer_root": "results/terrain_memory/transfer/material",
+    "large_root": "outputs/terrain_memory",
+    "required": [
+      "all 50 new weights and optimizer states",
+      "all real loss curves",
+      "fixed actual training/noise/heldout arrays",
+      "all final model-history predictions and failures",
+      "per-family paired tables and complete curves",
+      "local tangent/recovery quantities with derivation and scope",
+      "source/config hashes, compute record and downloadable archive"
+    ],
+    "no_empty_success_placeholders": true,
+    "no_new_audit_or_status_documents": true
+  }
+}
