@@ -130,7 +130,10 @@ def normalization(e, stress, dt):
     e_m, e_s = bounds(e)
     s_m, s_s = bounds(stress)
     dt_m, dt_s = bounds(dt)
-    rate = np.diff(e, axis=0)/dt[:, None]
+    # Independent histories have their own t0; difference before pooling.
+    rate = np.diff(e, axis=-2)/dt[..., None]
+    e = e.reshape(-1, 6)
+    rate = rate.reshape(-1, 6)
     inv = np.asarray(jax.vmap(invariants)(e))
     rinv = np.asarray(jax.vmap(invariants)(rate))
     sinv = np.asarray(jax.vmap(lambda x: invariants(x, False))(e))

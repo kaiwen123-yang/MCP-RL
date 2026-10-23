@@ -149,10 +149,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', default='experiments/tm02/r2-rnn.json')
     parser.add_argument('--run', default='tm02-rnn-20261023')
-    parser.add_argument('--phase', choices=['all', 'train', 'evaluate', 'revisit', 'diagnose'], default='all')
+    parser.add_argument('--phase', choices=['all', 'train', 'evaluate', 'evaluate-frozen', 'revisit', 'diagnose'], default='all')
     parser.add_argument('--revisit-config', default='experiments/tm02/r2-revisit.json')
     args = parser.parse_args()
     config = json.loads((ROOT/args.config).read_text(encoding='utf-8'))
+    multihistory = 'comparison' in config
     out = ROOT/config['outputs']['large_root']/args.run
     out.mkdir(parents=True, exist_ok=True)
     if not (out/'run.json').exists():
@@ -164,13 +165,28 @@ def main():
             start_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), output=str(out)))
         (out/'requirements-lock.txt').write_text(subprocess.check_output([sys.executable,'-m','pip','freeze'], text=True))
     if args.phase in ('all', 'train'):
-        prepare_data(config, out)
-        train(config, out)
+        if multihistory:
+            from tm02.multihistory import prepare_data as prepare_many, train as train_many
+            prepare_many(config, out)
+            train_many(config, out)
+        else:
+            prepare_data(config, out)
+            train(config, out)
+    if args.phase == 'evaluate-frozen':
+        from tm02.multihistory_evaluate import evaluate_frozen
+        evaluate_frozen(config, out, ROOT/config['outputs']['compact_root']/args.run, ROOT)
     if args.phase in ('all', 'evaluate'):
-        from tm02.evaluate import evaluate
-        evaluate(config, out, ROOT/config['outputs']['compact_root']/args.run)
+        if multihistory:
+            from tm02.multihistory_evaluate import evaluate
+            evaluate(config, out, ROOT/config['outputs']['compact_root']/args.run, ROOT)
+        else:
+            from tm02.evaluate import evaluate
+            evaluate(config, out, ROOT/config['outputs']['compact_root']/args.run)
     if args.phase in ('all', 'revisit'):
-        from tm02.evaluate import revisit
+        if multihistory:
+            from tm02.multihistory_revisit import revisit
+        else:
+            from tm02.evaluate import revisit
         revisit_config = json.loads((ROOT/args.revisit_config).read_text(encoding='utf-8'))
         revisit(config, revisit_config, out, ROOT, args.run)
     if args.phase == 'diagnose':
