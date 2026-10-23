@@ -1,0 +1,2767 @@
+{
+  "kind": "TM02 v1 section 5.2.2 / Figure 14 multi-history extension reimplementation",
+  "run": "tm02-multihistory-20261023",
+  "paper": "https://arxiv.org/html/2401.14270v1",
+  "condition_scope": {
+    "ideal": "original-method multi-history extension",
+    "noisy": "project extension"
+  },
+  "source_commit": "d962798d7383388a4b4ed89d359fe18fcb1b0ff4",
+  "run_provenance": {
+    "command": "scripts/run_tm02_r2.py --config experiments/tm02/r2-multihistory.json --run tm02-multihistory-20261023 --phase train",
+    "config": {
+      "purpose": "R2 Fig.14 multi-history execution contract. Extend the existing single-history runner before execution; this configuration is not a completed result.",
+      "source": {
+        "paper_id": "TM02",
+        "version": "2401.14270v1",
+        "url": "https://arxiv.org/html/2401.14270v1",
+        "scope": "TM02 v1 Sections 4.3 and 5.2.2, Fig.14: ideal 100 histories x 100 increments; noisy is a separately labeled project extension. Other training methods are outside this round."
+      },
+      "target_entrypoint": "scripts/run_tm02_r2.py",
+      "implementation": "Extend the existing JAX implementation with independent complete sequences, dataset-wide normalization, full-dataset gradient accumulation and paired old/new evaluation. Do not rewrite the material model.",
+      "reference_material": {
+        "equations": [
+          26,
+          27,
+          28,
+          29,
+          30
+        ],
+        "table": 1,
+        "strain_space": "3D symmetric small strain",
+        "independent_components": 6,
+        "parameters": {
+          "K_eq_MPa": 500,
+          "G_eq_MPa": 300,
+          "K_ov_MPa": 1000,
+          "G_ov_MPa": 700,
+          "eta_K_table_value": 400,
+          "eta_D_table_value": 200,
+          "a_MPa": 10,
+          "b": 2,
+          "o": 0.1
+        },
+        "constitutive_interpretation": "Eq.29 is implemented as V=[(1-o)*exp(-(norm_F(sigma_ov)/a)^b)+o]*V0: dimensionless o multiplies the full fourth-order V0 tensor. Table 1 eta_K=400 and eta_D=200 are interpreted in MPa*s, because Eq.27 differentiated with respect to strain rate must yield MPa. The printed tensor-plus-scalar and MPa/s are ambiguous; this is the project's dimensional interpretation, not verified author code.",
+        "viscosity": "state_dependent_as_reference; do_not_replace_with_constant_tau"
+      },
+      "data": {
+        "source_section": "5.1.2",
+        "initial_time_s": 0,
+        "initial_strain": 0,
+        "spline_knot_dt_s": [
+          0.2,
+          1
+        ],
+        "spline_knot_strain_increment_normal_std": 0.005,
+        "knot_strain_absolute_bound": 0.02,
+        "bound_rule": "resample increment when the proposed knot exceeds the paper's bound",
+        "interpolation": "cubic_spline",
+        "spline_boundary_condition": "natural",
+        "train": {
+          "paths_per_condition": 100,
+          "increments": 100,
+          "dt_uniform_s": [
+            0.03,
+            0.07
+          ],
+          "reuse_strain_path_across_conditions": true,
+          "strain_seeds": [
+            24015000,
+            24015001,
+            24015002,
+            24015003,
+            24015004,
+            24015005,
+            24015006,
+            24015007,
+            24015008,
+            24015009,
+            24015010,
+            24015011,
+            24015012,
+            24015013,
+            24015014,
+            24015015,
+            24015016,
+            24015017,
+            24015018,
+            24015019,
+            24015020,
+            24015021,
+            24015022,
+            24015023,
+            24015024,
+            24015025,
+            24015026,
+            24015027,
+            24015028,
+            24015029,
+            24015030,
+            24015031,
+            24015032,
+            24015033,
+            24015034,
+            24015035,
+            24015036,
+            24015037,
+            24015038,
+            24015039,
+            24015040,
+            24015041,
+            24015042,
+            24015043,
+            24015044,
+            24015045,
+            24015046,
+            24015047,
+            24015048,
+            24015049,
+            24015050,
+            24015051,
+            24015052,
+            24015053,
+            24015054,
+            24015055,
+            24015056,
+            24015057,
+            24015058,
+            24015059,
+            24015060,
+            24015061,
+            24015062,
+            24015063,
+            24015064,
+            24015065,
+            24015066,
+            24015067,
+            24015068,
+            24015069,
+            24015070,
+            24015071,
+            24015072,
+            24015073,
+            24015074,
+            24015075,
+            24015076,
+            24015077,
+            24015078,
+            24015079,
+            24015080,
+            24015081,
+            24015082,
+            24015083,
+            24015084,
+            24015085,
+            24015086,
+            24015087,
+            24015088,
+            24015089,
+            24015090,
+            24015091,
+            24015092,
+            24015093,
+            24015094,
+            24015095,
+            24015096,
+            24015097,
+            24015098,
+            24015099
+          ],
+          "initial_state": "q0=h0=c0=0 for each independently prepared history; never reset inside a history"
+        },
+        "stress_noise": {
+          "ideal_std_MPa": 0,
+          "noisy_std_MPa": 1.5,
+          "mean_MPa": 0,
+          "distribution": "independent Gaussian per stress component",
+          "seeds_by_training_path": [
+            24017000,
+            24017001,
+            24017002,
+            24017003,
+            24017004,
+            24017005,
+            24017006,
+            24017007,
+            24017008,
+            24017009,
+            24017010,
+            24017011,
+            24017012,
+            24017013,
+            24017014,
+            24017015,
+            24017016,
+            24017017,
+            24017018,
+            24017019,
+            24017020,
+            24017021,
+            24017022,
+            24017023,
+            24017024,
+            24017025,
+            24017026,
+            24017027,
+            24017028,
+            24017029,
+            24017030,
+            24017031,
+            24017032,
+            24017033,
+            24017034,
+            24017035,
+            24017036,
+            24017037,
+            24017038,
+            24017039,
+            24017040,
+            24017041,
+            24017042,
+            24017043,
+            24017044,
+            24017045,
+            24017046,
+            24017047,
+            24017048,
+            24017049,
+            24017050,
+            24017051,
+            24017052,
+            24017053,
+            24017054,
+            24017055,
+            24017056,
+            24017057,
+            24017058,
+            24017059,
+            24017060,
+            24017061,
+            24017062,
+            24017063,
+            24017064,
+            24017065,
+            24017066,
+            24017067,
+            24017068,
+            24017069,
+            24017070,
+            24017071,
+            24017072,
+            24017073,
+            24017074,
+            24017075,
+            24017076,
+            24017077,
+            24017078,
+            24017079,
+            24017080,
+            24017081,
+            24017082,
+            24017083,
+            24017084,
+            24017085,
+            24017086,
+            24017087,
+            24017088,
+            24017089,
+            24017090,
+            24017091,
+            24017092,
+            24017093,
+            24017094,
+            24017095,
+            24017096,
+            24017097,
+            24017098,
+            24017099
+          ],
+          "reuse_noise_arrays_across_initializations": true
+        },
+        "evaluation": {
+          "paths": 20,
+          "increments": 250,
+          "dt_s": 0.05,
+          "reference": "noise_free_reference_stress_for_both_conditions",
+          "strain_seeds": [
+            24016000,
+            24016001,
+            24016002,
+            24016003,
+            24016004,
+            24016005,
+            24016006,
+            24016007,
+            24016008,
+            24016009,
+            24016010,
+            24016011,
+            24016012,
+            24016013,
+            24016014,
+            24016015,
+            24016016,
+            24016017,
+            24016018,
+            24016019
+          ],
+          "freeze_protocol_before_training": true,
+          "no_selection_or_tuning_on_evaluation": true
+        },
+        "save_actual_arrays": true,
+        "project_choices": "Explicit seeds, natural spline boundary condition, paired ideal/noisy histories, 20 held-out paths and execution budget are project choices. Do not select paths based on model errors or change the reference material to an easier law."
+      },
+      "model": {
+        "free_energy": {
+          "networks": 2,
+          "type": "invariant_FICNN",
+          "inputs_each": 3,
+          "hidden_layers_each": 1,
+          "hidden_width_each": 10,
+          "outputs_each": 1,
+          "activation": "softplus"
+        },
+        "dissipation": {
+          "type": "PICNN",
+          "convex_inputs": 3,
+          "nonconvex_inputs": 3,
+          "hidden_layers_each_branch": 1,
+          "hidden_width_each_branch": 10,
+          "outputs": 1,
+          "nonconvex_activation": "tanh",
+          "convex_activation": "softplus",
+          "convex_activation_provenance": "project choice permitted by Appendix A.2; Table 4 leaves this entry unspecified"
+        },
+        "auxiliary": {
+          "type": "standard_LSTM_then_linear",
+          "input_dim": 13,
+          "hidden_dim": 50,
+          "output_dim": 6,
+          "input_definition": "Section 4.3",
+          "standard_sigmoid_gates": true
+        },
+        "corrections": "Preserve free-energy zero-state and dissipation zero-rate corrections as defined in the paper.",
+        "normalization": "Appendix A.3 from the entire 100-history training set per condition, fixed across initialization groups/microbatches. Compute strain rates within each history before pooling. Reference internal variables and all evaluation arrays are excluded."
+      },
+      "training": {
+        "conditions": [
+          "ideal",
+          "noisy"
+        ],
+        "initialization_seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24
+        ],
+        "iterations_per_initialization": 20000,
+        "total_training_runs": 50,
+        "optimizer": "Adam",
+        "initial_learning_rate": 0.01,
+        "lr_decay_every_iterations": 4000,
+        "lr_decay_factor": 0.1,
+        "loss": {
+          "equations": [
+            23,
+            24,
+            25
+          ],
+          "stress": "MAE",
+          "internal_force": "Biot consistency MAE",
+          "note": "Use the original RNN Eqs.23-25, averaged equally over 100 histories x 100 increments x 6 physical components. No additional multi-step, ranking or critic loss."
+        },
+        "selection": "minimum_final_training_loss_within_each_condition",
+        "retain": "all_final_weights_optimizer_states_and_loss_curves",
+        "resume": "continue_real_existing_checkpoints",
+        "budget_provenance": "Ideal 100x100 follows Fig.14. Noisy 100x100 is a project extension. 25 initializations, 20,000 updates and the existing learning-rate schedule are the fixed project budget, not a claim that Fig.14 reports every setting.",
+        "no_additional_training_losses": true,
+        "gradient_accumulation": "Differentiate each complete 100-increment sequence. Average gradients over all 100 histories before exactly one Adam update; microbatches do not increment Adam or the learning-rate schedule separately.",
+        "full_sequence_backpropagation": true
+      },
+      "prediction": {
+        "auxiliary_RNN_used": false,
+        "reference_internal_state_used": false,
+        "evaluation_stress_labels_used": false,
+        "state_update": "implicit_Euler_and_Newton_Raphson_from_learned_potentials",
+        "evaluate_all_final_models": true,
+        "figures": "Fig.14 ideal multi-history correlation; complete stress histories and paired old/new errors on all held-out paths; noisy plots labeled project extension",
+        "metrics": [
+          "per_path_per_component_MAE_MPa",
+          "per_path_per_component_RMSE_MPa",
+          "hydrostatic_RMSE_MPa",
+          "deviatoric_component_RMSE_MPa",
+          "same_fixed_denominator_normalized_error_if_reported",
+          "training_support_inside_outside_error",
+          "all_initialization_and_path_distributions",
+          "actual_integration_failures"
+        ],
+        "record_actual_solver_settings": true,
+        "normalization_for_comparison": "Use raw MPa as the primary cross-model metric. Historical model-specific training half-range NRMSE is not directly comparable to the new model's NRMSE. Any added normalized metric must use one explicitly recorded common scale for all model groups."
+      },
+      "numerics": {
+        "absolute_tolerance_MPa": 1E-08,
+        "max_iterations": 60,
+        "max_backtracks": 20,
+        "armijo": 0.0001,
+        "integration": "implicit Euler, Newton-Raphson with residual-merit backtracking; no time subdivision or alternate solver",
+        "strain_vector_order": [
+          "11",
+          "22",
+          "33",
+          "12",
+          "13",
+          "23"
+        ],
+        "shear_convention": "tensor components; tensor gradients divide shear derivatives by 2",
+        "training_dtype": "float32",
+        "reference_and_prediction_dtype": "float64"
+      },
+      "implementation_choices": {
+        "positive_weights": "softplus of unconstrained parameters; initialized with abs(Glorot uniform)+0.01 then inverse softplus",
+        "other_weights": "NumPy default_rng(seed) Glorot uniform; biases zero; same initialization for paired ideal/noisy runs",
+        "output_activations": "linear FICNN and PICNN output; softplus hidden convex layers, tanh hidden nonconvex layer",
+        "normalization": "A.3 midpoint/half-range for each invariant from training strain and finite-difference strain rate; scalar component-wide strain/stress ranges for RNN; q,p estimated from strain only; potential scale s_e*s_sigma, dissipation scale s_edot*s_sigma (MPa/s). Potential offsets cancel in zero-state corrections.",
+        "initial_state": "q0=0 and LSTM h0=c0=0 separately for each complete history; no auxiliary pretraining",
+        "loss_components": "equal mean over 100 independent histories, 100 increments each, and six independent physical tensor components",
+        "path_rng_order": "sample clock then spline knots; reject only offending component increments"
+      },
+      "execution": {
+        "host": "fy-5080",
+        "environment": "work/envs/tm02",
+        "device": "NVIDIA GeForce RTX 5080",
+        "checkpoint_every_iterations": 250,
+        "model_optimizer_updates": 1000000,
+        "additional_hyperparameter_searches": 0,
+        "initialization_batch_size": 50,
+        "path_microbatch_size": 10,
+        "grouping_note": "Group sizes may change to fit the existing GPU, but complete histories, full-dataset averaged gradients, one Adam step per dataset pass and the total scientific budget must not change.",
+        "new_training_runs": 50,
+        "new_heldout_model_path_predictions": 2000,
+        "new_known_hard_path_predictions": 50,
+        "new_revisit_model_histories": 24,
+        "no_automatic_additional_training": true
+      },
+      "outputs": {
+        "compact_root": "results/terrain_memory/reproduction/material",
+        "large_root": "outputs/terrain_memory/reproduction/material",
+        "create_only_after_actual_run": true,
+        "release_contents": "all 50 final weights, optimizer states, 20,000-step loss curves per run, actual training/evaluation arrays, all predictions, revisit arrays, source/config versions and compact figures"
+      },
+      "run_id": "tm02-multihistory-20261023",
+      "comparison": {
+        "frozen_run": "tm02-rnn-20261023",
+        "frozen_results_commit": "7bc5ed2d66982a98d3b24501564c4ffba90c8ee5",
+        "training_source_commit": "4244becb0302dd59c9b7a380a0edd7482ca90bec",
+        "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-r2-evidence-20261023",
+        "archive_filename": "tm02-rnn-20261023-evidence.tar.gz",
+        "archive_sha256": "13e59757551f6f7bc42d21481d9222e7e048965deb8f5c1144ef3f4b936c6dac",
+        "reuse_all_frozen_weights": true,
+        "preserve_frozen_normalization": true,
+        "old_models_on_new_paths": 1000,
+        "new_models_on_new_paths": 1000,
+        "independent_heldout_histories": 20,
+        "known_hard_path": {
+          "original_strain_seed": 24014271,
+          "reuse_original_arrays": true,
+          "new_models": 50,
+          "role": "known diagnostic path, already inspected; not a new blind test"
+        },
+        "prohibit_test_seed_selection": true,
+        "statistics": "Report the path and initialization axes separately; do not count 2000 predictions or within-path time points as independent physical histories.",
+        "attribution": "Any gain first supports expanded training-history coverage under the original method, not a new algorithm."
+      },
+      "revisit_comparison": {
+        "protocol": "experiments/tm02/r2-revisit.json",
+        "reuse_frozen_reference_histories": 12,
+        "reuse_frozen_old_model_histories": 24,
+        "new_selected_model_histories": 24,
+        "selected_models": "one ideal and one noisy model selected by minimum final training loss; 12 complete histories each",
+        "same_protocol_and_tie_tolerance": true,
+        "extra_training": 0,
+        "outcome": "positive magnitude of peak compressive strain during the common later probe; retain original integral and full-history outputs",
+        "metrics": [
+          "peak_and_integrated_compression_error",
+          "recovery_and_probe_full_history_error",
+          "candidate_center_bias",
+          "predicted_and_reference_early_minus_late_difference",
+          "response_ratio_only_when_reference_gap_exceeds_original_tolerance",
+          "rank_agreement_and_ties",
+          "always_early_constant_baseline",
+          "oracle_regret_with_explicit_uniform_tie_choice_expected_and_worst_case"
+        ],
+        "scope": "All six original reference pairs favor early. Rank agreement alone cannot demonstrate history-dependent decision value or robot control benefit."
+      }
+    },
+    "config_sha256": "8b999b2aac37aaf202441b4d0a8ac4cb8ab2645d147e91bb9fc0949413143ced",
+    "source_commit": "e9555c857bebc278abffa0ecfe6e1cdf910aa775",
+    "source_sha256": {
+      "scripts/run_tm02_r2.py": "30f318aae60243e069e8563bc66b7084115b2ada1f370b947f72fc32af31df01",
+      "src/tm02/__init__.py": "a2b8ef472a11d0c86b5ced29b83989a30571d77c9197f7beefcb986676e9d38c",
+      "src/tm02/evaluate.py": "b0dd0693bf6d5a9874f2666fddcc17421150d8fd5205498fbcd3759e34b7bebc",
+      "src/tm02/figures.py": "6e7dfc0547bfd9f79fd4a795d5e361a17e8edab78b3f3fc1979bffc892d7e362",
+      "src/tm02/material.py": "745e52257c2dcd73d7588a82f74556946e6c51565e41dbee5b2ac41b8dece14c",
+      "src/tm02/multihistory.py": "5bfb1f803720f6ae045a0ddc497a8f2d44ff364e3e8be6c856694e92b1c7be26",
+      "src/tm02/multihistory_evaluate.py": "c6c88bde32e10ea5c8efb991dafffa8cc2ba626aa2c99fa95593ce11279f29d5",
+      "src/tm02/multihistory_figures.py": "a8a956109ebff36fe9279d650151f9d19d28b901aa2ca2c7f74ff251e56703d1",
+      "src/tm02/multihistory_revisit.py": "56706712ecd668711b3991001bbe09bd3d2ed24dbdb5bef8a56e65bfb3d4e259",
+      "src/tm02/reference.py": "3102068a86e4e75c3831a297fb8ba5c7c3df355c5b62e64beec400a0a07179ce"
+    },
+    "host": "fanyuan-B850M-FORCE-WIFI6E",
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "jax": "0.6.2",
+    "devices": [
+      "cuda:0"
+    ],
+    "hardware": "NVIDIA GeForce RTX 5080, 16303 MiB, 580.178.04",
+    "start_utc": "2026-10-23T09:57:14Z",
+    "output": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/outputs/terrain_memory/reproduction/material/tm02-multihistory-20261023"
+  },
+  "frozen_comparison": {
+    "frozen_run": "tm02-rnn-20261023",
+    "frozen_results_commit": "7bc5ed2d66982a98d3b24501564c4ffba90c8ee5",
+    "training_source_commit": "4244becb0302dd59c9b7a380a0edd7482ca90bec",
+    "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-r2-evidence-20261023",
+    "archive_filename": "tm02-rnn-20261023-evidence.tar.gz",
+    "archive_sha256": "13e59757551f6f7bc42d21481d9222e7e048965deb8f5c1144ef3f4b936c6dac",
+    "reuse_all_frozen_weights": true,
+    "preserve_frozen_normalization": true,
+    "old_models_on_new_paths": 1000,
+    "new_models_on_new_paths": 1000,
+    "independent_heldout_histories": 20,
+    "known_hard_path": {
+      "original_strain_seed": 24014271,
+      "reuse_original_arrays": true,
+      "new_models": 50,
+      "role": "known diagnostic path, already inspected; not a new blind test"
+    },
+    "prohibit_test_seed_selection": true,
+    "statistics": "Report the path and initialization axes separately; do not count 2000 predictions or within-path time points as independent physical histories.",
+    "attribution": "Any gain first supports expanded training-history coverage under the original method, not a new algorithm."
+  },
+  "training_runs": 50,
+  "iterations_each": 20000,
+  "total_optimizer_updates": 1000000,
+  "selected": {
+    "ideal": {
+      "condition": "ideal",
+      "seed": 0,
+      "iterations": 20000,
+      "final_training_loss_MPa": 0.05547797679901123,
+      "final_stress_MAE_MPa": 0.016781872138381004,
+      "final_biot_MAE_MPa": 0.03869610279798508,
+      "weights": "final/ideal-seed-00.npz",
+      "potential_weights": "selected/ideal-potentials.npz"
+    },
+    "noisy": {
+      "condition": "noisy",
+      "seed": 10,
+      "iterations": 20000,
+      "final_training_loss_MPa": 1.2907623052597046,
+      "final_stress_MAE_MPa": 1.2554610967636108,
+      "final_biot_MAE_MPa": 0.035301245748996735,
+      "weights": "final/noisy-seed-10.npz",
+      "potential_weights": "selected/noisy-potentials.npz"
+    }
+  },
+  "frozen_selected": {
+    "ideal": {
+      "condition": "ideal",
+      "seed": 13,
+      "iterations": 20000,
+      "final_training_loss_MPa": 0.0617525614798069,
+      "final_stress_MAE_MPa": 0.036570701748132706,
+      "final_biot_MAE_MPa": 0.025181859731674194,
+      "weights": "final/ideal-seed-13.npz",
+      "potential_weights": "selected/ideal-potentials.npz"
+    },
+    "noisy": {
+      "condition": "noisy",
+      "seed": 0,
+      "iterations": 20000,
+      "final_training_loss_MPa": 1.2511876821517944,
+      "final_stress_MAE_MPa": 1.2477824687957764,
+      "final_biot_MAE_MPa": 0.0034051991533488035,
+      "weights": "final/noisy-seed-00.npz",
+      "potential_weights": "selected/noisy-potentials.npz"
+    }
+  },
+  "selection_rule": "minimum_final_training_loss_within_each_condition",
+  "independent_heldout_histories": 20,
+  "increments_per_heldout_history": 250,
+  "new_heldout_model_path_predictions": 2000,
+  "successful_heldout_predictions": 2000,
+  "new_known_diagnostic_predictions": 50,
+  "successful_new_known_predictions": 50,
+  "old_known_predictions_reused": 50,
+  "selected_paired_summary": {
+    "ideal": {
+      "physical_paths": 20,
+      "complete_pairs": 20,
+      "failed_path_ids": [],
+      "old_selected_seed": 13,
+      "new_selected_seed": 0,
+      "MAE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.23448848884755671,
+          "p90": 0.5030378787155163,
+          "worst": 0.6560477032007028
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.03496844665244405,
+          "p90": 0.041926253909205055,
+          "worst": 0.04573988266389309
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.19721772757721856,
+          "p10": 0.0815365520209544,
+          "p90": 0.46576280358477895,
+          "smallest": 0.0562745023768583,
+          "largest": 0.6180793499479069
+        },
+        "improved_paths": 20,
+        "worsened_paths": 0,
+        "equal_paths": 0,
+        "new_worst_path_id": 9
+      },
+      "RMSE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.37846862550882654,
+          "p90": 0.8684136231779502,
+          "worst": 1.118006771120515
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.050402010069867983,
+          "p90": 0.06308067639068768,
+          "worst": 0.0934822105228329
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.3296647584727471,
+          "p10": 0.1235339875978166,
+          "p90": 0.816699781343001,
+          "smallest": 0.09002519178342228,
+          "largest": 1.056556574211438
+        },
+        "improved_paths": 20,
+        "worsened_paths": 0,
+        "equal_paths": 0,
+        "new_worst_path_id": 7
+      },
+      "hydrostatic_MAE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.3146727419615077,
+          "p90": 0.8164889499633835,
+          "worst": 1.1331987650507662
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.04056417125883061,
+          "p90": 0.05184637600469223,
+          "worst": 0.05719442424318623
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.26663292610874395,
+          "p10": 0.11448698339273701,
+          "p90": 0.7769155116290909,
+          "smallest": 0.07900237758928418,
+          "largest": 1.0814428294462404
+        },
+        "improved_paths": 20,
+        "worsened_paths": 0,
+        "equal_paths": 0,
+        "new_worst_path_id": 7
+      },
+      "hydrostatic_RMSE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.4187137651036079,
+          "p90": 1.1945302195410707,
+          "worst": 1.5556357965466798
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.05117166171041217,
+          "p90": 0.07101315268156826,
+          "worst": 0.12313293272782808
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.35978048252490247,
+          "p10": 0.15554787114599675,
+          "p90": 1.1423766658679644,
+          "smallest": 0.12394910763116582,
+          "largest": 1.4783526057935084
+        },
+        "improved_paths": 20,
+        "worsened_paths": 0,
+        "equal_paths": 0,
+        "new_worst_path_id": 7
+      },
+      "deviatoric_component_MAE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.11802709961323096,
+          "p90": 0.16596762552631664,
+          "worst": 0.24847352378002824
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.02146958099515786,
+          "p90": 0.025991222867615054,
+          "worst": 0.031454963386541475
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.09710165013996358,
+          "p10": 0.04623672488848822,
+          "p90": 0.14626607822662763,
+          "smallest": 0.024473151505611256,
+          "largest": 0.21701856039348677
+        },
+        "improved_paths": 20,
+        "worsened_paths": 0,
+        "equal_paths": 0,
+        "new_worst_path_id": 9
+      },
+      "deviatoric_component_RMSE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.16237502511294782,
+          "p90": 0.22727779181528676,
+          "worst": 0.32786976632302617
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.031251312191669135,
+          "p90": 0.040217341004852865,
+          "worst": 0.05633691374086877
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.13055219739788576,
+          "p10": 0.07030233791633336,
+          "p90": 0.19565526690407797,
+          "smallest": 0.030543826895865163,
+          "largest": 0.27384041785006297
+        },
+        "improved_paths": 20,
+        "worsened_paths": 0,
+        "equal_paths": 0,
+        "new_worst_path_id": 9
+      }
+    },
+    "noisy": {
+      "physical_paths": 20,
+      "complete_pairs": 20,
+      "failed_path_ids": [],
+      "old_selected_seed": 0,
+      "new_selected_seed": 10,
+      "MAE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.680201843243457,
+          "p90": 1.0878998362536643,
+          "worst": 1.2184879457556705
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.3654467334437419,
+          "p90": 0.43045202375088754,
+          "worst": 0.4880257955569092
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.31587876747998267,
+          "p10": 0.10073969162826463,
+          "p90": 0.7061144180933207,
+          "smallest": -0.0064965922914572705,
+          "largest": 0.8753229443670945
+        },
+        "improved_paths": 19,
+        "worsened_paths": 1,
+        "equal_paths": 0,
+        "new_worst_path_id": 9
+      },
+      "RMSE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.9131901033727192,
+          "p90": 1.494223773609436,
+          "worst": 1.7973528879654106
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.5264377219402795,
+          "p90": 0.6591026549764417,
+          "worst": 0.828085395662208
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.40753138365994424,
+          "p10": 0.14815557609552882,
+          "p90": 1.0256958852479205,
+          "smallest": -0.006374810882999071,
+          "largest": 1.2678105115701024
+        },
+        "improved_paths": 19,
+        "worsened_paths": 1,
+        "equal_paths": 0,
+        "new_worst_path_id": 9
+      },
+      "hydrostatic_MAE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.6330440162000557,
+          "p90": 1.4229499848099822,
+          "worst": 1.77578287609688
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.405582210056856,
+          "p90": 0.4747687723622217,
+          "worst": 0.5854267080392922
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.22636775765644354,
+          "p10": 0.08304923722656007,
+          "p90": 1.0538419593837292,
+          "smallest": -0.07226531036545325,
+          "largest": 1.3549171078346955
+        },
+        "improved_paths": 19,
+        "worsened_paths": 1,
+        "equal_paths": 0,
+        "new_worst_path_id": 9
+      },
+      "hydrostatic_RMSE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.8181110931625528,
+          "p90": 1.8662204353862426,
+          "worst": 2.383367790030584
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.5160856794336341,
+          "p90": 0.670531905533303,
+          "worst": 0.9798017209344332
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.3122778077179236,
+          "p10": 0.016580193458133455,
+          "p90": 1.4096131857603094,
+          "smallest": -0.09637288560410001,
+          "largest": 1.761532153298766
+        },
+        "improved_paths": 18,
+        "worsened_paths": 2,
+        "equal_paths": 0,
+        "new_worst_path_id": 7
+      },
+      "deviatoric_component_MAE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.45323891012117956,
+          "p90": 0.6035734481439797,
+          "worst": 0.8446961234268939
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.24176316513918628,
+          "p90": 0.30327106881115073,
+          "worst": 0.3066698353216357
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.23996737666722745,
+          "p10": 0.06757555590006817,
+          "p90": 0.3602400168117398,
+          "smallest": 0.020496426945147028,
+          "largest": 0.5556681052149012
+        },
+        "improved_paths": 20,
+        "worsened_paths": 0,
+        "equal_paths": 0,
+        "new_worst_path_id": 9
+      },
+      "deviatoric_component_RMSE_MPa": {
+        "old_completed_path_distribution": {
+          "count": 20,
+          "median": 0.6174112822806433,
+          "p90": 0.8200939932474987,
+          "worst": 1.122403959561519
+        },
+        "new_completed_path_distribution": {
+          "count": 20,
+          "median": 0.33098176242185284,
+          "p90": 0.47499334466319043,
+          "worst": 0.5117441468839175
+        },
+        "paired_improvement_distribution": {
+          "count": 20,
+          "median": 0.284747430074325,
+          "p10": 0.09334895309815698,
+          "p90": 0.41383645909715805,
+          "smallest": 0.050515616351276604,
+          "largest": 0.6508833596783881
+        },
+        "improved_paths": 20,
+        "worsened_paths": 0,
+        "equal_paths": 0,
+        "new_worst_path_id": 8
+      }
+    }
+  },
+  "initialization_summary": {
+    "old_ideal": {
+      "initializations": 25,
+      "all_paths_complete": 25,
+      "failed_initialization_seeds": [],
+      "mean_path_error_distribution": {
+        "MAE_MPa": {
+          "count": 25,
+          "median": 0.3357145476245905,
+          "p90": 0.4364936244161699,
+          "worst": 0.5175487766390805
+        },
+        "RMSE_MPa": {
+          "count": 25,
+          "median": 0.5373208822352777,
+          "p90": 0.8379763143675328,
+          "worst": 1.0379293734164068
+        },
+        "hydrostatic_MAE_MPa": {
+          "count": 25,
+          "median": 0.4489385895310005,
+          "p90": 0.6935015707977418,
+          "worst": 0.814163953217613
+        },
+        "hydrostatic_RMSE_MPa": {
+          "count": 25,
+          "median": 0.6656435319191188,
+          "p90": 1.109086060104663,
+          "worst": 1.3932558631196192
+        },
+        "deviatoric_component_MAE_MPa": {
+          "count": 25,
+          "median": 0.15856458982236735,
+          "p90": 0.19710279530035676,
+          "worst": 0.21360764525540002
+        },
+        "deviatoric_component_RMSE_MPa": {
+          "count": 25,
+          "median": 0.2351326745819744,
+          "p90": 0.2823515952583324,
+          "worst": 0.29825126459973056
+        }
+      }
+    },
+    "old_noisy": {
+      "initializations": 25,
+      "all_paths_complete": 25,
+      "failed_initialization_seeds": [],
+      "mean_path_error_distribution": {
+        "MAE_MPa": {
+          "count": 25,
+          "median": 0.8149140227058556,
+          "p90": 0.879634547745264,
+          "worst": 0.9310290381667068
+        },
+        "RMSE_MPa": {
+          "count": 25,
+          "median": 1.1064142545173432,
+          "p90": 1.2403503466251524,
+          "worst": 1.3394815980859909
+        },
+        "hydrostatic_MAE_MPa": {
+          "count": 25,
+          "median": 0.8311162155456657,
+          "p90": 1.0224835770805034,
+          "worst": 1.1820721933608052
+        },
+        "hydrostatic_RMSE_MPa": {
+          "count": 25,
+          "median": 1.062508622578648,
+          "p90": 1.3540681002094006,
+          "worst": 1.5790033336337248
+        },
+        "deviatoric_component_MAE_MPa": {
+          "count": 25,
+          "median": 0.5296651293710812,
+          "p90": 0.6031482449028962,
+          "worst": 0.6469400218799002
+        },
+        "deviatoric_component_RMSE_MPa": {
+          "count": 25,
+          "median": 0.7346144852570865,
+          "p90": 0.8388708595236242,
+          "worst": 0.9077309668087015
+        }
+      }
+    },
+    "new_ideal": {
+      "initializations": 25,
+      "all_paths_complete": 25,
+      "failed_initialization_seeds": [],
+      "mean_path_error_distribution": {
+        "MAE_MPa": {
+          "count": 25,
+          "median": 0.050670673108479905,
+          "p90": 0.06224513838383979,
+          "worst": 0.07016658744396104
+        },
+        "RMSE_MPa": {
+          "count": 25,
+          "median": 0.07151741364157828,
+          "p90": 0.08888635538579295,
+          "worst": 0.11354721627677744
+        },
+        "hydrostatic_MAE_MPa": {
+          "count": 25,
+          "median": 0.05679227730259071,
+          "p90": 0.0723738462604763,
+          "worst": 0.09572947134076869
+        },
+        "hydrostatic_RMSE_MPa": {
+          "count": 25,
+          "median": 0.07526178377464156,
+          "p90": 0.09658238231119287,
+          "worst": 0.14002071466672927
+        },
+        "deviatoric_component_MAE_MPa": {
+          "count": 25,
+          "median": 0.03262997666948592,
+          "p90": 0.037391813476029545,
+          "worst": 0.04414810608403746
+        },
+        "deviatoric_component_RMSE_MPa": {
+          "count": 25,
+          "median": 0.04724919086695931,
+          "p90": 0.054498994111431096,
+          "worst": 0.06523552563861473
+        }
+      }
+    },
+    "new_noisy": {
+      "initializations": 25,
+      "all_paths_complete": 25,
+      "failed_initialization_seeds": [],
+      "mean_path_error_distribution": {
+        "MAE_MPa": {
+          "count": 25,
+          "median": 0.37542274491551264,
+          "p90": 0.38537581406452504,
+          "worst": 0.387988138996213
+        },
+        "RMSE_MPa": {
+          "count": 25,
+          "median": 0.5501747052493118,
+          "p90": 0.5628554101745046,
+          "worst": 0.5680475363097828
+        },
+        "hydrostatic_MAE_MPa": {
+          "count": 25,
+          "median": 0.4183865756840962,
+          "p90": 0.42647981910262406,
+          "worst": 0.427894277693042
+        },
+        "hydrostatic_RMSE_MPa": {
+          "count": 25,
+          "median": 0.5604116969485169,
+          "p90": 0.5715236458755376,
+          "worst": 0.5758129388993319
+        },
+        "deviatoric_component_MAE_MPa": {
+          "count": 25,
+          "median": 0.25143865352454803,
+          "p90": 0.25829621896135313,
+          "worst": 0.2611109066903989
+        },
+        "deviatoric_component_RMSE_MPa": {
+          "count": 25,
+          "median": 0.3731063951243398,
+          "p90": 0.3825081163854688,
+          "worst": 0.3859944123032838
+        }
+      }
+    }
+  },
+  "known_diagnostic_selected_comparison": [
+    {
+      "condition": "ideal",
+      "path_id": 0,
+      "path_seed": 24014271,
+      "old_seed": 13,
+      "new_seed": 0,
+      "old_complete": true,
+      "new_complete": true,
+      "paired_complete": true,
+      "old_MAE_MPa": 1.4942040863339359,
+      "new_MAE_MPa": 0.08968529681676919,
+      "improvement_MAE_MPa": 1.4045187895171667,
+      "old_RMSE_MPa": 2.5127290586244873,
+      "new_RMSE_MPa": 0.21272866697216536,
+      "improvement_RMSE_MPa": 2.300000391652322,
+      "old_hydrostatic_MAE_MPa": 2.799630727195835,
+      "new_hydrostatic_MAE_MPa": 0.15423695060251966,
+      "improvement_hydrostatic_MAE_MPa": 2.6453937765933153,
+      "old_hydrostatic_RMSE_MPa": 3.5407577209145997,
+      "new_hydrostatic_RMSE_MPa": 0.2979770684925531,
+      "improvement_hydrostatic_RMSE_MPa": 3.242780652422047,
+      "old_deviatoric_component_MAE_MPa": 0.15406125478937238,
+      "new_deviatoric_component_MAE_MPa": 0.01979679484200592,
+      "improvement_deviatoric_component_MAE_MPa": 0.13426445994736647,
+      "old_deviatoric_component_RMSE_MPa": 0.2128959909151103,
+      "new_deviatoric_component_RMSE_MPa": 0.029297083097922644,
+      "improvement_deviatoric_component_RMSE_MPa": 0.18359890781718766,
+      "old_MAE_11_MPa": 2.8505677077232745,
+      "new_MAE_11_MPa": 0.14761996941015934,
+      "improvement_MAE_11_MPa": 2.702947738313115,
+      "old_RMSE_11_MPa": 3.5507933875522295,
+      "new_RMSE_11_MPa": 0.2930231756526322,
+      "improvement_RMSE_11_MPa": 3.2577702118995973,
+      "old_MAE_22_MPa": 2.71716962709316,
+      "new_MAE_22_MPa": 0.15770811843422805,
+      "improvement_MAE_22_MPa": 2.5594615086589316,
+      "old_RMSE_22_MPa": 3.476187561728516,
+      "new_RMSE_22_MPa": 0.2943151207736741,
+      "improvement_RMSE_22_MPa": 3.181872440954842,
+      "old_MAE_33_MPa": 2.8311676480827193,
+      "new_MAE_33_MPa": 0.16501629772180643,
+      "improvement_MAE_33_MPa": 2.666151350360913,
+      "old_RMSE_33_MPa": 3.605143718519251,
+      "new_RMSE_33_MPa": 0.31018543087716793,
+      "improvement_RMSE_33_MPa": 3.2949582876420833,
+      "old_MAE_12_MPa": 0.2042000014766503,
+      "new_MAE_12_MPa": 0.022982147430566927,
+      "improvement_MAE_12_MPa": 0.18121785404608337,
+      "old_RMSE_12_MPa": 0.28266546682053173,
+      "new_RMSE_12_MPa": 0.03289814915810651,
+      "improvement_RMSE_12_MPa": 0.24976731766242521,
+      "old_MAE_13_MPa": 0.14782975486338368,
+      "new_MAE_13_MPa": 0.02155858894580488,
+      "improvement_MAE_13_MPa": 0.1262711659175788,
+      "old_RMSE_13_MPa": 0.20807724399397812,
+      "new_RMSE_13_MPa": 0.028830787935931215,
+      "improvement_RMSE_13_MPa": 0.1792464560580469,
+      "old_MAE_23_MPa": 0.2142897787644262,
+      "new_MAE_23_MPa": 0.023226658958049436,
+      "improvement_MAE_23_MPa": 0.19106311980637677,
+      "old_RMSE_23_MPa": 0.2656560749444929,
+      "new_RMSE_23_MPa": 0.030140315948259055,
+      "improvement_RMSE_23_MPa": 0.23551575899623384
+    },
+    {
+      "condition": "noisy",
+      "path_id": 0,
+      "path_seed": 24014271,
+      "old_seed": 0,
+      "new_seed": 10,
+      "old_complete": true,
+      "new_complete": true,
+      "paired_complete": true,
+      "old_MAE_MPa": 2.3165855074369337,
+      "new_MAE_MPa": 0.4766751999546265,
+      "improvement_MAE_MPa": 1.8399103074823073,
+      "old_RMSE_MPa": 3.5363251945675094,
+      "new_RMSE_MPa": 0.7464600245681456,
+      "improvement_RMSE_MPa": 2.7898651699993637,
+      "old_hydrostatic_MAE_MPa": 4.056736219253576,
+      "new_hydrostatic_MAE_MPa": 0.6789284722956389,
+      "improvement_hydrostatic_MAE_MPa": 3.377807746957937,
+      "old_hydrostatic_RMSE_MPa": 4.917236938621473,
+      "new_hydrostatic_RMSE_MPa": 0.964517294854773,
+      "improvement_hydrostatic_RMSE_MPa": 3.9527196437667,
+      "old_deviatoric_component_MAE_MPa": 0.4720493604064226,
+      "new_deviatoric_component_MAE_MPa": 0.21836254835976418,
+      "improvement_deviatoric_component_MAE_MPa": 0.25368681204665844,
+      "old_deviatoric_component_RMSE_MPa": 0.6449700198157978,
+      "new_deviatoric_component_RMSE_MPa": 0.30340692517029344,
+      "improvement_deviatoric_component_RMSE_MPa": 0.3415630946455044,
+      "old_MAE_11_MPa": 4.2119505840390215,
+      "new_MAE_11_MPa": 0.6175958648604692,
+      "improvement_MAE_11_MPa": 3.5943547191785523,
+      "old_RMSE_11_MPa": 4.952166079487899,
+      "new_RMSE_11_MPa": 0.921298076078684,
+      "improvement_RMSE_11_MPa": 4.030868003409215,
+      "old_MAE_22_MPa": 3.7770593274057354,
+      "new_MAE_22_MPa": 0.7387263008569142,
+      "improvement_MAE_22_MPa": 3.038333026548821,
+      "old_RMSE_22_MPa": 4.696922629238033,
+      "new_RMSE_22_MPa": 1.0157619696299711,
+      "improvement_RMSE_22_MPa": 3.6811606596080617,
+      "old_MAE_33_MPa": 4.182060742809579,
+      "new_MAE_33_MPa": 0.7288377225153642,
+      "improvement_MAE_33_MPa": 3.4532230202942147,
+      "old_RMSE_33_MPa": 5.166987454653068,
+      "new_RMSE_33_MPa": 1.0537163311385496,
+      "improvement_RMSE_33_MPa": 4.113271123514519,
+      "old_MAE_12_MPa": 0.55779480640479,
+      "new_MAE_12_MPa": 0.2534515445612745,
+      "improvement_MAE_12_MPa": 0.30434326184351546,
+      "old_RMSE_12_MPa": 0.7842603201802645,
+      "new_RMSE_12_MPa": 0.32988319139746947,
+      "improvement_RMSE_12_MPa": 0.454377128782795,
+      "old_MAE_13_MPa": 0.5062324907160937,
+      "new_MAE_13_MPa": 0.2822004538974678,
+      "improvement_MAE_13_MPa": 0.22403203681862588,
+      "old_RMSE_13_MPa": 0.6602514498424495,
+      "new_RMSE_13_MPa": 0.3680761589567859,
+      "improvement_RMSE_13_MPa": 0.29217529088566363,
+      "old_MAE_23_MPa": 0.6644150932463833,
+      "new_MAE_23_MPa": 0.2392393130362693,
+      "improvement_MAE_23_MPa": 0.42517578021011393,
+      "old_RMSE_23_MPa": 0.8365337071201787,
+      "new_RMSE_23_MPa": 0.3286819138160333,
+      "improvement_RMSE_23_MPa": 0.5078517933041454
+    }
+  ],
+  "failures": [],
+  "error_definition": "MPa; equal weight for six independent physical tensor components; time zero excluded. Hydrostatic error is mean of three normal stress errors. Deviatoric error subtracts that mean from normal components; shear unchanged.",
+  "normalization_comparison": "No cross-model NRMSE comparison; every model uses its original saved normalization.",
+  "support_definition": "Marginal strain and within-history strain-rate invariant ranges, with conjunction recorded as an observable invariant box; this is not sufficient internal-state coverage.",
+  "statistical_units": "20 independent held-out loading histories; 25 initializations per condition/cohort. Predictions and time increments are not independent physical histories.",
+  "deployment_inputs": [
+    "strain",
+    "time increments",
+    "own previous internal state"
+  ],
+  "auxiliary_RNN_in_deployment": false,
+  "reference_internal_variables_in_deployment": false,
+  "evaluation_stress_labels_in_deployment": false,
+  "numerics": {
+    "absolute_tolerance_MPa": 1E-08,
+    "max_iterations": 60,
+    "max_backtracks": 20,
+    "armijo": 0.0001,
+    "integration": "implicit Euler, Newton-Raphson with residual-merit backtracking; no time subdivision or alternate solver",
+    "strain_vector_order": [
+      "11",
+      "22",
+      "33",
+      "12",
+      "13",
+      "23"
+    ],
+    "shear_convention": "tensor components; tensor gradients divide shear derivatives by 2",
+    "training_dtype": "float32",
+    "reference_and_prediction_dtype": "float64"
+  },
+  "evaluation_elapsed_s": 132.89216731197666,
+  "training_elapsed_s": 1628.4447664409818,
+  "raw_artifacts": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/outputs/terrain_memory/reproduction/material/tm02-multihistory-20261023",
+  "prediction_arrays": "predictions/*.npz",
+  "selected_full_responses": [
+    "selected-heldout-full-responses.npz",
+    "selected-known-full-responses.npz"
+  ],
+  "scope": "Fixed-budget material evidence only; no robot-control benefit claim. Known hard history is a previously inspected diagnostic, not a new blind test.",
+  "artifact_archive": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm02-multihistory-evidence-20261023/tm02-multihistory-20261023-evidence.tar.gz",
+  "artifact_checksum": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm02-multihistory-evidence-20261023/tm02-multihistory-20261023-evidence.sha256",
+  "artifact_package": {
+    "command": "scripts/package_tm02_multihistory.py --release-tag tm02-multihistory-evidence-20261023 --executed-command JAX_PLATFORMS=cpu work/envs/tm02/bin/python scripts/run_tm02_r2.py --config experiments/tm02/r2-multihistory.json --run tm02-multihistory-20261023 --phase evaluate-frozen --executed-command JAX_PLATFORMS=cpu work/envs/tm02/bin/python scripts/run_tm02_r2.py --config experiments/tm02/r2-multihistory.json --run tm02-multihistory-20261023 --phase evaluate --executed-command PYTHONPATH=src JAX_PLATFORMS=cpu work/envs/tm02/bin/python work/terrain-memory/rerender-multihistory-paired.py --execution-log work/terrain-memory/rerender-multihistory-paired.py",
+    "created_utc": "2026-10-23T10:44:07Z",
+    "package_source_commit": "242e23d3c50607caf9ed2a40918229071cecd1ff",
+    "completion": {
+      "training_records": 50,
+      "final_weights": 50,
+      "final_optimizer_states": 50,
+      "training_curves": 50,
+      "model_update_counts": {
+        "20000": 50
+      },
+      "loss_curve_lengths": {
+        "20000": 50
+      },
+      "actual_model_optimizer_updates": 1000000,
+      "prediction_records": {
+        "new_heldout": 1000,
+        "new_known": 50,
+        "old_heldout": 1000
+      },
+      "prediction_arrays": 2050,
+      "failed_predictions": 0,
+      "new_revisit_records": 24,
+      "new_revisit_arrays": 24,
+      "failed_new_revisit_histories": 0,
+      "training_histories": 100,
+      "increments_per_training_history": 100,
+      "physical_heldout_histories": 20,
+      "increments_per_heldout_history": 250,
+      "reference_training_histories": 100,
+      "reference_heldout_histories": 20,
+      "failed_rollouts_retained": true
+    },
+    "actual_commands": [
+      "scripts/run_tm02_r2.py --config experiments/tm02/r2-multihistory.json --run tm02-multihistory-20261023 --phase train",
+      "scripts/run_tm02_r2.py --config experiments/tm02/r2-multihistory.json --run tm02-multihistory-20261023 --phase revisit",
+      "JAX_PLATFORMS=cpu work/envs/tm02/bin/python scripts/run_tm02_r2.py --config experiments/tm02/r2-multihistory.json --run tm02-multihistory-20261023 --phase evaluate-frozen",
+      "JAX_PLATFORMS=cpu work/envs/tm02/bin/python scripts/run_tm02_r2.py --config experiments/tm02/r2-multihistory.json --run tm02-multihistory-20261023 --phase evaluate",
+      "PYTHONPATH=src JAX_PLATFORMS=cpu work/envs/tm02/bin/python work/terrain-memory/rerender-multihistory-paired.py"
+    ],
+    "execution_provenance": {
+      "training": {
+        "command": "scripts/run_tm02_r2.py --config experiments/tm02/r2-multihistory.json --run tm02-multihistory-20261023 --phase train",
+        "config": {
+          "purpose": "R2 Fig.14 multi-history execution contract. Extend the existing single-history runner before execution; this configuration is not a completed result.",
+          "source": {
+            "paper_id": "TM02",
+            "version": "2401.14270v1",
+            "url": "https://arxiv.org/html/2401.14270v1",
+            "scope": "TM02 v1 Sections 4.3 and 5.2.2, Fig.14: ideal 100 histories x 100 increments; noisy is a separately labeled project extension. Other training methods are outside this round."
+          },
+          "target_entrypoint": "scripts/run_tm02_r2.py",
+          "implementation": "Extend the existing JAX implementation with independent complete sequences, dataset-wide normalization, full-dataset gradient accumulation and paired old/new evaluation. Do not rewrite the material model.",
+          "reference_material": {
+            "equations": [
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "table": 1,
+            "strain_space": "3D symmetric small strain",
+            "independent_components": 6,
+            "parameters": {
+              "K_eq_MPa": 500,
+              "G_eq_MPa": 300,
+              "K_ov_MPa": 1000,
+              "G_ov_MPa": 700,
+              "eta_K_table_value": 400,
+              "eta_D_table_value": 200,
+              "a_MPa": 10,
+              "b": 2,
+              "o": 0.1
+            },
+            "constitutive_interpretation": "Eq.29 is implemented as V=[(1-o)*exp(-(norm_F(sigma_ov)/a)^b)+o]*V0: dimensionless o multiplies the full fourth-order V0 tensor. Table 1 eta_K=400 and eta_D=200 are interpreted in MPa*s, because Eq.27 differentiated with respect to strain rate must yield MPa. The printed tensor-plus-scalar and MPa/s are ambiguous; this is the project's dimensional interpretation, not verified author code.",
+            "viscosity": "state_dependent_as_reference; do_not_replace_with_constant_tau"
+          },
+          "data": {
+            "source_section": "5.1.2",
+            "initial_time_s": 0,
+            "initial_strain": 0,
+            "spline_knot_dt_s": [
+              0.2,
+              1
+            ],
+            "spline_knot_strain_increment_normal_std": 0.005,
+            "knot_strain_absolute_bound": 0.02,
+            "bound_rule": "resample increment when the proposed knot exceeds the paper's bound",
+            "interpolation": "cubic_spline",
+            "spline_boundary_condition": "natural",
+            "train": {
+              "paths_per_condition": 100,
+              "increments": 100,
+              "dt_uniform_s": [
+                0.03,
+                0.07
+              ],
+              "reuse_strain_path_across_conditions": true,
+              "strain_seeds": [
+                24015000,
+                24015001,
+                24015002,
+                24015003,
+                24015004,
+                24015005,
+                24015006,
+                24015007,
+                24015008,
+                24015009,
+                24015010,
+                24015011,
+                24015012,
+                24015013,
+                24015014,
+                24015015,
+                24015016,
+                24015017,
+                24015018,
+                24015019,
+                24015020,
+                24015021,
+                24015022,
+                24015023,
+                24015024,
+                24015025,
+                24015026,
+                24015027,
+                24015028,
+                24015029,
+                24015030,
+                24015031,
+                24015032,
+                24015033,
+                24015034,
+                24015035,
+                24015036,
+                24015037,
+                24015038,
+                24015039,
+                24015040,
+                24015041,
+                24015042,
+                24015043,
+                24015044,
+                24015045,
+                24015046,
+                24015047,
+                24015048,
+                24015049,
+                24015050,
+                24015051,
+                24015052,
+                24015053,
+                24015054,
+                24015055,
+                24015056,
+                24015057,
+                24015058,
+                24015059,
+                24015060,
+                24015061,
+                24015062,
+                24015063,
+                24015064,
+                24015065,
+                24015066,
+                24015067,
+                24015068,
+                24015069,
+                24015070,
+                24015071,
+                24015072,
+                24015073,
+                24015074,
+                24015075,
+                24015076,
+                24015077,
+                24015078,
+                24015079,
+                24015080,
+                24015081,
+                24015082,
+                24015083,
+                24015084,
+                24015085,
+                24015086,
+                24015087,
+                24015088,
+                24015089,
+                24015090,
+                24015091,
+                24015092,
+                24015093,
+                24015094,
+                24015095,
+                24015096,
+                24015097,
+                24015098,
+                24015099
+              ],
+              "initial_state": "q0=h0=c0=0 for each independently prepared history; never reset inside a history"
+            },
+            "stress_noise": {
+              "ideal_std_MPa": 0,
+              "noisy_std_MPa": 1.5,
+              "mean_MPa": 0,
+              "distribution": "independent Gaussian per stress component",
+              "seeds_by_training_path": [
+                24017000,
+                24017001,
+                24017002,
+                24017003,
+                24017004,
+                24017005,
+                24017006,
+                24017007,
+                24017008,
+                24017009,
+                24017010,
+                24017011,
+                24017012,
+                24017013,
+                24017014,
+                24017015,
+                24017016,
+                24017017,
+                24017018,
+                24017019,
+                24017020,
+                24017021,
+                24017022,
+                24017023,
+                24017024,
+                24017025,
+                24017026,
+                24017027,
+                24017028,
+                24017029,
+                24017030,
+                24017031,
+                24017032,
+                24017033,
+                24017034,
+                24017035,
+                24017036,
+                24017037,
+                24017038,
+                24017039,
+                24017040,
+                24017041,
+                24017042,
+                24017043,
+                24017044,
+                24017045,
+                24017046,
+                24017047,
+                24017048,
+                24017049,
+                24017050,
+                24017051,
+                24017052,
+                24017053,
+                24017054,
+                24017055,
+                24017056,
+                24017057,
+                24017058,
+                24017059,
+                24017060,
+                24017061,
+                24017062,
+                24017063,
+                24017064,
+                24017065,
+                24017066,
+                24017067,
+                24017068,
+                24017069,
+                24017070,
+                24017071,
+                24017072,
+                24017073,
+                24017074,
+                24017075,
+                24017076,
+                24017077,
+                24017078,
+                24017079,
+                24017080,
+                24017081,
+                24017082,
+                24017083,
+                24017084,
+                24017085,
+                24017086,
+                24017087,
+                24017088,
+                24017089,
+                24017090,
+                24017091,
+                24017092,
+                24017093,
+                24017094,
+                24017095,
+                24017096,
+                24017097,
+                24017098,
+                24017099
+              ],
+              "reuse_noise_arrays_across_initializations": true
+            },
+            "evaluation": {
+              "paths": 20,
+              "increments": 250,
+              "dt_s": 0.05,
+              "reference": "noise_free_reference_stress_for_both_conditions",
+              "strain_seeds": [
+                24016000,
+                24016001,
+                24016002,
+                24016003,
+                24016004,
+                24016005,
+                24016006,
+                24016007,
+                24016008,
+                24016009,
+                24016010,
+                24016011,
+                24016012,
+                24016013,
+                24016014,
+                24016015,
+                24016016,
+                24016017,
+                24016018,
+                24016019
+              ],
+              "freeze_protocol_before_training": true,
+              "no_selection_or_tuning_on_evaluation": true
+            },
+            "save_actual_arrays": true,
+            "project_choices": "Explicit seeds, natural spline boundary condition, paired ideal/noisy histories, 20 held-out paths and execution budget are project choices. Do not select paths based on model errors or change the reference material to an easier law."
+          },
+          "model": {
+            "free_energy": {
+              "networks": 2,
+              "type": "invariant_FICNN",
+              "inputs_each": 3,
+              "hidden_layers_each": 1,
+              "hidden_width_each": 10,
+              "outputs_each": 1,
+              "activation": "softplus"
+            },
+            "dissipation": {
+              "type": "PICNN",
+              "convex_inputs": 3,
+              "nonconvex_inputs": 3,
+              "hidden_layers_each_branch": 1,
+              "hidden_width_each_branch": 10,
+              "outputs": 1,
+              "nonconvex_activation": "tanh",
+              "convex_activation": "softplus",
+              "convex_activation_provenance": "project choice permitted by Appendix A.2; Table 4 leaves this entry unspecified"
+            },
+            "auxiliary": {
+              "type": "standard_LSTM_then_linear",
+              "input_dim": 13,
+              "hidden_dim": 50,
+              "output_dim": 6,
+              "input_definition": "Section 4.3",
+              "standard_sigmoid_gates": true
+            },
+            "corrections": "Preserve free-energy zero-state and dissipation zero-rate corrections as defined in the paper.",
+            "normalization": "Appendix A.3 from the entire 100-history training set per condition, fixed across initialization groups/microbatches. Compute strain rates within each history before pooling. Reference internal variables and all evaluation arrays are excluded."
+          },
+          "training": {
+            "conditions": [
+              "ideal",
+              "noisy"
+            ],
+            "initialization_seeds": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24
+            ],
+            "iterations_per_initialization": 20000,
+            "total_training_runs": 50,
+            "optimizer": "Adam",
+            "initial_learning_rate": 0.01,
+            "lr_decay_every_iterations": 4000,
+            "lr_decay_factor": 0.1,
+            "loss": {
+              "equations": [
+                23,
+                24,
+                25
+              ],
+              "stress": "MAE",
+              "internal_force": "Biot consistency MAE",
+              "note": "Use the original RNN Eqs.23-25, averaged equally over 100 histories x 100 increments x 6 physical components. No additional multi-step, ranking or critic loss."
+            },
+            "selection": "minimum_final_training_loss_within_each_condition",
+            "retain": "all_final_weights_optimizer_states_and_loss_curves",
+            "resume": "continue_real_existing_checkpoints",
+            "budget_provenance": "Ideal 100x100 follows Fig.14. Noisy 100x100 is a project extension. 25 initializations, 20,000 updates and the existing learning-rate schedule are the fixed project budget, not a claim that Fig.14 reports every setting.",
+            "no_additional_training_losses": true,
+            "gradient_accumulation": "Differentiate each complete 100-increment sequence. Average gradients over all 100 histories before exactly one Adam update; microbatches do not increment Adam or the learning-rate schedule separately.",
+            "full_sequence_backpropagation": true
+          },
+          "prediction": {
+            "auxiliary_RNN_used": false,
+            "reference_internal_state_used": false,
+            "evaluation_stress_labels_used": false,
+            "state_update": "implicit_Euler_and_Newton_Raphson_from_learned_potentials",
+            "evaluate_all_final_models": true,
+            "figures": "Fig.14 ideal multi-history correlation; complete stress histories and paired old/new errors on all held-out paths; noisy plots labeled project extension",
+            "metrics": [
+              "per_path_per_component_MAE_MPa",
+              "per_path_per_component_RMSE_MPa",
+              "hydrostatic_RMSE_MPa",
+              "deviatoric_component_RMSE_MPa",
+              "same_fixed_denominator_normalized_error_if_reported",
+              "training_support_inside_outside_error",
+              "all_initialization_and_path_distributions",
+              "actual_integration_failures"
+            ],
+            "record_actual_solver_settings": true,
+            "normalization_for_comparison": "Use raw MPa as the primary cross-model metric. Historical model-specific training half-range NRMSE is not directly comparable to the new model's NRMSE. Any added normalized metric must use one explicitly recorded common scale for all model groups."
+          },
+          "numerics": {
+            "absolute_tolerance_MPa": 1E-08,
+            "max_iterations": 60,
+            "max_backtracks": 20,
+            "armijo": 0.0001,
+            "integration": "implicit Euler, Newton-Raphson with residual-merit backtracking; no time subdivision or alternate solver",
+            "strain_vector_order": [
+              "11",
+              "22",
+              "33",
+              "12",
+              "13",
+              "23"
+            ],
+            "shear_convention": "tensor components; tensor gradients divide shear derivatives by 2",
+            "training_dtype": "float32",
+            "reference_and_prediction_dtype": "float64"
+          },
+          "implementation_choices": {
+            "positive_weights": "softplus of unconstrained parameters; initialized with abs(Glorot uniform)+0.01 then inverse softplus",
+            "other_weights": "NumPy default_rng(seed) Glorot uniform; biases zero; same initialization for paired ideal/noisy runs",
+            "output_activations": "linear FICNN and PICNN output; softplus hidden convex layers, tanh hidden nonconvex layer",
+            "normalization": "A.3 midpoint/half-range for each invariant from training strain and finite-difference strain rate; scalar component-wide strain/stress ranges for RNN; q,p estimated from strain only; potential scale s_e*s_sigma, dissipation scale s_edot*s_sigma (MPa/s). Potential offsets cancel in zero-state corrections.",
+            "initial_state": "q0=0 and LSTM h0=c0=0 separately for each complete history; no auxiliary pretraining",
+            "loss_components": "equal mean over 100 independent histories, 100 increments each, and six independent physical tensor components",
+            "path_rng_order": "sample clock then spline knots; reject only offending component increments"
+          },
+          "execution": {
+            "host": "fy-5080",
+            "environment": "work/envs/tm02",
+            "device": "NVIDIA GeForce RTX 5080",
+            "checkpoint_every_iterations": 250,
+            "model_optimizer_updates": 1000000,
+            "additional_hyperparameter_searches": 0,
+            "initialization_batch_size": 50,
+            "path_microbatch_size": 10,
+            "grouping_note": "Group sizes may change to fit the existing GPU, but complete histories, full-dataset averaged gradients, one Adam step per dataset pass and the total scientific budget must not change.",
+            "new_training_runs": 50,
+            "new_heldout_model_path_predictions": 2000,
+            "new_known_hard_path_predictions": 50,
+            "new_revisit_model_histories": 24,
+            "no_automatic_additional_training": true
+          },
+          "outputs": {
+            "compact_root": "results/terrain_memory/reproduction/material",
+            "large_root": "outputs/terrain_memory/reproduction/material",
+            "create_only_after_actual_run": true,
+            "release_contents": "all 50 final weights, optimizer states, 20,000-step loss curves per run, actual training/evaluation arrays, all predictions, revisit arrays, source/config versions and compact figures"
+          },
+          "run_id": "tm02-multihistory-20261023",
+          "comparison": {
+            "frozen_run": "tm02-rnn-20261023",
+            "frozen_results_commit": "7bc5ed2d66982a98d3b24501564c4ffba90c8ee5",
+            "training_source_commit": "4244becb0302dd59c9b7a380a0edd7482ca90bec",
+            "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-r2-evidence-20261023",
+            "archive_filename": "tm02-rnn-20261023-evidence.tar.gz",
+            "archive_sha256": "13e59757551f6f7bc42d21481d9222e7e048965deb8f5c1144ef3f4b936c6dac",
+            "reuse_all_frozen_weights": true,
+            "preserve_frozen_normalization": true,
+            "old_models_on_new_paths": 1000,
+            "new_models_on_new_paths": 1000,
+            "independent_heldout_histories": 20,
+            "known_hard_path": {
+              "original_strain_seed": 24014271,
+              "reuse_original_arrays": true,
+              "new_models": 50,
+              "role": "known diagnostic path, already inspected; not a new blind test"
+            },
+            "prohibit_test_seed_selection": true,
+            "statistics": "Report the path and initialization axes separately; do not count 2000 predictions or within-path time points as independent physical histories.",
+            "attribution": "Any gain first supports expanded training-history coverage under the original method, not a new algorithm."
+          },
+          "revisit_comparison": {
+            "protocol": "experiments/tm02/r2-revisit.json",
+            "reuse_frozen_reference_histories": 12,
+            "reuse_frozen_old_model_histories": 24,
+            "new_selected_model_histories": 24,
+            "selected_models": "one ideal and one noisy model selected by minimum final training loss; 12 complete histories each",
+            "same_protocol_and_tie_tolerance": true,
+            "extra_training": 0,
+            "outcome": "positive magnitude of peak compressive strain during the common later probe; retain original integral and full-history outputs",
+            "metrics": [
+              "peak_and_integrated_compression_error",
+              "recovery_and_probe_full_history_error",
+              "candidate_center_bias",
+              "predicted_and_reference_early_minus_late_difference",
+              "response_ratio_only_when_reference_gap_exceeds_original_tolerance",
+              "rank_agreement_and_ties",
+              "always_early_constant_baseline",
+              "oracle_regret_with_explicit_uniform_tie_choice_expected_and_worst_case"
+            ],
+            "scope": "All six original reference pairs favor early. Rank agreement alone cannot demonstrate history-dependent decision value or robot control benefit."
+          }
+        },
+        "config_sha256": "8b999b2aac37aaf202441b4d0a8ac4cb8ab2645d147e91bb9fc0949413143ced",
+        "source_commit": "e9555c857bebc278abffa0ecfe6e1cdf910aa775",
+        "source_sha256": {
+          "scripts/run_tm02_r2.py": "30f318aae60243e069e8563bc66b7084115b2ada1f370b947f72fc32af31df01",
+          "src/tm02/__init__.py": "a2b8ef472a11d0c86b5ced29b83989a30571d77c9197f7beefcb986676e9d38c",
+          "src/tm02/evaluate.py": "b0dd0693bf6d5a9874f2666fddcc17421150d8fd5205498fbcd3759e34b7bebc",
+          "src/tm02/figures.py": "6e7dfc0547bfd9f79fd4a795d5e361a17e8edab78b3f3fc1979bffc892d7e362",
+          "src/tm02/material.py": "745e52257c2dcd73d7588a82f74556946e6c51565e41dbee5b2ac41b8dece14c",
+          "src/tm02/multihistory.py": "5bfb1f803720f6ae045a0ddc497a8f2d44ff364e3e8be6c856694e92b1c7be26",
+          "src/tm02/multihistory_evaluate.py": "c6c88bde32e10ea5c8efb991dafffa8cc2ba626aa2c99fa95593ce11279f29d5",
+          "src/tm02/multihistory_figures.py": "a8a956109ebff36fe9279d650151f9d19d28b901aa2ca2c7f74ff251e56703d1",
+          "src/tm02/multihistory_revisit.py": "56706712ecd668711b3991001bbe09bd3d2ed24dbdb5bef8a56e65bfb3d4e259",
+          "src/tm02/reference.py": "3102068a86e4e75c3831a297fb8ba5c7c3df355c5b62e64beec400a0a07179ce"
+        },
+        "host": "fanyuan-B850M-FORCE-WIFI6E",
+        "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+        "jax": "0.6.2",
+        "devices": [
+          "cuda:0"
+        ],
+        "hardware": "NVIDIA GeForce RTX 5080, 16303 MiB, 580.178.04",
+        "start_utc": "2026-10-23T09:57:14Z",
+        "output": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/outputs/terrain_memory/reproduction/material/tm02-multihistory-20261023"
+      },
+      "revisit": {
+        "run": "tm02-multihistory-20261023",
+        "command": "scripts/run_tm02_r2.py --config experiments/tm02/r2-multihistory.json --run tm02-multihistory-20261023 --phase revisit",
+        "protocol": {
+          "purpose": "Bounded material transfer after R2 original-method results; not a completed experiment or robot-control claim",
+          "stage": "R2_material_revisit_transfer",
+          "reference_protocol": "Same 3D nonlinear reference material and interpretation as r2-rnn.json",
+          "additional_training_runs": 0,
+          "models": [
+            "independent_analytical_reference",
+            "ideal_model_selected_by_final_training_loss",
+            "noisy_model_selected_by_final_training_loss"
+          ],
+          "number_of_complete_histories": 12,
+          "number_of_material_rollouts": 36,
+          "dt_s": 0.01,
+          "initial_state": "independently initialized virgin equilibrium for each complete history",
+          "boundary": {
+            "type": "uniaxial_stress_control",
+            "loaded_component": "sigma_11",
+            "other_stress_components_MPa": 0,
+            "compression_sign": "negative",
+            "predicted_response": "all six symmetric strain components",
+            "free_recovery": "zero external stress with strain and internal state solved; never clamp strain to zero"
+          },
+          "interpolation": "piecewise_linear stress commands; times below are local to each phase",
+          "preloading_histories": [
+            {
+              "id": "preload_3MPa",
+              "duration_s": 1,
+              "points_t_s_sigma11_MPa": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0.1,
+                  -3
+                ],
+                [
+                  0.4,
+                  -3
+                ],
+                [
+                  0.5,
+                  0
+                ],
+                [
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "id": "preload_6MPa",
+              "duration_s": 1,
+              "points_t_s_sigma11_MPa": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0.1,
+                  -6
+                ],
+                [
+                  0.4,
+                  -6
+                ],
+                [
+                  0.5,
+                  0
+                ],
+                [
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "current_action_candidates": [
+            {
+              "id": "early",
+              "duration_s": 1,
+              "points_t_s_sigma11_MPa": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0.1,
+                  -6
+                ],
+                [
+                  0.4,
+                  -6
+                ],
+                [
+                  0.5,
+                  0
+                ],
+                [
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "id": "late",
+              "duration_s": 1,
+              "points_t_s_sigma11_MPa": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0.5,
+                  0
+                ],
+                [
+                  0.6,
+                  -6
+                ],
+                [
+                  0.9,
+                  -6
+                ],
+                [
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "candidate_comparison": "same 1 s window, peak stress and absolute stress-time integral (2.4 MPa*s); only timing differs",
+          "recovery_delays_s": [
+            0.05,
+            0.5,
+            5
+          ],
+          "recovery_delay_note": "Fixed project delays after the common candidate window; not a constant material tau. Assess reference recovery from the actual response without selecting favorable learned-model results.",
+          "common_reload_probe": {
+            "duration_s": 1,
+            "points_t_s_sigma11_MPa": [
+              [
+                0,
+                0
+              ],
+              [
+                0.1,
+                -4
+              ],
+              [
+                0.4,
+                -4
+              ],
+              [
+                0.5,
+                0
+              ],
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          "sequence": [
+            "preloading_history",
+            "current_action_candidate",
+            "zero_stress_recovery_delay",
+            "common_reload_probe"
+          ],
+          "state_rules": [
+            "run the full observable prefix separately in each model",
+            "branch from each model's own physically reached state",
+            "no resets within the history",
+            "no true internal-variable injection"
+          ],
+          "metrics": {
+            "full_histories": true,
+            "prediction": [
+              "reload_strain_MAE",
+              "peak_compressive_strain_error",
+              "integrated_compressive_strain_error"
+            ],
+            "candidate_pairs": 6,
+            "rank_score": "peak max(0,-epsilon_11) during common reload probe; smaller means less future compression, not full robot utility",
+            "report": [
+              "reference_candidate_difference",
+              "predicted_candidate_difference",
+              "ranking_and_ties_for_all_six_pairs",
+              "recovery_interval_dependence",
+              "actual_solver_failures"
+            ],
+            "ranking_tie_tolerance_absolute_strain": 1E-06
+          },
+          "protocol_provenance": "Project transfer experiment, not an original TM02 figure or SuperMimic reproduction. Freeze before evaluation; no evaluation-based path or parameter selection.",
+          "outputs": {
+            "compact_root": "results/terrain_memory/transfer/material",
+            "large_root": "outputs/terrain_memory/transfer/material",
+            "create_only_after_actual_run": true
+          }
+        },
+        "source_commit": "d962798d7383388a4b4ed89d359fe18fcb1b0ff4",
+        "source_sha256": {
+          "scripts/run_tm02_r2.py": "30f318aae60243e069e8563bc66b7084115b2ada1f370b947f72fc32af31df01",
+          "src/tm02/__init__.py": "a2b8ef472a11d0c86b5ced29b83989a30571d77c9197f7beefcb986676e9d38c",
+          "src/tm02/evaluate.py": "b0dd0693bf6d5a9874f2666fddcc17421150d8fd5205498fbcd3759e34b7bebc",
+          "src/tm02/figures.py": "6e7dfc0547bfd9f79fd4a795d5e361a17e8edab78b3f3fc1979bffc892d7e362",
+          "src/tm02/material.py": "745e52257c2dcd73d7588a82f74556946e6c51565e41dbee5b2ac41b8dece14c",
+          "src/tm02/multihistory.py": "5bfb1f803720f6ae045a0ddc497a8f2d44ff364e3e8be6c856694e92b1c7be26",
+          "src/tm02/multihistory_evaluate.py": "c6c88bde32e10ea5c8efb991dafffa8cc2ba626aa2c99fa95593ce11279f29d5",
+          "src/tm02/multihistory_figures.py": "a8a956109ebff36fe9279d650151f9d19d28b901aa2ca2c7f74ff251e56703d1",
+          "src/tm02/multihistory_revisit.py": "56706712ecd668711b3991001bbe09bd3d2ed24dbdb5bef8a56e65bfb3d4e259",
+          "src/tm02/reference.py": "3102068a86e4e75c3831a297fb8ba5c7c3df355c5b62e64beec400a0a07179ce"
+        },
+        "config_sha256": "8b999b2aac37aaf202441b4d0a8ac4cb8ab2645d147e91bb9fc0949413143ced",
+        "protocol_sha256": "acdf793dc1cd25b5f06ee2b70599799f6513067272a2c45661a95c71a46451df",
+        "host": "fanyuan-B850M-FORCE-WIFI6E",
+        "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+        "jax": "0.6.2",
+        "devices": [
+          "TFRT_CPU_0"
+        ],
+        "start_utc": "2026-10-23T10:27:02Z",
+        "frozen_run": "tm02-rnn-20261023",
+        "frozen_archive": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-r2-evidence-20261023",
+        "frozen_archive_sha256": "13e59757551f6f7bc42d21481d9222e7e048965deb8f5c1144ef3f4b936c6dac",
+        "selected": {
+          "ideal": {
+            "condition": "ideal",
+            "seed": 0,
+            "iterations": 20000,
+            "final_training_loss_MPa": 0.05547797679901123,
+            "final_stress_MAE_MPa": 0.016781872138381004,
+            "final_biot_MAE_MPa": 0.03869610279798508,
+            "weights": "final/ideal-seed-00.npz",
+            "potential_weights": "selected/ideal-potentials.npz"
+          },
+          "noisy": {
+            "condition": "noisy",
+            "seed": 10,
+            "iterations": 20000,
+            "final_training_loss_MPa": 1.2907623052597046,
+            "final_stress_MAE_MPa": 1.2554610967636108,
+            "final_biot_MAE_MPa": 0.035301245748996735,
+            "weights": "final/noisy-seed-10.npz",
+            "potential_weights": "selected/noisy-potentials.npz"
+          }
+        },
+        "frozen_selected": {
+          "ideal": {
+            "condition": "ideal",
+            "seed": 13,
+            "iterations": 20000,
+            "final_training_loss_MPa": 0.0617525614798069,
+            "final_stress_MAE_MPa": 0.036570701748132706,
+            "final_biot_MAE_MPa": 0.025181859731674194,
+            "weights": "final/ideal-seed-13.npz",
+            "potential_weights": "selected/ideal-potentials.npz"
+          },
+          "noisy": {
+            "condition": "noisy",
+            "seed": 0,
+            "iterations": 20000,
+            "final_training_loss_MPa": 1.2511876821517944,
+            "final_stress_MAE_MPa": 1.2477824687957764,
+            "final_biot_MAE_MPa": 0.0034051991533488035,
+            "weights": "final/noisy-seed-00.npz",
+            "potential_weights": "selected/noisy-potentials.npz"
+          }
+        },
+        "selected_weights_sha256": {
+          "ideal": "10c362765dd9f70962edd5b7185ebcf09d8b1a877485f4c395f27dd1f2cbf578",
+          "noisy": "608a000785a3e30e6962da3702eae724cfcf039336336299c61ae24075b2d0f3"
+        },
+        "numerics": {
+          "absolute_tolerance_MPa": 1E-08,
+          "max_iterations": 60,
+          "max_backtracks": 20,
+          "armijo": 0.0001,
+          "integration": "implicit Euler, Newton-Raphson with residual-merit backtracking; no time subdivision or alternate solver",
+          "strain_vector_order": [
+            "11",
+            "22",
+            "33",
+            "12",
+            "13",
+            "23"
+          ],
+          "shear_convention": "tensor components; tensor gradients divide shear derivatives by 2",
+          "training_dtype": "float32",
+          "reference_and_prediction_dtype": "float64"
+        },
+        "additional_training_runs": 0,
+        "source_run": "outputs/terrain_memory/reproduction/material/tm02-multihistory-20261023",
+        "raw_artifacts": "outputs/terrain_memory/transfer/material/tm02-multihistory-20261023"
+      }
+    },
+    "seeds": {
+      "initialization": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "training_history": [
+        24015000,
+        24015001,
+        24015002,
+        24015003,
+        24015004,
+        24015005,
+        24015006,
+        24015007,
+        24015008,
+        24015009,
+        24015010,
+        24015011,
+        24015012,
+        24015013,
+        24015014,
+        24015015,
+        24015016,
+        24015017,
+        24015018,
+        24015019,
+        24015020,
+        24015021,
+        24015022,
+        24015023,
+        24015024,
+        24015025,
+        24015026,
+        24015027,
+        24015028,
+        24015029,
+        24015030,
+        24015031,
+        24015032,
+        24015033,
+        24015034,
+        24015035,
+        24015036,
+        24015037,
+        24015038,
+        24015039,
+        24015040,
+        24015041,
+        24015042,
+        24015043,
+        24015044,
+        24015045,
+        24015046,
+        24015047,
+        24015048,
+        24015049,
+        24015050,
+        24015051,
+        24015052,
+        24015053,
+        24015054,
+        24015055,
+        24015056,
+        24015057,
+        24015058,
+        24015059,
+        24015060,
+        24015061,
+        24015062,
+        24015063,
+        24015064,
+        24015065,
+        24015066,
+        24015067,
+        24015068,
+        24015069,
+        24015070,
+        24015071,
+        24015072,
+        24015073,
+        24015074,
+        24015075,
+        24015076,
+        24015077,
+        24015078,
+        24015079,
+        24015080,
+        24015081,
+        24015082,
+        24015083,
+        24015084,
+        24015085,
+        24015086,
+        24015087,
+        24015088,
+        24015089,
+        24015090,
+        24015091,
+        24015092,
+        24015093,
+        24015094,
+        24015095,
+        24015096,
+        24015097,
+        24015098,
+        24015099
+      ],
+      "stress_noise": [
+        24017000,
+        24017001,
+        24017002,
+        24017003,
+        24017004,
+        24017005,
+        24017006,
+        24017007,
+        24017008,
+        24017009,
+        24017010,
+        24017011,
+        24017012,
+        24017013,
+        24017014,
+        24017015,
+        24017016,
+        24017017,
+        24017018,
+        24017019,
+        24017020,
+        24017021,
+        24017022,
+        24017023,
+        24017024,
+        24017025,
+        24017026,
+        24017027,
+        24017028,
+        24017029,
+        24017030,
+        24017031,
+        24017032,
+        24017033,
+        24017034,
+        24017035,
+        24017036,
+        24017037,
+        24017038,
+        24017039,
+        24017040,
+        24017041,
+        24017042,
+        24017043,
+        24017044,
+        24017045,
+        24017046,
+        24017047,
+        24017048,
+        24017049,
+        24017050,
+        24017051,
+        24017052,
+        24017053,
+        24017054,
+        24017055,
+        24017056,
+        24017057,
+        24017058,
+        24017059,
+        24017060,
+        24017061,
+        24017062,
+        24017063,
+        24017064,
+        24017065,
+        24017066,
+        24017067,
+        24017068,
+        24017069,
+        24017070,
+        24017071,
+        24017072,
+        24017073,
+        24017074,
+        24017075,
+        24017076,
+        24017077,
+        24017078,
+        24017079,
+        24017080,
+        24017081,
+        24017082,
+        24017083,
+        24017084,
+        24017085,
+        24017086,
+        24017087,
+        24017088,
+        24017089,
+        24017090,
+        24017091,
+        24017092,
+        24017093,
+        24017094,
+        24017095,
+        24017096,
+        24017097,
+        24017098,
+        24017099
+      ],
+      "heldout_history": [
+        24016000,
+        24016001,
+        24016002,
+        24016003,
+        24016004,
+        24016005,
+        24016006,
+        24016007,
+        24016008,
+        24016009,
+        24016010,
+        24016011,
+        24016012,
+        24016013,
+        24016014,
+        24016015,
+        24016016,
+        24016017,
+        24016018,
+        24016019
+      ],
+      "known_diagnostic": 24014271
+    },
+    "packaged_current_source_sha256": {
+      "scripts/run_tm02_r2.py": "30f318aae60243e069e8563bc66b7084115b2ada1f370b947f72fc32af31df01",
+      "scripts/package_tm02_multihistory.py": "c28bddc4280827879182c7c58fedf19c38c87f7f88316875a4c1126428c9338e",
+      "scripts/run_tm02_r2_server.sh": "4b28c5cc8114a8dc1f470d4becd3cea9e792fef9a105516c0d9686233a65e123",
+      "src/tm02/__init__.py": "a2b8ef472a11d0c86b5ced29b83989a30571d77c9197f7beefcb986676e9d38c",
+      "src/tm02/evaluate.py": "b0dd0693bf6d5a9874f2666fddcc17421150d8fd5205498fbcd3759e34b7bebc",
+      "src/tm02/figures.py": "6e7dfc0547bfd9f79fd4a795d5e361a17e8edab78b3f3fc1979bffc892d7e362",
+      "src/tm02/material.py": "745e52257c2dcd73d7588a82f74556946e6c51565e41dbee5b2ac41b8dece14c",
+      "src/tm02/multihistory.py": "5bfb1f803720f6ae045a0ddc497a8f2d44ff364e3e8be6c856694e92b1c7be26",
+      "src/tm02/multihistory_evaluate.py": "c6c88bde32e10ea5c8efb991dafffa8cc2ba626aa2c99fa95593ce11279f29d5",
+      "src/tm02/multihistory_figures.py": "d49397a43831dadb9cdef13fd8292b0b231100345de8fd60baae0a700c649444",
+      "src/tm02/multihistory_revisit.py": "56706712ecd668711b3991001bbe09bd3d2ed24dbdb5bef8a56e65bfb3d4e259",
+      "src/tm02/reference.py": "3102068a86e4e75c3831a297fb8ba5c7c3df355c5b62e64beec400a0a07179ce"
+    },
+    "packaged_config_sha256": {
+      "experiments/tm02/r2-multihistory.json": "8b999b2aac37aaf202441b4d0a8ac4cb8ab2645d147e91bb9fc0949413143ced",
+      "experiments/tm02/r2-revisit.json": "acdf793dc1cd25b5f06ee2b70599799f6513067272a2c45661a95c71a46451df"
+    },
+    "frozen_artifact_dependency": {
+      "frozen_run": "tm02-rnn-20261023",
+      "frozen_results_commit": "7bc5ed2d66982a98d3b24501564c4ffba90c8ee5",
+      "training_source_commit": "4244becb0302dd59c9b7a380a0edd7482ca90bec",
+      "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-r2-evidence-20261023",
+      "archive_filename": "tm02-rnn-20261023-evidence.tar.gz",
+      "archive_sha256": "13e59757551f6f7bc42d21481d9222e7e048965deb8f5c1144ef3f4b936c6dac",
+      "reuse_all_frozen_weights": true,
+      "preserve_frozen_normalization": true,
+      "old_models_on_new_paths": 1000,
+      "new_models_on_new_paths": 1000,
+      "independent_heldout_histories": 20,
+      "known_hard_path": {
+        "original_strain_seed": 24014271,
+        "reuse_original_arrays": true,
+        "new_models": 50,
+        "role": "known diagnostic path, already inspected; not a new blind test"
+      },
+      "prohibit_test_seed_selection": true,
+      "statistics": "Report the path and initialization axes separately; do not count 2000 predictions or within-path time points as independent physical histories.",
+      "attribution": "Any gain first supports expanded training-history coverage under the original method, not a new algorithm."
+    },
+    "evaluation_cpu": {
+      "CPU(s)": "8",
+      "Model name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "Thread(s) per core": "1"
+    },
+    "archive_index_snapshot": "Both compact indexes are included before adding this archive SHA256 and byte count. The external checksum sidecar authenticates the archive; its internal file manifest authenticates the included index snapshots and other files.",
+    "publication": "Archive uploaded to GitHub; asset size and SHA-256 match the recorded archive.",
+    "local_frozen_archive": {
+      "path": "work/terrain-memory/tm02-rnn-20261023-evidence.tar.gz",
+      "bytes": 34760806,
+      "sha256": "13e59757551f6f7bc42d21481d9222e7e048965deb8f5c1144ef3f4b936c6dac"
+    },
+    "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-multihistory-evidence-20261023"
+  },
+  "revisit_comparison": {
+    "index": "results/terrain_memory/transfer/material/tm02-multihistory-20261023/index.json",
+    "new_histories": 24,
+    "successful_new_histories": 24,
+    "summaries": {
+      "old_ideal": {
+        "complete_pairs": 6,
+        "total_pairs": 6,
+        "rank_matches": 6,
+        "predicted_ties": 0,
+        "integration_failure_pairs": 0,
+        "expected_regret": {
+          "mean": 0.0,
+          "median": 0.0,
+          "max": 0.0
+        },
+        "worst_case_regret": {
+          "mean": 0.0,
+          "median": 0.0,
+          "max": 0.0
+        },
+        "absolute_candidate_center_bias": {
+          "mean": 8.811449992518628E-05,
+          "median": 8.833525301722885E-05,
+          "max": 0.00010932096374365648
+        },
+        "action_difference_error": {
+          "mean": -1.6893013455604353E-05,
+          "median": -1.1497810789089583E-05,
+          "max": 1.11578497429465E-06
+        },
+        "absolute_action_difference_error": {
+          "mean": 1.7635362187802034E-05,
+          "median": 1.1497810789089583E-05,
+          "max": 4.052522533456787E-05
+        },
+        "complete_histories": 12,
+        "absolute_peak_compression_error": {
+          "mean": 8.811449992518617E-05,
+          "median": 8.974286735831654E-05,
+          "max": 0.00011655096736673792
+        },
+        "relative_peak_compression_error_percent": {
+          "mean": 2.6996712555178473,
+          "median": 2.311610886781901,
+          "max": 3.938211799690817
+        },
+        "absolute_integrated_compression_error_s": {
+          "mean": 3.318569749892307E-05,
+          "median": 3.4070162463669664E-05,
+          "max": 5.923078755379818E-05
+        },
+        "reload_epsilon11_MAE": {
+          "mean": 4.2691304839849335E-05,
+          "median": 4.340575904038276E-05,
+          "max": 6.438532705077416E-05
+        },
+        "recovery_epsilon11_MAE": {
+          "mean": 3.811126083588957E-05,
+          "median": 3.132696529237786E-05,
+          "max": 8.738080211424912E-05
+        },
+        "full_history_strain_RMSE": {
+          "mean": 2.468039080346517E-05,
+          "median": 2.4896675141595516E-05,
+          "max": 2.951895356645352E-05
+        }
+      },
+      "old_noisy": {
+        "complete_pairs": 6,
+        "total_pairs": 6,
+        "rank_matches": 4,
+        "predicted_ties": 2,
+        "integration_failure_pairs": 0,
+        "expected_regret": {
+          "mean": 5.194863182864627E-07,
+          "median": 0.0,
+          "max": 1.5603410263922979E-06
+        },
+        "worst_case_regret": {
+          "mean": 1.0389726365728532E-06,
+          "median": 0.0,
+          "max": 3.1206820527845958E-06
+        },
+        "absolute_candidate_center_bias": {
+          "mean": 0.00031992232888918703,
+          "median": 0.0002716858482920304,
+          "max": 0.0004795598516733348
+        },
+        "action_difference_error": {
+          "mean": -5.9385130307046743E-05,
+          "median": -3.797531626918097E-06,
+          "max": 2.741948128795642E-06
+        },
+        "absolute_action_difference_error": {
+          "mean": 6.12106542746617E-05,
+          "median": 3.797531626918097E-06,
+          "max": 0.00017798798880299662
+        },
+        "complete_histories": 12,
+        "absolute_peak_compression_error": {
+          "mean": 0.00031992232888918703,
+          "median": 0.0002798820241622121,
+          "max": 0.0004809308257377326
+        },
+        "relative_peak_compression_error_percent": {
+          "mean": 10.044782083523954,
+          "median": 7.428828930776519,
+          "max": 17.23723305580251
+        },
+        "absolute_integrated_compression_error_s": {
+          "mean": 0.0001137013398772817,
+          "median": 8.685848783543653E-05,
+          "max": 0.00022079166135787333
+        },
+        "reload_epsilon11_MAE": {
+          "mean": 0.00018774523070133996,
+          "median": 0.00018809564359985385,
+          "max": 0.0002608839741573492
+        },
+        "recovery_epsilon11_MAE": {
+          "mean": 0.00022825503838212963,
+          "median": 0.00017774044554843296,
+          "max": 0.0004574382166029217
+        },
+        "full_history_strain_RMSE": {
+          "mean": 0.00011380823416152305,
+          "median": 0.00011127244097821143,
+          "max": 0.0001346669921443968
+        }
+      },
+      "new_ideal": {
+        "complete_pairs": 6,
+        "total_pairs": 6,
+        "rank_matches": 6,
+        "predicted_ties": 0,
+        "integration_failure_pairs": 0,
+        "expected_regret": {
+          "mean": 0.0,
+          "median": 0.0,
+          "max": 0.0
+        },
+        "worst_case_regret": {
+          "mean": 0.0,
+          "median": 0.0,
+          "max": 0.0
+        },
+        "absolute_candidate_center_bias": {
+          "mean": 5.614632154705552E-05,
+          "median": 5.687313761022425E-05,
+          "max": 6.95037762939079E-05
+        },
+        "action_difference_error": {
+          "mean": -1.130269147078536E-05,
+          "median": -8.138638416308516E-06,
+          "max": 8.07211953189179E-07
+        },
+        "absolute_action_difference_error": {
+          "mean": 1.1839843115840775E-05,
+          "median": 8.138638416308516E-06,
+          "max": 2.6767207838009413E-05
+        },
+        "complete_histories": 12,
+        "absolute_peak_compression_error": {
+          "mean": 5.614632154705559E-05,
+          "median": 5.771023293915504E-05,
+          "max": 7.555019764140473E-05
+        },
+        "relative_peak_compression_error_percent": {
+          "mean": 1.7188737522661077,
+          "median": 1.4861150215637098,
+          "max": 2.5055782994764053
+        },
+        "absolute_integrated_compression_error_s": {
+          "mean": 2.0583114531041714E-05,
+          "median": 2.1093528144734133E-05,
+          "max": 3.770664105346745E-05
+        },
+        "reload_epsilon11_MAE": {
+          "mean": 2.71725367664635E-05,
+          "median": 2.747990916493191E-05,
+          "max": 4.1234615220927844E-05
+        },
+        "recovery_epsilon11_MAE": {
+          "mean": 2.470798780481072E-05,
+          "median": 2.1295268519472152E-05,
+          "max": 5.3863596216838327E-05
+        },
+        "full_history_strain_RMSE": {
+          "mean": 1.54754517099064E-05,
+          "median": 1.5413245554706017E-05,
+          "max": 1.8367442402937982E-05
+        }
+      },
+      "new_noisy": {
+        "complete_pairs": 6,
+        "total_pairs": 6,
+        "rank_matches": 4,
+        "predicted_ties": 2,
+        "integration_failure_pairs": 0,
+        "expected_regret": {
+          "mean": 5.194863182864627E-07,
+          "median": 0.0,
+          "max": 1.5603410263922979E-06
+        },
+        "worst_case_regret": {
+          "mean": 1.0389726365728532E-06,
+          "median": 0.0,
+          "max": 3.1206820527845958E-06
+        },
+        "absolute_candidate_center_bias": {
+          "mean": 0.0004650115727479216,
+          "median": 0.00042160016565020607,
+          "max": 0.0006302007117574009
+        },
+        "action_difference_error": {
+          "mean": -7.521626746184707E-05,
+          "median": -1.4090240729590147E-05,
+          "max": 3.015254161776136E-06
+        },
+        "absolute_action_difference_error": {
+          "mean": 7.722392759052569E-05,
+          "median": 1.4090240729590147E-05,
+          "max": 0.00021553083551570634
+        },
+        "complete_histories": 12,
+        "absolute_peak_compression_error": {
+          "mean": 0.00046501157274792156,
+          "median": 0.00043370166491384543,
+          "max": 0.000631708338838289
+        },
+        "relative_peak_compression_error_percent": {
+          "mean": 14.4237706131806,
+          "median": 11.417075071331539,
+          "max": 22.64130988723007
+        },
+        "absolute_integrated_compression_error_s": {
+          "mean": 0.0001481223512822781,
+          "median": 0.00011271486669659522,
+          "max": 0.0002956193090208753
+        },
+        "reload_epsilon11_MAE": {
+          "mean": 0.00023861097349277003,
+          "median": 0.0002351121304090135,
+          "max": 0.0003436063989437389
+        },
+        "recovery_epsilon11_MAE": {
+          "mean": 0.00025526062369981157,
+          "median": 0.00020056504978147147,
+          "max": 0.0005706941380189277
+        },
+        "full_history_strain_RMSE": {
+          "mean": 0.00014197880673316618,
+          "median": 0.0001401734658831155,
+          "max": 0.00017470407336186874
+        }
+      },
+      "always_early": {
+        "complete_pairs": 6,
+        "total_pairs": 6,
+        "rank_matches": 6,
+        "predicted_ties": 0,
+        "integration_failure_pairs": 0,
+        "expected_regret": {
+          "mean": 0.0,
+          "median": 0.0,
+          "max": 0.0
+        },
+        "worst_case_regret": {
+          "mean": 0.0,
+          "median": 0.0,
+          "max": 0.0
+        },
+        "absolute_candidate_center_bias": null,
+        "action_difference_error": null,
+        "absolute_action_difference_error": null,
+        "complete_histories": null,
+        "absolute_peak_compression_error": null,
+        "relative_peak_compression_error_percent": null,
+        "absolute_integrated_compression_error_s": null,
+        "reload_epsilon11_MAE": null,
+        "recovery_epsilon11_MAE": null,
+        "full_history_strain_RMSE": null
+      }
+    },
+    "scope": "All six reference pairs favor early. Agreement with them cannot demonstrate history-dependent action selection or robot-control benefit; compare always-early regret explicitly."
+  },
+  "artifact_archive_sha256": "b738c0fb0116d4b11d82153d56efb0e3a54839bedfbbd9a2902648d030b948af",
+  "artifact_archive_bytes": 136760921,
+  "uploaded_asset_verification": {
+    "asset_state": "uploaded",
+    "bytes": 136760921,
+    "sha256": "b738c0fb0116d4b11d82153d56efb0e3a54839bedfbbd9a2902648d030b948af",
+    "verified_utc": "2026-10-23T10:47:52.9428497+00:00"
+  }
+}
