@@ -8,9 +8,10 @@
     "environment": "work/envs/tm02",
     "checkpoint_every_iterations": 250,
     "initialization_batch_size": 20,
-    "path_microbatch_size": 100,
-    "evaluation_workers": 6,
-    "grouping_note": "All arm histories contribute to one Adam update. A completed with microbatch 25; B resumes its recorded checkpoint with microbatch 100 after the user's throughput request; C uses 100. See run execution changes for the exact switch. Grouping changes no scientific budget."
+    "path_microbatch_size": 1000,
+    "evaluation_workers": 8,
+    "figure_workers": 8,
+    "grouping_note": "The history batch is capped by each arm's history count. A completed with 25; B resumes recorded checkpoints through 25/100/1000 after the user's throughput and memory requests; C uses all 100 histories. All histories contribute to one Adam update. See run execution changes for exact switches. No scientific budget changes."
   },
   "base": {
     "config": "experiments/tm02/r2-multihistory.json",

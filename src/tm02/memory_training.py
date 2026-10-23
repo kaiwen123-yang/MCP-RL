@@ -107,6 +107,8 @@ def train_study(config, base_config, out, old_out):
                      'normalization': 'Frozen second-round values read directly from saved weights'}}
         # Execution sizes affect memory and speed only, not the experiment.
         arm_config['execution'].update(config.get('execution', {}))
+        arm_config['execution']['path_microbatch_size'] = min(
+            arm['histories'], arm_config['execution']['path_microbatch_size'])
         fixed_norms = {
             cell: old_norms['ideal' if cell == 'ideal' else 'noisy']
             for cell in active_cells}
