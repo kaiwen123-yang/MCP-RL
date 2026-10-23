@@ -28,7 +28,7 @@
       "url": "https://arxiv.org/html/2401.14270v1",
       "pdf_url": "https://arxiv.org/pdf/2401.14270v1",
       "filename": "TM02_viscoelastic_2401.14270v1.pdf",
-      "read_for_execution": "已有全文与所选方法重实现复用；本轮仅核对第 3/4.3 节的隐变量与损失、5.2.2/Fig.14 和附录 A 的尺度/零态修正，不重启全文所有方法复现",
+      "read_for_execution": "三轮已完成材料方法基线复用；S0 按需读第 3 节的物理势函数、边界和尺度。第 4.1 节式 18–19 的 integration training 留作任务需求明确后的单一训练对照，不重启全文所有方法复现。",
       "code_status": "本次未核到官方训练代码；必须标为论文方法重实现",
       "reproduction_targets": [
         "参考材料的完整历史响应",
@@ -74,7 +74,7 @@
       "url": "https://arxiv.org/html/2604.12006v1",
       "pdf_url": "https://arxiv.org/pdf/2604.12006v1",
       "filename": "TM06_mud_2604.12006v1.pdf",
-      "read_for_execution": "II、补充材料的本构辨识；触变泥地不等同首版黏弹性地层，不在首版引入全部泥地机制"
+      "read_for_execution": "S0 读取 III-A、式 11b 的有效面积—应力—法向反力及脚形关系；按需读 II 的材料假设。触变泥地不等于首版黏弹性样件，不将吸力、颗粒流动等全部机制引入首版。"
     },
     {
       "id": "TM07",
@@ -102,13 +102,13 @@
       "url": "https://arxiv.org/html/2609.03645v1",
       "pdf_url": "https://arxiv.org/pdf/2609.03645v1",
       "filename": "TM08_full_field_viscoelastic_2609.03645v1.pdf",
-      "read_for_execution": "第 3–5 节：从可测反力/表面位移标定、独立加载验证；附录 C 的 backward adjoint 仅作后续隐式材料训练参考",
+      "read_for_execution": "第 4.2 节式 30–31 与附录 C：隐式内状态/边界联解及 backward adjoint；第 4.3 节非理想数据边界。当前只作材料到接触/后续训练的具体参考，不新增 FEM 全文复现。",
       "transfer_targets": [
-        "用多个完整加载历史检验材料预测与覆盖",
-        "后续从可测力/位移识别材料，不依赖真隐变量",
-        "后续确有需要时研究隐式伴随梯度"
+        "当前 S0 使用力学相容的反力/位移和完整状态推演，不提供真隐变量标签",
+        "若 S0 证明任务价值且 noisy 误差确实影响决策，固定数据与势结构比较 RNN 辅助训练和部署积分一致训练",
+        "借鉴隐式求解梯度时按本项目实际残差推导；原文对偶耗散势不能直接照抄到现有形式"
       ],
-      "scope_note": "原文参考材料是线性黏弹模型；不将本项目非线性参考替换为较易拟合材料，也不把全场标定实验说成本项目已完成"
+      "scope_note": "原文采用可测反力/位移、平面应力与对偶耗散势；噪声处理包含位移空间求导问题，不能无依据移植到当前应力标签噪声。integration training 在 TM02 §4.1 已存在，不称本项目新算法；当前不自动启动第四轮训练。"
     },
     {
       "id": "TM09",
@@ -121,8 +121,9 @@
       "filename": "TM09_prediction_error_planning_2610.05550v1.pdf",
       "read_for_execution": "第 3–5 节的 same-start branches、center/response 分解及 response scale；第 7.4/8 节的闭环收益边界",
       "transfer_targets": [
-        "对现有 early/late 材料候选计算中心偏差及动作响应差",
-        "同时报告幅值、候选排序、平局和恒定策略遗憾"
+        "同前史候选的共同偏差与动作响应分别评价；F6 常数 early 零遗憾如实保留",
+        "S0 比较完整当前—后足—返程后果、相同动作权限下的 constant/myopic 和 oracle；评价学习模型选出的动作在持续参考环境中的实际收益",
+        "不把低 RMSE、满分排序或响应改善直接称为闭环机器人收益"
       ],
       "scope_note": "借鉴物理结果评价，不新增 latent world model 或排序损失；原文的增量闭环规划收益未确认，不称借鉴后已证明机器人收益"
     },
@@ -189,6 +190,16 @@
       "url": "https://ieeexplore.ieee.org/abstract/document/11685272/",
       "role": "最新直接近邻；正式创新表述前取得全文逐项比较",
       "access_note": "本轮只核到公开摘要/索引，全文未取得；不得写成已排除重合，不阻止 R1/R2 实际复现"
+    },
+    {
+      "title": "Robust bipedal locomotion on flowable slopes via foot-driven terrain manipulation",
+      "version": "arXiv:2607.11855v1",
+      "published": "2026-07-13",
+      "url": "https://arxiv.org/abs/2607.11855",
+      "pdf_url": "https://arxiv.org/pdf/2607.11855v1",
+      "role": "主动调控地形响应的直接创新边界近邻；不新增必须复现的论文",
+      "access_note": "2026-10-23 核到 arXiv 原始摘要：足部 cleat 几何与主动深度调节影响颗粒地形响应，并进行双足机器人实验。本次未取得全文，不宣称已全文排除重合。",
+      "scope_note": "广义的主动改变地面帮助行走并非空白。本项目需以同一地块跨腿/跨步/返程的持续恢复状态及后续支撑反约束当前动作形成具体证据；S0/S1 不转向新足部硬件支线。"
     }
   ]
 }

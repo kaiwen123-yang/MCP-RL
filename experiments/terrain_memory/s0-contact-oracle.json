@@ -1,0 +1,400 @@
+{
+  "purpose": "Planned S0 complete compatible-contact and oracle-value experiment after the frozen third R2 campaign. This file is not an executed result.",
+  "run_id": "tm-s0-contact-oracle-20261023",
+  "stage": "S0_frame_supported_two_foot_normal_contact",
+  "target_entrypoint": "scripts/run_terrain_memory_s0.py",
+  "implementation_status": "Entry point and S0 orchestration still need implementation; reuse existing TM02 constitutive and deployment solvers.",
+  "execution": {
+    "environment": "work/envs/tm02",
+    "preferred_existing_host": "fy-5080",
+    "additional_training_runs": 0,
+    "dt_s": 0.01,
+    "workers": 8,
+    "resume": "Reuse completed physical candidate trajectories; resume only unfinished work. Do not rerun R1 or any R2 campaign."
+  },
+  "base": {
+    "repository_commit": "7b74c709052ed310af52d4e33a6e690e2e9152d5",
+    "material_config": "experiments/tm02/r2-multihistory.json",
+    "reuse_modules": [
+      "src/tm02/reference.py",
+      "src/tm02/material.py",
+      "src/tm02/evaluate.py"
+    ],
+    "source_run": "tm02-memory-study-20261023",
+    "source_output_root": "outputs/terrain_memory/reproduction/material/tm02-memory-study-20261023",
+    "source_index": "results/terrain_memory/reproduction/material/tm02-memory-study-20261023/index.json",
+    "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-memory-study-evidence-20261023",
+    "archive_filename": "tm02-memory-study-20261023-evidence.tar.gz",
+    "archive_sha256": "c39db8462f357c562f041ff99d7ff3b426fa0521dc8fa8b1f88c3bd601407ae7",
+    "inherit": "Same Table 1 parameters, Eq.29 interpretation, tensor shear convention and nonlinear viscosity. Reuse selected potentials with their own saved normalization, not the auxiliary RNN."
+  },
+  "scientific_questions": [
+    "At declared force, area and thickness scales, does persistent material history change the useful current action under identical future hind-foot and return requirements?",
+    "How much value comes from accounting for future contacts beyond a myopic planner with the same true current material state?",
+    "Do frozen ideal/noisy prediction errors change the selected action and its actual outcome in a continuously evolving reference environment?"
+  ],
+  "physical_scope": {
+    "apparatus": "Frame-supported two force-controlled feet/plungers; no free-body gravity balance, locomotion dynamics, traction or terrain flow is claimed.",
+    "samples": "Two independent homogeneous small-strain coupons with free lateral stress, fixed in world coordinates. This is not a calibrated wet-grass, sand, snow or mud model.",
+    "pads": [
+      {
+        "id": "P",
+        "center_x_m": 0
+      },
+      {
+        "id": "Q",
+        "center_x_m": 0.1
+      }
+    ],
+    "area_m2": 0.001,
+    "thickness_m": 0.05,
+    "front_staging_x_m": 0.05,
+    "hind_staging_x_m": 0,
+    "material_normal_axis": "Local tensor component 11 is normal to the sample; world x is lateral pad position.",
+    "material_scale_gamma": [
+      1,
+      0.025
+    ],
+    "unscaled_equilibrium_Young_modulus_MPa": 750,
+    "scaling": {
+      "definition": "psi_scaled=gamma*psi and phi_scaled=gamma*phi; preserve the full strain/state evolution at correspondingly scaled stress.",
+      "preferred_implementation": "Integrate unchanged reference/learned potentials at sigma_equivalent_MPa=sigma_physical_MPa/gamma. Strain and q are unchanged; physical stress, energy density and dissipation density are multiplied by gamma.",
+      "direct_parameter_alternative": "Multiply K_eq, G_eq, K_ov, G_ov, eta_K, eta_D and a_MPa by gamma; leave b and o unchanged. Do not scale only the moduli or omit a_MPa.",
+      "learned_weights_and_norm": "Unmodified; this transformation is a declared synthetic-material assumption, not empirical validation on a new material.",
+      "equilibrium_displacement_note": "At gamma=0.025, 50/100/150 N correspond to original 2/4/6 MPa and equilibrium compression 0.133333/0.266667/0.400000 mm; at gamma=1, 3.333333/6.666667/10 micrometres. Actual candidate feasibility uses the entire computed history."
+    }
+  },
+  "contact": {
+    "control": "Ideal prescribed nonnegative normal force; solve compatible material strain and state, then derive contact-foot height.",
+    "stress_physical_MPa": "sigma11=-normal_force_N/(area_m2*1e6); other five stress components are zero.",
+    "compression_m": "delta=-thickness_m*epsilon11; surface_z=-delta with virgin surface at z=0.",
+    "unilateral": "gap>=0, normal_force>=0, gap*normal_force=0. Contact-foot motion follows the material solution; flight is nonpenetrating.",
+    "off_contact": "Zero external stress on that pad and continuously evolving free recovery. Never clamp strain to zero or add an independent supporting ground reaction.",
+    "work": "W_plus=sum over pads integral max(normal_force_N*d(delta)/dt,0) dt in the remaining task. Also retain signed contact work. This is not motor electrical energy.",
+    "limits": {
+      "max_normal_force_N": 150,
+      "max_compression_m": 0.001,
+      "max_absolute_principal_strain": 0.02,
+      "max_horizontal_foot_speed_m_s": 0.5,
+      "max_vertical_foot_speed_m_s": 0.1,
+      "min_flight_clearance_m": 0.01,
+      "flight_height_above_virgin_surface_m": 0.011,
+      "min_raise_or_lower_duration_s": 0.12
+    },
+    "kinematics": "Front begins the decision at midpoint flight height; hind begins above P. Generate continuous position trajectories. Use 0.25 s approach, containing <=0.10 s horizontal motion, >=0.12 s lowering and slack; optional waiting occurs in flight before final lowering. Current-to-hind handoff is 0.25 s. Front P-to-Q flight needs at most 0.12+0.20+0.12=0.44 s, available during handoff+hind window+return gap. The 1 mm compression bound is not total actuator travel.",
+    "infeasibility": "Record full-history physical violations and actual numerical failures with phase/time; do not clip a trajectory, discard a condition, inject fallback support, or relabel it as successful."
+  },
+  "context_grid": {
+    "material_scale_gamma": [
+      1,
+      0.025
+    ],
+    "prefix_loaded_pad": [
+      "P",
+      "Q"
+    ],
+    "prefix_gap_after_window_s": [
+      0.1,
+      1,
+      5
+    ],
+    "future_peak_load_pairs_N": [
+      {
+        "hind_P": 50,
+        "return_Q": 150
+      },
+      {
+        "hind_P": 100,
+        "return_Q": 100
+      },
+      {
+        "hind_P": 150,
+        "return_Q": 50
+      }
+    ],
+    "return_gap_after_hind_window_s": [
+      0.5,
+      3
+    ],
+    "number_of_contexts": 72,
+    "interpretation": "Deterministic mechanism grid, not 72 independent random trials. Prefix/return gaps start after the full 1 s windows; actual zero-load recovery also includes the early waveform's final 0.5 s and other interposed events."
+  },
+  "waveforms": {
+    "interpolation": "piecewise_linear_normal_force",
+    "window_duration_s": 1,
+    "early_time_s_force_fraction": [
+      [
+        0,
+        0
+      ],
+      [
+        0.1,
+        1
+      ],
+      [
+        0.4,
+        1
+      ],
+      [
+        0.5,
+        0
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "late_time_s_force_fraction": [
+      [
+        0,
+        0
+      ],
+      [
+        0.5,
+        0
+      ],
+      [
+        0.6,
+        1
+      ],
+      [
+        0.9,
+        1
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "current_peak_force_N": 100,
+    "current_force_impulse_Ns": 40,
+    "prefix_peak_force_N": 100,
+    "prefix_hind_return_waveform": "early",
+    "equality": "Current early/late have identical peak, impulse and 1 s window; only timing differs."
+  },
+  "current_candidates": {
+    "pad": [
+      "P",
+      "Q"
+    ],
+    "waveform": [
+      "early",
+      "late"
+    ],
+    "extra_wait_s": [
+      0,
+      0.5,
+      1.5
+    ],
+    "count_per_context": 12,
+    "id_order": "Enumerate pad P,Q then waveform early,late then wait 0,0.5,1.5; save that integer ID before evaluation.",
+    "future_requirements": "Hind P and return Q load pair and return gap are fixed by context and identical across all 12 candidates."
+  },
+  "task": {
+    "initial_state": "Both pads start virgin at the beginning of the full prefix. Each predictor independently executes the observable prefix.",
+    "sequence": [
+      {
+        "phase": "prefix_front",
+        "duration_s": 1,
+        "pad": "context.prefix_loaded_pad",
+        "peak_force_N": 100,
+        "waveform": "early",
+        "motion": "After unloading at 0.5 s, front lifts and returns to midpoint flight height within the remaining 0.5 s."
+      },
+      {
+        "phase": "prefix_gap",
+        "duration": "context.prefix_gap_after_window_s",
+        "stress": "zero on both pads"
+      },
+      {
+        "phase": "approach_and_optional_wait",
+        "duration": "0.25 + candidate.extra_wait_s",
+        "stress": "zero on both pads",
+        "decision_start": true
+      },
+      {
+        "phase": "current_front",
+        "duration_s": 1,
+        "pad": "candidate.pad",
+        "peak_force_N": 100,
+        "waveform": "candidate.waveform"
+      },
+      {
+        "phase": "handoff",
+        "duration_s": 0.25,
+        "stress": "zero on both pads",
+        "motion": "Front lifts; hind descends to P."
+      },
+      {
+        "phase": "hind",
+        "duration_s": 1,
+        "pad": "P",
+        "peak_force": "context.future_peak_load_pairs_N.hind_P",
+        "waveform": "early"
+      },
+      {
+        "phase": "return_gap",
+        "duration": "context.return_gap_after_hind_window_s",
+        "stress": "zero on both pads"
+      },
+      {
+        "phase": "return_front",
+        "duration_s": 1,
+        "pad": "Q",
+        "peak_force": "context.future_peak_load_pairs_N.return_Q",
+        "waveform": "early",
+        "task_complete_at_end": true
+      },
+      {
+        "phase": "post_task_free_recovery",
+        "duration_s": 2,
+        "stress": "zero on both pads",
+        "excluded_from_task_objectives": true
+      }
+    ],
+    "state_continuity": "For each pad build one global time axis spanning prefix through final recovery, with zero stress whenever that pad is unloaded, and integrate continuously. Existing Reference.path and integrate start at q=0 per invocation: do not concatenate separately initialized contact calls. Explicit state continuation is an equivalent implementation.",
+    "observation_information": "Every learned predictor receives the same full observable prefix and future force/time/geometry commands. It evolves its own state, without reference-q injection.",
+    "time_metric": "T=3.5+return_gap_after_hind_window_s+extra_wait_s from decision start to end of return window. Exclude past prefix/gap and post-task 2 s.",
+    "past_prefix": "Preserve for material state and complete plots; do not score its already-incurred compression or work as a consequence of the current decision."
+  },
+  "predictors": [
+    {
+      "id": "reference_continuous",
+      "type": "analytical_reference",
+      "role": "Actual continuously evolving plant and full-horizon oracle.",
+      "state": "Continuous on both pads through prefix/current/hind/return/recovery."
+    },
+    {
+      "id": "reference_reset_planning",
+      "type": "analytical_reference_ablation",
+      "role": "Planning-only memory-removal ablation, not the sole strong comparator.",
+      "state": "During this predictor's forecast only, initialize a pad to virgin equilibrium immediately before each prescribed contact window; otherwise integrate its free recovery. Preserve and mark those intentional reset events.",
+      "actual_evaluation": "Never reset the true reference plant; evaluate its chosen action using reference_continuous's complete candidate trajectory."
+    },
+    {
+      "id": "A_random100--ideal",
+      "type": "frozen_learned_material",
+      "initialization_seed": 0,
+      "noise_realization": null,
+      "weights_relative_to_source_run": "selected/A_random100--ideal-potentials.npz",
+      "weights_sha256": "a33ccdd03bcbf08ea7c2e4313f0d78662e747971636167b903dc8c69e3dbb357",
+      "state": "Own continuous state from the full observable prefix; no true-q input.",
+      "normalization": "Reuse all saved norm fields unchanged; scale physical potentials outside the trained model."
+    },
+    {
+      "id": "B_random1000--ideal",
+      "type": "frozen_learned_material",
+      "initialization_seed": 0,
+      "noise_realization": null,
+      "weights_relative_to_source_run": "selected/B_random1000--ideal-potentials.npz",
+      "weights_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
+      "state": "Own continuous state from the full observable prefix; no true-q input.",
+      "normalization": "Reuse all saved norm fields unchanged; scale physical potentials outside the trained model."
+    },
+    {
+      "id": "B_random1000--noise0",
+      "type": "frozen_learned_material",
+      "initialization_seed": 0,
+      "noise_realization": 0,
+      "weights_relative_to_source_run": "selected/B_random1000--noise0-potentials.npz",
+      "weights_sha256": "3e6719781206a8fdd95bbb5f1259033e6ae619a90560568c60315de41002b3f0",
+      "state": "Own continuous state from the full observable prefix; no true-q input.",
+      "normalization": "Reuse all saved norm fields unchanged; scale physical potentials outside the trained model."
+    },
+    {
+      "id": "B_random1000--noise1",
+      "type": "frozen_learned_material",
+      "initialization_seed": 0,
+      "noise_realization": 1,
+      "weights_relative_to_source_run": "selected/B_random1000--noise1-potentials.npz",
+      "weights_sha256": "7ac09b1341a6ee324550ab453451f46c610655c03dbc45d34eef60560e36435b",
+      "state": "Own continuous state from the full observable prefix; no true-q input.",
+      "normalization": "Reuse all saved norm fields unchanged; scale physical potentials outside the trained model."
+    },
+    {
+      "id": "B_random1000--noise2",
+      "type": "frozen_learned_material",
+      "initialization_seed": 0,
+      "noise_realization": 2,
+      "weights_relative_to_source_run": "selected/B_random1000--noise2-potentials.npz",
+      "weights_sha256": "528a0288c5136e97f2c7f0428bcd657d29ee72b59af5041c215eedcbb6de2d2f",
+      "state": "Own continuous state from the full observable prefix; no true-q input.",
+      "normalization": "Reuse all saved norm fields unchanged; scale physical potentials outside the trained model."
+    }
+  ],
+  "evaluation": {
+    "remaining_interval": "From decision start through the end of the return window.",
+    "pareto_axes": [
+      "completion_time_s",
+      "max_remaining_pad_compression_m",
+      "positive_remaining_contact_work_J"
+    ],
+    "pareto_scope": "Retain every feasible candidate and all dominated/infeasible records separately; use the same declared units. Report Pareto sets per predictor and actual consequences in the reference.",
+    "peak_definition": "Maximum max(0,delta) over both pads during the remaining interval; additionally retain separate current-contact and hind/return-contact peaks.",
+    "extra_wait_budgets_s": [
+      0,
+      0.5,
+      1.5
+    ],
+    "deadline": "T_limit=3.5+context.return_gap_after_hind_window_s+extra_wait_budget_s",
+    "full_horizon_selection": "Among candidates allowed by wait budget and predicted feasible through the entire remaining task, minimize max_remaining_pad_compression_m. Candidates within the absolute compression tie tolerance of the minimum are a near-tie set; break ties by smaller completion time, then smaller positive work, then fixed candidate ID.",
+    "compression_tie_tolerance_absolute_strain": 0.000001,
+    "compression_tie_tolerance_m": 5e-8,
+    "failure_selection": "No predicted-feasible candidate means no selected action, recorded as a decision failure; no silent fallback.",
+    "actual_policy_evaluation": "Map selected candidate IDs to already computed reference_continuous outcomes, including physical failures. Report true compression regret at matched time allowance, time, work and failure counts; do not infer gain from ranking alone.",
+    "myopic_oracle": "Derived without extra integration from reference_continuous current segments. Has the same true current state, candidate actions and time allowance, but selects only by current-contact peak compression, time through current-window completion, positive work through that completion, then fixed ID. Apply the same compression near-tie rule. Check only current-segment physical feasibility plus common deterministic deadline; do not filter using future true feasibility. Evaluate its entire selected task in the continuous reference.",
+    "constant_controls": "Report all 12 fixed candidate IDs. Also report an explicitly retrospective optimistic constant per gamma and time allowance: require one ID to be feasible in all corresponding 36 contexts, choose minimum mean remaining peak compression, then mean T, then mean W_plus, then ID. Apply the same compression near-tie tolerance to the mean. If none is feasible in all contexts, report none and all constants' completion counts. Never choose a different constant ID per context, and do not call this held-out generalization.",
+    "history_matched_comparison": "Hold gamma, future load pair and return gap fixed; compare changes in prefix pad and prefix gap. Show both action changes and absolute physical consequence changes.",
+    "noise_scope": "Three frozen B models reflect independent training-label noise realizations; no additional observation noise or real sensor robustness is claimed."
+  },
+  "budget": {
+    "physical_contexts": 72,
+    "candidates_per_context": 12,
+    "material_predictors": 7,
+    "reference_complete_two_pad_tasks": 864,
+    "other_complete_two_pad_predictions": 5184,
+    "total_complete_two_pad_predictions": 6048,
+    "pad_histories_per_task": 2,
+    "total_pad_histories": 12096,
+    "new_training_runs": 0,
+    "counting": "Each complete prediction includes two pad histories, full prefix and tail. Time-budget selection, myopic and constants reuse these trajectories; they are not extra independent physical experiments."
+  },
+  "outputs": {
+    "compact_root": "results/terrain_memory/simulation/tm-s0-contact-oracle-20261023",
+    "large_root": "outputs/terrain_memory/simulation/tm-s0-contact-oracle-20261023",
+    "create_only_when_actually_running": true,
+    "required": [
+      "Actual command, code/config version, frozen model source hashes and computation time in one concise result index.",
+      "All context/candidate definitions and global event times; complete time/force/stress/strain/q/delta/foot-trajectory arrays for both pads, or actual failure trajectory.",
+      "Compact CSV of every candidate's feasibility, current/future peaks, T and signed/positive contact work; Pareto membership.",
+      "CSV of chosen actions, actual continuous-reference consequences, matched regret, myopic/constant comparisons and all failure counts.",
+      "Representative fixed-context complete curves and aggregate comparisons; at least one complete front-hind-return animation with actual mm/N/s and explicit deformation magnification."
+    ],
+    "representative_contexts": "Use both gamma values, both prefix pads, prefix gap 0.1 s, future loads (50,150) N and return gap 0.5 s as the fixed core examples; retain negative cases and reference full/myopic/fixed comparisons. Additional figures only if they explain an actual distinct finding."
+  },
+  "delivery": {
+    "code_and_compact_results": "Push to GitHub.",
+    "large_new_arrays_and_video": "Upload once directly from the execution host to a GitHub Release; include actual URLs and file digests in the result index.",
+    "existing_weights": "Reference the original Release and pinned hashes; do not include a second copy in the new result bundle.",
+    "verification": "Use already computed local upload-file hash plus GitHub asset size/digest; do not download the full published archive again for redundant verification.",
+    "user_computer_secondary_archive": false,
+    "execution_host_outputs": "Keep normal computation output and checkpoints needed for continuation. Required missing model inputs may be fetched on the execution host for computation; do not create a post-publication second archive on the user's computer.",
+    "historical_files": "No unrelated cleanup or deletion."
+  },
+  "completion": {
+    "fixed_budget_only": true,
+    "positive_result_not_required": true,
+    "honest_negative_result": "If full-state oracle gives constant actions or only tiny physical improvements, complete and publish that result. Do not soften material further, shrink constraints/tie tolerances, tune reward weights, select only favorable contexts or expand the budget to manufacture value.",
+    "next_step": "Use actual effect size and contact constraints to judge S1 whole-robot relevance. Integration-consistent training is only a later targeted mechanism comparison if task-relevant noisy errors justify it.",
+    "not_this_batch": [
+      "fourth random-data training campaign",
+      "new network or loss search",
+      "whole-robot RL",
+      "hardware activation",
+      "new FEM/BOED/world-model platform",
+      "unit/mock/smoke tests",
+      "audit or status reports",
+      "user-computer post-publication archival"
+    ]
+  }
+}
