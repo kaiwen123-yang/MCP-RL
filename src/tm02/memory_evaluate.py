@@ -365,7 +365,7 @@ def paired_arm_changes(records, metrics=METRICS, key='history_id'):
         if first['arm'] != 'A_random100':
             continue
         for arm in ('B_random1000', 'C_mixed100'):
-            other = indexed[arm, *item_key(first)]
+            other = indexed[(arm, *item_key(first))]
             row = dict(family=first['family'], cell=first['cell'], condition=first['condition'],
                        noise_realization=first['noise_realization'], comparison='A_minus_' + arm[0],
                        history_id=first.get('history_id'), condition_id=first['condition_id'],
