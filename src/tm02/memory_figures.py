@@ -357,7 +357,7 @@ def _history_figure(history_id, rows, training, destination, prediction_root, di
         ('Actual incomplete curves: '+', '.join(failures) if failures else 'Every displayed model history completed.'))
 
 
-def _atlas(records, training, destination, prediction_root, compact, examples, diagnostic=False):
+def _atlas(records, training, destination, prediction_root, compact, examples, workers, diagnostic=False):
     artifacts = []
     groups = {}
     for row in records:
@@ -365,7 +365,7 @@ def _atlas(records, training, destination, prediction_root, compact, examples, d
     ordered = sorted(groups.items())
     # Each process owns one complete history figure and its distinct files.
     # Summary figures and copying the fixed compact examples stay in the parent.
-    with ProcessPoolExecutor(max_workers=8, mp_context=multiprocessing.get_context('spawn'),
+    with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context('spawn'),
                              initializer=_style) as executor:
         results = executor.map(_history_figure,
             (history_id for history_id, rows in ordered), (rows for history_id, rows in ordered),
@@ -404,9 +404,11 @@ def study_figures(study, out, compact):
                       study['final_evaluation']['metrics']['ranking_tolerance_absolute_strain']))
     # These examples are fixed by protocol order, before any error-based inspection.
     examples = {family+'-000'+('-early' if family.startswith('F6_') else '') for family in FAMILY_TITLES}
-    final_atlas = _atlas(final, training, destination/'final-history-curves', final_root, compact_figures, examples)
+    figure_workers = study['execution']['figure_workers']
+    final_atlas = _atlas(final, training, destination/'final-history-curves', final_root,
+                         compact_figures, examples, figure_workers)
     diagnostic_atlas = _atlas(diagnostic, training, destination/'known-history-curves', diagnostic_root,
-                              compact_figures, set(), True)
+                              compact_figures, set(), figure_workers, True)
     manifest = dict(summary_figures=artifacts, final_history_curves=final_atlas,
         known_history_curves=diagnostic_atlas, compact_history_examples=sorted(examples),
         final_physical_conditions=len({r['condition_id'] for r in final}),
@@ -419,7 +421,7 @@ def study_figures(study, out, compact):
                'F2/F5 show the five seed clusters. No IID confidence intervals or means-only bar plots.',
         rendering='PNG previews and SVG vector output, fixed colorblind palette with redundant line/marker codes; '
                   'compact summaries include grayscale previews. Complete histories are not temporally downsampled.',
-        atlas_rendering_processes=8, atlas_process_start_method='spawn')
+        atlas_rendering_processes=figure_workers, atlas_process_start_method='spawn')
     (destination/'figures.json').write_text(json.dumps(manifest, indent=2, allow_nan=False)+'\n', encoding='utf-8')
     final_summary = _json(final_root/'evaluation.json')
     diagnostic_summary = _json(diagnostic_root/'evaluation.json')
