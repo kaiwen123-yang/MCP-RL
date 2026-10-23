@@ -1,0 +1,266 @@
+{
+  "kind": "TM02 v1 selected RNN method reimplementation",
+  "paper": "https://arxiv.org/html/2401.14270v1",
+  "run": "tm02-rnn-20261023",
+  "source_commit": "4244becb0302dd59c9b7a380a0edd7482ca90bec",
+  "training_runs": 50,
+  "iterations_each": 20000,
+  "total_optimizer_updates": 1000000,
+  "free_prediction_complete": 50,
+  "selected": {
+    "ideal": {
+      "condition": "ideal",
+      "seed": 13,
+      "iterations": 20000,
+      "final_training_loss_MPa": 0.0617525614798069,
+      "final_stress_MAE_MPa": 0.036570701748132706,
+      "final_biot_MAE_MPa": 0.025181859731674194,
+      "weights": "final/ideal-seed-13.npz",
+      "integration_complete": true,
+      "failure": null,
+      "stress_scale_MPa": 23.855609893798828,
+      "completed_increments": 250,
+      "MAE_MPa": 1.4942040863339359,
+      "RMSE_MPa": 2.5127290586244873,
+      "normalized_RMSE": 0.10533074064384584,
+      "per_component_MAE_MPa": [
+        2.8505677077232745,
+        2.717169627093161,
+        2.83116764808272,
+        0.20420000147665027,
+        0.14782975486338365,
+        0.21428977876442615
+      ],
+      "per_component_RMSE_MPa": [
+        3.55079338755223,
+        3.4761875617285156,
+        3.605143718519251,
+        0.28266546682053173,
+        0.20807724399397812,
+        0.26565607494449284
+      ],
+      "per_component_normalized_RMSE": [
+        0.1488452151657311,
+        0.14571782390825133,
+        0.15112351914575842,
+        0.011849014469925982,
+        0.008722361110040912,
+        0.011136000132763283
+      ],
+      "max_residual_MPa": 9.727745720056191e-09,
+      "max_Newton_iterations": 5,
+      "potential_weights": "selected/ideal-potentials.npz",
+      "direct_download": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm02-r2-evidence-20261023/ideal-potentials.npz"
+    },
+    "noisy": {
+      "condition": "noisy",
+      "seed": 0,
+      "iterations": 20000,
+      "final_training_loss_MPa": 1.2511876821517944,
+      "final_stress_MAE_MPa": 1.2477824687957764,
+      "final_biot_MAE_MPa": 0.0034051991533488035,
+      "weights": "final/noisy-seed-00.npz",
+      "integration_complete": true,
+      "failure": null,
+      "stress_scale_MPa": 25.265676498413086,
+      "completed_increments": 250,
+      "MAE_MPa": 2.3165855074369337,
+      "RMSE_MPa": 3.5363251945675094,
+      "normalized_RMSE": 0.13996558512057347,
+      "per_component_MAE_MPa": [
+        4.21195058403902,
+        3.7770593274057354,
+        4.182060742809576,
+        0.5577948064047903,
+        0.5062324907160938,
+        0.6644150932463828
+      ],
+      "per_component_RMSE_MPa": [
+        4.952166079487901,
+        4.696922629238033,
+        5.166987454653067,
+        0.7842603201802643,
+        0.6602514498424497,
+        0.8365337071201786
+      ],
+      "per_component_normalized_RMSE": [
+        0.19600370011065968,
+        0.18590132069224596,
+        0.20450619855667038,
+        0.031040543095274847,
+        0.026132347965585622,
+        0.03310949173170647
+      ],
+      "max_residual_MPa": 9.602719064361054e-09,
+      "max_Newton_iterations": 5,
+      "potential_weights": "selected/noisy-potentials.npz",
+      "direct_download": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm02-r2-evidence-20261023/noisy-potentials.npz"
+    }
+  },
+  "selection_rule": "minimum_final_training_loss_within_each_condition",
+  "evaluation_increments": 250,
+  "evaluation_dt_s": 0.05,
+  "evaluation_reference": "noise-free for both conditions",
+  "deployment_inputs": [
+    "strain",
+    "time increments",
+    "own previous internal state"
+  ],
+  "auxiliary_RNN_in_deployment": false,
+  "reference_internal_variables_in_deployment": false,
+  "training_elapsed_s": 183.74303746398073,
+  "evaluation_elapsed_s": 7.4098841699888,
+  "raw_artifacts": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/outputs/terrain_memory/reproduction/material/tm02-rnn-20261023",
+  "numerics": {
+    "absolute_tolerance_MPa": 1e-08,
+    "max_iterations": 60,
+    "max_backtracks": 20,
+    "armijo": 0.0001,
+    "integration": "implicit Euler, Newton-Raphson with residual-merit backtracking; no time subdivision or alternate solver",
+    "strain_vector_order": [
+      "11",
+      "22",
+      "33",
+      "12",
+      "13",
+      "23"
+    ],
+    "shear_convention": "tensor components; tensor gradients divide shear derivatives by 2",
+    "training_dtype": "float32",
+    "reference_and_prediction_dtype": "float64"
+  },
+  "implementation_choices": {
+    "positive_weights": "softplus of unconstrained parameters; initialized with abs(Glorot uniform)+0.01 then inverse softplus",
+    "other_weights": "NumPy default_rng(seed) Glorot uniform; biases zero; same initialization for paired ideal/noisy runs",
+    "output_activations": "linear FICNN and PICNN output; softplus hidden convex layers, tanh hidden nonconvex layer",
+    "normalization": "A.3 midpoint/half-range for each invariant from training strain and finite-difference strain rate; scalar component-wide strain/stress ranges for RNN; q,p estimated from strain only; potential scale s_e*s_sigma, dissipation scale s_edot*s_sigma (MPa/s). Potential offsets cancel in zero-state corrections.",
+    "initial_state": "q0=0; LSTM h0=c0=0; first RNN input is t1; no auxiliary pretraining",
+    "loss_components": "equal mean over 200 increments and six independent physical tensor components",
+    "path_rng_order": "sample clock then spline knots; reject only offending component increments"
+  },
+  "reference_interpretation": "Eq.29 is implemented as V=[(1-o)*exp(-(norm_F(sigma_ov)/a)^b)+o]*V0: dimensionless o multiplies the full fourth-order V0 tensor. Table 1 eta_K=400 and eta_D=200 are interpreted in MPa*s, because Eq.27 differentiated with respect to strain rate must yield MPa. The printed tensor-plus-scalar and MPa/s are ambiguous; this is the project's dimensional interpretation, not verified author code.",
+  "scope": "Figures 8-10 RNN portions only; fixed project paths and seeds, not recovered author arrays",
+  "observed_prediction_gap_diagnostic": {
+    "additional_optimizer_updates": 0,
+    "additional_generated_paths": 0,
+    "existing_training_history_replays": 2,
+    "selection_changed": false,
+    "train_trace_strain_range": [
+      -0.0521820026706778,
+      0.0018343141774753292
+    ],
+    "evaluation_trace_strain_range": [
+      -0.0028694838168673033,
+      0.05652951855856342
+    ],
+    "evaluation_steps_outside_training_trace_range": 231,
+    "evaluation_steps": 250,
+    "selected": {
+      "ideal": {
+        "seed": 13,
+        "training_replay_failure": null,
+        "training_free_MAE_MPa": 0.06024120748303705,
+        "training_free_RMSE_MPa": 0.09278207124538983,
+        "evaluation_hydrostatic_RMSE_MPa": 3.5407577209145997,
+        "evaluation_deviatoric_component_RMSE_MPa": 0.2128959909151103,
+        "evaluation_hydrostatic_MAE_inside_trace_range_MPa": 0.08824582285301166,
+        "evaluation_hydrostatic_MAE_outside_trace_range_MPa": 3.0226450699772793,
+        "evaluation_max_residual_MPa": 9.727745720056191e-09,
+        "training_replay_max_residual_MPa": 9.710403148233127e-09
+      },
+      "noisy": {
+        "seed": 0,
+        "training_replay_failure": null,
+        "training_free_MAE_MPa": 0.2700136766406008,
+        "training_free_RMSE_MPa": 0.35181261720590656,
+        "evaluation_hydrostatic_RMSE_MPa": 4.917236938621473,
+        "evaluation_deviatoric_component_RMSE_MPa": 0.6449700198157978,
+        "evaluation_hydrostatic_MAE_inside_trace_range_MPa": 0.22682614531040593,
+        "evaluation_hydrostatic_MAE_outside_trace_range_MPa": 4.371750467759723,
+        "evaluation_max_residual_MPa": 9.602719064361054e-09,
+        "training_replay_max_residual_MPa": 9.381956322940255e-09
+      }
+    },
+    "interpretation": "Normal-stress extrapolation and the frozen noisy-model recovery/ranking errors remain observed accuracy limits. The additional training-history free replays distinguish deployment integration from auxiliary fitting; small Newton residuals establish solved learned equations, not correct material predictions. No implementation defect is inferred solely from a nonzero prediction error; no extra training or evaluation-based selection was performed."
+  },
+  "all_initializations_summary": {
+    "ideal": {
+      "MAE_MPa": {
+        "min": 0.6473447408911985,
+        "median": 1.405254784506899,
+        "mean": 1.390148782510475,
+        "max": 2.1588361153354723
+      },
+      "RMSE_MPa": {
+        "min": 1.0553254260721645,
+        "median": 2.3048111921155234,
+        "mean": 2.2944816741100427,
+        "max": 3.507742740167181
+      },
+      "normalized_RMSE": {
+        "min": 0.04423804005725681,
+        "median": 0.09661506045647779,
+        "mean": 0.09618205882493427,
+        "max": 0.14704058105339007
+      }
+    },
+    "noisy": {
+      "MAE_MPa": {
+        "min": 1.019292006988166,
+        "median": 1.8284736744828922,
+        "mean": 1.8683028738664307,
+        "max": 2.8238488802406465
+      },
+      "RMSE_MPa": {
+        "min": 1.3560531774588536,
+        "median": 2.59623493612118,
+        "mean": 2.6951206869537527,
+        "max": 4.2145035860496876
+      },
+      "normalized_RMSE": {
+        "min": 0.053671754150102655,
+        "median": 0.10275738851814425,
+        "mean": 0.10667122596630377,
+        "max": 0.16680747045559602
+      }
+    }
+  },
+  "data_artifacts": {
+    "observations.npz": {
+      "sha256": "bcdedc88e750a81329cf9fe6d250e535f5340ce62cddee7bd380824f08a42d67",
+      "bytes": 55691
+    },
+    "reference.npz": {
+      "sha256": "28276bb8da2cf8f0db8511a8df00995c30fd18925abce37debb93d8be3a796c5",
+      "bytes": 69032
+    }
+  },
+  "observed_training_noise_MPa": {
+    "mean": 0.007113780736017331,
+    "standard_deviation": 1.5655816554115423,
+    "configured_std": 1.5
+  },
+  "commands": [
+    "bash scripts/run_tm02_r2_server.sh tm02-rnn-20261023",
+    "JAX_PLATFORMS=cpu work/envs/tm02/bin/python scripts/run_tm02_r2.py --run tm02-rnn-20261023 --phase diagnose"
+  ],
+  "processing_source_sha256": {
+    "src/tm02/evaluate.py": "b0dd0693bf6d5a9874f2666fddcc17421150d8fd5205498fbcd3759e34b7bebc",
+    "src/tm02/figures.py": "6e7dfc0547bfd9f79fd4a795d5e361a17e8edab78b3f3fc1979bffc892d7e362"
+  },
+  "interpretation": {
+    "fixed_training_and_evaluation_budget_executed": true,
+    "paper_level_prediction_accuracy_claimed": false,
+    "robot_control_benefit_claimed": false,
+    "remaining_accuracy_limits": [
+      "Systematic normal-stress underprediction on the independent positive volumetric-strain path.",
+      "Noisy selected model predicts ties for the two 5 s recovery pairs; reference differences exceed the fixed tie threshold."
+    ],
+    "additional_training_after_observing_errors": 0
+  },
+  "artifact_archive": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm02-r2-evidence-20261023/tm02-rnn-20261023-evidence.tar.gz",
+  "artifact_checksum": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm02-r2-evidence-20261023/tm02-rnn-20261023-evidence.sha256",
+  "final_weight_count": 50,
+  "final_optimizer_state_count": 50,
+  "training_curve_count": 50
+}

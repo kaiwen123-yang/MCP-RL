@@ -101,7 +101,7 @@ def reproduction_figures(out, compact, records, selected, predictions):
         ax.set_xticks([0,1],['ideal','noisy'])
         ax.set_ylabel(metric.replace('_',' '))
         ax.grid(axis='y', alpha=.2)
-    fig.suptitle('Independent full-path errors; each dot is one final initialization\nBox: median/IQR, whiskers: 1.5 IQR; failed integrators remain in CSV')
+    fig.suptitle('Independent full-path errors; 25 final models per condition\nDots: individual models; box: median/IQR; whiskers: 1.5 IQR')
     save(fig, compact, 'all-initialization-errors')
 
 
@@ -147,3 +147,20 @@ def revisit_figures(config, compact, rollouts, pairs):
     axes[0].legend()
     fig.suptitle('Six candidate pairs: negative favors early; gray band denotes ties')
     save(fig, compact, 'candidate-consequences')
+    fig, axes = plt.subplots(1,2,figsize=(7.2,3.5),sharey=True,layout='constrained')
+    for ax,preload in zip(axes,config['preloading_histories']):
+        pair = next(p for p in pairs if p['preload']==preload['id'] and p['delay_s']==5)
+        for x,model in enumerate(('reference','ideal','noisy')):
+            value = pair[f'{model}_difference']*1e6
+            ax.scatter(x,value,color=COLORS[model],marker=('o','s','^')[x],s=40,zorder=3)
+            ax.annotate(f'{value:.3f}',(x,value),xytext=(0,-17),textcoords='offset points',ha='center')
+        ax.axhspan(-1,1,color='#999999',alpha=.18)
+        ax.axhline(0,color='#777777',lw=.7)
+        ax.set_xticks([0,1,2],['reference','ideal','noisy'])
+        ax.set_xlim(-.5,2.5)
+        ax.set_ylim(-3.9,1.3)
+        ax.set_title(preload['id'])
+        ax.grid(axis='y',alpha=.2)
+    axes[0].set_ylabel('Early minus late peak compression ($10^{-6}$)')
+    fig.suptitle('5 s recovery: noisy model predicts a tie (gray band)')
+    save(fig,compact,'long-recovery-ranking')

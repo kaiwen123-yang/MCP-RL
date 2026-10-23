@@ -17,7 +17,9 @@
 | S：完整机器人任务 | 上述材料成果形成并可用于规划后 | 持续地块状态、跨步 MPC、长期价值，强对照与完整往返视频 |
 | H：实机 | S 的整程结果形成后 | 材料标定、前后足重访、完整往返及实际数据 |
 
-两份执行规格：[r2-rnn.json](experiments/tm02/r2-rnn.json)、[r2-revisit.json](experiments/tm02/r2-revisit.json)。**它们是下一轮要执行的配置，不是已完成实验。训练入口 scripts/run_tm02_r2.py 须由本轮 Codex 实现并运行，本次计划提交未实现训练器。**
+两份执行配置：[r2-rnn.json](experiments/tm02/r2-rnn.json)、[r2-revisit.json](experiments/tm02/r2-revisit.json)。实际入口为 [run_tm02_r2.py](scripts/run_tm02_r2.py)；服务器整程命令为 `bash scripts/run_tm02_r2_server.sh tm02-rnn-20261023`，已有训练从真实检查点接续。
+
+**固定 R2 批次已执行：50 次初始化各 20,000 次更新、50 条独立路径自由预测、36 条零新增训练重访推演，积分均完成。** [原方法结果](results/terrain_memory/reproduction/material/tm02-rnn-20261023/index.json)和[迁移结果](results/terrain_memory/transfer/material/tm02-rnn-20261023/index.json)包含全部初始化误差、完整曲线及[权重与原始数据归档](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-r2-evidence-20261023)。按最终训练损失选中 ideal seed 13、noisy seed 0，独立路径 RMSE 为 2.513、3.536 MPa；重访排序为 6/6、4/6。正体积应变外推及含噪模型长恢复排序仍有误差，未宣称原文级预测精度或整机控制收益。
 
 R2 采用 Rosenkranz 等的物理结构材料模型与辅助 RNN 训练方案。预测时丢弃辅助 RNN，以学习到的势函数积分演化，不输入参考隐变量或应变控制评价的真实应力答案。完整方法、数据及结果要求见计划。
 

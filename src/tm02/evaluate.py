@@ -23,6 +23,56 @@ def write_csv(path, rows):
         writer.writerows(rows)
 
 
+def diagnose_selected_prediction(config, out, compact):
+    """Explain the observed normal-stress gap using the same frozen histories.
+
+    Two full replays of the existing training history, no optimization, new path,
+    label injection, changed selection, or generic test harness.
+    """
+    obs = np.load(out/'observations.npz')
+    truth = np.load(out/'reference.npz')
+    training = json.loads((out/'training.json').read_text())
+    train_trace = obs['train_strain'][:,:3].sum(1)
+    eval_trace = obs['evaluation_strain'][:,:3].sum(1)
+    outside = (eval_trace[1:] < train_trace.min()) | (eval_trace[1:] > train_trace.max())
+    detail = dict(additional_optimizer_updates=0, additional_generated_paths=0,
+                  existing_training_history_replays=2, selection_changed=False,
+                  train_trace_strain_range=[float(train_trace.min()),float(train_trace.max())],
+                  evaluation_trace_strain_range=[float(eval_trace.min()),float(eval_trace.max())],
+                  evaluation_steps_outside_training_trace_range=int(outside.sum()),
+                  evaluation_steps=len(outside), selected={})
+    arrays = dict(train_time=obs['train_time'], reference_training_stress=truth['train_stress'])
+    for condition, choice in training['selection'].items():
+        w, norm = load_weights(out/choice['weights'])
+        replay, failure = integrate(w,norm,obs['train_time'],obs['train_strain'],config['numerics'])
+        arrays[condition+'_training_free_stress'] = replay['stress']
+        arrays[condition+'_training_free_q'] = replay['q']
+        pred = np.load(out/'predictions'/f"{condition}-seed-{choice['seed']:02d}.npz")
+        error = pred['stress'][1:]-truth['evaluation_stress'][1:]
+        hydro = error[:,:3].mean(1)
+        dev = error.copy()
+        dev[:,:3] -= hydro[:,None]
+        train_error = replay['stress'][1:]-truth['train_stress'][1:]
+        detail['selected'][condition] = dict(seed=choice['seed'], training_replay_failure=failure,
+            training_free_MAE_MPa=float(np.mean(np.abs(train_error))),
+            training_free_RMSE_MPa=float(np.sqrt(np.mean(train_error**2))),
+            evaluation_hydrostatic_RMSE_MPa=float(np.sqrt(np.mean(hydro**2))),
+            evaluation_deviatoric_component_RMSE_MPa=float(np.sqrt(np.mean(dev**2))),
+            evaluation_hydrostatic_MAE_inside_trace_range_MPa=float(np.mean(np.abs(hydro[~outside]))),
+            evaluation_hydrostatic_MAE_outside_trace_range_MPa=float(np.mean(np.abs(hydro[outside]))),
+            evaluation_max_residual_MPa=float(np.max(pred['residual'])),
+            training_replay_max_residual_MPa=float(np.nanmax(replay['residual'])))
+    np.savez_compressed(out/'selected-training-free-replays.npz', **arrays)
+    detail['interpretation'] = ('Normal-stress extrapolation and the frozen noisy-model recovery/ranking errors remain observed accuracy limits. '
+        'The additional training-history free replays distinguish deployment integration from auxiliary fitting; '
+        'small Newton residuals establish solved learned equations, not correct material predictions. '
+        'No implementation defect is inferred solely from a nonzero prediction error; no extra training or evaluation-based selection was performed.')
+    index = json.loads((compact/'index.json').read_text())
+    index['observed_prediction_gap_diagnostic'] = detail
+    write_json(compact/'index.json', index)
+    print(json.dumps(detail,indent=2),flush=True)
+
+
 def strain_residual(q, w, norm, e, qprev, dt):
     _, tau, tauhat = forces(w, norm, e, q, (q-qprev)/dt)
     return tauhat-tau

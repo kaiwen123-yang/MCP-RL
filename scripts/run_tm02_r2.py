@@ -132,6 +132,14 @@ def train(config, out):
                             final_biot_MAE_MPa=float(final_terms[i, 1]), weights=f'final/{stem}.npz'))
     selection = {cond: min((r for r in records if r['condition']==cond),
                           key=lambda r: r['final_training_loss_MPa']) for cond in tc['conditions']}
+    selected_dir = out/'selected'
+    selected_dir.mkdir(exist_ok=True)
+    for condition, chosen in selection.items():
+        i = runs.index((condition, chosen['seed']))
+        wi, ni = jax.tree.map(lambda x: np.asarray(x[i]), (w, norm))
+        potentials = {name: value for name,value in wi.items() if name != 'rnn'}
+        chosen['potential_weights'] = f'selected/{condition}-potentials.npz'
+        save_weights(out/chosen['potential_weights'], potentials, ni)
     write_json(out/'training.json', dict(runs=records, selection=selection, elapsed_s=elapsed,
                                        rule=tc['selection'], total_optimizer_updates=total*nrun))
     print('All final weights and optimizer states saved; selection uses only final training loss.', flush=True)
@@ -141,7 +149,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', default='experiments/tm02/r2-rnn.json')
     parser.add_argument('--run', default='tm02-rnn-20261023')
-    parser.add_argument('--phase', choices=['all', 'train', 'evaluate', 'revisit'], default='all')
+    parser.add_argument('--phase', choices=['all', 'train', 'evaluate', 'revisit', 'diagnose'], default='all')
     parser.add_argument('--revisit-config', default='experiments/tm02/r2-revisit.json')
     args = parser.parse_args()
     config = json.loads((ROOT/args.config).read_text(encoding='utf-8'))
@@ -165,6 +173,9 @@ def main():
         from tm02.evaluate import revisit
         revisit_config = json.loads((ROOT/args.revisit_config).read_text(encoding='utf-8'))
         revisit(config, revisit_config, out, ROOT, args.run)
+    if args.phase == 'diagnose':
+        from tm02.evaluate import diagnose_selected_prediction
+        diagnose_selected_prediction(config, out, ROOT/config['outputs']['compact_root']/args.run)
 
 
 if __name__ == '__main__':
