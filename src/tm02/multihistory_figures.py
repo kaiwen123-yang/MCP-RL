@@ -159,8 +159,8 @@ def _paired(compact, pairs):
                        marker='o' if condition == 'ideal' else '^', s=27, zorder=3)
             for offset, index in enumerate(np.flatnonzero(improvement < 0)):
                 ax.annotate(f'{improvement[index]:.4f}', (path_ids[index], improvement[index]),
-                            xytext=(0, -13 - 12 * (offset % 2)), textcoords='offset points',
-                            ha='center', va='top', fontsize=7, color=COLORS[condition])
+                            xytext=(0, 10 + 12 * (offset % 2)), textcoords='offset points',
+                            ha='center', va='bottom', fontsize=7, color=COLORS[condition])
             ax.set_xlim(-.7, 19.7)
             ax.set_xticks(range(20))
             ax.tick_params(axis='x', labelrotation=90, labelsize=7)
