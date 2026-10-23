@@ -159,7 +159,7 @@ def response_metrics(result, truth, item, complete, tolerance=1e-6):
 
 
 def _worker_environment():
-    # One CPU per full-model process; retain the original Newton/material code.
+    # One CPU per worker; retain the original Newton/material code.
     os.environ['JAX_PLATFORMS'] = 'cpu'
     affinity = sorted(os.sched_getaffinity(0))
     worker = multiprocessing.current_process()._identity[0] - 1
@@ -169,11 +169,12 @@ def _worker_environment():
 
 
 def _evaluate_one(arguments):
-    return evaluate_catalog(*arguments, summarize=False)
+    family, *run_arguments = arguments
+    return evaluate_catalog(*run_arguments, summarize=False, _family=family)
 
 
 def evaluate_catalog(models, catalog_path, numerics, output_dir, compact_dir, reuse=None,
-                     tolerance=1e-6, workers=1, summarize=True):
+                     tolerance=1e-6, workers=1, summarize=True, _family=None):
     """Run every supplied model/history cell with its independently evolved state.
 
     ``reuse`` maps (model_id, history_id) to {prediction_file, failure}; these
@@ -184,19 +185,23 @@ def evaluate_catalog(models, catalog_path, numerics, output_dir, compact_dir, re
     catalog_path, output_dir, compact_dir = map(Path, (catalog_path, output_dir, compact_dir))
     catalog_definition = json.loads(catalog_path.read_text(encoding='utf-8'))
     catalog = catalog_definition['histories']
+    if _family is not None:
+        catalog = [item for item in catalog if item['family'] == _family]
     output_dir.mkdir(parents=True, exist_ok=True)
     compact_dir.mkdir(parents=True, exist_ok=True)
     reuse = {} if reuse is None else reuse
     records, executed, resumed, reused = [], 0, 0, 0
     if workers > 1:
         # Spawn avoids inheriting an initialized JAX runtime. Each worker owns
-        # complete model/history executions and disjoint prediction files.
-        arguments = [([model], catalog_path, numerics, output_dir, compact_dir,
+        # one model/family task containing intact histories. Families share a
+        # model directory but have disjoint filenames; summaries run once here.
+        families = sorted({item['family'] for item in catalog})
+        arguments = [(family, [model], catalog_path, numerics, output_dir, compact_dir,
                       {k: v for k, v in reuse.items() if k[0] == model['model_id']}, tolerance)
-                     for model in models]
+                     for model in models for family in families]
         with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context('spawn'),
                                  initializer=_worker_environment) as pool:
-            for result in pool.map(_evaluate_one, arguments):
+            for result in pool.map(_evaluate_one, arguments, chunksize=1):
                 records.extend(result['records'])
                 executed += result['executed']
                 resumed += result['resumed']
@@ -265,7 +270,7 @@ def evaluate_catalog(models, catalog_path, numerics, output_dir, compact_dir, re
             record.update(response_metrics(result, truth, item, complete, tolerance))
             write_json(recordfile, record)
             records.append(record)
-        print(json.dumps(dict(catalog=catalog_path.name, model_id=model['model_id'],
+        print(json.dumps(dict(catalog=catalog_path.name, model_id=model['model_id'], family=_family,
                               recorded_histories=len(catalog),
                               failures=sum(not r['integration_complete'] for r in records
                                            if r['model_id'] == model['model_id']))), flush=True)

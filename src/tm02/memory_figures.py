@@ -1,6 +1,9 @@
 """Physical-unit figures and complete response atlases from actual study results."""
 import csv
+from concurrent.futures import ProcessPoolExecutor
+from itertools import repeat
 import json
+import multiprocessing
 from pathlib import Path
 import shutil
 
@@ -359,16 +362,24 @@ def _atlas(records, training, destination, prediction_root, compact, examples, d
     groups = {}
     for row in records:
         groups.setdefault(row['history_id'], []).append(row)
-    for index, (history_id, rows) in enumerate(sorted(groups.items()), 1):
-        artifact = _history_figure(history_id, rows, training, destination, prediction_root, diagnostic)
-        artifact['history_id'] = history_id
-        artifacts.append(artifact)
-        if history_id in examples:
-            for suffix in ('.png', '.svg'):
-                shutil.copyfile(destination/(history_id+suffix), compact/(history_id+suffix))
-        if index % 25 == 0:
-            print(f"Rendered {'diagnostic' if diagnostic else 'final'} complete-history figure {index}/{len(groups)}.",
-                  flush=True)
+    ordered = sorted(groups.items())
+    # Each process owns one complete history figure and its distinct files.
+    # Summary figures and copying the fixed compact examples stay in the parent.
+    with ProcessPoolExecutor(max_workers=8, mp_context=multiprocessing.get_context('spawn'),
+                             initializer=_style) as executor:
+        results = executor.map(_history_figure,
+            (history_id for history_id, rows in ordered), (rows for history_id, rows in ordered),
+            repeat({'selection': training['selection']}), repeat(destination), repeat(prediction_root),
+            repeat(diagnostic), chunksize=1)
+        for index, ((history_id, rows), artifact) in enumerate(zip(ordered, results), 1):
+            artifact['history_id'] = history_id
+            artifacts.append(artifact)
+            if history_id in examples:
+                for suffix in ('.png', '.svg'):
+                    shutil.copyfile(destination/(history_id+suffix), compact/(history_id+suffix))
+            if index % 25 == 0:
+                print(f"Rendered {'diagnostic' if diagnostic else 'final'} complete-history figure {index}/{len(groups)}.",
+                      flush=True)
     return artifacts
 
 
@@ -407,7 +418,8 @@ def study_figures(study, out, compact):
         design='Every physical condition retained. F6 candidates aggregate within condition for summary points; '
                'F2/F5 show the five seed clusters. No IID confidence intervals or means-only bar plots.',
         rendering='PNG previews and SVG vector output, fixed colorblind palette with redundant line/marker codes; '
-                  'compact summaries include grayscale previews. Complete histories are not temporally downsampled.')
+                  'compact summaries include grayscale previews. Complete histories are not temporally downsampled.',
+        atlas_rendering_processes=8, atlas_process_start_method='spawn')
     (destination/'figures.json').write_text(json.dumps(manifest, indent=2, allow_nan=False)+'\n', encoding='utf-8')
     final_summary = _json(final_root/'evaluation.json')
     diagnostic_summary = _json(diagnostic_root/'evaluation.json')
