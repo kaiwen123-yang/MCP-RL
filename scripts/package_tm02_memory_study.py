@@ -6,6 +6,7 @@ are separate operations; this command does not claim a release is published.
 """
 import argparse
 from collections import Counter
+import csv
 import hashlib
 import json
 from pathlib import Path
@@ -35,6 +36,91 @@ def sha256(path):
         for block in iter(lambda: stream.read(8 * 1024 * 1024), b''):
             digest.update(block)
     return digest.hexdigest()
+
+
+def write_training_throughput(out, compact):
+    """Measure adjacent saved checkpoints within each actual execution segment."""
+    profiles = {
+        'train.log': {(10, 100): ('A_random100', 25),
+                      (20, 1000): ('B_random1000', 25)},
+        'train-micro100.log': {(20, 1000): ('B_random1000', 100)},
+        'train-fullbatch.log': {(20, 1000): ('B_random1000', 1000),
+                               (20, 100): ('C_mixed100', 100)}}
+    intervals, logs = [], []
+    for name, groups in profiles.items():
+        path = out / name
+        if not path.exists():
+            continue
+        previous, previous_key, segment = None, None, 0
+        checkpoints = 0
+        for line in path.read_text(encoding='utf-8').splitlines():
+            if not line.startswith('{'):
+                continue
+            current = json.loads(line)
+            if 'group_start' not in current:
+                continue
+            key = current['independent_runs'], current['paths_per_update']
+            arm, microbatch = groups[key]
+            checkpoints += 1
+            if key != previous_key or current['iteration'] <= previous['iteration']:
+                # The first checkpoint contains initialization/compilation. Its
+                # cumulative elapsed time is not a measured steady-state chunk.
+                segment += 1
+            else:
+                updates = current['iteration'] - previous['iteration']
+                seconds = current['elapsed_s'] - previous['elapsed_s']
+                intervals.append(dict(
+                    source_log=name, segment=segment, arm=arm,
+                    independent_models=key[0], histories_per_update=key[1],
+                    path_microbatch_size=microbatch,
+                    from_iteration=previous['iteration'], to_iteration=current['iteration'],
+                    full_dataset_updates_per_model=updates,
+                    from_checkpoint_elapsed_s=previous['elapsed_s'],
+                    to_checkpoint_elapsed_s=current['elapsed_s'],
+                    checkpoint_interval_s=seconds,
+                    seconds_per_250_full_dataset_updates=seconds * 250 / updates,
+                    full_dataset_updates_per_model_per_s=updates / seconds,
+                    model_optimizer_updates_per_s=updates * key[0] / seconds,
+                    complete_history_gradient_evaluations_per_s=updates * key[0] * key[1] / seconds))
+            previous, previous_key = current, key
+        logs.append(dict(file=name, sha256=sha256(path), training_checkpoints=checkpoints,
+                         execution_segments=segment,
+                         first_checkpoints_excluded_from_timing=segment))
+    table = compact / 'training-throughput.csv'
+    with table.open('w', newline='', encoding='utf-8') as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(intervals[0]))
+        writer.writeheader()
+        writer.writerows(intervals)
+    summaries = []
+    for arm, models, paths, micro in sorted({
+            (r['arm'], r['independent_models'], r['histories_per_update'],
+             r['path_microbatch_size']) for r in intervals}):
+        rows = [r for r in intervals if (r['arm'], r['independent_models'],
+                r['histories_per_update'], r['path_microbatch_size']) == (arm, models, paths, micro)]
+        timing = [r['seconds_per_250_full_dataset_updates'] for r in rows]
+        summaries.append(dict(arm=arm, independent_models=models,
+            histories_per_update=paths, path_microbatch_size=micro,
+            measured_checkpoint_intervals=len(rows),
+            observed_from_iteration=min(r['from_iteration'] for r in rows),
+            observed_to_iteration=max(r['to_iteration'] for r in rows),
+            measured_full_dataset_updates_per_model=sum(r['full_dataset_updates_per_model'] for r in rows),
+            measured_interval_seconds=sum(r['checkpoint_interval_s'] for r in rows),
+            median_seconds_per_250_updates=float(np.median(timing)),
+            mean_seconds_per_250_updates=float(np.mean(timing)),
+            min_seconds_per_250_updates=float(np.min(timing)),
+            max_seconds_per_250_updates=float(np.max(timing))))
+    baseline = {r['arm']: r['median_seconds_per_250_updates'] for r in summaries
+                if r['path_microbatch_size'] == 25}
+    for row in summaries:
+        if row['arm'] in baseline and row['path_microbatch_size'] != 25:
+            row['median_speedup_vs_same_arm_micro25'] = (
+                baseline[row['arm']] / row['median_seconds_per_250_updates'])
+    return dict(table=table.relative_to(ROOT).as_posix(), logs=logs, groups=summaries,
+        timing_definition='Differences between adjacent checkpoint elapsed_s values inside the same log '
+                          'and the same (independent models, histories per update) execution segment. '
+                          'The first checkpoint of every segment is excluded; no interval crosses a restart.',
+        scope='Measured saved-checkpoint intervals only; no extrapolated future timing. '
+              'Checkpoint kernel timing excludes serialization outside the timed training call.')
 
 
 def main():
@@ -143,6 +229,27 @@ def main():
         raise SystemExit('Fixed study artifacts are incomplete; no release archive created.\n'
                          + json.dumps(completion, indent=2))
 
+    throughput = write_training_throughput(out, compact)
+    execution_changes = execution['execution_changes']
+    discarded_update_bound = sum(
+        sum(not r['reused'] and r['arm'] == change['arm'] for r in runs)
+        * config['execution']['checkpoint_every_iterations'] for change in execution_changes)
+    training_compute = {key: training[key] for key in (
+        'total_optimizer_updates', 'elapsed_s', 'history_gradient_evaluations',
+        'arm_compute', 'compute_scope')}
+    training_compute.update(
+        total_optimizer_updates_definition='Retained training trajectories of the 50 new models: '
+                                           '20,000 updates each. This excludes discarded work at execution changes.',
+        retained_training_trajectory_optimizer_updates=training['total_optimizer_updates'],
+        discarded_model_optimizer_update_attempts_upper_bound=discarded_update_bound,
+        discarded_work_bound_definition='At most one checkpoint interval per affected model per recorded '
+                                       'microbatch switch. This is an upper bound, not a measured count.',
+        interrupted_wall_time_scope='execution_changes.seconds_since_checkpoint_upper_bound includes '
+                                   'downtime between interruption and continuation; it is not actual compute time.',
+        other_arithmetic_scope='Compilation and final training-loss/gradient evaluations are additional '
+                               'work outside retained Adam update counts.',
+        throughput=throughput)
+
     work = ROOT / 'work/terrain-memory'
     work.mkdir(parents=True, exist_ok=True)
     archive = work / f'{args.run}-evidence.tar.gz'
@@ -164,9 +271,8 @@ def main():
         execution_provenance=(out / 'run.json').relative_to(ROOT).as_posix(),
         execution_provenance_sha256=sha256(out / 'run.json'),
         hardware={key: execution[key] for key in ('host', 'hardware', 'cpu', 'python', 'jax')},
-        training_compute={key: training[key] for key in (
-            'total_optimizer_updates', 'elapsed_s', 'history_gradient_evaluations',
-            'arm_compute', 'compute_scope')},
+        training_compute=training_compute,
+        execution_changes=execution_changes,
         seeds=dict(initialization=tc['initialization_seeds'],
                    original_training_histories=base['data']['train']['strain_seeds'],
                    random_augmentation={key: config['arms'][1][key] for key in (
@@ -191,6 +297,7 @@ def main():
     index.pop('artifact_archive_bytes', None)
     index['artifact_archive'] = f'{download}/{archive.name}'
     index['artifact_checksum'] = f'{download}/{checksum.name}'
+    index['training']['performance'] = throughput
     index['artifact_package'] = metadata
     write_json(index_path, index)
 
