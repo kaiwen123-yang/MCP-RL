@@ -1,11 +1,11 @@
 {
-  "primary": "r1-foothold-clock-repaired/index.json",
+  "primary": "r1-closeout-20261022/index.json",
   "foothold_restoration": "r1-foothold-restored/index.json",
   "historical_primary": "r1-v7-paper-model/index.json",
   "historical_clock_comparison": "r1-v8-phase-consistent/index.json",
   "r1_complete": false,
-  "new_experiments_this_work": 306,
-  "new_continuous_videos": 14,
+  "new_experiments_this_work": 103,
+  "new_continuous_videos": 7,
   "scope": "Pinned-author-version method reproduction and all declared core simulation comparisons, including two verified execution corrections; not a certified original 2024 release.",
   "primary_table1": {
     "episodes_per_method": 50,
@@ -24,7 +24,7 @@
     "The corrected same-implementation frequency contrast improves 60 s no-fall outcomes from 0/50 to 22/50 and mean time without a fall from 7.93536 to 42.72 s; 48/50 paired seeds last longer.",
     "Clock correction reduces >3 cm continuing-swing reference jumps from 71.83 percent to 0.206 percent. Its +4.70 s paired mean lifetime change has a 95 percent interval spanning zero; a reliable lifetime improvement from that correction alone is not established."
   ],
-  "remaining_gap": "The paper-specific strong-disturbance comparison is not fully explained: our declared Figure 4 reconstruction does not produce the acados fall, and the original Table I episode length, command, complete wrench schedule and scoring/configuration snapshot are unavailable in the selected paper/source. The new data establish frequency benefit and expose execution limits, but do not identify how much of the remaining difference comes from those unpublished conditions versus retained modern author implementation choices.",
+  "remaining_gap": "Original Figure 4 full velocity commands and unambiguous push timing remain unavailable; caption and main text disagree about push duration. The previously executed reconstruction does not reproduce the reported acados fall. Original Table I episode duration, initialization/phase, full wrench generation/timing and failure definition remain unavailable in the selected paper and dated author source. The remaining difference cannot be uniquely assigned to protocol versus retained modern implementation choices.",
   "required_external_evidence": [
     "Original Figure 4 full velocity command, push timing and controller/helper configuration.",
     "Original Table I episode duration, reset/phase settings, wrench generation/timing, failure definition, and controller/model parameter snapshot."
@@ -39,5 +39,88 @@
     "r1-v4",
     "r1-v5-source"
   ],
-  "closeout_fixed_2p0": "r1-closeout-20261022-fixed-2p0/index.json"
+  "closeout_fixed_2p0": "r1-closeout-20261022-fixed-2p0/index.json",
+  "clock_repair": "r1-foothold-clock-repaired/index.json",
+  "r2_started": false,
+  "prior_completed_foothold_clock_episodes": 306,
+  "cumulative_foothold_clock_closeout_episodes": 409,
+  "referenced_episodes_in_current_frequency_comparison": 100,
+  "prior_foothold_clock_continuous_videos": 14,
+  "cumulative_foothold_clock_closeout_videos": 21,
+  "primary_frequency_comparison": [
+    {
+      "group": "fixed_1p3",
+      "label": "Fixed 1.3 Hz",
+      "source_run": "r1-foothold-clock-repaired",
+      "method": "adaptive_fixed",
+      "newly_executed": 0,
+      "episodes": 50,
+      "successes": 0,
+      "success_percent": 0,
+      "success_ci95_low_percent": 0.0,
+      "success_ci95_high_percent": 7.134759913335873,
+      "mean_capped_duration_s": 7.93536,
+      "mean_capped_duration_ci95_low_s": 6.553340999999999,
+      "mean_capped_duration_ci95_high_s": 9.570531999999996,
+      "median_capped_duration_s": 6.144
+    },
+    {
+      "group": "fixed_2p0",
+      "label": "Fixed 2.0 Hz",
+      "source_run": "r1-closeout-20261022-fixed-2p0",
+      "method": "adaptive_fixed",
+      "newly_executed": 1,
+      "episodes": 50,
+      "successes": 8,
+      "success_percent": 16,
+      "success_ci95_low_percent": 8.337420678033403,
+      "success_ci95_high_percent": 28.514216063034993,
+      "mean_capped_duration_s": 30.122320000000006,
+      "mean_capped_duration_ci95_low_s": 24.770875000000004,
+      "mean_capped_duration_ci95_high_s": 35.76803899999999,
+      "median_capped_duration_s": 27.490000000000002
+    },
+    {
+      "group": "fixed_2p4",
+      "label": "Fixed 2.4 Hz",
+      "source_run": "r1-closeout-20261022-fixed-2p4",
+      "method": "adaptive_fixed",
+      "newly_executed": 1,
+      "episodes": 50,
+      "successes": 28,
+      "success_percent": 56,
+      "success_ci95_low_percent": 42.30602802165686,
+      "success_ci95_high_percent": 68.83780078874284,
+      "mean_capped_duration_s": 46.3486,
+      "mean_capped_duration_ci95_low_s": 40.470618,
+      "mean_capped_duration_ci95_high_s": 51.77304699999999,
+      "median_capped_duration_s": 60.0
+    },
+    {
+      "group": "adaptive",
+      "label": "Adaptive",
+      "source_run": "r1-foothold-clock-repaired",
+      "method": "adaptive",
+      "newly_executed": 0,
+      "episodes": 50,
+      "successes": 22,
+      "success_percent": 44,
+      "success_ci95_low_percent": 31.162199211257168,
+      "success_ci95_high_percent": 57.69397197834315,
+      "mean_capped_duration_s": 42.71999999999999,
+      "mean_capped_duration_ci95_low_s": 37.235526,
+      "mean_capped_duration_ci95_high_s": 47.867338999999994,
+      "median_capped_duration_s": 49.802
+    }
+  ],
+  "strong_fixed_baseline_hz": 2.4,
+  "new_isolated_fig3": "r1-closeout-20261022-fig3-isolated/index.json",
+  "fig3_latency_comparison_complete": true,
+  "closeout_fixed_2p4": "r1-closeout-20261022-fixed-2p4/index.json",
+  "latest_findings": [
+    "Among the three tested fixed frequencies, 2.4 Hz has the highest observed 60 s completion (28/50) and capped mean duration (46.3486 s). Retain it as a strong fixed-frequency baseline in subsequent authorized comparisons.",
+    "Adaptive completes 22/50 and lasts 42.72 s on average. Adaptive-minus-fixed-2.4 paired duration is -3.6286 s, 95% interval [-10.250129,2.904257]; success difference is -12 percentage points, interval [-30,6]. Neither superiority nor equivalence between these two controllers is established.",
+    "On the 15 seeds where both adaptive and fixed 2.4 Hz complete 60 s, adaptive uses 1574.064 J less positive mechanical work on average (95% paired interval [-1927.053,-1158.756] J), while its velocity RMSE is 0.023942 m/s higher (interval [0.009092,0.042247]). This is a completion-conditioned mechanical-work comparison, not battery energy or an unconditional all-task efficiency claim.",
+    "All three new Fig. 3 methods complete 60 s. Steady MPC-interface calls stay below 10 ms, but complete online steps exceed 2 ms on 14.55%, 16.14%, and 16.33% of recorded steps (acados, naive, MPPI). This does not establish real-robot 500 Hz operation."
+  ]
 }

@@ -1,0 +1,252 @@
+{
+  "run": "r1-closeout-20261022-fig3-isolated",
+  "scope": "Figure 3 tracking and observed timing only",
+  "reference_run": null,
+  "source_run": "r1-closeout-20261022-fig3-isolated",
+  "newly_executed_episode_count": 3,
+  "included_episode_count": 3,
+  "r1_completion_assessed": false,
+  "fig3_latency_comparison_complete": true,
+  "fig3_observed_timing_recorded": true,
+  "fig3_timing_contexts": {
+    "acados": "isolated",
+    "naive": "isolated",
+    "mppi": "isolated"
+  },
+  "fig3_summary": [
+    {
+      "method": "acados",
+      "completed": true,
+      "duration_s": 60.0,
+      "velocity_error_mean_m_s": 0.10036836601155272,
+      "velocity_error_rmse_m_s": 0.11194133395922443,
+      "observed_mpc_interface_median_ms": 0.9485924965701997,
+      "timing_context": "isolated"
+    },
+    {
+      "method": "naive",
+      "completed": true,
+      "duration_s": 60.0,
+      "velocity_error_mean_m_s": 0.1381330598506177,
+      "velocity_error_rmse_m_s": 0.15358948408151232,
+      "observed_mpc_interface_median_ms": 0.9412679937668145,
+      "timing_context": "isolated"
+    },
+    {
+      "method": "mppi",
+      "completed": true,
+      "duration_s": 60.0,
+      "velocity_error_mean_m_s": 0.13202214274925242,
+      "velocity_error_rmse_m_s": 0.14646876521836777,
+      "observed_mpc_interface_median_ms": 0.9484659822192043,
+      "timing_context": "isolated"
+    }
+  ],
+  "figures": [
+    "fig3.png",
+    "fig3.svg",
+    "fig3_timeseries.png",
+    "fig3_timeseries.svg"
+  ],
+  "timing_data": "fig3_timing.csv",
+  "notes": [
+    "Only the three Figure 3 groups are assessed; this does not establish R1 completion.",
+    "Timing comparability uses the recorded resource context; setting a label does not reserve exclusive hardware.",
+    "Simulation sampling frequency is not evidence of a hardware real-time deadline."
+  ],
+  "latency_sources": [
+    {
+      "method": "acados",
+      "source_run": "r1-closeout-20261022-fig3-isolated",
+      "trajectory": "outputs/terrain_memory/reproduction/pympc/r1-closeout-20261022-fig3-isolated/fig3/acados/seed-000.npz",
+      "sha256": "6c9b21bf7f815facc4b146463f13620ccdcf9a66febe19aab377d927cd3b8ec2",
+      "completed": true,
+      "duration_s": 60.0,
+      "run_record": "results/terrain_memory/reproduction/pympc/r1-closeout-20261022-fig3-isolated/fig3/acados/run.json",
+      "source_snapshot": "results/terrain_memory/reproduction/pympc/run-sources/ab99cf719fb3e2f7",
+      "cpu": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "device": "CPU",
+      "timing_context": "isolated",
+      "mpc_calls": 6000,
+      "recorded_steps": 30000,
+      "excluded_compile_steps": 0
+    },
+    {
+      "method": "naive",
+      "source_run": "r1-closeout-20261022-fig3-isolated",
+      "trajectory": "outputs/terrain_memory/reproduction/pympc/r1-closeout-20261022-fig3-isolated/fig3/naive/seed-000.npz",
+      "sha256": "8dc7839d5fe3fab6eb7591133c98d89f2d3a25c174ac0d91e6b32245ac0d1ca8",
+      "completed": true,
+      "duration_s": 60.0,
+      "run_record": "results/terrain_memory/reproduction/pympc/r1-closeout-20261022-fig3-isolated/fig3/naive/run.json",
+      "source_snapshot": "results/terrain_memory/reproduction/pympc/run-sources/ab99cf719fb3e2f7",
+      "cpu": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "device": "cuda:0",
+      "timing_context": "isolated",
+      "mpc_calls": 6000,
+      "recorded_steps": 30000,
+      "excluded_compile_steps": 1
+    },
+    {
+      "method": "mppi",
+      "source_run": "r1-closeout-20261022-fig3-isolated",
+      "trajectory": "outputs/terrain_memory/reproduction/pympc/r1-closeout-20261022-fig3-isolated/fig3/mppi/seed-000.npz",
+      "sha256": "b1dbde3ecd863268f28ff8e32d96934699a1be7b545e28a256e984a59314120f",
+      "completed": true,
+      "duration_s": 60.0,
+      "run_record": "results/terrain_memory/reproduction/pympc/r1-closeout-20261022-fig3-isolated/fig3/mppi/run.json",
+      "source_snapshot": "results/terrain_memory/reproduction/pympc/run-sources/ab99cf719fb3e2f7",
+      "cpu": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "device": "cuda:0",
+      "timing_context": "isolated",
+      "mpc_calls": 6000,
+      "recorded_steps": 30000,
+      "excluded_compile_steps": 1
+    }
+  ],
+  "latency_summary": "latency_summary.csv",
+  "latency_first_calls": "first_mpc_calls.csv",
+  "latency_figures": [
+    "latency_distributions.png",
+    "latency_distributions.svg"
+  ],
+  "latency_definition": {
+    "optimizer_seconds": "Synchronized optimizer",
+    "solve_seconds": "MPC interface",
+    "control_seconds": "Controller through executed torque",
+    "physics_seconds": "Physics / environment step",
+    "control_and_physics_seconds": "Controller + environment step",
+    "closed_loop_seconds": "Online step including diagnostics"
+  },
+  "steady_state_exclusion": "Only samples explicitly marked compile_included in the new raw trajectories are excluded. The first MPC call remains in first_mpc_calls.csv and all raw records.",
+  "constructor_and_compile_log": "outputs/terrain_memory/reproduction/pympc/r1-closeout-20261022/timing.log",
+  "statistical_scope": "Descriptive quantiles of correlated calls/steps from one 60 s episode per method on this host; no cross-hardware or real-robot deadline claim.",
+  "analysis_source": {
+    "path": "scripts/analyze_tm01_closeout_timing.py",
+    "sha256": "4a2584d912e47dd054db1e4ed475c2c76d77da4753b9627a385a04991f251d6c"
+  },
+  "resource_window": {
+    "started_at": "2026-10-23T06:16:35.073955+00:00",
+    "finished_at": "2026-10-23T06:19:21.247889+00:00",
+    "samples": 35,
+    "interval_seconds": 5,
+    "foreign_gpu_compute_records": [],
+    "top_non_experiment_cpu": [
+      {
+        "pid": 1604,
+        "parent": 1289,
+        "cpu": 0.8,
+        "name": "gnome-shell"
+      },
+      {
+        "pid": 821,
+        "parent": 763,
+        "cpu": 0.7,
+        "name": "awesun"
+      },
+      {
+        "pid": 1584048,
+        "parent": 1584015,
+        "cpu": 0.7,
+        "name": "code"
+      },
+      {
+        "pid": 1584182,
+        "parent": 1584018,
+        "cpu": 0.6,
+        "name": "code"
+      },
+      {
+        "pid": 1355,
+        "parent": 1353,
+        "cpu": 0.3,
+        "name": "Xorg"
+      },
+      {
+        "pid": 1581557,
+        "parent": 1604,
+        "cpu": 0.2,
+        "name": "gjs"
+      },
+      {
+        "pid": 1584073,
+        "parent": 1584018,
+        "cpu": 0.2,
+        "name": "code"
+      },
+      {
+        "pid": 502,
+        "parent": 2,
+        "cpu": 0.1,
+        "name": "nvidia-modeset/kthread_q"
+      }
+    ],
+    "observer_pid": 1596329,
+    "child_pid": 1596335,
+    "experiment_process_ids": [
+      1596329,
+      1596334,
+      1596335,
+      1596340,
+      1596344,
+      1596456,
+      1596461,
+      1596468,
+      1596474,
+      1596480,
+      1596488,
+      1596495,
+      1596502,
+      1596511,
+      1596512,
+      1596660,
+      1596665,
+      1596670,
+      1596679,
+      1596684,
+      1596691,
+      1596696,
+      1596703,
+      1596708,
+      1596713,
+      1596714,
+      1596864,
+      1596869,
+      1596877,
+      1596882,
+      1596890,
+      1596896,
+      1596904,
+      1596910,
+      1596915,
+      1596922,
+      1596924,
+      1596928,
+      1596969,
+      1596972,
+      1597013,
+      1597015,
+      1597058,
+      1597064
+    ],
+    "before_gpu": "",
+    "after_gpu": "",
+    "exit_code": 0,
+    "verdict": "No competing GPU compute process or substantial external CPU workload observed in 35 snapshots. Normal desktop services remained active. This is an observed exclusive compute window, not a kernel hardware reservation.",
+    "cpu_percent_definition": "ps lifetime CPU percentage sampled every five seconds",
+    "raw": "outputs/terrain_memory/reproduction/pympc/r1-closeout-20261022/timing-resource-window.jsonl"
+  },
+  "native_compilation": "The acados constructor generated and compiled its solver before online timing. The full cc/make output is retained in timing.log; that native build is not part of the online latency arrays.",
+  "native_source_manifest": "outputs/terrain_memory/reproduction/pympc/r1-closeout-20261022-fig3-isolated/native-source-manifest.json",
+  "downloads": [
+    {
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm01-r1-evidence-20261022/TM01-R1-closeout-fig3-isolated-data.tar",
+      "bytes": 183490560,
+      "sha256": "0887066eb5ff0c73c72986f0500115b1116a6a9e7ee48e49a1fc8e6784688c09",
+      "contents": "All 3 new 60 s Figure 3 episodes and videos, latency distributions, first JIT calls, native acados generated sources/binary, compilation log, and resource observations throughout the run."
+    }
+  ],
+  "r1_complete": false,
+  "r2_started": false,
+  "full_closeout_index": "../r1-closeout-20261022/index.json"
+}
