@@ -45,6 +45,8 @@ def main():
     run_file = out / 'run.json'
     source_files = [Path(__file__), *sorted((ROOT / 'src/tm02').glob('*.py'))]
     invocation = dict(command=' '.join(sys.argv), phase=args.phase,
+        config_sha256=hashlib.sha256(config_path.read_bytes()).hexdigest(),
+        execution=study['execution'],
         utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
         source_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
         source_sha256={p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()

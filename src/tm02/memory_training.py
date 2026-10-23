@@ -110,8 +110,8 @@ def train_study(config, base_config, out, old_out):
         fixed_norms = {
             cell: old_norms['ideal' if cell == 'ideal' else 'noisy']
             for cell in active_cells}
-        write_json(arm_out/'training-config.json', arm_config)
         if not (arm_out/'training.json').exists():
+            write_json(arm_out/'training-config.json', arm_config)
             train(arm_config, arm_out, fixed_norms=fixed_norms)
         trained = json.loads((arm_out/'training.json').read_text(encoding='utf-8'))
         prefix = arm_out.relative_to(out).as_posix()
