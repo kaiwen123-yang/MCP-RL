@@ -157,10 +157,6 @@ def _paired(compact, pairs):
             ax.axhline(0, color='#555555', linewidth=.9)
             ax.scatter(path_ids, improvement, color=COLORS[condition],
                        marker='o' if condition == 'ideal' else '^', s=27, zorder=3)
-            for offset, index in enumerate(np.flatnonzero(improvement < 0)):
-                ax.annotate(f'{improvement[index]:.4f}', (path_ids[index], improvement[index]),
-                            xytext=(0, 10 + 12 * (offset % 2)), textcoords='offset points',
-                            ha='center', va='bottom', fontsize=7, color=COLORS[condition])
             ax.set_xlim(-.7, 19.7)
             ax.set_xticks(range(20))
             ax.tick_params(axis='x', labelrotation=90, labelsize=7)
@@ -170,7 +166,7 @@ def _paired(compact, pairs):
             ax.set_title(f'{condition}: {label}\n{len(selected)}/20 complete pairs')
             ax.grid(alpha=.18)
     fig.suptitle('Path axis: 20 paired loading histories, selected using training loss only\n'
-                 'Positive improvement means lower new-model error; negative values are labeled')
+                 'Positive improvement means lower new-model error; points below zero indicate worsening')
     _save(fig, compact, 'selected-paired-path-errors')
 
 
