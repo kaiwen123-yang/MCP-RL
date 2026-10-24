@@ -113,19 +113,21 @@ def animate(config, out, compact, context, policy):
     axes = [fig.add_subplot(grid[i, 1]) for i in range(3)]
     info_ax.axis('off')
     scene.set_xlim(-28, 128)
-    scene.set_ylim(-20, 32)
+    thickness_mm = config['physical_scope']['thickness_m']*1000
+    scene.set_ylim(-thickness_mm-5, 32)
     scene.set_xlabel('World lateral position x (mm)')
     scene.set_ylabel('Displayed vertical position (mm)')
     scene.axhline(0, color='0.55', lw=0.8, ls='--')
     scene.plot([-22, 122], [28, 28], color='#666666', lw=5)
     scene.text(50, 30, 'External load-bearing frame', ha='center', fontsize=10)
+    scene.text(50, -thickness_mm/2, 'A = 1000 mm²\nH = 50 mm', ha='center', va='center', fontsize=10)
     width_mm = np.sqrt(config['physical_scope']['area_m2'])*1000
     pads, heads, stems = [], [], []
     for i, center in enumerate((0, 100)):
-        block = Rectangle((center-width_mm/2, -18), width_mm, 18, color=COLORS[i], alpha=0.45)
+        block = Rectangle((center-width_mm/2, -thickness_mm), width_mm, thickness_mm, color=COLORS[i], alpha=0.45)
         scene.add_patch(block)
         pads.append(block)
-        scene.text(center, -19.3, 'PQ'[i], ha='center', va='center')
+        scene.text(center, -thickness_mm-2.5, 'PQ'[i], ha='center', va='center')
         head = Rectangle((center-width_mm/2, 0), width_mm, 1.2, facecolor=COLORS[i], edgecolor='black')
         scene.add_patch(head)
         heads.append(head)
@@ -156,7 +158,7 @@ def animate(config, out, compact, context, policy):
     with writer.saving(fig, str(video), dpi=120):
         for i in frames:
             for pad in range(2):
-                pads[pad].set_height(18 + display_z(-trace['compression_m'][i, pad]))
+                pads[pad].set_height(thickness_mm + display_z(-trace['compression_m'][i, pad]))
             for foot in range(2):
                 x = trace['foot_position_xz_m'][i, foot, 0]*1000
                 z = float(display_z(trace['foot_position_xz_m'][i, foot, 1]))
