@@ -114,7 +114,7 @@ F6 参考为 **60 strict early、40 近似平局、0 strict late**，12 主模�
 
 ### 5.1 S0：当前直接执行的完整双地块任务
 
-固定配置为 [s0-contact-oracle.json](../experiments/terrain_memory/s0-contact-oracle.json)，运行名 `tm-s0-contact-oracle-20261023`。入口 `scripts/run_terrain_memory_s0.py` **尚待实现**；本计划与配置不是已运行成果。复用现有材料积分和选中权重，只补足本任务必要的接触/事件编排和结果生成，不另建通用仿真平台。
+固定配置为 [s0-contact-oracle.json](../experiments/terrain_memory/s0-contact-oracle.json)，运行名 `tm-s0-contact-oracle-20261023`。入口 `scripts/run_terrain_memory_s0.py` **已实现，并于 2026-10-24 完成全部 6,048 次双地块推演，新增训练、积分失败和物理约束失败均为零**。[实际结果索引](../results/terrain_memory/simulation/tm-s0-contact-oracle-20261023/index.json)与 [Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s0-contact-oracle-evidence-20261023)提供全部成果。合成 γ=0.025、1.5 s 等待预算下，完整 oracle 相比 myopic 平均/最大降低压入 0.00757446/0.02824167 mm，相比事后最佳单一常数的平均改善为 0.00071951 mm；没有完成率改善。固定 S0 研究结束，不自动推进 S1/RL/H。下文保留本次执行协议；配置本身不充当结果，后续复用实际候选，不重复积分。
 
 **要回答的科学问题。** 在公开的接触几何、实际载荷和同一后足/返程要求下，当前落点、加载时机和等待是否产生可利用的未来支撑差异？解析参考已知道完整材料状态，先给出这组任务的收益上限；再看 ideal/noisy 的误差是否影响选择。该装置由机架承载，允许双足同时零载，不承担自由机器人的重力平衡，不能提前声称四足步态或通行成功。
 
