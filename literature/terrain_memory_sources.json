@@ -40,10 +40,18 @@
       "id": "TM03",
       "title": "STANCE: Locomotion Adaptation over Soft Terrain",
       "role": "S 阶段软接触与在线柔顺估计强对照",
-      "url": "https://iit-dlslab.github.io/papers/fahmi19tro.pdf",
-      "pdf_url": "https://iit-dlslab.github.io/papers/fahmi19tro.pdf",
+      "version": "arXiv:1904.12306v2",
+      "url": "https://arxiv.org/html/1904.12306v2",
+      "pdf_url": "https://arxiv.org/pdf/1904.12306v2",
+      "author_pdf_url": "https://iit-dlslab.github.io/papers/fahmi19tro.pdf",
       "filename": "TM03_STANCE.pdf",
-      "read_for_execution": "足地 Kelvin–Voigt 模型、接触一致控制和在线辨识；不把复现整套 HyQ 系统作为 R1 前置"
+      "read_for_execution": "已核第 IV/V 节的 Kelvin–Voigt 接触模型、接触一致 WBC 和在线顺应性估计；第 VII-A 节的公开仿真参数及第 VII-B 节的泡沫压入标定。本轮只按这些段落实现 S1 所需接触机制，不重建整套 HyQ，也不新增全文复现门槛。",
+      "transfer_targets": [
+        "接触反力、足端压入及机器人支撑控制采用一致关系；在线参数估计是后续强对照的参考",
+        "S1 取第 VII-A 节公开仿真中的 k=3500/8000 N/m、d=400 Ns/m 两组接触尺度，明确标为论文仿真设置",
+        "第 VII-B 节特定泡沫样件实测平均刚度约 2400 N/m，只作物理尺度依据，不与仿真 d=400 Ns/m 拼成一组实测参数"
+      ],
+      "scope_note": "上述刚度是接触刚度，不是杨氏模量；没有样件几何、边界和恢复数据时，不能直接映射为 Go2 地面材料或长期恢复时间。原文使用 HyQ；本项目移植机制不等于完整复现原系统，公开 KV 仿真也不提供跨足/返程持久内变量的实测真值。"
     },
     {
       "id": "TM04",
@@ -74,7 +82,8 @@
       "url": "https://arxiv.org/html/2604.12006v1",
       "pdf_url": "https://arxiv.org/pdf/2604.12006v1",
       "filename": "TM06_mud_2604.12006v1.pdf",
-      "read_for_execution": "S0 读取 III-A、式 11b 的有效面积—应力—法向反力及脚形关系；按需读 II 的材料假设。触变泥地不等于首版黏弹性样件，不将吸力、颗粒流动等全部机制引入首版。"
+      "read_for_execution": "已核 III-A、式 11b 的有效面积—应力—法向反力及脚形关系；另核 II-B2、IV-A 和补充第 3.1 节/表 S1–S2 的结构恢复与标定条件。触变泥地不等于首版黏弹性样件，不将吸力、颗粒流动等全部机制引入首版。",
+      "scope_note": "原文结构参数满足 xi_dot=k_a(1-xi)-k_r|gamma_dot|xi，参数表中的 gamma_dot_c=k_a/k_r 不单独确定离足恢复所需的 k_a；应力松弛时间 lambda 不能自动代替结构恢复时间。其单次侵入实验每次整平泥面，现有参数表不能称为已标定的跨足/返程恢复真值。只继续借鉴力/位移/几何相容，不新增泥地全文复现或材料支线。"
     },
     {
       "id": "TM07",
@@ -157,6 +166,54 @@
         "按恢复、松弛、压剪循环及重访机制固定独立完整评价历史"
       ],
       "scope_note": "原文是软材料空化表征与预期信息增益/RBF 加速；本轮只借鉴信息性激励，不实施 BOED/RBF/激光空化，不声称 C 是原文最优设计或新算法贡献。"
+    },
+    {
+      "id": "TM12",
+      "title": "Load-bearing Assessment for Safe Locomotion of Quadruped Robots on Collapsing Terrain",
+      "role": "S1 从真实机器人运动取得接触载荷需求并闭环实现的参考",
+      "version": "arXiv:2510.21369v1",
+      "published": "2025-10-24",
+      "url": "https://arxiv.org/html/2510.21369v1",
+      "pdf_url": "https://arxiv.org/pdf/2510.21369v1",
+      "filename": "TM12_load_bearing_2510.21369v1.pdf",
+      "read_for_execution": "已读第 II-B/C 节的整步轨迹优化、所需 GRF 包络与 MPC 接触约束，以及第 III-A/B 节的控制实现和实验边界。本轮只读取这些方法段落，不新增整篇论文的复现任务。",
+      "transfer_targets": [
+        "由 Go2 自身动力学与完整运动确定各腿载荷需求，不继续将 S0 的预设力波形当整机任务",
+        "由 MPC/WBC 在其余腿维持身体支撑的条件下实现接触计划，分别保存计划力和实际反力"
+      ],
+      "scope_note": "原文研究可塌陷地面及主动试探，不是本项目黏弹地块恢复模型；不移植整套探测状态机、塌陷场景或经验位移阈值。原文控制频率不是本项目 NX 实时性能，不把它列为进入 S1 的全文复现门槛。"
+    },
+    {
+      "id": "TM13",
+      "title": "RK-MPC: Residual Koopman Model Predictive Control for Quadruped Locomotion in Offroad Environments",
+      "role": "S1 保留名义机器人模型、有限增广与机载计算预算的参考",
+      "version": "arXiv:2604.04221v1",
+      "published": "2026-04-05",
+      "url": "https://arxiv.org/html/2604.04221v1",
+      "pdf_url": "https://arxiv.org/pdf/2604.04221v1",
+      "filename": "TM13_RK_MPC_2604.04221v1.pdf",
+      "read_for_execution": "已核第 III/VI 节的名义模型、残差预测和 MPC 接口，第 V-C 节的预测比较，以及第 VII/VIII 节的部署和讨论相关段落；按需读取紧凑预测器接口，不新建 Koopman 复现阶段。",
+      "transfer_targets": [
+        "继续复用解析机器人动力学，只增广本任务必要的材料状态和接触闭合关系",
+        "记录材料状态推进、候选展开、MPC 和控制输出的实际整链路耗时，区别优化频率与模型离散时间"
+      ],
+      "scope_note": "原方法以残差 Koopman 预测与凸 QP 为核心，并报告 Go1/Jetson Xavier NX 实验；本项目未复现该算法，不采用其性能数字作为 Go2/NX 保证。本文只借鉴模型组织与计算口径，不新增 Koopman、完整机器人神经世界模型或另一套控制框架。"
+    },
+    {
+      "id": "TM14",
+      "title": "Look Forward to Walk Backward: Efficient Terrain Memory for Backward Locomotion with Forward Vision",
+      "role": "后续同信息记忆 RL 的横向对照及有界状态部署参考",
+      "version": "arXiv:2603.03138v1",
+      "published": "2026-03-03",
+      "url": "https://arxiv.org/html/2603.03138v1",
+      "pdf_url": "https://arxiv.org/pdf/2603.03138v1",
+      "filename": "TM14_LF2WB_2603.03138v1.pdf",
+      "read_for_execution": "已核第 III 节的紧凑记忆估计器、PPO Actor–Critic 与训练信息，以及第 IV-B/V 节的机载部署和局限；作为后续 RL 方法比较依据，当前 S1 不启动其训练或全文复现。",
+      "transfer_targets": [
+        "后续记忆 RL 比较对齐可获得的历史、空间和任务信息，不能仅因出现地形记忆/返程字样就判断创新重复",
+        "借鉴固定大小记忆状态与循环推理的部署组织，区分仿真训练真值和实际可部署输入"
+      ],
+      "scope_note": "原文以向前视觉形成几何记忆并支持倒退通过台阶/沟隙，部署平台为 Lite3/RK3588；不等于已建立踩踏导致的材料内状态演化，也不据此断言其合理适配不能解决本任务。原文特权 Critic 仅用于训练，不能直接作为本项目实机 MPC 的可调用终端价值；若部署 Critic，它的输入必须来自实际估计或可计算预测。只作横向对照与方法借鉴，不新增技能/导航支线或全文复现门槛。"
     }
   ],
   "upstream": {
