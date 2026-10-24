@@ -27,6 +27,11 @@ def main():
     index_path = compact / 'index.json'
     index = json.loads(index_path.read_text())
     index['run_metadata'] = json.loads((out / 'run.json').read_text())
+    index['run_metadata'].pop('config')
+    index['run_metadata']['config_file'] = args.config
+    index.pop('policy_summary', None)
+    index['policy_summary_csv'] = 'policy-summary.csv'
+    index['full_run_provenance'] = config['run_id'] + '/run.json inside the trajectory archive'
     index['run_metadata']['hardware'] = dict(
         cpu_model=next(line.split(':', 1)[1].strip() for line in Path('/proc/cpuinfo').read_text().splitlines()
                        if line.startswith('model name')),
