@@ -182,6 +182,17 @@ def summarize(config, out, compact):
                         changed_action=a['selected_id'] != b['selected_id'])
                     for key in ('actual_peak_m', 'actual_time_s', 'actual_positive_work_J', 'actual_compression_regret_m'):
                         row[key + '_difference_2_minus_1'] = b[key] - a[key] if a[key] is not None and b[key] is not None else None
+                    # Transfer the action across histories while keeping future demands fixed.
+                    # These counterfactuals reuse the same already-computed reference rows.
+                    for source_row, destination, suffix in ((a, b, '1_to_2'), (b, a, '2_to_1')):
+                        transferred = (None if source_row['selected_id'] is None else
+                                       truth[destination['context_id'], source_row['selected_id']])
+                        row['transferred_action_' + suffix + '_feasible'] = transferred is not None and transferred['remaining_feasible']
+                        for key, reference_key in (('peak_m', PEAK), ('time_s', TIME), ('positive_work_J', WORK)):
+                            value = transferred[reference_key] if transferred is not None else None
+                            row['transferred_action_' + suffix + '_' + key] = value
+                            actual = destination['actual_' + key]
+                            row['transferred_action_' + suffix + '_excess_' + key] = value - actual if value is not None and actual is not None else None
                     matched.append(row)
     csv_rows(compact / 'history-matched.csv', matched)
     model_summaries = []
@@ -199,6 +210,33 @@ def summarize(config, out, compact):
                 worst_peak_prediction_error_mm=float(max(abs(r['error_' + PEAK]) for r in complete)) * 1000))
     csv_rows(compact / 'predictor-summary.csv', model_summaries)
     manifest = json.loads((out / 'run.json').read_text())
+    scale_effects = []
+    summary_map = {(s['gamma'], s['wait_budget_s'], s['policy']): s for s in summaries}
+    for gamma in config['context_grid']['material_scale_gamma']:
+        for budget in budgets:
+            oracle = summary_map[gamma, budget, 'reference_continuous']
+            constant = next((c for c in constants if c['gamma'] == gamma and c['wait_budget_s'] == budget and c['selected_retrospective']), None)
+            item = dict(gamma=gamma, wait_budget_s=budget,
+                        full_oracle_mean_peak_mm=oracle['mean_actual_peak_m']*1000,
+                        full_oracle_mean_time_s=oracle['mean_actual_time_s'],
+                        full_oracle_mean_positive_work_J=oracle['mean_actual_positive_work_J'],
+                        retrospective_fixed_id=constant['candidate_id'] if constant else None,
+                        history_matched_future_families=6,
+                        history_families_with_action_changes=sum(len({policy_map['reference_continuous', c['context_id'], budget]['selected_id'] for c in family}) > 1
+                            for family in families.values() if family[0]['gamma'] == gamma))
+            for other in ('myopic_oracle', 'retrospective_best_constant'):
+                summary = summary_map[gamma, budget, other]
+                item[other + '_minus_full_mean_peak_mm'] = summary['mean_excess_over_full_oracle_actual_peak_m']*1000
+                item[other + '_minus_full_max_peak_mm'] = summary['max_excess_over_full_oracle_actual_peak_m']*1000
+                item[other + '_minus_full_mean_time_s'] = summary['mean_excess_over_full_oracle_actual_time_s']
+                item[other + '_minus_full_mean_work_J'] = summary['mean_excess_over_full_oracle_actual_positive_work_J']
+            cross_history = [r for r in matched if r['gamma'] == gamma and r['wait_budget_s'] == budget and r['policy'] == 'reference_continuous']
+            penalties = [r['transferred_action_' + direction + '_excess_peak_m'] for r in cross_history for direction in ('1_to_2', '2_to_1')]
+            item['worst_history_action_transfer_peak_penalty_mm'] = max(penalties)*1000
+            item['directed_history_action_transfers_exceeding_tolerance'] = sum(p > tolerance for p in penalties)
+            item['directed_history_action_transfers'] = len(penalties)
+            scale_effects.append(item)
+    csv_rows(compact / 'oracle-scale-effects.csv', scale_effects)
     ref_rows = list(truth.values())
     index = dict(run=config['run_id'], kind='Executed S0 frame-supported two-foot/two-coupon contact oracle study',
         scope='Synthetic homogeneous small-strain coupons; not a free quadruped gait, empirical soil calibration, motor energy, or hardware result.',
@@ -221,10 +259,17 @@ def summarize(config, out, compact):
             max_vertical_speed_m_s=max(r['maximum_vertical_speed_m_s'] for r in rows),
             minimum_flight_clearance_m=min(r['minimum_flight_clearance_m'] for r in rows),
             sum_task_worker_elapsed_s=sum(r['elapsed_s'] for r in rows)),
-        tie_tolerance_m=tolerance, policy_summary=summaries, predictor_summary=model_summaries,
+        tie_tolerance_m=tolerance, oracle_scale_effects=scale_effects,
+        policy_summary=summaries, predictor_summary=model_summaries,
+        observed_conclusions=[
+            'All 864 reference candidates satisfy the declared contact/motion limits; there is no success-rate advantage in this grid.',
+            'Full-horizon choices vary with history and future demands. Their physical peak-compression advantage over myopic and a single constant is quantified with its actual time/work cost in oracle-scale-effects.csv.',
+            'The original-scale effects are sub-micrometre. Synthetic gamma=0.025 increases the observed effect but does not establish real terrain or quadruped locomotion benefit.',
+            'The frozen noisy models retain substantial response bias while much of it is common across actions; material prediction error is not itself decision regret.',
+            'This fixed S0 budget is complete. No further softening, expanded experiment, new training, RL, or hardware activation was performed.'],
         retrospective_constant_scope='One single ID per gamma and wait budget over all 36 corresponding contexts; chosen retrospectively, optimistic descriptive comparison, no held-out generalization.',
         artifact_files=['contexts.csv', 'actions.csv', 'events.csv', 'candidates.csv', 'constants.csv',
-                        'policies.csv', 'policy-summary.csv', 'predictor-summary.csv', 'history-matched.csv'],
+                        'policies.csv', 'policy-summary.csv', 'predictor-summary.csv', 'history-matched.csv', 'oracle-scale-effects.csv'],
         trajectory_schema=dict(time='s, dt=0.01', pads=['P', 'Q'], feet=['front', 'hind'],
             tensor_components=['11', '22', '33', '12', '13', '23'],
             motion_modes={'0':'contact', '1':'raising', '2':'clear flight or parking', '3':'lowering'},
@@ -232,6 +277,10 @@ def summarize(config, out, compact):
             work='Trapezoidal force times material compression increments; positive increments summed separately, past prefix and final 2 s excluded from objectives.'),
         failures=[dict(predictor=r['predictor'], context=r['context_id'], candidate=r['candidate_id'],
                        failure=r['failure'], violations=r['violations']) for r in rows if not r['full_history_feasible']])
+    if (compact / 'index.json').exists():
+        previous = json.loads((compact / 'index.json').read_text())
+        if 'figures' in previous:
+            index['figures'] = previous['figures']
     write_json(compact / 'index.json', index)
     print(json.dumps(index['counts']), flush=True)
     return index

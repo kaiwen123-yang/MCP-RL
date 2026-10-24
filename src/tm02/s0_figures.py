@@ -45,6 +45,7 @@ def save_figure(fig, directory, name):
     fig.savefig(directory / (name + '.pdf'))
     # Layout observations are printed, not a new audit/status document.
     from matplotlib.text import Text
+    fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
     outside = []
     for item in fig.findobj(Text):
@@ -76,7 +77,6 @@ def representative(config, out, compact, context, lookup):
         axes[0, column].set_title(f"{LABELS[strategy]}: ID {row['selected_id']}\n{a['pad']}, {a['waveform']}, wait {a['wait_s']:g} s\n"
                                  f"T={row['actual_time_s']:.2f} s; peak={row['actual_peak_m']*1000:.5f} mm\nW+={row['actual_positive_work_J']:.6f} J", fontsize=9)
         axes[0, column].legend(ncol=2, loc='upper right', fontsize=8)
-        axes[3, column].legend(ncol=2, loc='upper right', fontsize=8)
         for ax in axes[:, column]:
             ax.axvspan(0, meta['decision_s'], color='#dddddd', alpha=0.35)
             ax.axvspan(meta['finish_s'], t[-1], color='#dddddd', alpha=0.35)
@@ -86,7 +86,7 @@ def representative(config, out, compact, context, lookup):
             ax.set_xlim(0, t[-1])
         axes[4, column].set_xlabel('Global time (s)')
     for ax, label in zip(axes[:, 0], ['Normal load (N)', 'Compression (mm)', 'Internal q11 (10^-3)',
-                                     'Foot lateral x (mm)', 'Foot height z (mm)']):
+                                     'Foot x (mm)\nFront solid / hind dashed', 'Foot height z (mm)']):
         ax.set_ylabel(label)
     gamma_note = 'original scale' if context['gamma'] == 1 else 'synthetic scale'
     fig.suptitle(f"Complete frame-supported task | gamma={context['gamma']:g} ({gamma_note}) | prefix {context['prefix_pad']}\n"
@@ -126,14 +126,14 @@ def animate(config, out, compact, context, policy):
         scene.add_patch(block)
         pads.append(block)
         scene.text(center, -19.3, 'PQ'[i], ha='center', va='center')
-        head = Rectangle((center-8, 0), 16, 1.2, facecolor=COLORS[i], edgecolor='black')
+        head = Rectangle((center-width_mm/2, 0), width_mm, 1.2, facecolor=COLORS[i], edgecolor='black')
         scene.add_patch(head)
         heads.append(head)
         stems.append(scene.plot([center, center], [1.2, 28], color=COLORS[i], lw=2, ls='-' if i == 0 else '--')[0])
     lines = []
     series = [trace['command_force_N'], trace['compression_m']*1000,
               np.r_[np.zeros((1, 2)), np.cumsum(trace['positive_contact_work_increment_J'], axis=0)]]
-    labels = ['Actual load (N)', 'Actual compression (mm)', 'Cumulative positive work (J)']
+    labels = ['Actual load (N)', 'Actual compression (mm)', 'Cumulative work incl. prefix (J)']
     cursors = []
     for axis, values, label in zip(axes, series, labels):
         for pad in range(2):
@@ -160,7 +160,7 @@ def animate(config, out, compact, context, policy):
             for foot in range(2):
                 x = trace['foot_position_xz_m'][i, foot, 0]*1000
                 z = float(display_z(trace['foot_position_xz_m'][i, foot, 1]))
-                heads[foot].set_xy((x-8, z))
+                heads[foot].set_xy((x-width_mm/2, z))
                 stems[foot].set_data([x, x], [z+1.2, 28])
             for j, values in enumerate(series):
                 for pad in range(2):
@@ -235,13 +235,38 @@ def figures(config, out, compact):
     fig.suptitle('All twelve fixed actions: time, compression and work\nPrefix P, gap 0.1 s; future loads 50/150 N; return gap 0.5 s. Exact Pareto membership: candidates.csv.', fontsize=10)
     save_figure(fig, directory, 'candidate-tradeoffs')
     names.append('candidate-tradeoffs')
+    # A large common response bias can coexist with small decision regret.
+    ctx = next(c for c in representatives if c['gamma'] == 0.025 and c['prefix_pad'] == 'P')
+    selected = lookup['reference_continuous', ctx['context_id'], 1.5]
+    actual = load_trace(out, selected)
+    fig, axes = plt.subplots(2, 2, figsize=(10, 6), sharex=True, layout='constrained')
+    model_styles = [('reference_continuous', '#222222', '-'),
+                    ('B_random1000--ideal', '#0072B2', '-'),
+                    ('B_random1000--noise0', '#D55E00', '-'),
+                    ('B_random1000--noise1', '#D55E00', '--'),
+                    ('B_random1000--noise2', '#D55E00', ':')]
+    for model, color, style in model_styles:
+        record = next(r for r in candidates if r['predictor'] == model and
+                      r['context_id'] == ctx['context_id'] and r['candidate_id'] == selected['selected_id'])
+        with np.load(Path(out) / record['trajectory']) as saved:
+            t, delta = saved['time'], saved['compression_m']*1000
+        for pad in range(2):
+            axes[0, pad].plot(t, delta[:, pad], color=color, ls=style, label=LABELS[model])
+            axes[1, pad].plot(t, delta[:, pad]-actual['compression_m'][:, pad]*1000, color=color, ls=style)
+    for pad in range(2):
+        axes[0, pad].set_title('World pad ' + 'PQ'[pad])
+        axes[0, pad].set_ylabel('Compression (mm)')
+        axes[1, pad].set_ylabel('Prediction minus reference (mm)')
+        axes[1, pad].set_xlabel('Global time (s)')
+        axes[0, pad].legend(fontsize=8, loc='upper right' if pad == 0 else 'upper left')
+        for ax in axes[:, pad]:
+            ax.grid(alpha=0.2)
+    fig.suptitle('Frozen-model response errors on the same complete action\nSynthetic gamma=0.025; context 36; full-oracle action ID 0. No model state is replaced with the reference state.', fontsize=10)
+    save_figure(fig, directory, 'frozen-model-response')
+    names.append('frozen-model-response')
     animation_context = next(c for c in representatives if c['gamma'] == 0.025 and c['prefix_pad'] == 'P')
-    video_path = Path(out) / 'complete-task-gamma0025.mp4'
-    if not video_path.exists():
-        animation = animate(config, out, compact, animation_context,
-                            lookup['reference_continuous', animation_context['context_id'], 1.5])
-    else:
-        animation = dict(path=str(video_path), reused_existing_animation=True)
+    animation = animate(config, out, compact, animation_context,
+                        lookup['reference_continuous', animation_context['context_id'], 1.5])
     index = json.loads((compact / 'index.json').read_text())
     index['figures'] = dict(stems=names, animation=animation,
                            representative_context_ids=[c['context_id'] for c in representatives])
