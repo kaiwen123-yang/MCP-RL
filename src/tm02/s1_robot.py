@@ -297,7 +297,7 @@ def run(root, args):
             action = np.clip(requested, env.mjModel.actuator_ctrlrange[:, 0], env.mjModel.actuator_ctrlrange[:, 1])
             control_s = time.perf_counter()-tc
             ac, _, grf = env.feet_contact_state(ground_reaction_forces=True)
-            record = dict(time=t, qpos=env.mjData.qpos.copy(), qvel=env.mjData.qvel.copy(),
+            record = dict(time=t, wall_start_s=start-begin, qpos=env.mjData.qpos.copy(), qvel=env.mjData.qvel.copy(),
                 base_pos=pos, velocity=v, orientation=ori, angular_velocity=omega,
                 command=refv, angular_command=refw, phase=list(('initial_stand','outbound','turn','return','terminal_stand','complete')).index(mission.phase),
                 torque=action, requested_torque=requested, feet=array(feet), feet_velocity=array(fv),
@@ -382,6 +382,8 @@ def run(root, args):
             source_sha256=resolved['source_sha256'])
         row['execution_fingerprint'] = resolved['execution_fingerprint']
         row['first_material_call_including_compile_s'] = contact_env.predictor.law.first_call_including_compile_s if args.controller=='C4' else None
+        row['first_material_call_since_episode_start_wall_s'] = (contact_env.predictor.law.first_call_started_perf_s-begin
+            if args.controller=='C4' and contact_env.predictor.law.first_call_started_perf_s is not None else None)
         row.update(material_domain_exit=contact_env.ground.domain_exit, integration_error=integration_error,
             predictor_domain_exit=contact_env.predictor.domain_exit,
             max_indentation_mm=float(np.max(hist['indentation_m'])*1000),

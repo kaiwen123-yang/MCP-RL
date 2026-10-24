@@ -117,6 +117,7 @@ class LearnedColumns:
             return x[:2], x[2:], stress, jnp.max(jnp.abs(one(x, qp, normal, dt, fixed)))
         self.solve = jax.jit(jax.vmap(solve, in_axes=(0, 0, 0, None, 0)), device=device)
         self.first_call_including_compile_s = None
+        self.first_call_started_perf_s = None
 
     def step(self, eprev, qprev, normal, dt, displacement):
         if len(normal) == 0:
@@ -137,6 +138,7 @@ class LearnedColumns:
                 target.append(np.asarray(value)[:count])
             if self.first_call_including_compile_s is None:
                 self.first_call_including_compile_s = time.perf_counter()-begin
+                self.first_call_started_perf_s = begin
         result = tuple(np.concatenate(x) for x in outputs)
         if not np.all(np.isfinite(result[3])) or np.max(result[3])>1e-7:
             raise IntegrationFailure(-1, np.max(result[3]), 30)
