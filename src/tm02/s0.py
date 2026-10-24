@@ -259,13 +259,20 @@ def metrics(config, arrays, meta, failures):
     current = score(meta['current_start_s'], meta['current_end_s'])
     myopic = score(meta['decision_s'], meta['current_end_s'])
     future = score(meta['hind_start_s'], meta['finish_s'])
+    def contact_peak(pad, a, b):
+        values = delta[mask(a, b), pad]
+        return float(np.max(np.maximum(0., values))) if np.isfinite(values).all() else None
+    current_peak = contact_peak('PQ'.index(meta['action']['pad']), meta['current_start_s'], meta['current_end_s'])
+    hind_peak = contact_peak(0, meta['hind_start_s'], meta['hind_start_s'] + 1)
+    return_peak = contact_peak(1, meta['return_start_s'], meta['finish_s'])
     row = dict(**meta['context'], **meta['action'], completion_time_s=meta['completion_time_s'],
                integration_complete=all(f is None for f in failures),
                full_history_feasible=bool(not np.any(violation)),
                remaining_feasible=remaining['feasible'], myopic_feasible=myopic['feasible'],
                max_remaining_pad_compression_m=remaining['peak'],
                positive_remaining_contact_work_J=remaining['work'], signed_remaining_contact_work_J=remaining['signed_work'],
-               current_contact_peak_m=current['peak'], future_contact_peak_m=future['peak'],
+               current_contact_peak_m=current_peak, future_contact_peak_m=future['peak'],
+               hind_contact_peak_m=hind_peak, return_contact_peak_m=return_peak,
                myopic_positive_work_J=myopic['work'], myopic_completion_time_s=meta['current_end_s']-meta['decision_s'],
                maximum_force_N=float(np.nanmax(force)), maximum_full_compression_m=float(np.nanmax(delta)),
                maximum_principal_strain=float(np.nanmax(principal)),
