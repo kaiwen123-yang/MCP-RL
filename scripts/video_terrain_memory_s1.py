@@ -17,13 +17,14 @@ PHASES=['initial stand','outbound','turn','return','terminal stand','completed']
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cohort',default='formal-v1')
+    parser.add_argument('--rerender',action='store_true',help='Regenerate saved-trajectory videos after a renderer correction.')
     args=parser.parse_args()
     config=json.loads((ROOT/'experiments/terrain_memory/s1-go2-contact.json').read_text())
     small=ROOT/config['outputs']['compact_root']
     out=ROOT/config['outputs']['large_root']
     rows=[json.loads(p.read_text()) for p in (small/args.cohort).glob('*-seed-*.json')]
     requested=[('rigid','C0'),('rigid','C3'),('kv_soft','C0'),('kv_soft','C2'),('kv_soft','C3'),
-               ('kv_moderate','C3'),('tm02_anchor','C0'),('tm02_anchor','C3'),('tm02_anchor','C4')]
+               ('kv_moderate','C0'),('kv_moderate','C3'),('tm02_anchor','C0'),('tm02_anchor','C3'),('tm02_anchor','C4')]
     selection=[]
     for terrain,method in requested:
         group=[r for r in rows if r['terrain']==terrain and r['controller']==method]
@@ -41,9 +42,11 @@ def main():
     for row in selection:
         name=f"{row['terrain']}-{row['controller']}-seed-{row['seed']}"
         path=videos/(name+'.mp4')
-        if path.exists():
+        if path.exists() and not args.rerender:
             entries.append(dict(terrain=row['terrain'],controller=row['controller'],seed=row['seed'],
-                success=row['success'],duration_s=row['duration_s'],video=str(path.relative_to(ROOT))))
+                success=row['success'],duration_s=row['duration_s'],video=str(path.relative_to(ROOT)),fps=30,
+                frames=int(np.ceil(row['duration_s']*30))+1,
+                selection='seed zero' if row['seed']==0 else 'lowest successful seed, additional to failed seed zero'))
             continue
         archive=np.load(ROOT/row['trajectory'])
         a={k:archive[k] for k in ['time','qpos','qvel','phase','actual_grf','planned_grf','indentation_m','frequency','velocity','final_qpos','final_qvel']}
@@ -70,10 +73,13 @@ def main():
             mujoco.mj_forward(model,data)
             camera.lookat[:]=data.qpos[:3]+np.array([0,0,-.05])
             renderer.update_scene(data,camera)
-            zone=renderer.scene.geoms[renderer.scene.ngeom]
-            mujoco.mjv_initGeom(zone,mujoco.mjtGeom.mjGEOM_BOX,np.array([.7,.6,.001]),
-                np.array([1.5,0,-.001]),np.eye(3).ravel(),np.array([.78,.57,.22,.45]))
-            renderer.scene.ngeom+=1
+            if row['terrain']!='rigid':
+                zone=renderer.scene.geoms[renderer.scene.ngeom]
+                # Render-only decal offset avoids z-fighting with the floor;
+                # recorded geometry and all simulated coordinates stay intact.
+                mujoco.mjv_initGeom(zone,mujoco.mjtGeom.mjGEOM_BOX,np.array([.7,.6,.0001]),
+                    np.array([1.5,0,.0002]),np.eye(3).ravel(),np.array([.78,.57,.22,.45]))
+                renderer.scene.ngeom+=1
             for j,leg in enumerate(['FL','FR','RL','RR']):
                 force=a['actual_grf'][k,j]
                 if np.linalg.norm(force)>1:
@@ -89,9 +95,10 @@ def main():
             draw.rectangle((0,0,1120,109),fill=(246,248,250))
             draw.text((16,8),f"S1 Go2 | {row['terrain']} | {row['controller']} | seed {row['seed']} | t = {t:.3f} s",font=font,fill=(20,30,45))
             status=(('COMPLETED' if row['success'] else 'FAILED: '+row['termination']) if frame==frames else PHASES[a['phase'][k]])
-            draw.text((16,35),status,font=font,fill=(155,35,25) if frame==frames and not row['success'] else (25,65,80))
+            draw.text((16,35),status+f' | body x={data.qpos[0]:.3f} m, y={data.qpos[1]:.3f} m',font=font,fill=(155,35,25) if frame==frames and not row['success'] else (25,65,80))
             draw.text((16,62),'Continuous recorded trajectory | 1x physical time | robot geometry 1x | force arrows: 100 N = 0.1 m',font=smallfont,fill=(30,45,55))
-            draw.text((16,84),f"speed = {np.linalg.norm(a['velocity'][k,:2]):.3f} m/s   gait = {a['frequency'][k]:.2f} Hz   soft strip x=0.8-2.2 m",font=smallfont,fill=(30,45,55))
+            region='Native rigid ground everywhere' if row['terrain']=='rigid' else 'Shaded strip: virgin reference surface, x=0.8-2.2 m'
+            draw.text((16,84),f"speed = {np.linalg.norm(a['velocity'][k,:2]):.3f} m/s   gait = {a['frequency'][k]:.2f} Hz   {region}",font=smallfont,fill=(30,45,55))
             draw.rectangle((0,583,1120,720),fill=(246,248,250))
             draw.text((16,590),'Actual / planned normal GRF (N) and actual indentation (mm)',font=font,fill=(25,35,45))
             for j,leg in enumerate(['FL','FR','RL','RR']):

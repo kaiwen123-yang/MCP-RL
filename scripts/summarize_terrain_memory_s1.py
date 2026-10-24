@@ -39,6 +39,7 @@ def summarize(cohort, source_output_root):
         physics=np.load(ROOT/row['material_trajectory'])['physics_foot_time_bottom_velocity_force_indent']
         row['max_indentation_500Hz_mm']=row.get('max_indentation_500Hz_mm',row['max_indentation_mm'])
         row['max_indentation_mm']=float(physics[:,37:41].max()*1000)
+        row['max_geometric_foot_below_virgin_plane_mm']=float(np.maximum(-physics[:,1:13].reshape(-1,4,3)[:,:,2],0).max()*1000)
         row['max_indentation_source']='All 5000 Hz physical substeps; 500 Hz sampled peak is retained separately.'
         foot_velocity=physics[:,13:25].reshape(-1,4,3)
         foot_force=physics[:,25:37].reshape(-1,4,3)
@@ -54,7 +55,11 @@ def summarize(cohort, source_output_root):
             cold=(a['wall_start_s']<=cold_start)&(a['wall_start_s']+a['total_s']>=cold_start)
             row['material_cold_control_tick_time_s']=a['time'][cold].tolist()
             warm=~cold & ~a['compile_included']
-            for part,values,deadline in [('upper_steady',a['upper_s'][warm & (a['upper_s']>0)],.2),
+            plans=json.loads((out/cohort/f"{row['terrain']}-{row['controller']}-seed-{row['seed']}-plans.json").read_text())
+            # The last failed decision has no subsequent physics tick. Retain
+            # its measured cost when computing steady intent latency.
+            upper_warm=np.array([p['wall_s'] for p in plans if not any(abs(p['time_s']-t)<1e-9 for t in a['time'][cold])])
+            for part,values,deadline in [('upper_steady',upper_warm,.2),
                                          ('predictor_steady',a['predictor_s'][warm],.002),
                                          ('total_steady',a['total_s'][warm],.002)]:
                 if len(values):
@@ -87,6 +92,8 @@ def summarize(cohort, source_output_root):
                     record[part+'_'+key] = value[key]
         flat.append(record)
     write_csv(small/'episodes.csv', flat)
+    write_csv(small/'timing.csv',[dict(terrain=r['terrain'],controller=r['controller'],seed=r['seed'],part=part,**values)
+              for r in rows for part,values in r['timing'].items() if values])
     groups = []
     for terrain in [x['id'] for x in config['terrains']]:
         for method in ('C0','C1','C2','C3','C4'):
@@ -141,7 +148,8 @@ def summarize(cohort, source_output_root):
                     normal_state_at_reload=event['e'][0], internal_state_at_reload=event['q'][0],
                     internal_state_at_release=release['q'][0] if release else None,
                     state_unit='strain' if row['terrain']=='tm02_anchor' else 'm' if row['terrain'].startswith('kv') else 'none')
-                event_rows.append(item)
+                if item['cross_leg']:
+                    event_rows.append(item)
         plan_path = out/cohort/f'{stem}-plans.json'
         if plan_path.exists():
             for decision in json.loads(plan_path.read_text()):
@@ -161,7 +169,7 @@ def summarize(cohort, source_output_root):
                     selected_candidate_infeasible_steps=chosen['infeasible_steps'] if chosen else None,
                     controller_no_feasible_intent=chosen is None,wall_s=decision['wall_s']))
     if event_rows:
-        write_csv(small/'actual-revisits.csv', event_rows)
+        write_csv(small/'actual-cross-leg-revisits.csv', event_rows)
     if coverage_rows:
         write_csv(small/'event-coverage.csv', coverage_rows)
     index_path = small/'index.json'
@@ -171,12 +179,14 @@ def summarize(cohort, source_output_root):
         hardware_activated=False, NX_timing_measured=False, config='experiments/terrain_memory/s1-go2-contact.json',
         groups=[{k:g[k] for k in ('terrain','controller','episodes','successes','task_failures','material_domain_exits',
             'integration_failures','predictor_domain_exits','successful_completion_time_mean_s','max_indentation_mm_max')} for g in groups],
-        group_table='groups.csv',episode_table='episodes.csv', paired_table='paired.csv', actual_revisits='actual-revisits.csv',
+        group_table='groups.csv',episode_table='episodes.csv', paired_table='paired.csv', actual_cross_leg_revisits='actual-cross-leg-revisits.csv',
         event_coverage='event-coverage.csv', compact_root=str(small), large_root=str(out),
         metric_interpretation='All observed pre-termination data are included. A failed duration is not a completion time; work over a shorter failure trajectory is not an efficiency benefit. Joint mechanical work is not battery consumption.',
         statistical_scope='Five paired optimizer seeds on one fixed scenario per material, not five independent materials or broad terrain generalization.',
         contact_model='World-fixed .02 m cells, exact .001 m2 interior square footprint partition; hard-priority whole-foot boundary assignment in a .0158114 m edge strip; original Go2 spherical geometry retained. Tangential friction is regularized Coulomb, not static friction.',
         physical_state_scope='TM02 gamma .025 is synthetic; KV parameters are published simulation scales, not Go2 calibration. Return-gap recovery does not establish long-horizon RL value.',
+        event_scope='The compact CSV retains cross-leg patch revisits. Every load, release and revisit, including same-leg contact chatter, remains in each episode events.json in the trajectory assets. Patch events are not independent task conditions.',
+        coverage_matching_window_s=.15,
         source_weights=config['base']['frozen_predictor'], source_release=config['base']['material_release_url'],
         R2_existing_evaluated_component_envelope=envelope,
         envelope_interpretation='Empirical maxima read from the 700 existing frozen R2 reference histories; not a continuous-domain validity guarantee. The separately specified S1 0.02 principal-strain limit is unchanged. No R2 integration or training was rerun.',
@@ -272,6 +282,46 @@ def figures(config, small, out, rows, cohort):
         axes[-1].set_xlabel('Physical time (s)')
         fig.suptitle(terrain+' | complete seed-0 records, ending at actual termination',fontsize=10)
         save(fig,'04-'+terrain+'-seed0-time-series')
+    for terrain,method in [('tm02_anchor','C3'),('tm02_anchor','C4'),('kv_soft','C0'),('kv_soft','C3')]:
+        row=next(r for r in rows if r['terrain']==terrain and r['controller']==method and r['seed']==0)
+        stem=f'{terrain}-{method}-seed-0'
+        events=json.loads((out/cohort/(stem+'-events.json')).read_text())['reference']
+        a=np.load(ROOT/row['material_trajectory'])
+        material=terrain=='tm02_anchor'
+        fig,axes=plt.subplots(4 if material else 2,1,figsize=(7.2,6.3 if material else 3.8),sharex=True,constrained_layout=True)
+        loads=[e for e in events if e['type']!='release']
+        if not loads:
+            axes[0].text(.5,.5,'Episode terminated before material loading',ha='center',va='center',transform=axes[0].transAxes)
+        else:
+            keys={e['patch'] for e in loads}
+            patch=min(keys,key=lambda k:(-len({e['leg'] for e in loads if e['patch']==k}),min(e['time_s'] for e in loads if e['patch']==k),k))
+            xy=a['reference_patch_xy_m'][patch]
+            def state_series(prefix,idx):
+                offsets=a[prefix+'_offsets'];valid=np.diff(offsets)>idx
+                times=a[prefix+'_time'][valid]
+                flat=offsets[:-1][valid]+idx
+                return times,a[prefix+'_e'][flat],a[prefix+'_q'][flat],a[prefix+'_stress_MPa'][flat],a[prefix+'_loaded'][flat]
+            t,e,q,s,loaded=state_series('reference',patch)
+            axes[0].plot(t,-e[:,0]*(50 if material else 1000),color=colors[0],label='Reference ground',lw=1)
+            axes[0].set_ylabel('Surface depression (mm)')
+            if material:
+                axes[1].plot(t,q[:,0],color=colors[0],lw=1)
+                axes[1].set_ylabel('Reference internal strain q11')
+                axes[2].plot(t,-s[:,0]*.025*1000,color=colors[0],label='Reference ground',lw=1)
+                axes[2].set_ylabel('Normal stress (kPa)')
+            axes[-1].step(t,loaded.astype(int),where='post',color=colors[0],lw=.8)
+            axes[-1].set(yticks=[0,1],yticklabels=['Free','Loaded'],ylabel='Patch contact')
+            if method=='C4' and 'predictor_time' in a.files:
+                candidates=np.flatnonzero(np.all(np.isclose(a['predictor_patch_xy_m'],xy,atol=1e-10),axis=1))
+                if len(candidates):
+                    tp,ep,qp,sp,lp=state_series('predictor',int(candidates[0]))
+                    axes[0].plot(tp,-ep[:,0]*50,color=colors[4],ls='--',lw=.9,label='Frozen B own-state observer')
+                    axes[2].plot(tp,-sp[:,0]*.025*1000,color=colors[4],ls='--',lw=.9,label='Frozen B own-state observer')
+                    axes[2].legend(frameon=False,fontsize=7)
+            axes[0].set_title(f'{terrain} / {method} / seed 0 | world patch ({xy[0]:.2f}, {xy[1]:.2f}) m',fontsize=9)
+        for ax in axes:ax.grid(alpha=.2)
+        axes[-1].set_xlabel('Physical time (s); saved material states at 500 Hz')
+        save(fig,'05-'+terrain+'-'+method+'-material-history')
     index_path=small/'index.json'
     index=json.loads(index_path.read_text())
     index['figures']=[str(p.relative_to(small)) for p in sorted(figdir.glob('*.png'))]
