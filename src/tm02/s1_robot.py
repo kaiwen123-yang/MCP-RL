@@ -294,7 +294,7 @@ def run(root, args):
                 try:
                     planner.choose(t, mission, step, tau)
                 except NoFeasibleIntent:
-                    reason = 'controller_no_feasible_intent'
+                    reason = 'controller_'+planner.choices[-1]['failure']
                     duration_s = t
                     break
                 upper_s = planner.last_upper_s

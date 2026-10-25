@@ -170,12 +170,22 @@ class AlignedPlanner:
         costs = np.array([x['cost'] if not x['infeasible_steps'] else np.inf for x in values])
         finite = np.flatnonzero(np.isfinite(costs))
         best = None
+        failure = 'no_feasible_intent'
+        minimum_candidates = []
         if len(finite):
             minimum = np.min(costs[finite])
-            # Exact ties and not-yet-effective actions keep continuation.
-            best = 0 if costs[0] == minimum else int(finite[np.argmin(costs[finite])])
+            minimum_candidates = finite[costs[finite] == minimum].tolist()
+            # A tie between alternatives cannot be broken by enumeration,
+            # even when their equal costs are below continuation's cost.
+            if len(minimum_candidates) > 1:
+                best = 0 if np.isfinite(costs[0]) else None
+                failure = 'unresolved_cost_tie'
+            else:
+                best = int(minimum_candidates[0])
             if best and not values[best]['action_observed'] and np.isfinite(costs[0]):
                 best = 0
+        if best is not None:
+            failure = None
         trace = [] if best is None else values[best]['trace']
         aligned = [] if best is None else values[best]['aligned_trace']
         for value in values:
@@ -186,8 +196,10 @@ class AlignedPlanner:
             intent=None if best is None else [pending if best == 0 and pending is not None else (intents[best] or 0.), 2.4, 0.],
             horizon_s=horizon, wall_s=self.last_upper_s, candidates=values,
             selected_plan=trace, aligned_trace=aligned,
-            failure='no_feasible_intent' if best is None else None))
+            exact_minimum_candidate_ids=minimum_candidates, failure=failure))
         if best is None:
+            if failure == 'unresolved_cost_tie':
+                raise NoFeasibleIntent('Continuation is infeasible and the feasible alternatives have an unresolved exact cost tie.')
             raise NoFeasibleIntent('All explicitly evaluated continuation/next-group candidates violate physical constraints.')
         if best:
             self.commitment.pending = intents[best]

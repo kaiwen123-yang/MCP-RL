@@ -364,7 +364,8 @@ def summarize_repair(config_path,cohort):
                     subset=[s for s in samples if 0<s['absolute_time_s']-start<=limit+1e-9 and
                         (window!='long_tail' or s['absolute_time_s']-start>.24)]
                     item=dict(**identity,decision_time_s=start,window=window,samples=len(subset),horizon_s=decision['horizon_s'],
-                        forecast_failure=bool(chosen and chosen.get('first_rejection')),wall_s=decision['wall_s'],
+                        forecast_failure=bool(decision.get('failure') or (chosen and chosen.get('first_rejection'))),
+                        decision_failure=decision.get('failure'),wall_s=decision['wall_s'],
                         derived_timestamp_corrections_used=sum('original_absolute_time_s' in sample for sample in subset))
                     if subset:
                         times=np.array([s['absolute_time_s'] for s in subset])
@@ -531,14 +532,14 @@ def figures(config, small, out, rows, cohort):
     durations=np.zeros((len(cases),5))
     for i,(terrain,method) in enumerate(cases):
         for r in [r for r in rows if r['terrain']==terrain and r['controller']==method]:
-            code=(0 if r['success'] else 1 if r['termination']=='controller_no_feasible_intent' else
+            code=(0 if r['success'] else 1 if r['termination'].startswith('controller_') else
                   2 if r['material_domain_exit'] is not None else 3 if r['integration_error'] is not None else
                   4 if r['termination']=='task_timeout' else 6 if r['termination']=='stance_reference_infeasible' else
                   7 if r['termination']=='stance_reference_integration_failure' else 5)
             matrix[i,r['seed']]=code
             durations[i,r['seed']]=r['duration_s']
     palette=['#009E73','#CC79A7','#D55E00','#333333','#999999','#E69F00','#56B4E9','#0072B2']
-    labels=['Completed','No feasible intent','Actual material domain','Actual integration failure','Task timeout',
+    labels=['Completed','Controller decision failure','Actual material domain','Actual integration failure','Task timeout',
         'Body/contact failure','Stance reference infeasible','Stance inverse integration failure']
     fig,ax=plt.subplots(figsize=(7.2,6.4),constrained_layout=True)
     ax.imshow(matrix,cmap=ListedColormap(palette),vmin=-.5,vmax=7.5,aspect='auto')
