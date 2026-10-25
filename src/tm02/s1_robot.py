@@ -91,6 +91,7 @@ class Mission:
 
 
 def configure(c, method):
+    nominal = method in ('C0', 'B0', 'B1', 'B2', 'B3')
     rc = get_robot_config('go2')
     cfg.robot, cfg.robot_cfg = 'go2', rc
     cfg.robot_leg_joints, cfg.robot_feet_geom_names = rc.leg_joints, rc.feet_geom_names
@@ -99,7 +100,7 @@ def configure(c, method):
     cfg.mpc_params.update(type='sampling', sampling_method='random_sampling', device='gpu',
         horizon=12, dt=.02, num_parallel_computations=1024, num_sampling_iterations=1,
         sigma_random_sampling=[.2, 3., 10.], control_parametrization='cubic_spline', num_splines=1,
-        optimize_step_freq=method in ('C0', 'C1'), step_freq_available=[2.4] if method == 'C0' else [1.3, 2., 2.4],
+        optimize_step_freq=nominal or method == 'C1', step_freq_available=[2.4] if nominal else [1.3, 2., 2.4],
         use_inertia_recomputation=False, gradient_refinement_steps=0, use_riccati_feedback=False,
         use_foothold_optimization=False, use_foothold_constraints=False, use_integrators=False,
         external_wrenches_compensation=False, use_RTI=False, use_nonuniform_discretization=False,
@@ -124,11 +125,14 @@ def timing(values, deadline):
 
 def run(root, args):
     c = json.loads((root/args.config).read_text())
+    repair = c.get('stage') == 'S1_control_execution_and_prediction_repair'
+    if repair:
+        c['resolved_numerics'] = c['numerics']
     configure(c, args.controller)
     from quadruped_pympc.quadruped_pympc_wrapper import QuadrupedPyMPC_Wrapper
     from quadruped_pympc.interfaces.srbd_controller_interface import SRBDControllerInterface
     from quadruped_pympc.helpers.quadruped_utils import GaitType
-    from .s1_contact import ContactEnvironment
+    from .s1_contact import ContactEnvironment, StanceReferenceInfeasible
     from .reference import IntegrationFailure
     base = json.loads((root/c['base']['material_config']).read_text())
     terrain = next(x for x in c['terrains'] if x['id'] == args.terrain)
@@ -197,6 +201,8 @@ def run(root, args):
                 raise ValueError('Saved episode belongs to another execution version; retain it under its original cohort.')
             print(json.dumps(dict(reused=name)), flush=True)
             continue
+        if repair:
+            args.register_start(seed, resolved['execution_fingerprint'])
         env.mjModel.geom_contype[feet_ids] = native_type
         env.mjModel.geom_conaffinity[feet_ids] = native_affinity
         env.mjData.qfrc_applied[:] = 0.
@@ -219,6 +225,7 @@ def run(root, args):
             ctl.sampling_key = ctl.master_key
             raw = interface.compute_control
             raw_jit = ctl.jitted_compute_control
+            ctl._s1_raw_jit = raw_jit
             signatures = set()
             def optimizer(*a, _jit=raw_jit, _signatures=signatures, **kw):
                 signature = tuple((np.shape(x),str(getattr(x,'dtype',type(x).__name__)),getattr(x,'weak_type',False))
@@ -240,16 +247,24 @@ def run(root, args):
             interface.compute_control = timed
         wb = wrapper.wb_interface
         planner = None
+        tracker = None
         if args.controller in ('C2', 'C3', 'C4'):
             from .s1_planner import IntentPlanner, NoFeasibleIntent
             planner = IntentPlanner(env, wrapper, contact_env, args.controller, resolved['event_horizon_s'], cfg.mass, cfg.inertia)
         wb.pgg.set_full_stance()
         wrapper.srbd_controller_interface = stand
+        if args.controller in ('B1', 'B2', 'B3'):
+            from .s1_stance import CompliantStanceTracking
+            from .s1_prediction import AlignedPlanner, NoFeasibleIntent
+            tracker = CompliantStanceTracking(env, wb, contact_env).install()
+            planner = AlignedPlanner(env, wrapper, contact_env, args.controller,
+                resolved['event_horizon_s'], cfg.mass, cfg.inertia, tracker, moving, stand)
         mission = Mission(c['task'])
         tau = LegsAttr(*[np.zeros(3) for _ in LEGS])
         hist = {}
         reason = ''
         integration_error = None
+        reference_failure = None
         duration_s = 0.
         begin = time.perf_counter()
         for step in range(round(c['task']['maximum_episode_s']/.002)):
@@ -272,7 +287,18 @@ def run(root, args):
             feet = env.feet_pos(frame='world')
             fv = env.feet_vel(frame='world')
             upper_s = 0.
-            if planner and not want_stand and step%100 == 0:
+            if args.controller == 'B1' and step > 0 and step%500 == 0:
+                planner.observe(t, mission, step, tau)
+                upper_s = planner.last_upper_s
+            elif args.controller in ('B2', 'B3') and not want_stand and step%100 == 0:
+                try:
+                    planner.choose(t, mission, step, tau)
+                except NoFeasibleIntent:
+                    reason = 'controller_no_feasible_intent'
+                    duration_s = t
+                    break
+                upper_s = planner.last_upper_s
+            elif planner and not repair and not want_stand and step%100 == 0:
                 try:
                     planner.choose(t, mission)
                 except NoFeasibleIntent:
@@ -282,14 +308,27 @@ def run(root, args):
                 upper_s = planner.last_upper_s
             last.update(solve=np.nan, first=False)
             tc = time.perf_counter()
-            tau = wrapper.compute_actions(env.com.copy(), pos, v, ori, omega, feet,
-                env.hip_positions(frame='world'), env.legs_qvel_idx, None, LEGS, .002,
-                refv, refw, step, env.mjData.qpos, env.mjData.qvel,
-                env.feet_jacobians(frame='world', return_rot_jac=False),
-                env.feet_jacobians_dot(frame='world', return_rot_jac=False), fv,
-                env.legs_qfrc_passive, env.legs_qfrc_bias, env.legs_mass_matrix,
-                env.legs_qpos_idx, env.legs_qvel_idx, tau, cfg.inertia.flatten(), env.mjData.contact)
-            if planner:
+            if repair and planner and planner.commitment:
+                planner.commitment.time = t
+            try:
+                tau = wrapper.compute_actions(env.com.copy(), pos, v, ori, omega, feet,
+                    env.hip_positions(frame='world'), env.legs_qvel_idx, None, LEGS, .002,
+                    refv, refw, step, env.mjData.qpos, env.mjData.qvel,
+                    env.feet_jacobians(frame='world', return_rot_jac=False),
+                    env.feet_jacobians_dot(frame='world', return_rot_jac=False), fv,
+                    env.legs_qfrc_passive, env.legs_qfrc_bias, env.legs_mass_matrix,
+                    env.legs_qpos_idx, env.legs_qvel_idx, tau, cfg.inertia.flatten(), env.mjData.contact)
+            except StanceReferenceInfeasible as error:
+                reference_failure = dict(time_s=t, **error.detail)
+                reason = 'stance_reference_infeasible'
+                duration_s = t
+                break
+            except IntegrationFailure as error:
+                reference_failure = dict(time_s=t, reason='constitutive_inverse_integration_failure', error=str(error))
+                reason = 'stance_reference_integration_failure'
+                duration_s = t
+                break
+            if planner and not repair:
                 tau = planner.stance_torque(tau, feet, fv, t)
             requested = np.zeros(env.mjModel.nu)
             for leg in LEGS:
@@ -305,8 +344,13 @@ def run(root, args):
                 planned_contact=wb.current_contact.copy(), frequency=float(wb.pgg.step_freq),
                 footholds=array(wrapper.nmpc_footholds), swing_target=array(wb.last_des_foot_pos),
                 solve_s=last['solve'], compile_included=last['first'], control_s=control_s, upper_s=upper_s,
-                executed_intent=np.array(wb.pgg.intent) if planner else np.array([0., wb.pgg.step_freq, 0.]),
-                intent_serial=wb.pgg.intent_serial if planner else -1)
+                executed_intent=np.array(wb.pgg.intent) if planner and not repair else np.array([0., wb.pgg.step_freq, 0.]),
+                intent_serial=wb.pgg.intent_serial if planner and not repair else -1)
+            if tracker:
+                record.update(tracker.record())
+            if repair and planner and planner.commitment:
+                record['executed_intent'] = np.array(planner.selected)
+                record['intent_serial'] = planner.commitment.serial
             tp = time.perf_counter()
             material_s, predictor_s = 0., 0.
             nonfoot = []
@@ -325,6 +369,7 @@ def run(root, args):
                     break
             record['physics_s'] = time.perf_counter()-tp
             duration_s = t+(sub+1)*.002/substeps
+            record['actual_grf_sample_time_s'] = t+sub*.002/substeps
             record['actual_grf'] = contact_env.force.copy()
             record['contact'] = contact_env.contact.copy()
             record['indentation_m'] = contact_env.indent.copy()
@@ -355,6 +400,8 @@ def run(root, args):
             predictor=contact_env.predictor.events if contact_env.predictor is not contact_env.ground else None))
         if planner:
             save_json(out/f'{name}-plans.json', planner.choices)
+            if repair and planner.commitment:
+                save_json(out/f'{name}-footstep-commitments.json', planner.commitment.applied)
         error = hist['velocity']-hist['command']
         qvel_idx = env.mjModel.jnt_dofadr[env.mjModel.actuator_trnid[:, 0]]
         power = hist['torque']*hist['qvel'][:, qvel_idx]
@@ -385,6 +432,8 @@ def run(root, args):
         row['first_material_call_since_episode_start_wall_s'] = (contact_env.predictor.law.first_call_started_perf_s-begin
             if args.controller=='C4' and contact_env.predictor.law.first_call_started_perf_s is not None else None)
         row.update(material_domain_exit=contact_env.ground.domain_exit, integration_error=integration_error,
+            stance_reference_failure=reference_failure,
+            material_rate_extrema=contact_env.ground.rate_extrema,
             predictor_domain_exit=contact_env.predictor.domain_exit,
             max_indentation_mm=float(np.max(hist['indentation_m'])*1000),
             max_abs_principal_strain=contact_env.ground.max_strain if args.terrain=='tm02_anchor' else None,
@@ -397,6 +446,12 @@ def run(root, args):
             material_trajectory=str(material_trace.relative_to(root)), material_sha256=digest(material_trace))
         row['timing'].update(material=timing(hist['material_s'], .002), predictor=timing(hist['predictor_s'], .002))
         row['timing']['upper'] = timing([x['wall_s'] for x in planner.choices], .2) if planner else None
+        if tracker:
+            for key in ('whole_body_leg_execution_s', 'native_whole_body_leg_execution_s',
+                        'constitutive_inverse_s', 'stance_tracking_algebra_s'):
+                row['timing'][key.removesuffix('_s')] = timing(hist[key], .002)
         save_json(small/f'{name}.json', row)
+        if repair:
+            args.register_result(seed, small/f'{name}.json')
         print(json.dumps(row), flush=True)
     env.close()

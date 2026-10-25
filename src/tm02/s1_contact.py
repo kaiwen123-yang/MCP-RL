@@ -5,6 +5,12 @@ import mujoco
 from .s1_material import ReferenceColumns, LearnedColumns
 
 
+class StanceReferenceInfeasible(RuntimeError):
+    def __init__(self, detail):
+        self.detail = detail
+        super().__init__(detail['reason'])
+
+
 class Ground:
     def __init__(self, terrain, material_parameters, weights=None, cell=.02):
         self.terrain = terrain
@@ -24,7 +30,13 @@ class Ground:
         self.last_owner = np.empty(0, int)
         self.last_release = np.empty(0)
         self.ever_loaded = np.empty(0, bool)
+        self.last_area = np.empty(0)
+        self.last_normal = np.empty(0)
+        self.last_load_event_id = np.empty(0, int)
         self.events = []
+        self.event_serial = 0
+        self.rate_hist = []
+        self.rate_extrema = {}
         self.max_strain = 0.
         self.max_stress = 0.
         self.max_rate = 0.
@@ -34,9 +46,11 @@ class Ground:
 
     def clone(self):
         other = copy.copy(self)
-        for name in ('e', 'q', 'stress', 'loaded', 'last_owner', 'last_release', 'ever_loaded'):
+        for name in ('e', 'q', 'stress', 'loaded', 'last_owner', 'last_release', 'ever_loaded',
+                     'last_area', 'last_normal', 'last_load_event_id'):
             setattr(other, name, getattr(self, name).copy())
         other.xy, other.ids, other.events = self.xy.copy(), self.ids.copy(), []
+        other.rate_hist, other.rate_extrema = [], copy.deepcopy(self.rate_extrema)
         if self.kind=='tm02_anchor':
             other.prediction_steps = []
             other.prediction_last = np.zeros(len(self.e),int)
@@ -97,6 +111,9 @@ class Ground:
                     self.last_owner = np.r_[self.last_owner, -1]
                     self.last_release = np.r_[self.last_release, np.nan]
                     self.ever_loaded = np.r_[self.ever_loaded, False]
+                    self.last_area = np.r_[self.last_area, 0.]
+                    self.last_normal = np.r_[self.last_normal, 0.]
+                    self.last_load_event_id = np.r_[self.last_load_event_id, -1]
                     if self.prediction_steps is not None:
                         self.prediction_last = np.r_[self.prediction_last,len(self.prediction_steps)]
                 cells.append(self.ids[key])
@@ -127,6 +144,9 @@ class Ground:
             # includes first loading of a previously virgin spatial column;
             # foot-centre velocity alone misses that local displacement change.
             free_delta = previous_delta/(1+k*dt/d)
+            preload_free_e = prev_e.copy()
+            preload_free_e[:, 0] = -free_delta
+            preload_free_q = preload_free_e.copy()
             self.e[:, 0] = -free_delta
             self.stress[:] = 0.
             pressure = np.zeros(n)
@@ -142,6 +162,7 @@ class Ground:
             active = np.array(sorted(self.prediction_active),int) if self.prediction_steps is not None else np.arange(n)
             free_e,free_q,free_s,res = self.law.step(prev_e[active],prev_q[active],np.zeros(len(active)),dt,np.zeros(len(active),bool))
             self.e[active],self.q[active],self.stress[active] = free_e,free_q,free_s
+            preload_free_e, preload_free_q = self.e.copy(), self.q.copy()
             residual = np.zeros(n)
             residual[active] = res
             candidates = np.flatnonzero(owner>=0)
@@ -173,21 +194,113 @@ class Ground:
         if log:
             for idx in np.flatnonzero(old_loaded & ~self.loaded):
                 self.last_release[idx] = t
-                self.events.append(dict(time_s=t, patch=int(idx), type='release', leg=int(self.last_owner[idx]),
-                                        e=self.e[idx].tolist(), q=self.q[idx].tolist()))
+                self.event_serial += 1
+                self.events.append(dict(event_id=self.event_serial, time_s=t, patch=int(idx), type='release',
+                    leg=int(self.last_owner[idx]), previous_load_event_id=int(self.last_load_event_id[idx]),
+                    area_before_m2=float(self.last_area[idx]), area_m2=0., normal_before_N=float(self.last_normal[idx]),
+                    normal_N=0., e_before_step=prev_e[idx].tolist(), q_before_step=prev_q[idx].tolist(),
+                    preload_free_e=preload_free_e[idx].tolist(), preload_free_q=preload_free_q[idx].tolist(),
+                    e=self.e[idx].tolist(), q=self.q[idx].tolist()))
             for idx in np.flatnonzero(self.loaded & (~old_loaded | (owner!=self.last_owner))):
-                self.events.append(dict(time_s=t, patch=int(idx), type='revisit' if self.ever_loaded[idx] else 'load',
+                self.event_serial += 1
+                self.events.append(dict(event_id=self.event_serial, time_s=t, patch=int(idx), type='revisit' if self.ever_loaded[idx] else 'load',
                     leg=int(owner[idx]), previous_leg=int(self.last_owner[idx]), area_m2=float(areas[idx]),
+                    previous_load_event_id=int(self.last_load_event_id[idx]),
+                    cross_leg=bool(self.ever_loaded[idx] and self.last_owner[idx]!=owner[idx]),
+                    area_before_m2=float(self.last_area[idx]), normal_before_N=float(self.last_normal[idx]),
+                    normal_N=float(pressure[idx]*areas[idx]),
                     unloaded_gap_s=float(t-self.last_release[idx]) if np.isfinite(self.last_release[idx]) else None,
+                    e_before_step=prev_e[idx].tolist(), q_before_step=prev_q[idx].tolist(),
+                    preload_free_e=preload_free_e[idx].tolist(), preload_free_q=preload_free_q[idx].tolist(),
                     xy_m=list(self.xy[idx]), e=self.e[idx].tolist(), q=self.q[idx].tolist()))
+                self.last_load_event_id[idx] = self.event_serial
+            if self.kind == 'tm02_anchor':
+                self.record_material_rates(prev_e, prev_q, old_loaded, owner, areas, pressure, velocity, dt, t)
             self.ever_loaded |= self.loaded
             self.last_owner[self.loaded] = owner[self.loaded]
+            self.last_area = np.where(self.loaded, areas, 0.)
+            self.last_normal = pressure*areas
         self.max_strain = max(self.max_strain, float(np.max(np.abs(self.e))))
         self.max_stress = max(self.max_stress, float(np.max(np.abs(self.stress))))
         self.max_rate = max(self.max_rate, float(np.max(np.abs(self.e-prev_e))/dt))
         if self.kind == 'tm02_anchor' and self.domain_exit is None and self.max_strain>.02:
             self.domain_exit = dict(time_s=t, max_abs_principal_strain=self.max_strain)
         return forces, indentation, maps
+
+    def record_material_rates(self, prev_e, prev_q, old_loaded, owner, areas, pressure, velocity, dt, t):
+        """Separate temporal loading from spatial-column boundary changes."""
+        de, qdot = self.e-prev_e, (self.q-prev_q)/dt
+        continuous = old_loaded & self.loaded & (owner == self.last_owner)
+        boundary = (old_loaded != self.loaded) | (old_loaded & self.loaded & (owner != self.last_owner))
+        values = [('continuous_loaded_strain_rate_s_inv', np.max(np.abs(de), axis=1)/dt, continuous),
+                  ('activation_release_strain_jump', np.max(np.abs(de), axis=1), boundary),
+                  ('internal_qdot_s_inv', np.max(np.abs(qdot), axis=1), np.ones(len(de), bool))]
+        row = [t]
+        for label, magnitude, mask in values:
+            candidates = np.flatnonzero(mask)
+            value = float(np.max(magnitude[candidates])) if len(candidates) else 0.
+            row.append(value)
+            if len(candidates) and (label not in self.rate_extrema or value > self.rate_extrema[label]['magnitude']):
+                idx = int(candidates[np.argmax(magnitude[candidates])])
+                leg = int(owner[idx] if owner[idx]>=0 else self.last_owner[idx])
+                self.rate_extrema[label] = dict(magnitude=value, time_s=t, patch=idx, leg=leg,
+                    previous_leg=int(self.last_owner[idx]), loaded_before=bool(old_loaded[idx]), loaded_after=bool(self.loaded[idx]),
+                    area_before_m2=float(self.last_area[idx]), area_after_m2=float(areas[idx]) if self.loaded[idx] else 0.,
+                    force_before_N=float(self.last_normal[idx]), force_after_N=float(pressure[idx]*areas[idx]),
+                    foot_vz_over_H_s_inv=float(velocity[leg, 2]/self.h) if leg>=0 else None,
+                    strain_increment=de[idx].tolist(), qdot_s_inv=qdot[idx].tolist(),
+                    e_before=prev_e[idx].tolist(), e_after=self.e[idx].tolist(),
+                    q_before=prev_q[idx].tolist(), q_after=self.q[idx].tolist())
+        loaded_legs = np.unique(owner[self.loaded])
+        row.append(float(np.max(np.abs(velocity[loaded_legs, 2]/self.h))) if len(loaded_legs) else 0.)
+        self.rate_hist.append(row)
+
+    def force_inverse(self, xy, force_N, dt):
+        """Invert the common sole displacement, without touching world state.
+
+        The endpoint equation uses the same unilateral mixed-boundary law and
+        exact overlap areas as step(). The inversion increment is the declared
+        control interval; actual environmental integration keeps its 0.2 ms step.
+        """
+        branch = self.clone()
+        ids, areas = branch.footprint(np.asarray(xy))
+        if not ids or self.kind == 'rigid':
+            return dict(displacement_m=0., previous_mean_displacement_m=0., force_residual_N=0.,
+                        forward_force_N=0., requested_force_N=float(force_N), inverse_dt_s=dt,
+                        max_abs_principal_strain=0.)
+        aa = np.asarray(areas)
+        ep, qp = branch.e[ids].copy(), branch.q[ids].copy()
+        thickness = self.h if self.kind == 'tm02_anchor' else 1.
+        previous = float(np.dot(aa, -ep[:, 0]*thickness)/aa.sum())
+        if self.kind.startswith('kv'):
+            k, d = self.terrain['k_N_per_m'], self.terrain['d_N_s_per_m']
+            free = -ep[:, 0]/(1+k*dt/d)
+            def forward(delta):
+                f = np.maximum(k*delta+d*(delta+ep[:, 0])/dt, 0.)
+                return float(np.dot(aa/self.area, f)), None
+            lower = min(0., float(free.min()))
+            upper = max(float(free.max()), (float(force_N)*self.area/aa.sum()+d/dt*float((-ep[:, 0]).max()))/(k+d/dt)) + 1e-9
+        else:
+            free_e, _, _, _ = self.law.step(ep, qp, np.zeros(len(ids)), dt, np.zeros(len(ids), bool))
+            def forward(delta):
+                ee, qq, ss, _ = self.law.step(ep, qp, np.full(len(ids), -delta/self.h), dt, np.ones(len(ids), bool))
+                pressure = np.where((-delta/self.h <= free_e[:, 0]) & (ss[:, 0]<0), -ss[:, 0]*1e6*self.gamma, 0.)
+                return float(np.dot(aa, pressure)), ee
+            lower, upper = min(0., float(np.min(-free_e[:, 0]*self.h))), self.h*.02
+        from scipy.optimize import brentq
+        wanted = max(0., float(force_N))
+        if wanted == 0.:
+            delta = lower
+        else:
+            force_upper, _ = forward(upper)
+            if force_upper < wanted:
+                raise StanceReferenceInfeasible(dict(reason='constitutive_inverse_outside_material_domain',
+                    requested_force_N=wanted, maximum_domain_force_N=force_upper, xy_m=list(xy), dt_s=dt))
+            delta = brentq(lambda value: forward(value)[0]-wanted, lower, upper, xtol=1e-11, rtol=1e-12)
+        force, ee = forward(delta)
+        return dict(displacement_m=float(delta), previous_mean_displacement_m=previous,
+                    forward_force_N=force, requested_force_N=wanted, force_residual_N=force-wanted,
+                    inverse_dt_s=dt, max_abs_principal_strain=float(np.max(np.abs(ee))) if ee is not None else None)
 
     def displacement_for_force(self, xy, force_N, dt):
         """Inverse constitutive boundary for a candidate load, never a future observation."""
@@ -215,14 +328,27 @@ class Ground:
         self.loaded = owner>=0
         for idx in np.flatnonzero(old & ~self.loaded):
             self.last_release[idx] = t
-            self.events.append(dict(time_s=t,patch=int(idx),type='release',leg=int(self.last_owner[idx]),e=[0.,0.],q=[0.,0.]))
+            self.event_serial += 1
+            self.events.append(dict(event_id=self.event_serial,time_s=t,patch=int(idx),type='release',leg=int(self.last_owner[idx]),
+                previous_load_event_id=int(self.last_load_event_id[idx]), area_before_m2=float(self.last_area[idx]), area_m2=0.,
+                normal_before_N=float(self.last_normal[idx]), normal_N=0.,
+                e_before_step=[0.,0.],q_before_step=[0.,0.],preload_free_e=[0.,0.],preload_free_q=[0.,0.],e=[0.,0.],q=[0.,0.]))
         for idx in np.flatnonzero(self.loaded & (~old | (owner!=self.last_owner))):
-            self.events.append(dict(time_s=t,patch=int(idx),type='revisit' if self.ever_loaded[idx] else 'load',
+            self.event_serial += 1
+            self.events.append(dict(event_id=self.event_serial,time_s=t,patch=int(idx),type='revisit' if self.ever_loaded[idx] else 'load',
                 leg=int(owner[idx]),previous_leg=int(self.last_owner[idx]),area_m2=float(areas[idx]),
+                previous_load_event_id=int(self.last_load_event_id[idx]),
+                cross_leg=bool(self.ever_loaded[idx] and self.last_owner[idx]!=owner[idx]),
+                normal_N=float(forces[owner[idx],2]*areas[idx]/self.area), area_before_m2=float(self.last_area[idx]),
+                normal_before_N=float(self.last_normal[idx]),
                 unloaded_gap_s=float(t-self.last_release[idx]) if np.isfinite(self.last_release[idx]) else None,
+                e_before_step=[0.,0.],q_before_step=[0.,0.],preload_free_e=[0.,0.],preload_free_q=[0.,0.],
                 xy_m=list(self.xy[idx]),e=[0.,0.],q=[0.,0.]))
+            self.last_load_event_id[idx] = self.event_serial
         self.ever_loaded |= self.loaded
         self.last_owner[self.loaded] = owner[self.loaded]
+        self.last_area = np.where(self.loaded, areas, 0.)
+        self.last_normal = np.array([forces[owner[i],2]*areas[i]/self.area if owner[i]>=0 else 0. for i in range(len(owner))])
 
 
 class ContactEnvironment:
@@ -308,6 +434,7 @@ class ContactEnvironment:
 
     def save(self, path):
         payload = {'physics_foot_time_bottom_velocity_force_indent':np.array(self.physics_hist)}
+        payload['reference_material_rate_time_continuous_jump_qdot_vz_over_H'] = np.asarray(self.ground.rate_hist).reshape(-1, 5)
         for label, history, ground in [('reference', self.material_hist, self.ground),
                                         ('predictor', self.predictor_hist, self.predictor)]:
             if history:

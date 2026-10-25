@@ -1,8 +1,24 @@
 {
-  "purpose": "Authorized next S1 execution protocol: isolate compliant stance tracking, then compare aligned limited foothold planning. Not an executed result.",
+  "purpose": "Authorized S1 execution protocol: isolate compliant stance tracking, then compare aligned limited foothold planning. Outcomes are recorded only by actual mission execution.",
   "run_id": "tm-s1-control-repair-20261024",
   "stage": "S1_control_execution_and_prediction_repair",
-  "implementation_status": "Planned. Extend the existing runner and controller interfaces before executing this protocol; do not report these algorithms or episode counts as already implemented/completed.",
+  "implementation_status": "Implemented for budgeted full-mission execution; completion and readiness are determined by the actual run index.",
+  "resolved_execution": {
+    "B0_control_identity": "C0 sampler and native WB/gait/stand/swing settings, optimize_step_freq=true with the sole available frequency 2.4 Hz; unchanged physical environment and random draws.",
+    "stance_implementation": "Inside existing WB, retain -J_joint.T*planned_GRF once and add leg inverse-dynamics inertia, bias and existing-gain Cartesian tracking. Latest simulated base acceleration is held over one 2 ms interval; this is not joint WBOpt.",
+    "stance_gains": {"position": 500.0, "velocity": 10.0, "source": "Unchanged existing swing-controller gains; no parameter search."},
+    "stance_inverse_dt_s": 0.002,
+    "stance_reference_time": "Next control endpoint t+0.002 s; same-leg reference position differences define velocity and acceleration, not spatial column strain jumps.",
+    "forecast_nominal_recording_hz": 1,
+    "forecast_recording_start_s": 1,
+    "forecast_physical_prefix_s": 0.24,
+    "forecast_prefix_physics_dt_s": 0.0002,
+    "forecast_prefix_control_dt_s": 0.002,
+    "forecast_tail_dt_s": 0.02,
+    "forecast_tail": "Copied native gait/swing and native MPC with centroidal robot and constitutive contact approximation; joint dynamics and native rigid-contact compliance are approximated. Report prefix and tail errors separately.",
+    "forecast_effective_time": "Synchronous functional simulation pauses physical time during computation. Decisions apply at their recorded physical timestamp; wall latency is measured and is not an NX real-time claim.",
+    "new_training_runs": 0
+  },
   "target_entrypoint": "scripts/run_terrain_memory_s1.py",
   "reviewed_source_commit": "1bfcf244bf5787cf0086f3f1846c19c42576f9d7",
   "frozen_first_S1": {
