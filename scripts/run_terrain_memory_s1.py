@@ -77,12 +77,11 @@ def reuse_B0(config,args):
     source_small=old_index_path.parent
     destination=ROOT/config['outputs']['compact_root']/args.cohort
     path,index=read_index(config)
+    index['reused_records']=[]
     for terrain in config['phase_A']['terrain_ids']:
         for seed in config['phase_A']['paired_optimizer_seeds']:
             source=source_small/source_cohort/f'{terrain}-C0-seed-{seed}.json'
             target=destination/f'{terrain}-B0-seed-{seed}.json'
-            if target.exists():
-                continue
             row=json.loads(source.read_text())
             provenance=dict(record=str(source),record_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
                 source_commit=config['reviewed_source_commit'],source_controller='C0',source_cohort=source_cohort,
@@ -99,7 +98,7 @@ def reuse_B0(config,args):
                 unavailable_diagnostics=['aligned_nominal_forecast','preload_state','unique_actual_event_id',
                     'continuous_loaded_strain_rate','activation_release_strain_jump','actual_foot_vz_over_H','internal_qdot'])
             save_json(target,row)
-            index['reused_records'].append(dict(record=str(target.relative_to(ROOT)),**provenance))
+            index['reused_records'].append(dict(result_record=str(target.relative_to(ROOT)),**provenance))
     index['B0_reuse_source_index']=str(old_index_path)
     index['B0_reuse_source_release']=old['release']
     save_json(path,index)
@@ -155,8 +154,10 @@ def main():
                 for method in matrix['controller_ids']:
                     for seed in matrix['paired_optimizer_seeds']:
                         record=ROOT/config['outputs']['compact_root']/args.cohort/f'{terrain}-{method}-seed-{seed}.json'
-                        if record.exists() and json.loads(record.read_text()).get('reused_from'):
-                            continue
+                        if record.exists():
+                            saved=json.loads(record.read_text())
+                            if saved.get('reused_from') or saved.get('reused_development_from'):
+                                continue
                         subprocess.run([sys.executable,str(Path(__file__)),'--config',args.config,
                             '--terrain',terrain,'--controller',method,'--seeds',str(seed),
                             '--cohort',args.cohort,'--source-output-root',args.source_output_root,

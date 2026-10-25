@@ -226,8 +226,9 @@ def summarize_repair(config_path,cohort):
         stem=f"{row['terrain']}-{row['controller']}-seed-{row['seed']}"
         identity={k:row[k] for k in ('terrain','controller','seed')}
         if not row.get('reused_from'):
-            trace=np.load(ROOT/row['trajectory'])
-            if 'stance_tracking_active' in trace.files:
+            with np.load(ROOT/row['trajectory']) as archive:
+                trace={key:archive[key] for key in archive.files}
+            if 'stance_tracking_active' in trace:
                 target_time=trace['time']+trace['stance_reference_effective_delay_s']
                 for leg in range(4):
                     active=trace['stance_tracking_active'][:,leg]&(target_time<=trace['time'][-1])
@@ -278,7 +279,6 @@ def summarize_repair(config_path,cohort):
         plan_path=Path(row.get('plans_path',out/cohort/f'{stem}-plans.json'))
         plans=json.loads(plan_path.read_text()) if plan_path.exists() and not row.get('reused_from') else []
         if plans:
-            trace=np.load(ROOT/row['trajectory'])
             physical_contacts=physics[:,25:37].reshape(-1,4,3)[:,:,2]>0
             physical_touchdowns=[np.flatnonzero(~physical_contacts[:-1,leg]&physical_contacts[1:,leg])+1 for leg in range(4)]
             globally_matched_actual=set()
