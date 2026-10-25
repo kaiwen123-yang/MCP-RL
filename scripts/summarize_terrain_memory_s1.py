@@ -282,7 +282,7 @@ def summarize_repair(config_path,cohort):
             physical_contacts=physics[:,25:37].reshape(-1,4,3)[:,:,2]>0
             physical_touchdowns=[np.flatnonzero(~physical_contacts[:-1,leg]&physical_contacts[1:,leg])+1 for leg in range(4)]
             globally_matched_actual=set()
-            prediction_count,matched_prediction_count=0,0
+            prediction_count,evaluable_prediction_count,matched_prediction_count=0,0,0
             actual_by_id={e['event_id']:e for e in actual_cross}
             for di,decision in enumerate(plans):
                 candidates=decision.get('candidates',[])
@@ -347,9 +347,14 @@ def summarize_repair(config_path,cohort):
                     forecast_rows.append(item)
                 predicted=chosen.get('covered_revisits',[]) if chosen else []
                 matched_here=set()
+                evaluable_here=0
                 for pe in predicted:
                     prediction_count+=1
                     when=pe.get('absolute_time_s',start+pe.get('time_s',0))
+                    if when>row['duration_s']:
+                        continue
+                    evaluable_here+=1
+                    evaluable_prediction_count+=1
                     patches=set(pe.get('patches',[]))
                     xy={tuple(np.round(v,8)) for v in pe.get('patch_xy_m',[])}
                     possible=[e for eid,e in actual_by_id.items() if eid not in matched_here and e['leg']==pe['leg'] and
@@ -361,12 +366,15 @@ def summarize_repair(config_path,cohort):
                         globally_matched_actual.add(match['event_id'])
                         matched_prediction_count+=1
                 coverage_rows.append(dict(**identity,decision_time_s=start,predicted_events=len(predicted),
+                    observed_time_prediction_denominator=evaluable_here,unobserved_after_termination=len(predicted)-evaluable_here,
                     matched_predictions=len(matched_here),matched_actual_event_ids=json.dumps(sorted(matched_here)),
-                    precision=len(matched_here)/len(predicted) if predicted else None))
+                    precision=len(matched_here)/evaluable_here if evaluable_here else None))
             coverage_rows.append(dict(**identity,decision_time_s=None,predicted_events=prediction_count,
+                observed_time_prediction_denominator=evaluable_prediction_count,
+                unobserved_after_termination=prediction_count-evaluable_prediction_count,
                 matched_predictions=matched_prediction_count,unique_actual_cross_leg_denominator=len(actual_by_id),
                 unique_matched_actual_cross_leg_events=len(globally_matched_actual),
-                precision=matched_prediction_count/prediction_count if prediction_count else None,
+                precision=matched_prediction_count/evaluable_prediction_count if evaluable_prediction_count else None,
                 actual_cross_leg_recall=len(globally_matched_actual)/len(actual_by_id) if actual_by_id else None))
         (small/cohort/f'{stem}.json').write_text(json.dumps(row,indent=2,allow_nan=False)+'\n')
     write_csv(small/'episodes.csv',flat)
@@ -423,7 +431,7 @@ def summarize_repair(config_path,cohort):
         episode_records=[str(p.relative_to(small)) for p in sorted((small/cohort).glob('*-seed-*.json'))],
         metric_interpretation='All observed data end at actual termination. Failed duration/work is not completion time/efficiency. Joint work is not battery consumption. Missing reused diagnostics remain absent.',
         forecast_alignment='Interpolate recorded actual values at forecast absolute time; actual GRF uses full-rate physics samples at the explicit forecast GRF timestamp. Planned GRF uses zero-order hold at that timestamp, never interpolation across a command change. Samples beyond observed time are excluded. Short errors reuse the same long prediction. Common prefix ends at 0.2 s or the next planning record; longer tails are separate.',
-        event_matching='Each predicted event matches at most one actual cross-leg event ID per forecast within 150 ms and the same patch/leg. Precision counts prediction instances; recall counts unique actual event IDs over the whole episode, never rolling-window repetitions.',
+        event_matching='Each predicted patch event matches at most one actual cross-leg event ID per forecast within 150 ms and the same world patch/leg. Precision uses prediction instances whose event time is observed before actual termination; later predictions remain unobserved. Recall counts unique actual event IDs over the whole episode, never rolling-window repetitions. Long-tail events remain conditional on the forecast future controls.',
         material_rate_interpretation='Continuous loaded strain rates, activation/release strain jumps, actual foot vz/H and qdot are separate. Total-strain finite-difference peak is not an impact speed.',
         total_recorded_episode_wall_s=sum(r['wall_s'] for r in rows if not r.get('reused_from')),
         total_new_simulated_duration_s=sum(r['duration_s'] for r in rows if not r.get('reused_from')))
@@ -521,7 +529,7 @@ def figures(config, small, out, rows, cohort):
     for terrain,method in material_cases:
         row=next(r for r in rows if r['terrain']==terrain and r['controller']==method and r['seed']==0)
         stem=f'{terrain}-{method}-seed-0'
-        events=json.loads((out/cohort/(stem+'-events.json')).read_text())['reference']
+        events=json.loads(Path(row.get('events_path',out/cohort/(stem+'-events.json'))).read_text())['reference']
         a=np.load(ROOT/row['material_trajectory'])
         material=terrain=='tm02_anchor'
         fig,axes=plt.subplots(4 if material else 2,1,figsize=(7.2,6.3 if material else 3.8),sharex=True,constrained_layout=True)

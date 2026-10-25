@@ -53,7 +53,7 @@ class CompliantStanceTracking:
         actual_contact = ce.contact.copy()
         touchdown = actual_contact & ~self.previous_actual_contact
         self.anchor[touchdown] = position[touchdown]
-        active = np.array([bool(wb.current_contact[i]) and ce.ground.soft(position[i,:2])
+        active = np.array([bool(wb.current_contact[i]) and actual_contact[i] and ce.ground.soft(position[i,:2])
                            for i in range(4)])
         ref_position = np.full((4, 3), np.nan)
         ref_velocity = np.full((4, 3), np.nan)

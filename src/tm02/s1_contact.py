@@ -406,7 +406,7 @@ class ContactEnvironment:
             velocity[leg] += np.cross(twist[:3], [0., 0., -self.radius[leg]])
         return bottom, velocity
 
-    def advance(self, action, dt, t, update_predictor=True, record_material=True):
+    def advance(self, action, dt, t, update_predictor=True, record_material=True, record_physics=True):
         import time
         env = self.env
         # mj_step leaves Cartesian geometry at the pre-integration qpos. Refresh
@@ -436,7 +436,8 @@ class ContactEnvironment:
         self.contact = self.force[:, 2]>0
         if self.ground.kind=='rigid':
             self.ground.observe_rigid(self.maps, self.force, t)
-        self.physics_hist.append(np.r_[t, bottom.ravel(), velocity.ravel(), self.force.ravel(), self.indent])
+        if record_physics:
+            self.physics_hist.append(np.r_[t, bottom.ravel(), velocity.ravel(), self.force.ravel(), self.indent])
         if record_material and len(self.ground.e):
             self.material_hist.append((float(t), self.ground.e.copy(), self.ground.q.copy(),
                                        self.ground.stress.copy(), self.ground.loaded.copy()))
