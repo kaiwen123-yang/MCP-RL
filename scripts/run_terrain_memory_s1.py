@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Execute complete Go2 missions from the explicit S1 phase configuration."""
 import argparse
+import fcntl
+from functools import wraps
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -29,6 +31,18 @@ def read_index(config):
         new_training_runs=0,hardware_activated=False,NX_timing_measured=False)
 
 
+def ledger_lock(fn):
+    @wraps(fn)
+    def locked(config,*args,**kw):
+        path=ROOT/config['outputs']['compact_root']
+        path.mkdir(parents=True,exist_ok=True)
+        with (path/'index.lock').open('a') as lock:
+            fcntl.flock(lock,fcntl.LOCK_EX)
+            return fn(config,*args,**kw)
+    return locked
+
+@ledger_lock
+
 def register_start(config,args,seed,fingerprint):
     """Count each physical reset, including an attempt that subsequently fails."""
     if 'phase_A' not in config:
@@ -43,7 +57,7 @@ def register_start(config,args,seed,fingerprint):
         raise RuntimeError('The authorized new-mission budget is exhausted.')
     if development and sum(a['kind']=='development' for a in attempts)>=budget['maximum_development_missions']:
         raise RuntimeError('The authorized development-mission budget is exhausted.')
-    if not development and sum(a['kind']=='formal' for a in attempts)>=budget['maximum_new_formal_episodes_if_affected_B0_must_be_recomputed']:
+    if not development and sum(a['kind']=='formal' for a in attempts)>=budget.get('maximum_new_formal_episodes_if_affected_B1_must_be_recomputed',budget.get('maximum_new_formal_episodes_if_affected_B0_must_be_recomputed')):
         raise RuntimeError('The authorized formal-mission budget is exhausted.')
     attempts.append(dict(attempt_id=len(attempts)+1,kind='development' if development else 'formal',
         cohort=args.cohort,terrain=args.terrain,controller=args.controller,seed=seed,
@@ -55,6 +69,7 @@ def register_start(config,args,seed,fingerprint):
     save_json(path,index)
 
 
+@ledger_lock
 def register_result(config,args,seed,record_path):
     if 'phase_A' not in config:
         return
@@ -129,7 +144,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config',default='experiments/terrain_memory/s1-control-repair.json')
     parser.add_argument('--terrain',choices=['rigid','tm02_anchor','kv_soft','kv_moderate'])
-    parser.add_argument('--controller',choices=['B0','B1','B2','B3','C0','C1','C2','C3','C4'])
+    parser.add_argument('--controller',choices=['B0','B1','B2','B3','C0','C1','C2','C3','C4','T1','T2'])
     parser.add_argument('--matrix',action='store_true',help='Read terrain, controller and seed cells from the configured phase.')
     parser.add_argument('--phase',choices=['A','B','all'],default='all')
     parser.add_argument('--seeds',type=int,nargs='+',default=[0])
@@ -165,8 +180,8 @@ def main():
         return
     if args.terrain is None or args.controller is None:
         parser.error('Specify --matrix, or both --terrain and --controller.')
-    if 'phase_A' in config and args.controller not in ('B0','B1','B2','B3'):
-        parser.error('The repair round contains B0/B1/B2/B3 only.')
+    if 'phase_A' in config and args.controller not in (('B1','T1','T2') if 'resolved_transition' in config else ('B0','B1','B2','B3')):
+        parser.error('Controller does not belong to the selected round.')
     if args.controller in ('B2','B3'):
         path,index=read_index(config)
         if not index.get('phase_B_readiness',{}).get('ready'):

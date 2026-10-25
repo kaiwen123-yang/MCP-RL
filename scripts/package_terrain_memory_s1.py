@@ -21,6 +21,7 @@ def main():
     parser.add_argument('--release-tag',default='tm-s1-control-repair-evidence-20261024')
     a=parser.parse_args()
     c=json.loads((ROOT/a.config).read_text())
+    transition='resolved_transition' in c
     out=ROOT/c['outputs']['large_root']
     small=ROOT/c['outputs']['compact_root']
     indexpath=small/'index.json'
@@ -55,10 +56,12 @@ def main():
         cohort_directories.add(trace.parent)
         files=[trace,ROOT/row['material_trajectory'],record_path,
             Path(row.get('events_path',trace.parent/(stem+'-events.json')))]
-        if row['controller'] in ('B1','B2','B3'):
+        if row['controller'] in ('B1','B2','B3') and not transition:
             files.append(Path(row.get('plans_path',trace.parent/(stem+'-plans.json'))))
         if row['controller'] in ('B2','B3'):
             files.append(trace.parent/(stem+'-footstep-commitments.json'))
+        if row['controller'] in ('T1','T2'):
+            files.extend([Path(row['queries_path']),Path(row['transitions_path'])])
         return files
 
     for record_path,row in new_records:
@@ -69,6 +72,14 @@ def main():
     development=[]
     for attempt in index['attempts']:
         if attempt['kind']!='development':
+            continue
+        if attempt['status']=='execution_error':
+            folder=out/attempt['cohort']
+            cohort_directories.add(folder)
+            log=ROOT/attempt['log']
+            assign(log,development_archive)
+            development.append(dict(attempt_id=attempt['attempt_id'],status='execution_error',log=str(log),
+                retained_evidence=attempt.get('retained_evidence'),trajectory_available=False))
             continue
         record_path=ROOT/attempt['record']
         row=json.loads(record_path.read_text())
@@ -89,6 +100,9 @@ def main():
                     'parallel_terrain_memory_s1.py','publish_terrain_memory_s1.py')],
                  *sorted((ROOT/'src/tm02').glob('*.py'))]:
         assign(path,development_archive)
+    if transition:
+        for name in ('summarize_s1_transition.py','publish_s1_transition.py'):
+            assign(ROOT/'scripts'/name,development_archive)
     archives=[]
     for name,files in archive_files.items():
         archive=out/name
@@ -156,7 +170,7 @@ def main():
         assets=assets,archives=archive_entries,development_attempts=development,
         archive_files=[dict(execution_host_path=str(path),archive=archive,member=member(path),bytes=path.stat().st_size)
             for path,archive in owner.items()],
-        reused_B0_reference='Original C0/B0 arrays and videos are referenced by reused_records and videos URLs; not copied or repackaged.',
+        reused_B0_reference='Historical arrays/videos are referenced by old_B1_references or reused_records; not copied or repackaged.',
         development_reuse='Each actual source file belongs to one archive. Adopted development trajectories are in their formal terrain/controller archive and referenced here by development attempt ID.',
         asset_size_limit_bytes=2*1024**3,
         verification_method='Execution-host SHA256 and byte size are computed before direct upload; confirm against GitHub returned size/digest without full download.')

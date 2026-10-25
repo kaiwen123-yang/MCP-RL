@@ -91,7 +91,7 @@ class Mission:
 
 
 def configure(c, method):
-    nominal = method in ('C0', 'B0', 'B1', 'B2', 'B3')
+    nominal = method in ('C0', 'B0', 'B1', 'B2', 'B3', 'T1', 'T2')
     rc = get_robot_config('go2')
     cfg.robot, cfg.robot_cfg = 'go2', rc
     cfg.robot_leg_joints, cfg.robot_feet_geom_names = rc.leg_joints, rc.feet_geom_names
@@ -114,6 +114,8 @@ def configure(c, method):
         visual_foothold_adaptation='blind', gait='trot')
     cfg.locomotion_params['gait_params']['trot'].update(step_freq=2.4, duty_factor=.65)
     cfg.simulation_params.update(scene='flat', dt=.002, mpc_frequency=50)
+    if method in ('T1','T2'):
+        cfg.mpc_params['optimize_step_freq'] = False  # supplied actual/future contact sequence; fixed 2.4 Hz
 
 
 def timing(values, deadline):
@@ -125,7 +127,8 @@ def timing(values, deadline):
 
 def run(root, args):
     c = json.loads((root/args.config).read_text())
-    repair = c.get('stage') == 'S1_control_execution_and_prediction_repair'
+    transition = c.get('stage') == 'S1_contact_transition_and_precontact_information'
+    repair = transition or c.get('stage') == 'S1_control_execution_and_prediction_repair'
     if repair:
         c['resolved_numerics'] = c['numerics']
     configure(c, args.controller)
@@ -248,17 +251,24 @@ def run(root, args):
         wb = wrapper.wb_interface
         planner = None
         tracker = None
+        common_swing = None
         if args.controller in ('C2', 'C3', 'C4'):
             from .s1_planner import IntentPlanner, NoFeasibleIntent
             planner = IntentPlanner(env, wrapper, contact_env, args.controller, resolved['event_horizon_s'], cfg.mass, cfg.inertia)
         wb.pgg.set_full_stance()
         wrapper.srbd_controller_interface = stand
-        if args.controller in ('B1', 'B2', 'B3'):
+        if args.controller in ('B1', 'B2', 'B3', 'T1', 'T2'):
             from .s1_stance import CompliantStanceTracking
             from .s1_prediction import AlignedPlanner, NoFeasibleIntent
             tracker = CompliantStanceTracking(env, wb, contact_env).install()
-            planner = AlignedPlanner(env, wrapper, contact_env, args.controller,
-                resolved['event_horizon_s'], cfg.mass, cfg.inertia, tracker, moving, stand)
+            if not transition:
+                planner = AlignedPlanner(env, wrapper, contact_env, args.controller,
+                    resolved['event_horizon_s'], cfg.mass, cfg.inertia, tracker, moving, stand)
+            else:
+                from .s1_transition import FloatingBaseSwing, ContactTransition
+                common_swing = FloatingBaseSwing(env, wb)
+                if args.controller in ('T1','T2'):
+                    tracker = ContactTransition(env, wb, contact_env, common_swing, args.controller).install()
         mission = Mission(c['task'])
         tau = LegsAttr(*[np.zeros(3) for _ in LEGS])
         hist = {}
@@ -287,7 +297,7 @@ def run(root, args):
             feet = env.feet_pos(frame='world')
             fv = env.feet_vel(frame='world')
             upper_s = 0.
-            if args.controller == 'B1' and step > 0 and step%500 == 0:
+            if args.controller == 'B1' and not transition and step > 0 and step%500 == 0:
                 planner.observe(t, mission, step, tau)
                 upper_s = planner.last_upper_s
             elif args.controller in ('B2', 'B3') and not want_stand and step%100 == 0:
@@ -310,6 +320,8 @@ def run(root, args):
             tc = time.perf_counter()
             if repair and planner and planner.commitment:
                 planner.commitment.time = t
+            if common_swing:
+                common_swing.begin()
             try:
                 tau = wrapper.compute_actions(env.com.copy(), pos, v, ori, omega, feet,
                     env.hip_positions(frame='world'), env.legs_qvel_idx, None, LEGS, .002,
@@ -348,6 +360,8 @@ def run(root, args):
                 intent_serial=wb.pgg.intent_serial if planner and not repair else -1)
             if tracker:
                 record.update(tracker.record())
+            if common_swing:
+                record.update(common_swing.last)
             if repair and planner and planner.commitment:
                 record['executed_intent'] = np.array(planner.selected)
                 record['intent_serial'] = planner.commitment.serial
@@ -402,6 +416,9 @@ def run(root, args):
             save_json(out/f'{name}-plans.json', planner.choices)
             if repair and planner.commitment:
                 save_json(out/f'{name}-footstep-commitments.json', planner.commitment.applied)
+        if transition and args.controller in ('T1','T2'):
+            save_json(out/f'{name}-queries.json', tracker.queries)
+            save_json(out/f'{name}-transitions.json', tracker.transitions)
         error = hist['velocity']-hist['command']
         qvel_idx = env.mjModel.jnt_dofadr[env.mjModel.actuator_trnid[:, 0]]
         power = hist['torque']*hist['qvel'][:, qvel_idx]
@@ -450,6 +467,20 @@ def run(root, args):
             for key in ('whole_body_leg_execution_s', 'native_whole_body_leg_execution_s',
                         'constitutive_inverse_s', 'stance_tracking_algebra_s'):
                 row['timing'][key.removesuffix('_s')] = timing(hist[key], .002)
+        if transition:
+            row['common_swing_correction'] = c['resolved_transition']['common_swing_correction']
+            row['events_path'] = str(out/f'{name}-events.json')
+            row['model_path'] = str(out/'go2.mjb')
+            revisits = [e for e in contact_env.ground.events if e['type']=='revisit' and
+                e.get('previous_leg') in (0,1) and e['leg'] in (2,3) and
+                e.get('unloaded_gap_s') is not None and e['unloaded_gap_s']>0 and e['area_m2']>0 and e['normal_N']>0]
+            row['front_to_hind_revisit'] = bool(revisits)
+            row['front_to_hind_column_events'] = len(revisits)
+            row['precontact_query_used'] = args.controller in ('T1','T2') and len(tracker.queries)>0
+            if args.controller in ('T1','T2'):
+                row['queries_path'] = str(out/f'{name}-queries.json')
+                row['transitions_path'] = str(out/f'{name}-transitions.json')
+                row['timing']['precontact_query'] = timing(hist['precontact_query_s'],.002)
         save_json(small/f'{name}.json', row)
         if repair:
             args.register_result(seed, small/f'{name}.json')

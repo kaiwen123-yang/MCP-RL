@@ -2,7 +2,7 @@
   "purpose": "Complete the unchanged Go2 mission on the frozen TM02 material through an executable contact transition, then conditionally measure the value of pre-contact material-state information. This is a bounded S1 task, not full-paper reproduction or a claim of three validated innovations.",
   "run_id": "tm-s1-contact-transition-20261025",
   "stage": "S1_contact_transition_and_precontact_information",
-  "implementation_status": "planned_not_executed",
+  "implementation_status": "implemented_pending_complete_mission_evidence",
   "target_entrypoint": "scripts/run_terrain_memory_s1.py",
   "reviewed_source_commit": "5af2c25c5223c7b74a473133fe97aed3d9962c34",
   "frozen_second_S1": {
@@ -370,5 +370,21 @@
       "audit/status reports",
       "user-computer secondary archive"
     ]
+  },
+  "resolved_transition": {
+    "common_swing_correction": "World-frame swing acceleration now includes full Jdot*qvel and J_base*qacc_base, plus M_joint_base*qacc_base. Original J.T feedback, gains, leg inertia and bias retained. Latest actual simulator base acceleration is held for the control interval; this remains finite leg inverse dynamics, not coupled WB optimization.",
+    "evidence": "Executed upstream patch c1002cc067934c5193c3ac2b00d2705ec8c3363a9a17a555f80e6c4fb0cb4056 omits these base terms. Archived TM02 B1 seed0 reproduces 5.538s vz=0.199919765, 5.540s gap=15.4494255mm/vz=0.36440609, 5.572s vz=-1.323548858. This algebraic omission is confirmed; it is not presumed to explain all landing error.",
+    "affected_B1_cells": "All 3 terrains x all 5 seeds use the same upstream swing path: recompute all 15 under the shared correction; retain and link historical B1 separately.",
+    "old_B1_source_root": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-repair",
+    "approach": "At nominal swing midpoint, C2 quintic from ongoing reference p/v/a to predicted free surface with bounded downward velocity and zero acceleration, within original remaining swing. Thereafter continue terminal velocity only until actual contact or next nominal liftoff. Global gait clock unchanged.",
+    "speed_derivation": "v = queried nominal two-leg load compression / low_level_dt. TM02 additionally min with remaining strain-domain displacement/(2*low_level_dt) and margin*sqrt(secant_stiffness/effective_leg_mass). Hard ground v=nominal_load*dt/effective_leg_mass from native 2ms constraint timescale. Effective mass = 1/(Jz*Mleg^-1*Jz.T). No paper speed thresholds.",
+    "loading_duration_s": 0.044721359549995794,
+    "loading_derivation": "min(nominal diagonal double-support interval, 1/sqrt(existing Cartesian kp)). Quintic load-fraction from actual contact; lost planned load redistributed to established actually contacting legs, no environment force injection.",
+    "support_reference": "Third-order critically damped C2 continuation of p/v/a toward current common-sole inverse; omega=sqrt(existing Cartesian kp). Same true current material state after touchdown for T1/T2.",
+    "mpc_contact": "T1/T2 use retained nonadaptive fixed-frequency sampling MPC so the supplied actual/current and predicted/future contact sequence is honored. 1024 GPU candidates and all other sampler settings remain fixed; only next pending touchdown can be delayed. WB support availability uses the same actual force>0 and physical phase.",
+    "same_start_query": "Both full and once-virgin query outputs recorded at the same input; selected query surface and speed enter the executed polynomial. No full-robot shadow prediction.",
+    "development_maximum": 6,
+    "total_new_starts_hard_cap": 41,
+    "parallel_resource_policy": "7 independent mission workers maximum, nice=10; one CPU affinity per worker, BLAS/OMP=1; preallocation disabled; admit new workers only with memory/GPU headroom and low competing CPU load. No processes owned by other work are changed."
   }
 }
