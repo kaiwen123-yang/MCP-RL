@@ -20,9 +20,10 @@ def main():
     if not index['phase_A_complete'] or (index['phase_B_readiness']['ready'] and not index['phase_B_complete']):
         raise RuntimeError('The authorized matrix has not finished.')
     token=os.environ['GH_TOKEN']
-    git_env=dict(os.environ,GIT_CONFIG_COUNT='2',GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
+    git_env=dict(os.environ,GIT_CONFIG_COUNT='3',GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
         GIT_CONFIG_VALUE_0='AUTHORIZATION: basic '+base64.b64encode(('x-access-token:'+token).encode()).decode(),
-        GIT_CONFIG_KEY_1='http.sslCAInfo',GIT_CONFIG_VALUE_1='/etc/ssl/certs/ca-certificates.crt')
+        GIT_CONFIG_KEY_1='http.sslCAInfo',GIT_CONFIG_VALUE_1='/etc/ssl/certs/ca-certificates.crt',
+        GIT_CONFIG_KEY_2='http.proxy',GIT_CONFIG_VALUE_2=os.environ['HTTPS_PROXY'])
     def git(*args):
         return subprocess.check_output(['git',*args],cwd=ROOT,env=git_env,text=True).strip()
     def gh(*args):

@@ -222,9 +222,29 @@ KV3500另有明确边界：当前只对足端建软材料反力，非足部仍�
 
 还没有可部署材料状态估计器、真实跨事件状态压缩、改进PPO或实机结果。下一步的接触修正是科研条件准备，不能包装成三项新贡献；更不能把“长预测”本身当理论创新。
 
-### 5.4 当前唯一下一任务：接触一致的TM02整程任务与接触前信息对照
+### 5.4 第三轮已执行：接触过渡与接触前信息条件
 
-新配置：[s1-contact-transition.json](../experiments/terrain_memory/s1-contact-transition.json)，run为 `tm-s1-contact-transition-20261025`。配置是 **planned_not_executed**；本次只分析既有成果并写下一任务，没有新增仿真或网络训练。后续Codex收到第7节启动词后完成下面固定工作，不重跑第5.3节历史矩阵。
+**第三轮S1固定任务结束：30条独立正式结果，8成功、22失败；实际新启动33次，开发6/6次。新增训练0、硬件0。**
+
+| 地面 | 原冻结B1 | 共同修正B1 | T1 |
+|---|---:|---:|---:|
+| 刚地 | 5/5 | 3/5 | 0/5 |
+| KV8000 | 5/5 | 5/5 | 0/5 |
+| TM02 | 0/5 | 0/5 | 0/5 |
+
+共同摆腿修正补入世界坐标逆动力学中遗漏的浮基加速度、完整Jacobian导数及基座—腿惯性耦合项。它影响三种地面全部15条B1，因此旧B1只保留为历史参照，正式配对均重算；不能把共同修复的变化归为T1。T1在原名义时钟下使用连续法向接近、实际接触支撑可用性及载荷接管。
+
+Phase B未执行：T1未达到冻结的完整任务/跨足重访准备条件，不能据此否定材料历史信息本身的价值。
+
+同起点查询1036次，其中初态不同24次，所计算接近动作不同16次。查询差异不等于完整任务收益。
+
+首批3次开发任务在轨迹序列化时出错，内存时程未保存；源码、模型、resolved配置和日志保留，并完整计入预算。其余3次开发结果按相同冻结版本复用为正式结果。这一记录缺失不填零、不臆造物理结局。
+
+五个seed是配对优化器种子。时间和机械功差值只对双方完成者计算；提前失败不是更快或节能，机械功不是电池耗电。并行共享资源计时不代表独占算法速度或NX实时性。当前仍缺稳定TM02完整任务及后续可观测辨识、公平强基线和部署证据。
+
+[运行索引](../results/terrain_memory/simulation/tm-s1-contact-transition-20261025/index.json)、[逐回合结果](../results/terrain_memory/simulation/tm-s1-contact-transition-20261025/episodes.csv)、[配对差值](../results/terrain_memory/simulation/tm-s1-contact-transition-20261025/paired.csv)、[共同修正对照](../results/terrain_memory/simulation/tm-s1-contact-transition-20261025/shared-correction-vs-frozen-B1.csv)、[同起点查询](../results/terrain_memory/simulation/tm-s1-contact-transition-20261025/same-start-queries.csv)、[Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-contact-transition-evidence-20261025)。
+
+以下保留冻结的本轮协议及适用边界。
 
 #### 5.4.1 先实现一个T1，闭合实际接触执行
 
