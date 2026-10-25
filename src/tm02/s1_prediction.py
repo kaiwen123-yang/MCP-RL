@@ -294,12 +294,19 @@ class AlignedPlanner:
                         first = reject('invalid_contact',gt,contacts=list(info['invalid_contacts']))
                     if first:
                         break
-                elapsed = (n+1)*.002
+                # A material/contact failure can end inside this control tick.
+                # Its pose is after the last completed 0.2 ms physics step,
+                # whereas the reported GRF belongs to that step's start.
+                partial_failure = first is not None and sub < 9
+                elapsed = n*.002+(sub+1)*.0002 if partial_failure else (n+1)*.002
                 mujoco.mj_forward(env.mjModel,env.mjData)
                 if not first and (max(abs(env.base_ori_euler_xyz[:2]))>1.2 or env.base_pos[2]<.12):
                     first = reject('body_fall',start_time+elapsed)
                 if n%10 == 9 or first:
-                    record(.002*(n%10+1),'exact_prefix' if elapsed<=physical_prefix+1e-10 else 'exact_tail',gt)
+                    interval = .002*(n%10+1)
+                    if partial_failure:
+                        interval -= (9-sub)*.0002
+                    record(interval,'exact_prefix' if elapsed<=physical_prefix+1e-10 else 'exact_tail',gt)
                 if first:
                     break
         except IntegrationFailure as error:
