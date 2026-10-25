@@ -291,7 +291,7 @@ class AlignedPlanner:
                     elif nonfoot:
                         first = reject('soft_region_nonfoot_contact',gt,geometries=nonfoot)
                     elif terminated:
-                        first = reject('invalid_contact',gt,contacts=info['invalid_contacts'])
+                        first = reject('invalid_contact',gt,contacts=list(info['invalid_contacts']))
                     if first:
                         break
                 elapsed = (n+1)*.002

@@ -254,6 +254,8 @@ def summarize_repair(config_path,cohort):
                     tracking_rows.append(item)
         record={k:row.get(k) for k in ('terrain','controller','seed','success','termination',*metrics)}
         record.update(reused=bool(row.get('reused_from')),material_domain_exit=row['material_domain_exit'] is not None,
+            requested_stance_reference_domain_failure=row['termination']=='stance_reference_infeasible',
+            stance_reference_integration_failure=row['termination']=='stance_reference_integration_failure',
             integration_failure=row['integration_error'] is not None,predictor_domain_exit=row['predictor_domain_exit'] is not None,
             trajectory=row['trajectory'],sha256=row['sha256'],patches=row['patches'],patch_revisits=row['revisits'],
             max_abs_principal_strain=row['max_abs_principal_strain'],max_total_strain_difference_rate_s_inv=row['max_strain_rate_s_inv'])
@@ -279,6 +281,24 @@ def summarize_repair(config_path,cohort):
         plan_path=Path(row.get('plans_path',out/cohort/f'{stem}-plans.json'))
         plans=json.loads(plan_path.read_text()) if plan_path.exists() and not row.get('reused_from') else []
         if plans:
+            prediction_deadline=1./config['control']['upper_intent_hz']
+            row['prediction_first_call_including_possible_compilation_s']=float(plans[0]['wall_s'])
+            row['prediction_first_call_physical_time_s']=float(plans[0]['time_s'])
+            row['prediction_recording_period_s']=(1./config['resolved_execution']['forecast_nominal_recording_hz']
+                if row['controller']=='B1' else prediction_deadline)
+            for label,calls in [('prediction_first_call_including_possible_compilation',plans[:1]),
+                                ('prediction_after_first_call',plans[1:])]:
+                durations=np.array([p['wall_s'] for p in calls],dtype=float)
+                values=(dict(count=len(durations),p50_ms=float(np.median(durations)*1000),
+                    p95_ms=float(np.percentile(durations,95)*1000),max_ms=float(durations.max()*1000),
+                    deadline_misses=int(np.sum(durations>prediction_deadline)),deadline_s=prediction_deadline)
+                    if len(durations) else None)
+                row['timing'][label]=values
+                if values:
+                    record.update({label+'_'+key:values[key] for key in ('count','p50_ms','p95_ms','max_ms','deadline_misses')})
+            record['prediction_first_call_including_possible_compilation_s']=row['prediction_first_call_including_possible_compilation_s']
+            record['prediction_first_call_physical_time_s']=row['prediction_first_call_physical_time_s']
+            record['prediction_recording_period_s']=row['prediction_recording_period_s']
             physical_contacts=physics[:,25:37].reshape(-1,4,3)[:,:,2]>0
             physical_touchdowns=[np.flatnonzero(~physical_contacts[:-1,leg]&physical_contacts[1:,leg])+1 for leg in range(4)]
             globally_matched_actual=set()
@@ -344,6 +364,7 @@ def summarize_repair(config_path,cohort):
                                 item['roll_rmse_deg']=float(np.sqrt(np.mean(error[:,0]**2))*180/np.pi)
                                 item['pitch_rmse_deg']=float(np.sqrt(np.mean(error[:,1]**2))*180/np.pi)
                         item['exact_prefix_samples']=sum(s.get('prediction_segment')=='exact_prefix' for s in subset)
+                        item['exact_tail_samples']=sum(s.get('prediction_segment')=='exact_tail' for s in subset)
                     forecast_rows.append(item)
                 predicted=chosen.get('covered_revisits',[]) if chosen else []
                 matched_here=set()
@@ -386,6 +407,8 @@ def summarize_repair(config_path,cohort):
         item=dict(terrain=terrain,controller=method,episodes=len(group),successes=sum(r['success'] for r in group),
             reused=sum(bool(r.get('reused_from')) for r in group),
             material_domain_exits=sum(r['material_domain_exit'] is not None for r in group),
+            requested_stance_reference_domain_failures=sum(r['termination']=='stance_reference_infeasible' for r in group),
+            stance_reference_integration_failures=sum(r['termination']=='stance_reference_integration_failure' for r in group),
             integration_failures=sum(r['integration_error'] is not None for r in group),
             terminations=json.dumps({reason:sum(r['termination']==reason for r in group) for reason in sorted({r['termination'] for r in group})}))
         for metric in metrics:
@@ -430,6 +453,7 @@ def summarize_repair(config_path,cohort):
         first_candidate_rejections='first-candidate-rejections.csv',event_coverage='event-coverage.csv',
         episode_records=[str(p.relative_to(small)) for p in sorted((small/cohort).glob('*-seed-*.json'))],
         metric_interpretation='All observed data end at actual termination. Failed duration/work is not completion time/efficiency. Joint work is not battery consumption. Missing reused diagnostics remain absent.',
+        prediction_timing_interpretation='The first saved prediction call includes possible compilation plus actual prediction work; it is not a measurement of compilation alone. Later saved calls provide separate P50/P95/max and deadline misses. The reported deadline is the configured 0.2 s planning target; B1 nominal diagnostic recording actually occurs once per 1 s. These wall times describe synchronous server simulation, not NX real time.',
         forecast_alignment='Interpolate recorded actual values at forecast absolute time; actual GRF uses full-rate physics samples at the explicit forecast GRF timestamp. Planned GRF uses zero-order hold at that timestamp, never interpolation across a command change. Samples beyond observed time are excluded. Short errors reuse the same long prediction. Common prefix ends at 0.2 s or the next planning record; longer tails are separate.',
         event_matching='Each predicted patch event matches at most one actual cross-leg event ID per forecast within 150 ms and the same world patch/leg. Precision uses prediction instances whose event time is observed before actual termination; later predictions remain unobserved. Recall counts unique actual event IDs over the whole episode, never rolling-window repetitions. Long-tail events remain conditional on the forecast future controls.',
         material_rate_interpretation='Continuous loaded strain rates, activation/release strain jumps, actual foot vz/H and qdot are separate. Total-strain finite-difference peak is not an impact speed.',
