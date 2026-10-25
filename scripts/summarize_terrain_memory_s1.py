@@ -211,6 +211,8 @@ def summarize_repair(config_path,cohort):
         'contact_slip_distance_m','angular_velocity_rmse_rad_s','torque_saturation_fraction','wall_s']
     flat,event_rows,rate_rows,tracking_rows,forecast_rows,touchdown_rows,rejection_rows,coverage_rows=[],[],[],[],[],[],[],[]
     time_corrections=[]
+    decision_rows,commitment_rows=[],[]
+    planning_decisions=0
     dt=config['numerics']['physics_dt_s']
     for row in rows:
         material=np.load(ROOT/row['material_trajectory'])
@@ -283,6 +285,13 @@ def summarize_repair(config_path,cohort):
                 rate_rows.append(dict(**identity,metric=metric,**{k:(json.dumps(v) if isinstance(v,(list,dict)) else v) for k,v in value.items()}))
         plan_path=Path(row.get('plans_path',out/cohort/f'{stem}-plans.json'))
         plans=json.loads(plan_path.read_text()) if plan_path.exists() and not row.get('reused_from') else []
+        if row['controller'] in ('B2','B3'):
+            trajectory_path=ROOT/row['trajectory']
+            commitment_path=Path(row.get('commitments_path',trajectory_path.with_name(trajectory_path.stem+'-footstep-commitments.json')))
+            for commitment in json.loads(commitment_path.read_text()):
+                commitment_rows.append(dict(**identity,case=stem,serial=commitment['serial'],time_s=commitment['time_s'],
+                    legs=json.dumps(commitment['legs']),offset_m=commitment['offset_m'],
+                    action_effective_time_s=commitment['action_effective_time_s']))
         if plans:
             prediction_deadline=1./config['control']['upper_intent_hz']
             row['prediction_first_call_including_possible_compilation_s']=float(plans[0]['wall_s'])
@@ -310,6 +319,17 @@ def summarize_repair(config_path,cohort):
             for di,decision in enumerate(plans):
                 candidates=decision.get('candidates',[])
                 chosen=candidates[decision['candidate_id']] if decision.get('candidate_id') is not None else None
+                if row['controller'] in ('B2','B3'):
+                    planning_decisions+=1
+                    for ci,candidate in enumerate(candidates):
+                        decision_rows.append(dict(**identity,case=stem,decision_id=di,time_s=decision['time_s'],
+                            kind=decision['kind'],candidate_count=len(candidates),candidate_id=ci,
+                            selected=decision['candidate_id']==ci,continuation=candidate['continuation'],
+                            offset_m=candidate['candidate_offset_m'],cost=candidate['cost'],
+                            feasible=candidate['infeasible_steps']==0,infeasible_steps=candidate['infeasible_steps'],
+                            action_effective_time_s=candidate['action_effective_time_s'],action_observed=candidate['action_observed'],
+                            exact_minimum_candidate_ids=json.dumps(decision['exact_minimum_candidate_ids']),
+                            decision_failure=decision['failure'],selected_intent=json.dumps(decision['intent'])))
                 forecast=[dict(sample) for sample in decision.get('aligned_trace',chosen.get('aligned_trace',[]) if chosen else [])]
                 start=decision.get('start_time_s',decision['time_s'])
                 correction=None
@@ -465,6 +485,7 @@ def summarize_repair(config_path,cohort):
     for name,data in [('actual-cross-leg-revisits',event_rows),('material-rate-extrema',rate_rows),('stance-tracking',tracking_rows),
                       ('forecast-errors',forecast_rows),('forecast-touchdowns',touchdown_rows),
                       ('forecast-time-corrections',time_corrections),
+                      ('decisions',decision_rows),('footstep-commitments',commitment_rows),
                       ('first-candidate-rejections',rejection_rows),('event-coverage',coverage_rows)]:
         write_csv(small/(name+'.csv'),data)
     path=small/'index.json'
@@ -481,6 +502,9 @@ def summarize_repair(config_path,cohort):
         forecast_errors='forecast-errors.csv',forecast_touchdowns='forecast-touchdowns.csv',
         forecast_time_corrections='forecast-time-corrections.csv',forecast_time_corrections_count=len(time_corrections),
         first_candidate_rejections='first-candidate-rejections.csv',event_coverage='event-coverage.csv',
+        decisions='decisions.csv',planning_decision_count=planning_decisions,predicted_candidate_row_count=len(decision_rows),
+        footstep_commitments='footstep-commitments.csv',actual_committed_group_count=len(commitment_rows),
+        decision_commitment_interpretation='decisions.csv has one row per recorded B2/B3 candidate in each decision, including exact-minimum IDs, continuation and failures. A continuation offset remains null because it retains the current pending plan rather than declaring a new zero offset. footstep-commitments.csv contains only live WB group records from the actual commitment file: serial/time/legs/shared scalar and the saved MPC action-effective time. These committed groups are distinct from candidate-predicted groups and actual material touchdown/revisit events; no commitment is reconstructed from predictions.',
         episode_records=[str(p.relative_to(small)) for p in sorted((small/cohort).glob('*-seed-*.json'))],
         metric_interpretation='All observed data end at actual termination. Failed duration/work is not completion time/efficiency. Joint work is not battery consumption. Missing reused diagnostics remain absent.',
         prediction_timing_interpretation='The first saved prediction call includes possible compilation plus actual prediction work; it is not a measurement of compilation alone. Later saved calls provide separate P50/P95/max and deadline misses. The reported deadline is the configured 0.2 s planning target; B1 nominal diagnostic recording actually occurs once per 1 s. These wall times describe synchronous server simulation, not NX real time.',
@@ -488,7 +512,7 @@ def summarize_repair(config_path,cohort):
         forecast_timestamp_correction='For a confirmed early-substep rejection (material_domain_exit, soft_region_nonfoot_contact or invalid_contact), a saved final pose timestamp that extends past the last GRF timestamp plus one 0.2 ms physics step is corrected only in derived comparison samples when the original first-rejection timestamp equals that GRF timestamp. The correction table retains original pose time, predicted duration, rejected cost and final-interval overcount. Raw plans and original rejected costs remain unchanged; missing endpoint fields prevent exact cost reconstruction. These infeasible candidate costs were not ranked. Physical task outcomes and trajectories are unchanged, and no task rerun is required for this metadata correction.',
         event_matching='Each predicted patch event matches at most one actual cross-leg event ID per forecast within 150 ms and the same world patch/leg. Precision uses prediction instances whose event time is observed before actual termination; later predictions remain unobserved. Recall counts unique actual event IDs over the whole episode, never rolling-window repetitions. Long-tail events remain conditional on the forecast future controls.',
         event_state_interpretation='e_before_step and q_before_step are the actual material state preceding the current step. preload_free_e and preload_free_q are the zero-external-stress candidate used by unilateral contact detection before imposing the new load; they are not a second actual integration or automatically an observed residual-memory state, especially during a contact-owner transfer. postload_e and postload_q are the resulting actual loaded state. Missing legacy B0 fields remain unrecorded.',
-        material_rate_interpretation='Continuous loaded strain rates, activation/release strain jumps, actual foot vz/H and qdot are separate. Total-strain finite-difference peak is not an impact speed.',
+        material_rate_interpretation='Continuous loaded strain rates, activation/release strain jumps, actual foot vz/H and qdot are separate. The reported vz/H extrema apply to loaded feet; all foot velocities remain in the full-rate physics trace. Total-strain finite-difference peak is not an impact speed.',
         total_recorded_episode_wall_s=sum(r['wall_s'] for r in rows if not r.get('reused_from')),
         total_new_simulated_duration_s=sum(r['duration_s'] for r in rows if not r.get('reused_from')))
     path.write_text(json.dumps(index,indent=2,allow_nan=False)+'\n')
