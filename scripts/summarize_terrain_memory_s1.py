@@ -490,6 +490,31 @@ def summarize_repair(config_path,cohort):
         write_csv(small/(name+'.csv'),data)
     path=small/'index.json'
     index=json.loads(path.read_text())
+    finished_attempts=[attempt for attempt in index['attempts'] if attempt['status']=='finished']
+    unique_finished={}
+    for attempt in finished_attempts:
+        record_path=(ROOT/attempt['record']).resolve()
+        actual=json.loads(record_path.read_text())
+        identity=(str((ROOT/actual['trajectory']).resolve()),actual['sha256'])
+        if identity not in unique_finished:
+            unique_finished[identity]=dict(record=str(record_path),attempt_ids=[],kinds=[],
+                duration_s=actual['duration_s'],wall_s=actual['wall_s'],success=actual['success'])
+        unique_finished[identity]['attempt_ids'].append(attempt['attempt_id'])
+        unique_finished[identity]['kinds'].append(attempt['kind'])
+    resolved_paths=sorted(small.glob('*/*-resolved.json'))
+    metadata_fields=('actual_mass_kg','inertia_kg_m2','nominal_feet_m','fore_hind_spacing_m','event_horizon_s',
+        'joint_names','joint_ranges_rad','actuator_limits_Nm','initial_qpos','foot_geom_ids','foot_geom_size_m',
+        'native_contact_solref','native_contact_solimp','native_contact_margin_m','source_commit','source_sha256',
+        'execution_fingerprint','upstream_commit','upstream_patch_sha256','package_versions','python','host','cpu',
+        'material_state_units')
+    execution_metadata={}
+    for resolved_path in resolved_paths:
+        resolved=json.loads(resolved_path.read_text())
+        metadata={key:resolved[key] for key in metadata_fields}
+        signature=json.dumps(metadata,sort_keys=True)
+        if signature not in execution_metadata:
+            execution_metadata[signature]=dict(resolved_files=[],**metadata)
+        execution_metadata[signature]['resolved_files'].append(str(resolved_path.relative_to(small)))
     phase_a=[r for r in rows if r['controller'] in config['phase_A']['controller_ids']]
     phase_b=[r for r in rows if r['controller'] in config['phase_B']['controller_ids']]
     index.update(config=config_path,cohort=cohort,completed_episodes=len(rows),successes=sum(r['success'] for r in rows),
@@ -508,11 +533,39 @@ def summarize_repair(config_path,cohort):
         episode_records=[str(p.relative_to(small)) for p in sorted((small/cohort).glob('*-seed-*.json'))],
         metric_interpretation='All observed data end at actual termination. Failed duration/work is not completion time/efficiency. Joint work is not battery consumption. Missing reused diagnostics remain absent.',
         prediction_timing_interpretation='The first saved prediction call includes possible compilation plus actual prediction work; it is not a measurement of compilation alone. Later saved calls provide separate P50/P95/max and deadline misses. The reported deadline is the configured 0.2 s planning target; B1 nominal diagnostic recording actually occurs once per 1 s. These wall times describe synchronous server simulation, not NX real time.',
+        legacy_predictor_fields='For B0-B3, contact_env.predictor aliases the actual reference ground. The legacy episode predictor_domain_exit therefore duplicates actual material-domain exit; candidate rejections are recorded in plans and first-candidate-rejections.csv. The independent frozen-C4 observer is paused. Its legacy timing.predictor and trace.predictor_s are zero in this round and do not measure nominal or candidate forecasting.',
         forecast_alignment='Interpolate recorded actual values at forecast absolute time; actual GRF uses full-rate physics samples at the explicit forecast GRF timestamp. Planned GRF uses zero-order hold at that timestamp, never interpolation across a command change. Samples beyond observed time are excluded. Short errors reuse the same long prediction. Common prefix ends at 0.2 s or the next planning record; longer tails are separate.',
         forecast_timestamp_correction='For a confirmed early-substep rejection (material_domain_exit, soft_region_nonfoot_contact or invalid_contact), a saved final pose timestamp that extends past the last GRF timestamp plus one 0.2 ms physics step is corrected only in derived comparison samples when the original first-rejection timestamp equals that GRF timestamp. The correction table retains original pose time, predicted duration, rejected cost and final-interval overcount. Raw plans and original rejected costs remain unchanged; missing endpoint fields prevent exact cost reconstruction. These infeasible candidate costs were not ranked. Physical task outcomes and trajectories are unchanged, and no task rerun is required for this metadata correction.',
         event_matching='Each predicted patch event matches at most one actual cross-leg event ID per forecast within 150 ms and the same world patch/leg. Precision uses prediction instances whose event time is observed before actual termination; later predictions remain unobserved. Recall counts unique actual event IDs over the whole episode, never rolling-window repetitions. Long-tail events remain conditional on the forecast future controls.',
         event_state_interpretation='e_before_step and q_before_step are the actual material state preceding the current step. preload_free_e and preload_free_q are the zero-external-stress candidate used by unilateral contact detection before imposing the new load; they are not a second actual integration or automatically an observed residual-memory state, especially during a contact-owner transfer. postload_e and postload_q are the resulting actual loaded state. Missing legacy B0 fields remain unrecorded.',
         material_rate_interpretation='Continuous loaded strain rates, activation/release strain jumps, actual foot vz/H and qdot are separate. The reported vz/H extrema apply to loaded feet; all foot velocities remain in the full-rate physics trace. Total-strain finite-difference peak is not an impact speed.',
+        attempt_totals=dict(ledger_started_count=len(index['attempts']),
+            ledger_finished_count=len(finished_attempts),ledger_active_count=sum(a['status']=='started' for a in index['attempts']),
+            unique_finished_physical_attempts=len(unique_finished),
+            unique_finished_development_attempts=sum('development' in item['kinds'] for item in unique_finished.values()),
+            unique_finished_formal_attempts=sum('formal' in item['kinds'] for item in unique_finished.values()),
+            unique_finished_successes=sum(item['success'] for item in unique_finished.values()),
+            observed_physical_duration_s=sum(item['duration_s'] for item in unique_finished.values()),
+            observed_wall_s=sum(item['wall_s'] for item in unique_finished.values()),
+            finished_records=list(unique_finished.values()),
+            scope='All unique finished new physical attempts from the run ledger, including every development failure and adopted development attempt once. Identity uses the actual trajectory path and saved SHA256. Active attempts have no invented duration/wall total; historical reused B0 is excluded.'),
+        formal_new_totals_scope='total_recorded_episode_wall_s and total_new_simulated_duration_s below cover new physical evidence represented by formal result rows, including adopted development once, and exclude old B0 and development-only attempts. The broader attempt_totals include development-only attempts as well; these totals overlap and must not be added.',
+        resolved_configuration_files=[str(p.relative_to(small)) for p in resolved_paths],
+        actual_execution_metadata=list(execution_metadata.values()),
+        timing_component_definitions=dict(control_s='Live MPC and WB execution, including the active stance-tracking path.',
+            physics_s='Actual robot physics and actual material/contact updates; material_s is an overlapping component, not an additional nonoverlapping duration.',
+            upper_prediction='timing.upper measures candidate or nominal cloned rollout, including cloned MPC, WB, material integration and robot physics. prediction_after_first_call measures these same forecast calls after the first call.',
+            predictor='Legacy timing.predictor / trace.predictor_s measures the independent frozen-C4 constitutive observer update, not candidate prediction. It is zero because C4 is paused; forecast cost is in upper and the separately split prediction-call timings.',
+            total_s='Observed outer control-loop wall time. Component intervals overlap; do not sum their P50/P95 or overlapping durations.',
+            scope='Execution-server synchronous functional simulation. Physical time pauses for computation; these measurements do not establish NX real time.'),
+        clocks_and_quadrature=dict(physics_dt_s=config['numerics']['physics_dt_s'],
+            live_control_dt_s=config['numerics']['low_level_dt_s'],mpc_period_s=1./config['control']['mpc_hz'],
+            planning_period_s=1./config['control']['upper_intent_hz'],
+            B1_nominal_prediction_recording_period_s=1./config['resolved_execution']['forecast_nominal_recording_hz'],
+            shared_B2_B3_stage_cost_quadrature_s=.02,
+            cost='The common B2/B3 stage-cost formula uses physical-time quadrature in 20 ms intervals and the same terminal formula. It is not a count of prediction samples; longer horizons change the evaluated future and computation.',
+            contact_work='Actual contact force (N) dotted with foot velocity (m/s), integrated at 5000 Hz; normal and tangential components are separate.',
+            joint_work='Recorded actuator torque (N m) times joint velocity (rad/s), integrated at 500 Hz. Positive mechanical work is not battery energy.'),
         total_recorded_episode_wall_s=sum(r['wall_s'] for r in rows if not r.get('reused_from')),
         total_new_simulated_duration_s=sum(r['duration_s'] for r in rows if not r.get('reused_from')))
     path.write_text(json.dumps(index,indent=2,allow_nan=False)+'\n')

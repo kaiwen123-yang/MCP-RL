@@ -31,6 +31,8 @@ def main():
         chosen=[next(r for r in group if r['seed']==0)]
         if not chosen[0]['success'] and any(r['success'] for r in group):
             chosen.append(min((r for r in group if r['success']),key=lambda r:r['seed']))
+        elif chosen[0]['success'] and any(not r['success'] for r in group):
+            chosen.append(min((r for r in group if not r['success']),key=lambda r:r['seed']))
         selection.extend(chosen)
     videos=out/'videos'
     videos.mkdir(exist_ok=True)
@@ -49,11 +51,14 @@ def main():
     for row in selection:
         name=f"{row['terrain']}-{row['controller']}-seed-{row['seed']}"
         path=videos/(name+'.mp4')
+        selection_label=('seed zero' if row['seed']==0 else
+            'lowest successful seed, additional to failed seed zero' if row['success'] else
+            'lowest failed seed, additional to successful seed zero')
         if path.exists() and not args.rerender:
             entries.append(dict(terrain=row['terrain'],controller=row['controller'],seed=row['seed'],
                 success=row['success'],duration_s=row['duration_s'],video=str(path.relative_to(ROOT)),fps=30,
                 frames=int(np.ceil(row['duration_s']*30))+1,
-                selection='seed zero' if row['seed']==0 else 'lowest successful seed, additional to failed seed zero'))
+                selection=selection_label))
             continue
         archive=np.load(ROOT/row['trajectory'])
         a={k:archive[k] for k in ['time','qpos','qvel','phase','actual_grf','planned_grf','indentation_m','frequency','velocity','final_qpos','final_qvel']}
@@ -123,7 +128,7 @@ def main():
         panel.save(previews/(name+'.png'))
         entry=dict(terrain=row['terrain'],controller=row['controller'],seed=row['seed'],success=row['success'],
             duration_s=row['duration_s'],video=str(path.relative_to(ROOT)),fps=fps,frames=frames+1,
-            selection='seed zero' if row['seed']==0 else 'lowest successful seed, additional to failed seed zero')
+            selection=selection_label)
         entries.append(entry)
         print(json.dumps(entry),flush=True)
     indexpath=small/'index.json'
