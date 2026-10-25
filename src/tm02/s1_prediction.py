@@ -129,6 +129,7 @@ class AlignedPlanner:
         wb0.ik = ik
         wrapper.wb_interface = copy.deepcopy(wb0, {id(ik): ik})
         moving, stand = clone_interface(self.moving), clone_interface(self.stand)
+        wrapper._s1_moving, wrapper._s1_stand = moving, stand
         wrapper.srbd_controller_interface = stand if self.wrapper.srbd_controller_interface is self.stand else moving
         tracker = self.tracking.clone(env, wrapper.wb_interface, contact)
         commitment = self.commitment.clone(wrapper.wb_interface) if self.commitment is not None else None
@@ -196,6 +197,10 @@ class AlignedPlanner:
             mission_phase=sim_mission.phase, pending_offset_m=None if commitment is None else commitment.pending,
             standing=bool(wb.pgg.gait_type == GaitType.FULL_STANCE.value),
             current_force_plan=array(wrapper.nmpc_GRFs).tolist(), last_mpc_step=wrapper.last_mpc_step_num)
+        snapshot['mission_linear_reference'] = sim_mission.v.tolist()
+        snapshot['mission_angular_reference'] = sim_mission.w.tolist()
+        snapshot['mpc_warm_start'] = np.asarray(wrapper.srbd_controller_interface.controller.best_control_parameters).tolist()
+        snapshot['mpc_random_key'] = np.asarray(wrapper.srbd_controller_interface.controller.sampling_key).tolist()
         def reject(condition, when, leg=None, **detail):
             return dict(condition=condition, absolute_time_s=float(when), relative_time_s=float(when-start_time),
                 leg=leg, position_m=env.base_pos.tolist(), orientation_rad=env.base_ori_euler_xyz.tolist(), **detail)
@@ -247,6 +252,9 @@ class AlignedPlanner:
                     env.legs_qfrc_bias,env.legs_mass_matrix,env.legs_qpos_idx,env.legs_qvel_idx,tau,
                     self.inertia.flatten(),env.mjData.contact)
                 if np.any((wb.previous_contact == 0)&(wb.current_contact == 1)):
+                    # The compliant WB has replaced soft-stance references;
+                    # solve those actual targets before assessing reachability.
+                    wb.ik.compute_solution(env.mjData.qpos.copy(), *array(wb.last_des_foot_pos))
                     wb.ik._update_kinematics()
                     residual = np.linalg.norm(array(wb.ik.env.feet_pos())-array(wb.last_des_foot_pos),axis=1)
                     joints = wb.ik.env.mjData.qpos[7:]
@@ -329,8 +337,10 @@ class AlignedPlanner:
             want_stand = mission.phase in ('initial_stand','terminal_stand','complete')
             if want_stand and not standing and np.all(wb.current_contact):
                 wb.pgg.set_full_stance()
+                wrapper.srbd_controller_interface = wrapper._s1_stand
             elif not want_stand and standing:
                 wb.pgg.restore_previous_gait()
+                wrapper.srbd_controller_interface = wrapper._s1_moving
             rotation = Rotation.from_euler('xyz',ori).as_matrix()
             if commitment is not None:
                 commitment.time = t
@@ -359,11 +369,18 @@ class AlignedPlanner:
                     if leg in landed:
                         foot[leg] = np.asarray(wrapper.nmpc_footholds[name]).reshape(3)
                     if ground.soft(foot[leg,:2]):
-                        inverse = ground.force_inverse(foot[leg,:2],planned[leg,2],dt)
+                        try:
+                            inverse = ground.force_inverse(foot[leg,:2],planned[leg,2],dt)
+                        except (IntegrationFailure, StanceReferenceInfeasible) as error:
+                            first = dict(condition='material_inverse_failure',absolute_time_s=t,relative_time_s=elapsed,
+                                leg=int(leg),error=str(error),position_m=p.tolist(),orientation_rad=ori.tolist())
+                            break
                         foot[leg,2] = contact.radius[leg]-inverse['displacement_m']
                     else:
                         foot[leg,2] = contact.radius[leg]
                     foot_velocity[leg] = (foot[leg]-before[leg])/dt
+            if first:
+                break
             # The same dissipative tangential constitutive law determines the
             # slip required by the planned horizontal force in the tail.
             for leg in np.flatnonzero(current):
@@ -381,7 +398,12 @@ class AlignedPlanner:
                 break
             bottom = foot.copy()
             bottom[:,2] -= contact.radius
-            reaction,indent,_ = ground.step(bottom,foot_velocity,dt,t+dt)
+            try:
+                reaction,indent,_ = ground.step(bottom,foot_velocity,dt,t+dt)
+            except IntegrationFailure as error:
+                first = dict(condition='material_integration_failure',absolute_time_s=t+dt,relative_time_s=elapsed+dt,
+                    leg=None,error=str(error),position_m=p.tolist(),orientation_rad=ori.tolist())
+                break
             for leg in range(4):
                 if not ground.soft(foot[leg,:2]):
                     reaction[leg] = planned[leg] if current[leg] else 0.

@@ -16,15 +16,15 @@ PHASES=['initial stand','outbound','turn','return','terminal stand','completed']
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--config',default='experiments/terrain_memory/s1-control-repair.json')
     parser.add_argument('--cohort',default='formal-v1')
     parser.add_argument('--rerender',action='store_true',help='Regenerate saved-trajectory videos after a renderer correction.')
     args=parser.parse_args()
-    config=json.loads((ROOT/'experiments/terrain_memory/s1-go2-contact.json').read_text())
+    config=json.loads((ROOT/args.config).read_text())
     small=ROOT/config['outputs']['compact_root']
     out=ROOT/config['outputs']['large_root']
     rows=[json.loads(p.read_text()) for p in (small/args.cohort).glob('*-seed-*.json')]
-    requested=[('rigid','C0'),('rigid','C3'),('kv_soft','C0'),('kv_soft','C2'),('kv_soft','C3'),
-               ('kv_moderate','C0'),('kv_moderate','C3'),('tm02_anchor','C0'),('tm02_anchor','C3'),('tm02_anchor','C4')]
+    requested=sorted({(r['terrain'],r['controller']) for r in rows if not r.get('reused_from')})
     selection=[]
     for terrain,method in requested:
         group=[r for r in rows if r['terrain']==terrain and r['controller']==method]
@@ -39,6 +39,13 @@ def main():
     font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',18)
     smallfont=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',14)
     entries=[]
+    for row in rows:
+        if row.get('reused_from') and row['seed']==0:
+            source=row['reused_from']
+            asset=next(a for a in source['assets'] if a['filename']==f"{row['terrain']}-C0-seed-0.mp4")
+            entries.append(dict(terrain=row['terrain'],controller='B0',seed=0,success=row['success'],
+                duration_s=row['duration_s'],url=asset['url'],bytes=asset['bytes'],sha256=asset['sha256'],
+                reused_from=source['release'],selection='original C0 seed zero reused without download or rerender'))
     for row in selection:
         name=f"{row['terrain']}-{row['controller']}-seed-{row['seed']}"
         path=videos/(name+'.mp4')
@@ -50,7 +57,7 @@ def main():
             continue
         archive=np.load(ROOT/row['trajectory'])
         a={k:archive[k] for k in ['time','qpos','qvel','phase','actual_grf','planned_grf','indentation_m','frequency','velocity','final_qpos','final_qvel']}
-        model=mujoco.MjModel.from_binary_path(str(out/args.cohort/'go2.mjb'))
+        model=mujoco.MjModel.from_binary_path(str(row.get('model_path',Path(row['trajectory']).parent/'go2.mjb')))
         model.vis.global_.offwidth=1120
         model.vis.global_.offheight=720
         data=mujoco.MjData(model)

@@ -200,6 +200,238 @@ def summarize(cohort, source_output_root):
     return config, small, out, rows
 
 
+def summarize_repair(config_path,cohort):
+    config=json.loads((ROOT/config_path).read_text())
+    small=ROOT/config['outputs']['compact_root']
+    out=ROOT/config['outputs']['large_root']
+    rows=[json.loads(p.read_text()) for p in sorted((small/cohort).glob('*-seed-*.json'))]
+    metrics=['duration_s','velocity_rmse_m_s','attitude_rms_rad','grf_rmse_N','max_indentation_mm',
+        'joint_positive_mechanical_work_J','signed_robot_contact_work_J','positive_ground_contact_work_J',
+        'positive_normal_ground_contact_work_J','signed_normal_robot_contact_work_J','signed_tangential_robot_contact_work_J',
+        'contact_slip_distance_m','angular_velocity_rmse_rad_s','torque_saturation_fraction','wall_s']
+    flat,event_rows,rate_rows,tracking_rows,forecast_rows,touchdown_rows,rejection_rows,coverage_rows=[],[],[],[],[],[],[],[]
+    dt=config['numerics']['physics_dt_s']
+    for row in rows:
+        material=np.load(ROOT/row['material_trajectory'])
+        physics=material['physics_foot_time_bottom_velocity_force_indent']
+        row['max_indentation_500Hz_mm']=row.get('max_indentation_500Hz_mm',row['max_indentation_mm'])
+        row['max_indentation_mm']=float(physics[:,37:41].max()*1000)
+        velocity=physics[:,13:25].reshape(-1,4,3)
+        force=physics[:,25:37].reshape(-1,4,3)
+        normal=velocity[:,:,2]*force[:,:,2]
+        tangent=np.sum(velocity[:,:,:2]*force[:,:,:2],axis=2)
+        row.update(positive_normal_ground_contact_work_J=float(np.maximum(-normal,0).sum()*dt),
+            signed_normal_robot_contact_work_J=float(normal.sum()*dt),
+            signed_tangential_robot_contact_work_J=float(tangent.sum()*dt))
+        stem=f"{row['terrain']}-{row['controller']}-seed-{row['seed']}"
+        identity={k:row[k] for k in ('terrain','controller','seed')}
+        if not row.get('reused_from'):
+            trace=np.load(ROOT/row['trajectory'])
+            if 'stance_tracking_active' in trace.files:
+                target_time=trace['time']+trace['stance_reference_effective_delay_s']
+                for leg in range(4):
+                    active=trace['stance_tracking_active'][:,leg]&(target_time<=trace['time'][-1])
+                    item=dict(**identity,leg=leg,active_reference_samples=int(active.sum()),reference_effective_delay_s=.002)
+                    if np.any(active):
+                        times=target_time[active]
+                        for reference,actual,label,scale in [('stance_reference_position','feet','position',1000.),
+                                                          ('stance_reference_velocity','feet_velocity','velocity',1.)]:
+                            measured=np.column_stack([np.interp(times,trace['time'],trace[actual][:,leg,j]) for j in range(3)])
+                            error=trace[reference][active,leg]-measured
+                            unit='mm' if scale==1000 else 'm_s'
+                            item[label+'_rmse_'+unit]=float(np.sqrt(np.mean(error**2))*scale)
+                            item[label+'_vertical_rmse_'+unit]=float(np.sqrt(np.mean(error[:,2]**2))*scale)
+                        residual=trace['stance_inverse_force_residual_N'][active,leg]
+                        item['inverse_forward_force_residual_rmse_N']=float(np.sqrt(np.mean(residual**2)))
+                        item['inverse_forward_force_residual_max_abs_N']=float(np.abs(residual).max())
+                        actual_normal=np.interp(times,physics[:,0],force[:,leg,2])
+                        item['planned_actual_normal_force_rmse_N']=float(np.sqrt(np.mean((trace['planned_grf'][active,leg,2]-actual_normal)**2)))
+                        for component in ('native_grf','inertia','tracking','bias'):
+                            values=trace['stance_'+component+'_torque'][active,leg]
+                            item[component+'_torque_rms_Nm']=float(np.sqrt(np.mean(values**2)))
+                            item[component+'_torque_max_abs_Nm']=float(np.abs(values).max())
+                    tracking_rows.append(item)
+        record={k:row.get(k) for k in ('terrain','controller','seed','success','termination',*metrics)}
+        record.update(reused=bool(row.get('reused_from')),material_domain_exit=row['material_domain_exit'] is not None,
+            integration_failure=row['integration_error'] is not None,predictor_domain_exit=row['predictor_domain_exit'] is not None,
+            trajectory=row['trajectory'],sha256=row['sha256'],patches=row['patches'],patch_revisits=row['revisits'],
+            max_abs_principal_strain=row['max_abs_principal_strain'],max_total_strain_difference_rate_s_inv=row['max_strain_rate_s_inv'])
+        for part,values in row['timing'].items():
+            if values:
+                record.update({part+'_'+key:values[key] for key in ('count','p50_ms','p95_ms','max_ms','deadline_misses')})
+        flat.append(record)
+        events_path=Path(row.get('events_path',out/cohort/f'{stem}-events.json'))
+        events=json.loads(events_path.read_text())['reference']
+        actual_cross=[e for e in events if e['type']=='revisit' and e['leg']!=e['previous_leg']]
+        for event in actual_cross:
+            event_rows.append(dict(**identity,event_id=event.get('event_id'),previous_load_event_id=event.get('previous_load_event_id'),
+                time_s=event['time_s'],patch=event['patch'],leg=event['leg'],previous_leg=event['previous_leg'],
+                unloaded_gap_s=event['unloaded_gap_s'],area_m2=event['area_m2'],normal_N=event.get('normal_N'),
+                x_m=event['xy_m'][0],y_m=event['xy_m'][1],
+                preload_free_e=json.dumps(event['preload_free_e']) if 'preload_free_e' in event else None,
+                preload_free_q=json.dumps(event['preload_free_q']) if 'preload_free_q' in event else None,
+                postload_e=json.dumps(event['e']),postload_q=json.dumps(event['q']),
+                unique_event_diagnostics_available='event_id' in event))
+        for metric,value in row.get('material_rate_extrema',{}).items():
+            if value:
+                rate_rows.append(dict(**identity,metric=metric,**{k:(json.dumps(v) if isinstance(v,(list,dict)) else v) for k,v in value.items()}))
+        plan_path=Path(row.get('plans_path',out/cohort/f'{stem}-plans.json'))
+        plans=json.loads(plan_path.read_text()) if plan_path.exists() and not row.get('reused_from') else []
+        if plans:
+            trace=np.load(ROOT/row['trajectory'])
+            physical_contacts=physics[:,25:37].reshape(-1,4,3)[:,:,2]>0
+            physical_touchdowns=[np.flatnonzero(~physical_contacts[:-1,leg]&physical_contacts[1:,leg])+1 for leg in range(4)]
+            globally_matched_actual=set()
+            prediction_count,matched_prediction_count=0,0
+            actual_by_id={e['event_id']:e for e in actual_cross}
+            for di,decision in enumerate(plans):
+                candidates=decision.get('candidates',[])
+                chosen=candidates[decision['candidate_id']] if decision.get('candidate_id') is not None else None
+                for ci,candidate in enumerate(candidates):
+                    rejection=candidate.get('first_rejection')
+                    if rejection:
+                        rejection_rows.append(dict(**identity,decision_time_s=decision['time_s'],candidate_id=ci,
+                            action_effective_time_s=candidate.get('action_effective_time_s'),first_rejection=json.dumps(rejection)))
+                forecast=decision.get('aligned_trace',chosen.get('aligned_trace',[]) if chosen else [])
+                start=decision.get('start_time_s',decision['time_s'])
+                next_time=plans[di+1]['time_s'] if di+1<len(plans) else row['duration_s']
+                samples=[s for s in forecast if trace['time'][0]<=s['absolute_time_s']<=trace['time'][-1] and
+                    physics[0,0]<=s.get('grf_sample_time_s',s['absolute_time_s'])<=physics[-1,0]]
+                matched_touchdowns=set()
+                for previous,sample in zip(samples[:-1],samples[1:]):
+                    for leg in range(4):
+                        if sample['contact'][leg] and not previous['contact'][leg]:
+                            when=sample['absolute_time_s']
+                            candidates_actual=[int(k) for k in physical_touchdowns[leg] if
+                                abs(physics[k,0]-when)<=.15 and (leg,int(k)) not in matched_touchdowns]
+                            item=dict(**identity,decision_time_s=start,leg=leg,predicted_time_s=when,
+                                forecast_segment=sample.get('prediction_segment'),matched=bool(candidates_actual))
+                            if candidates_actual:
+                                k=min(candidates_actual,key=lambda j:abs(physics[j,0]-when))
+                                matched_touchdowns.add((leg,k))
+                                actual_time=float(physics[k,0])
+                                actual_foot=np.array([np.interp(actual_time,trace['time'],trace['feet'][:,leg,j]) for j in range(3)])
+                                item.update(actual_contact_event_id=f'{leg}:{k}',actual_time_s=actual_time,
+                                    time_error_s=when-actual_time,location_error_mm=float(np.linalg.norm(np.array(sample['feet'][leg])-actual_foot)*1000))
+                            touchdown_rows.append(item)
+                for window,limit in [('common_prefix',min(.2,next_time-start)),('short_from_same_long',.24),('long_tail',2.5)]:
+                    subset=[s for s in samples if 0<s['absolute_time_s']-start<=limit+1e-9 and
+                        (window!='long_tail' or s['absolute_time_s']-start>.24)]
+                    item=dict(**identity,decision_time_s=start,window=window,samples=len(subset),horizon_s=decision['horizon_s'],
+                        forecast_failure=bool(chosen and chosen.get('first_rejection')),wall_s=decision['wall_s'])
+                    if subset:
+                        times=np.array([s['absolute_time_s'] for s in subset])
+                        for field,label,scale in [('base_pos','position',1000.),('orientation','attitude',180/np.pi),
+                                                 ('feet','feet',1000.),('actual_grf','actual_grf',1.),('planned_grf','planned_grf',1.)]:
+                            actual=physics[:,25:37] if field=='actual_grf' else trace[field].reshape(len(trace['time']),-1)
+                            measured_times=physics[:,0] if field=='actual_grf' else trace['time']
+                            actual_times=np.array([s.get('grf_sample_time_s',s['absolute_time_s']) for s in subset]) if 'grf' in field else times
+                            if field=='planned_grf':
+                                held=np.searchsorted(measured_times,actual_times,side='right')-1
+                                aligned=actual[held]
+                            else:
+                                aligned=np.column_stack([np.interp(actual_times,measured_times,actual[:,j]) for j in range(actual.shape[1])])
+                            predicted=np.array([s[field] for s in subset]).reshape(len(subset),-1)
+                            error=predicted-aligned
+                            if field=='orientation':
+                                error=np.arctan2(np.sin(error),np.cos(error))
+                            unit='N' if 'grf' in field else 'deg' if field=='orientation' else 'mm'
+                            item[label+'_rmse_'+unit]=float(np.sqrt(np.mean(error**2))*scale)
+                            item[label+'_max_abs_'+unit]=float(np.max(np.abs(error))*scale)
+                            if field=='base_pos':
+                                item['height_rmse_mm']=float(np.sqrt(np.mean(error[:,2]**2))*1000)
+                            if field=='orientation':
+                                item['roll_rmse_deg']=float(np.sqrt(np.mean(error[:,0]**2))*180/np.pi)
+                                item['pitch_rmse_deg']=float(np.sqrt(np.mean(error[:,1]**2))*180/np.pi)
+                        item['exact_prefix_samples']=sum(s.get('prediction_segment')=='exact_prefix' for s in subset)
+                    forecast_rows.append(item)
+                predicted=chosen.get('covered_revisits',[]) if chosen else []
+                matched_here=set()
+                for pe in predicted:
+                    prediction_count+=1
+                    when=pe.get('absolute_time_s',start+pe.get('time_s',0))
+                    patches=set(pe.get('patches',[]))
+                    xy={tuple(np.round(v,8)) for v in pe.get('patch_xy_m',[])}
+                    possible=[e for eid,e in actual_by_id.items() if eid not in matched_here and e['leg']==pe['leg'] and
+                        abs(e['time_s']-when)<=.15 and
+                        (tuple(np.round(e['xy_m'],8)) in xy if 'patch_xy_m' in pe else e['patch'] in patches)]
+                    if possible:
+                        match=min(possible,key=lambda e:abs(e['time_s']-when))
+                        matched_here.add(match['event_id'])
+                        globally_matched_actual.add(match['event_id'])
+                        matched_prediction_count+=1
+                coverage_rows.append(dict(**identity,decision_time_s=start,predicted_events=len(predicted),
+                    matched_predictions=len(matched_here),matched_actual_event_ids=json.dumps(sorted(matched_here)),
+                    precision=len(matched_here)/len(predicted) if predicted else None))
+            coverage_rows.append(dict(**identity,decision_time_s=None,predicted_events=prediction_count,
+                matched_predictions=matched_prediction_count,unique_actual_cross_leg_denominator=len(actual_by_id),
+                unique_matched_actual_cross_leg_events=len(globally_matched_actual),
+                precision=matched_prediction_count/prediction_count if prediction_count else None,
+                actual_cross_leg_recall=len(globally_matched_actual)/len(actual_by_id) if actual_by_id else None))
+        (small/cohort/f'{stem}.json').write_text(json.dumps(row,indent=2,allow_nan=False)+'\n')
+    write_csv(small/'episodes.csv',flat)
+    write_csv(small/'timing.csv',[dict(terrain=r['terrain'],controller=r['controller'],seed=r['seed'],reused=bool(r.get('reused_from')),part=part,**v)
+        for r in rows for part,v in r['timing'].items() if v])
+    groups=[]
+    for terrain,method in sorted({(r['terrain'],r['controller']) for r in rows}):
+        group=[r for r in rows if r['terrain']==terrain and r['controller']==method]
+        item=dict(terrain=terrain,controller=method,episodes=len(group),successes=sum(r['success'] for r in group),
+            reused=sum(bool(r.get('reused_from')) for r in group),
+            material_domain_exits=sum(r['material_domain_exit'] is not None for r in group),
+            integration_failures=sum(r['integration_error'] is not None for r in group),
+            terminations=json.dumps({reason:sum(r['termination']==reason for r in group) for reason in sorted({r['termination'] for r in group})}))
+        for metric in metrics:
+            values=[r[metric] for r in group if r.get(metric) is not None]
+            item[metric+'_mean_all_observed']=float(np.mean(values)) if values else None
+            item[metric+'_max']=float(max(values)) if values else None
+        successful=[r['duration_s'] for r in group if r['success']]
+        item['successful_completion_time_mean_s']=float(np.mean(successful)) if successful else None
+        groups.append(item)
+    write_csv(small/'groups.csv',groups)
+    paired=[]
+    lookup={(r['terrain'],r['controller'],r['seed']):r for r in rows}
+    for terrain in config['phase_A']['terrain_ids']:
+        for a,b in [('B0','B1'),('B1','B2'),('B2','B3')]:
+            for seed in config['phase_A']['paired_optimizer_seeds']:
+                if (terrain,a,seed) not in lookup or (terrain,b,seed) not in lookup:
+                    continue
+                ra,rb=lookup[terrain,a,seed],lookup[terrain,b,seed]
+                item=dict(terrain=terrain,reference=a,compared=b,seed=seed,reference_success=ra['success'],compared_success=rb['success'],
+                    success_difference=int(rb['success'])-int(ra['success']),reference_failure=ra['termination'],compared_failure=rb['termination'],
+                    reference_reused=bool(ra.get('reused_from')),compared_reused=bool(rb.get('reused_from')),
+                    completion_time_difference_s=rb['duration_s']-ra['duration_s'] if ra['success'] and rb['success'] else None)
+                item.update({metric+'_difference_observed':rb[metric]-ra[metric] if rb.get(metric) is not None and ra.get(metric) is not None else None for metric in metrics})
+                paired.append(item)
+    write_csv(small/'paired.csv',paired)
+    for name,data in [('actual-cross-leg-revisits',event_rows),('material-rate-extrema',rate_rows),('stance-tracking',tracking_rows),
+                      ('forecast-errors',forecast_rows),('forecast-touchdowns',touchdown_rows),
+                      ('first-candidate-rejections',rejection_rows),('event-coverage',coverage_rows)]:
+        write_csv(small/(name+'.csv'),data)
+    path=small/'index.json'
+    index=json.loads(path.read_text())
+    phase_a=[r for r in rows if r['controller'] in config['phase_A']['controller_ids']]
+    phase_b=[r for r in rows if r['controller'] in config['phase_B']['controller_ids']]
+    index.update(config=config_path,cohort=cohort,completed_episodes=len(rows),successes=sum(r['success'] for r in rows),
+        reused_episodes=sum(bool(r.get('reused_from')) for r in rows),new_completed_episodes=sum(not bool(r.get('reused_from')) for r in rows),
+        phase_A_records=len(phase_a),phase_A_complete=len(phase_a)==config['phase_A']['formal_result_records'],
+        phase_B_records=len(phase_b),phase_B_complete=len(phase_b)==config['phase_B']['formal_result_records'],
+        groups=groups,group_table='groups.csv',episode_table='episodes.csv',paired_table='paired.csv',timing_table='timing.csv',
+        actual_cross_leg_revisits='actual-cross-leg-revisits.csv',material_rate_extrema='material-rate-extrema.csv',
+        stance_tracking='stance-tracking.csv',stance_tracking_alignment='References generated at t are compared to actual feet and force at t + 0.002 s; inactive references are excluded and no missing old diagnostics are replaced with zero.',
+        forecast_errors='forecast-errors.csv',forecast_touchdowns='forecast-touchdowns.csv',
+        first_candidate_rejections='first-candidate-rejections.csv',event_coverage='event-coverage.csv',
+        episode_records=[str(p.relative_to(small)) for p in sorted((small/cohort).glob('*-seed-*.json'))],
+        metric_interpretation='All observed data end at actual termination. Failed duration/work is not completion time/efficiency. Joint work is not battery consumption. Missing reused diagnostics remain absent.',
+        forecast_alignment='Interpolate recorded actual values at forecast absolute time; actual GRF uses full-rate physics samples at the explicit forecast GRF timestamp. Planned GRF uses zero-order hold at that timestamp, never interpolation across a command change. Samples beyond observed time are excluded. Short errors reuse the same long prediction. Common prefix ends at 0.2 s or the next planning record; longer tails are separate.',
+        event_matching='Each predicted event matches at most one actual cross-leg event ID per forecast within 150 ms and the same patch/leg. Precision counts prediction instances; recall counts unique actual event IDs over the whole episode, never rolling-window repetitions.',
+        material_rate_interpretation='Continuous loaded strain rates, activation/release strain jumps, actual foot vz/H and qdot are separate. Total-strain finite-difference peak is not an impact speed.',
+        total_recorded_episode_wall_s=sum(r['wall_s'] for r in rows if not r.get('reused_from')),
+        total_new_simulated_duration_s=sum(r['duration_s'] for r in rows if not r.get('reused_from')))
+    path.write_text(json.dumps(index,indent=2,allow_nan=False)+'\n')
+    print(json.dumps(dict(completed=len(rows),successes=index['successes'],groups=groups)),flush=True)
+    return config,small,out,rows
+
+
 def figures(config, small, out, rows, cohort):
     import matplotlib
     matplotlib.use('Agg')
@@ -231,24 +463,26 @@ def figures(config, small, out, rows, cohort):
     save(fig,'01-all-mission-outcomes')
     from matplotlib.colors import ListedColormap
     from matplotlib.patches import Patch
-    cases=[(t,m) for t in terrains for m in ('C0','C1','C2','C3')]+[('tm02_anchor','C4')]
-    matrix=np.full((17,5),np.nan)
-    durations=np.zeros((17,5))
+    cases=sorted({(r['terrain'],r['controller']) for r in rows})
+    matrix=np.full((len(cases),5),np.nan)
+    durations=np.zeros((len(cases),5))
     for i,(terrain,method) in enumerate(cases):
         for r in [r for r in rows if r['terrain']==terrain and r['controller']==method]:
             code=(0 if r['success'] else 1 if r['termination']=='controller_no_feasible_intent' else
                   2 if r['material_domain_exit'] is not None else 3 if r['integration_error'] is not None else
-                  4 if r['termination']=='task_timeout' else 5)
+                  4 if r['termination']=='task_timeout' else 6 if r['termination']=='stance_reference_infeasible' else
+                  7 if r['termination']=='stance_reference_integration_failure' else 5)
             matrix[i,r['seed']]=code
             durations[i,r['seed']]=r['duration_s']
-    palette=['#009E73','#CC79A7','#D55E00','#333333','#999999','#E69F00']
-    labels=['Completed','No feasible intent','Material domain','Integration failure','Task timeout','Body/contact failure']
+    palette=['#009E73','#CC79A7','#D55E00','#333333','#999999','#E69F00','#56B4E9','#0072B2']
+    labels=['Completed','No feasible intent','Actual material domain','Actual integration failure','Task timeout',
+        'Body/contact failure','Stance reference infeasible','Stance inverse integration failure']
     fig,ax=plt.subplots(figsize=(7.2,6.4),constrained_layout=True)
-    ax.imshow(matrix,cmap=ListedColormap(palette),vmin=-.5,vmax=5.5,aspect='auto')
+    ax.imshow(matrix,cmap=ListedColormap(palette),vmin=-.5,vmax=7.5,aspect='auto')
     for i,j in np.argwhere(np.isfinite(matrix)):
-        ax.text(j,i,f'{durations[i,j]:.2f}',ha='center',va='center',fontsize=7,color='white' if matrix[i,j] in (0,2,3) else 'black')
-    ax.set(yticks=range(17),yticklabels=[t+' / '+m for t,m in cases],xticks=range(5),
-           xticklabels=[str(i) for i in range(5)],xlabel='Paired optimizer seed',title='All 85 outcomes; cell labels are observed duration in seconds')
+        ax.text(j,i,f'{durations[i,j]:.2f}',ha='center',va='center',fontsize=7,color='white' if matrix[i,j] in (0,2,3,7) else 'black')
+    ax.set(yticks=range(len(cases)),yticklabels=[t+' / '+m for t,m in cases],xticks=range(5),
+           xticklabels=[str(i) for i in range(5)],xlabel='Paired optimizer seed',title=f'All {len(rows)} outcomes; labels are observed duration in seconds')
     ax.legend(handles=[Patch(facecolor=c,label=l) for c,l in zip(palette,labels)],loc='upper center',
               bbox_to_anchor=(.5,-.09),ncol=3,frameon=False,fontsize=7)
     save(fig,'01b-failure-types')
@@ -282,7 +516,9 @@ def figures(config, small, out, rows, cohort):
         axes[-1].set_xlabel('Physical time (s)')
         fig.suptitle(terrain+' | complete seed-0 records, ending at actual termination',fontsize=10)
         save(fig,'04-'+terrain+'-seed0-time-series')
-    for terrain,method in [('tm02_anchor','C3'),('tm02_anchor','C4'),('kv_soft','C0'),('kv_soft','C3')]:
+    material_cases=([(t,m) for t,m in cases if t!='rigid' and m=='B1'] if 'phase_A' in config else
+        [('tm02_anchor','C3'),('tm02_anchor','C4'),('kv_soft','C0'),('kv_soft','C3')])
+    for terrain,method in material_cases:
         row=next(r for r in rows if r['terrain']==terrain and r['controller']==method and r['seed']==0)
         stem=f'{terrain}-{method}-seed-0'
         events=json.loads((out/cohort/(stem+'-events.json')).read_text())['reference']
@@ -322,6 +558,40 @@ def figures(config, small, out, rows, cohort):
         for ax in axes:ax.grid(alpha=.2)
         axes[-1].set_xlabel('Physical time (s); saved material states at 500 Hz')
         save(fig,'05-'+terrain+'-'+method+'-material-history')
+    if 'phase_A' in config:
+        for row in [r for r in rows if r['controller']=='B1' and r['seed']==0 and r['terrain']!='rigid']:
+            a=np.load(ROOT/row['trajectory'])
+            physical=np.load(ROOT/row['material_trajectory'])['physics_foot_time_bottom_velocity_force_indent']
+            fig,axes=plt.subplots(4,2,figsize=(9,8),sharex=True,constrained_layout=True)
+            for leg in range(4):
+                active=a['stance_tracking_active'][:,leg]
+                effective=a['time']+a['stance_reference_effective_delay_s']
+                reference=np.where(active,a['stance_reference_position'][:,leg,2]*1000,np.nan)
+                axes[leg,0].plot(a['time'][::5],a['feet'][::5,leg,2]*1000,color=colors[0],label='Actual',lw=.8)
+                axes[leg,0].plot(effective[::5],reference[::5],color=colors[1],ls='--',label='Material reference at effective time',lw=.8)
+                axes[leg,1].plot(physical[::50,0],physical[::50,25+leg*3+2],color=colors[0],label='Actual GRF',lw=.8)
+                axes[leg,1].plot(a['time'][::5],a['planned_grf'][::5,leg,2],color=colors[1],ls='--',label='MPC planned GRF',lw=.8)
+                axes[leg,0].set_ylabel(['FL','FR','RL','RR'][leg]+' centre z (mm)')
+                axes[leg,1].set_ylabel('Normal GRF (N)')
+                for ax in axes[leg]:ax.grid(alpha=.2)
+            for ax in axes[0]:ax.legend(frameon=False,fontsize=6)
+            for ax in axes[-1]:ax.set_xlabel('Physical time (s)')
+            fig.suptitle(row['terrain']+' / B1 / seed 0 | observed support references and actual execution',fontsize=10)
+            save(fig,'06-'+row['terrain']+'-stance-tracking')
+        forecast_path=small/'forecast-errors.csv'
+        with forecast_path.open(newline='') as f:
+            evidence=[r for r in csv.DictReader(f) if r['window']=='common_prefix' and r['controller']=='B1' and r['seed']=='0' and int(r['samples'])]
+        if evidence:
+            fig,axes=plt.subplots(3,1,figsize=(7.2,6),sharex=True,constrained_layout=True)
+            for j,terrain in enumerate(terrains):
+                group=[r for r in evidence if r['terrain']==terrain]
+                for ax,metric,label in zip(axes,['roll_rmse_deg','height_rmse_mm','actual_grf_rmse_N'],['Roll RMSE (deg)','Height RMSE (mm)','GRF RMSE (N)']):
+                    ax.plot([float(r['decision_time_s']) for r in group],[float(r[metric]) for r in group],label=terrain,color=colors[j],lw=.9,marker='.',ms=3)
+                    ax.set_ylabel(label);ax.grid(alpha=.2)
+            axes[0].legend(frameon=False,ncol=2,fontsize=7)
+            axes[-1].set_xlabel('Forecast start in physical mission time (s)')
+            fig.suptitle('Nominal-continuation forecast versus actual execution at the same absolute time\nB1 seed 0, common prefix through 0.2 s; every available forecast retained',fontsize=10)
+            save(fig,'07-common-prefix-prediction-errors')
     index_path=small/'index.json'
     index=json.loads(index_path.read_text())
     index['figures']=[str(p.relative_to(small)) for p in sorted(figdir.glob('*.png'))]
@@ -330,10 +600,12 @@ def figures(config, small, out, rows, cohort):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--config',default='experiments/terrain_memory/s1-control-repair.json')
     p.add_argument('--cohort',default='formal-v1')
     p.add_argument('--figures',action='store_true')
     p.add_argument('--source-output-root',default='/home/fanyuan/projects/kaiwen-learning/terrain-memory-study/outputs/terrain_memory/reproduction/material/tm02-memory-study-20261023')
     args=p.parse_args()
-    config,small,out,rows=summarize(args.cohort,args.source_output_root)
+    repair='phase_A' in json.loads((ROOT/args.config).read_text())
+    config,small,out,rows=(summarize_repair(args.config,args.cohort) if repair else summarize(args.cohort,args.source_output_root))
     if args.figures:
         figures(config,small,out,rows,args.cohort)

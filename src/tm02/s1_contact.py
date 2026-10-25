@@ -245,6 +245,10 @@ class Ground:
                 leg = int(owner[idx] if owner[idx]>=0 else self.last_owner[idx])
                 self.rate_extrema[label] = dict(magnitude=value, time_s=t, patch=idx, leg=leg,
                     previous_leg=int(self.last_owner[idx]), loaded_before=bool(old_loaded[idx]), loaded_after=bool(self.loaded[idx]),
+                    boundary_transition=('activation' if not old_loaded[idx] and self.loaded[idx] else
+                        'release' if old_loaded[idx] and not self.loaded[idx] else
+                        'ownership_transfer' if old_loaded[idx] and self.loaded[idx] and owner[idx]!=self.last_owner[idx] else
+                        'continuous_loaded' if self.loaded[idx] else 'unloaded_recovery'),
                     area_before_m2=float(self.last_area[idx]), area_after_m2=float(areas[idx]) if self.loaded[idx] else 0.,
                     force_before_N=float(self.last_normal[idx]), force_after_N=float(pressure[idx]*areas[idx]),
                     foot_vz_over_H_s_inv=float(velocity[leg, 2]/self.h) if leg>=0 else None,
@@ -252,7 +256,24 @@ class Ground:
                     e_before=prev_e[idx].tolist(), e_after=self.e[idx].tolist(),
                     q_before=prev_q[idx].tolist(), q_after=self.q[idx].tolist())
         loaded_legs = np.unique(owner[self.loaded])
-        row.append(float(np.max(np.abs(velocity[loaded_legs, 2]/self.h))) if len(loaded_legs) else 0.)
+        peak_foot_rate = float(np.max(np.abs(velocity[loaded_legs, 2]/self.h))) if len(loaded_legs) else 0.
+        row.append(peak_foot_rate)
+        label = 'actual_foot_vz_over_H_s_inv'
+        if len(loaded_legs) and (label not in self.rate_extrema or peak_foot_rate > self.rate_extrema[label]['magnitude']):
+            leg = int(loaded_legs[np.argmax(np.abs(velocity[loaded_legs, 2]/self.h))])
+            patches = np.flatnonzero(self.loaded & (owner == leg))
+            normal = pressure[patches]*areas[patches]
+            dominant = int(patches[np.argmax(normal)])
+            self.rate_extrema[label] = dict(magnitude=peak_foot_rate, time_s=t, leg=leg,
+                foot_vz_over_H_s_inv=float(velocity[leg, 2]/self.h), foot_vz_m_s=float(velocity[leg, 2]),
+                thickness_m=self.h, patch=dominant, patch_selection='largest actual normal force under the peak-rate leg',
+                patches=patches.tolist(), area_m2=float(areas[patches].sum()), force_N=float(normal.sum()),
+                patch_areas_m2=areas[patches].tolist(), patch_normal_forces_N=normal.tolist(),
+                dominant_patch_loaded_before=bool(old_loaded[dominant]),
+                dominant_patch_previous_leg=int(self.last_owner[dominant]),
+                e_before=prev_e[dominant].tolist(), e_after=self.e[dominant].tolist(),
+                q_before=prev_q[dominant].tolist(), q_after=self.q[dominant].tolist(),
+                qdot_s_inv=qdot[dominant].tolist())
         self.rate_hist.append(row)
 
     def force_inverse(self, xy, force_N, dt):
