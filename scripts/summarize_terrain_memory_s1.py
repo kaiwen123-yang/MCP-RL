@@ -257,6 +257,7 @@ def summarize_repair(config_path,cohort):
                     tracking_rows.append(item)
         record={k:row.get(k) for k in ('terrain','controller','seed','success','termination',*metrics)}
         record.update(reused=bool(row.get('reused_from')),material_domain_exit=row['material_domain_exit'] is not None,
+            resource_mode=row.get('resource_context',{}).get('mode','historical_serial' if row.get('reused_from') else 'serial'),
             requested_stance_reference_domain_failure=row['termination']=='stance_reference_infeasible',
             stance_reference_integration_failure=row['termination']=='stance_reference_integration_failure',
             integration_failure=row['integration_error'] is not None,predictor_domain_exit=row['predictor_domain_exit'] is not None,
@@ -447,12 +448,14 @@ def summarize_repair(config_path,cohort):
                 actual_cross_leg_recall=len(globally_matched_actual)/len(actual_by_id) if actual_by_id else None))
         (small/cohort/f'{stem}.json').write_text(json.dumps(row,indent=2,allow_nan=False)+'\n')
     write_csv(small/'episodes.csv',flat)
-    write_csv(small/'timing.csv',[dict(terrain=r['terrain'],controller=r['controller'],seed=r['seed'],reused=bool(r.get('reused_from')),part=part,**v)
+    write_csv(small/'timing.csv',[dict(terrain=r['terrain'],controller=r['controller'],seed=r['seed'],reused=bool(r.get('reused_from')),
+        resource_mode=r.get('resource_context',{}).get('mode','historical_serial' if r.get('reused_from') else 'serial'),part=part,**v)
         for r in rows for part,v in r['timing'].items() if v])
     groups=[]
     for terrain,method in sorted({(r['terrain'],r['controller']) for r in rows}):
         group=[r for r in rows if r['terrain']==terrain and r['controller']==method]
         item=dict(terrain=terrain,controller=method,episodes=len(group),successes=sum(r['success'] for r in group),
+            resource_modes=json.dumps(sorted({r.get('resource_context',{}).get('mode','historical_serial' if r.get('reused_from') else 'serial') for r in group})),
             reused=sum(bool(r.get('reused_from')) for r in group),
             material_domain_exits=sum(r['material_domain_exit'] is not None for r in group),
             requested_stance_reference_domain_failures=sum(r['termination']=='stance_reference_infeasible' for r in group),
@@ -553,6 +556,7 @@ def summarize_repair(config_path,cohort):
         resolved_configuration_files=[str(p.relative_to(small)) for p in resolved_paths],
         actual_execution_metadata=list(execution_metadata.values()),
         timing_component_definitions=dict(control_s='Live MPC and WB execution, including the active stance-tracking path.',
+            resource_comparability='timing.csv and episodes.csv label serial, historical_serial, serial_then_parallel and parallel. See index.parallel_execution for the user-authorized switch and concurrency. Shared-resource wall times are not isolated method speed comparisons.',
             physics_s='Actual robot physics and actual material/contact updates; material_s is an overlapping component, not an additional nonoverlapping duration.',
             upper_prediction='timing.upper measures candidate or nominal cloned rollout, including cloned MPC, WB, material integration and robot physics. prediction_after_first_call measures these same forecast calls after the first call.',
             predictor='Legacy timing.predictor / trace.predictor_s measures the independent frozen-C4 constitutive observer update, not candidate prediction. It is zero because C4 is paused; forecast cost is in upper and the separately split prediction-call timings.',

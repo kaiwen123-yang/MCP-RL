@@ -85,7 +85,8 @@ def main():
             assign(path,development_archive)
     for path in [ROOT/a.config,ROOT/c['base']['material_config'],ROOT/'scripts/tm01_env.sh',
                  *[ROOT/'scripts'/name for name in ('run_terrain_memory_s1.py','summarize_terrain_memory_s1.py',
-                    'video_terrain_memory_s1.py','package_terrain_memory_s1.py')],
+                    'video_terrain_memory_s1.py','package_terrain_memory_s1.py',
+                    'parallel_terrain_memory_s1.py','publish_terrain_memory_s1.py')],
                  *sorted((ROOT/'src/tm02').glob('*.py'))]:
         assign(path,development_archive)
     archives=[]

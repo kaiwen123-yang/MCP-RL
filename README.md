@@ -4,15 +4,26 @@
 
 同一空间地块的材料状态跨腿、跨步、跨返程持续演化；后续支撑需求反过来约束当前踩踏。第一版从具有可测恢复过程的黏弹性材料开始。
 
-## 当前下一步：继续 S1，先修执行与预测，再恢复落足规划
+## S1第二轮已完成：接触基线与预测执行修正
 
-**第一轮已完成实验执行，但尚未达到稳定软地任务或地面记忆收益目标。** 本次分析固定在 [1bfcf24](https://github.com/kaiwen123-yang/MCP-RL/commit/1bfcf244bf5787cf0086f3f1846c19c42576f9d7)。当前可用参考是 C0 刚地5/5、KV8000为4/5；16个软地回合在实际压入仍为零时就被上层判无可行意图。刚地C2 seed0中，2.8s作出的计划对2.98s的roll预测与实际差40.1°；4次决策因落点候选成本相同而按枚举顺序选−4cm。继续扩大数据或重复原85组合不能修正这些问题。
+**60/60条正式结果已完成，36成功、24失败；20条B0引用原C0，40条为本轮新增正式结果。实际新增任务启动42次，开发尝试3/8次，其中1次按同版本计入正式矩阵；总启动预算42/68。**
 
-下一轮为 [S1接触基线与预测执行修正](docs/TERRAIN_MEMORY_PLAN.md#53-下一轮唯一任务先接触基线再预测执行一致的落足规划)，[新协议](experiments/terrain_memory/s1-control-repair.json)尚待执行端实现：固定2.4Hz、dwell=0，先4地面×B0原C0/B1独立接触跟踪×5seed=40个完整任务结果；有效旧C0可复用20条。B1刚地5/5、KV8000至少4/5且已确认预测错误处理后，自动继续仅这两地面×B2短/B3长预测×5seed=20个规划任务。正式结果上限60，通常新增40；不满足条件就交第一部分有效结果，不运行已知无效矩阵。新增PANN/PPO训练0、暂停C4、无硬件。
+| 地面 | B0 原C0 | B1 接触跟踪 | B2 0.24s | B3 2.5s |
+|---|---:|---:|---:|---:|
+| 刚地 | 5/5 | 5/5 | 4/5 | 5/5 |
+| TM02 γ=0.025 | 0/5 | 0/5 | — | — |
+| KV3500 | 0/5 | 0/5 | — | — |
+| KV8000 | 4/5 | 5/5 | 3/5 | 5/5 |
 
-这轮不将额外PD命名为已复现STANCE，也不将较长混合步长预测命名为已证实的事件创新。新增[失败阶段表](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/failure-stage-summary.csv)直接派生自已有85个JSON；未增加仿真。TM02 C0 seed0的最高总应变差分已精确定位为足底滑出网格引起的材料柱卸载跳变，不能直接当高速撞击/扩训依据；真实材料域退出仍保留。详见计划第5.2节。
+B1在KV8000由4/5变为5/5，刚地仍为5/5；TM02仍实际应变超域，KV3500仍出现小腿触地。B1反演共同足底位移的面积加权合力，并在实际WB力矩路径执行支撑运动参考；GRF前馈只计一次。这是已知材料状态下的接触执行对照，不是完整STANCE c3WBC复现。
 
-[下一轮启动词](docs/TERRAIN_MEMORY_PLAN.md#7-下一轮启动提示词)与 [AGENTS约定](AGENTS.md)取代旧启动要求。发布GitHub与必要Release后结束，不在用户电脑二次下载、镜像、压缩或归档。以下各阶段为已完成成果，保留原证据与适用范围。
+B2/B3继承正在执行的摆腿、接触与MPC状态，仅改变下一组未承诺落足的一次共享偏移，共用执行、信息、代价与约束。刚地B2 seed3在6.0s结束：当次三个候选都预测在6.166s首次违反落足IK条件，此前可比较前缀与实际一致；6.166s是预测拒绝时刻，不是实际跌倒时刻。该失败保留。本轮比较短、长预测，没有把长时域本身称为事件创新，也未建立跨腿持久材料记忆的因果收益。
+
+B3在刚地和KV8000均为5/5，B2分别为4/5和3/5；B1在这两种地面也是5/5。B3的平均完整任务时间分别为40.6872s和39.0748s，同五个配对seed相对B1分别减少0.2992s和0.4272s。长预测修复了本轮短预测中的完成率损失，但相对B1没有完成率增益；计算量明显更高。
+
+新增PANN/PPO训练0，C4暂停，硬件0。全部成功与失败轨迹保留，失败后的值不补零。五个seed是优化器配对种子，不是五种独立材料；只对双方完成的配对比较完成时间。关节机械功不是电池耗电，提前失败的短轨迹不代表更快或更节能。同步功能仿真的物理时间会等待计算，分项耗时及首调用单列，NX实时性未测。用户随后授权并行完成剩余独立回合；索引和逐回合记录区分串行、切换中及共享资源运行，这些混合资源条件下的wall time不能直接作为算法独占计算速度对比。
+
+[运行索引](results/terrain_memory/simulation/tm-s1-control-repair-20261024/index.json)、[全部回合](results/terrain_memory/simulation/tm-s1-control-repair-20261024/episodes.csv)、[配对差值](results/terrain_memory/simulation/tm-s1-control-repair-20261024/paired.csv)、[分项耗时](results/terrain_memory/simulation/tm-s1-control-repair-20261024/timing.csv)、[同绝对时间预测误差](results/terrain_memory/simulation/tm-s1-control-repair-20261024/forecast-errors.csv)、[实际落足承诺](results/terrain_memory/simulation/tm-s1-control-repair-20261024/footstep-commitments.csv)与[全部新轨迹和连续视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-control-repair-evidence-20261024)提供实际结果。旧B0数组和视频引用原Release。新资产从服务器直接上传，按size/digest核对，不在用户电脑下载或归档。
 
 ## 首轮 S1：85 回合固定预算完成，尚未建立整程控制收益
 
@@ -33,12 +44,7 @@
 
 可核验成果包括 [结果索引](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/index.json)、[全部回合](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/episodes.csv)、[五种子配对差值](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/paired.csv)、[逐部分计时](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/timing.csv)、[跨腿重访](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/actual-cross-leg-revisits.csv)、[预测事件实际覆盖](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/event-coverage.csv)和[全部大时程与连续视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-contact-evidence-20261024)。失败后的值不补零；较短的失败轨迹不作为更快或更省能的证据。接触功按 5000 Hz 物理记录积分，关节正机械功使用 500 Hz 记录，均不等于电池耗电。
 
-[运行入口](scripts/run_terrain_memory_s1.py)与[冻结实际配置](experiments/terrain_memory/s1-go2-contact.json)可复现本轮；下面仅是历史复现命令，不是新的启动任务：
-
-```bash
-source scripts/tm01_env.sh
-python scripts/run_terrain_memory_s1.py --matrix --cohort formal-v1
-```
+首轮运行入口与原85组合属于冻结提交 [1bfcf24](https://github.com/kaiwen123-yang/MCP-RL/commit/1bfcf244bf5787cf0086f3f1846c19c42576f9d7)及[原配置](experiments/terrain_memory/s1-go2-contact.json)。当前main入口默认第二轮协议；不以当前默认命令重跑首轮。
 
 代表视频保留 seed 0 的真实失败，同时给出注明编号的成功补充例。新数组和视频从运行端直接上传 Release，旧 B 权重引用原 R2 Release；不在用户电脑另做大产物下载或归档。当前证据不支持启动长期 RL 或实机 H。
 
