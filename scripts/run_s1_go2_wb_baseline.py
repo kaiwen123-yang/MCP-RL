@@ -248,12 +248,11 @@ def run(args, c):
                 standing = mission.phase in ('initial_stand', 'terminal_stand', 'complete')
                 settings = 'stand_settings' if standing else 'move_and_turn_settings'
                 ts = time.perf_counter()
-                if settings != phase_settings:
+                settings_changed = settings != phase_settings
+                if settings_changed:
                     table = c['task'][settings]
                     agent.set_task_parameters({k: v for k, v in table.items() if k not in ('Balance','Upright','Height')})
                     agent.set_cost_weights({k: table[k] for k in ('Balance','Upright','Height')} | {'Orientation': c['task']['orientation_cost_weight']})
-                    resolved.setdefault('applied_settings', []).append(dict(time_s=t,
-                        task_parameters=agent.get_task_parameters(), cost_weights=agent.get_cost_weights()))
                     phase_settings = settings
                 agent.set_task_parameter('Heading', float(heading))
                 rotation = Rotation.from_euler('z', heading).as_matrix()
@@ -261,6 +260,11 @@ def run(args, c):
                 data.mocap_quat[goal] = [np.cos(heading/2), 0, 0, np.sin(heading/2)]
                 agent.set_state(time=t, qpos=data.qpos, qvel=data.qvel, act=data.act,
                     mocap_pos=data.mocap_pos, mocap_quat=data.mocap_quat, userdata=data.userdata)
+                if settings_changed:
+                    # GetCost evaluates residuals (including ground raycasts),
+                    # so it must follow SetState's first mj_forward.
+                    resolved.setdefault('applied_settings', []).append(dict(time_s=t,
+                        task_parameters=agent.get_task_parameters(), cost_weights=agent.get_cost_weights()))
                 sync_s = time.perf_counter()-ts
                 sync_times.append(sync_s)
                 plan_s = 0.
@@ -329,9 +333,6 @@ def run(args, c):
             reason = 'execution_error'
             print(error, flush=True)
         finally:
-            if error is None:
-                resolved['final_task_parameters'] = agent.get_task_parameters()
-                resolved['final_cost_weights'] = agent.get_cost_weights()
             dump(small/f'{args.attempt}-resolved.json', resolved)
     wall = time.perf_counter()-begin
     if not started:
