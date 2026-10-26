@@ -16,6 +16,7 @@ import subprocess
 import sys
 import time
 import traceback
+import xml.etree.ElementTree as ET
 
 import mujoco
 import numpy as np
@@ -163,6 +164,16 @@ def run(args, c):
         # Explicitly activate that approved input representation on BOTH models.
         model.actuator_biastype[:] = mujoco.mjtBias.mjBIAS_AFFINE
         model_meta['declared_input_repair'] = 'Enable affine bias for the existing gainprm=60 and biasprm=[0,-60,-5]; native physical and unlimited-force settings are retained.'
+        # The 50 MB native mesh-bearing MJB exceeds agent_server's 20 MiB RPC
+        # limit. Official XML transport sends only source, with on-host assets.
+        prepared_xml = out/'model.xml'
+        mujoco.mj_saveLastXML(str(prepared_xml), model)
+        xml = ET.parse(prepared_xml)
+        xml.getroot().find('compiler').set('meshdir', str(upstream/'mjpc/tasks/quadruped/assets'))
+        xml.write(prepared_xml, encoding='unicode')
+        model = mujoco.MjModel.from_xml_path(str(prepared_xml))
+        model_meta['transport'] = 'Official XML Init with absolute on-host mesh directory'
+        model_meta['prepared_xml_sha256'] = sha(prepared_xml)
         base_name, foot_names = 'trunk', LEGS
     else:
         from s1_go2_wb_model import build_project_model
@@ -222,7 +233,8 @@ def run(args, c):
     phase_settings = None
     with (out/'agent-server.log').open('w') as server_log, Agent(task_id='Quadruped Flat', model=model,
             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
-            subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT)) as agent:
+            subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT), run_init=False) as agent:
+        agent.init(task_id='Quadruped Flat', model=model, send_as='xml')
         agent.set_mode('Quadruped')
         agent.set_task_parameters({'Gait switch': 'Manual'})
         try:
