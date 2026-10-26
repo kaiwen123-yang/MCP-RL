@@ -424,6 +424,39 @@ def summarize(args,c):
     print(json.dumps(idx['stages']))
 
 
+def pipeline(args,c):
+    """Run the fixed gates once; failed identical conditions are never retried."""
+    small=ROOT/c['outputs']['root']
+    common=[sys.executable,str(Path(__file__).resolve()),'--config',args.config,
+        '--author-source',args.author_source,'--agent-server',args.agent_server,'--workers',str(args.workers)]
+    for option in ['original_robot_dir','original_scene','original_resolved']:
+        value=getattr(args,option)
+        if value: common+=['--'+option.replace('_','-'),value]
+    attempted=[]
+    def execute(stage,condition,purpose,name):
+        command=common+['--stage',stage,'--condition',condition,'--purpose',purpose,'--attempt',name]
+        print('START '+json.dumps(command),flush=True)
+        subprocess.run(command,check=True)
+        attempted.append(name)
+        return json.loads((small/f'{name}.json').read_text())
+    native=execute('G0','nominal','development','g0-01')
+    if native['success']:
+        nominal=execute('G1','nominal','development','g1-nominal-01')
+        if nominal['success']:
+            with index_file(small,c) as idx:
+                idx['formal_frozen_source_commit']=nominal['source_commit']
+                idx['formal_records']=[dict(attempt=nominal['attempt'],condition='nominal',success=True,reused_development=True)]
+            for condition in ['yaw_plus5','yaw_minus5']:
+                result=execute('G1',condition,'formal','g1-'+condition)
+                with index_file(small,c) as idx:
+                    idx['formal_records'].append(dict(attempt=result['attempt'],condition=condition,success=result['success'],reused_development=False))
+    # Video replay has no mj_step, and therefore adds no physical starts.
+    for name in attempted:
+        subprocess.run(common+['--attempt',name,'--render'],check=True)
+    summarize(args,c)
+    print('BOUNDED EXECUTION FINISHED: results and complete videos are on the execution host; GitHub publication is a separate remaining step.',flush=True)
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--config',default=CONFIG)
@@ -439,8 +472,9 @@ def main():
     p.add_argument('--original-resolved')
     p.add_argument('--render',action='store_true')
     p.add_argument('--summarize',action='store_true')
+    p.add_argument('--pipeline',action='store_true')
     args=p.parse_args(); c=json.loads((ROOT/args.config).read_text())
-    (summarize if args.summarize else render if args.render else run)(args,c)
+    (pipeline if args.pipeline else summarize if args.summarize else render if args.render else run)(args,c)
 
 
 if __name__=='__main__':
