@@ -1,0 +1,295 @@
+{
+  "purpose": "Reuse the published TM20 Go2 whole-body iLQG controller to obtain complete rigid-ground out-turn-return-stand missions. First establish author-model execution, then the original project robot and actuator limits. This is a bounded execution baseline, not full-paper reproduction or proof of terrain-memory benefit.",
+  "run_id": "tm-s1-go2-wb-baseline-20261026",
+  "stage": "S1_author_Go2_execution_baseline",
+  "implementation_status": "planned_not_executed",
+  "target_entrypoint": "scripts/run_s1_go2_wb_baseline.py",
+  "reviewed_source_commit": "56fabe0024108fe933dd8207c3a97331b8fa6102",
+  "frozen_previous": {
+    "config": "experiments/terrain_memory/s1-contact-execution.json",
+    "index": "results/terrain_memory/simulation/tm-s1-contact-execution-20261026/index.json",
+    "executed_implementation": "96748c9d0d51041177892ef7081d9ac3e02a6e36",
+    "actual_starts": 3,
+    "completions": 0,
+    "formal_results": 0,
+    "missing_records": 0,
+    "interpretation": "The requested interface repairs were implemented but T1R still failed all three rigid development missions. This does not invalidate historical second-round B1 or sampling MPC generally.",
+    "preserve": [
+      "R1",
+      "R2 rounds 1-3",
+      "S0",
+      "S1 rounds 1-4",
+      "old B1 success records"
+    ],
+    "stop": "No more T1/T1R contact debounce, load-duration, swing-feedforward or force-projection modifications.",
+    "derived_summary": "results/terrain_memory/simulation/tm-s1-contact-execution-20261026/execution-stage-summary.csv",
+    "derived_inputs": 5,
+    "derived_input_manifest_sha256": "e60874a7861d40af75856f74105f2c119a51cd265663c9edadd0c0bf52bb6b7c"
+  },
+  "upstream": {
+    "paper_id": "TM20",
+    "paper_version": "arXiv:2503.04613v3",
+    "paper_url": "https://arxiv.org/html/2503.04613v3",
+    "paper_pdf": "https://arxiv.org/pdf/2503.04613v3",
+    "solver_repository": "https://github.com/johnzhang3/mujoco_mpc",
+    "solver_branch_for_identification_only": "go2",
+    "solver_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+    "mujoco_dependency_commit": "088079eff0450e32b98ee743141780ed68307506",
+    "menagerie_dependency_commit": "d82891f8b6c576f9f6a9df308f3a1155ebedbc40",
+    "native_task": "mjpc/tasks/quadruped/task_flat.xml",
+    "native_robot": "mjpc/tasks/quadruped/go2.xml",
+    "task_implementation": "mjpc/tasks/quadruped/quadruped.cc",
+    "gait_table": "mjpc/tasks/quadruped/quadruped.h",
+    "api": "python/mujoco_mpc/agent.py",
+    "service": "mjpc/grpc/agent_service.cc",
+    "example_api_loop": "python/mujoco_mpc/demos/agent/cartpole.py",
+    "headless_server": "mjpc/grpc/agent_server.cc",
+    "planner": "mjpc/planners/ilqg/planner.cc",
+    "derivative_code": "mjpc/planners/model_derivatives.cc",
+    "trajectory_code": "mjpc/trajectory.cc",
+    "state_code": "mjpc/states/state.cc",
+    "deployment_repository_not_required_now": "https://github.com/johnzhang3/mujoco_mpc_deploy",
+    "deployment_commit_for_source_reference": "ba86aa7d4c3f0efe7fee32c2b6d259d4a6d865df",
+    "source_status": "Relevant code paths and settings have been read; this project has not built or run the author controller yet."
+  },
+  "execution": {
+    "host": "fy-5080",
+    "isolated_environment": "work/envs/mjpc-go2",
+    "isolated_source": "work/terrain-memory/upstreams/mujoco_mpc-go2",
+    "preserve_existing_environment": "work/envs/pympc and every historical upstream snapshot remain unchanged.",
+    "build": "Build the pinned author headless agent_server and Python interface with its pinned dependencies. Use an isolated build directory; do not substitute latest MuJoCo or modify system/base packages. Turn off MJPC_BUILD_TESTS, PYMJPC_BUILD_TESTS and MJPC_GRPC_BUILD_TESTS where exposed by that pinned build. Fix actual build errors needed for the requested run; do not add import/smoke/unit tests or a compatibility framework.",
+    "new_neural_training_runs": 0,
+    "new_RL_training_runs": 0,
+    "activate_hardware": false,
+    "control_loop": "Use official Agent(task_id='Quadruped Flat', model=model). Apply task parameters and mocap reference, synchronize actual time/qpos/qvel/act/mocap with set_state, call the original planner_step at 50Hz logical simulation time, obtain feedback-enabled get_action at 500Hz, and advance the actual model. Do not use the deployment GUI or connect SDK/ROS/hardware.",
+    "feedback_action": "get_action(time=data.time, nominal_action=False); hold its joint target over the original physical substeps.",
+    "timing": "Synchronous slow simulation is allowed: simulation time advances only by actual physical integration, not solver wall time. Record planner/feedback/physics/wall durations and explicitly label this mode. A successful offline task is not a 50Hz or 500Hz wall-time/NX claim.",
+    "paper_difference": "The paper describes approximately 300Hz feedback on hardware; this project adapter uses a declared 500Hz logical target update. This is not exact hardware-protocol reproduction.",
+    "solver_policy": "Retain the pinned author iLQG planner and its original planner_step behavior, horizon 0.35s and prediction timestep 0.01s. Record the resolved derivative/iteration/worker settings; no algorithm switching or compute-budget search.",
+    "forbidden_old_layers": [
+      "FloatingBaseSwing",
+      "ContactTransition T1/T1R",
+      "finite leg inverse-dynamics postprocessing",
+      "T1R project_contact_force"
+    ],
+    "development_changes": "Only evidenced task/model/input/timing mapping errors may be repaired within the allocated development starts. Do not scan gains/costs, invent another controller, or relax the physical/task constraints. Preserve every attempt."
+  },
+  "task": {
+    "initial_xy_m": [
+      0,
+      0
+    ],
+    "nominal_initial_yaw_rad": 0,
+    "initial_stand_s": 2,
+    "turnaround_xy_m": [
+      3,
+      0
+    ],
+    "turn_angle_rad": 3.141592653589793,
+    "return_xy_m": [
+      0,
+      0
+    ],
+    "command_speed_m_s": 0.25,
+    "turn_yaw_rate_rad_s": 0.5,
+    "extra_turnaround_hold_s": 0,
+    "terminal_stand_s": 2,
+    "maximum_episode_s": 60,
+    "goal_position_radius_m": 0.15,
+    "turn_heading_tolerance_rad": 0.15,
+    "terminal_speed_max_m_s": 0.05,
+    "original_task_source": "experiments/terrain_memory/s1-contact-execution.json and the frozen s1_robot.py mission logic at 56fabe0024108fe933dd8207c3a97331b8fa6102",
+    "route_mapping": "Reuse the original mission state machine and its smooth bounded velocity/heading references as a small task adapter. Convert them to a continuously moving body target without skipping state-based arrival/turn/return conditions. Evaluate completion and positional errors at the original body/base origin, not the author head site.",
+    "transition_meaning": "A clock change into outbound is not proof of stable standing. Record actual phase-entry state. Retain original fall, non-foot-contact, joint-bound and timeout definitions; use corresponding actual foot/collision names on each model.",
+    "task_mode": "Quadruped",
+    "gait_switch": "Manual",
+    "native_head_offset_in_trunk_m": [
+      0.3,
+      0,
+      0
+    ],
+    "goal_mapping": "mocap_goal = desired_body_position + Rz(desired_heading)*head_offset. For G1 read the actual fixed head-to-body offset after nonphysical site/name mapping. Do not rotate the fixed world route with the initial-yaw perturbation.",
+    "orientation_cost_weight": 0.03,
+    "orientation_weight_reason": "The author task default is zero; 0.03 is the fixed first implementation setting within the original XML range to give the required turn a nonzero cost. Declare this task override; no weight search.",
+    "heading_reference": "Use the original continuous yaw-rate-limited turn reference. Do not jump Heading from 0 directly to pi: the author's sine/cosine heading residual has a stationary point at the opposite orientation.",
+    "stand_settings": {
+      "Gait": "Stand",
+      "Duty ratio": 1,
+      "Cadence": 1,
+      "Amplitude": 0,
+      "Balance": 0,
+      "Upright": 1,
+      "Height": 1
+    },
+    "move_and_turn_settings": {
+      "Gait": "Trot",
+      "Duty ratio": 0.45,
+      "Cadence": 2,
+      "Amplitude": 0.03,
+      "Balance": 0.2,
+      "Upright": 1,
+      "Height": 1
+    },
+    "initialization": "Before the first set_state/physical step, explicitly apply the complete author Stand table and cost settings. current_gait starts as Stand while the XML numeric defaults are duty=0/cadence=2/amplitude=.06, so setting only the enum does not initialize a stationary gait. At each stage change set Gait plus its numeric preset before the task Transition reads cadence.",
+    "API_boundary": "Stand/Trot are Gait values, not task modes. Do not enter Walk mode; its internal trajectory overwrites the external goal. Keep Orientation=0.03 at all phases.",
+    "no_short_substitute": "Every physical trial starts the complete route. GUI loading, a stationary clip, mouse following, stepping in place or short contact motions do not count as task completion."
+  },
+  "controllers": {
+    "G0_author_native": {
+      "role": "Author Go2 physical model plus the declared original-mission task adapter. Code-reuse evidence only.",
+      "actual_mass_kg_from_source": 15.806408,
+      "physical_model": "Keep task_flat.xml/go2.xml mass, inertia, passive joint dynamics, collision and native ground settings. Read and record the compiled native physics timestep and actuator settings.",
+      "actuator": "The active general actuator uses gains 60/5 and joint target ranges; the commented 23.7/45.43 force limits are not active. Do not describe G0 as having the project's torque limits.",
+      "scope": "Complete original route and stop under author physical conditions, with the declared task overrides. Not a fair same-robot performance comparison against historical B1 and not full-paper reproduction."
+    },
+    "G1_project_limits": {
+      "role": "Same author controller and declared task adapter under this repository's original physical robot and limits.",
+      "actual_mass_kg": 15.206,
+      "model_reference": "Use the original Go2 MJCF/assets retained on the execution host and fingerprinted in the fourth-round source/model bundle. The per-attempt resolved file is results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json.",
+      "preserve_physics": [
+        "mass/inertia",
+        "joint names and physical joint ranges",
+        "passive damping/armature/friction parameters",
+        "actuator gear relationship and original torque limits",
+        "collision geometry and foot geometry",
+        "initial qpos/qvel except the declared yaw condition",
+        "original native rigid floor and contact solref/solimp/margin"
+      ],
+      "permitted_model_adaptation": "Add non-colliding task sites/sensors/name maps needed by the author task and replace the control input representation with explicit joint targets/PD while preserving the original physical dynamics and torque bounds. Do not copy the author robot's inertial/passive/contact settings.",
+      "physics_dt_s": 0.0002,
+      "control_dt_s": 0.002,
+      "mpc_dt_s": 0.02,
+      "original_native_contact": {
+        "solref": [
+          0.002,
+          1
+        ],
+        "solimp": [
+          0.99,
+          0.999,
+          0.001,
+          0.5,
+          2
+        ],
+        "margin_m": 0
+      },
+      "PD": {
+        "kp": 60,
+        "kd": 5
+      },
+      "joint_target_limits": "Use the original per-joint physical position ranges, mapped by name; enforce the same target bound in planner and plant.",
+      "original_torque_limit_pattern_Nm": [
+        23.7,
+        23.7,
+        45.43
+      ],
+      "actuator_mapping": "tau = limit_original(kp*(q_target-q)-kd*qvel) with the original actuator gear/unit relationship. Enforce identical target and actuator force/torque limits inside the planner model and actual model; do not add a separate post-planning PD or unmatched clipping. Record compiled forcelimited/forcerange/gear, actual final torques and saturation.",
+      "numerical_scope": "Planner prediction timestep remains the declared author 0.01s; actual integration remains 0.0002s. Record this approximation rather than claiming identical integration or changing the plant to help the solver.",
+      "no_materials": true
+    }
+  },
+  "protocol": {
+    "phase_A": {
+      "id": "author_native_complete_mission",
+      "controller": "G0_author_native",
+      "maximum_mission_attempts": 2,
+      "initial_condition": "nominal yaw=0, author home physical state",
+      "pass": "At least one complete out-turn-return-terminal-stand task under the declared author-model setup.",
+      "stop": "If no complete mission within two starts, publish actual failure/build limitation and do not run G1 or start a different platform."
+    },
+    "phase_B_development": {
+      "controller": "G1_project_limits",
+      "maximum_mission_attempts": 3,
+      "initial_condition": "nominal yaw=0 and original project home state",
+      "pass": "At least one complete nominal mission under a version/configuration that can be frozen for the formal three conditions.",
+      "stop": "Without a complete project-physics nominal mission, publish the scope and do not relax model/torque/task limits or start soft terrain."
+    },
+    "phase_B_formal": {
+      "controller": "G1_project_limits",
+      "conditions": [
+        {
+          "id": "nominal",
+          "initial_yaw_offset_deg": 0
+        },
+        {
+          "id": "yaw_plus5",
+          "initial_yaw_offset_deg": 5
+        },
+        {
+          "id": "yaw_minus5",
+          "initial_yaw_offset_deg": -5
+        }
+      ],
+      "initial_condition_rule": "Change only the original initial root yaw quaternion. Keep body x/y, joint pose, zero velocities, fixed world route and desired heading unchanged. These are prescribed physical initial errors, not three independent random repetitions.",
+      "freeze": "One version and fixed solver/task/PD/model settings across all three conditions. Reuse identical earlier records, including failures, without cherry-picking. If a new code change becomes necessary, end this round with the actual incomplete scope.",
+      "usable_baseline": "All 3 conditions complete the full task within original limits; this establishes only this bounded rigid-ground execution coverage, not unknown-terrain robustness or statistical success probability."
+    },
+    "historical_reference": {
+      "run": "tm-s1-control-repair-20261024",
+      "controller": "B1",
+      "rigid_successes": 5,
+      "kv8000_successes": 5,
+      "use": "Link existing result/version/video only. No new B1 episodes. Do not compare G0 against B1 as same-model gain, or pair deterministic iLQG conditions with old sampler seeds.",
+      "old_source_warning": "Current main's nonadaptive sampler expects contact and alpha rows. Any future old-B1 rerun must restore its full frozen source/upstream patch, not select --controller B1 on the current patched path."
+    }
+  },
+  "budget": {
+    "maximum_author_native_starts": 2,
+    "maximum_project_development_starts": 3,
+    "maximum_project_formal_conditions": 3,
+    "maximum_new_mission_starts_including_failures_missing_records_and_superseded_versions": 8,
+    "reuse": "Exact-version/configuration/initial-condition development episodes reused formally are one start and one result; do not repeat them to manufacture independent samples.",
+    "counting": "Count every actual complete-mission physical start, including early failure, lost output and superseded attempts. Build-only work does not count as a mission. A cap is not a quota; unused stage allowances cannot be transferred to another matrix or algorithm.",
+    "formal_random_optimizer_seeds": 0,
+    "no_refresh": true
+  },
+  "scientific_boundary": {
+    "current_claim": "Evaluate whether one established whole-body Go2 execution basis can complete the original task under declared real model/actuator constraints.",
+    "not_yet_claimed": [
+      "TM02 completion",
+      "persistent material state inside iLQG derivatives",
+      "memory benefit",
+      "unknown-state PANN identification",
+      "improved PPO/SHAC",
+      "NX realtime",
+      "hardware success"
+    ],
+    "next_material_work": "Only after actual G1 complete-mission evidence, specify how continuous material state is represented in every candidate and finite-difference perturbation. The current author state nq+nv+na and derivative state 2nv+na do not include arbitrary userdata history. No Python external-force callback or global mutable state is accepted as completed memory-state integration.",
+    "later_information_comparison": "A deployable material-history method still needs same-information classical-model/estimator, history-network and planning/RL comparisons. A controller swap does not establish those contributions.",
+    "latest_paper": "TM22 Open-DiffLoco: retain its distinction between value fit and value-gradient/closed-loop quality for later terminal-value research. Do not relabel JAVE as this project's innovation, use its implicit disturbance terrain as material memory, or start new SHAC/PPO training now."
+  },
+  "outputs": {
+    "root": "results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026",
+    "required": [
+      "thin executable headless mission entrypoint",
+      "declared task and nonphysical site/name adaptations",
+      "separate G0/G1 model/actuator/source/dependency fingerprints",
+      "all actual starts with phase, outcome and original completion errors",
+      "continuous base/feet/joints/q_target/final torque/contact trajectories",
+      "full mission videos including failure",
+      "planner, feedback, physics and wall timing",
+      "one run index with exact commands and unexecuted stages"
+    ],
+    "result_scope": "Success requires the actual original mission completion condition. Preserve all failures; failure duration/work is not a speed/energy gain. Mechanical work is not battery energy.",
+    "publication": "Commit source/configuration/compact results/figures; upload only new large arrays and complete videos from the execution host to GitHub Release. Reference existing evidence without repackaging.",
+    "no_status_reports": true
+  },
+  "delivery": {
+    "local_pc_archive": false,
+    "end_after": "Confirm commit and needed Release assets with size/digest, then end. Do not download, copy, mirror, compress or archive results again on the user's computer.",
+    "retain": "Normal execution outputs, needed checkpoints and all historical evidence remain on their existing execution locations."
+  },
+  "forbidden": [
+    "defensive programming and generic fallback frameworks",
+    "new unit/mock/smoke/import/shape tests",
+    "audit/status/continuation reports",
+    "further T1/T1R patches",
+    "new WBC/optimizer",
+    "new neural/RL training",
+    "hardware activation",
+    "TM02/material-state iLQG migration in this round",
+    "relaxing G1 model/actuator/mission constraints",
+    "claiming author-model success as project-model success",
+    "post-publication user-PC archiving"
+  ]
+}

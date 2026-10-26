@@ -316,7 +316,7 @@
     {
       "id": "TM20",
       "title": "Whole-Body Model-Predictive Control of Legged Robots with MuJoCo",
-      "role": "S1 预测输入与实际执行接口一致性的 Go2 原始参考；仅在现有执行基础确实不可用时评估复用成本",
+      "role": "S1：停止自写 T1R 调参后的有边界作者 Go2 执行基础复用；先原生完整往返，再迁移本仓原物理约束",
       "version": "arXiv:2503.04613v3",
       "published": "2025-03-06",
       "version_date": "2026-03-06",
@@ -329,14 +329,57 @@
       "code_url": "https://github.com/johnzhang3/mujoco_mpc_deploy",
       "algorithm_code_url": "https://github.com/johnzhang3/mujoco_mpc/tree/go2",
       "code_license": "部署仓库 mujoco_mpc_deploy 为 MIT；不据此推定其全部外部依赖的许可",
-      "code_status": "已核作者部署仓库包含 go2interface.py，README 指向求解器 go1/go2 分支，且 Go2 分支实际存在。README 标为开发中，状态估计使用 Optitrack；默认模型与 Go2 分支需区分。本次未取得并运行完整部署环境，不宣称开箱即用或论文已复现。",
+      "code_status": "已核作者部署仓库、Go2 求解器分支、官方 headless Agent API 及模型/任务/导数实现。当前只完成源码可行性核查，未安装、编译、运行或复现。作者实机脚本依赖 Optitrack、SDK2 与仓库中未提供的 go2_constants，examples/go2.py 还缺少 ChannelFactoryInitialize 导入；本轮仿真不以修复该硬件脚本为前置。",
       "read_for_execution": "已读第 III 节及第 IV-A 节的 MuJoCo 接触与动力学导数，第 IV-B/C 节的状态/动作表示、关节 PD 纳入预测和时变 LQR 反馈，以及第 V-A/B 节的部署与 Go1/Go2 实验。当前必需机制是第 IV-B 节，不新增整套 iLQR 复现阶段。",
       "transfer_targets": [
         "原文把低层关节 PD 纳入预测并优化实际发送给机器人的关节目标。本项目据此核对候选评估是否使用最终真正执行的接触映射和控制输入，而不是在预测之后再作未建模的独立变换",
         "材料预测器只能在明确的机器人执行接口上评价动作后果；不能把低层输入映射不一致造成的误差全部归为材料模型不准确，或用增加训练数据代替执行修正",
-        "若现有执行基础经具体证据确认无法满足任务，可将作者 Go2 代码作为有限替代候选评估；当前不直接迁移平台，也不把该评估设为新增全文复现门槛"
+        "在固定作者提交与独立依赖环境下，用官方 headless API 驱动原生完整往返；明确记录为任务所需的目标/朝向/停步配置覆盖。原生成功后迁移本仓 Go2 惯性、几何、原接触和原力矩界，保持同一状态触发任务及成功判据；本轮不扩展 iLQR 材料状态、不启动新学习平台或全文复现。"
       ],
-      "scope_note": "原文使用全身 iLQR 与时变 LQR，步态作为代价而非固定接触硬约束；其 MuJoCo 软接触不是跨足共享的黏弹地块持久内状态。Go1/Go2 实机依赖桌面 Intel i9 与外部动捕，不能作为 NX 实时能力证据；接入本项目仍需明确材料状态、任务与执行接口。将低层控制纳入预测已有研究，不称本项目首创，不照搬原文接触参数或通过修改材料/摩擦来制造任务成功。"
+      "scope_note": "原文使用全身 iLQR 与时变 LQR，关节 PD 纳入预测，步态进入代价；这些不是本项目首创。其 MuJoCo 软接触不等于跨足共享的黏弹地块持久状态。作者 Go1/Go2 实机依赖桌面 Intel i9 与外部动捕，不证明 NX 实时能力。原生代码复用当前只用于得到能完成原任务的执行基础，不能以更换质量、摩擦、材料参数、力矩界或终点定义制造项目成功；不代替后续材料记忆改变动作并改善支撑的证据。",
+      "code_execution_review": {
+        "reviewed_on": "2026-10-26",
+        "algorithm_repository": "https://github.com/johnzhang3/mujoco_mpc",
+        "algorithm_branch": "go2",
+        "algorithm_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+        "deployment_commit": "ba86aa7d4c3f0efe7fee32c2b6d259d4a6d865df",
+        "native_task": "mjpc/tasks/quadruped/task_flat.xml",
+        "native_model": "mjpc/tasks/quadruped/go2.xml",
+        "task_residual_and_transition": "mjpc/tasks/quadruped/quadruped.cc",
+        "headless_api": "python/mujoco_mpc/agent.py",
+        "headless_server": "mjpc/grpc/agent_server.cc",
+        "headless_rpc": "mjpc/grpc/agent_service.cc",
+        "external_physics_example": "python/mujoco_mpc/demos/agent/cartpole.py",
+        "state": "mjpc/states/state.cc",
+        "trajectory": "mjpc/trajectory.cc",
+        "planner": "mjpc/planners/ilqg/planner.cc",
+        "dynamics_fd": "mjpc/planners/model_derivatives.cc",
+        "planner_registry": "mjpc/planners/include.cc",
+        "entry_contract": "Agent(task_id='Quadruped Flat', model=model) 默认使用 headless agent_server。外部物理循环 set_state(time,qpos,qvel,act,mocap_pos,mocap_quat,userdata) -> planner_step() -> get_action() -> mj_step；SetState 服务会执行 mj_forward 和 task->Transition。固定每控制周期规划迭代数并记录耗时；源码可行不等于已完成 Go2 整程。",
+        "task_mapping": [
+          "固定世界往返使用 Quadruped mode 与外部 mocap goal/Heading；Walk mode 会内部更新 goal，不能同时另行覆盖。Position residual 追踪 trunk 的 head site（局部 [0.3,0,0]），本仓基座目标须补相应旋转偏移，成功判据仍在本仓原坐标定义上计算。",
+          "Heading 参数单位为弧度；原生 Orientation 默认权重为 0，本轮首版经 set_cost_weights 固定为 0.03（作者 XML 配置范围上端），是任务适配而非作者原样参数，不扫描该权重。Stand 为 Gait 选择而非 task mode；终段需切 Manual/Stand 并实际满足原静止判据。",
+          "task_flat.xml 的 agent_planner=2 在 include.cc 对应 iLQG。确定性 nominal/初始 yaw +/-5 度保持同起点与同一世界路线，属于三个初始条件，不冒充五个采样器随机种子的独立重复。",
+          "原生 current_gait_ 与 XML Gait 初始均为 Stand，首次 Manual+Stand 不触发 gait-change 分支，但 XML 残留 Duty ratio=0/Cadence=2/Amplitude=.06；首段应显式设置作者 Stand 表 Duty ratio=1/Cadence=1/Amplitude=0、Balance=0/Upright=1/Height=1。Trot 表为 .45/2/.03、.2/1/1。每阶段同步写入固定数值可避免 phase_velocity 在 gait 参数更新前计算造成一周期 cadence 滞后，不改作者求解器。"
+        ],
+        "native_physics_boundary": {
+          "mass_kg_from_explicit_inertials": 15.806408,
+          "joint_pd_kp": 60,
+          "joint_pd_kd": 5,
+          "horizon_s": 0.35,
+          "planner_timestep_s": 0.01,
+          "torque_limit_note": "激活的 general 执行器 ctrlrange 是关节目标范围；motor 的 23.7/45.43 注释不能作为生效力矩界，当前激活配置未显式提供 forcerange。原生结果与本仓原质量/接触/力矩界结果分开，不能用无力矩界原生成功替代项目成功。",
+          "migration_note": "迁移时控制量为关节位置目标，原力矩饱和必须在预测模型和实际物理中一致；不得只在规划后额外裁剪，也不得把旧 GRF 输入直接解释为关节目标。"
+        },
+        "material_state_boundary": "State 和 Trajectory 的动力学状态为 nq+nv+na，iLQG 导数维度为 2*nv+na；userdata 单独传递，ModelDerivatives 使用 mjd_transitionFD。外部材料历史或 userdata 不会自动成为优化状态和灵敏度链。本轮不声称已接入 TM02，后续须显式解决材料状态传播、每条轨迹隔离和导数。",
+        "build_scope": {
+          "mujoco_commit": "088079eff0450e32b98ee743141780ed68307506",
+          "menagerie_commit": "d82891f8b6c576f9f6a9df308f3a1155ebedbc40",
+          "dm_control_commit": "774f46182140106e22725914aad3c6299ed91edd",
+          "note": "以固定作者提交构建独立环境并启用 MJPC_BUILD_GRPC_SERVICE；可关闭 MJPC_BUILD_TESTS、MJPC_GRPC_BUILD_TESTS、PYMJPC_BUILD_TESTS。保留旧 PyMPC 环境；不新增上游烟测/单测流水线。"
+        },
+        "task_residual_header": "mjpc/tasks/quadruped/quadruped.h"
+      }
     },
     {
       "id": "TM21",
@@ -357,6 +400,30 @@
         "策略响应可重复性与命令响应建模属于后续实现选择；当前 S1 的接触执行负结果不触发 PPO 重训、奖励塑形、Koopman、机械臂或新观察器支线"
       ],
       "scope_note": "原文实机为 Go2+ARX X5，使用 Jetson Orin NX，研究腿式操作中的策略响应与 MPC 协调；不能据此证明本项目 TM02 软接触、GRF 执行或持久地块记忆已在 NX 实时实现。策略响应一致性、相位相关响应及策略感知 MPC 均已有研究，不作为本项目创新。本项目仍须证明同一世界地块的跨足加载/恢复信息如何改变可执行动作并改善后续支撑；当前未完成该证据。"
+    },
+    {
+      "id": "TM22",
+      "title": "Open-DiffLoco: Open-Source Differentiable Learning for Deployable Blind Quadruped Locomotion",
+      "role": "后续可微 RL 与模型/价值梯度有效性的参考；当前不引入新训练平台",
+      "version": "arXiv:2608.02069v1",
+      "published": "2026-08-03",
+      "selected_on": "2026-10-26",
+      "accessed_on": "2026-10-26",
+      "publication": "arXiv 预印本；作者项目页声明被 Nature Conference on Autonomous Robotics 接收，本次未独立核验正式会议记录，不表述为 Nature 期刊论文",
+      "url": "https://arxiv.org/html/2608.02069v1",
+      "pdf_url": "https://arxiv.org/pdf/2608.02069v1",
+      "project_url": "https://diffloco.martin-opat.com/",
+      "code_url": "https://github.com/MartinOpat/open-diffloco",
+      "code_commit": "35256b6c8e243d658d6379ff8d17cde8e01d8211",
+      "code_license": "作者仓库自定义 Non-Commercial Copyleft Software License（2026 Martin Opat），不标注为 MIT/Apache",
+      "code_status": "已核作者 SHAC/JAVE 实现、Go2 配置与部署说明。仓库存在 src/algorithms/shac/algorithm.py、src/algorithms/jave/algorithm.py 和 src/configs/shac_go2.yaml；本次树/发布查询未见已发布 .npz/.pkl/.onnx 权重或 GitHub release，未取得可直接部署的预训练策略，未安装或运行。",
+      "read_for_execution": "已读 II-D 的 Jacobian-Augmented Value Estimation、III 的仿真比较、IV 的 Go2 实机与 V/附录 A/C 的适用边界；同时读作者 docs/deployment.md 和 docs/terrain.md。",
+      "transfer_targets": [
+        "学习模型或终端价值的标量拟合误差小，不保证优化使用的动作/状态敏感性正确；后续检验材料预测器如何改变实际可执行动作及后续支撑，而非仅以本构拟合误差宣布控制收益。",
+        "JAVE 将价值梯度一致性作为训练目标，这是已有方法。作者主要观察到早期训练稳定/收敛收益，未证明最终策略性能必然优于 SHAC/PPO；不可把该机制重新命名为本项目原创。",
+        "当前只吸收闭环响应与梯度有效性这一原则；不在 S1 执行恢复阶段启动 SHAC/JAVE/PPO 训练、替换仿真器、增加终端 critic 或把作者代码设为新全文复现门槛。"
+      ],
+      "scope_note": "作者 Go2 部署证据不覆盖本项目往返重访任务、NX 实时预算或持久软地块。附录 C/代码地形方案为倾斜重力与按接触缩放的随机扰动，真实几何仍为平地，不能代替世界固定、跨足共享、加载后恢复的 TM02 材料历史。论文说明当前 Jacobian 目标固定已采样动作并有闭环导数偏差；PPO/可微训练的奖励与参考设置也不同，不据绝对奖励宣称公平全面胜出。"
     }
   ],
   "upstream": {
