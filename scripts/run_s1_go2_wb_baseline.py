@@ -219,10 +219,11 @@ def run(args, c):
             max_regularization_iterations=5, planner_step_iterations=1),
         author_prediction_approximation='Agent MakeDifferentiable temporarily sets solimp[0]=0 for gradient-planner rollouts; original plant contact settings stay unchanged. Prediction dt=.01s.',
         mujoco_version=mujoco.__version__, python=sys.version, command=sys.argv,
+        agent_server=dict(path=str(Path(args.agent_server).resolve()),sha256=sha(args.agent_server),size=Path(args.agent_server).stat().st_size),
         host=subprocess.check_output(['hostname'], text=True).strip())
     mujoco.mj_saveModel(model, str(out/'model.mjb'), None)
     resolved['model_mjb_sha256'] = sha(out/'model.mjb')
-    fingerprint = hashlib.sha256(json.dumps([source, resolved['model_mjb_sha256']], sort_keys=True).encode()).hexdigest()
+    fingerprint = hashlib.sha256(json.dumps([source, resolved['model_mjb_sha256'],resolved['agent_server']['sha256'],args.workers], sort_keys=True).encode()).hexdigest()
     resolved['execution_fingerprint'] = fingerprint
     small.mkdir(parents=True, exist_ok=True)
     dump(small/f'{args.attempt}-resolved.json', resolved)

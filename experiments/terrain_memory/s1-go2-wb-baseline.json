@@ -4,6 +4,8 @@
   "stage": "S1_author_Go2_execution_baseline",
   "implementation_status": "implemented_not_executed",
   "implementation_declarations": {
+    "necessary_build_flag": "libmjpc target is built with -fno-strict-aliasing. The pinned pointer-based integer/double bit reinterpretation otherwise compiled under GCC/LTO into an uninitialized gait stack read and segfaulted in FootStep before any plant step. No optimizer, feedback, gain or cost change.",
+    "model_transport": "Official Agent run_init=False followed by init(send_as='xml'), with absolute on-host mesh paths. The native 50MB MJB exceeds the official agent_server 20MiB receive limit; no server payload-limit patch is applied.",
     "author_input_mapping_repair": "Pinned task_flat.xml includes go2.xml, whose general actuator declares gainprm=60 and biasprm=0,-60,-5 but omits biastype=affine. The task adapter explicitly enables affine bias in the single model shared by Agent and actual plant. Record the compiled source value and repaired value. No gain, cost or physical-model search is performed.",
     "G0_identity": "Author native physical model with the declared task and affine-PD input mapping; original unbounded actuator force remains unbounded. This is not an unchanged-XML reproduction.",
     "author_prediction_contact_approximation": "The retained Agent MakeDifferentiable behavior temporarily sets solimp[0]=0 during gradient planning and restores it afterward. Plant contact settings remain original. This approximation and the 0.01s predictor versus 0.0002s G1 plant step are declared.",
