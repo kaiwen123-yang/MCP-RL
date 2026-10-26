@@ -170,6 +170,10 @@ def run(args, c):
         mujoco.mj_saveLastXML(str(prepared_xml), model)
         xml = ET.parse(prepared_xml)
         xml.getroot().find('compiler').set('meshdir', str(upstream/'mjpc/tasks/quadruped/assets'))
+        # mj_saveLastXML does not copy back actuator_biastype mutations; the
+        # explicit source attribute must survive the subsequent XML Init.
+        for actuator in xml.getroot().find('actuator'):
+            actuator.set('biastype', 'affine')
         xml.write(prepared_xml, encoding='unicode')
         model = mujoco.MjModel.from_xml_path(str(prepared_xml))
         model_meta['transport'] = 'Official XML Init with absolute on-host mesh directory'
