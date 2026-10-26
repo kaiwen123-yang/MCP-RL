@@ -30,7 +30,7 @@ def main():
     if execution:
         if not index['experiments_finished']:
             raise ValueError('Authorized physical execution has not ended.')
-        records=[(ROOT[x['record'],json.loads((ROOT/x['record']).read_text())) for x in index['attempts'] if x['status']=='finished']
+        records=[(ROOT/x['record'],json.loads((ROOT/x['record']).read_text())) for x in index['attempts'] if x['status']=='finished']
     else:
         if not index['phase_A_complete']:
             raise ValueError('Phase A actual result records are not complete.')

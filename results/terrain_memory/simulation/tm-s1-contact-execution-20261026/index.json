@@ -706,7 +706,8 @@
     "python scripts/video_terrain_memory_s1.py --config experiments/terrain_memory/s1-contact-execution.json --attempts",
     "python scripts/publish_s1_execution.py --prepare",
     "python scripts/package_terrain_memory_s1.py --config experiments/terrain_memory/s1-contact-execution.json --release-tag tm-s1-contact-execution-evidence-20261026",
-    "python scripts/publish_s1_execution.py"
+    "python scripts/publish_s1_execution.py",
+    "python scripts/publish_s1_execution.py --finish-existing-draft"
   ],
   "reproduction": {
     "base_main_commit": "e53e16c5cd02ebee5a12d0aa49cc63b7f028226a",
@@ -781,6 +782,781 @@
     "development-v1-seed0": "dc55da275eb70db22a1eb4f6a0d1461901481a5fc5786c3111f983d69754474e"
   },
   "postprocessing_execution_notes": [
-    "The first packaging invocation had a Python delimiter error before opening any archive; the packaging expression was corrected and packaging rerun. No physics mission was launched by postprocessing."
-  ]
+    "Initial packaging stopped on a delimiter typo. The first SSH command intended to correct/package never reached the host (banner timeout). The compact-results commit and empty draft already existed when the missing asset manifest stopped upload. The delimiter was then corrected on the execution host and all five assets were packaged; the explicitly selected existing draft is being completed without new physics starts."
+  ],
+  "publication": {
+    "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-contact-execution-evidence-20261026",
+    "uploaded": false,
+    "user_computer_secondary_archive": false,
+    "weights_repackaged": false,
+    "assets": [
+      {
+        "filename": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "bytes": 22265068,
+        "sha256": "e9addc75e42e84672bf594b0966a7786c93417827e165c0fa82a952e94fc772e",
+        "execution_host_mtime_ns": 1793021958057848270,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-contact-execution-evidence-20261026/tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz"
+      },
+      {
+        "filename": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "bytes": 60073300,
+        "sha256": "883c723bd543570532e0391cdc196942bc28c589bf89f177ebe90c868991f280",
+        "execution_host_mtime_ns": 1793021959141873817,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-contact-execution-evidence-20261026/tm-s1-contact-execution-20261026-development-and-model.tar.gz"
+      },
+      {
+        "filename": "rigid-T1R-seed-4.mp4",
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/videos/rigid-T1R-seed-4.mp4",
+        "bytes": 876743,
+        "sha256": "20edcabb70af680d8d81380bd96100f3689aeeb5648455b2623516729329e410",
+        "execution_host_mtime_ns": 1793021041579020024,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-contact-execution-evidence-20261026/rigid-T1R-seed-4.mp4"
+      },
+      {
+        "filename": "rigid-T1R-seed-3.mp4",
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/videos/rigid-T1R-seed-3.mp4",
+        "bytes": 734658,
+        "sha256": "37ee476665990d6b3801ffbce17af85cdd3a3280422d7ac96eb970b930f0a20e",
+        "execution_host_mtime_ns": 1793021042048041768,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-contact-execution-evidence-20261026/rigid-T1R-seed-3.mp4"
+      },
+      {
+        "filename": "rigid-T1R-seed-0.mp4",
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/videos/rigid-T1R-seed-0.mp4",
+        "bytes": 1761935,
+        "sha256": "fc2c5e5341bcdcdfbec133116d601f96e39d2dd5ac075f886d6e19531eb5cf95",
+        "execution_host_mtime_ns": 1793021042891080850,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-contact-execution-evidence-20261026/rigid-T1R-seed-0.mp4"
+      }
+    ],
+    "archives": [
+      {
+        "filename": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "bytes": 22265068,
+        "sha256": "e9addc75e42e84672bf594b0966a7786c93417827e165c0fa82a952e94fc772e",
+        "execution_host_mtime_ns": 1793021958057848270,
+        "assets": [
+          "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz"
+        ],
+        "split": false
+      },
+      {
+        "filename": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "bytes": 60073300,
+        "sha256": "883c723bd543570532e0391cdc196942bc28c589bf89f177ebe90c868991f280",
+        "execution_host_mtime_ns": 1793021959141873817,
+        "assets": [
+          "tm-s1-contact-execution-20261026-development-and-model.tar.gz"
+        ],
+        "split": false
+      }
+    ],
+    "development_attempts": [
+      {
+        "attempt_id": 1,
+        "record": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4.json",
+        "files": [
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4.npz",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed4/rigid-T1R-seed-4.npz"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4-material.npz",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed4/rigid-T1R-seed-4-material.npz"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "compact/development-v1-seed4/rigid-T1R-seed-4.json"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4-events.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed4/rigid-T1R-seed-4-events.json"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4-queries.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed4/rigid-T1R-seed-4-queries.json"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4-transitions.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed4/rigid-T1R-seed-4-transitions.json"
+          }
+        ]
+      },
+      {
+        "attempt_id": 2,
+        "record": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3.json",
+        "files": [
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3.npz",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed3/rigid-T1R-seed-3.npz"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3-material.npz",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed3/rigid-T1R-seed-3-material.npz"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "compact/development-v1-seed3/rigid-T1R-seed-3.json"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3-events.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed3/rigid-T1R-seed-3-events.json"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3-queries.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed3/rigid-T1R-seed-3-queries.json"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3-transitions.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed3/rigid-T1R-seed-3-transitions.json"
+          }
+        ]
+      },
+      {
+        "attempt_id": 3,
+        "record": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0.json",
+        "files": [
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0.npz",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed0/rigid-T1R-seed-0.npz"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0-material.npz",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed0/rigid-T1R-seed-0-material.npz"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "compact/development-v1-seed0/rigid-T1R-seed-0.json"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0-events.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed0/rigid-T1R-seed-0-events.json"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0-queries.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed0/rigid-T1R-seed-0-queries.json"
+          },
+          {
+            "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0-transitions.json",
+            "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+            "member": "development-v1-seed0/rigid-T1R-seed-0-transitions.json"
+          }
+        ]
+      }
+    ],
+    "archive_files": [
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4.npz",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed4/rigid-T1R-seed-4.npz",
+        "bytes": 2331480
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4-material.npz",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed4/rigid-T1R-seed-4-material.npz",
+        "bytes": 3442670
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "compact/development-v1-seed4/rigid-T1R-seed-4.json",
+        "bytes": 6918
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4-events.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed4/rigid-T1R-seed-4-events.json",
+        "bytes": 43
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4-queries.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed4/rigid-T1R-seed-4-queries.json",
+        "bytes": 187102
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-seed-4-transitions.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed4/rigid-T1R-seed-4-transitions.json",
+        "bytes": 20322
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3.npz",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed3/rigid-T1R-seed-3.npz",
+        "bytes": 1776357
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3-material.npz",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed3/rigid-T1R-seed-3-material.npz",
+        "bytes": 2512025
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "compact/development-v1-seed3/rigid-T1R-seed-3.json",
+        "bytes": 6927
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3-events.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed3/rigid-T1R-seed-3-events.json",
+        "bytes": 43
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3-queries.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed3/rigid-T1R-seed-3-queries.json",
+        "bytes": 236939
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-seed-3-transitions.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed3/rigid-T1R-seed-3-transitions.json",
+        "bytes": 26171
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0.npz",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed0/rigid-T1R-seed-0.npz",
+        "bytes": 5237275
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0-material.npz",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed0/rigid-T1R-seed-0-material.npz",
+        "bytes": 6892920
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "compact/development-v1-seed0/rigid-T1R-seed-0.json",
+        "bytes": 6878
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0-events.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed0/rigid-T1R-seed-0-events.json",
+        "bytes": 329376
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0-queries.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed0/rigid-T1R-seed-0-queries.json",
+        "bytes": 437599
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-seed-0-transitions.json",
+        "archive": "tm-s1-contact-execution-20261026-rigid-T1R-trajectories.tar.gz",
+        "member": "development-v1-seed0/rigid-T1R-seed-0-transitions.json",
+        "bytes": 38311
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/go2.mjb",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/go2.mjb",
+        "bytes": 44802092
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/pinned-upstream-executed.patch",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/pinned-upstream-executed.patch",
+        "bytes": 32382
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/source/run_terrain_memory_s1.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/source/run_terrain_memory_s1.py",
+        "bytes": 12676
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/source/s1-contact-execution.json",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/source/s1-contact-execution.json",
+        "bytes": 26877
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/source/s1_contact.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/source/s1_contact.py",
+        "bytes": 27803
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/source/s1_force.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/source/s1_force.py",
+        "bytes": 536
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/source/s1_material.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/source/s1_material.py",
+        "bytes": 7438
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/source/s1_planner.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/source/s1_planner.py",
+        "bytes": 15167
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/source/s1_prediction.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/source/s1_prediction.py",
+        "bytes": 20088
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/source/s1_robot.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/source/s1_robot.py",
+        "bytes": 30391
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/source/s1_stance.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/source/s1_stance.py",
+        "bytes": 7843
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/source/s1_transition.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed0/source/s1_transition.py",
+        "bytes": 23035
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed0/rigid-T1R-resolved.json",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "compact/development-v1-seed0/rigid-T1R-resolved.json",
+        "bytes": 37219
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/go2.mjb",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/go2.mjb",
+        "bytes": 44802092
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/pinned-upstream-executed.patch",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/pinned-upstream-executed.patch",
+        "bytes": 32382
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/source/run_terrain_memory_s1.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/source/run_terrain_memory_s1.py",
+        "bytes": 12676
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/source/s1-contact-execution.json",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/source/s1-contact-execution.json",
+        "bytes": 26877
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/source/s1_contact.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/source/s1_contact.py",
+        "bytes": 27803
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/source/s1_force.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/source/s1_force.py",
+        "bytes": 536
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/source/s1_material.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/source/s1_material.py",
+        "bytes": 7438
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/source/s1_planner.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/source/s1_planner.py",
+        "bytes": 15167
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/source/s1_prediction.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/source/s1_prediction.py",
+        "bytes": 20088
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/source/s1_robot.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/source/s1_robot.py",
+        "bytes": 30391
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/source/s1_stance.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/source/s1_stance.py",
+        "bytes": 7843
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/source/s1_transition.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed3/source/s1_transition.py",
+        "bytes": 23035
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed3/rigid-T1R-resolved.json",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "compact/development-v1-seed3/rigid-T1R-resolved.json",
+        "bytes": 37219
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/go2.mjb",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/go2.mjb",
+        "bytes": 44802092
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/pinned-upstream-executed.patch",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/pinned-upstream-executed.patch",
+        "bytes": 32382
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/source/run_terrain_memory_s1.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/source/run_terrain_memory_s1.py",
+        "bytes": 12676
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/source/s1-contact-execution.json",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/source/s1-contact-execution.json",
+        "bytes": 26877
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/source/s1_contact.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/source/s1_contact.py",
+        "bytes": 27803
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/source/s1_force.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/source/s1_force.py",
+        "bytes": 536
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/source/s1_material.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/source/s1_material.py",
+        "bytes": 7438
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/source/s1_planner.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/source/s1_planner.py",
+        "bytes": 15167
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/source/s1_prediction.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/source/s1_prediction.py",
+        "bytes": 20088
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/source/s1_robot.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/source/s1_robot.py",
+        "bytes": 30391
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/source/s1_stance.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/source/s1_stance.py",
+        "bytes": 7843
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/source/s1_transition.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "development-v1-seed4/source/s1_transition.py",
+        "bytes": 23035
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "compact/development-v1-seed4/rigid-T1R-resolved.json",
+        "bytes": 37219
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/experiments/terrain_memory/s1-contact-execution.json",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/experiments/terrain_memory/s1-contact-execution.json",
+        "bytes": 27405
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/experiments/tm02/r2-multihistory.json",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/experiments/tm02/r2-multihistory.json",
+        "bytes": 16434
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/tm01_env.sh",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/tm01_env.sh",
+        "bytes": 808
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/run_terrain_memory_s1.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/run_terrain_memory_s1.py",
+        "bytes": 12676
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/summarize_terrain_memory_s1.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/summarize_terrain_memory_s1.py",
+        "bytes": 64942
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/video_terrain_memory_s1.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/video_terrain_memory_s1.py",
+        "bytes": 9481
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/package_terrain_memory_s1.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/package_terrain_memory_s1.py",
+        "bytes": 10248
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/parallel_terrain_memory_s1.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/parallel_terrain_memory_s1.py",
+        "bytes": 9132
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/publish_terrain_memory_s1.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/publish_terrain_memory_s1.py",
+        "bytes": 15447
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/__init__.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/__init__.py",
+        "bytes": 65
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/evaluate.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/evaluate.py",
+        "bytes": 19917
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/figures.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/figures.py",
+        "bytes": 9314
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/material.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/material.py",
+        "bytes": 6500
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/memory_data.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/memory_data.py",
+        "bytes": 20169
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/memory_evaluate.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/memory_evaluate.py",
+        "bytes": 42173
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/memory_figures.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/memory_figures.py",
+        "bytes": 28307
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/memory_training.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/memory_training.py",
+        "bytes": 8508
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/multihistory.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/multihistory.py",
+        "bytes": 10749
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/multihistory_evaluate.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/multihistory_evaluate.py",
+        "bytes": 24743
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/multihistory_figures.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/multihistory_figures.py",
+        "bytes": 11862
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/multihistory_revisit.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/multihistory_revisit.py",
+        "bytes": 23618
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/reference.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/reference.py",
+        "bytes": 4606
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s0.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s0.py",
+        "bytes": 19350
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s0_figures.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s0_figures.py",
+        "bytes": 16624
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s0_results.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s0_results.py",
+        "bytes": 21770
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s1_contact.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s1_contact.py",
+        "bytes": 27803
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s1_force.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s1_force.py",
+        "bytes": 536
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s1_material.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s1_material.py",
+        "bytes": 7438
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s1_planner.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s1_planner.py",
+        "bytes": 15167
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s1_prediction.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s1_prediction.py",
+        "bytes": 20088
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s1_robot.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s1_robot.py",
+        "bytes": 30391
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s1_stance.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s1_stance.py",
+        "bytes": 7843
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/src/tm02/s1_transition.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/src/tm02/s1_transition.py",
+        "bytes": 23035
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/summarize_s1_transition.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/summarize_s1_transition.py",
+        "bytes": 12995
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/publish_s1_transition.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/publish_s1_transition.py",
+        "bytes": 9112
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/summarize_s1_execution.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/summarize_s1_execution.py",
+        "bytes": 17664
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/scripts/publish_s1_execution.py",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/scripts/publish_s1_execution.py",
+        "bytes": 12128
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/experiments/terrain_memory/s1-contact-execution-upstream.patch",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/experiments/terrain_memory/s1-contact-execution-upstream.patch",
+        "bytes": 32382
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/work/s1-execution/development-v1-seed4.log",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/work/s1-execution/development-v1-seed4.log",
+        "bytes": 7296
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/work/s1-execution/development-v1-seed3.log",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/work/s1-execution/development-v1-seed3.log",
+        "bytes": 7304
+      },
+      {
+        "execution_host_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/work/s1-execution/development-v1-seed0.log",
+        "archive": "tm-s1-contact-execution-20261026-development-and-model.tar.gz",
+        "member": "repository/work/s1-execution/development-v1-seed0.log",
+        "bytes": 7381
+      }
+    ],
+    "reused_B0_reference": "Historical arrays/videos are referenced by historical_references, old_B1_references or reused_records; not copied or repackaged.",
+    "development_reuse": "Each actual source file belongs to one archive. Adopted development trajectories are in their formal terrain/controller archive and referenced here by development attempt ID.",
+    "asset_size_limit_bytes": 2147483648,
+    "verification_method": "Execution-host SHA256 and byte size are computed before direct upload; confirm against GitHub returned size/digest without full download.",
+    "initial_compact_results_commit": "17f15b3"
+  }
 }

@@ -81,10 +81,11 @@ def prepare():
     print('Prepared actual results and closure decision.')
 
 
-def publish():
+def publish(finish_existing_draft=False):
     index=json.loads(INDEX.read_text())
     if not index['experiments_finished'] or len(index['attempts'])!=3 or not all(a['status']=='finished' for a in index['attempts']):
         raise RuntimeError('Physical attempt outcomes are incomplete; no publication performed.')
+    assets=index['publication']['assets']
     token=os.environ['GH_TOKEN']
     env=dict(os.environ,GIT_CONFIG_COUNT='3',GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
         GIT_CONFIG_VALUE_0='AUTHORIZATION: basic '+base64.b64encode(('x-access-token:'+token).encode()).decode(),
@@ -100,9 +101,12 @@ def publish():
     for p in (SMALL/'figures').glob('*.pdf'):git('add','-f',str(p.relative_to(ROOT)))
     git('commit','-m','Close T1R after three failed rigid missions with complete execution evidence')
     evidence=git('rev-parse','HEAD');git('push','origin','HEAD:main')
-    gh('release','create',TAG,'--repo',REPO,'--target',evidence,'--draft','--title','S1 contact execution: bounded rigid failure evidence',
-        '--notes-file',str(ROOT/'work/s1-execution/release-notes.md'))
-    assets=index['publication']['assets']
+    if finish_existing_draft:
+        gh('release','edit',TAG,'--repo',REPO,'--target',evidence,
+           '--notes-file',str(ROOT/'work/s1-execution/release-notes.md'))
+    else:
+        gh('release','create',TAG,'--repo',REPO,'--target',evidence,'--draft','--title','S1 contact execution: bounded rigid failure evidence',
+            '--notes-file',str(ROOT/'work/s1-execution/release-notes.md'))
     gh('release','upload',TAG,'--repo',REPO,*[a['execution_host_path'] for a in assets])
     releases=json.loads(gh('api',f'repos/{REPO}/releases?per_page=100'))
     release=next(r for r in releases if r['tag_name']==TAG)
@@ -124,5 +128,5 @@ def publish():
     print(json.dumps(dict(event='published',commit=git('rev-parse','HEAD'),release=release['html_url'],assets=len(checks))),flush=True)
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--prepare',action='store_true');args=p.parse_args()
-    prepare() if args.prepare else publish()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--prepare',action='store_true');p.add_argument('--finish-existing-draft',action='store_true',help='Finish the known draft left before asset upload.');args=p.parse_args()
+    prepare() if args.prepare else publish(args.finish_existing_draft)
