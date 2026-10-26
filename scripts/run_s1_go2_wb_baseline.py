@@ -6,6 +6,7 @@ render() replays recorded states without integrating another trajectory.
 """
 import argparse
 import contextlib
+import csv
 import fcntl
 import hashlib
 import json
@@ -382,6 +383,47 @@ def render(args,c):
     print(json.dumps(dict(video=str(out/'complete-mission.mp4'),size=(out/'complete-mission.mp4').stat().st_size,sha256=sha(out/'complete-mission.mp4'))))
 
 
+def summarize(args,c):
+    small=ROOT/c['outputs']['root']
+    idx=json.loads((small/'index.json').read_text())
+    results=[json.loads((small/x['result']).read_text()) for x in idx['attempts'] if 'result' in x]
+    columns=['attempt','stage','purpose','condition','success','reason','simulation_s','wall_s',
+        'max_x_m','final_origin_distance_m','final_heading_error_rad','min_body_height_m','max_joint_limit_excess_rad','source_commit','execution_fingerprint']
+    with (small/'episodes.csv').open('w',newline='') as f:
+        w=csv.DictWriter(f,fieldnames=columns); w.writeheader()
+        w.writerows({k:r[k] for k in columns} for r in results)
+    with (small/'timing.csv').open('w',newline='') as f:
+        w=csv.DictWriter(f,fieldnames=['attempt','component','count','total_s','p50_ms','p95_ms','max_ms','logical_deadline_s','deadline_misses']); w.writeheader()
+        for r in results:
+            for name,value in r['timing'].items():
+                if value: w.writerow(dict(attempt=r['attempt'],component=name,**value))
+    assets=[]
+    for r in results:
+        out=ROOT/'outputs/terrain_memory/simulation'/c['run_id']/r['attempt']
+        for name in ['trajectory.npz','complete-mission.mp4','model.mjb','agent-server.log']:
+            path=out/name
+            if path.exists():
+                assets.append(dict(attempt=r['attempt'],name=r['attempt']+'-'+name,path=str(path),size=path.stat().st_size,sha256=sha(path)))
+    g0=[r for r in results if r['stage']=='G0']
+    g1=[r for r in results if r['stage']=='G1']
+    g0_pass=any(r['success'] for r in g0)
+    g1_pass=any(r['success'] and r['condition']=='nominal' for r in g1)
+    formal=idx.get('formal_records',[])
+    idx.update(status='completed_bounded_scope', actual_starts=len(idx['attempts']),
+        completed_records=len(results), missing_records=len(idx['attempts'])-len(results),
+        active_attempts=sum(x['status']=='running' for x in idx['attempts']),
+        stages=dict(G0=dict(starts=len(g0),successes=sum(r['success'] for r in g0),passed=g0_pass),
+            G1_development=dict(starts=sum(r['purpose']=='development' for r in g1),passed=g1_pass,
+                unexecuted_reason=None if g0_pass else 'G0 full-mission gate did not pass'),
+            G1_formal=dict(records=formal,unexecuted_reason=None if g1_pass else 'No frozen successful G1 nominal mission',
+                usable_baseline=len(formal)==3 and all(r['success'] for r in formal))), assets=assets,
+        source_commit=git(ROOT), configuration_sha256=sha(ROOT/args.config),
+        environment=dict(path=str(ROOT/'work/envs/mjpc-go2'), packages=subprocess.check_output([sys.executable,'-m','pip','freeze'],text=True).splitlines()),
+        timing_scope='Shared server, synchronous slow simulation; separate planning, feedback RPC, state/parameter RPC, physical integration and total wall times. No NX measurement.')
+    dump(small/'index.json',idx)
+    print(json.dumps(idx['stages']))
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--config',default=CONFIG)
@@ -396,8 +438,9 @@ def main():
     p.add_argument('--original-scene')
     p.add_argument('--original-resolved')
     p.add_argument('--render',action='store_true')
+    p.add_argument('--summarize',action='store_true')
     args=p.parse_args(); c=json.loads((ROOT/args.config).read_text())
-    (render if args.render else run)(args,c)
+    (summarize if args.summarize else render if args.render else run)(args,c)
 
 
 if __name__=='__main__':
