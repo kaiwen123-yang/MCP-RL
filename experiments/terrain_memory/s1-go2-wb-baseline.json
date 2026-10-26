@@ -2,7 +2,18 @@
   "purpose": "Reuse the published TM20 Go2 whole-body iLQG controller to obtain complete rigid-ground out-turn-return-stand missions. First establish author-model execution, then the original project robot and actuator limits. This is a bounded execution baseline, not full-paper reproduction or proof of terrain-memory benefit.",
   "run_id": "tm-s1-go2-wb-baseline-20261026",
   "stage": "S1_author_Go2_execution_baseline",
-  "implementation_status": "implemented_not_executed",
+  "implementation_status": "executed_G0_gate_failed_G1_not_executed",
+  "actual_execution": {
+    "physical_starts": 2,
+    "G0_completions": 0,
+    "G0_allowance_exhausted": true,
+    "G1_development_starts": 0,
+    "G1_formal_conditions_executed": 0,
+    "setup_attempts_without_plant_steps": 5,
+    "execution_transport": "Direct SSH for both actual physical missions; user cancelled tmux before physical execution.",
+    "stop_reason": "G0 failed its full-mission gate within the two-start stage allowance. No additional physical starts, G1, training or hardware are authorized within this completed round.",
+    "index": "results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json"
+  },
   "implementation_declarations": {
     "necessary_build_flag": "libmjpc target is built with -fno-strict-aliasing. The pinned pointer-based integer/double bit reinterpretation otherwise compiled under GCC/LTO into an uninitialized gait stack read and segfaulted in FootStep before any plant step. No optimizer, feedback, gain or cost change.",
     "model_transport": "Official Agent run_init=False followed by init(send_as='xml'), with absolute on-host mesh paths. The native 50MB MJB exceeds the official agent_server 20MiB receive limit; no server payload-limit patch is applied.",
