@@ -208,7 +208,8 @@ def run(args, c):
     source = {p: sha(ROOT/p) for p in ['scripts/run_s1_go2_wb_baseline.py', 'scripts/s1_go2_wb_model.py', CONFIG] if (ROOT/p).exists()}
     resolved = dict(stage=args.stage, condition=args.condition, source_commit=git(ROOT), source_sha256=source,
         author_commit=(upstream/'SOURCE_COMMIT').read_text().strip(), author_source=str(upstream), model=model_meta,
-        model_path=str(model_path), mass_kg=float(model.body_mass.sum()), physics_dt_s=physical_dt,
+        model_path=str(model_path), mass_kg=float(model.body_subtreemass[base]),
+        compiled_mass_including_mocap_kg=float(model.body_mass.sum()), physics_dt_s=physical_dt,
         logical_feedback_dt_s=dt, logical_planning_dt_s=.02, workers=args.workers,
         synchronous_slow_simulation=True, initial_qpos=data.qpos.copy(), initial_qvel=data.qvel.copy(),
         joint_names=[model.joint(int(j)).name for j in joint_ids], joint_ranges=model.jnt_range[joint_ids],
@@ -396,6 +397,18 @@ def render(args,c):
             draw.text((18,10),f"{args.attempt} | {result['stage']} | {result['condition']} | t={data.time:.3f}s | {PHASES[int(a['phase'][i])]}",fill='white')
             draw.text((18,34),f"Body x={data.qpos[0]:.3f} m, y={data.qpos[1]:.3f} m | full recorded mission | synchronous simulation, not NX realtime",fill='white')
             if i==sample[-1]: draw.text((18,55),result['reason'],fill='yellow')
+            writer.append_data(np.asarray(frame))
+        if result['simulation_s'] > float(a['time'][-1])+1e-10:
+            # A planner exception can occur between the last logged command
+            # and its following state. The saved result contains that endpoint.
+            data.time=result['simulation_s']; data.qpos[:]=result['final_qpos']; data.qvel[:]=result['final_qvel']
+            mujoco.mj_forward(model,data)
+            camera.lookat[:]=[data.qpos[0],data.qpos[1],.25]
+            renderer.update_scene(data,camera=camera)
+            frame=Image.fromarray(renderer.render()); draw=ImageDraw.Draw(frame)
+            draw.rectangle((0,0,1280,74),fill=(15,20,30))
+            draw.text((18,10),f"{args.attempt} | actual terminal state | t={data.time:.3f}s",fill='white')
+            draw.text((18,34),result['reason'],fill='yellow')
             writer.append_data(np.asarray(frame))
     renderer.close()
     print(json.dumps(dict(video=str(out/'complete-mission.mp4'),size=(out/'complete-mission.mp4').stat().st_size,sha256=sha(out/'complete-mission.mp4'))))
