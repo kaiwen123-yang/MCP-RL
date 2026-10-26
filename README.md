@@ -4,29 +4,40 @@
 
 同一空间地块的材料状态跨腿、跨步、跨返程持续演化；后续支撑需求反过来约束当前踩踏。第一版从具有可测恢复过程的黏弹性材料开始。
 
-## S1 第三轮：接触过渡完整任务结果
+## 当前任务：先闭合接触执行，再检验地块记忆
 
-**第三轮S1固定任务结束：30条独立正式结果，8成功、22失败；实际新启动33次，开发6/6次。新增训练0、硬件0。**
+**2026-10-26：第三轮S1已结束，但尚未得到可用于证明材料记忆收益的整程控制。当前任务为T1R接触执行修正，状态planned_not_executed。** 详细依据见[计划第5.4节](docs/TERRAIN_MEMORY_PLAN.md)，下一轮实施与预算见第5.5节，启动词见第7节；配置为 [s1-contact-execution.json](experiments/terrain_memory/s1-contact-execution.json)，执行约定为 [AGENTS.md](AGENTS.md)。
 
-| 地面 | 原冻结B1 | 共同修正B1 | T1 |
+现在已有真实Go2接触仿真、连续世界地块状态、实际关节控制和完整任务记录。第二轮B1是刚地/KV8000上的局部可用参照；当前T1使用参考本构及真材料状态，没有调用学习PANN，也没有PPO。可观测辨识、跨事件MPC和长期RL的贡献均未得到整程实证。
+
+下一轮只修两处已确认的执行问题：所有失接触名义支撑腿都获得明确运动控制；接触/加载限制进入原sampling MPC的共同力约束，删除求解后均分力。保持50Hz MPC、500Hz执行和原任务；低层持有求解出的四足力并按同一当前约束投影，不按新接触数重算mg/n。**不是再换一套控制平台。**
+
+开发最多3次原完整任务；冻结T1R后先刚地5个seed，5/5才做KV8000五个，至少4/5才做TM02五个。最多15条新正式结果、18次总启动；条件未达即结束扩展并交实际成果。旧B1/T1仅引用，本轮不跑T2、不新增训练或硬件。GitHub与必要Release确认后结束，不在用户电脑再次下载、复制、镜像、压缩或归档。
+
+## S1 第三轮已冻结：结果、具体缺口及科学边界
+
+判断基点为 [f0a1632](https://github.com/kaiwen123-yang/MCP-RL/commit/f0a1632f445415be6c33a7eac31c3a2c974d1f4a)。**30条正式结果全部新增，8成功、22失败；实际新启动33次。** 6次开发中的前3次轨迹序列化失败、物理结局未知；后3次同版复用为正式结果。不能记为36次，缺失数据不臆造。
+
+| 地面 | 第二轮冻结B1 | 第三轮共同修正B1 | T1 |
 |---|---:|---:|---:|
 | 刚地 | 5/5 | 3/5 | 0/5 |
 | KV8000 | 5/5 | 5/5 | 0/5 |
 | TM02 | 0/5 | 0/5 | 0/5 |
 
-共同摆腿修正补入世界坐标逆动力学中遗漏的浮基加速度、完整Jacobian导数及基座—腿惯性耦合项。它影响三种地面全部15条B1，因此旧B1只保留为历史参照，正式配对均重算；不能把共同修复的变化归为T1。T1在原名义时钟下使用连续法向接近、实际接触支撑可用性及载荷接管。
+共同摆腿补项已实际实施，接触前查询也进入真实轨迹；但增加动力学项没有证明更好，旧B1不能被覆盖成“已修好基线”。T1没有任何双方成功配对，不能声称整程更快或节能，旧Phase B/T2完整任务未执行。
 
-Phase B未执行：T1未达到冻结的完整任务/跨足重访准备条件，不能据此否定材料历史信息本身的价值。
+源码与原始NPZ共同确认：
 
-同起点查询1036次，其中初态不同24次，所计算接近动作不同16次。查询差异不等于完整任务收益。
+- **初始失接触控制缺失。** T1 seed4在三种地面均于1.344s初始站立失败；FR/RL两足在0.160–1.344s连续1.184s的三关节命令为0。尚无材料加载或接近查询。未曾摆动的失接触腿没有进入运动分支，旧mode日志还错误保留support。
+- **求解后分力改写姿态力矩。** seed4在0.112s原计划的力矩约[−0.041,−0.888,0.005]Nm，接口后变成[6.365,7.845,0.215]Nm，虽然合力未变。seed0还出现单足命令243.497N超过原149.175N上限，以及总法向命令161.587N被缩为59.418N，均发生在软区之前。这些是命令量，不能冒充真实测力。
+- **局部接触较温和，任务仍失败。** T1仅3个TM02回合实际加载材料，已记录受载足竖直速度峰值比B1低；另外两个在材料前失败。所有TM02 B1/T1均无前足→后足同地块受载重访，不能称已解决整程超域或证明记忆价值。
+- **查询差异需要看幅度。** 1036次查询只有KV出现16次数值动作差；最大速度差0.16558m/s，第二大约1e-6m/s，其余更小。不是16次有意义的独立长期决策。T1的KV跨腿重载前残余最大约1.02nm，目标TM02没有跨足证据。
 
-首批3次开发任务在轨迹序列化时出错，内存时程未保存；源码、模型、resolved配置和日志保留，并完整计入预算。其余3次开发结果按相同冻结版本复用为正式结果。这一记录缺失不填零、不臆造物理结局。
+[原运行索引](results/terrain_memory/simulation/tm-s1-contact-transition-20261025/index.json)、[逐回合结果](results/terrain_memory/simulation/tm-s1-contact-transition-20261025/episodes.csv)、[共同修正对照](results/terrain_memory/simulation/tm-s1-contact-transition-20261025/shared-correction-vs-frozen-B1.csv)、[本次派生表](results/terrain_memory/simulation/tm-s1-contact-transition-20261025/mechanism-summary.csv)、[派生脚本](scripts/analyze_s1_transition_mechanism.py)及[Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-contact-transition-evidence-20261025)。派生表仅读取47个既有文件，无新仿真/训练/测试，原结果不改。14个Release资产size/digest与索引一致。
 
-五个seed是配对优化器种子。时间和机械功差值只对双方完成者计算；提前失败不是更快或节能，机械功不是电池耗电。并行共享资源计时不代表独占算法速度或NX实时性。当前仍缺稳定TM02完整任务及后续可观测辨识、公平强基线和部署证据。
+新增TM19–21分别借鉴逆动力学一致性、实际执行输入纳入MPC预测、策略闭环响应；原文/PDF/作者代码与限制见[来源清单](literature/terrain_memory_sources.json)。这些已有机制用于避免执行错误，不包装为本项目创新，也不新增全文复现门槛。
 
-[运行索引](results/terrain_memory/simulation/tm-s1-contact-transition-20261025/index.json)、[逐回合结果](results/terrain_memory/simulation/tm-s1-contact-transition-20261025/episodes.csv)、[配对差值](results/terrain_memory/simulation/tm-s1-contact-transition-20261025/paired.csv)、[共同修正对照](results/terrain_memory/simulation/tm-s1-contact-transition-20261025/shared-correction-vs-frozen-B1.csv)、[同起点查询](results/terrain_memory/simulation/tm-s1-contact-transition-20261025/same-start-queries.csv)、[Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-contact-transition-evidence-20261025)。
-
-## S1 第二轮已完成：可用基线与尚未成立的科学证据
+## S1 第二轮历史结果：可用基线与尚未成立的科学证据
 
 判断基点为[5af2c25](https://github.com/kaiwen123-yang/MCP-RL/commit/5af2c25c5223c7b74a473133fe97aed3d9962c34)。60条正式结果中20条旧B0复用、40条新增，36成功/24失败；实际新任务启动42次，含3次开发。不能把首轮14/85与本轮36/60直接当作同一实验的成功率提升。
 
@@ -43,7 +54,7 @@ B3相对B1在刚地/KV8000平均快0.2992/0.4272s，同样各5/5完成。B3也�
 
 **新的任务适用性计算：**KV8000的零载恢复时间为400/8000=0.05s。B1/B2/B3共2390条跨腿材料格点事件中，最短卸载间隔0.7862s，实际重载前残余变形最大约1.25nm；这些格点行不是2390次独立任务。TM02 B1仅有两条FR→FL格点重访，前足→后足为0，尚未到转向。当前成功地面几乎已恢复，目标材料又未稳定通过，因此核心记忆假设仍未得到整机检验。
 
-**下一步的具体原因：**已核TM02 B1 seed0在5.540s名义落地时，FL足底仍离地15.449mm并向上运动；原生支撑力矩已接管，B1尚未激活。5.572s以约−1.3235m/s触地，5.573s超域，早于5.574s下一次低层更新。参考末端速度本来已接近零，需要检查实际摆腿动力学及接触切换，不能只改期望末速或扩训练。KV3500保留为非足部接触终止负例，不删除碰撞来提高完成率。
+**第三轮当时启动的依据（历史记录）：**已核TM02 B1 seed0在5.540s名义落地时，FL足底仍离地15.449mm并向上运动；原生支撑力矩已接管，B1尚未激活。5.572s以约−1.3235m/s触地，5.573s超域，早于5.574s下一次低层更新。参考末端速度本来已接近零，需要检查实际摆腿动力学及接触切换，不能只改期望末速或扩训练。KV3500保留为非足部接触终止负例，不删除碰撞来提高完成率。
 
 [运行索引](results/terrain_memory/simulation/tm-s1-control-repair-20261024/index.json)、[全部回合](results/terrain_memory/simulation/tm-s1-control-repair-20261024/episodes.csv)、[本次派生的任务支持表](results/terrain_memory/simulation/tm-s1-control-repair-20261024/task-support-summary.csv)、[派生脚本](scripts/analyze_s1_task_support.py)、[分项耗时](results/terrain_memory/simulation/tm-s1-control-repair-20261024/timing.csv)、[Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-control-repair-evidence-20261024)。派生表只计算既有数据，没有新增仿真；原配置和原始结果不改写。19个Release资产的size/digest已与索引一致。
 
@@ -68,7 +79,7 @@ B3相对B1在刚地/KV8000平均快0.2992/0.4272s，同样各5/5完成。B3也�
 
 可核验成果包括 [结果索引](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/index.json)、[全部回合](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/episodes.csv)、[五种子配对差值](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/paired.csv)、[逐部分计时](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/timing.csv)、[跨腿重访](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/actual-cross-leg-revisits.csv)、[预测事件实际覆盖](results/terrain_memory/simulation/tm-s1-go2-contact-20261024/event-coverage.csv)和[全部大时程与连续视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-contact-evidence-20261024)。失败后的值不补零；较短的失败轨迹不作为更快或更省能的证据。接触功按 5000 Hz 物理记录积分，关节正机械功使用 500 Hz 记录，均不等于电池耗电。
 
-首轮运行入口与原85组合属于冻结提交 [1bfcf24](https://github.com/kaiwen123-yang/MCP-RL/commit/1bfcf244bf5787cf0086f3f1846c19c42576f9d7)及[原配置](experiments/terrain_memory/s1-go2-contact.json)。当前main入口默认第二轮协议；不以当前默认命令重跑首轮。
+首轮运行入口与原85组合属于冻结提交 [1bfcf24](https://github.com/kaiwen123-yang/MCP-RL/commit/1bfcf244bf5787cf0086f3f1846c19c42576f9d7)及[原配置](experiments/terrain_memory/s1-go2-contact.json)。历史默认参数不作为当前任务入口；下一轮只使用顶部指定的新配置，不以默认命令重跑旧矩阵。
 
 代表视频保留 seed 0 的真实失败，同时给出注明编号的成功补充例。新数组和视频从运行端直接上传 Release，旧 B 权重引用原 R2 Release；不在用户电脑另做大产物下载或归档。当前证据不支持启动长期 RL 或实机 H。
 
@@ -105,7 +116,7 @@ B3相对B1在刚地/KV8000平均快0.2992/0.4272s，同样各5/5完成。B3也�
 work/envs/tm02/bin/python scripts/run_terrain_memory_s0.py --config experiments/terrain_memory/s0-contact-oracle.json --run tm-s0-contact-oracle-20261023 --source-output-root /path/to/existing/tm02-memory-study-20261023
 ```
 
-## 第三轮已交付：三臂材料记忆适用性实验
+## R2第三轮历史成果：三臂材料记忆适用性实验
 
 **固定预算全部完成：50 个新模型、10 个复用模型、2,640 次已知历史双边界诊断，以及 600 个工况、700 条参考历史上的 8,400 次新预测；全部积分完成，失败为零。** 60 个模型均保留权重、优化器和 20,000 点损失；12 个主模型只按各单元 seed 0–4 的最终训练损失选择。R1 与 R2 前两轮保持冻结，本轮未启动 S、整机 RL 或实机。
 
@@ -128,13 +139,13 @@ A 精确复用 100 条原随机历史；B 增加 900 条同生成器历史；C �
 
 F6 参考有 **60 对 strict early、40 对近似平局、0 对 strict late**。全部主模型均为 60 early + 40 tie；always-early 的真实遗憾为零。预测平局按等概率选择计算，模型平均期望遗憾为 4.5071e-8 strain。这些排序不证明依历史改变最优动作的价值；含噪模型的动作响应幅值仍有显著误差。
 
-材料候选限于已执行的固定 Table 1、小应变、已知 virgin 初态和持续状态历史：冻结 A ideal 与更大数据量的 B ideal 已供S0相容接触和oracle比较，冻结B ideal继续供S1有限替换。未将离散网格推广为连续域保证；快速全幅随机、最大体积压缩保持与含噪恢复仍有明确误差。当前 noisy 模型保留为负面对照，接触几何、真实地面与机器人收益尚未验证。
+材料候选限于已执行的固定 Table 1、小应变、已知 virgin 初态和持续状态历史：冻结 A ideal 与更大数据量的 B ideal 已供S0相容接触和oracle比较，冻结B ideal曾用于首轮S1有限替换；当前T1/T1R使用参考本构和真状态。未将离散网格推广为连续域保证；快速全幅随机、最大体积压缩保持与含噪恢复仍有明确误差。当前 noisy 模型保留为负面对照，接触几何、真实地面与机器人收益尚未验证。
 
 用户要求提速后，B 的微批从 25 经 100 增至全部 1,000 条，实测每 250 次更新的耗时中位数为 **85.65 → 40.67 → 31.59 s**，约 **2.71 倍**提速；解算和曲线图使用 8 进程。检查点、Adam 状态和 20,000 次保留更新连续接续，切换的未落盘计算上界单独记录。B 仍使用更多训练计算，不能称等计算量比较。
 
 已完成批次的复跑入口为 [run_tm02_memory_study.py](scripts/run_tm02_memory_study.py)，配置为 [r2-memory-study.json](experiments/tm02/r2-memory-study.json)，不用于重复启动。当前执行约定为 [AGENTS.md](AGENTS.md)，结论和后续任务见 [执行计划](docs/TERRAIN_MEMORY_PLAN.md)。停止 R2 自动扩训；S0也已完成，当前执行入口转入S1。
 
-## 第二轮已有成果与边界
+## R2第二轮历史成果与边界
 
 第二轮实际完成 **50 个新模型、2,000 次新旧留出预测、50 次已知困难路径预测和 24 条新增重访**，积分失败为零。[材料结果索引](results/terrain_memory/reproduction/material/tm02-multihistory-20261023/index.json)、[重访结果索引](results/terrain_memory/transfer/material/tm02-multihistory-20261023/index.json)与[全部权重和数组归档](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-multihistory-evidence-20261023)提供命令、实际数组、源码版本、硬件、seed 和哈希。
 
@@ -159,7 +170,7 @@ F6 参考有 **60 对 strict early、40 对近似平局、0 对 strict late**。
 
 第二轮随机历史没有专门的保持/自由恢复段；所有应力分量同时在 ±6 MPa 内的训练增量约占 5.37%。当时 25 初始化共用一套噪声、20 条留出历史，尚不足以覆盖长保持、低速、循环和尾部行为。这些问题已通过第三轮三套噪声与 600 工况的固定实验检验：更多数据及这次恢复激励都未修复 noisy 恢复，不能再次把这段历史分析当作待执行的扩量指令。
 
-## 第三轮固定协议（已执行）：三臂与六类完整工况
+## R2第三轮固定协议（已执行）：三臂与六类完整工况
 
 | 训练臂 | 数据 | 要回答的问题 |
 |---|---|---|
@@ -189,9 +200,9 @@ F6 参考有 **60 对 strict early、40 对近似平局、0 对 strict late**。
 work/envs/tm02/bin/python scripts/run_tm02_memory_study.py --config experiments/tm02/r2-memory-study.json --run tm02-memory-study-20261023
 ```
 
-固定预算、每家族及每噪声实现的正负结果、全部曲线/权重/数组均已交付，停止自动扩量。S0及两轮S1也已完成，当前任务见顶部和计划第5.4节；不要求所有外推条件零误差，也不把材料预测叫作机器人收益。第三轮原计划和启动词保存在 Git 历史中，当前启动词见执行计划第 7 节。
+固定预算、每家族及每噪声实现的正负结果、全部曲线/权重/数组均已交付，停止自动扩量。S0及三轮S1固定预算均已结束，当前任务见顶部和计划第5.5节；不要求所有外推条件零误差，也不把材料预测叫作机器人收益。第三轮原计划和启动词保存在 Git 历史中，当前启动词见执行计划第 7 节。
 
-## 论文借鉴的具体落点
+## R2阶段的论文借鉴（历史）
 
 - [TM03：STANCE](https://arxiv.org/html/1904.12306v2)：接触一致支撑控制；仅采用论文§VII-A仿真KV尺度k=3500/8000N/m、d=400Ns/m作为公开对照，不冒充Go2地面实测或长期记忆。
 - [TM12：Load-bearing Assessment，2025](https://arxiv.org/html/2510.21369v1)：由实际机器人运动确定接触载荷需求，MPC/WBC落实；不另做塌陷地板/探测状态机复现。
@@ -232,4 +243,4 @@ work/envs/tm02/bin/python scripts/run_tm02_memory_study.py --config experiments/
 
 实际源码、配置、紧凑数据和图表推送 GitHub；必要大数组和视频从运行端直接上传 Release，索引提供实际位置与摘要。S0 交完整接触任务数据和动画；S1/实机交连续机器人任务视频，不预建空结果。GitHub 发布后不在用户电脑另做归档，不全量回下载来重复校验，不重复打包旧权重；保留运行端正常输出和必要检查点。
 
-禁止防御性编程、单元/mock/冒烟测试、无关回归、审查报告和状态流水。当前必须完成授权的完整机器人任务与条件成立后的信息对照，新增训练为0；遇到真实执行错误沿已有证据修复。实验结论由实际结果决定，主问题保持不变。
+禁止防御性编程、单元/mock/冒烟测试、无关回归、审查报告和状态流水。当前必须完成第5.5节的有限接触执行修正与逐级完整任务，新增训练为0，本轮不自动执行旧信息对照；沿已定位的物理执行错误实施。实验结论由实际结果决定，主问题保持不变。

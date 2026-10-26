@@ -288,6 +288,75 @@
         "分别评价材料响应预测和完整通行任务收益；较好的力—深度拟合或较慢的感知动作不自动证明长程任务改善"
       ],
       "scope_note": "原文研究 Spirit 40 四足在沙地与脆性表层上的感知步态，已有通过接触轨迹改善地面辨识的机制，不能将慢落足或感知步态称为本项目首创。其 0.08 m/s 慢穿透设置和 trot 超过 0.5 m/s 时的颗粒惯性现象均不是 TM02/Go2 的通用阈值；本项目允许速度须由自己的材料适用域及机器人可达性确定。原文 trot 的穿透区间等处理含人工后处理，不能直接视为可部署自动估计器；未提供同地块跨腿恢复记忆的因果收益证据，本次未复现其完整实验。"
+    },
+    {
+      "id": "TM19",
+      "title": "Whole-Body Inverse Dynamics MPC for Legged Loco-Manipulation",
+      "role": "S1 接触、运动与关节力矩一致性的直接参考；限定求解后独立修改接触力的适用性",
+      "version": "arXiv:2511.19709v1",
+      "published": "2025-11-24",
+      "selected_on": "2026-10-26",
+      "accessed_on": "2026-10-26",
+      "publication": "IEEE Robotics and Automation Letters, 11(1):898–905 (2026)；正式条目信息核自作者仓库，arXiv 首版发布于 2025 年",
+      "doi": "10.1109/LRA.2025.3636005",
+      "url": "https://arxiv.org/html/2511.19709v1",
+      "pdf_url": "https://arxiv.org/pdf/2511.19709v1",
+      "project_url": "https://lukasmolnar.github.io/wb-mpc-locoman",
+      "code_url": "https://github.com/lukasmolnar/wb-mpc-locoman",
+      "code_license": "MIT",
+      "code_status": "已核作者公开仓库、MIT 许可及机器人目录；提供 B2 与 B2+Z1 模型，未提供现成 Go2 配置。本次只读原文与代码说明，未安装、运行或复现该方法。",
+      "read_for_execution": "已读第 III-B 节的全身动力学，第 IV-B1/B2/B4 节的逆动力学等式、接触/摆腿约束与输入界，第 V-B 节的执行接口及第 VI-D 节的实机接触失配。只借鉴当前支撑力与运动执行的一致性，不新建全文复现任务。",
+      "transfer_targets": [
+        "原文将广义加速度、接触力与关节力矩置于同一逆动力学约束内。本项目据此检查实际可接触足集合、计划 GRF 与最终关节力矩是否共同支持所预测的机体运动；具体修正必须由已有失败轨迹确定",
+        "若接触过渡改变可用支撑足或足端力，须重新考虑共同支撑的可行性，不能在规划完成后独立截断或缩放足端力并假定原机体合力仍成立；优先修正现有求解与执行接口，不自动新增完整 WBC 平台",
+        "将真实接触时序失配与动力学约束分别处理；原文也记录延迟触地，不能把采用完整逆动力学当成接触过渡已解决的证明"
+      ],
+      "scope_note": "原文采用预设步态与刚性支撑足零速度约束，力矩界只施加于前两个优化步，不能宣称全时域力矩可行或直接移植零足速到 TM02 变形地面。硬件为 B2+Z1、桌面计算，不证明 Go2/NX 实时能力或持久材料记忆收益。运动—接触力—力矩一致性已有研究，不能称本项目创新；本次不替换机器人平台、不引入机械臂任务，也不以原文控制增益替代本模型分析。"
+    },
+    {
+      "id": "TM20",
+      "title": "Whole-Body Model-Predictive Control of Legged Robots with MuJoCo",
+      "role": "S1 预测输入与实际执行接口一致性的 Go2 原始参考；仅在现有执行基础确实不可用时评估复用成本",
+      "version": "arXiv:2503.04613v3",
+      "published": "2025-03-06",
+      "version_date": "2026-03-06",
+      "selected_on": "2026-10-26",
+      "accessed_on": "2026-10-26",
+      "publication": "arXiv v3 预印本；作者版本注释注明 to appear at ICRA 2026，本次未独立核对正式会议论文集",
+      "url": "https://arxiv.org/html/2503.04613v3",
+      "pdf_url": "https://arxiv.org/pdf/2503.04613v3",
+      "project_url": "https://johnzhang3.github.io/mujoco_ilqr/",
+      "code_url": "https://github.com/johnzhang3/mujoco_mpc_deploy",
+      "algorithm_code_url": "https://github.com/johnzhang3/mujoco_mpc/tree/go2",
+      "code_license": "部署仓库 mujoco_mpc_deploy 为 MIT；不据此推定其全部外部依赖的许可",
+      "code_status": "已核作者部署仓库包含 go2interface.py，README 指向求解器 go1/go2 分支，且 Go2 分支实际存在。README 标为开发中，状态估计使用 Optitrack；默认模型与 Go2 分支需区分。本次未取得并运行完整部署环境，不宣称开箱即用或论文已复现。",
+      "read_for_execution": "已读第 III 节及第 IV-A 节的 MuJoCo 接触与动力学导数，第 IV-B/C 节的状态/动作表示、关节 PD 纳入预测和时变 LQR 反馈，以及第 V-A/B 节的部署与 Go1/Go2 实验。当前必需机制是第 IV-B 节，不新增整套 iLQR 复现阶段。",
+      "transfer_targets": [
+        "原文把低层关节 PD 纳入预测并优化实际发送给机器人的关节目标。本项目据此核对候选评估是否使用最终真正执行的接触映射和控制输入，而不是在预测之后再作未建模的独立变换",
+        "材料预测器只能在明确的机器人执行接口上评价动作后果；不能把低层输入映射不一致造成的误差全部归为材料模型不准确，或用增加训练数据代替执行修正",
+        "若现有执行基础经具体证据确认无法满足任务，可将作者 Go2 代码作为有限替代候选评估；当前不直接迁移平台，也不把该评估设为新增全文复现门槛"
+      ],
+      "scope_note": "原文使用全身 iLQR 与时变 LQR，步态作为代价而非固定接触硬约束；其 MuJoCo 软接触不是跨足共享的黏弹地块持久内状态。Go1/Go2 实机依赖桌面 Intel i9 与外部动捕，不能作为 NX 实时能力证据；接入本项目仍需明确材料状态、任务与执行接口。将低层控制纳入预测已有研究，不称本项目首创，不照搬原文接触参数或通过修改材料/摩擦来制造任务成功。"
+    },
+    {
+      "id": "TM21",
+      "title": "ReCo: Response-Consistent Locomotion with Policy-Aware MPC for Legged Manipulation",
+      "role": "后续 RL–MPC 接口的真实闭环响应参考；当前只限定方法职责，不启动 RL 训练",
+      "version": "arXiv:2610.01612v1",
+      "published": "2026-10-01",
+      "selected_on": "2026-10-26",
+      "accessed_on": "2026-10-26",
+      "publication": "2026 年 10 月 arXiv 预印本；本次未核实正式录用状态",
+      "url": "https://arxiv.org/html/2610.01612v1",
+      "pdf_url": "https://arxiv.org/pdf/2610.01612v1",
+      "code_status": "已读原文相关段落并定向检索作者实现，截至访问日未找到可核实的作者算法发布与许可；文中 OCS2、qm_control 链接为基础框架或基线，不能当作 ReCo 作者实现。本次未运行或复现该方法。",
+      "read_for_execution": "已读第 III-B/C/D 节的策略响应塑形、冻结策略闭环辨识与 policy-aware MPC，以及第 IV-A/F 节的实验平台和实机条件。当前按需保留第 III-C/D 节作为后续接口依据，不新增策略训练、辨识平台或全文复现。",
+      "transfer_targets": [
+        "后续加入 RL 时，先明确 Actor/MPC 各自实际发送的控制量，并表征冻结低层控制器与机器人组成的闭环响应；期望基座速度不等于瞬间实现的基座速度",
+        "原文辨识速度响应增益/时间常数和步态相位相关机身响应。本项目仅借鉴区分控制器响应与材料历史影响的原则，不能将低层执行延迟误识别为地块记忆",
+        "策略响应可重复性与命令响应建模属于后续实现选择；当前 S1 的接触执行负结果不触发 PPO 重训、奖励塑形、Koopman、机械臂或新观察器支线"
+      ],
+      "scope_note": "原文实机为 Go2+ARX X5，使用 Jetson Orin NX，研究腿式操作中的策略响应与 MPC 协调；不能据此证明本项目 TM02 软接触、GRF 执行或持久地块记忆已在 NX 实时实现。策略响应一致性、相位相关响应及策略感知 MPC 均已有研究，不作为本项目创新。本项目仍须证明同一世界地块的跨足加载/恢复信息如何改变可执行动作并改善后续支撑；当前未完成该证据。"
     }
   ],
   "upstream": {
