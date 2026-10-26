@@ -2,7 +2,15 @@
   "purpose": "Reuse the published TM20 Go2 whole-body iLQG controller to obtain complete rigid-ground out-turn-return-stand missions. First establish author-model execution, then the original project robot and actuator limits. This is a bounded execution baseline, not full-paper reproduction or proof of terrain-memory benefit.",
   "run_id": "tm-s1-go2-wb-baseline-20261026",
   "stage": "S1_author_Go2_execution_baseline",
-  "implementation_status": "planned_not_executed",
+  "implementation_status": "implemented_not_executed",
+  "implementation_declarations": {
+    "author_input_mapping_repair": "Pinned task_flat.xml includes go2.xml, whose general actuator declares gainprm=60 and biasprm=0,-60,-5 but omits biastype=affine. The task adapter explicitly enables affine bias in the single model shared by Agent and actual plant. Record the compiled source value and repaired value. No gain, cost or physical-model search is performed.",
+    "G0_identity": "Author native physical model with the declared task and affine-PD input mapping; original unbounded actuator force remains unbounded. This is not an unchanged-XML reproduction.",
+    "author_prediction_contact_approximation": "The retained Agent MakeDifferentiable behavior temporarily sets solimp[0]=0 during gradient planning and restores it afterward. Plant contact settings remain original. This approximation and the 0.01s predictor versus 0.0002s G1 plant step are declared.",
+    "mission_reference": "Original state-based phases and velocity/heading rate limits; integrate the bounded x velocity into a continuous world-route body goal clamped to the original endpoints, keep world y=0, and advance heading continuously at at most 0.5rad/s. Head offset is applied afterward.",
+    "planner_iterations_per_50Hz_tick": 1,
+    "feedback_action": "Official get_action(time=data.time, nominal_action=False, averaging_duration=0), with current actual state synchronized every 0.002s."
+  },
   "target_entrypoint": "scripts/run_s1_go2_wb_baseline.py",
   "reviewed_source_commit": "56fabe0024108fe933dd8207c3a97331b8fa6102",
   "frozen_previous": {
