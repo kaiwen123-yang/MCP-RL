@@ -1,0 +1,449 @@
+{
+  "run_id": "tm-s1-go2-wb-baseline-20261026",
+  "status": "completed_bounded_scope",
+  "attempts": [
+    {
+      "attempt": "g0-01",
+      "stage": "G0",
+      "purpose": "development",
+      "condition": "nominal",
+      "status": "completed",
+      "execution_fingerprint": "e2fdb895cbb561776f4f694527a8c239d076702ec2157bf96635dab0c249d978",
+      "command": [
+        "scripts/run_s1_go2_wb_baseline.py",
+        "--stage",
+        "G0",
+        "--attempt",
+        "g0-01",
+        "--workers",
+        "7",
+        "--agent-server",
+        "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/bin/agent_server"
+      ],
+      "source_commit": "4549efe45ffad57fdc7d7763453f0cdb0cf5e260",
+      "started_utc": "2026-10-26T15:12:10Z",
+      "success": false,
+      "reason": "body_fall",
+      "simulation_s": 0.17800000000000013,
+      "wall_s": 1.773619655999937,
+      "result": "g0-01.json"
+    },
+    {
+      "attempt": "g0-02",
+      "stage": "G0",
+      "purpose": "development",
+      "condition": "nominal",
+      "status": "completed",
+      "execution_fingerprint": "44103a893c63832849721daa5a33558739884b1ce637adf5ab4b80a175115738",
+      "command": [
+        "scripts/run_s1_go2_wb_baseline.py",
+        "--stage",
+        "G0",
+        "--attempt",
+        "g0-02",
+        "--workers",
+        "7",
+        "--agent-server",
+        "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/bin/agent_server"
+      ],
+      "source_commit": "00291d7cc909f696c7fb97ea9df944e97bb1d980",
+      "started_utc": "2026-10-26T15:13:59Z",
+      "success": false,
+      "reason": "execution_error",
+      "simulation_s": 0.04000000000000002,
+      "wall_s": 181.61342379900452,
+      "result": "g0-02.json"
+    }
+  ],
+  "stages": {
+    "G0": {
+      "starts": 2,
+      "successes": 0,
+      "passed": false
+    },
+    "G1_development": {
+      "starts": 0,
+      "passed": false,
+      "unexecuted_reason": "G0 full-mission gate did not pass"
+    },
+    "G1_formal": {
+      "records": [],
+      "unexecuted_reason": "No frozen successful G1 nominal mission",
+      "usable_baseline": false
+    }
+  },
+  "budget": {
+    "maximum_author_native_starts": 2,
+    "maximum_project_development_starts": 3,
+    "maximum_project_formal_conditions": 3,
+    "maximum_new_mission_starts_including_failures_missing_records_and_superseded_versions": 8,
+    "reuse": "Exact-version/configuration/initial-condition development episodes reused formally are one start and one result; do not repeat them to manufacture independent samples.",
+    "counting": "Count every actual complete-mission physical start, including early failure, lost output and superseded attempts. Build-only work does not count as a mission. A cap is not a quota; unused stage allowances cannot be transferred to another matrix or algorithm.",
+    "formal_random_optimizer_seeds": 0,
+    "no_refresh": true
+  },
+  "historical_reference": {
+    "run": "tm-s1-control-repair-20261024",
+    "controller": "B1",
+    "rigid_successes": 5,
+    "kv8000_successes": 5,
+    "use": "Link existing result/version/video only. No new B1 episodes. Do not compare G0 against B1 as same-model gain, or pair deterministic iLQG conditions with old sampler seeds.",
+    "old_source_warning": "Current main's nonadaptive sampler expects contact and alpha rows. Any future old-B1 rerun must restore its full frozen source/upstream patch, not select --controller B1 on the current patched path."
+  },
+  "training_runs": 0,
+  "hardware_runs": 0,
+  "nx_realtime_measured": false,
+  "actual_starts": 2,
+  "completed_records": 2,
+  "missing_records": 0,
+  "active_attempts": 0,
+  "assets": [
+    {
+      "name": "g0-01-trajectory.npz",
+      "execution_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/g0-01/trajectory.npz",
+      "size": 170917,
+      "sha256": "2c53f906d6d47f978e5fd3333db74400ae58bac33e4885b6b7cd4aafe4c9d7c3"
+    },
+    {
+      "name": "g0-01-complete-mission.mp4",
+      "execution_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/g0-01/complete-mission.mp4",
+      "size": 147336,
+      "sha256": "a17b121f0d68c33cbed556334603a4f59311bc77112277c9c4feaee55894a7dd"
+    },
+    {
+      "name": "g0-01-model.xml",
+      "execution_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/g0-01/model.xml",
+      "size": 18826,
+      "sha256": "c0046eae90ddc48f030acc0729c425117a878b3e6c296d2d7dd3600bfb316ad1"
+    },
+    {
+      "name": "g0-02-trajectory.npz",
+      "execution_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/g0-02/trajectory.npz",
+      "size": 50385,
+      "sha256": "a91351ab5a6f4bdcf2bfd4b852403b80e4adffad0477cecd5b27e9364a1e0f31"
+    },
+    {
+      "name": "g0-02-complete-mission.mp4",
+      "execution_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/g0-02/complete-mission.mp4",
+      "size": 128141,
+      "sha256": "7e3db253a4c957998cdc0014aba4ea8692e5cc61fc2e19fd26ab66b393545a76"
+    },
+    {
+      "name": "g0-02-model.xml",
+      "execution_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/g0-02/model.xml",
+      "size": 19042,
+      "sha256": "78d08b97ecb1df8d7ecaf6e170c3d48307b95ea633afd1bd87e6e69e02514684"
+    },
+    {
+      "name": "initialization-and-build-logs.tar.gz",
+      "execution_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/initialization-and-build-logs.tar.gz",
+      "size": 80165,
+      "sha256": "9b3255c3be63a21b2b4443a436e38fb5f5b655d667472a656cb237817599b717"
+    }
+  ],
+  "source_commit": "728207e6ba8fd6d316cd1ae8ebc8bb920b0fcade",
+  "configuration_sha256": "c5bb4a1a74eeb6e58506a2297885085a0dcd4aaa5dbe2f92212ad75320a833ea",
+  "environment": {
+    "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/envs/mjpc-go2",
+    "packages": [
+      "absl-py==2.5.1",
+      "build==1.6.1",
+      "cmake==3.28.4",
+      "contourpy==1.3.3",
+      "cycler==0.12.1",
+      "etils==1.14.0",
+      "fonttools==4.67.0",
+      "fsspec==2026.9.0",
+      "glfw==2.11.0",
+      "grpcio==1.85.0",
+      "grpcio-tools==1.85.0",
+      "ImageIO==2.38.1",
+      "imageio-ffmpeg==0.6.0",
+      "kiwisolver==1.5.1",
+      "matplotlib==3.11.2",
+      "mujoco @ file:///home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/python-mujoco-build",
+      "ninja==1.13.2",
+      "numpy==2.4.6",
+      "packaging==26.3",
+      "pillow==13.0.0",
+      "protobuf==7.36.2",
+      "PyOpenGL==3.1.10",
+      "pyparsing==3.3.3",
+      "pyproject_hooks==1.3.3",
+      "python-dateutil==3.0.0",
+      "scipy==1.17.1",
+      "six==1.17.0",
+      "typing_extensions==4.16.0",
+      "tzdata==2026.5",
+      "zipp==4.1.2"
+    ]
+  },
+  "timing_scope": "Shared server, synchronous slow simulation; separate planning, feedback RPC, state/parameter RPC, physical integration and total wall times. No NX measurement.",
+  "build": {
+    "author_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+    "project_main_base": "f1299d8184487c493c36ddad168349e23f48b6f7",
+    "environment": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/envs/mjpc-go2",
+    "source": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2",
+    "binary": {
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/bin/agent_server",
+      "size_bytes": 13942000,
+      "sha256": "4094365ae34ce54581944bf4c3d7ef836b6de41f148e0f8abe963be084a7f49a"
+    },
+    "native_mujoco_library": {
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/lib/libmujoco.so.3.2.3",
+      "size_bytes": 3911192,
+      "sha256": "bd8e75dd9ee531758f8d71a9c5b5b26b8b5b0097235f9719f21a38879b889792"
+    },
+    "python_mujoco_library": {
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/envs/mjpc-go2/lib/python3.11/site-packages/mujoco/libmujoco.so.3.2.3",
+      "size_bytes": 3911192,
+      "sha256": "bd8e75dd9ee531758f8d71a9c5b5b26b8b5b0097235f9719f21a38879b889792"
+    },
+    "python_mujoco_wheel": {
+      "path": "/home/fanyuan/.cache/pip/wheels/49/23/b0/6c41d11fd3faee725b367205d606f0cf05240348db392c775c/mujoco-3.2.3-cp311-cp311-linux_x86_64.whl",
+      "size_bytes": 4123887,
+      "sha256": "8ffb1d86ba2a6188db81ec04bcd435c2e0605418395a5f4ce78fda91c8f50b5a"
+    },
+    "author_source_archive": {
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mjpc-author-source.tar.gz",
+      "size_bytes": 9276500,
+      "sha256": "b4317ce4c1e6c8b3d5f283743ad893c88b3b042b77fdd35d327269137da3e84a"
+    },
+    "eigen_source_archive": {
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/pinned-deps/eigen-33d0937.tar.gz",
+      "size_bytes": 2878635,
+      "sha256": "1f4babf536ce8fc2129dbf92ff3be54cd18ffb2171e9eb40edd00f0a045a54fa"
+    },
+    "eigen_commit": "33d0937c6bdf5ec999939fb17f2a553183d14a74",
+    "resolved_dependency_commits": {
+      "pinned-deps/dm_control": "774f46182140106e22725914aad3c6299ed91edd",
+      "pinned-deps/grpc": "e5ae3b6b44bf3b64d24bfb4b4f82556239b986db",
+      "pinned-deps/menagerie": "d82891f8b6c576f9f6a9df308f3a1155ebedbc40",
+      "pinned-deps/mujoco": "088079eff0450e32b98ee743141780ed68307506",
+      "build/_deps/abseil-cpp-src": "fb3621f4f897824c0dbe0615fa94543df6192f30",
+      "build/_deps/ccd-src": "7931e764a19ef6b21b443376c699bbc9c6d4fba8",
+      "build/_deps/cereal_lib-src": "ebef1e929807629befafbb2918ea1a08c7194554",
+      "build/_deps/glfw3-src": "7482de6071d21db77a7236155da44c172a7f6c9e",
+      "build/_deps/glm_lib-src": "89e52e327d7a3ae61eb402850ba36ac4dd111987",
+      "build/_deps/googletest-src": "b514bdc898e2951020cbdca1304b75f5950d1f59",
+      "build/_deps/lodepng-src": "b4ed2cd7ecf61d29076169b49199371456d4f90b",
+      "build/_deps/marchingcubecpp-src": "f03a1b3ec29b1d7d865691ca8aea4f1eb2c2873d",
+      "build/_deps/qhull-src": "0c8fc90d2037588024d9964515c1e684f6007ecc",
+      "build/_deps/sdflib-src": "1927bee6bb8225258a39c8cbf14e18a4d50409ae",
+      "build/_deps/spdlog_lib-src": "eb3220622e73a4889eee355ffa37972b3cac3df5",
+      "build/_deps/tinyobjloader-src": "1421a10d6ed9742f5b2c1766d22faa6cfbc56248",
+      "build/_deps/tinyxml2-src": "9a89766acc42ddfa9e7133c7d81a5bda108a0ade",
+      "python-mujoco-build/build/temp.linux-x86_64-cpython-311/_deps/abseil-cpp-src": "4447c7562e3bc702ade25105912dce503f0c4010",
+      "python-mujoco-build/build/temp.linux-x86_64-cpython-311/_deps/glfw3-src": "7482de6071d21db77a7236155da44c172a7f6c9e",
+      "python-mujoco-build/build/temp.linux-x86_64-cpython-311/_deps/lodepng-src": "b4ed2cd7ecf61d29076169b49199371456d4f90b",
+      "python-mujoco-build/build/temp.linux-x86_64-cpython-311/_deps/pybind11-src": "941f45bcb51457884fa1afd6e24a67377d70f75c",
+      "pinned-deps/grpc/third_party/boringssl-with-bazel": "2ff4b968a7e0cfee66d9f151cb95635b43dc1d5b",
+      "pinned-deps/grpc/third_party/cares/cares": "6360e96b5cf8e5980c887ce58ef727e53d77243a",
+      "pinned-deps/grpc/third_party/protobuf": "6b5d8db01fe47478e8d400f550e797e6230d464e",
+      "pinned-deps/grpc/third_party/re2": "0c5616df9c0aaa44c9440d87422012423d91c7d1"
+    },
+    "build_commands": {
+      "headless": "set -e\nexport PATH=/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/envs/mjpc-go2/bin:$PATH\nexport HTTPS_PROXY=http://127.0.0.1:17897 HTTP_PROXY=http://127.0.0.1:17897 GIT_CONFIG_NOSYSTEM=1\ngit -c http.version=HTTP/1.1 -C pinned-deps/grpc submodule update --init --depth=1 --jobs=2 third_party/boringssl-with-bazel third_party/cares/cares third_party/protobuf third_party/re2\ncmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DMJPC_BUILD_GRPC_SERVICE=ON -DMJPC_BUILD_TESTS=OFF -DMJPC_GRPC_BUILD_TESTS=OFF -DPYMJPC_BUILD_TESTS=OFF -DBUILD_TESTING=OFF -DMUJOCO_BUILD_TESTS=OFF -DFETCHCONTENT_QUIET=OFF -DFETCHCONTENT_SOURCE_DIR_MUJOCO=$PWD/pinned-deps/mujoco -DFETCHCONTENT_SOURCE_DIR_MENAGERIE=$PWD/pinned-deps/menagerie -DFETCHCONTENT_SOURCE_DIR_DM_CONTROL=$PWD/pinned-deps/dm_control -DFETCHCONTENT_SOURCE_DIR_GRPC=$PWD/pinned-deps/grpc\nnice -n 10 cmake --build build --target agent_server -j 5\n",
+      "python": "set -e\nexport PATH=/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/envs/mjpc-go2/bin:$PATH\nexport HTTPS_PROXY=http://127.0.0.1:17897 HTTP_PROXY=http://127.0.0.1:17897 GIT_CONFIG_NOSYSTEM=1\nexport MUJOCO_PATH=$PWD/mujoco-runtime MUJOCO_PLUGIN_PATH=$PWD/mujoco-runtime/plugin\nexport CMAKE_GENERATOR=Ninja MUJOCO_CMAKE_ARGS='-DCMAKE_JOB_POOLS=compile_pool=5 -DCMAKE_JOB_POOL_COMPILE=compile_pool -DFETCHCONTENT_SOURCE_DIR_EIGEN=/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/pinned-deps/eigen'\nnice -n 10 python -m pip install --no-build-isolation --no-deps ./python-mujoco-build\n",
+      "resume_native": "nice -n 10 cmake --build build --target agent_server -j 7",
+      "python_source": "Copy pinned MuJoCo python/, LICENSE, cmake/*.cmake, simulate/; run generate_enum_traits.py, generate_function_traits.py, generate_spec_bindings.py with PYTHONPATH pinned MuJoCo root.",
+      "agent_api": "Generate agent_pb2.py/agent_pb2_grpc.py using grpc_tools.protoc -I official python source --python_out=official python source --grpc_python_out=official python source on copied mjpc/grpc/agent.proto. Add official python source in env site-packages/mjpc-source.pth.",
+      "strict_aliasing_rebuild": "cmake -S . -B build -DFETCHCONTENT_FULLY_DISCONNECTED=ON; nice -n 10 cmake --build build --target agent_server -j 7",
+      "strict_aliasing_execution": "Direct foreground SSH exec session; no tmux."
+    },
+    "necessary_build_adjustments": [
+      {
+        "path": "mjpc/tasks/common_assets/reorientation_cube.xml",
+        "change": "CRLF to LF only",
+        "reason": "GNU patch stripped patch CRs but source retained CRLF. No Go2 model/controller change."
+      },
+      {
+        "change": "Stage standard libmujoco.so symlink to exact libmujoco.so.3.2.3",
+        "reason": "Python CMake find_library requires conventional link name."
+      },
+      {
+        "change": "Use fixed Eigen commit archive as FETCHCONTENT_SOURCE_DIR_EIGEN",
+        "reason": "GitLab git endpoint returned load errors; source archive is same commit."
+      },
+      {
+        "path": "mjpc/CMakeLists.txt",
+        "change": "target_compile_options(libmjpc PRIVATE -fno-strict-aliasing)",
+        "reason": "Pinned author utilities.cc uses reinterpret_cast pointer type punning; GCC Release/LTO miscompiled ReinterpretAsInt(double). Actual failure was a bogus gait index in FootStep, confirmed by parent source/disassembly/gdb. Only author libmjpc C++ target rebuilt; solver source/parameters and MuJoCo/Python shared libraries unchanged.",
+        "modified_file": {
+          "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/mjpc/CMakeLists.txt",
+          "size_bytes": 6616,
+          "sha256": "3eab9f8753a334a9dc7c99377789860ac0fadb364827116fe1a3b35ea02db877"
+        }
+      }
+    ],
+    "resource_policy": {
+      "native_compile_workers_initial": 5,
+      "native_compile_workers_final": 7,
+      "python_compile_pool": 5,
+      "nice": 10,
+      "gpu_compute_used_by_build": false
+    },
+    "network_scope": "Build-only GIT_CONFIG_NOSYSTEM=1 and localhost:17897 SSH proxy. Existing /etc/gitconfig points to unreachable 192.168.137.1:7897 and was not edited.",
+    "testing": {
+      "MJPC_BUILD_TESTS": false,
+      "MJPC_GRPC_BUILD_TESTS": false,
+      "PYMJPC_BUILD_TESTS": false,
+      "MUJOCO_BUILD_TESTS": false,
+      "BUILD_TESTING": false,
+      "tests_or_smoke_imports_run": 0,
+      "physical_starts_by_builder": 0
+    },
+    "python_packages": [
+      "absl-py==2.5.1",
+      "build==1.6.1",
+      "cmake==3.28.4",
+      "contourpy==1.3.3",
+      "cycler==0.12.1",
+      "etils==1.14.0",
+      "fonttools==4.67.0",
+      "fsspec==2026.9.0",
+      "glfw==2.11.0",
+      "grpcio==1.85.0",
+      "grpcio-tools==1.85.0",
+      "ImageIO==2.38.1",
+      "imageio-ffmpeg==0.6.0",
+      "kiwisolver==1.5.1",
+      "matplotlib==3.11.2",
+      "mujoco @ file:///home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/python-mujoco-build",
+      "ninja==1.13.2",
+      "numpy==2.4.6",
+      "packaging==26.3",
+      "pillow==13.0.0",
+      "protobuf==7.36.2",
+      "PyOpenGL==3.1.10",
+      "pyparsing==3.3.3",
+      "pyproject_hooks==1.3.3",
+      "python-dateutil==3.0.0",
+      "scipy==1.17.1",
+      "six==1.17.0",
+      "typing_extensions==4.16.0",
+      "tzdata==2026.5",
+      "zipp==4.1.2"
+    ],
+    "build_history": [
+      {
+        "binary": {
+          "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/bin/agent_server",
+          "size_bytes": 13952504,
+          "sha256": "7b2eeaa1b043c1e63d46a422f04b710e2ab439d5db78390122fb88031d295ff1"
+        },
+        "replaced_after": "Actual author G0 attempt reached a server SIGSEGV before plant integration. Parent/API source+disassembly+gdb diagnosis found strict-aliasing undefined behavior in ReinterpretAsInt(double), passing an invalid gait index into kGaitPhase."
+      }
+    ],
+    "strict_aliasing_resolved_compile_commands": [
+      {
+        "directory": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build",
+        "command": "/usr/bin/c++ -DMJSIMULATE_STATIC -DmjUSEPLATFORMSIMD -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/mjpc/.. -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/mjpc/.. -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/_deps/abseil-cpp-src -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/_deps/glfw3-src/include -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/_deps/lodepng-src -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/pinned-deps/mujoco/include -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/pinned-deps/mujoco/simulate -O3 -DNDEBUG -std=c++20 -flto=auto -fno-fat-lto-objects -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -fdata-sections -ffunction-sections -mavx -Werror -Wall -Wimplicit-fallthrough -Wunused -Wvla -Wno-int-in-bool-context -Wno-sign-compare -Wno-unknown-pragmas -Wimplicit-fallthrough=5 -Wno-maybe-uninitialized -fno-strict-aliasing -o mjpc/CMakeFiles/libmjpc.dir/utilities.cc.o -c /home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/mjpc/utilities.cc",
+        "file": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/mjpc/utilities.cc",
+        "output": "mjpc/CMakeFiles/libmjpc.dir/utilities.cc.o"
+      },
+      {
+        "directory": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build",
+        "command": "/usr/bin/c++ -DMJSIMULATE_STATIC -DmjUSEPLATFORMSIMD -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/mjpc/.. -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/mjpc/.. -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/_deps/abseil-cpp-src -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/_deps/glfw3-src/include -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/_deps/lodepng-src -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/pinned-deps/mujoco/include -I/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/pinned-deps/mujoco/simulate -O3 -DNDEBUG -std=c++20 -flto=auto -fno-fat-lto-objects -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -fdata-sections -ffunction-sections -mavx -Werror -Wall -Wimplicit-fallthrough -Wunused -Wvla -Wno-int-in-bool-context -Wno-sign-compare -Wno-unknown-pragmas -Wimplicit-fallthrough=5 -Wno-maybe-uninitialized -fno-strict-aliasing -o mjpc/CMakeFiles/libmjpc.dir/tasks/quadruped/quadruped.cc.o -c /home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/mjpc/tasks/quadruped/quadruped.cc",
+        "file": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/mjpc/tasks/quadruped/quadruped.cc",
+        "output": "mjpc/CMakeFiles/libmjpc.dir/tasks/quadruped/quadruped.cc.o"
+      }
+    ]
+  },
+  "actual_execution_transport": "SSH foreground command sessions. The earlier tmux processes were model setup only; no physical mission was advanced in tmux.",
+  "setup_attempts_without_plant_steps": [
+    {
+      "id": "setup-01-no-plant",
+      "cause": "Official binary model Init exceeded 20MiB RPC message limit",
+      "physical_starts": 0
+    },
+    {
+      "id": "setup-02-no-plant",
+      "cause": "Cost readback before initial SetState geometry initialization: ground ray error",
+      "physical_starts": 0
+    },
+    {
+      "id": "setup-03-no-plant",
+      "cause": "GCC/LTO strict-aliasing miscompilation: invalid gait table access in first SetState",
+      "physical_starts": 0
+    },
+    {
+      "id": "setup-04-no-plant",
+      "cause": "Same full-task setup under gdb to capture native fault stack",
+      "physical_starts": 0
+    },
+    {
+      "id": "setup-05-no-plant",
+      "cause": "Same full-task setup under gdb to capture erroneous gait register and instruction",
+      "physical_starts": 0
+    }
+  ],
+  "interpretation_by_attempt": {
+    "g0-01": {
+      "classification": "confirmed_adapter_XML_serialization_error",
+      "actual_biastype": 0,
+      "termination": "actual body fall at 0.178s",
+      "cause": "mj_saveLastXML did not preserve an in-memory biastype mutation. Actual tau=60*q_target, calf=-50.2656Nm. Retain this start; it is not valid evidence against the intended affine-PD iLQG."
+    },
+    "g0-02": {
+      "classification": "author_planner_ground_query_fatal",
+      "actual_biastype": 1,
+      "termination": "third planner_step at actual t=0.040s did not return after Ground ray error",
+      "error": "no group 0 geom detected by raycast",
+      "actual_body_fall": false,
+      "final_body_z_m": 0.29803754523693493,
+      "intervention": "SIGTERM sent only to the stalled agent_server so the official RPC returned an error and the Python recorder saved existing trajectory. No additional physics was run.",
+      "timing_caveat": "Only two completed planner calls enter timing quantiles; the incomplete third call is excluded. Wall 181.6134s includes the failure wait and diagnosis, not useful simulation throughput.",
+      "unobserved": "The exact failing predicted or finite-difference state was not returned by the author server. Do not infer it from the last actual body state."
+    }
+  },
+  "robot_mass_clarification": {
+    "g0-01": {
+      "robot_subtree_kg": 15.806408000000001,
+      "all_compiled_bodies_kg": 23.044637473870885,
+      "note": "The executed resolved mass_kg field summed every body and included the noncolliding mocap goal. This annotation preserves and corrects the interpretation of that original field; robot physical mass was unchanged.",
+      "compiled_actuator_biastype": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "g0-02": {
+      "robot_subtree_kg": 15.806408000000001,
+      "all_compiled_bodies_kg": 23.044637473870885,
+      "note": "The executed resolved mass_kg field summed every body and included the noncolliding mocap goal. This annotation preserves and corrects the interpretation of that original field; robot physical mass was unchanged.",
+      "compiled_actuator_biastype": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "compiled_models_retained_on_execution_host": "Each model.mjb remains beside its trace; released prepared XML plus pinned author source/assets and the entrypoint reproduce it. The duplicate mesh payloads are not uploaded.",
+  "publication": {
+    "status": "prepared_not_uploaded",
+    "release_tag": "tm-s1-go2-wb-baseline-evidence-20261026",
+    "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-baseline-evidence-20261026"
+  },
+  "all_new_physical_starts": 2,
+  "G0_stage_allowance_remaining": 0,
+  "unused_global_allowance_not_transferable": 6
+}
