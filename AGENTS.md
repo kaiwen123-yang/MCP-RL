@@ -4,7 +4,7 @@
 
 **面向重复踩踏的四足机器人地面记忆辨识与跨步协同控制。** 研究同一世界地块经历前足加载、离足恢复、后足/返程重访时，后续支撑需求怎样反过来改变当前决策。PANN/PINN、MPC、RL分别承担材料状态预测、可执行规划、长期价值学习，名称拼接不构成创新。
 
-用户于 **2026-10-26** 授权执行[计划第5.6节](docs/TERRAIN_MEMORY_PLAN.md)的“复用TM20作者Go2控制器，建立原完整刚地任务基线”。本轮已完成必要构建及 **2次G0真实任务启动，0次整程完成**；G0阶段额度已耗尽，G1开发与正式条件均未执行。当前仅做实际结果、连续证据和GitHub发布收尾，不再启动物理任务；余下总预算不得转移。配置为 `experiments/terrain_memory/s1-go2-wb-baseline.json`，实际记录见[运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json)。
+用户于 **2026-10-26** 授权执行[计划第5.6节](docs/TERRAIN_MEMORY_PLAN.md)的“复用TM20作者Go2控制器，建立原完整刚地任务基线”。本轮已完成必要构建及 **2次G0真实任务启动，0次整程完成**；G0阶段额度已耗尽，G1开发与正式条件均未执行。实际结果和连续证据已发布GitHub/Release并确认size/digest，本轮结束，不再启动物理任务；余下总预算不得转移。配置为 `experiments/terrain_memory/s1-go2-wb-baseline.json`，实际记录见[运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json)。
 
 第四轮T1R与本轮G0均已到达各自停止条件，不重新启动旧协议，也不继续修补T1/T1R。旧R1/R2/S0与历史S1的实现、配置和正负结果保持冻结。
 

@@ -6,7 +6,7 @@
 
 ## 当前结果：作者Go2基线G0未通过，停止后续物理任务并发布实际范围
 
-**`tm-s1-go2-wb-baseline-20261026` 已执行2次G0真实任务，0次整程完成；G0额度已耗尽，G1开发与三个正式条件均未执行。** 本轮尚未建立可用的刚地整程执行基线。保留全部实际结果，完成发布后结束；未使用的总预算不转为额外试验。固定配置见 [s1-go2-wb-baseline.json](experiments/terrain_memory/s1-go2-wb-baseline.json)，[计划第5.6节](docs/TERRAIN_MEMORY_PLAN.md)保留协议和实际阻碍，[AGENTS.md](AGENTS.md)规定停止边界。
+**`tm-s1-go2-wb-baseline-20261026` 已执行2次G0真实任务，0次整程完成；G0额度已耗尽，G1开发与三个正式条件均未执行。** 本轮尚未建立可用的刚地整程执行基线。全部实际结果已提交，Release资产size/digest已核验，本轮结束；未使用的总预算不转为额外试验。固定配置见 [s1-go2-wb-baseline.json](experiments/terrain_memory/s1-go2-wb-baseline.json)，[计划第5.6节](docs/TERRAIN_MEMORY_PLAN.md)保留协议和实际阻碍，[AGENTS.md](AGENTS.md)规定停止边界。
 
 | 实际启动 | 物理终止时刻 | 结果与证据范围 |
 |---|---:|---|
@@ -19,7 +19,7 @@
 
 作者机器人子树质量 **15.806408kg**，本仓原机器人为 **15.206408kg**。整model质量23.044637kg还包含无碰撞mocap目标球约7.238kg，不能当作机器人质量；作者模型也未启用本项目23.7/45.43Nm力矩界。G1模型映射虽已编写，**没有G1实验结果**。
 
-[运行入口](scripts/run_s1_go2_wb_baseline.py)、[模型映射](scripts/s1_go2_wb_model.py)与[运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json)记录实际实现、全部启动和未执行阶段。本轮交付范围为两次从启动到终止的连续状态/关节目标/力矩/接触与视频，以及构建和故障证据；Release发布确认写入索引，不将待发布标为已发布。
+[运行入口](scripts/run_s1_go2_wb_baseline.py)、[模型映射](scripts/s1_go2_wb_model.py)与[运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json)记录实际实现、全部启动和未执行阶段。本轮交付范围为两次从启动到终止的连续状态/关节目标/力矩/接触与视频，以及构建和故障证据；[Release证据](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-baseline-evidence-20261026)的7个资产（614,812 bytes）均已按size和SHA256核验；完整记录见索引。
 
 第二轮冻结B1的刚地/KV8000各5/5继续作为历史成功参照，本轮没有重跑。R1/R2/S0与历史S1均冻结；新增PANN/PPO/SHAC训练0、硬件0、NX实时未测，TM02与材料历史决策收益未在本轮评价。不继续T1/T1R补丁，不因G0未通过自动换平台或扩量。
 
