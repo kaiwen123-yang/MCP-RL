@@ -1,0 +1,805 @@
+{
+  "config": {
+    "purpose": "Repair the demonstrated contact-execution defects in third-round T1 within the retained sampling MPC, then evaluate the unchanged complete Go2 mission in a conditional rigid -> KV8000 -> TM02 sequence. This is execution feasibility, not a validated terrain-memory or RL innovation.",
+    "run_id": "tm-s1-contact-execution-20261026",
+    "stage": "S1_contact_execution_repair",
+    "implementation_status": "implemented_pending_full_mission_evidence",
+    "target_entrypoint": "scripts/run_terrain_memory_s1.py",
+    "reviewed_source_commit": "f0a1632f445415be6c33a7eac31c3a2c974d1f4a",
+    "reviewed_results": {
+      "source_run": "tm-s1-contact-transition-20261025",
+      "index": "results/terrain_memory/simulation/tm-s1-contact-transition-20261025/index.json",
+      "derived_table": "results/terrain_memory/simulation/tm-s1-contact-transition-20261025/mechanism-summary.csv",
+      "derived_script": "scripts/analyze_s1_transition_mechanism.py",
+      "source_input_files": 47,
+      "source_input_manifest_sha256": "72ba878cf929c56bbe2b7c3966f2afe32e3175d8f91d98b2a03ddd0669158901",
+      "formal_records": 30,
+      "formal_successes": 8,
+      "actual_new_starts": 33,
+      "T1_successes_by_terrain": {
+        "rigid": 0,
+        "kv_moderate": 0,
+        "tm02_anchor": 0
+      },
+      "T2_mission_starts": 0,
+      "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-contact-transition-evidence-20261025"
+    },
+    "execution": {
+      "host": "fy-5080",
+      "environment": "work/envs/pympc",
+      "environment_setup": "scripts/tm01_env.sh",
+      "new_neural_training_runs": 0,
+      "new_RL_training_runs": 0,
+      "activate_hardware": false,
+      "development_maximum_mission_attempts": 3,
+      "development_terrain": "rigid",
+      "development_seed_priority": [
+        4,
+        3
+      ],
+      "development": "Start the original complete mission, first seed4 and then preferably seed3. Count all early failures, lost records and superseded starts. Use at most three attempts, not three per seed or per version. If no version with a completed rigid mission can be frozen, end this round and publish the specific impediment; do not expand to soft terrains.",
+      "freeze": "Freeze T1R implementation and all configuration before formal execution. Reuse identical final-version development missions. Do not tune between formal seeds. If a further code change is necessary after formal execution starts, end the current round with its actual scope rather than refresh the budget or silently pool versions.",
+      "parallelism": "First resolve the named seed4 failure. Within a subsequent already-open terrain stage, independent seeds may use the existing executor. Do not start a later terrain stage before its prerequisite outcomes are known. Record resource sharing; no new scheduler and no exclusive-speed or NX claim from shared-resource wall times."
+    },
+    "base": {
+      "locomotion_repository": "https://github.com/iit-DLSLab/Quadruped-PyMPC",
+      "locomotion_commit": "c46cb9a3960554cffc467a71c6674b65c0f4a2c8",
+      "locomotion_runner": "scripts/run_tm01_r1.py",
+      "robot": "go2",
+      "robot_parameters": "Reuse the first-S1 formal Go2 MJCF, model digest, actual mass/inertia, foot sites/geometries, joint order, limits and initial pose. Inspect executed metadata/patches; do not reparameterize from Aliengo or choose a new model.",
+      "material_config": "experiments/tm02/r2-multihistory.json",
+      "material_source_run": "tm02-memory-study-20261023",
+      "material_source_output_root": "outputs/terrain_memory/reproduction/material/tm02-memory-study-20261023",
+      "material_source_index": "results/terrain_memory/reproduction/material/tm02-memory-study-20261023/index.json",
+      "material_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-memory-study-evidence-20261023",
+      "material_archive_sha256": "c39db8462f357c562f041ff99d7ff3b426fa0521dc8fa8b1f88c3bd601407ae7",
+      "frozen_predictor": {
+        "id": "B_random1000--ideal",
+        "initialization_seed": 0,
+        "weights_relative_to_source_run": "selected/B_random1000--ideal-potentials.npz",
+        "weights_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
+        "reuse": "Use saved potentials and all normalization fields unchanged. The auxiliary training RNN is not the deployed constitutive predictor."
+      },
+      "frozen_stages": [
+        "R1",
+        "R2_round1",
+        "R2_round2",
+        "R2_round3",
+        "S0",
+        "S1_round1",
+        "S1_round2",
+        "S1_round3"
+      ],
+      "material_predictor_usage": "Reference constitutive law and true current material state are an explicit mechanism reference. T1R uses no new or existing learned network in its controller; R2 weights remain frozen."
+    },
+    "task": {
+      "world_frame": "x follows the outbound corridor; z points upward; virgin surface z=0.",
+      "initial_xy_m": [
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "initial_stand_s": 2,
+      "turnaround_xy_m": [
+        3,
+        0
+      ],
+      "turn_angle_rad": 3.141592653589793,
+      "return_xy_m": [
+        0,
+        0
+      ],
+      "command_speed_m_s": 0.25,
+      "turn_yaw_rate_rad_s": 0.5,
+      "extra_turnaround_hold_s": 0,
+      "terminal_stand_s": 2,
+      "maximum_episode_s": 60,
+      "goal_position_radius_m": 0.15,
+      "turn_heading_tolerance_rad": 0.15,
+      "terminal_speed_max_m_s": 0.05,
+      "velocity_reference": "One common smooth acceleration/deceleration rule, recorded in the resolved configuration; goal completion is state-based, not an elapsed-time label.",
+      "soft_region_xy_m": {
+        "x": [
+          0.8,
+          2.2
+        ],
+        "y": [
+          -0.6,
+          0.6
+        ]
+      },
+      "continuous_history": "One complete outbound-turn-return episode. All patches continue evolving, including unloaded patches; reset virgin state only between independent episodes.",
+      "nominal_body_revisit_gap_s": 12.683185307179587,
+      "revisit_interpretation": "This body-path estimate ignores foot offsets and stopping ramps. Record actual patch loading/unloading/revisit intervals and footprint overlap. Return is primarily a long-gap recovery control, not evidence for long-lived physical memory; cross-leg overlap within each traversal is the main current mechanism.",
+      "standing": "Use the same true stance/gait transition for every controller; zero commanded velocity with continued stepping is not the required start/end stand."
+    },
+    "terrains": [
+      {
+        "id": "rigid",
+        "normal_contact": "Native rigid ground",
+        "role": "Whole-mission Go2 transfer reference"
+      },
+      {
+        "id": "tm02_anchor",
+        "normal_contact": "Frozen TM02 reference, free lateral stress, mixed normal displacement boundary",
+        "gamma": 0.025,
+        "equivalent_footprint_area_m2": 0.001,
+        "thickness_m": 0.05,
+        "max_absolute_principal_strain": 0.02,
+        "scaling": "Multiply free energy and dissipation potential by gamma consistently. Preserve strain/internal-state coordinates, weights, normalization and recovery law; convert physical stress from original stress by gamma.",
+        "scope": "Declared homogeneous independent-column synthetic contact. Not calibrated grass, sand, snow or mud. Do not further soften material or lengthen relaxation."
+      },
+      {
+        "id": "kv_moderate",
+        "normal_contact": "Unilateral Kelvin-Voigt contact with zero-force recovery",
+        "k_N_per_m": 8000,
+        "d_N_s_per_m": 400,
+        "source": "TM03 STANCE \u00a7VII-A simulation setting",
+        "role": "Published compliant-contact scale, not long-memory material"
+      }
+    ],
+    "contact": {
+      "authority": "Actual foot indentation/velocity and evolving material state determine the unique physical reaction applied to the actual foot body/contact point.",
+      "soft_region_native_normal_contact": false,
+      "hard_region": "Keep native contact outside the soft region. Boundary footprint assignment must not apply both full-foot native support and full-foot material support.",
+      "force_application": "Apply the physical material reaction through the simulator's force-at-contact-point mechanism. MPC planned GRF affects joint commands only and is never injected as environmental support.",
+      "common_outputs": [
+        "contact_state",
+        "actual_grf",
+        "surface_displacement",
+        "support_evaluation"
+      ],
+      "spatial_state": "Preserve the second-S1 world-fixed 0.02m columns, exact overlap area weights, equivalent sole area and native-priority boundary assignment unchanged.",
+      "area_consistency": "TM02 0.001 m2 and KV k,d define per-equivalent-footprint contact scales. Partition area/stiffness consistently across cells; do not multiply a full-foot stiffness/area by the number of touched cells. The effective flat-foot area remains an explicit approximation to Go2's actual foot.",
+      "unilateral": "Normal force >=0, contact gap >=0, no adhesion. Determine contact/release from the current recovering surface and force consistency; no independent displacement plus force waveform.",
+      "tm02_mixed_boundary": "Given actual epsilon11=-delta/H, solve the other five strain components plus six internal variables with five zero non-normal stresses and six evolution residuals, or a documented equivalent isotropic reduction. Full strain [epsilon11,0,0,0,0,0] is not a free-side boundary.",
+      "off_contact": "Zero external stress/normal force, evolving free recovery. Do not clamp strain to zero or reset state at each contact.",
+      "kv_law": "During valid contact N=k*delta+d*d_delta/dt with consistent unilateral release. Off contact follow d*d_delta/dt+k*delta=0. k,d refer to the whole equivalent contact; no unsupported conversion to 3D E or direct solref substitution.",
+      "state_integration": "Stateful incremental update from the previous state, no replay of the whole history on each control cycle. Use common physical time across all active and inactive touched patches.",
+      "tangent": {
+        "model": "Regularized dissipative Coulomb approximation",
+        "mu": 0.5,
+        "regularization_speed_m_s": 0.01,
+        "formula": "f_t=-mu*N*v_t/sqrt(dot(v_t,v_t)+v_eps^2)",
+        "scope": "Shared by all soft cases/controllers; not exact static friction. Disclose native rigid-ground friction differences; primary method comparisons are within terrain."
+      },
+      "domain": "Report material-domain exits separately from natural-terrain collapse and numerical errors. Do not silently clip strain/force or inject support. Log excursions outside the R2 evaluated stress/rate envelope.",
+      "numerical_resolution": "Freeze the second-S1 physics step at 0.0002s in this round. Do not add another step-size refinement as a substitute for contact-transition repair. If actual evidence shows this frozen numerical setting prevents a valid conclusion, preserve the failure and state the limitation within the same task budget.",
+      "reference_and_gap": "Total material strain is measured relative to the undeformed reference plane. Contact gap is measured relative to the currently recovering surface. Do not substitute incremental penetration for total strain or subtract stored deformation twice.",
+      "nonfoot_contact": "Retain the current non-foot collision/failure boundary. KV3500 remains a frozen negative case: its non-foot contact does not by itself prove robot collapse or soil failure. Do not add calf-soft-material physics in this round."
+    },
+    "numerics": {
+      "physics_substeps": 10,
+      "physics_dt_s": 0.0002,
+      "low_level_dt_s": 0.002,
+      "native_rigid_contact_solref": [
+        0.002,
+        1
+      ],
+      "native_rigid_contact_solimp": [
+        0.99,
+        0.999,
+        0.001,
+        0.5,
+        2
+      ],
+      "native_rigid_contact_margin_m": 0,
+      "native_boundary_correction": "The retained default native contact allowed 6.222 mm of hard-plane penetration at the FR boundary crossing in development-v5. This numerical hard-ground deformation was incorrectly inherited as imposed TM02 indentation. Use the same stiff native z=0 constraint regularization for all four terrains; no robot mass, geometry, joint, or torque parameter changes.",
+      "reason": "Development-v3 TM02 C0 seed-0 exited the strain domain at 5.168 s: Cartesian geometry was one MuJoCo integration behind qvel, and a 0.002 s contact step crossed the stiff contact in a single update. Refresh current kinematics and use a common 0.0002 s physics step. Preserve affected development trajectories and the material law."
+    },
+    "control": {
+      "low_level_hz": 500,
+      "mpc_hz": 50,
+      "gait_frequency_hz": 2.4,
+      "support_event_dwell_s": 0,
+      "controller": "T1R",
+      "controller_meaning": "One repaired contact execution of T1, not a fourth algorithm contribution.",
+      "inherited_from": "experiments/terrain_memory/s1-contact-transition.json at f0a1632f445415be6c33a7eac31c3a2c974d1f4a",
+      "retained_mpc_backend": "The same patched nonadaptive fixed-frequency sampling backend as third-round T1; unchanged cost, horizon, 1024 candidates, spline representation, nominal gait and stand-controller selection.",
+      "frozen_components": [
+        "Third-round shared FloatingBaseSwing correction; do not retune or independently change it.",
+        "Existing pre-contact material query, approach-speed formula, quintic trajectory family, stance reference filter and feedback gains.",
+        "Original loading duration and its model-based derivation; an initial established stance keeps its prior initialization, but actual re-contact after losing support uses the same loading law irrespective of has_swung.",
+        "Go2 model, mass, inertia, joint order and actuator bounds; actual physical material reaction, original material parameters and constitutive domain.",
+        "Original nominal phase clock, duty factor, footholds, zero dwell, mission speed, route and success/failure definitions."
+      ],
+      "unsupported_nominal_stance": {
+        "condition": "Nominal stance but no actual physical support, including initial_stand with has_swung=False and later contact loss.",
+        "action": "Use explicit approach/re-contact motion control initialized from the actual or continuously valid p/v/a reference. Invalidate stale support force immediately; each leg has one physical motion/support owner. Do not retain native stance torque or a zero-torque fall-through. Update the existing mode log to match the executed branch.",
+        "unchanged": "Do not pause/reset the nominal gait clock, extend the mission, introduce a new recovery controller or alter the approach-speed formula."
+      },
+      "force_interface": {
+        "route": "Integrate load availability into the existing sampler constraint mapping, with the same mapping for rollout, first-stage output and held-force execution. No new force-allocation QP or full WBC.",
+        "existing_force_constraints": "0 <= Fz <= grf_max and abs(Fx),abs(Fy) <= mu*Fz, using the original resolved bounds.",
+        "new_load_constraint": "0 <= Fz <= alpha[leg,stage]*grf_max; all three components are zero for an unavailable contact.",
+        "alpha_horizon": "Current actual support and contact-entry time determine the current cap. Future caps use the existing predicted touchdown and unchanged loading duration. Do not copy the current contact mask across the entire prediction horizon.",
+        "removed": "Delete post-planning grfs*alpha followed by equal redistribution of the missing force to established contacts. Do not multiply alpha a second time after the shared projection.",
+        "low_level_hold": "Hold the last optimized four-foot force vector f_hold. Every 0.002s, f_cmd = project(current actual contact, current alpha, f_hold) with the same constraint function. Loss of contact zeroes that foot, new loading respects its cap, and other feet do not receive compensating increments.",
+        "gravity_basis": "Do not recompute compute_first_stage_grfs from held parameters using a new contact count: its mg/n term silently redistributes load. Hold the solved force vector, or equivalently retain that solve's gravity and phase bases.",
+        "replanning": "Replan at the next original 50Hz MPC update. Unexpected contact loss can cause a real force/moment deficit before then; record it. Do not claim instantaneous six-dimensional wrench conservation and do not add 500Hz MPC.",
+        "torque_path": "The commanded GRF enters -J^T*f exactly once and is the same vector recorded as commanded. Separate the remaining motion/inertia/bias terms and the actual actuator command. Keep original actuator limits; these force caps do not prove full-body torque feasibility.",
+        "contact_authority": "Actual physical reaction defines contact. No planned force is injected into the environment and no prediction copy changes world material history."
+      },
+      "diagnostic_full_MuJoCo_forecasts": false,
+      "additional_control_algorithms": false
+    },
+    "formal_protocol": {
+      "seed_order": [
+        4,
+        3,
+        0,
+        1,
+        2
+      ],
+      "controller": "T1R",
+      "stages": [
+        {
+          "id": "rigid",
+          "terrain": "rigid",
+          "episodes": 5,
+          "required_previous_stage": null,
+          "expand_only_if": "All 5 complete the original mission; otherwise publish this stage and stop expansion."
+        },
+        {
+          "id": "kv8000",
+          "terrain": "kv_moderate",
+          "episodes": 5,
+          "required_previous_stage": "rigid 5/5 completed",
+          "expand_only_if": "At least 4 of 5 complete the original mission; otherwise publish completed stages and stop expansion."
+        },
+        {
+          "id": "tm02",
+          "terrain": "tm02_anchor",
+          "episodes": 5,
+          "required_previous_stage": "kv8000 at least 4/5 completed",
+          "expand_only_if": "No further physical-mission stage in this round. Publish all 5 outcomes, actual material loads/revisits and the remaining scientific limitation."
+        }
+      ],
+      "interpretation": "Thresholds allocate work to physically executable complete missions, not statistical confidence or a publication pass. Five paired optimizer seeds are not independent terrain realizations. Keep every result in each opened stage; do not use failed short trajectories as faster or lower-energy missions.",
+      "historical_comparisons": [
+        {
+          "id": "T1_previous",
+          "source_run": "tm-s1-contact-transition-20261025",
+          "controller": "T1",
+          "role": "Primary implementation comparison; same T1 moving MPC backend and frozen common swing. Existing records only."
+        },
+        {
+          "id": "B1_third",
+          "source_run": "tm-s1-contact-transition-20261025",
+          "controller": "B1",
+          "role": "Third-round common-correction reference; moving contact sequence/backend authority differs, so not a single-variable T1R ablation."
+        },
+        {
+          "id": "B1_second",
+          "source_run": "tm-s1-control-repair-20261024",
+          "controller": "B1",
+          "role": "Frozen locally successful practical reference (rigid/KV8000 5/5); do not overwrite with third-round B1 or call it a validated memory baseline."
+        }
+      ],
+      "new_T2_missions": 0,
+      "new_B1_missions": 0,
+      "new_B2_B3_missions": 0,
+      "materials_not_added": [
+        "kv_soft_3500",
+        "grass",
+        "sand",
+        "snow",
+        "mud"
+      ],
+      "information_experiment_boundary": "Retain same-input query outputs as diagnostics. Do not execute the old Phase B automatically. Before a later history experiment, establish actual TM02 cross-leg revisit and check the query's free-recovery assumption for footprint cells still loaded by another foot; a virgin-prior comparison also changes geometry and is not pure hidden-memory isolation."
+    },
+    "budget": {
+      "maximum_new_formal_records": 15,
+      "maximum_development_missions": 3,
+      "maximum_new_mission_attempts_including_failures_lost_records_and_superseded_versions": 18,
+      "counting": "A development episode reused under the exact frozen implementation is one start and one formal result, not two. Historical references are not new starts or new formal evidence. Every new physical mission attempt counts, including early failures, missing output and superseded versions. The cap never resets.",
+      "formal_version_policy": "One frozen version per formal protocol. No late common-physics modification or baseline rerun reserve is authorized by this configuration."
+    },
+    "observations_and_metrics": {
+      "outcome": "Complete original out-turn-return-terminal-stand task; retain exact termination, phase, time and actual stage coverage.",
+      "execution": [
+        "same-time f_hold and f_cmd",
+        "actual GRF and its sampling time",
+        "actual/nominal contact and load alpha",
+        "foot p/v/a and reference",
+        "final joint torque command and existing saturation",
+        "GRF, motion, inertia and bias torque terms",
+        "sum(f_cmd-f_hold) and sum(r cross (f_cmd-f_hold)) about the same recorded point"
+      ],
+      "material": [
+        "physical contact and loaded-foot velocity",
+        "domain excursions and failure timing",
+        "world-fixed loading/unloading/revisit state",
+        "front-to-hind and return contact-segment overlap, unloaded interval and residual deformation",
+        "query initial state, predicted response and actual selected approach variable"
+      ],
+      "timing": "Separate MPC, force projection/leg execution, material physics/query and total wall time; record shared resources. Preserve actual solver and actuator limitations.",
+      "paired_metrics": "Completion is primary. Compare duration, positive joint mechanical work, slip, attitude, velocity and force error only for both-completed pairs, alongside all success/failure counts. Mechanical work is not battery use.",
+      "query_metrics": "Report numerical difference magnitude, not only exact != counts. Repeated queries and material cells are not independent missions."
+    },
+    "paper_mechanisms": [
+      {
+        "id": "TM19",
+        "sections": "III-B; IV-B1/B2/B4; V-B; VI-D",
+        "use": "Keep motion/contact force/torque consistent; no whole-platform replacement, no rigid zero-foot-speed assumption on deformable terrain."
+      },
+      {
+        "id": "TM20",
+        "sections": "IV-B; V-A/B",
+        "use": "Prediction and execution share the actual input map; author Go2 code is only a later bounded alternative if this execution foundation remains unusable."
+      },
+      {
+        "id": "TM21",
+        "sections": "III-C/D",
+        "use": "Future RL-MPC must model the actual policy-robot closed-loop response. No RL training, manipulator task or new observer in this round."
+      }
+    ],
+    "outputs": {
+      "result_root": "results/terrain_memory/simulation/tm-s1-contact-execution-20261026",
+      "run_index": "One index containing the exact implementation/configuration, all starts, reused records, executed/unexecuted stages and original command lines.",
+      "compact": "Per-episode outcomes, paired comparisons with source versions, relevant contact-execution event table and figures. Do not add audit/status/review reports.",
+      "large": "Continuous trajectory arrays and representative whole-mission videos, including failures. Upload only new assets from the execution host to GitHub Release; link old evidence.",
+      "no_precreated_success": "Create result records only after actual execution. This plan/configuration is planned_not_executed.",
+      "compact_root": "results/terrain_memory/simulation/tm-s1-contact-execution-20261026",
+      "large_root": "outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026"
+    },
+    "delivery": {
+      "github": true,
+      "local_pc_archive": false,
+      "end_after": "Commit source/configuration/compact results and confirm necessary new Release assets from size/digest. Then end; do not download, copy, mirror, compress or archive results again on the user's computer.",
+      "retain": "Retain normal execution outputs, required checkpoints and historical evidence. Do not delete unrelated files."
+    },
+    "completion": {
+      "no_blind_repeat": "A failed prerequisite ends expansion; publish the actual complete-mission evidence and specific remaining constraint within this budget.",
+      "no_patch_loop": "If no usable rigid-ground execution version results from this bounded correction, stop incremental contact-controller development. Present a concrete decision about reusing an established Go2 execution basis and its integration cost; do not autonomously add a second controller, another matrix or a new reproduction platform.",
+      "next_science": "TM02 complete missions and meaningful actual cross-leg events would make a later causal history experiment possible. They do not by themselves prove memory benefit, unknown-state identifiability, improved PPO or NX deployment.",
+      "forbidden": [
+        "defensive programming",
+        "unit/mock/smoke/import/shape tests",
+        "generic fallbacks or retry frameworks",
+        "status/audit/review reports",
+        "new PANN/PPO training",
+        "hardware activation",
+        "material/domain/task relaxation",
+        "planned-force injection",
+        "local PC post-publish archiving"
+      ]
+    },
+    "resolved_transition": {
+      "common_swing_correction": "World-frame swing acceleration now includes full Jdot*qvel and J_base*qacc_base, plus M_joint_base*qacc_base. Original J.T feedback, gains, leg inertia and bias retained. Latest actual simulator base acceleration is held for the control interval; this remains finite leg inverse dynamics, not coupled WB optimization.",
+      "approach": "At nominal swing midpoint, C2 quintic from ongoing reference p/v/a to predicted free surface with bounded downward velocity and zero acceleration, within original remaining swing. Thereafter continue terminal velocity only until actual contact or next nominal liftoff. Global gait clock unchanged.",
+      "speed_derivation": "v = queried nominal two-leg load compression / low_level_dt. TM02 additionally min with remaining strain-domain displacement/(2*low_level_dt) and margin*sqrt(secant_stiffness/effective_leg_mass). Hard ground v=nominal_load*dt/effective_leg_mass from native 2ms constraint timescale. Effective mass = 1/(Jz*Mleg^-1*Jz.T). No paper speed thresholds.",
+      "loading_duration_s": 0.044721359549995794,
+      "support_reference": "Third-order critically damped C2 continuation of p/v/a toward current common-sole inverse; omega=sqrt(existing Cartesian kp). Same true current material state after touchdown for T1/T2."
+    },
+    "resolved_execution": {
+      "unsupported_stance_duration": "Original swing_period; unchanged quintic and approach-speed formula. Actual p/v/a initially, continuous reference after a supported interval.",
+      "upstream_patch": "experiments/terrain_memory/s1-contact-execution-upstream.patch",
+      "held_force": "Original wrapper stores solved nmpc_GRFs; projection applied once per low-level update.",
+      "sequence": "First four rows are physical contact, last four rows are load-fraction caps; dynamics and gravity basis use only contact rows."
+    },
+    "resolved_numerics": {
+      "physics_substeps": 10,
+      "physics_dt_s": 0.0002,
+      "low_level_dt_s": 0.002,
+      "native_rigid_contact_solref": [
+        0.002,
+        1
+      ],
+      "native_rigid_contact_solimp": [
+        0.99,
+        0.999,
+        0.001,
+        0.5,
+        2
+      ],
+      "native_rigid_contact_margin_m": 0,
+      "native_boundary_correction": "The retained default native contact allowed 6.222 mm of hard-plane penetration at the FR boundary crossing in development-v5. This numerical hard-ground deformation was incorrectly inherited as imposed TM02 indentation. Use the same stiff native z=0 constraint regularization for all four terrains; no robot mass, geometry, joint, or torque parameter changes.",
+      "reason": "Development-v3 TM02 C0 seed-0 exited the strain domain at 5.168 s: Cartesian geometry was one MuJoCo integration behind qvel, and a 0.002 s contact step crossed the stiff contact in a single update. Refresh current kinematics and use a common 0.0002 s physics step. Preserve affected development trajectories and the material law."
+    }
+  },
+  "controller_parameters": {
+    "type": "sampling",
+    "verbose": false,
+    "horizon": 12,
+    "dt": 0.02,
+    "use_inertia_recomputation": false,
+    "grf_max": 149.17486248,
+    "grf_min": 0,
+    "mu": 0.5,
+    "use_nonuniform_discretization": false,
+    "horizon_fine_grained": 2,
+    "dt_fine_grained": 0.01,
+    "optimize_step_freq": false,
+    "step_freq_available": [
+      2.4
+    ],
+    "use_riccati_feedback": false,
+    "use_warm_start": false,
+    "use_integrators": false,
+    "alpha_integrator": 0.1,
+    "integrator_cap": [
+      0.5,
+      0.2,
+      0.2,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "use_foothold_optimization": false,
+    "use_foothold_constraints": false,
+    "use_RTI": false,
+    "as_rti_type": "Standard",
+    "as_rti_iter": 1,
+    "use_DDP": false,
+    "num_qp_iterations": 1,
+    "solver_mode": "balance",
+    "use_input_prediction": false,
+    "use_static_stability": false,
+    "use_zmp_stability": false,
+    "trot_stability_margin": 0.04,
+    "pace_stability_margin": 0.1,
+    "crawl_stability_margin": 0.04,
+    "external_wrenches_compensation": false,
+    "external_wrenches_compensation_num_step": 15,
+    "passive_arm_compensation": true,
+    "K_z1": [
+      1,
+      1,
+      10
+    ],
+    "K_z2": [
+      1,
+      4,
+      10
+    ],
+    "residual_dynamics_upper_bound": 30,
+    "use_residual_dynamics_decay": false,
+    "sampling_method": "random_sampling",
+    "control_parametrization": "cubic_spline",
+    "num_splines": 1,
+    "num_parallel_computations": 1024,
+    "num_sampling_iterations": 1,
+    "device": "gpu",
+    "sigma_cem_mppi": 20.0,
+    "sigma_cem_mppi_reset_every": 2,
+    "sigma_mppi": 20.0,
+    "temperature_mppi": 0.03,
+    "sigma_random_sampling": [
+      0.2,
+      3.0,
+      10.0
+    ],
+    "sigma_ot_mpc": 20.0,
+    "ot_mpc_num_particles": 16,
+    "ot_mpc_epsilon": 0.05,
+    "ot_mpc_step_size": 0.7,
+    "ot_mpc_exploration": 0.1,
+    "ot_mpc_sinkhorn_iterations": 30,
+    "shift_solution": false,
+    "gradient_refinement_steps": 0,
+    "gradient_refinement_lr": 0.5,
+    "paper_input_cost": true,
+    "paper_Q": [
+      0.0,
+      0.0,
+      111500.0,
+      5000.0,
+      5000.0,
+      200.0,
+      11200.0,
+      11200.0,
+      0.0,
+      20.0,
+      20.0,
+      600.0
+    ]
+  },
+  "locomotion_parameters": {
+    "phase_consistent_swing": true,
+    "liftoff_frame": "world",
+    "swing_generator": "scipy",
+    "swing_position_gain_fb": 500.0,
+    "swing_velocity_gain_fb": 10.0,
+    "impedence_joint_position_gain": 10.0,
+    "impedence_joint_velocity_gain": 2.0,
+    "use_friction_compensation": false,
+    "friction_compensation_vel_eps": 0.1,
+    "friction_compensation_vel_deadband": 0.4,
+    "friction_compensation_ratio": 0.8,
+    "step_height": 0.05600000000000001,
+    "visual_foothold_adaptation": "blind",
+    "gait": "trot",
+    "gait_params": {
+      "trot": {
+        "step_freq": 2.4,
+        "duty_factor": 0.65,
+        "type": 0
+      },
+      "crawl": {
+        "step_freq": 0.5,
+        "duty_factor": 0.8,
+        "type": 5
+      },
+      "pace": {
+        "step_freq": 1.4,
+        "duty_factor": 0.7,
+        "type": 1
+      },
+      "bound": {
+        "step_freq": 1.8,
+        "duty_factor": 0.65,
+        "type": 2
+      },
+      "full_stance": {
+        "step_freq": 2,
+        "duty_factor": 0.65,
+        "type": 7
+      }
+    },
+    "start_and_stop_activated": false,
+    "reflex_trigger_mode": false,
+    "reflex_max_step_height": 0.14,
+    "reflex_next_steps_height_enhancement": false,
+    "velocity_modulator": false,
+    "ref_z": 0.28
+  },
+  "actual_mass_kg": 15.206408,
+  "inertia_kg_m2": [
+    [
+      0.17029060656536182,
+      0.00012165981636169666,
+      -0.016474597150336102
+    ],
+    [
+      0.00012165981636169666,
+      0.48373689740822773,
+      -3.1200472825479466e-05
+    ],
+    [
+      -0.016474597150336102,
+      -3.1200472825479466e-05,
+      0.5353720744060804
+    ]
+  ],
+  "nominal_feet_m": [
+    [
+      0.19215678006345865,
+      0.14200000000000002,
+      0.023837250030255774
+    ],
+    [
+      0.19215678006345865,
+      -0.14200000000000002,
+      0.023837250030255774
+    ],
+    [
+      -0.1946432199365413,
+      0.14200000000000002,
+      0.023837250030255774
+    ],
+    [
+      -0.1946432199365413,
+      -0.14200000000000002,
+      0.023837250030255774
+    ]
+  ],
+  "fore_hind_spacing_m": 0.3867999999999999,
+  "event_horizon_s": 2.5,
+  "joint_names": [
+    null,
+    "FL_hip_joint",
+    "FL_thigh_joint",
+    "FL_calf_joint",
+    "FR_hip_joint",
+    "FR_thigh_joint",
+    "FR_calf_joint",
+    "RL_hip_joint",
+    "RL_thigh_joint",
+    "RL_calf_joint",
+    "RR_hip_joint",
+    "RR_thigh_joint",
+    "RR_calf_joint"
+  ],
+  "joint_ranges_rad": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ]
+  ],
+  "actuator_limits_Nm": [
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ]
+  ],
+  "initial_qpos": [
+    3.4227784781322575e-23,
+    -6.362046133517818e-23,
+    0.29020935793281377,
+    1.0,
+    3.729569481712688e-21,
+    0.0,
+    0.0,
+    2.5579538487363612e-20,
+    0.9,
+    -1.8,
+    1.1368683772161603e-21,
+    0.9,
+    -1.8,
+    1.847411112976261e-20,
+    0.9,
+    -1.8,
+    1.847411112976261e-21,
+    0.9,
+    -1.8
+  ],
+  "foot_geom_ids": [
+    26,
+    39,
+    52,
+    65
+  ],
+  "foot_geom_size_m": [
+    [
+      0.022,
+      0.0,
+      0.0
+    ],
+    [
+      0.022,
+      0.0,
+      0.0
+    ],
+    [
+      0.022,
+      0.0,
+      0.0
+    ],
+    [
+      0.022,
+      0.0,
+      0.0
+    ]
+  ],
+  "native_contact_solref": [
+    0.002,
+    1.0
+  ],
+  "native_contact_solimp": [
+    0.99,
+    0.999,
+    0.001,
+    0.5,
+    2.0
+  ],
+  "native_contact_margin_m": 0.0,
+  "acceleration_m_s2": 0.5,
+  "heading_gain_s_inv": 1.5,
+  "position_gain_s_inv": 0.8,
+  "terminal_stance_entry_radius_m": 0.06,
+  "source_commit": "96748c9d0d51041177892ef7081d9ac3e02a6e36",
+  "source_sha256": {
+    "scripts/run_terrain_memory_s1.py": "d111d66fb56fdbc4dd50610e59e0c3e058a092de5a9777d25e1b890f96771582",
+    "src/tm02/s1_contact.py": "c62e97d0f079fa9d7f960797731fb4a364af3220ba951af9f0cfe57f93affdc5",
+    "src/tm02/s1_force.py": "af5dcddfe4412a65dd6bedfef9b78bd350389e910a701323f2ff8ff37d706de2",
+    "src/tm02/s1_material.py": "6a6f0dfb28a1249210ee076e0703ac7f834a42c54f50793d88302d408c60fc52",
+    "src/tm02/s1_planner.py": "8142626017ccda5735e5d8a8a1bfc038e353040191887adc62614f247f18155f",
+    "src/tm02/s1_prediction.py": "0abd3335c59d6f0d8ee3de2b82b2fde9c75c3a47a84a76c776955686772a3692",
+    "src/tm02/s1_robot.py": "414e89f33414c610cde367ee93bc2bdda83685734ae4d4f671e346c23c13351a",
+    "src/tm02/s1_stance.py": "6adad847dbd3135516c2399b5b176de301f7ae0e88467f13f1cc20ac13e529d9",
+    "src/tm02/s1_transition.py": "4f43ef5622bdee597f8cf37bf686e4758966cf64d641c1fc914d02f696a25e36"
+  },
+  "host": "fanyuan-B850M-FORCE-WIFI6E",
+  "gpu": "[CudaDevice(id=0)]",
+  "cpu": "AMD Ryzen 7 9850X3D 8-Core Processor",
+  "upstream_commit": "c46cb9a3960554cffc467a71c6674b65c0f4a2c8",
+  "upstream_patch_sha256": "e0acb30f93efdb45b4297ff0cbc9f62384aba06978da918f6ffd2fcf0a527534",
+  "package_versions": {
+    "mujoco": "3.16.0",
+    "gym-quadruped": "1.1.8",
+    "jax": "0.6.2",
+    "jaxlib": "0.6.2",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "python": "3.11.17 (main, Oct 13 2026, 16:45:47) [GCC 15.3.0]",
+  "material_state_units": {
+    "tm02_anchor": "e,q are strain; stress is original MPa before gamma scaling",
+    "kv": "e[:,0]=q[:,0]=surface height m; remaining columns unused; no 3D strain interpretation"
+  },
+  "new_training_runs": 0,
+  "execution_fingerprint": "dc55da275eb70db22a1eb4f6a0d1461901481a5fc5786c3111f983d69754474e"
+}

@@ -2,7 +2,7 @@
   "purpose": "Repair the demonstrated contact-execution defects in third-round T1 within the retained sampling MPC, then evaluate the unchanged complete Go2 mission in a conditional rigid -> KV8000 -> TM02 sequence. This is execution feasibility, not a validated terrain-memory or RL innovation.",
   "run_id": "tm-s1-contact-execution-20261026",
   "stage": "S1_contact_execution_repair",
-  "implementation_status": "implemented_pending_full_mission_evidence",
+  "implementation_status": "executed_development_closed_no_formal_version",
   "target_entrypoint": "scripts/run_terrain_memory_s1.py",
   "reviewed_source_commit": "f0a1632f445415be6c33a7eac31c3a2c974d1f4a",
   "reviewed_results": {
@@ -376,5 +376,19 @@
     "upstream_patch": "experiments/terrain_memory/s1-contact-execution-upstream.patch",
     "held_force": "Original wrapper stores solved nmpc_GRFs; projection applied once per low-level update.",
     "sequence": "First four rows are physical contact, last four rows are load-fraction caps; dynamics and gravity basis use only contact rows."
+  },
+  "actual_outcome": {
+    "new_mission_starts": 3,
+    "development_missions": 3,
+    "development_completed_missions": 0,
+    "formal_records": 0,
+    "formal_frozen_version": null,
+    "executed_implementation_commit": "96748c9d0d51041177892ef7081d9ac3e02a6e36",
+    "unexecuted": [
+      "rigid formal",
+      "KV8000",
+      "TM02"
+    ],
+    "immutable_per_attempt_configuration": "The resolved JSON and source snapshot next to each actual trajectory retain the exact pre-execution configuration and fingerprint."
   }
 }

@@ -19,14 +19,18 @@ def main():
     parser.add_argument('--config',default='experiments/terrain_memory/s1-control-repair.json')
     parser.add_argument('--cohort',default='formal-v1')
     parser.add_argument('--rerender',action='store_true',help='Regenerate saved-trajectory videos after a renderer correction.')
+    parser.add_argument('--attempts',action='store_true',help='Render every retained development attempt from the run index.')
     args=parser.parse_args()
     config=json.loads((ROOT/args.config).read_text())
     small=ROOT/config['outputs']['compact_root']
     out=ROOT/config['outputs']['large_root']
     rows=[json.loads(p.read_text()) for p in (small/args.cohort).glob('*-seed-*.json')]
+    if args.attempts:
+        idx=json.loads((small/'index.json').read_text())
+        rows=[json.loads((ROOT/a['record']).read_text()) for a in idx['attempts'] if a['status']=='finished']
     requested=sorted({(r['terrain'],r['controller']) for r in rows if not r.get('reused_from')})
     selection=[]
-    for terrain,method in requested:
+    for terrain,method in ([] if args.attempts else requested):
         group=[r for r in rows if r['terrain']==terrain and r['controller']==method]
         chosen=[next(r for r in group if r['seed']==0)]
         if not chosen[0]['success'] and any(r['success'] for r in group):
@@ -34,6 +38,8 @@ def main():
         elif chosen[0]['success'] and any(not r['success'] for r in group):
             chosen.append(min((r for r in group if not r['success']),key=lambda r:r['seed']))
         selection.extend(chosen)
+    if args.attempts:
+        selection=rows
     videos=out/'videos'
     videos.mkdir(exist_ok=True)
     previews=small/'video-previews'
@@ -54,6 +60,8 @@ def main():
         selection_label=('seed zero' if row['seed']==0 else
             'lowest successful seed, additional to failed seed zero' if row['success'] else
             'lowest failed seed, additional to successful seed zero')
+        if args.attempts:
+            selection_label='Every development attempt, original full mission until recorded termination'
         if path.exists() and not args.rerender:
             entries.append(dict(terrain=row['terrain'],controller=row['controller'],seed=row['seed'],
                 success=row['success'],duration_s=row['duration_s'],video=str(path.relative_to(ROOT)),fps=30,
@@ -62,6 +70,8 @@ def main():
             continue
         archive=np.load(ROOT/row['trajectory'])
         a={k:archive[k] for k in ['time','qpos','qvel','phase','actual_grf','planned_grf','indentation_m','frequency','velocity','final_qpos','final_qvel']}
+        if args.attempts:
+            a['commanded_grf']=archive['commanded_grf']
         model=mujoco.MjModel.from_binary_path(str(row.get('model_path',Path(row['trajectory']).parent/'go2.mjb')))
         model.vis.global_.offwidth=1120
         model.vis.global_.offheight=720
@@ -112,9 +122,13 @@ def main():
             region='Native rigid ground everywhere' if row['terrain']=='rigid' else 'Shaded strip: virgin reference surface, x=0.8-2.2 m'
             draw.text((16,84),f"speed = {np.linalg.norm(a['velocity'][k,:2]):.3f} m/s   gait = {a['frequency'][k]:.2f} Hz   {region}",font=smallfont,fill=(30,45,55))
             draw.rectangle((0,583,1120,720),fill=(246,248,250))
-            draw.text((16,590),'Actual / planned normal GRF (N) and actual indentation (mm)',font=font,fill=(25,35,45))
+            draw.text((16,590),('Actual / held plan / command normal GRF (N)' if args.attempts else 'Actual / planned normal GRF (N) and actual indentation (mm)'),font=font,fill=(25,35,45))
             for j,leg in enumerate(['FL','FR','RL','RR']):
                 x=16+j*275
+                if args.attempts:
+                    draw.text((x,620),f"{leg} actual: {a['actual_grf'][k,j,2]:.1f} N",font=smallfont,fill=(0,85,130))
+                    draw.text((x,645),f"held/cmd: {a['planned_grf'][k,j,2]:.1f}/{a['commanded_grf'][k,j,2]:.1f} N",font=smallfont,fill=(30,45,55))
+                    continue
                 draw.text((x,620),f"{leg}: {a['actual_grf'][k,j,2]:7.1f} / {a['planned_grf'][k,j,2]:7.1f} N",font=smallfont,fill=(0,85,130))
                 draw.text((x,645),f"indentation {a['indentation_m'][k,j]*1000:.5f} mm",font=smallfont,fill=(30,45,55))
             draw.text((16,683),'Synthetic simulation; no hardware run. KV is not Go2 calibration. TM02 retains gamma=0.025.',font=smallfont,fill=(65,65,65))

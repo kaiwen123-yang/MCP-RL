@@ -26,11 +26,17 @@ def main():
     small=ROOT/c['outputs']['compact_root']
     indexpath=small/'index.json'
     index=json.loads(indexpath.read_text())
-    if not index['phase_A_complete']:
-        raise ValueError('Phase A actual result records are not complete.')
-    if index['phase_B_readiness']['ready'] and not index['phase_B_complete']:
-        raise ValueError('Authorized ready phase B has not completed.')
-    records=[(p,json.loads(p.read_text())) for p in sorted((small/a.cohort).glob('*-seed-*.json'))]
+    execution=c['stage']=='S1_contact_execution_repair'
+    if execution:
+        if not index['experiments_finished']:
+            raise ValueError('Authorized physical execution has not ended.')
+        records=[(ROOT[x['record'],json.loads((ROOT/x['record']).read_text())) for x in index['attempts'] if x['status']=='finished']
+    else:
+        if not index['phase_A_complete']:
+            raise ValueError('Phase A actual result records are not complete.')
+        if index['phase_B_readiness']['ready'] and not index['phase_B_complete']:
+            raise ValueError('Authorized ready phase B has not completed.')
+        records=[(p,json.loads(p.read_text())) for p in sorted((small/a.cohort).glob('*-seed-*.json'))]
     new_records=[(p,r) for p,r in records if not r.get('reused_from')]
     archive_files={}
     owner={}
@@ -60,7 +66,7 @@ def main():
             files.append(Path(row.get('plans_path',trace.parent/(stem+'-plans.json'))))
         if row['controller'] in ('B2','B3'):
             files.append(trace.parent/(stem+'-footstep-commitments.json'))
-        if row['controller'] in ('T1','T2'):
+        if row['controller'] in ('T1','T2','T1R'):
             files.extend([Path(row['queries_path']),Path(row['transitions_path'])])
         return files
 
@@ -103,6 +109,12 @@ def main():
     if transition:
         for name in ('summarize_s1_transition.py','publish_s1_transition.py'):
             assign(ROOT/'scripts'/name,development_archive)
+    if execution:
+        for name in ('summarize_s1_execution.py','publish_s1_execution.py'):
+            assign(ROOT/'scripts'/name,development_archive)
+        assign(ROOT/'experiments/terrain_memory/s1-contact-execution-upstream.patch',development_archive)
+        for attempt in index['attempts']:
+            assign(ROOT/attempt['log'],development_archive)
     archives=[]
     for name,files in archive_files.items():
         archive=out/name
@@ -170,7 +182,7 @@ def main():
         assets=assets,archives=archive_entries,development_attempts=development,
         archive_files=[dict(execution_host_path=str(path),archive=archive,member=member(path),bytes=path.stat().st_size)
             for path,archive in owner.items()],
-        reused_B0_reference='Historical arrays/videos are referenced by old_B1_references or reused_records; not copied or repackaged.',
+        reused_B0_reference='Historical arrays/videos are referenced by historical_references, old_B1_references or reused_records; not copied or repackaged.',
         development_reuse='Each actual source file belongs to one archive. Adopted development trajectories are in their formal terrain/controller archive and referenced here by development attempt ID.',
         asset_size_limit_bytes=2*1024**3,
         verification_method='Execution-host SHA256 and byte size are computed before direct upload; confirm against GitHub returned size/digest without full download.')
