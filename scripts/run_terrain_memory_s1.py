@@ -45,24 +45,42 @@ def ledger_lock(fn):
 
 def register_start(config,args,seed,fingerprint):
     """Count each physical reset, including an attempt that subsequently fails."""
-    if 'phase_A' not in config:
+    if 'phase_A' not in config and config['stage']!='S1_contact_execution_repair':
         return
     path,index=read_index(config)
     attempts=index['attempts']
     development=args.development or args.cohort.startswith('development-')
     budget=config['budget']
-    if development and seed!=config['execution']['development_seed']:
-        raise ValueError('Development missions use the configured seed zero.')
-    if len(attempts)>=budget['maximum_new_mission_attempts_including_development_failures_and_superseded_runs']:
-        raise RuntimeError('The authorized new-mission budget is exhausted.')
-    if development and sum(a['kind']=='development' for a in attempts)>=budget['maximum_development_missions']:
-        raise RuntimeError('The authorized development-mission budget is exhausted.')
-    if not development and sum(a['kind']=='formal' for a in attempts)>=budget.get('maximum_new_formal_episodes_if_affected_B1_must_be_recomputed',budget.get('maximum_new_formal_episodes_if_affected_B0_must_be_recomputed')):
-        raise RuntimeError('The authorized formal-mission budget is exhausted.')
+    if config['stage']=='S1_contact_execution_repair':
+        if fingerprint is not None:
+            attempt=next(a for a in reversed(attempts) if a['cohort']==args.cohort and a['seed']==seed and a['status']=='started')
+            attempt['execution_fingerprint']=fingerprint
+            save_json(path,index)
+            return
+        if len(attempts)>=budget['maximum_new_mission_attempts_including_failures_lost_records_and_superseded_versions']:
+            raise RuntimeError('The authorized total launch budget is exhausted.')
+        if development and sum(a['kind']=='development' for a in attempts)>=budget['maximum_development_missions']:
+            raise RuntimeError('The authorized development budget is exhausted.')
+        if development and (args.terrain!='rigid' or (not attempts and seed!=4)):
+            raise ValueError('Development starts with the original rigid seed4 mission.')
+        if not development and 'frozen_execution_sha256' not in index:
+            raise RuntimeError('Formal execution requires the recorded implementation freeze.')
+        if not development and sum(a.get('formal_result',False) or a['kind']=='formal' for a in attempts)>=15:
+            raise RuntimeError('The authorized formal budget is exhausted.')
+        index['protocol']='experiments/terrain_memory/s1-contact-execution.json'
+        index['scope_not_executed']=['KV8000 until rigid 5/5','TM02 until KV8000 >=4/5','B1','T2','B2','B3','PANN/PPO training','hardware']
+    else:
+        if development and seed!=config['execution']['development_seed']:
+            raise ValueError('Development missions use the configured seed zero.')
+        if len(attempts)>=budget['maximum_new_mission_attempts_including_development_failures_and_superseded_runs']:
+            raise RuntimeError('The authorized new-mission budget is exhausted.')
+        if development and sum(a['kind']=='development' for a in attempts)>=budget['maximum_development_missions']:
+            raise RuntimeError('The authorized development-mission budget is exhausted.')
     attempts.append(dict(attempt_id=len(attempts)+1,kind='development' if development else 'formal',
         cohort=args.cohort,terrain=args.terrain,controller=args.controller,seed=seed,
         started_utc=datetime.now(timezone.utc).isoformat(),status='started',
-        command=[sys.executable,*sys.argv],execution_fingerprint=fingerprint))
+        command=[sys.executable,*sys.argv],execution_fingerprint=fingerprint,
+        source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()))
     index['budget']=budget
     index['new_mission_starts']=len(attempts)
     index['development_mission_starts']=sum(a['kind']=='development' for a in attempts)
@@ -71,7 +89,7 @@ def register_start(config,args,seed,fingerprint):
 
 @ledger_lock
 def register_result(config,args,seed,record_path):
-    if 'phase_A' not in config:
+    if 'phase_A' not in config and config['stage']!='S1_contact_execution_repair':
         return
     path,index=read_index(config)
     row=json.loads(Path(record_path).read_text())
@@ -144,7 +162,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config',default='experiments/terrain_memory/s1-control-repair.json')
     parser.add_argument('--terrain',choices=['rigid','tm02_anchor','kv_soft','kv_moderate'])
-    parser.add_argument('--controller',choices=['B0','B1','B2','B3','C0','C1','C2','C3','C4','T1','T2'])
+    parser.add_argument('--controller',choices=['B0','B1','B2','B3','C0','C1','C2','C3','C4','T1','T2','T1R'])
     parser.add_argument('--matrix',action='store_true',help='Read terrain, controller and seed cells from the configured phase.')
     parser.add_argument('--phase',choices=['A','B','all'],default='all')
     parser.add_argument('--seeds',type=int,nargs='+',default=[0])
@@ -188,6 +206,10 @@ def main():
             parser.error('Phase B requires the recorded complete-B1 readiness decision.')
     args.register_start=lambda seed,fingerprint:register_start(config,args,seed,fingerprint)
     args.register_result=lambda seed,record_path:register_result(config,args,seed,record_path)
+    if config['stage']=='S1_contact_execution_repair':
+        if args.controller!='T1R' or len(args.seeds)!=1:
+            parser.error('This protocol executes one T1R mission per launched process.')
+        register_start(config,args,args.seeds[0],None)
     from tm02.s1_robot import run
     run(ROOT,args)
 

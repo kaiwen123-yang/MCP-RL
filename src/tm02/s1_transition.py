@@ -7,6 +7,7 @@ import time
 import numpy as np
 import mujoco
 from .s1_stance import CompliantStanceTracking
+from .s1_force import project_contact_force, loading_fraction
 
 
 def quintic(p, v, a, target, end_v, duration):
@@ -124,6 +125,9 @@ class ContactTransition(CompliantStanceTracking):
         self.support = np.zeros(4,bool)
         self.curves = [None]*4
         self.has_swung = np.zeros(4,bool)
+        self.ever_supported = np.zeros(4,bool)
+        self.ever_lost_support = np.zeros(4,bool)
+        self.alpha_horizon = np.ones((4,12))
         self.touch_time = np.full(4,np.nan)
         self.mode = np.zeros(4,int)  # 0 native, 1 approach, 2 loading, 3 support
         self.reference = np.zeros((4,3,3))  # leg, position/velocity/acceleration, xyz
@@ -142,6 +146,7 @@ class ContactTransition(CompliantStanceTracking):
         result = self.raw_update(*args,**kw)
         state,ref,sequence,height,optimize = result
         t = self.env.mjData.time
+        self.query_seconds = 0.
         self.previous_nominal = self.nominal.copy()
         self.nominal = self.wb.current_contact.astype(bool).copy()
         liftoff = ~self.nominal & self.previous_nominal
@@ -155,11 +160,24 @@ class ContactTransition(CompliantStanceTracking):
         # during its last unloading sample; descending early contact is usable.
         descending = np.array(self.wb.stc.swing_time)>=self.wb.stc.swing_period/2
         self.support = actual & (self.nominal | (descending & self.has_swung))
+        lost = self.previous_actual_contact & ~self.support
+        self.ever_lost_support[lost] = True
+        for leg in np.flatnonzero(lost):
+            self.curves[leg] = None
+            self.touch_time[leg] = np.nan
+            self.transitions.append(dict(time_s=float(t),leg=int(leg),event='support_lost_force_invalidated'))
         for leg in np.flatnonzero(self.support & ~self.previous_actual_contact):
-            self.touch_time[leg] = t
+            initial_support = not self.ever_supported[leg] and not self.has_swung[leg]
+            self.touch_time[leg] = t-self.load_duration if initial_support else t
+            self.ever_supported[leg] = True
+            self.curves[leg] = None
             self.anchor[leg] = np.asarray(args[5][self.legs[leg]])
             self.transitions.append(dict(time_s=float(t),leg=int(leg),event='first_control_after_actual_contact'))
+        for leg in np.flatnonzero(self.nominal & ~self.support):
+            if self.curves[leg] is None:
+                self.begin_recontact(leg)
         physical = sequence.copy()
+        arrival_times = np.full(4,np.nan)
         physical[:,0] = self.support
         for leg,curve in enumerate(self.curves):
             if curve is not None and not self.support[leg]:
@@ -167,11 +185,64 @@ class ContactTransition(CompliantStanceTracking):
                 p = np.asarray(args[5][self.legs[leg]])
                 gap = max(0.,p[2]-self.contact_env.radius[leg]-curve['surface'])
                 arrival = curve['end'] if t<curve['end'] else t+gap/max(curve['speed'],np.finfo(float).eps)
+                arrival_times[leg] = arrival
                 elapsed = np.arange(physical.shape[1])*.02
                 next_liftoff = (self.wb.pgg.duty_factor-self.wb.pgg.phase_signal[leg])%1/self.wb.pgg.step_freq
                 physical[leg,(elapsed<arrival-t)&(elapsed<next_liftoff)] = 0
         self.mpc_sequence = physical.copy()
-        return state,ref,physical,height,optimize
+        alpha = np.zeros_like(physical)
+        period = 1/self.wb.pgg.step_freq
+        for leg in range(4):
+            entry = self.touch_time[leg]
+            nominal_touch = t+(1-self.wb.pgg.phase_signal[leg])*period
+            pending = arrival_times[leg]
+            next_liftoff = t+(self.wb.pgg.duty_factor-self.wb.pgg.phase_signal[leg])%1*period
+            for k in range(physical.shape[1]):
+                sample = t+k*.02
+                if not physical[leg,k]:
+                    continue
+                if k>0 and not physical[leg,k-1]:
+                    if np.isfinite(pending) and sample>=pending and sample<next_liftoff:
+                        entry = pending
+                    else:
+                        entry = nominal_touch+np.floor((sample-nominal_touch+1e-12)/period)*period
+                alpha[leg,k] = loading_fraction(sample-entry,self.load_duration)
+        self.alpha_horizon = alpha[:,:12].copy()
+        return state,ref,np.vstack((physical,alpha)),height,optimize
+
+    def begin_recontact(self, leg):
+        env,wb,ce = self.env,self.wb,self.contact_env
+        name = self.legs[leg]
+        t = float(env.mjData.time)
+        position = np.asarray(env.feet_pos(frame='world')[name])
+        velocity = np.asarray(env.feet_vel(frame='world')[name])
+        full_j = env.feet_jacobians(frame='world',return_rot_jac=False)[name]
+        jdot = env.feet_jacobians_dot(frame='world',return_rot_jac=False)[name]
+        if self.mode[leg] in (1,2,3):
+            p,v,a = self.reference[leg].copy()
+        else:
+            p,v,a = position.copy(),velocity.copy(),full_j@env.mjData.qacc+jdot@env.mjData.qvel
+        jac = full_j[:,env.legs_qvel_idx[name]]
+        effective_mass = float(1/(jac[2]@np.linalg.solve(env.legs_mass_matrix[name],jac[2])))
+        duration = wb.stc.swing_period
+        target = p.copy()
+        start = time.perf_counter()
+        pair = [query_precontact(ce.ground,target[:2],duration,env.mjModel.body_mass.sum()*9.81/2,
+            .002,effective_mass,virgin=virgin) for virgin in (False,True)]
+        self.query_seconds += time.perf_counter()-start
+        chosen = pair[0]
+        target[2] = ce.radius[leg]+chosen['surface_m']
+        end_v = np.array([0.,0.,-chosen['approach_speed_m_s']])
+        coeff = quintic(p,v,a,target,end_v,duration)
+        self.curves[leg] = dict(start=t,end=t+duration,duration=duration,coefficients=coeff,
+            speed=chosen['approach_speed_m_s'],surface=chosen['surface_m'])
+        self.queries.append(dict(query_id=len(self.queries)+1,time_s=t,leg=leg,controller=self.controller,
+            T1=pair[0],T2=pair[1],selected_prior='T1',reason='unsupported_nominal_stance',
+            executed_variable='normal_approach_endpoint_and_speed',executed_endpoint_m=target.tolist(),
+            executed_velocity_m_s=end_v.tolist(),curve_coefficients=coeff.tolist(),remaining_s=duration,
+            actuator_limits_Nm=env.mjModel.actuator_ctrlrange.tolist()))
+        self.transitions.append(dict(time_s=t,leg=leg,event='unsupported_nominal_stance_approach',
+            reference_source='continuous' if self.mode[leg] in (1,2,3) else 'actual'))
 
     def compute(self, simulation_dt, qpos, qvel, feet_jac, feet_jac_dot, feet_pos, feet_vel,
                 legs_qfrc_passive, legs_qfrc_bias, legs_mass_matrix, nmpc_GRFs, nmpc_footholds,
@@ -191,18 +262,15 @@ class ContactTransition(CompliantStanceTracking):
         position = np.array([feet_pos[n] for n in self.legs])
         velocity = np.array([feet_vel[n] for n in self.legs])
         grfs = np.array([nmpc_GRFs[n] for n in self.legs])
-        alpha = self.support.astype(float)
-        for leg in np.flatnonzero(self.support & self.has_swung):
-            u = np.clip((t-self.touch_time[leg])/self.load_duration,0.,1.)
-            alpha[leg] *= u**3*(10-15*u+6*u*u)
-        # Preserve the requested total wrench's force component while sharing
-        # first-load force with established support. No environmental injection.
-        applied = grfs*alpha[:,None]
-        established = self.support & (alpha>=1-1e-12)
-        if np.any(established):
-            applied[established] += (grfs.sum(axis=0)-applied.sum(axis=0))/established.sum()
+        alpha = np.zeros(4)
+        alpha[self.support] = loading_fraction(t-self.touch_time[self.support],self.load_duration)
+        projection_start = time.perf_counter()
+        # nmpc_GRFs is the last solved force vector, held by the original wrapper.
+        # No parameter re-extraction, changed gravity basis, or redistribution.
+        from quadruped_pympc import config as cfg
+        applied = project_contact_force(grfs,self.support,alpha,cfg.mpc_params['grf_max'],cfg.mpc_params['mu'])
+        projection_seconds = time.perf_counter()-projection_start
         self.applied_grf = applied
-        self.query_seconds = 0.
         self.inverse_seconds = 0.
         feedback_tau = np.zeros((4,3))
         inertia_tau = np.zeros((4,3))
@@ -247,8 +315,8 @@ class ContactTransition(CompliantStanceTracking):
                 grf_tau[leg] = -jac.T@applied[leg]
                 tau[name] = grf_tau[leg].copy()
                 if not ce.ground.soft(position[leg,:2]):
-                    self.mode[leg] = 3
-                    if self.has_swung[leg]:
+                    self.mode[leg] = 2 if alpha[leg]<1 else 3
+                    if self.has_swung[leg] or self.ever_lost_support[leg]:
                         p,v,a=self.reference[leg]
                         w=np.sqrt(kp)
                         jerk=w**3*(self.anchor[leg]-p)-3*w*w*v-3*w*a
@@ -278,14 +346,13 @@ class ContactTransition(CompliantStanceTracking):
                 p,v,a=evaluate(curve['coefficients'],t-curve['start'],curve['duration'])
                 self.mode[leg]=1
                 tau[name]=np.zeros(3)
-            elif self.nominal[leg] and self.has_swung[leg]:
-                # A missed approach remains an explicit unsupported motion state.
-                p,v,a=self.reference[leg]
-                p=p+v*simulation_dt+.5*a*simulation_dt**2
-                v=v+a*simulation_dt
-                tau[name]=np.zeros(3)
-                self.mode[leg]=1
             else:
+                self.mode[leg] = 0
+                # Native swing is the sole owner here; expose its actual terms.
+                feedback_tau[leg] = self.common.last['swing_cartesian_feedback_torque'][leg]
+                inertia_tau[leg] = (self.common.last['swing_joint_inertia_torque'][leg]
+                                   +self.common.last['swing_base_correction_torque'][leg])
+                bias_tau[leg] = self.common.last['swing_bias_torque'][leg]
                 if np.all(np.isfinite(raw_p)):
                     self.reference[leg]=raw_p,self.common.last['swing_reference_velocity'][leg],self.common.last['swing_reference_acceleration'][leg]
                 continue
@@ -308,6 +375,14 @@ class ContactTransition(CompliantStanceTracking):
             stance_tracking_torque=feedback_tau,stance_bias_torque=bias_tau,
             actual_support_available=self.support.copy(),transition_mode=self.mode.copy(),
             transition_load_fraction=alpha,executed_grf=applied,mpc_contact_sequence=self.mpc_sequence[:,:12].copy(),
+            held_grf=grfs.copy(),commanded_grf=applied.copy(),force_projection_s=projection_seconds,
+            held_force_minus_command_N=(grfs-applied).sum(axis=0),
+            command_minus_hold_force_N=(applied-grfs).sum(axis=0),
+            command_minus_hold_moment_Nm=np.cross(position-env.base_pos,applied-grfs).sum(axis=0),
+            wrench_reference_point_m=env.base_pos.copy(),mpc_load_fraction=self.alpha_horizon.copy(),
+            actual_contact_at_control=ce.contact.copy(),actual_grf_at_control=ce.force.copy(),
+            final_leg_torque_requested=np.array([tau[name] for name in self.legs]),
+            feet_acceleration=np.array([feet_jac[name]@env.mjData.qacc+feet_jac_dot[name]@qvel for name in self.legs]),
             precontact_query_count=len(self.queries),precontact_query_s=self.query_seconds,
             floating_base_acceleration=base_acc,whole_body_leg_execution_s=self.last_seconds,
             native_whole_body_leg_execution_s=native_seconds,constitutive_inverse_s=self.inverse_seconds,

@@ -91,7 +91,7 @@ class Mission:
 
 
 def configure(c, method):
-    nominal = method in ('C0', 'B0', 'B1', 'B2', 'B3', 'T1', 'T2')
+    nominal = method in ('C0', 'B0', 'B1', 'B2', 'B3', 'T1', 'T2', 'T1R')
     rc = get_robot_config('go2')
     cfg.robot, cfg.robot_cfg = 'go2', rc
     cfg.robot_leg_joints, cfg.robot_feet_geom_names = rc.leg_joints, rc.feet_geom_names
@@ -114,7 +114,7 @@ def configure(c, method):
         visual_foothold_adaptation='blind', gait='trot')
     cfg.locomotion_params['gait_params']['trot'].update(step_freq=2.4, duty_factor=.65)
     cfg.simulation_params.update(scene='flat', dt=.002, mpc_frequency=50)
-    if method in ('T1','T2'):
+    if method in ('T1','T2','T1R'):
         cfg.mpc_params['optimize_step_freq'] = False  # supplied actual/future contact sequence; fixed 2.4 Hz
 
 
@@ -127,7 +127,7 @@ def timing(values, deadline):
 
 def run(root, args):
     c = json.loads((root/args.config).read_text())
-    transition = c.get('stage') == 'S1_contact_transition_and_precontact_information'
+    transition = c.get('stage') in ('S1_contact_transition_and_precontact_information','S1_contact_execution_repair')
     repair = transition or c.get('stage') == 'S1_control_execution_and_prediction_repair'
     if repair:
         c['resolved_numerics'] = c['numerics']
@@ -193,7 +193,7 @@ def run(root, args):
         material_state_units={'tm02_anchor':'e,q are strain; stress is original MPa before gamma scaling',
                               'kv':'e[:,0]=q[:,0]=surface height m; remaining columns unused; no 3D strain interpretation'},
         new_training_runs=0)
-    resolved['execution_fingerprint'] = hashlib.sha256(json.dumps([c, resolved['source_sha256']],sort_keys=True).encode()).hexdigest()
+    resolved['execution_fingerprint'] = hashlib.sha256(json.dumps([c, resolved['source_sha256'], resolved['upstream_patch_sha256']],sort_keys=True).encode()).hexdigest()
     save_json(small/f'{args.terrain}-{args.controller}-resolved.json', resolved)
     mujoco.mj_saveModel(env.mjModel, str(out/'go2.mjb'), None)
     for seed in args.seeds:
@@ -257,7 +257,7 @@ def run(root, args):
             planner = IntentPlanner(env, wrapper, contact_env, args.controller, resolved['event_horizon_s'], cfg.mass, cfg.inertia)
         wb.pgg.set_full_stance()
         wrapper.srbd_controller_interface = stand
-        if args.controller in ('B1', 'B2', 'B3', 'T1', 'T2'):
+        if args.controller in ('B1', 'B2', 'B3', 'T1', 'T2', 'T1R'):
             from .s1_stance import CompliantStanceTracking
             from .s1_prediction import AlignedPlanner, NoFeasibleIntent
             tracker = CompliantStanceTracking(env, wb, contact_env).install()
@@ -267,7 +267,7 @@ def run(root, args):
             else:
                 from .s1_transition import FloatingBaseSwing, ContactTransition
                 common_swing = FloatingBaseSwing(env, wb)
-                if args.controller in ('T1','T2'):
+                if args.controller in ('T1','T2','T1R'):
                     tracker = ContactTransition(env, wb, contact_env, common_swing, args.controller).install()
         mission = Mission(c['task'])
         tau = LegsAttr(*[np.zeros(3) for _ in LEGS])
@@ -384,6 +384,7 @@ def run(root, args):
             record['physics_s'] = time.perf_counter()-tp
             duration_s = t+(sub+1)*.002/substeps
             record['actual_grf_sample_time_s'] = t+sub*.002/substeps
+            record['actual_grf_post_step_time_s'] = float(env.mjData.time)
             record['actual_grf'] = contact_env.force.copy()
             record['contact'] = contact_env.contact.copy()
             record['indentation_m'] = contact_env.indent.copy()
@@ -416,7 +417,7 @@ def run(root, args):
             save_json(out/f'{name}-plans.json', planner.choices)
             if repair and planner.commitment:
                 save_json(out/f'{name}-footstep-commitments.json', planner.commitment.applied)
-        if transition and args.controller in ('T1','T2'):
+        if transition and args.controller in ('T1','T2','T1R'):
             save_json(out/f'{name}-queries.json', tracker.queries)
             save_json(out/f'{name}-transitions.json', tracker.transitions)
         error = hist['velocity']-hist['command']
@@ -476,11 +477,13 @@ def run(root, args):
                 e.get('unloaded_gap_s') is not None and e['unloaded_gap_s']>0 and e['area_m2']>0 and e['normal_N']>0]
             row['front_to_hind_revisit'] = bool(revisits)
             row['front_to_hind_column_events'] = len(revisits)
-            row['precontact_query_used'] = args.controller in ('T1','T2') and len(tracker.queries)>0
-            if args.controller in ('T1','T2'):
+            row['precontact_query_used'] = args.controller in ('T1','T2','T1R') and len(tracker.queries)>0
+            if args.controller in ('T1','T2','T1R'):
                 row['queries_path'] = str(out/f'{name}-queries.json')
                 row['transitions_path'] = str(out/f'{name}-transitions.json')
                 row['timing']['precontact_query'] = timing(hist['precontact_query_s'],.002)
+                if args.controller=='T1R':
+                    row['timing']['force_projection'] = timing(hist['force_projection_s'],.002)
         save_json(small/f'{name}.json', row)
         if repair:
             args.register_result(seed, small/f'{name}.json')

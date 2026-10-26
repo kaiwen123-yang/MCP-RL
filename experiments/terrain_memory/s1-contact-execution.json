@@ -2,7 +2,7 @@
   "purpose": "Repair the demonstrated contact-execution defects in third-round T1 within the retained sampling MPC, then evaluate the unchanged complete Go2 mission in a conditional rigid -> KV8000 -> TM02 sequence. This is execution feasibility, not a validated terrain-memory or RL innovation.",
   "run_id": "tm-s1-contact-execution-20261026",
   "stage": "S1_contact_execution_repair",
-  "implementation_status": "planned_not_executed",
+  "implementation_status": "implemented_pending_full_mission_evidence",
   "target_entrypoint": "scripts/run_terrain_memory_s1.py",
   "reviewed_source_commit": "f0a1632f445415be6c33a7eac31c3a2c974d1f4a",
   "reviewed_results": {
@@ -338,7 +338,9 @@
     "run_index": "One index containing the exact implementation/configuration, all starts, reused records, executed/unexecuted stages and original command lines.",
     "compact": "Per-episode outcomes, paired comparisons with source versions, relevant contact-execution event table and figures. Do not add audit/status/review reports.",
     "large": "Continuous trajectory arrays and representative whole-mission videos, including failures. Upload only new assets from the execution host to GitHub Release; link old evidence.",
-    "no_precreated_success": "Create result records only after actual execution. This plan/configuration is planned_not_executed."
+    "no_precreated_success": "Create result records only after actual execution. This plan/configuration is planned_not_executed.",
+    "compact_root": "results/terrain_memory/simulation/tm-s1-contact-execution-20261026",
+    "large_root": "outputs/terrain_memory/simulation/tm-s1-contact-execution-20261026"
   },
   "delivery": {
     "github": true,
@@ -361,5 +363,18 @@
       "planned-force injection",
       "local PC post-publish archiving"
     ]
+  },
+  "resolved_transition": {
+    "common_swing_correction": "World-frame swing acceleration now includes full Jdot*qvel and J_base*qacc_base, plus M_joint_base*qacc_base. Original J.T feedback, gains, leg inertia and bias retained. Latest actual simulator base acceleration is held for the control interval; this remains finite leg inverse dynamics, not coupled WB optimization.",
+    "approach": "At nominal swing midpoint, C2 quintic from ongoing reference p/v/a to predicted free surface with bounded downward velocity and zero acceleration, within original remaining swing. Thereafter continue terminal velocity only until actual contact or next nominal liftoff. Global gait clock unchanged.",
+    "speed_derivation": "v = queried nominal two-leg load compression / low_level_dt. TM02 additionally min with remaining strain-domain displacement/(2*low_level_dt) and margin*sqrt(secant_stiffness/effective_leg_mass). Hard ground v=nominal_load*dt/effective_leg_mass from native 2ms constraint timescale. Effective mass = 1/(Jz*Mleg^-1*Jz.T). No paper speed thresholds.",
+    "loading_duration_s": 0.044721359549995794,
+    "support_reference": "Third-order critically damped C2 continuation of p/v/a toward current common-sole inverse; omega=sqrt(existing Cartesian kp). Same true current material state after touchdown for T1/T2."
+  },
+  "resolved_execution": {
+    "unsupported_stance_duration": "Original swing_period; unchanged quintic and approach-speed formula. Actual p/v/a initially, continuous reference after a supported interval.",
+    "upstream_patch": "experiments/terrain_memory/s1-contact-execution-upstream.patch",
+    "held_force": "Original wrapper stores solved nmpc_GRFs; projection applied once per low-level update.",
+    "sequence": "First four rows are physical contact, last four rows are load-fraction caps; dynamics and gravity basis use only contact rows."
   }
 }

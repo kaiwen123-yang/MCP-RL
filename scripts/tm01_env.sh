@@ -9,3 +9,5 @@ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 export XLA_PYTHON_CLIENT_PREALLOCATE=false
 export MUJOCO_GL=egl
 export CPATH="$TM01_ROOT/work/envs/pympc/include${CPATH:+:$CPATH}"
+
+export PYTHONPATH="$TM01_ROOT/src:$TM01_ROOT/work/terrain-memory/upstreams/Quadruped-PyMPC${PYTHONPATH:+:$PYTHONPATH}"
