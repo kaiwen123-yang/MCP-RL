@@ -33,6 +33,7 @@ def main():
         # snapshot or source mirror is created on the user's computer.
         remote=remote_main();head=git('rev-parse','HEAD')
         git('merge-base','--is-ancestor',remote,head)
+        if remote==head:return head
         for commit in git('rev-list','--reverse',remote+'..'+head).splitlines():
             raw=subprocess.check_output(['git','cat-file','-p',commit],cwd=ROOT).decode()
             header,message=raw.split('\n\n',1);lines=header.splitlines()
@@ -68,7 +69,8 @@ def main():
         commit=publish_git_objects()
         url=gh('release','create',TAG,'--repo',REPO,'--target',commit,'--draft',
             '--title','S1 R9: actual TM02 material prerequisite failed under frozen S3',
-            '--notes','Three actual complete-mission attempts failed at the original material strain domain. PPO/PANN and formal evaluation were not run. Full original negative evidence is being uploaded; no joint success claim.')
+            '--notes','Eight actual complete-mission attempts failed at the original material strain domain. PPO/PANN and formal evaluation were not run. Full original negative evidence is being uploaded; no joint success claim.')
+        idx=json.loads((SMALL/'index.json').read_text())
         idx['publication']=dict(status='draft_uploading',release_url=url,evidence_commit=commit)
         dump(SMALL/'index.json',idx);print(url,flush=True);return
     release=next(x for x in json.loads(gh('api',f'repos/{REPO}/releases?per_page=100')) if x['tag_name']==TAG)
@@ -97,28 +99,20 @@ def main():
         if b['state']!='uploaded' or b['size']!=asset['size'] or b['digest']!='sha256:'+asset['sha256']:
             raise ValueError('Release original-byte verification failed: '+asset['name'])
     notes=ROOT/'work/r9-release-notes.md'
-    notes.write_text('''# Actual R9 result: material prerequisite blocked
-
-The frozen R8 S3 model and binary were reused. Three original complete-mission attempts with constant allowed speed caps all terminated during outbound travel on the unchanged TM02 strip.
-
-| cap (m/s) | Physical endpoint (s) | Body x (m) | Failed foot | Final total indentation (mm) | Maximum principal strain |
-|---|---:|---:|---|---:|---:|
-| 0.180 | 7.8440 | 0.835811 | FR | 1.033173 | 0.02066346 |
-| 0.215 | 8.2860 | 1.044376 | FR | 1.137215 | 0.02274429 |
-| 0.250 | 8.3372 | 1.241578 | RL | 1.015776 | 0.02031551 |
-
-The original material limit is 0.02 (1 mm for H=0.05 m). The out-of-domain final constitutive step is retained but its force is not applied to the robot. All three complete recorded failure videos are included.
-
-3 physical starts (of the 8-start adaptation maximum), one zero-physics initialization failure, 122336 physical steps / 24.4672 simulated seconds. No constitutive numerical failure. Actual unified soft-foot GRF and applied material-force records agree at each integrated step. Native pre-attachment model and MPC executable hashes exactly match R8 S3.
-
-The material adapter is implemented. The PANN observer and joint PPO environment were not implemented/executed after the actual physical prerequisite failed. Training starts/transitions/weights and formal 21+3 evaluations are zero. No training curves or joint-success claims are supplied. These three fixed intents do not prove impossibility for every time-varying speed policy.
-
-The campaign ended at this specific prerequisite blocker; neither the 48-hour cap nor the 8-start cap was exhausted. The frozen robot, controller, constitutive parameters, material domain, and mission criteria were not relaxed.
-
-Assets are original execution-host files: 500 Hz robot/controller trajectories, 5 kHz physics and material boundaries, 500 Hz material cell states, unique world-key load/revisit/release events, prediction traces, startup plans, models, logs and three full failure videos. Each asset is below 2 GiB. No dataset was downloaded to the user's computer.
-
-See the repository's single R9 index and episodes.csv for provenance, per-episode timings, unexecuted work and final verified asset metadata.
-''')
+    lines=['# Actual R9 result: material prerequisite blocked after 8/8 adaptation starts','',
+        'The frozen R8 S3 model and binary were reused. Five constant caps and three predeclared 2Hz sequences all failed during outbound travel on the unchanged TM02 strip.','',
+        '| Intent | Physical endpoint (s) | Body x (m) | Failed foot | Final indentation (mm) | Maximum principal strain |',
+        '|---|---:|---:|---|---:|---:|']
+    for r in idx['summary']:
+        label=f"constant {r['cap_m_s']:.3f} m/s" if r['cap_profile']=='constant' else r['cap_profile']
+        lines.append(f"| {label} | {r['physics_end_s']:.4f} | {r['max_body_x_m']:.6f} | {r['failed_foot']} | {-r['failed_boundary_bottom_mm']:.6f} | {r['max_abs_principal_strain']:.8f} |")
+    lines += ['', 'The original material limit remains 0.02 (1mm for H=0.05m). The final out-of-domain constitutive boundary is retained, but its force is not applied or integrated into the robot. All eight complete recorded failure videos are included.',
+        '', '8/8 adaptation physical starts, 8/32 nontraining starts, one zero-physics initialization failure, 306472 integrated physical steps / 61.2944 simulated seconds. No constitutive numerical failures. Native pre-attachment model and MPC binary SHA256 exactly match R8 S3. No strain clipping or relaxation of robot, material, controller, or mission limits.',
+        '', 'The material adapter was implemented and executed. The PANN observer and joint PPO environment were not implemented/executed after the actual prerequisite failed. All six PPO streams, training transitions, new policies/weights and formal 21+3 evaluations remain unstarted. There are no training curves or joint-success claims.',
+        '', 'All eight predeclared intents failed; this is not a mathematical impossibility proof for every possible time-varying policy. The full eight-start adaptation allowance is exhausted; the 48-hour wall-clock cap is not exhausted.',
+        '', 'Assets are original execution-host files: 500Hz robot/control states, 5kHz physics and material boundaries, 500Hz material cell states, world-key load/revisit/release events, complete plans/startup records, allowed cap decisions, models, logs and eight full failure videos. Every asset is below2GiB. No dataset was downloaded to the user computer.',
+        '', 'See the single repository R9 index and episodes.csv for exact provenance, timings, unexecuted work, figure definitions and final verified asset metadata.']
+    notes.write_text('\n'.join(lines)+'\n')
     git('add','AGENTS.md','README.md','docs/TERRAIN_MEMORY_PLAN.md','experiments/terrain_memory/s1-go2-joint.json',
         'scripts/summarize_s1_go2_joint.py','scripts/publish_s1_go2_joint.py',str(SMALL.relative_to(ROOT)))
     # Lock files are excluded from versioned experiment data.

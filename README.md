@@ -1,6 +1,6 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
-**R9实际状态（2026-10-28）：真实材料前置任务0/3，联合训练未启动。** 同一冻结R8-S3接入原TM02中段条带后，cap=.18/.215/.25 m/s三条完整mission尝试分别在7.8440/8.2860/8.3372s于去程触发原主应变域上限.02。3次物理启动、1次零物理步初始化失败；PANN观察器和PPO联合采样尚未实现，训练/正式评价均为0。本批因该具体前置阻塞收尾，材料、S3和阈值未放宽；三种固定意图不等于全部时变策略不可行。[唯一R9索引](results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json) · [实际轨迹图](results/terrain_memory/simulation/tm-s1-go2-joint-r9/material-boundary.png) · [完整负例数据与视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-joint-r9)
+**R9实际状态（2026-10-28）：8次材料适配启动已用完，完整任务0/8，联合训练未启动。** 同一冻结R8-S3接原TM02中段条带，五种固定cap与三条预定2Hz时变序列均在6.5518–8.3448s于去程触发原主应变域上限.02。另有1次零物理步初始化失败。物理累计61.2944s/306472步，并发峰值3环境×2solver workers。PANN观察器与联合PPO环境未实现，训练/正式评价为0；材料、S3和阈值未放宽。48h预算未耗尽，8次适配额度已耗尽，不刷新额度。[唯一R9索引](results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json) · [八条真实轨迹](results/terrain_memory/simulation/tm-s1-go2-joint-r9/all-intents.png) · [完整负例数据与视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-joint-r9)
 
 
 

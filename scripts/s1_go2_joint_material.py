@@ -16,7 +16,7 @@ class JointMaterial:
         self.bottom=np.zeros((4,3));self.velocity=np.zeros((4,3))
         self.material_time=0.;self.material_wall=0.
         self.records=[];self.cells=[];self.chunks=[];self.physics_steps=0
-        self.reason='';self.group='FIXED_S3'
+        self.reason='';self.group='DEVELOPMENT_ALLOWED_INTENT'
         self.route_progress=0.;self.indent_integral=0.;self.slip_integral=0.
         self.applied_cap=cap
 

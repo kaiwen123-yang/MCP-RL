@@ -2,7 +2,7 @@
   "purpose": "R9 frozen contract with actual material prerequisite results; material adapter ran, but no PANN observer or PPO training/evaluation was executed.",
   "run_id": "tm-s1-go2-joint-r9",
   "stage": "S1R9",
-  "implementation_status": "material_feasibility_in_progress",
+  "implementation_status": "material_adapter_executed_training_blocked",
   "reviewed_source_commit": "e3abb8268353bb4900d8ec5b11cc63391cd8d897",
   "entrypoint_contract": {
     "extend_existing": "scripts/run_s1_go2_wb_baseline.py",
@@ -368,7 +368,7 @@
     "execution_source_commit": "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15",
     "adapter": "scripts/s1_go2_joint_material.py",
     "runner": "scripts/run_s1_go2_joint.py",
-    "nontraining_physical_starts": 3,
+    "nontraining_physical_starts": 8,
     "initialization_failures_without_physics": 1,
     "material_complete_tasks": 0,
     "training_starts": 0,
@@ -379,12 +379,23 @@
     "formal_long_starts": 0,
     "tested_constant_caps_m_s": [
       0.18,
+      0.2,
       0.215,
+      0.235,
       0.25
     ],
-    "termination": "All three actual material missions stopped at |principal strain| > .02 during outbound travel; no allowed-intent feasible complete task established.",
-    "budget": "Stopped for unresolved material prerequisite, not cap exhaustion. No change to material, S3, action range, or criteria.",
+    "termination": "All eight allowed-intent actual material missions stopped at the unchanged |principal strain|>.02 bound during outbound travel.",
+    "budget": "8/8 material-adaptation physical starts used; 8/32 total nontraining starts. The 48h wall-clock cap is not exhausted. No change to material/S3/action range/task criteria.",
     "failed_constitutive_step": "Final attempted current-total-displacement boundary retained at material time t+.0002; out-of-domain force not applied to robot. No strain clipping.",
-    "scope": "Three constant allowed intents are not a proof about all time-varying policies. Joint implementation/training and PANN action/performance claims remain unestablished."
+    "scope": "Five constant caps plus three predeclared 2Hz sequences did not establish the required complete-task feasible domain within the full adaptation budget. This is not a proof of impossibility for every policy. No PANN/PPO result is claimed.",
+    "tested_2Hz_sequences": [
+      "switch_2s",
+      "switch_05s",
+      "sinusoid_4s"
+    ],
+    "execution_source_commits": [
+      "0468e207b4c44bfb634996faa0f8a3ac9b70fac5",
+      "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15"
+    ]
   }
 }
