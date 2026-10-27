@@ -90,7 +90,7 @@ def analyze(name,c):
     print(json.dumps(evidence),flush=True)
 
 def summary(c):
-    small=ROOT/c['outputs']['root'];idx=json.loads((small/'index.json').read_text());results=[];assets=[];empty_files=[];execution={};videos=[]
+    small=ROOT/c['outputs']['root'];idx=json.loads((small/'index.json').read_text());results=[];assets=[];empty_files=[];execution={};videos=[];reference_rows=[]
     for item in idx['attempts']:
         name=item['attempt'];path=small/(name+'.json')
         out=ROOT/'outputs/terrain_memory/simulation'/c['run_id']/name
@@ -108,6 +108,15 @@ def summary(c):
         execution[name]=dict(workers=provenance['workers'],process_nice=provenance['process_nice'])
         references=provenance.get('stand_references',[])
         if references:r['timing']['reference_solve_subset_of_state_parameter_rpc']=timings([x['wall_s'] for x in references],.02)
+        for reference in references:
+            reference_rows.append(dict(attempt=name,entry_time_s=reference['entry_time_s'],feasible=reference['feasible'],
+                qacc_norm=reference['qacc_norm'],foot_xy_error_m=reference['max_foot_xy_error_m'],
+                pd_identity_error_rad=reference['pd_reference_identity_max_error_rad'],
+                max_friction_ratio=float(np.max(reference['friction_ratio'])),
+                base_height_m=reference['body_height_m'],relative_height_m=reference['relative_height_m'],
+                **{leg+'_Fz_N':reference['foot_force'][j][2] for j,leg in enumerate(['FL','FR','RL','RR'])},
+                loaded_at_entry=json.dumps(reference['loaded_at_entry']),reference_kind=json.dumps(reference['reference_kind']),
+                solve_wall_s=reference['wall_s']))
         for file in sorted(out.glob('*.npz'))+list(out.glob('*.mp4'))+[out/'model.mjb',out/'agent-server.log',out/'model.xml' if r['stage']=='G0' else out/'model/G1-project-go2.xml']:
             assets.append(dict(name=name+'-'+file.name,path=str(file),size=file.stat().st_size,sha256=sha(file)))
     for file in sorted((ROOT/'work').glob('r8-build*.log'))+[ROOT/'work/r8-author-debug02.log']:
@@ -120,6 +129,7 @@ def summary(c):
         **{k:r['last_30s_hold'].get(k) for k in holdcols},
         **{k+'_pass_fraction':v for k,v in r['last_30s_hold']['criterion_pass_fraction'].items()}) for r in results if r['mission']=='long'])
     table(small/'arrivals.csv',[dict(attempt=r['attempt'],**{k:a[k] for k in ['lap','endpoint','arrival_s','stable_completion_s','stopping_s']}) for r in results for a in r['arrivals']])
+    table(small/'support-references.csv',reference_rows)
     table(small/'rendering.csv',videos)
     table(small/'timing.csv',[dict(attempt=r['attempt'],**execution[r['attempt']],component=k,**v) for r in results for k,v in r['timing'].items() if v])
     coverage=[];cohort_outcomes={};by_name={r['attempt']:r for r in results}

@@ -92,6 +92,8 @@ def main():
     gh('release','edit',tag,'--repo',REPO,'--target',commit,'--notes-file',args.notes_file,'--draft=false')
     # Draft URLs can contain an untagged identifier. Fetch after publication.
     release=json.loads(gh('api',f'repos/{REPO}/releases/tags/{tag}'))
+    tag_commit=git('ls-remote','origin','refs/tags/'+tag).split()[0]
+    if release['draft'] or tag_commit!=commit:raise ValueError('Published release/tag does not identify the evidence commit')
     pages=json.loads(gh('api','--paginate','--slurp',f"repos/{REPO}/releases/{release['id']}/assets?per_page=100"))
     final={a['name']:a for page in pages for a in page}
     for a in expected:
@@ -100,10 +102,15 @@ def main():
             verified=b['state']=='uploaded' and b['size']==a['size'] and b['digest']=='sha256:'+a['sha256']))
     if not all(a['verified'] for a in checks):raise ValueError('Final published metadata differs')
     with index_file(small,c) as idx:
+        idx['status']='completed_published_verified'
         idx['publication'].update(status='published_verified',release_url=release['html_url'],release_id=release['id'],
-            evidence_commit=commit,draft=release['draft'],asset_count=len(checks),asset_bytes=sum(a['size'] for a in checks),
+            evidence_commit=commit,published_tag_commit=tag_commit,draft=release['draft'],asset_count=len(checks),asset_bytes=sum(a['size'] for a in checks),
             all_assets_verified=True,asset_verification=checks,verified_utc=datetime.now(timezone.utc).isoformat(),
-            method='Original execution-host files; authenticated direct upload; final URL/size/digest verified without downloading assets.')
+            method='Original execution-host files; authenticated direct upload; final URL/size/digest and release tag commit verified without downloading assets.')
+        for name,video in idx['videos'].items():video['release_url']=final[name+'-complete-mission.mp4']['browser_download_url']
     git('add',str((small/'index.json').relative_to(ROOT)));git('commit','-m','Verify final R8 Release URLs sizes and digests')
-    git('push','origin','HEAD:main');print(json.dumps(dict(commit=git('rev-parse','HEAD'),release=release['html_url'],assets=len(checks))),flush=True)
+    git('push','origin','HEAD:main')
+    final_commit=git('rev-parse','HEAD');remote_commit=git('ls-remote','origin','refs/heads/main').split()[0]
+    if remote_commit!=final_commit:raise ValueError('Remote main does not contain the final verified index commit')
+    print(json.dumps(dict(commit=final_commit,remote_main_commit=remote_commit,release_tag_commit=tag_commit,release=release['html_url'],assets=len(checks))),flush=True)
 if __name__=='__main__':main()
