@@ -4,11 +4,29 @@
 
 同一空间地块的材料状态跨腿、跨步、跨返程持续演化；后续支撑需求反过来约束当前踩踏。第一版从具有可测恢复过程的黏弹性材料开始。
 
-## 当前任务：修正同一作者控制器的启动，先交完整刚地任务
+## S1第六轮已结束：完成路径往返，终点连续稳定未通过
 
-**近期目标是先做出稳定的 PANN/PINN＋RL＋MPC 联合基础版本，再推进创新。** 眼下尚未建立可用的新MPC整程执行基础；标准PPO集成不需要以先证明创新或材料记忆收益为前提。
+**第六轮已完成固定范围执行：1次G0完整任务启动，0次完整成功；G1开发与正式均未执行。** 本轮 `tm-s1-go2-wb-startup-r6` 使用实现 `ce3e03255e6e229fd61cac458b514fb6ea162314`，保留第五轮和所有历史结果。没有训练PANN/PPO、接入TM02或启用硬件。
 
-用户最新请求授权S1第六轮：[计划第5.7节](docs/TERRAIN_MEMORY_PLAN.md)、[s1-go2-wb-startup.json](experiments/terrain_memory/s1-go2-wb-startup.json)、[最小upstream补丁](experiments/terrain_memory/s1-go2-wb-startup-upstream.patch)。新run_id为 `tm-s1-go2-wb-startup-r6`，**planned_not_executed**；补丁仅检查固定源码适用性，尚未在执行端编译或跑实验。Codex按[AGENTS.md](AGENTS.md)复用现有环境完成真实任务与发布。
+三项启动修正已进入真实执行：作者Init/Reset恢复home后初始化策略；实际世界固定水平floor为−0.01m并写入 `s1_flat_ground_height`；同一任务t=0恰20次原规划，期间plant步数和reset次数均为0。优化前nominal与home ctrl最大差4.77×10⁻⁸rad，最后一次初始化反馈目标与首个实际目标一致。首次最大绝对力矩10.5164Nm，前2s最大机身线速度0.05862m/s，原affine PD最大核对差1.71×10⁻⁶Nm。
+
+| 原任务阶段 | 实际记录 |
+|---|---|
+| 初始站立→去程 | 2.000s进入去程，初始站立阶段未触发跌倒 |
+| 去程→转向 | 15.086s，机身x=2.9673m；全程最大x=3.00363m |
+| 转向→返程 | 22.068s，实际yaw=2.99301rad |
+| 返程→终点站立 | 35.112s，距原点约3.71cm |
+| 最终结果 | 60.000s超时，距原点2.064cm、航向误差0.03737rad；未完成原2s连续稳定条件 |
+
+**主导停止条件是终点角速度反复越过0.1rad/s。** 终点阶段全部稳定条件同时满足的采样比例为69.385%，最长连续区间仅0.250s，达不到2s。终点接触、位置、线速度、姿态分别有99.743%、100%、99.012%、100%的采样满足原条件；单个末状态看似静止不能替代连续稳定要求。没有确认新的实施错误，因此不重复同版运行；G0尚余1次上限未用，不转移到G1，也不放宽阈值或扫描参数。这是停止判据的定位，尚未隔离终点振荡的唯一动力学原因。
+
+解析高度也没有消除几何重叠：保存的best预测中足球底部相对floor最低−30.543mm，实际轨迹最低−21.344mm；使用原0.022m足球半径作几何回放，未改真实接触和失败规则。全部best轨迹保留。0.02/0.10/0.20/0.35s时域按相同绝对时间对齐的平均机身位置误差为0.312/1.536/6.099/38.792mm；末端预测误差仍不能忽略。
+
+物理60s耗时92.335s（另计视频回放/分析/上传）；20次初始化规划共0.4676s。后续3000次规划中1615次超过20ms，规划中位/P95为20.267/31.777ms；这是共享服务器同步仿真，不是NX实时验证。全程30001条500Hz控制状态、30000条真实物理反力记录、3001组best预测和20组启动预测均保留。视频为1801帧、30fps，覆盖实际0→60s失败全过程。
+
+[运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/index.json)、[任务结果](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/episodes.csv)、[全程图](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/figures/g0-01-mission.png)、[连续50Hz便览](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-continuous-50hz.csv)、[500Hz终点判据](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-terminal-criteria.csv)、[绝对时间预测误差](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-prediction-alignment.csv)与[全密度数组和完整视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-startup-r6)。50Hz CSV仅作便览，完整500Hz时程在Release。构建和实验在服务器tmux执行，按用户最后授权覆盖此前前台限定；源码和紧凑结果进GitHub，大数组/视频由执行端直接发布并核对size/digest。
+
+本轮证明启动修正生效并完成了路径往返，但**G0完整任务仍未通过，G1执行基础和PANN/PINN＋RL＋MPC联合基础版本仍未完成**。近期顺序继续是先建立稳定联合基础，再研究创新；标准PPO接入不以先证明创新为前提。本轮已结束，不自动开新轮。
 
 ### 第五轮实际做到哪里
 
@@ -23,17 +41,9 @@
 
 固定作者headless Init/Reset清零控制序列后才恢复home物理状态；[作者GUI](https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/app.cc)则使用home ctrl初始化策略。这是已确认的启动语义差异；第三次Ground错误的具体内部候选未记录，不能宣布唯一根因。
 
-### 下一轮交什么
+### 第六轮原计划与联合基础顺序
 
-复用已构建的作者iLQG，不换平台：先恢复home控制种子，给当前已知水平plane写入解析高度，再在同一任务t=0完成固定20次规划初始化，随后执行原2s站立→前进3m→转向→返回→稳定站立全程。20次是启动计算，不是20个小测试或收敛保证；解析地面高度不把无效预测变成成功。
-
-G0作者条件最多2次整程启动，有完整成功才进入G1；G1保留本仓原物理、接触与力矩界，开发最多3次，正式为同版nominal/yaw＋5°/yaw−5°，相同nominal复用。总上限8，不用满、不重跑失败凑样本。3/3仅说明这三个条件的刚地执行基线可用，**仍不等于联合算法、TM02通行或材料记忆创新已完成**。随后在同一执行链接冻结PANN与标准PPO，接口范围随实际结果确定；不要求先实现高级材料扩维或终端Critic。
-
-第五轮保留了已解决的构建、模型XML传输、affine输入与连续数据链。作者机器人质量15.806408kg，本仓原机器人15.206408kg；含mocap球的23.044637kg不是机器人质量。G0无显式原项目力矩界，不能用其成功代替G1。第二轮B1刚地/KV8000各5/5仍保留，新执行链的失败不改写旧成果。
-
-[第五轮运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json)、[原配置](experiments/terrain_memory/s1-go2-wb-baseline.json)和[Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-baseline-evidence-20261026)保存全部实际证据，7个资产共614,812 bytes已核size/digest。本轮不重跑历史、不新增训练或硬件。近期LLA-MPPI/ReCo仅用于实际输入/响应核查和后续联合闭环一致性的借鉴，具体边界见计划第5.10节。
-
-**源码/紧凑结果进GitHub，大数组/视频从执行端进Release；确认后结束，不在用户电脑再次下载、复制、镜像、压缩或归档。**
+第六轮[实际配置](experiments/terrain_memory/s1-go2-wb-startup.json)、[作者补丁](experiments/terrain_memory/s1-go2-wb-startup-upstream.patch)和[计划第5.7/5.8节](docs/TERRAIN_MEMORY_PLAN.md)保留原边界与实际完成范围。第五轮[原索引](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json)和[Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-baseline-evidence-20261026)保持冻结。第二轮B1刚地/KV8000各5/5仍是历史参照。
 
 ## S1第四轮已冻结：接口修复有效，动态执行仍未成立
 

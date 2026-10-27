@@ -4,7 +4,9 @@
 
 最终问题是**面向重复踩踏的四足机器人地面记忆辨识与跨步协同控制**。用户已明确近期顺序：**先形成稳定执行完整任务的 PANN/PINN＋RL＋MPC 联合基础版本，再研究方法创新、轻量化和泛化。** 不以先证明创新、材料记忆收益或改进PPO为接入标准RL的前提。
 
-用户最新请求授权S1第六轮：[计划第5.7节](docs/TERRAIN_MEMORY_PLAN.md)、[新配置](experiments/terrain_memory/s1-go2-wb-startup.json)，run_id=`tm-s1-go2-wb-startup-r6`。当前为 **planned_not_executed**：已给出固定作者源码的最小补丁，仅检查可应用，尚未在执行端编译或运行。下一位Codex要完成适配、完整任务和发布，不停在报告。
+**S1第六轮已执行并关闭**：[计划第5.7节](docs/TERRAIN_MEMORY_PLAN.md)、[实际配置](experiments/terrain_memory/s1-go2-wb-startup.json)，run_id=`tm-s1-go2-wb-startup-r6`。实际1次G0物理启动、0次完整成功，60s内完成路径往返但终点连续稳定最长0.25s，未达原2s要求。G1开发/正式均未执行。没有确认新的实施错误，不自动使用剩余G0上限、不放宽任务判据。本轮仅收尾源码/实际证据发布和size/digest确认，不重开任务。
+
+三项启动改动已应用、编译并执行；实现提交 `ce3e03255e6e229fd61cac458b514fb6ea162314`，新agent_server SHA256为 `7f290267c078f67a8fd57a9fcb2b7e8098b4c6f61203b31bf9f67aaa049a7c4e`。20次初始化、全60s真实时程及best预测均已保留。原判据与所有失败不改写。
 
 第五轮 `tm-s1-go2-wb-baseline-20261026` 已关闭，2次G0真实启动、0次整程完成，G1未执行；旧配置、原始结果与Release保持原样。本次是独立新运行，不刷新旧额度。R1/R2/S0、S1历史及T1/T1R均冻结；第二轮B1刚地/KV8000各5/5仍是历史成功参照。
 
@@ -15,7 +17,7 @@
 - 作者headless Init/Reset先清零策略，才恢复home物理状态；GUI却使用 `Reset(home ctrl)`。这是已确认的启动差异。第三次规划Ground fatal的内部候选未记录，不能宣布唯一根因。
 - 已知水平面的解析高度只解决本次gait残差几何查询的定义域问题；不证明预测或执行稳定。
 
-## 实施顺序
+## 已完成的实施顺序（原协议保留）
 
 1. 复用现有 `work/envs/mjpc-go2`、固定作者提交 `e00c47a5adb9856af2e0f24231bb3a60d5be23c4` 及固定依赖。保留 `-fno-strict-aliasing`、官方XML传输、显式affine PD、完整Stand/Trot表、head目标偏移和连续Heading。不重装平台，不接旧T1/T1R执行层。
 2. 应用 [upstream补丁](experiments/terrain_memory/s1-go2-wb-startup-upstream.patch)：Init/Reset先恢复home，再以home ctrl初始化策略；Quadruped gait残差仅在显式 `s1_flat_ground_height` 存在时使用该平面高度。重编受影响目标并实际使用新 `agent_server`，记录真实二进制hash。只在Python调用未修复的 `agent.reset()`无效。
@@ -45,6 +47,6 @@ LLA-MPPI只借鉴实际状态—动作响应核查，ReCo只借鉴训练/部署�
 
 ## 执行与发布
 
-通过现有SSH前台路径执行，不使用tmux。禁止防御性编程、通用fallback、单元/mock/冒烟/导入/形状测试及无关回归矩阵；不新增审查报告、状态日报或接续文档。验证来自实际完整任务，构建/初始化不冒充实验成功。
+本轮按用户2026-10-27最后授权通过现有SSH在tmux执行，覆盖此前前台限定。禁止防御性编程、通用fallback、单元/mock/冒烟/导入/形状测试及无关回归矩阵；不新增审查报告、状态日报或接续文档。验证来自实际完整任务，构建/初始化不冒充实验成功。
 
 只维护必要源码、实际配置、紧凑结果图表和一个运行索引；索引区分无物理初始化失败与真实启动，不用零plant步失败绕过停止条件无限重试。新大数组/完整视频从执行端直接上传Release，旧结果只引用。**GitHub commit及必要Release的size/digest确认后结束，不在用户电脑再次下载、复制、镜像、压缩或归档。** 最终交真实正负结论、关键数字、commit与成果链接。

@@ -1,0 +1,630 @@
+{
+  "run_id": "tm-s1-go2-wb-startup-r6",
+  "status": "completed_bounded_scope",
+  "attempts": [
+    {
+      "attempt": "g0-01",
+      "stage": "G0",
+      "purpose": "development",
+      "condition": "nominal",
+      "status": "completed",
+      "execution_fingerprint": "3879533fa30f29acc5a85ca2948af6ebdd2e4bb8ee39a76a9571182ebdee010d",
+      "command": [
+        "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/scripts/run_s1_go2_wb_baseline.py",
+        "--config",
+        "experiments/terrain_memory/s1-go2-wb-startup.json",
+        "--author-source",
+        "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2",
+        "--agent-server",
+        "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/bin/agent_server",
+        "--workers",
+        "6",
+        "--original-robot-dir",
+        "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2",
+        "--original-scene",
+        "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/utils/mujoco/assets/scene_flat.xml",
+        "--original-resolved",
+        "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json",
+        "--stage",
+        "G0",
+        "--condition",
+        "nominal",
+        "--purpose",
+        "development",
+        "--attempt",
+        "g0-01"
+      ],
+      "source_commit": "ce3e03255e6e229fd61cac458b514fb6ea162314",
+      "started_utc": "2026-10-27T01:24:23Z",
+      "success": false,
+      "reason": "task_timeout",
+      "simulation_s": 60.00000000002736,
+      "wall_s": 92.33523662999505,
+      "result": "g0-01.json"
+    }
+  ],
+  "stages": {
+    "G0": {
+      "starts": 1,
+      "successes": 0,
+      "passed": false
+    },
+    "G1_development": {
+      "starts": 0,
+      "passed": false,
+      "unexecuted_reason": "G0 full-mission gate did not pass"
+    },
+    "G1_formal": {
+      "records": [],
+      "unexecuted_reason": "No frozen successful G1 nominal mission",
+      "usable_baseline": false
+    }
+  },
+  "budget": {
+    "maximum_author_native_starts": 2,
+    "maximum_project_development_starts": 3,
+    "maximum_project_formal_conditions": 3,
+    "maximum_new_mission_starts_including_failures_missing_records_and_superseded_versions": 8,
+    "formal_random_optimizer_seeds": 0,
+    "no_refresh": true,
+    "counting": "Count every physical start and preserve failures, lost-output and superseded attempts. Identical reused nominal is one start. Caps are not quotas; no allowance transfer."
+  },
+  "historical_reference": {
+    "run_id": "tm-s1-go2-wb-baseline-20261026",
+    "config": "experiments/terrain_memory/s1-go2-wb-baseline.json",
+    "index": "results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json",
+    "physical_starts": 2,
+    "complete_missions": 0,
+    "closed": true,
+    "refresh": false
+  },
+  "training_runs": 0,
+  "hardware_runs": 0,
+  "nx_realtime_measured": false,
+  "plan_commit": "0758c4c198758b9fb3d9cc48c870176bd4af4056",
+  "implementation_commit": "ce3e03255e6e229fd61cac458b514fb6ea162314",
+  "configuration_sha256": "35be6fc220372ba4ea219ff3c9043e83559c9c3fa23b09cfa8fe77c9c44ac6e7",
+  "configuration_at_execution": {
+    "purpose": "Establish the original full rigid-ground mission with home-seeded author iLQG and an explicit fixed-plane residual.",
+    "run_id": "tm-s1-go2-wb-startup-r6",
+    "stage": "S1_author_Go2_startup_repair",
+    "implementation_status": "implemented_and_compiled_pending_full_mission",
+    "reviewed_source_commit": "d9c04a9850000916cc2d77ef741f3473c543d130",
+    "target_entrypoint": "scripts/run_s1_go2_wb_baseline.py",
+    "frozen_previous": {
+      "run_id": "tm-s1-go2-wb-baseline-20261026",
+      "config": "experiments/terrain_memory/s1-go2-wb-baseline.json",
+      "index": "results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json",
+      "physical_starts": 2,
+      "complete_missions": 0,
+      "closed": true,
+      "refresh": false
+    },
+    "upstream": {
+      "paper_id": "TM20",
+      "paper_version": "arXiv:2503.04613v3",
+      "solver_repository": "https://github.com/johnzhang3/mujoco_mpc",
+      "solver_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+      "mujoco_dependency_commit": "088079eff0450e32b98ee743141780ed68307506",
+      "menagerie_dependency_commit": "d82891f8b6c576f9f6a9df308f3a1155ebedbc40",
+      "native_task": "mjpc/tasks/quadruped/task_flat.xml",
+      "patch": "experiments/terrain_memory/s1-go2-wb-startup-upstream.patch",
+      "patch_sha256": "f67a6ab54b863abd80b91244af8b62ff473eb897ac64708990a9e96e07c9a824",
+      "patch_status": "Applied and agent_server rebuilt successfully on 2026-10-27; physical mission outcomes recorded separately."
+    },
+    "execution": {
+      "host": "fy-5080",
+      "isolated_environment": "work/envs/mjpc-go2",
+      "isolated_source": "work/terrain-memory/upstreams/mujoco_mpc-go2",
+      "reuse_existing_environment": true,
+      "rebuild_patched_agent_server": true,
+      "required_libmjpc_compile_flags": [
+        "-fno-strict-aliasing"
+      ],
+      "build_test_options": {
+        "MJPC_BUILD_TESTS": false,
+        "PYMJPC_BUILD_TESTS": false,
+        "MJPC_GRPC_BUILD_TESTS": false
+      },
+      "model_transport": "Agent(run_init=False), then init(send_as='xml') with absolute on-host mesh paths.",
+      "actuator_mapping": {
+        "biastype": "affine",
+        "gainprm": [
+          60
+        ],
+        "biasprm": [
+          0,
+          -60,
+          -5
+        ]
+      },
+      "task_mode": "Quadruped",
+      "gait_switch": "Manual",
+      "apply_complete_gait_table_before_set_state": true,
+      "feedback_dt_s": 0.002,
+      "planner_dt_s": 0.02,
+      "planner_iterations_per_tick_after_startup": 1,
+      "prediction_dt_s": 0.01,
+      "prediction_horizon_s": 0.35,
+      "retain_author_integrator_and_differentiable_contact": true,
+      "feedback_action": "get_action(time=data.time, nominal_action=False, averaging_duration=0)",
+      "synchronous_slow_simulation": true,
+      "new_neural_training_runs": 0,
+      "new_RL_training_runs": 0,
+      "activate_hardware": false,
+      "transport": "SSH to the existing host; run the bounded pipeline in tmux per the latest user instruction on 2026-10-27.",
+      "resource_policy": {
+        "nice": 10,
+        "planner_workers": 6,
+        "BLAS_threads": 1,
+        "build_workers": 6,
+        "GPU": "Only recorded-state video rendering; existing workloads retained."
+      },
+      "agent_server_sha256": "7f290267c078f67a8fd57a9fcb2b7e8098b4c6f61203b31bf9f67aaa049a7c4e"
+    },
+    "startup": {
+      "policy_seed": "home keyframe ctrl after restoring home data; preserve nullptr behavior without home.",
+      "seed_both_init_and_reset": true,
+      "ground_height_numeric": "s1_flat_ground_height",
+      "ground_height_enable_condition": "Adapter confirms the actual floor is a world-static horizontal plane; write its world height as one scalar.",
+      "G0_ground_height_m": -0.01,
+      "G1_ground_height_m": "Read the actual project floor; do not assume zero.",
+      "global_Ground_unchanged": true,
+      "time_s": 0,
+      "planner_steps": 20,
+      "replaces_original_time_zero_planner_step": true,
+      "additional_time_zero_planner_step": false,
+      "advance_plant_during_startup": false,
+      "reset_agent_between_startup_iterations": false,
+      "state_and_goal": "Hold the actual initial qpos/qvel/time, complete Stand settings and initial mission goal fixed.",
+      "retain": [
+        "home ctrl and pre-optimization nominal seed action",
+        "each of the 20 best trajectories: states, actions, times and iteration number",
+        "each initial action and the final feedback action before the first physical step",
+        "all initialization errors and subsequent physical failures"
+      ],
+      "horizon_cost": "get_total_cost() is a current-state cost, not the optimized horizon return; never label it horizon convergence.",
+      "success_meaning": "Initialization completion is not standing or mission success."
+    },
+    "task": {
+      "initial_xy_m": [
+        0,
+        0
+      ],
+      "nominal_initial_yaw_rad": 0,
+      "initial_stand_s": 2,
+      "turnaround_xy_m": [
+        3,
+        0
+      ],
+      "turn_angle_rad": 3.141592653589793,
+      "return_xy_m": [
+        0,
+        0
+      ],
+      "command_speed_m_s": 0.25,
+      "turn_yaw_rate_rad_s": 0.5,
+      "extra_turnaround_hold_s": 0,
+      "terminal_stand_s": 2,
+      "maximum_episode_s": 60,
+      "goal_position_radius_m": 0.15,
+      "turn_heading_tolerance_rad": 0.15,
+      "terminal_speed_max_m_s": 0.05,
+      "task_mode": "Quadruped",
+      "gait_switch": "Manual",
+      "native_head_offset_in_trunk_m": [
+        0.3,
+        0,
+        0
+      ],
+      "orientation_cost_weight": 0.03,
+      "stand_settings": {
+        "Gait": "Stand",
+        "Duty ratio": 1,
+        "Cadence": 1,
+        "Amplitude": 0,
+        "Balance": 0,
+        "Upright": 1,
+        "Height": 1
+      },
+      "move_and_turn_settings": {
+        "Gait": "Trot",
+        "Duty ratio": 0.45,
+        "Cadence": 2,
+        "Amplitude": 0.03,
+        "Balance": 0.2,
+        "Upright": 1,
+        "Height": 1
+      }
+    },
+    "controllers": {
+      "G0_author_native": {
+        "actual_mass_kg_from_source": 15.806408,
+        "physics_dt_s": 0.002,
+        "physical_model": "Retain the author mass, inertia, passive joints, native collisions and contacts.",
+        "actuator_force_limits": "Retain author unbounded force; do not claim project torque-limit coverage.",
+        "PD": {
+          "kp": 60,
+          "kd": 5
+        }
+      },
+      "G1_project_limits": {
+        "actual_mass_kg": 15.206408,
+        "model_reference": "Original on-host Go2 MJCF/assets and results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json.",
+        "preserve_physics": [
+          "mass/inertia",
+          "joint names and physical joint ranges",
+          "passive damping/armature/friction parameters",
+          "actuator gear relationship and original torque limits",
+          "collision geometry and foot geometry",
+          "initial qpos/qvel except the declared yaw condition",
+          "original native rigid floor and contact solref/solimp/margin"
+        ],
+        "permitted_model_adaptation": "Nonphysical task sites/sensors/name maps and explicit joint-target PD only.",
+        "physics_dt_s": 0.0002,
+        "control_dt_s": 0.002,
+        "mpc_dt_s": 0.02,
+        "original_native_contact": {
+          "solref": [
+            0.002,
+            1
+          ],
+          "solimp": [
+            0.99,
+            0.999,
+            0.001,
+            0.5,
+            2
+          ],
+          "margin_m": 0
+        },
+        "PD": {
+          "kp": 60,
+          "kd": 5
+        },
+        "joint_target_limits": "Original per-joint physical position ranges, mapped by name.",
+        "original_torque_limit_pattern_Nm": [
+          23.7,
+          23.7,
+          45.43
+        ],
+        "actuator_mapping": "Identical gear, target bounds and original force/torque limits in predictor and plant; no unmatched post-planning clipping.",
+        "no_materials": true
+      }
+    },
+    "protocol": {
+      "phase_A": {
+        "controller": "G0_author_native",
+        "maximum_mission_attempts": 2,
+        "condition": "nominal",
+        "pass": "At least one complete original out-turn-return-terminal-stand mission.",
+        "failure_action": "Stop this round before G1 if neither attempt completes."
+      },
+      "phase_B_development": {
+        "controller": "G1_project_limits",
+        "maximum_mission_attempts": 3,
+        "condition": "nominal",
+        "pass": "At least one complete original mission with a version/configuration that can be frozen.",
+        "failure_action": "Stop before formal conditions if no nominal mission completes."
+      },
+      "phase_B_formal": {
+        "controller": "G1_project_limits",
+        "conditions": [
+          {
+            "id": "nominal",
+            "initial_yaw_offset_deg": 0
+          },
+          {
+            "id": "yaw_plus5",
+            "initial_yaw_offset_deg": 5
+          },
+          {
+            "id": "yaw_minus5",
+            "initial_yaw_offset_deg": -5
+          }
+        ],
+        "initial_condition_rule": "Change only initial root yaw; retain body x/y, joint pose, zero velocities and the fixed world route.",
+        "freeze": "One source/configuration/model/solver version for all three conditions.",
+        "reuse_identical_nominal": true,
+        "retain_all_failures": true,
+        "usable_baseline": "All three prescribed conditions complete the original mission within original limits; no statistical robustness claim."
+      },
+      "full_mission_only": true,
+      "no_extra_short_physical_trials": true
+    },
+    "budget": {
+      "maximum_author_native_starts": 2,
+      "maximum_project_development_starts": 3,
+      "maximum_project_formal_conditions": 3,
+      "maximum_new_mission_starts_including_failures_missing_records_and_superseded_versions": 8,
+      "formal_random_optimizer_seeds": 0,
+      "no_refresh": true,
+      "counting": "Count every physical start and preserve failures, lost-output and superseded attempts. Identical reused nominal is one start. Caps are not quotas; no allowance transfer."
+    },
+    "next_joint_stage": {
+      "entry": "After a usable G1 baseline, integrate standard PPO with frozen PANN and this MPC into one stable complete closed loop.",
+      "requires_novel_algorithm_first": false,
+      "requires_material_state_expansion_first": false,
+      "current_round_training": false,
+      "current_round_claim": "Execution baseline only; no PINN/PANN+RL+MPC innovation or material-memory benefit claim."
+    },
+    "outputs": {
+      "root": "results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6",
+      "required": [
+        "actual passed configuration and source/upstream-patch/server-binary/model hashes",
+        "startup seed and all 20 initialization best trajectories",
+        "every physical start, exact command, phase/outcome and unexecuted stages",
+        "continuous actual base/feet/joints/targets/torques/contact trajectories and full videos",
+        "planner/feedback/physics/wall timings; distinguish simulated from wall-time rates",
+        "continuous actual foot ground reaction forces, distinct from contact flags",
+        "best predictions during the full actual mission, aligned with recorded states"
+      ],
+      "publication": "Commit compact results and code; upload new large arrays/videos directly from execution host to Release. Reference old evidence.",
+      "no_status_reports": true
+    },
+    "delivery": {
+      "local_pc_archive": false,
+      "end_after": "Confirm GitHub commit and required Release asset size/digest; no user-PC copy/download/archive."
+    },
+    "forbidden": [
+      "defensive programming and generic fallback frameworks",
+      "new unit/mock/smoke/import/shape tests",
+      "audit/status/continuation reports",
+      "T1/T1R or new WBC/optimizer layers",
+      "gain/cost/integrator search or relaxed mission/physical limits",
+      "neural/RL training, materials or hardware in this round",
+      "claiming G0 success as G1 success",
+      "post-publication user-PC archiving"
+    ]
+  },
+  "build": {
+    "author_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+    "patch": "experiments/terrain_memory/s1-go2-wb-startup-upstream.patch",
+    "patch_sha256": "f67a6ab54b863abd80b91244af8b62ff473eb897ac64708990a9e96e07c9a824",
+    "binary": {
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/bin/agent_server",
+      "size": 13941984,
+      "sha256": "7f290267c078f67a8fd57a9fcb2b7e8098b4c6f61203b31bf9f67aaa049a7c4e"
+    },
+    "patched_sources": {
+      "mjpc/grpc/agent_service.cc": "93b1e16965938934bbd5cb5dd46100225207537621100ec48f00f86e213761ac",
+      "mjpc/grpc/grpc_agent_util.cc": "94b7328afb705bb226ee4dd306defce1a3f09972c4432da46bef8ee4c033e5c1",
+      "mjpc/tasks/quadruped/quadruped.cc": "20e416c884dc5158dd2688621a8438f42be599f0875c2b45b0dc430674b2c3c4",
+      "mjpc/CMakeLists.txt": "3eab9f8753a334a9dc7c99377789860ac0fadb364827116fe1a3b35ea02db877"
+    },
+    "command": "nice -n 10 cmake --build build --target agent_server -j 6",
+    "exit_code": 0,
+    "preserved_compile_option": "-fno-strict-aliasing",
+    "dependency_reference": "results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json#build",
+    "log": {
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/r6-build.log",
+      "sha256": "50042521b7beb1c72da37bf9f08ff092a72fc02bf63fe863abc891c2298a5b7a"
+    },
+    "native_and_python_mujoco_sha256": "bd8e75dd9ee531758f8d71a9c5b5b26b8b5b0097235f9719f21a38879b889792"
+  },
+  "execution": {
+    "transport": "tmux through existing SSH; latest explicit user instruction overrides prior no-tmux text",
+    "session": "s1-r6",
+    "nice": 10,
+    "workers": 6,
+    "BLAS_threads": 1,
+    "physics_started": true,
+    "comment": "A running process or initialization completion is not full-task success.",
+    "status": "physical_execution_and_video_replay_finished"
+  },
+  "actual_starts": 1,
+  "completed_records": 1,
+  "missing_records": 0,
+  "active_attempts": 0,
+  "assets": [
+    {
+      "attempt": "g0-01",
+      "name": "g0-01-trajectory.npz",
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01/trajectory.npz",
+      "size": 67595433,
+      "sha256": "56c5a0074da16b57d6e25983965e20c1d5192065340e36ea5029dcbb1a6ab2d2"
+    },
+    {
+      "attempt": "g0-01",
+      "name": "g0-01-startup.npz",
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01/startup.npz",
+      "size": 259929,
+      "sha256": "5ade8f6c3dc597efb8048243f5c9e188ae339bde8effb36658c21f29a9d403f0"
+    },
+    {
+      "attempt": "g0-01",
+      "name": "g0-01-complete-mission.mp4",
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01/complete-mission.mp4",
+      "size": 16360563,
+      "sha256": "ee8558d9b70e3857de1ec214e8c37205c3be00eff8673bdaa3d7da13253d7360"
+    },
+    {
+      "attempt": "g0-01",
+      "name": "g0-01-model.xml",
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01/model.xml",
+      "size": 19095,
+      "sha256": "fcf27f75a1ddaa15e32e5193262a58d33e9c1c6da19ebf3ee2714b9860350712"
+    },
+    {
+      "attempt": "g0-01",
+      "name": "g0-01-agent-server.log",
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01/agent-server.log",
+      "size": 176,
+      "sha256": "527868d05b484cb03c905f8473795bd9301fea7eb1bb59f5f376289ef00cae8e"
+    },
+    {
+      "name": "g0-01-prediction-ground-gaps.npz",
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01/prediction-ground-gaps.npz",
+      "size": 3451003,
+      "sha256": "4b7636e244194aa0f6944c6eca934691edda3aea53f2fffe862916affd2ae055"
+    },
+    {
+      "name": "agent-server-build.log",
+      "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/r6-build.log",
+      "size": 72762,
+      "sha256": "50042521b7beb1c72da37bf9f08ff092a72fc02bf63fe863abc891c2298a5b7a"
+    }
+  ],
+  "source_commit": "ce3e03255e6e229fd61cac458b514fb6ea162314",
+  "environment": {
+    "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/envs/mjpc-go2",
+    "packages": [
+      "absl-py==2.5.1",
+      "build==1.6.1",
+      "cmake==3.28.4",
+      "contourpy==1.3.3",
+      "cycler==0.12.1",
+      "etils==1.14.0",
+      "fonttools==4.67.0",
+      "fsspec==2026.9.0",
+      "glfw==2.11.0",
+      "grpcio==1.85.0",
+      "grpcio-tools==1.85.0",
+      "ImageIO==2.38.1",
+      "imageio-ffmpeg==0.6.0",
+      "kiwisolver==1.5.1",
+      "matplotlib==3.11.2",
+      "mujoco @ file:///home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/python-mujoco-build",
+      "ninja==1.13.2",
+      "numpy==2.4.6",
+      "packaging==26.3",
+      "pillow==13.0.0",
+      "protobuf==7.36.2",
+      "PyOpenGL==3.1.10",
+      "pyparsing==3.3.3",
+      "pyproject_hooks==1.3.3",
+      "python-dateutil==3.0.0",
+      "scipy==1.17.1",
+      "six==1.17.0",
+      "typing_extensions==4.16.0",
+      "tzdata==2026.5",
+      "zipp==4.1.2"
+    ]
+  },
+  "timing_scope": "Shared server, synchronous slow simulation; separate planning, feedback RPC, state/parameter RPC, physical integration and total wall times. No NX measurement.",
+  "trajectory_analysis": [
+    {
+      "attempt": "g0-01",
+      "success": false,
+      "reason": "task_timeout",
+      "data_profile": {
+        "control_samples": 30001,
+        "physical_samples": 30000,
+        "planning_origins": 3001,
+        "prediction_steps": 36,
+        "full_control_dt_s": 0.002,
+        "compact_csv_stride": 10,
+        "nonfinite_values": {
+          "qpos": 0,
+          "qvel": 0,
+          "torque": 0,
+          "actual_grf": 0,
+          "plan_states": 0,
+          "plan_actions": 0,
+          "physical": 0
+        }
+      },
+      "startup": {
+        "iterations": 20,
+        "plant_time_values": [
+          0.0
+        ],
+        "seed_home_max_abs_difference_rad": 4.768371586472142e-08,
+        "predicted_initial_qpos_max_abs_difference": 0.0,
+        "final_initialization_vs_executed_action_max_abs_difference": 0.0,
+        "first_actual_max_abs_torque_Nm": 10.516429424285889,
+        "first_2s_peak_total_vertical_grf_N": 228.78724420024986,
+        "first_2s_peak_base_linear_speed_m_s": 0.05862451011654417,
+        "affine_PD_max_abs_error_Nm": 1.7028808620977998e-06
+      },
+      "terminal": {
+        "start_s": 35.11199999999695,
+        "duration_s": 24.888000000030416,
+        "criteria_satisfied_fraction": {
+          "all_feet_contact": 0.9974286862193652,
+          "origin_distance": 1.0,
+          "linear_speed": 0.990116512655685,
+          "angular_speed": 0.69385295299317,
+          "roll_pitch": 1.0
+        },
+        "all_criteria_satisfied_fraction": 0.69385295299317,
+        "longest_stable_streak_s": 0.25000000000030553,
+        "maximum_angular_speed_rad_s": 0.7798252862773261,
+        "p95_angular_speed_rad_s": 0.19587177306401674,
+        "endpoint_angular_speed_rad_s": 0.01906203201642151,
+        "failure_condition": "No continuous 2 s interval satisfied every original terminal criterion; angular-speed crossings reset the stable timer.",
+        "causal_limit": "Observed stopping condition, not isolation of a unique dynamical cause; no confirmed new implementation error and no identical retry."
+      },
+      "best_prediction": {
+        "min_base_z_m": 0.23184840948889587,
+        "max_abs_roll_pitch_rad": 0.24960794998591407,
+        "aligned_error": {
+          "0.02": {
+            "samples": 3000,
+            "mean_position_error_m": 0.0003115419462265236,
+            "mean_orientation_error_rad": 0.002662761037909467
+          },
+          "0.1": {
+            "samples": 2996,
+            "mean_position_error_m": 0.00153587564785794,
+            "mean_orientation_error_rad": 0.008648309469785235
+          },
+          "0.2": {
+            "samples": 2991,
+            "mean_position_error_m": 0.006099091079495293,
+            "mean_orientation_error_rad": 0.015981776013812236
+          },
+          "0.35": {
+            "samples": 2983,
+            "mean_position_error_m": 0.03879230345338548,
+            "mean_orientation_error_rad": 0.14922377566656284
+          }
+        },
+        "alignment": "Best prediction and actual state compared at equal absolute simulation time; no extrapolation past actual termination. This is not a horizon-cost convergence curve.",
+        "ground_geometry": {
+          "foot_radius_m": [
+            0.022,
+            0.022,
+            0.022,
+            0.022
+          ],
+          "predicted_min_foot_bottom_gap_m": -0.030543280590095603,
+          "actual_min_foot_bottom_gap_m": -0.02134431593387799,
+          "worst_plan_origin_s": 6.619999999999493,
+          "worst_horizon_s": 0.03999999999999915,
+          "worst_foot": "RR",
+          "meaning": "Signed sphere-bottom minus fixed plane height; negative means geometric overlap under the retained native contact model. Analytic residual height did not eliminate these overlaps. This is not a new termination rule."
+        }
+      },
+      "figure_layout": {
+        "text_outside_canvas": []
+      }
+    }
+  ],
+  "decision": "Close R6 after one full G0 timeout. The route and turn were traversed, but the original continuous 2 s terminal stability condition was not met. No confirmed new implementation error warrants a second identical start. G1 remains unexecuted.",
+  "unused_allowances": {
+    "G0": 1,
+    "G1_development": 3,
+    "G1_formal_conditions": 3,
+    "transfer_allowed": false
+  },
+  "postprocessing_command": "work/envs/mjpc-go2/bin/python scripts/analyze_s1_go2_wb_startup.py",
+  "compact_data_note": "50 Hz CSV is decimated from full 500 Hz trajectory; terminal criteria retain every 500 Hz sample. NPZ contains all actual states, physical forces, joint targets, torques and best predictions.",
+  "publication": {
+    "status": "pending",
+    "release_tag": "tm-s1-go2-wb-startup-r6",
+    "upload_origin": "execution host only; no result download to the user PC",
+    "summary": "**第六轮已完成固定范围执行：1次G0完整任务启动，0次完整成功；G1开发与正式均未执行。** 本轮 `tm-s1-go2-wb-startup-r6` 使用实现 `ce3e03255e6e229fd61cac458b514fb6ea162314`，保留第五轮和所有历史结果。没有训练PANN/PPO、接入TM02或启用硬件。\n\n三项启动修正已进入真实执行：作者Init/Reset恢复home后初始化策略；实际世界固定水平floor为−0.01m并写入 `s1_flat_ground_height`；同一任务t=0恰20次原规划，期间plant步数和reset次数均为0。优化前nominal与home ctrl最大差4.77×10⁻⁸rad，最后一次初始化反馈目标与首个实际目标一致。首次最大绝对力矩10.5164Nm，前2s最大机身线速度0.05862m/s，原affine PD最大核对差1.71×10⁻⁶Nm。\n\n| 原任务阶段 | 实际记录 |\n|---|---|\n| 初始站立→去程 | 2.000s进入去程，初始站立阶段未触发跌倒 |\n| 去程→转向 | 15.086s，机身x=2.9673m；全程最大x=3.00363m |\n| 转向→返程 | 22.068s，实际yaw=2.99301rad |\n| 返程→终点站立 | 35.112s，距原点约3.71cm |\n| 最终结果 | 60.000s超时，距原点2.064cm、航向误差0.03737rad；未完成原2s连续稳定条件 |\n\n**主导停止条件是终点角速度反复越过0.1rad/s。** 终点阶段全部稳定条件同时满足的采样比例为69.385%，最长连续区间仅0.250s，达不到2s。终点接触、位置、线速度、姿态分别有99.743%、100%、99.012%、100%的采样满足原条件；单个末状态看似静止不能替代连续稳定要求。没有确认新的实施错误，因此不重复同版运行；G0尚余1次上限未用，不转移到G1，也不放宽阈值或扫描参数。这是停止判据的定位，尚未隔离终点振荡的唯一动力学原因。\n\n解析高度也没有消除几何重叠：保存的best预测中足球底部相对floor最低−30.543mm，实际轨迹最低−21.344mm；使用原0.022m足球半径作几何回放，未改真实接触和失败规则。全部best轨迹保留。0.02/0.10/0.20/0.35s时域按相同绝对时间对齐的平均机身位置误差为0.312/1.536/6.099/38.792mm；末端预测误差仍不能忽略。\n\n物理60s耗时92.335s（另计视频回放/分析/上传）；20次初始化规划共0.4676s。后续3000次规划中1615次超过20ms，规划中位/P95为20.267/31.777ms；这是共享服务器同步仿真，不是NX实时验证。全程30001条500Hz控制状态、30000条真实物理反力记录、3001组best预测和20组启动预测均保留。视频为1801帧、30fps，覆盖实际0→60s失败全过程。\n\n[运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/index.json)、[任务结果](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/episodes.csv)、[全程图](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/figures/g0-01-mission.png)、[连续50Hz便览](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-continuous-50hz.csv)、[500Hz终点判据](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-terminal-criteria.csv)、[绝对时间预测误差](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-prediction-alignment.csv)与[全密度数组和完整视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-startup-r6)。50Hz CSV仅作便览，完整500Hz时程在Release。构建和实验在服务器tmux执行，按用户最后授权覆盖此前前台限定；源码和紧凑结果进GitHub，大数组/视频由执行端直接发布并核对size/digest。\n\n本轮证明启动修正生效并完成了路径往返，但**G0完整任务仍未通过，G1执行基础和PANN/PINN＋RL＋MPC联合基础版本仍未完成**。近期顺序继续是先建立稳定联合基础，再研究创新；标准PPO接入不以先证明创新为前提。本轮已结束，不自动开新轮。\n"
+  },
+  "published_configuration_sha256": "5c1b6d82099f622ee5f775a4f03beb920e14eeee0de4de8063c674e259c83ce8",
+  "video_verification": {
+    "frames": 1801,
+    "fps": 30,
+    "duration_s": 60.03,
+    "simulation_endpoint_s": 60.0,
+    "first_frame": 0,
+    "last_frame": 1800,
+    "sampled_visual_review": "Return at 30.002 s and terminal state at 60.000 s inspected; final frame labels task_timeout."
+  },
+  "figure_visual_verification": "Six panels inspected; labels and curves visible; no out-of-canvas text after axis limits were set. No statistical error bars or reliability estimate."
+}
