@@ -114,9 +114,29 @@ def summary(c):
     table(small/'episodes.csv',[{k:r.get(k) for k in cols} for r in results])
     holdcols=['start_s','observed_through_s','full_observation','all_criteria_fraction','violation_samples','interruptions','longest_stable_s','final_stable_s','max_speed_m_s','max_omega_rad_s','max_origin_distance_m']
     table(small/'holding.csv',[dict(attempt=r['attempt'],**{k:r['hold'].get(k) for k in holdcols}) for r in results])
+    table(small/'last-30s-holding.csv',[dict(attempt=r['attempt'],stage=r['stage'],cohort=r['cohort'],condition=r['condition'],
+        **{k:r['last_30s_hold'].get(k) for k in holdcols},
+        **{k+'_pass_fraction':v for k,v in r['last_30s_hold']['criterion_pass_fraction'].items()}) for r in results if r['mission']=='long'])
     table(small/'arrivals.csv',[dict(attempt=r['attempt'],**{k:a[k] for k in ['lap','endpoint','arrival_s','stable_completion_s','stopping_s']}) for r in results for a in r['arrivals']])
     table(small/'timing.csv',[dict(attempt=r['attempt'],**execution[r['attempt']],component=k,**v) for r in results for k,v in r['timing'].items() if v])
+    coverage=[];cohort_outcomes={};by_name={r['attempt']:r for r in results}
+    for cohort,frozen in idx.get('formal_cohorts',{}).items():
+        reused=frozen['reused_attempts']
+        names=reused+[x['attempt'] for x in idx['attempts'] if x.get('cohort')==cohort]
+        records=[by_name[n] for n in names if n in by_name]
+        for r in records:
+            coverage.append(dict(cohort=cohort,attempt=r['attempt'],mission=r['mission'],condition=r['condition'],
+                reused_qualification=r['attempt'] in reused,success=r['sustained_execution_success'],
+                same_frozen_controller=r['execution_fingerprint']==frozen['execution_fingerprint'],
+                first_completion_s=r['first_completion_s'],observed_through_s=r['simulation_s']))
+        cohort_outcomes[cohort]=dict(recorded_conditions=len(records),expected_conditions=12,
+            original_passed=sum(r['mission']=='single' and r['sustained_execution_success'] for r in records),
+            long_passed=sum(r['mission']=='long' and r['sustained_execution_success'] for r in records),
+            all_recorded_controller_identities_match=all(r['execution_fingerprint']==frozen['execution_fingerprint'] for r in records),
+            reused_qualification_attempts=reused,new_physical_starts=sum(bool(x.get('physical_started')) and x.get('cohort')==cohort for x in idx['attempts']))
+    table(small/'coverage.csv',coverage)
     with index_file(small,c) as idx:
+        idx['formal_coverage']=cohort_outcomes
         empty_files=[a for a in assets if a['size']==0]
         assets=[a for a in assets if a['size']>0]
         idx.update(assets=assets,empty_original_files=empty_files,empty_file_publication='Zero-byte startup logs retained as path/size/SHA256 records; GitHub rejects zero-byte release uploads with Bad Content-Length. No padding or replacement content.',actual_physical_starts=sum(x.get('physical_started',False) for x in idx['attempts']),

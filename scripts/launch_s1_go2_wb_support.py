@@ -61,7 +61,7 @@ def main():
                 execution_fingerprint=qualification[0]['execution_fingerprint'] if reused else None)
         specs=[]
         # Queue the two remaining long episodes first; short episodes occupy the
-        # third worker slot and then fill the released slots without changing
+        # remaining worker slots and then fill released slots without changing
         # each episode's controller/worker identity or physical clock.
         for mission,conditions,reuse in [('long',c['long_mission_protocol']['conditions'],args.reuse_long),
                 ('single',[x['id'] for x in c['single_mission_protocol']['formal_conditions']],args.reuse_single)]:
