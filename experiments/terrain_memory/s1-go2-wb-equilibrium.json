@@ -2,7 +2,7 @@
   "purpose": "One continuous experimental campaign: stabilize the existing whole-body MPC's stopping objective, diagnose matched-input dynamics, establish original project-physics execution, and complete longer uninterrupted missions before joint PANN/PPO integration.",
   "run_id": "tm-s1-go2-wb-equilibrium-r7",
   "stage": "S1_equilibrium_dynamics_and_long_missions",
-  "implementation_status": "implemented_and_compiled_not_yet_physically_evaluated",
+  "implementation_status": "implemented",
   "reviewed_source_commit": "1aba0630a1dd17794c82e399811926882f18fbe6",
   "target_entrypoint": "scripts/run_s1_go2_wb_baseline.py",
   "frozen_reference": {
@@ -33,7 +33,7 @@
     "environment": "work/envs/mjpc-go2",
     "source": "work/terrain-memory/upstreams/mujoco_mpc-go2",
     "reuse_installed_dependencies": true,
-    "workers": 2,
+    "workers": 6,
     "required_libmjpc_flags": [
       "-fno-strict-aliasing"
     ],
@@ -54,9 +54,10 @@
     "max_parallel_development_episodes": 3,
     "max_parallel_long_episodes": 2,
     "build_jobs": 6,
-    "cpu_affinity": "0-5",
+    "cpu_affinity": "0-7",
     "nice": 10,
-    "agent_server_sha256": "1991b74ccf70b5f87e056519f4b6d54598ee0da2171dbf63d78370a8a8d6e9e6"
+    "agent_server_sha256": "1991b74ccf70b5f87e056519f4b6d54598ee0da2171dbf63d78370a8a8d6e9e6",
+    "scheduling": "Up to three independent original tasks or two long tasks, each with six planner workers, confined to eight available CPUs at nice 10. Normal-priority existing processes retain priority; no process is stopped."
   },
   "startup": {
     "policy_seed": "home keyframe ctrl after restoring home data; preserve nullptr behavior without home.",
@@ -297,7 +298,9 @@
     "G0_to_G1": "A new G0 original mission success establishes author-model feasibility; the N-only arm need not pass. Select with explicit velocity/holding/compute evidence, not a lucky final frame.",
     "G1_start": "Prefer ON when it has passed the original G0 mission. If ON failed but another arm passed, use the observed full-mission and matched-input evidence to make a justified revision or enter G1 with the successful arm; do not mechanically transfer a known failed setting. Preserve the project's physical model and original torque limits. G1 native-contact/refsafe differences still require explicit analysis and treatment. Handle justified prediction changes inside the combined development budget; never silently soften the plant.",
     "allowed_changes": "Evidence-based stationary cost, state/actuator/constraint semantics, and native prediction numerical settings. Each physical attempt is a complete mission and is retained.",
-    "forbidden_changes": "Relaxing task thresholds, hiding failed starts, changing G1 mass/contact/torque limits to get success, blind grids, controller/platform replacement or new RL training."
+    "forbidden_changes": "Relaxing task thresholds, hiding failed starts, changing G1 mass/contact/torque limits to get success, blind grids, controller/platform replacement or new RL training.",
+    "G1_selected_arm": "N",
+    "G1_selection_evidence": "G0 O fell after its terminal Stand transition; G0 ON made invalid trunk/world contact at 43.052s; G0 N completed the original task. Preserve the successful N objective and analyze G1 native-contact dynamics explicitly."
   },
   "single_mission_protocol": {
     "original_deadline_s": 60,

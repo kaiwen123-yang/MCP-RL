@@ -66,7 +66,7 @@ def main():
     for i in sorted(indices):
         horizon=times[i,-1]-times[i,0]
         if horizon<.34:continue
-        offsets=np.arange(round(horizon/.01)+1)*.01
+        offsets=np.arange(int(np.floor((horizon+1e-8)/.01))+1)*.01
         action_indices=np.searchsorted(times[i]-times[i,0],offsets+1e-8,side='right')-1
         action_indices=np.minimum(action_indices,len(actions[i])-1)
         targets=actions[i,action_indices]
@@ -89,10 +89,11 @@ def main():
         original_plan_dt_s=float(np.median(np.diff(times,axis=1))),
         common_input='Same saved-plan targets sampled at 0.01s and held identically on every replica; no feedback or replanning.',
         reference='Original actual plant under the same counterfactual input, not the historical future.',
+        comparison_endpoint_s=float(jobs[0][3][-1]),
         missing_state='qacc_warmstart and integration auxiliary state not recorded in R6. All replicas consistently reset auxiliary state, then restore saved qpos/qvel/act, clock and mocap. No bitwise history replay claim.',
         max_warning_counts=np.max(np.asarray([v[3] for v in results]),axis=0).tolist(),variants={})
     for variant,*_ in VARIANTS[1:]:
-        tail=np.asarray([[float(x) for x in row[2:]] for row in rows if row[1]==variant and abs(row[2]-.35)<1e-7])
+        tail=np.asarray([[float(x) for x in row[2:]] for row in rows if row[1]==variant and abs(row[2]-jobs[0][3][-1])<1e-7])
         summary['variants'][variant]={metric:dict(mean=float(tail[:,j].mean()),max=float(tail[:,j].max())) for j,metric in enumerate(header[3:],1)}
     (small/(name+'.json')).write_text(json.dumps(summary,indent=2)+'\n')
     print(json.dumps(summary),flush=True)

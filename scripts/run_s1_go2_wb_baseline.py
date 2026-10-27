@@ -242,6 +242,7 @@ def run(args, c):
         compiled_mass_including_mocap_kg=float(model.body_mass.sum()), physics_dt_s=physical_dt,
         logical_feedback_dt_s=dt, logical_planning_dt_s=.02, workers=args.workers,
         synchronous_slow_simulation=True, initial_qpos=data.qpos.copy(), initial_qvel=data.qvel.copy(),
+        execution_cpus=sorted(os.sched_getaffinity(0)), process_nice=os.getpriority(os.PRIO_PROCESS,0),
         joint_names=[model.joint(int(j)).name for j in joint_ids], joint_ranges=model.jnt_range[joint_ids],
         actuator_gear=model.actuator_gear, actuator_gainprm=model.actuator_gainprm,
         actuator_biasprm=model.actuator_biasprm, actuator_gaintype=model.actuator_gaintype,
@@ -448,7 +449,7 @@ def run(args, c):
         max_abs_torque_Nm=np.max(np.abs(np.asarray(physics)[:,2:14]),axis=0),
         max_joint_limit_excess_rad=float(np.maximum(np.maximum(model.jnt_range[joint_ids,0]-arrays['qpos'][:,qadr],
             arrays['qpos'][:,qadr]-model.jnt_range[joint_ids,1]),0).max()),
-        transitions=mission.transitions, execution_fingerprint=fingerprint, source_commit=git(ROOT),
+        transitions=mission.transitions, execution_fingerprint=fingerprint, source_commit=resolved['source_commit'],
         startup=dict(iterations=len(startup_plans), planning_total_s=sum(startup_times),
             record=f'{args.attempt}-resolved.json', archive=str(out/'startup.npz')),
         timing=dict(startup_planning=timings(startup_times,.02), planning=timings(planning_times,.02), feedback=timings(feedback_times,.002),
@@ -461,6 +462,8 @@ def run(args, c):
     if campaign:
         from s1_go2_wb_equilibrium import hold_metrics
         result['hold'] = hold_metrics(arrays, first_completion, duration, args.mission)
+        if args.mission == 'long':
+            result['success'] = bool(result['success'] and result['hold']['endpoint_position_violation_samples']==0)
         actual_plan_times = np.asarray([x[1]['times'] for x in plans])
         result['realized_prediction'] = dict(nodes=int(actual_plan_times.shape[1]),
             span_min_s=float(np.diff(actual_plan_times[:,[0,-1]],axis=1).min()),

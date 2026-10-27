@@ -91,7 +91,7 @@ def hold_metrics(a,first_completion,duration,mission):
         angular_speed=np.linalg.norm(v[:,3:6],axis=1)<.1,
         roll_pitch=np.max(np.abs(r[:,:2]),axis=1)<.15)
     good=np.logical_and.reduce(list(checks.values()))
-    start=(duration-30 if mission=='long' else first_completion)
+    start=first_completion if first_completion is not None else (duration-30 if mission=='long' else None)
     if start is None:
         terminal=np.flatnonzero(a['phase']==4)
         start=float(t[terminal[0]]) if len(terminal) else duration
@@ -106,6 +106,7 @@ def hold_metrics(a,first_completion,duration,mission):
     return dict(start_s=float(start),observed_samples=int(selected.sum()),
         observed_through_s=float(t[-1]),full_observation=bool(t[-1]>=duration-1e-7),
         all_criteria_fraction=float(valid.mean()) if len(valid) else None,
+        endpoint_position_violation_samples=int((~checks['position'][selected]).sum()),
         violation_samples=int((~valid).sum()),interruptions=int(np.sum(valid[:-1]&~valid[1:])),
         longest_stable_s=float(max(lengths,default=0.)),final_stable_s=float(final_stable),
         criterion_pass_fraction={k:float(x[selected].mean()) if len(valid) else None for k,x in checks.items()},

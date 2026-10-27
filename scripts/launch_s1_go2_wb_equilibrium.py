@@ -10,7 +10,7 @@ ORIGINAL=ROOT.parent/'terrain-memory-s1-execution'
 ROBOT=ORIGINAL/'work/envs/pympc/lib/python3.11/site-packages/gym_quadruped'
 
 
-def command(attempt,stage,arm,condition,purpose,mission,cohort,workers=2):
+def command(attempt,stage,arm,condition,purpose,mission,cohort,workers=6):
     return [sys.executable,'-u',str(ROOT/'scripts/run_s1_go2_wb_baseline.py'),
         '--config',CONFIG,'--attempt',attempt,'--stage',stage,'--arm',arm,'--condition',condition,
         '--purpose',purpose,'--mission',mission,'--cohort',cohort,'--workers',str(workers),
