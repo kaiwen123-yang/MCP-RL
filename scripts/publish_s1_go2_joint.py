@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Direct execution-host publication of the bounded R9 physical negatives."""
-import argparse,base64,json,os,subprocess,sys,time,re
-from datetime import datetime,timezone,timedelta
+import argparse,base64,json,os,subprocess,sys,time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from run_s1_go2_wb_baseline import ROOT,dump,sha
@@ -12,61 +11,27 @@ SMALL=ROOT/'results/terrain_memory/simulation'/TAG
 def main():
     p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare','upload','finalize'])
     a=p.parse_args();token=sys.stdin.read().strip()
-    env=dict(os.environ,GH_TOKEN=token,GIT_TERMINAL_PROMPT='0')
+    env=dict(os.environ,GH_TOKEN=token,GIT_TERMINAL_PROMPT='0',
+        GIT_CONFIG_COUNT='2',GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
+        GIT_CONFIG_VALUE_0='AUTHORIZATION: basic '+base64.b64encode(('x-access-token:'+token).encode()).decode(),
+        GIT_CONFIG_KEY_1='http.proxy',GIT_CONFIG_VALUE_1=os.environ['HTTPS_PROXY'])
     ghpath=ROOT.parent/'terrain-memory-s0/work/tools/gh_2.103.2_linux_amd64/bin/gh'
     def gh(*x):return subprocess.check_output([str(ghpath),*x],env=env,cwd=ROOT,text=True).strip()
     def git(*x):return subprocess.check_output(['git',*x],env=env,cwd=ROOT,text=True).strip()
-    def api(method,path,payload):
-        return json.loads(subprocess.check_output([str(ghpath),'api','--method',method,path,'--input','-'],
-            input=json.dumps(payload),env=env,cwd=ROOT,text=True))
     def remote_main():
         return json.loads(gh('api',f'repos/{REPO}/git/ref/heads/main'))['object']['sha']
-    def identity(line):
-        m=re.fullmatch(r'(.*) <(.*)> ([0-9]+) ([+-][0-9]{4})',line)
-        name,email,stamp,offset=m.groups()
-        minutes=(int(offset[1:3])*60+int(offset[3:]))*(1 if offset[0]=='+' else -1)
-        date=datetime.fromtimestamp(int(stamp),timezone(timedelta(minutes=minutes))).isoformat()
-        return dict(name=name,email=email,date=date)
-    def publish_git_objects():
-        # The GitHub API hostname has working verified TLS on this host.
-        # Preserve exact local Git blobs, trees and commits; no alternate code
-        # snapshot or source mirror is created on the user's computer.
-        remote=remote_main();head=git('rev-parse','HEAD')
-        git('merge-base','--is-ancestor',remote,head)
-        if remote==head:return head
-        for commit in git('rev-list','--reverse',remote+'..'+head).splitlines():
-            raw=subprocess.check_output(['git','cat-file','-p',commit],cwd=ROOT).decode()
-            header,message=raw.split('\n\n',1);lines=header.splitlines()
-            tree=next(x[5:] for x in lines if x.startswith('tree '))
-            parents=[x[7:] for x in lines if x.startswith('parent ')]
-            changes=subprocess.check_output(['git','diff-tree','-r','--raw','-z','--no-renames',parents[0],commit],cwd=ROOT).split(b'\0')
-            entries=[]
-            for k in range(0,len(changes)-1,2):
-                fields=changes[k].decode().split()
-                mode,blob,status=fields[1],fields[3],fields[4]
-                path=changes[k+1].decode()
-                if status=='D':
-                    entries.append(dict(path=path,mode=fields[0][1:],type='blob',sha=None))
-                    continue
-                data=subprocess.check_output(['git','cat-file','blob',blob],cwd=ROOT)
-                result=api('POST',f'repos/{REPO}/git/blobs',
-                    dict(content=base64.b64encode(data).decode(),encoding='base64'))
-                if result['sha']!=blob:raise ValueError('Uploaded Git blob hash differs: '+path)
-                entries.append(dict(path=path,mode=mode,type='blob',sha=blob))
-            result=api('POST',f'repos/{REPO}/git/trees',
-                dict(base_tree=git('rev-parse',parents[0]+'^{tree}'),tree=entries))
-            if result['sha']!=tree:raise ValueError('Uploaded Git tree hash differs')
-            result=api('POST',f'repos/{REPO}/git/commits',dict(tree=tree,parents=parents,message=message,
-                author=identity(next(x[7:] for x in lines if x.startswith('author '))),
-                committer=identity(next(x[10:] for x in lines if x.startswith('committer ')))))
-            if result['sha']!=commit:raise ValueError('Uploaded Git commit identity differs: '+commit+' vs '+result['sha'])
-            print(json.dumps(dict(uploaded_exact_commit=commit)),flush=True)
-        api('PATCH',f'repos/{REPO}/git/refs/heads/main',dict(sha=head,force=False))
+    def publish_source():
+        # Source and compact evidence are sent from the execution host.
+        # The caller supplies the existing verified network transport.
+        git('fetch','origin','main')
+        git('merge-base','--is-ancestor','origin/main','HEAD')
+        git('push','origin','HEAD:main')
+        head=git('rev-parse','HEAD')
         if remote_main()!=head:raise ValueError('Remote main does not match local published HEAD')
         return head
     idx=json.loads((SMALL/'index.json').read_text())
     if a.action=='prepare':
-        commit=publish_git_objects()
+        commit=publish_source()
         url=gh('release','create',TAG,'--repo',REPO,'--target',commit,'--draft',
             '--title','S1 R9: actual TM02 material prerequisite failed under frozen S3',
             '--notes','Eight actual complete-mission attempts failed at the original material strain domain. PPO/PANN and formal evaluation were not run. Full original negative evidence is being uploaded; no joint success claim.')
@@ -118,7 +83,7 @@ def main():
     # Lock files are excluded from versioned experiment data.
     git('reset','--',str((SMALL/'index.lock').relative_to(ROOT)))
     git('commit','-m','Retain complete R9 material negatives and original evidence manifest')
-    commit=publish_git_objects()
+    commit=publish_source()
     gh('release','edit',TAG,'--repo',REPO,'--target',commit,'--notes-file',str(notes),'--draft=false')
     release=json.loads(gh('api',f'repos/{REPO}/releases/tags/{TAG}'))
     tag_commit=json.loads(gh('api',f'repos/{REPO}/git/ref/tags/{TAG}'))['object']['sha']
@@ -141,7 +106,7 @@ def main():
     dump(SMALL/'index.json',idx)
     git('add',str((SMALL/'index.json').relative_to(ROOT)))
     git('commit','-m','Verify final R9 original asset URLs sizes and digests')
-    final=publish_git_objects();remote=remote_main()
+    final=publish_source();remote=remote_main()
     if final!=remote:raise ValueError('Remote main does not identify the final verified index')
     print(json.dumps(dict(final_commit=final,remote_main=remote,release_tag_commit=tag_commit,
         release=release['html_url'],assets=len(checks),bytes=sum(x['size'] for x in checks))),flush=True)
