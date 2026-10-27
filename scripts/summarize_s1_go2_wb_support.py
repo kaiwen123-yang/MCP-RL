@@ -90,7 +90,7 @@ def analyze(name,c):
     print(json.dumps(evidence),flush=True)
 
 def summary(c):
-    small=ROOT/c['outputs']['root'];idx=json.loads((small/'index.json').read_text());results=[];assets=[];empty_files=[];execution={}
+    small=ROOT/c['outputs']['root'];idx=json.loads((small/'index.json').read_text());results=[];assets=[];empty_files=[];execution={};videos=[]
     for item in idx['attempts']:
         name=item['attempt'];path=small/(name+'.json')
         out=ROOT/'outputs/terrain_memory/simulation'/c['run_id']/name
@@ -102,6 +102,8 @@ def summary(c):
                     assets.append(dict(name=name+'-'+file.name,path=str(file),size=file.stat().st_size,sha256=sha(file)))
             continue
         r=json.loads(path.read_text());results.append(r)
+        video=out/'video.json'
+        if video.exists():videos.append(dict(attempt=name,**json.loads(video.read_text())))
         provenance=json.loads((small/(name+'-resolved.json')).read_text())
         execution[name]=dict(workers=provenance['workers'],process_nice=provenance['process_nice'])
         references=provenance.get('stand_references',[])
@@ -118,6 +120,7 @@ def summary(c):
         **{k:r['last_30s_hold'].get(k) for k in holdcols},
         **{k+'_pass_fraction':v for k,v in r['last_30s_hold']['criterion_pass_fraction'].items()}) for r in results if r['mission']=='long'])
     table(small/'arrivals.csv',[dict(attempt=r['attempt'],**{k:a[k] for k in ['lap','endpoint','arrival_s','stable_completion_s','stopping_s']}) for r in results for a in r['arrivals']])
+    table(small/'rendering.csv',videos)
     table(small/'timing.csv',[dict(attempt=r['attempt'],**execution[r['attempt']],component=k,**v) for r in results for k,v in r['timing'].items() if v])
     coverage=[];cohort_outcomes={};by_name={r['attempt']:r for r in results}
     for cohort,frozen in idx.get('formal_cohorts',{}).items():
@@ -137,6 +140,7 @@ def summary(c):
     table(small/'coverage.csv',coverage)
     with index_file(small,c) as idx:
         idx['formal_coverage']=cohort_outcomes
+        idx['videos']={v['attempt']:{k:x for k,x in v.items() if k!='attempt'} for v in videos}
         empty_files=[a for a in assets if a['size']==0]
         assets=[a for a in assets if a['size']>0]
         idx.update(assets=assets,empty_original_files=empty_files,empty_file_publication='Zero-byte startup logs retained as path/size/SHA256 records; GitHub rejects zero-byte release uploads with Bad Content-Length. No padding or replacement content.',actual_physical_starts=sum(x.get('physical_started',False) for x in idx['attempts']),
