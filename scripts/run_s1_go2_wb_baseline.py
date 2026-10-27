@@ -155,7 +155,7 @@ def index_file(root, config):
         dump(path, idx)
 
 
-def run(args, c):
+def run(args, c, joint=None):
     from mujoco_mpc.agent import Agent
     small = ROOT/c['outputs']['root']
     out = ROOT/'outputs/terrain_memory/simulation'/c['run_id']/args.attempt
@@ -225,7 +225,7 @@ def run(args, c):
         model_meta['controller_settings'] = write_equilibrium_settings(model_path, c, args.arm)
         model = mujoco.MjModel.from_xml_path(str(model_path))
         model_meta['prepared_xml_sha256'] = sha(model_path)
-    prediction_model = model
+    prediction_model = mujoco.MjModel.from_xml_path(str(model_path)) if joint is not None else model
     if campaign and model_meta['controller_settings']['prediction_smoothing_width_m'] is not None:
         from s1_go2_wb_model import build_prediction_model
         model_meta['prediction_only_model'] = build_prediction_model(model_path, out/'prediction-model.xml',
@@ -276,6 +276,13 @@ def run(args, c):
         mujoco_version=mujoco.__version__, python=sys.version, command=sys.argv,
         agent_server=dict(path=str(Path(args.agent_server).resolve()),sha256=sha(args.agent_server),size=Path(args.agent_server).stat().st_size),
         host=subprocess.check_output(['hostname'], text=True).strip())
+    if joint is not None:
+        joint.attach(model,data,feet,allowed,out,prediction_model)
+        resolved['r9_material_contract']=joint.contract
+        resolved['r9_material_source_sha256']=sha(ROOT/'scripts/s1_go2_joint_material.py')
+    def actual_contact(full=False):
+        native=contact_state(model,data,feet,allowed,full=True)
+        return joint.contacts(native,full) if joint is not None else (native if full else native[:3])
     mujoco.mj_saveModel(model, str(out/'model.mjb'), None)
     resolved['model_mjb_sha256'] = sha(out/'model.mjb')
     fingerprint = hashlib.sha256(json.dumps([source, resolved['model_mjb_sha256'],resolved['agent_server']['sha256'],args.workers], sort_keys=True).encode()).hexdigest()
@@ -344,7 +351,9 @@ def run(args, c):
                 mujoco.mj_forward(model, data)
                 ori = Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz')
                 velocity, omega = data.qvel[:3].copy(), data.qvel[3:6].copy()
-                contact, grf, _ = contact_state(model, data, feet, allowed)
+                if joint is not None:
+                    joint.control(t,mission)
+                contact, grf, _ = actual_contact()
                 body_goal, heading = mission.update(t, dt, data.qpos[:3], velocity, ori, omega, bool(contact.all()))
                 mission_changed = mission.phase != previous_phase
                 previous_phase = mission.phase
@@ -364,7 +373,8 @@ def run(args, c):
                 if support and args.arm=='S' and standing and settings_changed:
                     from s1_go2_support_reference import stand_reference,reference_userdata
                     tr=time.perf_counter()
-                    reference=stand_reference(model,data,heading,c['support_reference']['H_realized']['absolute_base_height_m'])
+                    ref_model,ref_data=joint.native_reference_state() if joint is not None else (model,data)
+                    reference=stand_reference(ref_model,ref_data,heading,c['support_reference']['H_realized']['absolute_base_height_m'])
                     reference['wall_s']=time.perf_counter()-tr
                     resolved.setdefault('stand_references',[]).append(reference)
                     dump(small/f'{args.attempt}-resolved.json',resolved)
@@ -432,7 +442,7 @@ def run(args, c):
                     dump(small/f'{args.attempt}-resolved.json', resolved)
                 data.ctrl[:] = action
                 mujoco.mj_forward(model, data)
-                contact, grf, _, total_grf, nonfoot_grf, nonfoot_count = contact_state(model, data, feet, allowed, full=True)
+                contact, grf, _, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
                 hist.append(dict(time=t, diagnostic_time=t, qpos=data.qpos.copy(), qvel=data.qvel.copy(), rpy=ori,
                     q_target=action.copy(), torque=data.qfrc_actuator[vadr].copy(), actuator_force=data.actuator_force.copy(),
                     contact=contact, actual_grf=grf, total_ground_force=total_grf, nonfoot_ground_force=nonfoot_grf, nonfoot_ground_contacts=nonfoot_count, feet=data.geom_xpos[feet].copy(), body_target=body_goal,
@@ -469,14 +479,21 @@ def run(args, c):
                                 condition=args.condition, status='running', execution_fingerprint=fingerprint,
                                 command=sys.argv, source_commit=resolved['source_commit']))
                     started = True
+                    if joint is not None:
+                        joint.started(small,c,index_file)
                 tp = time.perf_counter()
                 for _ in range(substeps):
                     sample_t = float(data.time)
                     raw_pd=60*(data.ctrl-data.qpos[qadr])-5*data.qvel[vadr]
+                    if joint is not None and not joint.before_physics(physical_dt,mission.phase):
+                        reason=joint.reason
+                        break
                     mujoco.mj_step(model, data)
-                    actual_contact, actual_grf, invalid, total_grf, nonfoot_grf, nonfoot_count = contact_state(model, data, feet, allowed, full=True)
+                    actual_contacts, actual_grf, invalid, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
+                    if joint is not None:
+                        joint.after_physics(physical_dt,actual_grf)
                     physics.append(np.r_[sample_t, data.time, data.qfrc_actuator[vadr], data.actuator_force,
-                        actual_contact, actual_grf.ravel(), total_grf, nonfoot_grf, nonfoot_count])
+                        actual_contacts, actual_grf.ravel(), total_grf, nonfoot_grf, nonfoot_count])
                     if support:physics[-1]=np.r_[physics[-1],raw_pd]
                     if invalid:
                         reason = 'invalid_contact:'+str(invalid)
@@ -561,12 +578,15 @@ def run(args, c):
                 span_min_s=float(np.diff(actual_plan_times[:,[0,-1]],axis=1).min()),
                 span_max_s=float(np.diff(actual_plan_times[:,[0,-1]],axis=1).max()),
                 timestep_s=float(np.median(np.diff(actual_plan_times,axis=1))),planning_origins=len(plans))
+    if joint is not None:
+        result=joint.finish(result)
     dump(small/f'{args.attempt}.json',result)
     with index_file(small,c) as idx:
         row=next(x for x in idx['attempts'] if x['attempt']==args.attempt)
         row.update({k:result[k] for k in ('status','success','reason','simulation_s','wall_s')})
         row['result']=f'{args.attempt}.json'
     print(json.dumps(result,default=lambda x:x.tolist() if isinstance(x,np.ndarray) else str(x)),flush=True)
+    return result
 
 
 def render(args,c):
