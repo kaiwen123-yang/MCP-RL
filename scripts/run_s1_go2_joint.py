@@ -38,7 +38,7 @@ def main():
     p.add_argument('--mission',default='single');p.add_argument('--render',action='store_true')
     a=p.parse_args();c,contract=configuration()
     args=arguments(a.attempt,a.cap,a.condition,a.purpose,a.mission)
-    os.environ['MJPC_TASKS_DIR']=str(ROOT/'work/terrain-memory/upstreams/mujoco_mpc-go2/mjpc/tasks')
+    os.environ['MJPC_TASKS_DIR']=str(ROOT/'work/terrain-memory/upstreams/mujoco_mpc-go2/build/mjpc/tasks')
     if a.render:
         render(args,c)
         return
