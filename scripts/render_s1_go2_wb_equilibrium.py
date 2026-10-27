@@ -8,8 +8,9 @@ from PIL import Image,ImageDraw
 from run_s1_go2_wb_baseline import ROOT,PHASES,sha
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--attempt',required=True);args=p.parse_args()
-    c=json.loads((ROOT/'experiments/terrain_memory/s1-go2-wb-equilibrium.json').read_text())
+    p=argparse.ArgumentParser();p.add_argument('--attempt',required=True)
+    p.add_argument('--config',default='experiments/terrain_memory/s1-go2-wb-equilibrium.json');args=p.parse_args()
+    c=json.loads((ROOT/args.config).read_text())
     out=ROOT/'outputs/terrain_memory/simulation'/c['run_id']/args.attempt
     result=json.loads((ROOT/c['outputs']['root']/(args.attempt+'.json')).read_text())
     a=np.load(out/'trajectory.npz');times=a['time'];qpos=a['qpos'];qvel=a['qvel'];mp=a['mocap_pos'];mq=a['mocap_quat'];phases=a['phase']
