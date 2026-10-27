@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from run_s1_go2_wb_baseline import ROOT,dump,index_file,sha
+from run_s1_go2_wb_baseline import ROOT,dump,index_file,sha,timings
 CONFIG='experiments/terrain_memory/s1-go2-wb-support.json'
 plt.rcParams.update({'font.family':'DejaVu Sans','font.size':9,'axes.spines.top':False,
     'axes.spines.right':False,'pdf.fonttype':42})
@@ -90,7 +90,7 @@ def analyze(name,c):
     print(json.dumps(evidence),flush=True)
 
 def summary(c):
-    small=ROOT/c['outputs']['root'];idx=json.loads((small/'index.json').read_text());results=[];assets=[];empty_files=[]
+    small=ROOT/c['outputs']['root'];idx=json.loads((small/'index.json').read_text());results=[];assets=[];empty_files=[];execution={}
     for item in idx['attempts']:
         name=item['attempt'];path=small/(name+'.json')
         out=ROOT/'outputs/terrain_memory/simulation'/c['run_id']/name
@@ -102,6 +102,10 @@ def summary(c):
                     assets.append(dict(name=name+'-'+file.name,path=str(file),size=file.stat().st_size,sha256=sha(file)))
             continue
         r=json.loads(path.read_text());results.append(r)
+        provenance=json.loads((small/(name+'-resolved.json')).read_text())
+        execution[name]=dict(workers=provenance['workers'],process_nice=provenance['process_nice'])
+        references=provenance.get('stand_references',[])
+        if references:r['timing']['reference_solve_subset_of_state_parameter_rpc']=timings([x['wall_s'] for x in references],.02)
         for file in sorted(out.glob('*.npz'))+list(out.glob('*.mp4'))+[out/'model.mjb',out/'agent-server.log',out/'model.xml' if r['stage']=='G0' else out/'model/G1-project-go2.xml']:
             assets.append(dict(name=name+'-'+file.name,path=str(file),size=file.stat().st_size,sha256=sha(file)))
     for file in sorted((ROOT/'work').glob('r8-build*.log'))+[ROOT/'work/r8-author-debug02.log']:
@@ -111,7 +115,7 @@ def summary(c):
     holdcols=['start_s','observed_through_s','full_observation','all_criteria_fraction','violation_samples','interruptions','longest_stable_s','final_stable_s','max_speed_m_s','max_omega_rad_s','max_origin_distance_m']
     table(small/'holding.csv',[dict(attempt=r['attempt'],**{k:r['hold'].get(k) for k in holdcols}) for r in results])
     table(small/'arrivals.csv',[dict(attempt=r['attempt'],**{k:a[k] for k in ['lap','endpoint','arrival_s','stable_completion_s','stopping_s']}) for r in results for a in r['arrivals']])
-    table(small/'timing.csv',[dict(attempt=r['attempt'],component=k,**v) for r in results for k,v in r['timing'].items() if v])
+    table(small/'timing.csv',[dict(attempt=r['attempt'],**execution[r['attempt']],component=k,**v) for r in results for k,v in r['timing'].items() if v])
     with index_file(small,c) as idx:
         empty_files=[a for a in assets if a['size']==0]
         assets=[a for a in assets if a['size']>0]
