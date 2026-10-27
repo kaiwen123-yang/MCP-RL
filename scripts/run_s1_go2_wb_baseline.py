@@ -461,10 +461,11 @@ def run(args, c):
     if campaign:
         from s1_go2_wb_equilibrium import hold_metrics
         result['hold'] = hold_metrics(arrays, first_completion, duration, args.mission)
-        result['realized_prediction'] = dict(nodes=int(arrays['plan_times'].shape[1]),
-            span_min_s=float(np.diff(arrays['plan_times'][:,[0,-1]],axis=1).min()),
-            span_max_s=float(np.diff(arrays['plan_times'][:,[0,-1]],axis=1).max()),
-            timestep_s=float(np.median(np.diff(arrays['plan_times'],axis=1))),
+        actual_plan_times = np.asarray([x[1]['times'] for x in plans])
+        result['realized_prediction'] = dict(nodes=int(actual_plan_times.shape[1]),
+            span_min_s=float(np.diff(actual_plan_times[:,[0,-1]],axis=1).min()),
+            span_max_s=float(np.diff(actual_plan_times[:,[0,-1]],axis=1).max()),
+            timestep_s=float(np.median(np.diff(actual_plan_times,axis=1))),
             planning_origins=len(plans))
     dump(small/f'{args.attempt}.json',result)
     with index_file(small,c) as idx:
