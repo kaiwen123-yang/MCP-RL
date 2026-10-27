@@ -19,14 +19,17 @@ def main():
     for t in [0.,1.,2.,34.,40.,50.]:
         i=int(np.searchsorted(times,t-1e-8));d=mujoco.MjData(m)
         d.time=times[i];d.qpos[:]=q[i];d.qvel[:]=v[i];d.ctrl[:]=u[i]
-        initial=mujoco.MjData(m);mujoco.mj_copyData(initial,m,d)
+        def initial_data():
+            x=mujoco.MjData(m);x.time=times[i];x.qpos[:]=q[i];x.qvel[:]=v[i];x.ctrl[:]=u[i]
+            return x
+        initial=initial_data()
         a1=np.zeros((nx,nx));b1=np.zeros((nx,m.nu));a2=a1.copy();b2=b1.copy()
         mujoco.mjd_transitionFD(m,d,eps,False,a1,b1,None,None)
         mujoco.mj_step(m,d)
         mujoco.mjd_transitionFD(m,d,eps,False,a2,b2,None,None)
         composed_a=a2@a1;composed_b=a2@b1+b2
         def advance(delta_x=None,delta_u=None):
-            x=mujoco.MjData(m);mujoco.mj_copyData(x,m,initial)
+            x=initial_data()
             if delta_x is not None:
                 mujoco.mj_integratePos(m,x.qpos,delta_x[:m.nv],1.)
                 x.qvel[:]+=delta_x[m.nv:2*m.nv]

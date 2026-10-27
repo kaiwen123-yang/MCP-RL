@@ -20,7 +20,7 @@ def execute(spec):
     for key,value in spec.items():cmd+=['--'+key.replace('_','-'),str(value)]
     with (ROOT/'work'/('r8-'+name+'.log')).open('w') as f:
         p=subprocess.run(cmd,cwd=ROOT,stdout=f,stderr=subprocess.STDOUT,
-            env=dict(os.environ,MJPC_TASKS_DIR=str(SOURCE/'mjpc/tasks')))
+            env=dict(os.environ,MJPC_TASKS_DIR=str(SOURCE/'build/mjpc/tasks')))
     (ROOT/'work'/('r8-'+name+'.exit')).write_text(str(p.returncode)+'\n')
     print(json.dumps(dict(attempt=name,exit_code=p.returncode)),flush=True)
     return name,p.returncode
@@ -32,7 +32,7 @@ def main():
     p.add_argument('--parallel',type=int,default=1);p.add_argument('--reuse-single');p.add_argument('--reuse-long')
     args=p.parse_args();c=json.loads((ROOT/CONFIG).read_text())
     if args.batch=='author':
-        specs=[dict(attempt='author-n-long-'+x+'-run01',stage='G0',arm='AUTHOR_N',condition=x,
+        specs=[dict(attempt='author-n-long-'+x+'-run02',stage='G0',arm='AUTHOR_N',condition=x,
             purpose='formal',mission='long',cohort='author-reference',workers=args.workers) for x in c['author_long_reference']['conditions']]
     elif args.batch=='development':
         specs=[dict(attempt=args.attempt,stage='G1',arm=args.arm,condition='nominal',purpose='development',
