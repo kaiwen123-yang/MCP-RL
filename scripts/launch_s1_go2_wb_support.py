@@ -42,12 +42,23 @@ def main():
         root=ROOT/c['outputs']['root']
         reused=[x for x in [args.reuse_single,args.reuse_long] if x]
         if reused:
+            from run_s1_go2_wb_baseline import sha
+            qualification=[]
             for name,mission in [(args.reuse_single,'single'),(args.reuse_long,'long')]:
                 r=json.loads((root/(name+'.json')).read_text())
                 if not (r['sustained_execution_success'] and r['arm']==args.arm and r['mission']==mission):
                     raise ValueError('Formal reuse requires both identical successful qualification missions')
+                qualification.append(r)
+                provenance=json.loads((root/(name+'-resolved.json')).read_text())
+                if provenance['workers']!=args.workers or provenance['agent_server']['sha256']!=sha(SOURCE/'build/bin/agent_server'):
+                    raise ValueError('Qualification binary/workers differ from requested formal execution')
+                for path,digest in provenance['source_sha256'].items():
+                    if sha(ROOT/path)!=digest:raise ValueError('Qualification controller source/config changed: '+path)
+            if qualification[0]['execution_fingerprint']!=qualification[1]['execution_fingerprint']:
+                raise ValueError('Single and long qualification controller identities differ')
         with index_file(root,c) as idx:
-            idx.setdefault('formal_cohorts',{})[args.cohort]=dict(arm=args.arm,reused_attempts=reused)
+            idx.setdefault('formal_cohorts',{})[args.cohort]=dict(arm=args.arm,reused_attempts=reused,workers=args.workers,
+                execution_fingerprint=qualification[0]['execution_fingerprint'] if reused else None)
         specs=[]
         for mission,conditions,reuse in [('single',[x['id'] for x in c['single_mission_protocol']['formal_conditions']],args.reuse_single),
                 ('long',c['long_mission_protocol']['conditions'],args.reuse_long)]:
