@@ -318,6 +318,20 @@
         "reviewed_project_commit": "1aba0630a1dd17794c82e399811926882f18fbe6",
         "evidence": "R6已完成60s实际物理和路径往返，终点角速度反复越过0.1rad/s使原2s连续稳定条件未通过。该事实支持补齐终点速度目标，不证明振荡具有唯一动力学原因。",
         "status": "Research and planned transfer only; no new simulation, training, solver migration or hardware execution in this review."
+      },
+      "r8_application": {
+        "run_id": "tm-s1-go2-wb-support-r8",
+        "configuration": "experiments/terrain_memory/s1-go2-wb-support.json",
+        "reviewed_project_commit": "a26c339ff2c30a0c45753f7ea771c7169e4b6d63",
+        "reviewed_on": "2026-10-27",
+        "status": "planned_not_executed",
+        "read_for_execution": "重新核对第IV-B2节式(6)的接触足零速度、非负法向力与摩擦可行性，以及第VI-D节的CoM偏移/接触力参考修正。不是再借鉴一次新增机身速度cost。",
+        "transfer_targets": [
+          "原地驻足必须同时有实际地面上的机身高度、可达足端支撑和静力平衡参考。接触足速度为零的条件只适用于已经建立或可实现的支撑，不能把切换时悬空的足端位置锁成接触锚点。",
+          "参考支撑应与实际Go2质量、质心、足位、摩擦和原力矩限制相容。原文调整CoM与接触力目标改善后倾，不能据此强制本项目四足始终各承担mg/4。",
+          "从已完成路线的Go2项目约束N_SH出发修正完整Stand任务；保留既有行走/转向成果和真实物理。现有MuJoCo残差或参考适配不等于已经实现原文硬接触约束，也不自动给出稳定性保证。"
+        ],
+        "scope_note": "原文载体为B2＋机械臂；此处仅借鉴支撑与参考的一致性，当前项目载体始终为Go2，不迁移Fatrop/机械臂/新WBC平台，不重开全文复现。R7全部正负结果保持。"
       }
     },
     {
@@ -416,6 +430,25 @@
           "comparison": "冻结同一起点和best action序列，按同一ZOH日程输入各重放模型；不要引入TV-LQR/新规划后又称同输入。该数值对照与未来真实闭环轨迹的计划兑现偏差分开，缺失积分状态时不要求或声称逐位复现。",
           "planned_scope": "同一执行批次由系统定位/修复推进至G0/G1原整程、9个预定物理初态和3条300s连续五往返；每条长任务状态与控制策略不按圈重置，原任务及长期结果分开。具体协议以新计划/配置为准。",
           "status": "Not executed in this review. No new simulations, training, tests or hardware actions were performed."
+        },
+        "r8_support_review": {
+          "run_id": "tm-s1-go2-wb-support-r8",
+          "configuration": "experiments/terrain_memory/s1-go2-wb-support.json",
+          "reviewed_project_commit": "a26c339ff2c30a0c45753f7ea771c7169e4b6d63",
+          "reviewed_on": "2026-10-27",
+          "status": "planned_not_executed",
+          "source_paths": {
+            "author_task": "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/tasks/quadruped/quadruped.cc",
+            "author_policy": "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/planners/ilqg/policy.cc",
+            "project_runner": "https://github.com/kaiwen123-yang/MCP-RL/blob/a26c339ff2c30a0c45753f7ea771c7169e4b6d63/scripts/run_s1_go2_wb_baseline.py",
+            "project_model": "https://github.com/kaiwen123-yang/MCP-RL/blob/a26c339ff2c30a0c45753f7ea771c7169e4b6d63/scripts/s1_go2_wb_model.py"
+          },
+          "task_semantics": "固定作者Quadruped Position将z残差置零，Height使用机身与平均足端的相对高度；Stand时Gait残差为零且当前Balance权重为零。因此仅补姿态/机身速度目标仍未完整定义实际地面上的承载驻足。此为任务目标缺口，不把它宣称为所有R7失败的唯一原因。",
+          "R7_evidence_boundary": "R7作者配置N完成原任务；项目约束N_SH完成路线但终点不稳，O_SH姿态仍可满足而持续失去四足支撑并下沉，O_SH_W较低同输入均值误差未转化为闭环成功。旧结果/分母不改写，N_SH只作为有界开发基点，不能称项目完整任务基线已成功。",
+          "action_and_integration_clocks": "分别定义积分网格与动作网格。R7细步预测允许1ms节点动作，实际控制每2ms取得目标并保持；新方案保留1ms动力学积分，但预测应实现与实际同一2ms保持目标，反馈调用与首段保持亦需一致。不能以更细积分自动推定实际可执行动作一致，也不能用事后平滑替代正确预测。",
+          "planned_transfer": "优先C：在同一MuJoCo/iLQG执行链内实现1ms积分/2ms动作保持与对应导数的一致性；完整任务仍有相关驻足问题时，才逐步H/S补实际floor上的绝对机身高度、可行支撑/姿态及PD偏置参考。原任务、质量、真实接触、力矩界与失败判据不放宽，记录实际承载与完整闭环结果。",
+          "later_only": "名义驻足Riccati终端代价或频率整形仅在完整支撑目标后仍有对应失稳证据时再考虑；R8不以实现这些机制、换优化器或新神经动力学训练为前置任务。",
+          "status_note": "本次只完成来源阅读与计划应用整理，尚未编译R8修改、执行新物理任务或训练。"
         }
       }
     },
@@ -484,6 +517,91 @@
         "保持现有iLQG执行链，稳定联合基础版本后才按实际瓶颈考虑额外适应机制。"
       ],
       "scope_note": "原文模型库及GPU并行仿真研究Go2负载变化、单腿失效和推箱等条件；不证明本项目TM02持续材料记忆或NX实时。关节目标范围不是力矩界。本轮不换MPPI/MuJoCo Warp、不建模型库、不启动新训练或硬件；已有模型选择思想不称本项目首创。"
+    },
+    {
+      "id": "TM24",
+      "title": "Perceptive Locomotion through Nonlinear Model Predictive Control",
+      "authors": [
+        "Ruben Grandia",
+        "Fabian Jenelten",
+        "Shaohui Yang",
+        "Farbod Farshidian",
+        "Marco Hutter"
+      ],
+      "version": "arXiv:2208.08373v1",
+      "published": "2022-08-17",
+      "selected_on": "2026-10-27",
+      "accessed_on": "2026-10-27",
+      "publication": "IEEE Transactions on Robotics, 2023；本次实施阅读固定于2022-08-17的arXiv v1，不将后续期刊版细节冒充已逐项核验。",
+      "role": "R8完整驻足参考与实际支撑定义的主要方法依据；用于Go2现有MPC任务适配",
+      "url": "https://arxiv.org/abs/2208.08373v1",
+      "pdf_url": "https://arxiv.org/pdf/2208.08373v1",
+      "code_url": "https://github.com/leggedrobotics/ocs2",
+      "code_status": "原文将基础MPC/求解组件贡献到OCS2；本次未安装或运行该平台，也未取得可在Go2开箱重现全部ANYmal实验的固定发布。本项目保留当前MuJoCo/iLQG执行器。",
+      "read_for_execution": "已读第IV-E节Reference generation、第IV-F节Cost & Soft Inequality Constraints（尤其式24的驻足LQR终端代价）、第IV-G节Equality constraints（式25–26）；另核对第IV-C节频率整形的上下文。本轮不移植完整感知/地形分割/多重射击/WBC系统。",
+      "verified_mechanisms": [
+        "第IV-E节将地形高程与名义机身高度结合，生成6DoF机身参考；基于机身与足端参考用逆运动学生成关节参考。该绝对地形参考不等于机身减当前平均足端高度。",
+        "第IV-E节将机器人重量分给预定接触足作为接触力参考，关节速度参考置零；这是一组运动/力参考，不是强制每足在所有状态下平均承载的硬条件。",
+        "第IV-G节对接触足施加零足端速度条件，对摆腿施加不同的法向运动条件；第IV-F节还处理摩擦、关节范围/速度/力矩与碰撞条件。",
+        "式24在名义站姿附近线性化模型并二次化代价，用LQR Riccati矩阵近似时域之后的保持价值。普通stage速度惩罚并不等同于这种终端代价。"
+      ],
+      "transfer_targets": [
+        "从N_SH保留可完成的行走与转向，补齐Stand对实际floor的绝对机身高度、可达支撑和相容姿态/关节参考；在原真实接触中评价实际承载。",
+        "切换时区分已接触足与悬空足；不把悬空世界位置冻结为支撑锚点，不重置机器人或地面状态制造四足站立。",
+        "支撑参考应符合本项目Go2的真实质量、质心、足位与原力矩/摩擦条件。若使用PD目标偏置，明确参考关节角与维持平衡所需的非零力矩关系，并在预测/执行共同实现。",
+        "先使预测与实际2ms保持输入一致；仍有对应驻足问题时才采用H/S。原任务成功后立即进行候选nominal300s，两项通过再冻结并补其余覆盖；不把原文全文复现、终端LQR或频率整形变成新前置门槛。"
+      ],
+      "r8_application": {
+        "run_id": "tm-s1-go2-wb-support-r8",
+        "configuration": "experiments/terrain_memory/s1-go2-wb-support.json",
+        "reviewed_project_commit": "a26c339ff2c30a0c45753f7ea771c7169e4b6d63",
+        "reviewed_on": "2026-10-27",
+        "status": "planned_not_executed",
+        "scope": "只作当前Go2驻足任务的具体机制迁移；尚未实施或验证。"
+      },
+      "scope_note": "这是一项已有方法参考，不是本项目创新。论文载体ANYmal不意味着本项目更换机器人；Go2作者配置组与Go2项目约束组仍都使用Go2。当前MuJoCo残差的软目标不自动具有原文硬约束和稳定性性质。终端Riccati代价与频率整形留待后续具体证据，不要求本轮全部实现。"
+    },
+    {
+      "id": "TM25",
+      "title": "Learning Legged MPC with Smooth Neural Surrogates",
+      "authors": [
+        "Samuel A. Moore",
+        "Easop Lee",
+        "Boyuan Chen"
+      ],
+      "version": "arXiv:2601.12169v1",
+      "published": "2026-01-17",
+      "selected_on": "2026-10-27",
+      "accessed_on": "2026-10-27",
+      "publication": "2026年arXiv预印本；本次按固定v1原文核对机制，不以未独立核实的会议录用状态作判断依据。",
+      "role": "区分预测误差、导数性质与闭环可控性的近期Go2参考；不新增神经动力学训练任务",
+      "url": "https://arxiv.org/html/2601.12169v1",
+      "pdf_url": "https://arxiv.org/pdf/2601.12169v1",
+      "project_url": "https://generalroboticslab.com/SNS-MPC",
+      "code_url": "https://github.com/generalroboticslab/SNS-MPC",
+      "code_commit": "f3f9f83583ad4ccb585e67591d6293ed759bde5f",
+      "code_commit_date": "2026-06-21",
+      "code_status": "已核作者公开仓库main及README。公开支持范围主要是Go2/MuJoCo仿真训练、评测和部署；README明确排除受支持的实机部署工具、论文绘图脚本和多GPU实验批处理。附有一个模型检查点与执行器网络资产。本次没有安装、训练或运行。",
+      "read_for_execution": "已读第IV-B节光滑表示、第V-C节动作结点/样条与GGN-MPC、第VI-A节及Fig.12的零阶预测误差与导数/控制性能对比，并核对作者README的公开代码范围。未做全文复现。",
+      "verified_mechanisms": [
+        "第VI-A节显示更低的零阶预测MAE可同时伴随更尖锐或不规则的导数和更差闭环控制；平滑程度与预测/规划性能存在折中。",
+        "第V-C节以较少动作结点和样条参数化控制序列，既减少优化变量，也表达动作连续性；这与简单缩小积分步长却允许每步独立动作是不同的设计维度。",
+        "模型的光滑参数化和厚尾训练目标是原文已有机制。它们不能被重新命名为本项目原创，也不能从Go2行为成功直接推出本项目地面持久记忆收益。"
+      ],
+      "transfer_targets": [
+        "R7缩窄预测接触宽度的同输入均值误差改善，并未带来任务成功。R8继续同时评价预测状态、实际反力/支撑和完整闭环，避免只按零阶均值误差选模型。",
+        "明确1ms积分与2ms实际目标保持的区别；用实际可执行的动作日程作对齐。必要的导数/优化信息服务现有完整任务，不另开宽泛诊断平台或测试矩阵。",
+        "保留解析机器人动力学、现有iLQG和已有材料PANN。当前不训练SNS/执行器网络、不换GGN/DIAL-MPC，不把模型检查点下载或新训练当作进入长任务的门槛。"
+      ],
+      "r8_application": {
+        "run_id": "tm-s1-go2-wb-support-r8",
+        "configuration": "experiments/terrain_memory/s1-go2-wb-support.json",
+        "reviewed_project_commit": "a26c339ff2c30a0c45753f7ea771c7169e4b6d63",
+        "reviewed_on": "2026-10-27",
+        "status": "planned_not_executed",
+        "scope": "当前只借鉴评价方法与动作表示原则；不实施原文学习算法。"
+      },
+      "scope_note": "原文处理可用于规划的机器人动态近似及状态估计，不能替代本项目跨足/返程的世界地块材料状态模型。导数良好、低预测误差与真实长期收益需分别评价；作者仿真代码公开不表示本项目NX或Go2实机已验证。"
     }
   ],
   "upstream": {

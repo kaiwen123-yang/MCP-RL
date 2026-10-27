@@ -1,0 +1,570 @@
+{
+  "purpose": "Go2 continuous execution: preserve the successful author controller; align predicted control holds with execution; repair project standing support only as required by complete-task results.",
+  "run_id": "tm-s1-go2-wb-support-r8",
+  "stage": "S1R8",
+  "implementation_status": "planned_not_executed",
+  "reviewed_source_commit": "a26c339ff2c30a0c45753f7ea771c7169e4b6d63",
+  "target_entrypoint": "scripts/run_s1_go2_wb_baseline.py",
+  "stage_labels": {
+    "G0": "Go2 author configuration",
+    "G1": "Go2 project physical constraints",
+    "hardware": "Go2 plus NX",
+    "note": "G0/G1 are experiment codes; neither denotes a humanoid."
+  },
+  "frozen_reference": {
+    "run_id": "tm-s1-go2-wb-equilibrium-r7",
+    "config": "experiments/terrain_memory/s1-go2-wb-equilibrium.json",
+    "index": "results/terrain_memory/simulation/tm-s1-go2-wb-equilibrium-r7/index.json",
+    "author": {
+      "attempt": "g0-n-01",
+      "arm": "N",
+      "source_commit": "ec0c4f5cb8de7645ff9c29f8585316544b0da503",
+      "first_completion_s": 37.556,
+      "observed_through_s": 60
+    },
+    "project": {
+      "attempt": "g1-nsh-nominal-03",
+      "arm": "N_SH",
+      "source_commit": "8451e480e0f5a26ecb7600d4d7418c214bc40dcd",
+      "return_s": 35.85,
+      "longest_terminal_stability_s": 0.16,
+      "original_mission_success": false
+    },
+    "binary_sha256": "1991b74ccf70b5f87e056519f4b6d54598ee0da2171dbf63d78370a8a8d6e9e6",
+    "selection": "Restore N_SH; R7's selected O_SH_W was the last failed attempt, not the best baseline.",
+    "preserve": "All historical outcomes/configs/arrays remain unchanged; O, ON, O_SH and O_SH_W remain negative references."
+  },
+  "upstream": {
+    "repository": "https://github.com/johnzhang3/mujoco_mpc",
+    "commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+    "mujoco_commit": "088079eff0450e32b98ee743141780ed68307506",
+    "menagerie_commit": "d82891f8b6c576f9f6a9df308f3a1155ebedbc40",
+    "required_previous_patches": [
+      "experiments/terrain_memory/s1-go2-wb-startup-upstream.patch",
+      "experiments/terrain_memory/s1-go2-wb-equilibrium-upstream.patch"
+    ],
+    "implementation": "C/H/S are not implemented or compiled in this plan commit. Implement local explicit opt-ins in the current author stack; keep the original N path for author long runs."
+  },
+  "execution": {
+    "host": "fy-5080",
+    "transport": "Reuse existing SSH/tmux",
+    "environment": "work/envs/mjpc-go2",
+    "author_source": "work/terrain-memory/upstreams/mujoco_mpc-go2",
+    "reuse_installed_dependencies": true,
+    "required_libmjpc_flags": [
+      "-fno-strict-aliasing"
+    ],
+    "build_tests": false,
+    "physical_control_dt_s": 0.002,
+    "logical_planning_dt_s": 0.02,
+    "actual_physics_dt_s": {
+      "G0": 0.002,
+      "G1": 0.0002
+    },
+    "requested_prediction_horizon_s": 0.35,
+    "synchronous_slow_simulation": true,
+    "new_training_runs": 0,
+    "activate_hardware": false,
+    "TM02_runs": 0,
+    "resources": "Use existing authorized resources; record workers, affinity, concurrency and all wall time. Shared or overlapping host runs do not measure NX latency.",
+    "pipeline": "Extend existing runner/launcher to this configuration and split budgets. Do not inherit the old eight-start cap, default ON, last-failed selected arm or R7-only file paths. This JSON is a specification, not an implemented runner.",
+    "preserve": [
+      "home seed",
+      "20 t=0 planning calls without plant advancement/reset",
+      "affine PD 60/5",
+      "fixed floor opt-in",
+      "original gait/head/heading mapping",
+      "original task and physical limits"
+    ]
+  },
+  "startup": {
+    "policy_seed": "home keyframe ctrl after restoring home data; preserve nullptr behavior without home.",
+    "seed_both_init_and_reset": true,
+    "ground_height_numeric": "s1_flat_ground_height",
+    "ground_height_enable_condition": "Adapter confirms the actual floor is a world-static horizontal plane; write its world height as one scalar.",
+    "G0_ground_height_m": -0.01,
+    "G1_ground_height_m": "Read the actual project floor; do not assume zero.",
+    "global_Ground_unchanged": true,
+    "time_s": 0,
+    "planner_steps": 20,
+    "replaces_original_time_zero_planner_step": true,
+    "additional_time_zero_planner_step": false,
+    "advance_plant_during_startup": false,
+    "reset_agent_between_startup_iterations": false,
+    "state_and_goal": "Hold the actual initial qpos/qvel/time, complete Stand settings and initial mission goal fixed.",
+    "retain": [
+      "home ctrl and pre-optimization nominal seed action",
+      "each of the 20 best trajectories: states, actions, times and iteration number",
+      "each initial action and the final feedback action before the first physical step",
+      "all initialization errors and subsequent physical failures"
+    ],
+    "horizon_cost": "get_total_cost() is a current-state cost, not the optimized horizon return; never label it horizon convergence.",
+    "success_meaning": "Initialization completion is not standing or mission success."
+  },
+  "task": {
+    "initial_xy_m": [
+      0,
+      0
+    ],
+    "nominal_initial_yaw_rad": 0,
+    "initial_stand_s": 2,
+    "turnaround_xy_m": [
+      3,
+      0
+    ],
+    "turn_angle_rad": 3.141592653589793,
+    "return_xy_m": [
+      0,
+      0
+    ],
+    "command_speed_m_s": 0.25,
+    "turn_yaw_rate_rad_s": 0.5,
+    "extra_turnaround_hold_s": 0,
+    "terminal_stand_s": 2,
+    "maximum_episode_s": 60,
+    "goal_position_radius_m": 0.15,
+    "turn_heading_tolerance_rad": 0.15,
+    "terminal_speed_max_m_s": 0.05,
+    "task_mode": "Quadruped",
+    "gait_switch": "Manual",
+    "native_head_offset_in_trunk_m": [
+      0.3,
+      0,
+      0
+    ],
+    "orientation_cost_weight": 0.03,
+    "stand_settings": {
+      "Gait": "Stand",
+      "Duty ratio": 1,
+      "Cadence": 1,
+      "Amplitude": 0,
+      "Balance": 0,
+      "Upright": 1,
+      "Height": 1
+    },
+    "move_and_turn_settings": {
+      "Gait": "Trot",
+      "Duty ratio": 0.45,
+      "Cadence": 2,
+      "Amplitude": 0.03,
+      "Balance": 0.2,
+      "Upright": 1,
+      "Height": 1
+    }
+  },
+  "stationary_objective": {
+    "legacy_switch": "s1_stand_equilibrium",
+    "legacy_switch_value": 0,
+    "legacy_velocity_terms": "Initially disabled in C/H/S. New Stand support terms use separate explicit opt-ins; do not re-enable the failed O family."
+  },
+  "prediction_settings": {
+    "AUTHOR_N": {
+      "integration_dt_s": 0.001,
+      "control_node_dt_s": 0.001,
+      "integrator": "implicitfast",
+      "differentiable": 0,
+      "R7_actual_nodes": 350,
+      "R7_actual_span_s": 0.349,
+      "scope": "Frozen author long reference."
+    },
+    "PROJECT_N_SH": {
+      "integration_dt_s": 0.001,
+      "control_node_dt_s": 0.001,
+      "integrator": "implicitfast",
+      "differentiable": 1,
+      "prediction_width_m": 0.001,
+      "orientation_weight": 1,
+      "scope": "Historical project moving reference."
+    },
+    "C": {
+      "integration_dt_s": 0.001,
+      "control_node_dt_s": 0.002,
+      "substeps": 2,
+      "control_transitions": 175,
+      "state_nodes": 176,
+      "horizon_s": 0.35,
+      "integrator": "implicitfast",
+      "differentiable": 1,
+      "prediction_width_m": 0.001,
+      "orientation_weight": 1
+    },
+    "invariant": "Keep refsafety and actual 500Hz feedback. Do not increase actual control to 1kHz or substitute a single 2ms integration step for two 1ms steps."
+  },
+  "held_input_transition": {
+    "map": "x_mid=f_0.001(x,u); x_next=f_0.001(x_mid,u)",
+    "action": "Query nominal-plus-feedback once per 2ms control node; hold the same u for both integration steps.",
+    "derivatives": "A=A2*A1, B=A2*B1+B2 in the original MuJoCo tangent coordinates, or finite-difference the complete held-input map. Independent 1ms control derivatives are not valid for the new map.",
+    "cost_semantics": "Node-start stage residuals and matching C/D. If stepping overwrites sensordata, preserve the first-substep residual. Final cost at the actual final node.",
+    "implementation_sites": [
+      "Agent control-node horizon count",
+      "Trajectory Rollout/NoisyRollout/RolloutDiscrete",
+      "ModelDerivatives held-input A/B and node-start C/D",
+      "nominal/feedback/line-search policy schedules and interpolation"
+    ],
+    "timing": "Record 176 states, 175 two-step holds, actual 0.350s span. Never silently truncate/double the horizon.",
+    "phase_update": "On a real mission/gait/cost phase change, plan once from current state with new goals before the next hold; retain warm start. If the periodic update is due, call once. Keep initial 20 startup calls unchanged.",
+    "scope": "Default off for frozen AUTHOR_N. A post-hoc control projection or filter without matching derivatives is not this implementation."
+  },
+  "existing_data_work": {
+    "host": "Read already retained execution-host NPZs; no new physical rollout and no user-PC archive.",
+    "sources": [
+      "g0-n-01",
+      "g1-nsh-nominal-03",
+      "g1-osh-nominal-04",
+      "g1-oshw-nominal-05"
+    ],
+    "windows": "Initial stand, movement/turn transitions and terminal segments; O_SH 34-45s before collapse.",
+    "schedules": [
+      "Original 1ms plan_actions at actual plan_times",
+      "Same plan projected to actual 2ms held commands",
+      "Saved 500Hz feedback commands held 2ms in both compared models",
+      "Old 10ms-ZOH counterfactual kept separate"
+    ],
+    "quantities": [
+      "absolute base/trunk COM height",
+      "foot heights and real foot radii",
+      "original relative Height residual",
+      "actual per-foot forces/velocities and non-foot support",
+      "nominal/applied joint targets",
+      "unclipped PD request versus actual clipped torque",
+      "per-joint saturation onset/duration",
+      "1ms-to-2ms action projection effect"
+    ],
+    "sensitivity": "On representative saved states, verify the implemented two-step map and sensitivities against that same map. This is specific dynamics evidence, not a new unit/mock/smoke suite.",
+    "limitations": "Disclose missing warmstart/integration state. No bitwise replay claim. No high-rate force/contact conclusions from 10Hz convenience rows.",
+    "continuation": "Proceed directly to implementation and full missions within this campaign; no separate replay-only review round."
+  },
+  "support_reference": {
+    "activation": "Conditional H/S after C remains insufficient; successful C does not have to receive more mechanisms.",
+    "H": "Stand-only absolute base height from actual floor plus a feasible project Go2 stance; keep movement/heading unchanged.",
+    "height_semantics": "Original .27m is trunk COM minus mean foot-center height. Runner body_target_z=.27 was ignored by Quadruped Position; original project initial base z is about .290209m. Do not confuse these values.",
+    "S": "If height alone is insufficient, track a compatible stance: reachable world foot locations/zero foot velocities, body pose, joint pose and gravity-support input reference in the same MPC.",
+    "equilibrium": "Use original mass/COM, foot geometry, friction, joint and torque limits to solve a feasible static reference. Check zero-velocity balance in the original forward-contact model. Equal mg/4 is only an initial guess, not a forced distribution.",
+    "PD_reference": "At zero velocity and unit gear u_ref=q_joint_ref+tau_actuator_ref/60, with gravity/passive/contact balance included. Otherwise use actual gear mapping. This is an MPC reference, never an extra torque added after optimization.",
+    "foot_reference": "Freeze actually established world contacts. For an airborne foot define a reachable landing before fixed support; do not anchor an airborne position as loaded.",
+    "physical_continuity": "Reference construction never resets qpos/qvel/policy/contact. Update on relevant Stand entry and preserve the reference throughout each hold.",
+    "cost_contract": "New residuals are soft objectives, not hard foot constraints. Keep original moving objective; use mutually compatible Stand posture/input references and avoid double gravity compensation. Record units, scales and weights before each complete attempt; no parameter grid.",
+    "deferred": "No simultaneous terminal LQR, frequency-shaping filter state, WBC, learned dynamics or PPO. Further mechanisms require a demonstrated remaining issue and are not automatically bundled."
+  },
+  "controllers": {
+    "G0_author_native": {
+      "actual_mass_kg_from_source": 15.806408,
+      "physics_dt_s": 0.002,
+      "physical_model": "Retain the author mass, inertia, passive joints, native collisions and contacts.",
+      "actuator_force_limits": "Retain author unbounded force; do not claim project torque-limit coverage.",
+      "PD": {
+        "kp": 60,
+        "kd": 5
+      }
+    },
+    "G1_project_limits": {
+      "actual_mass_kg": 15.206408,
+      "model_reference": "Original on-host Go2 MJCF/assets and results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json.",
+      "preserve_physics": [
+        "mass/inertia",
+        "joint names and physical joint ranges",
+        "passive damping/armature/friction parameters",
+        "actuator gear relationship and original torque limits",
+        "collision geometry and foot geometry",
+        "initial qpos/qvel except the nine declared physical initial conditions",
+        "original native rigid floor and contact solref/solimp/margin"
+      ],
+      "permitted_model_adaptation": "Nonphysical task sites/sensors/name maps and explicit joint-target PD only.",
+      "physics_dt_s": 0.0002,
+      "control_dt_s": 0.002,
+      "mpc_dt_s": 0.02,
+      "original_native_contact": {
+        "solref": [
+          0.002,
+          1
+        ],
+        "solimp": [
+          0.99,
+          0.999,
+          0.001,
+          0.5,
+          2
+        ],
+        "margin_m": 0
+      },
+      "PD": {
+        "kp": 60,
+        "kd": 5
+      },
+      "joint_target_limits": "Original per-joint physical position ranges, mapped by name.",
+      "original_torque_limit_pattern_Nm": [
+        23.7,
+        23.7,
+        45.43
+      ],
+      "actuator_mapping": "Identical gear, target bounds and original force/torque limits in predictor and plant; no unmatched post-planning clipping.",
+      "no_materials": true
+    }
+  },
+  "author_long_reference": {
+    "arm": "AUTHOR_N",
+    "legacy_stage": "G0",
+    "conditions": [
+      "nominal",
+      "yaw_plus5",
+      "yaw_minus5"
+    ],
+    "maximum_new_starts": 3,
+    "protocol": "Use long_mission_protocol with frozen successful R7 N control/author physics.",
+    "independence": "Proceed without waiting for project success. An author long failure does not cancel project work; preserve outcomes and complete conditions unless a shared concrete execution defect blocks meaningful continuation.",
+    "meaning": "Author-configuration continuity evidence, not project physical-limit verification, material memory, cross-robot generalization or NX real time."
+  },
+  "development": {
+    "legacy_stage": "G1",
+    "baseline": "PROJECT_N_SH",
+    "arms": [
+      {
+        "id": "C",
+        "change": "2ms held control / two 1ms steps, consistent derivatives and phase update; keep N_SH objective."
+      },
+      {
+        "id": "H",
+        "change": "C plus absolute Stand height.",
+        "when": "C still cannot establish the stopping task and evidence warrants an absolute-height/support target."
+      },
+      {
+        "id": "S",
+        "change": "C+H plus feasible fixed-support stance/input reference.",
+        "when": "H alone leaves support or stance inconsistency unresolved."
+      }
+    ],
+    "policy": "After nominal original success plus full60s observation, lock the candidate and immediately attempt nominal300s within the same development cap. Only both successes create the first formal freeze. Long failure permits evidence-based C/H/S refinement within development; it does not consume the formal revision. If C or H qualifies, no mandatory extra mechanism.",
+    "scope": "Each development physical start is either the complete original60s mission or a nominal300s candidate qualification mission. The combined cap is12. Reference solving and saved-data calculations do not create short stand tests.",
+    "revision": "Evidence-based C/H/S fixes are authorized within this campaign. Preserve all attempts; no blind repetitions, new platform or automatic extension.",
+    "maximum_new_physical_starts": 12
+  },
+  "single_mission_protocol": {
+    "original_deadline_s": 60,
+    "terminal_conditions": {
+      "all_feet_contact": true,
+      "origin_radius_m": 0.15,
+      "base_linear_speed_norm_max_m_s": 0.05,
+      "base_angular_speed_norm_max_rad_s": 0.1,
+      "roll_pitch_abs_max_rad": 0.15,
+      "continuous_s": 2
+    },
+    "keep_original_transition_rules": true,
+    "observe_until_s": 60,
+    "completion_and_hold": "Record the first original mission-completion time separately. If it completes early, retain the same physical state and Stand controller through t=60 for sustained-hold observation. Later instability remains in the hold outcome and cannot be omitted.",
+    "formal_conditions": [
+      {
+        "id": "nominal",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "yaw_plus5",
+        "initial_yaw_offset_deg": 5,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "yaw_minus5",
+        "initial_yaw_offset_deg": -5,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "vx_plus005",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0.05,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "vx_minus005",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          -0.05,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "vy_plus005",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0.05,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "vy_minus005",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          -0.05,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "wz_plus01",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0.1
+        ]
+      },
+      {
+        "id": "wz_minus01",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          -0.1
+        ]
+      }
+    ],
+    "deterministic_scope": "Nine specified physical initial conditions, not nine stochastic optimizer seeds or independent material samples.",
+    "formal_freeze": "One source/binary/controller configuration per formal cohort; reuse identical development nominal once and retain every failure."
+  },
+  "long_mission_protocol": {
+    "conditions": [
+      "nominal",
+      "yaw_plus5",
+      "yaw_minus5"
+    ],
+    "duration_s": 300,
+    "full_round_trips": 5,
+    "endpoints_m": [
+      [
+        0,
+        0
+      ],
+      [
+        3,
+        0
+      ]
+    ],
+    "command_speed_m_s": 0.25,
+    "turn_rate_rad_s": 0.5,
+    "route_completion_deadline_s": 270,
+    "minimum_final_hold_s": 30,
+    "stop_at_each_endpoint": "Use the original position/velocity/angular-velocity/roll-pitch/contact tolerances with 2s continuous stability. Heading target is the current travel heading during the stop; then turn continuously for the next leg.",
+    "continuous_state": "No reset of qpos/qvel, control policy, contact state, or initialization between legs/laps. The home endpoint must explicitly turn back toward +x before another outbound leg; do not loop a yaw=0 Mission after returning at yaw~pi.",
+    "success": "Five actual round trips completed by t=270 without original physical failure; remain at the endpoint through t=300 and meet the original continuous 2s stable condition at the end. Report all intervening 30s hold statistics and interruptions, even when the run passes.",
+    "counting": "Each 300s trace is one episode; its ten arrivals are correlated events, not ten independent trials."
+  },
+  "project_formal_order": {
+    "freeze": "First formal freeze requires both nominal original success with full60s observation and nominal300s success under the identical candidate. Both starts belong to development and are each reused once as formal evidence.",
+    "first": "Before formal freeze, lock every original-task-successful candidate and run nominal300s immediately within the12-start development cap; do not wait for nonnominal coverage.",
+    "then": "After qualification, complete other eight original-task conditions and two yaw-offset long tasks under the same freeze. Reuse both qualification successes without new physical starts.",
+    "hold": "Report first completion separately from subsequent hold. Never hide a post-completion fall; it disqualifies sustained-execution readiness.",
+    "revision": "At most one justified formal revision, then all nine original and three long conditions under a new common freeze; preserve both cohorts."
+  },
+  "campaign_budget": {
+    "max_author_long_starts": 3,
+    "max_project_development_starts": 12,
+    "max_project_formal_single_per_cohort": 9,
+    "max_project_long_per_cohort": 3,
+    "max_evidence_based_formal_revisions": 1,
+    "max_new_physical_starts": 39,
+    "counting": "3 author long +12 project development (original60s and candidate nominal300s together) +up to12 first formal +up to12 one revised formal. First formal normally reuses2 successful qualification starts, reducing actual starts. Count all failures, missing records and superseded attempts.39 is a conservative cap, never a quota.",
+    "authorization": "New R8 scope, not reuse of R7 unused formal allowance. Implement separate author-long and project-development counters.",
+    "finish": "Complete the specified experiments and publication, or report a concrete unresolved blocker/cap exhaustion. One local failure does not end the campaign."
+  },
+  "joint_baseline_exit": {
+    "minimum": "Project nominal original task with sustained observed hold plus nominal uninterrupted 300s permits a limited-domain execution freeze.",
+    "coverage": "9/9 original plus3/3 long establish only prescribed deterministic project coverage. Author results stay separate.",
+    "next": "Freeze existing PANN, train standard PPO in the same Actor-to-MPC-to-Go2 loop, then freeze Actor for evaluation. No training in R8.",
+    "meaning": "Baseline completeness corrections are not material-memory innovation or unknown-terrain generalization."
+  },
+  "outputs": {
+    "root": "results/terrain_memory/simulation/tm-s1-go2-wb-support-r8",
+    "required": [
+      "one actual-attempt index with source/config/binary/model identities",
+      "first completion and continued holding",
+      "separate author/project continuous-task outcomes",
+      "state/targets/torque/all ground forces at declared rates",
+      "same-time nominal/applied targets with clamp semantics",
+      "full-rate/held-input comparisons",
+      "absolute/relative heights, foot support and per-joint saturation",
+      "actual control/integration grids and horizon",
+      "complete uninterrupted success/failure videos and timing"
+    ],
+    "long_recording": "Write continuous time/data-stream chunks on the execution host, for example at most60s per chunk. Split files only, never reset physical/controller state; retain high-rate records and global times.",
+    "max_release_asset_bytes_exclusive": 2147483648,
+    "capacity": "R7 60s compressed arrays are about419.5MB(author N)/478.0MB(project N_SH). A300s file is near/above GitHub's2GiB asset limit; compression varies."
+  },
+  "delivery": {
+    "source_and_compact_results": "GitHub",
+    "large_arrays_and_video": "Direct upload from execution host to Release",
+    "verification": "Confirm commit, final published asset URLs, size and digest; then finish.",
+    "no_user_pc_download_copy_mirror_compress_or_archive": true
+  },
+  "forbidden": [
+    "defensive programming or generic fallback frameworks",
+    "unit/mock/smoke/import/shape suites and unrelated regression matrices",
+    "separate audit/status reports or replay-only rounds",
+    "relaxing task/physical limits",
+    "changing actual control rate to hide prediction mismatch",
+    "post-hoc action filtering with inconsistent derivatives",
+    "blind weight/contact-width grids",
+    "PANN/PPO/TM02/hardware in R8",
+    "rewriting old outcomes or user-PC re-archiving"
+  ]
+}
