@@ -1,6 +1,6 @@
 {
   "run_id": "tm-s1-go2-wb-startup-r6",
-  "status": "completed_bounded_scope",
+  "status": "completed_and_published_G0_terminal_stability_timeout",
   "attempts": [
     {
       "attempt": "g0-01",
@@ -611,10 +611,70 @@
   "postprocessing_command": "work/envs/mjpc-go2/bin/python scripts/analyze_s1_go2_wb_startup.py",
   "compact_data_note": "50 Hz CSV is decimated from full 500 Hz trajectory; terminal criteria retain every 500 Hz sample. NPZ contains all actual states, physical forces, joint targets, torques and best predictions.",
   "publication": {
-    "status": "pending",
+    "status": "published_verified",
     "release_tag": "tm-s1-go2-wb-startup-r6",
     "upload_origin": "execution host only; no result download to the user PC",
-    "summary": "**第六轮已完成固定范围执行：1次G0完整任务启动，0次完整成功；G1开发与正式均未执行。** 本轮 `tm-s1-go2-wb-startup-r6` 使用实现 `ce3e03255e6e229fd61cac458b514fb6ea162314`，保留第五轮和所有历史结果。没有训练PANN/PPO、接入TM02或启用硬件。\n\n三项启动修正已进入真实执行：作者Init/Reset恢复home后初始化策略；实际世界固定水平floor为−0.01m并写入 `s1_flat_ground_height`；同一任务t=0恰20次原规划，期间plant步数和reset次数均为0。优化前nominal与home ctrl最大差4.77×10⁻⁸rad，最后一次初始化反馈目标与首个实际目标一致。首次最大绝对力矩10.5164Nm，前2s最大机身线速度0.05862m/s，原affine PD最大核对差1.71×10⁻⁶Nm。\n\n| 原任务阶段 | 实际记录 |\n|---|---|\n| 初始站立→去程 | 2.000s进入去程，初始站立阶段未触发跌倒 |\n| 去程→转向 | 15.086s，机身x=2.9673m；全程最大x=3.00363m |\n| 转向→返程 | 22.068s，实际yaw=2.99301rad |\n| 返程→终点站立 | 35.112s，距原点约3.71cm |\n| 最终结果 | 60.000s超时，距原点2.064cm、航向误差0.03737rad；未完成原2s连续稳定条件 |\n\n**主导停止条件是终点角速度反复越过0.1rad/s。** 终点阶段全部稳定条件同时满足的采样比例为69.385%，最长连续区间仅0.250s，达不到2s。终点接触、位置、线速度、姿态分别有99.743%、100%、99.012%、100%的采样满足原条件；单个末状态看似静止不能替代连续稳定要求。没有确认新的实施错误，因此不重复同版运行；G0尚余1次上限未用，不转移到G1，也不放宽阈值或扫描参数。这是停止判据的定位，尚未隔离终点振荡的唯一动力学原因。\n\n解析高度也没有消除几何重叠：保存的best预测中足球底部相对floor最低−30.543mm，实际轨迹最低−21.344mm；使用原0.022m足球半径作几何回放，未改真实接触和失败规则。全部best轨迹保留。0.02/0.10/0.20/0.35s时域按相同绝对时间对齐的平均机身位置误差为0.312/1.536/6.099/38.792mm；末端预测误差仍不能忽略。\n\n物理60s耗时92.335s（另计视频回放/分析/上传）；20次初始化规划共0.4676s。后续3000次规划中1615次超过20ms，规划中位/P95为20.267/31.777ms；这是共享服务器同步仿真，不是NX实时验证。全程30001条500Hz控制状态、30000条真实物理反力记录、3001组best预测和20组启动预测均保留。视频为1801帧、30fps，覆盖实际0→60s失败全过程。\n\n[运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/index.json)、[任务结果](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/episodes.csv)、[全程图](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/figures/g0-01-mission.png)、[连续50Hz便览](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-continuous-50hz.csv)、[500Hz终点判据](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-terminal-criteria.csv)、[绝对时间预测误差](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-prediction-alignment.csv)与[全密度数组和完整视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-startup-r6)。50Hz CSV仅作便览，完整500Hz时程在Release。构建和实验在服务器tmux执行，按用户最后授权覆盖此前前台限定；源码和紧凑结果进GitHub，大数组/视频由执行端直接发布并核对size/digest。\n\n本轮证明启动修正生效并完成了路径往返，但**G0完整任务仍未通过，G1执行基础和PANN/PINN＋RL＋MPC联合基础版本仍未完成**。近期顺序继续是先建立稳定联合基础，再研究创新；标准PPO接入不以先证明创新为前提。本轮已结束，不自动开新轮。\n"
+    "summary": "**第六轮已完成固定范围执行：1次G0完整任务启动，0次完整成功；G1开发与正式均未执行。** 本轮 `tm-s1-go2-wb-startup-r6` 使用实现 `ce3e03255e6e229fd61cac458b514fb6ea162314`，保留第五轮和所有历史结果。没有训练PANN/PPO、接入TM02或启用硬件。\n\n三项启动修正已进入真实执行：作者Init/Reset恢复home后初始化策略；实际世界固定水平floor为−0.01m并写入 `s1_flat_ground_height`；同一任务t=0恰20次原规划，期间plant步数和reset次数均为0。优化前nominal与home ctrl最大差4.77×10⁻⁸rad，最后一次初始化反馈目标与首个实际目标一致。首次最大绝对力矩10.5164Nm，前2s最大机身线速度0.05862m/s，原affine PD最大核对差1.71×10⁻⁶Nm。\n\n| 原任务阶段 | 实际记录 |\n|---|---|\n| 初始站立→去程 | 2.000s进入去程，初始站立阶段未触发跌倒 |\n| 去程→转向 | 15.086s，机身x=2.9673m；全程最大x=3.00363m |\n| 转向→返程 | 22.068s，实际yaw=2.99301rad |\n| 返程→终点站立 | 35.112s，距原点约3.71cm |\n| 最终结果 | 60.000s超时，距原点2.064cm、航向误差0.03737rad；未完成原2s连续稳定条件 |\n\n**主导停止条件是终点角速度反复越过0.1rad/s。** 终点阶段全部稳定条件同时满足的采样比例为69.385%，最长连续区间仅0.250s，达不到2s。终点接触、位置、线速度、姿态分别有99.743%、100%、99.012%、100%的采样满足原条件；单个末状态看似静止不能替代连续稳定要求。没有确认新的实施错误，因此不重复同版运行；G0尚余1次上限未用，不转移到G1，也不放宽阈值或扫描参数。这是停止判据的定位，尚未隔离终点振荡的唯一动力学原因。\n\n解析高度也没有消除几何重叠：保存的best预测中足球底部相对floor最低−30.543mm，实际轨迹最低−21.344mm；使用原0.022m足球半径作几何回放，未改真实接触和失败规则。全部best轨迹保留。0.02/0.10/0.20/0.35s时域按相同绝对时间对齐的平均机身位置误差为0.312/1.536/6.099/38.792mm；末端预测误差仍不能忽略。\n\n物理60s耗时92.335s（另计视频回放/分析/上传）；20次初始化规划共0.4676s。后续3000次规划中1615次超过20ms，规划中位/P95为20.267/31.777ms；这是共享服务器同步仿真，不是NX实时验证。全程30001条500Hz控制状态、30000条真实物理反力记录、3001组best预测和20组启动预测均保留。视频为1801帧、30fps，覆盖实际0→60s失败全过程。\n\n[运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/index.json)、[任务结果](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/episodes.csv)、[全程图](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/figures/g0-01-mission.png)、[连续50Hz便览](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-continuous-50hz.csv)、[500Hz终点判据](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-terminal-criteria.csv)、[绝对时间预测误差](results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/g0-01-prediction-alignment.csv)与[全密度数组和完整视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-startup-r6)。50Hz CSV仅作便览，完整500Hz时程在Release。构建和实验在服务器tmux执行，按用户最后授权覆盖此前前台限定；源码和紧凑结果进GitHub，大数组/视频由执行端直接发布并核对size/digest。\n\n本轮证明启动修正生效并完成了路径往返，但**G0完整任务仍未通过，G1执行基础和PANN/PINN＋RL＋MPC联合基础版本仍未完成**。近期顺序继续是先建立稳定联合基础，再研究创新；标准PPO接入不以先证明创新为前提。本轮已结束，不自动开新轮。\n",
+    "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-startup-r6",
+    "release_id": 424947013,
+    "evidence_commit": "0eddc466ecd5b2be7b07695b00f4e67b50d891a2",
+    "draft": false,
+    "asset_count": 7,
+    "asset_bytes": 87758961,
+    "all_assets_verified": true,
+    "asset_verification": [
+      {
+        "name": "g0-01-trajectory.npz",
+        "size": 67595433,
+        "digest": "sha256:56c5a0074da16b57d6e25983965e20c1d5192065340e36ea5029dcbb1a6ab2d2",
+        "verified": true,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/untagged-7f5c41407a1fe6e05429/g0-01-trajectory.npz"
+      },
+      {
+        "name": "g0-01-startup.npz",
+        "size": 259929,
+        "digest": "sha256:5ade8f6c3dc597efb8048243f5c9e188ae339bde8effb36658c21f29a9d403f0",
+        "verified": true,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/untagged-7f5c41407a1fe6e05429/g0-01-startup.npz"
+      },
+      {
+        "name": "g0-01-complete-mission.mp4",
+        "size": 16360563,
+        "digest": "sha256:ee8558d9b70e3857de1ec214e8c37205c3be00eff8673bdaa3d7da13253d7360",
+        "verified": true,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/untagged-7f5c41407a1fe6e05429/g0-01-complete-mission.mp4"
+      },
+      {
+        "name": "g0-01-model.xml",
+        "size": 19095,
+        "digest": "sha256:fcf27f75a1ddaa15e32e5193262a58d33e9c1c6da19ebf3ee2714b9860350712",
+        "verified": true,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/untagged-7f5c41407a1fe6e05429/g0-01-model.xml"
+      },
+      {
+        "name": "g0-01-agent-server.log",
+        "size": 176,
+        "digest": "sha256:527868d05b484cb03c905f8473795bd9301fea7eb1bb59f5f376289ef00cae8e",
+        "verified": true,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/untagged-7f5c41407a1fe6e05429/g0-01-agent-server.log"
+      },
+      {
+        "name": "g0-01-prediction-ground-gaps.npz",
+        "size": 3451003,
+        "digest": "sha256:4b7636e244194aa0f6944c6eca934691edda3aea53f2fffe862916affd2ae055",
+        "verified": true,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/untagged-7f5c41407a1fe6e05429/g0-01-prediction-ground-gaps.npz"
+      },
+      {
+        "name": "agent-server-build.log",
+        "size": 72762,
+        "digest": "sha256:50042521b7beb1c72da37bf9f08ff092a72fc02bf63fe863abc891c2298a5b7a",
+        "verified": true,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/untagged-7f5c41407a1fe6e05429/agent-server-build.log"
+      }
+    ],
+    "verified_utc": "2026-10-27T01:40:26.887095+00:00",
+    "method": "Execution-host files uploaded by authenticated gh; remote asset size/digest checked without downloading results to the user PC."
   },
   "published_configuration_sha256": "5c1b6d82099f622ee5f775a4f03beb920e14eeee0de4de8063c674e259c83ce8",
   "video_verification": {
