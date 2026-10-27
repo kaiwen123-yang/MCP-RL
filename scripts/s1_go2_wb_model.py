@@ -169,7 +169,7 @@ def write_flat_ground_height(model, xml_path):
 
 def write_equilibrium_settings(xml_path, config, arm):
     """Wire declared controller settings into the XML actually loaded by Agent."""
-    setting = next(x for x in config['development']['G0_named_arms'] if x['id']==arm)
+    setting = next(x for x in config['development']['G0_named_arms'] + config['development'].get('G1_revisions', []) if x['id']==arm)
     prediction = config['prediction_settings'][setting['prediction']]
     values = dict(s1_stand_equilibrium=setting['stationary_objective'],
         agent_timestep=prediction['agent_timestep_s'],

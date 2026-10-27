@@ -54,7 +54,9 @@ def evaluate(job):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--source-run',default='tm-s1-go2-wb-startup-r6')
-    p.add_argument('--attempt',default='g0-01');p.add_argument('--workers',type=int,default=3);args=p.parse_args()
+    p.add_argument('--attempt',default='g0-01');p.add_argument('--workers',type=int,default=3);p.add_argument('--smooth-fine',action='store_true');args=p.parse_args()
+    global VARIANTS
+    if args.smooth_fine: VARIANTS=[VARIANTS[0],('smooth_fine_implicitfast',.001,3,True)]
     c=json.loads(CFG.read_text());small=ROOT/c['outputs']['root'];small.mkdir(parents=True,exist_ok=True)
     out=ROOT/'outputs/terrain_memory/simulation'/c['run_id'];out.mkdir(parents=True,exist_ok=True)
     source=ROOT/'outputs/terrain_memory/simulation'/args.source_run/args.attempt
@@ -76,7 +78,7 @@ def main():
     results=[]
     with ProcessPoolExecutor(args.workers) as pool:
         for value in pool.map(evaluate,jobs):results.append(value)
-    name=args.source_run+'-'+args.attempt+'-matched-input'
+    name=args.source_run+'-'+args.attempt+('-smooth-fine' if args.smooth_fine else '')+'-matched-input'
     header=['origin_s','variant','horizon_s','position_error_m','orientation_error_rad','linear_velocity_error_m_s',
         'angular_velocity_error_rad_s','actuator_force_error_norm_Nm','foot_force_error_norm_N']
     rows=[row for value in results for row in value[2]]

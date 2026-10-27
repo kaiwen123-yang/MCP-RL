@@ -179,6 +179,11 @@
       "implicitfast": 3,
       "agent_differentiable": "0 or 1",
       "stationary_objective": "s1_stand_equilibrium"
+    },
+    "N_S": {
+      "agent_timestep_s": 0.001,
+      "agent_integrator": "implicitfast",
+      "agent_differentiable": 1
     }
   },
   "matched_input_replay": {
@@ -300,7 +305,16 @@
     "allowed_changes": "Evidence-based stationary cost, state/actuator/constraint semantics, and native prediction numerical settings. Each physical attempt is a complete mission and is retained.",
     "forbidden_changes": "Relaxing task thresholds, hiding failed starts, changing G1 mass/contact/torque limits to get success, blind grids, controller/platform replacement or new RL training.",
     "G1_selected_arm": "N",
-    "G1_selection_evidence": "G0 O fell after its terminal Stand transition; G0 ON made invalid trunk/world contact at 43.052s; G0 N completed the original task. Preserve the successful N objective and analyze G1 native-contact dynamics explicitly."
+    "G1_selection_evidence": "G0 O fell after its terminal Stand transition; G0 ON made invalid trunk/world contact at 43.052s; G0 N completed the original task. Preserve the successful N objective and analyze G1 native-contact dynamics explicitly.",
+    "G1_revisions": [
+      {
+        "id": "N_S",
+        "stationary_objective": 0,
+        "prediction": "N_S",
+        "purpose": "Retain fine time step and the successful original objective, but use the author differentiable-contact rollout/derivative setting. The plant is unchanged.",
+        "evidence": "G1 N predicted and executed a crouched small-leg-support state, despite small same-input forward error; native-contact optimization derivatives remain a candidate cause. On the same 35 origins, fine differentiable prediction has mean/max position discrepancy 0.667/0.743 mm, mean angular discrepancy 0.00103 rad/s, and mean foot-force vector discrepancy 9.756 N. This is an explicit prediction approximation, not physical contact softening or proof of better optimization."
+      }
+    ]
   },
   "single_mission_protocol": {
     "original_deadline_s": 60,
