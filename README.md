@@ -27,6 +27,8 @@ C在真实源码中实现2ms控制保持、同一输入下两次1ms积分及一�
 
 [名义原任务图](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/figures/project-s3-single-05.png)与[名义300秒图](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/figures/project-s3-long-06.png)便于浏览；高率数组和全部成功/失败完整视频从执行端直接上传[本轮Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-support-r8)。最终提交、正式URL、size和SHA256核验以索引publication为准；没有在用户电脑再次下载、复制、镜像、压缩或归档。
 
+发布核验发现一个执行端模型副本与运行时记录相差2个字节；先前上传的原始模型及另一份冻结模型的SHA256仍与运行时一致。变化副本和字节差异记录保留，原始Release资产未替换；清单使用已有的相同原始模型作为核验来源，详见索引publication_integrity_events。
+
 本轮PANN/PPO训练0、TM02运行0、硬件0，NX未测。后续按[主计划第5.10节](docs/TERRAIN_MEMORY_PLAN.md)冻结已有PANN参数、训练标准PPO并评测固定Actor；当前控制修正本身不是三项研究创新。第八轮指定实验已结束，不自动用满剩余额度。
 
 下方第七轮及更早内容作为历史原文保留；其“本轮/当前”和旧停止规则仅指对应旧run。R8原授权契约与历史启动词见[主计划第5.9及7节](docs/TERRAIN_MEMORY_PLAN.md)。
