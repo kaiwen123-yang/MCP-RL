@@ -461,7 +461,7 @@ G1成功只建立执行载体；之后才在保留真实材料规律和任务需
 
 ### 5.8 第七轮：驻足目标与预测动力学修正，连续完成整程和长时实验
 
-**当前执行依据。** 用户在第六轮后明确要求根据动力学问题进行系统修正，并继续较长实验；本节替代旧轮“只修接口错误、没有新实施错误即结束”的限制。新run_id为 `tm-s1-go2-wb-equilibrium-r7`，配置为 [s1-go2-wb-equilibrium.json](../experiments/terrain_memory/s1-go2-wb-equilibrium.json)。这是一个从修正到完整任务、初态覆盖和300s连续运行的完整批次，不为每个局部改动另开一轮等待用户。**本计划提交的状态是 planned_not_executed：未编译新补丁、未启动新物理实验、未训练。**
+**当前执行依据。** 用户在第六轮后明确要求根据动力学问题进行系统修正，并继续较长实验；本节替代旧轮“只修接口错误、没有新实施错误即结束”的限制。新run_id为 `tm-s1-go2-wb-equilibrium-r7`，配置为 [s1-go2-wb-equilibrium.json](../experiments/terrain_memory/s1-go2-wb-equilibrium.json)。这是一个从修正到完整任务、初态覆盖和300s连续运行的完整批次，不为每个局部改动另开一轮等待用户。计划提交时为planned_not_executed；现已执行8次开发物理任务，G0 1/3、G1 0/5，正式和长任务未启动，实际结果见第5.8.7节。
 
 #### 5.8.1 第六轮结果支持的判断
 
@@ -494,7 +494,7 @@ G1成功只建立执行载体；之后才在保留真实材料规律和任务需
 - 新速度项进入每个预测状态以及末端代价；沿用原cost管线，不新增Critic、终端价值训练或优化器。非Stand/开关关闭时新速度残差为0，保留原Upright行为，Upright原平滑范数不改。
 - runner必须把这两个名字传给set_cost_weights，而不是set_task_parameters；numeric在Agent初始化前写入实际加载XML。agent_timestep_s映射到agent_timestep，时域映射到agent_horizon；Euler枚举为0，implicitfast为3。G1保留对应user sensor顺序并实际使用新二进制；不能只改配置而遗漏C++模型/成本。
 
-新补丁SHA256为 `e0a57d4e22fb4f4b1d05acef132d12b3cee22faf6d05c1467498453b77c10e4a`。它已在固定作者源码加R6补丁的基点通过源码可应用性核对，**尚未编译、加载或仿真**。只重编受影响的libmjpc/agent_server，记录真实实现提交、配置和二进制hash。
+新补丁SHA256为 `e0a57d4e22fb4f4b1d05acef132d12b3cee22faf6d05c1467498453b77c10e4a`。它已在固定作者源码加R6补丁的基点通过源码可应用性核对，计划阶段尚未编译；本轮现已应用、重编并实际运行，新agent_server SHA256为`1991b74ccf70b5f87e056519f4b6d54598ee0da2171dbf63d78370a8a8d6e9e6`。实际源码、配置、二进制和逐任务结果均在第5.8.7节索引中。
 
 **预测设置N。** 使用作者已有agent_timestep=0.001、agent_integrator=implicitfast、agent_differentiable=0；名义预测时域仍0.35s，保留refsafe。实际plant的G0=0.002s、G1=0.0002s及其接触参数不变。读取真实plan_times确认时域和节点数；现有512节点上限下直接设0.0002s会把实际时域截到约0.1022s，不能仍称0.35s。0.001s约350/351节点，以真实输出为准。
 
@@ -554,6 +554,27 @@ R6 O0N0历史结果直接复用，不重跑凑数。N单独不成功不阻止一
 
 实际物理步数、控制样本、规划调用、初始化调用和wall time分开记录；300s同步慢仿真不是NX实时。源码/紧凑结果推GitHub，大数组和视频从执行端直接发布Release。**核对commit及必要资产size/digest后结束，不在用户电脑重新下载、复制、镜像、压缩或归档。**
 
+#### 5.8.7 第七轮实际执行结果与停止范围
+
+开发8/8次真实物理启动全部保留，G0为1/3成功、G1为0/5。G0 N在37.556s达到原完整任务要求并继续记录至60s；完成后仅2个角速度超限样本，末段连续稳定11.698s。G1未取得完整成功版本，因此9个预定义初态与3条300s连续任务均未执行。未使用的正式额度没有转作开发，PANN/PPO训练、TM02和硬件均为0。
+
+| 实际任务 | 结果 | 物理记录 / s | 关键事实 |
+|---|---|---:|---|
+| G0 O | 失败 | 36.974 | 返程后跌倒 |
+| G0 N | 原任务成功 | 60.000 | 37.556s首次完成；继续观察到60s |
+| G0 ON | 失败 | 43.052 | 返程后非允许机体触地 |
+| G1 N | 失败 | 16.522 | 原接触细步预测下非允许机体触地 |
+| G1 N_S | 超时 | 60.000 | 已到远端；航向未进入原0.15rad转向门槛 |
+| G1 N_SH | 超时 | 60.000 | 35.850s返到终点；连续稳定最长0.160s |
+| G1 O_SH | 失败 | 50.524 | 加入按阈值代价定标的驻足目标后跌倒 |
+| G1 O_SH_W | 失败 | 4.928 | 仅预测模型缩窄平滑宽度后跌倒 |
+
+N_S采用作者细步可微预测近似，N_SH将独立Heading权重提高至1，O_SH启用Stand直立/速度项并按相同原容限代价取速度权重0.0224578441，O_SH_W仅在独立预测XML中将floor/feet的solimp宽度改为实测接触尺度60.743856μm。全部G1真实plant、refsafe、0.0002s物理步及原力矩界保持不变。N_SH已完成路径但未停稳；后两次修订失败。前向均值误差改善并未保证优化或闭环稳定，不能据此宣布G1或联合基础成立。
+
+同输入比较明确使用相同保存计划目标、相同零阶保持调度以及原plant反事实参考；与未来重规划轨迹误差分开。0.001s预测实际为350节点、0.349s，共同时刻比较止于0.34s。未保存的warmstart等积分辅助状态统一重置并保留限制。8条真实全程视频和原始时程从执行端发布；前五条缺少连续非足部地面反力，不填零，后三条已补齐。未到终点的保持量为null。
+
+结果见[一个运行索引](../results/terrain_memory/simulation/tm-s1-go2-wb-equilibrium-r7/index.json)、[逐任务表](../results/terrain_memory/simulation/tm-s1-go2-wb-equilibrium-r7/episodes.csv)、[保持量](../results/terrain_memory/simulation/tm-s1-go2-wb-equilibrium-r7/holding.csv)和[Release发布位置](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-equilibrium-r7)。本轮实验已因开发上限关闭，发布确认以索引为准；不自动重启物理任务。
+
 ### 5.9 先完成联合基础版本，再逐项研究三项贡献
 
 用户最新明确的推进顺序，替代此前把高级材料规划或创新证明放在基础集成之前的安排。这里“冻结PANN＋标准PPO”指冻结已有PANN参数、随后训练标准PPO并在评测时固定Actor；不表示已有可用PPO或跳过策略训练：
@@ -608,7 +629,7 @@ ReCo的控制层级为MPC协调命令、低层RL执行；本项目首版拟采�
 
 ## 7. 第七轮启动词
 
-以下启动词与第5.8节和配置共同约束当前批次；当前是待实施计划，不是已完成结果。
+以下保留第七轮已经执行的启动词；实际范围见第5.8.7节。本轮开发额度已用完，此历史启动词不构成再次启动授权。
 
 ```text
 继续执行 MCP-RL 的 S1 第七轮 tm-s1-go2-wb-equilibrium-r7。先读取当前 AGENTS.md、docs/TERRAIN_MEMORY_PLAN.md 第5.8–5.9节，以及 experiments/terrain_memory/s1-go2-wb-equilibrium.json。目标是把同一MPC执行基础修到能完成原任务，并在同一批次内继续初态覆盖和300s连续任务；不要每修一个局部问题就停下来写报告。

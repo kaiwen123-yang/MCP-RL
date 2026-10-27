@@ -1,0 +1,60 @@
+{
+  "source_run": "tm-s1-go2-wb-equilibrium-r7",
+  "attempt": "g1-ns-nominal-02",
+  "origins": 123,
+  "original_plan_dt_s": 0.0009999999999994458,
+  "common_input": "Same saved-plan targets sampled at 0.01s and held identically on every replica; no feedback or replanning.",
+  "reference": "Original actual plant under the same counterfactual input, not the historical future.",
+  "comparison_endpoint_s": 0.34,
+  "missing_state": "qacc_warmstart and integration auxiliary state not recorded in R6. All replicas consistently reset auxiliary state, then restore saved qpos/qvel/act, clock and mocap. No bitwise history replay claim.",
+  "max_warning_counts": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "variants": {
+    "smooth_fine_implicitfast": {
+      "position_error_m": {
+        "mean": 0.000736910997891432,
+        "max": 0.002043840234502579
+      },
+      "orientation_error_rad": {
+        "mean": 0.0010975237466170436,
+        "max": 0.009371069411987194
+      },
+      "linear_velocity_error_m_s": {
+        "mean": 0.002511813450361352,
+        "max": 0.014629211854886458
+      },
+      "angular_velocity_error_rad_s": {
+        "mean": 0.00872010655105175,
+        "max": 0.06673306448041535
+      },
+      "actuator_force_error_norm_Nm": {
+        "mean": 0.5485742598555652,
+        "max": 0.9274462970463799
+      },
+      "foot_force_error_norm_N": {
+        "mean": 17.168455593653245,
+        "max": 25.74607884737267
+      }
+    }
+  }
+}

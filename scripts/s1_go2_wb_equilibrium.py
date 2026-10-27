@@ -94,8 +94,15 @@ def hold_metrics(a,first_completion,duration,mission):
     start=first_completion if first_completion is not None else (duration-30 if mission=='long' else None)
     if start is None:
         terminal=np.flatnonzero(a['phase']==4)
-        start=float(t[terminal[0]]) if len(terminal) else duration
-    selected=t>=start-1e-8; times=t[selected]; valid=good[selected]
+        start=float(t[terminal[0]]) if len(terminal) else None
+    selected=(t>=start-1e-8) if start is not None else np.zeros(len(t),dtype=bool)
+    times=t[selected]; valid=good[selected]
+    if not len(times):
+        return dict(scope='terminal_hold_not_observed',start_s=start,observed_samples=0,
+            observed_through_s=None,full_observation=False,all_criteria_fraction=None,
+            endpoint_position_violation_samples=None,violation_samples=None,interruptions=None,
+            longest_stable_s=None,final_stable_s=None,criterion_pass_fraction={k:None for k in checks},
+            max_speed_m_s=None,max_omega_rad_s=None,max_origin_distance_m=None,stable_intervals_s=[])
     intervals=[]; since=None
     for j,(tm,ok) in enumerate(zip(times,valid)):
         if ok and since is None: since=float(tm)

@@ -31,7 +31,9 @@ def main():
             frame=Image.fromarray(renderer.render());draw=ImageDraw.Draw(frame)
             draw.rectangle((0,0,1280,76),fill=(15,20,30))
             draw.text((18,10),f"{args.attempt} | {result['stage']} | {result['condition']} | t={d.time:.3f}s | {PHASES[int(phases[i])]}",fill='white')
-            draw.text((18,34),f"Body x={d.qpos[0]:.3f} m, y={d.qpos[1]:.3f} m | continuous recorded simulation",fill='white')
+            laps=sum(v['endpoint']=='home' and v['stable_completion_s']<=d.time for v in result['arrivals'])
+            lap_text=f' | completed round trips {laps}/5' if result['mission']=='long' else ''
+            draw.text((18,34),f"Body x={d.qpos[0]:.3f} m, y={d.qpos[1]:.3f} m{lap_text} | continuous recorded simulation",fill='white')
             if k==len(sample)-1:
                 draw.text((18,55),result['reason'],fill='yellow');frame.save(out/'terminal-frame.png')
             process.stdin.write(np.asarray(frame).tobytes())

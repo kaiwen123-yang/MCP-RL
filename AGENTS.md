@@ -4,16 +4,16 @@
 
 最终问题是**面向重复踩踏的四足机器人地面记忆辨识与跨步协同控制**。近期顺序已经由用户明确：**先形成稳定执行完整任务的 PANN/PINN＋标准RL＋MPC联合基础版本，再研究三项方法贡献、轻量化和泛化。** 不把理论创新、材料记忆收益、改进PPO或所有边缘条件满分作为标准RL集成的前置门槛。
 
-当前任务为 **S1第七轮 `tm-s1-go2-wb-equilibrium-r7`**，依据 [主计划第5.8–5.9节](docs/TERRAIN_MEMORY_PLAN.md) 和 [equilibrium配置](experiments/terrain_memory/s1-go2-wb-equilibrium.json)。用户已授权根据动力学证据修正并连续推进较长实验；旧轮“只修接口错误、无新实施错误即关闭”的限制不约束本轮。不要把每次局部修改拆成新轮或停下来重新要启动词。本计划提交尚未编译新补丁或执行新任务，状态为planned_not_executed。
+**S1第七轮 `tm-s1-go2-wb-equilibrium-r7` 已执行至开发上限，实验已关闭。** 依据[计划第5.8–5.9节](docs/TERRAIN_MEMORY_PLAN.md)和[实际配置](experiments/terrain_memory/s1-go2-wb-equilibrium.json)，实际8次开发启动：G0 1/3完整成功，G1 0/5。G0 N在37.556s完成并观察到60s；G1 N_SH在35.850s返回但最长稳定仅0.160s，后续两次修订也失败。9条件正式矩阵和3条300s均未执行，不标成功、不借正式额度追加开发。本轮仅完成必要成果发布，确认后结束；后续物理工作不能重开本轮额度。[实际索引](results/terrain_memory/simulation/tm-s1-go2-wb-equilibrium-r7/index.json)保留全部正负记录。
 
 第六轮真实结果：1次G0启动并运行60s，35.112s进入返程终点，原2s连续稳定未通过（终点最长0.250s）；G1未执行。从36s之后到60s的12,000个500Hz状态中，接触/位置/线速度/姿态各100%通过，仅角速度通过70.15%。这是路线执行已成立、驻足动态收敛尚未成立，不能说毫无进展，也不能改成完整成功。
 
 R6启动home、affine PD、固定平面和20次t=0规划均已实际生效。保留实现 `ce3e03255e6e229fd61cac458b514fb6ea162314` 及其二进制SHA256 `7f290267c078f67a8fd57a9fcb2b7e8098b4c6f61203b31bf9f67aaa049a7c4e` 的历史结果。R1/R2/S0、S1旧轮和T1/T1R均冻结；不重开旧额度、不改旧判据和结果。第二轮B1刚地/KV8000各5/5继续作为不同控制器/协议下的历史成功参照。
 
-## 本轮实施：目标、动力学与真实完整任务
+## 本轮实施及保留的原协议：目标、动力学与真实完整任务
 
 1. 复用现有SSH/tmux环境、固定作者提交 `e00c47a5adb9856af2e0f24231bb3a60d5be23c4` 及其固定依赖、R6启动补丁。保留affine PD、home初始化、固定平面适配、完整Stand/Trot表、head偏移、连续Heading、原反馈和首次20次规划；不重装平台、不接旧T1/T1R。
-2. 应用 [equilibrium upstream补丁](experiments/terrain_memory/s1-go2-wb-equilibrium-upstream.patch)，只重编受影响的libmjpc/agent_server并记录实际二进制。该补丁目前仅完成固定源码可应用性核对，未编译/运行；不能把提交补丁当作实验成功。
+2. 应用 [equilibrium upstream补丁](experiments/terrain_memory/s1-go2-wb-equilibrium-upstream.patch)，只重编受影响的libmjpc/agent_server并记录实际二进制。该补丁已在执行端应用并重编，agent_server SHA256为1991b74ccf70b5f87e056519f4b6d54598ee0da2171dbf63d78370a8a8d6e9e6，已实际用于本轮8条任务。构建成功不等于任务成功。
 3. **驻足目标O：**显式numeric `s1_stand_equilibrium=1` 且仅Quadruped/Stand，采用body z减world z的三维Upright残差；新增StandLinearVelocity=qvel[0:3]/0.05、StandAngularVelocity=qvel[3:6]/0.1两个二次cost，各权重1，覆盖stage和末端。原Upright平滑范数不改。非Stand/开关关闭保留原行为，新速度项为0。修正torso_angmom为subtreeangmom但权重仍0，不以角动量代替base角速度。
 4. 将新cost名字接到set_cost_weights，numeric写进初始化前实际加载XML；G1复制完整user sensor顺序。JSON中的单位后缀不进入MJCF numeric名称：agent_timestep_s→agent_timestep；horizon→agent_horizon；Euler=0，implicitfast=3，agent_differentiable=0/1。自由关节线速度为世界系、角速度为机体系，后者不是Euler角导数；当前速度cost和判据都用各向同性范数。
 5. **预测设置N：**agent_timestep=0.001、agent_integrator=3、agent_differentiable=0，名义horizon=0.35s，保留refsafe；读取plan_times报告实际时域/节点。原G0 plant步长0.002s、G1 0.0002s及接触不改。0.001s约350/351节点；不将0.0002s预测在512节点上限下的约0.1022s冒充0.35s。
@@ -22,7 +22,7 @@ R6启动home、affine PD、固定平面和20次t=0规划均已实际生效。保
 
 实际物理边界不变：G0作者子树15.806408kg且无显式同类力矩界；G1原15.206408kg及原惯量、被动参数、几何、初姿、接触、关节范围和逐关节23.7/45.43Nm界。G1目标范围、PD及最终力矩限制共同进入预测与执行。禁止改真实floor、质量、力矩或原失败判据以制造成功。现有impratio=100不重复“修复”；软接触几何重叠不自动等于接触失效。
 
-## 一次完整实验批次
+## 原定实验范围（实际开发8次，正式与长任务未启动）
 
 **开发最多8次新物理完整任务启动，G0/G1合计。** 有证据的局部修订在这个额度内继续，不在一次失败后只交状态报告。无依据重复不允许，额度也不必用满。
 

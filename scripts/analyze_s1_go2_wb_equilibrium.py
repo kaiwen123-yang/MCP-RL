@@ -76,7 +76,8 @@ def analyze(name,c):
         for ax in axes:
             ax.set_xlim(0,max(t[-1],.01));ax.grid(alpha=.15)
             if result['first_completion_s'] is not None:ax.axvline(result['first_completion_s'],color='0.2',ls=':',lw=.8)
-        fig.suptitle(name+' | '+result['reason']+' | original completion: '+str(result['first_completion_s']))
+        completion='not reached' if result['first_completion_s'] is None else format(result['first_completion_s'],'.3f')+' s'
+        fig.suptitle(name+' | '+result['reason'].split(':')[0]+' | original completion: '+completion)
         fig.savefig(figures/(name+'-mission.png'),dpi=160);fig.savefig(figures/(name+'-mission.pdf'));plt.close(fig)
     dump(small/(name+'-evidence.json'),evidence)
     print(json.dumps(evidence),flush=True)
@@ -89,10 +90,12 @@ def summary(c):
         if not p.exists():continue
         result=json.loads(p.read_text());results.append(result)
         out=ROOT/'outputs/terrain_memory/simulation'/c['run_id']/name
-        for filename in ['trajectory.npz','startup.npz','complete-mission.mp4','model.xml','agent-server.log']:
+        for filename in ['trajectory.npz','startup.npz','complete-mission.mp4','model.xml','prediction-model.xml','agent-server.log']:
             file=out/filename
             if not file.exists() and filename=='model.xml':file=out/'model/G1-project-go2.xml'
-            if file.exists():assets.append(dict(name=name+'-'+filename,path=str(file),size=file.stat().st_size,sha256=sha(file)))
+            if file.exists():
+                digest=result['trajectory']['sha256'] if filename=='trajectory.npz' else json.loads((out/'video.json').read_text())['sha256'] if filename=='complete-mission.mp4' and (out/'video.json').exists() else sha(file)
+                assets.append(dict(name=name+'-'+filename,path=str(file),size=file.stat().st_size,sha256=digest))
     for file in (ROOT/'outputs/terrain_memory/simulation'/c['run_id']).glob('*matched-input.npz'):
         assets.append(dict(name=file.name,path=str(file),size=file.stat().st_size,sha256=sha(file)))
     for filename in ['r7-build.log']:
@@ -101,8 +104,9 @@ def summary(c):
     csvwrite(small/'episodes.csv',columns,[[r.get(k) for k in columns] for r in results])
     csvwrite(small/'holding.csv',['attempt','full_observation','start_s','observed_through_s','all_criteria_fraction','violation_samples','interruptions','longest_stable_s','final_stable_s','max_speed_m_s','max_omega_rad_s','max_origin_distance_m'],
         [[r['attempt']]+[r['hold'][k] for k in ['full_observation','start_s','observed_through_s','all_criteria_fraction','violation_samples','interruptions','longest_stable_s','final_stable_s','max_speed_m_s','max_omega_rad_s','max_origin_distance_m']] for r in results])
-    csvwrite(small/'arrivals.csv',['attempt','lap','endpoint','arrival_s','stable_completion_s','stopping_s'],
-        [[r['attempt']]+[a[k] for k in ['lap','endpoint','arrival_s','stable_completion_s','stopping_s']] for r in results for a in r['arrivals']])
+    if any(r['mission']=='long' for r in results):
+        csvwrite(small/'arrivals.csv',['attempt','lap','endpoint','arrival_s','stable_completion_s','stopping_s'],
+            [[r['attempt']]+[a[k] for k in ['lap','endpoint','arrival_s','stable_completion_s','stopping_s']] for r in results for a in r['arrivals']])
     csvwrite(small/'timing.csv',['attempt','component','count','total_s','p50_ms','p95_ms','max_ms','logical_deadline_s','deadline_misses'],
         [[r['attempt'],name]+[v[k] for k in ['count','total_s','p50_ms','p95_ms','max_ms','logical_deadline_s','deadline_misses']] for r in results for name,v in r['timing'].items() if v])
     with index_file(small,c) as idx:
