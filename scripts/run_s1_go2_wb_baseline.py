@@ -161,13 +161,18 @@ def run(args, c):
     out = ROOT/'outputs/terrain_memory/simulation'/c['run_id']/args.attempt
     out.mkdir(parents=True, exist_ok=False)
     campaign = 'campaign_budget' in c
+    support = c.get('stage') == 'S1R8'
     if campaign:
         with index_file(small, c) as idx:
             if len(idx['attempts']) >= c['campaign_budget']['max_new_physical_starts']:
                 raise ValueError('Campaign launch allowance exhausted, including missing records')
-            if args.purpose == 'development' and sum(x['purpose']=='development' for x in idx['attempts']) >= c['campaign_budget']['max_development_starts']:
+            if support and args.stage=='G0' and sum(x['stage']=='G0' for x in idx['attempts']) >= c['campaign_budget']['max_author_long_starts']:
+                raise ValueError('Author long-mission allowance exhausted')
+            if support and args.stage=='G1' and args.purpose=='development' and sum(x['stage']=='G1' and x['purpose']=='development' for x in idx['attempts']) >= c['campaign_budget']['max_project_development_starts']:
+                raise ValueError('Project development allowance exhausted')
+            if not support and args.purpose == 'development' and sum(x['purpose']=='development' for x in idx['attempts']) >= c['campaign_budget']['max_development_starts']:
                 raise ValueError('Combined development allowance exhausted')
-            if args.stage == 'G1' and not any(x.get('success') and x['stage']=='G0' for x in idx['attempts']):
+            if not support and args.stage == 'G1' and not any(x.get('success') and x['stage']=='G0' for x in idx['attempts']):
                 raise ValueError('G0 original full-mission prerequisite has not passed')
             idx['attempts'].append(dict(attempt=args.attempt, stage=args.stage, purpose=args.purpose,
                 condition=args.condition, arm=args.arm, mission=args.mission, cohort=args.cohort,
@@ -279,10 +284,34 @@ def run(args, c):
             prediction_settings=model_meta['controller_settings'],
             author_prediction_approximation=model_meta['controller_settings'],
             author_source_sha256={name:sha(upstream/name) for name in ['mjpc/tasks/quadruped/quadruped.cc',
-                'mjpc/tasks/quadruped/task_flat.xml','mjpc/agent.cc','mjpc/grpc/agent_service.cc'] if (upstream/name).exists()})
+                'mjpc/tasks/quadruped/task_flat.xml','mjpc/agent.cc','mjpc/trajectory.cc',
+                'mjpc/planners/model_derivatives.cc','mjpc/planners/ilqg/policy.cc','mjpc/grpc/agent_service.cc'] if (upstream/name).exists()})
     small.mkdir(parents=True, exist_ok=True)
     dump(small/f'{args.attempt}-resolved.json', resolved)
     mission, hist, physics, plans = Mission(c['task']), [], [], []
+    chunks=[];physical_count=0;plan_count=0;peak_torque=np.zeros(12);prediction_grid=None
+    def save_streams():
+        nonlocal physical_count,plan_count,peak_torque,prediction_grid
+        if physics:
+            values=np.asarray(physics);physical_count+=len(values)
+            peak_torque=np.maximum(peak_torque,np.max(np.abs(values[:,2:14]),axis=0))
+            path=out/('physical-%03d.npz'%sum(x['stream']=='physical' for x in chunks))
+            np.savez_compressed(path,physical=values)
+            chunks.append(dict(stream='physical',path=str(path),start_s=float(values[0,0]),
+                end_s=float(values[-1,1]),samples=len(values),size=path.stat().st_size,sha256=sha(path)))
+            physics.clear()
+        if plans:
+            times=np.asarray([x[1]['times'] for x in plans]);plan_count+=len(plans)
+            path=out/('prediction-%03d.npz'%sum(x['stream']=='prediction' for x in chunks))
+            np.savez_compressed(path,plan_origin=np.asarray([x[0] for x in plans]),
+                plan_states=np.asarray([x[1]['states'] for x in plans]),
+                plan_actions=np.asarray([x[1]['actions'] for x in plans]),plan_times=times)
+            chunks.append(dict(stream='prediction',path=str(path),start_s=float(plans[0][0]),
+                end_s=float(plans[-1][0]),samples=len(plans),size=path.stat().st_size,sha256=sha(path)))
+            prediction_grid=dict(nodes=int(times.shape[1]),transitions=int(times.shape[1]-1),
+                span_min_s=float(np.min(times[:,-1]-times[:,0])),span_max_s=float(np.max(times[:,-1]-times[:,0])),
+                timestep_s=float(np.median(np.diff(times,axis=1))))
+            plans.clear()
     if campaign and args.mission == 'long':
         from s1_go2_wb_equilibrium import ContinuousMission
         mission = ContinuousMission(c['task'], c['long_mission_protocol'])
@@ -297,6 +326,7 @@ def run(args, c):
     reason, error, started = '', None, False
     begin = time.perf_counter()
     phase_settings = None
+    previous_phase = None
     with (out/'agent-server.log').open('w') as server_log, Agent(task_id='Quadruped Flat', model=prediction_model,
             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
             subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT), run_init=False) as agent:
@@ -311,6 +341,8 @@ def run(args, c):
                 velocity, omega = data.qvel[:3].copy(), data.qvel[3:6].copy()
                 contact, grf, _ = contact_state(model, data, feet, allowed)
                 body_goal, heading = mission.update(t, dt, data.qpos[:3], velocity, ori, omega, bool(contact.all()))
+                mission_changed = mission.phase != previous_phase
+                previous_phase = mission.phase
                 if mission.phase == 'complete' and first_completion is None:
                     first_completion = t
                 standing = mission.phase in ('initial_stand', 'terminal_stand', 'complete', 'far_hold', 'home_hold')
@@ -322,7 +354,7 @@ def run(args, c):
                     agent.set_task_parameters({k: v for k, v in table.items() if k not in ('Balance','Upright','Height')})
                     agent.set_cost_weights({k: table[k] for k in ('Balance','Upright','Height')} | {'Orientation': c['task']['orientation_cost_weight']})
                     if campaign:
-                        agent.set_cost_weights(c['stationary_objective']['cost_weights'] | {'Angmom': 0.} | model_meta['controller_settings']['cost_weights'])
+                        agent.set_cost_weights(c['stationary_objective'].get('cost_weights',{}) | {'Angmom': 0.} | model_meta['controller_settings']['cost_weights'])
                     phase_settings = settings
                 agent.set_task_parameter('Heading', float(heading))
                 rotation = Rotation.from_euler('z', heading).as_matrix()
@@ -368,7 +400,7 @@ def run(args, c):
                     plan_s = sum(startup_times)
                     startup['planning_total_s'] = plan_s
                     plans.append([t, plan])
-                elif step % 10 == 0:
+                elif step % 10 == 0 or (support and args.stage=='G1' and (settings_changed or mission_changed)):
                     tp = time.perf_counter()
                     agent.planner_step()
                     plan_s = time.perf_counter()-tp
@@ -377,6 +409,7 @@ def run(args, c):
                     plans.append([t, plan])
                 tf = time.perf_counter()
                 action = agent.get_action(time=t, nominal_action=False, averaging_duration=0)
+                nominal_action = agent.get_action(time=t, nominal_action=True, averaging_duration=0) if support else None
                 feedback_s = time.perf_counter()-tf
                 feedback_times.append(feedback_s)
                 if step == 0:
@@ -391,6 +424,17 @@ def run(args, c):
                     heading_target=heading, mocap_pos=data.mocap_pos.copy(), mocap_quat=data.mocap_quat.copy(),
                     command_velocity=mission.v.copy(), command_omega=mission.w.copy(), phase=PHASES.index(mission.phase),
                     planner_s=plan_s, feedback_s=feedback_s, sync_s=sync_s))
+                if support:
+                    feet_velocity=[]
+                    for foot in feet:
+                        spatial=np.zeros(6);mujoco.mj_objectVelocity(model,data,mujoco.mjtObj.mjOBJ_GEOM,int(foot),spatial,0)
+                        feet_velocity.append(spatial[3:])
+                    hist[-1].update(nominal_q_target=nominal_action,
+                        unclipped_pd_request=60*(action-data.qpos[qadr])-5*data.qvel[vadr],
+                        base_absolute_height=float(data.xpos[base,2]),trunk_com_absolute_height=float(data.xipos[base,2]),
+                        relative_height_residual=float(data.xipos[base,2]-data.geom_xpos[feet,2].mean()-.27),
+                        feet_velocity=np.asarray(feet_velocity),phase_replan=bool(mission_changed and step>0 and args.stage=='G1'))
+                    if step>0 and step%15000==0:save_streams()
                 if (not campaign and mission.phase == 'complete') or step >= round(duration/dt):
                     reason = 'completed' if first_completion is not None else 'task_timeout'
                     break
@@ -410,10 +454,12 @@ def run(args, c):
                 tp = time.perf_counter()
                 for _ in range(substeps):
                     sample_t = float(data.time)
+                    raw_pd=60*(data.ctrl-data.qpos[qadr])-5*data.qvel[vadr]
                     mujoco.mj_step(model, data)
                     actual_contact, actual_grf, invalid, total_grf, nonfoot_grf, nonfoot_count = contact_state(model, data, feet, allowed, full=True)
                     physics.append(np.r_[sample_t, data.time, data.qfrc_actuator[vadr], data.actuator_force,
                         actual_contact, actual_grf.ravel(), total_grf, nonfoot_grf, nonfoot_count])
+                    if support:physics[-1]=np.r_[physics[-1],raw_pd]
                     if invalid:
                         reason = 'invalid_contact:'+str(invalid)
                         break
@@ -444,9 +490,13 @@ def run(args, c):
                 source_commit=resolved['source_commit'], execution_fingerprint=fingerprint))
         raise RuntimeError('No plant start: '+str(error))
     arrays = {k: np.asarray([r[k] for r in hist]) for k in hist[0]}
-    np.savez_compressed(out/'trajectory.npz', **arrays, physical=np.asarray(physics),
-        plan_origin=np.asarray([x[0] for x in plans]), plan_states=np.asarray([x[1]['states'] for x in plans]),
-        plan_actions=np.asarray([x[1]['actions'] for x in plans]), plan_times=np.asarray([x[1]['times'] for x in plans]))
+    if support:
+        save_streams()
+        np.savez_compressed(out/'trajectory.npz',**arrays)
+    else:
+        np.savez_compressed(out/'trajectory.npz', **arrays, physical=np.asarray(physics),
+            plan_origin=np.asarray([x[0] for x in plans]), plan_states=np.asarray([x[1]['states'] for x in plans]),
+            plan_actions=np.asarray([x[1]['actions'] for x in plans]), plan_times=np.asarray([x[1]['times'] for x in plans]))
     result = dict(attempt=args.attempt, stage=args.stage, purpose=args.purpose, condition=args.condition,
         status='completed', success=(first_completion is not None if args.mission=='single' else
             first_completion is not None and first_completion <= c['long_mission_protocol']['route_completion_deadline_s'] and
@@ -459,7 +509,7 @@ def run(args, c):
         final_origin_distance_m=float(np.linalg.norm(data.qpos[:2])),
         final_heading_error_rad=float(abs(angle(np.pi-Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz')[2]))),
         max_x_m=float(arrays['qpos'][:,0].max()), min_body_height_m=float(arrays['qpos'][:,2].min()),
-        max_abs_torque_Nm=np.max(np.abs(np.asarray(physics)[:,2:14]),axis=0),
+        max_abs_torque_Nm=peak_torque if support else np.max(np.abs(np.asarray(physics)[:,2:14]),axis=0),
         max_joint_limit_excess_rad=float(np.maximum(np.maximum(model.jnt_range[joint_ids,0]-arrays['qpos'][:,qadr],
             arrays['qpos'][:,qadr]-model.jnt_range[joint_ids,1]),0).max()),
         transitions=mission.transitions, execution_fingerprint=fingerprint, source_commit=resolved['source_commit'],
@@ -467,7 +517,7 @@ def run(args, c):
             record=f'{args.attempt}-resolved.json', archive=str(out/'startup.npz')),
         timing=dict(startup_planning=timings(startup_times,.02), planning=timings(planning_times,.02), feedback=timings(feedback_times,.002),
             state_parameter_rpc=timings(sync_times,.002), physics=timings(physics_times,.002)),
-        samples_500Hz=len(hist), physical_samples=len(physics),
+        samples_500Hz=len(hist), physical_samples=physical_count if support else len(physics),
         trajectory=dict(path=str(out/'trajectory.npz'), size=(out/'trajectory.npz').stat().st_size, sha256=sha(out/'trajectory.npz')),
         physical_columns=['force_evaluation_time_s','post_integration_time_s']+[f'torque_{i}' for i in range(12)]+[f'actuator_force_{i}' for i in range(12)]+[f'contact_{l}' for l in LEGS]+[f'grf_{l}_{a}' for l in LEGS for a in 'xyz']+[f'total_grf_{a}' for a in 'xyz']+[f'nonfoot_grf_{a}' for a in 'xyz']+['nonfoot_ground_contacts'],
         physical_time_note='MuJoCo mj_step forces/contact correspond to the integration evaluation, preceding its returned qpos. Force evaluation and post-integration clocks are both stored.',
@@ -479,12 +529,20 @@ def run(args, c):
             result['success'] = bool(result['success'] and result['hold']['endpoint_position_violation_samples']==0)
             if reason=='completed' and not result['success']:
                 result['reason'] = ('route_deadline_missed' if first_completion > c['long_mission_protocol']['route_completion_deadline_s'] else 'left_terminal_endpoint' if result['hold']['endpoint_position_violation_samples'] else 'terminal_stability_failed')
-        actual_plan_times = np.asarray([x[1]['times'] for x in plans])
-        result['realized_prediction'] = dict(nodes=int(actual_plan_times.shape[1]),
-            span_min_s=float(np.diff(actual_plan_times[:,[0,-1]],axis=1).min()),
-            span_max_s=float(np.diff(actual_plan_times[:,[0,-1]],axis=1).max()),
-            timestep_s=float(np.median(np.diff(actual_plan_times,axis=1))),
-            planning_origins=len(plans))
+        if support:
+            result['realized_prediction']=dict(**prediction_grid,planning_origins=plan_count)
+            result['chunks']=chunks
+            result['physical_columns'] += [f'unclipped_pd_request_{i}' for i in range(12)]
+            result['sustained_execution_success']=bool(result['success'] and reason=='completed' and result['hold']['full_observation'])
+            result['recording']='500Hz control trajectory; physical and prediction streams split every30s on the same uninterrupted clock.'
+            if args.mission=='long':
+                result['last_30s_hold']=hold_metrics(arrays,duration-30,duration,args.mission)
+        else:
+            actual_plan_times = np.asarray([x[1]['times'] for x in plans])
+            result['realized_prediction'] = dict(nodes=int(actual_plan_times.shape[1]),
+                span_min_s=float(np.diff(actual_plan_times[:,[0,-1]],axis=1).min()),
+                span_max_s=float(np.diff(actual_plan_times[:,[0,-1]],axis=1).max()),
+                timestep_s=float(np.median(np.diff(actual_plan_times,axis=1))),planning_origins=len(plans))
     dump(small/f'{args.attempt}.json',result)
     with index_file(small,c) as idx:
         row=next(x for x in idx['attempts'] if x['attempt']==args.attempt)

@@ -169,6 +169,22 @@ def write_flat_ground_height(model, xml_path):
 
 def write_equilibrium_settings(xml_path, config, arm):
     """Wire declared controller settings into the XML actually loaded by Agent."""
+    if config['stage'] == 'S1R8':
+        prediction=config['prediction_settings']['AUTHOR_N' if arm=='AUTHOR_N' else 'C']
+        values=dict(s1_stand_equilibrium=0,agent_timestep=prediction['integration_dt_s'],
+            agent_integrator=3,agent_differentiable=prediction['differentiable'],
+            agent_horizon=config['execution']['requested_prediction_horizon_s'],
+            s1_control_hold_substeps=1 if arm=='AUTHOR_N' else 2)
+        tree=ET.parse(xml_path);custom=tree.getroot().find('custom')
+        for name,value in values.items():
+            element=custom.find("numeric[@name='%s']" % name)
+            if element is None:element=ET.SubElement(custom,'numeric',name=name)
+            element.set('data',format(float(value),'.17g'))
+        tree.write(xml_path,encoding='unicode')
+        return dict(arm=arm,prediction_profile='AUTHOR_N' if arm=='AUTHOR_N' else 'C',
+            numerics=values,cost_weights={'Orientation':.03 if arm=='AUTHOR_N' else 1.,'Angmom':0.},
+            prediction_smoothing_width_m=None,refsafe='preserved',plant_options='unchanged',
+            xml_sha256=_digest(xml_path))
     setting = next(x for x in config['development']['G0_named_arms'] + config['development'].get('G1_revisions', []) if x['id']==arm)
     prediction = config['prediction_settings'][setting['prediction']]
     values = dict(s1_stand_equilibrium=setting['stationary_objective'],
