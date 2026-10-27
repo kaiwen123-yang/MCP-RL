@@ -107,9 +107,10 @@ class Mission:
         return self.body_target.copy(), self.heading
 
 
-def contact_state(model, data, feet, allowed_bodies):
+def contact_state(model, data, feet, allowed_bodies, full=False):
     contact, force = np.zeros(4, dtype=bool), np.zeros((4, 3))
     invalid = []
+    total_force, nonfoot_force, nonfoot_contacts = np.zeros(3), np.zeros(3), 0
     for k in range(data.ncon):
         con = data.contact[k]
         g1, g2 = int(con.geom1), int(con.geom2)
@@ -118,13 +119,19 @@ def contact_state(model, data, feet, allowed_bodies):
             invalid.append([g1, g2, b1, b2])
         if b2 == 0 and b1 not in allowed_bodies:
             invalid.append([g1, g2, b1, b2])
+        world_contact = (b1==0 and b2!=0) or (b2==0 and b1!=0)
+        if world_contact:
+            wrench=np.zeros(6)
+            mujoco.mj_contactForce(model,data,k,wrench)
+            world_force=con.frame.reshape(3,3).T@wrench[:3]*(1 if b1==0 else -1)
+            total_force+=world_force
+            if g1 not in feet and g2 not in feet:
+                nonfoot_force+=world_force; nonfoot_contacts+=1
         for i, foot in enumerate(feet):
             if (foot == g1 and b2 == 0) or (foot == g2 and b1 == 0):
                 contact[i] = True
-                wrench = np.zeros(6)
-                mujoco.mj_contactForce(model, data, k, wrench)
-                force[i] += con.frame.reshape(3, 3).T @ wrench[:3] * (1 if foot == g2 else -1)
-    return contact, force, invalid
+                force[i] += world_force
+    return (contact,force,invalid,total_force,nonfoot_force,nonfoot_contacts) if full else (contact,force,invalid)
 
 
 def timings(values, deadline):
@@ -371,10 +378,10 @@ def run(args, c):
                     dump(small/f'{args.attempt}-resolved.json', resolved)
                 data.ctrl[:] = action
                 mujoco.mj_forward(model, data)
-                contact, grf, _ = contact_state(model, data, feet, allowed)
+                contact, grf, _, total_grf, nonfoot_grf, nonfoot_count = contact_state(model, data, feet, allowed, full=True)
                 hist.append(dict(time=t, diagnostic_time=t, qpos=data.qpos.copy(), qvel=data.qvel.copy(), rpy=ori,
                     q_target=action.copy(), torque=data.qfrc_actuator[vadr].copy(), actuator_force=data.actuator_force.copy(),
-                    contact=contact, actual_grf=grf, feet=data.geom_xpos[feet].copy(), body_target=body_goal,
+                    contact=contact, actual_grf=grf, total_ground_force=total_grf, nonfoot_ground_force=nonfoot_grf, nonfoot_ground_contacts=nonfoot_count, feet=data.geom_xpos[feet].copy(), body_target=body_goal,
                     heading_target=heading, mocap_pos=data.mocap_pos.copy(), mocap_quat=data.mocap_quat.copy(),
                     command_velocity=mission.v.copy(), command_omega=mission.w.copy(), phase=PHASES.index(mission.phase),
                     planner_s=plan_s, feedback_s=feedback_s, sync_s=sync_s))
@@ -398,9 +405,9 @@ def run(args, c):
                 for _ in range(substeps):
                     sample_t = float(data.time)
                     mujoco.mj_step(model, data)
-                    actual_contact, actual_grf, invalid = contact_state(model, data, feet, allowed)
+                    actual_contact, actual_grf, invalid, total_grf, nonfoot_grf, nonfoot_count = contact_state(model, data, feet, allowed, full=True)
                     physics.append(np.r_[sample_t, data.time, data.qfrc_actuator[vadr], data.actuator_force,
-                        actual_contact, actual_grf.ravel()])
+                        actual_contact, actual_grf.ravel(), total_grf, nonfoot_grf, nonfoot_count])
                     if invalid:
                         reason = 'invalid_contact:'+str(invalid)
                         break
@@ -456,7 +463,7 @@ def run(args, c):
             state_parameter_rpc=timings(sync_times,.002), physics=timings(physics_times,.002)),
         samples_500Hz=len(hist), physical_samples=len(physics),
         trajectory=dict(path=str(out/'trajectory.npz'), size=(out/'trajectory.npz').stat().st_size, sha256=sha(out/'trajectory.npz')),
-        physical_columns=['force_evaluation_time_s','post_integration_time_s']+[f'torque_{i}' for i in range(12)]+[f'actuator_force_{i}' for i in range(12)]+[f'contact_{l}' for l in LEGS]+[f'grf_{l}_{a}' for l in LEGS for a in 'xyz'],
+        physical_columns=['force_evaluation_time_s','post_integration_time_s']+[f'torque_{i}' for i in range(12)]+[f'actuator_force_{i}' for i in range(12)]+[f'contact_{l}' for l in LEGS]+[f'grf_{l}_{a}' for l in LEGS for a in 'xyz']+[f'total_grf_{a}' for a in 'xyz']+[f'nonfoot_grf_{a}' for a in 'xyz']+['nonfoot_ground_contacts'],
         physical_time_note='MuJoCo mj_step forces/contact correspond to the integration evaluation, preceding its returned qpos. Force evaluation and post-integration clocks are both stored.',
         terminal_row_note='Failure terminal qpos/qvel are appended; held command and last diagnostic values retain their preceding control timestamp.')
     if campaign:
@@ -464,6 +471,8 @@ def run(args, c):
         result['hold'] = hold_metrics(arrays, first_completion, duration, args.mission)
         if args.mission == 'long':
             result['success'] = bool(result['success'] and result['hold']['endpoint_position_violation_samples']==0)
+            if reason=='completed' and not result['success']:
+                result['reason'] = ('route_deadline_missed' if first_completion > c['long_mission_protocol']['route_completion_deadline_s'] else 'left_terminal_endpoint' if result['hold']['endpoint_position_violation_samples'] else 'terminal_stability_failed')
         actual_plan_times = np.asarray([x[1]['times'] for x in plans])
         result['realized_prediction'] = dict(nodes=int(actual_plan_times.shape[1]),
             span_min_s=float(np.diff(actual_plan_times[:,[0,-1]],axis=1).min()),

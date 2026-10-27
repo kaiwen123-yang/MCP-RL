@@ -62,9 +62,17 @@ def analyze(name,c):
         axes[0].set_ylabel('Position (m)');axes[0].legend(loc='upper right',ncol=2)
         axes[1].plot(t,speed,color='#0072B2',lw=.7);axes[1].axhline(.05,color='#D55E00',ls='--',lw=.8);axes[1].set_ylabel('Base speed (m/s)')
         axes[2].plot(t,omega,color='#009E73',lw=.7);axes[2].axhline(.1,color='#D55E00',ls='--',lw=.8);axes[2].set_ylabel('Angular speed (rad/s)')
-        axes[3].plot(t,grf[:,:,2].sum(axis=1),color='#CC79A7',lw=.6)
+        axes[3].plot(t,grf[:,:,2].sum(axis=1),color='#CC79A7',lw=.6,label='Feet')
+        if 'total_ground_force' in a.files:
+            axes[3].plot(t,a['total_ground_force'][:,2],color='0.25',lw=.6,label='All ground contacts')
+            evidence['nonfoot_ground_contact_samples_500Hz']=int((a['nonfoot_ground_contacts']>0).sum())
+            evidence['max_nonfoot_ground_force_N']=float(np.linalg.norm(a['nonfoot_ground_force'],axis=1).max())
+        else:
+            evidence['nonfoot_ground_contact_samples_500Hz']=None
+            evidence['max_nonfoot_ground_force_N']=None
+        axes[3].legend(loc='upper right')
         axes[3].axhline(resolved['mass_kg']*9.81,color='0.3',ls='--',lw=.8)
-        axes[3].set_ylabel('Vertical ground force (N)');axes[3].set_xlabel('Physical time (s)')
+        axes[3].set_ylabel('Recorded vertical force (N)');axes[3].set_xlabel('Physical time (s)')
         for ax in axes:
             ax.set_xlim(0,max(t[-1],.01));ax.grid(alpha=.15)
             if result['first_completion_s'] is not None:ax.axvline(result['first_completion_s'],color='0.2',ls=':',lw=.8)
