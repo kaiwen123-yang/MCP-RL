@@ -1,0 +1,285 @@
+{
+  "purpose": "Establish the original full rigid-ground mission with home-seeded author iLQG and an explicit fixed-plane residual.",
+  "run_id": "tm-s1-go2-wb-startup-r6",
+  "stage": "S1_author_Go2_startup_repair",
+  "implementation_status": "planned_not_executed",
+  "reviewed_source_commit": "d9c04a9850000916cc2d77ef741f3473c543d130",
+  "target_entrypoint": "scripts/run_s1_go2_wb_baseline.py",
+  "frozen_previous": {
+    "run_id": "tm-s1-go2-wb-baseline-20261026",
+    "config": "experiments/terrain_memory/s1-go2-wb-baseline.json",
+    "index": "results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json",
+    "physical_starts": 2,
+    "complete_missions": 0,
+    "closed": true,
+    "refresh": false
+  },
+  "upstream": {
+    "paper_id": "TM20",
+    "paper_version": "arXiv:2503.04613v3",
+    "solver_repository": "https://github.com/johnzhang3/mujoco_mpc",
+    "solver_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+    "mujoco_dependency_commit": "088079eff0450e32b98ee743141780ed68307506",
+    "menagerie_dependency_commit": "d82891f8b6c576f9f6a9df308f3a1155ebedbc40",
+    "native_task": "mjpc/tasks/quadruped/task_flat.xml",
+    "patch": "experiments/terrain_memory/s1-go2-wb-startup-upstream.patch",
+    "patch_sha256": "f67a6ab54b863abd80b91244af8b62ff473eb897ac64708990a9e96e07c9a824",
+    "patch_status": "Source applicability checked only; not compiled or executed."
+  },
+  "execution": {
+    "host": "fy-5080",
+    "isolated_environment": "work/envs/mjpc-go2",
+    "isolated_source": "work/terrain-memory/upstreams/mujoco_mpc-go2",
+    "reuse_existing_environment": true,
+    "rebuild_patched_agent_server": true,
+    "required_libmjpc_compile_flags": [
+      "-fno-strict-aliasing"
+    ],
+    "build_test_options": {
+      "MJPC_BUILD_TESTS": false,
+      "PYMJPC_BUILD_TESTS": false,
+      "MJPC_GRPC_BUILD_TESTS": false
+    },
+    "model_transport": "Agent(run_init=False), then init(send_as='xml') with absolute on-host mesh paths.",
+    "actuator_mapping": {
+      "biastype": "affine",
+      "gainprm": [
+        60
+      ],
+      "biasprm": [
+        0,
+        -60,
+        -5
+      ]
+    },
+    "task_mode": "Quadruped",
+    "gait_switch": "Manual",
+    "apply_complete_gait_table_before_set_state": true,
+    "feedback_dt_s": 0.002,
+    "planner_dt_s": 0.02,
+    "planner_iterations_per_tick_after_startup": 1,
+    "prediction_dt_s": 0.01,
+    "prediction_horizon_s": 0.35,
+    "retain_author_integrator_and_differentiable_contact": true,
+    "feedback_action": "get_action(time=data.time, nominal_action=False, averaging_duration=0)",
+    "synchronous_slow_simulation": true,
+    "new_neural_training_runs": 0,
+    "new_RL_training_runs": 0,
+    "activate_hardware": false,
+    "transport": "Direct foreground SSH on the existing host; no tmux."
+  },
+  "startup": {
+    "policy_seed": "home keyframe ctrl after restoring home data; preserve nullptr behavior without home.",
+    "seed_both_init_and_reset": true,
+    "ground_height_numeric": "s1_flat_ground_height",
+    "ground_height_enable_condition": "Adapter confirms the actual floor is a world-static horizontal plane; write its world height as one scalar.",
+    "G0_ground_height_m": -0.01,
+    "G1_ground_height_m": "Read the actual project floor; do not assume zero.",
+    "global_Ground_unchanged": true,
+    "time_s": 0,
+    "planner_steps": 20,
+    "replaces_original_time_zero_planner_step": true,
+    "additional_time_zero_planner_step": false,
+    "advance_plant_during_startup": false,
+    "reset_agent_between_startup_iterations": false,
+    "state_and_goal": "Hold the actual initial qpos/qvel/time, complete Stand settings and initial mission goal fixed.",
+    "retain": [
+      "home ctrl and pre-optimization nominal seed action",
+      "each of the 20 best trajectories: states, actions, times and iteration number",
+      "each initial action and the final feedback action before the first physical step",
+      "all initialization errors and subsequent physical failures"
+    ],
+    "horizon_cost": "get_total_cost() is a current-state cost, not the optimized horizon return; never label it horizon convergence.",
+    "success_meaning": "Initialization completion is not standing or mission success."
+  },
+  "task": {
+    "initial_xy_m": [
+      0,
+      0
+    ],
+    "nominal_initial_yaw_rad": 0,
+    "initial_stand_s": 2,
+    "turnaround_xy_m": [
+      3,
+      0
+    ],
+    "turn_angle_rad": 3.141592653589793,
+    "return_xy_m": [
+      0,
+      0
+    ],
+    "command_speed_m_s": 0.25,
+    "turn_yaw_rate_rad_s": 0.5,
+    "extra_turnaround_hold_s": 0,
+    "terminal_stand_s": 2,
+    "maximum_episode_s": 60,
+    "goal_position_radius_m": 0.15,
+    "turn_heading_tolerance_rad": 0.15,
+    "terminal_speed_max_m_s": 0.05,
+    "task_mode": "Quadruped",
+    "gait_switch": "Manual",
+    "native_head_offset_in_trunk_m": [
+      0.3,
+      0,
+      0
+    ],
+    "orientation_cost_weight": 0.03,
+    "stand_settings": {
+      "Gait": "Stand",
+      "Duty ratio": 1,
+      "Cadence": 1,
+      "Amplitude": 0,
+      "Balance": 0,
+      "Upright": 1,
+      "Height": 1
+    },
+    "move_and_turn_settings": {
+      "Gait": "Trot",
+      "Duty ratio": 0.45,
+      "Cadence": 2,
+      "Amplitude": 0.03,
+      "Balance": 0.2,
+      "Upright": 1,
+      "Height": 1
+    }
+  },
+  "controllers": {
+    "G0_author_native": {
+      "actual_mass_kg_from_source": 15.806408,
+      "physics_dt_s": 0.002,
+      "physical_model": "Retain the author mass, inertia, passive joints, native collisions and contacts.",
+      "actuator_force_limits": "Retain author unbounded force; do not claim project torque-limit coverage.",
+      "PD": {
+        "kp": 60,
+        "kd": 5
+      }
+    },
+    "G1_project_limits": {
+      "actual_mass_kg": 15.206408,
+      "model_reference": "Original on-host Go2 MJCF/assets and results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json.",
+      "preserve_physics": [
+        "mass/inertia",
+        "joint names and physical joint ranges",
+        "passive damping/armature/friction parameters",
+        "actuator gear relationship and original torque limits",
+        "collision geometry and foot geometry",
+        "initial qpos/qvel except the declared yaw condition",
+        "original native rigid floor and contact solref/solimp/margin"
+      ],
+      "permitted_model_adaptation": "Nonphysical task sites/sensors/name maps and explicit joint-target PD only.",
+      "physics_dt_s": 0.0002,
+      "control_dt_s": 0.002,
+      "mpc_dt_s": 0.02,
+      "original_native_contact": {
+        "solref": [
+          0.002,
+          1
+        ],
+        "solimp": [
+          0.99,
+          0.999,
+          0.001,
+          0.5,
+          2
+        ],
+        "margin_m": 0
+      },
+      "PD": {
+        "kp": 60,
+        "kd": 5
+      },
+      "joint_target_limits": "Original per-joint physical position ranges, mapped by name.",
+      "original_torque_limit_pattern_Nm": [
+        23.7,
+        23.7,
+        45.43
+      ],
+      "actuator_mapping": "Identical gear, target bounds and original force/torque limits in predictor and plant; no unmatched post-planning clipping.",
+      "no_materials": true
+    }
+  },
+  "protocol": {
+    "phase_A": {
+      "controller": "G0_author_native",
+      "maximum_mission_attempts": 2,
+      "condition": "nominal",
+      "pass": "At least one complete original out-turn-return-terminal-stand mission.",
+      "failure_action": "Stop this round before G1 if neither attempt completes."
+    },
+    "phase_B_development": {
+      "controller": "G1_project_limits",
+      "maximum_mission_attempts": 3,
+      "condition": "nominal",
+      "pass": "At least one complete original mission with a version/configuration that can be frozen.",
+      "failure_action": "Stop before formal conditions if no nominal mission completes."
+    },
+    "phase_B_formal": {
+      "controller": "G1_project_limits",
+      "conditions": [
+        {
+          "id": "nominal",
+          "initial_yaw_offset_deg": 0
+        },
+        {
+          "id": "yaw_plus5",
+          "initial_yaw_offset_deg": 5
+        },
+        {
+          "id": "yaw_minus5",
+          "initial_yaw_offset_deg": -5
+        }
+      ],
+      "initial_condition_rule": "Change only initial root yaw; retain body x/y, joint pose, zero velocities and the fixed world route.",
+      "freeze": "One source/configuration/model/solver version for all three conditions.",
+      "reuse_identical_nominal": true,
+      "retain_all_failures": true,
+      "usable_baseline": "All three prescribed conditions complete the original mission within original limits; no statistical robustness claim."
+    },
+    "full_mission_only": true,
+    "no_extra_short_physical_trials": true
+  },
+  "budget": {
+    "maximum_author_native_starts": 2,
+    "maximum_project_development_starts": 3,
+    "maximum_project_formal_conditions": 3,
+    "maximum_new_mission_starts_including_failures_missing_records_and_superseded_versions": 8,
+    "formal_random_optimizer_seeds": 0,
+    "no_refresh": true,
+    "counting": "Count every physical start and preserve failures, lost-output and superseded attempts. Identical reused nominal is one start. Caps are not quotas; no allowance transfer."
+  },
+  "next_joint_stage": {
+    "entry": "After a usable G1 baseline, integrate standard PPO with frozen PANN and this MPC into one stable complete closed loop.",
+    "requires_novel_algorithm_first": false,
+    "requires_material_state_expansion_first": false,
+    "current_round_training": false,
+    "current_round_claim": "Execution baseline only; no PINN/PANN+RL+MPC innovation or material-memory benefit claim."
+  },
+  "outputs": {
+    "root": "results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6",
+    "required": [
+      "actual passed configuration and source/upstream-patch/server-binary/model hashes",
+      "startup seed and all 20 initialization best trajectories",
+      "every physical start, exact command, phase/outcome and unexecuted stages",
+      "continuous actual base/feet/joints/targets/torques/contact trajectories and full videos",
+      "planner/feedback/physics/wall timings; distinguish simulated from wall-time rates",
+      "continuous actual foot ground reaction forces, distinct from contact flags",
+      "best predictions during the full actual mission, aligned with recorded states"
+    ],
+    "publication": "Commit compact results and code; upload new large arrays/videos directly from execution host to Release. Reference old evidence.",
+    "no_status_reports": true
+  },
+  "delivery": {
+    "local_pc_archive": false,
+    "end_after": "Confirm GitHub commit and required Release asset size/digest; no user-PC copy/download/archive."
+  },
+  "forbidden": [
+    "defensive programming and generic fallback frameworks",
+    "new unit/mock/smoke/import/shape tests",
+    "audit/status/continuation reports",
+    "T1/T1R or new WBC/optimizer layers",
+    "gain/cost/integrator search or relaxed mission/physical limits",
+    "neural/RL training, materials or hardware in this round",
+    "claiming G0 success as G1 success",
+    "post-publication user-PC archiving"
+  ]
+}

@@ -4,24 +4,36 @@
 
 同一空间地块的材料状态跨腿、跨步、跨返程持续演化；后续支撑需求反过来约束当前踩踏。第一版从具有可测恢复过程的黏弹性材料开始。
 
-## 当前结果：作者Go2基线G0未通过，停止后续物理任务并发布实际范围
+## 当前任务：修正同一作者控制器的启动，先交完整刚地任务
 
-**`tm-s1-go2-wb-baseline-20261026` 已执行2次G0真实任务，0次整程完成；G0额度已耗尽，G1开发与三个正式条件均未执行。** 本轮尚未建立可用的刚地整程执行基线。全部实际结果已提交，Release资产size/digest已核验，本轮结束；未使用的总预算不转为额外试验。固定配置见 [s1-go2-wb-baseline.json](experiments/terrain_memory/s1-go2-wb-baseline.json)，[计划第5.6节](docs/TERRAIN_MEMORY_PLAN.md)保留协议和实际阻碍，[AGENTS.md](AGENTS.md)规定停止边界。
+**近期目标是先做出稳定的 PANN/PINN＋RL＋MPC 联合基础版本，再推进创新。** 眼下尚未建立可用的新MPC整程执行基础；标准PPO集成不需要以先证明创新或材料记忆收益为前提。
 
-| 实际启动 | 物理终止时刻 | 结果与证据范围 |
+用户最新请求授权S1第六轮：[计划第5.7节](docs/TERRAIN_MEMORY_PLAN.md)、[s1-go2-wb-startup.json](experiments/terrain_memory/s1-go2-wb-startup.json)、[最小upstream补丁](experiments/terrain_memory/s1-go2-wb-startup-upstream.patch)。新run_id为 `tm-s1-go2-wb-startup-r6`，**planned_not_executed**；补丁仅检查固定源码适用性，尚未在执行端编译或跑实验。Codex按[AGENTS.md](AGENTS.md)复用现有环境完成真实任务与发布。
+
+### 第五轮实际做到哪里
+
+审阅基点 [d9c04a9](https://github.com/kaiwen123-yang/MCP-RL/commit/d9c04a9850000916cc2d77ef741f3473c543d130)。**2次G0物理启动、0次完整任务，G1开发/正式均0；两次都未完成最初2s站立。** 另5次无plant推进的设置失败单列，不是5次行走实验。旧运行已经关闭，原配置/结果不改写。
+
+| 启动 | 实际物理时长 | 能支持的结论 |
 |---|---:|---|
-| g0-01 | 0.178s | 输入序列化丢失affine类型，实际力矩为 `60*q_target`，随后跌倒；这是适配错误，不能据此否定作者PD/iLQG |
-| g0-02 | 0.040s | 显式XML修复后PD 60/5生效；第三次规划在作者预测Ground射线查询报fatal并阻塞，终止服务后保存状态，实际机身未跌倒 |
+| g0-01 | 0.178s | affine PD经XML序列化丢失，实际力矩成了 `60*q_target`，随后跌倒；不能据此否定预期作者控制器 |
+| g0-02 | 0.040s | PD已正确生效，但首次目标与home关节角严重不匹配；第三次规划Ground射线fatal，真实执行提前中断，尚无稳定性结论 |
 
-`g0-01` 源码为 [4549efe](https://github.com/kaiwen123-yang/MCP-RL/commit/4549efe45ffad57fdc7d7763453f0cdb0cf5e260)，实际 `biastype` 全为0，calf力矩达到−50.2656Nm。`g0-02` 源码为 [00291d7](https://github.com/kaiwen123-yang/MCP-RL/commit/00291d7cc909f696c7fb97ea9df944e97bb1d980)，实际12个执行器 `biastype` 均为1；错误为 `no group 0 geom detected by raycast`，停止时机身高度0.298037545m。两次均未完成初始2s站立，不能把预测分支错误写成实际机器人跌倒，也不能由这段执行证明整程可行。
+第二次初始thigh/calf为0.9/−1.8rad，首目标约0.0353/−0.83776rad，对应约−51.88/+57.73Nm；足端总竖直反力峰值910.25N，约为实际机器人重量155.06N的5.87倍。40ms最终状态向后约0.672m/s、向上约1.207m/s。**当时尚未跌倒，不能写成站稳，只是尚未观察到后续恢复或跌倒。** 数据见[连续状态](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/continuous.csv)、[物理反力](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/physical-forces.csv)和[g0-02结果](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/g0-02.json)。
 
-固定作者提交 `e00c47a5adb9856af2e0f24231bb3a60d5be23c4` 的官方headless Agent/agent_server已在独立环境构建，原pympc保留。必要的 `-fno-strict-aliasing` 编译设置处理GCC/LTO下作者位转换导致的步态枚举越界；官方XML传输避开约50MB MJB与20MiB RPC限制。另5次设置失败没有推进plant物理，日志单列保留，不计入2次真实启动。实际任务按用户后续要求经SSH直接执行，取消tmux。
+固定作者headless Init/Reset清零控制序列后才恢复home物理状态；[作者GUI](https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/app.cc)则使用home ctrl初始化策略。这是已确认的启动语义差异；第三次Ground错误的具体内部候选未记录，不能宣布唯一根因。
 
-作者机器人子树质量 **15.806408kg**，本仓原机器人为 **15.206408kg**。整model质量23.044637kg还包含无碰撞mocap目标球约7.238kg，不能当作机器人质量；作者模型也未启用本项目23.7/45.43Nm力矩界。G1模型映射虽已编写，**没有G1实验结果**。
+### 下一轮交什么
 
-[运行入口](scripts/run_s1_go2_wb_baseline.py)、[模型映射](scripts/s1_go2_wb_model.py)与[运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json)记录实际实现、全部启动和未执行阶段。本轮交付范围为两次从启动到终止的连续状态/关节目标/力矩/接触与视频，以及构建和故障证据；[Release证据](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-baseline-evidence-20261026)的7个资产（614,812 bytes）均已按size和SHA256核验；完整记录见索引。
+复用已构建的作者iLQG，不换平台：先恢复home控制种子，给当前已知水平plane写入解析高度，再在同一任务t=0完成固定20次规划初始化，随后执行原2s站立→前进3m→转向→返回→稳定站立全程。20次是启动计算，不是20个小测试或收敛保证；解析地面高度不把无效预测变成成功。
 
-第二轮冻结B1的刚地/KV8000各5/5继续作为历史成功参照，本轮没有重跑。R1/R2/S0与历史S1均冻结；新增PANN/PPO/SHAC训练0、硬件0、NX实时未测，TM02与材料历史决策收益未在本轮评价。不继续T1/T1R补丁，不因G0未通过自动换平台或扩量。
+G0作者条件最多2次整程启动，有完整成功才进入G1；G1保留本仓原物理、接触与力矩界，开发最多3次，正式为同版nominal/yaw＋5°/yaw−5°，相同nominal复用。总上限8，不用满、不重跑失败凑样本。3/3仅说明这三个条件的刚地执行基线可用，**仍不等于联合算法、TM02通行或材料记忆创新已完成**。随后在同一执行链接冻结PANN与标准PPO，接口范围随实际结果确定；不要求先实现高级材料扩维或终端Critic。
+
+第五轮保留了已解决的构建、模型XML传输、affine输入与连续数据链。作者机器人质量15.806408kg，本仓原机器人15.206408kg；含mocap球的23.044637kg不是机器人质量。G0无显式原项目力矩界，不能用其成功代替G1。第二轮B1刚地/KV8000各5/5仍保留，新执行链的失败不改写旧成果。
+
+[第五轮运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-baseline-20261026/index.json)、[原配置](experiments/terrain_memory/s1-go2-wb-baseline.json)和[Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-baseline-evidence-20261026)保存全部实际证据，7个资产共614,812 bytes已核size/digest。本轮不重跑历史、不新增训练或硬件。近期LLA-MPPI/ReCo仅用于实际输入/响应核查和后续联合闭环一致性的借鉴，具体边界见计划第5.10节。
+
+**源码/紧凑结果进GitHub，大数组/视频从执行端进Release；确认后结束，不在用户电脑再次下载、复制、镜像、压缩或归档。**
 
 ## S1第四轮已冻结：接口修复有效，动态执行仍未成立
 

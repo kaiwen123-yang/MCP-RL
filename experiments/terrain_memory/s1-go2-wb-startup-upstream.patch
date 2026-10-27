@@ -1,0 +1,62 @@
+diff --git a/mjpc/grpc/agent_service.cc b/mjpc/grpc/agent_service.cc
+--- a/mjpc/grpc/agent_service.cc
++++ b/mjpc/grpc/agent_service.cc
+@@ -108,7 +108,6 @@
+ 
+   agent_.Initialize(load_model.model.get());
+   agent_.Allocate();
+-  agent_.Reset();
+ 
+   task = agent_.ActiveTask();
+   CHECK_EQ(agent_model, nullptr)
+@@ -124,6 +123,8 @@
+     mj_resetDataKeyframe(model, data_, home_id);
+     mj_resetDataKeyframe(model, rollout_data_.get(), home_id);
+   }
++  // Seed the policy with the home controls, as in the GUI reload path.
++  agent_.Reset(home_id >= 0 ? data_->ctrl : nullptr);
+   mjcb_sensor = residual_sensor_callback;
+ 
+   agent_.SetState(data_);
+diff --git a/mjpc/grpc/grpc_agent_util.cc b/mjpc/grpc/grpc_agent_util.cc
+--- a/mjpc/grpc/grpc_agent_util.cc
++++ b/mjpc/grpc/grpc_agent_util.cc
+@@ -279,7 +279,6 @@
+ }
+ 
+ grpc::Status Reset(mjpc::Agent* agent, const mjModel* model, mjData* data) {
+-  agent->Reset();
+   // TODO(nimrod): This should be in the agent, no?
+   int home_id = mj_name2id(model, mjOBJ_KEY, "home");
+   if (home_id >= 0) {
+@@ -287,6 +286,7 @@
+   } else {
+     mj_resetData(model, data);
+   }
++  agent->Reset(home_id >= 0 ? data->ctrl : nullptr);
+   agent->SetState(data);
+   return grpc::Status::OK;
+ }
+diff --git a/mjpc/tasks/quadruped/quadruped.cc b/mjpc/tasks/quadruped/quadruped.cc
+--- a/mjpc/tasks/quadruped/quadruped.cc
++++ b/mjpc/tasks/quadruped/quadruped.cc
+@@ -120,6 +120,9 @@
+   A1Gait gait = GetGait();
+   double step[kNumFoot];
+   FootStep(step, GetPhase(data->time), gait);
++  // Explicit opt-in for a known, static horizontal ground plane.
++  const double* flat_ground_height =
++      GetCustomNumericData(model, "s1_flat_ground_height");
+   for (A1Foot foot : kFootAll) {
+     if (is_biped) {
+       // ignore "hands" in biped mode
+@@ -144,7 +147,8 @@
+       mju_addToScl3(query, torso_to_goal, 0.15);
+     }
+ 
+-    double ground_height = Ground(model, data, query);
++    double ground_height = flat_ground_height ? flat_ground_height[0]
++                                             : Ground(model, data, query);
+     double height_target = ground_height + kFootRadius + step[foot];
+     double height_difference = foot_pos[foot][2] - height_target;
+     if (current_mode_ == kModeScramble) {

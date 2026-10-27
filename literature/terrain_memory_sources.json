@@ -329,7 +329,7 @@
       "code_url": "https://github.com/johnzhang3/mujoco_mpc_deploy",
       "algorithm_code_url": "https://github.com/johnzhang3/mujoco_mpc/tree/go2",
       "code_license": "部署仓库 mujoco_mpc_deploy 为 MIT；不据此推定其全部外部依赖的许可",
-      "code_status": "已核作者部署仓库、Go2 求解器分支、官方 headless Agent API 及模型/任务/导数实现。当前只完成源码可行性核查，未安装、编译、运行或复现。作者实机脚本依赖 Optitrack、SDK2 与仓库中未提供的 go2_constants，examples/go2.py 还缺少 ChannelFactoryInitialize 导入；本轮仿真不以修复该硬件脚本为前置。",
+      "code_status": "固定作者提交及依赖已在独立环境编译运行，S1第五轮完成2次G0物理启动、0次整程，G1未执行。第一条丢失affine PD；第二条PD正确但存在零策略启动冲击及第三次规划Ground fatal。当前三文件补丁仅检查固定源码可应用，未编译/运行；不称全文复现成功，实机未运行。",
       "read_for_execution": "已读第 III 节及第 IV-A 节的 MuJoCo 接触与动力学导数，第 IV-B/C 节的状态/动作表示、关节 PD 纳入预测和时变 LQR 反馈，以及第 V-A/B 节的部署与 Go1/Go2 实验。当前必需机制是第 IV-B 节，不新增整套 iLQR 复现阶段。",
       "transfer_targets": [
         "原文把低层关节 PD 纳入预测并优化实际发送给机器人的关节目标。本项目据此核对候选评估是否使用最终真正执行的接触映射和控制输入，而不是在预测之后再作未建模的独立变换",
@@ -378,7 +378,16 @@
           "dm_control_commit": "774f46182140106e22725914aad3c6299ed91edd",
           "note": "以固定作者提交构建独立环境并启用 MJPC_BUILD_GRPC_SERVICE；可关闭 MJPC_BUILD_TESTS、MJPC_GRPC_BUILD_TESTS、PYMJPC_BUILD_TESTS。保留旧 PyMPC 环境；不新增上游烟测/单测流水线。"
         },
-        "task_residual_header": "mjpc/tasks/quadruped/quadruped.h"
+        "task_residual_header": "mjpc/tasks/quadruped/quadruped.h",
+        "startup_followup": {
+          "reviewed_project_commit": "d9c04a9850000916cc2d77ef741f3473c543d130",
+          "home_seed": "mjpc/grpc/agent_service.cc Init与grpc_agent_util.cc Reset先清零策略再恢复home物理状态；mjpc/app.cc GUI则恢复home后Reset(dnew->ctrl)。补丁使headless与GUI一致。",
+          "observation": "g0-02初始thigh/calf为0.9/-1.8rad，首目标约0.03533/-0.83776rad，PD力矩约-51.88/+57.73Nm；40ms时vx=-0.67193、vz=1.20724m/s。尚未跌倒不等于稳定。",
+          "plane": "已知固定水平floor的原Ground成功返回值等于平面world z。显式s1_flat_ground_height仅用于当前gait残差，不改变全局Ground、真实接触和失败判据。具体fatal候选未保存，不宣称唯一根因。",
+          "startup": "固定真实t=0进行20次原planner_step再执行同一完整任务；这是工程初始化预算，不是20次小测试或论文收敛保证。",
+          "patch": "experiments/terrain_memory/s1-go2-wb-startup-upstream.patch",
+          "status": "Only source applicability checked; not compiled or simulated in this planning change."
+        }
       }
     },
     {
@@ -397,7 +406,8 @@
       "transfer_targets": [
         "后续加入 RL 时，先明确 Actor/MPC 各自实际发送的控制量，并表征冻结低层控制器与机器人组成的闭环响应；期望基座速度不等于瞬间实现的基座速度",
         "原文辨识速度响应增益/时间常数和步态相位相关机身响应。本项目仅借鉴区分控制器响应与材料历史影响的原则，不能将低层执行延迟误识别为地块记忆",
-        "策略响应可重复性与命令响应建模属于后续实现选择；当前 S1 的接触执行负结果不触发 PPO 重训、奖励塑形、Koopman、机械臂或新观察器支线"
+        "策略响应可重复性与命令响应建模属于后续实现选择；当前 S1 的接触执行负结果不触发 PPO 重训、奖励塑形、Koopman、机械臂或新观察器支线",
+        "本项目首版拟为高层Actor→MPC→机器人；原文是MPC协调命令并经低层RL执行。借鉴同一训练/部署闭环响应的原则，不宣称控制层级相同，不新增机械臂或辨识平台。"
       ],
       "scope_note": "原文实机为 Go2+ARX X5，使用 Jetson Orin NX，研究腿式操作中的策略响应与 MPC 协调；不能据此证明本项目 TM02 软接触、GRF 执行或持久地块记忆已在 NX 实时实现。策略响应一致性、相位相关响应及策略感知 MPC 均已有研究，不作为本项目创新。本项目仍须证明同一世界地块的跨足加载/恢复信息如何改变可执行动作并改善后续支撑；当前未完成该证据。"
     },
@@ -424,6 +434,27 @@
         "当前只吸收闭环响应与梯度有效性这一原则；不在 S1 执行恢复阶段启动 SHAC/JAVE/PPO 训练、替换仿真器、增加终端 critic 或把作者代码设为新全文复现门槛。"
       ],
       "scope_note": "作者 Go2 部署证据不覆盖本项目往返重访任务、NX 实时预算或持久软地块。附录 C/代码地形方案为倾斜重力与按接触缩放的随机扰动，真实几何仍为平地，不能代替世界固定、跨足共享、加载后恢复的 TM02 材料历史。论文说明当前 Jacobian 目标固定已采样动作并有闭环导数偏差；PPO/可微训练的奖励与参考设置也不同，不据绝对奖励宣称公平全面胜出。"
+    },
+    {
+      "id": "TM23",
+      "title": "LLA-MPPI: Rapidly Adaptive Whole-body Control of Legged Robots with GPU-Accelerated Parallel Simulations",
+      "version": "arXiv:2610.10465v1",
+      "published": "2026-10-07",
+      "selected_on": "2026-10-26",
+      "accessed_on": "2026-10-26",
+      "publication": "2026年10月arXiv预印本；本次未核实正式录用状态",
+      "role": "实际状态—动作转移与预测一致性的近期参考；只吸收当前启动诊断及后续材料/机器人误差区分",
+      "url": "https://arxiv.org/html/2610.10465v1",
+      "pdf_url": "https://arxiv.org/pdf/2610.10465v1",
+      "project_url": "https://lla-control.github.io/",
+      "code_status": "本次未取得可直接复用并核实版本/许可的作者算法发布；没有安装、运行或复现。",
+      "read_for_execution": "已读第II节及III-B/C节：关节目标PD、动作范围、近期状态—动作预测误差模型选择，以及所选模型上的MPPI。只作有限机制借鉴，不新增全文复现。",
+      "transfer_targets": [
+        "比较预测与实际结果时必须使用真正下发的动作和真实状态转移；先修正输入映射与启动响应，再评价适应，不能把同样错误设置扩量当作证据。",
+        "后续区分机器人参数/控制响应误差与世界地块加载后持续恢复状态；短窗模型选择不自动表示跨足/返程历史。",
+        "保持现有iLQG执行链，稳定联合基础版本后才按实际瓶颈考虑额外适应机制。"
+      ],
+      "scope_note": "原文模型库及GPU并行仿真研究Go2负载变化、单腿失效和推箱等条件；不证明本项目TM02持续材料记忆或NX实时。关节目标范围不是力矩界。本轮不换MPPI/MuJoCo Warp、不建模型库、不启动新训练或硬件；已有模型选择思想不称本项目首创。"
     }
   ],
   "upstream": {
