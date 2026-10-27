@@ -1,0 +1,1676 @@
+{
+  "stage": "G1",
+  "condition": "yaw_plus5",
+  "source_commit": "73ffdbd91ade6fb1fdc8f832771c58bb9e888d2e",
+  "source_sha256": {
+    "scripts/run_s1_go2_wb_baseline.py": "8c110efa9127e752a8e0d6dcb7c68f9db1c7d64324d68ed4044d21df4bad56ab",
+    "scripts/s1_go2_wb_model.py": "7eb536e4cdc917700302d62403758b3a534a219a52423e9754c68de93e14d8cc",
+    "scripts/s1_go2_wb_equilibrium.py": "56ce578557138cd1072a1036252a18785eeadca3b9268562c5ed008fe46bcfa0",
+    "scripts/s1_go2_support_reference.py": "6d1e5c0eb9fdb85a7335e8ea4f19e31d4e7b5f310b3d79fdb6225d28d8105060",
+    "experiments/terrain_memory/s1-go2-wb-support.json": "d5580a33e9516a4887a8d18b6ba5bbec2dbd0bd545441851dec66e63e471710d",
+    "experiments/terrain_memory/s1-go2-wb-support-upstream.patch": "0af245c165f077c00be75f979af1ffadec2886214e2f350fc7fd4c7b319fdef4"
+  },
+  "author_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+  "author_source": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2",
+  "model": {
+    "xml": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-support-r8/project-s3-formal-v1-long-yaw_plus5/model/G1-project-go2.xml",
+    "xml_sha256": "523b99374d87892f770d0d3b6779f7b7e8c60e06dfec88493c295f9bb0f077fc",
+    "original_model_mass_kg": 15.206408,
+    "sources": [
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/go2.xml",
+        "sha256": "ff349d63fc147a22042e5e77cc3ad204760f11d646badbe7d62f3f5a4e8d4de9"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/utils/mujoco/assets/scene_flat.xml",
+        "sha256": "9675f840e069cf27968da4665e2ccf5c2fed6fdaec799e7e091cccd99bd99f83"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json",
+        "sha256": "3213c69a9954721a14ccf56000f90cef82871446f04998d656ad421b17444e20"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/mjpc/tasks/quadruped/task_flat.xml",
+        "sha256": "8028e1566d961c959f05a0f4c070ad69a19130a91777be9ed2ee4470a32744af"
+      }
+    ],
+    "mesh_assets": [
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/base_0.obj",
+        "sha256": "8cdc53719002a5ee737d867904e534a6d6fa930b616bdcc1b3131e577d4e46c0"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/base_1.obj",
+        "sha256": "39d2f4724ff64dd5a0640c308fd98902a2946660a8d033ec8dbf368fd5af0dd6"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/base_2.obj",
+        "sha256": "29cae463f95d678e4ede863c36c9b19b0d356b8340412add10670d70bdcc3095"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/base_3.obj",
+        "sha256": "f51ba43bf300e68957a0c1aa83eaf3e4926f4ac7e64a0d6c33ae5d21fcbcf5f6"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/base_4.obj",
+        "sha256": "49ddec0129546e5dd2075d5beacf7f207baa2860aeff7626818e64d2efbf3821"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/hip_0.obj",
+        "sha256": "cc29932ab4d251ce3f72389ec4c1f757e44eee138b87e772b648c2bc76b506cd"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/hip_1.obj",
+        "sha256": "3fd5bd9b2ef6abe622c0739d3c67eaa1679b19b47132951972c4892a779ea7cf"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/thigh_0.obj",
+        "sha256": "bb3edfe6a7b04f4f4dff1ce7b05d426ddce941e276cc6372fb542055893c71ec"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/thigh_1.obj",
+        "sha256": "3a631822f9f7d2114b1b79dcdff5abf95103630abb7d91d1f3b8b18117132ed2"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/thigh_mirror_0.obj",
+        "sha256": "07abaedce761f1dd48647384ac14ba1959276bc78d5a2a62051e8f1c6093933b"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/thigh_mirror_1.obj",
+        "sha256": "db984a3e983eabbc9b38183427cca9ab0bb3bdb049f9eab030e06edda36579d6"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/calf_0.obj",
+        "sha256": "4a818cd563c5b7e2a271504442d05fd777d38cbaa028d4a10ad29c9f87bb355e"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/calf_1.obj",
+        "sha256": "51950c3a153ae3208592df86ea11c9d6756f8f645ebca5caf6910c61aeb03817"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/calf_mirror_0.obj",
+        "sha256": "6dc0406207a1c08a5953fd5962aca1a270fd06593d30d100205e05c1b32d4af2"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/calf_mirror_1.obj",
+        "sha256": "f84f5af90b914633165beb3a5493ee499169144c5797dcf04c6eb5842f74b31a"
+      },
+      {
+        "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2/assets/foot.obj",
+        "sha256": "df9e78a7c0110d02557439010f2a5f11f0ec4fd907b32704145dbd6aa7affc0b"
+      }
+    ],
+    "body_name_mapping": {
+      "base": "trunk"
+    },
+    "base_body_name": "trunk",
+    "foot_geom_names": [
+      "FL",
+      "FR",
+      "RL",
+      "RR"
+    ],
+    "allowed_ground_body_names": [
+      "FL_hip",
+      "FL_thigh",
+      "FL_calf",
+      "FL_foot",
+      "FR_hip",
+      "FR_thigh",
+      "FR_calf",
+      "FR_foot",
+      "RL_hip",
+      "RL_thigh",
+      "RL_calf",
+      "RL_foot",
+      "RR_hip",
+      "RR_thigh",
+      "RR_calf",
+      "RR_foot"
+    ],
+    "added_nonphysical_sites": {
+      "head": [
+        0.3,
+        0.0,
+        0.0
+      ],
+      "task_goal": "mocap goal"
+    },
+    "actuator_mapping": [
+      {
+        "name": "FL_hip",
+        "joint": "FL_hip_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.0472,
+          1.0472
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "FL_thigh",
+        "joint": "FL_thigh_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.5708,
+          3.4907
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "FL_calf",
+        "joint": "FL_calf_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -2.7227,
+          -0.83776
+        ],
+        "force_range_Nm": [
+          -45.43,
+          45.43
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "FR_hip",
+        "joint": "FR_hip_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.0472,
+          1.0472
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "FR_thigh",
+        "joint": "FR_thigh_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.5708,
+          3.4907
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "FR_calf",
+        "joint": "FR_calf_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -2.7227,
+          -0.83776
+        ],
+        "force_range_Nm": [
+          -45.43,
+          45.43
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RL_hip",
+        "joint": "RL_hip_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.0472,
+          1.0472
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RL_thigh",
+        "joint": "RL_thigh_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -0.5236,
+          4.5379
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RL_calf",
+        "joint": "RL_calf_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -2.7227,
+          -0.83776
+        ],
+        "force_range_Nm": [
+          -45.43,
+          45.43
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RR_hip",
+        "joint": "RR_hip_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.0472,
+          1.0472
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RR_thigh",
+        "joint": "RR_thigh_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -0.5236,
+          4.5379
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RR_calf",
+        "joint": "RR_calf_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -2.7227,
+          -0.83776
+        ],
+        "force_range_Nm": [
+          -45.43,
+          45.43
+        ],
+        "kp": 60,
+        "kd": 5
+      }
+    ],
+    "initial_qpos": [
+      3.4227784781322575e-23,
+      -6.362046133517818e-23,
+      0.29020935793281377,
+      1.0,
+      3.729569481712688e-21,
+      0.0,
+      0.0,
+      2.5579538487363612e-20,
+      0.9,
+      -1.8,
+      1.1368683772161603e-21,
+      0.9,
+      -1.8,
+      1.847411112976261e-20,
+      0.9,
+      -1.8,
+      1.847411112976261e-21,
+      0.9,
+      -1.8
+    ],
+    "initial_qvel": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "initial_velocity_rule": "The runner applies the declared physical initial-condition velocities after home initialization.",
+    "physical_timestep_s": 0.0002,
+    "native_rigid_contact": {
+      "solref": [
+        0.002,
+        1.0
+      ],
+      "solimp": [
+        0.99,
+        0.999,
+        0.001,
+        0.5,
+        2.0
+      ],
+      "margin": 0.0,
+      "ground_and_feet_friction": [
+        0.5,
+        0.005,
+        0.0
+      ]
+    },
+    "integration_scope": "The runner writes the selected prediction numerics before Agent initialization; plant timestep remains 0.0002 s.",
+    "actuator_scope": "The same compiled target/PD/force mapping is used by plant and Agent.",
+    "flat_ground": {
+      "geom_name": "floor",
+      "geom_id": 0,
+      "body_id": 0,
+      "world_normal": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "world_height_m": 0.0,
+      "numeric": "s1_flat_ground_height",
+      "xml_sha256": "682d5b376c587ce272cf6f9ae7b043e103d7ae6ac5f552d5f4e7e065e012b824"
+    },
+    "prepared_xml_sha256": "7fa4532ffa88d0a2d323942fe5aefd07079701df1e91e7107b682ed539f0b86d",
+    "controller_settings": {
+      "arm": "S",
+      "prediction_profile": "C",
+      "numerics": {
+        "s1_stand_equilibrium": 0,
+        "agent_timestep": 0.001,
+        "agent_integrator": 3,
+        "agent_differentiable": 1,
+        "agent_horizon": 0.35,
+        "s1_control_hold_substeps": 2,
+        "s1_stand_absolute_height": 0.29020336039643685,
+        "s1_stand_support": 1,
+        "s1_stand_input_scale": 0.02,
+        "s1_stand_load_tracking": 0
+      },
+      "cost_weights": {
+        "Orientation": 1.0,
+        "Angmom": 0.0
+      },
+      "prediction_smoothing_width_m": null,
+      "refsafe": "preserved",
+      "plant_options": "unchanged",
+      "xml_sha256": "7fa4532ffa88d0a2d323942fe5aefd07079701df1e91e7107b682ed539f0b86d"
+    }
+  },
+  "model_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-support-r8/project-s3-formal-v1-long-yaw_plus5/model/G1-project-go2.xml",
+  "mass_kg": 15.206408000000003,
+  "compiled_mass_including_mocap_kg": 15.206408,
+  "physics_dt_s": 0.0002,
+  "logical_feedback_dt_s": 0.002,
+  "logical_planning_dt_s": 0.02,
+  "workers": 2,
+  "synchronous_slow_simulation": true,
+  "initial_qpos": [
+    3.4227784781322575e-23,
+    -6.362046133517818e-23,
+    0.29020935793281377,
+    0.9990482215818578,
+    0.0,
+    0.0,
+    0.043619387365336,
+    2.5579538487363612e-20,
+    0.9,
+    -1.8,
+    1.1368683772161603e-21,
+    0.9,
+    -1.8,
+    1.847411112976261e-20,
+    0.9,
+    -1.8,
+    1.847411112976261e-21,
+    0.9,
+    -1.8
+  ],
+  "initial_qvel": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "execution_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "process_nice": 10,
+  "joint_names": [
+    "FL_hip_joint",
+    "FL_thigh_joint",
+    "FL_calf_joint",
+    "FR_hip_joint",
+    "FR_thigh_joint",
+    "FR_calf_joint",
+    "RL_hip_joint",
+    "RL_thigh_joint",
+    "RL_calf_joint",
+    "RR_hip_joint",
+    "RR_thigh_joint",
+    "RR_calf_joint"
+  ],
+  "joint_ranges": [
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ]
+  ],
+  "actuator_gear": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "actuator_gainprm": [
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "actuator_biasprm": [
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "actuator_gaintype": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "actuator_biastype": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "actuator_ctrlrange": [
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ]
+  ],
+  "actuator_ctrllimited": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "actuator_forcerange": [
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ]
+  ],
+  "actuator_forcelimited": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "head_offset": [
+    0.3,
+    0.0,
+    0.0
+  ],
+  "model_numerics": {
+    "agent_planner": [
+      2.0
+    ],
+    "agent_horizon": [
+      0.35
+    ],
+    "agent_timestep": [
+      0.001
+    ],
+    "sampling_spline_points": [
+      3.0
+    ],
+    "sampling_trajectories": [
+      60.0
+    ],
+    "sampling_exploration": [
+      0.04
+    ],
+    "gradient_spline_points": [
+      5.0
+    ],
+    "s1_stand_equilibrium": [
+      0.0
+    ],
+    "residual_select_Gait": [
+      0.0
+    ],
+    "residual_select_Gait switch": [
+      1.0
+    ],
+    "residual_Cadence": [
+      2.0,
+      0.0,
+      4.0
+    ],
+    "residual_Amplitude": [
+      0.06,
+      0.0,
+      0.2
+    ],
+    "residual_Duty ratio": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "residual_Walk speed": [
+      0.0,
+      0.0,
+      4.0
+    ],
+    "residual_Walk turn": [
+      0.0,
+      -2.0,
+      2.0
+    ],
+    "residual_select_Flip dir": [
+      0.0
+    ],
+    "residual_select_Biped type": [
+      0.0
+    ],
+    "residual_Heading": [
+      0.0,
+      -3.14,
+      3.14
+    ],
+    "residual_Arm posture": [
+      0.2,
+      0.0,
+      1.0
+    ],
+    "estimator": [
+      0.0
+    ],
+    "estimator_sensor_start": [
+      11.0
+    ],
+    "estimator_number_sensor": [
+      16.0
+    ],
+    "estimator_timestep": [
+      0.005
+    ],
+    "batch_configuration_length": [
+      3.0
+    ],
+    "batch_scale_prior": [
+      0.001
+    ],
+    "s1_flat_ground_height": [
+      0.0
+    ],
+    "agent_integrator": [
+      3.0
+    ],
+    "agent_differentiable": [
+      1.0
+    ],
+    "s1_control_hold_substeps": [
+      2.0
+    ],
+    "s1_stand_absolute_height": [
+      0.29020336039643685
+    ],
+    "s1_stand_support": [
+      1.0
+    ],
+    "s1_stand_input_scale": [
+      0.02
+    ],
+    "s1_stand_load_tracking": [
+      0.0
+    ]
+  },
+  "author_planner_defaults": {
+    "ilqg_num_rollouts": 10,
+    "derivative_skip": 0,
+    "fd_tolerance": 1e-06,
+    "fd_mode": 0,
+    "ilqg_representation": 1,
+    "action_limits": 1,
+    "nominal_feedback_scaling": 1,
+    "max_regularization_iterations": 5,
+    "planner_step_iterations": 1
+  },
+  "author_prediction_approximation": {
+    "arm": "S",
+    "prediction_profile": "C",
+    "numerics": {
+      "s1_stand_equilibrium": 0,
+      "agent_timestep": 0.001,
+      "agent_integrator": 3,
+      "agent_differentiable": 1,
+      "agent_horizon": 0.35,
+      "s1_control_hold_substeps": 2,
+      "s1_stand_absolute_height": 0.29020336039643685,
+      "s1_stand_support": 1,
+      "s1_stand_input_scale": 0.02,
+      "s1_stand_load_tracking": 0
+    },
+    "cost_weights": {
+      "Orientation": 1.0,
+      "Angmom": 0.0
+    },
+    "prediction_smoothing_width_m": null,
+    "refsafe": "preserved",
+    "plant_options": "unchanged",
+    "xml_sha256": "7fa4532ffa88d0a2d323942fe5aefd07079701df1e91e7107b682ed539f0b86d"
+  },
+  "mujoco_version": "3.2.3",
+  "python": "3.11.16 (main, Sep  2 2026, 23:39:52) [GCC 15.3.0]",
+  "command": [
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/scripts/run_s1_go2_wb_baseline.py",
+    "--config",
+    "experiments/terrain_memory/s1-go2-wb-support.json",
+    "--agent-server",
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/bin/agent_server",
+    "--author-source",
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2",
+    "--original-robot-dir",
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2",
+    "--original-scene",
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/utils/mujoco/assets/scene_flat.xml",
+    "--original-resolved",
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json",
+    "--attempt",
+    "project-s3-formal-v1-long-yaw_plus5",
+    "--stage",
+    "G1",
+    "--arm",
+    "S",
+    "--condition",
+    "yaw_plus5",
+    "--purpose",
+    "formal",
+    "--mission",
+    "long",
+    "--cohort",
+    "project-s3-formal-v1",
+    "--workers",
+    "2"
+  ],
+  "agent_server": {
+    "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/build/bin/agent_server",
+    "sha256": "1a586ca2879b5fed37d58cbadb12e3d2f4afd601dd468fe8f1c8ae0f78a21af3",
+    "size": 13944976
+  },
+  "host": "fanyuan-B850M-FORCE-WIFI6E",
+  "model_mjb_sha256": "28c915c7f6b5b2bd030b59e321d7fff2245ee20a8429b90a9cb20e8547a5a403",
+  "execution_fingerprint": "d3177cb85bc13bb1d997d87b5c8ad5e37c87b504d70c7a08ddf32d42463a2842",
+  "arm": "S",
+  "mission": "long",
+  "cohort": "project-s3-formal-v1",
+  "prediction_settings": {
+    "arm": "S",
+    "prediction_profile": "C",
+    "numerics": {
+      "s1_stand_equilibrium": 0,
+      "agent_timestep": 0.001,
+      "agent_integrator": 3,
+      "agent_differentiable": 1,
+      "agent_horizon": 0.35,
+      "s1_control_hold_substeps": 2,
+      "s1_stand_absolute_height": 0.29020336039643685,
+      "s1_stand_support": 1,
+      "s1_stand_input_scale": 0.02,
+      "s1_stand_load_tracking": 0
+    },
+    "cost_weights": {
+      "Orientation": 1.0,
+      "Angmom": 0.0
+    },
+    "prediction_smoothing_width_m": null,
+    "refsafe": "preserved",
+    "plant_options": "unchanged",
+    "xml_sha256": "7fa4532ffa88d0a2d323942fe5aefd07079701df1e91e7107b682ed539f0b86d"
+  },
+  "author_source_sha256": {
+    "mjpc/tasks/quadruped/quadruped.cc": "b838dfca17ffa54c2e6dc78579e83584dcd963fc4c8eaf6be72d5b54c1791b59",
+    "mjpc/tasks/quadruped/task_flat.xml": "8028e1566d961c959f05a0f4c070ad69a19130a91777be9ed2ee4470a32744af",
+    "mjpc/agent.cc": "054a4ab7db5858d798f3e0e55443486bab7095bf31ee9365cf21dbaf04e00e62",
+    "mjpc/trajectory.cc": "dc3fdbd20cad24f0dbb4863a54f7c30f9cfae75f9e694f8dafe378808bc359c9",
+    "mjpc/planners/model_derivatives.cc": "1c4f878a44f6c4d8b6945b2079061d75f7ad9f5a7d09a181c1537b3114865031",
+    "mjpc/planners/ilqg/planner.cc": "30f763321527ed814ba7f7258136b51717a234750af97d3d35cd05da972eac98",
+    "mjpc/planners/ilqg/policy.cc": "b47a0288d4ba3dc7ff813819fc5ccd633d8862e391943d8e86e081687854a670",
+    "mjpc/grpc/agent_service.cc": "93b1e16965938934bbd5cb5dd46100225207537621100ec48f00f86e213761ac"
+  },
+  "startup": {
+    "home_ctrl": [
+      2.5579538487363612e-20,
+      0.9,
+      -1.8,
+      1.1368683772161603e-21,
+      0.9,
+      -1.8,
+      1.847411112976261e-20,
+      0.9,
+      -1.8,
+      1.847411112976261e-21,
+      0.9,
+      -1.8
+    ],
+    "state_time_s": 0.0,
+    "initial_qpos": [
+      3.4227784781322575e-23,
+      -6.362046133517818e-23,
+      0.29020935793281377,
+      0.9990482215818578,
+      0.0,
+      0.0,
+      0.043619387365336,
+      2.5579538487363612e-20,
+      0.9,
+      -1.8,
+      1.1368683772161603e-21,
+      0.9,
+      -1.8,
+      1.847411112976261e-20,
+      0.9,
+      -1.8,
+      1.847411112976261e-21,
+      0.9,
+      -1.8
+    ],
+    "initial_qvel": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "completed_iterations": 20,
+    "plant_steps_during_initialization": 0,
+    "reset_calls_during_initialization": 0,
+    "pre_optimization_nominal_action": [
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842,
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842,
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842,
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842
+    ],
+    "body_target": [
+      0.0,
+      0.0,
+      0.27
+    ],
+    "heading_target": 0.0,
+    "mocap_pos": [
+      [
+        0.3,
+        0.0,
+        0.27
+      ]
+    ],
+    "mocap_quat": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "planning_total_s": 4.012224658916239,
+    "actual_first_feedback_action": [
+      0.00605429382994771,
+      0.9171671867370605,
+      -1.655148983001709,
+      0.08968707174062729,
+      0.8770328164100647,
+      -1.713997721672058,
+      -0.08932382613420486,
+      0.9466497898101807,
+      -1.7147823572158813,
+      -0.008873055689036846,
+      0.8415043950080872,
+      -1.6454647779464722
+    ]
+  },
+  "stand_references": [
+    {
+      "qpos": [
+        3.4227784781322575e-23,
+        -6.362046133517818e-23,
+        0.2902041157945516,
+        0.9999999999999984,
+        -4.159722457457899e-09,
+        5.543667221803356e-08,
+        2.3060117039208697e-16,
+        0.05972078176558269,
+        0.9220620898579226,
+        -1.748959818368464,
+        0.0651213401370855,
+        0.8665774768914322,
+        -1.8216828547093795,
+        -0.06594500932152529,
+        0.9550641271532205,
+        -1.8214116234664646,
+        -0.06050898011412485,
+        0.8266729143781664,
+        -1.7491444610460722
+      ],
+      "ctrl": [
+        0.008926464295405683,
+        0.9209298622855138,
+        -1.6571226047649275,
+        0.09653209335512404,
+        0.8798340260974753,
+        -1.7198328842483173,
+        -0.09773053474908745,
+        0.954896769534857,
+        -1.7254006349462196,
+        -0.009197242378267962,
+        0.8406457390625728,
+        -1.6488215479199277
+      ],
+      "joint_pose": [
+        0.05972078176558269,
+        0.9220620898579226,
+        -1.748959818368464,
+        0.0651213401370855,
+        0.8665774768914322,
+        -1.8216828547093795,
+        -0.06594500932152529,
+        0.9550641271532205,
+        -1.8214116234664646,
+        -0.06050898011412485,
+        0.8266729143781664,
+        -1.7491444610460722
+      ],
+      "actuator_torque": [
+        -3.0476590482106203,
+        -0.0679336543445288,
+        5.510232816212195,
+        1.8846451930823123,
+        0.7953929523625902,
+        6.110998227663728,
+        -1.9071315256537291,
+        -0.010041457101806373,
+        5.760659311214695,
+        3.0787042641514133,
+        0.8383694810643831,
+        6.019374787568665
+      ],
+      "unclipped_pd": [
+        -3.0476590482106203,
+        -0.06793365434452969,
+        5.510232816212195,
+        1.8846451930823127,
+        0.795392952362588,
+        6.110998227663735,
+        -1.9071315256537296,
+        -0.01004145710181037,
+        5.760659311214695,
+        3.0787042641514137,
+        0.8383694810643849,
+        6.01937478756867
+      ],
+      "qacc": [
+        6.127335566750932e-08,
+        -1.1836564336510777e-08,
+        2.365234171272975e-06,
+        6.408030789122238e-08,
+        2.453404912654451e-08,
+        -3.1638156699587816e-08,
+        -6.818897800263815e-08,
+        2.0441371295017782e-07,
+        2.9383486427766263e-07,
+        1.0069901805594321e-07,
+        -2.3268689013364792e-07,
+        3.9702192546797616e-07,
+        -8.404052666565211e-08,
+        -2.1034551443064135e-07,
+        2.621255247436848e-07,
+        -4.528579398555158e-08,
+        2.4862069513243555e-07,
+        4.179174823716878e-07
+      ],
+      "feet": [
+        [
+          0.17904945011335296,
+          0.15820721442794683,
+          0.021996125832396934
+        ],
+        [
+          0.2038016811388399,
+          -0.1247120805616659,
+          0.021996378555726434
+        ],
+        [
+          -0.20627865913505466,
+          0.12449537299746798,
+          0.021996262036406783
+        ],
+        [
+          -0.18152642813046044,
+          -0.15842392186445334,
+          0.0219962114008789
+        ]
+      ],
+      "foot_force": [
+        [
+          0.000196130925048786,
+          6.246840168323951e-05,
+          37.17708220389802
+        ],
+        [
+          -0.00024035207928342007,
+          -0.0001397412899210728,
+          37.08600185958364
+        ],
+        [
+          -0.0003058891165255021,
+          5.689078443378744e-05,
+          37.50239820579927
+        ],
+        [
+          0.0003510041672035651,
+          2.021820039119207e-05,
+          37.40941611847699
+        ]
+      ],
+      "head_position": [
+        0.2999999999999981,
+        -6.362046133517818e-23,
+        0.29020408253254826
+      ],
+      "body_height_m": 0.2902041157945516,
+      "relative_height_m": 0.2628418689974413,
+      "anchor_xy": [
+        [
+          0.17904945003143166,
+          0.158207214019457
+        ],
+        [
+          0.20380168097176657,
+          -0.12471208023859875
+        ],
+        [
+          -0.20627865919045554,
+          0.12449537272466282
+        ],
+        [
+          -0.18152642825012064,
+          -0.15842392153339294
+        ]
+      ],
+      "body_xy": [
+        3.4227784781322575e-23,
+        -6.362046133517818e-23
+      ],
+      "heading": 0.0,
+      "requested_height_m": 0.29020336039643685,
+      "max_equation_residual": 1.8884952868170046e-05,
+      "solver_nfev": 72,
+      "solver_message": "`xtol` termination condition is satisfied.",
+      "qacc_norm": 2.513395278077671e-06,
+      "max_foot_xy_error_m": 4.084898252987301e-10,
+      "pd_reference_identity_max_error_rad": 1.249000902703301e-16,
+      "friction_ratio": [
+        5.536713996194984e-06,
+        7.496708110672806e-06,
+        8.296390965177438e-06,
+        9.398328443403136e-06
+      ],
+      "loaded_at_entry": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "reference_kind": [
+        "reachable_floor_landing",
+        "reachable_floor_landing",
+        "reachable_floor_landing",
+        "reachable_floor_landing"
+      ],
+      "entry_time_s": 0.0,
+      "feasible": true,
+      "wall_s": 0.06857239699456841
+    }
+  ],
+  "applied_settings": [
+    {
+      "time_s": 0.0,
+      "task_parameters": {
+        "Heading": 0.0,
+        "Walk speed": 0.0,
+        "Walk turn": 0.0,
+        "Flip dir": "Back Flip",
+        "Biped type": "Foot Stand",
+        "Amplitude": 0.0,
+        "Gait switch": "Manual",
+        "Duty ratio": 1.0,
+        "Arm posture": 0.2,
+        "Gait": "Stand",
+        "Cadence": 1.0
+      },
+      "cost_weights": {
+        "Effort": 0.08,
+        "Balance": 0.0,
+        "Upright": 1.0,
+        "StandSupportForce": 0.0,
+        "Angmom": 0.0,
+        "StandFootVelocity": 0.02,
+        "StandAbsoluteHeight": 1.0,
+        "Orientation": 1.0,
+        "StandFootPosition": 0.1,
+        "StandLinearVelocity": 1.0,
+        "StandAngularVelocity": 1.0,
+        "Gait": 2.0,
+        "Position": 0.2,
+        "Height": 1.0,
+        "Posture": 0.02
+      }
+    }
+  ]
+}

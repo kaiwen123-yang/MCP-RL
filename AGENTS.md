@@ -4,7 +4,7 @@
 
 最终问题是**面向重复踩踏的四足机器人地面记忆辨识与跨步协同控制**。用户明确的近期顺序是：**先形成稳定执行完整任务的PANN/PINN＋标准RL＋MPC联合基础版本，再研究三项方法贡献、轻量化和泛化。** 不把改进PPO、新理论或所有边缘条件满分作为标准RL集成的前置门槛。
 
-当前新授权批次为 **S1第八轮 `tm-s1-go2-wb-support-r8`**，以[主计划第5.9节](docs/TERRAIN_MEMORY_PLAN.md)和[配置](experiments/terrain_memory/s1-go2-wb-support.json)执行；联合顺序见第5.10节，启动词在第7节。当前提交为 **planned_not_executed**，C/H/S尚未实现、编译或实验。下一执行端须落实真实源码与运行接线，不能把JSON当已运行算法。
+当前新授权批次为 **S1第八轮 `tm-s1-go2-wb-support-r8`**，以[主计划第5.9节](docs/TERRAIN_MEMORY_PLAN.md)和[配置](experiments/terrain_memory/s1-go2-wb-support.json)执行；联合顺序见第5.10节，启动词在第7节。C/H/S已真实实现、编译并执行。项目S3名义原任务36.378s完成且观察至60s，名义五往返214.356s完成且观察至300s，两条完成后均无判据超限；现已冻结同一执行版本并补齐正式覆盖。作者N三条300s均通过，末30s角速度超限仍分别12/32/5个样本，保持单列。实际启动、正负结果和发布状态以[唯一R8索引](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json)为准，不重跑已完成条件。
 
 **G0是Go2作者配置组，G1是Go2项目约束组，始终都是四足Go2；G1不是人形机器人型号。最终实机仍为Go2＋NX。** 对用户优先使用全称，代码代号保留历史兼容即可。
 
