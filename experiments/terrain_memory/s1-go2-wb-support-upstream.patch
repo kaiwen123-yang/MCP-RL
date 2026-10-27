@@ -1,0 +1,114 @@
+--- a/mjpc/agent.cc
++++ b/mjpc/agent.cc
+@@ -15,6 +15,7 @@
+ #include "mjpc/agent.h"
+ 
+ #include <algorithm>
++#include <cmath>
+ #include <atomic>
+ #include <chrono>
+ #include <cstdio>
+@@ -104,7 +105,9 @@
+   timestep_ = GetNumberOrDefault(1.0e-2, model, "agent_timestep");
+ 
+   // planning steps
+-  steps_ = mju_max(mju_min(horizon_ / timestep_ + 1, kMaxTrajectoryHorizon), 1);
++  steps_ = GetNumberOrDefault(1, model, "s1_control_hold_substeps") == 2
++      ? std::min(static_cast<int>(std::lround(horizon_ / (2 * timestep_))) + 1, kMaxTrajectoryHorizon)
++      : mju_max(mju_min(horizon_ / timestep_ + 1, kMaxTrajectoryHorizon), 1);
+ 
+   active_task_id_ = gui_task_id;
+   ActiveTask()->Reset(model);
+@@ -289,8 +292,9 @@
+   model_->opt.integrator = integrator_;
+ 
+   // set planning steps
+-  steps_ =
+-      mju_max(mju_min(horizon_ / timestep_ + 1, kMaxTrajectoryHorizon), 1);
++  steps_ = GetNumberOrDefault(1, model_, "s1_control_hold_substeps") == 2
++      ? std::min(static_cast<int>(std::lround(horizon_ / (2 * timestep_))) + 1, kMaxTrajectoryHorizon)
++      : mju_max(mju_min(horizon_ / timestep_ + 1, kMaxTrajectoryHorizon), 1);
+ 
+   // make model differentiable
+   int differentiable = differentiable_;
+--- a/mjpc/trajectory.cc
++++ b/mjpc/trajectory.cc
+@@ -116,6 +116,7 @@
+ 
+   // horizon
+   horizon = steps;
++  const bool held_control = GetNumberOrDefault(1, model, "s1_control_hold_substeps") == 2;
+ 
+   // set mocap
+   for (int i = 0; i < nmocap; i++) {
+@@ -146,7 +147,7 @@
+     // apply perturbation
+     if (xfrc_std > 0) {
+       // convert rate and scale to discrete time (Ornstein–Uhlenbeck)
+-      mjtNum rate = mju_exp(-model->opt.timestep / xfrc_rate);
++      mjtNum rate = mju_exp(-(held_control ? 2 : 1) * model->opt.timestep / xfrc_rate);
+       mjtNum scale = xfrc_std * mju_sqrt(1 - rate * rate);
+       for (int i = 0; i < 6*model->nbody; i++) {
+         data->xfrc_applied[i] = rate * data->xfrc_applied[i] +
+@@ -164,6 +165,10 @@
+     // record trace
+     GetTraces(DataAt(trace, t * 3 * task->num_trace), model, data,
+               task->num_trace);
++
++    // Residual and trace above belong to the node start. The second 1ms
++    // integration uses the same policy output and must not replace them.
++    if (held_control) mj_step(model, data);
+ 
+     // check for step warnings
+     if ((failure |= CheckWarnings(data))) {
+@@ -228,6 +233,7 @@
+ 
+   // horizon
+   horizon = steps;
++  const bool held_control = GetNumberOrDefault(1, model, "s1_control_hold_substeps") == 2;
+ 
+   // set mocap
+   for (int i = 0; i < nmocap; i++) {
+@@ -263,6 +269,10 @@
+     // record trace
+     GetTraces(DataAt(trace, t * 3 * task->num_trace), model, data,
+               task->num_trace);
++
++    // Residual and trace above belong to the node start. The second 1ms
++    // integration uses the same policy output and must not replace them.
++    if (held_control) mj_step(model, data);
+ 
+     // check for step warnings
+     if ((failure |= CheckWarnings(data))) {
+--- a/mjpc/planners/model_derivatives.cc
++++ b/mjpc/planners/model_derivatives.cc
+@@ -92,13 +92,28 @@
+                          DataAt(C, t * (dim_sensor * dim_state_derivative)),
+                          nullptr);
+       } else {
+-        // derivatives
++        // Node-start C/D and the first 1ms state transition.
+         mjd_transitionFD(
+             m, d, tol, mode,
+             DataAt(A, t * (dim_state_derivative * dim_state_derivative)),
+             DataAt(B, t * (dim_state_derivative * dim_action)),
+             DataAt(C, t * (dim_sensor * dim_state_derivative)),
+             DataAt(D, t * (dim_sensor * dim_action)));
++        if (GetNumberOrDefault(1, m, "s1_control_hold_substeps") == 2) {
++          const int nx = dim_state_derivative, nu = dim_action;
++          double* first_a = DataAt(A, t * nx * nx);
++          double* first_b = DataAt(B, t * nx * nu);
++          std::vector<double> a1(first_a, first_a + nx * nx);
++          std::vector<double> b1(first_b, first_b + nx * nu);
++          std::vector<double> a2(nx * nx), b2(nx * nu);
++          // mjd_transitionFD restores the node state. Advance once to the
++          // midpoint, keeping u unchanged, then differentiate the second step.
++          mj_step(m, d);
++          mjd_transitionFD(m, d, tol, mode, a2.data(), b2.data(), nullptr, nullptr);
++          mju_mulMatMat(first_a, a2.data(), a1.data(), nx, nx, nx);
++          mju_mulMatMat(first_b, a2.data(), b1.data(), nx, nx, nu);
++          mju_addTo(first_b, b2.data(), nx * nu);
++        }
+       }
+     });
+   }

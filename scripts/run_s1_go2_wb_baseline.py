@@ -164,11 +164,12 @@ def run(args, c):
     support = c.get('stage') == 'S1R8'
     if campaign:
         with index_file(small, c) as idx:
-            if len(idx['attempts']) >= c['campaign_budget']['max_new_physical_starts']:
+            launches=[x for x in idx['attempts'] if x['status']!='initialization_failed']
+            if len(launches) >= c['campaign_budget']['max_new_physical_starts']:
                 raise ValueError('Campaign launch allowance exhausted, including missing records')
-            if support and args.stage=='G0' and sum(x['stage']=='G0' for x in idx['attempts']) >= c['campaign_budget']['max_author_long_starts']:
+            if support and args.stage=='G0' and sum(x['stage']=='G0' for x in launches) >= c['campaign_budget']['max_author_long_starts']:
                 raise ValueError('Author long-mission allowance exhausted')
-            if support and args.stage=='G1' and args.purpose=='development' and sum(x['stage']=='G1' and x['purpose']=='development' for x in idx['attempts']) >= c['campaign_budget']['max_project_development_starts']:
+            if support and args.stage=='G1' and args.purpose=='development' and sum(x['stage']=='G1' and x['purpose']=='development' for x in launches) >= c['campaign_budget']['max_project_development_starts']:
                 raise ValueError('Project development allowance exhausted')
             if not support and args.purpose == 'development' and sum(x['purpose']=='development' for x in idx['attempts']) >= c['campaign_budget']['max_development_starts']:
                 raise ValueError('Combined development allowance exhausted')
@@ -288,6 +289,10 @@ def run(args, c):
                 'mjpc/planners/model_derivatives.cc','mjpc/planners/ilqg/policy.cc','mjpc/grpc/agent_service.cc'] if (upstream/name).exists()})
     small.mkdir(parents=True, exist_ok=True)
     dump(small/f'{args.attempt}-resolved.json', resolved)
+    if support and args.arm=='AUTHOR_N':
+        resolved['binary_source_identity']='Frozen R7 executable, SHA256 recorded above; current upstream C files are not compiled into this retained executable.'
+        resolved['frozen_binary_source_sha256']={name:sha(ROOT/'work/r8-source-before'/name) for name in
+            ['mjpc/agent.cc','mjpc/trajectory.cc','mjpc/planners/model_derivatives.cc']}
     mission, hist, physics, plans = Mission(c['task']), [], [], []
     chunks=[];physical_count=0;plan_count=0;peak_torque=np.zeros(12);prediction_grid=None
     def save_streams():

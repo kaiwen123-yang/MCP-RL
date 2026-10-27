@@ -35,7 +35,7 @@ def replay(job):
                 if elapsed>=next_update-1e-9:
                     query=np.floor((elapsed+1e-9)/hold)*hold
                     if schedule=='feedback_2ms_hold': held=actual[min(round(query/.002),len(actual)-1)]
-                    else: held=np.array([np.interp(origin+query,times,actions[:,j]) for j in range(m.nu)])
+                    else: held=np.array([np.interp(origin+query,times[:len(actions)],actions[:,j]) for j in range(m.nu)])
                     next_update=query+hold
                 d.ctrl[:]=held;mujoco.mj_step(m,d)
             mujoco.mj_forward(m,d)
@@ -72,7 +72,7 @@ def main():
                 com_z_mean_m=float(comz[mask].mean()),relative_height_residual_mean_m=float(rel[mask].mean()),
                 all_feet_contact_fraction=float(np.all(ph[pm,26:30]>0,axis=1).mean()),
                 foot_Fz_mean_N=float(ph[pm,32:42:3].sum(axis=1).mean()),
-                nonfoot_Fz_mean_N=float(ph[pm,47].mean()),
+                nonfoot_Fz_mean_N=float(ph[pm,47].mean()) if ph.shape[1]==49 else None,
                 max_roll_pitch_rad=float(np.max(np.abs(a['rpy'][mask,:2]))),
                 omega_rms_rad_s=float(np.sqrt(np.mean(a['qvel'][mask,3:6]**2))))
             for j in range(12):row['sat_fraction_joint_'+str(j)]=float(saturation[mask,j].mean())
