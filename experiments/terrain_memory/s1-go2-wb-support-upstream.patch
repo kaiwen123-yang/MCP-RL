@@ -112,3 +112,19 @@
        }
      });
    }
+--- a/mjpc/tasks/quadruped/quadruped.cc
++++ b/mjpc/tasks/quadruped/quadruped.cc
+@@ -256,6 +256,13 @@
+   }
+   counter += 6;
+ 
++
++  // R8 H: opt-in absolute base height during Stand, on the actual plane.
++  const double* stand_height = GetCustomNumericData(model, "s1_stand_absolute_height");
++  if (stand_height) {
++    const bool stand = current_mode_ == kModeQuadruped && GetGait() == kGaitStand;
++    residual[counter++] = stand ? data->xpos[3 * torso_body_id_ + 2] - stand_height[0] : 0;
++  }
+ 
+   // sensor dim sanity check
+   CheckSensorDim(model, counter);

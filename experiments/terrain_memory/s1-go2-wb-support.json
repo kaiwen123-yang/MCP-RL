@@ -2,7 +2,7 @@
   "purpose": "Go2 continuous execution: preserve the successful author controller; align predicted control holds with execution; repair project standing support only as required by complete-task results.",
   "run_id": "tm-s1-go2-wb-support-r8",
   "stage": "S1R8",
-  "implementation_status": "C_source_compiled_full_missions_pending",
+  "implementation_status": "C_completed_negative_H_source_implemented",
   "reviewed_source_commit": "a26c339ff2c30a0c45753f7ea771c7169e4b6d63",
   "target_entrypoint": "scripts/run_s1_go2_wb_baseline.py",
   "stage_labels": {
@@ -245,7 +245,38 @@
     "foot_reference": "Freeze actually established world contacts. For an airborne foot define a reachable landing before fixed support; do not anchor an airborne position as loaded.",
     "physical_continuity": "Reference construction never resets qpos/qvel/policy/contact. Update on relevant Stand entry and preserve the reference throughout each hold.",
     "cost_contract": "New residuals are soft objectives, not hard foot constraints. Keep original moving objective; use mutually compatible Stand posture/input references and avoid double gravity compensation. Record units, scales and weights before each complete attempt; no parameter grid.",
-    "deferred": "No simultaneous terminal LQR, frequency-shaping filter state, WBC, learned dynamics or PPO. Further mechanisms require a demonstrated remaining issue and are not automatically bundled."
+    "deferred": "No simultaneous terminal LQR, frequency-shaping filter state, WBC, learned dynamics or PPO. Further mechanisms require a demonstrated remaining issue and are not automatically bundled.",
+    "H_realized": {
+      "absolute_base_height_m": 0.29020336039643685,
+      "world_floor_height_m": 0.0,
+      "norm": "Original Height smooth norm6, parameter0.04m",
+      "cost_weight": 1.0,
+      "activation": "Quadruped Stand only",
+      "evidence": "C returned at34.244s but longest stability0.136s through60s; preserve all old objectives and append absolute-height residual.",
+      "reference_qacc_norm": 3.1379383892855756e-05,
+      "reference_foot_force_N": [
+        [
+          0.013496597167031641,
+          -0.001103780779720824,
+          37.113653751745375
+        ],
+        [
+          -0.008822243297508251,
+          0.004369948728670767,
+          37.135117183654316
+        ],
+        [
+          -0.009059126427699484,
+          0.0015624167718512928,
+          37.4735829174041
+        ],
+        [
+          0.00436203120033637,
+          -0.004828467074560738,
+          37.452119549988204
+        ]
+      ]
+    }
   },
   "controllers": {
     "G0_author_native": {

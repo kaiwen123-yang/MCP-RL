@@ -180,6 +180,12 @@ def write_equilibrium_settings(xml_path, config, arm):
             element=custom.find("numeric[@name='%s']" % name)
             if element is None:element=ET.SubElement(custom,'numeric',name=name)
             element.set('data',format(float(value),'.17g'))
+        if arm=='H':
+            height=config['support_reference']['H_realized']['absolute_base_height_m']
+            ET.SubElement(custom,'numeric',name='s1_stand_absolute_height',data=format(height,'.17g'))
+            sensors=tree.getroot().find('sensor');index=next(i for i,s in enumerate(sensors) if s.tag!='user')
+            sensors.insert(index,ET.Element('user',name='StandAbsoluteHeight',dim='1',user='6 1 0 3 0.04'))
+            values['s1_stand_absolute_height']=height
         tree.write(xml_path,encoding='unicode')
         return dict(arm=arm,prediction_profile='AUTHOR_N' if arm=='AUTHOR_N' else 'C',
             numerics=values,cost_weights={'Orientation':.03 if arm=='AUTHOR_N' else 1.,'Angmom':0.},
