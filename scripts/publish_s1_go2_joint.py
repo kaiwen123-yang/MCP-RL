@@ -12,7 +12,8 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare','upload','finalize'])
     a=p.parse_args();token=sys.stdin.read().strip()
     env=dict(os.environ,GH_TOKEN=token,GIT_TERMINAL_PROMPT='0',
-        GIT_CONFIG_NOSYSTEM='1',GIT_CONFIG_COUNT='1',
+        GIT_CONFIG_NOSYSTEM='1',GIT_CONFIG_COUNT='2',
+        GIT_CONFIG_KEY_1='http.proxy',GIT_CONFIG_VALUE_1=os.environ['R9_PUBLISH_PROXY'],
         GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
         GIT_CONFIG_VALUE_0='AUTHORIZATION: basic '+base64.b64encode(('x-access-token:'+token).encode()).decode())
     ghpath=ROOT.parent/'terrain-memory-s0/work/tools/gh_2.103.2_linux_amd64/bin/gh'
