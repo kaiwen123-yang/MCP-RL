@@ -95,4 +95,4 @@ def stand_reference(model,data,heading,height):
 
 def reference_userdata(ref):
     return np.r_[1.,ref['relative_height_m'],ref['body_height_m'],ref['qpos'][3:7],
-        ref['head_position'],ref['feet'].ravel(),ref['joint_pose'],ref['ctrl'],ref['actuator_torque']]
+        ref['head_position'],ref['feet'].ravel(),ref['joint_pose'],ref['ctrl'],ref['actuator_torque'],ref['foot_force'][:,2]]

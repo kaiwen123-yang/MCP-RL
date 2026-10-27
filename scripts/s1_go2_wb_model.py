@@ -189,10 +189,10 @@ def write_equilibrium_settings(xml_path, config, arm):
         if arm=='S':
             ET.SubElement(custom,'numeric',name='s1_stand_support',data='1')
             values['s1_stand_support']=1
-            ET.SubElement(tree.getroot(),'size',nuserdata='58')
+            ET.SubElement(tree.getroot(),'size',nuserdata='62')
             index=next(i for i,s in enumerate(sensors) if s.tag!='user')
-            for name,weight in [('StandFootPosition',.1),('StandFootVelocity',.02)]:
-                sensors.insert(index,ET.Element('user',name=name,dim='12',user=f'0 {weight} 0 1'))
+            for name,dim,weight in [('StandFootPosition',12,.1),('StandFootVelocity',12,.02),('StandSupportForce',4,.05)]:
+                sensors.insert(index,ET.Element('user',name=name,dim=str(dim),user=f'0 {weight} 0 1'))
                 index+=1
         tree.write(xml_path,encoding='unicode')
         return dict(arm=arm,prediction_profile='AUTHOR_N' if arm=='AUTHOR_N' else 'C',

@@ -175,7 +175,7 @@
    if (current_mode_ == kModeFlip) {
      double flip_time = data->time - mode_start_time_;
      if (flip_time < crouch_time_) {
-@@ -256,6 +271,28 @@
+@@ -256,6 +271,49 @@
    }
    counter += 6;
  
@@ -200,6 +200,27 @@
 +      for (int j = 0; j < 3; ++j)
 +        residual[counter++] = support ? velocity[3+j] / 0.05 : 0;
 +    }
++    // S2: preserve the solved load distribution as a soft MPC objective.
++    // Micrometre foot lifting is too cheap under position tracking alone.
++    double vertical_load[4] = {0, 0, 0, 0};
++    if (support) {
++      for (int k = 0; k < data->ncon; ++k) {
++        const mjContact& contact = data->contact[k];
++        for (int i = 0; i < 4; ++i) {
++          const int geom = foot_geom_id_[order[i]];
++          const bool first = contact.geom1 == geom && model->geom_bodyid[contact.geom2] == 0;
++          const bool second = contact.geom2 == geom && model->geom_bodyid[contact.geom1] == 0;
++          if (first || second) {
++            double local[6], world[3];
++            mj_contactForce(model, data, k, local);
++            mju_mulMatTVec(world, contact.frame, local, 3, 3);
++            vertical_load[i] += (second ? 1 : -1) * world[2];
++          }
++        }
++      }
++    }
++    for (int i = 0; i < 4; ++i)
++      residual[counter++] = support ? (vertical_load[i] - ref[58+i]) / 40.0 : 0;
 +  }
  
    // sensor dim sanity check
