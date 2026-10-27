@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Summarize the actual R9 material prerequisite attempts; no new simulation."""
-import csv,json,time
+import csv,json,time,sys
 from pathlib import Path
 import numpy as np
 import mujoco
@@ -74,7 +74,8 @@ def main():
     colors=['#0072B2','#D55E00','#009E73'];styles=['-','--','-.']
     plt.rcParams.update({'font.size':9,'axes.spines.top':False,'axes.spines.right':False,
         'svg.fonttype':'none','pdf.fonttype':42})
-    fig,axs=plt.subplots(2,2,figsize=(9,6.4),layout='constrained')
+    fig,axs=plt.subplots(2,2,figsize=(9,6.4))
+    fig.subplots_adjust(left=.10,right=.985,bottom=.13,top=.95,wspace=.30,hspace=.32)
     for (r,a,f,bot,vel,force,leg),color,style in zip(series,colors,styles):
         label=f"cap {r['requested_cap_m_s']:.3f} m/s"
         t=f[:,0];lag=(t-t[-1])*1000;last=lag>=-8
@@ -103,7 +104,6 @@ def main():
     for ax in [axs[0,1],axs[1,0]]:
         ax.axhline(1,color='.3',lw=.8,ls=':')
     for ax in axs.flat:ax.grid(alpha=.15)
-    fig.get_layout_engine().set(rect=(0,.055,1,.94))
     axs[0,0].set_yticks(np.arange(0,3.01,.5))
     axs[0,1].set_yticks(np.arange(0,1.21,.2))
     axs[1,0].set_yticks(np.arange(0,1.21,.2))
@@ -122,7 +122,8 @@ def main():
             if b.x0<bbox.x0 or b.y0<bbox.y0 or b.x1>bbox.x1 or b.y1>bbox.y1:outside.append(text.get_text())
     print('Figure text outside canvas:',outside)
     plt.close(fig)
-    fig,axs=plt.subplots(2,2,figsize=(9,6.4),layout='constrained')
+    fig,axs=plt.subplots(2,2,figsize=(9,6.4))
+    fig.subplots_adjust(left=.10,right=.985,bottom=.13,top=.95,wspace=.30,hspace=.32)
     palettes=[['#0072B2','#D55E00','#009E73','#CC79A7','#333333'],['#0072B2','#D55E00','#009E73']]
     line_styles=['-','--','-.',':',(0,(5,2,1,2))]
     families=[[x for x in series if x[0]['cap_profile']=='constant'],[x for x in series if x[0]['cap_profile']!='constant']]
@@ -137,7 +138,7 @@ def main():
             axs[1,column].plot(t[:n].reshape(-1,10)[:,-1],sinking[:n].reshape(-1,10).max(axis=1),color=color,ls=style)
             axs[1,column].plot(t[-1],sinking[-1],marker='x',color=color)
         axs[0,column].set(xlabel='Physical time (s)',ylabel='Body x (m)',xlim=(0,9),ylim=(0,3.15),
-            title=('A  Five fixed allowed caps' if column==0 else 'B  Three predeclared time-varying caps'))
+            title=('A  Five fixed allowed caps' if column==0 else 'B  Three time-varying caps (2 Hz)'))
         axs[0,column].axhline(3,color='.5',ls=':',lw=.8)
         axs[0,column].legend(frameon=False,loc='upper left',fontsize=8)
         axs[1,column].set(xlabel='Boundary sample time (s)',ylabel='Maximum soft-foot indentation (mm)',
@@ -145,11 +146,11 @@ def main():
         axs[1,column].axhline(1,color='.5',ls=':',lw=.8)
         axs[0,column].set_yticks(np.arange(0,3.01,.5));axs[1,column].set_yticks(np.arange(0,1.21,.2))
     for ax in axs.flat:ax.grid(alpha=.15)
-    fig.get_layout_engine().set(rect=(0,.055,1,.94))
     fig.text(.5,.012,'Eight separate original-mission attempts; all stop at the unchanged material limit. x: rejected final constitutive boundary.',
         ha='center',fontsize=8)
     for ext in ['png','svg','pdf']:fig.savefig(SMALL/('all-intents.'+ext),dpi=190)
     plt.close(fig)
+    if '--figures-only' in sys.argv:return
     init=idx['attempts'][0]
     file=ROOT/init['log']
     assets.append(dict(name='initialization-dev01-cap025.log',path=str(file.relative_to(ROOT)),size=file.stat().st_size,sha256=sha(file)))
