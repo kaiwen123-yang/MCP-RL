@@ -189,9 +189,13 @@ def write_equilibrium_settings(xml_path, config, arm):
         if arm=='S':
             ET.SubElement(custom,'numeric',name='s1_stand_support',data='1')
             values['s1_stand_support']=1
+            scale=config['support_reference']['S_realized']['residuals']['Effort']['scale_rad']
+            ET.SubElement(custom,'numeric',name='s1_stand_input_scale',data=format(scale,'.17g'))
+            ET.SubElement(custom,'numeric',name='s1_stand_load_tracking',data='0')
+            values.update(s1_stand_input_scale=scale,s1_stand_load_tracking=0)
             ET.SubElement(tree.getroot(),'size',nuserdata='62')
             index=next(i for i,s in enumerate(sensors) if s.tag!='user')
-            for name,dim,weight in [('StandFootPosition',12,.1),('StandFootVelocity',12,.02),('StandSupportForce',4,.05)]:
+            for name,dim,weight in [('StandFootPosition',12,.1),('StandFootVelocity',12,.02),('StandSupportForce',4,0.)]:
                 sensors.insert(index,ET.Element('user',name=name,dim=str(dim),user=f'0 {weight} 0 1'))
                 index+=1
         tree.write(xml_path,encoding='unicode')

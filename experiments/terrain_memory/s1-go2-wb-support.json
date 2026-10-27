@@ -278,7 +278,7 @@
       ]
     },
     "S_realized": {
-      "revision": "S2",
+      "revision": "S3",
       "activation": "Stand entry; same native state preserved; fixed reference throughout each hold",
       "native_solve": "Reachable floor IK then 27-variable native mj_forward equilibrium; current body xy, mission heading, H base height; established foot xy anchored; airborne feet receive feasible floor landing xy",
       "feasibility": {
@@ -313,7 +313,7 @@
         "Effort": {
           "target": "solved PD input q_ref+tau_ref/60",
           "unit": "rad",
-          "scale_rad": 0.1,
+          "scale_rad": 0.02,
           "weight": 0.08,
           "norm": 0
         },
@@ -332,15 +332,15 @@
         "StandSupportForce": {
           "unit": "N",
           "scale_N": 40,
-          "weight": 0.05,
+          "weight": 0,
           "norm": 0,
-          "target": "Each solved native equilibrium vertical foot force; predicted contact force used inside the same MPC"
+          "activation": "disabled after S2 worsened contact and endpoint holding"
         }
       },
-      "weight_basis": "2cm foot position and 5cm/s velocity scales; modest quadratic weights relative to original height and Orientation; original posture/effort weights retained with mutually compatible targets. Fixed before the whole-task attempt; no weight grid. S2 adds load tracking because 40-60s all159 lost-contact samples occur at16/18ms after regular planning, with only micrometre foot lifting; position/velocity tracking alone permits unloading. A full40N load error costs0.025 per foot, with no physical or acceptance changes.",
-      "userdata_layout": "active[0],relative_height[1],base_z[2],quat[3:7],head_xyz[7:10],feet_FL_FR_RL_RR[10:22],q_ref[22:34],u_ref[34:46],tau_ref[46:58],foot_vertical_force[58:62]",
+      "weight_basis": "Restore S1 compatible targets. S1 has97.39% terminal criteria pass but micrometre unloading and feedback target steps0.097-0.177rad in retained0.35s windows. Old0.1rad input scale permits6Nm, about the entire static calf support torque. New0.02rad scale corresponds1.2Nm (~20% of native calf support torque); original Effort weight0.08 retained, quadratic input curvature25x. This is MPC input-reference regularization, with no post-MPC filtering or extra torque; S2 load objective disabled based on its full negative result.",
+      "userdata_layout": "active[0],relative_height[1],base_z[2],quat[3:7],head_xyz[7:10],feet_FL_FR_RL_RR[10:22],q_ref[22:34],u_ref[34:46],tau_ref[46:58],foot_vertical_force[58:62] (recorded; force objective disabled)",
       "reference_timing": "Measured separately per Stand entry; no physical integration in solver; initial20 planning calls retained",
-      "evidence": "S1 original60s task_timeout; terminal allcriteria97.39%, angular99.51%, contact97.88%, longestcontinuous0.938s. No force saturation near Stand. Native solved reference is feasible."
+      "evidence": "S2 task_timeout through60s, longeststable0.034s, terminal contact55.66%, position62.36%, actual target peak step0.493rad in40-60s. Native support references remain feasible."
     },
     "S_previous": [
       {
@@ -399,6 +399,71 @@
         "weight_basis": "2cm foot position and 5cm/s velocity scales; modest quadratic weights relative to original height and Orientation; original posture/effort weights retained with mutually compatible targets. Fixed before the whole-task attempt; no weight grid.",
         "userdata_layout": "active[0],relative_height[1],base_z[2],quat[3:7],head_xyz[7:10],feet_FL_FR_RL_RR[10:22],q_ref[22:34],u_ref[34:46],tau_ref[46:58]",
         "reference_timing": "Measured separately per Stand entry; no physical integration in solver; initial20 planning calls retained"
+      },
+      {
+        "revision": "S2",
+        "activation": "Stand entry; same native state preserved; fixed reference throughout each hold",
+        "native_solve": "Reachable floor IK then 27-variable native mj_forward equilibrium; current body xy, mission heading, H base height; established foot xy anchored; airborne feet receive feasible floor landing xy",
+        "feasibility": {
+          "qacc_norm_max": 0.01,
+          "foot_xy_error_max_m": 1e-05,
+          "each_foot_Fz_min_N": 1.0,
+          "friction_ratio_max": 0.5,
+          "pd_identity_error_max_rad": 1e-06
+        },
+        "residuals": {
+          "StandAbsoluteHeight": {
+            "unit": "m",
+            "norm": 6,
+            "scale_m": 0.04,
+            "weight": 1,
+            "target": "solved base height"
+          },
+          "Height": {
+            "target": "solved trunk COM minus average foot center; replaces .27 only in Stand"
+          },
+          "Position": {
+            "target": "solved head world xy at entry base xy"
+          },
+          "Upright": {
+            "target": "solved torso Rzz; original scalar form retained"
+          },
+          "Posture": {
+            "target": "solved joint pose",
+            "weight": 0.02,
+            "scales": "original per-joint posture gains"
+          },
+          "Effort": {
+            "target": "solved PD input q_ref+tau_ref/60",
+            "unit": "rad",
+            "scale_rad": 0.1,
+            "weight": 0.08,
+            "norm": 0
+          },
+          "StandFootPosition": {
+            "unit": "m",
+            "scale_m": 0.02,
+            "weight": 0.1,
+            "norm": 0
+          },
+          "StandFootVelocity": {
+            "unit": "m/s",
+            "scale_m_s": 0.05,
+            "weight": 0.02,
+            "norm": 0
+          },
+          "StandSupportForce": {
+            "unit": "N",
+            "scale_N": 40,
+            "weight": 0.05,
+            "norm": 0,
+            "target": "Each solved native equilibrium vertical foot force; predicted contact force used inside the same MPC"
+          }
+        },
+        "weight_basis": "2cm foot position and 5cm/s velocity scales; modest quadratic weights relative to original height and Orientation; original posture/effort weights retained with mutually compatible targets. Fixed before the whole-task attempt; no weight grid. S2 adds load tracking because 40-60s all159 lost-contact samples occur at16/18ms after regular planning, with only micrometre foot lifting; position/velocity tracking alone permits unloading. A full40N load error costs0.025 per foot, with no physical or acceptance changes.",
+        "userdata_layout": "active[0],relative_height[1],base_z[2],quat[3:7],head_xyz[7:10],feet_FL_FR_RL_RR[10:22],q_ref[22:34],u_ref[34:46],tau_ref[46:58],foot_vertical_force[58:62]",
+        "reference_timing": "Measured separately per Stand entry; no physical integration in solver; initial20 planning calls retained",
+        "evidence": "S1 original60s task_timeout; terminal allcriteria97.39%, angular99.51%, contact97.88%, longestcontinuous0.938s. No force saturation near Stand. Native solved reference is feasible."
       }
     ]
   },

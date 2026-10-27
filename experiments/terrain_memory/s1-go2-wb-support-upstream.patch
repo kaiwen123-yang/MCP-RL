@@ -154,14 +154,15 @@
    residual[counter++] = head[0] - target[0];
    residual[counter++] = head[1] - target[1];
    residual[counter++] =
-@@ -179,13 +189,18 @@
+@@ -179,13 +189,19 @@
  
  
    // ---------- Effort ----------
 -  mju_scl(residual + counter, data->actuator_force, 2e-2, model->nu);
 +  if (support) {
 +    mju_sub(residual + counter, data->ctrl, ref + 34, model->nu);
-+    mju_scl(residual + counter, residual + counter, 10.0, model->nu);
++    mju_scl(residual + counter, residual + counter,
++            1.0 / GetNumberOrDefault(0.1, model, "s1_stand_input_scale"), model->nu);
 +  } else {
 +    mju_scl(residual + counter, data->actuator_force, 2e-2, model->nu);
 +  }
@@ -175,7 +176,7 @@
    if (current_mode_ == kModeFlip) {
      double flip_time = data->time - mode_start_time_;
      if (flip_time < crouch_time_) {
-@@ -256,6 +271,49 @@
+@@ -256,6 +272,50 @@
    }
    counter += 6;
  
@@ -202,8 +203,9 @@
 +    }
 +    // S2: preserve the solved load distribution as a soft MPC objective.
 +    // Micrometre foot lifting is too cheap under position tracking alone.
++    const bool track_load = support && GetNumberOrDefault(0, model, "s1_stand_load_tracking") == 1;
 +    double vertical_load[4] = {0, 0, 0, 0};
-+    if (support) {
++    if (track_load) {
 +      for (int k = 0; k < data->ncon; ++k) {
 +        const mjContact& contact = data->contact[k];
 +        for (int i = 0; i < 4; ++i) {
@@ -220,7 +222,7 @@
 +      }
 +    }
 +    for (int i = 0; i < 4; ++i)
-+      residual[counter++] = support ? (vertical_load[i] - ref[58+i]) / 40.0 : 0;
++      residual[counter++] = track_load ? (vertical_load[i] - ref[58+i]) / 40.0 : 0;
 +  }
  
    // sensor dim sanity check
