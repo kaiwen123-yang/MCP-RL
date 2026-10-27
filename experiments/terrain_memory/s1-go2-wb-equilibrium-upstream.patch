@@ -1,0 +1,91 @@
+diff --git a/mjpc/tasks/quadruped/quadruped.cc b/mjpc/tasks/quadruped/quadruped.cc
+index 7b09c91..4bdf30b 100644
+--- a/mjpc/tasks/quadruped/quadruped.cc
++++ b/mjpc/tasks/quadruped/quadruped.cc
+@@ -48,10 +48,20 @@ void QuadrupedFlat::ResidualFn::Residual(const mjModel* model,
+   double* torso_xmat = data->xmat + 9*torso_body_id_;
+   double* goal_pos = data->mocap_pos + 3*goal_mocap_id_;
+   double* compos = SensorByName(model, data, "torso_subtreecom");
++  const double* s1_stand_equilibrium =
++      GetCustomNumericData(model, "s1_stand_equilibrium");
++  const bool stand_equilibrium =
++      s1_stand_equilibrium && s1_stand_equilibrium[0] == 1.0 &&
++      current_mode_ == kModeQuadruped && GetGait() == kGaitStand;
+ 
+ 
+   // ---------- Upright ----------
+-  if (current_mode_ != kModeFlip) {
++  if (stand_equilibrium) {
++    // Body z-axis minus world z-axis: linear in small roll/pitch errors.
++    residual[counter++] = torso_xmat[2];
++    residual[counter++] = torso_xmat[5];
++    residual[counter++] = torso_xmat[8] - 1;
++  } else if (current_mode_ != kModeFlip) {
+     if (current_mode_ == kModeBiped) {
+       double biped_type = parameters_[biped_type_param_id_];
+       int handstand = ReinterpretAsInt(biped_type) ? -1 : 1;
+@@ -234,6 +244,19 @@ void QuadrupedFlat::ResidualFn::Residual(const mjModel* model,
+   counter +=3;
+ 
+ 
++  // ---------- Stand linear and angular velocity ----------
++  // Go2's leading free joint matches the runner's base velocity quantities.
++  // The scales are the original stopping thresholds: 0.05 m/s and 0.1 rad/s.
++  // These residuals are evaluated at every stage, including the final state.
++  if (stand_equilibrium) {
++    mju_scl(residual + counter, data->qvel, 1.0 / 0.05, 3);
++    mju_scl(residual + counter + 3, data->qvel + 3, 1.0 / 0.1, 3);
++  } else {
++    mju_zero(residual + counter, 6);
++  }
++  counter += 6;
++
++
+   // sensor dim sanity check
+   CheckSensorDim(model, counter);
+ }
+diff --git a/mjpc/tasks/quadruped/task_flat.xml b/mjpc/tasks/quadruped/task_flat.xml
+index 9917b3f..777b5af 100644
+--- a/mjpc/tasks/quadruped/task_flat.xml
++++ b/mjpc/tasks/quadruped/task_flat.xml
+@@ -14,6 +14,9 @@
+     <numeric name="sampling_exploration" data="0.04" />
+     <numeric name="gradient_spline_points" data="5" />
+ 
++    <!-- S1 standing objective: explicitly set to 1 in the experiment model. -->
++    <numeric name="s1_stand_equilibrium" data="0" />
++
+     <!-- residual -->
+     <numeric name="residual_select_Gait" data="0"/>
+     <text name="residual_list_Gait" data="Stand|Walk|Trot|Canter|Gallop"/>
+@@ -33,8 +36,9 @@
+ 
+     <!-- estimator -->
+     <numeric name="estimator" data="0" />
+-    <numeric name="estimator_sensor_start" data="9" />
+-    <numeric name="estimator_number_sensor" data="21" />
++    <numeric name="estimator_sensor_start" data="11" />
++    <!-- 12 joint positions, one trace, and three subtree sensors below. -->
++    <numeric name="estimator_number_sensor" data="16" />
+     <numeric name="estimator_timestep" data="0.005" />
+     <numeric name="batch_configuration_length" data="3" />
+     <numeric name="batch_scale_prior" data="1.0e-3" />
+@@ -138,6 +142,9 @@
+     <user name="Posture" dim="12" user="0 0.02 0.0 0.1" />
+     <user name="Orientation" dim="2" user="0 0 0 .03" />
+     <user name="Angmom" dim="3" user="0 0 0 .03" />
++    <!-- Quadratic costs of base velocities normalized by stopping thresholds. -->
++    <user name="StandLinearVelocity" dim="3" user="0 1 0 1" />
++    <user name="StandAngularVelocity" dim="3" user="0 1 0 1" />
+ 
+     <!-- estimator measurements -->
+     <!-- <framepos name="torso_pos" objtype="site" objname="torso" />
+@@ -170,7 +177,7 @@
+     <!-- residual -->
+     <subtreecom    name="torso_subtreecom" body="trunk"/>
+     <subtreelinvel name="torso_subtreelinvel" body="trunk"/>
+-    <subtreelinvel name="torso_angmom" body="trunk"/>
++    <subtreeangmom name="torso_angmom" body="trunk"/>
+   </sensor>
+ 
+   <keyframe>

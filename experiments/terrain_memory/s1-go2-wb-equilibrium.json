@@ -1,0 +1,512 @@
+{
+  "purpose": "One continuous experimental campaign: stabilize the existing whole-body MPC's stopping objective, diagnose matched-input dynamics, establish original project-physics execution, and complete longer uninterrupted missions before joint PANN/PPO integration.",
+  "run_id": "tm-s1-go2-wb-equilibrium-r7",
+  "stage": "S1_equilibrium_dynamics_and_long_missions",
+  "implementation_status": "planned_not_executed",
+  "reviewed_source_commit": "1aba0630a1dd17794c82e399811926882f18fbe6",
+  "target_entrypoint": "scripts/run_s1_go2_wb_baseline.py",
+  "frozen_reference": {
+    "run_id": "tm-s1-go2-wb-startup-r6",
+    "implementation_commit": "ce3e03255e6e229fd61cac458b514fb6ea162314",
+    "config": "experiments/terrain_memory/s1-go2-wb-startup.json",
+    "index": "results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/index.json",
+    "actual_starts": 1,
+    "route_return_time_s": 35.112,
+    "physical_duration_s": 60,
+    "original_mission_success": false,
+    "interpretation": "The route was traversed without fall or planner fatal, but continuous terminal stability lasted at most 0.25s. Reuse this historical nominal result; do not rerun it to inflate samples.",
+    "preserve": "R1/R2/S0, all historical S1 configurations, source and raw results remain unchanged."
+  },
+  "upstream": {
+    "repository": "https://github.com/johnzhang3/mujoco_mpc",
+    "commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+    "mujoco_commit": "088079eff0450e32b98ee743141780ed68307506",
+    "menagerie_commit": "d82891f8b6c576f9f6a9df308f3a1155ebedbc40",
+    "required_previous_patch": "experiments/terrain_memory/s1-go2-wb-startup-upstream.patch",
+    "new_patch": "experiments/terrain_memory/s1-go2-wb-equilibrium-upstream.patch",
+    "patch_status": "Prepared against the pinned source plus the R6 startup patch; source applicability only, no compilation or simulation in the plan commit.",
+    "new_patch_sha256": "e0a57d4e22fb4f4b1d05acef132d12b3cee22faf6d05c1467498453b77c10e4a"
+  },
+  "execution": {
+    "host": "fy-5080",
+    "transport": "Reuse the existing SSH/tmux execution arrangement authorized and used in R6.",
+    "environment": "work/envs/mjpc-go2",
+    "source": "work/terrain-memory/upstreams/mujoco_mpc-go2",
+    "reuse_installed_dependencies": true,
+    "workers": 6,
+    "required_libmjpc_flags": [
+      "-fno-strict-aliasing"
+    ],
+    "build_tests": false,
+    "new_training_runs": 0,
+    "activate_hardware": false,
+    "control_dt_s": 0.002,
+    "planning_interval_s": 0.02,
+    "prediction_horizon_s": 0.35,
+    "actual_physics_dt_s": {
+      "G0": 0.002,
+      "G1": 0.0002
+    },
+    "synchronous_slow_simulation": true,
+    "preserve": "Official XML transport, explicit affine PD 60/5, home control seed, 20 fixed t=0 planning calls, fixed-plane opt-in, complete gait tables, head-offset mapping and continuous heading.",
+    "runtime": "Record actual binary/source/config/model hashes and returned prediction times. Keep logical and wall time separate; finer prediction is not an NX realtime claim.",
+    "pipeline_change": "The old one-G0 pipeline and hard-coded 8/2/3 limits must follow this campaign configuration. Continue through the prescribed stages and evidence-based development; do not close after one failure or request a new round for each small correction."
+  },
+  "startup": {
+    "policy_seed": "home keyframe ctrl after restoring home data; preserve nullptr behavior without home.",
+    "seed_both_init_and_reset": true,
+    "ground_height_numeric": "s1_flat_ground_height",
+    "ground_height_enable_condition": "Adapter confirms the actual floor is a world-static horizontal plane; write its world height as one scalar.",
+    "G0_ground_height_m": -0.01,
+    "G1_ground_height_m": "Read the actual project floor; do not assume zero.",
+    "global_Ground_unchanged": true,
+    "time_s": 0,
+    "planner_steps": 20,
+    "replaces_original_time_zero_planner_step": true,
+    "additional_time_zero_planner_step": false,
+    "advance_plant_during_startup": false,
+    "reset_agent_between_startup_iterations": false,
+    "state_and_goal": "Hold the actual initial qpos/qvel/time, complete Stand settings and initial mission goal fixed.",
+    "retain": [
+      "home ctrl and pre-optimization nominal seed action",
+      "each of the 20 best trajectories: states, actions, times and iteration number",
+      "each initial action and the final feedback action before the first physical step",
+      "all initialization errors and subsequent physical failures"
+    ],
+    "horizon_cost": "get_total_cost() is a current-state cost, not the optimized horizon return; never label it horizon convergence.",
+    "success_meaning": "Initialization completion is not standing or mission success."
+  },
+  "task": {
+    "initial_xy_m": [
+      0,
+      0
+    ],
+    "nominal_initial_yaw_rad": 0,
+    "initial_stand_s": 2,
+    "turnaround_xy_m": [
+      3,
+      0
+    ],
+    "turn_angle_rad": 3.141592653589793,
+    "return_xy_m": [
+      0,
+      0
+    ],
+    "command_speed_m_s": 0.25,
+    "turn_yaw_rate_rad_s": 0.5,
+    "extra_turnaround_hold_s": 0,
+    "terminal_stand_s": 2,
+    "maximum_episode_s": 60,
+    "goal_position_radius_m": 0.15,
+    "turn_heading_tolerance_rad": 0.15,
+    "terminal_speed_max_m_s": 0.05,
+    "task_mode": "Quadruped",
+    "gait_switch": "Manual",
+    "native_head_offset_in_trunk_m": [
+      0.3,
+      0,
+      0
+    ],
+    "orientation_cost_weight": 0.03,
+    "stand_settings": {
+      "Gait": "Stand",
+      "Duty ratio": 1,
+      "Cadence": 1,
+      "Amplitude": 0,
+      "Balance": 0,
+      "Upright": 1,
+      "Height": 1
+    },
+    "move_and_turn_settings": {
+      "Gait": "Trot",
+      "Duty ratio": 0.45,
+      "Cadence": 2,
+      "Amplitude": 0.03,
+      "Balance": 0.2,
+      "Upright": 1,
+      "Height": 1
+    }
+  },
+  "stationary_objective": {
+    "numeric_switch": "s1_stand_equilibrium",
+    "active_mode": "Quadruped",
+    "active_gait": "Stand",
+    "upright_residual": "[R02,R12,R22-1], the trunk z-axis minus the world z-axis; keep yaw Orientation separate.",
+    "linear_velocity_residual": "freejoint qvel[0:3] / 0.05 m/s",
+    "angular_velocity_residual": "freejoint qvel[3:6] / 0.1 rad/s",
+    "cost_names": [
+      "StandLinearVelocity",
+      "StandAngularVelocity"
+    ],
+    "cost_weights": {
+      "StandLinearVelocity": 1,
+      "StandAngularVelocity": 1
+    },
+    "norm": "quadratic; transparent first engineering setting normalized by the original terminal tolerances, not a learned or proven-optimal weight",
+    "horizon_scope": "Every predicted state including the final cost. No learned terminal critic or new optimizer.",
+    "other_modes": "When the switch is off or mode/gait is not Quadruped/Stand, retain the old Upright behavior and set the new velocity residuals to zero.",
+    "original_Angmom": "Correct the source sensor type to subtreeangmom, keep its weight zero, and do not confuse whole-body angular momentum with base angular velocity.",
+    "runner_mapping": "Pass new cost names to set_cost_weights, not set_task_parameters; copy the added user sensors into G1 and retain their ordering.",
+    "calibration_rule": "Do not grid-search gains/costs. A further change must explain the observed velocity, attitude, force, or solver behavior and be recorded before the next full development mission.",
+    "velocity_coordinates": "freejoint qvel[0:3] is world-frame linear velocity; qvel[3:6] is body-frame angular velocity, not Euler-angle rates. The isotropic norms match the original terminal checks.",
+    "upright_norm": "Retain the existing smooth norm 6 and its parameter; only the Upright residual vector changes. The new velocity terms alone use quadratic norm 0."
+  },
+  "prediction_settings": {
+    "R6": {
+      "agent_timestep_s": 0.01,
+      "agent_integrator": "Euler",
+      "agent_differentiable": 1
+    },
+    "N": {
+      "agent_timestep_s": 0.001,
+      "agent_integrator": "implicitfast",
+      "agent_differentiable": 0
+    },
+    "rationale": "Default refsafe makes positive solref time constant >=2*dt. G1's original .002s is clamped to .02s by .01s prediction. The .001s candidate retains .002s without changing the actual floor. Turning off MakeDifferentiable retains native prediction contact rather than changing d0=.99 to zero.",
+    "limits": "Retain refsafety and the actual plant. Read the realized horizon: 512 knots cap .0002s prediction to about .1022s; do not silently truncate a claimed .35s horizon.",
+    "warning": "implicitfast handles actuator velocity-dependent forces but not constraint forces implicitly. Native-contact finite differences may be harder; neither setting is guaranteed to solve the mission.",
+    "xml_numeric_mapping": {
+      "prediction_horizon_s": "agent_horizon",
+      "agent_timestep_s": "agent_timestep",
+      "Euler": 0,
+      "implicitfast": 3,
+      "agent_differentiable": "0 or 1",
+      "stationary_objective": "s1_stand_equilibrium"
+    }
+  },
+  "matched_input_replay": {
+    "source": "Reuse saved R6 plan_states/plan_actions/plan_times on the execution host; do not redownload an archive to the user's PC.",
+    "selection": "Every 25th saved planning origin with a complete horizon, plus the first available planning origin after each phase transition.",
+    "input": "The saved plan's applied joint targets, zero-order held over its original .01s intervals, identically for every replica. No new feedback or replanning in any replica.",
+    "initial_state": "Same saved plan_states[0], time and model-specific auxiliary state. Initialize missing warmstart consistently and disclose missing recorded state; no bitwise-fidelity claim.",
+    "variants": [
+      {
+        "id": "author",
+        "integrator": "Euler",
+        "dt_s": 0.01,
+        "contact_d0": "author MakeDifferentiable zero"
+      },
+      {
+        "id": "native_coarse",
+        "integrator": "Euler",
+        "dt_s": 0.01,
+        "contact_d0": "native"
+      },
+      {
+        "id": "native_fine_euler",
+        "integrator": "Euler",
+        "dt_s": 0.001,
+        "contact_d0": "native"
+      },
+      {
+        "id": "native_fine_implicitfast",
+        "integrator": "implicitfast",
+        "dt_s": 0.001,
+        "contact_d0": "native"
+      }
+    ],
+    "reference": "A replica of the actual plant model/contact/integrator at its original physical dt, driven by that same saved plan input. This is a counterfactual same-input reference, not the historical re-planned future.",
+    "metrics": "Position/orientation, linear/angular velocity, torque and contact response at common times; separate d0, dt and integrator effects.",
+    "real_input_caution": "If also replaying the actual 500Hz targets, preserve their 2ms update schedule on both sides. Do not downsample or interpolate one side and call the difference a pure dynamics error.",
+    "continuation": "This is diagnosis using existing full-task evidence. It is not a standalone deliverable or smoke-test gate; proceed to complete missions in this same campaign. Repeat on the first G1 full-mission record before freezing its configuration."
+  },
+  "controllers": {
+    "G0_author_native": {
+      "actual_mass_kg_from_source": 15.806408,
+      "physics_dt_s": 0.002,
+      "physical_model": "Retain the author mass, inertia, passive joints, native collisions and contacts.",
+      "actuator_force_limits": "Retain author unbounded force; do not claim project torque-limit coverage.",
+      "PD": {
+        "kp": 60,
+        "kd": 5
+      }
+    },
+    "G1_project_limits": {
+      "actual_mass_kg": 15.206408,
+      "model_reference": "Original on-host Go2 MJCF/assets and results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json.",
+      "preserve_physics": [
+        "mass/inertia",
+        "joint names and physical joint ranges",
+        "passive damping/armature/friction parameters",
+        "actuator gear relationship and original torque limits",
+        "collision geometry and foot geometry",
+        "initial qpos/qvel except the nine declared physical yaw or base-velocity conditions",
+        "original native rigid floor and contact solref/solimp/margin"
+      ],
+      "permitted_model_adaptation": "Nonphysical task sites/sensors/name maps and explicit joint-target PD only.",
+      "physics_dt_s": 0.0002,
+      "control_dt_s": 0.002,
+      "mpc_dt_s": 0.02,
+      "original_native_contact": {
+        "solref": [
+          0.002,
+          1
+        ],
+        "solimp": [
+          0.99,
+          0.999,
+          0.001,
+          0.5,
+          2
+        ],
+        "margin_m": 0
+      },
+      "PD": {
+        "kp": 60,
+        "kd": 5
+      },
+      "joint_target_limits": "Original per-joint physical position ranges, mapped by name.",
+      "original_torque_limit_pattern_Nm": [
+        23.7,
+        23.7,
+        45.43
+      ],
+      "actuator_mapping": "Identical gear, target bounds and original force/torque limits in predictor and plant; no unmatched post-planning clipping.",
+      "no_materials": true
+    }
+  },
+  "development": {
+    "maximum_new_full_mission_starts_G0_and_G1_combined": 8,
+    "G0_named_arms": [
+      {
+        "id": "O",
+        "stationary_objective": 1,
+        "prediction": "R6",
+        "purpose": "Isolate the stopping objective changes."
+      },
+      {
+        "id": "N",
+        "stationary_objective": 0,
+        "prediction": "N",
+        "purpose": "Isolate the declared numerical/contact prediction change."
+      },
+      {
+        "id": "ON",
+        "stationary_objective": 1,
+        "prediction": "N",
+        "purpose": "Evaluate the combined controller."
+      }
+    ],
+    "G0_reference": "Reuse the frozen R6 O=0,N=0 nominal record. New arms execute the original complete task, not isolated stand clips.",
+    "G0_to_G1": "A new G0 original mission success establishes author-model feasibility; the N-only arm need not pass. Select with explicit velocity/holding/compute evidence, not a lucky final frame.",
+    "G1_start": "Prefer ON when it has passed the original G0 mission. If ON failed but another arm passed, use the observed full-mission and matched-input evidence to make a justified revision or enter G1 with the successful arm; do not mechanically transfer a known failed setting. Preserve the project's physical model and original torque limits. G1 native-contact/refsafe differences still require explicit analysis and treatment. Handle justified prediction changes inside the combined development budget; never silently soften the plant.",
+    "allowed_changes": "Evidence-based stationary cost, state/actuator/constraint semantics, and native prediction numerical settings. Each physical attempt is a complete mission and is retained.",
+    "forbidden_changes": "Relaxing task thresholds, hiding failed starts, changing G1 mass/contact/torque limits to get success, blind grids, controller/platform replacement or new RL training."
+  },
+  "single_mission_protocol": {
+    "original_deadline_s": 60,
+    "terminal_conditions": {
+      "all_feet_contact": true,
+      "origin_radius_m": 0.15,
+      "base_linear_speed_norm_max_m_s": 0.05,
+      "base_angular_speed_norm_max_rad_s": 0.1,
+      "roll_pitch_abs_max_rad": 0.15,
+      "continuous_s": 2
+    },
+    "keep_original_transition_rules": true,
+    "observe_until_s": 60,
+    "completion_and_hold": "Record the first original mission-completion time separately. If it completes early, retain the same physical state and Stand controller through t=60 for sustained-hold observation. Later instability remains in the hold outcome and cannot be omitted.",
+    "formal_conditions": [
+      {
+        "id": "nominal",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "yaw_plus5",
+        "initial_yaw_offset_deg": 5,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "yaw_minus5",
+        "initial_yaw_offset_deg": -5,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "vx_plus005",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0.05,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "vx_minus005",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          -0.05,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "vy_plus005",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0.05,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "vy_minus005",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          -0.05,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "wz_plus01",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          0.1
+        ]
+      },
+      {
+        "id": "wz_minus01",
+        "initial_yaw_offset_deg": 0,
+        "initial_base_linear_velocity_m_s": [
+          0,
+          0,
+          0
+        ],
+        "initial_base_angular_velocity_rad_s": [
+          0,
+          0,
+          -0.1
+        ]
+      }
+    ],
+    "deterministic_scope": "Nine specified physical initial conditions, not nine stochastic optimizer seeds or independent material samples.",
+    "formal_freeze": "One source/binary/controller configuration per formal cohort; reuse identical development nominal once and retain every failure."
+  },
+  "long_mission_protocol": {
+    "conditions": [
+      "nominal",
+      "yaw_plus5",
+      "yaw_minus5"
+    ],
+    "duration_s": 300,
+    "full_round_trips": 5,
+    "endpoints_m": [
+      [
+        0,
+        0
+      ],
+      [
+        3,
+        0
+      ]
+    ],
+    "command_speed_m_s": 0.25,
+    "turn_rate_rad_s": 0.5,
+    "route_completion_deadline_s": 270,
+    "minimum_final_hold_s": 30,
+    "stop_at_each_endpoint": "Use the original position/velocity/angular-velocity/roll-pitch/contact tolerances with 2s continuous stability. Heading target is the current travel heading during the stop; then turn continuously for the next leg.",
+    "continuous_state": "No reset of qpos/qvel, control policy, contact state, or initialization between legs/laps. The home endpoint must explicitly turn back toward +x before another outbound leg; do not loop a yaw=0 Mission after returning at yaw~pi.",
+    "success": "Five actual round trips completed by t=270 without original physical failure; remain at the endpoint through t=300 and meet the original continuous 2s stable condition at the end. Report all intervening 30s hold statistics and interruptions, even when the run passes.",
+    "counting": "Each 300s trace is one episode; its ten arrivals are correlated events, not ten independent trials."
+  },
+  "campaign_budget": {
+    "max_development_starts": 8,
+    "max_formal_single_missions_per_cohort": 9,
+    "max_long_missions_per_cohort": 3,
+    "max_evidence_based_formal_revisions": 1,
+    "max_new_physical_starts": 32,
+    "counting": "8 development + 12 frozen evaluation + at most one justified revised 12-condition evaluation. Exact reuse reduces actual starts. All early failures, missing records and superseded attempts count. Caps are not quotas.",
+    "revision": "Complete the specified cohort, or interrupt only for a demonstrated shared implementation defect that makes further identical failures uninformative. One evidence-based revision may be made, then rerun all nine original-task and three long-task conditions under the new common frozen version. Preserve both cohorts.",
+    "stop": "Finish when the specified campaign scope is complete, or report an actual unresolved prerequisite/runtime failure or budget exhaustion. Caps are not quotas. Do not treat absence of a spelling/interface bug after the first control failure as a reason to close the campaign."
+  },
+  "joint_baseline_exit": {
+    "minimum_supported_domain": "A successful G1 nominal original mission plus successful G1 nominal uninterrupted 300s mission permits freezing a limited-domain MPC execution basis for PANN + standard PPO integration.",
+    "full_coverage": "9/9 original missions and 3/3 long missions establish only the prescribed deterministic coverage.",
+    "partial_coverage": "Publish the exact successful domain and every failure. Additional edge-condition perfection and novelty proof are not prerequisites for beginning the next joint baseline on the supported domain.",
+    "scope": "This campaign adds no PANN/PPO training or hardware execution and does not prove terrain-memory innovation. Return to the joint baseline after obtaining usable execution evidence rather than scheduling another generic MPC cleanup round.",
+    "learning_order": "After this campaign, freeze existing PANN parameters, train standard PPO in the same Actor-to-MPC-to-robot loop, and freeze the Actor for evaluation. No PPO has been trained in this R7 plan and no training starts in this campaign."
+  },
+  "outputs": {
+    "root": "results/terrain_memory/simulation/tm-s1-go2-wb-equilibrium-r7",
+    "required": [
+      "one run index with code/config/model/binary and all actual attempts",
+      "one compact same-input dynamics comparison, separate from best-vs-replanned-future discrepancy",
+      "full original-task outcomes and first completion times plus post-completion hold",
+      "all nine physical initial conditions and all three long outcomes, including skipped stages with concrete reasons",
+      "continuous 500Hz state/target/torque/actual foot-force data and complete success/failure videos",
+      "best predicted tail velocities, physical force/velocity behavior, same-input errors and actual horizon span",
+      "per-arrival stopping times, uninterrupted stability intervals, lap counts and drift",
+      "real planning/feedback/physics timing and deadline misses; startup counted separately"
+    ],
+    "publication": "Commit source/config/compact evidence. Upload only new large arrays and full videos directly from the execution host to GitHub Release, verify size/digest, and end."
+  },
+  "delivery": {
+    "local_pc_archive": false,
+    "no_post_publication_download_copy_mirror_or_compression": true
+  },
+  "forbidden": [
+    "defensive programming or generic silent fallback frameworks",
+    "new unit/mock/smoke/import/shape tests or unrelated regression matrices",
+    "audit/status/continuation reports",
+    "automatically stopping after a single local correction",
+    "changing original task success/failure definitions to relabel R6",
+    "altering G1 physical limits or claiming G0 is G1",
+    "treating long-trace arrivals as independent samples",
+    "new neural training, hardware activation or user-PC archiving"
+  ]
+}
