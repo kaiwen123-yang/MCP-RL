@@ -34,6 +34,7 @@ def arguments(name,cap,condition='nominal',purpose='development',mission='single
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--attempt',required=True);p.add_argument('--cap',type=float,default=.25)
+    p.add_argument('--profile',default='constant',choices=['constant','switch_2s','switch_05s','sinusoid_4s'])
     p.add_argument('--condition',default='nominal');p.add_argument('--purpose',default='development')
     p.add_argument('--mission',default='single');p.add_argument('--render',action='store_true')
     a=p.parse_args();c,contract=configuration()
@@ -42,7 +43,7 @@ def main():
     if a.render:
         render(args,c)
         return
-    joint=JointMaterial(ROOT,contract,a.cap)
+    joint=JointMaterial(ROOT,contract,a.cap,a.profile)
     run(args,c,joint)
 
 if __name__=='__main__':main()

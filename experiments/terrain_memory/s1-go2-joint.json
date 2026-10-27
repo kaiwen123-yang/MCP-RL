@@ -2,7 +2,7 @@
   "purpose": "R9 frozen contract with actual material prerequisite results; material adapter ran, but no PANN observer or PPO training/evaluation was executed.",
   "run_id": "tm-s1-go2-joint-r9",
   "stage": "S1R9",
-  "implementation_status": "material_adapter_executed_training_blocked",
+  "implementation_status": "material_feasibility_in_progress",
   "reviewed_source_commit": "e3abb8268353bb4900d8ec5b11cc63391cd8d897",
   "entrypoint_contract": {
     "extend_existing": "scripts/run_s1_go2_wb_baseline.py",
@@ -240,7 +240,35 @@
   "development": {
     "maximum_nontraining_physical_starts": 8,
     "protocol": "Complete original mission, up to60 s, on actual strip; retain all negatives. Direct interface/physics implementation fixes only; do not spend starts on short stand/smoke tasks.",
-    "before_training": "At least one actual complete material task under an allowed speed intent must demonstrate a usable execution domain. If the genuine contact/domain blocker persists, preserve complete failures and stop that blocked training path without inventing success or changing truth."
+    "before_training": "At least one actual complete material task under an allowed speed intent must demonstrate a usable execution domain. If the genuine contact/domain blocker persists, preserve complete failures and stop that blocked training path without inventing success or changing truth.",
+    "remaining_predeclared_intents": [
+      {
+        "attempt": "dev04-cap020",
+        "cap": 0.2,
+        "profile": "constant"
+      },
+      {
+        "attempt": "dev05-cap0235",
+        "cap": 0.235,
+        "profile": "constant"
+      },
+      {
+        "attempt": "dev06-switch2s",
+        "cap": 0.215,
+        "profile": "switch_2s"
+      },
+      {
+        "attempt": "dev07-switch05s",
+        "cap": 0.215,
+        "profile": "switch_05s"
+      },
+      {
+        "attempt": "dev08-sinusoid4s",
+        "cap": 0.215,
+        "profile": "sinusoid_4s"
+      }
+    ],
+    "remaining_intent_reason": "After 0/3 constant caps, use the remaining five full-mission adaptation starts to cover two intermediate caps and three predeclared 2 Hz sequences, without changing the frozen physics/controller. This tests the permitted time-varying action channel before deciding the prerequisite is blocked."
   },
   "evaluation": {
     "freeze": "Freeze shared plant/controller/observation/reward, exact trained checkpoints and deterministic policy means before formal evaluation; record source/config/weights/binary identities and every start.",

@@ -449,6 +449,8 @@ def run(args, c, joint=None):
                     heading_target=heading, mocap_pos=data.mocap_pos.copy(), mocap_quat=data.mocap_quat.copy(),
                     command_velocity=mission.v.copy(), command_omega=mission.w.copy(), phase=PHASES.index(mission.phase),
                     planner_s=plan_s, feedback_s=feedback_s, sync_s=sync_s))
+                if joint is not None:
+                    hist[-1].update(requested_speed_cap=float(joint.cap),cap_effective=mission.phase in ('outbound','return'))
                 if support:
                     feet_velocity=[]
                     for foot in feet:

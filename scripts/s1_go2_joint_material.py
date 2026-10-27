@@ -6,8 +6,10 @@ import mujoco
 from tm02.s1_contact import Ground
 
 class JointMaterial:
-    def __init__(self,root,contract,cap=.25):
+    def __init__(self,root,contract,cap=.25,profile='constant'):
         self.root,self.contract,self.cap=root,contract,cap
+        self.nominal_cap,self.profile=cap,profile
+        self.cap_decisions=[];self.last_actor_tick=-1
         pars=json.loads((root/'experiments/tm02/r2-multihistory.json').read_text())['reference_material']['parameters']
         self.ground=Ground({'id':'tm02_anchor'},pars)
         self.soft=np.zeros(4,bool);self.force=np.zeros((4,3))
@@ -109,7 +111,18 @@ class JointMaterial:
         if self.physics_steps%5000==0:self.flush()
 
     def control(self,t,mission):
-        mission.task['command_speed_m_s']=self.cap
+        tick=int(np.floor((t+1e-8)/.5))
+        if tick!=self.last_actor_tick:
+            if self.profile=='switch_2s':
+                self.cap=.18 if (tick//4)%2==0 else .25
+            elif self.profile=='switch_05s':
+                self.cap=.18 if tick%2==0 else .25
+            elif self.profile=='sinusoid_4s':
+                self.cap=.215+.035*np.sin(2*np.pi*tick/8)
+            self.cap_decisions.append(dict(time_s=t,tick=tick,requested_cap_m_s=float(self.cap),
+                phase_before_update=mission.phase))
+            self.last_actor_tick=tick
+        mission.task['command_speed_m_s']=float(self.cap)
 
     def flush(self):
         if self.records or self.cells or self.ground.rate_hist:
@@ -129,7 +142,9 @@ class JointMaterial:
         np.savez_compressed(self.out/'material-final.npz',keys=np.asarray(list(g.ids),int),
             e=g.e,q=g.q,stress=g.stress,loaded=g.loaded,ever_loaded=g.ever_loaded,
             last_owner=g.last_owner,last_release=g.last_release)
-        result.update(group=self.group,requested_cap_m_s=self.cap,
+        (self.out/'cap-decisions.json').write_text(json.dumps(self.cap_decisions,indent=2)+'\n')
+        result.update(group=self.group,requested_cap_m_s=self.nominal_cap,cap_profile=self.profile,
+            development_intent='Predeclared allowed cap; no policy or training',
             material=dict(truth='ReferenceColumns',dt_s=.0002,observer_enabled=False,
                 max_abs_principal_strain=g.max_strain,max_stress_original_MPa=g.max_stress,
                 max_residual=g.max_residual,domain_exit=g.domain_exit,rate_extrema=g.rate_extrema,
