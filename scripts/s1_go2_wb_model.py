@@ -183,5 +183,21 @@ def write_equilibrium_settings(xml_path, config, arm):
             element=ET.SubElement(custom,'numeric',name=name)
         element.set('data',format(float(value),'.17g'))
     tree.write(xml_path,encoding='unicode')
-    return dict(arm=arm, prediction_profile=setting['prediction'], numerics=values, cost_weights=setting.get('cost_weights',{}),
+    return dict(arm=arm, prediction_profile=setting['prediction'], numerics=values, cost_weights=setting.get('cost_weights',{}), prediction_smoothing_width_m=setting.get('prediction_smoothing_width_m'),
         refsafe='preserved', plant_options='unchanged', xml_sha256=_digest(xml_path))
+
+
+def build_prediction_model(plant_xml, prediction_xml, smoothing_width):
+    """One declared prediction-only constraint approximation; plant stays intact."""
+    tree=ET.parse(plant_xml)
+    changes={}
+    for name in ['floor','FL','FR','RL','RR']:
+        geom=tree.getroot().find(".//geom[@name='%s']" % name)
+        original=[float(x) for x in geom.get('solimp').split()]
+        modified=list(original);modified[2]=smoothing_width
+        geom.set('solimp',_numbers(modified))
+        changes[name]=dict(plant_solimp=original,predictor_xml_solimp=modified)
+    tree.write(prediction_xml,encoding='unicode')
+    return dict(xml=str(prediction_xml),xml_sha256=_digest(prediction_xml),geometry_changes=changes,
+        runtime_d0='Author MakeDifferentiable still sets joint, geom and explicit-pair d0 to zero during rollout and derivatives.',
+        actual_plant='Unchanged native contact, physics timestep, refsafe, PD and original torque limits.')

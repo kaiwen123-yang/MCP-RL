@@ -8,6 +8,7 @@ import mujoco
 from scipy.spatial.transform import Rotation
 ROOT=Path(__file__).resolve().parents[1]
 CFG=ROOT/'experiments/terrain_memory/s1-go2-wb-equilibrium.json'
+SMOOTH_WIDTH=None
 VARIANTS=[('plant',None,None,False),('author',.01,0,True),
     ('native_coarse',.01,0,False),('native_fine_euler',.001,0,False),
     ('native_fine_implicitfast',.001,3,False)]
@@ -21,6 +22,8 @@ def evaluate(job):
         if dt is not None: m.opt.timestep=dt; m.opt.integrator=integrator
         if smooth:
             m.jnt_solimp[:,0]=0.;m.geom_solimp[:,0]=0.;m.pair_solimp[:,0]=0.
+            if SMOOTH_WIDTH is not None:
+                m.geom_solimp[[m.geom(n).id for n in ['floor','FL','FR','RL','RR']],2]=SMOOTH_WIDTH
         d=mujoco.MjData(m); d.qpos[:]=state[:m.nq];d.qvel[:]=state[m.nq:m.nq+m.nv]
         if m.na:d.act[:]=state[m.nq+m.nv:]
         d.time=origin;d.mocap_pos[:]=mocap_pos;d.mocap_quat[:]=mocap_quat
@@ -54,9 +57,11 @@ def evaluate(job):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--source-run',default='tm-s1-go2-wb-startup-r6')
-    p.add_argument('--attempt',default='g0-01');p.add_argument('--workers',type=int,default=3);p.add_argument('--smooth-fine',action='store_true');args=p.parse_args()
-    global VARIANTS
-    if args.smooth_fine: VARIANTS=[VARIANTS[0],('smooth_fine_implicitfast',.001,3,True)]
+    p.add_argument('--attempt',default='g0-01');p.add_argument('--workers',type=int,default=3);p.add_argument('--smooth-fine',action='store_true');p.add_argument('--smoothing-width',type=float);args=p.parse_args()
+    global VARIANTS,SMOOTH_WIDTH
+    SMOOTH_WIDTH=args.smoothing_width
+    if SMOOTH_WIDTH is not None: VARIANTS=[VARIANTS[0],('measured_width_implicitfast',.001,3,True)]
+    elif args.smooth_fine: VARIANTS=[VARIANTS[0],('smooth_fine_implicitfast',.001,3,True)]
     c=json.loads(CFG.read_text());small=ROOT/c['outputs']['root'];small.mkdir(parents=True,exist_ok=True)
     out=ROOT/'outputs/terrain_memory/simulation'/c['run_id'];out.mkdir(parents=True,exist_ok=True)
     source=ROOT/'outputs/terrain_memory/simulation'/args.source_run/args.attempt
@@ -78,7 +83,7 @@ def main():
     results=[]
     with ProcessPoolExecutor(args.workers) as pool:
         for value in pool.map(evaluate,jobs):results.append(value)
-    name=args.source_run+'-'+args.attempt+('-smooth-fine' if args.smooth_fine else '')+'-matched-input'
+    name=args.source_run+'-'+args.attempt+('-measured-width' if SMOOTH_WIDTH is not None else '-smooth-fine' if args.smooth_fine else '')+'-matched-input'
     header=['origin_s','variant','horizon_s','position_error_m','orientation_error_rad','linear_velocity_error_m_s',
         'angular_velocity_error_rad_s','actuator_force_error_norm_Nm','foot_force_error_norm_N']
     rows=[row for value in results for row in value[2]]
@@ -91,7 +96,7 @@ def main():
         original_plan_dt_s=float(np.median(np.diff(times,axis=1))),
         common_input='Same saved-plan targets sampled at 0.01s and held identically on every replica; no feedback or replanning.',
         reference='Original actual plant under the same counterfactual input, not the historical future.',
-        comparison_endpoint_s=float(jobs[0][3][-1]),
+        comparison_endpoint_s=float(jobs[0][3][-1]),prediction_smoothing_width_m=SMOOTH_WIDTH,
         missing_state='qacc_warmstart and integration auxiliary state not recorded in R6. All replicas consistently reset auxiliary state, then restore saved qpos/qvel/act, clock and mocap. No bitwise history replay claim.',
         max_warning_counts=np.max(np.asarray([v[3] for v in results]),axis=0).tolist(),variants={})
     for variant,*_ in VARIANTS[1:]:

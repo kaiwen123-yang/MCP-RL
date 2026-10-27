@@ -219,6 +219,12 @@ def run(args, c):
         model_meta['controller_settings'] = write_equilibrium_settings(model_path, c, args.arm)
         model = mujoco.MjModel.from_xml_path(str(model_path))
         model_meta['prepared_xml_sha256'] = sha(model_path)
+    prediction_model = model
+    if campaign and model_meta['controller_settings']['prediction_smoothing_width_m'] is not None:
+        from s1_go2_wb_model import build_prediction_model
+        model_meta['prediction_only_model'] = build_prediction_model(model_path, out/'prediction-model.xml',
+            model_meta['controller_settings']['prediction_smoothing_width_m'])
+        prediction_model = mujoco.MjModel.from_xml_path(str(out/'prediction-model.xml'))
     data = mujoco.MjData(model)
     mujoco.mj_resetDataKeyframe(model, data, model.key('home').id)
     initial = next(x for x in c['single_mission_protocol']['formal_conditions'] if x['id']==args.condition) if campaign else None
@@ -291,11 +297,11 @@ def run(args, c):
     reason, error, started = '', None, False
     begin = time.perf_counter()
     phase_settings = None
-    with (out/'agent-server.log').open('w') as server_log, Agent(task_id='Quadruped Flat', model=model,
+    with (out/'agent-server.log').open('w') as server_log, Agent(task_id='Quadruped Flat', model=prediction_model,
             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
             subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT), run_init=False) as agent:
         try:
-            agent.init(task_id='Quadruped Flat', model=model, send_as='xml')
+            agent.init(task_id='Quadruped Flat', model=prediction_model, send_as='xml')
             agent.set_mode('Quadruped')
             agent.set_task_parameters({'Gait switch': 'Manual'})
             for step in range(round(duration/dt)+1):
