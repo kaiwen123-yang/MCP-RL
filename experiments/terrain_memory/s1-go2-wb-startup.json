@@ -2,7 +2,7 @@
   "purpose": "Establish the original full rigid-ground mission with home-seeded author iLQG and an explicit fixed-plane residual.",
   "run_id": "tm-s1-go2-wb-startup-r6",
   "stage": "S1_author_Go2_startup_repair",
-  "implementation_status": "planned_not_executed",
+  "implementation_status": "implemented_and_compiled_pending_full_mission",
   "reviewed_source_commit": "d9c04a9850000916cc2d77ef741f3473c543d130",
   "target_entrypoint": "scripts/run_s1_go2_wb_baseline.py",
   "frozen_previous": {
@@ -24,7 +24,7 @@
     "native_task": "mjpc/tasks/quadruped/task_flat.xml",
     "patch": "experiments/terrain_memory/s1-go2-wb-startup-upstream.patch",
     "patch_sha256": "f67a6ab54b863abd80b91244af8b62ff473eb897ac64708990a9e96e07c9a824",
-    "patch_status": "Source applicability checked only; not compiled or executed."
+    "patch_status": "Applied and agent_server rebuilt successfully on 2026-10-27; physical mission outcomes recorded separately."
   },
   "execution": {
     "host": "fy-5080",
@@ -66,7 +66,15 @@
     "new_neural_training_runs": 0,
     "new_RL_training_runs": 0,
     "activate_hardware": false,
-    "transport": "Direct foreground SSH on the existing host; no tmux."
+    "transport": "SSH to the existing host; run the bounded pipeline in tmux per the latest user instruction on 2026-10-27.",
+    "resource_policy": {
+      "nice": 10,
+      "planner_workers": 6,
+      "BLAS_threads": 1,
+      "build_workers": 6,
+      "GPU": "Only recorded-state video rendering; existing workloads retained."
+    },
+    "agent_server_sha256": "7f290267c078f67a8fd57a9fcb2b7e8098b4c6f61203b31bf9f67aaa049a7c4e"
   },
   "startup": {
     "policy_seed": "home keyframe ctrl after restoring home data; preserve nullptr behavior without home.",

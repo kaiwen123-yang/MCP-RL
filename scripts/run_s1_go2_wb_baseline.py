@@ -142,7 +142,7 @@ def index_file(root, config):
         path = root/'index.json'
         idx = json.loads(path.read_text()) if path.exists() else dict(
             run_id=config['run_id'], status='executing', attempts=[], stages={},
-            budget=config['budget'], historical_reference=config['protocol']['historical_reference'],
+            budget=config['budget'], historical_reference=config.get('frozen_previous', config['protocol'].get('historical_reference')),
             training_runs=0, hardware_runs=0, nx_realtime_measured=False)
         yield idx
         dump(path, idx)
@@ -178,6 +178,7 @@ def run(args, c):
         model = mujoco.MjModel.from_xml_path(str(prepared_xml))
         model_meta['transport'] = 'Official XML Init with absolute on-host mesh directory'
         model_meta['prepared_xml_sha256'] = sha(prepared_xml)
+        model_path = prepared_xml
         base_name, foot_names = 'trunk', LEGS
     else:
         from s1_go2_wb_model import build_project_model
@@ -186,6 +187,13 @@ def run(args, c):
         model = mujoco.MjModel.from_xml_path(str(model_path))
         base_name = model_meta['base_body_name']
         foot_names = model_meta['foot_geom_names']
+    if 'startup' in c:
+        from s1_go2_wb_model import write_flat_ground_height
+        model_meta['flat_ground'] = write_flat_ground_height(model, model_path)
+        if args.stage == 'G0' and not np.isclose(model_meta['flat_ground']['world_height_m'], c['startup']['G0_ground_height_m']):
+            raise ValueError('G0 actual plane height differs from the fixed protocol')
+        model = mujoco.MjModel.from_xml_path(str(model_path))
+        model_meta['prepared_xml_sha256'] = sha(model_path)
     data = mujoco.MjData(model)
     mujoco.mj_resetDataKeyframe(model, data, model.key('home').id)
     yaw = {'nominal': 0., 'yaw_plus5': 5., 'yaw_minus5': -5.}[args.condition]*np.pi/180
@@ -205,7 +213,7 @@ def run(args, c):
     substeps = round(dt/physical_dt)
     if not np.isclose(substeps*physical_dt, dt):
         raise ValueError('Native physics timestep does not divide the specified 500Hz feedback interval')
-    source = {p: sha(ROOT/p) for p in ['scripts/run_s1_go2_wb_baseline.py', 'scripts/s1_go2_wb_model.py', CONFIG] if (ROOT/p).exists()}
+    source = {p: sha(ROOT/p) for p in ['scripts/run_s1_go2_wb_baseline.py', 'scripts/s1_go2_wb_model.py', args.config, *([c['upstream']['patch']] if 'startup' in c else [])] if (ROOT/p).exists()}
     resolved = dict(stage=args.stage, condition=args.condition, source_commit=git(ROOT), source_sha256=source,
         author_commit=(upstream/'SOURCE_COMMIT').read_text().strip(), author_source=str(upstream), model=model_meta,
         model_path=str(model_path), mass_kg=float(model.body_subtreemass[base]),
@@ -234,16 +242,21 @@ def run(args, c):
     dump(small/f'{args.attempt}-resolved.json', resolved)
     mission, hist, physics, plans = Mission(c['task']), [], [], []
     planning_times, feedback_times, sync_times, physics_times = [], [], [], []
+    startup_plans, startup_actions, startup_times = [], [], []
+    startup = dict(home_ctrl=data.ctrl.copy(), state_time_s=float(data.time),
+        initial_qpos=data.qpos.copy(), initial_qvel=data.qvel.copy(), completed_iterations=0,
+        plant_steps_during_initialization=0, reset_calls_during_initialization=0)
+    resolved['startup'] = startup
     reason, error, started = '', None, False
     begin = time.perf_counter()
     phase_settings = None
     with (out/'agent-server.log').open('w') as server_log, Agent(task_id='Quadruped Flat', model=model,
             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
             subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT), run_init=False) as agent:
-        agent.init(task_id='Quadruped Flat', model=model, send_as='xml')
-        agent.set_mode('Quadruped')
-        agent.set_task_parameters({'Gait switch': 'Manual'})
         try:
+            agent.init(task_id='Quadruped Flat', model=model, send_as='xml')
+            agent.set_mode('Quadruped')
+            agent.set_task_parameters({'Gait switch': 'Manual'})
             for step in range(round(c['task']['maximum_episode_s']/dt)+1):
                 t = float(data.time)
                 mujoco.mj_forward(model, data)
@@ -274,7 +287,37 @@ def run(args, c):
                 sync_s = time.perf_counter()-ts
                 sync_times.append(sync_s)
                 plan_s = 0.
-                if step % 10 == 0:
+                if step == 0 and 'startup' in c:
+                    startup['pre_optimization_nominal_action'] = agent.get_action(time=t, nominal_action=True, averaging_duration=0)
+                    startup['body_target'] = body_goal.copy()
+                    startup['heading_target'] = float(heading)
+                    startup['mocap_pos'] = data.mocap_pos.copy()
+                    startup['mocap_quat'] = data.mocap_quat.copy()
+                    dump(small/f'{args.attempt}-resolved.json', resolved)
+                    for iteration in range(1, c['startup']['planner_steps']+1):
+                        tp = time.perf_counter()
+                        agent.planner_step()
+                        elapsed = time.perf_counter()-tp
+                        startup_times.append(elapsed)
+                        plan = agent.best_trajectory()
+                        startup_plans.append(plan)
+                        target = agent.get_action(time=t, nominal_action=False, averaging_duration=0)
+                        startup_actions.append(target)
+                        startup['completed_iterations'] = iteration
+                        np.savez_compressed(out/'startup.npz',
+                            iteration=np.arange(1, iteration+1), time_s=np.zeros(iteration),
+                            home_ctrl=startup['home_ctrl'],
+                            seed_action=startup['pre_optimization_nominal_action'],
+                            states=np.asarray([p['states'] for p in startup_plans]),
+                            actions=np.asarray([p['actions'] for p in startup_plans]),
+                            times=np.asarray([p['times'] for p in startup_plans]),
+                            feedback_target=np.asarray(startup_actions), planner_s=np.asarray(startup_times))
+                        print(json.dumps(dict(attempt=args.attempt, startup_iteration=iteration,
+                            plant_time_s=t, planner_s=elapsed)), flush=True)
+                    plan_s = sum(startup_times)
+                    startup['planning_total_s'] = plan_s
+                    plans.append([t, plan])
+                elif step % 10 == 0:
                     tp = time.perf_counter()
                     agent.planner_step()
                     plan_s = time.perf_counter()-tp
@@ -282,9 +325,12 @@ def run(args, c):
                     plan = agent.best_trajectory()
                     plans.append([t, plan])
                 tf = time.perf_counter()
-                action = agent.get_action(time=t, nominal_action=False)
+                action = agent.get_action(time=t, nominal_action=False, averaging_duration=0)
                 feedback_s = time.perf_counter()-tf
                 feedback_times.append(feedback_s)
+                if step == 0:
+                    startup['actual_first_feedback_action'] = action.copy()
+                    dump(small/f'{args.attempt}-resolved.json', resolved)
                 data.ctrl[:] = action
                 mujoco.mj_forward(model, data)
                 contact, grf, _ = contact_state(model, data, feet, allowed)
@@ -342,6 +388,11 @@ def run(args, c):
             dump(small/f'{args.attempt}-resolved.json', resolved)
     wall = time.perf_counter()-begin
     if not started:
+        with index_file(small, c) as idx:
+            idx.setdefault('initialization_failures', []).append(dict(attempt=args.attempt,
+                stage=args.stage, condition=args.condition, physical_steps=0, error=error,
+                completed_startup_iterations=len(startup_plans), command=sys.argv,
+                source_commit=resolved['source_commit'], execution_fingerprint=fingerprint))
         raise RuntimeError('No plant start: '+str(error))
     arrays = {k: np.asarray([r[k] for r in hist]) for k in hist[0]}
     np.savez_compressed(out/'trajectory.npz', **arrays, physical=np.asarray(physics),
@@ -357,7 +408,9 @@ def run(args, c):
         max_joint_limit_excess_rad=float(np.maximum(np.maximum(model.jnt_range[joint_ids,0]-arrays['qpos'][:,qadr],
             arrays['qpos'][:,qadr]-model.jnt_range[joint_ids,1]),0).max()),
         transitions=mission.transitions, execution_fingerprint=fingerprint, source_commit=git(ROOT),
-        timing=dict(planning=timings(planning_times,.02), feedback=timings(feedback_times,.002),
+        startup=dict(iterations=len(startup_plans), planning_total_s=sum(startup_times),
+            record=f'{args.attempt}-resolved.json', archive=str(out/'startup.npz')),
+        timing=dict(startup_planning=timings(startup_times,.02), planning=timings(planning_times,.02), feedback=timings(feedback_times,.002),
             state_parameter_rpc=timings(sync_times,.002), physics=timings(physics_times,.002)),
         samples_500Hz=len(hist), physical_samples=len(physics),
         trajectory=dict(path=str(out/'trajectory.npz'), size=(out/'trajectory.npz').stat().st_size, sha256=sha(out/'trajectory.npz')),
@@ -431,7 +484,7 @@ def summarize(args,c):
     assets=[]
     for r in results:
         out=ROOT/'outputs/terrain_memory/simulation'/c['run_id']/r['attempt']
-        for name in ['trajectory.npz','complete-mission.mp4','model.mjb','agent-server.log']:
+        for name in ['trajectory.npz','startup.npz','complete-mission.mp4','model.xml','agent-server.log']:
             path=out/name
             if path.exists():
                 assets.append(dict(attempt=r['attempt'],name=r['attempt']+'-'+name,path=str(path),size=path.stat().st_size,sha256=sha(path)))

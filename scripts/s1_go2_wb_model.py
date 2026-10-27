@@ -142,3 +142,26 @@ def build_project_model(author_source, original_robot_dir, original_scene,
         actuator_scope="The same compiled target/PD/force mapping is used by plant and Agent.",
     )
     return output, provenance
+
+
+def write_flat_ground_height(model, xml_path):
+    """Opt in only the actual world-fixed horizontal floor to analytic height."""
+    import mujoco
+    import numpy as np
+    floor = model.geom('floor').id
+    data = mujoco.MjData(model)
+    mujoco.mj_resetDataKeyframe(model, data, model.key('home').id)
+    mujoco.mj_kinematics(model, data)
+    normal = data.geom_xmat[floor].reshape(3, 3)[:, 2]
+    if (model.geom_type[floor] != mujoco.mjtGeom.mjGEOM_PLANE or
+            model.geom_bodyid[floor] != 0 or
+            not np.allclose(normal, [0., 0., 1.], atol=1e-12, rtol=0)):
+        raise ValueError('s1_flat_ground_height requires a world-fixed upward horizontal plane')
+    height = float(data.geom_xpos[floor, 2])
+    tree = ET.parse(xml_path)
+    ET.SubElement(tree.getroot().find('custom'), 'numeric',
+                  name='s1_flat_ground_height', data=format(height, '.17g'))
+    tree.write(xml_path, encoding='unicode')
+    return dict(geom_name='floor', geom_id=int(floor), body_id=0,
+                world_normal=normal.tolist(), world_height_m=height,
+                numeric='s1_flat_ground_height', xml_sha256=_digest(xml_path))
