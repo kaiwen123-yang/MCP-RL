@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Direct execution-host publication of the bounded R9 physical negatives."""
 import argparse,base64,json,os,subprocess,sys,time
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from run_s1_go2_wb_baseline import ROOT,dump,sha
@@ -100,7 +101,10 @@ def main():
     idx['status']='blocked_material_domain_published_verified'
     idx['publication'].update(status='published_verified',release_url=release['html_url'],release_id=release['id'],
         evidence_commit=commit,published_tag_commit=tag_commit,asset_count=len(checks),
-        asset_bytes=sum(x['size'] for x in checks),all_assets_verified=True,assets=checks,
+        asset_bytes=sum(x['size'] for x in checks),max_asset_bytes=max(x['size'] for x in checks),
+        elapsed_after_draft_created_s=time.time()-datetime.fromisoformat(release['created_at'].replace('Z','+00:00')).timestamp(),
+        transfer_timing_scope='Elapsed since draft release creation through final verification; earlier transport diagnosis is outside this interval.',
+        all_assets_verified=True,assets=checks,
         verified_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
         method='Authenticated execution-host uploads; original size/SHA256 compared with final URL/size/digest; no asset downloads.')
     dump(SMALL/'index.json',idx)

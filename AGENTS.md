@@ -8,7 +8,7 @@
 
 当前run **tm-s1-go2-joint-r9** 已在2026-10-28完成全部 **8/8次材料适配启动**：五种固定cap及三条预定2Hz时变序列均在去程触发原材料应变域退出，完整任务 **0/8**。另有1次零物理步初始化失败。状态 **material_adapter_executed_training_blocked**；PANN观察器/联合PPO环境未实现或执行，训练和正式21+3评价为0。S3/材料/阈值未放宽；48h总墙钟预算未耗尽，适配启动预算已耗尽，不刷新额度。[唯一R9索引](results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json)保留全部真实负例、未执行项与发布核验。八条意图不是任意策略不可行的数学证明。
 
-按[主计划第 5.10 节](docs/TERRAIN_MEMORY_PLAN.md)与[新配置](experiments/terrain_memory/s1-go2-joint.json)实现并执行一个连续批次。配置存在不代表代码接线、PPO 训练或材料实验已完成。第 5.11 节规定联合后研究顺序，历史协议不重新授权旧任务。
+本批已按[主计划第5.10节](docs/TERRAIN_MEMORY_PLAN.md)与[配置](experiments/terrain_memory/s1-go2-joint.json)执行至材料适配预算边界。下面保留冻结协议及未执行的训练/评价内容，不新增启动额度。配置存在不代表代码接线、PPO 训练或材料实验已完成。第 5.11 节规定联合后研究顺序，历史协议不重新授权旧任务。
 
 机器人始终是**四足 Go2**。G0/G1 仅为历史作者配置组/项目约束组代号，不是改用人形 G1；最终实机仍为 Go2＋NX。本轮不启用硬件、不声称 NX 实时。
 
