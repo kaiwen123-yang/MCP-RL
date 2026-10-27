@@ -1,0 +1,1099 @@
+{
+  "stage": "G0",
+  "condition": "yaw_minus5",
+  "source_commit": "6e326f1090af15862f1a41de5efeede065164b4c",
+  "source_sha256": {
+    "scripts/run_s1_go2_wb_baseline.py": "57a18c7178106aaf5460f389173aa86b05ac10d049fe57b98958c7116d2e44f0",
+    "scripts/s1_go2_wb_model.py": "3ea771a7950d8838ddda11d4883a9bda4437e1266c3fdc883f8d6f20b42d0291",
+    "scripts/s1_go2_wb_equilibrium.py": "56ce578557138cd1072a1036252a18785eeadca3b9268562c5ed008fe46bcfa0",
+    "experiments/terrain_memory/s1-go2-wb-support.json": "01778aa5646a1af06a2d0182e2e810d1844058c8d6fc04d1d6a8827f9d50ef39",
+    "experiments/terrain_memory/s1-go2-wb-support-upstream.patch": "41891dd3d8fc33222bce3b852a498f04a4ae0fb7901318490221293ee8819811"
+  },
+  "author_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+  "author_source": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2",
+  "model": {
+    "identity": "author_native",
+    "xml_sha256": "8028e1566d961c959f05a0f4c070ad69a19130a91777be9ed2ee4470a32744af",
+    "robot_xml_sha256": "4be66915a1d52afc25e1fdf0359c17421855dbe7b865b57aab4f3c4868b4a34f",
+    "source_actuator_biastype": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "declared_input_repair": "Enable affine bias for the existing gainprm=60 and biasprm=[0,-60,-5]; native physical and unlimited-force settings are retained.",
+    "transport": "Official XML Init with absolute on-host mesh directory",
+    "prepared_xml_sha256": "a71c4507678310f1f514b5c41f3e4433c519a4184f1c736d98765957b789d346",
+    "flat_ground": {
+      "geom_name": "floor",
+      "geom_id": 0,
+      "body_id": 0,
+      "world_normal": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "world_height_m": -0.01,
+      "numeric": "s1_flat_ground_height",
+      "xml_sha256": "27cc63a8521d9543d6fef913b88464c36feb07ce062cde76553aecc3c91038c9"
+    },
+    "controller_settings": {
+      "arm": "AUTHOR_N",
+      "prediction_profile": "AUTHOR_N",
+      "numerics": {
+        "s1_stand_equilibrium": 0,
+        "agent_timestep": 0.001,
+        "agent_integrator": 3,
+        "agent_differentiable": 0,
+        "agent_horizon": 0.35,
+        "s1_control_hold_substeps": 1
+      },
+      "cost_weights": {
+        "Orientation": 0.03,
+        "Angmom": 0.0
+      },
+      "prediction_smoothing_width_m": null,
+      "refsafe": "preserved",
+      "plant_options": "unchanged",
+      "xml_sha256": "a71c4507678310f1f514b5c41f3e4433c519a4184f1c736d98765957b789d346"
+    }
+  },
+  "model_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-support-r8/author-n-long-yaw_minus5-run02/model.xml",
+  "mass_kg": 15.806408000000001,
+  "compiled_mass_including_mocap_kg": 23.044637473870885,
+  "physics_dt_s": 0.002,
+  "logical_feedback_dt_s": 0.002,
+  "logical_planning_dt_s": 0.02,
+  "workers": 2,
+  "synchronous_slow_simulation": true,
+  "initial_qpos": [
+    0.0,
+    0.0,
+    0.27,
+    0.9990482215818578,
+    0.0,
+    0.0,
+    -0.043619387365336,
+    0.0,
+    0.9,
+    -1.8,
+    0.0,
+    0.9,
+    -1.8,
+    0.0,
+    0.9,
+    -1.8,
+    0.0,
+    0.9,
+    -1.8
+  ],
+  "initial_qvel": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "execution_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "process_nice": 10,
+  "joint_names": [
+    "FR_hip_joint",
+    "FR_thigh_joint",
+    "FR_calf_joint",
+    "FL_hip_joint",
+    "FL_thigh_joint",
+    "FL_calf_joint",
+    "RR_hip_joint",
+    "RR_thigh_joint",
+    "RR_calf_joint",
+    "RL_hip_joint",
+    "RL_thigh_joint",
+    "RL_calf_joint"
+  ],
+  "joint_ranges": [
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ]
+  ],
+  "actuator_gear": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "actuator_gainprm": [
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "actuator_biasprm": [
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "actuator_gaintype": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "actuator_biastype": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "actuator_ctrlrange": [
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ]
+  ],
+  "actuator_ctrllimited": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "actuator_forcerange": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "actuator_forcelimited": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "head_offset": [
+    0.3,
+    0.0,
+    0.0
+  ],
+  "model_numerics": {
+    "agent_planner": [
+      2.0
+    ],
+    "agent_horizon": [
+      0.35
+    ],
+    "agent_timestep": [
+      0.001
+    ],
+    "sampling_spline_points": [
+      3.0
+    ],
+    "sampling_trajectories": [
+      60.0
+    ],
+    "sampling_exploration": [
+      0.04
+    ],
+    "gradient_spline_points": [
+      5.0
+    ],
+    "s1_stand_equilibrium": [
+      0.0
+    ],
+    "residual_select_Gait": [
+      0.0
+    ],
+    "residual_select_Gait switch": [
+      1.0
+    ],
+    "residual_Cadence": [
+      2.0,
+      0.0,
+      4.0
+    ],
+    "residual_Amplitude": [
+      0.06,
+      0.0,
+      0.2
+    ],
+    "residual_Duty ratio": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "residual_Walk speed": [
+      0.0,
+      0.0,
+      4.0
+    ],
+    "residual_Walk turn": [
+      0.0,
+      -2.0,
+      2.0
+    ],
+    "residual_select_Flip dir": [
+      0.0
+    ],
+    "residual_select_Biped type": [
+      0.0
+    ],
+    "residual_Heading": [
+      0.0,
+      -3.14,
+      3.14
+    ],
+    "residual_Arm posture": [
+      0.2,
+      0.0,
+      1.0
+    ],
+    "estimator": [
+      0.0
+    ],
+    "estimator_sensor_start": [
+      11.0
+    ],
+    "estimator_number_sensor": [
+      16.0
+    ],
+    "estimator_timestep": [
+      0.005
+    ],
+    "batch_configuration_length": [
+      3.0
+    ],
+    "batch_scale_prior": [
+      0.001
+    ],
+    "s1_flat_ground_height": [
+      -0.01
+    ],
+    "agent_integrator": [
+      3.0
+    ],
+    "agent_differentiable": [
+      0.0
+    ],
+    "s1_control_hold_substeps": [
+      1.0
+    ]
+  },
+  "author_planner_defaults": {
+    "ilqg_num_rollouts": 10,
+    "derivative_skip": 0,
+    "fd_tolerance": 1e-06,
+    "fd_mode": 0,
+    "ilqg_representation": 1,
+    "action_limits": 1,
+    "nominal_feedback_scaling": 1,
+    "max_regularization_iterations": 5,
+    "planner_step_iterations": 1
+  },
+  "author_prediction_approximation": {
+    "arm": "AUTHOR_N",
+    "prediction_profile": "AUTHOR_N",
+    "numerics": {
+      "s1_stand_equilibrium": 0,
+      "agent_timestep": 0.001,
+      "agent_integrator": 3,
+      "agent_differentiable": 0,
+      "agent_horizon": 0.35,
+      "s1_control_hold_substeps": 1
+    },
+    "cost_weights": {
+      "Orientation": 0.03,
+      "Angmom": 0.0
+    },
+    "prediction_smoothing_width_m": null,
+    "refsafe": "preserved",
+    "plant_options": "unchanged",
+    "xml_sha256": "a71c4507678310f1f514b5c41f3e4433c519a4184f1c736d98765957b789d346"
+  },
+  "mujoco_version": "3.2.3",
+  "python": "3.11.16 (main, Sep  2 2026, 23:39:52) [GCC 15.3.0]",
+  "command": [
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/scripts/run_s1_go2_wb_baseline.py",
+    "--config",
+    "experiments/terrain_memory/s1-go2-wb-support.json",
+    "--agent-server",
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/r8-author-agent_server",
+    "--author-source",
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2",
+    "--original-robot-dir",
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/robot_model/go2",
+    "--original-scene",
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/work/envs/pympc/lib/python3.11/site-packages/gym_quadruped/utils/mujoco/assets/scene_flat.xml",
+    "--original-resolved",
+    "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-execution/results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json",
+    "--attempt",
+    "author-n-long-yaw_minus5-run02",
+    "--stage",
+    "G0",
+    "--arm",
+    "AUTHOR_N",
+    "--condition",
+    "yaw_minus5",
+    "--purpose",
+    "formal",
+    "--mission",
+    "long",
+    "--cohort",
+    "author-reference",
+    "--workers",
+    "2"
+  ],
+  "agent_server": {
+    "path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/r8-author-agent_server",
+    "sha256": "1991b74ccf70b5f87e056519f4b6d54598ee0da2171dbf63d78370a8a8d6e9e6",
+    "size": 13941984
+  },
+  "host": "fanyuan-B850M-FORCE-WIFI6E",
+  "model_mjb_sha256": "a18cb8285be8ddc7e1cd076694b8058fc45a7423dff507005767afb8a1165de5",
+  "execution_fingerprint": "546208960cb85be58edfdf80a83f7ce6b3c989cbbd8d917448fdde2bf6902502",
+  "arm": "AUTHOR_N",
+  "mission": "long",
+  "cohort": "author-reference",
+  "prediction_settings": {
+    "arm": "AUTHOR_N",
+    "prediction_profile": "AUTHOR_N",
+    "numerics": {
+      "s1_stand_equilibrium": 0,
+      "agent_timestep": 0.001,
+      "agent_integrator": 3,
+      "agent_differentiable": 0,
+      "agent_horizon": 0.35,
+      "s1_control_hold_substeps": 1
+    },
+    "cost_weights": {
+      "Orientation": 0.03,
+      "Angmom": 0.0
+    },
+    "prediction_smoothing_width_m": null,
+    "refsafe": "preserved",
+    "plant_options": "unchanged",
+    "xml_sha256": "a71c4507678310f1f514b5c41f3e4433c519a4184f1c736d98765957b789d346"
+  },
+  "author_source_sha256": {
+    "mjpc/tasks/quadruped/quadruped.cc": "e26ab2e406c426084f2e05ee9b35f0559ca9359389615980a8f5248fc48e1c5e",
+    "mjpc/tasks/quadruped/task_flat.xml": "8028e1566d961c959f05a0f4c070ad69a19130a91777be9ed2ee4470a32744af",
+    "mjpc/agent.cc": "054a4ab7db5858d798f3e0e55443486bab7095bf31ee9365cf21dbaf04e00e62",
+    "mjpc/trajectory.cc": "dc3fdbd20cad24f0dbb4863a54f7c30f9cfae75f9e694f8dafe378808bc359c9",
+    "mjpc/planners/model_derivatives.cc": "1c4f878a44f6c4d8b6945b2079061d75f7ad9f5a7d09a181c1537b3114865031",
+    "mjpc/planners/ilqg/policy.cc": "b47a0288d4ba3dc7ff813819fc5ccd633d8862e391943d8e86e081687854a670",
+    "mjpc/grpc/agent_service.cc": "93b1e16965938934bbd5cb5dd46100225207537621100ec48f00f86e213761ac"
+  },
+  "binary_source_identity": "Frozen R7 executable, SHA256 recorded above; current upstream C files are not compiled into this retained executable.",
+  "frozen_binary_source_sha256": {
+    "mjpc/agent.cc": "3684e9e05e8a9e95f9aed1369fdcdee05ed3730a96caf997445e315cb067d51f",
+    "mjpc/trajectory.cc": "62ad4cf6907bb2cf5aca21d4794321fd44398ffb25022d04359ca768a22ff347",
+    "mjpc/planners/model_derivatives.cc": "fc6c3c412c4eb94663344e845b0aab5f2cbb817f5b90ac3adafb8d3b785b590d"
+  },
+  "startup": {
+    "home_ctrl": [
+      0.0,
+      0.9,
+      -1.8,
+      0.0,
+      0.9,
+      -1.8,
+      0.0,
+      0.9,
+      -1.8,
+      0.0,
+      0.9,
+      -1.8
+    ],
+    "state_time_s": 0.0,
+    "initial_qpos": [
+      0.0,
+      0.0,
+      0.27,
+      0.9990482215818578,
+      0.0,
+      0.0,
+      -0.043619387365336,
+      0.0,
+      0.9,
+      -1.8,
+      0.0,
+      0.9,
+      -1.8,
+      0.0,
+      0.9,
+      -1.8,
+      0.0,
+      0.9,
+      -1.8
+    ],
+    "initial_qvel": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "completed_iterations": 20,
+    "plant_steps_during_initialization": 0,
+    "reset_calls_during_initialization": 0,
+    "pre_optimization_nominal_action": [
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842,
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842,
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842,
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842
+    ],
+    "body_target": [
+      0.0,
+      0.0,
+      0.27
+    ],
+    "heading_target": 0.0,
+    "mocap_pos": [
+      [
+        0.3,
+        0.0,
+        0.27
+      ]
+    ],
+    "mocap_quat": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "planning_total_s": 12.357819364959141,
+    "actual_first_feedback_action": [
+      -0.008664012886583805,
+      0.8898991346359253,
+      -1.5637786388397217,
+      -0.03837764635682106,
+      0.9019019603729248,
+      -1.6859841346740723,
+      0.04112931713461876,
+      0.9301937818527222,
+      -1.613694190979004,
+      0.0257023423910141,
+      0.8818483948707581,
+      -1.6637858152389526
+    ]
+  },
+  "applied_settings": [
+    {
+      "time_s": 0.0,
+      "task_parameters": {
+        "Heading": 0.0,
+        "Cadence": 1.0,
+        "Amplitude": 0.0,
+        "Flip dir": "Back Flip",
+        "Walk turn": 0.0,
+        "Biped type": "Foot Stand",
+        "Duty ratio": 1.0,
+        "Walk speed": 0.0,
+        "Gait": "Stand",
+        "Gait switch": "Manual",
+        "Arm posture": 0.2
+      },
+      "cost_weights": {
+        "Effort": 0.08,
+        "Height": 1.0,
+        "Position": 0.2,
+        "Posture": 0.02,
+        "Upright": 1.0,
+        "Gait": 2.0,
+        "StandLinearVelocity": 1.0,
+        "StandAngularVelocity": 1.0,
+        "Orientation": 0.03,
+        "Angmom": 0.0,
+        "Balance": 0.0
+      }
+    }
+  ]
+}
