@@ -534,9 +534,23 @@ S3 关闭 S2 力跟踪项，保留 S1 相容目标，将 Stand Effort 的尺度�
 
 ### 5.10 第九轮执行计划：同一 S3 上的材料 PANN＋标准 PPO 联合基础
 
-新 run：**`tm-s1-go2-joint-r9`**；本次提交状态 **`planned_not_executed`**。机器可读契约在 [s1-go2-joint.json](../experiments/terrain_memory/s1-go2-joint.json)。实现沿现有 `scripts/run_s1_go2_wb_baseline.py` 和已成功的 S3，新增必要薄适配与一个 campaign launcher；文件里的接口规定不等于已存在对应代码。
+run：**tm-s1-go2-joint-r9**；2026-10-28 实际状态 **material_adapter_executed_training_blocked**。机器可读契约在 [s1-go2-joint.json](../experiments/terrain_memory/s1-go2-joint.json)。实现沿现有 `scripts/run_s1_go2_wb_baseline.py` 和已成功的 S3，新增必要薄适配与一个 campaign launcher；文件里的接口规定不等于已存在对应代码。
 
 本轮要交付：**真实材料上的完整 Go2 任务、真正经过同一 MPC 闭环采样的标准 PPO、确实进入 Actor 的冻结 PANN 特征，以及三组同版原任务和连续长任务结果。** 成功跑通、材料信息影响动作、改善任务表现分别评价，不先预定联合版必须胜出。
+
+**本批实际结果：材料完整任务前置条件未通过，联合训练尚未启动。** 已实现真实材料薄适配，并以原S3完成三次完整mission尝试；三条都在去程触发原材料主应变域退出，提前失败轨迹全部保留，不称为60秒观察完成。原native模型SHA256与MPC二进制SHA256均与R8-S3一致。5000Hz记录中软足统一GRF与材料施力相同；未出现本构积分数值失败。未发现可在本轮冻结范围内定向修正的接线错误，未通过改变材料或S3来制造通过。
+
+| 固定允许cap / m·s⁻¹ | 物理终止 / s | 机身x / m | 失败足 | 最后总下陷 / mm | 最大主应变 |
+|---|---:|---:|---|---:|---:|
+| .180 | 7.8440 | .835811 | FR | 1.033173 | .02066346 |
+| .215 | 8.2860 | 1.044376 | FR | 1.137215 | .02274429 |
+| .250 | 8.3372 | 1.241578 | RL | 1.015776 | .02031551 |
+
+下陷边界由当前足底位置/H计算，原上限为1mm对应主应变.02。最后一个越域本构步单独保留，未把越域反力施加到机器人；每条材料边界记录因此比实际物理步多1。原质量、力矩界、PD、2ms保持及S3参考不变。三种固定cap都失败说明本次未建立所需可完成域，不证明任意时变允许意图均不可行。
+
+实际物理启动 **3/8适配额度、3/32非训练额度**，另有1次资源路径初始化失败且物理步为0；PANN观察器/联合PPO环境未实现或执行，训练流/转移/新权重为0，正式21条短任务和3条长任务均未启动。物理累计24.4672s、122336步；三个episode墙钟之和340.4421s，并发峰值为2个环境×2solver workers。整批在前置阻塞处结束，48h预算未耗尽。没有训练曲线，不能用空曲线或原权重替代。
+
+[唯一索引](../results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json)、[逐条结果](../results/terrain_memory/simulation/tm-s1-go2-joint-r9/episodes.csv)、[连续材料图](../results/terrain_memory/simulation/tm-s1-go2-joint-r9/material-boundary.png)和[本批Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-joint-r9)保留实际结果与全部失败视频。以下协议保持冻结，未执行部分不冒充成果。
 
 #### 5.10.1 固定控制链和物理范围
 

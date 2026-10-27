@@ -1,8 +1,8 @@
 {
-  "purpose": "R9 execution contract for the first stable Go2 material-PANN + standard PPO + frozen S3 MPC baseline; this file is a plan, not an implemented controller or completed experiment.",
+  "purpose": "R9 frozen contract with actual material prerequisite results; material adapter ran, but no PANN observer or PPO training/evaluation was executed.",
   "run_id": "tm-s1-go2-joint-r9",
   "stage": "S1R9",
-  "implementation_status": "planned_not_executed",
+  "implementation_status": "material_adapter_executed_training_blocked",
   "reviewed_source_commit": "e3abb8268353bb4900d8ec5b11cc63391cd8d897",
   "entrypoint_contract": {
     "extend_existing": "scripts/run_s1_go2_wb_baseline.py",
@@ -334,5 +334,29 @@
     "unit/mock/smoke/import/shape tests and irrelevant regression matrices",
     "audit/status/continuation reports instead of task results",
     "user-PC archiving after publication"
-  ]
+  ],
+  "actual_execution": {
+    "result_index": "results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json",
+    "execution_source_commit": "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15",
+    "adapter": "scripts/s1_go2_joint_material.py",
+    "runner": "scripts/run_s1_go2_joint.py",
+    "nontraining_physical_starts": 3,
+    "initialization_failures_without_physics": 1,
+    "material_complete_tasks": 0,
+    "training_starts": 0,
+    "training_transitions": 0,
+    "pann_observer_implemented": false,
+    "ppo_joint_environment_implemented": false,
+    "formal_short_starts": 0,
+    "formal_long_starts": 0,
+    "tested_constant_caps_m_s": [
+      0.18,
+      0.215,
+      0.25
+    ],
+    "termination": "All three actual material missions stopped at |principal strain| > .02 during outbound travel; no allowed-intent feasible complete task established.",
+    "budget": "Stopped for unresolved material prerequisite, not cap exhaustion. No change to material, S3, action range, or criteria.",
+    "failed_constitutive_step": "Final attempted current-total-displacement boundary retained at material time t+.0002; out-of-domain force not applied to robot. No strain clipping.",
+    "scope": "Three constant allowed intents are not a proof about all time-varying policies. Joint implementation/training and PANN action/performance claims remain unestablished."
+  }
 }

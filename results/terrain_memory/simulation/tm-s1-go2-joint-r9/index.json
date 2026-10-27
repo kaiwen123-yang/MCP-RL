@@ -1,0 +1,660 @@
+{
+  "run_id": "tm-s1-go2-joint-r9",
+  "status": "blocked_material_domain_publication_pending",
+  "attempts": [
+    {
+      "attempt": "dev01-cap025",
+      "stage": "G1",
+      "purpose": "development",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "single",
+      "cohort": "r9-material-v1",
+      "status": "initialization_failed",
+      "physical_started": false,
+      "command": [
+        "scripts/run_s1_go2_joint.py",
+        "--attempt",
+        "dev01-cap025",
+        "--cap",
+        ".25"
+      ],
+      "started_utc": "2026-10-27T17:16:12Z",
+      "physical_steps": 0,
+      "reason": "gRPC readiness timeout before physical start; R8 launcher uses staged build/mjpc/tasks resources, not source-tree tasks.",
+      "log": "work/r9-dev01.log"
+    },
+    {
+      "attempt": "dev01-cap025-run02",
+      "stage": "G1",
+      "purpose": "development",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "single",
+      "cohort": "r9-material-v1",
+      "status": "completed",
+      "physical_started": true,
+      "command": [
+        "scripts/run_s1_go2_joint.py",
+        "--attempt",
+        "dev01-cap025-run02",
+        "--cap",
+        ".25"
+      ],
+      "started_utc": "2026-10-27T17:17:58Z",
+      "execution_fingerprint": "5e7ecfb68d8c4f1538021db47ea6d71060364899c7177720f733ea1bf67a6d9e",
+      "source_commit": "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15",
+      "success": false,
+      "reason": "material_domain_exit",
+      "simulation_s": 8.337200000007247,
+      "wall_s": 114.32059715897776,
+      "result": "dev01-cap025-run02.json"
+    },
+    {
+      "attempt": "dev03-cap0215",
+      "stage": "G1",
+      "purpose": "development",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "single",
+      "cohort": "r9-material-v1",
+      "status": "completed",
+      "physical_started": true,
+      "command": [
+        "scripts/run_s1_go2_joint.py",
+        "--attempt",
+        "dev03-cap0215",
+        "--cap",
+        ".215"
+      ],
+      "started_utc": "2026-10-27T17:20:40Z",
+      "execution_fingerprint": "5e7ecfb68d8c4f1538021db47ea6d71060364899c7177720f733ea1bf67a6d9e",
+      "source_commit": "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15",
+      "success": false,
+      "reason": "material_domain_exit",
+      "simulation_s": 8.286000000007366,
+      "wall_s": 116.24979152798187,
+      "result": "dev03-cap0215.json"
+    },
+    {
+      "attempt": "dev02-cap018",
+      "stage": "G1",
+      "purpose": "development",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "single",
+      "cohort": "r9-material-v1",
+      "status": "completed",
+      "physical_started": true,
+      "command": [
+        "scripts/run_s1_go2_joint.py",
+        "--attempt",
+        "dev02-cap018",
+        "--cap",
+        ".18"
+      ],
+      "started_utc": "2026-10-27T17:20:40Z",
+      "execution_fingerprint": "5e7ecfb68d8c4f1538021db47ea6d71060364899c7177720f733ea1bf67a6d9e",
+      "source_commit": "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15",
+      "success": false,
+      "reason": "material_domain_exit",
+      "simulation_s": 7.844000000007704,
+      "wall_s": 109.87172989099054,
+      "result": "dev02-cap018.json"
+    }
+  ],
+  "stages": {},
+  "budget": {
+    "max_new_physical_starts": 32,
+    "max_project_development_starts": 8,
+    "wall_clock_hard_cap_h": 48,
+    "reserve_evaluation_h_at_least": 6
+  },
+  "historical_reference": {
+    "run_id": "tm-s1-go2-wb-support-r8",
+    "cohort": "project-s3-formal-v1",
+    "configuration": "experiments/terrain_memory/s1-go2-wb-support.json",
+    "result_index": "results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json",
+    "qualification_source_commit": "fb7f924f2d519582a127d15ff2e1e2cb2cd5bc9e",
+    "execution_fingerprint_sha256": "d3177cb85bc13bb1d997d87b5c8ad5e37c87b504d70c7a08ddf32d42463a2842",
+    "binary_sha256": "1a586ca2879b5fed37d58cbadb12e3d2f4afd601dd468fe8f1c8ae0f78a21af3",
+    "current_result": {
+      "original_conditions_passed": 9,
+      "long_300s_passed": 3,
+      "physical_starts": 19,
+      "new_pann_or_ppo_training_runs": 0
+    },
+    "controller": "S3; keep feasible native Stand equilibrium, absolute height/foot/posture/PD-input references, Stand Effort scale .02 rad and weight .08, StandSupportForce weight 0.",
+    "predictor": "Native rigid-floor Go2 dynamics; material PANN affects high-level Actor observations only. No claim that learned material state is optimized inside iLQG.",
+    "preserve": [
+      "project Go2 15.206408 kg and original inertia/passive/geometry",
+      "home/initial qpos and qvel apart from declared yaw condition",
+      "PD kp=60 kd=5 with original target bounds",
+      "23.7/23.7/45.43 Nm per leg",
+      "2 ms held input with two 1 ms internal prediction integrations and consistent derivatives",
+      "175 prediction transitions/176 states over .350 s",
+      "20 initial planning calls without plant advancement",
+      "immediate phase-change replan",
+      "frozen Stand support-reference solver without plant resets",
+      "original movement/turn/gait settings and mission criteria"
+    ]
+  },
+  "training_runs": 0,
+  "hardware_runs": 0,
+  "nx_realtime_measured": false,
+  "campaign_started_unix_s": 1793121483.6428285,
+  "campaign_deadline_unix_s": 1793294283.6428285,
+  "campaign_started_utc": "2026-10-27T17:18:03Z",
+  "actual_nontraining_physical_starts": 3,
+  "nontraining_start_cap": 32,
+  "development_physical_starts": 3,
+  "development_start_cap": 8,
+  "initialization_failures": 1,
+  "training_starts": 0,
+  "training_transitions": 0,
+  "formal_short_starts": 0,
+  "formal_long_starts": 0,
+  "active_attempts": 0,
+  "material_route_completions": 0,
+  "material_route_attempts": 3,
+  "campaign_stopped_unix_s": 1793122066.2504056,
+  "campaign_wall_s": 582.607577085495,
+  "campaign_stop_utc": "2026-10-27T17:27:46Z",
+  "physical_seconds": 24.467200000022316,
+  "physics_steps": 122336,
+  "episode_wall_sum_s": 340.44211857795017,
+  "resource_execution": {
+    "max_simultaneously_integrating_environments": 2,
+    "solver_workers_per_environment": 2,
+    "available_cpu_threads": 8,
+    "gpu": "RTX 5080; no learned workload launched before the material prerequisite passed",
+    "gpu_training_runs": 0,
+    "process_nice": 0
+  },
+  "source_commit": "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15",
+  "assets": [
+    {
+      "name": "dev02-cap018-agent-server.log",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/agent-server.log",
+      "size": 176,
+      "sha256": "55c686d367ff93a97d7afee0c4a523358a075f4a00af80f4eb6499b648ca2f40"
+    },
+    {
+      "name": "dev02-cap018-complete-mission.mp4",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/complete-mission.mp4",
+      "size": 1937050,
+      "sha256": "346b7f20c1078ece4df5ccb97711ad1c501361e5ec97b341b7ad2327d7862ff5"
+    },
+    {
+      "name": "dev02-cap018-material-0000.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-0000.npz",
+      "size": 846246,
+      "sha256": "fb7349fe1d075233e0caa460b60f3678fddd5402a82c053c703d1ada593589d2"
+    },
+    {
+      "name": "dev02-cap018-material-0001.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-0001.npz",
+      "size": 850523,
+      "sha256": "fcc7eb3a585f4f9ec16ad902872f07bf53f6ef87cc6baef636a7dca5a76bd567"
+    },
+    {
+      "name": "dev02-cap018-material-0002.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-0002.npz",
+      "size": 874444,
+      "sha256": "557756bf9f00af669c4385e5e6d636f7a99293b275e7077e38f2a099bf141d45"
+    },
+    {
+      "name": "dev02-cap018-material-0003.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-0003.npz",
+      "size": 915725,
+      "sha256": "a661a07f130435ebffb6ee9cfcafd38c77d7c2d47b96590db645d119ef64eda5"
+    },
+    {
+      "name": "dev02-cap018-material-0004.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-0004.npz",
+      "size": 916574,
+      "sha256": "51e2d9cd1785734d7bec5c5535224a6cf16a46bd6a4b8aac1a3dc2c65b198128"
+    },
+    {
+      "name": "dev02-cap018-material-0005.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-0005.npz",
+      "size": 938136,
+      "sha256": "e5f84aecced3ab784072e2e703030470366f3de3087bfc1353b38e6ed26cee2a"
+    },
+    {
+      "name": "dev02-cap018-material-0006.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-0006.npz",
+      "size": 1130049,
+      "sha256": "5f9208e8e8ba07a16384c13d4cdaa2cfb2e23cd6f038b79da42dc88e558f2cdc"
+    },
+    {
+      "name": "dev02-cap018-material-0007.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-0007.npz",
+      "size": 1392385,
+      "sha256": "12964f60d578653fc5454cce6613170aa87271dd9ff3002db152d9c06767117c"
+    },
+    {
+      "name": "dev02-cap018-material-events.jsonl",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-events.jsonl",
+      "size": 763013,
+      "sha256": "0b198ab5e271f9821a3a1af68631e6f43f6ded47518c7f04c1005ac51dc51131"
+    },
+    {
+      "name": "dev02-cap018-material-failures.jsonl",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-failures.jsonl",
+      "size": 940,
+      "sha256": "675068d120b8a9a56c3911f31135e60803a299c6f29f920e028d1b1527284927"
+    },
+    {
+      "name": "dev02-cap018-material-final.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/material-final.npz",
+      "size": 2252,
+      "sha256": "b3ed33ba245e27757c545f5af2d97c6ff34a7d4f09f40534cd7045e640bf0207"
+    },
+    {
+      "name": "dev02-cap018-model.mjb",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/model.mjb",
+      "size": 43262898,
+      "sha256": "28c915c7f6b5b2bd030b59e321d7fff2245ee20a8429b90a9cb20e8547a5a403"
+    },
+    {
+      "name": "dev02-cap018-physical-000.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/physical-000.npz",
+      "size": 9147039,
+      "sha256": "ddd941d7c4f7d6e02536ba5215a186a97f4b5ba6f116dcf5280e81108dc192bb"
+    },
+    {
+      "name": "dev02-cap018-prediction-000.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/prediction-000.npz",
+      "size": 25450218,
+      "sha256": "46c947bad9fb2c0e846c374406c70daacf30ef3affffefc586fe4465f2b29dc1"
+    },
+    {
+      "name": "dev02-cap018-startup.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/startup.npz",
+      "size": 1182244,
+      "sha256": "eaa12e7e94755f9f9a34fd5edc30bf545840ab635ebabcea70c6b2b10132fe3f"
+    },
+    {
+      "name": "dev02-cap018-trajectory.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/trajectory.npz",
+      "size": 3912374,
+      "sha256": "8a20e4dd4152536d6833d6076465cc72a7bdf3f288644490b5c482cd309d59a2"
+    },
+    {
+      "name": "dev02-cap018-model.xml",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev02-cap018/model/G1-project-go2.xml",
+      "size": 25197,
+      "sha256": "7fa4532ffa88d0a2d323942fe5aefd07079701df1e91e7107b682ed539f0b86d"
+    },
+    {
+      "name": "dev03-cap0215-agent-server.log",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/agent-server.log",
+      "size": 176,
+      "sha256": "de4452ff645fcfe763fb9db4e27be81ba9fd59df9e3a3b2356c380f3b5cf0f90"
+    },
+    {
+      "name": "dev03-cap0215-complete-mission.mp4",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/complete-mission.mp4",
+      "size": 2142610,
+      "sha256": "ad6c8bb5fb11b455f3d09fca65939327bae4d15224b01c138f841dce008fa732"
+    },
+    {
+      "name": "dev03-cap0215-material-0000.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-0000.npz",
+      "size": 843117,
+      "sha256": "6b587f59a379e07b982dda9afdf49475a56339894c6ec53ae2324e6e20be506b"
+    },
+    {
+      "name": "dev03-cap0215-material-0001.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-0001.npz",
+      "size": 851712,
+      "sha256": "2bc183f0f093c77dc1c48c1bac7f5b5a2d5602ed90ee5414000b739f8aea6145"
+    },
+    {
+      "name": "dev03-cap0215-material-0002.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-0002.npz",
+      "size": 875310,
+      "sha256": "a48f1bcf55b62d252abda9746d6e81e3aabad7f46441989672e27cd9ff2185e0"
+    },
+    {
+      "name": "dev03-cap0215-material-0003.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-0003.npz",
+      "size": 917601,
+      "sha256": "1ef93ae2051e431244de91ad451a7acc428515a88400d3e6584a50e654197ac1"
+    },
+    {
+      "name": "dev03-cap0215-material-0004.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-0004.npz",
+      "size": 928634,
+      "sha256": "d69c9259e29130387d17281c0229d31909861867453d368a1189dcab94b9f298"
+    },
+    {
+      "name": "dev03-cap0215-material-0005.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-0005.npz",
+      "size": 913233,
+      "sha256": "c11a017d5f50d965c4dd0a1ec88c4ceca3a044e260a5d9aa5f555c5bd36fca89"
+    },
+    {
+      "name": "dev03-cap0215-material-0006.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-0006.npz",
+      "size": 1561595,
+      "sha256": "f507f46d764e2590c1a1f29f1d650f379407b14fdbddb014299bb84f68e61aa0"
+    },
+    {
+      "name": "dev03-cap0215-material-0007.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-0007.npz",
+      "size": 1658708,
+      "sha256": "f79088b8af1c08fa9f739f8871b0128cb897f26a3f7edf784f8e6a0a95309dec"
+    },
+    {
+      "name": "dev03-cap0215-material-0008.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-0008.npz",
+      "size": 560561,
+      "sha256": "f07b9ac3cba8a7bc1bbcd536ab1215f04aa28576c1bb99f5d1d2d9e22c48f9dd"
+    },
+    {
+      "name": "dev03-cap0215-material-events.jsonl",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-events.jsonl",
+      "size": 1073757,
+      "sha256": "132dc8e5567e7f9492e60f6e70675543c0b8fa7a0f024b434b82cf1ca0cd0e2e"
+    },
+    {
+      "name": "dev03-cap0215-material-failures.jsonl",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-failures.jsonl",
+      "size": 989,
+      "sha256": "5cac80233e74e4fa8bf2c48cc35e8ab5e8f935b23adaed1fe014c5fd92cdd5cb"
+    },
+    {
+      "name": "dev03-cap0215-material-final.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/material-final.npz",
+      "size": 3339,
+      "sha256": "06d2d678da062e24da0f496a07b0352136023249609e5a981721ede74dbdd84f"
+    },
+    {
+      "name": "dev03-cap0215-model.mjb",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/model.mjb",
+      "size": 43262898,
+      "sha256": "28c915c7f6b5b2bd030b59e321d7fff2245ee20a8429b90a9cb20e8547a5a403"
+    },
+    {
+      "name": "dev03-cap0215-physical-000.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/physical-000.npz",
+      "size": 9633331,
+      "sha256": "9ccf5f2f91f17c2dd77db59c3cc33e265859582547cd7aa9714f92da7ac797b2"
+    },
+    {
+      "name": "dev03-cap0215-prediction-000.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/prediction-000.npz",
+      "size": 26897329,
+      "sha256": "8657d1d04e5f6e13cbd186d7226c269217a333c4b7f9aeb83ba8491411b75b4f"
+    },
+    {
+      "name": "dev03-cap0215-startup.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/startup.npz",
+      "size": 1131456,
+      "sha256": "7266650b8f1bfe614c5e60981c50b4a47a09b2ec88a54c7ca524b003b066b0ab"
+    },
+    {
+      "name": "dev03-cap0215-trajectory.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/trajectory.npz",
+      "size": 4135579,
+      "sha256": "3b5671702885a1c01e8ac68e29946ea03de8d8040fb12214414aee85606ea874"
+    },
+    {
+      "name": "dev03-cap0215-model.xml",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev03-cap0215/model/G1-project-go2.xml",
+      "size": 25197,
+      "sha256": "7fa4532ffa88d0a2d323942fe5aefd07079701df1e91e7107b682ed539f0b86d"
+    },
+    {
+      "name": "dev01-cap025-run02-agent-server.log",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/agent-server.log",
+      "size": 176,
+      "sha256": "498fb0f6ffaeae9318f6381fb5d3705121cb9dcaad9130c5c092b1d115577d43"
+    },
+    {
+      "name": "dev01-cap025-run02-complete-mission.mp4",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/complete-mission.mp4",
+      "size": 2267620,
+      "sha256": "5d2826676c5af4f42a8b5519761621b537948b5ee3a2b9195808f1e91792aae9"
+    },
+    {
+      "name": "dev01-cap025-run02-material-0000.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-0000.npz",
+      "size": 842917,
+      "sha256": "f378d2a1fbbe9f652ef30704a294a8b83db150c18d48f45c5a8b109a3f942b05"
+    },
+    {
+      "name": "dev01-cap025-run02-material-0001.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-0001.npz",
+      "size": 851643,
+      "sha256": "718d193899ccf6351f0281bc6b288249bd72d618596717109c4c234aca939bbf"
+    },
+    {
+      "name": "dev01-cap025-run02-material-0002.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-0002.npz",
+      "size": 879028,
+      "sha256": "c68c478b5c727df91256cef24e15cccec8922590bba421af5f5f4a8cadf4cee7"
+    },
+    {
+      "name": "dev01-cap025-run02-material-0003.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-0003.npz",
+      "size": 914670,
+      "sha256": "df64148ced63b5bc1c3dd0d3c749040e06b23a9cc22278f57b403a5ac95e6efe"
+    },
+    {
+      "name": "dev01-cap025-run02-material-0004.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-0004.npz",
+      "size": 921492,
+      "sha256": "e75702202fc31a8af02535c90bb1087d1819b813e87591066eedd0a9b803cf43"
+    },
+    {
+      "name": "dev01-cap025-run02-material-0005.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-0005.npz",
+      "size": 929231,
+      "sha256": "ce6b1edc4cab80d6329e108ab318a870b5b55757c49f09d7022a17daeabd7521"
+    },
+    {
+      "name": "dev01-cap025-run02-material-0006.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-0006.npz",
+      "size": 1064194,
+      "sha256": "36b570520dae6926906cf127d04c11190b818ced99ecc977ffa02c12b637fcac"
+    },
+    {
+      "name": "dev01-cap025-run02-material-0007.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-0007.npz",
+      "size": 1694112,
+      "sha256": "0321ed3f175c2b55bb9b64fc68976a14b4bf5812b57819be0c14d226072823b6"
+    },
+    {
+      "name": "dev01-cap025-run02-material-0008.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-0008.npz",
+      "size": 792903,
+      "sha256": "e6023e68e7bf4d739891dee2d41f941b3514839fbc589209e11a1714ff98055b"
+    },
+    {
+      "name": "dev01-cap025-run02-material-events.jsonl",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-events.jsonl",
+      "size": 809304,
+      "sha256": "d54281bfe11c3282c11419e27bdea5b525e5e39e9074e0e64a4a630c3a09edad"
+    },
+    {
+      "name": "dev01-cap025-run02-material-failures.jsonl",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-failures.jsonl",
+      "size": 974,
+      "sha256": "fef50d78ae05c09bfa0a19de97b2a0f8bdc0fc6f9604b7d02a480a7379f94d66"
+    },
+    {
+      "name": "dev01-cap025-run02-material-final.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/material-final.npz",
+      "size": 4264,
+      "sha256": "04cb10ad7fd7d2e9e00069bef017b476b932e0a74fa4af00c005677f283c717f"
+    },
+    {
+      "name": "dev01-cap025-run02-model.mjb",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/model.mjb",
+      "size": 43262898,
+      "sha256": "28c915c7f6b5b2bd030b59e321d7fff2245ee20a8429b90a9cb20e8547a5a403"
+    },
+    {
+      "name": "dev01-cap025-run02-physical-000.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/physical-000.npz",
+      "size": 9560589,
+      "sha256": "8199b78379ec751396d9e6f3feb2a401fdf472141fc525254905727f0922376d"
+    },
+    {
+      "name": "dev01-cap025-run02-prediction-000.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/prediction-000.npz",
+      "size": 27041943,
+      "sha256": "82ff0018ac1b753a074406e4fc19a5324af8d2830c82dacfd24ca998bc9643ae"
+    },
+    {
+      "name": "dev01-cap025-run02-startup.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/startup.npz",
+      "size": 1131613,
+      "sha256": "f7ff26bf57228e75477c9701f1e5fe680b300a90a66a0dc1c868261022bdad24"
+    },
+    {
+      "name": "dev01-cap025-run02-trajectory.npz",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/trajectory.npz",
+      "size": 4152835,
+      "sha256": "faa0d1db2b6249a10699c788211b3885f4f07e3d2f5fc4d7136052464275c020"
+    },
+    {
+      "name": "dev01-cap025-run02-model.xml",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-joint-r9/dev01-cap025-run02/model/G1-project-go2.xml",
+      "size": 25197,
+      "sha256": "7fa4532ffa88d0a2d323942fe5aefd07079701df1e91e7107b682ed539f0b86d"
+    },
+    {
+      "name": "initialization-dev01-cap025.log",
+      "path": "work/r9-dev01.log",
+      "size": 1362,
+      "sha256": "f1a80523fc249640b516dd9df4210234dd564f54e6c600349ea44052fd9b8f5b"
+    }
+  ],
+  "summary": [
+    {
+      "attempt": "dev02-cap018",
+      "cap_m_s": 0.18,
+      "success": false,
+      "reason": "material_domain_exit",
+      "physics_end_s": 7.844000000007704,
+      "max_body_x_m": 0.8358113462946862,
+      "failed_foot": "FR",
+      "failed_boundary_bottom_mm": -1.033173135284511,
+      "max_abs_principal_strain": 0.020663462705690222,
+      "first_soft_foot_s": 6.474000000004813,
+      "first_material_force_s": 6.624600000005131,
+      "peak_applied_soft_Fz_N": 1155.8566335340377,
+      "rejected_step_soft_Fz_N": 1245.4042785654713,
+      "peak_loaded_downward_speed_m_s": 1.0301397591150974,
+      "max_constitutive_residual": 9.178178078661503e-09,
+      "actual_soft_grf_discrepancy_N": 0.0,
+      "physical_steps": 39220,
+      "material_steps": 39221,
+      "states_500Hz": 3924,
+      "world_cells": 73,
+      "material_events": 1124,
+      "cross_leg_revisits": 0,
+      "wall_s": 109.87172989099054,
+      "material_wall_s": 5.796975423843833,
+      "source_commit": "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15",
+      "model_sha256": "28c915c7f6b5b2bd030b59e321d7fff2245ee20a8429b90a9cb20e8547a5a403",
+      "binary_sha256": "1a586ca2879b5fed37d58cbadb12e3d2f4afd601dd468fe8f1c8ae0f78a21af3"
+    },
+    {
+      "attempt": "dev03-cap0215",
+      "cap_m_s": 0.215,
+      "success": false,
+      "reason": "material_domain_exit",
+      "physics_end_s": 8.286000000007366,
+      "max_body_x_m": 1.0443760771315347,
+      "failed_foot": "FR",
+      "failed_boundary_bottom_mm": -1.1372147419668674,
+      "max_abs_principal_strain": 0.022744294839337348,
+      "first_soft_foot_s": 6.0414000000039,
+      "first_material_force_s": 6.042200000003902,
+      "peak_applied_soft_Fz_N": 1182.8452363493186,
+      "rejected_step_soft_Fz_N": 1376.4811021147189,
+      "peak_loaded_downward_speed_m_s": 1.4296586585453948,
+      "max_constitutive_residual": 9.972109832334652e-09,
+      "actual_soft_grf_discrepancy_N": 0.0,
+      "physical_steps": 41430,
+      "material_steps": 41431,
+      "states_500Hz": 4145,
+      "world_cells": 157,
+      "material_events": 1584,
+      "cross_leg_revisits": 4,
+      "wall_s": 116.24979152798187,
+      "material_wall_s": 8.14967777687707,
+      "source_commit": "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15",
+      "model_sha256": "28c915c7f6b5b2bd030b59e321d7fff2245ee20a8429b90a9cb20e8547a5a403",
+      "binary_sha256": "1a586ca2879b5fed37d58cbadb12e3d2f4afd601dd468fe8f1c8ae0f78a21af3"
+    },
+    {
+      "attempt": "dev01-cap025-run02",
+      "cap_m_s": 0.25,
+      "success": false,
+      "reason": "material_domain_exit",
+      "physics_end_s": 8.337200000007247,
+      "max_body_x_m": 1.2415779222274743,
+      "failed_foot": "RL",
+      "failed_boundary_bottom_mm": -1.015775733651074,
+      "max_abs_principal_strain": 0.02031551467302148,
+      "first_soft_foot_s": 6.481400000004829,
+      "first_material_force_s": 6.625600000005133,
+      "peak_applied_soft_Fz_N": 1192.7186095140437,
+      "rejected_step_soft_Fz_N": 1225.5165799716578,
+      "peak_loaded_downward_speed_m_s": 1.1688417382193068,
+      "max_constitutive_residual": 9.854346616489096e-09,
+      "actual_soft_grf_discrepancy_N": 0.0,
+      "physical_steps": 41686,
+      "material_steps": 41687,
+      "states_500Hz": 4170,
+      "world_cells": 235,
+      "material_events": 1205,
+      "cross_leg_revisits": 0,
+      "wall_s": 114.32059715897776,
+      "material_wall_s": 6.96051459867158,
+      "source_commit": "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15",
+      "model_sha256": "28c915c7f6b5b2bd030b59e321d7fff2245ee20a8429b90a9cb20e8547a5a403",
+      "binary_sha256": "1a586ca2879b5fed37d58cbadb12e3d2f4afd601dd468fe8f1c8ae0f78a21af3"
+    }
+  ],
+  "prerequisite": {
+    "passed": false,
+    "reason": "All three allowed constant caps (.18/.215/.25 m/s) reach the unchanged |principal strain|>.02 limit during actual soft-foot loading, before completing the outbound leg.",
+    "implementation_evidence": "The native pre-attachment model and MPC binary SHA256 exactly match R8 S3; actual soft GRF and applied material-force records agree at every integrated step; parameters and .2 ms truth integration are unchanged; constitutive residuals remain below 1e-8.",
+    "domain_failure_semantics": "The last attempted material boundary is saved with current robot time t and material time t+.0002. Its out-of-domain force is not applied or integrated into the robot. Each run therefore has one more material-boundary sample than physical integration steps.",
+    "permitted_scope": "No evidenced adapter defect remains in these records. Changing the contact law, material domain, S3 gait/controller or physics step is outside the frozen R9 contract. No blind additional starts were used.",
+    "inference_limit": "These three fixed intents do not prove impossibility for every time-varying allowed speed sequence; they did not establish the required feasible domain for PPO."
+  },
+  "unexecuted": {
+    "pann_observer": "Not implemented/executed after the actual material prerequisite failed.",
+    "ppo": "No new policies, optimizer updates, training curves or weights; all six streams unstarted.",
+    "formal": "21 short and 3 gated long evaluations unstarted; no trained matched checkpoint exists.",
+    "reasons": "Physical material prerequisite failed; 48 h and 8-start caps are not exhausted."
+  },
+  "conclusions": {
+    "joint_closed_loop": "not_established",
+    "pann_changes_actions": "not_evaluated",
+    "improves_full_mission": "not_evaluated",
+    "material_history": "Persistent world grid and cross-foot material events recorded until failure; no return traverse reached."
+  },
+  "recording": {
+    "actual_grf_Hz": 5000,
+    "material_boundary_Hz": 5000,
+    "material_cell_state_Hz": 500,
+    "robot_state_control_Hz": 500,
+    "video_count": 3,
+    "videos": "Complete recorded trajectories through real failure, not 60 s successes.",
+    "startup_planning": "20 initial planning calls per physical episode, no plant integration during them.",
+    "units": "Joint mechanical work, when calculated, is not battery energy."
+  },
+  "figure": {
+    "path": "material-boundary.png",
+    "data": "Original high-rate arrays, 2ms peak envelope only for overview panel B; no independent sample inference or confidence intervals."
+  }
+}

@@ -6,7 +6,7 @@
 
 **R8 已完成，不再重开刚地修补。** 审阅基点为 [e3abb826](https://github.com/kaiwen123-yang/MCP-RL/commit/e3abb8268353bb4900d8ec5b11cc63391cd8d897)：同一 S3 完成项目 9/9 原任务和 3/3 连续 300 秒，完成后原判据零超限。19 次物理启动、四条开发负例、作者组及初始化失败均保留。[R8 原始成果](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json)冻结；R1/R2/S0 和旧 S1 的预算、结果与阈值不改。
 
-当前新 run 为 **`tm-s1-go2-joint-r9`**，状态 **`planned_not_executed`**。按[主计划第 5.10 节](docs/TERRAIN_MEMORY_PLAN.md)与[新配置](experiments/terrain_memory/s1-go2-joint.json)实现并执行一个连续批次。配置存在不代表代码接线、PPO 训练或材料实验已完成。第 5.11 节规定联合后研究顺序，历史协议不重新授权旧任务。
+当前 run 为 **tm-s1-go2-joint-r9**。2026-10-28 已执行三条真实材料整程尝试（固定 cap=.18/.215/.25 m/s），均在去程因原材料主应变域退出而失败，可完成域为 **0/3**。物理启动3、零物理步初始化失败1；PANN观察器、PPO训练及正式21+3评价均未执行。状态为 **material_adapter_executed_training_blocked**，不是联合完成。[唯一R9索引](results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json)保存全部负例、未执行项及预算。S3/材料/阈值未放宽；本批因明确前置物理阻塞收尾，未耗尽预算，不据三种固定意图证明所有时变意图不可行。按[主计划第 5.10 节](docs/TERRAIN_MEMORY_PLAN.md)与[新配置](experiments/terrain_memory/s1-go2-joint.json)实现并执行一个连续批次。配置存在不代表代码接线、PPO 训练或材料实验已完成。第 5.11 节规定联合后研究顺序，历史协议不重新授权旧任务。
 
 机器人始终是**四足 Go2**。G0/G1 仅为历史作者配置组/项目约束组代号，不是改用人形 G1；最终实机仍为 Go2＋NX。本轮不启用硬件、不声称 NX 实时。
 
