@@ -60,8 +60,11 @@ def main():
             idx.setdefault('formal_cohorts',{})[args.cohort]=dict(arm=args.arm,reused_attempts=reused,workers=args.workers,
                 execution_fingerprint=qualification[0]['execution_fingerprint'] if reused else None)
         specs=[]
-        for mission,conditions,reuse in [('single',[x['id'] for x in c['single_mission_protocol']['formal_conditions']],args.reuse_single),
-                ('long',c['long_mission_protocol']['conditions'],args.reuse_long)]:
+        # Queue the two remaining long episodes first; short episodes occupy the
+        # third worker slot and then fill the released slots without changing
+        # each episode's controller/worker identity or physical clock.
+        for mission,conditions,reuse in [('long',c['long_mission_protocol']['conditions'],args.reuse_long),
+                ('single',[x['id'] for x in c['single_mission_protocol']['formal_conditions']],args.reuse_single)]:
             for name in conditions:
                 if name=='nominal' and reuse:continue
                 specs.append(dict(attempt=args.cohort+'-'+mission+'-'+name,stage='G1',arm=args.arm,condition=name,
