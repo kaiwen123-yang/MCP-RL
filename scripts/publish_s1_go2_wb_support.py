@@ -98,8 +98,9 @@ def main():
     final={a['name']:a for page in pages for a in page}
     for a in expected:
         b=final[a['name']]
+        expected_url=f"https://github.com/{REPO}/releases/download/{tag}/{a['name']}"
         checks.append(dict(name=b['name'],url=b['browser_download_url'],size=b['size'],digest=b['digest'],
-            verified=b['state']=='uploaded' and b['size']==a['size'] and b['digest']=='sha256:'+a['sha256']))
+            verified=b['state']=='uploaded' and b['size']==a['size'] and b['digest']=='sha256:'+a['sha256'] and b['browser_download_url']==expected_url))
     if not all(a['verified'] for a in checks):raise ValueError('Final published metadata differs')
     with index_file(small,c) as idx:
         idx['status']='completed_published_verified'
@@ -108,6 +109,8 @@ def main():
             all_assets_verified=True,asset_verification=checks,verified_utc=datetime.now(timezone.utc).isoformat(),
             method='Original execution-host files; authenticated direct upload; final URL/size/digest and release tag commit verified without downloading assets.')
         for name,video in idx['videos'].items():video['release_url']=final[name+'-complete-mission.mp4']['browser_download_url']
+        for segments in idx['stream_segments'].values():
+            for segment in segments:segment['release_url']=final[segment['asset_name']]['browser_download_url']
     git('add',str((small/'index.json').relative_to(ROOT)));git('commit','-m','Verify final R8 Release URLs sizes and digests')
     git('push','origin','HEAD:main')
     final_commit=git('rev-parse','HEAD');remote_commit=git('ls-remote','origin','refs/heads/main').split()[0]

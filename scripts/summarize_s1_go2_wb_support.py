@@ -150,6 +150,8 @@ def summary(c):
     table(small/'coverage.csv',coverage)
     with index_file(small,c) as idx:
         idx['formal_coverage']=cohort_outcomes
+        idx['stream_segments']={r['attempt']:[dict(chunk,asset_name=r['attempt']+'-'+Path(chunk['path']).name) for chunk in r['chunks']] for r in results}
+        idx['recording_clock']='Every attempt has one uninterrupted physical clock. Physical and prediction arrays are split by stream every30s; start/end times and sample counts below identify original segments. The complete500Hz control trajectory is also retained as trajectory.npz. Splitting files never resets physical state, policy, contact or references.'
         idx['videos']={v['attempt']:{k:x for k,x in v.items() if k!='attempt'} for v in videos}
         empty_files=[a for a in assets if a['size']==0]
         assets=[a for a in assets if a['size']>0]
