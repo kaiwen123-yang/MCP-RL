@@ -24,7 +24,7 @@ from scipy.spatial.transform import Rotation
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = 'experiments/terrain_memory/s1-go2-wb-baseline.json'
-PHASES = ['initial_stand', 'outbound', 'turn', 'return', 'terminal_stand', 'complete']
+PHASES = ['initial_stand', 'outbound', 'turn', 'return', 'terminal_stand', 'complete', 'far_hold', 'home_hold', 'turn_home']
 LEGS = ['FL', 'FR', 'RL', 'RR']
 
 
@@ -142,7 +142,7 @@ def index_file(root, config):
         path = root/'index.json'
         idx = json.loads(path.read_text()) if path.exists() else dict(
             run_id=config['run_id'], status='executing', attempts=[], stages={},
-            budget=config['budget'], historical_reference=config.get('frozen_previous', config['protocol'].get('historical_reference')),
+            budget=config.get('campaign_budget', config.get('budget')), historical_reference=config.get('frozen_reference', config.get('frozen_previous')),
             training_runs=0, hardware_runs=0, nx_realtime_measured=False)
         yield idx
         dump(path, idx)
@@ -153,6 +153,19 @@ def run(args, c):
     small = ROOT/c['outputs']['root']
     out = ROOT/'outputs/terrain_memory/simulation'/c['run_id']/args.attempt
     out.mkdir(parents=True, exist_ok=False)
+    campaign = 'campaign_budget' in c
+    if campaign:
+        with index_file(small, c) as idx:
+            if len(idx['attempts']) >= c['campaign_budget']['max_new_physical_starts']:
+                raise ValueError('Campaign launch allowance exhausted, including missing records')
+            if args.purpose == 'development' and sum(x['purpose']=='development' for x in idx['attempts']) >= c['campaign_budget']['max_development_starts']:
+                raise ValueError('Combined development allowance exhausted')
+            if args.stage == 'G1' and not any(x.get('success') and x['stage']=='G0' for x in idx['attempts']):
+                raise ValueError('G0 original full-mission prerequisite has not passed')
+            idx['attempts'].append(dict(attempt=args.attempt, stage=args.stage, purpose=args.purpose,
+                condition=args.condition, arm=args.arm, mission=args.mission, cohort=args.cohort,
+                status='initializing', physical_started=False, command=sys.argv,
+                started_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())))
     upstream = Path(args.author_source).resolve()
     if args.stage == 'G0':
         model_path = upstream/'mjpc/tasks/quadruped/task_flat.xml'
@@ -194,9 +207,18 @@ def run(args, c):
             raise ValueError('G0 actual plane height differs from the fixed protocol')
         model = mujoco.MjModel.from_xml_path(str(model_path))
         model_meta['prepared_xml_sha256'] = sha(model_path)
+    if campaign:
+        from s1_go2_wb_model import write_equilibrium_settings
+        model_meta['controller_settings'] = write_equilibrium_settings(model_path, c, args.arm)
+        model = mujoco.MjModel.from_xml_path(str(model_path))
+        model_meta['prepared_xml_sha256'] = sha(model_path)
     data = mujoco.MjData(model)
     mujoco.mj_resetDataKeyframe(model, data, model.key('home').id)
-    yaw = {'nominal': 0., 'yaw_plus5': 5., 'yaw_minus5': -5.}[args.condition]*np.pi/180
+    initial = next(x for x in c['single_mission_protocol']['formal_conditions'] if x['id']==args.condition) if campaign else None
+    yaw = (initial['initial_yaw_offset_deg'] if campaign else {'nominal': 0., 'yaw_plus5': 5., 'yaw_minus5': -5.}[args.condition])*np.pi/180
+    if campaign:
+        data.qvel[:3] = initial['initial_base_linear_velocity_m_s']
+        data.qvel[3:6] = initial['initial_base_angular_velocity_rad_s']
     data.qpos[3:7] = [np.cos(yaw/2), 0., 0., np.sin(yaw/2)]
     mujoco.mj_forward(model, data)
     feet = np.array([model.geom(n).id for n in foot_names])
@@ -213,7 +235,7 @@ def run(args, c):
     substeps = round(dt/physical_dt)
     if not np.isclose(substeps*physical_dt, dt):
         raise ValueError('Native physics timestep does not divide the specified 500Hz feedback interval')
-    source = {p: sha(ROOT/p) for p in ['scripts/run_s1_go2_wb_baseline.py', 'scripts/s1_go2_wb_model.py', args.config, *([c['upstream']['patch']] if 'startup' in c else [])] if (ROOT/p).exists()}
+    source = {p: sha(ROOT/p) for p in ['scripts/run_s1_go2_wb_baseline.py', 'scripts/s1_go2_wb_model.py', 'scripts/s1_go2_wb_equilibrium.py', args.config, *[v for k,v in c['upstream'].items() if 'patch' in k and isinstance(v,str) and v.endswith('.patch')]] if (ROOT/p).exists()}
     resolved = dict(stage=args.stage, condition=args.condition, source_commit=git(ROOT), source_sha256=source,
         author_commit=(upstream/'SOURCE_COMMIT').read_text().strip(), author_source=str(upstream), model=model_meta,
         model_path=str(model_path), mass_kg=float(model.body_subtreemass[base]),
@@ -238,9 +260,20 @@ def run(args, c):
     resolved['model_mjb_sha256'] = sha(out/'model.mjb')
     fingerprint = hashlib.sha256(json.dumps([source, resolved['model_mjb_sha256'],resolved['agent_server']['sha256'],args.workers], sort_keys=True).encode()).hexdigest()
     resolved['execution_fingerprint'] = fingerprint
+    if campaign:
+        resolved.update(arm=args.arm, mission=args.mission, cohort=args.cohort,
+            prediction_settings=model_meta['controller_settings'],
+            author_prediction_approximation=model_meta['controller_settings'],
+            author_source_sha256={name:sha(upstream/name) for name in ['mjpc/tasks/quadruped/quadruped.cc',
+                'mjpc/tasks/quadruped/task_flat.xml','mjpc/agent.cc','mjpc/grpc/agent_service.cc'] if (upstream/name).exists()})
     small.mkdir(parents=True, exist_ok=True)
     dump(small/f'{args.attempt}-resolved.json', resolved)
     mission, hist, physics, plans = Mission(c['task']), [], [], []
+    if campaign and args.mission == 'long':
+        from s1_go2_wb_equilibrium import ContinuousMission
+        mission = ContinuousMission(c['task'], c['long_mission_protocol'])
+    duration = c['long_mission_protocol']['duration_s'] if campaign and args.mission=='long' else c['task']['maximum_episode_s']
+    first_completion = None
     planning_times, feedback_times, sync_times, physics_times = [], [], [], []
     startup_plans, startup_actions, startup_times = [], [], []
     startup = dict(home_ctrl=data.ctrl.copy(), state_time_s=float(data.time),
@@ -257,14 +290,16 @@ def run(args, c):
             agent.init(task_id='Quadruped Flat', model=model, send_as='xml')
             agent.set_mode('Quadruped')
             agent.set_task_parameters({'Gait switch': 'Manual'})
-            for step in range(round(c['task']['maximum_episode_s']/dt)+1):
+            for step in range(round(duration/dt)+1):
                 t = float(data.time)
                 mujoco.mj_forward(model, data)
                 ori = Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz')
                 velocity, omega = data.qvel[:3].copy(), data.qvel[3:6].copy()
                 contact, grf, _ = contact_state(model, data, feet, allowed)
                 body_goal, heading = mission.update(t, dt, data.qpos[:3], velocity, ori, omega, bool(contact.all()))
-                standing = mission.phase in ('initial_stand', 'terminal_stand', 'complete')
+                if mission.phase == 'complete' and first_completion is None:
+                    first_completion = t
+                standing = mission.phase in ('initial_stand', 'terminal_stand', 'complete', 'far_hold', 'home_hold')
                 settings = 'stand_settings' if standing else 'move_and_turn_settings'
                 ts = time.perf_counter()
                 settings_changed = settings != phase_settings
@@ -272,6 +307,8 @@ def run(args, c):
                     table = c['task'][settings]
                     agent.set_task_parameters({k: v for k, v in table.items() if k not in ('Balance','Upright','Height')})
                     agent.set_cost_weights({k: table[k] for k in ('Balance','Upright','Height')} | {'Orientation': c['task']['orientation_cost_weight']})
+                    if campaign:
+                        agent.set_cost_weights(c['stationary_objective']['cost_weights'] | {'Angmom': 0.})
                     phase_settings = settings
                 agent.set_task_parameter('Heading', float(heading))
                 rotation = Rotation.from_euler('z', heading).as_matrix()
@@ -340,23 +377,21 @@ def run(args, c):
                     heading_target=heading, mocap_pos=data.mocap_pos.copy(), mocap_quat=data.mocap_quat.copy(),
                     command_velocity=mission.v.copy(), command_omega=mission.w.copy(), phase=PHASES.index(mission.phase),
                     planner_s=plan_s, feedback_s=feedback_s, sync_s=sync_s))
-                if mission.phase == 'complete' or step >= round(c['task']['maximum_episode_s']/dt):
-                    reason = 'completed' if mission.phase == 'complete' else 'task_timeout'
+                if (not campaign and mission.phase == 'complete') or step >= round(duration/dt):
+                    reason = 'completed' if first_completion is not None else 'task_timeout'
                     break
                 if not started:
                     with index_file(small, c) as idx:
-                        if any(x['attempt'] == args.attempt for x in idx['attempts']):
-                            raise ValueError('Attempt already exists; retain and reuse its actual record')
-                        if len(idx['attempts']) >= 8:
-                            raise ValueError('Eight-start hard budget exhausted')
-                        stage_starts = sum(x['stage'] == args.stage and x['purpose'] == args.purpose for x in idx['attempts'])
-                        if stage_starts >= (2 if args.stage == 'G0' else 3):
-                            raise ValueError('Stage allowance exhausted')
-                        if args.stage == 'G1' and not any(x.get('success') and x['stage']=='G0' for x in idx['attempts']):
-                            raise ValueError('G0 complete-mission gate has not passed')
-                        idx['attempts'].append(dict(attempt=args.attempt, stage=args.stage, purpose=args.purpose,
-                            condition=args.condition, status='running', execution_fingerprint=fingerprint,
-                            command=sys.argv, source_commit=resolved['source_commit'], started_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())))
+                        if campaign:
+                            row=next(x for x in idx['attempts'] if x['attempt']==args.attempt)
+                            row.update(status='running', physical_started=True,
+                                execution_fingerprint=fingerprint, source_commit=resolved['source_commit'])
+                        else:
+                            if len(idx['attempts']) >= 8:
+                                raise ValueError('Historical eight-start allowance exhausted')
+                            idx['attempts'].append(dict(attempt=args.attempt, stage=args.stage, purpose=args.purpose,
+                                condition=args.condition, status='running', execution_fingerprint=fingerprint,
+                                command=sys.argv, source_commit=resolved['source_commit']))
                     started = True
                 tp = time.perf_counter()
                 for _ in range(substeps):
@@ -399,7 +434,13 @@ def run(args, c):
         plan_origin=np.asarray([x[0] for x in plans]), plan_states=np.asarray([x[1]['states'] for x in plans]),
         plan_actions=np.asarray([x[1]['actions'] for x in plans]), plan_times=np.asarray([x[1]['times'] for x in plans]))
     result = dict(attempt=args.attempt, stage=args.stage, purpose=args.purpose, condition=args.condition,
-        status='completed', success=reason=='completed', reason=reason, error=error,
+        status='completed', success=(first_completion is not None if args.mission=='single' else
+            first_completion is not None and first_completion <= c['long_mission_protocol']['route_completion_deadline_s'] and
+            reason=='completed' and mission.final_stable_s >= c['task']['terminal_stand_s']), reason=reason, error=error,
+        original_mission_success=(first_completion is not None) if args.mission=='single' else None,
+        first_completion_s=first_completion, mission=args.mission, arm=args.arm, cohort=args.cohort,
+        arrivals=getattr(mission,'arrivals',[]), completed_round_trips=getattr(mission,'laps',int(first_completion is not None)),
+        final_stable_s=getattr(mission,'final_stable_s',None),
         simulation_s=float(data.time), wall_s=wall, final_qpos=data.qpos.copy(), final_qvel=data.qvel.copy(),
         final_origin_distance_m=float(np.linalg.norm(data.qpos[:2])),
         final_heading_error_rad=float(abs(angle(np.pi-Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz')[2]))),
@@ -417,6 +458,14 @@ def run(args, c):
         physical_columns=['force_evaluation_time_s','post_integration_time_s']+[f'torque_{i}' for i in range(12)]+[f'actuator_force_{i}' for i in range(12)]+[f'contact_{l}' for l in LEGS]+[f'grf_{l}_{a}' for l in LEGS for a in 'xyz'],
         physical_time_note='MuJoCo mj_step forces/contact correspond to the integration evaluation, preceding its returned qpos. Force evaluation and post-integration clocks are both stored.',
         terminal_row_note='Failure terminal qpos/qvel are appended; held command and last diagnostic values retain their preceding control timestamp.')
+    if campaign:
+        from s1_go2_wb_equilibrium import hold_metrics
+        result['hold'] = hold_metrics(arrays, first_completion, duration, args.mission)
+        result['realized_prediction'] = dict(nodes=int(arrays['plan_times'].shape[1]),
+            span_min_s=float(np.diff(arrays['plan_times'][:,[0,-1]],axis=1).min()),
+            span_max_s=float(np.diff(arrays['plan_times'][:,[0,-1]],axis=1).max()),
+            timestep_s=float(np.median(np.diff(arrays['plan_times'],axis=1))),
+            planning_origins=len(plans))
     dump(small/f'{args.attempt}.json',result)
     with index_file(small,c) as idx:
         row=next(x for x in idx['attempts'] if x['attempt']==args.attempt)
@@ -546,7 +595,10 @@ def main():
     p.add_argument('--config',default=CONFIG)
     p.add_argument('--stage',choices=['G0','G1'],default='G0')
     p.add_argument('--purpose',choices=['development','formal'],default='development')
-    p.add_argument('--condition',choices=['nominal','yaw_plus5','yaw_minus5'],default='nominal')
+    p.add_argument('--condition',default='nominal')
+    p.add_argument('--arm',default='ON')
+    p.add_argument('--mission',choices=['single','long'],default='single')
+    p.add_argument('--cohort',default='development-v1')
     p.add_argument('--attempt',required=True)
     p.add_argument('--workers',type=int,default=5)
     p.add_argument('--author-source',default=str(ROOT/'work/terrain-memory/upstreams/mujoco_mpc-go2'))
@@ -558,6 +610,8 @@ def main():
     p.add_argument('--summarize',action='store_true')
     p.add_argument('--pipeline',action='store_true')
     args=p.parse_args(); c=json.loads((ROOT/args.config).read_text())
+    if args.pipeline and 'campaign_budget' in c:
+        raise ValueError('R7 uses the prescribed arm/cohort campaign commands, not the historical R5/R6 pipeline')
     (pipeline if args.pipeline else summarize if args.summarize else render if args.render else run)(args,c)
 
 

@@ -133,12 +133,12 @@ def build_project_model(author_source, original_robot_dir, original_scene,
         added_nonphysical_sites={"head": [0.3, 0., 0.], "task_goal": "mocap goal"},
         actuator_mapping=actuator_map,
         initial_qpos=resolved["initial_qpos"], initial_qvel=[0.] * 18,
-        initial_velocity_rule="Zero velocities required by the fixed three-condition protocol.",
+        initial_velocity_rule="The runner applies the declared physical initial-condition velocities after home initialization.",
         physical_timestep_s=.0002,
         native_rigid_contact=dict(solref=resolved["native_contact_solref"],
                                   solimp=resolved["native_contact_solimp"], margin=0.,
                                   ground_and_feet_friction=[.5, .005, 0.]),
-        integration_scope="The author planner retains its 0.01 s prediction timestep.",
+        integration_scope="The runner writes the selected prediction numerics before Agent initialization; plant timestep remains 0.0002 s.",
         actuator_scope="The same compiled target/PD/force mapping is used by plant and Agent.",
     )
     return output, provenance
@@ -165,3 +165,23 @@ def write_flat_ground_height(model, xml_path):
     return dict(geom_name='floor', geom_id=int(floor), body_id=0,
                 world_normal=normal.tolist(), world_height_m=height,
                 numeric='s1_flat_ground_height', xml_sha256=_digest(xml_path))
+
+
+def write_equilibrium_settings(xml_path, config, arm):
+    """Wire declared controller settings into the XML actually loaded by Agent."""
+    setting = next(x for x in config['development']['G0_named_arms'] if x['id']==arm)
+    prediction = config['prediction_settings'][setting['prediction']]
+    values = dict(s1_stand_equilibrium=setting['stationary_objective'],
+        agent_timestep=prediction['agent_timestep_s'],
+        agent_integrator={'Euler':0,'implicitfast':3}[prediction['agent_integrator']],
+        agent_differentiable=prediction['agent_differentiable'],
+        agent_horizon=config['execution']['prediction_horizon_s'])
+    tree=ET.parse(xml_path); custom=tree.getroot().find('custom')
+    for name,value in values.items():
+        element=custom.find("numeric[@name='%s']" % name)
+        if element is None:
+            element=ET.SubElement(custom,'numeric',name=name)
+        element.set('data',format(float(value),'.17g'))
+    tree.write(xml_path,encoding='unicode')
+    return dict(arm=arm, prediction_profile=setting['prediction'], numerics=values,
+        refsafe='preserved', plant_options='unchanged', xml_sha256=_digest(xml_path))
