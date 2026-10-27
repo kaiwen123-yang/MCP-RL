@@ -183,5 +183,5 @@ def write_equilibrium_settings(xml_path, config, arm):
             element=ET.SubElement(custom,'numeric',name=name)
         element.set('data',format(float(value),'.17g'))
     tree.write(xml_path,encoding='unicode')
-    return dict(arm=arm, prediction_profile=setting['prediction'], numerics=values,
+    return dict(arm=arm, prediction_profile=setting['prediction'], numerics=values, cost_weights=setting.get('cost_weights',{}),
         refsafe='preserved', plant_options='unchanged', xml_sha256=_digest(xml_path))

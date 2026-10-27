@@ -316,7 +316,7 @@ def run(args, c):
                     agent.set_task_parameters({k: v for k, v in table.items() if k not in ('Balance','Upright','Height')})
                     agent.set_cost_weights({k: table[k] for k in ('Balance','Upright','Height')} | {'Orientation': c['task']['orientation_cost_weight']})
                     if campaign:
-                        agent.set_cost_weights(c['stationary_objective']['cost_weights'] | {'Angmom': 0.})
+                        agent.set_cost_weights(c['stationary_objective']['cost_weights'] | {'Angmom': 0.} | model_meta['controller_settings']['cost_weights'])
                     phase_settings = settings
                 agent.set_task_parameter('Heading', float(heading))
                 rotation = Rotation.from_euler('z', heading).as_matrix()
