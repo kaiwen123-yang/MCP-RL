@@ -4,29 +4,32 @@
 
 同一空间地块的材料状态跨腿、跨步、跨返程持续演化；后续支撑需求反过来约束当前踩踏。第一版从具有可测恢复过程的黏弹性材料开始。
 
-## S1第八轮：项目Go2名义完整任务与300秒资格已通过
+## S1第八轮结果：项目Go2指定9＋3覆盖全部通过
 
-**近期目标仍是稳定执行完整任务的PANN/PINN＋标准RL＋MPC联合基础版本。** 本轮 `tm-s1-go2-wb-support-r8` 已建立项目物理约束下的名义MPC执行基础；其余确定性覆盖正在执行，联合PANN/PPO/MPC尚未接入。Go2作者配置组（G0）和Go2项目约束组（G1）始终都是四足Go2，实机目标仍为Go2＋NX。
+**同一冻结S3控制器通过9/9条原任务和3/3条300秒连续任务。** `tm-s1-go2-wb-support-r8` 已完成指定实验范围，形成刚地项目物理约束下的MPC仿真执行基础。PANN/PPO/MPC联合闭环尚未接入；近期仍先形成联合基础，再研究创新。Go2作者配置组（G0）和Go2项目约束组（G1）始终都是四足Go2，实机目标仍为Go2＋NX。
 
-| 已完成内容 | 真实结果 |
+| 实际任务 | 结果与观察范围 |
 |---|---|
-| 作者固定N三条300s | nominal、yaw±5°均通过；五往返完成时间220.686–221.470s，均记录至300s |
-| 项目C、H、S1、S2原任务 | 四条均未满足原连续2s稳定，全部60s负结果保留 |
-| 项目S3名义原任务 | 36.378s完成，继续观察到60s，完成后零判据超限 |
-| 项目S3名义300s | 214.356s完成五次连续往返，继续观察到300s；完成后85.644s及末30s均零判据超限 |
-| 项目S3正式剩余覆盖 | 复用上述两条资格任务一次，另外8条原任务＋2条300s正在执行；未提前宣称全过 |
+| 作者固定N三条300s | nominal、yaw±5°均通过；五往返在220.686–221.470s完成，均观察至300s |
+| 项目开发C / H / S1 / S2 | 四条均观察到60s但未满足原连续2s稳定；最长稳定分别0.136 / 0.192 / 0.938 / 0.034s |
+| 项目S3九条原任务 | nominal、yaw±5°、vx/vy±0.05m/s、wz±0.1rad/s全部通过；36.292–44.136s完成，均观察至60s，完成后零判据超限 |
+| 项目S3三条300s | nominal、yaw+5°、yaw−5°分别214.356、216.564、218.454s完成五次连续往返；均观察至300s，完成后及末30s零判据超限 |
 
-作者三条长任务末30s仍分别存在12、32、5个角速度超限样本（nominal、yaw+5°、yaw−5°），最终连续稳定分别23.480、2.560、5.636s；作者模型不同，结果始终单列。项目名义长任务11次Stand参考均经原生forward平衡核对，最大qacc范数5.98×10⁻⁵，最大足部xy误差1.81×10⁻⁹m。十次到达属于一条连续episode，不作为十个独立样本。
+共**19次新物理启动＝作者3＋项目开发6＋正式新增10**；两条名义资格任务在同版正式覆盖中各复用一次，未重复启动，未动用正式修订。39次上限未用满。另保留7次进入物理积分前的初始化失败，physical_steps均为0。四条完整开发负结果、未收敛的初次参考求解和全部旧轮结果均保留。
 
-C在真实源码中实现2ms控制保持、同一输入下两次1ms积分及一致导数，0.350s为175转移/176状态；H加入可行绝对高度。两者不足后，S在同一MPC内使用固定世界足目标、零足速度和相容机身/关节/支撑输入参考，满足单位gear下 `u*=q*+tau*/60`。S1仍有接触短暂丢失，S2软竖直力目标使结果恶化；S3撤去该目标，按已观察到的反馈目标跳变将输入参考尺度从0.1rad改为0.02rad，保留其余S1设置。新增目标均为软代价，没有新增独立站立控制器或稳定性证明。
+作者三条长任务末30s仍分别存在12、32、5个角速度超限样本，最终连续稳定分别23.480、2.560、5.636s；“任务通过”不代表没有中断，作者模型也不能替代项目物理验证。九个初态是确定性覆盖，不是随机seed统计；一条长任务的十次到达不作为十个独立样本。
 
-项目保留15.206408kg、0.0002s真实物理步、500Hz控制、20ms规划、原接触与23.7/45.43Nm力矩界；作者保留15.806408kg、0.002s物理步及原N二进制。S3资格与正式任务每条2个求解worker，正式最多4条并发、nice 10；全部为共享CPU上的同步慢仿真，**不代表NX实时性**。
+C在真实源码中实现2ms控制保持、同一输入下两次1ms积分及一致导数，0.350s为175转移/176状态；H加入可行绝对高度。两者不足后，S在同一MPC内使用固定世界足目标、零足速度和相容机身/关节/支撑输入参考，满足单位gear下 `u*=q*+tau*/60`。S1仍有接触短暂丢失；S2软竖直力目标使结果恶化；S3撤去该目标，按已观察到的反馈目标跳变将输入参考尺度从0.1rad改为0.02rad，保留其余S1设置。新增目标均为软代价，没有新增独立站立控制器或稳定性证明。
 
-[单一运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json)、[全部任务](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/episodes.csv)、[同版正式覆盖](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/coverage.csv)、[完成后保持](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/holding.csv)、[长任务末30秒](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/last-30s-holding.csv)、[实际耗时](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/timing.csv)记录结果与边界。原始数组和完整成功/失败视频从执行端直接上传现有Release草稿；最终发布与URL/size/digest核验尚在进行。
+项目保留15.206408kg、0.0002s真实物理步、500Hz控制、20ms规划、原接触与23.7/45.43Nm力矩界；作者保留15.806408kg、0.002s物理步及原N二进制。每条任务2个求解worker、nice 10，正式最多4条并发；后处理及EGL/NVENC渲染以nice 15与部分物理任务重叠。全部是共享CPU上的同步慢仿真，**不代表NX实时性**。
 
-本轮不训练PANN/PPO、不接TM02、不启用硬件，NX未测。名义资格允许后续按[主计划第5.10节](docs/TERRAIN_MEMORY_PLAN.md)冻结已有PANN参数、训练标准PPO并评测固定Actor；当前控制修正本身不是三项研究创新。本轮总上限39次物理启动不变，实际计数见索引；没有挪用旧预算。
+[单一运行索引](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json)记录实际源码/配置/二进制、分片全局时钟、预算和最终发布核验。[全部任务](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/episodes.csv)、[同版正式覆盖](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/coverage.csv)、[完成后保持](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/holding.csv)、[长任务末30秒](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/last-30s-holding.csv)、[原生支撑参考](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/support-references.csv)、[控制耗时](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/timing.csv)和[渲染耗时](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/rendering.csv)分别保留。
 
-下方第七轮及更早内容作为历史原文保留；其“本轮/当前”和旧停止规则仅指对应旧run。R8原授权契约与启动词见[主计划第5.9及7节](docs/TERRAIN_MEMORY_PLAN.md)，实际进度以本轮索引为准。
+[名义原任务图](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/figures/project-s3-single-05.png)与[名义300秒图](results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/figures/project-s3-long-06.png)便于浏览；高率数组和全部成功/失败完整视频从执行端直接上传[本轮Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-wb-support-r8)。最终提交、正式URL、size和SHA256核验以索引publication为准；没有在用户电脑再次下载、复制、镜像、压缩或归档。
+
+本轮PANN/PPO训练0、TM02运行0、硬件0，NX未测。后续按[主计划第5.10节](docs/TERRAIN_MEMORY_PLAN.md)冻结已有PANN参数、训练标准PPO并评测固定Actor；当前控制修正本身不是三项研究创新。第八轮指定实验已结束，不自动用满剩余额度。
+
+下方第七轮及更早内容作为历史原文保留；其“本轮/当前”和旧停止规则仅指对应旧run。R8原授权契约与历史启动词见[主计划第5.9及7节](docs/TERRAIN_MEMORY_PLAN.md)。
 
 ## S1第七轮历史结果（已冻结）：G0可完成，G1原任务仍未建立
 
