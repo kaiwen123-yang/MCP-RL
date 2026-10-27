@@ -305,7 +305,7 @@
     "G1_start": "Prefer ON when it has passed the original G0 mission. If ON failed but another arm passed, use the observed full-mission and matched-input evidence to make a justified revision or enter G1 with the successful arm; do not mechanically transfer a known failed setting. Preserve the project's physical model and original torque limits. G1 native-contact/refsafe differences still require explicit analysis and treatment. Handle justified prediction changes inside the combined development budget; never silently soften the plant.",
     "allowed_changes": "Evidence-based stationary cost, state/actuator/constraint semantics, and native prediction numerical settings. Each physical attempt is a complete mission and is retained.",
     "forbidden_changes": "Relaxing task thresholds, hiding failed starts, changing G1 mass/contact/torque limits to get success, blind grids, controller/platform replacement or new RL training.",
-    "G1_selected_arm": "N_SH",
+    "G1_selected_arm": "O_SH",
     "G1_selection_evidence": "G0 O fell after its terminal Stand transition; G0 ON made invalid trunk/world contact at 43.052s; G0 N completed the original task. Preserve the successful N objective and analyze G1 native-contact dynamics explicitly.",
     "G1_revisions": [
       {
@@ -324,6 +324,19 @@
         },
         "purpose": "Retain the successful standing and outward locomotion of N_S; increase the unit heading-vector quadratic weight from .03 to 1 to enforce the original physical turn requirement.",
         "evidence": "G1 N_S completed 60s without a fall but never reached the .15rad turn criterion. During 30-60s its smallest heading error was .248979rad; mean heading cost .001621 was below mean effort cost .002551. Head position was partly satisfied by body lateral displacement. No change to .5rad/s heading reference, transition tolerance, plant or force limits. Unit heading weight matches the declared upright weight; this is a single evidence-based correction, not a parameter sweep."
+      },
+      {
+        "id": "O_SH",
+        "stationary_objective": 1,
+        "prediction": "N_S",
+        "cost_weights": {
+          "Orientation": 1.0,
+          "StandLinearVelocity": 0.022457844127915516,
+          "StandAngularVelocity": 0.022457844127915516
+        },
+        "purpose": "Keep successful route/heading execution while adding the declared Stand upright and velocity residuals at a physically interpretable objective scale.",
+        "evidence": "N_SH returned at 35.85s but longest terminal stability was .16s. During 40-60s foot force mean was 149.049N with no non-foot support; mean best-predicted tail angular speed .5613rad/s, actual mean .1528rad/s. Same-input smooth fine angular discrepancy mean .00898rad/s. The objective permits moving terminal predictions; the original O=1 weights also destabilized both G0 objective arms.",
+        "weight_rule": "w=2*(1-cos(original heading tolerance .15rad))=.022457844127915516. Each normalized base-velocity cost at its original threshold equals Orientation(weight=1) cost at the original heading threshold. No threshold, norm, PD, plant, torque limit or time budget changes."
       }
     ]
   },
