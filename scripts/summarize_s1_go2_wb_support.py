@@ -96,9 +96,9 @@ def summary(c):
         if not path.exists():continue
         r=json.loads(path.read_text());results.append(r)
         out=ROOT/'outputs/terrain_memory/simulation'/c['run_id']/name
-        for file in sorted(out.glob('*.npz'))+list(out.glob('*.mp4'))+[out/'agent-server.log',out/'model.xml' if r['stage']=='G0' else out/'model/G1-project-go2.xml']:
+        for file in sorted(out.glob('*.npz'))+list(out.glob('*.mp4'))+[out/'model.mjb',out/'agent-server.log',out/'model.xml' if r['stage']=='G0' else out/'model/G1-project-go2.xml']:
             assets.append(dict(name=name+'-'+file.name,path=str(file),size=file.stat().st_size,sha256=sha(file)))
-    for file in [ROOT/'work/r8-build.log']:
+    for file in sorted((ROOT/'work').glob('r8-build*.log')):
         assets.append(dict(name=file.name,path=str(file),size=file.stat().st_size,sha256=sha(file)))
     cols=['attempt','stage','purpose','arm','condition','mission','cohort','success','sustained_execution_success','reason','simulation_s','first_completion_s','completed_round_trips','wall_s']
     table(small/'episodes.csv',[{k:r.get(k) for k in cols} for r in results])

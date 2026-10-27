@@ -254,7 +254,7 @@ def run(args, c):
     substeps = round(dt/physical_dt)
     if not np.isclose(substeps*physical_dt, dt):
         raise ValueError('Native physics timestep does not divide the specified 500Hz feedback interval')
-    source = {p: sha(ROOT/p) for p in ['scripts/run_s1_go2_wb_baseline.py', 'scripts/s1_go2_wb_model.py', 'scripts/s1_go2_wb_equilibrium.py', args.config, *[v for k,v in c['upstream'].items() if 'patch' in k and isinstance(v,str) and v.endswith('.patch')]] if (ROOT/p).exists()}
+    source = {p: sha(ROOT/p) for p in ['scripts/run_s1_go2_wb_baseline.py', 'scripts/s1_go2_wb_model.py', 'scripts/s1_go2_wb_equilibrium.py', *(['scripts/s1_go2_support_reference.py'] if args.arm=='S' else []), args.config, *[v for k,v in c['upstream'].items() if 'patch' in k and isinstance(v,str) and v.endswith('.patch')]] if (ROOT/p).exists()}
     resolved = dict(stage=args.stage, condition=args.condition, source_commit=git(ROOT), source_sha256=source,
         author_commit=(upstream/'SOURCE_COMMIT').read_text().strip(), author_source=str(upstream), model=model_meta,
         model_path=str(model_path), mass_kg=float(model.body_subtreemass[base]),
@@ -286,7 +286,7 @@ def run(args, c):
             author_prediction_approximation=model_meta['controller_settings'],
             author_source_sha256={name:sha(upstream/name) for name in ['mjpc/tasks/quadruped/quadruped.cc',
                 'mjpc/tasks/quadruped/task_flat.xml','mjpc/agent.cc','mjpc/trajectory.cc',
-                'mjpc/planners/model_derivatives.cc','mjpc/planners/ilqg/policy.cc','mjpc/grpc/agent_service.cc'] if (upstream/name).exists()})
+                'mjpc/planners/model_derivatives.cc','mjpc/planners/ilqg/planner.cc','mjpc/planners/ilqg/policy.cc','mjpc/grpc/agent_service.cc'] if (upstream/name).exists()})
     small.mkdir(parents=True, exist_ok=True)
     dump(small/f'{args.attempt}-resolved.json', resolved)
     if support and args.arm=='AUTHOR_N':
@@ -361,6 +361,16 @@ def run(args, c):
                     if campaign:
                         agent.set_cost_weights(c['stationary_objective'].get('cost_weights',{}) | {'Angmom': 0.} | model_meta['controller_settings']['cost_weights'])
                     phase_settings = settings
+                if support and args.arm=='S' and standing and settings_changed:
+                    from s1_go2_support_reference import stand_reference,reference_userdata
+                    tr=time.perf_counter()
+                    reference=stand_reference(model,data,heading,c['support_reference']['H_realized']['absolute_base_height_m'])
+                    reference['wall_s']=time.perf_counter()-tr
+                    resolved.setdefault('stand_references',[]).append(reference)
+                    dump(small/f'{args.attempt}-resolved.json',resolved)
+                    if not reference['feasible']:
+                        raise ValueError('Native static support reference infeasible; see retained reference and entry state')
+                    data.userdata[:]=reference_userdata(reference)
                 agent.set_task_parameter('Heading', float(heading))
                 rotation = Rotation.from_euler('z', heading).as_matrix()
                 data.mocap_pos[goal] = body_goal+rotation@offset
@@ -439,6 +449,9 @@ def run(args, c):
                         base_absolute_height=float(data.xpos[base,2]),trunk_com_absolute_height=float(data.xipos[base,2]),
                         relative_height_residual=float(data.xipos[base,2]-data.geom_xpos[feet,2].mean()-.27),
                         feet_velocity=np.asarray(feet_velocity),phase_replan=bool(mission_changed and step>0 and args.stage=='G1'))
+                    if args.arm=='S':
+                        hist[-1].update(support_reference_userdata=data.userdata.copy(),support_active=standing,
+                            active_relative_height_target=float(data.userdata[1]) if standing else .27)
                     if step>0 and step%15000==0:save_streams()
                 if (not campaign and mission.phase == 'complete') or step >= round(duration/dt):
                     reason = 'completed' if first_completion is not None else 'task_timeout'

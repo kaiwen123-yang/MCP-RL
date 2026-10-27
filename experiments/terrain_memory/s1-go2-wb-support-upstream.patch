@@ -114,7 +114,68 @@
    }
 --- a/mjpc/tasks/quadruped/quadruped.cc
 +++ b/mjpc/tasks/quadruped/quadruped.cc
-@@ -256,6 +256,13 @@
+@@ -55,6 +55,11 @@
+       current_mode_ == kModeQuadruped && GetGait() == kGaitStand;
+ 
+ 
++  const double* support_opt = GetCustomNumericData(model, "s1_stand_support");
++  const bool support = support_opt && current_mode_ == kModeQuadruped &&
++                       GetGait() == kGaitStand && data->userdata[0] == 1;
++  const double* ref = data->userdata;
++
+   // ---------- Upright ----------
+   if (stand_equilibrium) {
+     // Body z-axis minus world z-axis: linear in small roll/pitch errors.
+@@ -67,7 +72,9 @@
+       int handstand = ReinterpretAsInt(biped_type) ? -1 : 1;
+       residual[counter++] = torso_xmat[6] - handstand;
+     } else {
+-      residual[counter++] = torso_xmat[8] - 1;
++      double reference_matrix[9];
++      if (support) mju_quat2Mat(reference_matrix, ref + 3);
++      residual[counter++] = torso_xmat[8] - (support ? reference_matrix[8] : 1);
+     }
+     residual[counter++] = 0;
+     residual[counter++] = 0;
+@@ -96,6 +103,8 @@
+     height_goal = kHeightQuadruped;
+   }
+ 
++  if (support) height_goal = ref[1];
++
+   if (current_mode_ == kModeScramble) {
+     // disable height term in Scramble
+     residual[counter++] = 0;
+@@ -121,6 +130,7 @@
+     target[1] = goal_pos[1];
+     target[2] = goal_pos[2];
+   }
++  if (support) mju_copy3(target, ref + 7);
+   residual[counter++] = head[0] - target[0];
+   residual[counter++] = head[1] - target[1];
+   residual[counter++] =
+@@ -179,13 +189,18 @@
+ 
+ 
+   // ---------- Effort ----------
+-  mju_scl(residual + counter, data->actuator_force, 2e-2, model->nu);
++  if (support) {
++    mju_sub(residual + counter, data->ctrl, ref + 34, model->nu);
++    mju_scl(residual + counter, residual + counter, 10.0, model->nu);
++  } else {
++    mju_scl(residual + counter, data->actuator_force, 2e-2, model->nu);
++  }
+   counter += model->nu;
+ 
+ 
+   // ---------- Posture ----------
+   double* home = KeyQPosByName(model, data, "home");
+-  mju_sub(residual + counter, data->qpos + 7, home + 7, model->nu);
++  mju_sub(residual + counter, data->qpos + 7, support ? ref + 22 : home + 7, model->nu);
+   if (current_mode_ == kModeFlip) {
+     double flip_time = data->time - mode_start_time_;
+     if (flip_time < crouch_time_) {
+@@ -256,6 +271,28 @@
    }
    counter += 6;
  
@@ -123,8 +184,47 @@
 +  const double* stand_height = GetCustomNumericData(model, "s1_stand_absolute_height");
 +  if (stand_height) {
 +    const bool stand = current_mode_ == kModeQuadruped && GetGait() == kGaitStand;
-+    residual[counter++] = stand ? data->xpos[3 * torso_body_id_ + 2] - stand_height[0] : 0;
++    residual[counter++] = stand ? data->xpos[3 * torso_body_id_ + 2] - (support ? ref[2] : stand_height[0]) : 0;
++  }
++
++  if (support_opt) {
++    // Python reference order FL, FR, RL, RR; enum order FL, HL, FR, HR.
++    constexpr A1Foot order[4] = {kFootFL, kFootFR, kFootHL, kFootHR};
++    for (int i = 0; i < 4; ++i) {
++      for (int j = 0; j < 3; ++j)
++        residual[counter++] = support ? (foot_pos[order[i]][j] - ref[10 + 3*i + j]) / 0.02 : 0;
++    }
++    for (A1Foot foot : order) {
++      double velocity[6];
++      if (support) mj_objectVelocity(model, data, mjOBJ_GEOM, foot_geom_id_[foot], velocity, 0);
++      for (int j = 0; j < 3; ++j)
++        residual[counter++] = support ? velocity[3+j] / 0.05 : 0;
++    }
 +  }
  
    // sensor dim sanity check
    CheckSensorDim(model, counter);
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -173,6 +173,10 @@
+ 
+   // resize data for rollouts
+   ResizeMjData(model, pool.NumThreads());
++  // R8 S references must reach every derivative worker on this Stand entry.
++  if (GetCustomNumericData(model, "s1_stand_support")) {
++    for (auto& d : data_) mju_copy(d->userdata, userdata.data(), model->nuserdata);
++  }
+ 
+   // step sizes (log scaling)
+   LogScale(linesearch_steps, 1.0, settings.min_linesearch_step,
+@@ -381,6 +385,10 @@
+   // ----- setup ----- //
+   // resize data for rollouts
+   ResizeMjData(model, pool.NumThreads());
++  // R8 S references must reach every derivative worker on this Stand entry.
++  if (GetCustomNumericData(model, "s1_stand_support")) {
++    for (auto& d : data_) mju_copy(d->userdata, userdata.data(), model->nuserdata);
++  }
+ 
+   // step sizes (log scaling)
+   LogScale(linesearch_steps, 1.0, settings.min_linesearch_step,

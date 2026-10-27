@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """Publish R8 originals directly from the execution host and verify metadata."""
-import argparse,base64,json,os,subprocess,sys
-from concurrent.futures import ThreadPoolExecutor
+import argparse,base64,json,os,subprocess,sys,time
+from concurrent.futures import ThreadPoolExecutor,wait,FIRST_COMPLETED
 from datetime import datetime,timezone
 from pathlib import Path
-from run_s1_go2_wb_baseline import ROOT,index_file
+from run_s1_go2_wb_baseline import ROOT,index_file,sha
 CONFIG='experiments/terrain_memory/s1-go2-wb-support.json'
 REPO='kaiwen123-yang/MCP-RL'
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare','upload','finalize']);p.add_argument('--attempt')
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare','upload','stream-author','finalize']);p.add_argument('--attempt')
     p.add_argument('--notes-file');args=p.parse_args()
     c=json.loads((ROOT/CONFIG).read_text());small=ROOT/c['outputs']['root'];tag=c['run_id']
     token=sys.stdin.read().strip();env=dict(os.environ,GH_TOKEN=token,GIT_CONFIG_NOSYSTEM='1',GIT_CONFIG_COUNT='1',
@@ -26,9 +26,44 @@ def main():
         with index_file(small,c) as idx:idx['publication']=dict(status='draft_in_progress',release_url=url,evidence_commit=commit)
         print(url,flush=True);return
     idx=json.loads((small/'index.json').read_text())
-    release=json.loads(gh('api',f'repos/{REPO}/releases/tags/{tag}'))
+    release=next(x for x in json.loads(gh('api',f'repos/{REPO}/releases?per_page=100')) if x['tag_name']==tag)
     pages=json.loads(gh('api','--paginate','--slurp',f"repos/{REPO}/releases/{release['id']}/assets?per_page=100"))
     actual={a['name']:a for page in pages for a in page}
+    if args.action=='stream-author':
+        # This finite batch covers only the three already-started author runs.
+        names=[x['attempt'] for x in idx['attempts'] if x['stage']=='G0' and x.get('physical_started')]
+        folder=ROOT/'outputs/terrain_memory/simulation'/tag/'release-assets';folder.mkdir(exist_ok=True)
+        done=set(actual);queued=set();futures={}
+        def upload_original(file,name):
+            value=dict(name=name,path=str(file),size=file.stat().st_size,sha256=sha(file))
+            if value['size']>=c['outputs']['max_release_asset_bytes_exclusive']:raise ValueError('Asset exceeds limit: '+name)
+            link=folder/name
+            if not link.exists():link.symlink_to(file)
+            gh('release','upload',tag,'--repo',REPO,str(link))
+            return value
+        with ThreadPoolExecutor(4) as pool:
+            while True:
+                finished=all((small/(name+'.json')).exists() for name in names)
+                for name in names:
+                    out=ROOT/'outputs/terrain_memory/simulation'/tag/name
+                    for file in sorted(out.glob('*.npz')):
+                        key=name+'-'+file.name
+                        if key in done or key in queued:continue
+                        # NumPy writes this ZIP end marker only after closing the
+                        # data stream. Never upload a still-being-written chunk.
+                        if file.stat().st_size<22:continue
+                        with file.open('rb') as f:f.seek(-22,2);closed=f.read(4)==b'PK\x05\x06'
+                        if not closed:continue
+                        future=pool.submit(upload_original,file,key);futures[future]=key;queued.add(key)
+                if not futures and finished:break
+                if futures:
+                    ready,_=wait(futures,timeout=30,return_when=FIRST_COMPLETED)
+                    for future in ready:
+                        value=future.result();key=futures.pop(future);queued.remove(key);done.add(key)
+                        with index_file(small,c) as current:current.setdefault('streamed_author_assets',{})[key]=value
+                        print(json.dumps(dict(uploaded=key,bytes=value['size'])),flush=True)
+                else:time.sleep(30)
+        return
     if args.action=='upload':
         assets=[a for a in idx['assets'] if not args.attempt or a['name'].startswith(args.attempt+'-')]
         folder=ROOT/'outputs/terrain_memory/simulation'/tag/'release-assets';folder.mkdir(exist_ok=True)
