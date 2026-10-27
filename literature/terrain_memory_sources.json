@@ -53,7 +53,23 @@
         "S1 取第 VII-A 节公开仿真中的 k=3500/8000 N/m、d=400 Ns/m 两组接触尺度，明确标为论文仿真设置",
         "第 VII-B 节特定泡沫样件实测平均刚度约 2400 N/m，只作物理尺度依据，不与仿真 d=400 Ns/m 拼成一组实测参数"
       ],
-      "scope_note": "上述刚度是接触刚度，不是杨氏模量；没有样件几何、边界和恢复数据时，不能直接映射为 Go2 地面材料或长期恢复时间。原文使用 HyQ；本项目移植机制不等于完整复现原系统，公开 KV 仿真也不提供跨足/返程持久内变量的实测真值。"
+      "scope_note": "上述刚度是接触刚度，不是杨氏模量；没有样件几何、边界和恢复数据时，不能直接映射为 Go2 地面材料或长期恢复时间。原文使用 HyQ；本项目移植机制不等于完整复现原系统，公开 KV 仿真也不提供跨足/返程持久内变量的实测真值。",
+      "r9_application": {
+        "run_id": "tm-s1-go2-joint-r9",
+        "configuration": "experiments/terrain_memory/s1-go2-joint.json",
+        "reviewed_source_commit": "e3abb8268353bb4900d8ec5b11cc63391cd8d897",
+        "reviewed_on": "2026-10-28",
+        "status": "planned_not_executed",
+        "starting_evidence": "R8项目S3同一冻结版本通过九个原任务条件与三条300s连续任务；该结论限于原刚地项目条件。下一阶段转入受控材料上的联合基础，保留R8及所有历史正负结果。",
+        "intended_hierarchy": "冻结已有材料PANN权重；训练高层标准PPO，通过声明的低维意图接口作用于冻结S3 MPC，再由同一反馈/PD执行。评测时固定Actor；本字段不表示训练、材料集成或新实验已经完成。",
+        "specific_use": [
+          "受控材料首版须把足部承载、实际压入/恢复与接触参考联系起来。S3的刚地世界足参考不能直接解释为软地面上的持续承载；相关参考适配只服务当前材料接口，不重开刚地调参轮。",
+          "PANN输出须实际进入Actor观测或所声明的参考/预测接口。材料参数与世界地块的当前状态分开，同一地块历史跨足、跨返程保留；仅加载网络或保存预测日志不算有效集成。",
+          "明确受力N、应力/模量及变形量的单位和几何映射；不把STANCE接触刚度直接当作PANN材料模量，也不把MuJoCo数值软接触当作已实现持久材料状态。",
+          "首版可声明已知材料与virgin初态；机器人状态/接触估计、控制器瞬态与材料恢复分别解释，真实隐变量仅作标明的仿真参考。"
+        ],
+        "boundary": "只借鉴压入、承载和接触运动相容的物理原则；不移植HyQ/c3WBC、不新增全文复现，不把已知顺应性估计包装成创新。联合首版的PANN接口不要求先将全部材料状态嵌入iLQG候选传播。"
+      }
     },
     {
       "id": "TM04",
@@ -471,7 +487,23 @@
         "策略响应可重复性与命令响应建模属于后续实现选择；当前 S1 的接触执行负结果不触发 PPO 重训、奖励塑形、Koopman、机械臂或新观察器支线",
         "本项目首版拟为高层Actor→MPC→机器人；原文是MPC协调命令并经低层RL执行。借鉴同一训练/部署闭环响应的原则，不宣称控制层级相同，不新增机械臂或辨识平台。"
       ],
-      "scope_note": "原文实机为 Go2+ARX X5，使用 Jetson Orin NX，研究腿式操作中的策略响应与 MPC 协调；不能据此证明本项目 TM02 软接触、GRF 执行或持久地块记忆已在 NX 实时实现。策略响应一致性、相位相关响应及策略感知 MPC 均已有研究，不作为本项目创新。本项目仍须证明同一世界地块的跨足加载/恢复信息如何改变可执行动作并改善后续支撑；当前未完成该证据。"
+      "scope_note": "原文实机为 Go2+ARX X5，使用 Jetson Orin NX，研究腿式操作中的策略响应与 MPC 协调；不能据此证明本项目 TM02 软接触、GRF 执行或持久地块记忆已在 NX 实时实现。策略响应一致性、相位相关响应及策略感知 MPC 均已有研究，不作为本项目创新。本项目仍须证明同一世界地块的跨足加载/恢复信息如何改变可执行动作并改善后续支撑；当前未完成该证据。",
+      "r9_application": {
+        "run_id": "tm-s1-go2-joint-r9",
+        "configuration": "experiments/terrain_memory/s1-go2-joint.json",
+        "reviewed_source_commit": "e3abb8268353bb4900d8ec5b11cc63391cd8d897",
+        "reviewed_on": "2026-10-28",
+        "status": "planned_not_executed",
+        "starting_evidence": "R8项目S3同一冻结版本通过九个原任务条件与三条300s连续任务；该结论限于原刚地项目条件。下一阶段转入受控材料上的联合基础，保留R8及所有历史正负结果。",
+        "intended_hierarchy": "冻结已有材料PANN权重；训练高层标准PPO，通过声明的低维意图接口作用于冻结S3 MPC，再由同一反馈/PD执行。评测时固定Actor；本字段不表示训练、材料集成或新实验已经完成。",
+        "specific_use": [
+          "标准PPO的训练转移必须来自实际Actor→S3 MPC→Go2闭环。期望速度或步态意图不视为瞬间实现的机器人运动；训练和评测使用同一接口与控制时序。",
+          "用实际执行速度、任务/接触相位、上一意图及必要闭环状态解释策略响应，避免把执行迟滞或周期运动误识别为材料记忆收益。",
+          "分别记录Actor决策数、物理推进时间、MPC调用数与实际计算耗时。降低高层决策频率并不会自动减少保持原MPC频率所需的优化计算。"
+        ],
+        "hierarchy_boundary": "ReCo原文是MPC协调命令、低层RL执行；本项目是高层PPO→冻结S3 MPC。只吸收闭环响应一致性原则，不宣称两者层级相同。",
+        "boundary": "不添加机械臂、不新建响应辨识/Koopman平台、不以ReCo的Go2+Orin NX结果代替本项目实测；不额外引入在线PPO训练。"
+      }
     },
     {
       "id": "TM22",
@@ -602,6 +634,89 @@
         "scope": "当前只借鉴评价方法与动作表示原则；不实施原文学习算法。"
       },
       "scope_note": "原文处理可用于规划的机器人动态近似及状态估计，不能替代本项目跨足/返程的世界地块材料状态模型。导数良好、低预测误差与真实长期收益需分别评价；作者仿真代码公开不表示本项目NX或Go2实机已验证。"
+    },
+    {
+      "id": "TM26",
+      "title": "RLOC: Terrain-Aware Legged Locomotion using Reinforcement Learning and Optimal Control",
+      "authors": [
+        "Siddhant Gangapurwala",
+        "Mathieu Geisert",
+        "Romeo Orsolino",
+        "Maurice Fallon",
+        "Ioannis Havoutis"
+      ],
+      "version": "arXiv:2012.03094v3",
+      "selected_on": "2026-10-28",
+      "accessed_on": "2026-10-28",
+      "role": "S3冻结后的高层学习与模型控制同闭环训练依据；帮助界定慢优化器环境的采样成本",
+      "url": "https://arxiv.org/html/2012.03094v3",
+      "pdf_url": "https://arxiv.org/pdf/2012.03094v3",
+      "read_for_execution": "已读第III节层级架构及III-C足步规划、第IV-A训练和第VI-H训练选择；当前只借鉴接口和训练成本，不做全文复现。",
+      "verified_mechanisms": [
+        "足步规划策略输出期望足位置，由模型控制器生成并跟踪运动；训练rollout包含该控制器。",
+        "原文明确带运动优化的环境推进是训练主要开销；足步规划使用SAC，快速低层恢复使用PPO。不能把原文写成所有层级均采用PPO。"
+      ],
+      "r9_application": {
+        "run_id": "tm-s1-go2-joint-r9",
+        "configuration": "experiments/terrain_memory/s1-go2-joint.json",
+        "reviewed_source_commit": "e3abb8268353bb4900d8ec5b11cc63391cd8d897",
+        "reviewed_on": "2026-10-28",
+        "status": "planned_not_executed",
+        "starting_evidence": "R8项目S3同一冻结版本通过九个原任务条件与三条300s连续任务；该结论限于原刚地项目条件。下一阶段转入受控材料上的联合基础，保留R8及所有历史正负结果。",
+        "intended_hierarchy": "冻结已有材料PANN权重；训练高层标准PPO，通过声明的低维意图接口作用于冻结S3 MPC，再由同一反馈/PD执行。评测时固定Actor；本字段不表示训练、材料集成或新实验已经完成。",
+        "specific_use": [
+          "高层策略先通过低维任务意图影响已经可执行的S3，保留明确的控制所有权，避免额外关节力矩残差绕过同一预测链。",
+          "保持标准PPO作为本项目首版；按实际闭环吞吐记录采样成本，不能照搬快速低层RL的训练步数，也不能把低频Actor等同于低成本物理推进。",
+          "完整任务对照需比较同一环境和执行器；日志中的名义意图、实际动作与实际运动分别保存。"
+        ],
+        "boundary": "不移植ANYmal、完整地形感知、域适应力矩或恢复控制器；不因论文使用SAC而自动更换本项目PPO。层级RL加模型控制本身已有研究，不作为本项目创新。"
+      }
+    },
+    {
+      "id": "TM27",
+      "title": "Learning Structured Locomotion References for Optimization-Based Whole-Body Control",
+      "authors": [
+        "Ömer Tarık Banuş",
+        "Uluç Saranlı",
+        "M. Mert Ankaralı"
+      ],
+      "version": "arXiv:2610.24779v1",
+      "selected_on": "2026-10-28",
+      "accessed_on": "2026-10-28",
+      "indexed_submission_date": "2026-10-17",
+      "date_scope": "2026-10-17由arXiv v1全文页核实；该日期不表示期刊/会议发表或录用。",
+      "role": "近期具体机制参考：可独立执行的模型控制骨架、结构化高层参考、完整执行层级在训练环内",
+      "url": "https://arxiv.org/abs/2610.24779",
+      "pdf_url": "https://arxiv.org/pdf/2610.24779v1",
+      "publication_status": "已核实2026年arXiv v1预印本全文；正式期刊/会议发表或录用信息未核实。",
+      "read_for_execution": "已阅读arXiv HTML v1的摘要、引言、§II-B、§III-A/B/D及实验范围和局限说明；核读结构化动作、完整控制器参与训练、标准PPO训练与训练期动作通道消融。未完成全文复现，未核实作者代码或可运行配置，未下载校对PDF。",
+      "code_status": "未取得并核实作者算法代码、版本或许可；不作为可直接运行的复现依赖。",
+      "r9_application": {
+        "run_id": "tm-s1-go2-joint-r9",
+        "configuration": "experiments/terrain_memory/s1-go2-joint.json",
+        "reviewed_source_commit": "e3abb8268353bb4900d8ec5b11cc63391cd8d897",
+        "reviewed_on": "2026-10-28",
+        "status": "planned_not_executed",
+        "starting_evidence": "R8项目S3同一冻结版本通过九个原任务条件与三条300s连续任务；该结论限于原刚地项目条件。下一阶段转入受控材料上的联合基础，保留R8及所有历史正负结果。",
+        "intended_hierarchy": "冻结已有材料PANN权重；训练高层标准PPO，通过声明的低维意图接口作用于冻结S3 MPC，再由同一反馈/PD执行。评测时固定Actor；本字段不表示训练、材料集成或新实验已经完成。",
+        "specific_use": "R9保留冻结S3 MPC与反馈/PD，冻结已有材料PANN权重，先让高层标准PPO只学习一维速度上限cap∈[0.18,0.25]m/s；使用同一动作解码、保持方式和完整Go2闭环训练与评测，按实际完成任务和控制响应判断收益。该cap是允许的速度上限，不代表实际速度。参考§III-D解释后续消融：评测时屏蔽PANN只能作为依赖性诊断；若要比较不使用该信息的可训练算法，需要独立训练相应策略。",
+        "boundary": "不移植WBIC，不扩展为论文的25维动作接口，也不复制其训练规模或控制频率。该文主方法训练环内没有本项目的iLQG MPC优化过程，其并行吞吐与样本预算不能用于推算本项目成本。论文的平地扰动存活结果不能证明本项目材料切换、驻足回访、长程任务或NX实时性已解决；未宣称该文已复现或本项目具有同类原创结构。"
+      },
+      "full_text_url": "https://arxiv.org/html/2610.24779v1",
+      "verified_mechanisms": [
+        {
+          "source_section": "§I、§II-B",
+          "mechanism": "模型控制骨架本身能够维持名义运动；RL输出结构化参考。该文主方法明确由RL替代MPC作为自适应参考生成器，并经步态调度、落足规划和WBIC执行；MPC+WBIC属于对照。因此它不等同于本项目保留iLQG MPC的Actor→MPC结构。"
+        },
+        {
+          "source_section": "§III-A/B",
+          "mechanism": "完整状态反馈、步态调度、落足规划、全身控制和关节命令执行共同位于训练环境内；高层动作保持期间底层控制继续运行。可借鉴的是训练与部署采用同一真实执行链路，而不是用低维代理环境替代实际控制响应。"
+        },
+        {
+          "source_section": "§III-D",
+          "mechanism": "结构化动作通道消融在训练和评测中均固定对应通道，并为各消融重新训练策略，使保留通道有机会适应；仅在评测时删除输入或通道不能等价地证明该模块对可训练系统的必要性。"
+        }
+      ]
     }
   ],
   "upstream": {
@@ -667,5 +782,6 @@
       ],
       "scope_note": "先用相同初态、冻结plan及统一ZOH输入辨别数值/接触差异，再据完整任务评价。未来真实闭环采用不同反馈/重规划动作，不能拿其远期差值单独归因于动力学。新数值候选尚未运行；不从文档推荐推导本项目必然成功、精确等价或NX实时。"
     }
-  ]
+  ],
+  "execution_scope_note": "旧条目中“当前”“本轮”“不启动训练”等表述保留其原访问/选择日期及所述阶段的历史适用范围，不构成对R9的当前限制。R9按各条目的r9_application、当前AGENTS.md及docs/TERRAIN_MEMORY_PLAN.md第5.10节执行，已授权在冻结S3的真实闭环中从零训练标准PPO；旧研究事实与历史结果不改写。"
 }

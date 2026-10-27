@@ -1,0 +1,338 @@
+{
+  "purpose": "R9 execution contract for the first stable Go2 material-PANN + standard PPO + frozen S3 MPC baseline; this file is a plan, not an implemented controller or completed experiment.",
+  "run_id": "tm-s1-go2-joint-r9",
+  "stage": "S1R9",
+  "implementation_status": "planned_not_executed",
+  "reviewed_source_commit": "e3abb8268353bb4900d8ec5b11cc63391cd8d897",
+  "entrypoint_contract": {
+    "extend_existing": "scripts/run_s1_go2_wb_baseline.py",
+    "thin_material_adapter": "Adapt existing Ground/ReferenceColumns/LearnedColumns mathematics to this raw MuJoCo runner; do not import the old T1/PyMPC/WBC execution stack.",
+    "new_joint_launcher": "Implement one R9 campaign launcher and actual resolved configuration; naming is an implementation choice, not evidence of completion.",
+    "contact_measurements": "Replace native-only contact_state aggregation with unified actual support: native rigid-foot reaction for hard feet, ReferenceColumns actual reaction for soft feet; use this for raw GRF/contact/total support/slip/criteria. Non-foot contact remains from native contacts; never substitute predicted PANN forces."
+  },
+  "frozen_baseline": {
+    "run_id": "tm-s1-go2-wb-support-r8",
+    "cohort": "project-s3-formal-v1",
+    "configuration": "experiments/terrain_memory/s1-go2-wb-support.json",
+    "result_index": "results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json",
+    "qualification_source_commit": "fb7f924f2d519582a127d15ff2e1e2cb2cd5bc9e",
+    "execution_fingerprint_sha256": "d3177cb85bc13bb1d997d87b5c8ad5e37c87b504d70c7a08ddf32d42463a2842",
+    "binary_sha256": "1a586ca2879b5fed37d58cbadb12e3d2f4afd601dd468fe8f1c8ae0f78a21af3",
+    "current_result": {
+      "original_conditions_passed": 9,
+      "long_300s_passed": 3,
+      "physical_starts": 19,
+      "new_pann_or_ppo_training_runs": 0
+    },
+    "controller": "S3; keep feasible native Stand equilibrium, absolute height/foot/posture/PD-input references, Stand Effort scale .02 rad and weight .08, StandSupportForce weight 0.",
+    "predictor": "Native rigid-floor Go2 dynamics; material PANN affects high-level Actor observations only. No claim that learned material state is optimized inside iLQG.",
+    "preserve": [
+      "project Go2 15.206408 kg and original inertia/passive/geometry",
+      "home/initial qpos and qvel apart from declared yaw condition",
+      "PD kp=60 kd=5 with original target bounds",
+      "23.7/23.7/45.43 Nm per leg",
+      "2 ms held input with two 1 ms internal prediction integrations and consistent derivatives",
+      "175 prediction transitions/176 states over .350 s",
+      "20 initial planning calls without plant advancement",
+      "immediate phase-change replan",
+      "frozen Stand support-reference solver without plant resets",
+      "original movement/turn/gait settings and mission criteria"
+    ]
+  },
+  "execution": {
+    "host": "fy-5080",
+    "transport": "Reuse existing SSH/tmux",
+    "environment": "work/envs/mjpc-go2",
+    "author_source": "work/terrain-memory/upstreams/mujoco_mpc-go2",
+    "reuse_installed_dependencies": true,
+    "build_tests": false,
+    "physical_dt_s": 0.0002,
+    "material_truth_dt_s": 0.0002,
+    "mpc_target_dt_s": 0.002,
+    "logical_planning_dt_s": 0.02,
+    "pann_observer_dt_s": 0.002,
+    "actor_dt_s": 0.5,
+    "solver_workers_per_environment": 2,
+    "max_concurrent_training_environments": 3,
+    "max_concurrent_evaluation_environments": 3,
+    "synchronous_slow_simulation": true,
+    "activate_hardware": false,
+    "nx_timing_measurement": false,
+    "resource_policy": "Use current authorized host/resources; no new paid resources or simulator platform. Record actual CPU/GPU concurrency and per-component wall times."
+  },
+  "material": {
+    "family": "controlled TM02 independent-column viscoelastic strip; not sand/snow/wet grass",
+    "region_m": {
+      "x": [
+        0.8,
+        2.2
+      ],
+      "y": [
+        -0.6,
+        0.6
+      ],
+      "floor_z": 0
+    },
+    "world_fixed_cells": true,
+    "cell_size_m": 0.02,
+    "footprint_area_m2": 0.001,
+    "layer_height_m": 0.05,
+    "force_scale_gamma": 0.025,
+    "max_abs_principal_strain": 0.02,
+    "constitutive_source": "experiments/tm02/r2-multihistory.json:reference_material",
+    "implementation_source": "src/tm02/s1_material.py and src/tm02/s1_contact.py",
+    "truth": "ReferenceColumns",
+    "parameter_policy": "Use unchanged tm02_anchor reference-material parameters and existing pressure/area/friction mapping; no parameter fitting or softened truth to manufacture success.",
+    "endpoints_and_turns": "Rigid pads at home x=0 and far x=3; material only on translating middle strip.",
+    "boundary_rule": "Hard priority: an equivalent entire foot footprint must lie inside the soft interior; straddling footprints remain fully native rigid. No blending or duplicate support.",
+    "truth_forces": "Disable only native soft-foot ground support, advance ReferenceColumns from actual foot kinematics, apply its unique reaction at the actual foot-bottom world point. Retain non-foot collisions/failure. Never inject an MPC planned support force as actual ground reaction. Clear old applied external forces before applying the current step's actual material forces.",
+    "kinematics": "Use sphere-center z minus foot radius minus actual floor z; total strain is current bottom displacement/H, not per-step delta-z/H. Foot-bottom velocity includes angular-velocity cross offset.",
+    "continuity": "Share world cells across all feet, steps and revisits; unloaded cells continue zero-load recovery. Reset material to known virgin only between independent episodes, never at PPO rollout chunks, leg switches or long-task laps.",
+    "validity": "Declare and record any physical or predictor material-domain exit. No clipping material strain/stress or silently substituting another contact law.",
+    "model_state": "The plant may change foot-ground collision masks by current region. Keep separate immutable native model copies for MPC initialization, FK and Stand reference solving. At each independent episode, restore native foot masks and clear old applied forces before initial references and20 startup planning calls; resetting qpos alone does not reset model attributes."
+  },
+  "pann": {
+    "training": "none; frozen R2 material network",
+    "selection": "B_random1000--ideal",
+    "seed": 0,
+    "weights_path": "outputs/terrain_memory/reproduction/material/tm02-memory-study-20261023/selected/B_random1000--ideal-potentials.npz",
+    "weights_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
+    "preserve_weights_and_normalization": true,
+    "observer": "Independent LearnedColumns state initialized virgin; update from causal foot-bottom kinematics and allowed observed contact information. Actual ReferenceColumns hidden q/e must not enter it.",
+    "clock": "Use real accumulated dt=.002 s, not .002 at every .0002 plant step. Handle observed within-window contact events causally and disclose sampling approximation; no hidden true-state correction. Continue recovery during inactive Actor phases. At t=0 keep virgin state; when observation time t arrives advance by t-last_observation_time to t before querying, never pre-advance a future-labeled state.",
+    "no_pann_group": "No learned prediction features and no predictor=ground alias. Same actual ReferenceColumns plant and shared raw observation stream.",
+    "query_contract": {
+      "query_locations": "Four world footprints from the most recent available frozen S3 nominal trajectory at current time +.20 s (time-aligned FK, not actual future motion); same positions and soft masks exposed to both PPO groups. Use only a completed plan and record its start/query times; do not replan using the not-yet-selected Actor action.",
+      "outputs_per_foot": [
+        "signed predicted free-recovery depression after .002 s zero external load",
+        "same after .200 s",
+        "same after .500 s"
+      ],
+      "definition": "Use observer-owned material state at query time. Form union of all queried columns once; copy into a private branch. Advance normal=0 with displacement=False in250 consecutive .002 s steps, save steps1,100,250. Area-weight -H*e_hat[:,0] over each footprint, normalize by .001 m. Current constrained strain is not the current free surface. No clipping signed outputs.",
+      "sharing": "Four feet reuse the same union rollout. Queries do not change actual material or the persistent observer. No compression probe, candidate-control search or new learned network.",
+      "mask": "Rigid/straddling footprints use the public rigid mask and zero material features. Unvisited soft cells use declared known-virgin state.",
+      "evaluation": "These are conditional zero-load forecasts, not guaranteed future trajectories. Compare with actual recovery only for physically comparable windows with no intervening load; record intervening contact separately. Match truth/observer/private-query columns by world grid key(ix,iy), never creation-order row index; their sparse arrays may differ. Only genuinely never-loaded truth cells use the declared virgin reference.",
+      "dimensions": "12 prediction values; RAW pads them with zero. The four query masks/coordinates are shared information.",
+      "cost": "Keep current integrator and JAX batching; charge observer and private250-step queries to measured complete-episode wall time. Do not claim2Hz Actor makes this free or5kHz.",
+      "api": "After private clone and all footprint(...,create=True) queries, form union. law.step(e_hat,q_hat,zeros(n),.002,zeros(n,bool)) returns next e/q/stress/residual; save steps1,100,250. All query columns fit existing batching; no new generic predictor platform."
+    },
+    "deployment_scope": "Known material, known strip position, ideal robot state/contact observations, virgin initial material. Not an unknown-material estimator or validated real sensor pipeline."
+  },
+  "actor": {
+    "algorithm": "standard PPO",
+    "action_dimension": 1,
+    "normalized_action_range": [
+      -1,
+      1
+    ],
+    "physical_speed_cap_m_s": [
+      0.18,
+      0.25
+    ],
+    "mapping": "Set PPO action_bound=1; a=tanh(raw_action), cap=.215+.035*a. Preserve raw Gaussian action/log_prob for standard PPO ratios. Existing PPOBackend.act already returns sample.action=tanh(raw) for action_bound=1: implement cap=.215+.035*sample.action, no second tanh.",
+    "application": "Cap original outbound/return velocity command; retain original acceleration and near-goal braking, which may go below .18 m/s. Do not impose a minimum actual speed.",
+    "inactive_phases": "Stand/turn/gait/foot placement/PD/torque/weights stay frozen. Actor can be sampled at 2 Hz but ignored there; record phase and action_effective flag. No post-completion passive Stand counted as training transitions.",
+    "observation_shared": "Ideal simulated robot proprioception/body pose and velocities, relative goal/heading, mission and gait phase, joint position/velocity, foot position/velocity/contact/actual GRF, previous applied cap; same preceding 1 s raw history sampled at 20 Hz. Public strip geometry and any query coordinates/masks available to both groups.",
+    "observation_history_fields": [
+      "foot bottom height relative to undeformed plane",
+      "per-foot Fz",
+      "per-foot tangential velocity",
+      "per-foot contact",
+      "body linear and angular velocity",
+      "applied speed cap"
+    ],
+    "observation_forbidden": [
+      "true hidden material q/e",
+      "future measured GRF",
+      "future actual robot motion",
+      "oracle recovery time",
+      "test outcomes used for model selection"
+    ],
+    "information_scope": "Same incoming raw measurements, action authority and task. PANN group additionally has frozen constitutive prior and persistent estimated world state; this is not yet a comparison with equally capable RNN/classical state estimators.",
+    "normalization": "Use one declared physical scaling/schema for both groups, freeze for evaluation; pad PANN feature channels with zero in RAW so architecture dimensions match. No group-specific test-data normalization.",
+    "observation_scaling": {
+      "body_xy_relative_goal_and_query_xy_m": 3,
+      "body_height_m": 0.3,
+      "body_linear_speed_m_s": 0.25,
+      "angular_speed_rad_s": 1,
+      "joint_position": "Original per-joint range midpoint/half-width",
+      "joint_speed_rad_s": 10,
+      "relative_foot_position_m": 0.3,
+      "foot_speed_m_s": 1,
+      "force_N": "15.206408*9.81/4",
+      "history_bottom_height_m": 0.05,
+      "pann_depression_m": 0.001,
+      "other": "Binary masks/phase indicators and sine/cosine angles unchanged; cap normalized to[-1,1]. Record the exact ordered schema; preserve real exceedances without hidden observation clipping."
+    }
+  },
+  "ppo": {
+    "backend": "src/response_ppo/ppo_backend.py, installed Tianshou 0.5.1 PPOPolicy.learn",
+    "reuse": "Core PPO backend only; new environment/observations/reward/action map and fresh policies. Do not reuse old task wrappers or unrelated checkpoints.",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "hidden": [
+      64,
+      64
+    ],
+    "learning_rate": 0.0003,
+    "initial_std": 0.35,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_epsilon": 0.2,
+    "value_coef": 0.5,
+    "entropy_coef": 0,
+    "max_grad_norm": 0.5,
+    "epochs": 4,
+    "rollout_transitions": 256,
+    "minibatch_size": 64,
+    "device": "cpu",
+    "initial_target_transitions_per_group_seed": 4096,
+    "extension_target_transitions_per_group_seed": 8192,
+    "total_transition_hard_cap": 49152,
+    "sampling": "Every training transition uses actual frozen S3 MPC + Go2 + actual material; keep MPC server/model and compiled PANN persistent. No surrogate controller or fake fast plant.",
+    "episode_initial_conditions": "Cycle nominal/yaw+5/yaw-5 identically across groups; training seeds control initialization/action sampling. Evaluation repeats declared conditions, not held-out terrain generalization.",
+    "termination": "Training ends successfully on first full original route completion plus continuous2 s stable hold. Physical/material/model-domain failure and the intrinsic60 s task deadline are terminal with bootstrap0 (timeout labeled separately). A PPO rollout boundary is nonterminal and bootstraps the actual successor; a mere technical interruption is not a fabricated physical failure. Formal evaluation observes full60/300 s.",
+    "rollout_continuity": "PPO update/rollout boundaries never reset the robot or material. Preserve actual terminal/truncated successor before episode reset.",
+    "balance": "Schedule all six group/seed flows evenly; save common multiples of 256. Extend only together. If wall budget stops early, evaluate matched common completed checkpoints and report actual steps; do not claim 4096/8192 completed.",
+    "counts": "Record collected transitions, action-effective transitions, physics seconds, MPC calls, episode/reset/failure counts and wall time separately."
+  },
+  "reward": {
+    "scope": "Identical scalar reward in the two PPO groups, fixed before training and based on actual executed quantities; never reward a PANN belief or assumed compaction benefit.",
+    "per_transition": "5*d_route_fraction - dt/60 - 1.0*mean_indent_sq*dt/60 - 0.1*mean_loaded_slip_sq*dt/60 - 0.01*d_applied_normalized_cap_sq + 10*completion - 10*failure - 5*timeout",
+    "route_fraction": "Signed actual translation progress along each outbound/return leg, accumulated at plant resolution and divided by 6 m; split phase boundaries, no phase-switch bonus, preserve negative progress.",
+    "indentation": "Per-foot positive sinking below undeformed material plane divided by H*.02=.001 m, squared; soft loaded feet only, zero when none, integrate actual time rather than just endpoint samples.",
+    "slip": "Per-foot tangential foot-bottom speed/.25 m/s, squared, loaded feet with Fz>1 N; zero when none; integrate actual time.",
+    "action_change": "Difference of applied normalized caps on translating decisions only; phase-masked requested changes receive no action penalty.",
+    "terminal": "Completion only under original full task/2 s stability. Failure includes physical or material-domain termination, separately labeled; timeout is not success. Report energy and force as metrics without adding reward terms. A task timeout sets terminated=True with bootstrap0, timeout=True in metrics, but does not also set the physical/domain failure penalty.",
+    "tuning": "No reward/learning-rate/action-space sweep. A demonstrated implementation error may be fixed within the same bounded campaign, retaining its affected training records; never tune after formal outcomes."
+  },
+  "groups": [
+    {
+      "id": "FIXED_S3",
+      "actor": "constant cap .25 m/s",
+      "pann_features": false,
+      "training": false
+    },
+    {
+      "id": "PPO_RAW_S3",
+      "actor": "standard PPO from scratch",
+      "pann_features": false,
+      "training_seeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PANN_PPO_S3",
+      "actor": "same standard PPO from scratch",
+      "pann_features": true,
+      "training_seeds": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "development": {
+    "maximum_nontraining_physical_starts": 8,
+    "protocol": "Complete original mission, up to60 s, on actual strip; retain all negatives. Direct interface/physics implementation fixes only; do not spend starts on short stand/smoke tasks.",
+    "before_training": "At least one actual complete material task under an allowed speed intent must demonstrate a usable execution domain. If the genuine contact/domain blocker persists, preserve complete failures and stop that blocked training path without inventing success or changing truth."
+  },
+  "evaluation": {
+    "freeze": "Freeze shared plant/controller/observation/reward, exact trained checkpoints and deterministic policy means before formal evaluation; record source/config/weights/binary identities and every start.",
+    "short": {
+      "duration_s": 60,
+      "conditions": [
+        "nominal",
+        "yaw_plus5",
+        "yaw_minus5"
+      ],
+      "fixed_episodes": 3,
+      "ppo_episodes": 18,
+      "total": 21,
+      "criteria": "Unchanged R8 original mission and terminal thresholds, observe through60 s after first completion; original far-end turn has no extra stop."
+    },
+    "long": {
+      "duration_s": 300,
+      "conditions": [
+        "nominal"
+      ],
+      "groups": [
+        "FIXED_S3",
+        "PPO_RAW_S3:seed0",
+        "PANN_PPO_S3:seed0"
+      ],
+      "total": 3,
+      "full_round_trips": 5,
+      "route_deadline_s": 270,
+      "endpoint_stable_s": 2,
+      "minimum_final_observation_s": 30,
+      "criteria": "Unchanged R8 continuous long protocol and final original2 s stability, all intervening violations reported.",
+      "representative": "seed0 preselected; never choose best formal seed after seeing results.",
+      "activation": "Start corresponding300 s after its nominal60 s passes and full observation shows no hidden failure; other short failures do not cancel unaffected groups.",
+      "no_reset_between_laps": true
+    },
+    "max_formal_starts": 24,
+    "max_nontraining_starts_including_development": 32,
+    "reuse": "Do not duplicate-count development and formal runs; only reuse an exactly identical, predeclared frozen FIXED_S3 nominal run, disclose its single physical-start identity.",
+    "comparison": [
+      "task completion and post-completion holding",
+      "material loading/recovery across feet and return visits",
+      "actual requested/applied action and physical response",
+      "true-vs-PANN predictions for evaluation only",
+      "slip, energy, peak forces, torque saturation, model-domain exits",
+      "seed dispersion, simulation/actor/MPC sample counts and runtime"
+    ],
+    "interpretation": "Stable joint execution, action dependence on PANN features and improved complete-task performance are different outcomes. Neither loading a network, more sample rows nor constant max-speed success establishes material-memory innovation.",
+    "negative_result_policy": "Retain every failed/partial formal start; no post-test best-seed selection, hidden parameter relaxation, stitched laps or pooled distinct algorithms."
+  },
+  "campaign_budget": {
+    "wall_clock_hard_cap_h": 48,
+    "starts_at": "First new physical start; includes adaptation, training, evaluation and intervening pauses. Report implementation and publication time separately.",
+    "reserve_evaluation_h_at_least": 6,
+    "reserve_rule": "Reserve max(6 h,1.2 times remaining evaluation cost estimated from real complete episodes). Stop adding training before this reserve; no separate microbenchmark.",
+    "runtime_prior": "R8 nominal300 s required3679.95 s wall, all72127 project planning calls exceeded20 ms. PANN/contact cost is additional. Two Hz Actor does not reduce50 Hz MPC calls.",
+    "finish_rule": "Execute the full authorized feasible campaign without stopping after each failed episode. Finish at delivered results, a specific unresolved physical/implementation blocker, or actual budget exhaustion. State incomplete work rather than silently extending budgets."
+  },
+  "outputs": {
+    "root": "results/terrain_memory/simulation/tm-s1-go2-joint-r9",
+    "release_tag": "tm-s1-go2-joint-r9",
+    "required": [
+      "actual source/config/binary/checkpoint identities",
+      "learning curves and per-seed true sample/time counters",
+      "all formal/development full videos including failures",
+      "same-version three-group task table",
+      "500 Hz state/command/torque and0.2 ms material forces/support for evaluation",
+      "causal PANN state/query and material history records",
+      "first completion plus full subsequent holding",
+      "per-component and total wall times",
+      "one concise result index with source and final asset URLs"
+    ],
+    "training_records": "Keep per-Actor transition/episode statistics, material summaries, selected full-task videos and checkpoints. Do not serialize every MPC predicted trajectory in every training step; full high-rate records required for development/formal evaluation.",
+    "large_files": "Chunk on execution host by continuous time/data stream, each asset below2 GiB. Split files only; never reset a physical task."
+  },
+  "delivery": {
+    "source_and_compact_results": "GitHub",
+    "large_arrays_weights_and_video": "Upload directly from execution host to Release",
+    "verification": "Verify final commit and published URL/size/digest; then finish.",
+    "no_user_pc_download_copy_mirror_compress_or_archive": true
+  },
+  "forbidden": [
+    "reopen R1/R2/S0 or old S1 budgets",
+    "new rigid-only perfection campaign",
+    "PANN retraining or new PPO algorithm",
+    "material-state iLQG derivative expansion in this round",
+    "new WBC/alternate simulator or controller stack",
+    "hardware activation or fabricated NX timing",
+    "true hidden material state to deployment Actor",
+    "altering material/robot limits/task criteria to force success",
+    "defensive programming/generic fallback",
+    "unit/mock/smoke/import/shape tests and irrelevant regression matrices",
+    "audit/status/continuation reports instead of task results",
+    "user-PC archiving after publication"
+  ]
+}
