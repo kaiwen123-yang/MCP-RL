@@ -42,6 +42,7 @@ def configuration(form,build=None):
             c['local_contact_model'].update(causal_force_anchor=True,
                 anchor='At each planning state, observed Fz and bottom z define rest_z=bottom_z+Fz/k on the currently loaded footprint. Candidate forces recomputed from candidate z and overlap with those fixed world patches.',
                 hidden_state='No true q/e. Frozen observed local force/displacement anchor; no relaxation propagation.',
+                observation_alignment='Fz and bottom share the last force-evaluation boundary, 0.2 ms before the returned physical state; no future force recomputation.',
                 evidence='GNC r1 at6.5s predicted84.046N vs measured47.697N; at7.0s114.654N vs46.426N, followed by base-height loss and body_fall. Correct the local affine intercept using the shared observed contact channel.')
     return c,r9
 

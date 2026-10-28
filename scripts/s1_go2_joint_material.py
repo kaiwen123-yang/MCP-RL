@@ -14,6 +14,7 @@ class JointMaterial:
         self.ground=Ground({'id':'tm02_anchor'},pars)
         self.soft=np.zeros(4,bool);self.force=np.zeros((4,3))
         self.bottom=np.zeros((4,3));self.velocity=np.zeros((4,3))
+        self.force_boundary_bottom=np.zeros((4,3))
         self.material_time=0.;self.material_wall=0.
         self.records=[];self.cells=[];self.chunks=[];self.physics_steps=0
         self.reason='';self.group='DEVELOPMENT_ALLOWED_INTENT'
@@ -79,6 +80,7 @@ class JointMaterial:
         t=float(d.time)
         force,indent,maps=self.ground.step(bottom,velocity,dt,t+dt,log=self.full_recording)
         self.force=force;self.material_time=t+dt
+        self.force_boundary_bottom=bottom.copy()
         self.material_wall+=time.perf_counter()-begin
         if self.full_recording:
             self.records.append(np.r_[t,t+dt,self.soft,bottom.ravel(),velocity.ravel(),force.ravel(),

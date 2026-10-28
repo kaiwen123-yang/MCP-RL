@@ -397,7 +397,7 @@ def run(args, c, joint=None):
                         raise ValueError('Native static support reference infeasible; see retained reference and entry state')
                     data.userdata[:62]=reference_userdata(reference)
                 if c.get('local_contact_model',{}).get('causal_force_anchor'):
-                    bottom,_=joint.kinematics()
+                    bottom=joint.force_boundary_bottom
                     patches=data.userdata[62:78].reshape(4,4)
                     patches[:,0]=(joint.force[:,2]>1)&joint.soft
                     patches[:,1:3]=bottom[:,:2]
