@@ -1,0 +1,221 @@
+--- a/mjpc/tasks/quadruped/quadruped.cc
++++ b/mjpc/tasks/quadruped/quadruped.cc
+@@ -169,7 +169,7 @@
+ 
+     double ground_height = flat_ground_height ? flat_ground_height[0]
+                                              : Ground(model, data, query);
+-    double height_target = ground_height + kFootRadius + step[foot];
++    double height_target = ground_height + model->geom_size[3*foot_geom_id_[foot]] + step[foot];
+     double height_difference = foot_pos[foot][2] - height_target;
+     if (current_mode_ == kModeScramble) {
+       // in Scramble, foot higher than target is not penalized
+@@ -315,6 +315,33 @@
+     }
+     for (int i = 0; i < 4; ++i)
+       residual[counter++] = track_load ? (vertical_load[i] - ref[58+i]) / 40.0 : 0;
++  }
++
++  // S4 N: candidate normal motion, before and during actual predicted contact.
++  // The 5 mm approach band precedes the unchanged 1 mm material domain.
++  if (soft_landing_) {
++    double velocity_residual[4] = {0,0,0,0};
++    double indentation_residual[4] = {0,0,0,0};
++    constexpr double half_sole = 0.015811388300841896;
++    for (A1Foot foot : kFootAll) {
++      const double* p = foot_pos[foot];
++      const bool material = p[0] >= 0.8+half_sole && p[0] <= 2.2-half_sole &&
++                            mju_abs(p[1]) <= 0.6-half_sole;
++      if (material) {
++        double z = p[2] - model->geom_size[3*foot_geom_id_[foot]] - flat_ground_height[0];
++        double velocity[6];
++        mj_objectVelocity(model,data,mjOBJ_GEOM,foot_geom_id_[foot],velocity,0);
++        double gate = 0.5*(1-mju_tanh((z-0.005)/0.002));
++        // 1 mm / 20 ms logical replanning interval; approaches zero at the plane.
++        double desired_vz = -0.05*mju_tanh(mju_max(z,0)/0.001);
++        velocity_residual[foot] = gate*(mju_min(velocity[5],0)-desired_vz)/0.05;
++        // 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.
++        double over = -z - 0.00019889981664;
++        indentation_residual[foot] = 0.5*(over+mju_sqrt(over*over+1e-12))/0.001;
++      }
++    }
++    mju_copy(residual+counter,velocity_residual,4); counter+=4;
++    mju_copy(residual+counter,indentation_residual,4); counter+=4;
+   }
+ 
+   // sensor dim sanity check
+@@ -545,7 +572,7 @@
+ 
+   // draw step height
+   for (ResidualFn::A1Foot foot : ResidualFn::kFootAll) {
+-    stance_pos[foot][2] = ResidualFn::kFootRadius + ground[foot];
++    stance_pos[foot][2] = model->geom_size[3*residual_.foot_geom_id_[foot]] + ground[foot];
+     if (residual_.current_mode_ == ResidualFn::kModeBiped) {
+       // skip "hands" in biped mode
+       bool handstand =
+@@ -557,7 +584,7 @@
+       if (front_hand || back_hand) continue;
+     }
+     if (step[foot]) {
+-      flight_pos[foot][2] = ResidualFn::kFootRadius + step[foot] + ground[foot];
++      flight_pos[foot][2] = model->geom_size[3*residual_.foot_geom_id_[foot]] + step[foot] + ground[foot];
+       AddConnector(scene, mjGEOM_CYLINDER, ResidualFn::kFootRadius,
+                    stance_pos[foot], flight_pos[foot], kStepRgba);
+     }
+@@ -626,6 +653,8 @@
+   residual_.balance_cost_id_ = CostTermByName(model, "Balance");
+   residual_.upright_cost_id_ = CostTermByName(model, "Upright");
+   residual_.height_cost_id_ = CostTermByName(model, "Height");
++
++  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;
+ 
+   // ----------  model identifiers  ----------
+   residual_.torso_body_id_ = mj_name2id(model, mjOBJ_XBODY, "trunk");
+@@ -759,6 +788,11 @@
+   if (duty_ratio < 1) {
+     angle *= 0.5 / (1 - duty_ratio);
+     value = mju_cos(mju_clip(angle, -mjPI/2, mjPI/2));
++    if (soft_landing_) {
++      double u = (mju_clip(angle, -mjPI/2, mjPI/2) + mjPI/2) / mjPI;
++      double s = u < 0.5 ? 2*u : 2*(1-u);
++      value = s*s*s*(10 + s*(-15 + 6*s));
++    }
+   }
+   return mju_abs(value) < 1e-6 ? 0.0 : value;
+ }
+--- a/mjpc/tasks/quadruped/quadruped.h
++++ b/mjpc/tasks/quadruped/quadruped.h
+@@ -211,6 +211,7 @@
+     int balance_cost_id_      = -1;
+     int height_cost_id_       = -1;
+     int foot_geom_id_[kNumFoot];
++    bool soft_landing_ = false;
+     int shoulder_body_id_[kNumFoot];
+ 
+     // derived kinematic quantities describing flip trajectory
+--- a/mjpc/agent.cc
++++ b/mjpc/agent.cc
+@@ -105,8 +105,8 @@
+   timestep_ = GetNumberOrDefault(1.0e-2, model, "agent_timestep");
+ 
+   // planning steps
+-  steps_ = GetNumberOrDefault(1, model, "s1_control_hold_substeps") == 2
+-      ? std::min(static_cast<int>(std::lround(horizon_ / (2 * timestep_))) + 1, kMaxTrajectoryHorizon)
++  steps_ = GetNumberOrDefault(1, model, "s1_control_hold_substeps") > 1
++      ? std::min(static_cast<int>(std::lround(horizon_ / (GetNumberOrDefault(1, model, "s1_control_hold_substeps") * timestep_))) + 1, kMaxTrajectoryHorizon)
+       : mju_max(mju_min(horizon_ / timestep_ + 1, kMaxTrajectoryHorizon), 1);
+ 
+   active_task_id_ = gui_task_id;
+@@ -292,8 +292,8 @@
+   model_->opt.integrator = integrator_;
+ 
+   // set planning steps
+-  steps_ = GetNumberOrDefault(1, model_, "s1_control_hold_substeps") == 2
+-      ? std::min(static_cast<int>(std::lround(horizon_ / (2 * timestep_))) + 1, kMaxTrajectoryHorizon)
++  steps_ = GetNumberOrDefault(1, model_, "s1_control_hold_substeps") > 1
++      ? std::min(static_cast<int>(std::lround(horizon_ / (GetNumberOrDefault(1, model_, "s1_control_hold_substeps") * timestep_))) + 1, kMaxTrajectoryHorizon)
+       : mju_max(mju_min(horizon_ / timestep_ + 1, kMaxTrajectoryHorizon), 1);
+ 
+   // make model differentiable
+--- a/mjpc/trajectory.cc
++++ b/mjpc/trajectory.cc
+@@ -116,7 +116,7 @@
+ 
+   // horizon
+   horizon = steps;
+-  const bool held_control = GetNumberOrDefault(1, model, "s1_control_hold_substeps") == 2;
++  const int control_substeps = GetNumberOrDefault(1, model, "s1_control_hold_substeps");
+ 
+   // set mocap
+   for (int i = 0; i < nmocap; i++) {
+@@ -147,7 +147,7 @@
+     // apply perturbation
+     if (xfrc_std > 0) {
+       // convert rate and scale to discrete time (Ornstein–Uhlenbeck)
+-      mjtNum rate = mju_exp(-(held_control ? 2 : 1) * model->opt.timestep / xfrc_rate);
++      mjtNum rate = mju_exp(-control_substeps * model->opt.timestep / xfrc_rate);
+       mjtNum scale = xfrc_std * mju_sqrt(1 - rate * rate);
+       for (int i = 0; i < 6*model->nbody; i++) {
+         data->xfrc_applied[i] = rate * data->xfrc_applied[i] +
+@@ -168,7 +168,7 @@
+ 
+     // Residual and trace above belong to the node start. The second 1ms
+     // integration uses the same policy output and must not replace them.
+-    if (held_control) mj_step(model, data);
++    for (int substep=1;substep<control_substeps;++substep) mj_step(model,data);
+ 
+     // check for step warnings
+     if ((failure |= CheckWarnings(data))) {
+@@ -233,7 +233,7 @@
+ 
+   // horizon
+   horizon = steps;
+-  const bool held_control = GetNumberOrDefault(1, model, "s1_control_hold_substeps") == 2;
++  const int control_substeps = GetNumberOrDefault(1, model, "s1_control_hold_substeps");
+ 
+   // set mocap
+   for (int i = 0; i < nmocap; i++) {
+@@ -272,7 +272,7 @@
+ 
+     // Residual and trace above belong to the node start. The second 1ms
+     // integration uses the same policy output and must not replace them.
+-    if (held_control) mj_step(model, data);
++    for (int substep=1;substep<control_substeps;++substep) mj_step(model,data);
+ 
+     // check for step warnings
+     if ((failure |= CheckWarnings(data))) {
+--- a/mjpc/planners/model_derivatives.cc
++++ b/mjpc/planners/model_derivatives.cc
+@@ -99,20 +99,20 @@
+             DataAt(B, t * (dim_state_derivative * dim_action)),
+             DataAt(C, t * (dim_sensor * dim_state_derivative)),
+             DataAt(D, t * (dim_sensor * dim_action)));
+-        if (GetNumberOrDefault(1, m, "s1_control_hold_substeps") == 2) {
+-          const int nx = dim_state_derivative, nu = dim_action;
+-          double* first_a = DataAt(A, t * nx * nx);
+-          double* first_b = DataAt(B, t * nx * nu);
+-          std::vector<double> a1(first_a, first_a + nx * nx);
+-          std::vector<double> b1(first_b, first_b + nx * nu);
+-          std::vector<double> a2(nx * nx), b2(nx * nu);
+-          // mjd_transitionFD restores the node state. Advance once to the
+-          // midpoint, keeping u unchanged, then differentiate the second step.
+-          mj_step(m, d);
+-          mjd_transitionFD(m, d, tol, mode, a2.data(), b2.data(), nullptr, nullptr);
+-          mju_mulMatMat(first_a, a2.data(), a1.data(), nx, nx, nx);
+-          mju_mulMatMat(first_b, a2.data(), b1.data(), nx, nx, nu);
+-          mju_addTo(first_b, b2.data(), nx * nu);
++        const int control_substeps = GetNumberOrDefault(1,m,"s1_control_hold_substeps");
++        if (control_substeps > 1) {
++          const int nx=dim_state_derivative, nu=dim_action;
++          double* total_a=DataAt(A,t*nx*nx);
++          double* total_b=DataAt(B,t*nx*nu);
++          std::vector<double> old_a(nx*nx),old_b(nx*nu),next_a(nx*nx),next_b(nx*nu);
++          for (int substep=1;substep<control_substeps;++substep) {
++            mju_copy(old_a.data(),total_a,nx*nx);mju_copy(old_b.data(),total_b,nx*nu);
++            mj_step(m,d);
++            mjd_transitionFD(m,d,tol,mode,next_a.data(),next_b.data(),nullptr,nullptr);
++            mju_mulMatMat(total_a,next_a.data(),old_a.data(),nx,nx,nx);
++            mju_mulMatMat(total_b,next_a.data(),old_b.data(),nx,nx,nu);
++            mju_addTo(total_b,next_b.data(),nx*nu);
++          }
+         }
+       }
+     });
+--- a/mjpc/grpc/agent_service.cc
++++ b/mjpc/grpc/agent_service.cc
+@@ -26,6 +26,7 @@
+ #include "mjpc/grpc/grpc_agent_util.h"
+ #include "mjpc/task.h"
+ #include "mjpc/trajectory.h"
++#include "mjpc/tasks/quadruped/r10_contact.h"
+ 
+ namespace mjpc::agent_grpc {
+ 
+@@ -85,6 +86,8 @@
+ grpc::Status AgentService::Init(grpc::ServerContext* context,
+                                 const InitRequest* request,
+                                 InitResponse* response) {
++  mjcb_contactfilter = mjpc::R10ContactFilter;
++  mjcb_passive = mjpc::R10ContactForce;
+   agent_.SetTaskList(tasks_);
+   grpc::Status status = grpc_agent_util::InitAgent(&agent_, request);
+   if (!status.ok()) {

@@ -1,5 +1,15 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
+**R10 实际结果（2026-10-28）：开发额度12/12已结束，材料完整任务0/9，联合PPO未启动。** 12次启动包括3次零物理步初始化失败和9次真实Go2材料任务；累计107.9750秒、539875个0.2ms物理步。G、G＋N与G＋N＋C均保留完整记录，C的局部力参考和支撑高度修正逐版保存。最终0.215m/s版本通过去程和远端转向，在返程32.5672秒触发原材料域；仍未完成原任务。
+
+冻结PANN的独立观察器完成既有R9记录的4169次状态推进与17次条件恢复查询，权重SHA256与原B ideal seed0一致；这不是闭环成功。标准PPO接口已准备但未执行，六流训练、PPO更新、新策略权重、21条60秒与21条600秒正式评价均为0。三模块稳定联合执行尚未成立，PANN改变动作及改善任务均未评价。真实材料、Go2物理、PD/力矩、任务阈值未放宽；未启动硬件，未测NX实时。
+
+48小时墙钟上限未耗尽，开发启动额度已耗尽。剩余49个预定评价case保留清单与未执行原因，不自动刷新额度。当前已无R10仿真或训练作业；`tmux`保留执行日志入口。
+
+[唯一运行索引](results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/index.json) · [全部启动与结果](results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/episodes.csv) · [轨迹与阈值图](results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/development-trajectories.png) · [未执行评价清单](results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/evaluation-manifest.csv) · [完整数据与负例视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-soft-landing-r10)
+
+以下R9及更早内容保留其历史身份。
+
 **R9实际状态（2026-10-28）：8次材料适配启动已用完，完整任务0/8，联合训练未启动。** 同一冻结R8-S3接原TM02中段条带，五种固定cap与三条预定2Hz时变序列均在6.5518–8.3448s于去程触发原主应变域上限.02。另有1次零物理步初始化失败。物理累计61.2944s/306472步，并发峰值3环境×2solver workers。PANN观察器与联合PPO环境未实现，训练/正式评价为0；材料、S3和阈值未放宽。48h预算未耗尽，8次适配额度已耗尽，不刷新额度。[唯一R9索引](results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json) · [八条真实轨迹](results/terrain_memory/simulation/tm-s1-go2-joint-r9/all-intents.png) · [完整负例数据与视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-joint-r9)
 
 **最终研究问题（用户于 2026-10-21 确认）：机器狗在会被自己改变的软地面上，怎样决定当前加载、落点和重访时间，为后足及返程留下可用的支撑条件？**

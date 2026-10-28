@@ -1,0 +1,3445 @@
+{
+  "stage": "G1",
+  "condition": "nominal",
+  "source_commit": "551fdc39b6f1737c972f32beb2c03e7c035d4fb1",
+  "source_sha256": {
+    "scripts/run_s1_go2_wb_baseline.py": "76e5b4a7fdd7f46477e17098a9b22b76b1e42621a563730ec1801f4209c9ff87",
+    "scripts/s1_go2_wb_model.py": "9cddeaaafda5982017ac8b9456517bb8cea3d7f41112e65320a384ddfb339909",
+    "scripts/s1_go2_wb_equilibrium.py": "56ce578557138cd1072a1036252a18785eeadca3b9268562c5ed008fe46bcfa0",
+    "scripts/s1_go2_support_reference.py": "6d1e5c0eb9fdb85a7335e8ea4f19e31d4e7b5f310b3d79fdb6225d28d8105060",
+    "experiments/terrain_memory/s1-go2-soft-landing-r10.json": "2f5606025cd5f6c9587e403461c7c68a82972760b2a1ba1c83d0f17091c7ad94",
+    "experiments/terrain_memory/s1-go2-wb-support-upstream.patch": "0af245c165f077c00be75f979af1ffadec2886214e2f350fc7fd4c7b319fdef4"
+  },
+  "author_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+  "author_source": "/root/autodl-tmp/MCP-RL/work/r10-frozen/GNC-r3",
+  "model": {
+    "xml": "/root/autodl-tmp/MCP-RL-r10-gnc-r3/outputs/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/dev10-GNC-r3-cap025/model/G1-project-go2.xml",
+    "xml_sha256": "7687f9ea01fdf209f884100d0ca1df9d89d306db11e425e09d9fe3fba7b9d129",
+    "original_model_mass_kg": 15.206408,
+    "sources": [
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/go2.xml",
+        "sha256": "ff349d63fc147a22042e5e77cc3ad204760f11d646badbe7d62f3f5a4e8d4de9"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/scene_flat.xml",
+        "sha256": "9675f840e069cf27968da4665e2ccf5c2fed6fdaec799e7e091cccd99bd99f83"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/rigid-T1R-resolved.json",
+        "sha256": "3213c69a9954721a14ccf56000f90cef82871446f04998d656ad421b17444e20"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/r10-frozen/GNC-r3/mjpc/tasks/quadruped/task_flat.xml",
+        "sha256": "8028e1566d961c959f05a0f4c070ad69a19130a91777be9ed2ee4470a32744af"
+      }
+    ],
+    "mesh_assets": [
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/base_0.obj",
+        "sha256": "8cdc53719002a5ee737d867904e534a6d6fa930b616bdcc1b3131e577d4e46c0"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/base_1.obj",
+        "sha256": "39d2f4724ff64dd5a0640c308fd98902a2946660a8d033ec8dbf368fd5af0dd6"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/base_2.obj",
+        "sha256": "29cae463f95d678e4ede863c36c9b19b0d356b8340412add10670d70bdcc3095"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/base_3.obj",
+        "sha256": "f51ba43bf300e68957a0c1aa83eaf3e4926f4ac7e64a0d6c33ae5d21fcbcf5f6"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/base_4.obj",
+        "sha256": "49ddec0129546e5dd2075d5beacf7f207baa2860aeff7626818e64d2efbf3821"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/hip_0.obj",
+        "sha256": "cc29932ab4d251ce3f72389ec4c1f757e44eee138b87e772b648c2bc76b506cd"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/hip_1.obj",
+        "sha256": "3fd5bd9b2ef6abe622c0739d3c67eaa1679b19b47132951972c4892a779ea7cf"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/thigh_0.obj",
+        "sha256": "bb3edfe6a7b04f4f4dff1ce7b05d426ddce941e276cc6372fb542055893c71ec"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/thigh_1.obj",
+        "sha256": "3a631822f9f7d2114b1b79dcdff5abf95103630abb7d91d1f3b8b18117132ed2"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/thigh_mirror_0.obj",
+        "sha256": "07abaedce761f1dd48647384ac14ba1959276bc78d5a2a62051e8f1c6093933b"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/thigh_mirror_1.obj",
+        "sha256": "db984a3e983eabbc9b38183427cca9ab0bb3bdb049f9eab030e06edda36579d6"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/calf_0.obj",
+        "sha256": "4a818cd563c5b7e2a271504442d05fd777d38cbaa028d4a10ad29c9f87bb355e"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/calf_1.obj",
+        "sha256": "51950c3a153ae3208592df86ea11c9d6756f8f645ebca5caf6910c61aeb03817"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/calf_mirror_0.obj",
+        "sha256": "6dc0406207a1c08a5953fd5962aca1a270fd06593d30d100205e05c1b32d4af2"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/calf_mirror_1.obj",
+        "sha256": "f84f5af90b914633165beb3a5493ee499169144c5797dcf04c6eb5842f74b31a"
+      },
+      {
+        "path": "/root/autodl-tmp/MCP-RL/work/assets/go2/assets/foot.obj",
+        "sha256": "df9e78a7c0110d02557439010f2a5f11f0ec4fd907b32704145dbd6aa7affc0b"
+      }
+    ],
+    "body_name_mapping": {
+      "base": "trunk"
+    },
+    "base_body_name": "trunk",
+    "foot_geom_names": [
+      "FL",
+      "FR",
+      "RL",
+      "RR"
+    ],
+    "allowed_ground_body_names": [
+      "FL_hip",
+      "FL_thigh",
+      "FL_calf",
+      "FL_foot",
+      "FR_hip",
+      "FR_thigh",
+      "FR_calf",
+      "FR_foot",
+      "RL_hip",
+      "RL_thigh",
+      "RL_calf",
+      "RL_foot",
+      "RR_hip",
+      "RR_thigh",
+      "RR_calf",
+      "RR_foot"
+    ],
+    "added_nonphysical_sites": {
+      "head": [
+        0.3,
+        0.0,
+        0.0
+      ],
+      "task_goal": "mocap goal"
+    },
+    "actuator_mapping": [
+      {
+        "name": "FL_hip",
+        "joint": "FL_hip_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.0472,
+          1.0472
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "FL_thigh",
+        "joint": "FL_thigh_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.5708,
+          3.4907
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "FL_calf",
+        "joint": "FL_calf_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -2.7227,
+          -0.83776
+        ],
+        "force_range_Nm": [
+          -45.43,
+          45.43
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "FR_hip",
+        "joint": "FR_hip_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.0472,
+          1.0472
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "FR_thigh",
+        "joint": "FR_thigh_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.5708,
+          3.4907
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "FR_calf",
+        "joint": "FR_calf_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -2.7227,
+          -0.83776
+        ],
+        "force_range_Nm": [
+          -45.43,
+          45.43
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RL_hip",
+        "joint": "RL_hip_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.0472,
+          1.0472
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RL_thigh",
+        "joint": "RL_thigh_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -0.5236,
+          4.5379
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RL_calf",
+        "joint": "RL_calf_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -2.7227,
+          -0.83776
+        ],
+        "force_range_Nm": [
+          -45.43,
+          45.43
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RR_hip",
+        "joint": "RR_hip_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -1.0472,
+          1.0472
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RR_thigh",
+        "joint": "RR_thigh_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -0.5236,
+          4.5379
+        ],
+        "force_range_Nm": [
+          -23.7,
+          23.7
+        ],
+        "kp": 60,
+        "kd": 5
+      },
+      {
+        "name": "RR_calf",
+        "joint": "RR_calf_joint",
+        "gear": "1",
+        "target_range_rad": [
+          -2.7227,
+          -0.83776
+        ],
+        "force_range_Nm": [
+          -45.43,
+          45.43
+        ],
+        "kp": 60,
+        "kd": 5
+      }
+    ],
+    "initial_qpos": [
+      3.4227784781322575e-23,
+      -6.362046133517818e-23,
+      0.29020935793281377,
+      1.0,
+      3.729569481712688e-21,
+      0.0,
+      0.0,
+      2.5579538487363612e-20,
+      0.9,
+      -1.8,
+      1.1368683772161603e-21,
+      0.9,
+      -1.8,
+      1.847411112976261e-20,
+      0.9,
+      -1.8,
+      1.847411112976261e-21,
+      0.9,
+      -1.8
+    ],
+    "initial_qvel": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "initial_velocity_rule": "The runner applies the declared physical initial-condition velocities after home initialization.",
+    "physical_timestep_s": 0.0002,
+    "native_rigid_contact": {
+      "solref": [
+        0.002,
+        1.0
+      ],
+      "solimp": [
+        0.99,
+        0.999,
+        0.001,
+        0.5,
+        2.0
+      ],
+      "margin": 0.0,
+      "ground_and_feet_friction": [
+        0.5,
+        0.005,
+        0.0
+      ]
+    },
+    "integration_scope": "The runner writes the selected prediction numerics before Agent initialization; plant timestep remains 0.0002 s.",
+    "actuator_scope": "The same compiled target/PD/force mapping is used by plant and Agent.",
+    "flat_ground": {
+      "geom_name": "floor",
+      "geom_id": 0,
+      "body_id": 0,
+      "world_normal": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "world_height_m": 0.0,
+      "numeric": "s1_flat_ground_height",
+      "xml_sha256": "31bb3a501d6bbf0e282088317cbda94cf6426f5b651a9cfa82320eaf951c446a"
+    },
+    "prepared_xml_sha256": "60ea95fe3eee8446c9282aacd0d5c8baba8705a59c0d70115fc5444ffe5f6331",
+    "controller_settings": {
+      "arm": "S",
+      "prediction_profile": "C",
+      "numerics": {
+        "s1_stand_equilibrium": 0,
+        "agent_timestep": 0.0002,
+        "agent_integrator": 3,
+        "agent_differentiable": 1,
+        "agent_horizon": 0.35,
+        "s1_control_hold_substeps": 10,
+        "s1_stand_absolute_height": 0.29020336039643685,
+        "s1_stand_support": 1,
+        "s1_stand_input_scale": 0.02,
+        "s1_stand_load_tracking": 0,
+        "r10_normal_landing": 1,
+        "r10_local_contact": 1227272.7272727273,
+        "r10_contact_anchor": 1
+      },
+      "cost_weights": {
+        "Orientation": 1.0,
+        "Angmom": 0.0
+      },
+      "prediction_smoothing_width_m": null,
+      "refsafe": "preserved",
+      "plant_options": "unchanged",
+      "xml_sha256": "60ea95fe3eee8446c9282aacd0d5c8baba8705a59c0d70115fc5444ffe5f6331"
+    }
+  },
+  "model_path": "/root/autodl-tmp/MCP-RL-r10-gnc-r3/outputs/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/dev10-GNC-r3-cap025/model/G1-project-go2.xml",
+  "mass_kg": 15.206408000000003,
+  "compiled_mass_including_mocap_kg": 15.206408,
+  "physics_dt_s": 0.0002,
+  "logical_feedback_dt_s": 0.002,
+  "logical_planning_dt_s": 0.02,
+  "workers": 12,
+  "synchronous_slow_simulation": true,
+  "initial_qpos": [
+    3.4227784781322575e-23,
+    -6.362046133517818e-23,
+    0.29020935793281377,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    2.5579538487363612e-20,
+    0.9,
+    -1.8,
+    1.1368683772161603e-21,
+    0.9,
+    -1.8,
+    1.847411112976261e-20,
+    0.9,
+    -1.8,
+    1.847411112976261e-21,
+    0.9,
+    -1.8
+  ],
+  "initial_qvel": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "execution_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    148,
+    149,
+    150,
+    151,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167,
+    168,
+    169,
+    170,
+    171,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    184,
+    185,
+    186,
+    187,
+    188,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207
+  ],
+  "process_nice": 0,
+  "joint_names": [
+    "FL_hip_joint",
+    "FL_thigh_joint",
+    "FL_calf_joint",
+    "FR_hip_joint",
+    "FR_thigh_joint",
+    "FR_calf_joint",
+    "RL_hip_joint",
+    "RL_thigh_joint",
+    "RL_calf_joint",
+    "RR_hip_joint",
+    "RR_thigh_joint",
+    "RR_calf_joint"
+  ],
+  "joint_ranges": [
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ]
+  ],
+  "actuator_gear": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "actuator_gainprm": [
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      60.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "actuator_biasprm": [
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -60.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "actuator_gaintype": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "actuator_biastype": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "actuator_ctrlrange": [
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -1.5708,
+      3.4907
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ],
+    [
+      -1.0472,
+      1.0472
+    ],
+    [
+      -0.5236,
+      4.5379
+    ],
+    [
+      -2.7227,
+      -0.83776
+    ]
+  ],
+  "actuator_ctrllimited": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "actuator_forcerange": [
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -23.7,
+      23.7
+    ],
+    [
+      -45.43,
+      45.43
+    ]
+  ],
+  "actuator_forcelimited": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "head_offset": [
+    0.3,
+    0.0,
+    0.0
+  ],
+  "model_numerics": {
+    "agent_planner": [
+      2.0
+    ],
+    "agent_horizon": [
+      0.35
+    ],
+    "agent_timestep": [
+      0.0002
+    ],
+    "sampling_spline_points": [
+      3.0
+    ],
+    "sampling_trajectories": [
+      60.0
+    ],
+    "sampling_exploration": [
+      0.04
+    ],
+    "gradient_spline_points": [
+      5.0
+    ],
+    "s1_stand_equilibrium": [
+      0.0
+    ],
+    "residual_select_Gait": [
+      0.0
+    ],
+    "residual_select_Gait switch": [
+      1.0
+    ],
+    "residual_Cadence": [
+      2.0,
+      0.0,
+      4.0
+    ],
+    "residual_Amplitude": [
+      0.06,
+      0.0,
+      0.2
+    ],
+    "residual_Duty ratio": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "residual_Walk speed": [
+      0.0,
+      0.0,
+      4.0
+    ],
+    "residual_Walk turn": [
+      0.0,
+      -2.0,
+      2.0
+    ],
+    "residual_select_Flip dir": [
+      0.0
+    ],
+    "residual_select_Biped type": [
+      0.0
+    ],
+    "residual_Heading": [
+      0.0,
+      -3.14,
+      3.14
+    ],
+    "residual_Arm posture": [
+      0.2,
+      0.0,
+      1.0
+    ],
+    "estimator": [
+      0.0
+    ],
+    "estimator_sensor_start": [
+      11.0
+    ],
+    "estimator_number_sensor": [
+      16.0
+    ],
+    "estimator_timestep": [
+      0.005
+    ],
+    "batch_configuration_length": [
+      3.0
+    ],
+    "batch_scale_prior": [
+      0.001
+    ],
+    "s1_flat_ground_height": [
+      0.0
+    ],
+    "agent_integrator": [
+      3.0
+    ],
+    "agent_differentiable": [
+      1.0
+    ],
+    "s1_control_hold_substeps": [
+      10.0
+    ],
+    "s1_stand_absolute_height": [
+      0.29020336039643685
+    ],
+    "s1_stand_support": [
+      1.0
+    ],
+    "s1_stand_input_scale": [
+      0.02
+    ],
+    "s1_stand_load_tracking": [
+      0.0
+    ],
+    "r10_normal_landing": [
+      1.0
+    ],
+    "r10_material_support_height": [
+      0.29020336039643685
+    ],
+    "r10_local_contact": [
+      1227272.7272727273
+    ],
+    "r10_contact_anchor": [
+      1.0
+    ]
+  },
+  "author_planner_defaults": {
+    "ilqg_num_rollouts": 10,
+    "derivative_skip": 0,
+    "fd_tolerance": 1e-06,
+    "fd_mode": 0,
+    "ilqg_representation": 1,
+    "action_limits": 1,
+    "nominal_feedback_scaling": 1,
+    "max_regularization_iterations": 5,
+    "planner_step_iterations": 1
+  },
+  "author_prediction_approximation": {
+    "arm": "S",
+    "prediction_profile": "C",
+    "numerics": {
+      "s1_stand_equilibrium": 0,
+      "agent_timestep": 0.0002,
+      "agent_integrator": 3,
+      "agent_differentiable": 1,
+      "agent_horizon": 0.35,
+      "s1_control_hold_substeps": 10,
+      "s1_stand_absolute_height": 0.29020336039643685,
+      "s1_stand_support": 1,
+      "s1_stand_input_scale": 0.02,
+      "s1_stand_load_tracking": 0,
+      "r10_normal_landing": 1,
+      "r10_local_contact": 1227272.7272727273,
+      "r10_contact_anchor": 1
+    },
+    "cost_weights": {
+      "Orientation": 1.0,
+      "Angmom": 0.0
+    },
+    "prediction_smoothing_width_m": null,
+    "refsafe": "preserved",
+    "plant_options": "unchanged",
+    "xml_sha256": "60ea95fe3eee8446c9282aacd0d5c8baba8705a59c0d70115fc5444ffe5f6331"
+  },
+  "mujoco_version": "3.2.3",
+  "python": "3.11.16 (main, Sep  2 2026, 23:39:52) [GCC 15.3.0]",
+  "command": [
+    "scripts/run_s1_go2_r10.py",
+    "--attempt",
+    "dev10-GNC-r3-cap025",
+    "--form",
+    "GNC",
+    "--build",
+    "GNC-r3",
+    "--cap",
+    ".25",
+    "--workers",
+    "12"
+  ],
+  "agent_server": {
+    "path": "/root/autodl-tmp/MCP-RL/work/r10-frozen/GNC-r3/agent_server",
+    "sha256": "f2bc6741d13f893239776b96f07cbacb25130eadaf68229c2e70e51649ead2da",
+    "size": 13761200
+  },
+  "host": "autodl-container-xtdqf2xk0b-5d274a8e",
+  "r9_material_contract": {
+    "purpose": "R9 frozen contract with actual material prerequisite results; material adapter ran, but no PANN observer or PPO training/evaluation was executed.",
+    "run_id": "tm-s1-go2-joint-r9",
+    "stage": "S1R9",
+    "implementation_status": "material_adapter_executed_training_blocked",
+    "reviewed_source_commit": "e3abb8268353bb4900d8ec5b11cc63391cd8d897",
+    "entrypoint_contract": {
+      "extend_existing": "scripts/run_s1_go2_wb_baseline.py",
+      "thin_material_adapter": "Adapt existing Ground/ReferenceColumns/LearnedColumns mathematics to this raw MuJoCo runner; do not import the old T1/PyMPC/WBC execution stack.",
+      "new_joint_launcher": "Implement one R9 campaign launcher and actual resolved configuration; naming is an implementation choice, not evidence of completion.",
+      "contact_measurements": "Replace native-only contact_state aggregation with unified actual support: native rigid-foot reaction for hard feet, ReferenceColumns actual reaction for soft feet; use this for raw GRF/contact/total support/slip/criteria. Non-foot contact remains from native contacts; never substitute predicted PANN forces."
+    },
+    "frozen_baseline": {
+      "run_id": "tm-s1-go2-wb-support-r8",
+      "cohort": "project-s3-formal-v1",
+      "configuration": "experiments/terrain_memory/s1-go2-wb-support.json",
+      "result_index": "results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json",
+      "qualification_source_commit": "fb7f924f2d519582a127d15ff2e1e2cb2cd5bc9e",
+      "execution_fingerprint_sha256": "d3177cb85bc13bb1d997d87b5c8ad5e37c87b504d70c7a08ddf32d42463a2842",
+      "binary_sha256": "1a586ca2879b5fed37d58cbadb12e3d2f4afd601dd468fe8f1c8ae0f78a21af3",
+      "current_result": {
+        "original_conditions_passed": 9,
+        "long_300s_passed": 3,
+        "physical_starts": 19,
+        "new_pann_or_ppo_training_runs": 0
+      },
+      "controller": "S3; keep feasible native Stand equilibrium, absolute height/foot/posture/PD-input references, Stand Effort scale .02 rad and weight .08, StandSupportForce weight 0.",
+      "predictor": "Native rigid-floor Go2 dynamics; material PANN affects high-level Actor observations only. No claim that learned material state is optimized inside iLQG.",
+      "preserve": [
+        "project Go2 15.206408 kg and original inertia/passive/geometry",
+        "home/initial qpos and qvel apart from declared yaw condition",
+        "PD kp=60 kd=5 with original target bounds",
+        "23.7/23.7/45.43 Nm per leg",
+        "2 ms held input with two 1 ms internal prediction integrations and consistent derivatives",
+        "175 prediction transitions/176 states over .350 s",
+        "20 initial planning calls without plant advancement",
+        "immediate phase-change replan",
+        "frozen Stand support-reference solver without plant resets",
+        "original movement/turn/gait settings and mission criteria"
+      ]
+    },
+    "execution": {
+      "host": "fy-5080",
+      "transport": "Reuse existing SSH/tmux",
+      "environment": "work/envs/mjpc-go2",
+      "author_source": "work/terrain-memory/upstreams/mujoco_mpc-go2",
+      "reuse_installed_dependencies": true,
+      "build_tests": false,
+      "physical_dt_s": 0.0002,
+      "material_truth_dt_s": 0.0002,
+      "mpc_target_dt_s": 0.002,
+      "logical_planning_dt_s": 0.02,
+      "pann_observer_dt_s": 0.002,
+      "actor_dt_s": 0.5,
+      "solver_workers_per_environment": 2,
+      "max_concurrent_training_environments": 3,
+      "max_concurrent_evaluation_environments": 3,
+      "synchronous_slow_simulation": true,
+      "activate_hardware": false,
+      "nx_timing_measurement": false,
+      "resource_policy": "Use current authorized host/resources; no new paid resources or simulator platform. Record actual CPU/GPU concurrency and per-component wall times."
+    },
+    "material": {
+      "family": "controlled TM02 independent-column viscoelastic strip; not sand/snow/wet grass",
+      "region_m": {
+        "x": [
+          0.8,
+          2.2
+        ],
+        "y": [
+          -0.6,
+          0.6
+        ],
+        "floor_z": 0
+      },
+      "world_fixed_cells": true,
+      "cell_size_m": 0.02,
+      "footprint_area_m2": 0.001,
+      "layer_height_m": 0.05,
+      "force_scale_gamma": 0.025,
+      "max_abs_principal_strain": 0.02,
+      "constitutive_source": "experiments/tm02/r2-multihistory.json:reference_material",
+      "implementation_source": "src/tm02/s1_material.py and src/tm02/s1_contact.py",
+      "truth": "ReferenceColumns",
+      "parameter_policy": "Use unchanged tm02_anchor reference-material parameters and existing pressure/area/friction mapping; no parameter fitting or softened truth to manufacture success.",
+      "endpoints_and_turns": "Rigid pads at home x=0 and far x=3; material only on translating middle strip.",
+      "boundary_rule": "Hard priority: an equivalent entire foot footprint must lie inside the soft interior; straddling footprints remain fully native rigid. No blending or duplicate support.",
+      "truth_forces": "Disable only native soft-foot ground support, advance ReferenceColumns from actual foot kinematics, apply its unique reaction at the actual foot-bottom world point. Retain non-foot collisions/failure. Never inject an MPC planned support force as actual ground reaction. Clear old applied external forces before applying the current step's actual material forces.",
+      "kinematics": "Use sphere-center z minus foot radius minus actual floor z; total strain is current bottom displacement/H, not per-step delta-z/H. Foot-bottom velocity includes angular-velocity cross offset.",
+      "continuity": "Share world cells across all feet, steps and revisits; unloaded cells continue zero-load recovery. Reset material to known virgin only between independent episodes, never at PPO rollout chunks, leg switches or long-task laps.",
+      "validity": "Declare and record any physical or predictor material-domain exit. No clipping material strain/stress or silently substituting another contact law.",
+      "model_state": "The plant may change foot-ground collision masks by current region. Keep separate immutable native model copies for MPC initialization, FK and Stand reference solving. At each independent episode, restore native foot masks and clear old applied forces before initial references and20 startup planning calls; resetting qpos alone does not reset model attributes."
+    },
+    "pann": {
+      "training": "none; frozen R2 material network",
+      "selection": "B_random1000--ideal",
+      "seed": 0,
+      "weights_path": "outputs/terrain_memory/reproduction/material/tm02-memory-study-20261023/selected/B_random1000--ideal-potentials.npz",
+      "weights_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
+      "preserve_weights_and_normalization": true,
+      "observer": "Independent LearnedColumns state initialized virgin; update from causal foot-bottom kinematics and allowed observed contact information. Actual ReferenceColumns hidden q/e must not enter it.",
+      "clock": "Use real accumulated dt=.002 s, not .002 at every .0002 plant step. Handle observed within-window contact events causally and disclose sampling approximation; no hidden true-state correction. Continue recovery during inactive Actor phases. At t=0 keep virgin state; when observation time t arrives advance by t-last_observation_time to t before querying, never pre-advance a future-labeled state.",
+      "no_pann_group": "No learned prediction features and no predictor=ground alias. Same actual ReferenceColumns plant and shared raw observation stream.",
+      "query_contract": {
+        "query_locations": "Four world footprints from the most recent available frozen S3 nominal trajectory at current time +.20 s (time-aligned FK, not actual future motion); same positions and soft masks exposed to both PPO groups. Use only a completed plan and record its start/query times; do not replan using the not-yet-selected Actor action.",
+        "outputs_per_foot": [
+          "signed predicted free-recovery depression after .002 s zero external load",
+          "same after .200 s",
+          "same after .500 s"
+        ],
+        "definition": "Use observer-owned material state at query time. Form union of all queried columns once; copy into a private branch. Advance normal=0 with displacement=False in250 consecutive .002 s steps, save steps1,100,250. Area-weight -H*e_hat[:,0] over each footprint, normalize by .001 m. Current constrained strain is not the current free surface. No clipping signed outputs.",
+        "sharing": "Four feet reuse the same union rollout. Queries do not change actual material or the persistent observer. No compression probe, candidate-control search or new learned network.",
+        "mask": "Rigid/straddling footprints use the public rigid mask and zero material features. Unvisited soft cells use declared known-virgin state.",
+        "evaluation": "These are conditional zero-load forecasts, not guaranteed future trajectories. Compare with actual recovery only for physically comparable windows with no intervening load; record intervening contact separately. Match truth/observer/private-query columns by world grid key(ix,iy), never creation-order row index; their sparse arrays may differ. Only genuinely never-loaded truth cells use the declared virgin reference.",
+        "dimensions": "12 prediction values; RAW pads them with zero. The four query masks/coordinates are shared information.",
+        "cost": "Keep current integrator and JAX batching; charge observer and private250-step queries to measured complete-episode wall time. Do not claim2Hz Actor makes this free or5kHz.",
+        "api": "After private clone and all footprint(...,create=True) queries, form union. law.step(e_hat,q_hat,zeros(n),.002,zeros(n,bool)) returns next e/q/stress/residual; save steps1,100,250. All query columns fit existing batching; no new generic predictor platform."
+      },
+      "deployment_scope": "Known material, known strip position, ideal robot state/contact observations, virgin initial material. Not an unknown-material estimator or validated real sensor pipeline."
+    },
+    "actor": {
+      "algorithm": "standard PPO",
+      "action_dimension": 1,
+      "normalized_action_range": [
+        -1,
+        1
+      ],
+      "physical_speed_cap_m_s": [
+        0.18,
+        0.25
+      ],
+      "mapping": "Set PPO action_bound=1; a=tanh(raw_action), cap=.215+.035*a. Preserve raw Gaussian action/log_prob for standard PPO ratios. Existing PPOBackend.act already returns sample.action=tanh(raw) for action_bound=1: implement cap=.215+.035*sample.action, no second tanh.",
+      "application": "Cap original outbound/return velocity command; retain original acceleration and near-goal braking, which may go below .18 m/s. Do not impose a minimum actual speed.",
+      "inactive_phases": "Stand/turn/gait/foot placement/PD/torque/weights stay frozen. Actor can be sampled at 2 Hz but ignored there; record phase and action_effective flag. No post-completion passive Stand counted as training transitions.",
+      "observation_shared": "Ideal simulated robot proprioception/body pose and velocities, relative goal/heading, mission and gait phase, joint position/velocity, foot position/velocity/contact/actual GRF, previous applied cap; same preceding 1 s raw history sampled at 20 Hz. Public strip geometry and any query coordinates/masks available to both groups.",
+      "observation_history_fields": [
+        "foot bottom height relative to undeformed plane",
+        "per-foot Fz",
+        "per-foot tangential velocity",
+        "per-foot contact",
+        "body linear and angular velocity",
+        "applied speed cap"
+      ],
+      "observation_forbidden": [
+        "true hidden material q/e",
+        "future measured GRF",
+        "future actual robot motion",
+        "oracle recovery time",
+        "test outcomes used for model selection"
+      ],
+      "information_scope": "Same incoming raw measurements, action authority and task. PANN group additionally has frozen constitutive prior and persistent estimated world state; this is not yet a comparison with equally capable RNN/classical state estimators.",
+      "normalization": "Use one declared physical scaling/schema for both groups, freeze for evaluation; pad PANN feature channels with zero in RAW so architecture dimensions match. No group-specific test-data normalization.",
+      "observation_scaling": {
+        "body_xy_relative_goal_and_query_xy_m": 3,
+        "body_height_m": 0.3,
+        "body_linear_speed_m_s": 0.25,
+        "angular_speed_rad_s": 1,
+        "joint_position": "Original per-joint range midpoint/half-width",
+        "joint_speed_rad_s": 10,
+        "relative_foot_position_m": 0.3,
+        "foot_speed_m_s": 1,
+        "force_N": "15.206408*9.81/4",
+        "history_bottom_height_m": 0.05,
+        "pann_depression_m": 0.001,
+        "other": "Binary masks/phase indicators and sine/cosine angles unchanged; cap normalized to[-1,1]. Record the exact ordered schema; preserve real exceedances without hidden observation clipping."
+      }
+    },
+    "ppo": {
+      "backend": "src/response_ppo/ppo_backend.py, installed Tianshou 0.5.1 PPOPolicy.learn",
+      "reuse": "Core PPO backend only; new environment/observations/reward/action map and fresh policies. Do not reuse old task wrappers or unrelated checkpoints.",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "hidden": [
+        64,
+        64
+      ],
+      "learning_rate": 0.0003,
+      "initial_std": 0.35,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_epsilon": 0.2,
+      "value_coef": 0.5,
+      "entropy_coef": 0,
+      "max_grad_norm": 0.5,
+      "epochs": 4,
+      "rollout_transitions": 256,
+      "minibatch_size": 64,
+      "device": "cpu",
+      "initial_target_transitions_per_group_seed": 4096,
+      "extension_target_transitions_per_group_seed": 8192,
+      "total_transition_hard_cap": 49152,
+      "sampling": "Every training transition uses actual frozen S3 MPC + Go2 + actual material; keep MPC server/model and compiled PANN persistent. No surrogate controller or fake fast plant.",
+      "episode_initial_conditions": "Cycle nominal/yaw+5/yaw-5 identically across groups; training seeds control initialization/action sampling. Evaluation repeats declared conditions, not held-out terrain generalization.",
+      "termination": "Training ends successfully on first full original route completion plus continuous2 s stable hold. Physical/material/model-domain failure and the intrinsic60 s task deadline are terminal with bootstrap0 (timeout labeled separately). A PPO rollout boundary is nonterminal and bootstraps the actual successor; a mere technical interruption is not a fabricated physical failure. Formal evaluation observes full60/300 s.",
+      "rollout_continuity": "PPO update/rollout boundaries never reset the robot or material. Preserve actual terminal/truncated successor before episode reset.",
+      "balance": "Schedule all six group/seed flows evenly; save common multiples of 256. Extend only together. If wall budget stops early, evaluate matched common completed checkpoints and report actual steps; do not claim 4096/8192 completed.",
+      "counts": "Record collected transitions, action-effective transitions, physics seconds, MPC calls, episode/reset/failure counts and wall time separately."
+    },
+    "reward": {
+      "scope": "Identical scalar reward in the two PPO groups, fixed before training and based on actual executed quantities; never reward a PANN belief or assumed compaction benefit.",
+      "per_transition": "5*d_route_fraction - dt/60 - 1.0*mean_indent_sq*dt/60 - 0.1*mean_loaded_slip_sq*dt/60 - 0.01*d_applied_normalized_cap_sq + 10*completion - 10*failure - 5*timeout",
+      "route_fraction": "Signed actual translation progress along each outbound/return leg, accumulated at plant resolution and divided by 6 m; split phase boundaries, no phase-switch bonus, preserve negative progress.",
+      "indentation": "Per-foot positive sinking below undeformed material plane divided by H*.02=.001 m, squared; soft loaded feet only, zero when none, integrate actual time rather than just endpoint samples.",
+      "slip": "Per-foot tangential foot-bottom speed/.25 m/s, squared, loaded feet with Fz>1 N; zero when none; integrate actual time.",
+      "action_change": "Difference of applied normalized caps on translating decisions only; phase-masked requested changes receive no action penalty.",
+      "terminal": "Completion only under original full task/2 s stability. Failure includes physical or material-domain termination, separately labeled; timeout is not success. Report energy and force as metrics without adding reward terms. A task timeout sets terminated=True with bootstrap0, timeout=True in metrics, but does not also set the physical/domain failure penalty.",
+      "tuning": "No reward/learning-rate/action-space sweep. A demonstrated implementation error may be fixed within the same bounded campaign, retaining its affected training records; never tune after formal outcomes."
+    },
+    "groups": [
+      {
+        "id": "FIXED_S3",
+        "actor": "constant cap .25 m/s",
+        "pann_features": false,
+        "training": false
+      },
+      {
+        "id": "PPO_RAW_S3",
+        "actor": "standard PPO from scratch",
+        "pann_features": false,
+        "training_seeds": [
+          0,
+          1,
+          2
+        ]
+      },
+      {
+        "id": "PANN_PPO_S3",
+        "actor": "same standard PPO from scratch",
+        "pann_features": true,
+        "training_seeds": [
+          0,
+          1,
+          2
+        ]
+      }
+    ],
+    "development": {
+      "maximum_nontraining_physical_starts": 8,
+      "protocol": "Complete original mission, up to60 s, on actual strip; retain all negatives. Direct interface/physics implementation fixes only; do not spend starts on short stand/smoke tasks.",
+      "before_training": "At least one actual complete material task under an allowed speed intent must demonstrate a usable execution domain. If the genuine contact/domain blocker persists, preserve complete failures and stop that blocked training path without inventing success or changing truth.",
+      "remaining_predeclared_intents": [
+        {
+          "attempt": "dev04-cap020",
+          "cap": 0.2,
+          "profile": "constant"
+        },
+        {
+          "attempt": "dev05-cap0235",
+          "cap": 0.235,
+          "profile": "constant"
+        },
+        {
+          "attempt": "dev06-switch2s",
+          "cap": 0.215,
+          "profile": "switch_2s"
+        },
+        {
+          "attempt": "dev07-switch05s",
+          "cap": 0.215,
+          "profile": "switch_05s"
+        },
+        {
+          "attempt": "dev08-sinusoid4s",
+          "cap": 0.215,
+          "profile": "sinusoid_4s"
+        }
+      ],
+      "remaining_intent_reason": "After 0/3 constant caps, use the remaining five full-mission adaptation starts to cover two intermediate caps and three predeclared 2 Hz sequences, without changing the frozen physics/controller. This tests the permitted time-varying action channel before deciding the prerequisite is blocked."
+    },
+    "evaluation": {
+      "freeze": "Freeze shared plant/controller/observation/reward, exact trained checkpoints and deterministic policy means before formal evaluation; record source/config/weights/binary identities and every start.",
+      "short": {
+        "duration_s": 60,
+        "conditions": [
+          "nominal",
+          "yaw_plus5",
+          "yaw_minus5"
+        ],
+        "fixed_episodes": 3,
+        "ppo_episodes": 18,
+        "total": 21,
+        "criteria": "Unchanged R8 original mission and terminal thresholds, observe through60 s after first completion; original far-end turn has no extra stop."
+      },
+      "long": {
+        "duration_s": 300,
+        "conditions": [
+          "nominal"
+        ],
+        "groups": [
+          "FIXED_S3",
+          "PPO_RAW_S3:seed0",
+          "PANN_PPO_S3:seed0"
+        ],
+        "total": 3,
+        "full_round_trips": 5,
+        "route_deadline_s": 270,
+        "endpoint_stable_s": 2,
+        "minimum_final_observation_s": 30,
+        "criteria": "Unchanged R8 continuous long protocol and final original2 s stability, all intervening violations reported.",
+        "representative": "seed0 preselected; never choose best formal seed after seeing results.",
+        "activation": "Start corresponding300 s after its nominal60 s passes and full observation shows no hidden failure; other short failures do not cancel unaffected groups.",
+        "no_reset_between_laps": true
+      },
+      "max_formal_starts": 24,
+      "max_nontraining_starts_including_development": 32,
+      "reuse": "Do not duplicate-count development and formal runs; only reuse an exactly identical, predeclared frozen FIXED_S3 nominal run, disclose its single physical-start identity.",
+      "comparison": [
+        "task completion and post-completion holding",
+        "material loading/recovery across feet and return visits",
+        "actual requested/applied action and physical response",
+        "true-vs-PANN predictions for evaluation only",
+        "slip, energy, peak forces, torque saturation, model-domain exits",
+        "seed dispersion, simulation/actor/MPC sample counts and runtime"
+      ],
+      "interpretation": "Stable joint execution, action dependence on PANN features and improved complete-task performance are different outcomes. Neither loading a network, more sample rows nor constant max-speed success establishes material-memory innovation.",
+      "negative_result_policy": "Retain every failed/partial formal start; no post-test best-seed selection, hidden parameter relaxation, stitched laps or pooled distinct algorithms."
+    },
+    "campaign_budget": {
+      "wall_clock_hard_cap_h": 48,
+      "starts_at": "First new physical start; includes adaptation, training, evaluation and intervening pauses. Report implementation and publication time separately.",
+      "reserve_evaluation_h_at_least": 6,
+      "reserve_rule": "Reserve max(6 h,1.2 times remaining evaluation cost estimated from real complete episodes). Stop adding training before this reserve; no separate microbenchmark.",
+      "runtime_prior": "R8 nominal300 s required3679.95 s wall, all72127 project planning calls exceeded20 ms. PANN/contact cost is additional. Two Hz Actor does not reduce50 Hz MPC calls.",
+      "finish_rule": "Execute the full authorized feasible campaign without stopping after each failed episode. Finish at delivered results, a specific unresolved physical/implementation blocker, or actual budget exhaustion. State incomplete work rather than silently extending budgets."
+    },
+    "outputs": {
+      "root": "results/terrain_memory/simulation/tm-s1-go2-joint-r9",
+      "release_tag": "tm-s1-go2-joint-r9",
+      "required": [
+        "actual source/config/binary/checkpoint identities",
+        "learning curves and per-seed true sample/time counters",
+        "all formal/development full videos including failures",
+        "same-version three-group task table",
+        "500 Hz state/command/torque and0.2 ms material forces/support for evaluation",
+        "causal PANN state/query and material history records",
+        "first completion plus full subsequent holding",
+        "per-component and total wall times",
+        "one concise result index with source and final asset URLs"
+      ],
+      "training_records": "Keep per-Actor transition/episode statistics, material summaries, selected full-task videos and checkpoints. Do not serialize every MPC predicted trajectory in every training step; full high-rate records required for development/formal evaluation.",
+      "large_files": "Chunk on execution host by continuous time/data stream, each asset below2 GiB. Split files only; never reset a physical task."
+    },
+    "delivery": {
+      "source_and_compact_results": "GitHub",
+      "large_arrays_weights_and_video": "Upload directly from execution host to Release",
+      "verification": "Verify final commit and published URL/size/digest; then finish.",
+      "no_user_pc_download_copy_mirror_compress_or_archive": true
+    },
+    "forbidden": [
+      "reopen R1/R2/S0 or old S1 budgets",
+      "new rigid-only perfection campaign",
+      "PANN retraining or new PPO algorithm",
+      "material-state iLQG derivative expansion in this round",
+      "new WBC/alternate simulator or controller stack",
+      "hardware activation or fabricated NX timing",
+      "true hidden material state to deployment Actor",
+      "altering material/robot limits/task criteria to force success",
+      "defensive programming/generic fallback",
+      "unit/mock/smoke/import/shape tests and irrelevant regression matrices",
+      "audit/status/continuation reports instead of task results",
+      "user-PC archiving after publication"
+    ],
+    "actual_execution": {
+      "result_index": "results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json",
+      "execution_source_commit": "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15",
+      "adapter": "scripts/s1_go2_joint_material.py",
+      "runner": "scripts/run_s1_go2_joint.py",
+      "nontraining_physical_starts": 8,
+      "initialization_failures_without_physics": 1,
+      "material_complete_tasks": 0,
+      "training_starts": 0,
+      "training_transitions": 0,
+      "pann_observer_implemented": false,
+      "ppo_joint_environment_implemented": false,
+      "formal_short_starts": 0,
+      "formal_long_starts": 0,
+      "tested_constant_caps_m_s": [
+        0.18,
+        0.2,
+        0.215,
+        0.235,
+        0.25
+      ],
+      "termination": "All eight allowed-intent actual material missions stopped at the unchanged |principal strain|>.02 bound during outbound travel.",
+      "budget": "8/8 material-adaptation physical starts used; 8/32 total nontraining starts. The 48h wall-clock cap is not exhausted. No change to material/S3/action range/task criteria.",
+      "failed_constitutive_step": "Final attempted current-total-displacement boundary retained at material time t+.0002; out-of-domain force not applied to robot. No strain clipping.",
+      "scope": "Five constant caps plus three predeclared 2Hz sequences did not establish the required complete-task feasible domain within the full adaptation budget. This is not a proof of impossibility for every policy. No PANN/PPO result is claimed.",
+      "tested_2Hz_sequences": [
+        "switch_2s",
+        "switch_05s",
+        "sinusoid_4s"
+      ],
+      "execution_source_commits": [
+        "0468e207b4c44bfb634996faa0f8a3ac9b70fac5",
+        "7f36f93ed0b32b5276ba6f79bdf615b7b524ed15"
+      ]
+    }
+  },
+  "r9_material_source_sha256": "7bbbac1919a1bdfb39df20be74dd48a09a713869f430352485b842b91ddd28e6",
+  "r10_configuration": {
+    "purpose": "Go2 continuous execution: preserve the successful author controller; align predicted control holds with execution; repair project standing support only as required by complete-task results.",
+    "run_id": "tm-s1-go2-soft-landing-r10",
+    "stage": "S1R10",
+    "implementation_status": "S4_development_GNC",
+    "reviewed_source_commit": "a26c339ff2c30a0c45753f7ea771c7169e4b6d63",
+    "target_entrypoint": "scripts/run_s1_go2_wb_baseline.py",
+    "stage_labels": {
+      "G0": "Go2 author configuration",
+      "G1": "Go2 project physical constraints",
+      "hardware": "Go2 plus NX",
+      "note": "G0/G1 are experiment codes; neither denotes a humanoid."
+    },
+    "frozen_reference": {
+      "run_id": "tm-s1-go2-wb-equilibrium-r7",
+      "config": "experiments/terrain_memory/s1-go2-wb-equilibrium.json",
+      "index": "results/terrain_memory/simulation/tm-s1-go2-wb-equilibrium-r7/index.json",
+      "author": {
+        "attempt": "g0-n-01",
+        "arm": "N",
+        "source_commit": "ec0c4f5cb8de7645ff9c29f8585316544b0da503",
+        "first_completion_s": 37.556,
+        "observed_through_s": 60
+      },
+      "project": {
+        "attempt": "g1-nsh-nominal-03",
+        "arm": "N_SH",
+        "source_commit": "8451e480e0f5a26ecb7600d4d7418c214bc40dcd",
+        "return_s": 35.85,
+        "longest_terminal_stability_s": 0.16,
+        "original_mission_success": false
+      },
+      "binary_sha256": "1991b74ccf70b5f87e056519f4b6d54598ee0da2171dbf63d78370a8a8d6e9e6",
+      "selection": "Restore N_SH; R7's selected O_SH_W was the last failed attempt, not the best baseline.",
+      "preserve": "All historical outcomes/configs/arrays remain unchanged; O, ON, O_SH and O_SH_W remain negative references."
+    },
+    "upstream": {
+      "repository": "https://github.com/johnzhang3/mujoco_mpc",
+      "commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+      "mujoco_commit": "088079eff0450e32b98ee743141780ed68307506",
+      "menagerie_commit": "d82891f8b6c576f9f6a9df308f3a1155ebedbc40",
+      "required_previous_patches": [
+        "experiments/terrain_memory/s1-go2-wb-startup-upstream.patch",
+        "experiments/terrain_memory/s1-go2-wb-equilibrium-upstream.patch"
+      ],
+      "implementation": "C, H and S implemented, compiled and physically evaluated. C/H/S1/S2 complete-task negatives retained; frozen S3 passes all9 original and3 continuous300s conditions. Author original N passes3 separate300s conditions.",
+      "r8_patch": "experiments/terrain_memory/s1-go2-wb-support-upstream.patch"
+    },
+    "execution": {
+      "host": "fy-5080",
+      "transport": "Reuse existing SSH/tmux",
+      "environment": "work/envs/mjpc-go2",
+      "author_source": "work/terrain-memory/upstreams/mujoco_mpc-go2",
+      "reuse_installed_dependencies": true,
+      "required_libmjpc_flags": [
+        "-fno-strict-aliasing"
+      ],
+      "build_tests": false,
+      "physical_control_dt_s": 0.002,
+      "logical_planning_dt_s": 0.02,
+      "actual_physics_dt_s": {
+        "G0": 0.002,
+        "G1": 0.0002
+      },
+      "requested_prediction_horizon_s": 0.35,
+      "synchronous_slow_simulation": true,
+      "new_training_runs": 0,
+      "activate_hardware": false,
+      "TM02_runs": 0,
+      "resources": "Use existing authorized resources; record workers, affinity, concurrency and all wall time. Shared or overlapping host runs do not measure NX latency.",
+      "pipeline": "Implemented existing runner and launcher with separate author/development/formal budgets, exact held-control prediction and continuous mission recording.19 physical starts completed; original nominal qualification pair reused once; no formal revision.",
+      "preserve": [
+        "home seed",
+        "20 t=0 planning calls without plant advancement/reset",
+        "affine PD 60/5",
+        "fixed floor opt-in",
+        "original gait/head/heading mapping",
+        "original task and physical limits"
+      ]
+    },
+    "startup": {
+      "policy_seed": "home keyframe ctrl after restoring home data; preserve nullptr behavior without home.",
+      "seed_both_init_and_reset": true,
+      "ground_height_numeric": "s1_flat_ground_height",
+      "ground_height_enable_condition": "Adapter confirms the actual floor is a world-static horizontal plane; write its world height as one scalar.",
+      "G0_ground_height_m": -0.01,
+      "G1_ground_height_m": "Read the actual project floor; do not assume zero.",
+      "global_Ground_unchanged": true,
+      "time_s": 0,
+      "planner_steps": 20,
+      "replaces_original_time_zero_planner_step": true,
+      "additional_time_zero_planner_step": false,
+      "advance_plant_during_startup": false,
+      "reset_agent_between_startup_iterations": false,
+      "state_and_goal": "Hold the actual initial qpos/qvel/time, complete Stand settings and initial mission goal fixed.",
+      "retain": [
+        "home ctrl and pre-optimization nominal seed action",
+        "each of the 20 best trajectories: states, actions, times and iteration number",
+        "each initial action and the final feedback action before the first physical step",
+        "all initialization errors and subsequent physical failures"
+      ],
+      "horizon_cost": "get_total_cost() is a current-state cost, not the optimized horizon return; never label it horizon convergence.",
+      "success_meaning": "Initialization completion is not standing or mission success."
+    },
+    "task": {
+      "initial_xy_m": [
+        0,
+        0
+      ],
+      "nominal_initial_yaw_rad": 0,
+      "initial_stand_s": 2,
+      "turnaround_xy_m": [
+        3,
+        0
+      ],
+      "turn_angle_rad": 3.141592653589793,
+      "return_xy_m": [
+        0,
+        0
+      ],
+      "command_speed_m_s": 0.25,
+      "turn_yaw_rate_rad_s": 0.5,
+      "extra_turnaround_hold_s": 0,
+      "terminal_stand_s": 2,
+      "maximum_episode_s": 60,
+      "goal_position_radius_m": 0.15,
+      "turn_heading_tolerance_rad": 0.15,
+      "terminal_speed_max_m_s": 0.05,
+      "task_mode": "Quadruped",
+      "gait_switch": "Manual",
+      "native_head_offset_in_trunk_m": [
+        0.3,
+        0,
+        0
+      ],
+      "orientation_cost_weight": 0.03,
+      "stand_settings": {
+        "Gait": "Stand",
+        "Duty ratio": 1,
+        "Cadence": 1,
+        "Amplitude": 0,
+        "Balance": 0,
+        "Upright": 1,
+        "Height": 1
+      },
+      "move_and_turn_settings": {
+        "Gait": "Trot",
+        "Duty ratio": 0.45,
+        "Cadence": 2,
+        "Amplitude": 0.03,
+        "Balance": 0.2,
+        "Upright": 1,
+        "Height": 1
+      }
+    },
+    "stationary_objective": {
+      "legacy_switch": "s1_stand_equilibrium",
+      "legacy_switch_value": 0,
+      "legacy_velocity_terms": "Initially disabled in C/H/S. New Stand support terms use separate explicit opt-ins; do not re-enable the failed O family."
+    },
+    "prediction_settings": {
+      "AUTHOR_N": {
+        "integration_dt_s": 0.001,
+        "control_node_dt_s": 0.001,
+        "integrator": "implicitfast",
+        "differentiable": 0,
+        "R7_actual_nodes": 350,
+        "R7_actual_span_s": 0.349,
+        "scope": "Frozen author long reference."
+      },
+      "PROJECT_N_SH": {
+        "integration_dt_s": 0.001,
+        "control_node_dt_s": 0.001,
+        "integrator": "implicitfast",
+        "differentiable": 1,
+        "prediction_width_m": 0.001,
+        "orientation_weight": 1,
+        "scope": "Historical project moving reference."
+      },
+      "C": {
+        "integration_dt_s": 0.0002,
+        "control_node_dt_s": 0.002,
+        "substeps": 10,
+        "control_transitions": 175,
+        "state_nodes": 176,
+        "horizon_s": 0.35,
+        "integrator": "implicitfast",
+        "differentiable": 1,
+        "prediction_width_m": 0.001,
+        "orientation_weight": 1
+      },
+      "invariant": "Keep refsafety and actual 500Hz feedback. Do not increase actual control to 1kHz or substitute a single 2ms integration step for two 1ms steps."
+    },
+    "held_input_transition": {
+      "map": "x_mid=f_0.001(x,u); x_next=f_0.001(x_mid,u)",
+      "action": "Query nominal-plus-feedback once per 2ms control node; hold the same u for both integration steps.",
+      "derivatives": "A=A2*A1, B=A2*B1+B2 in the original MuJoCo tangent coordinates, or finite-difference the complete held-input map. Independent 1ms control derivatives are not valid for the new map.",
+      "cost_semantics": "Node-start stage residuals and matching C/D. If stepping overwrites sensordata, preserve the first-substep residual. Final cost at the actual final node.",
+      "implementation_sites": [
+        "Agent control-node horizon count",
+        "Trajectory Rollout/NoisyRollout/RolloutDiscrete",
+        "ModelDerivatives held-input A/B and node-start C/D",
+        "nominal/feedback/line-search policy schedules and interpolation"
+      ],
+      "timing": "Record 176 states, 175 two-step holds, actual 0.350s span. Never silently truncate/double the horizon.",
+      "phase_update": "On a real mission/gait/cost phase change, plan once from current state with new goals before the next hold; retain warm start. If the periodic update is due, call once. Keep initial 20 startup calls unchanged.",
+      "scope": "Default off for frozen AUTHOR_N. A post-hoc control projection or filter without matching derivatives is not this implementation."
+    },
+    "existing_data_work": {
+      "host": "Read already retained execution-host NPZs; no new physical rollout and no user-PC archive.",
+      "sources": [
+        "g0-n-01",
+        "g1-nsh-nominal-03",
+        "g1-osh-nominal-04",
+        "g1-oshw-nominal-05"
+      ],
+      "windows": "Initial stand, movement/turn transitions and terminal segments; O_SH 34-45s before collapse.",
+      "schedules": [
+        "Original 1ms plan_actions at actual plan_times",
+        "Same plan projected to actual 2ms held commands",
+        "Saved 500Hz feedback commands held 2ms in both compared models",
+        "Old 10ms-ZOH counterfactual kept separate"
+      ],
+      "quantities": [
+        "absolute base/trunk COM height",
+        "foot heights and real foot radii",
+        "original relative Height residual",
+        "actual per-foot forces/velocities and non-foot support",
+        "nominal/applied joint targets",
+        "unclipped PD request versus actual clipped torque",
+        "per-joint saturation onset/duration",
+        "1ms-to-2ms action projection effect"
+      ],
+      "sensitivity": "On representative saved states, verify the implemented two-step map and sensitivities against that same map. This is specific dynamics evidence, not a new unit/mock/smoke suite.",
+      "limitations": "Disclose missing warmstart/integration state. No bitwise replay claim. No high-rate force/contact conclusions from 10Hz convenience rows.",
+      "continuation": "Proceed directly to implementation and full missions within this campaign; no separate replay-only review round."
+    },
+    "support_reference": {
+      "activation": "Conditional H/S after C remains insufficient; successful C does not have to receive more mechanisms.",
+      "H": "Stand-only absolute base height from actual floor plus a feasible project Go2 stance; keep movement/heading unchanged.",
+      "height_semantics": "Original .27m is trunk COM minus mean foot-center height. Runner body_target_z=.27 was ignored by Quadruped Position; original project initial base z is about .290209m. Do not confuse these values.",
+      "S": "If height alone is insufficient, track a compatible stance: reachable world foot locations/zero foot velocities, body pose, joint pose and gravity-support input reference in the same MPC.",
+      "equilibrium": "Use original mass/COM, foot geometry, friction, joint and torque limits to solve a feasible static reference. Check zero-velocity balance in the original forward-contact model. Equal mg/4 is only an initial guess, not a forced distribution.",
+      "PD_reference": "At zero velocity and unit gear u_ref=q_joint_ref+tau_actuator_ref/60, with gravity/passive/contact balance included. Otherwise use actual gear mapping. This is an MPC reference, never an extra torque added after optimization.",
+      "foot_reference": "Freeze actually established world contacts. For an airborne foot define a reachable landing before fixed support; do not anchor an airborne position as loaded.",
+      "physical_continuity": "Reference construction never resets qpos/qvel/policy/contact. Update on relevant Stand entry and preserve the reference throughout each hold.",
+      "cost_contract": "New residuals are soft objectives, not hard foot constraints. Keep original moving objective; use mutually compatible Stand posture/input references and avoid double gravity compensation. Record units, scales and weights before each complete attempt; no parameter grid.",
+      "deferred": "No simultaneous terminal LQR, frequency-shaping filter state, WBC, learned dynamics or PPO. Further mechanisms require a demonstrated remaining issue and are not automatically bundled.",
+      "H_realized": {
+        "absolute_base_height_m": 0.29020336039643685,
+        "world_floor_height_m": 0.0,
+        "norm": "Original Height smooth norm6, parameter0.04m",
+        "cost_weight": 1.0,
+        "activation": "Quadruped Stand only",
+        "evidence": "C returned at34.244s but longest stability0.136s through60s; preserve all old objectives and append absolute-height residual.",
+        "reference_qacc_norm": 3.1379383892855756e-05,
+        "reference_foot_force_N": [
+          [
+            0.013496597167031641,
+            -0.001103780779720824,
+            37.113653751745375
+          ],
+          [
+            -0.008822243297508251,
+            0.004369948728670767,
+            37.135117183654316
+          ],
+          [
+            -0.009059126427699484,
+            0.0015624167718512928,
+            37.4735829174041
+          ],
+          [
+            0.00436203120033637,
+            -0.004828467074560738,
+            37.452119549988204
+          ]
+        ]
+      },
+      "S_realized": {
+        "revision": "S3",
+        "activation": "Stand entry; same native state preserved; fixed reference throughout each hold",
+        "native_solve": "Reachable floor IK then 27-variable native mj_forward equilibrium; current body xy, mission heading, H base height; established foot xy anchored; airborne feet receive feasible floor landing xy",
+        "feasibility": {
+          "qacc_norm_max": 0.01,
+          "foot_xy_error_max_m": 1e-05,
+          "each_foot_Fz_min_N": 1.0,
+          "friction_ratio_max": 0.5,
+          "pd_identity_error_max_rad": 1e-06
+        },
+        "residuals": {
+          "StandAbsoluteHeight": {
+            "unit": "m",
+            "norm": 6,
+            "scale_m": 0.04,
+            "weight": 1,
+            "target": "solved base height"
+          },
+          "Height": {
+            "target": "solved trunk COM minus average foot center; replaces .27 only in Stand"
+          },
+          "Position": {
+            "target": "solved head world xy at entry base xy"
+          },
+          "Upright": {
+            "target": "solved torso Rzz; original scalar form retained"
+          },
+          "Posture": {
+            "target": "solved joint pose",
+            "weight": 0.02,
+            "scales": "original per-joint posture gains"
+          },
+          "Effort": {
+            "target": "solved PD input q_ref+tau_ref/60",
+            "unit": "rad",
+            "scale_rad": 0.02,
+            "weight": 0.08,
+            "norm": 0
+          },
+          "StandFootPosition": {
+            "unit": "m",
+            "scale_m": 0.02,
+            "weight": 0.1,
+            "norm": 0
+          },
+          "StandFootVelocity": {
+            "unit": "m/s",
+            "scale_m_s": 0.05,
+            "weight": 0.02,
+            "norm": 0
+          },
+          "StandSupportForce": {
+            "unit": "N",
+            "scale_N": 40,
+            "weight": 0,
+            "norm": 0,
+            "activation": "disabled after S2 worsened contact and endpoint holding"
+          }
+        },
+        "weight_basis": "Restore S1 compatible targets. S1 has97.39% terminal criteria pass but micrometre unloading and feedback target steps0.097-0.177rad in retained0.35s windows. Old0.1rad input scale permits6Nm, about the entire static calf support torque. New0.02rad scale corresponds1.2Nm (~20% of native calf support torque); original Effort weight0.08 retained, quadratic input curvature25x. This is MPC input-reference regularization, with no post-MPC filtering or extra torque; S2 load objective disabled based on its full negative result.",
+        "userdata_layout": "active[0],relative_height[1],base_z[2],quat[3:7],head_xyz[7:10],feet_FL_FR_RL_RR[10:22],q_ref[22:34],u_ref[34:46],tau_ref[46:58],foot_vertical_force[58:62] (recorded; force objective disabled)",
+        "reference_timing": "Measured separately per Stand entry; no physical integration in solver; initial20 planning calls retained",
+        "evidence": "S2 task_timeout through60s, longeststable0.034s, terminal contact55.66%, position62.36%, actual target peak step0.493rad in40-60s. Native support references remain feasible."
+      },
+      "S_previous": [
+        {
+          "revision": "S1",
+          "activation": "Stand entry; same native state preserved; fixed reference throughout each hold",
+          "native_solve": "Reachable floor IK then 27-variable native mj_forward equilibrium; current body xy, mission heading, H base height; established foot xy anchored; airborne feet receive feasible floor landing xy",
+          "feasibility": {
+            "qacc_norm_max": 0.01,
+            "foot_xy_error_max_m": 1e-05,
+            "each_foot_Fz_min_N": 1.0,
+            "friction_ratio_max": 0.5,
+            "pd_identity_error_max_rad": 1e-06
+          },
+          "residuals": {
+            "StandAbsoluteHeight": {
+              "unit": "m",
+              "norm": 6,
+              "scale_m": 0.04,
+              "weight": 1,
+              "target": "solved base height"
+            },
+            "Height": {
+              "target": "solved trunk COM minus average foot center; replaces .27 only in Stand"
+            },
+            "Position": {
+              "target": "solved head world xy at entry base xy"
+            },
+            "Upright": {
+              "target": "solved torso Rzz; original scalar form retained"
+            },
+            "Posture": {
+              "target": "solved joint pose",
+              "weight": 0.02,
+              "scales": "original per-joint posture gains"
+            },
+            "Effort": {
+              "target": "solved PD input q_ref+tau_ref/60",
+              "unit": "rad",
+              "scale_rad": 0.1,
+              "weight": 0.08,
+              "norm": 0
+            },
+            "StandFootPosition": {
+              "unit": "m",
+              "scale_m": 0.02,
+              "weight": 0.1,
+              "norm": 0
+            },
+            "StandFootVelocity": {
+              "unit": "m/s",
+              "scale_m_s": 0.05,
+              "weight": 0.02,
+              "norm": 0
+            }
+          },
+          "weight_basis": "2cm foot position and 5cm/s velocity scales; modest quadratic weights relative to original height and Orientation; original posture/effort weights retained with mutually compatible targets. Fixed before the whole-task attempt; no weight grid.",
+          "userdata_layout": "active[0],relative_height[1],base_z[2],quat[3:7],head_xyz[7:10],feet_FL_FR_RL_RR[10:22],q_ref[22:34],u_ref[34:46],tau_ref[46:58]",
+          "reference_timing": "Measured separately per Stand entry; no physical integration in solver; initial20 planning calls retained"
+        },
+        {
+          "revision": "S2",
+          "activation": "Stand entry; same native state preserved; fixed reference throughout each hold",
+          "native_solve": "Reachable floor IK then 27-variable native mj_forward equilibrium; current body xy, mission heading, H base height; established foot xy anchored; airborne feet receive feasible floor landing xy",
+          "feasibility": {
+            "qacc_norm_max": 0.01,
+            "foot_xy_error_max_m": 1e-05,
+            "each_foot_Fz_min_N": 1.0,
+            "friction_ratio_max": 0.5,
+            "pd_identity_error_max_rad": 1e-06
+          },
+          "residuals": {
+            "StandAbsoluteHeight": {
+              "unit": "m",
+              "norm": 6,
+              "scale_m": 0.04,
+              "weight": 1,
+              "target": "solved base height"
+            },
+            "Height": {
+              "target": "solved trunk COM minus average foot center; replaces .27 only in Stand"
+            },
+            "Position": {
+              "target": "solved head world xy at entry base xy"
+            },
+            "Upright": {
+              "target": "solved torso Rzz; original scalar form retained"
+            },
+            "Posture": {
+              "target": "solved joint pose",
+              "weight": 0.02,
+              "scales": "original per-joint posture gains"
+            },
+            "Effort": {
+              "target": "solved PD input q_ref+tau_ref/60",
+              "unit": "rad",
+              "scale_rad": 0.1,
+              "weight": 0.08,
+              "norm": 0
+            },
+            "StandFootPosition": {
+              "unit": "m",
+              "scale_m": 0.02,
+              "weight": 0.1,
+              "norm": 0
+            },
+            "StandFootVelocity": {
+              "unit": "m/s",
+              "scale_m_s": 0.05,
+              "weight": 0.02,
+              "norm": 0
+            },
+            "StandSupportForce": {
+              "unit": "N",
+              "scale_N": 40,
+              "weight": 0.05,
+              "norm": 0,
+              "target": "Each solved native equilibrium vertical foot force; predicted contact force used inside the same MPC"
+            }
+          },
+          "weight_basis": "2cm foot position and 5cm/s velocity scales; modest quadratic weights relative to original height and Orientation; original posture/effort weights retained with mutually compatible targets. Fixed before the whole-task attempt; no weight grid. S2 adds load tracking because 40-60s all159 lost-contact samples occur at16/18ms after regular planning, with only micrometre foot lifting; position/velocity tracking alone permits unloading. A full40N load error costs0.025 per foot, with no physical or acceptance changes.",
+          "userdata_layout": "active[0],relative_height[1],base_z[2],quat[3:7],head_xyz[7:10],feet_FL_FR_RL_RR[10:22],q_ref[22:34],u_ref[34:46],tau_ref[46:58],foot_vertical_force[58:62]",
+          "reference_timing": "Measured separately per Stand entry; no physical integration in solver; initial20 planning calls retained",
+          "evidence": "S1 original60s task_timeout; terminal allcriteria97.39%, angular99.51%, contact97.88%, longestcontinuous0.938s. No force saturation near Stand. Native solved reference is feasible."
+        }
+      ]
+    },
+    "controllers": {
+      "G0_author_native": {
+        "actual_mass_kg_from_source": 15.806408,
+        "physics_dt_s": 0.002,
+        "physical_model": "Retain the author mass, inertia, passive joints, native collisions and contacts.",
+        "actuator_force_limits": "Retain author unbounded force; do not claim project torque-limit coverage.",
+        "PD": {
+          "kp": 60,
+          "kd": 5
+        }
+      },
+      "G1_project_limits": {
+        "actual_mass_kg": 15.206408,
+        "model_reference": "Original on-host Go2 MJCF/assets and results/terrain_memory/simulation/tm-s1-contact-execution-20261026/development-v1-seed4/rigid-T1R-resolved.json.",
+        "preserve_physics": [
+          "mass/inertia",
+          "joint names and physical joint ranges",
+          "passive damping/armature/friction parameters",
+          "actuator gear relationship and original torque limits",
+          "collision geometry and foot geometry",
+          "initial qpos/qvel except the nine declared physical initial conditions",
+          "original native rigid floor and contact solref/solimp/margin"
+        ],
+        "permitted_model_adaptation": "Nonphysical task sites/sensors/name maps and explicit joint-target PD only.",
+        "physics_dt_s": 0.0002,
+        "control_dt_s": 0.002,
+        "mpc_dt_s": 0.02,
+        "original_native_contact": {
+          "solref": [
+            0.002,
+            1
+          ],
+          "solimp": [
+            0.99,
+            0.999,
+            0.001,
+            0.5,
+            2
+          ],
+          "margin_m": 0
+        },
+        "PD": {
+          "kp": 60,
+          "kd": 5
+        },
+        "joint_target_limits": "Original per-joint physical position ranges, mapped by name.",
+        "original_torque_limit_pattern_Nm": [
+          23.7,
+          23.7,
+          45.43
+        ],
+        "actuator_mapping": "Identical gear, target bounds and original force/torque limits in predictor and plant; no unmatched post-planning clipping.",
+        "no_materials": true
+      }
+    },
+    "author_long_reference": {
+      "arm": "AUTHOR_N",
+      "legacy_stage": "G0",
+      "conditions": [
+        "nominal",
+        "yaw_plus5",
+        "yaw_minus5"
+      ],
+      "maximum_new_starts": 3,
+      "protocol": "Use long_mission_protocol with frozen successful R7 N control/author physics.",
+      "independence": "Proceed without waiting for project success. An author long failure does not cancel project work; preserve outcomes and complete conditions unless a shared concrete execution defect blocks meaningful continuation.",
+      "meaning": "Author-configuration continuity evidence, not project physical-limit verification, material memory, cross-robot generalization or NX real time."
+    },
+    "development": {
+      "legacy_stage": "G1",
+      "baseline": "PROJECT_N_SH",
+      "arms": [
+        {
+          "id": "C",
+          "change": "2ms held control / two 1ms steps, consistent derivatives and phase update; keep N_SH objective."
+        },
+        {
+          "id": "H",
+          "change": "C plus absolute Stand height.",
+          "when": "C still cannot establish the stopping task and evidence warrants an absolute-height/support target."
+        },
+        {
+          "id": "S",
+          "change": "C+H plus feasible fixed-support stance/input reference.",
+          "when": "H alone leaves support or stance inconsistency unresolved."
+        }
+      ],
+      "policy": "After nominal original success plus full60s observation, lock the candidate and immediately attempt nominal300s within the same development cap. Only both successes create the first formal freeze. Long failure permits evidence-based C/H/S refinement within development; it does not consume the formal revision. If C or H qualifies, no mandatory extra mechanism.",
+      "scope": "Each development physical start is either the complete original60s mission or a nominal300s candidate qualification mission. The combined cap is12. Reference solving and saved-data calculations do not create short stand tests.",
+      "revision": "Evidence-based C/H/S fixes are authorized within this campaign. Preserve all attempts; no blind repetitions, new platform or automatic extension.",
+      "maximum_new_physical_starts": 12
+    },
+    "single_mission_protocol": {
+      "original_deadline_s": 60,
+      "terminal_conditions": {
+        "all_feet_contact": true,
+        "origin_radius_m": 0.15,
+        "base_linear_speed_norm_max_m_s": 0.05,
+        "base_angular_speed_norm_max_rad_s": 0.1,
+        "roll_pitch_abs_max_rad": 0.15,
+        "continuous_s": 2
+      },
+      "keep_original_transition_rules": true,
+      "observe_until_s": 60,
+      "completion_and_hold": "Record the first original mission-completion time separately. If it completes early, retain the same physical state and Stand controller through t=60 for sustained-hold observation. Later instability remains in the hold outcome and cannot be omitted.",
+      "formal_conditions": [
+        {
+          "id": "nominal",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "yaw_plus5",
+          "initial_yaw_offset_deg": 5,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "yaw_minus5",
+          "initial_yaw_offset_deg": -5,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "vx_plus005",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0.05,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "vx_minus005",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            -0.05,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "vy_plus005",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0.05,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "vy_minus005",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            -0.05,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wz_plus01",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0.1
+          ]
+        },
+        {
+          "id": "wz_minus01",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            -0.1
+          ]
+        }
+      ],
+      "deterministic_scope": "Nine specified physical initial conditions, not nine stochastic optimizer seeds or independent material samples.",
+      "formal_freeze": "One source/binary/controller configuration per formal cohort; reuse identical development nominal once and retain every failure."
+    },
+    "long_mission_protocol": {
+      "conditions": [
+        "nominal",
+        "yaw_plus5",
+        "yaw_minus5"
+      ],
+      "duration_s": 300,
+      "full_round_trips": 5,
+      "endpoints_m": [
+        [
+          0,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ],
+      "command_speed_m_s": 0.25,
+      "turn_rate_rad_s": 0.5,
+      "route_completion_deadline_s": 270,
+      "minimum_final_hold_s": 30,
+      "stop_at_each_endpoint": "Use the original position/velocity/angular-velocity/roll-pitch/contact tolerances with 2s continuous stability. Heading target is the current travel heading during the stop; then turn continuously for the next leg.",
+      "continuous_state": "No reset of qpos/qvel, control policy, contact state, or initialization between legs/laps. The home endpoint must explicitly turn back toward +x before another outbound leg; do not loop a yaw=0 Mission after returning at yaw~pi.",
+      "success": "Five actual round trips completed by t=270 without original physical failure; remain at the endpoint through t=300 and meet the original continuous 2s stable condition at the end. Report all intervening 30s hold statistics and interruptions, even when the run passes.",
+      "counting": "Each 300s trace is one episode; its ten arrivals are correlated events, not ten independent trials."
+    },
+    "project_formal_order": {
+      "freeze": "First formal freeze requires both nominal original success with full60s observation and nominal300s success under the identical candidate. Both starts belong to development and are each reused once as formal evidence.",
+      "first": "Before formal freeze, lock every original-task-successful candidate and run nominal300s immediately within the12-start development cap; do not wait for nonnominal coverage.",
+      "then": "After qualification, complete other eight original-task conditions and two yaw-offset long tasks under the same freeze. Reuse both qualification successes without new physical starts.",
+      "hold": "Report first completion separately from subsequent hold. Never hide a post-completion fall; it disqualifies sustained-execution readiness.",
+      "revision": "At most one justified formal revision, then all nine original and three long conditions under a new common freeze; preserve both cohorts."
+    },
+    "campaign_budget": {
+      "max_new_physical_starts": 61,
+      "max_project_development_starts": 12,
+      "wall_clock_hard_cap_h": 48,
+      "reserve_evaluation_h_at_least": 6
+    },
+    "joint_baseline_exit": {
+      "minimum": "Project nominal original task with sustained observed hold plus nominal uninterrupted 300s permits a limited-domain execution freeze.",
+      "coverage": "9/9 original plus3/3 long establish only prescribed deterministic project coverage. Author results stay separate.",
+      "next": "Freeze existing PANN, train standard PPO in the same Actor-to-MPC-to-Go2 loop, then freeze Actor for evaluation. No training in R8.",
+      "meaning": "Baseline completeness corrections are not material-memory innovation or unknown-terrain generalization."
+    },
+    "outputs": {
+      "root": "results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10",
+      "required": [
+        "one actual-attempt index with source/config/binary/model identities",
+        "first completion and continued holding",
+        "separate author/project continuous-task outcomes",
+        "state/targets/torque/all ground forces at declared rates",
+        "same-time nominal/applied targets with clamp semantics",
+        "full-rate/held-input comparisons",
+        "absolute/relative heights, foot support and per-joint saturation",
+        "actual control/integration grids and horizon",
+        "complete uninterrupted success/failure videos and timing"
+      ],
+      "long_recording": "Write continuous time/data-stream chunks on the execution host, for example at most60s per chunk. Split files only, never reset physical/controller state; retain high-rate records and global times.",
+      "max_release_asset_bytes_exclusive": 2147483648,
+      "capacity": "R7 60s compressed arrays are about419.5MB(author N)/478.0MB(project N_SH). A300s file is near/above GitHub's2GiB asset limit; compression varies."
+    },
+    "delivery": {
+      "source_and_compact_results": "GitHub",
+      "large_arrays_and_video": "Direct upload from execution host to Release",
+      "verification": "Confirm commit, final published asset URLs, size and digest; then finish.",
+      "no_user_pc_download_copy_mirror_compress_or_archive": true
+    },
+    "forbidden": [
+      "defensive programming or generic fallback frameworks",
+      "unit/mock/smoke/import/shape suites and unrelated regression matrices",
+      "separate audit/status reports or replay-only rounds",
+      "relaxing task/physical limits",
+      "changing actual control rate to hide prediction mismatch",
+      "post-hoc action filtering with inconsistent derivatives",
+      "blind weight/contact-width grids",
+      "PANN/PPO/TM02/hardware in R8",
+      "rewriting old outcomes or user-PC re-archiving"
+    ],
+    "executed_configuration_provenance": {
+      "source_commit": "fb7f924f2d519582a127d15ff2e1e2cb2cd5bc9e",
+      "path": "experiments/terrain_memory/s1-go2-wb-support.json",
+      "sha256": "d5580a33e9516a4887a8d18b6ba5bbec2dbd0bd545441851dec66e63e471710d",
+      "execution_fingerprint": "d3177cb85bc13bb1d997d87b5c8ad5e37c87b504d70c7a08ddf32d42463a2842",
+      "note": "After all physical episodes ended, only implementation_status, upstream.implementation, execution.pipeline and this provenance entry were updated. Scientific parameters are unchanged; per-attempt resolved records retain the exact executed file hashes and commits."
+    },
+    "r10_contract": {
+      "run_id": "tm-s1-go2-soft-landing-r10",
+      "stage": "S1R10",
+      "status": "planned_not_executed",
+      "protocol_revision": "parallel_long_training_v2",
+      "revision_date": "2026-10-28",
+      "reviewed_source_commit": "521303033ef6836880afb80e146c7b73ed0bb985",
+      "superseded_plan_commit": "3c21bf0512b1785cce8a7228d791dac1e0b657b9",
+      "plan": "docs/TERRAIN_MEMORY_PLAN.md",
+      "purpose": "The original R10 objective is unchanged: material-compatible touchdown, followed by a stable frozen-PANN/standard-PPO/same-MPC baseline. This pre-execution revision changes scheduling, training scale and continuous-task coverage; it contains no new experimental results.",
+      "history": {
+        "R8": "results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json",
+        "R9": "results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json",
+        "R9_status": "8 material development starts, 0 complete missions; PANN observer and PPO training/evaluation not executed",
+        "historical_protocol_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/521303033ef6836880afb80e146c7b73ed0bb985/docs/TERRAIN_MEMORY_PLAN.md",
+        "original_r10_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/3c21bf0512b1785cce8a7228d791dac1e0b657b9/docs/TERRAIN_MEMORY_PLAN.md",
+        "reopen_old_budgets": false,
+        "revision_scope": "User confirmed R10 had not started. Do not restart counters if execution records are nevertheless discovered; preserve and reconcile actual starts."
+      },
+      "configuration_reuse": {
+        "baseline": "experiments/terrain_memory/s1-go2-wb-support.json",
+        "joint_interface": "experiments/terrain_memory/s1-go2-joint.json",
+        "rule": "Read both at reviewed_source_commit. Reuse physics, PANN feature definitions, original single-mission criteria and PPO settings unless explicitly overridden here. Current R10 controls run identity, sample targets, curriculum, termination semantics, parallelism and evaluation. Do not launch the closed R9 campaign or inherit its hard-coded workers/host/49152-step budget. Emit one actual resolved configuration."
+      },
+      "plant_invariants": {
+        "robot": "project four-legged Go2, 15.206408 kg; original geometry/inertia/passive parameters/limits; G0/G1 are historical cohort labels, not humanoid hardware",
+        "pd": [
+          60,
+          5
+        ],
+        "per_leg_torque_limits_Nm": [
+          23.7,
+          23.7,
+          45.43
+        ],
+        "physics_dt_s": 0.0002,
+        "control_hold_s": 0.002,
+        "logical_planning_dt_s": 0.02,
+        "material": "unchanged ReferenceColumns tm02_anchor and original constitutive parameters",
+        "gamma": 0.025,
+        "thickness_m": 0.05,
+        "footprint_area_m2": 0.001,
+        "grid_m": 0.02,
+        "strain_absolute_limit": 0.02,
+        "strip_x_m": [
+          0.8,
+          2.2
+        ],
+        "strip_y_m": [
+          -0.6,
+          0.6
+        ],
+        "boundary_rule": "unchanged hard-priority footprint assignment, unique support; retain non-foot collisions",
+        "history_rule": "World-fixed shared columns recover when unloaded. Reset only between independent episodes/acquisition sessions, never at PPO updates, laps or file boundaries.",
+        "prohibited": "softening truth to pass, clipping material strain/force, injecting planned GRF, relaxing task/physical limits, replacing the training plant or controller"
+      },
+      "controller_development": {
+        "new_controller_name": "S4 after actual implementation; preserve frozen R8-S3 identity and results",
+        "maximum_development_physical_starts": 12,
+        "maximum_named_formulations": 3,
+        "starting_data": "Use execution-host R9 contact/failure windows, actual build source and corresponding plans; no new short diagnostic episodes or redundant asset downloads.",
+        "G": "Confirm and correct model-derived center/sole geometry: upstream .020 m reference versus project .022 m physical foot. Preserve physical geometry. Source mismatch alone is not a verified sole cause.",
+        "N": "Put smooth approach and predicted actual normal-velocity/indentation objectives inside the same MPC. Initially retain 2 Hz gait, .45 duty and .03 m apex; preserve phase continuity. A zero-speed reference is not a guarantee on actual touchdown. No post-solve torque or target filter.",
+        "conditional_C": "If full-mission evidence still indicates contact prediction mismatch, implement one documented local short-horizon contact approximation in the same solver. Candidate forces come from candidate states, finite-difference/rollout states are independent and derivatives match the implemented transition. Do not copy current applied forces to all candidates or assume userdata automatically propagates material state.",
+        "prediction_clock": "Retain .350 s horizon and 2 ms held actions with matching composed derivatives. Finer predictor substeps, if needed, do not change plant truth or silently shorten the horizon.",
+        "development_cap_priority_m_s": [
+          0.25,
+          0.215,
+          0.18
+        ],
+        "cap_rule": "Start at .25; alternative caps only characterize the modified controller, not a repeated R9 sweep. Freeze the first successful predeclared controller/cap before comparison.",
+        "stand_reference": "Keep S3 feasible references and Stand Effort scale .02 rad/weight .08 on rigid endpoint pads; force tracking remains disabled.",
+        "training_entry": "One same-version complete original nominal material mission permits freezing S4 and starting joint learning. Neither all initial conditions nor prior 600 s perfection is required.",
+        "stop": "Preserve the actual blocker if all bounded development fails. Do not refresh the allowance, modify truth or switch platform. Observer/interface work already feasible may still be delivered, without claiming closed-loop learning."
+      },
+      "joint_learning": {
+        "groups": [
+          "FIXED_S4",
+          "PPO_RAW_S4",
+          "PANN_PPO_S4"
+        ],
+        "fixed_group_cap": "first successful predeclared development cap, frozen before evaluation",
+        "actor_dt_s": 0.5,
+        "actor_action": "single speed cap [.18,.25] m/s; .215+.035*sample.action, where existing sample.action is already tanh(raw); retain raw action/log_prob",
+        "shared_controller": "All three groups use identical frozen S4, truth, limits and task interfaces; common touchdown improvements are not PANN gains.",
+        "shared_observation": "R9 raw proprioception, public task/strip information and preceding 1 s at 20 Hz. Add shared task-type flag and normalized intrinsic remaining time for finite 60 s training; use a mask and no artificial sampling-deadline countdown for continuing stages. Both PPO groups receive identical non-PANN channels.",
+        "pann": "Frozen B_random1000--ideal seed0 and original normalization; independent causal LearnedColumns world state, no true material q/e input",
+        "pann_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
+        "pann_features": "Preserve R9 2 ms causal observer, latest completed plan t+.20 s four footprints, private zero-load recovery at2/200/500 ms and12 area-weighted signed depressions. Shared public query positions/masks; RAW prediction channels zero. Match world keys, not array row indices; queries do not alter truth or observer.",
+        "observer_preparation": "Can proceed alongside controller development using existing causal trajectories. Replay/network loading is not closed-loop success or PPO training.",
+        "ppo": {
+          "implementation": "existing standard Tianshou PPO core; no algorithm/platform replacement",
+          "hidden_sizes": [
+            64,
+            64
+          ],
+          "learning_rate": 0.0003,
+          "initial_std": 0.35,
+          "gamma": 0.99,
+          "gae_lambda": 0.95,
+          "clip": 0.2,
+          "value_coef": 0.5,
+          "entropy_coef": 0,
+          "max_grad_norm": 0.5,
+          "epochs_per_update": 4,
+          "rollout_transitions": 256,
+          "minibatch_size": 64,
+          "device": "Resolve on authorized hardware once before training; use the same actor/critic device policy for both groups. A small PPO network need not be enlarged to occupy VRAM."
+        },
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "streams": 6,
+        "early_checkpoints_per_stream": [
+          4096,
+          8192,
+          16384
+        ],
+        "standard_target_transitions_per_stream": 32768,
+        "standard_target_total_transitions": 196608,
+        "optional_target_transitions_per_stream": 65536,
+        "maximum_total_transitions": 393216,
+        "balanced_checkpoint_stride": 256,
+        "primary_checkpoint_rule": "Use exactly32768 for all six streams when achieved, otherwise the last common completed multiple of256 before the reserved evaluation deadline. Report shortfall. No formal-performance-based checkpoint or seed selection.",
+        "optional_training_rule": "Only after all six standard checkpoints exist and core evaluation is completed or fully time-reserved, resume all six equally toward65536 within remaining authorized time. Optional weights do not replace the primary checkpoint. No unbudgeted second full evaluation matrix.",
+        "sampling_accounting": "Record total/effective translating transitions, elapsed physics, actual resets, failures, PPO updates and component/campaign wall times. Stand/turn observations may be collected but separately count ineffective actions; no passive post-completion padding.",
+        "on_policy_and_independence": "Separate parameters, optimizer, normalizers, seeds and environment/MPC/material/observer state for each stream. Collect each256-transition fragment under its fixed behavior policy; update only that stream and then continue its state. Do not mix other seeds or stale-policy fragments to fake on-policy data. Archive frozen evaluation normalizers with checkpoints.",
+        "curriculum": [
+          {
+            "start_transition": 0,
+            "end_transition": 8192,
+            "task": "original_single_round_trip",
+            "session_limit_s": 60,
+            "end_semantics": "original success/failure/intrinsic timeout are terminal; successful training ends immediately, not after passive holding"
+          },
+          {
+            "start_transition": 8192,
+            "end_transition": 16384,
+            "task": "continuing_round_trips",
+            "session_limit_s": 300,
+            "end_semantics": "real physical/material failure terminates;300s is an external acquisition truncation, not task failure"
+          },
+          {
+            "start_transition": 16384,
+            "end_transition": 32768,
+            "task": "continuing_round_trips",
+            "session_limit_s": 600,
+            "end_semantics": "real physical/material failure terminates;600s is external acquisition truncation"
+          },
+          {
+            "start_transition": 32768,
+            "end_transition": 65536,
+            "task": "continuing_round_trips",
+            "session_limit_s": 600,
+            "optional": true,
+            "end_semantics": "same continuing-task semantics, no new action or reward design"
+          }
+        ],
+        "curriculum_boundary_rule": "Threshold crossings queue the next stage for the next natural episode/session boundary; never reset a running robot or material solely to hit8192/16384 exactly. Record actual per-stage counts and overshoot. Both methods use the same rule and initial-condition cycling nominal/yaw+5/yaw-5.",
+        "continuing_route": "Endless0-to3-to0m circuits during each300/600s training session; stop2s under original thresholds at each endpoint and really turn before the next leg/lap. Completion of a lap is not session termination. No per-lap material or MPC reset, and no training parking after a fixed target lap count.",
+        "bootstrap_rule": "True terminal: bootstrap0. Rollout cut: bootstrap actual successor and keep environment alive. External300/600s truncation: bootstrap saved final pre-reset observation, stop GAE recursion across the subsequent reset. Use distinct bootstrap and trace-continuation masks; never bootstrap reset observation or propagate advantages into the next episode. Technical interruption is not physical failure."
+      },
+      "reward_adaptation": {
+        "base": "Frozen R9 physical progress/time/indentation/slip/applied-action-change reward and weights; no reward for predicted material or assumed beneficial compaction",
+        "rate_rule": "Retain original dt/60 denominators and physical normalization in every training stage. Do not divide costs by300/600 or reweight to favor long sessions. Integrate actual dt, not nominal dt after early termination.",
+        "progress": "Unwrapped signed actual translational progress divided by6m per circuit; split phase changes, include backward motion, no position-reset or phase-switch progress bonus.",
+        "events": "Original single-task completion gives+10 once and terminates. In continuing stages give+10 once per fully completed circuit after original home stability, then continue. No completion reward for merely standing or at the far endpoint. Physical/material failure gives-10 once. Intrinsic60s timeout gives-5 without duplicate failure penalty; external300/600s truncation or technical deadline gives no timeout/failure penalty.",
+        "freeze": "Same adapted reward and task semantics in both learning groups before training. No reward or hyperparameter sweep and no formal-result tuning.",
+        "interpretation": "Long continuous execution is not proof of long-delay credit assignment; gamma remains.99 and the material memory time is determined by actual physics."
+      },
+      "evaluation": {
+        "freeze": "Primary common checkpoints and normalizers fixed for entire evaluation trajectories; deterministic policy mean; no PPO updates during formal tests. PANN estimated states and MPC still evolve causally.",
+        "rigid_regression": {
+          "maximum_starts": 1,
+          "condition": "nominal",
+          "duration_s": 60
+        },
+        "original_material": {
+          "maximum_records": 21,
+          "conditions": [
+            "nominal",
+            "yaw_plus5",
+            "yaw_minus5"
+          ],
+          "duration_s": 60,
+          "composition": "3 fixed +2 learned groups x3 training seeds x3 initial conditions",
+          "observe_after_success": true,
+          "criteria": "Unchanged original single mission; observe through60s, no newly added far-end hold"
+        },
+        "continuous_material": {
+          "priority": "core",
+          "maximum_records": 21,
+          "conditions": [
+            "nominal",
+            "yaw_plus5",
+            "yaw_minus5"
+          ],
+          "composition": "3 fixed +2 learned groups x3 training seeds x3 initial conditions; do not reduce learned coverage to seed0",
+          "duration_s": 600,
+          "round_trips": 10,
+          "route_deadline_s": 540,
+          "endpoint_stable_s": 2,
+          "start_rule": "After each frozen group/seed policy passes its nominal60s full observation, schedule its three predeclared600s conditions. Do not wait for all other policies or for perturbed60s cases to be perfect. Failed/ineligible nominal policies stay listed with the reason; do not silently remove them or label unrun600s cases as tested failures/successes.",
+          "between_laps_reset": false,
+          "observation_rule": "After10 circuits continue holding and record to600s; separately report moving/holding time, route completion and subsequent violations. Treat300s as an in-trajectory observation, not an independent extra trial."
+        },
+        "extended_continuous_material": [
+          {
+            "maximum_records": 3,
+            "duration_s": 1800,
+            "round_trips": 30,
+            "route_deadline_s": 1620,
+            "condition": "nominal",
+            "learned_seed": 0,
+            "start_rule": "Only predeclared FIXED and each learned seed0 whose same-version nominal600s passes, after core time reservation; no best-seed substitution."
+          },
+          {
+            "maximum_records": 3,
+            "duration_s": 3600,
+            "round_trips": 60,
+            "route_deadline_s": 3240,
+            "condition": "nominal",
+            "learned_seed": 0,
+            "start_rule": "Same predeclared policy whose nominal1800s passes, with core evaluation protected and enough authorized time; otherwise explicitly not executed."
+          }
+        ],
+        "all_long_tasks": "Original stability tolerances,2s holds at both endpoints and actual turns; no lap resets or stitched runs. At route completion hold until declared horizon and require final continuous2s stability; report every violation, final30s and each lap/60s segment. Failures terminate truthfully and remain in denominators. All durations are simulation time, not wall time.",
+        "reuse": "Exactly same source/config/checkpoint/initial state/protocol may be reused once. A shorter run or prefix is not an independent longer task; new durations are separately declared.",
+        "interpretation": "Three seeds and deterministic initial offsets are limited coverage, not held-out material generalization or robot certification. Joint execution, PANN changing actions and task gains are separate outcomes."
+      },
+      "resources": {
+        "user_reported_hardware": {
+          "gpu": "RTX PRO 6000",
+          "vram_GB": 96,
+          "vCPU_approx": 25,
+          "host_cpu": "Intel Xeon Platinum 8470Q",
+          "verified_by_this_plan": false
+        },
+        "host_selection": "Use the user's already authorized96GB execution machine via existing SSH access. Confirm actual host, GPU, affinity/quota, RAM and active jobs once; fy-5080 is a legacy label, not authority to silently use a different machine. No new paid machine, purchase or hardware activation.",
+        "training_streams_concurrent_target": 6,
+        "evaluation_environments_initial_target": 8,
+        "max_concurrent_environments": null,
+        "concurrency_policy": "Replace legacy fixed3 ceiling with allocated-resource/throughput limit. Increase evaluation concurrency beyond8 only while actual aggregate useful throughput improves and CPU/RAM/GPU allow; reduce on contention. Do not add training seeds or vector environments to a stream silently. Ready independent jobs run concurrently; causal development dependencies remain ordered.",
+        "solver_workers_per_environment_initial": 2,
+        "thread_memory_policy": "Coordinate solver, BLAS/OpenMP, PyTorch and JAX threads; avoid every process consuming all CPUs. Configure JAX allocation or memory fractions per process and reserve space for other backends; large VRAM reservation is not compute utilization. Record host RAM separately from VRAM. No global modification to other users' environments.",
+        "isolation": "Independent ports, MPC server, RNG, states, optimizer and output directory. Running jobs read immutable source/binaries; parallel editors use isolated worktrees and never overwrite a running shared build. Rendering/publication use spare resources.",
+        "throughput_measurement": "Use already-required full episodes/rollout fragments, recording aggregate simulated seconds and valid transitions per wall hour plus component times. No separate benchmark or artificial short episodes. Comparing concurrency must account for task phase and method cost. Do not interrupt episodes only to adjust concurrency.",
+        "platform": "Retain native MuJoCo/iLQG and existing environments; do not migrate to MJX/Warp or a world model to fill GPU utilization. Slow synchronous simulation is not NX realtime."
+      },
+      "budget": {
+        "maximum_nontraining_physical_starts": 61,
+        "upper_bound_decomposition": "12 development +1 rigid regression +21 original60 +21 core600 +3 optional1800 +3 optional3600; exact reuse reduces starts",
+        "training_starts_counted_separately": true,
+        "campaign_wall_clock_hard_cap_h": 48,
+        "wall_budget_authorization": "Retain the existing48h ceiling: user approved scale but supplied no replacement numerical wall-time limit. Targets are not promises within48h. Any later extension needs an explicit recorded user limit; do not auto-extend, restart the clock or acquire resources.",
+        "starts_at": "first R10 physical integration; count all concurrent jobs against one elapsed clock including pauses, development, training and evaluation. Implementation/build/publication timing separately recorded.",
+        "reserve_evaluation_h_at_least": 6,
+        "reserve_rule": "Reserve max(6h,1.2x measured parallel wall cost of all remaining eligible core21x60+21x600 plus required regression). Account for the actual worker allocation/contention, not summed single-job time divided by an assumed perfect speedup. Recompute from normal complete jobs/fragments; stop training in time to preserve core evaluation.",
+        "priority": [
+          "material-executable S4",
+          "balanced six-stream core training and21x60+21x600 evaluation",
+          "optional65536 training and1800/3600 only with core fully protected"
+        ],
+        "shortfall": "Evaluate last common actual checkpoint and disclose missing training/evaluation. Do not claim32768, convergence, all21 tasks or one-hour execution when not achieved. Preserve unfinished task as budget-truncated, not fabricated physical failure.",
+        "benchmark_episodes": 0
+      },
+      "outputs": {
+        "compact_root": "results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10",
+        "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-soft-landing-r10",
+        "create_result_index_only_after_actual_execution": true,
+        "required": "actual source/config/checkpoint/normalizer/binary identities; all starts and full outcomes; actual training curves and sample counts;60/600/optional1800/3600 separated; full positive/negative evaluation videos; causal touchdown/recovery/revisit records; real component and campaign timing",
+        "segmented_metrics": "Per lap and per60s completion/progress, slip, contact peaks, posture, material/observer error where comparable, MPC timing, RAM/VRAM and state-map size. Separate movement and passive holding; energy comparisons on comparable completed tasks, not early-failure savings.",
+        "training_logging": "compact transitions/episodes, checkpoints and selected full videos, not every MPC horizon at every training step; high-rate event windows and necessary physics remain inspectable",
+        "publication": "Source/config/compact results toGitHub; arrays/checkpoints/videos directly from execution host toRelease, each asset<2GiB with continuous timestamps. Verify final commit and URL/size/digest, then finish.",
+        "archive_on_user_pc_after_publication": false,
+        "prohibited_post_publication": [
+          "download another copy to user's PC",
+          "copy or mirror to user's PC",
+          "recompress or create a second local archive",
+          "automatic deletion of working data or history"
+        ],
+        "retention": "Keep normal execution outputs, necessary checkpoints and historical evidence. No archival-only work after publication verification."
+      }
+    },
+    "controller_formulation": "GNC",
+    "controller_build": "GNC-r3",
+    "actual_terrain": "tm02_anchor",
+    "normal_landing": {
+      "height_profile": "symmetric quintic, original swing phase",
+      "approach_band_m": 0.005,
+      "gate_width_m": 0.002,
+      "velocity_scale_m_s": 0.05,
+      "velocity_target": "-.05*tanh(max(bottom_z,0)/.001)",
+      "velocity_weight": 0.02,
+      "indentation_target_m": 0.00019889981664,
+      "indentation_scale_m": 0.001,
+      "indentation_weight": 0.1,
+      "positive_part_smoothing_m": 1e-06,
+      "force": "Candidate stateless normal stiffness and regularized Coulomb friction",
+      "material_support_height": {
+        "target_m": 0.29020336039643685,
+        "scale_m": 0.04,
+        "weight": 1.0,
+        "norm": "quadratic",
+        "activation": "Any candidate footprint wholly in the material strip",
+        "evidence": "Completed GNC r1/r2 trajectories show the optimized horizons themselves accepting progressive base-height loss. At r1 t7, predicted final height .18665m agrees with actual .18869m, so an intercept correction alone does not supply the missing body-support objective.",
+        "scope": "Complete N objective with predicted body support; original rigid Stand references, plant and failure threshold unchanged. No weight sweep."
+      }
+    },
+    "local_contact_model": {
+      "instantaneous_stiffness_N_m": 1227272.7272727273,
+      "source": "Unchanged TM02 instantaneous uniaxial modulus, gamma, area and thickness",
+      "law": "Fz=k*max(-bottom_z,0); Ft=-.5*Fz*vt/sqrt(vt^2+.01^2)",
+      "hidden_state": "No true q/e. Frozen observed local force/displacement anchor; no relaxation propagation.",
+      "predictor_dt_s": 0.0002,
+      "hold_substeps": 10,
+      "action_dt_s": 0.002,
+      "horizon_s": 0.35,
+      "derivatives": "Chain all ten step Jacobians under the same input, preserve node-start C/D",
+      "plant": "Original ReferenceColumns at .0002 s, unchanged",
+      "limitations": "Instantaneous stateless execution approximation; relaxation and off-contact memory are omitted",
+      "causal_force_anchor": true,
+      "anchor": "At each planning state, observed Fz and bottom z define rest_z=bottom_z+Fz/k on the currently loaded footprint. Candidate forces recomputed from candidate z and overlap with those fixed world patches.",
+      "observation_alignment": "Fz and bottom share the last force-evaluation boundary, 0.2 ms before the returned physical state; no future force recomputation.",
+      "evidence": "GNC r1 at6.5s predicted84.046N vs measured47.697N; at7.0s114.654N vs46.426N, followed by base-height loss and body_fall. Correct the local affine intercept using the shared observed contact channel."
+    }
+  },
+  "r10_source_sha256": {
+    "run_s1_go2_r10.py": "53e356c97e3cc04506baed8437cbf91f1f43512d083633ca88c7f90ba6c00eeb",
+    "prepare_s1_go2_r10.py": "432edb18514a12b25c53e956a5c1ccf92ef680c72fbf29c73c9dc0850dd57a85"
+  },
+  "model_mjb_sha256": "3d74f9dd2be13c7ac6d02e70a03dff58f1c279f3ae1b06235b4c64544cfc41c3",
+  "execution_fingerprint": "bcc7f8d8866d5039d323d4b6f2ea0c129405032c4628203f7d0d05110e971aae",
+  "arm": "S",
+  "mission": "single",
+  "cohort": "parallel_long_training_v2",
+  "prediction_settings": {
+    "arm": "S",
+    "prediction_profile": "C",
+    "numerics": {
+      "s1_stand_equilibrium": 0,
+      "agent_timestep": 0.0002,
+      "agent_integrator": 3,
+      "agent_differentiable": 1,
+      "agent_horizon": 0.35,
+      "s1_control_hold_substeps": 10,
+      "s1_stand_absolute_height": 0.29020336039643685,
+      "s1_stand_support": 1,
+      "s1_stand_input_scale": 0.02,
+      "s1_stand_load_tracking": 0,
+      "r10_normal_landing": 1,
+      "r10_local_contact": 1227272.7272727273,
+      "r10_contact_anchor": 1
+    },
+    "cost_weights": {
+      "Orientation": 1.0,
+      "Angmom": 0.0
+    },
+    "prediction_smoothing_width_m": null,
+    "refsafe": "preserved",
+    "plant_options": "unchanged",
+    "xml_sha256": "60ea95fe3eee8446c9282aacd0d5c8baba8705a59c0d70115fc5444ffe5f6331"
+  },
+  "author_source_sha256": {
+    "mjpc/tasks/quadruped/quadruped.cc": "0601fb5201aa7d6044f544e563b018546d7ca35aed942b362db03d28b6deac05",
+    "mjpc/tasks/quadruped/task_flat.xml": "8028e1566d961c959f05a0f4c070ad69a19130a91777be9ed2ee4470a32744af",
+    "mjpc/agent.cc": "3ceeaeebed088055950478e37300644af839dfc7b909d658106e5d912004b325",
+    "mjpc/trajectory.cc": "0d81470ce17a2ae3c7b248497908cae80c7849c2fb1bb7b28dc8315ad05a690f",
+    "mjpc/planners/model_derivatives.cc": "b0f3a683d04e9a9c8b7f74a73ef6bf9a9eca2dd3510a8dbfe2f782f1f477c5fd",
+    "mjpc/planners/ilqg/planner.cc": "30f763321527ed814ba7f7258136b51717a234750af97d3d35cd05da972eac98",
+    "mjpc/planners/ilqg/policy.cc": "b47a0288d4ba3dc7ff813819fc5ccd633d8862e391943d8e86e081687854a670",
+    "mjpc/grpc/agent_service.cc": "baf5a431369d29df474fceafa26eb214ff032a3b295ed6be0e5dcd5cb57c9963"
+  },
+  "startup": {
+    "home_ctrl": [
+      2.5579538487363612e-20,
+      0.9,
+      -1.8,
+      1.1368683772161603e-21,
+      0.9,
+      -1.8,
+      1.847411112976261e-20,
+      0.9,
+      -1.8,
+      1.847411112976261e-21,
+      0.9,
+      -1.8
+    ],
+    "state_time_s": 0.0,
+    "initial_qpos": [
+      3.4227784781322575e-23,
+      -6.362046133517818e-23,
+      0.29020935793281377,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      2.5579538487363612e-20,
+      0.9,
+      -1.8,
+      1.1368683772161603e-21,
+      0.9,
+      -1.8,
+      1.847411112976261e-20,
+      0.9,
+      -1.8,
+      1.847411112976261e-21,
+      0.9,
+      -1.8
+    ],
+    "initial_qvel": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "completed_iterations": 20,
+    "plant_steps_during_initialization": 0,
+    "reset_calls_during_initialization": 0,
+    "pre_optimization_nominal_action": [
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842,
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842,
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842,
+      0.0,
+      0.8999999761581421,
+      -1.7999999523162842
+    ],
+    "body_target": [
+      0.0,
+      0.0,
+      0.27
+    ],
+    "heading_target": 0.0,
+    "mocap_pos": [
+      [
+        0.3,
+        0.0,
+        0.27
+      ]
+    ],
+    "mocap_quat": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "planning_total_s": 12.373808708973229,
+    "actual_first_feedback_action": [
+      -0.03709486499428749,
+      0.8945857882499695,
+      -1.6908036470413208,
+      0.03629499673843384,
+      0.8928084969520569,
+      -1.6923816204071045,
+      -0.03634976968169212,
+      0.8947776556015015,
+      -1.6912219524383545,
+      0.03616419807076454,
+      0.8935035467147827,
+      -1.6916416883468628
+    ]
+  },
+  "stand_references": [
+    {
+      "qpos": [
+        3.4227784781322575e-23,
+        -6.362046133517818e-23,
+        0.2902041864088134,
+        0.9999999999999988,
+        -3.3574270518248195e-09,
+        4.92893123694015e-08,
+        1.654852707148725e-16,
+        -1.3017070476859571e-16,
+        0.894434314935029,
+        -1.7889333183868006,
+        -4.2238644776872857e-17,
+        0.8944350468671102,
+        -1.7889347779357787,
+        6.713692297706019e-17,
+        0.8944346061286672,
+        -1.788933901376567,
+        4.63630247038736e-16,
+        0.8944344167412039,
+        -1.7889335275254323
+      ],
+      "ctrl": [
+        -0.04134293359327292,
+        0.9009566654133971,
+        -1.6914329660454364,
+        0.04134328335209914,
+        0.9009570452778433,
+        -1.6914336730577932,
+        -0.041882608101743296,
+        0.9009493281714825,
+        -1.6905020886635411,
+        0.041882221059861176,
+        0.9009491989884834,
+        -1.6905025028065717
+      ],
+      "joint_pose": [
+        -1.3017070476859571e-16,
+        0.894434314935029,
+        -1.7889333183868006,
+        -4.2238644776872857e-17,
+        0.8944350468671102,
+        -1.7889347779357787,
+        6.713692297706019e-17,
+        0.8944346061286672,
+        -1.788933901376567,
+        4.63630247038736e-16,
+        0.8944344167412039,
+        -1.7889335275254323
+      ],
+      "actuator_torque": [
+        -2.4805760155963674,
+        0.39134102870209375,
+        5.850021140481857,
+        2.4805970011259513,
+        0.3913199046439857,
+        5.850066292679131,
+        -2.512956486104602,
+        0.390883322568925,
+        5.905908762781564,
+        2.5129332635916426,
+        0.3908869348367645,
+        5.9058614831316305
+      ],
+      "unclipped_pd": [
+        -2.4805760155963674,
+        0.391341028702088,
+        5.850021140481854,
+        2.4805970011259513,
+        0.39131990464398525,
+        5.850066292679128,
+        -2.512956486104602,
+        0.3908833225689201,
+        5.905908762781555,
+        2.5129332635916426,
+        0.39088693483676495,
+        5.90586148313164
+      ],
+      "qacc": [
+        -4.403510898175488e-06,
+        1.1078821806259658e-06,
+        -5.554507298245631e-05,
+        -3.0169449099123426e-06,
+        -8.699479590054951e-06,
+        2.645434279281853e-07,
+        -1.0254510285522432e-06,
+        -2.0057359415484e-07,
+        -1.1746318846192913e-05,
+        -9.54917155589273e-07,
+        -8.003490837543813e-07,
+        -1.0274644674897909e-05,
+        -6.65102825548893e-07,
+        -2.393126184899401e-06,
+        -7.885032325249514e-06,
+        -5.67514220792253e-07,
+        -2.1131871666738657e-06,
+        -7.908879834184043e-06
+      ],
+      "feet": [
+        [
+          0.19215677886025304,
+          0.14199999819902215,
+          0.021996131589062135
+        ],
+        [
+          0.19215677941204828,
+          -0.14200000180097622,
+          0.021996375036005766
+        ],
+        [
+          -0.19464322060740039,
+          0.14199999819902287,
+          0.02199626619645395
+        ],
+        [
+          -0.1946432202366624,
+          -0.1420000018009775,
+          0.021996206232696935
+        ]
+      ],
+      "foot_force": [
+        [
+          5.9990214596555085e-05,
+          5.5766840560918335e-05,
+          37.123957092082165
+        ],
+        [
+          -1.161658229631362e-05,
+          -2.5015382563763712e-05,
+          37.124275329921
+        ],
+        [
+          -6.085624603941339e-05,
+          4.920237859487949e-05,
+          37.46303605695998
+        ],
+        [
+          -5.046513426272549e-05,
+          -6.433763467827747e-05,
+          37.46274985801599
+        ]
+      ],
+      "head_position": [
+        0.29999999999999855,
+        -6.362046133517818e-23,
+        0.290204156835226
+      ],
+      "body_height_m": 0.2902041864088134,
+      "relative_height_m": 0.26284193956406676,
+      "anchor_xy": [
+        [
+          0.19215678006345865,
+          0.14200000000000002
+        ],
+        [
+          0.19215678006345865,
+          -0.14200000000000002
+        ],
+        [
+          -0.1946432199365413,
+          0.14200000000000002
+        ],
+        [
+          -0.1946432199365413,
+          -0.14200000000000002
+        ]
+      ],
+      "body_xy": [
+        3.4227784781322575e-23,
+        -6.362046133517818e-23
+      ],
+      "heading": 0.0,
+      "requested_height_m": 0.29020336039643685,
+      "max_equation_residual": 2.065030941383883e-05,
+      "solver_nfev": 250,
+      "solver_message": "The maximum number of function evaluations is exceeded.",
+      "qacc_norm": 5.977119728995857e-05,
+      "max_foot_xy_error_m": 1.800977866839304e-09,
+      "pd_reference_identity_max_error_rad": 1.6653345369377348e-16,
+      "friction_ratio": [
+        2.206312733249566e-06,
+        7.429384223110801e-07,
+        2.0889462711237535e-06,
+        2.1826571134555115e-06
+      ],
+      "loaded_at_entry": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "reference_kind": [
+        "reachable_floor_landing",
+        "reachable_floor_landing",
+        "reachable_floor_landing",
+        "reachable_floor_landing"
+      ],
+      "entry_time_s": 0.0,
+      "feasible": true,
+      "wall_s": 0.6928727608174086
+    }
+  ],
+  "applied_settings": [
+    {
+      "time_s": 0.0,
+      "task_parameters": {
+        "Arm posture": 0.2,
+        "Biped type": "Foot Stand",
+        "Duty ratio": 1.0,
+        "Walk speed": 0.0,
+        "Amplitude": 0.0,
+        "Walk turn": 0.0,
+        "Flip dir": "Back Flip",
+        "Heading": 0.0,
+        "Cadence": 1.0,
+        "Gait": "Stand",
+        "Gait switch": "Manual"
+      },
+      "cost_weights": {
+        "LandingVelocity": 0.02,
+        "Position": 0.2,
+        "StandLinearVelocity": 1.0,
+        "StandSupportForce": 0.0,
+        "Upright": 1.0,
+        "Orientation": 1.0,
+        "StandFootVelocity": 0.02,
+        "Gait": 2.0,
+        "LandingIndentation": 0.1,
+        "StandAngularVelocity": 1.0,
+        "Height": 1.0,
+        "StandAbsoluteHeight": 1.0,
+        "Effort": 0.08,
+        "Angmom": 0.0,
+        "StandFootPosition": 0.1,
+        "Posture": 0.02,
+        "Balance": 0.0,
+        "MaterialSupportHeight": 1.0
+      }
+    },
+    {
+      "time_s": 2.0019999999998124,
+      "task_parameters": {
+        "Arm posture": 0.2,
+        "Biped type": "Foot Stand",
+        "Duty ratio": 0.45,
+        "Walk speed": 0.0,
+        "Amplitude": 0.03,
+        "Walk turn": 0.0,
+        "Flip dir": "Back Flip",
+        "Cadence": 2.0,
+        "Heading": 0.0,
+        "Gait": "Trot",
+        "Gait switch": "Manual"
+      },
+      "cost_weights": {
+        "LandingVelocity": 0.02,
+        "Position": 0.2,
+        "StandLinearVelocity": 1.0,
+        "StandSupportForce": 0.0,
+        "StandFootVelocity": 0.02,
+        "Orientation": 1.0,
+        "Upright": 1.0,
+        "Gait": 2.0,
+        "LandingIndentation": 0.1,
+        "StandAngularVelocity": 1.0,
+        "Effort": 0.08,
+        "StandAbsoluteHeight": 1.0,
+        "Height": 1.0,
+        "Angmom": 0.0,
+        "StandFootPosition": 0.1,
+        "Posture": 0.02,
+        "MaterialSupportHeight": 1.0,
+        "Balance": 0.2
+      }
+    }
+  ]
+}

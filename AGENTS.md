@@ -1,5 +1,9 @@
 # Codex 执行约定
 
+**R10已结束本轮开发：12/12启动（3次零步初始化失败＋9次物理任务），完整材料任务0/9；PPO训练0。** 最后0.215m/s在返程32.5672秒材料域退出。不得重新起钟、重开额度或启动未通过前置条件的联合训练。实际结果见[唯一索引](results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/index.json)。
+
+以下为本轮冻结执行约定，保留历史协议身份；当前状态以以上实际结果为准。
+
 ## 当前唯一入口：S1 R10 材料相容触地与稳定联合基础
 
 读取 [主计划](docs/TERRAIN_MEMORY_PLAN.md) 和 [R10 契约](experiments/terrain_memory/s1-go2-soft-landing-r10.json)。run_id 仍为 **tm-s1-go2-soft-landing-r10**，协议修订为 **parallel_long_training_v2**，状态 **planned_not_executed**。用户确认启动前扩大并行、训练规模和长任务评价；不改R10科学问题，不新开R11，不把计划当结果。

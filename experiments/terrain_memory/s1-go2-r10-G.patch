@@ -1,0 +1,29 @@
+--- a/mjpc/tasks/quadruped/quadruped.cc
++++ b/mjpc/tasks/quadruped/quadruped.cc
+@@ -169,7 +169,7 @@
+ 
+     double ground_height = flat_ground_height ? flat_ground_height[0]
+                                              : Ground(model, data, query);
+-    double height_target = ground_height + kFootRadius + step[foot];
++    double height_target = ground_height + model->geom_size[3*foot_geom_id_[foot]] + step[foot];
+     double height_difference = foot_pos[foot][2] - height_target;
+     if (current_mode_ == kModeScramble) {
+       // in Scramble, foot higher than target is not penalized
+@@ -545,7 +545,7 @@
+ 
+   // draw step height
+   for (ResidualFn::A1Foot foot : ResidualFn::kFootAll) {
+-    stance_pos[foot][2] = ResidualFn::kFootRadius + ground[foot];
++    stance_pos[foot][2] = model->geom_size[3*residual_.foot_geom_id_[foot]] + ground[foot];
+     if (residual_.current_mode_ == ResidualFn::kModeBiped) {
+       // skip "hands" in biped mode
+       bool handstand =
+@@ -557,7 +557,7 @@
+       if (front_hand || back_hand) continue;
+     }
+     if (step[foot]) {
+-      flight_pos[foot][2] = ResidualFn::kFootRadius + step[foot] + ground[foot];
++      flight_pos[foot][2] = model->geom_size[3*residual_.foot_geom_id_[foot]] + step[foot] + ground[foot];
+       AddConnector(scene, mjGEOM_CYLINDER, ResidualFn::kFootRadius,
+                    stance_pos[foot], flight_pos[foot], kStepRgba);
+     }

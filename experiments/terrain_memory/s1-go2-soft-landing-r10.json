@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-soft-landing-r10",
   "stage": "S1R10",
-  "status": "planned_not_executed",
+  "status": "blocked_material_execution_development_allowance_exhausted",
   "protocol_revision": "parallel_long_training_v2",
   "revision_date": "2026-10-28",
   "reviewed_source_commit": "521303033ef6836880afb80e146c7b73ed0bb985",
@@ -24,8 +24,15 @@
   },
   "plant_invariants": {
     "robot": "project four-legged Go2, 15.206408 kg; original geometry/inertia/passive parameters/limits; G0/G1 are historical cohort labels, not humanoid hardware",
-    "pd": [60, 5],
-    "per_leg_torque_limits_Nm": [23.7, 23.7, 45.43],
+    "pd": [
+      60,
+      5
+    ],
+    "per_leg_torque_limits_Nm": [
+      23.7,
+      23.7,
+      45.43
+    ],
     "physics_dt_s": 0.0002,
     "control_hold_s": 0.002,
     "logical_planning_dt_s": 0.02,
@@ -35,8 +42,14 @@
     "footprint_area_m2": 0.001,
     "grid_m": 0.02,
     "strain_absolute_limit": 0.02,
-    "strip_x_m": [0.8, 2.2],
-    "strip_y_m": [-0.6, 0.6],
+    "strip_x_m": [
+      0.8,
+      2.2
+    ],
+    "strip_y_m": [
+      -0.6,
+      0.6
+    ],
     "boundary_rule": "unchanged hard-priority footprint assignment, unique support; retain non-foot collisions",
     "history_rule": "World-fixed shared columns recover when unloaded. Reset only between independent episodes/acquisition sessions, never at PPO updates, laps or file boundaries.",
     "prohibited": "softening truth to pass, clipping material strain/force, injecting planned GRF, relaxing task/physical limits, replacing the training plant or controller"
@@ -50,14 +63,22 @@
     "N": "Put smooth approach and predicted actual normal-velocity/indentation objectives inside the same MPC. Initially retain 2 Hz gait, .45 duty and .03 m apex; preserve phase continuity. A zero-speed reference is not a guarantee on actual touchdown. No post-solve torque or target filter.",
     "conditional_C": "If full-mission evidence still indicates contact prediction mismatch, implement one documented local short-horizon contact approximation in the same solver. Candidate forces come from candidate states, finite-difference/rollout states are independent and derivatives match the implemented transition. Do not copy current applied forces to all candidates or assume userdata automatically propagates material state.",
     "prediction_clock": "Retain .350 s horizon and 2 ms held actions with matching composed derivatives. Finer predictor substeps, if needed, do not change plant truth or silently shorten the horizon.",
-    "development_cap_priority_m_s": [0.25, 0.215, 0.18],
+    "development_cap_priority_m_s": [
+      0.25,
+      0.215,
+      0.18
+    ],
     "cap_rule": "Start at .25; alternative caps only characterize the modified controller, not a repeated R9 sweep. Freeze the first successful predeclared controller/cap before comparison.",
     "stand_reference": "Keep S3 feasible references and Stand Effort scale .02 rad/weight .08 on rigid endpoint pads; force tracking remains disabled.",
     "training_entry": "One same-version complete original nominal material mission permits freezing S4 and starting joint learning. Neither all initial conditions nor prior 600 s perfection is required.",
     "stop": "Preserve the actual blocker if all bounded development fails. Do not refresh the allowance, modify truth or switch platform. Observer/interface work already feasible may still be delivered, without claiming closed-loop learning."
   },
   "joint_learning": {
-    "groups": ["FIXED_S4", "PPO_RAW_S4", "PANN_PPO_S4"],
+    "groups": [
+      "FIXED_S4",
+      "PPO_RAW_S4",
+      "PANN_PPO_S4"
+    ],
     "fixed_group_cap": "first successful predeclared development cap, frozen before evaluation",
     "actor_dt_s": 0.5,
     "actor_action": "single speed cap [.18,.25] m/s; .215+.035*sample.action, where existing sample.action is already tanh(raw); retain raw action/log_prob",
@@ -69,7 +90,10 @@
     "observer_preparation": "Can proceed alongside controller development using existing causal trajectories. Replay/network loading is not closed-loop success or PPO training.",
     "ppo": {
       "implementation": "existing standard Tianshou PPO core; no algorithm/platform replacement",
-      "hidden_sizes": [64, 64],
+      "hidden_sizes": [
+        64,
+        64
+      ],
       "learning_rate": 0.0003,
       "initial_std": 0.35,
       "gamma": 0.99,
@@ -83,9 +107,17 @@
       "minibatch_size": 64,
       "device": "Resolve on authorized hardware once before training; use the same actor/critic device policy for both groups. A small PPO network need not be enlarged to occupy VRAM."
     },
-    "seeds": [0, 1, 2],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
     "streams": 6,
-    "early_checkpoints_per_stream": [4096, 8192, 16384],
+    "early_checkpoints_per_stream": [
+      4096,
+      8192,
+      16384
+    ],
     "standard_target_transitions_per_stream": 32768,
     "standard_target_total_transitions": 196608,
     "optional_target_transitions_per_stream": 65536,
@@ -96,10 +128,35 @@
     "sampling_accounting": "Record total/effective translating transitions, elapsed physics, actual resets, failures, PPO updates and component/campaign wall times. Stand/turn observations may be collected but separately count ineffective actions; no passive post-completion padding.",
     "on_policy_and_independence": "Separate parameters, optimizer, normalizers, seeds and environment/MPC/material/observer state for each stream. Collect each256-transition fragment under its fixed behavior policy; update only that stream and then continue its state. Do not mix other seeds or stale-policy fragments to fake on-policy data. Archive frozen evaluation normalizers with checkpoints.",
     "curriculum": [
-      {"start_transition": 0, "end_transition": 8192, "task": "original_single_round_trip", "session_limit_s": 60, "end_semantics": "original success/failure/intrinsic timeout are terminal; successful training ends immediately, not after passive holding"},
-      {"start_transition": 8192, "end_transition": 16384, "task": "continuing_round_trips", "session_limit_s": 300, "end_semantics": "real physical/material failure terminates;300s is an external acquisition truncation, not task failure"},
-      {"start_transition": 16384, "end_transition": 32768, "task": "continuing_round_trips", "session_limit_s": 600, "end_semantics": "real physical/material failure terminates;600s is external acquisition truncation"},
-      {"start_transition": 32768, "end_transition": 65536, "task": "continuing_round_trips", "session_limit_s": 600, "optional": true, "end_semantics": "same continuing-task semantics, no new action or reward design"}
+      {
+        "start_transition": 0,
+        "end_transition": 8192,
+        "task": "original_single_round_trip",
+        "session_limit_s": 60,
+        "end_semantics": "original success/failure/intrinsic timeout are terminal; successful training ends immediately, not after passive holding"
+      },
+      {
+        "start_transition": 8192,
+        "end_transition": 16384,
+        "task": "continuing_round_trips",
+        "session_limit_s": 300,
+        "end_semantics": "real physical/material failure terminates;300s is an external acquisition truncation, not task failure"
+      },
+      {
+        "start_transition": 16384,
+        "end_transition": 32768,
+        "task": "continuing_round_trips",
+        "session_limit_s": 600,
+        "end_semantics": "real physical/material failure terminates;600s is external acquisition truncation"
+      },
+      {
+        "start_transition": 32768,
+        "end_transition": 65536,
+        "task": "continuing_round_trips",
+        "session_limit_s": 600,
+        "optional": true,
+        "end_semantics": "same continuing-task semantics, no new action or reward design"
+      }
     ],
     "curriculum_boundary_rule": "Threshold crossings queue the next stage for the next natural episode/session boundary; never reset a running robot or material solely to hit8192/16384 exactly. Record actual per-stage counts and overshoot. Both methods use the same rule and initial-condition cycling nominal/yaw+5/yaw-5.",
     "continuing_route": "Endless0-to3-to0m circuits during each300/600s training session; stop2s under original thresholds at each endpoint and really turn before the next leg/lap. Completion of a lap is not session termination. No per-lap material or MPC reset, and no training parking after a fixed target lap count.",
@@ -115,10 +172,18 @@
   },
   "evaluation": {
     "freeze": "Primary common checkpoints and normalizers fixed for entire evaluation trajectories; deterministic policy mean; no PPO updates during formal tests. PANN estimated states and MPC still evolve causally.",
-    "rigid_regression": {"maximum_starts": 1, "condition": "nominal", "duration_s": 60},
+    "rigid_regression": {
+      "maximum_starts": 1,
+      "condition": "nominal",
+      "duration_s": 60
+    },
     "original_material": {
       "maximum_records": 21,
-      "conditions": ["nominal", "yaw_plus5", "yaw_minus5"],
+      "conditions": [
+        "nominal",
+        "yaw_plus5",
+        "yaw_minus5"
+      ],
       "duration_s": 60,
       "composition": "3 fixed +2 learned groups x3 training seeds x3 initial conditions",
       "observe_after_success": true,
@@ -127,7 +192,11 @@
     "continuous_material": {
       "priority": "core",
       "maximum_records": 21,
-      "conditions": ["nominal", "yaw_plus5", "yaw_minus5"],
+      "conditions": [
+        "nominal",
+        "yaw_plus5",
+        "yaw_minus5"
+      ],
       "composition": "3 fixed +2 learned groups x3 training seeds x3 initial conditions; do not reduce learned coverage to seed0",
       "duration_s": 600,
       "round_trips": 10,
@@ -138,15 +207,37 @@
       "observation_rule": "After10 circuits continue holding and record to600s; separately report moving/holding time, route completion and subsequent violations. Treat300s as an in-trajectory observation, not an independent extra trial."
     },
     "extended_continuous_material": [
-      {"maximum_records": 3, "duration_s": 1800, "round_trips": 30, "route_deadline_s": 1620, "condition": "nominal", "learned_seed": 0, "start_rule": "Only predeclared FIXED and each learned seed0 whose same-version nominal600s passes, after core time reservation; no best-seed substitution."},
-      {"maximum_records": 3, "duration_s": 3600, "round_trips": 60, "route_deadline_s": 3240, "condition": "nominal", "learned_seed": 0, "start_rule": "Same predeclared policy whose nominal1800s passes, with core evaluation protected and enough authorized time; otherwise explicitly not executed."}
+      {
+        "maximum_records": 3,
+        "duration_s": 1800,
+        "round_trips": 30,
+        "route_deadline_s": 1620,
+        "condition": "nominal",
+        "learned_seed": 0,
+        "start_rule": "Only predeclared FIXED and each learned seed0 whose same-version nominal600s passes, after core time reservation; no best-seed substitution."
+      },
+      {
+        "maximum_records": 3,
+        "duration_s": 3600,
+        "round_trips": 60,
+        "route_deadline_s": 3240,
+        "condition": "nominal",
+        "learned_seed": 0,
+        "start_rule": "Same predeclared policy whose nominal1800s passes, with core evaluation protected and enough authorized time; otherwise explicitly not executed."
+      }
     ],
     "all_long_tasks": "Original stability tolerances,2s holds at both endpoints and actual turns; no lap resets or stitched runs. At route completion hold until declared horizon and require final continuous2s stability; report every violation, final30s and each lap/60s segment. Failures terminate truthfully and remain in denominators. All durations are simulation time, not wall time.",
     "reuse": "Exactly same source/config/checkpoint/initial state/protocol may be reused once. A shorter run or prefix is not an independent longer task; new durations are separately declared.",
     "interpretation": "Three seeds and deterministic initial offsets are limited coverage, not held-out material generalization or robot certification. Joint execution, PANN changing actions and task gains are separate outcomes."
   },
   "resources": {
-    "user_reported_hardware": {"gpu": "RTX PRO 6000", "vram_GB": 96, "vCPU_approx": 25, "host_cpu": "Intel Xeon Platinum 8470Q", "verified_by_this_plan": false},
+    "user_reported_hardware": {
+      "gpu": "RTX PRO 6000",
+      "vram_GB": 96,
+      "vCPU_approx": 25,
+      "host_cpu": "Intel Xeon Platinum 8470Q",
+      "verified_by_this_plan": false
+    },
     "host_selection": "Use the user's already authorized96GB execution machine via existing SSH access. Confirm actual host, GPU, affinity/quota, RAM and active jobs once; fy-5080 is a legacy label, not authority to silently use a different machine. No new paid machine, purchase or hardware activation.",
     "training_streams_concurrent_target": 6,
     "evaluation_environments_initial_target": 8,
@@ -167,7 +258,11 @@
     "starts_at": "first R10 physical integration; count all concurrent jobs against one elapsed clock including pauses, development, training and evaluation. Implementation/build/publication timing separately recorded.",
     "reserve_evaluation_h_at_least": 6,
     "reserve_rule": "Reserve max(6h,1.2x measured parallel wall cost of all remaining eligible core21x60+21x600 plus required regression). Account for the actual worker allocation/contention, not summed single-job time divided by an assumed perfect speedup. Recompute from normal complete jobs/fragments; stop training in time to preserve core evaluation.",
-    "priority": ["material-executable S4", "balanced six-stream core training and21x60+21x600 evaluation", "optional65536 training and1800/3600 only with core fully protected"],
+    "priority": [
+      "material-executable S4",
+      "balanced six-stream core training and21x60+21x600 evaluation",
+      "optional65536 training and1800/3600 only with core fully protected"
+    ],
     "shortfall": "Evaluate last common actual checkpoint and disclose missing training/evaluation. Do not claim32768, convergence, all21 tasks or one-hour execution when not achieved. Preserve unfinished task as budget-truncated, not fabricated physical failure.",
     "benchmark_episodes": 0
   },
@@ -180,7 +275,32 @@
     "training_logging": "compact transitions/episodes, checkpoints and selected full videos, not every MPC horizon at every training step; high-rate event windows and necessary physics remain inspectable",
     "publication": "Source/config/compact results toGitHub; arrays/checkpoints/videos directly from execution host toRelease, each asset<2GiB with continuous timestamps. Verify final commit and URL/size/digest, then finish.",
     "archive_on_user_pc_after_publication": false,
-    "prohibited_post_publication": ["download another copy to user's PC", "copy or mirror to user's PC", "recompress or create a second local archive", "automatic deletion of working data or history"],
+    "prohibited_post_publication": [
+      "download another copy to user's PC",
+      "copy or mirror to user's PC",
+      "recompress or create a second local archive",
+      "automatic deletion of working data or history"
+    ],
     "retention": "Keep normal execution outputs, necessary checkpoints and historical evidence. No archival-only work after publication verification."
+  },
+  "actual_execution": {
+    "index": "results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/index.json",
+    "development_attempts": 12,
+    "initialization_failures": 3,
+    "physical_missions": 9,
+    "complete_original_missions": 0,
+    "integrated_simulation_s": 107.97499999997785,
+    "integrated_physical_steps": 539875,
+    "ppo_streams_started": 0,
+    "ppo_transitions": 0,
+    "pann_weight_updates": 0,
+    "formal_60s_started": 0,
+    "core_600s_started": 0,
+    "optional_1800s_started": 0,
+    "optional_3600s_started": 0,
+    "observer_replay": "Existing R9 causal-record replay only; 4169 state updates and 17 recovery queries, no closed-loop or training claim",
+    "status": "blocked_material_execution_development_allowance_exhausted",
+    "development_allowance_exhausted": true,
+    "wall_clock_limit_exhausted": false
   }
 }

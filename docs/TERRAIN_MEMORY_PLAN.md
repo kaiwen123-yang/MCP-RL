@@ -1,10 +1,22 @@
 # 地面记忆与跨步协同：R10稳定联合基础与并行长任务计划
 
-更新日期：2026-10-28。run_id：**tm-s1-go2-soft-landing-r10**；协议修订：**parallel_long_training_v2**；状态：**planned_not_executed**。
+更新日期：2026-10-28。run_id：**tm-s1-go2-soft-landing-r10**；协议修订：**parallel_long_training_v2**；状态：**blocked_material_execution_development_allowance_exhausted**。
 
 本次根据用户启动前确认，扩大并行、训练规模和连续任务评价；**原R10目标与控制/材料研究路线不变**。机器可读契约见[s1-go2-soft-landing-r10.json](../experiments/terrain_memory/s1-go2-soft-landing-r10.json)，执行约定见[AGENTS.md](../AGENTS.md)。本次不是新仿真、训练或硬件成果。
 
 审阅基点[52130303](https://github.com/kaiwen123-yang/MCP-RL/commit/521303033ef6836880afb80e146c7b73ed0bb985)。原R10诊断、公式推导及文献阅读边界完整保留于[3c21bf05固定计划](https://github.com/kaiwen123-yang/MCP-RL/blob/3c21bf0512b1785cce8a7228d791dac1e0b657b9/docs/TERRAIN_MEMORY_PLAN.md)，更早R1–R9协议见[历史计划](https://github.com/kaiwen123-yang/MCP-RL/blob/521303033ef6836880afb80e146c7b73ed0bb985/docs/TERRAIN_MEMORY_PLAN.md)。历史结果、失败、配置、发布均不改写；旧文中的“当前”、未用额度和旧低并发限制不重新授权执行。
+
+## 本轮实际执行结果
+
+**R10 实际结果（2026-10-28）：开发额度12/12已结束，材料完整任务0/9，联合PPO未启动。** 12次启动包括3次零物理步初始化失败和9次真实Go2材料任务；累计107.9750秒、539875个0.2ms物理步。G、G＋N与G＋N＋C均保留完整记录，C的局部力参考和支撑高度修正逐版保存。最终0.215m/s版本通过去程和远端转向，在返程32.5672秒触发原材料域；仍未完成原任务。
+
+冻结PANN的独立观察器完成既有R9记录的4169次状态推进与17次条件恢复查询，权重SHA256与原B ideal seed0一致；这不是闭环成功。标准PPO接口已准备但未执行，六流训练、PPO更新、新策略权重、21条60秒与21条600秒正式评价均为0。三模块稳定联合执行尚未成立，PANN改变动作及改善任务均未评价。真实材料、Go2物理、PD/力矩、任务阈值未放宽；未启动硬件，未测NX实时。
+
+48小时墙钟上限未耗尽，开发启动额度已耗尽。剩余49个预定评价case保留清单与未执行原因，不自动刷新额度。当前已无R10仿真或训练作业；`tmux`保留执行日志入口。
+
+[唯一运行索引](../results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/index.json) · [全部启动与结果](../results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/episodes.csv) · [轨迹与阈值图](../results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/development-trajectories.png) · [未执行评价清单](../results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/evaluation-manifest.csv) · [完整数据与负例视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-soft-landing-r10)
+
+以下保留本轮执行时的协议；预算不重新授权。
 
 ## 1. 本轮目标不变：先形成可用的联合基础
 
