@@ -1,0 +1,11 @@
+{
+  "build": "S5-r17",
+  "based_on": "S5-r16",
+  "r11_native_contact_impedance": {
+    "enabled": true,
+    "change": "After MakeDifferentiable, restore the original geom/pair solimp d0 values during prediction. Retain the existing joint-limit smoothing, all other solimp/solref parameters, .2ms integration and2ms holds.",
+    "evidence": "Saved S5-r14 C plan at5.0s predicts rigid-ground foot bottoms[-.5584,-.5478,-.4780,-.5150]mm at5.1s; actual bottoms are[-.0039,-.0040,-.0035,-.0024]mm and all feet are outside the material. Agent::PlanIteration sets geom/pair d0 to0 with MakeDifferentiable, while the real original native contact usesd0=.99. The later material entry switches to the unchanged1.227MN/m C spring.",
+    "scope": "Only native-contact prediction approximation. Original true Go2/rigid floor/TM02 and all physical thresholds remain unchanged. Material contact filter, causal force anchors and material force are unchanged.",
+    "hypothesis": "Matching the native contact impedance removes an observed rigid-support geometry mismatch before the rigid/material transition; independent E30/E60 still determine control outcome."
+  }
+}

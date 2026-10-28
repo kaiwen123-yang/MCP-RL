@@ -18,6 +18,7 @@ def main():
     if a.build=='S5-r14':prior=ROOT/'work/r11-frozen/S5-r13'
     if a.build=='S5-r15':prior=ROOT/'work/r11-frozen/S5-r14'
     if a.build=='S5-r16':prior=ROOT/'work/r11-frozen/S5-r15'
+    if a.build=='S5-r17':prior=ROOT/'work/r11-frozen/S5-r16'
     frozen=ROOT/'work/r11-frozen'/a.build
     if frozen.exists():raise ValueError('This controller build already exists; preserve its identity')
     if a.build in ('S5-r2','S5-r4','S5-r5','S5-r12'):
@@ -34,7 +35,7 @@ def main():
         (frozen/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
         print(f'Prepared {a.build} controller with unchanged frozen C binary.',flush=True)
         return
-    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9','S5-r10','S5-r11','S5-r13','S5-r14','S5-r15','S5-r16'):raise ValueError('An undeclared S5 controller build was requested')
+    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9','S5-r10','S5-r11','S5-r13','S5-r14','S5-r15','S5-r16','S5-r17'):raise ValueError('An undeclared S5 controller build was requested')
     relative=Path('mjpc/tasks/quadruped/quadruped.cc')
     old=(prior/relative).read_text()
     new=old.replace('// 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.',
@@ -73,7 +74,7 @@ def main():
             '        double desired_vz = -0.05*mju_tanh(mju_max(z,0)/0.001);\n        if (slow_approach_) desired_vz=mju_max(mju_min(step_velocity[foot],0.),desired_vz);')
         new=new.replace('  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;',
             '  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;\n  residual_.slow_approach_ = GetNumberOrDefault(0, model, "r11_slow_approach") == 1;')
-    if a.build in ('S5-r8','S5-r9','S5-r10','S5-r11'):new=old
+    if a.build in ('S5-r8','S5-r9','S5-r10','S5-r11','S5-r17'):new=old
     if a.build=='S5-r13':
         new=old.replace('    residual[counter++] = step[foot] ? height_difference : 0;',
             '    const bool moving_stance_height = gait != kGaitStand &&\n'
@@ -100,7 +101,7 @@ def main():
     if a.build=='S5-r16':
         new=old.replace('GetNumberOrDefault(0, model, "r11_landing_approach_band")',
             'GetNumberOrDefault(0., model, "r11_landing_approach_band")')
-    if new==old and a.build not in ('S5-r8','S5-r9','S5-r10','S5-r11'):raise ValueError('Frozen residual was not found')
+    if new==old and a.build not in ('S5-r8','S5-r9','S5-r10','S5-r11','S5-r17'):raise ValueError('Frozen residual was not found')
     for path in (prior/'mjpc').rglob('*'):
         if path.is_file() and path.suffix in ('.cc','.h'):
             shutil.copy2(path,source/path.relative_to(prior))
@@ -138,6 +139,19 @@ def main():
             '    model_->opt.disableflags |= mjDSBL_WARMSTART;\n  }\n\n' + target
         if agent_old.count(target)!=1:raise ValueError('Planning entry was not uniquely located')
         agent_new=agent_old.replace(target,replacement)
+        (source/agent_path).write_text(agent_new)
+        patch+=''.join(difflib.unified_diff(agent_old.splitlines(True),agent_new.splitlines(True),
+            fromfile=prior.name+'/'+str(agent_path),tofile=a.build+'/'+str(agent_path)))
+    if a.build=='S5-r17':
+        agent_path=Path('mjpc/agent.cc');agent_old=(prior/agent_path).read_text()
+        target='  // R11: numerical predictor state is independent of worker solver history.'
+        addition='  // S5-r17: retain original native contact impedance in C predictions.\n' + \
+            '  if (differentiable && GetNumberOrDefault(0, model_, "r11_native_contact_impedance") == 1) {\n' + \
+            '    for (int i = 0; i < model_->ngeom; ++i)\n' + \
+            '      model_->geom_solimp[mjNIMP*i] = geom_solimp_[i];\n' + \
+            '    for (int i = 0; i < model_->npair; ++i)\n' + \
+            '      model_->pair_solimp[mjNIMP*i] = pair_solimp_[i];\n  }\n\n'
+        agent_new=agent_old.replace(target,addition+target)
         (source/agent_path).write_text(agent_new)
         patch+=''.join(difflib.unified_diff(agent_old.splitlines(True),agent_new.splitlines(True),
             fromfile=prior.name+'/'+str(agent_path),tofile=a.build+'/'+str(agent_path)))
@@ -198,6 +212,9 @@ def main():
     if a.build=='S5-r16':
         overrides=json.loads((prior/'identity.json').read_text())['configuration_overrides']
         overrides['r11_landing_band_scalar_fix']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r16.json').read_text())['r11_landing_band_scalar_fix']
+    if a.build=='S5-r17':
+        overrides=json.loads((prior/'identity.json').read_text())['configuration_overrides']
+        overrides['r11_native_contact_impedance']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r17.json').read_text())['r11_native_contact_impedance']
     identity=dict(controller='S5',build=a.build,based_on=prior.name,
         prior_binary_sha256=sha(prior/'agent_server'),binary_sha256=sha(frozen/'agent_server'),
         source_files_sha256={str(x.relative_to(frozen)):sha(x) for x in (frozen/'mjpc').rglob('*') if x.is_file() and x.suffix in ('.cc','.h')},

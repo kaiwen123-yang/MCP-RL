@@ -6,6 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 CONFIG='experiments/terrain_memory/s1-go2-material-continuation-r11.json'
 CONTRACT=json.loads((ROOT/CONFIG).read_text())
 RUN=CONTRACT['run_id']
+EVALUATION_SOURCE_SHA256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 LEVELS=['E30','E60','E300','E600']
 CONDITIONS=['nominal','yaw_plus5','yaw_minus5']
 STAGES={
@@ -59,10 +60,36 @@ def prerequisite(c,index,purpose,terrain):
     if actual['workers']!=c['evaluation_workers']:
         raise ValueError('The declared predecessor used different solver workers; re-establish qualification for the changed execution setting')
     return previous
+def material_traversal(result,arrays):
+    # Operationalize the user's passage through the unchanged rectangular strip.
+    # This only scores the completed original route; it never terminates/steers physics.
+    outbound=next((r['time_s'] for r in result['transitions'] if r['phase']=='outbound'),None)
+    far=next((r['time_s'] for r in result['transitions'] if r['phase']=='turn'),None)
+    t=arrays['time'];xy=arrays['qpos'][:,:2]
+    selected=np.flatnonzero((t>=outbound-1e-8)&(t<=(far if far is not None else t[-1])+1e-8)) if outbound is not None else np.array([],int)
+    west=next((int(i) for i in selected if xy[i,0]>=.8),None)
+    east=next((int(i) for i in selected if west is not None and i>=west and xy[i,0]>=2.2),None)
+    segment=np.arange(west,east+1 if east is not None else selected[-1]+1) if west is not None else np.array([],int)
+    lateral=np.flatnonzero(abs(xy[segment,1])>.6) if len(segment) else np.array([],int)
+    half=.015811388300841896
+    feet=arrays['feet'][segment,:,:2]
+    interior=(feet[:,:,0]>=.8+half)&(feet[:,:,0]<=2.2-half)&(abs(feet[:,:,1])<=.6-half)
+    loaded=interior&(arrays['actual_grf'][segment,:,2]>0)
+    material_loaded=bool(np.any(loaded))
+    complete=bool(west is not None and east is not None and not len(lateral) and material_loaded)
+    return dict(completed=complete,west_entry_s=float(t[west]) if west is not None else None,
+        east_exit_s=float(t[east]) if east is not None else None,
+        lateral_exit_s=float(t[segment[lateral[0]]]) if len(lateral) else None,
+        max_abs_base_y_during_crossing_m=float(np.max(abs(xy[segment,1]))) if len(segment) else None,
+        material_loaded_during_crossing=material_loaded,
+        original_strip_x_m=[.8,2.2],original_strip_y_m=[-.6,.6],
+        measurement='First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change.')
+
 def evaluate_stage(result,c,joint,arrays):
     identity=c['r11_stage'];level=identity['level'];duration=identity['duration_s']
     result.update(evaluation_stage=identity,case_key=c.get('case_key'),case_identity=c.get('case_identity'),
         qualification=dict(predecessor_attempt=c.get('predecessor_attempt'),protocol_revision=CONTRACT['protocol_revision'],
+            evaluator_sha256=EVALUATION_SOURCE_SHA256,
             solver_workers=c.get('evaluation_workers'),worker_setting_checked_against_predecessor=bool(c.get('predecessor_attempt'))))
     reason=result['reason'];full=result['simulation_s']>=duration-1e-7
     failure=reason.startswith(('material_domain_exit','body_fall','invalid_contact'))
@@ -74,13 +101,14 @@ def evaluate_stage(result,c,joint,arrays):
         return_start_s=returning[0]['time_s'] if returning else None,
         actual_route_fraction=joint.route_progress,full_observation=full,
         actual_material_loaded=bool(np.any(joint.ground.ever_loaded)) if joint.ground.kind!='rigid' else False)
+    result['stage_progress']['material_traversal']=material_traversal(result,arrays)
     if identity['task_kind']=='continuing_acquisition':
         result.update(success=None,stage_status='physical_material_failure' if failure else
             'technical_interruption' if technical else 'budget_truncated' if budget else
             'acquisition_boundary' if full else 'technical_interruption')
         return result
     if level=='E30':
-        achieved=bool(full and far and result['stage_progress']['actual_material_loaded'])
+        achieved=bool(full and far and result['stage_progress']['material_traversal']['completed'])
     elif level=='E60':
         achieved=bool(full and result['first_completion_s'] is not None)
     else:
@@ -92,5 +120,6 @@ def evaluate_stage(result,c,joint,arrays):
     status='passed' if passed else 'physical_material_failure' if failure else 'technical_interruption' if technical else 'budget_truncated' if budget else 'task_criteria_unmet'
     result.update(success=passed,stage_status=status,sustained_execution_success=passed,
         original_mission_success=bool(result['first_completion_s'] is not None) if level=='E60' else None)
-    if not failure and not technical and not budget:result['reason']='stage_passed' if passed else 'stage_criteria_unmet'
+    if not failure and not technical and not budget:
+        result['reason']='stage_passed' if passed else 'material_traversal_not_completed' if level=='E30' and not result['stage_progress']['material_traversal']['completed'] else 'stage_criteria_unmet'
     return result
