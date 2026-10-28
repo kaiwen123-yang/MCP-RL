@@ -217,11 +217,20 @@ def write_equilibrium_settings(xml_path, config, arm):
                 ET.SubElement(custom,'numeric',name='r10_contact_anchor',data='1')
                 tree.getroot().find('size').set('nuserdata','78')
                 values['r10_contact_anchor']=1
+        if config.get('r11_domain_margin'):
+            domain=config['r11_domain_margin']
+            ET.SubElement(custom,'numeric',name='r11_domain_margin',
+                data=f"{domain['onset_m']:.17g} {domain['scale_m']:.17g}")
+            values['r11_domain_margin']=[domain['onset_m'],domain['scale_m']]
+            index=next(i for i,sensor in enumerate(sensors) if sensor.tag!='user')
+            sensors.insert(index,ET.Element('user',name='MaterialDomainMargin',dim='4',user=f"0 {domain['weight']} 0 {domain['weight']}"))
         tree.write(xml_path,encoding='unicode')
         cost_weights={'Orientation':.03 if arm=='AUTHOR_N' else 1.,'Angmom':0.}
         if config.get('actual_terrain')=='rigid' and config.get('controller_formulation') in ('GN','GNC'):
             cost_weights.update(LandingVelocity=0.,LandingIndentation=0.)
             if config['normal_landing'].get('material_support_height'):cost_weights['MaterialSupportHeight']=0.
+        if config.get('r11_domain_margin'):
+            cost_weights['MaterialDomainMargin']=0. if config.get('actual_terrain')=='rigid' else config['r11_domain_margin']['weight']
         return dict(arm=arm,prediction_profile='AUTHOR_N' if arm=='AUTHOR_N' else 'C',
             numerics=values,cost_weights=cost_weights,
             prediction_smoothing_width_m=None,refsafe='preserved',plant_options='unchanged',

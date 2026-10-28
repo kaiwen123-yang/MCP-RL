@@ -1,0 +1,14 @@
+{
+  "build": "S5-r6",
+  "based_on": "S5-r5",
+  "r11_domain_margin": {
+    "onset_m": 0.0008,
+    "scale_m": 0.0002,
+    "weight": 176.0,
+    "smoothing_m": 1e-06,
+    "derivation": "1mm true domain minus2*.002s*.05m_s target approach displacement; ordinary equilibrium indentation objective unchanged.",
+    "evidence": "S5-r5 optimized RL plans descend beyond1.2m_s and penetrate1.18-1.63mm; true task terminates at1.09113mm. Add the approach cost inside the same iLQG objective, no action/force/state clipping.",
+    "scope": "Prediction objective only; original true TM02 strain limit.02, footprint and constitutive integration unchanged.",
+    "time_normalization": "Trajectory::UpdateReturn averages176 node costs. Weight176 makes a single node at the1mm limit contribute approximately.5 to the horizon-mean objective; this was declared before first S5-r6 physics, not selected from its outcome."
+  }
+}

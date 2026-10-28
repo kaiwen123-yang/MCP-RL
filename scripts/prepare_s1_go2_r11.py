@@ -9,6 +9,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--build',default='S5-r1');a=p.parse_args()
     source=OLD/'work/terrain-memory/upstreams/mujoco_mpc-go2'
     prior=OLD/'work/r10-frozen/GNC-r3'
+    if a.build=='S5-r6':prior=ROOT/'work/r11-frozen/S5-r3'
     frozen=ROOT/'work/r11-frozen'/a.build
     if frozen.exists():raise ValueError('This controller build already exists; preserve its identity')
     if a.build in ('S5-r2','S5-r4','S5-r5'):
@@ -24,7 +25,7 @@ def main():
         (frozen/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
         print(f'Prepared {a.build} controller with unchanged frozen C binary.',flush=True)
         return
-    if a.build not in ('S5-r1','S5-r3'):raise ValueError('An undeclared S5 controller build was requested')
+    if a.build not in ('S5-r1','S5-r3','S5-r6'):raise ValueError('An undeclared S5 controller build was requested')
     relative=Path('mjpc/tasks/quadruped/quadruped.cc')
     old=(prior/relative).read_text()
     new=old.replace('// 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.',
@@ -49,13 +50,16 @@ def main():
   }
   // ---------- Upright ----------
   if (stand_equilibrium || r11_material_support) {''')
-    if new==old:raise ValueError('Frozen GNC-r3 residual was not found')
+    if a.build=='S5-r6':
+        domain=(ROOT/'experiments/terrain_memory/s1-go2-r11-domain-margin.inc').read_text()
+        new=old.replace('  // sensor dim sanity check',domain+'\n  // sensor dim sanity check')
+    if new==old:raise ValueError('Frozen residual was not found')
     for path in (prior/'mjpc').rglob('*'):
         if path.is_file() and path.suffix in ('.cc','.h'):
             shutil.copy2(path,source/path.relative_to(prior))
     (source/relative).write_text(new)
     patch=''.join(difflib.unified_diff(old.splitlines(True),new.splitlines(True),
-        fromfile='R10-GNC-r3/'+str(relative),tofile=a.build+'/'+str(relative)))
+        fromfile=prior.name+'/'+str(relative),tofile=a.build+'/'+str(relative)))
     (ROOT/('experiments/terrain_memory/s1-go2-r11-'+a.build+'.patch')).write_text(patch)
     begin=time.time()
     subprocess.run(['cmake','--build',str(source/'build-autodl'),'--target','agent_server','-j','8'],check=True)
@@ -79,7 +83,10 @@ def main():
             activation='At least one candidate footprint inside original material strip; absent for rigid regression',
             baseline='Original dev11 GNC-r3 body reference and landing objective, no S5-r1 or S5-r2 stacking',
             evidence='S5-r1 ends at pitch.61447rad with trunk contact. Original moving Upright uses R22-1, zeroing two available residual channels, and has vanishing first-order tilt sensitivity near upright. Yaw residual is heading-only. S5-r2 separately loses height, not the same mechanism.'))
-    identity=dict(controller='S5',build=a.build,based_on='R10-GNC-r3',
+    if a.build=='S5-r6':
+        overrides=json.loads((ROOT/'work/r11-frozen/S5-r5/identity.json').read_text())['configuration_overrides']
+        overrides['r11_domain_margin']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r6.json').read_text())['r11_domain_margin']
+    identity=dict(controller='S5',build=a.build,based_on='S5-r5' if a.build=='S5-r6' else 'R10-GNC-r3',
         prior_binary_sha256=sha(prior/'agent_server'),binary_sha256=sha(frozen/'agent_server'),
         source_files_sha256={str(x.relative_to(frozen)):sha(x) for x in (frozen/'mjpc').rglob('*') if x.is_file() and x.suffix in ('.cc','.h')},
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
