@@ -14,6 +14,7 @@ def main():
     if a.build=='S5-r8':prior=ROOT/'work/r11-frozen/S5-r7'
     if a.build=='S5-r10':prior=ROOT/'work/r11-frozen/S5-r9'
     if a.build=='S5-r11':prior=ROOT/'work/r11-frozen/S5-r8'
+    if a.build=='S5-r13':prior=ROOT/'work/r11-frozen/S5-r12'
     frozen=ROOT/'work/r11-frozen'/a.build
     if frozen.exists():raise ValueError('This controller build already exists; preserve its identity')
     if a.build in ('S5-r2','S5-r4','S5-r5','S5-r12'):
@@ -30,7 +31,7 @@ def main():
         (frozen/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
         print(f'Prepared {a.build} controller with unchanged frozen C binary.',flush=True)
         return
-    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9','S5-r10','S5-r11'):raise ValueError('An undeclared S5 controller build was requested')
+    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9','S5-r10','S5-r11','S5-r13'):raise ValueError('An undeclared S5 controller build was requested')
     relative=Path('mjpc/tasks/quadruped/quadruped.cc')
     old=(prior/relative).read_text()
     new=old.replace('// 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.',
@@ -70,6 +71,12 @@ def main():
         new=new.replace('  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;',
             '  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;\n  residual_.slow_approach_ = GetNumberOrDefault(0, model, "r11_slow_approach") == 1;')
     if a.build in ('S5-r8','S5-r9','S5-r10','S5-r11'):new=old
+    if a.build=='S5-r13':
+        new=old.replace('    residual[counter++] = step[foot] ? height_difference : 0;',
+            '    const bool moving_stance_height = gait != kGaitStand &&\n'
+            '        GetNumberOrDefault(0, model, "r11_moving_stance_height") == 1;\n'
+            '    residual[counter++] = (step[foot] || moving_stance_height) ? height_difference : 0;')
+
     if new==old and a.build not in ('S5-r8','S5-r9','S5-r10','S5-r11'):raise ValueError('Frozen residual was not found')
     for path in (prior/'mjpc').rglob('*'):
         if path.is_file() and path.suffix in ('.cc','.h'):
@@ -156,6 +163,9 @@ def main():
         overrides=json.loads((ROOT/'work/r11-frozen/S5-r8/identity.json').read_text())['configuration_overrides']
         overrides['r11_prediction_coldstart']=json.loads((ROOT/'work/r11-frozen/S5-r10/identity.json').read_text())['configuration_overrides']['r11_prediction_coldstart']
         overrides['r11_combined_repair']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r11.json').read_text())
+    if a.build=='S5-r13':
+        overrides=json.loads((prior/'identity.json').read_text())['configuration_overrides']
+        overrides['r11_moving_stance_height']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r13.json').read_text())['r11_moving_stance_height']
     identity=dict(controller='S5',build=a.build,based_on=prior.name,
         prior_binary_sha256=sha(prior/'agent_server'),binary_sha256=sha(frozen/'agent_server'),
         source_files_sha256={str(x.relative_to(frozen)):sha(x) for x in (frozen/'mjpc').rglob('*') if x.is_file() and x.suffix in ('.cc','.h')},

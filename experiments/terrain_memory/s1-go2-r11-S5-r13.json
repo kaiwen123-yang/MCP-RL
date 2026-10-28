@@ -1,0 +1,12 @@
+{
+  "build": "S5-r13",
+  "based_on": "S5-r12",
+  "r11_moving_stance_height": {
+    "enabled": true,
+    "reference": "Same world ground plane and foot radius as the existing Gait residual, including nominal stance feet while moving.",
+    "norm": "Existing Gait SmoothAbs norm6, p=.03 and weight2, unchanged; no new residual dimension.",
+    "evidence": "Correctly applied S5-r12 1Hz/.65 E30 body fall at10.192s. At9.9s its own optimized plan predicts FR nominal stance bottom45.426mm at10.0s, versus actual43.727mm. All four actual normal forces then vanish. Original Gait residual is identically0 when step[foot]==0.",
+    "scope": "Prediction objective only, moving Trot; Stand support formulation unchanged. Original Go2/TM02/contact/physics/domain/limits and full route unchanged.",
+    "hypothesis": "Penalizing airborne nominal stance feet supplies a missing support reference; actual E30/E60 determine whether it prevents the recorded mechanism."
+  }
+}

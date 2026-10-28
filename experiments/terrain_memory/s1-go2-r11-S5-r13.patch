@@ -1,0 +1,13 @@
+--- S5-r12/mjpc/tasks/quadruped/quadruped.cc
++++ S5-r13/mjpc/tasks/quadruped/quadruped.cc
+@@ -184,7 +184,9 @@
+       // in Scramble, foot higher than target is not penalized
+       height_difference = mju_min(0, height_difference);
+     }
+-    residual[counter++] = step[foot] ? height_difference : 0;
++    const bool moving_stance_height = gait != kGaitStand &&
++        GetNumberOrDefault(0, model, "r11_moving_stance_height") == 1;
++    residual[counter++] = (step[foot] || moving_stance_height) ? height_difference : 0;
+   }
+ 
+ 
