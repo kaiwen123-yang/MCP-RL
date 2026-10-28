@@ -1,0 +1,21 @@
+--- R10-GNC-r3/mjpc/tasks/quadruped/quadruped.cc
++++ S5-r3/mjpc/tasks/quadruped/quadruped.cc
+@@ -60,8 +60,17 @@
+                        GetGait() == kGaitStand && data->userdata[0] == 1;
+   const double* ref = data->userdata;
+ 
++  // S5-r3: first-order roll/pitch error on the original material footprint.
++  bool r11_material_support = false;
++  if (soft_landing_ && GetCustomNumericData(model, "r10_local_contact")) {
++    constexpr double half = 0.015811388300841896;
++    for (A1Foot foot : kFootAll) {
++      const double* p = foot_pos[foot];
++      r11_material_support |= p[0]>=.8+half && p[0]<=2.2-half && mju_abs(p[1])<=.6-half;
++    }
++  }
+   // ---------- Upright ----------
+-  if (stand_equilibrium) {
++  if (stand_equilibrium || r11_material_support) {
+     // Body z-axis minus world z-axis: linear in small roll/pitch errors.
+     residual[counter++] = torso_xmat[2];
+     residual[counter++] = torso_xmat[5];

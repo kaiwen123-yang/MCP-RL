@@ -366,7 +366,7 @@ def run(args, c, joint=None):
                         reason=joint.stop_requested
                         break
                 if joint is not None and started and c.get('stage') == 'S1R11' and time.time() >= joint.deadline:
-                    reason = 'campaign_budget_truncated'
+                    reason = 'development_budget_truncated' if args.purpose=='development' else 'campaign_budget_truncated'
                     break
                 mission_changed = mission.phase != previous_phase
                 previous_phase = mission.phase
@@ -523,6 +523,10 @@ def run(args, c, joint=None):
                         started = True
                         if joint is not None:
                             joint.started(small,c,index_file)
+                            if args.purpose=='development':
+                                reserve=idx.get('evaluation_reserve',{}).get('wall_s',6*3600)
+                                joint.deadline=min(joint.deadline,idx['campaign_started_unix_s']+24*3600,
+                                    idx['campaign_deadline_unix_s']-reserve)
                     actual_contacts, actual_grf, invalid, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
                     if joint is not None:
                         joint.after_physics(physical_dt,actual_grf)

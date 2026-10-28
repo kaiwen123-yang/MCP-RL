@@ -60,7 +60,7 @@ def main():
     identity['terrain']=a.terrain
     from s1_go2_r11_protocol import stable_digest
     key=stable_digest(identity)
-    c.update(case_identity=identity,case_key=key)
+    c.update(case_identity=identity,case_key=key,evaluation_workers=a.workers)
     small=ROOT/c['outputs']['root']
     with index_file(small,c) as idx:
         if idx.get('campaign_deadline_unix_s',float('inf'))<=time.time():raise ValueError('R11 campaign wall clock expired')

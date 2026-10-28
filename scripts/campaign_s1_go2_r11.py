@@ -11,7 +11,7 @@ GROUPS=['PPO_RAW_S5','PANN_PPO_S5']
 def current():return json.loads((SMALL/'index.json').read_text())
 def launch(attempt,build,level,condition='nominal',group='FIXED_S5',seed=None,checkpoint=None,purpose='formal',terrain='tm02_anchor'):
     py=TRAIN_PY if group!='FIXED_S5' else Path(sys.executable)
-    workers=current().get('frozen_controller',{}).get('workers',8 if build=='S5-r2' else 2)
+    workers=current().get('frozen_controller',{}).get('workers',2 if build=='S5-r1' else 8)
     cmd=[str(py),'-u',str(ROOT/'scripts/run_s1_go2_r11.py'),'--attempt',attempt,'--build',build,
          '--level',level,'--condition',condition,'--group',group,'--purpose',purpose,'--terrain',terrain,'--workers',str(workers)]
     if seed is not None:cmd+=['--seed',str(seed),'--checkpoint',str(checkpoint)]
@@ -35,6 +35,16 @@ def chain(build,prefix,condition,group='FIXED_S5',seed=None,checkpoint=None,leve
     for level in levels:
         if time.time()>=current()['campaign_deadline_unix_s']:break
         attempt=f'{prefix}-{level}'
+        idx=current()
+        completed=[a for a in idx['attempts'] if a.get('success') and a.get('simulation_s',0)>=30]
+        ratio=max((a['wall_s']/a['simulation_s'] for a in completed),default=CONTRACT['budget']['actual_cost_reference']['slowdown'])
+        estimate=1.2*int(level[1:])*ratio
+        if time.time()+estimate>idx['campaign_deadline_unix_s']:
+            with index_file(SMALL,CONTRACT) as state:
+                state.setdefault('budget_unexecuted',[]).append(dict(group=group,seed=seed,condition=condition,
+                    level=level,build=build,estimated_wall_s=estimate,remaining_wall_s=idx['campaign_deadline_unix_s']-time.time(),
+                    reason='Measured full-stage cost does not fit remaining campaign clock; no physical launch'))
+            break
         job=launch(attempt,build,level,condition,group,seed,checkpoint)
         job.wait()
         r=result(attempt)
@@ -117,7 +127,15 @@ def main():
         if any(p.poll() not in (None,0) for p in streams):deadline=min(deadline,time.time())
         dump(SMALL/'training-deadline.json',dict(deadline_unix_s=deadline,basis='measured_protected_nominal_ladders'))
         time.sleep(30)
-    progress=training_progress();common=min(v['samples']//256*256 for v in progress)
+    progress=training_progress()
+    errors=[p.returncode for p in streams if p.returncode!=0]
+    if errors:
+        with index_file(SMALL,CONTRACT) as idx:
+            idx.update(training_streams=progress,training_transitions=sum(v['actual_samples'] for v in progress),
+                training_status='technical_interruption_requires_repair',training_process_exit_codes=errors)
+        print('Training infrastructure interrupted; no primary checkpoint selected from this technical stop.',flush=True)
+        return
+    common=min(v['samples']//256*256 for v in progress)
     with index_file(SMALL,CONTRACT) as idx:
         idx.update(training_streams=progress,training_transitions=sum(v['actual_samples'] for v in progress),
             primary_checkpoint_transitions=common,training_under_target=common<32768)

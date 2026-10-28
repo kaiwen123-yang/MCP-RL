@@ -54,11 +54,16 @@ def prerequisite(c,index,purpose,terrain):
     passes=[a for a in index.get('attempts',[]) if a.get('case_key')==key and
             a.get('evaluation_stage',{}).get('level')==prior and a.get('stage_status')=='passed']
     if not passes:raise ValueError(f'{level} requires this exact case to pass independent {prior}')
-    return passes[-1]['attempt']
+    previous=passes[-1]['attempt']
+    actual=json.loads((ROOT/CONTRACT['outputs']['compact_root']/(previous+'-resolved.json')).read_text())
+    if actual['workers']!=c['evaluation_workers']:
+        raise ValueError('The declared predecessor used different solver workers; re-establish qualification for the changed execution setting')
+    return previous
 def evaluate_stage(result,c,joint,arrays):
     identity=c['r11_stage'];level=identity['level'];duration=identity['duration_s']
     result.update(evaluation_stage=identity,case_key=c.get('case_key'),case_identity=c.get('case_identity'),
-        qualification=dict(predecessor_attempt=c.get('predecessor_attempt'),protocol_revision=CONTRACT['protocol_revision']))
+        qualification=dict(predecessor_attempt=c.get('predecessor_attempt'),protocol_revision=CONTRACT['protocol_revision'],
+            solver_workers=c.get('evaluation_workers'),worker_setting_checked_against_predecessor=bool(c.get('predecessor_attempt'))))
     reason=result['reason'];full=result['simulation_s']>=duration-1e-7
     failure=reason.startswith(('material_domain_exit','body_fall','invalid_contact'))
     technical=reason=='execution_error'
