@@ -169,7 +169,7 @@ def write_flat_ground_height(model, xml_path):
 
 def write_equilibrium_settings(xml_path, config, arm):
     """Wire declared controller settings into the XML actually loaded by Agent."""
-    if config['stage'] == 'S1R8':
+    if config['stage'] in ('S1R8', 'S1R10'):
         prediction=config['prediction_settings']['AUTHOR_N' if arm=='AUTHOR_N' else 'C']
         values=dict(s1_stand_equilibrium=0,agent_timestep=prediction['integration_dt_s'],
             agent_integrator=3,agent_differentiable=prediction['differentiable'],

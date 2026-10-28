@@ -161,10 +161,10 @@ def run(args, c, joint=None):
     out = ROOT/'outputs/terrain_memory/simulation'/c['run_id']/args.attempt
     out.mkdir(parents=True, exist_ok=False)
     campaign = 'campaign_budget' in c
-    support = c.get('stage') == 'S1R8'
+    support = c.get('stage') in ('S1R8', 'S1R10')
     if campaign:
         with index_file(small, c) as idx:
-            launches=[x for x in idx['attempts'] if x['status']!='initialization_failed']
+            launches=[x for x in idx['attempts'] if c.get('stage') == 'S1R10' or x['status']!='initialization_failed']
             if len(launches) >= c['campaign_budget']['max_new_physical_starts']:
                 raise ValueError('Campaign launch allowance exhausted, including missing records')
             if support and args.stage=='G0' and sum(x['stage']=='G0' for x in launches) >= c['campaign_budget']['max_author_long_starts']:
@@ -280,6 +280,10 @@ def run(args, c, joint=None):
         joint.attach(model,data,feet,allowed,out,prediction_model)
         resolved['r9_material_contract']=joint.contract
         resolved['r9_material_source_sha256']=sha(ROOT/'scripts/s1_go2_joint_material.py')
+    if c.get('stage') == 'S1R10':
+        resolved['r10_configuration'] = c
+        resolved['r10_source_sha256'] = {name:sha(ROOT/'scripts'/name) for name in
+            ('run_s1_go2_r10.py', 'prepare_s1_go2_r10.py')}
     def actual_contact(full=False):
         native=contact_state(model,data,feet,allowed,full=True)
         return joint.contacts(native,full) if joint is not None else (native if full else native[:3])
@@ -353,6 +357,9 @@ def run(args, c, joint=None):
                 velocity, omega = data.qvel[:3].copy(), data.qvel[3:6].copy()
                 if joint is not None:
                     joint.control(t,mission)
+                    if started and c.get('stage') == 'S1R10' and time.time() >= joint.deadline:
+                        reason = 'campaign_budget_truncated'
+                        break
                 contact, grf, _ = actual_contact()
                 body_goal, heading = mission.update(t, dt, data.qpos[:3], velocity, ori, omega, bool(contact.all()))
                 mission_changed = mission.phase != previous_phase
