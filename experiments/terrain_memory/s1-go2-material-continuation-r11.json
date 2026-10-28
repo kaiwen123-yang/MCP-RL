@@ -1,0 +1,364 @@
+{
+  "run_id": "tm-s1-go2-material-continuation-r11",
+  "stage": "S1R11",
+  "status": "planned_not_executed",
+  "protocol_revision": "evidence_time_budget_continuous_training_v1",
+  "revision_date": "2026-10-28",
+  "reviewed_source_commit": "025956032e2a3aa1e0c9881f2eda307301c77522",
+  "plan": "docs/TERRAIN_MEMORY_PLAN.md",
+  "purpose": "Continue from the actual R10 GNC-r3 material-execution progress, replace the12-start cap with evidence/time constraints, establish a frozen same-version complete mission, and advance real continuous PPO/PANN/MPC and600s evaluation. This contract contains no R11 results.",
+  "history": {
+    "R8": "results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json",
+    "R10": "results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/index.json",
+    "R10_actual": {
+      "launch_attempts": 12,
+      "zero_physics_initialization_failures": 3,
+      "physical_missions": 9,
+      "complete_missions": 0,
+      "training_transitions": 0,
+      "elapsed_campaign_h": 2.2610132424698937
+    },
+    "starting_attempt": "dev11-GNC-r3-cap0215",
+    "starting_source_commit": "551fdc39b6f1737c972f32beb2c03e7c035d4fb1",
+    "starting_binary_sha256": "f2bc6741d13f893239776b96f07cbacb25130eadaf68229c2e70e51649ead2da",
+    "preserve_closed_runs": true,
+    "rule": "New user-requested R11 campaign; preserve all R10 counts/results/contracts/assets. Do not repurpose or overwrite the closed R10 run."
+  },
+  "configuration_reuse": {
+    "baseline": "experiments/terrain_memory/s1-go2-wb-support.json",
+    "joint_interface": "experiments/terrain_memory/s1-go2-joint.json",
+    "prior_contract": "experiments/terrain_memory/s1-go2-soft-landing-r10.json",
+    "starting_resolved": "results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/dev11-GNC-r3-cap0215-resolved.json",
+    "read_ref": "025956032e2a3aa1e0c9881f2eda307301c77522",
+    "rule": "Reuse actual GNC-r3 physics/execution, R9 PANN/features/reward and R10 PPO implementation unless explicitly overridden here. R11 owns identity, budgets, continuous curriculum and priority order. Adapt all R10 hard-coded paths/counts and runner stage conditions; changingJSON alone is insufficient. Emit the fully resolved actual config before physics."
+  },
+  "plant_invariants": {
+    "robot": "project four-legged Go2, 15.206408 kg; original geometry/inertia/passive parameters/limits; G0/G1 are historical cohort labels, not humanoid hardware",
+    "pd": [
+      60,
+      5
+    ],
+    "per_leg_torque_limits_Nm": [
+      23.7,
+      23.7,
+      45.43
+    ],
+    "physics_dt_s": 0.0002,
+    "control_hold_s": 0.002,
+    "logical_planning_dt_s": 0.02,
+    "material": "unchanged ReferenceColumns tm02_anchor and original constitutive parameters",
+    "gamma": 0.025,
+    "thickness_m": 0.05,
+    "footprint_area_m2": 0.001,
+    "grid_m": 0.02,
+    "strain_absolute_limit": 0.02,
+    "strip_x_m": [
+      0.8,
+      2.2
+    ],
+    "strip_y_m": [
+      -0.6,
+      0.6
+    ],
+    "boundary_rule": "unchanged hard-priority footprint assignment, unique support; retain non-foot collisions",
+    "history_rule": "World-fixed shared columns recover when unloaded. Reset only between independent episodes/acquisition sessions, never at PPO updates, laps or file boundaries.",
+    "prohibited": "softening truth to pass, clipping material strain/force, injecting planned GRF, relaxing task/physical limits, replacing the training plant or controller"
+  },
+  "controller_development": {
+    "new_controller_name": "S5 only upon implementation; preserve S3 and all S4/R10 builds",
+    "initial_cap_m_s": 0.215,
+    "maximum_development_physical_starts": null,
+    "physical_start_hard_cap_enabled": false,
+    "evidence_review_max_physical_starts_per_batch": 6,
+    "maximum_development_elapsed_h": 24,
+    "initialization_failures_consume_physical_allowance": false,
+    "physical_accounting": "Every task with any real integration counts, including early physical failures, crashes and missing records. Zero-step setup failures remain logged and consume wall time. No blind repeat of same infrastructure failure.",
+    "first_work": "On the execution host read existing dev11 last0.5s and planned trajectories plus maximum-lateral-drift window; compare dev10/dev12. Correct the old1ms/native-only contact analysis before using it for C. No new short diagnostic episodes.",
+    "evidence_fields": [
+      "absolute force/state/plan times",
+      "predicted and actual foot bottom/vz/contact/GRF",
+      "nominal and executed feedback joint targets",
+      "saturation duration",
+      "body height/orientation",
+      "soft masks and world anchors/overlap",
+      "normalized residual/cost contributions"
+    ],
+    "decision_branches": [
+      "Predicted fast landing: repair consistent normal/support/body/foot reference and objective priorities inside the same MPC.",
+      "Predicted slow but actual fast: repair local contact/feedback/discrete derivative/execution mismatch; candidate forces must follow candidate states.",
+      "Path/support transition evidence: repair same-MPC reference and boundary transition handling without bypassing or changing the truth strip."
+    ],
+    "allowed_scope": "Evidence-backed local model, objective, reference and necessary contact-timing revisions within existing raw MuJoCo whole-body iLQG+PD. No fixed three-formulation cap; each actual version is identified and retained.",
+    "stop_rule": "Freeze at first same-version nominal original material mission with full60s observation. Otherwise development ends at24h or evaluation-reserve limit. Two successive evidence batches stop only the current branch when BOTH no relevant improvement AND no new testable mechanism exist; other feasible work continues. Do not repeat deterministic failure without new evidence or automatically extend the campaign.",
+    "formal_version_rule": "No tuning after formal freeze. A required new controller revision ends the previous formal version's scope; do not combine best outcomes or silently continue policies on changed dynamics."
+  },
+  "joint_learning": {
+    "groups": [
+      "FIXED_S5",
+      "PPO_RAW_S5",
+      "PANN_PPO_S5"
+    ],
+    "fixed_group_cap": "first successful predeclared development cap, frozen before evaluation",
+    "actor_dt_s": 0.5,
+    "actor_action": "single speed cap [.18,.25] m/s; .215+.035*sample.action, where existing sample.action is already tanh(raw); retain raw action/log_prob",
+    "shared_controller": "All three groups use the same actually frozen S5, real Go2/TM02, limits and interfaces; shared execution repairs are not PANN gains.",
+    "shared_observation": "Retain R9 public proprioception, task phase/goal/strip information and preceding1s at20Hz. Keep the existing schema but set the old finite-task flag and remaining-time channels to zero for continuous training, formal60s and every long evaluation. Do not expose an unseen finite-task countdown after600s-only training. The evaluator still enforces original60s deadlines/termination. No true material q/e.",
+    "pann": "Frozen B_random1000--ideal seed0 and original normalization; independent causal LearnedColumns world state, no true material q/e input",
+    "pann_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
+    "pann_features": "Preserve R9 2 ms causal observer, latest completed plan t+.20 s four footprints, private zero-load recovery at2/200/500 ms and12 area-weighted signed depressions. Shared public query positions/masks; RAW prediction channels zero. Match world keys, not array row indices; queries do not alter truth or observer.",
+    "observer_preparation": "Can proceed alongside controller development using existing causal trajectories. Replay/network loading is not closed-loop success or PPO training.",
+    "ppo": {
+      "implementation": "existing standard Tianshou PPO core; no algorithm/platform replacement",
+      "hidden_sizes": [
+        64,
+        64
+      ],
+      "learning_rate": 0.0003,
+      "initial_std": 0.35,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip": 0.2,
+      "value_coef": 0.5,
+      "entropy_coef": 0,
+      "max_grad_norm": 0.5,
+      "epochs_per_update": 4,
+      "rollout_transitions": 256,
+      "minibatch_size": 64,
+      "device": "Resolve on authorized hardware once before training; use the same actor/critic device policy for both groups. A small PPO network need not be enlarged to occupy VRAM."
+    },
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "streams": 6,
+    "early_checkpoints_per_stream": [
+      4096,
+      8192,
+      16384
+    ],
+    "standard_target_transitions_per_stream": 32768,
+    "standard_target_total_transitions": 196608,
+    "optional_target_transitions_per_stream": 65536,
+    "maximum_total_transitions": 393216,
+    "balanced_checkpoint_stride": 256,
+    "primary_checkpoint_rule": "Exactly32768/stream if all reach it; otherwise the last common completed256-step checkpoint before the empirically budgeted evaluation deadline. Label undertraining. No performance-selected seed/checkpoint. If no common updated checkpoint exists, do not label initial weights as trained.",
+    "optional_training_rule": "Only after all six32768 standard checkpoints exist and core evaluation is completed under evaluation.core_completion_rule, resume all six equally toward65536 within the remaining authorized time. Optional weights do not replace primary checkpoints. No second unbudgeted formal matrix.",
+    "sampling_accounting": "Record total/effective translating transitions, elapsed physics, actual resets, failures, PPO updates and component/campaign wall times. Stand/turn observations may be collected but separately count ineffective actions; no passive post-completion padding.",
+    "on_policy_and_independence": "Separate parameters, optimizer, normalizers, seeds and environment/MPC/material/observer state for each stream. Collect each256-transition fragment under its fixed behavior policy; update only that stream and then continue its state. Do not mix other seeds or stale-policy fragments to fake on-policy data. Archive frozen evaluation normalizers with checkpoints.",
+    "curriculum": [
+      {
+        "start_transition": 0,
+        "end_transition": 65536,
+        "task": "continuing_round_trips",
+        "session_limit_s": 600,
+        "end_semantics": "Physical/material failure terminates;600s acquisition boundary truncates. Original60s is used for qualification/formal evaluation, not a prerequisite sample-count curriculum."
+      }
+    ],
+    "curriculum_boundary_rule": "Long continuous sampling starts with the first actual training session after controller qualification. No8192/16384 gate. No reset at256-transition rollout or lap boundaries. Reset only after actual terminal or explicitly recorded independent-session truncation.",
+    "continuing_route": "Endless0-to3-to0m circuits during each600s training session; stop2s under original thresholds at each endpoint and really turn before the next leg/lap. Completion of a lap is not session termination. No per-lap material or MPC reset, and no training parking after a fixed target lap count.",
+    "bootstrap_rule": "True terminal: bootstrap0. Rollout cut: bootstrap actual successor and keep environment alive. External600s truncation: bootstrap saved final pre-reset observation, stop GAE recursion across the subsequent reset. Use distinct bootstrap and trace-continuation masks; never bootstrap reset observation or propagate advantages into the next episode. Technical interruption is not physical failure.",
+    "start_condition": "At least one same-version nominal material original mission completes and is observed through60s. No requirement for all initial conditions or prior600s success.",
+    "resume_required": "Implement R11 paths/stage branches and actual budget routing. Restore actor/critic, optimizer, normalization, RNG, samples/updates and episode numbers; do not overwrite prior output. Only complete physics/material/observer/MPC snapshots permit continuous-session resume; otherwise record technical truncation and begin a separate session.",
+    "standard_target_is_guaranteed_within_campaign": false
+  },
+  "reward_adaptation": {
+    "base": "Frozen R9 physical progress/time/indentation/slip/applied-action-change reward and weights; no reward for predicted material or assumed beneficial compaction",
+    "rate_rule": "Retain original dt/60 denominators and physical normalization in every training stage. Do not divide costs by300/600 or reweight to favor long sessions. Integrate actual dt, not nominal dt after early termination.",
+    "progress": "Unwrapped signed actual translational progress divided by6m per circuit; split phase changes, include backward motion, no position-reset or phase-switch progress bonus.",
+    "events": "Original single-task completion gives+10 once and terminates. In continuing stages give+10 once per fully completed circuit after original home stability, then continue. No completion reward for merely standing or at the far endpoint. Physical/material failure gives-10 once. Intrinsic60s timeout gives-5 without duplicate failure penalty; external600s truncation or technical deadline gives no timeout/failure penalty. Original finite-task reward semantics are retained for reference/evaluation; they do not authorize a60s R11 training curriculum.",
+    "freeze": "Same adapted reward and task semantics in both learning groups before training. No reward or hyperparameter sweep and no formal-result tuning.",
+    "interpretation": "Long continuous execution is not proof of long-delay credit assignment; gamma remains.99 and the material memory time is determined by actual physics."
+  },
+  "evaluation": {
+    "freeze": "Primary common checkpoints and normalizers fixed for entire evaluation trajectories; deterministic policy mean; no PPO updates during formal tests. PANN estimated states and MPC still evolve causally.",
+    "rigid_regression": {
+      "maximum_starts": 1,
+      "condition": "nominal",
+      "duration_s": 60
+    },
+    "original_material": {
+      "maximum_records": 21,
+      "conditions": [
+        "nominal",
+        "yaw_plus5",
+        "yaw_minus5"
+      ],
+      "duration_s": 60,
+      "composition": "3 fixed +2 learned groups x3 training seeds x3 initial conditions",
+      "observe_after_success": true,
+      "criteria": "Unchanged original single mission; observe through60s, no newly added far-end hold"
+    },
+    "continuous_material": {
+      "priority": "core_full_target_with_predeclared_P1_P2_first",
+      "maximum_records": 21,
+      "conditions": [
+        "nominal",
+        "yaw_plus5",
+        "yaw_minus5"
+      ],
+      "composition": "3 fixed +2 learned groups x3 training seeds x3 initial conditions; do not reduce learned coverage to seed0",
+      "duration_s": 600,
+      "round_trips": 10,
+      "route_deadline_s": 540,
+      "endpoint_stable_s": 2,
+      "start_rule": "Each frozen group/seed qualifies by its own nominal60s complete observation; fixed nominal600s starts immediately, remaining conditions follow priority manifest and actual budget. No prerequisite300s campaign.",
+      "between_laps_reset": false,
+      "observation_rule": "After10 circuits continue holding and record to600s; separately report moving/holding time, route completion and subsequent violations. Treat300s as an in-trajectory observation, not an independent extra trial."
+    },
+    "extended_continuous_material": [
+      {
+        "maximum_records": 3,
+        "duration_s": 1800,
+        "round_trips": 30,
+        "route_deadline_s": 1620,
+        "condition": "nominal",
+        "learned_seed": 0,
+        "start_rule": "Own same-version nominal600s passes, all core completed and estimated1800s wall time fits; fixed/learned seed0 only."
+      },
+      {
+        "maximum_records": 3,
+        "duration_s": 3600,
+        "round_trips": 60,
+        "route_deadline_s": 3240,
+        "condition": "nominal",
+        "learned_seed": 0,
+        "start_rule": "Own same-version nominal1800s passes, all core completed and estimated3600s uninterrupted wall time fits; fixed/learned seed0 only."
+      }
+    ],
+    "all_long_tasks": "Original stability tolerances,2s holds at both endpoints and actual turns; no lap resets or stitched runs. At route completion hold until declared horizon and require final continuous2s stability; report every violation, final30s and each lap/60s segment. Failures terminate truthfully and remain in denominators. All durations are simulation time, not wall time.",
+    "reuse": "Exactly same source/config/checkpoint/initial state/protocol may be reused once. A shorter run or prefix is not an independent longer task; new durations are separately declared.",
+    "interpretation": "Three seeds and deterministic initial offsets are limited coverage, not held-out material generalization or robot certification. Joint execution, PANN changing actions and task gains are separate outcomes.",
+    "priority_schedule": [
+      {
+        "id": "P0",
+        "tasks": "One same-version nominal material60s qualification, one rigid60s regression after freezing.",
+        "reuse": "identical full qualification may be reused once"
+      },
+      {
+        "id": "P1",
+        "tasks": "Fixed3 initial-condition60s and fixed nominal600s immediately after nominal qualification; do not wait for PPO."
+      },
+      {
+        "id": "P2",
+        "tasks": "Balanced6-stream training to common actual checkpoint; schedule each predeclared RAW/PANN seed0 nominal600s immediately after that same policy passes nominal60s. Other learned policies nominal60s may run in parallel or later; no all-policy qualification barrier."
+      },
+      {
+        "id": "P3",
+        "tasks": "Remaining predeclared21x60s and21x600s cases in fixed manifest order; preserve unrun cases and reasons."
+      },
+      {
+        "id": "P4",
+        "tasks": "Predeclared fixed/learned seed0 1800s then3600s only after own preceding-duration pass, all core completion and enough actual wall time."
+      }
+    ],
+    "coverage_rule": "The complete21+21 target remains. Priority nominal long tasks are explicitly a partial subset; do not report them as all21. No best-seed substitution, hidden manifest reduction or mixed-version outcomes.",
+    "observation_consistency": "Use the same continuous-policy observation convention for all training and evaluation durations: old finite-task flag and remaining-time channels always zero. Original finite60s task criteria and evaluator deadline remain unchanged.",
+    "core_completion_rule": "All eligible predeclared core cases have actually run (pass or fail); ineligible cases remain listed with their failed qualification. Budget-omitted eligible cases are still incomplete core work. A failed/ineligible method does not cancel other eligible methods; no optional extension before the remaining eligible core work is completed."
+  },
+  "resources": {
+    "authorized_existing_hardware": {
+      "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "gpu_memory_MiB": 97887,
+      "cpu": "Intel Xeon Platinum 8470Q",
+      "cpu_quota_vcpus": 25,
+      "ram_limit_bytes": 128849018880
+    },
+    "reuse_authorized_ssh_tmux": true,
+    "new_paid_resources": false,
+    "hardware_activation": false,
+    "training_streams_target": 6,
+    "initial_solver_workers_per_environment": 2,
+    "evaluation_environment_target_if_throughput_improves": 8,
+    "evaluation_target_is_minimum": false,
+    "rule": "Use CPU quota, not208 visible affinity entries. Coordinate env/solver/BLAS/OpenMP/PyTorch/JAX resources; preserve per-stream independence. Adjust only from actual full missions/fragments, without interrupting sessions or starting benchmarks.",
+    "performance_scope": "Reduce redundant RPC/FK/logging and batch material arithmetic/reuse constants without changing the true .2ms material integration, .2ms physics,2ms action holding, persistent unloaded recovery or fair information. No fast substitute controller/plant."
+  },
+  "budget": {
+    "campaign_wall_clock_hard_cap_h": 48,
+    "maximum_development_elapsed_h": 24,
+    "starts_at": "first real R11 physics integration; one elapsed deadline including pauses and all later development/build/training/evaluation",
+    "prephysics_preparation_and_publication_timing": "record separately",
+    "maximum_development_physical_starts": null,
+    "maximum_nontraining_physical_starts": null,
+    "fixed_start_count_stop_enabled": false,
+    "old_12_and_61_limits_reused": false,
+    "training_starts_counted_separately": true,
+    "reserve_evaluation_h_at_least": 6,
+    "reserve_rule": "Reserve max(6h,1.2x measured remaining scheduling wall cost). Protect fixed P1 and fair nominal P2 first if complete21+21 exceeds remaining time; keep P3 manifest unexecuted reasons. Do not make an infeasible full-matrix reservation prohibit all training; do not assume perfect speedup.",
+    "training_standard_target_is_wall_time_promise": false,
+    "targets_and_extensions": "32768/flow remains target,65536 and1800/3600 conditional. All full targets require actual throughput and authorized time; no automatic extension or reset.",
+    "no_improvement_stop_batches": 2,
+    "benchmark_episodes": 0,
+    "actual_cost_reference": {
+      "attempt": "dev11-GNC-r3-cap0215",
+      "sim_s": 32.56719999995078,
+      "wall_s": 1949.4272634955123,
+      "slowdown": 59.8586081547833,
+      "planning_fraction": 0.7033522149766496,
+      "material_fraction": 0.20671639330534264
+    },
+    "extrapolation_only": {
+      "six_streams_32768_sim_s": 98304,
+      "core_evaluation_with_rigid_sim_s": 13920,
+      "ideal_six_env_total_h": 310.9987241464075,
+      "aggregate_sim_s_per_wall_s_required_for48h": 0.6494444444444445,
+      "single600_wall_h_at_dev11_cost": 9.976434692463883
+    },
+    "interpretation": "These are conditional extrapolations from one short run, not measured long-task throughput. Material-state growth, observer cost and CPU contention may change cost. Additional environments do not remove each policy's serial600->1800->3600 dependency.",
+    "no_improvement_stop_scope": "current_evidence_branch_only",
+    "no_improvement_stop_requires": [
+      "no relevant task/contact evidence improvement across two successive batches",
+      "no new testable mechanism supported by evidence"
+    ],
+    "no_improvement_is_global_attempt_limit": false
+  },
+  "literature_reading": [
+    {
+      "id": "TM03",
+      "url": "https://arxiv.org/html/1904.12306v2",
+      "sections": "IV-A/B, Eq16-19",
+      "use": "Compliant force/penetration/motion and loading transition consistency; no WBC/KV truth substitution."
+    },
+    {
+      "id": "TM20",
+      "url": "https://arxiv.org/html/2503.04613v3",
+      "sections": "III-B, IV-A/B/D",
+      "use": "PD-in-model, candidate dynamics/derivatives, contact-compute tradeoff; v3 relevant sections accessed in this review."
+    },
+    {
+      "id": "TM24",
+      "url": "https://arxiv.org/html/2208.08373v1",
+      "sections": "IV-E/G, VI-B",
+      "use": "Normal swing/landing reference and foot/body tracking tradeoff; causal hypothesis, not proven R10 root cause."
+    },
+    {
+      "id": "TM18",
+      "url": "https://arxiv.org/html/2509.22065v1",
+      "sections": "III-B/C, IV-B",
+      "use": "Foot/body motion and deformed reference-plane effects on material observation; do not copy granular8cm/s threshold."
+    },
+    {
+      "id": "TM26",
+      "url": "https://arxiv.org/html/2012.03094v3",
+      "sections": "III-C, VI-H",
+      "use": "Optimization-in-loop rollout cost; keep first standardPPO baseline, no automatic SAC/platform switch."
+    }
+  ],
+  "outputs": {
+    "compact_root": "results/terrain_memory/simulation/tm-s1-go2-material-continuation-r11",
+    "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-material-continuation-r11",
+    "create_result_index_only_after_actual_execution": true,
+    "required": "Actual source/config/binary identities, all physical/setup starts, full positive/negative missions, compact causal contact/revisit evidence, genuine training curves/checkpoints and common-sample evaluations, actual component/campaign times and unexecuted cases.",
+    "training_logging": "Compact transfers/episode summaries/checkpoints and representative videos; avoid all-node MPC dumps for every training step.",
+    "publication": "Execution host sends original large arrays/weights/videos directly to Release; source/config/compact evidence to GitHub. Verify finalcommit andasset URL/size/digest, then finish.",
+    "archive_on_user_pc_after_publication": false,
+    "forbidden_postpublication_actions": [
+      "download to user PC",
+      "copy/mirror to user PC",
+      "compress on user PC",
+      "secondary archive on user PC"
+    ],
+    "retention": "Keep normal execution outputs, needed checkpoints and all history; no unsolicited deletion."
+  }
+}
