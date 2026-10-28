@@ -1,0 +1,14 @@
+{
+  "build": "S5-r2",
+  "based_on": "work/r10-frozen/GNC-r3",
+  "binary_sha256": "f2bc6741d13f893239776b96f07cbacb25130eadaf68229c2e70e51649ead2da",
+  "configuration_overrides": {
+    "r11_body_reference": {
+      "maximum_longitudinal_lead_m": 0.15,
+      "scale_source": "Original task goal_position_radius_m",
+      "activation": "Any currently observed footprint in the original material strip, outbound or return",
+      "rule": "Advance the original bounded-velocity target, then limit its forward lead relative to observed base x. The stored moving reference receives the same update, so delay does not accumulate into catch-up commands. Lateral route target and all endpoint criteria unchanged.",
+      "evidence": "S5-r1 max reference lead1.630497m, body vx.908008m/s at16s versus command cap.215, final pitch.61447rad and invalid trunk contact at16.531s. Isolate reference accumulation using the original dev11 GNC-r3 normal objective; do not stack the stronger S5-r1 indentation normalization."
+    }
+  }
+}
