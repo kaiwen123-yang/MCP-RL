@@ -36,7 +36,12 @@ def wait_case(attempt):
     while True:
         r=result(attempt)
         if r is not None:return r
-        a=next(x for x in current()['attempts'] if x['attempt']==attempt)
+        a=next((x for x in current()['attempts'] if x['attempt']==attempt),None)
+        # The launched runner imports its environment before publishing registration.
+        # Wait for that registration; never launch another physical task here.
+        if a is None:
+            time.sleep(1)
+            continue
         if a['status'] in ('initialization_failed','interrupted'):return a
         time.sleep(10)
 def chain(build,prefix,condition,group='FIXED_S5',seed=None,checkpoint=None,levels=LEVELS):
@@ -78,9 +83,30 @@ def reserve():
     measured=[a['wall_s']/a['simulation_s'] for a in idx['attempts']
         if a.get('success') and a.get('simulation_s',0)>=30]
     fixed_ratio=max(measured,default=CONTRACT['budget']['actual_cost_reference']['slowdown'])
-    progress=training_progress()
-    ratios=[v['wall_s']/v['physics_s'] for v in progress if v['physics_s']>=30]
-    learned_ratio=max(ratios,default=fixed_ratio)
+    # Formal evaluation uses the frozen8-worker execution setting. Do not
+    # confuse the2-worker six-stream acquisition cost with that formal cost.
+    observer_sources=[]
+    replay=idx.get('observer_preparation')
+    if replay:observer_sources.append((replay,replay['observed_through_s']))
+    else:
+        previous=json.loads((ROOT/'results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/index.json').read_text())['observer_replay']
+        observer_sources.append((previous,previous['observed_through_s']))
+    for attempt in idx['attempts']:
+        if attempt.get('purpose')=='training' and attempt.get('result'):
+            actual=json.loads((SMALL/attempt['result']).read_text())
+            observer=(actual.get('policy') or {}).get('observer')
+            if observer and observer['world_cells']>0 and actual['simulation_s']>0:
+                observer_sources.append((observer,actual['simulation_s']))
+    observer_ratio=0.
+    for observation,duration in observer_sources:
+        compilation=observation['first_compilation_s'] or 0.
+        observation_rate=max(0.,observation['observation_wall_s']-compilation)/duration
+        query_rate=observation['query_wall_s']/duration
+        # Original fixed strip/grid has about4200 world cells. This is an
+        # explicit upper-geometry extrapolation of the observed component cost.
+        scale=max(1.,4200/observation['world_cells'])
+        observer_ratio=max(observer_ratio,observation_rate*scale+query_rate+compilation/30)
+    learned_ratio=fixed_ratio+observer_ratio
     # Two seed0 learned chains can run together after sampling; fixed nominal runs now.
     # All four dependencies of both learned chains remain protected until actual predecessor failure.
     protected_learning=990*learned_ratio+4*45
@@ -95,9 +121,9 @@ def reserve():
         elif level=='E600' and a.get('success'):fixed_remaining=0
     seconds=max(6*3600,1.2*max(protected_learning,fixed_remaining*fixed_ratio))
     with index_file(SMALL,CONTRACT) as j:
-        j['evaluation_reserve']=dict(wall_s=seconds,fixed_ratio=fixed_ratio,learned_ratio=learned_ratio,
+        j['evaluation_reserve']=dict(wall_s=seconds,fixed_ratio=fixed_ratio,learned_ratio=learned_ratio,observer_component_ratio=observer_ratio,
             fixed_remaining_sim_s=fixed_remaining,protected_learning_sim_s_per_case=990,
-            basis='Actual complete R11 stages and >=30s per-stream sampling; two protected learning ladders execute in parallel. Includes not-yet-qualified E30/E60/E300/E600. No assumption of sixfold speedup.',
+            basis='Actual complete8-worker R11 stages plus retained/real-training PANN component costs, conservatively scaled to the fixed strip grid. Two protected learned ladders can execute in parallel. All not-yet-qualified stages remain included. Acquisition slowdown is not substituted for formal8-worker throughput.',
             updated_unix_s=time.time())
     return seconds
 def main():

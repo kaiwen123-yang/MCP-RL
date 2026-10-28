@@ -2,8 +2,10 @@
 
 ## 当前入口：S1第十一轮材料执行与阶梯评价
 
-**R11计划已准备，尚未执行。** run_id：tm-s1-go2-material-continuation-r11，协议staged_evaluation_30_60_300_600_v2。
-先读[执行约定](AGENTS.md)、[主计划](docs/TERRAIN_MEMORY_PLAN.md)和[机器契约](experiments/terrain_memory/s1-go2-material-continuation-r11.json)。
+**R11执行中，尚未冻结S5。** S5-r7通过独立nominal E30：22.422s到达远端，28.926s返程，观察满30s，主应变峰值.01914027；同版独立E60在11.142s失败。模型、初态与源码相同，启动优化已出现差异。实际导数调度把176节点中的174号节点重复交给两个任务，造成十个子步A/B组合的并发写入；S5-r8只修这一项，并从E30重新资格。PPO训练0，硬件0。统一时钟从北京时间2026-10-28 23:36:01开始，48h截止2026-10-30 23:36:01。
+
+实际启动、失败、阶段资格和当前状态见[唯一R11索引](results/terrain_memory/simulation/tm-s1-go2-material-continuation-r11/index.json)。以下保留本轮阶梯协议；未执行阶段不作为成果。
+
 
 用户最新要求评价按**30s→60s→300s→600s**逐case推进，覆盖此前60直接600和300仅观察点的安排：
 

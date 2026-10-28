@@ -1,7 +1,7 @@
 # S1 第十一轮：材料执行、连续训练与30/60/300/600秒阶梯评价
 
-更新日期：2026-10-28。run_id：**tm-s1-go2-material-continuation-r11**。状态：**planned_not_executed**。
-本次为尚未执行的R11计划修订，协议staged_evaluation_30_60_300_600_v2；没有新仿真、训练或实机成果。执行约定见[AGENTS](../AGENTS.md)，机器契约见[R11配置](../experiments/terrain_memory/s1-go2-material-continuation-r11.json)。
+更新日期：2026-10-28。run_id：**tm-s1-go2-material-continuation-r11**。状态：**executing_development**。
+执行使用协议staged_evaluation_30_60_300_600_v2。S5-r7独立nominal E30通过，同版独立E60在11.142s失败；S5-r8修正已确认的导数重复并发写，并重新从E30资格。PPO训练0，硬件0。全部实际版本、结果和统一时钟见唯一R11索引；以下阶梯规范保持。执行约定见[AGENTS](../AGENTS.md)，机器契约见[R11配置](../experiments/terrain_memory/s1-go2-material-continuation-r11.json)。
 
 用户在R10结束后要求继续实验、重新评估12次限制、借鉴论文，并将下一步计划推送GitHub。由此建立独立R11；保留R10原始结果、配置、12次计数与Release，不回写历史。旧R10文中的“不得新开R11”针对当时尚未启动的同一批协议修订，不作为本次新计划的停止指令。
 

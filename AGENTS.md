@@ -3,9 +3,11 @@
 ## 当前入口：S1 R11 材料执行与30/60/300/600秒阶梯评价
 
 读取[主计划](docs/TERRAIN_MEMORY_PLAN.md)和[R11契约](experiments/terrain_memory/s1-go2-material-continuation-r11.json)。
-run：**tm-s1-go2-material-continuation-r11**，状态**planned_not_executed**，协议**staged_evaluation_30_60_300_600_v2**。用户最新要求四级评价，覆盖旧R11的60秒直达600、300秒仅观察点和首训练会话无条件600秒。R10原配置、结果、12次计数及Release保留；不重开旧run。
+run：**tm-s1-go2-material-continuation-r11**，状态**executing_development**，协议**staged_evaluation_30_60_300_600_v2**。用户最新要求四级评价，覆盖旧R11的60秒直达600、300秒仅观察点和首训练会话无条件600秒。R10原配置、结果、12次计数及Release保留；不重开旧run。
 
 R10实际：12启动＝3零步初始化＋9物理任务，完整任务0/9；dev11 GNC-r3/.215m/s通过去程与转向，32.5672s返程越域，仍距原点1.98m。观察器只完成既有R9因果回放，PPO/正式评价0。R8-S3刚地9/9＋3/3连续300秒继续成立。机器人为四足Go2，最终Go2＋NX。
+
+R11执行记录（2026-10-29）：S5-r7独立nominal E30通过、同版独立E60在11.142s失败。实际iLQG导数节点174被重复派发，S5-r8仅修并发重复写并重新从E30资格；旧结果保留。当前训练0、S5未冻结。读取唯一R11索引的实际时钟和阶段，不重新创建run或重启预算。
 
 ## 开发与推进
 
