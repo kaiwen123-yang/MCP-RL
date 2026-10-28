@@ -1,0 +1,13 @@
+--- GNC-r3/mjpc/planners/model_derivatives.cc
++++ S5-r9/mjpc/planners/model_derivatives.cc
+@@ -59,7 +59,9 @@
+   for (int t = s; t < T - s; t += s) {
+     evaluate_.push_back(t);
+   }
+-  evaluate_.push_back(T - 2);
++  // The last interior node may already be present when skip==0.
++  // One job owns each output block during held-input A/B composition.
++  if (evaluate_.back() != T - 2) evaluate_.push_back(T - 2);
+   evaluate_.push_back(T - 1);
+ 
+   // interpolate indices

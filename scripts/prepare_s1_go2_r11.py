@@ -27,7 +27,7 @@ def main():
         (frozen/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
         print(f'Prepared {a.build} controller with unchanged frozen C binary.',flush=True)
         return
-    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8'):raise ValueError('An undeclared S5 controller build was requested')
+    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9'):raise ValueError('An undeclared S5 controller build was requested')
     relative=Path('mjpc/tasks/quadruped/quadruped.cc')
     old=(prior/relative).read_text()
     new=old.replace('// 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.',
@@ -66,8 +66,8 @@ def main():
             '        double desired_vz = -0.05*mju_tanh(mju_max(z,0)/0.001);\n        if (slow_approach_) desired_vz=mju_max(mju_min(step_velocity[foot],0.),desired_vz);')
         new=new.replace('  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;',
             '  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;\n  residual_.slow_approach_ = GetNumberOrDefault(0, model, "r11_slow_approach") == 1;')
-    if a.build=='S5-r8':new=old
-    if new==old and a.build!='S5-r8':raise ValueError('Frozen residual was not found')
+    if a.build in ('S5-r8','S5-r9'):new=old
+    if new==old and a.build not in ('S5-r8','S5-r9'):raise ValueError('Frozen residual was not found')
     for path in (prior/'mjpc').rglob('*'):
         if path.is_file() and path.suffix in ('.cc','.h'):
             shutil.copy2(path,source/path.relative_to(prior))
@@ -85,7 +85,7 @@ def main():
         fromfile=prior.name+'/'+str(relative),tofile=a.build+'/'+str(relative)))
     patch+=''.join(difflib.unified_diff(header_old.splitlines(True),header_new.splitlines(True),
         fromfile=prior.name+'/'+str(header_relative),tofile=a.build+'/'+str(header_relative)))
-    if a.build=='S5-r8':
+    if a.build in ('S5-r8','S5-r9'):
         derivative_path=Path('mjpc/planners/model_derivatives.cc')
         derivative_old=(prior/derivative_path).read_text()
         target='  evaluate_.push_back(T - 2);'
@@ -133,6 +133,8 @@ def main():
     if a.build=='S5-r8':
         overrides=json.loads((ROOT/'work/r11-frozen/S5-r7/identity.json').read_text())['configuration_overrides']
         overrides['r11_derivative_schedule']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r8.json').read_text())['r11_derivative_schedule']
+    if a.build=='S5-r9':
+        overrides=dict(r11_derivative_schedule=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r9.json').read_text())['r11_derivative_schedule'])
     identity=dict(controller='S5',build=a.build,based_on=prior.name,
         prior_binary_sha256=sha(prior/'agent_server'),binary_sha256=sha(frozen/'agent_server'),
         source_files_sha256={str(x.relative_to(frozen)):sha(x) for x in (frozen/'mjpc').rglob('*') if x.is_file() and x.suffix in ('.cc','.h')},
