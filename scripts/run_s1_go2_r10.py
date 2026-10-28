@@ -40,7 +40,7 @@ def main():
         author_source=str(frozen),agent_server=str(frozen/'agent_server'),
         original_robot_dir=str(assets/'go2'),original_scene=str(assets/'scene_flat.xml'),
         original_resolved=str(assets/'rigid-T1R-resolved.json'))
-    os.environ['MJPC_TASKS_DIR']=str(frozen/'mjpc/tasks')
+    os.environ['MJPC_TASKS_DIR']=str(frozen/'runtime-tasks')
     if a.render:
         render(args,c)
         return

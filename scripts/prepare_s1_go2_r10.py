@@ -39,6 +39,7 @@ def main():
     frozen = ROOT/'work/r10-frozen'/a.form
     frozen.mkdir(parents=True, exist_ok=False)
     shutil.copytree(source/'mjpc', frozen/'mjpc')
+    shutil.copytree(source/'build-autodl/mjpc/tasks', frozen/'runtime-tasks')
     shutil.copy2(source/'SOURCE_COMMIT', frozen/'SOURCE_COMMIT')
     shutil.copy2(source/'build-autodl/bin/agent_server', frozen/'agent_server')
     (frozen/'lib').mkdir()
