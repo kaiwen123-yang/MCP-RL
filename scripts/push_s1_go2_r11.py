@@ -21,7 +21,7 @@ def main():
         return p.stdout.strip()
     command(["git","push","origin",f"HEAD:refs/heads/{BRANCH}"])
     head=command(["git","rev-parse","HEAD"])
-    actual=command(["gh","api",f"repos/{REPO}/git/ref/heads/{BRANCH}","--jq",".object.sha"])
+    actual=json.loads(command(["gh","api",f"repos/{REPO}/git/ref/heads/{BRANCH}"]))["object"]["sha"]
     if actual!=head:raise RuntimeError("Remote source branch differs from submitted commit")
     print(json.dumps(dict(branch=BRANCH,commit=head,url=f"https://github.com/{REPO}/tree/{BRANCH}")),flush=True)
 if __name__=="__main__":main()

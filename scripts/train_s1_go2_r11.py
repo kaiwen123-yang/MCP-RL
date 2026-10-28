@@ -56,6 +56,7 @@ def main():
             if result['stage_status'] in ('technical_interruption','budget_truncated'):break
     stream.log.close();stream.learning.close()
     dump(output/'stopped.json',dict(actual_transitions=stream.samples,
+        total_numbered_collections=stream.transition_serial,discarded_after_checkpoint=stream.discarded_after_checkpoint,
         last_completed_checkpoint=stream.samples//256*256,unupdated_fragment=len(stream.buffer),
         actual_stage_samples=stream.stage_samples,physics_s=stream.physics_s,session_records=stream.session_records,
         promotions=stream.promotions,curriculum_stage=stream.curriculum_stage,

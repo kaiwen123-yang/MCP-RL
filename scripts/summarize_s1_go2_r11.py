@@ -8,7 +8,15 @@ SMALL=ROOT/CONTRACT['outputs']['compact_root']
 def main():
     with index_file(SMALL,CONTRACT) as index:
         attempts=index['attempts'];physical=[a for a in attempts if a.get('physical_started')]
-        records=[json.loads((SMALL/a['result']).read_text()) for a in attempts if a.get('result')]
+        records=[]
+        for attempt in attempts:
+            if not attempt.get('result'):continue
+            record=json.loads((SMALL/attempt['result']).read_text())
+            resolved=json.loads((SMALL/(attempt['attempt']+'-resolved.json')).read_text())
+            record['controller_build']=resolved['r11_configuration']['controller_build']
+            record['qualification_usable']=attempt.get('qualification_usable',True)
+            record['declared_parameter_mismatch']=attempt.get('declared_parameter_mismatch')
+            records.append(record)
         index['actual_summary']=dict(total_launches=len(attempts),physical_starts=len(physical),
             zero_step_failures=sum(a.get('status')=='initialization_failed' and not a.get('physical_started') for a in attempts),
             closed_record_simulation_s=sum(r['simulation_s'] for r in records),
@@ -58,8 +66,16 @@ def main():
                     attempt=r['attempt'] if r else None,case_key=r['case_key'] if r else None,reason=reason,
                     predecessor=r['qualification']['predecessor_attempt'] if r else None))
             case_rows.append(dict(group=group,seed=seed,condition=condition,highest_passed_stage=highest,
+                controller_build=(frozen or {}).get('build') or (candidates[-1]['controller_build'] if candidates else None),
                 controller_frozen=bool(frozen),failure_attempt=next((r['attempt'] for r in reversed(candidates) if not r['success']),None),
                 failure_reason=next((r['reason'] for r in reversed(candidates) if not r['success']),None)))
+        index['development_qualification_history']=[dict(
+            attempt=r['attempt'],controller_build=r['controller_build'],case_key=r['case_key'],
+            level=r['evaluation_stage']['level'],observed_task_outcome=r['stage_status'],
+            qualification_usable=r['qualification_usable'],reason=r['reason'],
+            parameter_mismatch=r['declared_parameter_mismatch'])
+            for r in records if r['purpose']=='development']
+        index['accepted_core_controller']=frozen['build'] if frozen else None
         index['case_coverage']=case_rows
         index['stage_coverage']={level:{status:sum(x['level']==level and x['status']==status for x in stage_rows)
             for status in sorted(set(x['status'] for x in stage_rows))} for level in LEVELS}
@@ -68,7 +84,7 @@ def main():
             with (SMALL/name).open('w',newline='') as f:
                 w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
         if records:
-            cols=['attempt','purpose','condition','case_key','stage_status','success','reason','simulation_s','wall_s','physical_samples','first_completion_s','completed_round_trips','source_commit']
+            cols=['attempt','purpose','condition','controller_build','case_key','qualification_usable','stage_status','success','reason','simulation_s','wall_s','physical_samples','first_completion_s','completed_round_trips','source_commit']
             with (SMALL/'episodes.csv').open('w',newline='') as f:
                 w=csv.DictWriter(f,fieldnames=cols);w.writeheader();w.writerows({k:r.get(k) for k in cols} for r in records)
         print(json.dumps(index['actual_summary']),flush=True)

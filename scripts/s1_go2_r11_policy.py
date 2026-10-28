@@ -41,6 +41,7 @@ class PolicyStream:
             max_grad_norm=p['max_grad_norm'],epochs=p['epochs_per_update'],minibatch_size=64,device='cpu'))
         self.normalization=json.loads(json.dumps(NORMALIZATION))
         self.samples=0;self.effective_samples=0;self.buffer=[];self.episode=0
+        self.transition_serial=0;self.discarded_after_checkpoint=0
         self.stage_samples={0:0,1:0,2:0};self.physics_s=0.;self.begin=time.time()
         self.curriculum_stage=0;self.promotions=[];self.session_records=[]
         self.restored_without_environment=False
@@ -58,10 +59,20 @@ class PolicyStream:
                 self.backend.optimizer.load_state_dict(saved['optimizer'])
                 torch.set_rng_state(saved['torch_rng']);np.random.set_state(saved['numpy_rng'])
                 self.buffer=saved.get('buffer',[])
+                self.transition_serial=saved.get('transition_serial',self.samples)
+                log_path=self.directory/'transitions.jsonl'
+                if log_path.exists():
+                    recorded=[json.loads(line) for line in log_path.read_text().splitlines() if line.strip()]
+                    latest=max([self.transition_serial]+[row.get('transition_serial',row['transition']) for row in recorded])
+                    self.discarded_after_checkpoint=latest-self.transition_serial
+                    self.transition_serial=latest
                 self.restored_without_environment=True
                 self.session_records.append(dict(episode=self.episode,status='technical_interruption_on_restore',
                     continuous_environment_restored=False,checkpoint=str(checkpoint)))
                 existing=[int(x.stem.split('-')[-1]) for x in self.directory.glob('episode-*.json')]
+                prefix=f'train-{group}-s{seed}-ep'
+                existing += [int(x.name[len(prefix):]) for x in self.directory.parent.parent.glob(prefix+'*') if x.is_dir()]
+                # An interrupted started session also owns its episode number.
                 self.episode=max([self.episode]+existing)
         self.log=(self.directory/'transitions.jsonl').open('a')
         self.learning=(self.directory/'learning.jsonl').open('a')
@@ -71,6 +82,7 @@ class PolicyStream:
         torch.save(dict(actor=self.backend.actor.state_dict(),critic=self.backend.critic.state_dict(),
             optimizer=self.backend.optimizer.state_dict(),normalization=self.normalization,
             samples=self.samples,stage_samples=self.stage_samples,seed=self.seed,group=self.group,
+            transition_serial=self.transition_serial,discarded_after_checkpoint=self.discarded_after_checkpoint,
             effective_samples=self.effective_samples,physics_s=self.physics_s,episode=self.episode,
             curriculum_stage=self.curriculum_stage,promotions=self.promotions,session_records=self.session_records,
             updates=self.backend.update_count,continuous_environment_snapshot=False,buffer=self.buffer,
@@ -89,18 +101,28 @@ class PolicyStream:
         progress.with_suffix('.tmp').replace(progress)
 
     def transition(self,pending,observation,reward,terminated,truncated,dt,effective,stage,info):
+        self.transition_serial+=1
         sample=pending['sample'];next_obs=torch.as_tensor(observation,dtype=torch.float32).reshape(1,-1)
         next_value=self.backend.value(next_obs)
         record=dict(obs=pending['obs'],next_obs=next_obs,raw_action=sample.raw_action,reward=torch.tensor([reward]),
             terminated=torch.tensor([terminated]),truncated=torch.tensor([truncated]),
             log_prob=sample.log_prob,value=sample.value,next_value=next_value)
         self.log.write(json.dumps(dict(time_s=info['time_s'],episode=self.episode,
-            transition=self.samples+1,reward=reward,terminated=terminated,truncated=truncated,
+            transition=self.samples+1,transition_serial=self.transition_serial,reward=reward,terminated=terminated,truncated=truncated,
             dt_s=dt,effective=effective,stage=stage,cap_m_s=pending['cap'],
             raw_action=float(sample.raw_action.item()),log_prob=float(sample.log_prob.item()),**info['metrics']))+'\n')
+        self.log.flush()
         if not self.training:return
         self.buffer.append(record);self.samples+=1;self.effective_samples+=int(effective)
         self.stage_samples[stage]+=1;self.physics_s+=dt
+        collected=self.directory/'collection.json'
+        collected.with_suffix('.tmp').write_text(json.dumps(dict(
+            collected_transitions=self.samples,transition_serial=self.transition_serial,
+            completed_update_transitions=self.backend.update_count*256,
+            unupdated_fragment=len(self.buffer),stage_samples=self.stage_samples,
+            physics_s=self.physics_s,episode=self.episode,curriculum_stage=self.curriculum_stage,
+            discarded_after_checkpoint=self.discarded_after_checkpoint))+'\n')
+        collected.with_suffix('.tmp').replace(collected)
         if len(self.buffer)==256:
             batch={key:torch.stack([row[key] for row in self.buffer]) for key in record}
             np.savez_compressed(self.directory/f'rollout-{self.samples-255:06d}-{self.samples:06d}.npz',
