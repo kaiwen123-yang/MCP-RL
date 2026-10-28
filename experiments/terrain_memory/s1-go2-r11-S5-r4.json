@@ -1,0 +1,68 @@
+{
+  "build": "S5-r4",
+  "based_on": "work/r10-frozen/GNC-r3",
+  "binary_sha256": "f2bc6741d13f893239776b96f07cbacb25130eadaf68229c2e70e51649ead2da",
+  "configuration_overrides": {
+    "task": {
+      "initial_xy_m": [
+        0,
+        0
+      ],
+      "nominal_initial_yaw_rad": 0,
+      "initial_stand_s": 2,
+      "turnaround_xy_m": [
+        3,
+        0
+      ],
+      "turn_angle_rad": 3.141592653589793,
+      "return_xy_m": [
+        0,
+        0
+      ],
+      "command_speed_m_s": 0.215,
+      "turn_yaw_rate_rad_s": 0.5,
+      "extra_turnaround_hold_s": 0,
+      "terminal_stand_s": 2,
+      "maximum_episode_s": 60,
+      "goal_position_radius_m": 0.15,
+      "turn_heading_tolerance_rad": 0.15,
+      "terminal_speed_max_m_s": 0.05,
+      "task_mode": "Quadruped",
+      "gait_switch": "Manual",
+      "native_head_offset_in_trunk_m": [
+        0.3,
+        0,
+        0
+      ],
+      "orientation_cost_weight": 0.03,
+      "stand_settings": {
+        "Gait": "Stand",
+        "Duty ratio": 1,
+        "Cadence": 1,
+        "Amplitude": 0,
+        "Balance": 0,
+        "Upright": 1,
+        "Height": 1
+      },
+      "move_and_turn_settings": {
+        "Gait": "Trot",
+        "Duty ratio": 0.65,
+        "Cadence": 1.0,
+        "Amplitude": 0.03,
+        "Balance": 0.2,
+        "Upright": 1,
+        "Height": 1
+      }
+    },
+    "r11_contact_timing": {
+      "cadence_Hz": 1.0,
+      "duty_ratio": 0.65,
+      "nominal_diagonal_overlap_s": 0.15,
+      "swing_duration_s": 0.35,
+      "swing_height_m": 0.03,
+      "actor_cap_m_s": 0.215,
+      "basis": "Completed S5-r1/r2/r3 last1s unsupported intervals140.2/88.4/119.6ms. Original2Hz duty.45 yields25ms nominal flight gaps; the5mm/.05m_s approach reference needs about100ms before final deceleration. Test support overlap in the same MPC gait, not a material/threshold change.",
+      "baseline": "Original dev11 GNC-r3 objective/reference/contact implementation; no S5-r1/r2/r3 stacking."
+    }
+  }
+}

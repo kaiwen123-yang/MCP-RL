@@ -24,6 +24,8 @@ def configuration(build,level,cap=.215,terrain='tm02_anchor',training_duration=N
             route_completion_deadline_s=c['r11_stage']['route_deadline_s'] or c['r11_stage']['duration_s'])
     if terrain=='rigid':c['local_contact_model'].update(enabled=False,causal_force_anchor=False)
     for key,value in identity.get('configuration_overrides',{}).items():c[key]=value
+    c['task']['command_speed_m_s']=cap
+    c['task']['maximum_episode_s']=c['r11_stage']['duration_s']
     return c,json.loads((ROOT/'experiments/terrain_memory/s1-go2-joint.json').read_text())
 def arguments(attempt,build,condition,purpose,kind,workers=2):
     frozen=ROOT/'work/r11-frozen'/build;assets=ROOT/'work/assets'

@@ -11,8 +11,8 @@ def main():
     prior=OLD/'work/r10-frozen/GNC-r3'
     frozen=ROOT/'work/r11-frozen'/a.build
     if frozen.exists():raise ValueError('This controller build already exists; preserve its identity')
-    if a.build=='S5-r2':
-        specification=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r2.json').read_text())
+    if a.build in ('S5-r2','S5-r4'):
+        specification=json.loads((ROOT/f'experiments/terrain_memory/s1-go2-r11-{a.build}.json').read_text())
         frozen.mkdir(parents=True)
         for name in ('mjpc','runtime-tasks','lib'):(frozen/name).symlink_to(prior/name)
         for name in ('agent_server','SOURCE_COMMIT'):shutil.copy2(prior/name,frozen/name)
@@ -21,7 +21,7 @@ def main():
             configuration_overrides=specification['configuration_overrides'],
             reused_frozen_binary=True,physics_unchanged=True)
         (frozen/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
-        print('Prepared S5-r2 reference controller with unchanged frozen C binary.',flush=True)
+        print(f'Prepared {a.build} controller with unchanged frozen C binary.',flush=True)
         return
     if a.build not in ('S5-r1','S5-r3'):raise ValueError('An undeclared S5 controller build was requested')
     relative=Path('mjpc/tasks/quadruped/quadruped.cc')

@@ -200,7 +200,8 @@ class PolicyMaterial(JointMaterial):
         measurement=self.measurements()
         if self.observer is not None:self.observer.observe(t,measurement[0],measurement[1])
         self.gait_phase+=2*np.pi*self.cadence*(t-self.last_control_time)
-        self.cadence=1. if mission.phase in ('initial_stand','terminal_stand','complete','far_hold','home_hold') else 2.
+        self.cadence=mission.task['stand_settings' if mission.phase in
+            ('initial_stand','terminal_stand','complete','far_hold','home_hold') else 'move_and_turn_settings']['Cadence']
         self.last_control_time=t
         if t>=self.next_history-1e-8:
             bottom,velocity,contact,grf=measurement
