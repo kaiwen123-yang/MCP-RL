@@ -22,7 +22,8 @@ def save(fig,name):
     plt.close(fig)
     return dict(png=name+'.png',svg=name+'.svg')
 def main():
-    index=json.loads((SMALL/'index.json').read_text())
+    from campaign_s1_go2_r11 import current
+    index=current()
     records=[json.loads((SMALL/a['result']).read_text()) for a in index['attempts'] if a.get('result') and a['purpose']=='development']
     figures={}
     for offset in range(0,len(records),6):

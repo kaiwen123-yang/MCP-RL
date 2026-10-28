@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Advance only qualified R11 cases; keep the campaign's one physical clock."""
-import argparse,json,os,subprocess,sys,time
+import argparse,fcntl,json,os,subprocess,sys,time
 from pathlib import Path
 from s1_go2_r11_protocol import ROOT,CONTRACT,LEVELS,CONDITIONS,RUN
 from s1_go2_r11_runtime import index_file,dump
@@ -8,7 +8,15 @@ SMALL=ROOT/CONTRACT['outputs']['compact_root']
 LARGE=ROOT/CONTRACT['outputs']['large_root']
 TRAIN_PY=ROOT/'work/envs/joint-py312/bin/python'
 GROUPS=['PPO_RAW_S5','PANN_PPO_S5']
-def current():return json.loads((SMALL/'index.json').read_text())
+def current():
+    with (SMALL/'index.lock').open('r') as lock:
+        fcntl.flock(lock,fcntl.LOCK_SH)
+        return json.loads((SMALL/'index.json').read_text())
+def deadline_file(value):
+    path=SMALL/'training-deadline.json'
+    temporary=path.with_suffix('.tmp')
+    dump(temporary,value)
+    temporary.replace(path)
 def launch(attempt,build,level,condition='nominal',group='FIXED_S5',seed=None,checkpoint=None,purpose='formal',terrain='tm02_anchor'):
     py=TRAIN_PY if group!='FIXED_S5' else Path(sys.executable)
     workers=current().get('frozen_controller',{}).get('workers',2 if build=='S5-r1' else 8)
@@ -21,8 +29,9 @@ def launch(attempt,build,level,condition='nominal',group='FIXED_S5',seed=None,ch
         stdout=(ROOT/'work'/f'r11-{attempt}.log').open('w'),stderr=subprocess.STDOUT,start_new_session=True)
     return p
 def result(attempt):
-    p=SMALL/(attempt+'.json')
-    return json.loads(p.read_text()) if p.exists() else None
+    row=next((a for a in current()['attempts'] if a['attempt']==attempt),None)
+    if row is None or not row.get('result'):return None
+    return json.loads((SMALL/row['result']).read_text())
 def wait_case(attempt):
     while True:
         r=result(attempt)
@@ -113,7 +122,7 @@ def main():
     fixed=subprocess.Popen(fixed_cmd,cwd=ROOT,stdin=subprocess.DEVNULL,
         stdout=(ROOT/'work/r11-fixed-chain.log').open('w'),stderr=subprocess.STDOUT,start_new_session=True)
     deadline=current()['campaign_deadline_unix_s']-reserve()
-    dump(SMALL/'training-deadline.json',dict(deadline_unix_s=deadline,basis='protected_nominal_ladders'))
+    deadline_file(dict(deadline_unix_s=deadline,basis='protected_nominal_ladders'))
     streams=[]
     for group in GROUPS:
         for seed in range(3):
@@ -125,7 +134,7 @@ def main():
     while any(p.poll() is None for p in streams):
         seconds=reserve();deadline=current()['campaign_deadline_unix_s']-seconds
         if any(p.poll() not in (None,0) for p in streams):deadline=min(deadline,time.time())
-        dump(SMALL/'training-deadline.json',dict(deadline_unix_s=deadline,basis='measured_protected_nominal_ladders'))
+        deadline_file(dict(deadline_unix_s=deadline,basis='measured_protected_nominal_ladders'))
         time.sleep(30)
     progress=training_progress()
     errors=[p.returncode for p in streams if p.returncode!=0]
