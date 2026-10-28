@@ -44,6 +44,12 @@ def main():
     index['empty_original_files']=empty
     index['assets']=[a for a in index['assets'] if a['size']>0]
     index['empty_file_policy']='Empty original logs remain on the execution host and are listed here; no nonexistent data are fabricated or uploaded.'
+    index['cap_decision_records']=[]
+    for row in index['attempts']:
+        if row['physical_started']:
+            name=row['attempt'];target=SMALL/(name+'-cap-decisions.json')
+            shutil.copy2(ROOT/'outputs/terrain_memory/simulation'/RUN/name/'cap-decisions.json',target)
+            index['cap_decision_records'].append(target.name)
     (SMALL/'index.json').write_text(json.dumps(index,indent=2)+'\n')
     config_path=ROOT/'experiments/terrain_memory/s1-go2-soft-landing-r10.json'
     config=json.loads(config_path.read_text());config['status']=index['status']
