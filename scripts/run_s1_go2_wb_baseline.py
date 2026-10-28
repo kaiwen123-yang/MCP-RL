@@ -162,10 +162,13 @@ def run(args, c, joint=None):
     out.mkdir(parents=True, exist_ok=False)
     campaign = 'campaign_budget' in c
     support = c.get('stage') in ('S1R8', 'S1R10')
+    training = bool(c.get('r10_training'))
+    policy_hook = bool(c.get('r10_policy'))
+    compact = training and not joint.full_recording
     if campaign:
         with index_file(small, c) as idx:
-            launches=[x for x in idx['attempts'] if c.get('stage') == 'S1R10' or x['status']!='initialization_failed']
-            if len(launches) >= c['campaign_budget']['max_new_physical_starts']:
+            launches=[x for x in idx['attempts'] if x['purpose']!='training' and (c.get('stage') == 'S1R10' or x['status']!='initialization_failed')]
+            if not training and len(launches) >= c['campaign_budget']['max_new_physical_starts']:
                 raise ValueError('Campaign launch allowance exhausted, including missing records')
             if support and args.stage=='G0' and sum(x['stage']=='G0' for x in launches) >= c['campaign_budget']['max_author_long_starts']:
                 raise ValueError('Author long-mission allowance exhausted')
@@ -343,9 +346,9 @@ def run(args, c, joint=None):
     begin = time.perf_counter()
     phase_settings = None
     previous_phase = None
-    with (out/'agent-server.log').open('w') as server_log, Agent(task_id='Quadruped Flat', model=prediction_model,
+    with (out/'agent-server.log').open('w') as server_log, (contextlib.nullcontext(joint.agent) if training else Agent(task_id='Quadruped Flat', model=prediction_model,
             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
-            subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT), run_init=False) as agent:
+            subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT), run_init=False)) as agent:
         try:
             agent.init(task_id='Quadruped Flat', model=prediction_model, send_as='xml')
             agent.set_mode('Quadruped')
@@ -355,13 +358,18 @@ def run(args, c, joint=None):
                 mujoco.mj_forward(model, data)
                 ori = Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz')
                 velocity, omega = data.qvel[:3].copy(), data.qvel[3:6].copy()
-                if joint is not None:
+                if joint is not None and not policy_hook:
                     joint.control(t,mission)
-                    if started and c.get('stage') == 'S1R10' and time.time() >= joint.deadline:
-                        reason = 'campaign_budget_truncated'
-                        break
                 contact, grf, _ = actual_contact()
                 body_goal, heading = mission.update(t, dt, data.qpos[:3], velocity, ori, omega, bool(contact.all()))
+                if policy_hook:
+                    joint.control(t,mission)
+                    if joint.stop_requested:
+                        reason=joint.stop_requested
+                        break
+                if joint is not None and started and c.get('stage') == 'S1R10' and time.time() >= joint.deadline:
+                    reason = 'campaign_budget_truncated'
+                    break
                 mission_changed = mission.phase != previous_phase
                 previous_phase = mission.phase
                 if mission.phase == 'complete' and first_completion is None:
@@ -387,7 +395,13 @@ def run(args, c, joint=None):
                     dump(small/f'{args.attempt}-resolved.json',resolved)
                     if not reference['feasible']:
                         raise ValueError('Native static support reference infeasible; see retained reference and entry state')
-                    data.userdata[:]=reference_userdata(reference)
+                    data.userdata[:62]=reference_userdata(reference)
+                if c.get('local_contact_model',{}).get('causal_force_anchor'):
+                    bottom,_=joint.kinematics()
+                    patches=data.userdata[62:78].reshape(4,4)
+                    patches[:,0]=(joint.force[:,2]>1)&joint.soft
+                    patches[:,1:3]=bottom[:,:2]
+                    patches[:,3]=bottom[:,2]+joint.force[:,2]/c['local_contact_model']['instantaneous_stiffness_N_m']
                 agent.set_task_parameter('Heading', float(heading))
                 rotation = Rotation.from_euler('z', heading).as_matrix()
                 data.mocap_pos[goal] = body_goal+rotation@offset
@@ -431,14 +445,21 @@ def run(args, c, joint=None):
                             plant_time_s=t, planner_s=elapsed)), flush=True)
                     plan_s = sum(startup_times)
                     startup['planning_total_s'] = plan_s
-                    plans.append([t, plan])
+                    if not compact:plans.append([t, plan])
+                    if policy_hook:joint.latest_plan=plan
                 elif step % 10 == 0 or (support and args.stage=='G1' and (settings_changed or mission_changed)):
                     tp = time.perf_counter()
                     agent.planner_step()
                     plan_s = time.perf_counter()-tp
                     planning_times.append(plan_s)
                     plan = agent.best_trajectory()
-                    plans.append([t, plan])
+                    if not compact:plans.append([t, plan])
+                    if policy_hook:joint.latest_plan=plan
+                if compact and plan_s:
+                    plan_count+=1
+                    prediction_grid=dict(nodes=len(plan['times']),transitions=len(plan['times'])-1,
+                        span_min_s=float(plan['times'][-1]-plan['times'][0]),
+                        span_max_s=float(plan['times'][-1]-plan['times'][0]),timestep_s=.002)
                 tf = time.perf_counter()
                 action = agent.get_action(time=t, nominal_action=False, averaging_duration=0)
                 nominal_action = agent.get_action(time=t, nominal_action=True, averaging_duration=0) if support else None
@@ -450,6 +471,7 @@ def run(args, c, joint=None):
                 data.ctrl[:] = action
                 mujoco.mj_forward(model, data)
                 contact, grf, _, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
+                if compact and step>0 and (step-1)%25:hist.pop()
                 hist.append(dict(time=t, diagnostic_time=t, qpos=data.qpos.copy(), qvel=data.qvel.copy(), rpy=ori,
                     q_target=action.copy(), torque=data.qfrc_actuator[vadr].copy(), actuator_force=data.actuator_force.copy(),
                     contact=contact, actual_grf=grf, total_ground_force=total_grf, nonfoot_ground_force=nonfoot_grf, nonfoot_ground_contacts=nonfoot_count, feet=data.geom_xpos[feet].copy(), body_target=body_goal,
@@ -472,7 +494,7 @@ def run(args, c, joint=None):
                         hist[-1].update(support_reference_userdata=data.userdata.copy(),support_active=standing,
                             active_relative_height_target=float(data.userdata[1]) if standing else .27)
                     if step>0 and step%15000==0:save_streams()
-                if (not campaign and mission.phase == 'complete') or step >= round(duration/dt):
+                if ((not campaign or (training and args.mission=='single')) and mission.phase == 'complete') or step >= round(duration/dt):
                     reason = 'completed' if first_completion is not None else 'task_timeout'
                     break
                 if not started:
@@ -501,9 +523,13 @@ def run(args, c, joint=None):
                     actual_contacts, actual_grf, invalid, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
                     if joint is not None:
                         joint.after_physics(physical_dt,actual_grf)
-                    physics.append(np.r_[sample_t, data.time, data.qfrc_actuator[vadr], data.actuator_force,
-                        actual_contacts, actual_grf.ravel(), total_grf, nonfoot_grf, nonfoot_count])
-                    if support:physics[-1]=np.r_[physics[-1],raw_pd]
+                    if compact:
+                        physical_count+=1
+                        peak_torque=np.maximum(peak_torque,np.abs(data.qfrc_actuator[vadr]))
+                    else:
+                        physics.append(np.r_[sample_t, data.time, data.qfrc_actuator[vadr], data.actuator_force,
+                            actual_contacts, actual_grf.ravel(), total_grf, nonfoot_grf, nonfoot_count])
+                        if support:physics[-1]=np.r_[physics[-1],raw_pd]
                     if invalid:
                         reason = 'invalid_contact:'+str(invalid)
                         break
@@ -589,6 +615,9 @@ def run(args, c, joint=None):
                 timestep_s=float(np.median(np.diff(actual_plan_times,axis=1))),planning_origins=len(plans))
     if joint is not None:
         result=joint.finish(result)
+    if compact:
+        result.update(samples_500Hz=None,recorded_control_samples=len(hist),control_record_rate_Hz=20,
+            recording='Training: 20Hz robot states, 2Hz transitions, per-episode actual physical counters; no full prediction/physics dumps.')
     dump(small/f'{args.attempt}.json',result)
     with index_file(small,c) as idx:
         row=next(x for x in idx['attempts'] if x['attempt']==args.attempt)

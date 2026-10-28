@@ -6,7 +6,7 @@ import mujoco
 from tm02.s1_contact import Ground
 
 class JointMaterial:
-    def __init__(self,root,contract,cap=.25,profile='constant'):
+    def __init__(self,root,contract,cap=.25,profile='constant',full_recording=True):
         self.root,self.contract,self.cap=root,contract,cap
         self.nominal_cap,self.profile=cap,profile
         self.cap_decisions=[];self.last_actor_tick=-1
@@ -19,6 +19,7 @@ class JointMaterial:
         self.reason='';self.group='DEVELOPMENT_ALLOWED_INTENT'
         self.route_progress=0.;self.indent_integral=0.;self.slip_integral=0.
         self.applied_cap=cap
+        self.full_recording=full_recording
 
     def attach(self,model,data,feet,allowed,out,native_model):
         self.model,self.data,self.feet,self.allowed=model,data,feet,allowed
@@ -76,11 +77,12 @@ class JointMaterial:
         m.geom_contype[self.feet]=np.where(self.soft,0,self.original_type)
         m.geom_conaffinity[self.feet]=np.where(self.soft,0,self.original_affinity)
         t=float(d.time)
-        force,indent,maps=self.ground.step(bottom,velocity,dt,t+dt,log=True)
+        force,indent,maps=self.ground.step(bottom,velocity,dt,t+dt,log=self.full_recording)
         self.force=force;self.material_time=t+dt
         self.material_wall+=time.perf_counter()-begin
-        self.records.append(np.r_[t,t+dt,self.soft,bottom.ravel(),velocity.ravel(),force.ravel(),
-            indent,self.ground.max_strain,self.ground.max_residual])
+        if self.full_recording:
+            self.records.append(np.r_[t,t+dt,self.soft,bottom.ravel(),velocity.ravel(),force.ravel(),
+                indent,self.ground.max_strain,self.ground.max_residual])
         if self.ground.domain_exit:
             self.reason='material_domain_exit'
             self.failures_file.write(json.dumps(dict(reason=self.reason,**self.ground.domain_exit,
@@ -104,11 +106,11 @@ class JointMaterial:
         loaded=grf[:,2]>1
         if loaded.any():
             self.slip_integral+=float(np.mean(np.sum(self.velocity[loaded,:2]**2,axis=1)/.25**2))*dt
-        if self.physics_steps%10==0 and len(self.ground.e):
+        if self.full_recording and self.physics_steps%10==0 and len(self.ground.e):
             g=self.ground;n=len(g.e)
             self.cells.append(np.c_[np.full(n,self.material_time),np.asarray(list(g.ids)),g.e,g.q,g.stress,
                 g.loaded,g.last_owner,g.last_area,g.last_normal])
-        if self.physics_steps%5000==0:self.flush()
+        if self.full_recording and self.physics_steps%5000==0:self.flush()
 
     def control(self,t,mission):
         tick=int(np.floor((t+1e-8)/.5))

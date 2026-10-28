@@ -5,8 +5,9 @@ from tm02.s1_contact import Ground
 
 
 class MaterialObserver:
-    def __init__(self, parameters, weights):
-        self.ground = Ground({'id':'tm02_anchor'}, parameters, weights=weights)
+    def __init__(self, parameters, weights, law=None):
+        self.ground = Ground({'id':'tm02_anchor'}, parameters, weights=weights if law is None else None)
+        if law is not None:self.ground.law=law
         self.time = 0.
         self.updates = 0
         self.wall_s = 0.

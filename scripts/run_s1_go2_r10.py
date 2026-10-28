@@ -11,12 +11,12 @@ from s1_go2_joint_material import JointMaterial
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def configuration(form):
+def configuration(form,build=None):
     r10=json.loads((ROOT/'experiments/terrain_memory/s1-go2-soft-landing-r10.json').read_text())
     r9=json.loads((ROOT/'experiments/terrain_memory/s1-go2-joint.json').read_text())
     c=json.loads((ROOT/r10['configuration_reuse']['baseline']).read_text())
     c.update(run_id=r10['run_id'],stage='S1R10',r10_contract=r10,
-        implementation_status='S4_development_'+form,controller_formulation=form)
+        implementation_status='S4_development_'+form,controller_formulation=form,controller_build=build or form)
     c['outputs']['root']=r10['outputs']['compact_root']
     c['campaign_budget']=dict(max_new_physical_starts=61,max_project_development_starts=12,
         wall_clock_hard_cap_h=48,reserve_evaluation_h_at_least=6)
@@ -38,26 +38,39 @@ def configuration(form):
             derivatives='Chain all ten step Jacobians under the same input, preserve node-start C/D',
             plant='Original ReferenceColumns at .0002 s, unchanged',
             limitations='Instantaneous stateless execution approximation; relaxation and off-contact memory are omitted')
+        if build=='GNC-r2':
+            c['local_contact_model'].update(causal_force_anchor=True,
+                anchor='At each planning state, observed Fz and bottom z define rest_z=bottom_z+Fz/k on the currently loaded footprint. Candidate forces recomputed from candidate z and overlap with those fixed world patches.',
+                hidden_state='No true q/e. Frozen observed local force/displacement anchor; no relaxation propagation.',
+                evidence='GNC r1 at6.5s predicted84.046N vs measured47.697N; at7.0s114.654N vs46.426N, followed by base-height loss and body_fall. Correct the local affine intercept using the shared observed contact channel.')
     return c,r9
+
+
+def arguments(attempt,form,condition='nominal',purpose='development',mission='single',build=None):
+    frozen=ROOT/'work/r10-frozen'/(build or form)
+    assets=ROOT/'work/assets'
+    return SimpleNamespace(config='experiments/terrain_memory/s1-go2-soft-landing-r10.json',
+        stage='G1',purpose=purpose,condition=condition,arm='S',mission=mission,
+        cohort='parallel_long_training_v2',attempt=attempt,workers=2,
+        author_source=str(frozen),agent_server=str(frozen/'agent_server'),
+        original_robot_dir=str(assets/'go2'),original_scene=str(assets/'scene_flat.xml'),
+        original_resolved=str(assets/'rigid-T1R-resolved.json'))
 
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--attempt',required=True)
     p.add_argument('--form',choices=['G','GN','GNC'],required=True)
+    p.add_argument('--build',default=None)
     p.add_argument('--cap',type=float,default=.25)
     p.add_argument('--condition',default='nominal')
     p.add_argument('--purpose',default='development')
+    p.add_argument('--workers',type=int,default=2)
     p.add_argument('--render',action='store_true')
-    a=p.parse_args();c,r9=configuration(a.form)
-    frozen=ROOT/'work/r10-frozen'/a.form
-    assets=ROOT/'work/assets'
-    args=SimpleNamespace(config='experiments/terrain_memory/s1-go2-soft-landing-r10.json',
-        stage='G1',purpose=a.purpose,condition=a.condition,arm='S',mission='single',
-        cohort='parallel_long_training_v2',attempt=a.attempt,workers=2,
-        author_source=str(frozen),agent_server=str(frozen/'agent_server'),
-        original_robot_dir=str(assets/'go2'),original_scene=str(assets/'scene_flat.xml'),
-        original_resolved=str(assets/'rigid-T1R-resolved.json'))
+    a=p.parse_args();c,r9=configuration(a.form,a.build)
+    frozen=ROOT/'work/r10-frozen'/(a.build or a.form)
+    args=arguments(a.attempt,a.form,a.condition,a.purpose,build=a.build)
+    args.workers=a.workers
     os.environ['MJPC_TASKS_DIR']=str(frozen/'runtime-tasks')
     if a.render:
         render(args,c)

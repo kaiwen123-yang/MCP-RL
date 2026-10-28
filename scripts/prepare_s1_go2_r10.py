@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--form', choices=['G','GN','GNC'], required=True)
+    p.add_argument('--build',default=None)
     a = p.parse_args()
     source = ROOT/'work/terrain-memory/upstreams/mujoco_mpc-go2'
     relative = Path('mjpc/tasks/quadruped/quadruped.cc')
@@ -101,11 +102,12 @@ def main():
             path.write_text(text)
             patch+=''.join(difflib.unified_diff(before.read_text().splitlines(True),text.splitlines(True),
                 fromfile='a/'+name,tofile='b/'+name))
-    (ROOT/('experiments/terrain_memory/s1-go2-r10-'+a.form+'.patch')).write_text(patch)
+    label=a.build or a.form
+    (ROOT/('experiments/terrain_memory/s1-go2-r10-'+label+'.patch')).write_text(patch)
     begin = time.time()
     subprocess.run(['cmake','--build',str(source/'build-autodl'),
         '--target','agent_server','-j','12'], check=True)
-    frozen = ROOT/'work/r10-frozen'/a.form
+    frozen = ROOT/'work/r10-frozen'/label
     frozen.mkdir(parents=True, exist_ok=False)
     shutil.copytree(source/'mjpc', frozen/'mjpc')
     shutil.copytree(source/'build-autodl/mjpc/tasks', frozen/'runtime-tasks')
@@ -113,7 +115,7 @@ def main():
     shutil.copy2(source/'build-autodl/bin/agent_server', frozen/'agent_server')
     (frozen/'lib').mkdir()
     shutil.copy2(source/'build-autodl/lib/libmujoco.so.3.2.3', frozen/'lib/libmujoco.so.3.2.3')
-    identity = dict(formulation=a.form, compiled_unix_s=time.time(),build_wall_s=time.time()-begin,
+    identity = dict(formulation=a.form, build=label, compiled_unix_s=time.time(),build_wall_s=time.time()-begin,
         source_sha256=hashlib.sha256(new.encode()).hexdigest(),
         binary_sha256=hashlib.sha256((frozen/'agent_server').read_bytes()).hexdigest(),
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),

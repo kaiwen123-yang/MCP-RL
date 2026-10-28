@@ -2,6 +2,7 @@
 // This approximation has no hidden material q/e and no propagated terrain memory.
 #ifndef MJPC_R10_CONTACT_H_
 #define MJPC_R10_CONTACT_H_
+#include <string_view>
 #include <mujoco/mujoco.h>
 #include "mjpc/utilities.h"
 
@@ -29,7 +30,20 @@ inline void R10ContactForce(const mjModel* m,mjData* d) {
     if (!R10MaterialFoot(m,d,geom)) continue;
     const double radius=m->geom_size[3*geom];
     double point[3];mju_copy3(point,d->geom_xpos+3*geom);point[2]-=radius;
-    const double depth=mju_max(floor-point[2],0);
+    double rest=0;
+    if (GetCustomNumericData(m,"r10_contact_anchor")) {
+      // Four frozen, currently observed patches in world coordinates. A new
+      // footprint receives the virgin plane, not a material offset carried
+      // along with a moving foot. No state is modified by a rollout.
+      constexpr double width=0.03162277660168379;
+      for (int i=0;i<4;++i) {
+        const double* patch=d->userdata+62+4*i;
+        const double overlap=mju_max(1-mju_abs(point[0]-patch[1])/width,0)*
+                             mju_max(1-mju_abs(point[1]-patch[2])/width,0);
+        rest+=patch[0]*overlap*patch[3];
+      }
+    }
+    const double depth=mju_max(floor+rest-point[2],0);
     double velocity[6];mj_objectVelocity(m,d,mjOBJ_GEOM,geom,velocity,0);
     const double vx=velocity[3]-radius*velocity[1];
     const double vy=velocity[4]+radius*velocity[0];
