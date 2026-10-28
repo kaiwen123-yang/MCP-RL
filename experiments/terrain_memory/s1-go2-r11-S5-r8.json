@@ -1,0 +1,15 @@
+{
+  "build": "S5-r8",
+  "based_on": "S5-r7",
+  "r11_derivative_schedule": {
+    "correction": "Schedule each derivative time node exactly once.",
+    "actual_grid_nodes": 176,
+    "derivative_skip": 0,
+    "previous_jobs": 177,
+    "corrected_jobs": 176,
+    "duplicated_node": 174,
+    "evidence": "Identical S5-r7 E30/E60 compiled model, initial state, source digests, weights and initial support userdata; initial nominal state rollout identical, but first optimized action differs3.7464e-8 before any physical step. The derivative index loop already includesT-2, then appendsT-2 again. Parallel jobs write and repeatedly compose the same A/B output block.",
+    "retained": "Same10*.2ms transition,2ms input hold,node-start C/D,.35s horizon,8 workers and all S5-r7 objectives/references. No true plant change.",
+    "scope": "Concrete duplicate-write defect removed; successful task or all numerical variability removal must be established by actual staged tasks."
+  }
+}
