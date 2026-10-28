@@ -52,6 +52,7 @@ def main():
                 stream.promotions.append(dict(from_stage=stage,to_stage=stream.curriculum_stage,evidence=record,
                     effective_at='next_natural_independent_session'))
             stream.session_records.append(record);dump(output/f'episode-{stream.episode:05d}.json',record)
+            stream.checkpoint(resume_only=True)
             if result['stage_status'] in ('technical_interruption','budget_truncated'):break
     stream.log.close();stream.learning.close()
     dump(output/'stopped.json',dict(actual_transitions=stream.samples,

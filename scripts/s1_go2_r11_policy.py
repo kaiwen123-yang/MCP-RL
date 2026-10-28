@@ -57,6 +57,7 @@ class PolicyStream:
             if training:
                 self.backend.optimizer.load_state_dict(saved['optimizer'])
                 torch.set_rng_state(saved['torch_rng']);np.random.set_state(saved['numpy_rng'])
+                self.buffer=saved.get('buffer',[])
                 self.restored_without_environment=True
                 self.session_records.append(dict(episode=self.episode,status='technical_interruption_on_restore',
                     continuous_environment_restored=False,checkpoint=str(checkpoint)))
@@ -65,14 +66,15 @@ class PolicyStream:
         self.log=(self.directory/'transitions.jsonl').open('a')
         self.learning=(self.directory/'learning.jsonl').open('a')
 
-    def checkpoint(self):
-        p=self.directory/f'checkpoint-{self.samples:06d}.pt'
+    def checkpoint(self,resume_only=False):
+        p=self.directory/(f'resume-state-ep{self.episode:05d}.pt' if resume_only else f'checkpoint-{self.samples:06d}.pt')
         torch.save(dict(actor=self.backend.actor.state_dict(),critic=self.backend.critic.state_dict(),
             optimizer=self.backend.optimizer.state_dict(),normalization=self.normalization,
             samples=self.samples,stage_samples=self.stage_samples,seed=self.seed,group=self.group,
             effective_samples=self.effective_samples,physics_s=self.physics_s,episode=self.episode,
             curriculum_stage=self.curriculum_stage,promotions=self.promotions,session_records=self.session_records,
-            updates=self.backend.update_count,continuous_environment_snapshot=False,
+            updates=self.backend.update_count,continuous_environment_snapshot=False,buffer=self.buffer,
+            session_boundary=resume_only,
             torch_rng=torch.get_rng_state(),numpy_rng=np.random.get_state(),
             ppo=self.backend.provenance()),p.with_suffix('.tmp'))
         p.with_suffix('.tmp').replace(p)
@@ -81,6 +83,7 @@ class PolicyStream:
             curriculum_stage=self.curriculum_stage,promotions=self.promotions,session_records=self.session_records,
             updates=self.backend.update_count,wall_s=time.time()-self.begin,checkpoint=str(p),
             group=self.group,seed=self.seed)
+        if resume_only:return
         progress=self.directory/'progress.json'
         progress.with_suffix('.tmp').write_text(json.dumps(summary,indent=2)+'\n')
         progress.with_suffix('.tmp').replace(progress)
@@ -106,6 +109,16 @@ class PolicyStream:
             loss=self.backend.update(Rollout(**batch));self.buffer.clear()
             self.learning.write(json.dumps(dict(samples=self.samples,wall_s=time.time()-self.begin,**loss))+'\n')
             self.log.flush();self.learning.flush();self.checkpoint()
+            # Keep at most one 256-transition update ahead, preserving this live session.
+            while True:
+                deadline=json.loads((self.root/self.contract['outputs']['compact_root']/'training-deadline.json').read_text())['deadline_unix_s']
+                amounts=[]
+                for group in ('PPO_RAW_S5','PANN_PPO_S5'):
+                    for seed in range(3):
+                        path=self.directory.parent/f'{group}-seed{seed}'/'progress.json'
+                        amounts.append(json.loads(path.read_text())['samples'] if path.exists() else 0)
+                if self.samples-min(amounts)<=256 or time.time()>=deadline:break
+                time.sleep(5)
             print(json.dumps(dict(group=self.group,seed=self.seed,samples=self.samples,
                 physics_s=self.physics_s,wall_s=time.time()-self.begin,loss=loss['loss'])),flush=True)
 

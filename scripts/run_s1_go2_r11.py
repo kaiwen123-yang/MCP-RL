@@ -36,13 +36,14 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--attempt',required=True);p.add_argument('--build',required=True)
     p.add_argument('--level',choices=['E30','E60','E300','E600'],required=True)
+    p.add_argument('--workers',type=int,default=2)
     p.add_argument('--cap',type=float,default=.215);p.add_argument('--condition',choices=['nominal','yaw_plus5','yaw_minus5'],default='nominal')
     p.add_argument('--purpose',choices=['development','formal','rigid_regression'],default='development')
     p.add_argument('--terrain',choices=['tm02_anchor','rigid'],default='tm02_anchor')
     p.add_argument('--group',choices=['FIXED_S5','PPO_RAW_S5','PANN_PPO_S5'],default='FIXED_S5')
     p.add_argument('--seed',type=int,choices=[0,1,2]);p.add_argument('--checkpoint');p.add_argument('--render',action='store_true')
     a=p.parse_args();c,r9=configuration(a.build,a.level,a.cap,a.terrain)
-    args=arguments(a.attempt,a.build,a.condition,a.purpose,c['r11_stage']['task_kind'])
+    args=arguments(a.attempt,a.build,a.condition,a.purpose,c['r11_stage']['task_kind'],workers=a.workers)
     os.environ['MJPC_TASKS_DIR']=str(ROOT/'work/r11-frozen'/a.build/'runtime-tasks')
     if a.render:render(args,c);return
     normalization=None
@@ -89,6 +90,6 @@ def main():
             if not idx.get('frozen_controller'):
                 idx['frozen_controller']=dict(build=a.build,cap=a.cap,case_key=key,
                     E30=c['predecessor_attempt'],E60=a.attempt,case_identity=identity,
-                    frozen_unix_s=time.time(),controller_identity=json.loads((ROOT/'work/r11-frozen'/a.build/'identity.json').read_text()))
+                    frozen_unix_s=time.time(),workers=a.workers,controller_identity=json.loads((ROOT/'work/r11-frozen'/a.build/'identity.json').read_text()))
     if a.group!='FIXED_S5':stream.log.close();stream.learning.close()
 if __name__=='__main__':main()

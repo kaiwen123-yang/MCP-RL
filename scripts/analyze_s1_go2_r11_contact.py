@@ -7,7 +7,7 @@ import mujoco
 ROOT=Path(__file__).resolve().parents[1]
 OLD=Path('/root/autodl-tmp/MCP-RL-r10-gnc-r3')
 RUN='tm-s1-go2-soft-landing-r10'
-OUT=ROOT/'results/terrain_memory/simulation/tm-s1-go2-material-continuation-r11'
+OUT=ROOT/'outputs/terrain_memory/simulation/tm-s1-go2-material-continuation-r11/r10-source-analysis'
 OUT.mkdir(parents=True,exist_ok=True)
 summaries=[]
 for name in ['dev10-GNC-r3-cap025','dev11-GNC-r3-cap0215','dev12-GNC-r3-cap018']:
