@@ -1,0 +1,23 @@
+--- S5-r13/mjpc/tasks/quadruped/quadruped.cc
++++ S5-r14/mjpc/tasks/quadruped/quadruped.cc
+@@ -61,7 +61,10 @@
+   const double* ref = data->userdata;
+ 
+   // S5-r3: first-order roll/pitch error on the original material footprint.
+-  bool r11_material_support = false;
++  const bool r11_moving_body_support = current_mode_ == kModeQuadruped &&
++      GetGait() != kGaitStand &&
++      GetNumberOrDefault(0, model, "r11_moving_body_support") == 1;
++  bool r11_material_support = r11_moving_body_support;
+   if (soft_landing_ && GetCustomNumericData(model, "r10_local_contact")) {
+     constexpr double half = 0.015811388300841896;
+     for (A1Foot foot : kFootAll) {
+@@ -362,7 +365,7 @@
+         material_support |= p[0]>=.8+half_sole && p[0]<=2.2-half_sole &&
+                             mju_abs(p[1])<=.6-half_sole;
+       }
+-      residual[counter++]=material_support ?
++      residual[counter++]=(material_support || r11_moving_body_support) ?
+           (data->xpos[3*torso_body_id_+2]-support_height[0])/.04 : 0;
+     }
+   }

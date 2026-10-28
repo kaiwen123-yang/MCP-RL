@@ -1,0 +1,12 @@
+{
+  "build": "S5-r14",
+  "based_on": "S5-r13",
+  "r11_moving_body_support": {
+    "enabled": true,
+    "change": "Keep the existing absolute body-height and first-order Upright objectives active throughout moving Quadruped gait, independently of candidate footprint membership in the material strip.",
+    "preserved": "Same height target .29020336039643685m, scale .04m, quadratic weight1; same Upright norm6/.05 weight1. No extra cost term or weight change. Stand S3 support remains unchanged.",
+    "evidence": "S5-r13 moving stance tracking alone ended10.5304s with trunk contact and maxstrain.008374. Its9.7s optimized plan leaves all candidate feet outside the strip by9.9s, disabling absolute height and first-order Upright; the same plan predicts base .175499m at10.0s. S5-r12 shows the same gating mechanism.",
+    "rigid_regression": "The same moving-body objectives also remain active in the one rigid regression; material-only landing/domain costs still switch off with the physical material.",
+    "hypothesis": "Removing the support-objective spatial discontinuity prevents the optimizer from accepting collapse after retracting candidate footprints across the strip boundary."
+  }
+}

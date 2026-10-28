@@ -217,6 +217,9 @@ def write_equilibrium_settings(xml_path, config, arm):
                 ET.SubElement(custom,'numeric',name='r10_contact_anchor',data='1')
                 tree.getroot().find('size').set('nuserdata','78')
                 values['r10_contact_anchor']=1
+        if config.get('r11_moving_body_support'):
+            ET.SubElement(custom,'numeric',name='r11_moving_body_support',data='1')
+            values['r11_moving_body_support']=1
         if config.get('r11_moving_stance_height'):
             ET.SubElement(custom,'numeric',name='r11_moving_stance_height',data='1')
             values['r11_moving_stance_height']=1
@@ -237,7 +240,7 @@ def write_equilibrium_settings(xml_path, config, arm):
         cost_weights={'Orientation':.03 if arm=='AUTHOR_N' else 1.,'Angmom':0.}
         if config.get('actual_terrain')=='rigid' and config.get('controller_formulation') in ('GN','GNC'):
             cost_weights.update(LandingVelocity=0.,LandingIndentation=0.)
-            if config['normal_landing'].get('material_support_height'):cost_weights['MaterialSupportHeight']=0.
+            if config['normal_landing'].get('material_support_height') and not config.get('r11_moving_body_support'):cost_weights['MaterialSupportHeight']=0.
         if config.get('r11_domain_margin'):
             cost_weights['MaterialDomainMargin']=0. if config.get('actual_terrain')=='rigid' else config['r11_domain_margin']['weight']
         return dict(arm=arm,prediction_profile='AUTHOR_N' if arm=='AUTHOR_N' else 'C',
