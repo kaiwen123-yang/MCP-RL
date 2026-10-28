@@ -20,7 +20,8 @@ def main():
     parameters=json.loads((ROOT/'experiments/tm02/r2-multihistory.json').read_text())['reference_material']['parameters']
     weights=os.environ['MPC_PANN_WEIGHTS']
     obs=MaterialObserver(parameters,weights)
-    data=np.load(a.trajectory)
+    with np.load(a.trajectory) as archive:
+        data={key:archive[key] for key in ('time','feet','feet_velocity')}
     records=[];query_time=-1.;begin=time.perf_counter()
     for i,t in enumerate(data['time']):
         bottom=data['feet'][i].copy();bottom[:,2]-=.022

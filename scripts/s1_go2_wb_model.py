@@ -174,7 +174,7 @@ def write_equilibrium_settings(xml_path, config, arm):
         values=dict(s1_stand_equilibrium=0,agent_timestep=prediction['integration_dt_s'],
             agent_integrator=3,agent_differentiable=prediction['differentiable'],
             agent_horizon=config['execution']['requested_prediction_horizon_s'],
-            s1_control_hold_substeps=1 if arm=='AUTHOR_N' else 2)
+            s1_control_hold_substeps=1 if arm=='AUTHOR_N' else prediction.get('substeps',2))
         tree=ET.parse(xml_path);custom=tree.getroot().find('custom')
         for name,value in values.items():
             element=custom.find("numeric[@name='%s']" % name)
@@ -198,13 +198,17 @@ def write_equilibrium_settings(xml_path, config, arm):
             for name,dim,weight in [('StandFootPosition',12,.1),('StandFootVelocity',12,.02),('StandSupportForce',4,0.)]:
                 sensors.insert(index,ET.Element('user',name=name,dim=str(dim),user=f'0 {weight} 0 1'))
                 index+=1
-        if config.get('controller_formulation') == 'GN':
+        if config.get('controller_formulation') in ('GN','GNC'):
             ET.SubElement(custom,'numeric',name='r10_normal_landing',data='1')
             values['r10_normal_landing']=1
             index=next(i for i,s in enumerate(sensors) if s.tag!='user')
             for name,weight in [('LandingVelocity',.02),('LandingIndentation',.1)]:
                 sensors.insert(index,ET.Element('user',name=name,dim='4',user=f'0 {weight} 0 1'))
                 index+=1
+        if config.get('controller_formulation') == 'GNC':
+            stiffness=config['local_contact_model']['instantaneous_stiffness_N_m']
+            ET.SubElement(custom,'numeric',name='r10_local_contact',data=format(stiffness,'.17g'))
+            values['r10_local_contact']=stiffness
         tree.write(xml_path,encoding='unicode')
         return dict(arm=arm,prediction_profile='AUTHOR_N' if arm=='AUTHOR_N' else 'C',
             numerics=values,cost_weights={'Orientation':.03 if arm=='AUTHOR_N' else 1.,'Angmom':0.},
