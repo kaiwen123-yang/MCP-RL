@@ -1,0 +1,127 @@
+{
+  "run_id": "tm-s1-go2-soft-landing-r10",
+  "stage": "S1R10",
+  "status": "planned_not_executed",
+  "reviewed_source_commit": "521303033ef6836880afb80e146c7b73ed0bb985",
+  "plan": "docs/TERRAIN_MEMORY_PLAN.md",
+  "purpose": "Establish material-compatible touchdown in the retained Go2 whole-body MPC, then execute real PANN/standard-PPO/MPC training and continuous material missions in the same campaign. This file contains no new experimental results.",
+  "history": {
+    "R8": "results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json",
+    "R9": "results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json",
+    "R9_status": "8 material development starts, 0 complete missions, 0 PANN observer runs, 0 PPO training streams",
+    "historical_protocol_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/521303033ef6836880afb80e146c7b73ed0bb985/docs/TERRAIN_MEMORY_PLAN.md",
+    "reopen_old_budgets": false
+  },
+  "configuration_reuse": {
+    "baseline": "experiments/terrain_memory/s1-go2-wb-support.json",
+    "joint_interface": "experiments/terrain_memory/s1-go2-joint.json",
+    "rule": "Read both at reviewed_source_commit. Reuse their material, observations, PANN features, PPO settings, reward and original mission definitions except explicit R10 overrides in this contract and current plan. R9 run identity, closed launch counters and old launcher are not executable R10 defaults. Emit the actual fully resolved configuration before new physical execution."
+  },
+  "plant_invariants": {
+    "robot": "project Go2, 15.206408 kg; original geometry/inertia/passive parameters/limits",
+    "pd": [60, 5],
+    "per_leg_torque_limits_Nm": [23.7, 23.7, 45.43],
+    "physics_dt_s": 0.0002,
+    "control_hold_s": 0.002,
+    "logical_planning_dt_s": 0.02,
+    "material": "original ReferenceColumns tm02_anchor, original parameters and stress scaling",
+    "gamma": 0.025,
+    "thickness_m": 0.05,
+    "footprint_area_m2": 0.001,
+    "grid_m": 0.02,
+    "strain_absolute_limit": 0.02,
+    "strip_x_m": [0.8, 2.2],
+    "strip_y_m": [-0.6, 0.6],
+    "boundary_rule": "unchanged hard-priority footprint assignment, no double support",
+    "history_rule": "world-fixed shared columns; unloaded recovery continues; only independent episode resets",
+    "prohibited": "changing truth to pass, clipping material strain/force, injecting planned GRF, relaxing failure/completion criteria, resetting between laps, substituting a different training controller"
+  },
+  "controller_development": {
+    "new_controller_name": "S4 only after actual implementation; preserve frozen R8 S3",
+    "maximum_development_physical_starts": 12,
+    "maximum_named_formulations": 3,
+    "starting_data": "Inspect existing R9 first-loading/domain-exit windows and corresponding MPC plans on the execution host; no new short diagnostic episodes or full asset re-downloads.",
+    "G": "Resolve model-derived foot-center versus sole geometry. Upstream kFootRadius=.020 m versus project .022 m is a source-level inconsistency; confirm executed source before attributing an actual failure. Use per-foot model radii, preserve physical geometry, rebuild affected targets.",
+    "N": "In the same MPC objective, implement smooth soft-touchdown reference and actual predicted normal-velocity/indentation objectives near material contact. Preserve 2 Hz gait, .45 duty, .03 m apex initially. Do not merely post-filter targets or append torques. Reference endpoint speed is not actual touchdown speed, and a soft cost is not a hard guarantee.",
+    "conditional_C": "Only if G/N full-mission evidence still shows material-contact prediction mismatch: implement one documented short-horizon normal-contact approximation within the same solver. Truth remains unchanged. Recompute candidate forces from candidate states, preserve independent rollout/finite-difference state, and differentiate the implemented transition. A frozen local approximation is not propagated terrain memory; arbitrary userdata is not automatically an optimized state. No global material-state or new solver-platform project.",
+    "prediction_clock": "Retain .350 s horizon and 2 ms actual-input grid. If the new contact approximation needs finer internal integration, preserve horizon, input holding and matching composed derivatives; explicitly record cost. Do not change the real plant step to manufacture success.",
+    "development_cap_priority_m_s": [0.25, 0.215, 0.18],
+    "cap_rule": "Start at .25. Alternative fixed caps are used only to characterize the changed controller's feasible domain, not a repeat of the R9 speed sweep. Freeze the first complete nominal controller/cap before formal use.",
+    "stand_reference": "Retain successful S3 feasible Stand references and effort scale .02 rad/weight .08 on rigid endpoint pads; no unrelated standing redesign.",
+    "stop": "If no complete material mission after the bounded G/N/C development, publish the concrete impediment and all attempts. No automatic new platform, additional formulation, material relaxation or refreshed allowance."
+  },
+  "joint_learning": {
+    "start_condition": "At least one same-implementation complete original nominal material mission; no requirement for all initial conditions or a 300 s perfect score before training",
+    "groups": ["FIXED_S4", "PPO_RAW_S4", "PANN_PPO_S4"],
+    "fixed_group_cap": "first successful predeclared development cap, frozen before formal evaluation",
+    "actor_action": "R9 single speed-cap channel [.18,.25] m/s at 2 Hz; no new torque or touchdown channel in this baseline comparison",
+    "pann": "frozen B_random1000--ideal seed0, original normalization, independent causal LearnedColumns state; no truth q/e inputs",
+    "pann_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
+    "observer_preparation": "Implement and evaluate on existing causal records while controller development proceeds. Replay is not closed-loop success or RL training. Validate deployed 2 ms observation integration on relevant new complete histories, not merely network loading.",
+    "ppo": "standard existing Tianshou PPO; settings/reward/shared histories from frozen R9 contract; no new PPO algorithm or PANN retraining",
+    "seeds": [0, 1, 2],
+    "streams": 6,
+    "first_target_transitions_per_stream": 4096,
+    "maximum_transitions_per_stream": 8192,
+    "maximum_total_transitions": 49152,
+    "balanced_checkpoint_stride": 256,
+    "checkpoint_selection": "last common 256-step checkpoint reached by all six streams before the fixed training deadline; no selection by formal performance",
+    "shortfall": "evaluate common actual sample count and label undertraining; do not call incomplete sampling converged or completed",
+    "rollout": "same frozen S4+material+Go2 physics for every transition; persistent MPC server/model and compiled PANN; no episode reset at rollout boundaries",
+    "termination": "actual physical/material failure or intrinsic 60 s mission deadline are terminal; ordinary rollout boundaries bootstrap actual successors; technical budget interruption is not physical failure"
+  },
+  "evaluation": {
+    "rigid_regression": {"maximum_starts": 1, "condition": "nominal", "duration_s": 60},
+    "original_material": {
+      "maximum_records": 21,
+      "conditions": ["nominal", "yaw_plus5", "yaw_minus5"],
+      "duration_s": 60,
+      "composition": "3 fixed plus 2 learned groups x 3 training seeds x 3 initial conditions",
+      "observe_after_success": true
+    },
+    "continuous_material": {
+      "maximum_records": 3,
+      "duration_s": 300,
+      "round_trips": 5,
+      "route_deadline_s": 270,
+      "condition": "nominal",
+      "learned_seed": 0,
+      "start_rule": "Start a group's long task once its frozen nominal 60 s complete observation passes. Do not wait for all other initial conditions. Fixed-group long execution can precede learned-policy evaluation.",
+      "between_laps_reset": false
+    },
+    "extended_continuous_material": {
+      "maximum_records": 3,
+      "duration_s": 600,
+      "round_trips": 10,
+      "route_deadline_s": 540,
+      "condition": "nominal",
+      "learned_seed": 0,
+      "start_rule": "Only for each same-version group whose 300 s task passes, and only from budget remaining after reserving all core evaluation. Otherwise explicitly not executed. No replacement seed or version."
+    },
+    "reuse": "An exactly identical frozen development/formal record may be reused once; one physical start cannot count twice.",
+    "interpretation": "Deterministic initial-condition coverage and three policy seeds are not independent material populations. Report completion, post-completion holding and unique material contact events separately."
+  },
+  "budget": {
+    "maximum_nontraining_physical_starts": 40,
+    "upper_bound_decomposition": "12 development + 1 rigid regression + 21 original material + 3 continuous300 + 3 conditional600; exact reuse reduces actual starts",
+    "training_starts_counted_separately": true,
+    "campaign_wall_clock_hard_cap_h": 48,
+    "starts_at": "first R10 physical integration; include pauses, development, training and evaluation; implementation/build/publication timing separately recorded",
+    "reserve_evaluation_h_at_least": 6,
+    "reserve_rule": "max(6 h,1.2 times empirically estimated remaining core evaluation cost); omit conditional600 before consuming core evaluation reserve",
+    "max_concurrent_environments": 3,
+    "solver_workers_per_environment": 2,
+    "benchmark_episodes": 0,
+    "resource": "existing fy-5080 SSH/tmux and environments only; no paid resources; no hardware activation"
+  },
+  "outputs": {
+    "compact_root": "results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10",
+    "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-soft-landing-r10",
+    "create_result_index_only_after_actual_execution": true,
+    "required": "actual source/config/binary identities; complete positive/negative outcomes and videos; causal touchdown/reference/force records; actual PPO curves/checkpoints; material recovery/revisit and task metrics; real component/campaign timing",
+    "training_logging": "compact transitions/episodes and selected full videos; no all-node MPC dumps at every training step",
+    "publication": "source/compact evidence to GitHub, arrays/weights/videos directly from execution host to Release; verify commit and asset URL/size/digest",
+    "archive_on_user_pc_after_publication": false,
+    "retention": "keep normal execution outputs, required checkpoints and historical evidence; no unsolicited deletion"
+  }
+}
