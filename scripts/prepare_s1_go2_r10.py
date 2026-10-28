@@ -16,6 +16,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--form', choices=['G','GN','GNC'], required=True)
     p.add_argument('--build',default=None)
+    p.add_argument('--jobs',type=int,default=12)
     a = p.parse_args()
     source = ROOT/'work/terrain-memory/upstreams/mujoco_mpc-go2'
     relative = Path('mjpc/tasks/quadruped/quadruped.cc')
@@ -106,7 +107,7 @@ def main():
     (ROOT/('experiments/terrain_memory/s1-go2-r10-'+label+'.patch')).write_text(patch)
     begin = time.time()
     subprocess.run(['cmake','--build',str(source/'build-autodl'),
-        '--target','agent_server','-j','12'], check=True)
+        '--target','agent_server','-j',str(a.jobs)], check=True)
     frozen = ROOT/'work/r10-frozen'/label
     frozen.mkdir(parents=True, exist_ok=False)
     shutil.copytree(source/'mjpc', frozen/'mjpc')

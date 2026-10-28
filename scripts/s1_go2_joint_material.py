@@ -6,12 +6,12 @@ import mujoco
 from tm02.s1_contact import Ground
 
 class JointMaterial:
-    def __init__(self,root,contract,cap=.25,profile='constant',full_recording=True):
+    def __init__(self,root,contract,cap=.25,profile='constant',full_recording=True,terrain='tm02_anchor'):
         self.root,self.contract,self.cap=root,contract,cap
         self.nominal_cap,self.profile=cap,profile
         self.cap_decisions=[];self.last_actor_tick=-1
         pars=json.loads((root/'experiments/tm02/r2-multihistory.json').read_text())['reference_material']['parameters']
-        self.ground=Ground({'id':'tm02_anchor'},pars)
+        self.ground=Ground({'id':terrain},pars)
         self.soft=np.zeros(4,bool);self.force=np.zeros((4,3))
         self.bottom=np.zeros((4,3));self.velocity=np.zeros((4,3))
         self.force_boundary_bottom=np.zeros((4,3))

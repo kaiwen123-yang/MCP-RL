@@ -205,7 +205,11 @@ def write_equilibrium_settings(xml_path, config, arm):
             for name,weight in [('LandingVelocity',.02),('LandingIndentation',.1)]:
                 sensors.insert(index,ET.Element('user',name=name,dim='4',user=f'0 {weight} 0 1'))
                 index+=1
-        if config.get('controller_formulation') == 'GNC':
+            height_objective=config['normal_landing'].get('material_support_height')
+            if height_objective:
+                ET.SubElement(custom,'numeric',name='r10_material_support_height',data=format(height_objective['target_m'],'.17g'))
+                sensors.insert(index,ET.Element('user',name='MaterialSupportHeight',dim='1',user='0 1 0 1'))
+        if config.get('controller_formulation') == 'GNC' and config['local_contact_model'].get('enabled',True):
             stiffness=config['local_contact_model']['instantaneous_stiffness_N_m']
             ET.SubElement(custom,'numeric',name='r10_local_contact',data=format(stiffness,'.17g'))
             values['r10_local_contact']=stiffness
@@ -214,8 +218,12 @@ def write_equilibrium_settings(xml_path, config, arm):
                 tree.getroot().find('size').set('nuserdata','78')
                 values['r10_contact_anchor']=1
         tree.write(xml_path,encoding='unicode')
+        cost_weights={'Orientation':.03 if arm=='AUTHOR_N' else 1.,'Angmom':0.}
+        if config.get('actual_terrain')=='rigid' and config.get('controller_formulation') in ('GN','GNC'):
+            cost_weights.update(LandingVelocity=0.,LandingIndentation=0.)
+            if config['normal_landing'].get('material_support_height'):cost_weights['MaterialSupportHeight']=0.
         return dict(arm=arm,prediction_profile='AUTHOR_N' if arm=='AUTHOR_N' else 'C',
-            numerics=values,cost_weights={'Orientation':.03 if arm=='AUTHOR_N' else 1.,'Angmom':0.},
+            numerics=values,cost_weights=cost_weights,
             prediction_smoothing_width_m=None,refsafe='preserved',plant_options='unchanged',
             xml_sha256=_digest(xml_path))
     setting = next(x for x in config['development']['G0_named_arms'] + config['development'].get('G1_revisions', []) if x['id']==arm)

@@ -66,7 +66,7 @@ class PolicyStream:
     def transition(self,pending,observation,reward,terminated,truncated,dt,effective,stage,info):
         sample=pending['sample'];next_obs=torch.as_tensor(observation,dtype=torch.float32).reshape(1,-1)
         next_value=self.backend.value(next_obs)
-        record=dict(obs=pending['obs'],raw_action=sample.raw_action,reward=torch.tensor([reward]),
+        record=dict(obs=pending['obs'],next_obs=next_obs,raw_action=sample.raw_action,reward=torch.tensor([reward]),
             terminated=torch.tensor([terminated]),truncated=torch.tensor([truncated]),
             log_prob=sample.log_prob,value=sample.value,next_value=next_value)
         self.log.write(json.dumps(dict(time_s=info['time_s'],episode=self.episode,
@@ -78,6 +78,9 @@ class PolicyStream:
         self.stage_samples[stage]+=1;self.physics_s+=dt
         if len(self.buffer)==256:
             batch={key:torch.stack([row[key] for row in self.buffer]) for key in record}
+            np.savez_compressed(self.directory/f'rollout-{self.samples-255:06d}-{self.samples:06d}.npz',
+                **{key:value.detach().cpu().numpy() for key,value in batch.items()})
+            batch.pop('next_obs')
             loss=self.backend.update(Rollout(**batch));self.buffer.clear()
             self.learning.write(json.dumps(dict(samples=self.samples,wall_s=time.time()-self.begin,**loss))+'\n')
             self.log.flush();self.learning.flush();self.checkpoint()
@@ -214,6 +217,8 @@ class PolicyMaterial(JointMaterial):
         truncated=not (physical_failure or timeout or success)
         self.collect_pending(t,self.mission,observation,physical_failure or timeout or success,truncated,physical_failure,timeout)
         result=super().finish(result)
+        result.pop('development_intent',None)
+        result['execution_intent']='Standard PPO in the actual S4/Go2/material loop'
         result['material']['observer_enabled']=self.observer is not None
         result['policy']=dict(group=self.group,seed=self.stream.seed,training=self.stream.training,
             total_transitions=self.stream.samples,stage=self.stage,session_limit_s=self.session_s,

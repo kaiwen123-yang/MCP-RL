@@ -23,4 +23,15 @@
     }
     mju_copy(residual+counter,velocity_residual,4); counter+=4;
     mju_copy(residual+counter,indentation_residual,4); counter+=4;
+    const double* support_height=GetCustomNumericData(model,"r10_material_support_height");
+    if (support_height) {
+      bool material_support=false;
+      for (A1Foot foot : kFootAll) {
+        const double* p=foot_pos[foot];
+        material_support |= p[0]>=.8+half_sole && p[0]<=2.2-half_sole &&
+                            mju_abs(p[1])<=.6-half_sole;
+      }
+      residual[counter++]=material_support ?
+          (data->xpos[3*torso_body_id_+2]-support_height[0])/.04 : 0;
+    }
   }
