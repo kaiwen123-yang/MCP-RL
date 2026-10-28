@@ -1,0 +1,94 @@
+--- S5-r6/mjpc/tasks/quadruped/quadruped.cc
++++ S5-r7/mjpc/tasks/quadruped/quadruped.cc
+@@ -147,8 +147,8 @@
+ 
+   // ---------- Gait ----------
+   A1Gait gait = GetGait();
+-  double step[kNumFoot];
+-  FootStep(step, GetPhase(data->time), gait);
++  double step[kNumFoot], step_velocity[kNumFoot];
++  FootStep(step, GetPhase(data->time), gait, step_velocity);
+   // Explicit opt-in for a known, static horizontal ground plane.
+   const double* flat_ground_height =
+       GetCustomNumericData(model, "s1_flat_ground_height");
+@@ -343,6 +343,7 @@
+         double gate = 0.5*(1-mju_tanh((z-0.005)/0.002));
+         // 1 mm / 20 ms logical replanning interval; approaches zero at the plane.
+         double desired_vz = -0.05*mju_tanh(mju_max(z,0)/0.001);
++        if (slow_approach_) desired_vz=mju_max(mju_min(step_velocity[foot],0.),desired_vz);
+         velocity_residual[foot] = gate*(mju_min(velocity[5],0)-desired_vz)/0.05;
+         // 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.
+         double over = -z - 0.00019889981664;
+@@ -692,6 +693,7 @@
+   residual_.height_cost_id_ = CostTermByName(model, "Height");
+ 
+   residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;
++  residual_.slow_approach_ = GetNumberOrDefault(0, model, "r11_slow_approach") == 1;
+ 
+   // ----------  model identifiers  ----------
+   residual_.torso_body_id_ = mj_name2id(model, mjOBJ_XBODY, "trunk");
+@@ -835,13 +837,43 @@
+ }
+ 
+ // compute target step height for all feet
++// A C2 swing with a separately timed final 5 mm approach.
+ void QuadrupedFlat::ResidualFn::FootStep(double step[kNumFoot], double time,
+-                                         A1Gait gait) const {
++                                        A1Gait gait, double* velocity) const {
+   double amplitude = parameters_[amplitude_param_id_];
+   double duty_ratio = parameters_[duty_param_id_];
++  if (velocity) mju_zero(velocity, kNumFoot);
+   for (A1Foot foot : kFootAll) {
+     double footphase = 2*mjPI*kGaitPhase[gait][foot];
+-    step[foot] = amplitude * StepHeight(time, footphase, duty_ratio);
++    if (!slow_approach_ || duty_ratio >= 1 || amplitude == 0) {
++      step[foot] = amplitude * StepHeight(time, footphase, duty_ratio);
++      continue;
++    }
++    double angle = (fmod(time+mjPI-footphase,2*mjPI)-mjPI)*.5/(1-duty_ratio);
++    if (angle<=-mjPI/2 || angle>=mjPI/2) {
++      step[foot]=0;
++      continue;
++    }
++    const double swing_duration=(1-duty_ratio)*2*mjPI/phase_velocity_;
++    constexpr double approach_duration=.20;
++    constexpr double approach_height=.005;
++    const double fast_duration=swing_duration-approach_duration;
++    const double rise_duration=fast_duration*amplitude/(2*amplitude-approach_height);
++    const double high_descent_duration=fast_duration-rise_duration;
++    const double t=(angle+mjPI/2)/mjPI*swing_duration;
++    double start_height,change,duration,u;
++    if (t<rise_duration) {
++      start_height=0;change=amplitude;duration=rise_duration;u=t/duration;
++    } else if (t<fast_duration) {
++      start_height=amplitude;change=approach_height-amplitude;
++      duration=high_descent_duration;u=(t-rise_duration)/duration;
++    } else {
++      start_height=approach_height;change=-approach_height;
++      duration=approach_duration;u=(t-fast_duration)/duration;
++    }
++    const double smooth=u*u*u*(10+u*(-15+6*u));
++    step[foot]=start_height+change*smooth;
++    if (velocity) velocity[foot]=change/duration*30*u*u*(1-u)*(1-u);
+   }
+ }
+ 
+--- S5-r6/mjpc/tasks/quadruped/quadruped.h
++++ S5-r7/mjpc/tasks/quadruped/quadruped.h
+@@ -157,7 +157,7 @@
+     double StepHeight(double time, double footphase, double duty_ratio) const;
+ 
+     // compute target step height for all feet
+-    void FootStep(double step[kNumFoot], double time, A1Gait gait) const;
++    void FootStep(double step[kNumFoot], double time, A1Gait gait, double* velocity = nullptr) const;
+ 
+     // walk horizontal position given time
+     void Walk(double pos[2], double time) const;
+@@ -212,6 +212,7 @@
+     int height_cost_id_       = -1;
+     int foot_geom_id_[kNumFoot];
+     bool soft_landing_ = false;
++    bool slow_approach_ = false;
+     int shoulder_body_id_[kNumFoot];
+ 
+     // derived kinematic quantities describing flip trajectory

@@ -10,6 +10,7 @@ def main():
     source=OLD/'work/terrain-memory/upstreams/mujoco_mpc-go2'
     prior=OLD/'work/r10-frozen/GNC-r3'
     if a.build=='S5-r6':prior=ROOT/'work/r11-frozen/S5-r3'
+    if a.build=='S5-r7':prior=ROOT/'work/r11-frozen/S5-r6'
     frozen=ROOT/'work/r11-frozen'/a.build
     if frozen.exists():raise ValueError('This controller build already exists; preserve its identity')
     if a.build in ('S5-r2','S5-r4','S5-r5'):
@@ -25,7 +26,7 @@ def main():
         (frozen/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
         print(f'Prepared {a.build} controller with unchanged frozen C binary.',flush=True)
         return
-    if a.build not in ('S5-r1','S5-r3','S5-r6'):raise ValueError('An undeclared S5 controller build was requested')
+    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7'):raise ValueError('An undeclared S5 controller build was requested')
     relative=Path('mjpc/tasks/quadruped/quadruped.cc')
     old=(prior/relative).read_text()
     new=old.replace('// 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.',
@@ -53,13 +54,35 @@ def main():
     if a.build=='S5-r6':
         domain=(ROOT/'experiments/terrain_memory/s1-go2-r11-domain-margin.inc').read_text()
         new=old.replace('  // sensor dim sanity check',domain+'\n  // sensor dim sanity check')
+    if a.build=='S5-r7':
+        new=old
+        start=new.index('void QuadrupedFlat::ResidualFn::FootStep(')
+        end=new.index('\n// height during flip',start)
+        new=new[:start]+(ROOT/'experiments/terrain_memory/s1-go2-r11-slow-approach.inc').read_text()+new[end:]
+        new=new.replace('  double step[kNumFoot];\n  FootStep(step, GetPhase(data->time), gait);',
+            '  double step[kNumFoot], step_velocity[kNumFoot];\n  FootStep(step, GetPhase(data->time), gait, step_velocity);',1)
+        new=new.replace('        double desired_vz = -0.05*mju_tanh(mju_max(z,0)/0.001);',
+            '        double desired_vz = -0.05*mju_tanh(mju_max(z,0)/0.001);\n        if (slow_approach_) desired_vz=mju_max(mju_min(step_velocity[foot],0.),desired_vz);')
+        new=new.replace('  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;',
+            '  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;\n  residual_.slow_approach_ = GetNumberOrDefault(0, model, "r11_slow_approach") == 1;')
     if new==old:raise ValueError('Frozen residual was not found')
     for path in (prior/'mjpc').rglob('*'):
         if path.is_file() and path.suffix in ('.cc','.h'):
             shutil.copy2(path,source/path.relative_to(prior))
     (source/relative).write_text(new)
+    header_relative=Path('mjpc/tasks/quadruped/quadruped.h')
+    header_old=(prior/header_relative).read_text()
+    header_new=header_old
+    if a.build=='S5-r7':
+        header_new=header_new.replace('bool soft_landing_ = false;',
+            'bool soft_landing_ = false;\n    bool slow_approach_ = false;')
+        header_new=header_new.replace('void FootStep(double step[kNumFoot], double time, A1Gait gait) const;',
+            'void FootStep(double step[kNumFoot], double time, A1Gait gait, double* velocity = nullptr) const;')
+        (source/header_relative).write_text(header_new)
     patch=''.join(difflib.unified_diff(old.splitlines(True),new.splitlines(True),
         fromfile=prior.name+'/'+str(relative),tofile=a.build+'/'+str(relative)))
+    patch+=''.join(difflib.unified_diff(header_old.splitlines(True),header_new.splitlines(True),
+        fromfile=prior.name+'/'+str(header_relative),tofile=a.build+'/'+str(header_relative)))
     (ROOT/('experiments/terrain_memory/s1-go2-r11-'+a.build+'.patch')).write_text(patch)
     begin=time.time()
     subprocess.run(['cmake','--build',str(source/'build-autodl'),'--target','agent_server','-j','8'],check=True)
@@ -86,7 +109,14 @@ def main():
     if a.build=='S5-r6':
         overrides=json.loads((ROOT/'work/r11-frozen/S5-r5/identity.json').read_text())['configuration_overrides']
         overrides['r11_domain_margin']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r6.json').read_text())['r11_domain_margin']
-    identity=dict(controller='S5',build=a.build,based_on='S5-r5' if a.build=='S5-r6' else 'R10-GNC-r3',
+    if a.build=='S5-r7':
+        overrides=json.loads((ROOT/'work/r11-frozen/S5-r6/identity.json').read_text())['configuration_overrides']
+        overrides['r11_slow_approach']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r7.json').read_text())['r11_slow_approach']
+        landing=json.loads((ROOT/'results/terrain_memory/simulation/tm-s1-go2-soft-landing-r10/dev11-GNC-r3-cap0215-resolved.json').read_text())['r10_configuration']['normal_landing']
+        landing['height_profile']='S5-r7 three C2 quintic segments; final5mm over.20s, shared with analytic normal velocity reference'
+        landing['velocity_target']='During ascent/stance0; during descent max(min(phase_height_derivative,0),-.05*tanh(max(bottom_z,0)/.001))'
+        overrides['normal_landing']=landing
+    identity=dict(controller='S5',build=a.build,based_on=prior.name,
         prior_binary_sha256=sha(prior/'agent_server'),binary_sha256=sha(frozen/'agent_server'),
         source_files_sha256={str(x.relative_to(frozen)):sha(x) for x in (frozen/'mjpc').rglob('*') if x.is_file() and x.suffix in ('.cc','.h')},
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
