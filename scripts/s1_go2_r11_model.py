@@ -217,6 +217,10 @@ def write_equilibrium_settings(xml_path, config, arm):
                 ET.SubElement(custom,'numeric',name='r10_contact_anchor',data='1')
                 tree.getroot().find('size').set('nuserdata','78')
                 values['r10_contact_anchor']=1
+        if config.get('r11_landing_approach_band'):
+            width=config['r11_landing_approach_band']['width_m']
+            ET.SubElement(custom,'numeric',name='r11_landing_approach_band',data=format(width,'.17g'))
+            values['r11_landing_approach_band']=width
         if config.get('r11_moving_body_support'):
             ET.SubElement(custom,'numeric',name='r11_moving_body_support',data='1')
             values['r11_moving_body_support']=1

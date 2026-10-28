@@ -1,0 +1,12 @@
+{
+  "build": "S5-r15",
+  "based_on": "S5-r14",
+  "r11_landing_approach_band": {
+    "width_m": 0.07525,
+    "derivation": "Fixed body-reference cap .215m/s times unchanged .35s prediction horizon. This is a declared reference activation width, not a bound on actual foot reach.",
+    "change": "Activate the existing downward landing-velocity objective on a spatial approach band around the original footprint-interior material region. Keep normal force, native contact switching, indentation and material-domain residual activation on the exact original strip.",
+    "evidence": "S5-r14 retained body height but failed RL at9.448s: actual bottom-1.0144mm/vz-.62295m/s. Its9.4s C plan already predicted RL-1.03865mm/vz-.87028 at9.448s with x.815931m, only.120mm inside the .815811m footprint threshold. The prior9.38s plan has x.814946m at that time: braking is absent until the footprint crosses the sharp material boundary.",
+    "objective": "Same phase-compatible desired vz, .05m/s scale and .02 weight. No physical region, constitutive parameter, strain limit, cap, route or timing change.",
+    "hypothesis": "Begin braking before the planned foot crosses the strip boundary rather than activating the normal-velocity cost at already-deep entry."
+  }
+}

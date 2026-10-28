@@ -16,6 +16,7 @@ def main():
     if a.build=='S5-r11':prior=ROOT/'work/r11-frozen/S5-r8'
     if a.build=='S5-r13':prior=ROOT/'work/r11-frozen/S5-r12'
     if a.build=='S5-r14':prior=ROOT/'work/r11-frozen/S5-r13'
+    if a.build=='S5-r15':prior=ROOT/'work/r11-frozen/S5-r14'
     frozen=ROOT/'work/r11-frozen'/a.build
     if frozen.exists():raise ValueError('This controller build already exists; preserve its identity')
     if a.build in ('S5-r2','S5-r4','S5-r5','S5-r12'):
@@ -32,7 +33,7 @@ def main():
         (frozen/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
         print(f'Prepared {a.build} controller with unchanged frozen C binary.',flush=True)
         return
-    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9','S5-r10','S5-r11','S5-r13','S5-r14'):raise ValueError('An undeclared S5 controller build was requested')
+    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9','S5-r10','S5-r11','S5-r13','S5-r14','S5-r15'):raise ValueError('An undeclared S5 controller build was requested')
     relative=Path('mjpc/tasks/quadruped/quadruped.cc')
     old=(prior/relative).read_text()
     new=old.replace('// 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.',
@@ -86,6 +87,15 @@ def main():
             '  bool r11_material_support = r11_moving_body_support;')
         new=new.replace('      residual[counter++]=material_support ?',
             '      residual[counter++]=(material_support || r11_moving_body_support) ?')
+    if a.build=='S5-r15':
+        new=old.replace('      if (material) {\n        double z = p[2]',
+            '      const double approach_width = GetNumberOrDefault(0, model, "r11_landing_approach_band");\n'
+            '      const bool approaching = p[0] >= .8+half_sole-approach_width &&\n'
+            '          p[0] <= 2.2-half_sole+approach_width &&\n'
+            '          mju_abs(p[1]) <= .6-half_sole+approach_width;\n'
+            '      if (material || approaching) {\n        double z = p[2]')
+        new=new.replace('        indentation_residual[foot] = 0.5*(over+mju_sqrt(over*over+1e-12))/0.001;',
+            '        indentation_residual[foot] = material ? 0.5*(over+mju_sqrt(over*over+1e-12))/0.001 : 0;')
     if new==old and a.build not in ('S5-r8','S5-r9','S5-r10','S5-r11'):raise ValueError('Frozen residual was not found')
     for path in (prior/'mjpc').rglob('*'):
         if path.is_file() and path.suffix in ('.cc','.h'):
@@ -178,6 +188,9 @@ def main():
     if a.build=='S5-r14':
         overrides=json.loads((prior/'identity.json').read_text())['configuration_overrides']
         overrides['r11_moving_body_support']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r14.json').read_text())['r11_moving_body_support']
+    if a.build=='S5-r15':
+        overrides=json.loads((prior/'identity.json').read_text())['configuration_overrides']
+        overrides['r11_landing_approach_band']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r15.json').read_text())['r11_landing_approach_band']
     identity=dict(controller='S5',build=a.build,based_on=prior.name,
         prior_binary_sha256=sha(prior/'agent_server'),binary_sha256=sha(frozen/'agent_server'),
         source_files_sha256={str(x.relative_to(frozen)):sha(x) for x in (frozen/'mjpc').rglob('*') if x.is_file() and x.suffix in ('.cc','.h')},

@@ -17,9 +17,9 @@ def deadline_file(value):
     temporary=path.with_suffix('.tmp')
     dump(temporary,value)
     temporary.replace(path)
-def launch(attempt,build,level,condition='nominal',group='FIXED_S5',seed=None,checkpoint=None,purpose='formal',terrain='tm02_anchor'):
+def launch(attempt,build,level,condition='nominal',group='FIXED_S5',seed=None,checkpoint=None,purpose='formal',terrain='tm02_anchor',workers=None):
     py=TRAIN_PY if group!='FIXED_S5' else Path(sys.executable)
-    workers=current().get('frozen_controller',{}).get('workers',2 if build=='S5-r1' else 8)
+    if workers is None:workers=current().get('frozen_controller',{}).get('workers',2 if build=='S5-r1' else 8)
     cmd=[str(py),'-u',str(ROOT/'scripts/run_s1_go2_r11.py'),'--attempt',attempt,'--build',build,
          '--level',level,'--condition',condition,'--group',group,'--purpose',purpose,'--terrain',terrain,'--workers',str(workers)]
     if seed is not None:cmd+=['--seed',str(seed),'--checkpoint',str(checkpoint)]
@@ -80,8 +80,12 @@ def training_progress():
     return values
 def reserve():
     idx=current()
+    frozen=idx.get('frozen_controller',{})
     measured=[a['wall_s']/a['simulation_s'] for a in idx['attempts']
-        if a.get('success') and a.get('simulation_s',0)>=30]
+        if a.get('success') and a.get('simulation_s',0)>=30 and
+        (not frozen or a.get('case_key')==frozen['case_key'])]
+    workers=frozen.get('workers',8)
+    parallel_contention=max(1.,2*(workers+1)/25.)
     fixed_ratio=max(measured,default=CONTRACT['budget']['actual_cost_reference']['slowdown'])
     # Formal evaluation uses the frozen8-worker execution setting. Do not
     # confuse the2-worker six-stream acquisition cost with that formal cost.
@@ -106,7 +110,7 @@ def reserve():
         # explicit upper-geometry extrapolation of the observed component cost.
         scale=max(1.,4200/observation['world_cells'])
         observer_ratio=max(observer_ratio,observation_rate*scale+query_rate+compilation/30)
-    learned_ratio=fixed_ratio+observer_ratio
+    learned_ratio=(fixed_ratio+observer_ratio)*parallel_contention
     # Two seed0 learned chains can run together after sampling; fixed nominal runs now.
     # All four dependencies of both learned chains remain protected until actual predecessor failure.
     protected_learning=990*learned_ratio+4*45
@@ -122,8 +126,9 @@ def reserve():
     seconds=max(6*3600,1.2*max(protected_learning,fixed_remaining*fixed_ratio))
     with index_file(SMALL,CONTRACT) as j:
         j['evaluation_reserve']=dict(wall_s=seconds,fixed_ratio=fixed_ratio,learned_ratio=learned_ratio,observer_component_ratio=observer_ratio,
+            formal_workers=workers,parallel_contention_factor=parallel_contention,allocated_cpu_cores=25,
             fixed_remaining_sim_s=fixed_remaining,protected_learning_sim_s_per_case=990,
-            basis='Actual complete8-worker R11 stages plus retained/real-training PANN component costs, conservatively scaled to the fixed strip grid. Two protected learned ladders can execute in parallel. All not-yet-qualified stages remain included. Acquisition slowdown is not substituted for formal8-worker throughput.',
+            basis='Actual complete stages of the same frozen controller and worker setting plus retained/real-training PANN component costs, conservatively scaled to the fixed strip grid. Before measured concurrent-stage data exists, account for two evaluation jobs sharing25vCPU by max(1,2*(workers+1)/25). All not-yet-qualified stages remain included. Acquisition slowdown is not substituted for formal evaluation throughput.',
             updated_unix_s=time.time())
     return seconds
 def main():
@@ -136,13 +141,14 @@ def main():
     resolved=json.loads((SMALL/(a.follow+'-resolved.json')).read_text())
     build=resolved['r11_configuration']['controller_build']
     second=f"dev{len(current()['attempts'])+1:02d}-{build}-E60"
-    job=launch(second,build,'E60',purpose='development');job.wait()
+    job=launch(second,build,'E60',purpose='development',workers=resolved['workers']);job.wait()
     second_result=result(second)
     if not second_result or not second_result['success']:
         print('Same-version E60 did not qualify; S5 remains unfrozen.',flush=True);return
     frozen=current()['frozen_controller']
     # One nominal rigid regression, fixed nominal long ladder and training overlap.
     rigid=launch('rigid-'+build+'-E60',build,'E60',purpose='rigid_regression',terrain='rigid')
+    rigid.wait()
     fixed_cmd=[sys.executable,str(Path(__file__)),'--fixed-chain',build]
     # A dedicated process runs the fixed chain; this process coordinates training.
     fixed=subprocess.Popen(fixed_cmd,cwd=ROOT,stdin=subprocess.DEVNULL,
