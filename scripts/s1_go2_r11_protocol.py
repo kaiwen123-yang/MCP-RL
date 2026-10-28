@@ -52,7 +52,7 @@ def prerequisite(c,index,purpose,terrain):
     if j==0:return None
     prior=LEVELS[j-1]
     passes=[a for a in index.get('attempts',[]) if a.get('case_key')==key and
-            a.get('evaluation_stage',{}).get('level')==prior and a.get('stage_status')=='passed']
+            a.get('evaluation_stage',{}).get('level')==prior and a.get('stage_status')=='passed' and a.get('qualification_usable',True)]
     if not passes:raise ValueError(f'{level} requires this exact case to pass independent {prior}')
     previous=passes[-1]['attempt']
     actual=json.loads((ROOT/CONTRACT['outputs']['compact_root']/(previous+'-resolved.json')).read_text())

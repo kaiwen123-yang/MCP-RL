@@ -378,10 +378,9 @@ def run(args, c, joint=None):
                 settings_changed = settings != phase_settings
                 if settings_changed:
                     table = c['task'][settings]
-                    agent.set_task_parameters({k: v for k, v in table.items() if k not in ('Balance','Upright','Height')})
-                    agent.set_cost_weights({k: table[k] for k in ('Balance','Upright','Height')} | {'Orientation': c['task']['orientation_cost_weight']})
-                    if campaign:
-                        agent.set_cost_weights(c['stationary_objective'].get('cost_weights',{}) | {'Angmom': 0.} | model_meta['controller_settings']['cost_weights'])
+                    # Native gait selection applies its own numeric defaults on Transition.
+                    # Select first; apply the declared numeric values after that transition.
+                    agent.set_task_parameter('Gait',table['Gait'])
                     phase_settings = settings
                 if support and args.arm=='S' and standing and settings_changed:
                     from s1_go2_support_reference import stand_reference,reference_userdata
@@ -407,10 +406,24 @@ def run(args, c, joint=None):
                 agent.set_state(time=t, qpos=data.qpos, qvel=data.qvel, act=data.act,
                     mocap_pos=data.mocap_pos, mocap_quat=data.mocap_quat, userdata=data.userdata)
                 if settings_changed:
-                    # GetCost evaluates residuals (including ground raycasts),
-                    # so it must follow SetState's first mj_forward.
+                    agent.set_task_parameters({k:v for k,v in table.items()
+                        if k not in ('Gait','Balance','Upright','Height')})
+                    agent.set_cost_weights({k:table[k] for k in ('Balance','Upright','Height')} |
+                        {'Orientation':c['task']['orientation_cost_weight']})
+                    if campaign:
+                        agent.set_cost_weights(c['stationary_objective'].get('cost_weights',{}) |
+                            {'Angmom':0.} | model_meta['controller_settings']['cost_weights'])
+                    # The same-time transition activates the requested cadence without
+                    # advancing the plant or re-entering the gait-default branch.
+                    agent.set_state(time=t,qpos=data.qpos,qvel=data.qvel,act=data.act,
+                        mocap_pos=data.mocap_pos,mocap_quat=data.mocap_quat,userdata=data.userdata)
+                    actual_parameters=agent.get_task_parameters()
                     resolved.setdefault('applied_settings', []).append(dict(time_s=t,
-                        task_parameters=agent.get_task_parameters(), cost_weights=agent.get_cost_weights()))
+                        declared_parameters={k:table[k] for k in ('Gait','Cadence','Duty ratio','Amplitude')},
+                        task_parameters=actual_parameters,cost_weights=agent.get_cost_weights()))
+                    dump(small/f'{args.attempt}-resolved.json',resolved)
+                    if any(actual_parameters[k]!=table[k] for k in ('Gait','Cadence','Duty ratio','Amplitude')):
+                        raise RuntimeError('Declared gait settings were overwritten during native transition; see actual readback')
                 sync_s = time.perf_counter()-ts
                 sync_times.append(sync_s)
                 plan_s = 0.

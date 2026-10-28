@@ -1,0 +1,161 @@
+{
+  "build": "S5-r12",
+  "based_on": "work/r11-frozen/S5-r11",
+  "binary_sha256": "e89de8d1f3d28f0b1e88394082dd6cc9b42087cb3c5e081a9675157da6c2f3ae",
+  "configuration_overrides": {
+    "r11_material_upright": {
+      "residual": "Body world z-axis minus world up: [R02,R12,R22-1]",
+      "norm": "Existing Upright smooth norm6, parameter.05; applied weight1 unchanged",
+      "activation": "At least one candidate footprint inside original material strip; absent for rigid regression",
+      "baseline": "Original dev11 GNC-r3 body reference and landing objective, no S5-r1 or S5-r2 stacking",
+      "evidence": "S5-r1 ends at pitch.61447rad with trunk contact. Original moving Upright uses R22-1, zeroing two available residual channels, and has vanishing first-order tilt sensitivity near upright. Yaw residual is heading-only. S5-r2 separately loses height, not the same mechanism."
+    },
+    "task": {
+      "initial_xy_m": [
+        0,
+        0
+      ],
+      "nominal_initial_yaw_rad": 0,
+      "initial_stand_s": 2,
+      "turnaround_xy_m": [
+        3,
+        0
+      ],
+      "turn_angle_rad": 3.141592653589793,
+      "return_xy_m": [
+        0,
+        0
+      ],
+      "command_speed_m_s": 0.215,
+      "turn_yaw_rate_rad_s": 0.5,
+      "extra_turnaround_hold_s": 0,
+      "terminal_stand_s": 2,
+      "maximum_episode_s": 60,
+      "goal_position_radius_m": 0.15,
+      "turn_heading_tolerance_rad": 0.15,
+      "terminal_speed_max_m_s": 0.05,
+      "task_mode": "Quadruped",
+      "gait_switch": "Manual",
+      "native_head_offset_in_trunk_m": [
+        0.3,
+        0,
+        0
+      ],
+      "orientation_cost_weight": 0.03,
+      "stand_settings": {
+        "Gait": "Stand",
+        "Duty ratio": 1,
+        "Cadence": 1,
+        "Amplitude": 0,
+        "Balance": 0,
+        "Upright": 1,
+        "Height": 1
+      },
+      "move_and_turn_settings": {
+        "Gait": "Trot",
+        "Duty ratio": 0.65,
+        "Cadence": 1.0,
+        "Amplitude": 0.03,
+        "Balance": 0.2,
+        "Upright": 1,
+        "Height": 1
+      }
+    },
+    "r11_contact_timing": {
+      "cadence_Hz": 1.0,
+      "duty_ratio": 0.65,
+      "nominal_diagonal_overlap_s": 0.15,
+      "swing_duration_s": 0.35,
+      "swing_height_m": 0.03,
+      "actor_cap_m_s": 0.215,
+      "basis": "Completed S5-r1/r2/r3 last1s unsupported intervals140.2/88.4/119.6ms. Original2Hz duty.45 yields25ms nominal flight gaps; the5mm/.05m_s approach reference needs about100ms before final deceleration. Test support overlap in the same MPC gait, not a material/threshold change.",
+      "baseline": "Original dev11 GNC-r3 objective/reference/contact implementation; no S5-r1/r2/r3 stacking."
+    },
+    "r11_combination": {
+      "components": [
+        "S5-r3 material Upright vector",
+        "S5-r4 1Hz/.65 support timing"
+      ],
+      "evidence": "S5-r3 loses height at7.194s; S5-r4 retains minimum base height.26367m but reaches pitch.64213rad and trunk contact at8.2316s. Test complementary support and attitude requirements without another weight or cap change."
+    },
+    "r11_domain_margin": {
+      "onset_m": 0.0008,
+      "scale_m": 0.0002,
+      "weight": 176.0,
+      "smoothing_m": 1e-06,
+      "derivation": "1mm true domain minus2*.002s*.05m_s target approach displacement; ordinary equilibrium indentation objective unchanged.",
+      "evidence": "S5-r5 optimized RL plans descend beyond1.2m_s and penetrate1.18-1.63mm; true task terminates at1.09113mm. Add the approach cost inside the same iLQG objective, no action/force/state clipping.",
+      "scope": "Prediction objective only; original true TM02 strain limit.02, footprint and constitutive integration unchanged.",
+      "time_normalization": "Trajectory::UpdateReturn averages176 node costs. Weight176 makes a single node at the1mm limit contribute approximately.5 to the horizon-mean objective; this was declared before first S5-r6 physics, not selected from its outcome."
+    },
+    "r11_slow_approach": {
+      "swing_duration_s": 0.35,
+      "approach_height_m": 0.005,
+      "approach_duration_s": 0.2,
+      "rising_duration_s": 0.08181818181818182,
+      "high_descent_duration_s": 0.06818181818181818,
+      "maximum_final_approach_speed_m_s": 0.04687499999999999,
+      "profile": "Three joined quintic segments with zero velocity and acceleration at each join; fast portions share the same peak speed.",
+      "velocity_objective": "During ascent or stance the downward target is0. During descent use the less-negative of the analytic phase derivative and the existing material braking field.",
+      "derivation": "Final5mm quintic peak1.875*height/duration is.046875m_s, below the existing.05m_s approach target. Original symmetric .35s swing reaches about.23m_s at5mm, creating an incompatible position/velocity demand.",
+      "physical_changes": "None. Original Go2, true material, 0.2ms physics,2ms held input,.35s prediction,cap.215 and deadlines unchanged."
+    },
+    "normal_landing": {
+      "height_profile": "S5-r7 three C2 quintic segments; final5mm over.20s, shared with analytic normal velocity reference",
+      "approach_band_m": 0.005,
+      "gate_width_m": 0.002,
+      "velocity_scale_m_s": 0.05,
+      "velocity_target": "During ascent/stance0; during descent max(min(phase_height_derivative,0),-.05*tanh(max(bottom_z,0)/.001))",
+      "velocity_weight": 0.02,
+      "indentation_target_m": 0.00019889981664,
+      "indentation_scale_m": 0.001,
+      "indentation_weight": 0.1,
+      "positive_part_smoothing_m": 1e-06,
+      "force": "Candidate stateless normal stiffness and regularized Coulomb friction",
+      "material_support_height": {
+        "target_m": 0.29020336039643685,
+        "scale_m": 0.04,
+        "weight": 1.0,
+        "norm": "quadratic",
+        "activation": "Any candidate footprint wholly in the material strip",
+        "evidence": "Completed GNC r1/r2 trajectories show the optimized horizons themselves accepting progressive base-height loss. At r1 t7, predicted final height .18665m agrees with actual .18869m, so an intercept correction alone does not supply the missing body-support objective.",
+        "scope": "Complete N objective with predicted body support; original rigid Stand references, plant and failure threshold unchanged. No weight sweep."
+      }
+    },
+    "r11_derivative_schedule": {
+      "correction": "Schedule each derivative time node exactly once.",
+      "actual_grid_nodes": 176,
+      "derivative_skip": 0,
+      "previous_jobs": 177,
+      "corrected_jobs": 176,
+      "duplicated_node": 174,
+      "evidence": "Identical S5-r7 E30/E60 compiled model, initial state, source digests, weights and initial support userdata; initial nominal state rollout identical, but first optimized action differs3.7464e-8 before any physical step. The derivative index loop already includesT-2, then appendsT-2 again. Parallel jobs write and repeatedly compose the same A/B output block.",
+      "retained": "Same10*.2ms transition,2ms input hold,node-start C/D,.35s horizon,8 workers and all S5-r7 objectives/references. No true plant change.",
+      "scope": "Concrete duplicate-write defect removed; successful task or all numerical variability removal must be established by actual staged tasks."
+    },
+    "r11_prediction_coldstart": {
+      "enabled": true,
+      "disabled_prediction_bit": "mjDSBL_WARMSTART",
+      "scope": "Private Agent planning model only, before both rollouts and finite differences; client/true MuJoCo model unchanged.",
+      "reason": "After duplicate derivative ownership was fixed, matched S5-r9 E30 runs failed at12.9474s and8.2652s and startup optimized actions still differed. SetState copies qpos/qvel/act but leaves worker-dependent qacc_warmstart; prediction options had warmstart enabled.",
+      "unchanged": "All objective/gait/reference settings from dev11,100 solver iterations,1e-8 solver tolerance,.2ms steps,2ms holds,.35s horizon and8 workers.",
+      "claim": "A declared numerical-model hypothesis; no task or repeatability success claimed before staged execution."
+    },
+    "r11_combined_repair": {
+      "build": "S5-r11",
+      "based_on": "S5-r8 with S5-r10 prediction solver setting",
+      "combination": [
+        "S5-r7 compatible soft approach and support objectives",
+        "unique derivative output ownership",
+        "prediction warmstart disabled"
+      ],
+      "evidence": "S5-r10 original objective with both numerical-state repairs reached10.44s and failed material domain, with base height near.29m. Reapply the mechanical reference package that previously completed an independent E30, now with both declared numerical repairs. No old qualification transfers."
+    },
+    "r11_parameter_application": {
+      "order": "Select gait -> synchronize same actual state -> set declared numeric settings and costs -> synchronize same state -> record readback -> optimize",
+      "physical_state_advances_during_application": 0,
+      "evidence": "Actual S5-r4/r5/r7/r8 records read back2Hz/.45 despite declared1Hz/.65; native TransitionLocked assigns defaults on a selection change.",
+      "requirement": "Gait, cadence, duty and amplitude must equal the declaration before the next actual hold; no silent native defaults."
+    }
+  }
+}
