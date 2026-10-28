@@ -1,0 +1,12 @@
+{
+  "build": "S5-r10",
+  "based_on": "S5-r9",
+  "r11_prediction_coldstart": {
+    "enabled": true,
+    "disabled_prediction_bit": "mjDSBL_WARMSTART",
+    "scope": "Private Agent planning model only, before both rollouts and finite differences; client/true MuJoCo model unchanged.",
+    "reason": "After duplicate derivative ownership was fixed, matched S5-r9 E30 runs failed at12.9474s and8.2652s and startup optimized actions still differed. SetState copies qpos/qvel/act but leaves worker-dependent qacc_warmstart; prediction options had warmstart enabled.",
+    "unchanged": "All objective/gait/reference settings from dev11,100 solver iterations,1e-8 solver tolerance,.2ms steps,2ms holds,.35s horizon and8 workers.",
+    "claim": "A declared numerical-model hypothesis; no task or repeatability success claimed before staged execution."
+  }
+}

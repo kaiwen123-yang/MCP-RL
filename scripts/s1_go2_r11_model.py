@@ -217,6 +217,9 @@ def write_equilibrium_settings(xml_path, config, arm):
                 ET.SubElement(custom,'numeric',name='r10_contact_anchor',data='1')
                 tree.getroot().find('size').set('nuserdata','78')
                 values['r10_contact_anchor']=1
+        if config.get('r11_prediction_coldstart'):
+            ET.SubElement(custom,'numeric',name='r11_prediction_coldstart',data='1')
+            values['r11_prediction_coldstart']=1
         if config.get('r11_slow_approach'):
             ET.SubElement(custom,'numeric',name='r11_slow_approach',data='1')
             values['r11_slow_approach']=1

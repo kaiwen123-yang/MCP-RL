@@ -12,6 +12,7 @@ def main():
     if a.build=='S5-r6':prior=ROOT/'work/r11-frozen/S5-r3'
     if a.build=='S5-r7':prior=ROOT/'work/r11-frozen/S5-r6'
     if a.build=='S5-r8':prior=ROOT/'work/r11-frozen/S5-r7'
+    if a.build=='S5-r10':prior=ROOT/'work/r11-frozen/S5-r9'
     frozen=ROOT/'work/r11-frozen'/a.build
     if frozen.exists():raise ValueError('This controller build already exists; preserve its identity')
     if a.build in ('S5-r2','S5-r4','S5-r5'):
@@ -27,7 +28,7 @@ def main():
         (frozen/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
         print(f'Prepared {a.build} controller with unchanged frozen C binary.',flush=True)
         return
-    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9'):raise ValueError('An undeclared S5 controller build was requested')
+    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9','S5-r10'):raise ValueError('An undeclared S5 controller build was requested')
     relative=Path('mjpc/tasks/quadruped/quadruped.cc')
     old=(prior/relative).read_text()
     new=old.replace('// 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.',
@@ -66,8 +67,8 @@ def main():
             '        double desired_vz = -0.05*mju_tanh(mju_max(z,0)/0.001);\n        if (slow_approach_) desired_vz=mju_max(mju_min(step_velocity[foot],0.),desired_vz);')
         new=new.replace('  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;',
             '  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;\n  residual_.slow_approach_ = GetNumberOrDefault(0, model, "r11_slow_approach") == 1;')
-    if a.build in ('S5-r8','S5-r9'):new=old
-    if new==old and a.build not in ('S5-r8','S5-r9'):raise ValueError('Frozen residual was not found')
+    if a.build in ('S5-r8','S5-r9','S5-r10'):new=old
+    if new==old and a.build not in ('S5-r8','S5-r9','S5-r10'):raise ValueError('Frozen residual was not found')
     for path in (prior/'mjpc').rglob('*'):
         if path.is_file() and path.suffix in ('.cc','.h'):
             shutil.copy2(path,source/path.relative_to(prior))
@@ -97,6 +98,17 @@ def main():
         (source/derivative_path).write_text(derivative_new)
         patch+=''.join(difflib.unified_diff(derivative_old.splitlines(True),derivative_new.splitlines(True),
             fromfile=prior.name+'/'+str(derivative_path),tofile=a.build+'/'+str(derivative_path)))
+    if a.build=='S5-r10':
+        agent_path=Path('mjpc/agent.cc');agent_old=(prior/agent_path).read_text()
+        target='  // plan\n  if (!allocate_enabled) {'
+        replacement='  // R11: numerical predictor state is independent of worker solver history.\n' + \
+            '  if (GetNumberOrDefault(0, model_, "r11_prediction_coldstart") == 1) {\n' + \
+            '    model_->opt.disableflags |= mjDSBL_WARMSTART;\n  }\n\n' + target
+        if agent_old.count(target)!=1:raise ValueError('Planning entry was not uniquely located')
+        agent_new=agent_old.replace(target,replacement)
+        (source/agent_path).write_text(agent_new)
+        patch+=''.join(difflib.unified_diff(agent_old.splitlines(True),agent_new.splitlines(True),
+            fromfile=prior.name+'/'+str(agent_path),tofile=a.build+'/'+str(agent_path)))
     (ROOT/('experiments/terrain_memory/s1-go2-r11-'+a.build+'.patch')).write_text(patch)
     begin=time.time()
     subprocess.run(['cmake','--build',str(source/'build-autodl'),'--target','agent_server','-j','8'],check=True)
@@ -135,6 +147,9 @@ def main():
         overrides['r11_derivative_schedule']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r8.json').read_text())['r11_derivative_schedule']
     if a.build=='S5-r9':
         overrides=dict(r11_derivative_schedule=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r9.json').read_text())['r11_derivative_schedule'])
+    if a.build=='S5-r10':
+        overrides=json.loads((ROOT/'work/r11-frozen/S5-r9/identity.json').read_text())['configuration_overrides']
+        overrides['r11_prediction_coldstart']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r10.json').read_text())['r11_prediction_coldstart']
     identity=dict(controller='S5',build=a.build,based_on=prior.name,
         prior_binary_sha256=sha(prior/'agent_server'),binary_sha256=sha(frozen/'agent_server'),
         source_files_sha256={str(x.relative_to(frozen)):sha(x) for x in (frozen/'mjpc').rglob('*') if x.is_file() and x.suffix in ('.cc','.h')},

@@ -1,0 +1,14 @@
+--- S5-r9/mjpc/agent.cc
++++ S5-r10/mjpc/agent.cc
+@@ -310,6 +310,11 @@
+       pair_solimp_[i] = model_->pair_solimp[mjNIMP * i];
+     }
+     MakeDifferentiable(model_);
++  }
++
++  // R11: numerical predictor state is independent of worker solver history.
++  if (GetNumberOrDefault(0, model_, "r11_prediction_coldstart") == 1) {
++    model_->opt.disableflags |= mjDSBL_WARMSTART;
+   }
+ 
+   // plan
