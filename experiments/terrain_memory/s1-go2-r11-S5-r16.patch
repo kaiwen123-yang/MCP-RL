@@ -1,0 +1,11 @@
+--- S5-r15/mjpc/tasks/quadruped/quadruped.cc
++++ S5-r16/mjpc/tasks/quadruped/quadruped.cc
+@@ -341,7 +341,7 @@
+       const double* p = foot_pos[foot];
+       const bool material = p[0] >= 0.8+half_sole && p[0] <= 2.2-half_sole &&
+                             mju_abs(p[1]) <= 0.6-half_sole;
+-      const double approach_width = GetNumberOrDefault(0, model, "r11_landing_approach_band");
++      const double approach_width = GetNumberOrDefault(0., model, "r11_landing_approach_band");
+       const bool approaching = p[0] >= .8+half_sole-approach_width &&
+           p[0] <= 2.2-half_sole+approach_width &&
+           mju_abs(p[1]) <= .6-half_sole+approach_width;

@@ -1,0 +1,11 @@
+{
+  "build": "S5-r16",
+  "based_on": "S5-r15",
+  "r11_landing_band_scalar_fix": {
+    "correction": "GetNumberOrDefault(0., model, \"r11_landing_approach_band\") uses double rather than deducing integer from0.",
+    "declared_width_m": 0.07525,
+    "prior_effective_width_m": 0.0,
+    "evidence": "utilities.h GetNumber<T> returns static_cast<T>(data[0]); the previous integer default narrowed .07525 to0. Complete dev16/dev17 physical times, qpos and q_target arrays are bit-identical despite8 versus20 workers. Thus dev17 is not evidence against a nonzero approach band.",
+    "preserved": "Same S5-r15 declaration,20 workers and all controller/plant settings; only scalar retrieval type is corrected. Independent E30 qualification required."
+  }
+}
