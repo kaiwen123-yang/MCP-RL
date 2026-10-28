@@ -631,7 +631,8 @@ def render(args,c):
     import imageio.v2 as imageio
     from PIL import Image, ImageDraw
     out=ROOT/'outputs/terrain_memory/simulation'/c['run_id']/args.attempt
-    a=np.load(out/'trajectory.npz')
+    with np.load(out/'trajectory.npz') as archive:
+        a={key:archive[key] for key in ('time','qpos','qvel','mocap_pos','mocap_quat','phase')}
     result=json.loads((ROOT/c['outputs']['root']/f'{args.attempt}.json').read_text())
     model=mujoco.MjModel.from_binary_path(str(out/'model.mjb'))
     data=mujoco.MjData(model)

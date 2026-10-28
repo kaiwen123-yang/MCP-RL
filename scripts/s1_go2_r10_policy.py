@@ -11,13 +11,13 @@ from run_s1_go2_wb_baseline import PHASES, contact_state
 from s1_go2_joint_material import JointMaterial
 from s1_go2_r10_observer import MaterialObserver
 
-OBSERVATION_DIM=656
+OBSERVATION_DIM=658
 NORMALIZATION=dict(body_xy_m=3.,body_height_m=.3,body_linear_velocity_m_s=.25,
     body_angular_velocity_rad_s=1.,joint_position='range midpoint and half-width',
     joint_velocity_rad_s=10.,relative_feet_m=.3,foot_velocity_m_s=1.,
     force_N=15.206408*9.81/4,history_bottom_height_m=.05,
     pann_recovery_m=.001,history_frames=20,history_dt_s=.05,
-    schema=['relative_goal_xy','base_z','base_quaternion_wxyz','base_velocity6',
+    schema=['relative_goal_xy','base_z','base_quaternion_wxyz','relative_heading_sin_cos','base_velocity6',
         'joint_position12','joint_velocity12','relative_world_feet12','foot_velocity12',
         'contact4','GRF12','applied_cap','mission_phase9','gait_sin_cos',
         'finite_task_flag_and_remaining_fraction','completed_plan_age',
@@ -56,12 +56,15 @@ class PolicyStream:
             optimizer=self.backend.optimizer.state_dict(),normalization=self.normalization,
             samples=self.samples,stage_samples=self.stage_samples,seed=self.seed,group=self.group,
             torch_rng=torch.get_rng_state(),numpy_rng=np.random.get_state(),
-            ppo=self.backend.provenance()),p)
+            ppo=self.backend.provenance()),p.with_suffix('.tmp'))
+        p.with_suffix('.tmp').replace(p)
         summary=dict(samples=self.samples,effective_samples=self.effective_samples,
             physics_s=self.physics_s,stage_samples=self.stage_samples,episodes_started=self.episode,
             updates=self.backend.update_count,wall_s=time.time()-self.begin,checkpoint=str(p),
             group=self.group,seed=self.seed)
-        (self.directory/'progress.json').write_text(json.dumps(summary,indent=2)+'\n')
+        progress=self.directory/'progress.json'
+        progress.with_suffix('.tmp').write_text(json.dumps(summary,indent=2)+'\n')
+        progress.with_suffix('.tmp').replace(progress)
 
     def transition(self,pending,observation,reward,terminated,truncated,dt,effective,stage,info):
         sample=pending['sample'];next_obs=torch.as_tensor(observation,dtype=torch.float32).reshape(1,-1)
@@ -131,7 +134,11 @@ class PolicyMaterial(JointMaterial):
         phase=np.zeros(len(PHASES));phase[PHASES.index(mission.phase)]=1
         history=np.zeros((20,27));history[-len(self.history):]=np.asarray(self.history)
         d=self.data;mg=15.206408*9.81/4
+        w,x,y,z=d.qpos[3:7]
+        yaw=np.arctan2(2*(w*z+x*y),1-2*(y*y+z*z))
+        heading_error=mission.heading-yaw
         return np.concatenate(((goal-d.qpos[:2])/3,[d.qpos[2]/.3],d.qpos[3:7],
+            [np.sin(heading_error),np.cos(heading_error)],
             d.qvel[:6]/np.array([.25,.25,.25,1,1,1]),(d.qpos[self.qa]-self.qmid)/self.qhalf,
             d.qvel[self.va]/10,((bottom-d.qpos[:3])/.3).ravel(),velocity.ravel(),contact,
             (grf/mg).ravel(),[(self.applied_cap-.215)/.035],phase,
