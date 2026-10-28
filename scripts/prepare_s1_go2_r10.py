@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--form', choices=['G'], required=True)
+    p.add_argument('--form', choices=['G','GN'], required=True)
     a = p.parse_args()
     source = ROOT/'work/terrain-memory/upstreams/mujoco_mpc-go2'
     relative = Path('mjpc/tasks/quadruped/quadruped.cc')
@@ -29,10 +29,33 @@ def main():
         'model->geom_size[3*residual_.foot_geom_id_[foot]] + ground[foot]')
     new = new.replace('ResidualFn::kFootRadius + step[foot] + ground[foot]',
         'model->geom_size[3*residual_.foot_geom_id_[foot]] + step[foot] + ground[foot]')
+    header = source/'mjpc/tasks/quadruped/quadruped.h'
+    header_prior = prior.with_suffix('.h')
+    if not header_prior.exists():
+        shutil.copy2(header, header_prior)
+    header_new = header_prior.read_text()
+    if a.form == 'GN':
+        header_new = header_new.replace('int foot_geom_id_[kNumFoot];',
+            'int foot_geom_id_[kNumFoot];\n    bool soft_landing_ = false;')
+        new = new.replace('  // ----------  model identifiers  ----------',
+            '  residual_.soft_landing_ = GetNumberOrDefault(0, model, "r10_normal_landing") == 1;\n\n'
+            '  // ----------  model identifiers  ----------')
+        new = new.replace('    value = mju_cos(mju_clip(angle, -mjPI/2, mjPI/2));',
+            '''    value = mju_cos(mju_clip(angle, -mjPI/2, mjPI/2));
+    if (soft_landing_) {
+      double u = (mju_clip(angle, -mjPI/2, mjPI/2) + mjPI/2) / mjPI;
+      double s = u < 0.5 ? 2*u : 2*(1-u);
+      value = s*s*s*(10 + s*(-15 + 6*s));
+    }''')
+        landing = (ROOT/'experiments/terrain_memory/s1-go2-r10-normal.inc').read_text()
+        new = new.replace('  // sensor dim sanity check', landing+'\n  // sensor dim sanity check')
+    header.write_text(header_new)
     (source/relative).write_text(new)
     patch = ''.join(difflib.unified_diff(old.splitlines(True), new.splitlines(True),
         fromfile='a/'+str(relative), tofile='b/'+str(relative)))
-    (ROOT/'experiments/terrain_memory/s1-go2-r10-G.patch').write_text(patch)
+    patch += ''.join(difflib.unified_diff(header_prior.read_text().splitlines(True),header_new.splitlines(True),
+        fromfile='a/mjpc/tasks/quadruped/quadruped.h',tofile='b/mjpc/tasks/quadruped/quadruped.h'))
+    (ROOT/('experiments/terrain_memory/s1-go2-r10-'+a.form+'.patch')).write_text(patch)
     begin = time.time()
     subprocess.run(['cmake','--build',str(source/'build-autodl'),
         '--target','agent_server','-j','12'], check=True)

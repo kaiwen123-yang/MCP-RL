@@ -20,13 +20,20 @@ def configuration(form):
     c['outputs']['root']=r10['outputs']['compact_root']
     c['campaign_budget']=dict(max_new_physical_starts=61,max_project_development_starts=12,
         wall_clock_hard_cap_h=48,reserve_evaluation_h_at_least=6)
+    if form == 'GN':
+        c['normal_landing']=dict(height_profile='symmetric quintic, original swing phase',
+            approach_band_m=.005,gate_width_m=.002,velocity_scale_m_s=.05,
+            velocity_target='-.05*tanh(max(bottom_z,0)/.001)',velocity_weight=.02,
+            indentation_target_m=.00019889981664,indentation_scale_m=.001,
+            indentation_weight=.1,positive_part_smoothing_m=.000001,
+            force='Original native MPC prediction; real TM02 unchanged')
     return c,r9
 
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--attempt',required=True)
-    p.add_argument('--form',choices=['G'],required=True)
+    p.add_argument('--form',choices=['G','GN'],required=True)
     p.add_argument('--cap',type=float,default=.25)
     p.add_argument('--condition',default='nominal')
     p.add_argument('--purpose',default='development')
