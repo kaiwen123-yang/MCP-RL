@@ -273,8 +273,8 @@ def run(args, c, joint=None):
         joint.attach(model,data,feet,allowed,out,prediction_model)
         resolved['r9_material_contract']=joint.contract
         resolved['r9_material_source_sha256']=sha(ROOT/'scripts/s1_go2_joint_material.py')
-    if c.get('stage') == 'S1R11':
-        resolved['r11_configuration'] = c
+    if c.get('stage') in ('S1R11', 'S1R12'):
+        resolved['r12_configuration' if c['stage']=='S1R12' else 'r11_configuration'] = c
         resolved['full_configuration_sha256']=hashlib.sha256(json.dumps(c,sort_keys=True).encode()).hexdigest()
         resolved['r11_source_sha256'] = {name:sha(ROOT/'scripts'/name) for name in
             ('run_s1_go2_r11.py', 's1_go2_r11_protocol.py')}
@@ -365,6 +365,9 @@ def run(args, c, joint=None):
                     if joint.stop_requested:
                         reason=joint.stop_requested
                         break
+                if c.get('stage') == 'S1R12' and time.time() >= c['window']['run_deadline_unix_s']:
+                    reason = 'window_budget_truncated'
+                    break
                 if joint is not None and started and c.get('stage') == 'S1R11' and time.time() >= joint.deadline:
                     reason = 'development_budget_truncated' if args.purpose=='development' else 'campaign_budget_truncated'
                     break
@@ -531,7 +534,10 @@ def run(args, c, joint=None):
                     mujoco.mj_step(model, data)
                     if not started:
                         with index_file(small, c) as idx:
-                            if 'campaign_started_unix_s' not in idx:
+                            if c.get('stage') == 'S1R12':
+                                idx.setdefault('first_physical_start_unix_s', first_integration_unix_s)
+                                idx['window'] = c['window']
+                            elif 'campaign_started_unix_s' not in idx:
                                 idx.update(campaign_started_unix_s=first_integration_unix_s,
                                     campaign_deadline_unix_s=first_integration_unix_s+48*3600,
                                     campaign_started_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime(first_integration_unix_s)))
@@ -546,7 +552,9 @@ def run(args, c, joint=None):
                                     condition=args.condition, status='running', execution_fingerprint=fingerprint,
                                     command=sys.argv, source_commit=resolved['source_commit']))
                         started = True
-                        if joint is not None:
+                        if joint is not None and c.get('stage') == 'S1R12':
+                            joint.deadline=c['window']['run_deadline_unix_s']
+                        elif joint is not None:
                             joint.started(small,c,index_file)
                             if args.purpose=='development':
                                 reserve=idx.get('evaluation_reserve',{}).get('wall_s',6*3600)
