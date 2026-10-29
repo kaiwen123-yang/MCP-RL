@@ -14,13 +14,16 @@ def render(name):
     result=json.loads((SMALL/(name+'.json')).read_text())
     resolved=json.loads((SMALL/(name+'-resolved.json')).read_text())
     terrain=resolved['r11_configuration']['actual_terrain']
+    from campaign_s1_go2_r11 import current
+    row=next(r for r in current()['attempts'] if r['attempt']==name)
+    mismatch=not row.get('qualification_usable',True)
     a=np.load(out/'trajectory.npz')
     m=mujoco.MjModel.from_binary_path(str(out/'model.mjb'));d=mujoco.MjData(m)
     m.vis.global_.offwidth=1280;m.vis.global_.offheight=720
     renderer=mujoco.Renderer(m,height=720,width=1280)
     camera=mujoco.MjvCamera();camera.azimuth=125;camera.elevation=-23;camera.distance=4.8
     sample=np.unique(np.r_[np.searchsorted(a['time'],np.arange(0,a['time'][-1],1/30)),len(a['time'])-1])
-    target=out/'full-mission-material-overlay.mp4'
+    target=out/('full-mission-qualification-noted.mp4' if mismatch else 'full-mission-material-overlay.mp4')
     with imageio.get_writer(target,fps=30,codec='libx264',quality=8,ffmpeg_params=['-threads','2']) as writer:
         for i in sample:
             d.time=float(a['time'][i]);d.qpos[:]=a['qpos'][i];d.qvel[:]=a['qvel'][i]
@@ -34,10 +37,12 @@ def render(name):
                     np.array([1.5,0,.0002]),np.eye(3).ravel(),np.array([.15,.45,.8,.22],np.float32))
                 renderer.scene.ngeom+=1
             frame=Image.fromarray(renderer.render());draw=ImageDraw.Draw(frame)
-            draw.rectangle((0,0,1280,76),fill=(15,20,30))
+            draw.rectangle((0,0,1280,98 if mismatch else 76),fill=(15,20,30))
             draw.text((18,9),f"{name} | {result['evaluation_stage']['level']} | t={d.time:.4f}s | {PHASES[int(a['phase'][i])]}",fill='white')
             draw.text((18,31),f"Base x={d.qpos[0]:.3f}m y={d.qpos[1]:.3f}m | full recorded task | {'TM02 strip: x[0.8,2.2], y[-0.6,0.6]m' if terrain!='rigid' else 'Rigid regression'}",fill='white')
             draw.text((18,53),result['reason'] if i==sample[-1] else 'Recorded-state replay; original physics and material limits',fill='yellow' if i==sample[-1] else 'white')
+            if mismatch:
+                draw.text((18,76),'DECLARED PARAMETER MISMATCH: retained observation; unusable as declared-version qualification',fill='yellow')
             writer.append_data(np.asarray(frame))
     renderer.close()
     record=dict(attempt=name,path=str(target),size=target.stat().st_size,sha256=sha(target),

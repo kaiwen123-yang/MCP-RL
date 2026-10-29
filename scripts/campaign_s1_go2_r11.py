@@ -74,8 +74,10 @@ def training_progress():
             j=json.loads(p.read_text()) if p.exists() else dict(samples=0,physics_s=0,wall_s=0)
             stopped=d/'stopped.json'
             tail=json.loads(stopped.read_text()) if stopped.exists() else {}
-            j.update(group=group,seed=seed,actual_samples=tail.get('actual_transitions',j['samples']),
-                stopped=tail)
+            collection=d/'collection.json'
+            collected=json.loads(collection.read_text()) if collection.exists() else {}
+            j.update(group=group,seed=seed,actual_samples=tail.get('actual_transitions',collected.get('collected_transitions',j['samples'])),
+                collection=collected,stopped=tail)
             values.append(j)
     return values
 def reserve():
@@ -85,7 +87,9 @@ def reserve():
         if a.get('success') and a.get('simulation_s',0)>=30 and
         (not frozen or a.get('case_key')==frozen['case_key'])]
     workers=frozen.get('workers',8)
-    parallel_contention=max(1.,2*(workers+1)/25.)
+    cpu_samples=[x['aggregate_average_cores'] for x in idx.get('actual_resource_samples',[]) if x['workers']==workers]
+    measured_cpu_cores=max(cpu_samples) if cpu_samples else workers+1
+    parallel_contention=max(1.,2*(measured_cpu_cores+1)/25.)
     fixed_ratio=max(measured,default=CONTRACT['budget']['actual_cost_reference']['slowdown'])
     # Formal evaluation uses the frozen8-worker execution setting. Do not
     # confuse the2-worker six-stream acquisition cost with that formal cost.
@@ -126,11 +130,49 @@ def reserve():
     seconds=max(6*3600,1.2*max(protected_learning,fixed_remaining*fixed_ratio))
     with index_file(SMALL,CONTRACT) as j:
         j['evaluation_reserve']=dict(wall_s=seconds,fixed_ratio=fixed_ratio,learned_ratio=learned_ratio,observer_component_ratio=observer_ratio,
-            formal_workers=workers,parallel_contention_factor=parallel_contention,allocated_cpu_cores=25,
+            formal_workers=workers,measured_average_cpu_cores=measured_cpu_cores,parallel_contention_factor=parallel_contention,allocated_cpu_cores=25,
             fixed_remaining_sim_s=fixed_remaining,protected_learning_sim_s_per_case=990,
-            basis='Actual complete stages of the same frozen controller and worker setting plus retained/real-training PANN component costs, conservatively scaled to the fixed strip grid. Before measured concurrent-stage data exists, account for two evaluation jobs sharing25vCPU by max(1,2*(workers+1)/25). All not-yet-qualified stages remain included. Acquisition slowdown is not substituted for formal evaluation throughput.',
+            basis='Actual complete stages of the same frozen controller and worker setting plus retained/real-training PANN component costs, conservatively scaled to the fixed strip grid. Before measured concurrent-stage data exists, use process CPU counters from actual tasks, plus one conservative observer core per job, to estimate two-job contention on25vCPU. Thread count is not continuous CPU utilization. All not-yet-qualified stages remain included. Acquisition slowdown is not substituted for formal evaluation throughput.',
             updated_unix_s=time.time())
     return seconds
+def training_cutoff(required_reserve):
+    idx=current();now=time.time();end=idx['campaign_deadline_unix_s']
+    full_cutoff=end-required_reserve
+    allocation=idx['evaluation_reserve']
+    priority_reserve=max(6*3600,1.2*allocation['fixed_remaining_sim_s']*allocation['fixed_ratio'])
+    priority_cutoff=end-priority_reserve
+    progress=training_progress()
+    common=min(x['samples']//256*256 for x in progress)
+    cutoff=full_cutoff;basis='protected_full_nominal_ladders'
+    remaining_update_cost=None
+    if common==0:
+        if all(x['actual_samples']>0 and x.get('collection') for x in progress):
+            remaining_update_cost=max(max(0,256-x['actual_samples'])*
+                (now-x['collection']['collection_started_unix_s'])/x['actual_samples'] for x in progress)
+            candidate=min(priority_cutoff,now+1.2*remaining_update_cost)
+            if now+remaining_update_cost<=priority_cutoff and candidate>cutoff:
+                cutoff=candidate;basis='infeasible_full_scope_fair_first_update'
+        elif full_cutoff<=now:
+            workers=allocation['formal_workers']
+            cores=allocation['measured_average_cpu_cores']
+            fraction=min(1.,max(0.,(cores-1)/max(1,workers-1)))
+            two_worker_ratio=allocation['fixed_ratio']*((1-fraction)+fraction*workers/2)
+            initial_session_cost=1.2*60*(two_worker_ratio+3*allocation['observer_component_ratio'])
+            cutoff=min(priority_cutoff,now+initial_session_cost)
+            basis='infeasible_full_scope_initial_fair_acquisition'
+    if basis!='protected_full_nominal_ladders':
+        with index_file(SMALL,CONTRACT) as state:
+            state['partial_scope_budget_allocation']=dict(
+                full_conditional_nominal_reserve_s=required_reserve,
+                full_reserve_is_retained_in_cost_accounting=True,
+                priority_P1_and_minimum_evaluation_reserve_s=priority_reserve,
+                actual_common_updated_transitions=common,
+                estimated_remaining_wall_to_first_common_update_s=remaining_update_cost,
+                effective_training_cutoff_unix_s=cutoff,updated_unix_s=now,
+                rule='Contract exception for infeasible full nominal coverage: preserve P1 priority and at least6h evaluation, allow a fair first common256 update only when empirical collection cost fits, then freeze by budget. Full conditional E30/E60/E300/E600 costs remain recorded; no stage gate or curriculum rule is skipped. Unfunded higher stages remain missing, not failed or passed.',
+                basis=basis)
+    return cutoff,basis
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--follow',required=True);a=p.parse_args()
     first=wait_case(a.follow)
@@ -153,8 +195,8 @@ def main():
     # A dedicated process runs the fixed chain; this process coordinates training.
     fixed=subprocess.Popen(fixed_cmd,cwd=ROOT,stdin=subprocess.DEVNULL,
         stdout=(ROOT/'work/r11-fixed-chain.log').open('w'),stderr=subprocess.STDOUT,start_new_session=True)
-    deadline=current()['campaign_deadline_unix_s']-reserve()
-    deadline_file(dict(deadline_unix_s=deadline,basis='protected_nominal_ladders'))
+    deadline,basis=training_cutoff(reserve())
+    deadline_file(dict(deadline_unix_s=deadline,basis=basis))
     streams=[]
     for group in GROUPS:
         for seed in range(3):
@@ -164,9 +206,9 @@ def main():
             streams.append(subprocess.Popen(cmd,cwd=ROOT,env=env,stdin=subprocess.DEVNULL,
                 stdout=(ROOT/'work'/f'r11-train-{group}-s{seed}.log').open('w'),stderr=subprocess.STDOUT,start_new_session=True))
     while any(p.poll() is None for p in streams):
-        seconds=reserve();deadline=current()['campaign_deadline_unix_s']-seconds
+        seconds=reserve();deadline,basis=training_cutoff(seconds)
         if any(p.poll() not in (None,0) for p in streams):deadline=min(deadline,time.time())
-        deadline_file(dict(deadline_unix_s=deadline,basis='measured_protected_nominal_ladders'))
+        deadline_file(dict(deadline_unix_s=deadline,basis=basis))
         time.sleep(30)
     progress=training_progress()
     errors=[p.returncode for p in streams if p.returncode!=0]

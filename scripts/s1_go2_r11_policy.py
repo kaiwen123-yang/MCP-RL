@@ -55,6 +55,7 @@ class PolicyStream:
             self.stage_samples=saved['stage_samples'];self.episode=saved['episode']
             self.curriculum_stage=saved['curriculum_stage'];self.promotions=saved['promotions']
             self.session_records=saved['session_records'];self.backend.update_count=saved['updates']
+            self.begin=saved.get('collection_started_unix_s',self.begin)
             if training:
                 self.backend.optimizer.load_state_dict(saved['optimizer'])
                 torch.set_rng_state(saved['torch_rng']);np.random.set_state(saved['numpy_rng'])
@@ -83,6 +84,7 @@ class PolicyStream:
             optimizer=self.backend.optimizer.state_dict(),normalization=self.normalization,
             samples=self.samples,stage_samples=self.stage_samples,seed=self.seed,group=self.group,
             transition_serial=self.transition_serial,discarded_after_checkpoint=self.discarded_after_checkpoint,
+            collection_started_unix_s=self.begin,
             effective_samples=self.effective_samples,physics_s=self.physics_s,episode=self.episode,
             curriculum_stage=self.curriculum_stage,promotions=self.promotions,session_records=self.session_records,
             updates=self.backend.update_count,continuous_environment_snapshot=False,buffer=self.buffer,
@@ -120,6 +122,7 @@ class PolicyStream:
             collected_transitions=self.samples,transition_serial=self.transition_serial,
             completed_update_transitions=self.backend.update_count*256,
             unupdated_fragment=len(self.buffer),stage_samples=self.stage_samples,
+            wall_s=time.time()-self.begin,updated_unix_s=time.time(),collection_started_unix_s=self.begin,
             physics_s=self.physics_s,episode=self.episode,curriculum_stage=self.curriculum_stage,
             discarded_after_checkpoint=self.discarded_after_checkpoint))+'\n')
         collected.with_suffix('.tmp').replace(collected)

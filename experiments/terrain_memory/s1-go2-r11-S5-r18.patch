@@ -1,0 +1,20 @@
+--- S5-r17/mjpc/tasks/quadruped/quadruped.cc
++++ S5-r18/mjpc/tasks/quadruped/quadruped.cc
+@@ -278,9 +278,17 @@
+   // Go2's leading free joint matches the runner's base velocity quantities.
+   // The scales are the original stopping thresholds: 0.05 m/s and 0.1 rad/s.
+   // These residuals are evaluated at every stage, including the final state.
++  const double* moving_twist = GetCustomNumericData(model, "r11_body_twist_reference");
+   if (stand_equilibrium) {
+     mju_scl(residual + counter, data->qvel, 1.0 / 0.05, 3);
+     mju_scl(residual + counter + 3, data->qvel + 3, 1.0 / 0.1, 3);
++  } else if (moving_twist && current_mode_ == kModeQuadruped && GetGait() != kGaitStand) {
++    mju_sub(residual + counter, data->qvel, data->userdata + 78, 3);
++    mju_scl(residual + counter, residual + counter, 1.0/moving_twist[0], 3);
++    double world_omega[3];
++    mju_rotVecQuat(world_omega, data->qvel + 3, data->qpos + 3);
++    mju_sub(residual + counter + 3, world_omega, data->userdata + 81, 3);
++    mju_scl(residual + counter + 3, residual + counter + 3, 1.0/moving_twist[1], 3);
+   } else {
+     mju_zero(residual + counter, 6);
+   }
