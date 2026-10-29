@@ -341,6 +341,7 @@ def run(args, c, joint=None):
             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
             subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT), run_init=False)) as agent:
         try:
+            agent.model = prediction_model
             agent.init(task_id='Quadruped Flat', model=prediction_model, send_as='xml')
             agent.set_mode('Quadruped')
             agent.set_task_parameters({'Gait switch': 'Manual'})
@@ -599,6 +600,13 @@ def run(args, c, joint=None):
                 completed_startup_iterations=len(startup_plans), command=sys.argv,
                 source_commit=resolved['source_commit'], execution_fingerprint=fingerprint))
         raise RuntimeError('No plant start: '+str(error))
+    # A sample target or wall deadline can end at the top of the next control
+    # tick. Preserve that real successor, including the final partial interval.
+    if hist and float(data.time) > hist[-1]['time']:
+        row = dict(hist[-1])
+        row.update(time=float(data.time), qpos=data.qpos.copy(), qvel=data.qvel.copy(),
+            rpy=Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz'))
+        hist.append(row)
     arrays = {k: np.asarray([r[k] for r in hist]) for k in hist[0]}
     if support:
         save_streams()
@@ -631,7 +639,7 @@ def run(args, c, joint=None):
         trajectory=dict(path=str(out/'trajectory.npz'), size=(out/'trajectory.npz').stat().st_size, sha256=sha(out/'trajectory.npz')),
         physical_columns=['force_evaluation_time_s','post_integration_time_s']+[f'torque_{i}' for i in range(12)]+[f'actuator_force_{i}' for i in range(12)]+[f'contact_{l}' for l in LEGS]+[f'grf_{l}_{a}' for l in LEGS for a in 'xyz']+[f'total_grf_{a}' for a in 'xyz']+[f'nonfoot_grf_{a}' for a in 'xyz']+['nonfoot_ground_contacts'],
         physical_time_note='MuJoCo mj_step forces/contact correspond to the integration evaluation, preceding its returned qpos. Force evaluation and post-integration clocks are both stored.',
-        terminal_row_note='Failure terminal qpos/qvel are appended; held command and last diagnostic values retain their preceding control timestamp.')
+        terminal_row_note='Actual final qpos/qvel are appended for physical failure and external truncation; held command and last diagnostic values retain their preceding control timestamp.')
     if campaign:
         from s1_go2_wb_equilibrium import hold_metrics
         result['hold'] = hold_metrics(arrays, first_completion, duration, args.mission)
