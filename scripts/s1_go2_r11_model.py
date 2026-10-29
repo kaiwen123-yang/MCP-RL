@@ -217,6 +217,12 @@ def write_equilibrium_settings(xml_path, config, arm):
                 ET.SubElement(custom,'numeric',name='r10_contact_anchor',data='1')
                 tree.getroot().find('size').set('nuserdata','78')
                 values['r10_contact_anchor']=1
+        if config.get('r11_body_twist_reference'):
+            twist=config['r11_body_twist_reference']
+            values['r11_body_twist_reference']=[twist['linear_scale_m_s'],twist['angular_scale_rad_s']]
+            ET.SubElement(custom,'numeric',name='r11_body_twist_reference',
+                data=' '.join(format(x,'.17g') for x in values['r11_body_twist_reference']))
+            tree.getroot().find('size').set('nuserdata','84')
         if config.get('r11_native_contact_impedance'):
             ET.SubElement(custom,'numeric',name='r11_native_contact_impedance',data='1')
             values['r11_native_contact_impedance']=1

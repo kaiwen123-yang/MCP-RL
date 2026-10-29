@@ -399,6 +399,9 @@ def run(args, c, joint=None):
                     patches[:,0]=(joint.force[:,2]>1)&joint.soft
                     patches[:,1:3]=bottom[:,:2]
                     patches[:,3]=bottom[:,2]+joint.force[:,2]/c['local_contact_model']['instantaneous_stiffness_N_m']
+                if c.get('r11_body_twist_reference'):
+                    data.userdata[78:81]=mission.v
+                    data.userdata[81:84]=mission.w
                 agent.set_task_parameter('Heading', float(heading))
                 rotation = Rotation.from_euler('z', heading).as_matrix()
                 data.mocap_pos[goal] = body_goal+rotation@offset

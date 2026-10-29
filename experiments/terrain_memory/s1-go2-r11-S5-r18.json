@@ -1,0 +1,15 @@
+{
+  "build": "S5-r18",
+  "based_on": "S5-r17",
+  "r11_body_twist_reference": {
+    "linear_scale_m_s": 0.25,
+    "angular_scale_rad_s": 0.5,
+    "linear_weight": 1.0,
+    "angular_weight": 1.0,
+    "channels": "Reuse the existing3 StandLinearVelocity and3 StandAngularVelocity residual slots, with their existing weight1. Activate desired-reference tracking during moving Quadruped gait; original Stand branches are unchanged.",
+    "reference": "Current original mission.v and mission.w, transmitted every2ms in userdata[78:84]. Linear velocity is world-frame free-joint translation; rotate local free-joint angular velocity into world coordinates before comparison with mission.w.",
+    "derivation": "Normalize moving linear and angular errors by the declared maximum actor cap.25m/s and original maximum turn rate.5rad/s. No weight sweep or new motion command.",
+    "evidence": "dev18 t9s commanded vy+.04455m/s but actual vy-.82555m/s before lateral exit. dev19 t15.3628s actual local roll rate-7.4564rad/s; its15.26s optimized C plan already predicts-7.7484rad/s at15.362s. Existing moving body linear/angular residuals are zero even though the route follower computes these velocity references.",
+    "preserved": "Same native-contact prediction, material normal objectives, gait1Hz/.65, cap.215, Go2/PD/torque limits, true TM02 and1mm domain, .2ms physics,2ms hold and.35s horizon. No additional WBC or force path."
+  }
+}

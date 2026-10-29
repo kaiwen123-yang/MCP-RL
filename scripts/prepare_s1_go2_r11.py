@@ -19,6 +19,7 @@ def main():
     if a.build=='S5-r15':prior=ROOT/'work/r11-frozen/S5-r14'
     if a.build=='S5-r16':prior=ROOT/'work/r11-frozen/S5-r15'
     if a.build=='S5-r17':prior=ROOT/'work/r11-frozen/S5-r16'
+    if a.build=='S5-r18':prior=ROOT/'work/r11-frozen/S5-r17'
     frozen=ROOT/'work/r11-frozen'/a.build
     if frozen.exists():raise ValueError('This controller build already exists; preserve its identity')
     if a.build in ('S5-r2','S5-r4','S5-r5','S5-r12'):
@@ -35,7 +36,7 @@ def main():
         (frozen/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
         print(f'Prepared {a.build} controller with unchanged frozen C binary.',flush=True)
         return
-    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9','S5-r10','S5-r11','S5-r13','S5-r14','S5-r15','S5-r16','S5-r17'):raise ValueError('An undeclared S5 controller build was requested')
+    if a.build not in ('S5-r1','S5-r3','S5-r6','S5-r7','S5-r8','S5-r9','S5-r10','S5-r11','S5-r13','S5-r14','S5-r15','S5-r16','S5-r17','S5-r18'):raise ValueError('An undeclared S5 controller build was requested')
     relative=Path('mjpc/tasks/quadruped/quadruped.cc')
     old=(prior/relative).read_text()
     new=old.replace('// 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.',
@@ -101,6 +102,21 @@ def main():
     if a.build=='S5-r16':
         new=old.replace('GetNumberOrDefault(0, model, "r11_landing_approach_band")',
             'GetNumberOrDefault(0., model, "r11_landing_approach_band")')
+    if a.build=='S5-r18':
+        target='  if (stand_equilibrium) {\n    mju_scl(residual + counter, data->qvel, 1.0 / 0.05, 3);'
+        new=old.replace(target,
+            '  const double* moving_twist = GetCustomNumericData(model, "r11_body_twist_reference");\n'+target)
+        target='    mju_scl(residual + counter + 3, data->qvel + 3, 1.0 / 0.1, 3);\n  } else {'
+        new=new.replace(target,
+            '    mju_scl(residual + counter + 3, data->qvel + 3, 1.0 / 0.1, 3);\n'
+            '  } else if (moving_twist && current_mode_ == kModeQuadruped && GetGait() != kGaitStand) {\n'
+            '    mju_sub(residual + counter, data->qvel, data->userdata + 78, 3);\n'
+            '    mju_scl(residual + counter, residual + counter, 1.0/moving_twist[0], 3);\n'
+            '    double world_omega[3];\n'
+            '    mju_rotVecQuat(world_omega, data->qvel + 3, data->qpos + 3);\n'
+            '    mju_sub(residual + counter + 3, world_omega, data->userdata + 81, 3);\n'
+            '    mju_scl(residual + counter + 3, residual + counter + 3, 1.0/moving_twist[1], 3);\n'
+            '  } else {')
     if new==old and a.build not in ('S5-r8','S5-r9','S5-r10','S5-r11','S5-r17'):raise ValueError('Frozen residual was not found')
     for path in (prior/'mjpc').rglob('*'):
         if path.is_file() and path.suffix in ('.cc','.h'):
@@ -215,6 +231,9 @@ def main():
     if a.build=='S5-r17':
         overrides=json.loads((prior/'identity.json').read_text())['configuration_overrides']
         overrides['r11_native_contact_impedance']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r17.json').read_text())['r11_native_contact_impedance']
+    if a.build=='S5-r18':
+        overrides=json.loads((prior/'identity.json').read_text())['configuration_overrides']
+        overrides['r11_body_twist_reference']=json.loads((ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r18.json').read_text())['r11_body_twist_reference']
     identity=dict(controller='S5',build=a.build,based_on=prior.name,
         prior_binary_sha256=sha(prior/'agent_server'),binary_sha256=sha(frozen/'agent_server'),
         source_files_sha256={str(x.relative_to(frozen)):sha(x) for x in (frozen/'mjpc').rglob('*') if x.is_file() and x.suffix in ('.cc','.h')},
