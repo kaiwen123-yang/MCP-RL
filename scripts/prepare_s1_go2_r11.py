@@ -22,10 +22,11 @@ def main():
     if a.build=='S5-r18':prior=ROOT/'work/r11-frozen/S5-r17'
     frozen=ROOT/'work/r11-frozen'/a.build
     if frozen.exists():raise ValueError('This controller build already exists; preserve its identity')
-    if a.build in ('S5-r2','S5-r4','S5-r5','S5-r12'):
+    if a.build in ('S5-r2','S5-r4','S5-r5','S5-r12','S5-r19'):
         specification=json.loads((ROOT/f'experiments/terrain_memory/s1-go2-r11-{a.build}.json').read_text())
         if a.build=='S5-r5':prior=ROOT/'work/r11-frozen/S5-r3'
         if a.build=='S5-r12':prior=ROOT/'work/r11-frozen/S5-r11'
+        if a.build=='S5-r19':prior=ROOT/'work/r11-frozen/S5-r18'
         frozen.mkdir(parents=True)
         for name in ('mjpc','runtime-tasks','lib'):(frozen/name).symlink_to(prior/name)
         for name in ('agent_server','SOURCE_COMMIT'):shutil.copy2(prior/name,frozen/name)
