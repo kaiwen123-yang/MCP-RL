@@ -1,0 +1,17 @@
+--- S5-r16/mjpc/agent.cc
++++ S5-r17/mjpc/agent.cc
+@@ -310,6 +310,14 @@
+       pair_solimp_[i] = model_->pair_solimp[mjNIMP * i];
+     }
+     MakeDifferentiable(model_);
++  }
++
++  // S5-r17: retain original native contact impedance in C predictions.
++  if (differentiable && GetNumberOrDefault(0, model_, "r11_native_contact_impedance") == 1) {
++    for (int i = 0; i < model_->ngeom; ++i)
++      model_->geom_solimp[mjNIMP*i] = geom_solimp_[i];
++    for (int i = 0; i < model_->npair; ++i)
++      model_->pair_solimp[mjNIMP*i] = pair_solimp_[i];
+   }
+ 
+   // R11: numerical predictor state is independent of worker solver history.
