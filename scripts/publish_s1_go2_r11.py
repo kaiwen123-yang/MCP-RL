@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Publish R11 directly from the execution host; verify metadata without downloading assets."""
-import argparse,base64,json,os,re,subprocess,sys,time,threading
+import argparse,base64,hashlib,json,os,re,subprocess,sys,time,threading
 import requests
 from concurrent.futures import ThreadPoolExecutor,wait,FIRST_COMPLETED
 from pathlib import Path
 from s1_go2_r11_protocol import ROOT,CONTRACT,RUN
 from s1_go2_r11_runtime import index_file
+from package_s1_go2_r11 import build_memory_archive
 REPO='kaiwen123-yang/MCP-RL'
 SMALL=ROOT/CONTRACT['outputs']['compact_root']
 LINKS=ROOT/CONTRACT['outputs']['large_root']/'release-upload-links'
@@ -82,15 +83,17 @@ def main():
                 if r['draft'] and prior['state']=='starter':
                     gh('api',f"repos/{REPO}/releases/assets/{prior['id']}",'--method','DELETE')
                 else:raise RuntimeError('Existing published bytes differ: '+item['name'])
-            link=LINKS/item['name']
-            if not link.exists():link.symlink_to(ROOT/item['path'])
-            todo.append(link)
+            if item.get('archive_mode')!='memory_tar_gzip_v1':
+                link=LINKS/item['name']
+                if not link.exists():link.symlink_to(ROOT/item['path'])
+                item['_upload_path']=str(link)
+            todo.append(item)
         # Old gh upload produced repeated EOF/TLS errors through the authorized tunnel.
         # Authenticated metadata and Git remain on gh; original file bytes stream via HTTP/1.
         connections=threading.local()
         upload_url=r['upload_url'].split('{')[0]
-        def upload(path):
-            begin=time.time()
+        def upload(item):
+            begin=time.time();name=item['name']
             if not hasattr(connections,'session'):
                 session=requests.Session();session.trust_env=False
                 session.proxies={'http':env['http_proxy'],'https':env['https_proxy']}
@@ -99,17 +102,25 @@ def main():
                     'User-Agent':'MCP-RL-R11-publication'})
                 connections.session=session
             try:
-                with path.open('rb') as data:
-                    response=connections.session.post(upload_url,params={'name':path.name},
+                if item.get('archive_mode')=='memory_tar_gzip_v1':
+                    base=ROOT/item['source_directory']
+                    data=build_memory_archive(base,[base/member['path'] for member in item['members']],
+                        deduplicate=item.get('deduplicate',False))
+                    if data.getbuffer().nbytes!=item['size'] or hashlib.sha256(data.getbuffer()).hexdigest()!=item['sha256']:
+                        raise RuntimeError('Completed source bytes or archive runtime changed: '+name)
+                else:
+                    data=Path(item['_upload_path']).open('rb')
+                with data:
+                    response=connections.session.post(upload_url,params={'name':name},
                         data=data,headers={'Content-Type':'application/octet-stream'},timeout=(45,900))
                 response.raise_for_status()
                 actual=response.json()
-                return dict(name=path.name,uploaded=True,wall_s=time.time()-begin,
+                return dict(name=name,uploaded=True,wall_s=time.time()-begin,
                     size=actual['size'],digest=actual.get('digest'))
             except requests.RequestException as error:
                 connections.session.close();del connections.session
-                return dict(name=path.name,uploaded=False,wall_s=time.time()-begin,
-                    error=type(error).__name__,http_status=error.response.status_code if error.response is not None else None)
+                return dict(name=name,uploaded=False,wall_s=time.time()-begin,
+                    error=type(error).__name__,network_detail=next((label for token,label in [('CERTIFICATE_VERIFY_FAILED','certificate_verify_failed'),('UNEXPECTED_EOF','unexpected_tls_eof'),('EOF occurred','unexpected_tls_eof'),('WRONG_VERSION_NUMBER','wrong_tls_version'),('timed out','timeout'),('Connection refused','connection_refused')] if token in str(error)),None),http_status=error.response.status_code if error.response is not None else None)
         failed=0;completed=0;iterator=iter(todo)
         with ThreadPoolExecutor(3) as pool:
             pending={pool.submit(upload,path) for path in [next(iterator,None) for _ in range(min(3,len(todo)))]}
