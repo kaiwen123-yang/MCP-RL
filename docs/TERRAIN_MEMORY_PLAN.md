@@ -7,7 +7,7 @@
 - 已完成：复用r21冻结二进制/资源，修正本地库路径、grpcio和R12阶段分支；1次物理启动、62,591步、524.73s运行耗时，3次积分前初始化错误保留，PPO更新0。
 - 已知阻塞：r21仍未完成原材料穿越，12.324s侧出材料条带，12.5182s非足端接地；本轮未修改支撑机制。
 - 下一步：仅执行W2，在现有r21可交互候选上打通RAW seed0单流真实采样与首次256转移更新；不等待未启动流，普通更新不reset，到窗口截止保存真实末观测/尾buffer/checkpoint。
-- 续接位置：代码 `3250294`；`scripts/run_s1_go2_r12.py`；`results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json`；5080工作目录 `/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12`，`work/r11-frozen/S5-r21` 与 `work/assets` 已就绪，目前无R12 checkpoint。
+- 续接位置：代码 `3250294`；`scripts/run_s1_go2_r12.py`；`results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json`；5080工作目录 `/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12`，`work/r11-frozen/S5-r21` 与 `work/assets` 已就绪，目前无R12 checkpoint；发布使用 `kaiwen-learn/bin/git` 2.55.0。
 
 ## 1. 本次调整
 
