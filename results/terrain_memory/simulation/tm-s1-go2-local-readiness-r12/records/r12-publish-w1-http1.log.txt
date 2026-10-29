@@ -1,0 +1,35 @@
+{"name": "w1-S5-r21-E30-02__cap-decisions.json", "size": 3346, "status": "uploaded", "wall_s": 4.42}
+{"name": "w1-S5-r21-E30__model__G1-project-go2.xml", "size": 24671, "status": "uploaded", "wall_s": 4.79}
+{"name": "w1-S5-r21-E30-02__agent-server.log", "size": 176, "status": "uploaded", "wall_s": 4.89}
+{"name": "w1-S5-r21-E30-02__material-0000.npz", "size": 837223, "status": "uploaded", "wall_s": 6.64}
+{"name": "w1-S5-r21-E30-02__material-0002.npz", "size": 888112, "status": "uploaded", "wall_s": 5.39}
+{"name": "w1-S5-r21-E30-02__material-0003.npz", "size": 915804, "status": "uploaded", "wall_s": 41.11}
+Traceback (most recent call last):
+  File "/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12/scripts/publish_s1_go2_r12.py", line 115, in <module>
+    print(json.dumps(dict(name=row['name'],size=row['size'],status='uploaded',wall_s=round(time.time()-begin,2))),flush=True)
+                    ^^^^^^
+  File "/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12/scripts/publish_s1_go2_r12.py", line 114, in main
+    update(uploaded)
+    ^^^^^^^^^^^^^^^^^
+  File "/home/fanyuan/miniconda3/envs/kaiwen-learn/lib/python3.11/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fanyuan/miniconda3/envs/kaiwen-learn/lib/python3.11/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/fanyuan/miniconda3/envs/kaiwen-learn/lib/python3.11/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/fanyuan/miniconda3/envs/kaiwen-learn/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/home/fanyuan/miniconda3/envs/kaiwen-learn/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12/scripts/publish_s1_go2_r12.py", line 107, in upload
+    link=links/row['name']
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12/scripts/publish_s1_go2_r12.py", line 29, in gh
+    if run.returncode:raise RuntimeError('gh command failed: '+run.stderr.replace(proxy,'[existing proxy]'))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: gh command failed: HTTP 408: Upload body timed out due to inactivity (https://uploads.github.com/repos/kaiwen123-yang/MCP-RL/releases/427848131/assets?label=&name=w1-S5-r21-E30-02__full-mission-material-overlay.mp4)
+

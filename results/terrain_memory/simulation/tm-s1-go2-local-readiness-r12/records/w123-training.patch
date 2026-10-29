@@ -1,0 +1,215 @@
+diff --git a/scripts/s1_go2_r11_policy.py b/scripts/s1_go2_r11_policy.py
+index febf5e4..cbf5b23 100644
+--- a/scripts/s1_go2_r11_policy.py
++++ b/scripts/s1_go2_r11_policy.py
+@@ -31,20 +31,21 @@ class PolicyStream:
+         self.root,self.group,self.seed,self.contract=root,group,seed,contract
+         self.directory=Path(directory);self.directory.mkdir(parents=True,exist_ok=True)
+         self.training=training
+-        torch.set_num_threads(1);torch.set_num_interop_threads(1)
++        resources=contract.get('resources',{})
++        torch.set_num_threads(resources.get('torch_threads',1));torch.set_num_interop_threads(1)
+         np.random.seed(seed);torch.manual_seed(seed)
+         p=contract['joint_learning']['ppo']
+         self.backend=PPOBackend(PPOConfig(obs_dim=OBSERVATION_DIM,action_bound=1.,
+             hidden=(64,64),learning_rate=p['learning_rate'],initial_std=p['initial_std'],
+             gamma=p['gamma'],gae_lambda=p['gae_lambda'],clip_epsilon=p['clip'],
+             value_coef=p['value_coef'],entropy_coef=p['entropy_coef'],
+-            max_grad_norm=p['max_grad_norm'],epochs=p['epochs_per_update'],minibatch_size=64,device='cpu'))
++            max_grad_norm=p['max_grad_norm'],epochs=p['epochs_per_update'],minibatch_size=64,device=resources.get('torch_device','cpu')))
+         self.normalization=json.loads(json.dumps(NORMALIZATION))
+         self.samples=0;self.effective_samples=0;self.buffer=[];self.episode=0
+         self.transition_serial=0;self.discarded_after_checkpoint=0
+         self.stage_samples={0:0,1:0,2:0};self.physics_s=0.;self.begin=time.time()
+         self.curriculum_stage=0;self.promotions=[];self.session_records=[]
+-        self.restored_without_environment=False
++        self.restored_without_environment=False;self.last_observation=None
+         self.target=contract['joint_learning']['standard_target_transitions_per_stream']
+         self.observer_law=None
+         if checkpoint is not None:
+@@ -59,7 +60,9 @@ class PolicyStream:
+             if training:
+                 self.backend.optimizer.load_state_dict(saved['optimizer'])
+                 torch.set_rng_state(saved['torch_rng']);np.random.set_state(saved['numpy_rng'])
+-                self.buffer=saved.get('buffer',[])
++                if saved.get('cuda_rng') is not None:torch.cuda.set_rng_state_all(saved['cuda_rng'])
++                self.buffer=[{k:v.to(self.backend.config.device) for k,v in row.items()} for row in saved.get('buffer',[])]
++                self.last_observation=saved.get('last_observation')
+                 self.transition_serial=saved.get('transition_serial',self.samples)
+                 log_path=self.directory/'transitions.jsonl'
+                 if log_path.exists():
+@@ -88,26 +91,41 @@ class PolicyStream:
+             effective_samples=self.effective_samples,physics_s=self.physics_s,episode=self.episode,
+             curriculum_stage=self.curriculum_stage,promotions=self.promotions,session_records=self.session_records,
+             updates=self.backend.update_count,continuous_environment_snapshot=False,buffer=self.buffer,
+-            session_boundary=resume_only,
++            last_observation=self.last_observation,session_boundary=resume_only,
+             torch_rng=torch.get_rng_state(),numpy_rng=np.random.get_state(),
++            cuda_rng=torch.cuda.get_rng_state_all() if self.backend.config.device.startswith('cuda') else None,
+             ppo=self.backend.provenance()),p.with_suffix('.tmp'))
+         p.with_suffix('.tmp').replace(p)
+         summary=dict(samples=self.samples,effective_samples=self.effective_samples,
+             physics_s=self.physics_s,stage_samples=self.stage_samples,episodes_started=self.episode,
+             curriculum_stage=self.curriculum_stage,promotions=self.promotions,session_records=self.session_records,
+             updates=self.backend.update_count,wall_s=time.time()-self.begin,checkpoint=str(p),
+-            group=self.group,seed=self.seed)
+-        if resume_only:return
++            group=self.group,seed=self.seed,unupdated_fragment=len(self.buffer),
++            continuous_environment_snapshot=False)
++        self.write_collection()
+         progress=self.directory/'progress.json'
+         progress.with_suffix('.tmp').write_text(json.dumps(summary,indent=2)+'\n')
+         progress.with_suffix('.tmp').replace(progress)
+ 
++    def write_collection(self):
++        collected=self.directory/'collection.json'
++        collected.with_suffix('.tmp').write_text(json.dumps(dict(
++            collected_transitions=self.samples,transition_serial=self.transition_serial,
++            completed_update_transitions=self.backend.update_count*256,updates=self.backend.update_count,
++            unupdated_fragment=len(self.buffer),stage_samples=self.stage_samples,
++            wall_s=time.time()-self.begin,updated_unix_s=time.time(),collection_started_unix_s=self.begin,
++            physics_s=self.physics_s,episode=self.episode,curriculum_stage=self.curriculum_stage,
++            discarded_after_checkpoint=self.discarded_after_checkpoint))+'\n')
++        collected.with_suffix('.tmp').replace(collected)
++
+     def transition(self,pending,observation,reward,terminated,truncated,dt,effective,stage,info):
+         self.transition_serial+=1
+-        sample=pending['sample'];next_obs=torch.as_tensor(observation,dtype=torch.float32).reshape(1,-1)
++        device=self.backend.config.device
++        sample=pending['sample'];next_obs=torch.as_tensor(observation,dtype=torch.float32,device=device).reshape(1,-1)
++        self.last_observation=next_obs.detach().cpu()
+         next_value=self.backend.value(next_obs)
+-        record=dict(obs=pending['obs'],next_obs=next_obs,raw_action=sample.raw_action,reward=torch.tensor([reward]),
+-            terminated=torch.tensor([terminated]),truncated=torch.tensor([truncated]),
++        record=dict(obs=pending['obs'],next_obs=next_obs,raw_action=sample.raw_action,reward=torch.tensor([reward],device=device),
++            terminated=torch.tensor([terminated],device=device),truncated=torch.tensor([truncated],device=device),
+             log_prob=sample.log_prob,value=sample.value,next_value=next_value)
+         self.log.write(json.dumps(dict(time_s=info['time_s'],episode=self.episode,
+             transition=self.samples+1,transition_serial=self.transition_serial,reward=reward,terminated=terminated,truncated=truncated,
+@@ -117,15 +135,6 @@ class PolicyStream:
+         if not self.training:return
+         self.buffer.append(record);self.samples+=1;self.effective_samples+=int(effective)
+         self.stage_samples[stage]+=1;self.physics_s+=dt
+-        collected=self.directory/'collection.json'
+-        collected.with_suffix('.tmp').write_text(json.dumps(dict(
+-            collected_transitions=self.samples,transition_serial=self.transition_serial,
+-            completed_update_transitions=self.backend.update_count*256,
+-            unupdated_fragment=len(self.buffer),stage_samples=self.stage_samples,
+-            wall_s=time.time()-self.begin,updated_unix_s=time.time(),collection_started_unix_s=self.begin,
+-            physics_s=self.physics_s,episode=self.episode,curriculum_stage=self.curriculum_stage,
+-            discarded_after_checkpoint=self.discarded_after_checkpoint))+'\n')
+-        collected.with_suffix('.tmp').replace(collected)
+         if len(self.buffer)==256:
+             batch={key:torch.stack([row[key] for row in self.buffer]) for key in record}
+             np.savez_compressed(self.directory/f'rollout-{self.samples-255:06d}-{self.samples:06d}.npz',
+@@ -134,18 +143,17 @@ class PolicyStream:
+             loss=self.backend.update(Rollout(**batch));self.buffer.clear()
+             self.learning.write(json.dumps(dict(samples=self.samples,wall_s=time.time()-self.begin,**loss))+'\n')
+             self.log.flush();self.learning.flush();self.checkpoint()
+-            # Keep at most one 256-transition update ahead, preserving this live session.
+-            while True:
+-                deadline=json.loads((self.root/self.contract['outputs']['compact_root']/'training-deadline.json').read_text())['deadline_unix_s']
+-                amounts=[]
+-                for group in ('PPO_RAW_S5','PANN_PPO_S5'):
+-                    for seed in range(3):
+-                        path=self.directory.parent/f'{group}-seed{seed}'/'progress.json'
+-                        amounts.append(json.loads(path.read_text())['samples'] if path.exists() else 0)
+-                if self.samples-min(amounts)<=256 or time.time()>=deadline:break
+-                time.sleep(5)
++            # R12 independent streams never wait for unstarted groups or seeds.
++            if self.contract['joint_learning'].get('cross_stream_wait',True):
++                while True:
++                    deadline=json.loads((self.root/self.contract['outputs']['compact_root']/'training-deadline.json').read_text())['deadline_unix_s']
++                    paths=list(self.directory.parent.glob('*/progress.json'))
++                    amounts=[json.loads(path.read_text())['samples'] for path in paths]
++                    if self.samples-min(amounts)<=256 or time.time()>=deadline:break
++                    time.sleep(5)
+             print(json.dumps(dict(group=self.group,seed=self.seed,samples=self.samples,
+                 physics_s=self.physics_s,wall_s=time.time()-self.begin,loss=loss['loss'])),flush=True)
++        self.write_collection()
+ 
+ 
+ class PolicyMaterial(JointMaterial):
+@@ -210,15 +218,17 @@ class PolicyMaterial(JointMaterial):
+ 
+     def collect_pending(self,t,mission,observation,terminated=False,truncated=False,failure=False,timeout=False):
+         current=self.snapshot(t,mission)
+-        if self.pending is not None:
+-            change=current-self.last_snapshot;dt=change[0]
++        self.stream.last_observation=torch.as_tensor(observation).reshape(1,-1).detach().cpu()
++        pending=self.pending;previous=self.last_snapshot
++        self.last_snapshot=current;self.pending=None
++        if pending is not None and current[0]>previous[0]:
++            change=current-previous;dt=change[0]
+             reward=5*change[1]-dt/60-change[2]/60-.1*change[3]/60-.01*change[4]+10*change[5]-10*failure-5*timeout
+-            self.stream.transition(self.pending,observation,float(reward),terminated,truncated,
++            self.stream.transition(pending,observation,float(reward),terminated,truncated,
+                 float(dt),bool(change[6]>0),self.stage,dict(time_s=float(t),metrics=dict(
+                     signed_route_fraction=float(change[1]),indentation_sq_s=float(change[2]),
+                     loaded_slip_sq_s=float(change[3]),completed_circuits=int(change[5]),
+                     failure=failure,intrinsic_timeout=timeout)))
+-        self.last_snapshot=current;self.pending=None
+ 
+     def control(self,t,mission):
+         self.mission=mission
+@@ -241,14 +251,19 @@ class PolicyMaterial(JointMaterial):
+         tick=int(np.floor((t+1e-8)/.5))
+         if tick!=self.last_actor_tick:
+             observation=self.observation(t,mission,measurement)
+-            self.collect_pending(t,mission,observation)
++            external_end=''
+             if self.stream.training:
+                 deadline=json.loads(self.training_deadline_path.read_text())['deadline_unix_s']
+-                if time.time()>=deadline:
+-                    self.stop_requested='training_budget_truncated';return
+-            if self.stream.training and self.stream.samples>=self.stream.target:
+-                self.stop_requested='training_checkpoint_complete';return
+-            obs=torch.as_tensor(observation).reshape(1,-1)
++                has_transition=self.pending is not None and t>self.last_snapshot[0]
++                if time.time()>=deadline:external_end='training_budget_truncated'
++                elif self.stream.samples+int(has_transition)>=self.stream.target:
++                    external_end='training_checkpoint_complete'
++            # The runtime checks physical failure immediately after integration.
++            # Its finish path wins over this external boundary at the next tick.
++            self.collect_pending(t,mission,observation,truncated=bool(external_end))
++            if external_end:
++                self.stop_requested=external_end;return
++            obs=torch.as_tensor(observation,device=self.stream.backend.config.device).reshape(1,-1)
+             sample=self.stream.backend.act(obs,deterministic=not self.stream.training)
+             self.cap=.215+.035*float(sample.action.item())
+             self.pending=dict(obs=obs,sample=sample,cap=self.cap)
+diff --git a/scripts/s1_go2_r11_runtime.py b/scripts/s1_go2_r11_runtime.py
+index f2fad29..de745e2 100644
+--- a/scripts/s1_go2_r11_runtime.py
++++ b/scripts/s1_go2_r11_runtime.py
+@@ -341,6 +341,7 @@ def run(args, c, joint=None):
+             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
+             subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT), run_init=False)) as agent:
+         try:
++            agent.model = prediction_model
+             agent.init(task_id='Quadruped Flat', model=prediction_model, send_as='xml')
+             agent.set_mode('Quadruped')
+             agent.set_task_parameters({'Gait switch': 'Manual'})
+@@ -599,6 +600,13 @@ def run(args, c, joint=None):
+                 completed_startup_iterations=len(startup_plans), command=sys.argv,
+                 source_commit=resolved['source_commit'], execution_fingerprint=fingerprint))
+         raise RuntimeError('No plant start: '+str(error))
++    # A sample target or wall deadline can end at the top of the next control
++    # tick. Preserve that real successor, including the final partial interval.
++    if hist and float(data.time) > hist[-1]['time']:
++        row = dict(hist[-1])
++        row.update(time=float(data.time), qpos=data.qpos.copy(), qvel=data.qvel.copy(),
++            rpy=Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz'))
++        hist.append(row)
+     arrays = {k: np.asarray([r[k] for r in hist]) for k in hist[0]}
+     if support:
+         save_streams()
+@@ -631,7 +639,7 @@ def run(args, c, joint=None):
+         trajectory=dict(path=str(out/'trajectory.npz'), size=(out/'trajectory.npz').stat().st_size, sha256=sha(out/'trajectory.npz')),
+         physical_columns=['force_evaluation_time_s','post_integration_time_s']+[f'torque_{i}' for i in range(12)]+[f'actuator_force_{i}' for i in range(12)]+[f'contact_{l}' for l in LEGS]+[f'grf_{l}_{a}' for l in LEGS for a in 'xyz']+[f'total_grf_{a}' for a in 'xyz']+[f'nonfoot_grf_{a}' for a in 'xyz']+['nonfoot_ground_contacts'],
+         physical_time_note='MuJoCo mj_step forces/contact correspond to the integration evaluation, preceding its returned qpos. Force evaluation and post-integration clocks are both stored.',
+-        terminal_row_note='Failure terminal qpos/qvel are appended; held command and last diagnostic values retain their preceding control timestamp.')
++        terminal_row_note='Actual final qpos/qvel are appended for physical failure and external truncation; held command and last diagnostic values retain their preceding control timestamp.')
+     if campaign:
+         from s1_go2_wb_equilibrium import hold_metrics
+         result['hold'] = hold_metrics(arrays, first_completion, duration, args.mission)
