@@ -2,12 +2,12 @@
 
 ## 当前交接（每窗口结束只更新这6行）
 
-- 当前任务：W1，本地移植并运行真实材料E30。
-- 当前状态：计划修订完成；R12尚未实际执行。
-- 已完成：R11修复和真实结果已在GitHub；本轮取消长窗口、重复计划和繁重验收。
-- 已知阻塞：AutoDL绝对路径/旧构建与资产位置尚未完成本地适配。
-- 下一步：在5080的kaiwen-learn适配必要路径和构建，使用r21启动一次原材料E30；记录实际进度或第一处具体失败。
-- 续接位置：`experiments/terrain_memory/s1-go2-r11-S5-r21.json`、`scripts/prepare_s1_go2_r11.py`、`scripts/run_s1_go2_r11.py`；目前无R12 checkpoint。
+- 当前任务：W2，RAW seed0 首次累计256真实转移并完成一次PPO更新；本窗口未启动W2。
+- 当前状态：W1移植完成；5080/kaiwen-learn 已运行原材料r21 E30，12.5182s非足端接触终止，E30未通过。
+- 已完成：复用r21冻结二进制/资源，修正本地库路径、grpcio和R12阶段分支；1次物理启动、62,591步、524.73s运行耗时，3次积分前初始化错误保留，PPO更新0。
+- 已知阻塞：r21仍未完成原材料穿越，12.324s侧出材料条带，12.5182s非足端接地；本轮未修改支撑机制。
+- 下一步：仅执行W2，在现有r21可交互候选上打通RAW seed0单流真实采样与首次256转移更新；不等待未启动流，普通更新不reset，到窗口截止保存真实末观测/尾buffer/checkpoint。
+- 续接位置：代码 `3250294`；`scripts/run_s1_go2_r12.py`；`results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json`；5080工作目录 `/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12`，`work/r11-frozen/S5-r21` 与 `work/assets` 已就绪，目前无R12 checkpoint。
 
 ## 1. 本次调整
 
