@@ -1,13 +1,13 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "planned_not_executed",
-  "protocol_revision": "one_task_per_window_max4h_v2",
+  "status": "W1_complete_W123_training_pending",
+  "protocol_revision": "linked_w123_max4h_v3",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-10-29",
-  "supersedes_plan_commit": "402894f7a865a2905e651d45b6746521dcd6eef7",
+  "supersedes_plan_commit": "816f34dfe9eaa76f3a37695f0b6ce3c3712b9ff8",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
-  "current_task": "W1",
+  "current_task": "W123",
   "reuse": {
     "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
     "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
@@ -15,22 +15,23 @@
     "rule": "Reuse actual r21 fixes and original physical/observation/reward/PPO/formal-task settings. Do not inherit R11 paused-run paths/status,48h autonomous campaign,6-stream wait or mandatory formal-freeze gate for early engineering sampling."
   },
   "execution": {
-    "mode": "one_task_per_new_context",
+    "mode": "linked_w123_per_new_context",
     "maximum_window_wall_s": 14400,
     "begin_wrapup_after_s": 12600,
     "clock_starts": "first activity on the assigned task, including reading",
     "includes": [
       "reading",
       "editing",
-      "building",
-      "actual runs",
+      "building only if concretely necessary",
+      "actual training",
       "analysis",
+      "rendering retained trajectories",
       "publishing"
     ],
-    "stop_when": "assigned goal complete, concrete unresolved blocker, or4h deadline",
+    "stop_when": "Both actual stream first-updates and full publication completed, concrete unresolved blocker, or4h deadline; no automatic W4 or paid jobs.",
     "automatically_chain_tasks": false,
     "autonomous_48h_campaign_enabled": false,
-    "unfinished_task_rule": "Keep actual work and counts; the next user-started window continues the same task when needed, without a new planning cycle.",
+    "unfinished_task_rule": "Next user-started window continues unfinished W123 phase/publication with preserved counts/checkpoints, never repeats completedW1 merely for a new window.",
     "background_overrun_authorized": false,
     "default_reads": [
       "AGENTS.md",
@@ -44,13 +45,45 @@
     ],
     "opening_plan_max_lines": 5,
     "handoff_max_lines": 6,
-    "new_handoff_document_required": false
+    "new_handoff_document_required": false,
+    "within_task_chain_enabled": true,
+    "allowed_chain": [
+      "reuse_completed_W1",
+      "W2_RAW",
+      "W3_PANN",
+      "complete_publication"
+    ],
+    "chain_shares_one_absolute_deadline": true,
+    "current_completed_prerequisite": {
+      "task": "W1",
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w1-S5-r21-E30-02.json",
+      "physical_s": 12.518199999997503,
+      "material_loading": true,
+      "formal_E30_pass": false,
+      "reuse_without_new_E30": true,
+      "host_workspace": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12",
+      "workers": 5,
+      "binary_reused": true,
+      "rebuild_required": false
+    }
   },
   "tasks": [
     {
+      "id": "W123",
+      "goal": "Reuse actual W1 and continue W2 then W3 in the same bounded window, followed by complete artifact publication.",
+      "phases": [
+        "reuse_W1",
+        "W2",
+        "W3",
+        "publication"
+      ],
+      "done": "RAW/PANNseed0 each256 real transitions and one actualPPO update, plus all required W1/W123 artifacts published; track training completion and publication completion separately."
+    },
+    {
       "id": "W1",
       "goal": "Port necessary paths/build/assets to5080 and actually run r21 materialE30.",
-      "done": "One real E30 record. Repair ordinary build/runtime errors directly; report partial only at deadline or a concrete blocker that cannot be resolved with available access/resources. E30 success is not required to prove migration."
+      "done": "One real E30 record. Repair ordinary build/runtime errors directly; report partial only at deadline or a concrete blocker that cannot be resolved with available access/resources. E30 success is not required to prove migration.",
+      "status": "completed"
     },
     {
       "id": "W2",
@@ -91,13 +124,24 @@
     "conda_environment": "kaiwen-learn",
     "new_paid_resources": false,
     "maximum_environments": 2,
-    "workers": "Choose from actual resources; preserve the setting of a formal qualification case. Lower concurrency when necessary.",
-    "environment_changes": "Only necessary task changes in kaiwen-learn; do not alter base/other environments/system libraries/global shell configuration."
+    "workers": "Reuse actualW1 five-worker configuration for both training streams. Start sequential independent subprocesses; no worker scan or extra benchmark.",
+    "environment_changes": "Only necessary task changes in kaiwen-learn; do not alter base/other environments/system libraries/global shell configuration.",
+    "actual_local_workers": 5,
+    "initial_training_concurrency": 1
   },
   "learning": {
     "candidate_can_start_before_E30_E60_pass": true,
     "candidate_requires": "Correct initial stand, effective permitted actions, real TM02 loading and original causal/physical failure semantics.",
-    "active_streams": "Only the stream assigned to this window; independent logs/checkpoints per group and actual controller version.",
+    "active_streams": [
+      {
+        "group": "PPO_RAW_S5",
+        "seed": 0
+      },
+      {
+        "group": "PANN_PPO_S5",
+        "seed": 0
+      }
+    ],
     "cross_stream_wait": false,
     "rollout_transitions": 256,
     "first_update_target_per_assigned_stream": 256,
@@ -118,7 +162,29 @@
     "explicit_task_end_rule": "If first256 or wall deadline is the declared end, mark external truncation before inserting the real final transition into buffer/GAE/update. True physical terminal has priority. Use actual pre-reset observation and do not add a failure/timeout bonus or penalty.",
     "unfinished_buffer_rule": "Save valid tail,optimizer,RNG,normalization and counts during ordinary shutdown. Continue in a later actual training window; do not require a separate recovery exercise.",
     "incomplete_environment_snapshot_rule": "Start a new physical session if full environment state was not saved. Record real boundaries and do not claim uninterrupted physics or fabricate missing successors.",
-    "evidence": "Use normal update logs,real trajectories and saved checkpoint. Do not replace real learning by mock tests or inflate results into convergence/benefit claims."
+    "evidence": "Use normal update logs,real trajectories and saved checkpoint. Do not replace real learning by mock tests or inflate results into convergence/benefit claims.",
+    "schedule": "RAW then PANN, sequential independent subprocesses inside the same W123 window; do not reset deadline at phase changes.",
+    "first_update_total_target": 512,
+    "required_updates_per_stream": 1,
+    "shares_actor_or_optimizer_between_groups": false,
+    "controller_change_during_w123": false,
+    "entrypoint_adaptation": [
+      "Use existing r21 engineering candidate and W1 local paths, not R11 frozen_controller index.",
+      "Reuse original PPO settings and explicitly map R12 learning fields to the existing joint_learning interface.",
+      "Use R12 outputs and the single current window deadline, nominal,60s sessions,curriculum off,5workers.",
+      "Remove six-stream waiting and update actual counts after optimization.",
+      "Mark sample-target/window truncation before buffer/GAE; physical terminal takes priority; do not count pending actions with no physical elapsed time."
+    ],
+    "pann_runtime": "Existing MaterialObserver uses JAX GPU/x64; W1 did not verify it or PPO dependencies. Resolve concrete dependency/weight issues in actual startup inside kaiwen-learn; no separate import/mock/recovery suite.",
+    "recording": "For this short W123 collect complete existing episode recording for all actual episodes, rather than full_recording only for the first. Preserve existing frequencies/schema, raw trajectories, actual arrays,transition/rollout/update data and normal checkpoints; no extra diagnostics fields.",
+    "estimated_cost": {
+      "reference_attempt": "w1-S5-r21-E30-02",
+      "slowdown": 41.917391027632,
+      "one_stream256_full_half_second_samples_serial_h": 1.4903961254269156,
+      "two_streams256_each_serial_h": 2.980792250853831,
+      "is_wall_time_promise": false,
+      "excludes": "new code/dependency work,onlinePANN,rendering/upload and changed rollout/resource behavior"
+    }
   },
   "control_and_evaluation": {
     "keep_original_robot_material_pd_torque_and_thresholds": true,
@@ -154,7 +220,9 @@
       "Git commit",
       "configuration name",
       "checkpoint path",
-      "necessary real result"
+      "normal environment record",
+      "necessary real result",
+      "one asset list with names/sizes/URLs/status"
     ],
     "hash_use": "Existing automatic fields may remain; investigate a specific corruption/wrong-file problem only when evidence requires it. No new routine certification stage.",
     "prohibited_extra_work": [
@@ -164,7 +232,8 @@
       "separate benchmark",
       "repeated planning/review documents",
       "forced restore drills",
-      "mandatory per-window full video/plot production"
+      "rerun physics solely to recreate a video or overwrite a retained failure",
+      "duplicated local archive after publication"
     ]
   },
   "outputs": {
@@ -172,15 +241,65 @@
     "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "create_result_index_only_after_actual_execution": true,
     "handoff": "Update only the six current-handoff lines in docs/TERRAIN_MEMORY_PLAN.md plus necessary normal run results.",
-    "publication": "Commit/push source and compact results. Upload large checkpoints needed for continuation directly from execution host to Release; record ordinary push success and commit. No separate exhaustive audit.",
-    "unfinished_upload": "At deadline record exact output location and remaining upload; continue next window without regenerating all artifacts.",
+    "publication": "Commit source/patches/configs/run scripts/environment records/small results. Upload all W1 unpublished and all W123 actual videos/raw trajectories/physical-prediction-material arrays/rollouts/checkpoints/logs to GitHubRelease as appropriate, not just continuation checkpoints. Reference unchanged previously published dependencies.",
+    "unfinished_upload": "At4h record actual pending paths and upload status, keep real outputs, continue W123 publication next window. Never declare complete publication while assets are missing.",
     "extra_archive_on_user_pc": false,
-    "preserve_normal_working_files_and_actual_history": true
+    "preserve_normal_working_files_and_actual_history": true,
+    "release_tag": "tm-s1-go2-local-readiness-r12",
+    "complete_research_artifact_publication_required": true,
+    "required_categories": [
+      "all current source changes and relevant execution/render/publication scripts",
+      "resolved configuration and ordinary logs,including initialization/negative results",
+      "actual conda and pip dependency records,driver/runtime and launch/environment changes without credentials",
+      "full videos from every actual episode's saved trajectory,including failure/truncation",
+      "all retained raw robot trajectories and physical/prediction/material array chunks",
+      "all actual PPO transitions,rollouts,learning logs,checkpoints and valid resume tail",
+      "actual Go2 scene/XML/mesh,normalization and needed model assets not already publicly referenced; unchanged published assets use original links"
+    ],
+    "w1_catchup": {
+      "status_at_review": "not_published_to_release",
+      "directory": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w1-S5-r21-E30-02",
+      "known_files": [
+        "trajectory.npz",
+        "physical-000.npz",
+        "prediction-000.npz",
+        "material-0000.npz through material-0012.npz"
+      ],
+      "known_three_array_bytes": 59613628,
+      "material_chunk_sizes": "read existing files on execution host; not available in GitHub result metadata",
+      "video": "Locate retained full video or render once from original saved trajectory; do not rerun physics.",
+      "previous_release_upload_required_false_superseded": true
+    },
+    "artifact_index": "Use existing result index for category,relative path,size,Git/ReleaseURL and upload status; no second audit document.",
+    "publication_check": "One normal comparison of expected artifact names/sizes with uploaded asset list; no full-repository hashing or redownload verification. Preserve any already-generated digest fields without extra certification work.",
+    "max_release_asset_bytes_exclusive": 2147483648,
+    "no_large_binary_in_regular_git_history": true,
+    "upload_packaging": "Only split/package as necessary for transfer on execution host; no extra PC mirror/archive after publication.",
+    "training_complete_does_not_imply_publication_complete": true
   },
   "history": {
     "R11_remains_paused": true,
     "rewrite_R11_counts_or_results": false,
     "R12_counts_persist_across_windows": true,
-    "previous_full_assessment_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/402894f7a865a2905e651d45b6746521dcd6eef7/docs/TERRAIN_MEMORY_PLAN.md"
-  }
+    "previous_full_assessment_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/402894f7a865a2905e651d45b6746521dcd6eef7/docs/TERRAIN_MEMORY_PLAN.md",
+    "R12_W1_complete_at_review": true,
+    "reviewed_W1_result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w1-S5-r21-E30-02.json"
+  },
+  "reviewed_source_commit": "e70de2b4de10fb60ec4c844a1012b5c35931a6c1",
+  "literature": [
+    {
+      "url": "https://arxiv.org/abs/1707.06347",
+      "use": "Actual interaction and optimization alternate;256 here is an engineering target,not a convergence claim."
+    },
+    {
+      "url": "https://arxiv.org/html/2012.03094v3",
+      "section": "VI-H",
+      "use": "Optimizer-in-loop rollout can dominate cost;keep existingPPO and measure actual sampling,do not copy other modules'algorithms/runtime."
+    },
+    {
+      "url": "https://arxiv.org/html/1904.12306v2",
+      "section": "IV",
+      "use": "Compliant stance/contact consistency informs subsequent support repair,not a new prerequisite for first learning."
+    }
+  ]
 }
