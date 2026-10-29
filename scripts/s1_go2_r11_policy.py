@@ -141,7 +141,7 @@ class PolicyStream:
                 **{key:value.detach().cpu().numpy() for key,value in batch.items()})
             batch.pop('next_obs')
             loss=self.backend.update(Rollout(**batch));self.buffer.clear()
-            self.learning.write(json.dumps(dict(samples=self.samples,wall_s=time.time()-self.begin,**loss))+'\n')
+            self.learning.write(json.dumps(dict(loss,cumulative_samples=self.samples,wall_s=time.time()-self.begin))+'\n')
             self.log.flush();self.learning.flush();self.checkpoint()
             # R12 independent streams never wait for unstarted groups or seeds.
             if self.contract['joint_learning'].get('cross_stream_wait',True):

@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "W1_complete_W123_training_pending",
+  "status": "RAW_first_update_complete_PANN_deferred_by_user",
   "protocol_revision": "linked_w123_max4h_v3",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-10-29",
@@ -50,8 +50,8 @@
     "allowed_chain": [
       "reuse_completed_W1",
       "W2_RAW",
-      "W3_PANN",
-      "complete_publication"
+      "complete_publication",
+      "stop_for_RAW_review"
     ],
     "chain_shares_one_absolute_deadline": true,
     "current_completed_prerequisite": {
@@ -92,7 +92,11 @@
       "seed": 0,
       "condition": "nominal",
       "target_cumulative_transitions": 256,
-      "done": "One real update, or saved actual samples/tail and a precise continuation at deadline."
+      "done": "One real update, or saved actual samples/tail and a precise continuation at deadline.",
+      "status": "completed",
+      "actual_transitions": 256,
+      "actual_updates": 1,
+      "loss_metrics_saved": false
     },
     {
       "id": "W3",
@@ -101,7 +105,8 @@
       "seed": 0,
       "condition": "nominal",
       "target_cumulative_transitions": 256,
-      "done": "One real update, or saved actual samples/tail and a precise continuation at deadline."
+      "done": "One real update, or saved actual samples/tail and a precise continuation at deadline.",
+      "status": "deferred_by_user_until_RAW_review"
     },
     {
       "id": "W4",
@@ -301,5 +306,22 @@
       "section": "IV",
       "use": "Compliant stance/contact consistency informs subsequent support repair,not a new prerequisite for first learning."
     }
-  ]
+  ],
+  "current_window_scope": {
+    "updated_utc": "2026-10-29T13:34:13Z",
+    "user_instruction": "Finish RAW and complete publication, then stop for user analysis before PANN.",
+    "active_streams": [
+      {
+        "group": "PPO_RAW_S5",
+        "seed": 0
+      }
+    ],
+    "target_real_transitions": 256,
+    "target_updates": 1,
+    "PANN_start_authorized_this_window": false,
+    "preserve_original_absolute_deadline": true,
+    "status": "RAW_training_complete_publication_in_progress",
+    "actual_transitions": 256,
+    "actual_updates": 1
+  }
 }

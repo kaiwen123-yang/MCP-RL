@@ -2,12 +2,12 @@
 
 ## 当前交接（每窗口结束只更新这6行）
 
-- 当前任务：W123联动；W1已完成并复用，接着W2 RAW→W3 PANN，不再要求中间换窗口。
-- 当前状态：W1本地适配成立；材料E30未通过；RAW/PANN训练转移与更新仍为0。
-- 已完成：5080/kaiwen-learn运行r21；3次零步错误已处理，1次真实物理任务12.5182s/62,591步，524.73s墙钟；未重新编译r21。
-- 当前问题：R12缺训练适配入口；旧policy仍有六流等待、目标截断顺序及更新后计数问题；在线PANN依赖尚未实际运行。
-- 下一步：复用W1路径/5workers，完成同一R12单流入口，依次RAW seed0、PANN seed0各累计256真实转移/首次更新；同时补齐W1和本轮全部科研产物上传。
-- 续接位置：`/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12`，`work/r11-frozen/S5-r21`与`work/assets`就绪；源码基准`3250294`，审查`e70de2b4`；无R12训练checkpoint，R12 Release尚未创建；使用kaiwen-learn内Git 2.55.0，仓库代理已接入服务器现有Clash，普通fetch已成功。
+- 当前任务：RAW首次学习已完成；按用户最新要求完成发布后结束，PANN暂缓，先分析RAW。
+- 当前状态：RAW seed0为256条真实转移、1次PPO更新、有效尾buffer为0；PANN为0条/0次，未启动；最终资产上传中，状态见现有索引。
+- 已完成：复用W1、r21与5workers，Torch使用CUDA；RAW共4个真实会话、127.6484s物理时间，205条有效平移转移；W1遗留已全部补传。
+- 当前问题：3次非足端接触、完整往返0；第256条先标截断并完成更新，随后日志samples键冲突，原loss标量未保存；代码已修，更新后的checkpoint与真实末观测已保存，不重复物理或优化器更新。
+- 下一步：只分析本轮RAW的完整轨迹、动作奖励、rollout与更新后checkpoint，再由用户决定PANN；不重做W1、不清零已有样本、不自动启动W4或长评价。
+- 续接位置：`/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12`；训练状态在`outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PPO_RAW_S5-seed0/resume-state-ep00006.pt`；全部成果链接与上传状态见本run现有index.json。
 
 ## 1. 本轮判断与范围
 
