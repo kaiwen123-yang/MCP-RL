@@ -213,6 +213,9 @@ def write_equilibrium_settings(xml_path, config, arm):
             stiffness=config['local_contact_model']['instantaneous_stiffness_N_m']
             ET.SubElement(custom,'numeric',name='r10_local_contact',data=format(stiffness,'.17g'))
             values['r10_local_contact']=stiffness
+            if config.get('r11_contact_completion'):
+                ET.SubElement(custom,'numeric',name='r11_contact_completion',data='1')
+                values['r11_contact_completion']=1
             if config['local_contact_model'].get('causal_force_anchor'):
                 ET.SubElement(custom,'numeric',name='r10_contact_anchor',data='1')
                 tree.getroot().find('size').set('nuserdata','78')

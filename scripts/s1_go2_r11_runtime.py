@@ -393,10 +393,17 @@ def run(args, c, joint=None):
                     if not reference['feasible']:
                         raise ValueError('Native static support reference infeasible; see retained reference and entry state')
                     data.userdata[:62]=reference_userdata(reference)
+                if c.get('r11_contact_completion'):
+                    anchor_kind=np.zeros(4,dtype=np.int8)
                 if c.get('local_contact_model',{}).get('causal_force_anchor'):
                     bottom=joint.force_boundary_bottom
                     patches=data.userdata[62:78].reshape(4,4)
-                    patches[:,0]=(joint.force[:,2]>1)&joint.soft
+                    loaded_anchor=(joint.force[:,2]>1)&joint.soft
+                    patches[:,0]=loaded_anchor
+                    if c.get('r11_contact_completion'):
+                        below_plane=joint.soft&(bottom[:,2]<0)&~loaded_anchor
+                        patches[:,0]=loaded_anchor|below_plane
+                        anchor_kind=np.where(loaded_anchor,1,np.where(below_plane,2,0)).astype(np.int8)
                     patches[:,1:3]=bottom[:,:2]
                     patches[:,3]=bottom[:,2]+joint.force[:,2]/c['local_contact_model']['instantaneous_stiffness_N_m']
                 if c.get('r11_body_twist_reference'):
@@ -508,6 +515,8 @@ def run(args, c, joint=None):
                         hist[-1].update(support_reference_userdata=data.userdata.copy(),support_active=standing,
                             active_relative_height_target=float(data.userdata[1]) if standing else .27)
                     if step>0 and step%15000==0:save_streams()
+                if c.get('r11_contact_completion'):
+                    hist[-1]['anchor_observation_kind']=anchor_kind.copy()
                 if ((not campaign or (training and args.mission=='single')) and mission.phase == 'complete') or step >= round(duration/dt):
                     reason = 'stage_horizon_reached'
                     break

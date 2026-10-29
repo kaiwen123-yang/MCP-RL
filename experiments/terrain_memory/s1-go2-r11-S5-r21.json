@@ -1,0 +1,20 @@
+{
+  "build": "S5-r21",
+  "based_on": "S5-r20",
+  "r11_contact_completion": {
+    "enabled": true,
+    "normal_force_target": "Original two-foot support share: subtree_mass*abs(gravity_z)/2",
+    "loaded_reference": "z_target = same C causal rest offset - (mass*abs(g_z)/2)/K0",
+    "scope": "Only normal-velocity reference and causal C observation anchors. Keep original Kinf-based indentation penalty, its scale/weight, real material law/domain and all other S5-r20 settings.",
+    "velocity": "Swing ascent remains unpenalized; descending swing retains the phase-compatible braking limit. During nominal material stance, preserve the downward braking reference until the loaded C reference is reached instead of clipping it to0 solely because nominal step height is0.",
+    "gate": "Use height relative to the same estimated C unloaded surface for the existing5mm gate, without changing true geometry or domain.",
+    "anchor_observations": "Retain original >1N loaded anchors. Also retain below-original-plane observations with force<=1N: atzero force these tighten an upper bound on the contact surface; atsmall positive force they match the observed weak force. No true q/e or future truth is read.",
+    "anchor_kind": {
+      "inactive": 0,
+      "original_loaded_over1N": 1,
+      "below_plane_subthreshold_observation": 2
+    },
+    "evidence": "dev22 has a93ms unsupported interval and1745N total-force peak before trunk contact, while its RL stays unloaded through the final.5s. The existing phase clip makes desired downward velocity0 for airborne nominal stance feet. In retained dev18 at9.04s, ignoring a negative-height zero-force observation makes C predict18.89N at a true zero-force node.",
+    "qualification": "New independent E30 then same-version E60; no retrospective qualification."
+  }
+}
