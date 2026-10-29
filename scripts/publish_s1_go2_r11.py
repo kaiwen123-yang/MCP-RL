@@ -150,7 +150,7 @@ def main():
             url=f'https://github.com/{REPO}/releases/download/{RUN}/{item["name"]}'))
     git('fetch','origin','main')
     git('merge-base','--is-ancestor','origin/main','HEAD')
-    git('push','origin','HEAD:main')
+    git('push','origin','HEAD:main','HEAD:refs/heads/codex/r11-material-continuation')
     head=git('rev-parse','HEAD')
     if api(f'repos/{REPO}/git/ref/heads/main')['object']['sha']!=head:raise RuntimeError('Main commit mismatch')
     payload=ROOT/'work/r11-publish-payload.json'
@@ -175,7 +175,7 @@ def main():
             verification='Authenticated URL, size and SHA256 metadata against original execution-host files; no asset downloads')
     git('add',str((SMALL/'index.json').relative_to(ROOT)))
     git('commit','-m','Verify R11 release asset URLs sizes and digests')
-    git('push','origin','HEAD:main')
+    git('push','origin','HEAD:main','HEAD:refs/heads/codex/r11-material-continuation')
     final=git('rev-parse','HEAD')
     if api(f'repos/{REPO}/git/ref/heads/main')['object']['sha']!=final:raise RuntimeError('Final metadata commit mismatch')
     print(json.dumps(dict(final_commit=final,evidence_commit=head,release_url=public['html_url'],verified_assets=len(checked))),flush=True)
