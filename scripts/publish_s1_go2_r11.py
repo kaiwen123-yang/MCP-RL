@@ -16,6 +16,7 @@ def main():
     parser.add_argument('action',choices=['draft','upload','status','finish'])
     parser.add_argument('--workers',type=int,default=8)
     parser.add_argument('--exclude-prefix',action='append',default=[])
+    parser.add_argument('--include-prefix',action='append',default=[])
     args=parser.parse_args()
     credentials=json.loads(sys.stdin.read())
     env=dict(os.environ,GH_TOKEN=credentials['token'],GITHUB_TOKEN=credentials['token'],
@@ -65,9 +66,9 @@ def main():
                 transport=os.environ.get('R11_PUBLICATION_TRANSPORT','AutoDL academic acceleration'))
         print(json.dumps(dict(release_id=r['id'],draft=r['draft'])),flush=True)
         return
-    r=release()
+    r=credentials.get('release_metadata') or release()
     if r is None:raise RuntimeError('No R11 draft exists')
-    remote=assets(r);expected=state().get('assets',[])
+    remote=({x['name']:x for x in credentials['remote_assets']} if 'remote_assets' in credentials else assets(r));expected=state().get('assets',[])
     def matches(item,actual):
         return actual.get('state')=='uploaded' and actual['size']==item['size'] and actual.get('digest')=='sha256:'+item['sha256']
     if args.action=='status':
@@ -79,6 +80,7 @@ def main():
         todo=[]
         for item in expected:
             if any(item['name'].startswith(prefix) for prefix in args.exclude_prefix):continue
+            if args.include_prefix and not any(item['name'].startswith(prefix) for prefix in args.include_prefix):continue
             if item['size']>=2*1024**3:raise RuntimeError('Asset exceeds release limit: '+item['name'])
             prior=remote.get(item['name'])
             if prior and matches(item,prior):continue
