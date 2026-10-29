@@ -1,0 +1,74 @@
+--- S5-r20/mjpc/tasks/quadruped/quadruped.cc
++++ S5-r21/mjpc/tasks/quadruped/quadruped.cc
+@@ -19,6 +19,7 @@
+ #include <mujoco/mujoco.h>
+ #include "mjpc/task.h"
+ #include "mjpc/utilities.h"
++#include "mjpc/tasks/quadruped/r10_contact.h"
+ 
+ namespace mjpc {
+ std::string QuadrupedHill::XmlPath() const {
+@@ -349,10 +350,21 @@
+         double z = p[2] - model->geom_size[3*foot_geom_id_[foot]] - flat_ground_height[0];
+         double velocity[6];
+         mj_objectVelocity(model,data,mjOBJ_GEOM,foot_geom_id_[foot],velocity,0);
+-        double gate = 0.5*(1-mju_tanh((z-0.005)/0.002));
++        const double* normal_stiffness = GetCustomNumericData(model,"r10_local_contact");
++        const bool complete_contact = material && normal_stiffness &&
++            GetNumberOrDefault(0,model,"r11_contact_completion")==1;
++        double rest=0, loaded_target=0;
++        if (complete_contact) {
++          const double point[3]={p[0],p[1],z+flat_ground_height[0]};
++          rest=R10ContactRest(model,data,point);
++          loaded_target=rest-model->body_subtreemass[torso_body_id_]*
++              mju_abs(model->opt.gravity[2])/(2*normal_stiffness[0]);
++        }
++        double gate = 0.5*(1-mju_tanh((z-rest-0.005)/0.002));
+         // 1 mm / 20 ms logical replanning interval; approaches zero at the plane.
+-        double desired_vz = -0.05*mju_tanh(mju_max(z,0)/0.001);
+-        if (slow_approach_) desired_vz=mju_max(mju_min(step_velocity[foot],0.),desired_vz);
++        double desired_vz = -0.05*mju_tanh(mju_max(z-loaded_target,0)/0.001);
++        if (slow_approach_ && (!complete_contact || step[foot]>0))
++          desired_vz=mju_max(mju_min(step_velocity[foot],0.),desired_vz);
+         velocity_residual[foot] = gate*(mju_min(velocity[5],0)-desired_vz)/0.05;
+         // 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.
+         double over = -z - 0.00019889981664;
+--- S5-r20/mjpc/tasks/quadruped/r10_contact.h
++++ S5-r21/mjpc/tasks/quadruped/r10_contact.h
+@@ -21,15 +21,7 @@
+   return R10MaterialFoot(m,d,g1) || R10MaterialFoot(m,d,g2);
+ }
+ 
+-inline void R10ContactForce(const mjModel* m,mjData* d) {
+-  const double* opt=GetCustomNumericData(m,"r10_local_contact");
+-  if (!opt) return;
+-  const double floor=GetCustomNumericData(m,"s1_flat_ground_height")[0];
+-  for (const char* name : {"FL","FR","RL","RR"}) {
+-    const int geom=mj_name2id(m,mjOBJ_GEOM,name);
+-    if (!R10MaterialFoot(m,d,geom)) continue;
+-    const double radius=m->geom_size[3*geom];
+-    double point[3];mju_copy3(point,d->geom_xpos+3*geom);point[2]-=radius;
++inline double R10ContactRest(const mjModel* m,const mjData* d,const double* point) {
+     double rest=0;
+     if (GetCustomNumericData(m,"r10_contact_anchor")) {
+       // Four frozen, currently observed patches in world coordinates. A new
+@@ -43,6 +35,19 @@
+         rest+=patch[0]*overlap*patch[3];
+       }
+     }
++    return rest;
++}
++
++inline void R10ContactForce(const mjModel* m,mjData* d) {
++  const double* opt=GetCustomNumericData(m,"r10_local_contact");
++  if (!opt) return;
++  const double floor=GetCustomNumericData(m,"s1_flat_ground_height")[0];
++  for (const char* name : {"FL","FR","RL","RR"}) {
++    const int geom=mj_name2id(m,mjOBJ_GEOM,name);
++    if (!R10MaterialFoot(m,d,geom)) continue;
++    const double radius=m->geom_size[3*geom];
++    double point[3];mju_copy3(point,d->geom_xpos+3*geom);point[2]-=radius;
++    const double rest=R10ContactRest(m,d,point);
+     const double depth=mju_max(floor+rest-point[2],0);
+     double velocity[6];mj_objectVelocity(m,d,mjOBJ_GEOM,geom,velocity,0);
+     const double vx=velocity[3]-radius*velocity[1];
