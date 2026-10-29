@@ -2,706 +2,185 @@
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
   "status": "planned_not_executed",
-  "protocol_revision": "local_executor_and_joint_pilot_v1",
+  "protocol_revision": "one_task_per_window_max4h_v2",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-10-29",
-  "revision_timezone": "Asia/Shanghai",
-  "reviewed_source_commit": "25947cfae9b2a48a872327bb63e9b36f76fe2dac",
+  "supersedes_plan_commit": "402894f7a865a2905e651d45b6746521dcd6eef7",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
-  "purpose": "Use the user's existing RTX 5080 server to establish a portable real executor, bounded real PPO engineering pilot and qualified short material tasks before proposing paid cloud-scale learning. This contract is a plan, not executed evidence.",
-  "implementation_status": "R12 entrypoints and the targeted runtime/policy changes must be implemented before execution; this document does not claim the R11 scripts already satisfy R12.",
-  "authorization_scope": {
-    "host": "user's existing RTX 5080 server",
-    "actual_host_inventory_required": true,
-    "new_paid_resources": false,
-    "restart_r11": false,
-    "hardware_robot_activation": false,
-    "archive_on_user_pc_after_publication": false
+  "current_task": "W1",
+  "reuse": {
+    "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
+    "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
+    "source_reference_commit": "25947cfae9b2a48a872327bb63e9b36f76fe2dac",
+    "rule": "Reuse actual r21 fixes and original physical/observation/reward/PPO/formal-task settings. Do not inherit R11 paused-run paths/status,48h autonomous campaign,6-stream wait or mandatory formal-freeze gate for early engineering sampling."
   },
-  "history": {
-    "R11_run": "tm-s1-go2-material-continuation-r11",
-    "R11_index": "results/terrain_memory/simulation/tm-s1-go2-material-continuation-r11/index.json",
-    "R11_status": "paused_by_user_review_published",
-    "R11_plan_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/25947cfae9b2a48a872327bb63e9b36f76fe2dac/docs/TERRAIN_MEMORY_PLAN.md",
-    "preserve_all_prior_results_contracts_and_assets": true,
-    "r11_clock_reset": false,
-    "new_scope_rule": "R12 is an explicitly planned local readiness phase. Do not resume the paused cloud campaign or refresh its budget by renaming it.",
-    "reviewed_r11_actual": {
-      "physical_starts": 23,
-      "zero_step_failures": 0,
-      "E30_starts": 22,
-      "E60_starts": 1,
-      "physical_time_s": 271.5529999999358,
-      "physical_steps": 1357765,
-      "valid_E30_passes": 0,
-      "valid_E60_passes": 0,
-      "complete_material_round_trips": 0,
-      "training_transitions": 0,
-      "ppo_updates": 0,
-      "elapsed_at_user_pause_h": 11.412866228620212,
-      "task_execution_wall_h": 5.064581479038784,
-      "outcomes": {
-        "physical_material_failure": 20,
-        "technical_interruption": 1,
-        "initial_pass_with_invalid_qualification": 1,
-        "material_traversal_unmet": 1
-      },
-      "retained_observer_replay": {
-        "source": "R10 dev11",
-        "updates": 16284,
-        "queries": 66,
-        "new_robot_physics_steps": 0,
-        "training_transitions": 0
-      }
-    }
+  "execution": {
+    "mode": "one_task_per_new_context",
+    "maximum_window_wall_s": 14400,
+    "begin_wrapup_after_s": 12600,
+    "clock_starts": "first activity on the assigned task, including reading",
+    "includes": [
+      "reading",
+      "editing",
+      "building",
+      "actual runs",
+      "analysis",
+      "publishing"
+    ],
+    "stop_when": "assigned goal complete, concrete unresolved blocker, or4h deadline",
+    "automatically_chain_tasks": false,
+    "autonomous_48h_campaign_enabled": false,
+    "unfinished_task_rule": "Keep actual work and counts; the next user-started window continues the same task when needed, without a new planning cycle.",
+    "background_overrun_authorized": false,
+    "default_reads": [
+      "AGENTS.md",
+      "current handoff and task row in docs/TERRAIN_MEMORY_PLAN.md"
+    ],
+    "avoid_default_bulk_reads": [
+      "README history",
+      "entire R11 index",
+      "full logs/arrays",
+      "all old plans and papers"
+    ],
+    "opening_plan_max_lines": 5,
+    "handoff_max_lines": 6,
+    "new_handoff_document_required": false
   },
-  "configuration_reuse": {
-    "read_ref": "25947cfae9b2a48a872327bb63e9b36f76fe2dac",
-    "prior_contract": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
-    "initial_candidate": "S5-r21",
-    "candidate_spec": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
-    "candidate_patch": "experiments/terrain_memory/s1-go2-r11-S5-r21.patch",
-    "prior_actual_attempt": "results/terrain_memory/simulation/tm-s1-go2-material-continuation-r11/dev23-S5-r21-E30.json",
-    "source_snapshot_asset": {
-      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-material-continuation-r11/controller-source-snapshots-arrays-01.tar.gz",
-      "size_bytes": 44911295,
-      "sha256": "5ef5f9df7702f7bd3918d2dc5024d3e8c6844dbacf19174d39891b033acc87ab"
+  "tasks": [
+    {
+      "id": "W1",
+      "goal": "Port necessary paths/build/assets to5080 and actually run r21 materialE30.",
+      "done": "One real E30 record. Repair ordinary build/runtime errors directly; report partial only at deadline or a concrete blocker that cannot be resolved with available access/resources. E30 success is not required to prove migration."
     },
-    "overrides": "R12 owns local paths, run identity, explicit engineering-pilot candidate, active streams, pilot target/resume/truncation/accounting, local scope, budget and cloud-readiness decision. Keep R11 physical and formal task semantics unless explicitly restated here.",
-    "required_native_fixes": [
-      "deduplicate T-2 derivative job",
-      "private prediction warmstart disabled without changing truth",
-      "apply gait transition before numerical settings and read back actual values",
-      "floating-point approach band read",
-      "persistent stance/body support objectives",
-      "r21 contact completion and zero/small-force causal anchors"
-    ],
-    "assets_rule": "Recover only needed source/build/model/weight assets for execution and selected evidence. Do not reconstruct all 21 historical controller builds or download all 77 assets.",
-    "identity_rule": "Resolve project/interpreter/build/assets/binary paths. Record actual source/patch/compiler/native libraries/models/parameters/binary/worker identity before physics. Local rebuild is a new identity and does not inherit cloud qualification."
+    {
+      "id": "W2",
+      "goal": "RAW seed0 actual first PPO update on the existing interactive candidate.",
+      "group": "PPO_RAW_S5",
+      "seed": 0,
+      "condition": "nominal",
+      "target_cumulative_transitions": 256,
+      "done": "One real update, or saved actual samples/tail and a precise continuation at deadline."
+    },
+    {
+      "id": "W3",
+      "goal": "Connect frozen causal PANN to actual sampling and first PPO update.",
+      "group": "PANN_PPO_S5",
+      "seed": 0,
+      "condition": "nominal",
+      "target_cumulative_transitions": 256,
+      "done": "One real update, or saved actual samples/tail and a precise continuation at deadline."
+    },
+    {
+      "id": "W4",
+      "goal": "One evidence-backed support-handoff correction, with directly relevant realE30.",
+      "done": "Actual result and earliest remaining mismatch; no parameter matrix."
+    },
+    {
+      "id": "W5",
+      "goal": "Same-version qualifiedE30 then original materialE60; reuse existing same-version prerequisite.",
+      "done": "Actual complete mission or recorded concrete failure, not extra audit tasks."
+    },
+    {
+      "id": "W6",
+      "goal": "Normal PPO learning in affordable window-sized increments and throughput evidence for cloud decision.",
+      "done": "Actual new samples/updates,normal checkpoint and specific resource/remaining-work conclusion."
+    }
+  ],
+  "resources": {
+    "host": "user's existing RTX5080 server",
+    "conda_environment": "kaiwen-learn",
+    "new_paid_resources": false,
+    "maximum_environments": 2,
+    "workers": "Choose from actual resources; preserve the setting of a formal qualification case. Lower concurrency when necessary.",
+    "environment_changes": "Only necessary task changes in kaiwen-learn; do not alter base/other environments/system libraries/global shell configuration."
   },
-  "plant_invariants": {
-    "robot": "project four-legged Go2, 15.206408 kg; original geometry/inertia/passive parameters/limits; G0/G1 are historical cohort labels, not humanoid hardware",
-    "pd": [
-      60,
-      5
+  "learning": {
+    "candidate_can_start_before_E30_E60_pass": true,
+    "candidate_requires": "Correct initial stand, effective permitted actions, real TM02 loading and original causal/physical failure semantics.",
+    "active_streams": "Only the stream assigned to this window; independent logs/checkpoints per group and actual controller version.",
+    "cross_stream_wait": false,
+    "rollout_transitions": 256,
+    "first_update_target_per_assigned_stream": 256,
+    "mandatory_paired512_pilot": false,
+    "mandatory_repeat_pilot_after_every_candidate": false,
+    "mandatory_exit_restart_resume_drill": false,
+    "mandatory_parameter_reload_comparison": false,
+    "initial_acquisition_session_s": 60,
+    "initial_condition": "nominal",
+    "initial_curriculum_enabled": false,
+    "actor_dt_s": 0.5,
+    "cap_m_s": [
+      0.18,
+      0.25
     ],
-    "per_leg_torque_limits_Nm": [
-      23.7,
-      23.7,
-      45.43
-    ],
+    "pann": "Keep frozen B ideal and causal2ms observer; no true q/e input.",
+    "ordinary_update_resets_environment": false,
+    "explicit_task_end_rule": "If first256 or wall deadline is the declared end, mark external truncation before inserting the real final transition into buffer/GAE/update. True physical terminal has priority. Use actual pre-reset observation and do not add a failure/timeout bonus or penalty.",
+    "unfinished_buffer_rule": "Save valid tail,optimizer,RNG,normalization and counts during ordinary shutdown. Continue in a later actual training window; do not require a separate recovery exercise.",
+    "incomplete_environment_snapshot_rule": "Start a new physical session if full environment state was not saved. Record real boundaries and do not claim uninterrupted physics or fabricate missing successors.",
+    "evidence": "Use normal update logs,real trajectories and saved checkpoint. Do not replace real learning by mock tests or inflate results into convergence/benefit claims."
+  },
+  "control_and_evaluation": {
+    "keep_original_robot_material_pd_torque_and_thresholds": true,
     "physics_dt_s": 0.0002,
     "control_hold_s": 0.002,
     "logical_planning_dt_s": 0.02,
-    "material": "unchanged ReferenceColumns tm02_anchor and original constitutive parameters",
-    "gamma": 0.025,
-    "thickness_m": 0.05,
-    "footprint_area_m2": 0.001,
-    "grid_m": 0.02,
-    "strain_absolute_limit": 0.02,
-    "strip_x_m": [
-      0.8,
-      2.2
-    ],
-    "strip_y_m": [
-      -0.6,
-      0.6
-    ],
-    "boundary_rule": "unchanged hard-priority footprint assignment, unique support; retain non-foot collisions",
-    "history_rule": "World-fixed shared columns recover when unloaded. Reset only between independent episodes/acquisition sessions, never at PPO updates, laps or file boundaries.",
-    "prohibited": "softening truth to pass, clipping material strain/force, injecting planned GRF, relaxing task/physical limits, replacing the training plant or controller",
-    "prediction_horizon_s": 0.35
-  },
-  "local_execution": {
-    "host_inventory": [
-      "actual CPU quota and usable cores",
-      "RAM limit and free memory",
-      "GPU model and available VRAM",
-      "driver/runtime",
-      "existing relevant Python/build environments"
-    ],
-    "hardcoded_paths_to_remove": [
-      "/root/autodl-tmp/MCP-RL",
-      "implicit work/r10-frozen",
-      "implicit build-autodl",
-      "fixed joint-py312 interpreter"
-    ],
-    "initial_worker_preference": 4,
-    "lower_resource_worker_choice": 2,
-    "worker_rule": "Choose and record one value from actual host resources before first physics; use the same resolved value for final fixed E30/E60, rigid regression and final pilot. If parallel pilots do not fit, run sequentially without changing worker identity. Any subsequent worker change creates a new execution identity and requires its own qualification.",
-    "maximum_concurrent_environments": 2,
-    "separate_benchmark_episodes": 0,
-    "same_semantics_performance_scope": "Reduce redundant RPC/FK/logging and batch material arithmetic/reuse constants without changing the true .2ms material integration, .2ms physics,2ms action holding, persistent unloaded recovery or fair information. No fast substitute controller/plant.",
-    "no_environment_wide_upgrade": true,
-    "r12_entrypoint_rule": "Explicitly adapt run/stage/contract/output/deadline and candidate-vs-frozen paths; never start paused R11 as a shortcut.",
-    "first_real_task": "Predeclared local fixed nominal material E30; a valid failed record may establish pilot eligibility but not formal qualification.",
-    "intended_conda_environment": "kaiwen-learn",
-    "environment_rule": "Inspect actual versions and locked dependency compatibility. Limit necessary adjustments to the user's existing kaiwen-learn environment; do not alter base/other environments/system libraries/global shell settings or solve a concrete conflict by upgrading the entire stack."
-  },
-  "controller_development": {
-    "initial_candidate": "ported S5-r21 with actual inherited fixes",
-    "initial_cap_m_s": 0.215,
-    "maximum_physical_starts": null,
-    "evidence_batch_max_development_starts": 6,
-    "engineering_pilot_must_not_wait_for_final_E30_E60": true,
-    "fixed_freeze_rule": "Same actual execution identity first passes independent nominal material E30 then E60 with full observation. Retain the first qualifying identity and one original nominal rigid60 regression; no result/version mixing.",
-    "next_mechanism_hypothesis": {
-      "name": "actual_support_handoff_within_existing_horizon",
-      "condition": "Use retained r20/r21 and first local evidence to confirm support-handoff hypothesis; if contradicted, document the earliest mismatch before choosing one evidence-backed alternative.",
+    "prediction_horizon_s": 0.35,
+    "support_candidate_if_evidence_still_applies": {
       "cadence_Hz": 2,
       "duty": 0.55,
-      "prior_duty": 0.45,
-      "nominal_diagonal_event_s": 0.25,
-      "nominal_overlap_s": 0.025,
-      "prior_nominal_flight_gap_s": 0.025,
-      "prediction_horizon_s": 0.35,
-      "prior_swing_s": 0.275,
-      "swing_s": 0.225,
-      "profile_scale": 0.8181818181818182,
-      "clearance_m": 0.00409090909090909,
-      "rise_s": 0.061363636363636356,
-      "descent_s": 0.16363636363636364,
-      "reference_peak_rise_m_s": 0.125,
-      "reference_peak_descent_m_s": 0.046875,
-      "reference_acceleration_scale": 1.2222222222222223,
-      "not_guaranteed_to_reduce_actual_impact": true,
-      "change_together": "Scale clearance and both quintic times; do not merely change duty while leaving hardcoded0.20s descent. Preserve the remaining r21 C/objective/numerical configuration for this single mechanism hypothesis.",
-      "required_evidence": [
-        "predicted and actual support/force handoff",
-        "zero-total-support intervals",
-        "actual foot vertical speed and clearance",
-        "body pose/acceleration",
-        "PD/torque saturation",
-        "first predicted-vs-actual divergence",
-        "material strip passage",
-        "matching candidate plan and causal anchors"
-      ],
-      "decision": "If prediction already chooses loss of support, address objective/feasibility. If prediction is supportive and truth differs, address specific contact/execution/derivative mismatch. Nominal gait flags alone do not demonstrate support.",
-      "no_simultaneous_additions": [
-        "body-twist weight sweep",
-        "short-time relaxation/rate model",
-        "frequency-shaped objective",
-        "new controller platform"
-      ]
+      "scale_clearance_and_both_profile_times": 0.8181818181818182,
+      "interpretation": "Single hypothesis; reference speed scale preserved,clearance reduced and acceleration increased. Check actual support,not only nominal gait."
     },
-    "stop_rule": "No blind rerun of identical deterministic failure. After two successive evidence batches stop the current branch only if both no relevant improvement and no new testable mechanism hold. End work at actual delivery, concrete unresolved blocker or common deadline; do not invent a global12/61-start cap.",
-    "maximum_development_phase_elapsed_h": null
-  },
-  "joint_learning": {
-    "mode": "engineering_joint_pilot",
-    "group_names": [
-      "PPO_RAW_S5",
-      "PANN_PPO_S5"
-    ],
-    "active_streams": [
-      {
-        "group": "PPO_RAW_S5",
-        "seed": 0
-      },
-      {
-        "group": "PANN_PPO_S5",
-        "seed": 0
-      }
-    ],
-    "streams": 2,
-    "seeds": [
-      0
-    ],
-    "cross_stream_wait": false,
-    "candidate_field": "engineering_pilot_candidate",
-    "formally_qualified_executor_required_for_pilot": false,
-    "candidate_start_requirements": [
-      "locked actual local candidate identity and resolved parameters",
-      "correct original initialization and initial stand",
-      "cap actually influences permitted translation reference",
-      "real TM02 interaction and material loading",
-      "correct causal clocks, original physical/task failure semantics and no truth-state leakage"
-    ],
-    "status_if_fixed_qualification_missing": "not_qualified_executor",
-    "start_priority": "Once eligible, perform the early real pilot before another open-ended sequence of control variants. A failed E30 is not by itself a pilot prohibition.",
-    "actor_dt_s": 0.5,
-    "actor_action": "single speed cap [.18,.25] m/s; .215+.035*sample.action, where existing sample.action is already tanh(raw); retain raw action/log_prob",
-    "observation_dim": 658,
-    "shared_observation": "Retain R9 public proprioception/task phase/goals/strip and preceding1s at20Hz. Same schema across all training and formal30/60/300/600/optional durations: old finite-task flag and remaining-time channels always zero. Evaluator enforces the actual deadlines/criteria. No true material q/e.",
-    "pann": "Frozen B_random1000--ideal seed0 and original normalization; independent causal LearnedColumns world state, no true material q/e input",
-    "pann_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
-    "pann_features": "Preserve R9 2 ms causal observer, latest completed plan t+.20 s four footprints, private zero-load recovery at2/200/500 ms and12 area-weighted signed depressions. Shared public query positions/masks; RAW prediction channels zero. Match world keys, not array row indices; queries do not alter truth or observer.",
-    "ppo": {
-      "implementation": "existing standard Tianshou PPO core; no algorithm/platform replacement",
-      "hidden_sizes": [
-        64,
-        64
-      ],
-      "learning_rate": 0.0003,
-      "initial_std": 0.35,
-      "gamma": 0.99,
-      "gae_lambda": 0.95,
-      "clip": 0.2,
-      "value_coef": 0.5,
-      "entropy_coef": 0,
-      "max_grad_norm": 0.5,
-      "epochs_per_update": 4,
-      "rollout_transitions": 256,
-      "minibatch_size": 64,
-      "device": "cpu",
-      "library": "tianshou==0.5.1; use existing audited PPOPolicy.learn adapter"
-    },
-    "session_limit_s": 60,
-    "curriculum_enabled": false,
-    "task": "continuing_round_trips",
-    "continuing_route": "Endless0->3->0m circuits during current60/300/600s acquisition session; original2s stable endpoint holds and real turns. Lap completion is not session termination. No per-lap state reset or parking after a target number of laps.",
-    "standard_target_transitions_per_stream": 512,
-    "standard_target_total_transitions": 1024,
-    "required_updates_per_stream": 2,
-    "rollout_transitions": 256,
-    "sample_target_is_per_stream_across_multiple_sessions": true,
-    "sample_target_is_convergence_claim": false,
-    "equal_finished_targets_not_live_barrier": true,
-    "primary_checkpoint_rule": "When both finish,512 each. Otherwise retain each actual collected/updated/tail count and identify the greatest common completed256 multiple as coverage only; any stream below512 means the pilot is partial.",
-    "on_policy": "Separate parameters, optimizer, normalizers, seeds and environment/MPC/material/observer state for each stream. Collect each256-transition fragment under its fixed behavior policy; update only that stream and then continue its state. Do not mix other seeds or stale-policy fragments to fake on-policy data. Archive frozen evaluation normalizers with checkpoints.",
-    "restore_protocol": {
-      "required_per_stream": true,
-      "sequence": [
-        "first256-transition update",
-        "continue current live session",
-        "nearest natural terminal or60s acquisition boundary",
-        "save resume-state including unupdated tail",
-        "exit process",
-        "new process restores state",
-        "collect only remaining transitions to cumulative512",
-        "second update and final checkpoint"
-      ],
-      "planned_boundary_status": "planned_boundary_resume",
-      "ordinary_rollout_cut_resets_environment": false,
-      "lap_boundary_resets_environment": false,
-      "continuous_environment_snapshot": false,
-      "continuous_physical_resume_claim_allowed": false,
-      "tail_required_fields": [
-        "actual policy observation or exact normalization reconstruction",
-        "raw_action",
-        "old_log_prob",
-        "reward",
-        "value",
-        "next_value",
-        "actual_successor_observation",
-        "terminated",
-        "truncated",
-        "transition_serial",
-        "behavior_policy_identity"
-      ],
-      "state_required_fields": [
-        "actor",
-        "critic",
-        "optimizer",
-        "Torch and NumPy RNG",
-        "normalization",
-        "sample/update/tail counts",
-        "episode and transition IDs",
-        "session records",
-        "resume generation"
-      ],
-      "no_failure_example": {
-        "at_first_update": {
-          "samples": 256,
-          "updates": 1,
-          "tail": 0
-        },
-        "boundary_resume": {
-          "samples": 360,
-          "updates": 1,
-          "tail": 104
-        },
-        "new_samples_after_resume": 152,
-        "final": {
-          "samples": 512,
-          "updates": 2,
-          "tail": 0
-        }
-      },
-      "interruption_rule": "Without complete real successor or environment state, retain technical truncation/missing data honestly; never fabricate a final observation or seamless physical continuation."
-    },
-    "sample_boundary_fix": {
-      "target_decided_before_buffer_gae_update": true,
-      "sample512_external_truncation": true,
-      "physical_terminal_has_priority": true,
-      "final_real_observation_bootstrap": true,
-      "no_zero_duration_extra_transition": true,
-      "no_implicit_513th_sample": true,
-      "ordinary_256_boundary": "Bootstrap real successor and retain live environment.",
-      "external_boundary": "60s acquisition or512 total budget: bootstrap real pre-reset successor and cut GAE across reset.",
-      "physical_terminal": "No bootstrap."
-    },
-    "required_real_learning_evidence": [
-      "both groups collect real transitions with valid finite observations/rewards/actions/losses",
-      "record Actor and Critic parameter changes and optimizer updates separately; actual Actor learning must be evidenced and its updated behavior-policy identity must drive subsequent real samples, not inferred only from Critic changes",
-      "second update is completed and final checkpoint preserves parameters/counts",
-      "final checkpoint reload produces matching output on saved observations without new physics",
-      "both streams actually exit and resume from declared natural boundaries",
-      "effective translating transitions, material exposure and phase-masked inactive actions are explicitly reported"
-    ],
-    "accounting_fix": "Refresh authoritative collected/updated/tail/serial/resume-generation state after update, restore and finish. Do not let pre-update collection.json or old stopped.json override the current run. A partial second stream never becomes complete by using a common lower checkpoint.",
-    "candidate_change_rule": "Early candidate pilot and final-controller pilot are separate cohorts. Reuse once only when actual identity is unchanged. No cross-controller trajectories, optimizer or weights as final qualification; do not rerun a full pilot automatically for every intermediate variant.",
-    "not_formal_evaluation": true,
-    "no_algorithm_benefit_claim_from_pilot": true,
-    "diagnostics": "Record causal observer timing, world-key/query/mask/feature exposure and policy identity/action application. Distinguish physically unvisited zero features from a disconnected observer; no truth q/e correction.",
-    "sample_target_scope": "per_candidate_cohort",
-    "cohort_id_rule": "Bind each pilot cohort_id to actual controller/execution identity. Early and changed final candidates use independent logs/checkpoints/optimizer/counts; unchanged identity may reuse one completed cohort once.",
-    "cohort_directory_template": "pilot/<cohort_id>/<group>-seed<seed>",
-    "run_total_accounting": "Accumulate all cohorts' actual transitions, updates, failures and costs.1024 is the two-stream target per cohort, not a cap on the whole R12. Two completed distinct candidate cohorts total2048 transitions and8 updates; preserve partial cohorts too."
-  },
-  "reward_adaptation": {
-    "base": "Frozen R9 physical progress/time/indentation/slip/applied-action-change reward and weights; no reward for predicted material or assumed beneficial compaction",
-    "rate_rule": "Keep original dt/60 denominators and physical normalization at all acquisition stages; no cost division by300/600. Integrate actual dt after early failure.",
-    "progress": "Unwrapped signed actual translational progress divided by6m per circuit; split phase changes, include backward motion, no position-reset or phase-switch progress bonus.",
-    "events": "Continuing training gives original+10 once per full circuit after home stability, then continues; no far-end or passive-standing bonus. Physical/material failure gives-10 once. All external acquisition/sample-budget truncations, including60s and cumulative512 pilot transitions, create no additional failure, intrinsic-timeout or completion reward/penalty. A true physical failure on the same transition retains terminal semantics and its original penalty; a genuinely completed circuit retains its original one-time event reward. Future300/600 acquisition boundaries obey the same external rule. Original finiteE60 single-mission termination and-5 intrinsic timeout remain evaluation/reference semantics, not continuing train60.",
-    "freeze": "Same adapted reward and task semantics in both learning groups before training. No reward or hyperparameter sweep and no formal-result tuning.",
-    "interpretation": "Long continuous execution is not proof of long-delay credit assignment; gamma remains.99 and the material memory time is determined by actual physics."
-  },
-  "evaluation": {
-    "protocol_revision": "staged_evaluation_30_60_300_600_v2",
-    "local_required_fixed_material_levels": [
-      "E30",
-      "E60"
-    ],
-    "local_required_unique_material_cases": 1,
-    "local_required_material_stage_records": 2,
-    "local_required_rigid": {
-      "unique_case_count": 1,
-      "condition": "nominal",
-      "duration_s": 60,
-      "rule": "One original nominal regression for final actual identity; no unrelated nine-condition matrix. Technical incompletion is not a pass."
-    },
-    "optional_local_level": "E300",
-    "optional_local_entry": "Final fixed case owns its E60; required final pilot, rigid regression and readiness evidence completed, with adequate measured budget.",
-    "E600_in_local_required_scope": false,
-    "ladder_order": [
+    "ladder": [
       "E30",
       "E60",
       "E300",
       "E600"
     ],
-    "durations_s": [
-      30,
-      60,
-      300,
-      600
-    ],
-    "stages": [
-      {
-        "level": "E30",
-        "predecessor_level": null,
-        "conditions": [
-          "nominal"
-        ],
-        "duration_s": 30,
-        "task": "original_route_short_stage",
-        "initial_stand_s": 2,
-        "criteria": "Reach original far3m endpoint by original arrival predicate and actually load/traverse the TM02 strip, then continue original turn/return logic. Observe full30s without original physical/material failure. No new30s turn-completion or whole-round-trip deadline; no extra far-end hold, shortened strip-avoiding route or deliberate parking.",
-        "progress_reporting": "Actual material loading evidence, far-arrival time, turn/return phase times, real return progress and complete physical criteria. E30 pass is short-stage capability, never an original E60 complete mission.",
-        "r12_scope": "required_final_fixed_nominal"
-      },
-      {
-        "conditions": [
-          "nominal"
-        ],
-        "duration_s": 60,
-        "observe_after_success": true,
-        "criteria": "Unchanged original single mission; observe through60s, no newly added far-end hold",
-        "level": "E60",
-        "predecessor_level": "E30",
-        "start_rule": "Same exact case's E30 passes; independent original60s mission, never skip short qualification.",
-        "r12_scope": "required_final_fixed_nominal"
-      },
-      {
-        "level": "E300",
-        "predecessor_level": "E60",
-        "conditions": [
-          "nominal"
-        ],
-        "duration_s": 300,
-        "round_trips": 5,
-        "route_deadline_s": 270,
-        "endpoint_stable_s": 2,
-        "start_rule": "Same exact frozen case's E60 passes; run a separately declared independent300s task, without waiting for other cases.",
-        "between_laps_reset": false,
-        "observation_rule": "Complete5 circuits by270s, hold and observe through300s, require original final continuous2s stability; record all violations. A600s prefix is not this independent E300 result.",
-        "r12_scope": "optional_final_fixed_nominal_after_required_deliverables"
-      },
-      {
-        "conditions": [
-          "nominal"
-        ],
-        "duration_s": 600,
-        "round_trips": 10,
-        "route_deadline_s": 540,
-        "endpoint_stable_s": 2,
-        "start_rule": "Same exact frozen case's independent E300 passes; no E60->E600 shortcut or qualification borrowed from another condition/seed.",
-        "between_laps_reset": false,
-        "observation_rule": "Complete10 circuits by540s, hold and observe through600s, require original final continuous2s stability. In-trajectory300s is only an observation and cannot replace the prerequisite independent E300.",
-        "level": "E600",
-        "predecessor_level": "E300",
-        "r12_scope": "deferred_to_future_formal_campaign"
-      }
-    ],
-    "material_traversal_evidence": {
-      "scope": "E30 original-route passage requirement, not a new physical failure threshold",
-      "geometry": "Original strip x[.8,2.2], y[-.6,.6]m; original footprint-interior contact rule unchanged",
-      "measurement": "First outbound base projection passes west-to-east within the original strip sides, with actual loaded material feet during that interval. Record entry, exit, side exit and lateral excursion. Merely touching the material and then bypassing it on rigid ground is not passage through the material strip.",
-      "retained": "Run the independently declared full stage duration unless original physical/material failure or technical/budget interruption; do not terminate early on this coverage measurement."
-    },
-    "case_identity": [
-      "shared_controller_physics_and_algorithm_configuration_and_binary",
-      "fixed_cap_or_policy_checkpoint_and_normalizers",
-      "training_seed_or_fixed",
-      "initial_condition",
-      "initial_robot_and_material_state",
-      "protocol_revision",
-      "actual_solver_worker_configuration"
-    ],
-    "case_identity_rule": "Separate common case identity from stage identity. The predeclared duration, short/original/continuous task kind, target circuits, route deadline and hold semantics are stage fields; their specified differences do not invalidate predecessor qualification. Preserve each full resolved config/hash but do not use its entire hash as the shared ladder key. Other trajectory-affecting changes requalify.",
-    "entry_rule": "Each exact case must pass its own immediate predecessor before the next stage; E30 has no earlier duration prerequisite. No nominal->yaw, seed0->seed1/2 or method substitution; no all-method barrier.",
-    "version_rule": "Trajectory-affecting controller/config/weights/normalizer changes re-establish E30 onward; retain closed version results. Pure publication/docs changes do not require reruns.",
-    "independence": "Each level is independently predeclared and run from the same case's independent initial state. No reset inside laps/updates/log chunks. Training trajectories and post-hoc prefixes do not qualify.",
-    "freeze": "Primary common checkpoints and normalizers fixed for entire evaluation trajectories; deterministic policy mean; no PPO updates during formal tests. PANN estimated states and MPC still evolve causally.",
-    "reuse": "Exactly same actual source/config/binary/checkpoint/normalizers/initial state/protocol and predeclared development qualification may populate its one formal manifest record with provenance, never double count. No retrospective R10 E30, longer-trajectory prefixes, training rollouts or stitched runs as independent stages.",
-    "all_long_tasks": "Original stability tolerances,2s holds at both endpoints and actual turns; no lap resets or stitched runs. At route completion hold until declared horizon and require final continuous2s stability; report every violation, final30s and each lap/60s segment. Failures terminate truthfully and remain in denominators. All durations are simulation time, not wall time.",
-    "observation_consistency": "Same observation schema for all training and evaluation durations, old finite-task flag/countdown always zero. Evaluator enforces E30/E60/E300/E600 criteria independently; no new actor countdown inputs.",
-    "status_fields": [
-      "planned",
-      "eligible",
-      "executed",
-      "passed",
-      "physical_material_failure",
-      "task_criteria_unmet",
-      "technical_interruption",
-      "budget_truncated",
-      "blocked_by_predecessor",
-      "budget_unexecuted"
-    ],
-    "local_reporting": "Report local predeclared cases and actual highest valid stages. Engineering pilot is a distinct evidence category and cannot populate a formal stage.",
-    "future_full_matrix": {
-      "active_in_r12": false,
-      "cases_per_level": 21,
-      "material_stage_records": 84,
-      "composition": "FIXED3 initial states + RAW/PANN x3seeds x3initial states; each owns its full30/60/300/600 ladder",
-      "extended1800_3600_active": false
-    }
+    "same_case_predecessor_required": true,
+    "same_version_qualification_survives_window_change": true,
+    "training_and_posthoc_prefixes_are_not_formal_qualification": true,
+    "automatically_run_extra_rigid_regression": false,
+    "additional_run_rule": "Only when it directly answers the current concrete failure/change; no unrelated matrix.",
+    "formal_mission_wall_rule": "Use actual cost to schedule within the current4h window. Do not automatically start an over-budget long mission or stitch interrupted portions into success."
   },
-  "budget": {
-    "campaign_wall_clock_hard_cap_h": 48,
-    "starts_at": "first real R12 physics integration",
-    "includes_after_start": [
-      "development",
-      "builds",
-      "repairs",
-      "pauses",
-      "pilot",
-      "formal qualification",
-      "analysis"
+  "process": {
+    "physical_start_hard_count_cap": null,
+    "repeat_identical_failure_without_new_evidence": false,
+    "routine_manual_hash_inventory_required": false,
+    "full_asset_redownload_verification_required": false,
+    "minimal_provenance": [
+      "Git commit",
+      "configuration name",
+      "checkpoint path",
+      "necessary real result"
     ],
-    "preparation_and_final_publication_timing": "record separately",
-    "existing_r11_clock_reset": false,
-    "old_12_and_61_limits_reused": false,
-    "fixed_start_count_stop_enabled": false,
-    "maximum_development_physical_starts": null,
-    "maximum_nontraining_physical_starts": null,
-    "maximum_development_phase_elapsed_h": null,
-    "technical_and_zero_step_failures": "Preserve records and wall time; every actual integrated attempt counts as physical regardless of early failure/crash/missing data.",
-    "evidence_batch_max_development_starts": 6,
-    "branch_stop_after_batches": 2,
-    "stop_requires_both": [
-      "no relevant improvement",
-      "no new testable mechanism"
-    ],
-    "early_pilot_priority": true,
-    "reserve_rule": "Estimate remaining mandatory local work from actual tasks, not the inactive84-stage matrix; preserve readiness/qualification/pilot delivery time. If targets do not fit, keep priority and report partial evidence rather than preventing every eligible early pilot.",
-    "paid_cloud_jobs_in_r12": 0,
-    "automatic_extension": false,
-    "standard_targets_are_wall_time_promises": false,
-    "historical_cost_reference": {
-      "attempt": "R11 dev23 S5-r21",
-      "physical_s": 14.357999999993215,
-      "wall_s": 832.268679975532,
-      "planning_s": 657.6287685474381,
-      "planning_p50_ms": 923.591036349535,
-      "planning_p95_ms": 1018.8787874300034,
-      "physics_s": 128.25410843640566
-    },
-    "extrapolation_only": {
-      "pilot_full_half_second_samples_total_physics_s": 512,
-      "pilot_serial_equivalent_h_at_r21": 8.243982529052207,
-      "formal_six_streams32768_full_half_second_samples_physics_s": 98304,
-      "rule": "Not local measured throughput: reset/observer/compile/resource contention and different hardware can change cost. Early terminals shorten transition time and add startup costs.",
-      "sample_scope": "one_candidate_two_stream_cohort; final changed identity may require a second independent cohort within the same R12 deadline",
-      "two_candidate_cohorts_serial_equivalent_h_at_r21": 16.487965058104415
-    }
-  },
-  "cloud_readiness": {
-    "status_before_execution": "not_evaluated",
-    "mandatory_evidence": [
-      "portable locked source/dependency/asset/binary manifest and local paths",
-      "same final actual identity passes fixed nominal material E30 then E60",
-      "same final identity passes one original nominal rigid60 regression",
-      "same final identity completes RAW/PANNseed0 pilot512 each,2updates and actual boundary resume",
-      "real component times,CPU,RAM,VRAM and measured aggregate throughput",
-      "proposed cloud CPU/memory/GPU/concurrency and separately costed training/evaluation with20percent time contingency"
-    ],
-    "E300_required": false,
-    "E600_required": false,
-    "learned_pilot_policy_E60_pass_required": false,
-    "pilot_does_not_prove_convergence_or_PANN_gain": true,
-    "next_paid_phase_requires_user_resource_and_budget_decision": true,
-    "new_cloud_build_requires_its_own_actual_execution_identity_and_qualification": true,
-    "formal_learning_future": {
-      "active_in_r12": false,
-      "groups": [
-        "PPO_RAW_S5",
-        "PANN_PPO_S5"
-      ],
-      "seeds": [
-        0,
-        1,
-        2
-      ],
-      "streams": 6,
-      "independent_fresh_initialization": true,
-      "reuse_development_pilot_weights_as_formal_start": false,
-      "curriculum": [
-        {
-          "stage_id": "train60",
-          "task": "continuing_round_trips",
-          "session_limit_s": 60,
-          "entry": "Own cloud campaign common final executor has validE30/E60; formal streams start fresh, then own-session promotion.",
-          "promote_to": "train300",
-          "promotion": "This stream completes an entire60s session without physical/material failure and >=1 complete circuit under original endpoint stability; promotion applies to its next natural independent session. No new54s deadline."
-        },
-        {
-          "stage_id": "train300",
-          "task": "continuing_round_trips",
-          "session_limit_s": 300,
-          "entry": "Own train60 promotion evidence; no fixed-policy or other-stream300s prerequisite.",
-          "promote_to": "train600",
-          "promotion": "This stream completes an entire300s session without physical/material failure and >=5 complete circuits by its acquisition boundary. This is not formal E300 and does not certify its270s deadline/terminal hold."
-        },
-        {
-          "stage_id": "train600",
-          "task": "continuing_round_trips",
-          "session_limit_s": 600,
-          "entry": "Own train300 promotion evidence; keep collecting under authorized sample/time budget.",
-          "promote_to": null
-        }
-      ],
-      "common_checkpoint_stride": 256,
-      "milestone_transitions_per_stream": [
-        4096,
-        8192,
-        16384,
-        32768
-      ],
-      "standard_target_transitions_per_stream": 32768,
-      "active_cohort_and_balanced_scheduling_required": true,
-      "inherit_pilot_cross_stream_wait_setting": false,
-      "primary_checkpoint_rule": "Predeclare affordable common actual updated sample count before formal evaluation; no best-seed or formal-performance checkpoint selection, label undertraining.",
-      "formal_ladder_rule": "Each learned frozen checkpoint/seed/initial state establishes its own30->60->300->600 qualification. Fixed-controller passes do not qualify learned cases."
-    }
-  },
-  "resources": {
-    "actual_local_host_not_yet_inventoried": true,
-    "intended_gpu": "user's RTX 5080",
-    "new_paid_resources": false,
-    "initial_concurrent_environment_limit": 2,
-    "solver_worker_rule": "Resolve unified actual workers from local_execution and include in all final controller/pilot identities; reduce concurrency before silently changing workers.",
-    "required_timing_and_resource_evidence": [
-      "physical/wall time",
-      "real and effective transitions",
-      "startup",
-      "MPC/derivatives",
-      "feedback/RPC",
-      "truth/material with nested accounting",
-      "PANN observe/query/compile",
-      "PPO update",
-      "CPU quota/utilization",
-      "RAM/VRAM peak",
-      "actual concurrency"
-    ],
-    "performance_claim": "No assumption that5080 is faster, that GPU memory controls CPU solver throughput, or that20ms logical planning is real-time execution."
+    "hash_use": "Existing automatic fields may remain; investigate a specific corruption/wrong-file problem only when evidence requires it. No new routine certification stage.",
+    "prohibited_extra_work": [
+      "unit/mock/smoke/import/shape test suites",
+      "generic defensive fallback",
+      "unrelated regression matrix",
+      "separate benchmark",
+      "repeated planning/review documents",
+      "forced restore drills",
+      "mandatory per-window full video/plot production"
+    ]
   },
   "outputs": {
     "compact_root": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
-    "release_tag": "tm-s1-go2-local-readiness-r12",
     "create_result_index_only_after_actual_execution": true,
-    "required_categories": [
-      "portable execution identity",
-      "all starts/failures",
-      "early engineering pilot",
-      "final fixed qualification",
-      "final engineering pilot",
-      "per-case ladder status",
-      "actual costs",
-      "cloud readiness blockers",
-      "per-candidate pilot cohort identity and run-wide cumulative training totals"
-    ],
-    "learning_accounting": [
-      "collected_transitions",
-      "updated_transitions",
-      "updates",
-      "tail_buffer_count",
-      "unique_transition_serial",
-      "effective_translation_transitions",
-      "physical_time",
-      "session/reset/resume identity",
-      "actor/checkpoint identity"
-    ],
-    "publication": "Source/configuration/compact actual evidence to GitHub; necessary large arrays/weights/full positive and negative task videos directly from execution host to Release. Verify actual commit and asset URL/size/digest. Assets below2GiB; chunks retain continuous physical time.",
-    "archive_on_user_pc_after_publication": false,
-    "additional_download_mirror_compress_archive_after_publication": false,
-    "working_files_exception": "Necessary execution checkout, dependencies, selected source/evidence assets, active checkpoints and normal outputs may remain on the5080 host. Do not duplicate them as a post-publication archive.",
-    "unsolicited_deletion": false
+    "handoff": "Update only the six current-handoff lines in docs/TERRAIN_MEMORY_PLAN.md plus necessary normal run results.",
+    "publication": "Commit/push source and compact results. Upload large checkpoints needed for continuation directly from execution host to Release; record ordinary push success and commit. No separate exhaustive audit.",
+    "unfinished_upload": "At deadline record exact output location and remaining upload; continue next window without regenerating all artifacts.",
+    "extra_archive_on_user_pc": false,
+    "preserve_normal_working_files_and_actual_history": true
   },
-  "literature_reading": [
-    {
-      "title": "Whole-Body Model-Predictive Control of Legged Robots with MuJoCo",
-      "url": "https://arxiv.org/html/2503.04613v3",
-      "use": "PD in prediction, derivative cost and actual discretization; do not copy real-time claims."
-    },
-    {
-      "title": "STANCE: Locomotion Adaptation over Soft Terrain",
-      "url": "https://arxiv.org/html/1904.12306v2",
-      "use": "Compliant support motion/force and loading timing consistency; no platform or TM02 parameter substitution."
-    },
-    {
-      "title": "Frequency-Aware Model Predictive Control",
-      "url": "https://arxiv.org/pdf/1809.04539",
-      "use": "Contact/actuator bandwidth as a future independently evidenced mechanism, not an extra simultaneous change."
-    },
-    {
-      "title": "RLOC: Terrain-Aware Legged Locomotion using Reinforcement Learning and Optimal Control",
-      "url": "https://arxiv.org/html/2012.03094v3",
-      "use": "Optimizer-in-loop sampling costs and modular learning; do not equate all modules withPPO or copy runtimes."
-    },
-    {
-      "title": "Proximal Policy Optimization Algorithms",
-      "url": "https://arxiv.org/abs/1707.06347",
-      "use": "Actual sampling/update alternation; engineering qualification is not a mathematicalPPO learning prerequisite."
-    },
-    {
-      "title": "Gymnasium handling time limits",
-      "url": "https://gymnasium.farama.org/tutorials/gymnasium_basics/handling_time_limits/",
-      "use": "Real terminal vs external truncation bootstrap and trace boundaries."
-    }
-  ],
-  "working_rules": {
-    "prohibited_extra_work": [
-      "unit/mock/smoke/import/shape tests",
-      "generic fallback or defensive scaffolding",
-      "unrelated rigid matrices",
-      "separate benchmark episodes",
-      "repeated status/review documents",
-      "post-publication PC archive"
-    ],
-    "validation": "Use real authorized E30/E60/rigid missions and bounded actual PPO pilot, plus required static identity/config/publication inspection. Do not create another test framework.",
-    "stop_at": "Actual deliverables, a concrete unresolved blocker or authorized deadline; preserve all partial evidence."
+  "history": {
+    "R11_remains_paused": true,
+    "rewrite_R11_counts_or_results": false,
+    "R12_counts_persist_across_windows": true,
+    "previous_full_assessment_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/402894f7a865a2905e651d45b6746521dcd6eef7/docs/TERRAIN_MEMORY_PLAN.md"
   }
 }
-
