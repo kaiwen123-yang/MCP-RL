@@ -122,8 +122,8 @@ def main():
                 return dict(name=name,uploaded=False,wall_s=time.time()-begin,
                     error=type(error).__name__,network_detail=next((label for token,label in [('CERTIFICATE_VERIFY_FAILED','certificate_verify_failed'),('UNEXPECTED_EOF','unexpected_tls_eof'),('EOF occurred','unexpected_tls_eof'),('WRONG_VERSION_NUMBER','wrong_tls_version'),('timed out','timeout'),('Connection refused','connection_refused')] if token in str(error)),None),http_status=error.response.status_code if error.response is not None else None)
         failed=0;completed=0;iterator=iter(todo)
-        with ThreadPoolExecutor(3) as pool:
-            pending={pool.submit(upload,path) for path in [next(iterator,None) for _ in range(min(3,len(todo)))]}
+        with ThreadPoolExecutor(8) as pool:
+            pending={pool.submit(upload,path) for path in [next(iterator,None) for _ in range(min(8,len(todo)))]}
             while pending:
                 done,pending=wait(pending,return_when=FIRST_COMPLETED)
                 for future in done:
