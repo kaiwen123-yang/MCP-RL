@@ -6,4 +6,5 @@ unset LD_LIBRARY_PATH
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
 export XLA_PYTHON_CLIENT_PREALLOCATE=false
 export JAX_ENABLE_X64=true
-nice -n 10 python -u scripts/train_s1_go2_r12.py --group "$1" --seed 0 --window-start-unix 1793277066 --deadline-unix 1793289666 "${@:2}"
+# Pass this window's explicit group/start/deadline to the existing Python CLI.
+exec nice -n 10 python -u scripts/train_s1_go2_r12.py "$@"

@@ -1,13 +1,13 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "RAW_first_update_complete_PANN_deferred_by_user",
-  "protocol_revision": "linked_w123_max4h_v3",
+  "status": "RAW_review_complete_PANN_first_update_planned",
+  "protocol_revision": "single_pann_after_raw_review_v4",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-10-29",
-  "supersedes_plan_commit": "816f34dfe9eaa76f3a37695f0b6ce3c3712b9ff8",
+  "supersedes_plan_commit": "4f18facb193c33628090f848986c37afb1844178",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
-  "current_task": "W123",
+  "current_task": "W3_PANN",
   "reuse": {
     "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
     "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
@@ -15,10 +15,10 @@
     "rule": "Reuse actual r21 fixes and original physical/observation/reward/PPO/formal-task settings. Do not inherit R11 paused-run paths/status,48h autonomous campaign,6-stream wait or mandatory formal-freeze gate for early engineering sampling."
   },
   "execution": {
-    "mode": "linked_w123_per_new_context",
+    "mode": "one_assigned_stream_per_window",
     "maximum_window_wall_s": 14400,
     "begin_wrapup_after_s": 12600,
-    "clock_starts": "first activity on the assigned task, including reading",
+    "clock_starts": "First activity of this new window including reading; pass its actual timestamp explicitly to the existing CLI. Never reuse the previous window's absolute deadline.",
     "includes": [
       "reading",
       "editing",
@@ -28,10 +28,10 @@
       "rendering retained trajectories",
       "publishing"
     ],
-    "stop_when": "Both actual stream first-updates and full publication completed, concrete unresolved blocker, or4h deadline; no automatic W4 or paid jobs.",
+    "stop_when": "PANN first256/one update and publication complete, a concrete unresolved blocker, or4h deadline. Do not chain RAW,W4,formal evaluation or paid jobs.",
     "automatically_chain_tasks": false,
     "autonomous_48h_campaign_enabled": false,
-    "unfinished_task_rule": "Next user-started window continues unfinished W123 phase/publication with preserved counts/checkpoints, never repeats completedW1 merely for a new window.",
+    "unfinished_task_rule": "A later user-started window continues only unfinished PANN sampling/publication from its own checkpoint and cumulative target; do not repeat W1 or RAW.",
     "background_overrun_authorized": false,
     "default_reads": [
       "AGENTS.md",
@@ -46,38 +46,35 @@
     "opening_plan_max_lines": 5,
     "handoff_max_lines": 6,
     "new_handoff_document_required": false,
-    "within_task_chain_enabled": true,
+    "within_task_chain_enabled": false,
     "allowed_chain": [
-      "reuse_completed_W1",
-      "W2_RAW",
-      "complete_publication",
-      "stop_for_RAW_review"
+      "W3_PANN"
     ],
     "chain_shares_one_absolute_deadline": true,
     "current_completed_prerequisite": {
-      "task": "W1",
-      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w1-S5-r21-E30-02.json",
-      "physical_s": 12.518199999997503,
-      "material_loading": true,
-      "formal_E30_pass": false,
-      "reuse_without_new_E30": true,
-      "host_workspace": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12",
-      "workers": 5,
-      "binary_reused": true,
-      "rebuild_required": false
+      "W1": "Local r21 execution complete; original material E30 remains unqualified.",
+      "RAW": {
+        "transitions": 256,
+        "effective_transitions": 205,
+        "updates": 1,
+        "tail_buffer": 0,
+        "loss_metrics_saved": false,
+        "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PPO_RAW_S5-seed0/resume-state-ep00006.pt"
+      },
+      "reuse_without_new_test": true
     }
   },
   "tasks": [
     {
       "id": "W123",
-      "goal": "Reuse actual W1 and continue W2 then W3 in the same bounded window, followed by complete artifact publication.",
+      "goal": "Historical linked task stopped after RAW and complete publication; next task is independent W3.",
       "phases": [
         "reuse_W1",
         "W2",
-        "W3",
         "publication"
       ],
-      "done": "RAW/PANNseed0 each256 real transitions and one actualPPO update, plus all required W1/W123 artifacts published; track training completion and publication completion separately."
+      "done": "W1 and RAW completed; PANN not run in that window. Do not restart the linked chain.",
+      "status": "ended_after_RAW_at_user_request"
     },
     {
       "id": "W1",
@@ -92,7 +89,7 @@
       "seed": 0,
       "condition": "nominal",
       "target_cumulative_transitions": 256,
-      "done": "One real update, or saved actual samples/tail and a precise continuation at deadline.",
+      "done": "Already completed256 real transitions and one update; missing original loss remains disclosed.",
       "status": "completed",
       "actual_transitions": 256,
       "actual_updates": 1,
@@ -105,43 +102,50 @@
       "seed": 0,
       "condition": "nominal",
       "target_cumulative_transitions": 256,
-      "done": "One real update, or saved actual samples/tail and a precise continuation at deadline.",
-      "status": "deferred_by_user_until_RAW_review"
+      "done": "256 cumulative real PANN transitions, one actual update with ordinary logs/checkpoint, all actual outputs published; otherwise preserve actual partial progress at deadline.",
+      "status": "planned_after_RAW_review",
+      "stop_after": true
     },
     {
       "id": "W4",
       "goal": "One evidence-backed support-handoff correction, with directly relevant realE30.",
-      "done": "Actual result and earliest remaining mismatch; no parameter matrix."
+      "done": "Actual result and earliest remaining mismatch; no parameter matrix.",
+      "status": "deferred_not_authorized_in_W3_window"
     },
     {
       "id": "W5",
       "goal": "Same-version qualifiedE30 then original materialE60; reuse existing same-version prerequisite.",
-      "done": "Actual complete mission or recorded concrete failure, not extra audit tasks."
+      "done": "Actual complete mission or recorded concrete failure, not extra audit tasks.",
+      "status": "deferred_not_authorized_in_W3_window"
     },
     {
       "id": "W6",
       "goal": "Normal PPO learning in affordable window-sized increments and throughput evidence for cloud decision.",
-      "done": "Actual new samples/updates,normal checkpoint and specific resource/remaining-work conclusion."
+      "done": "Actual new samples/updates,normal checkpoint and specific resource/remaining-work conclusion.",
+      "status": "deferred_not_authorized_in_W3_window"
     }
   ],
   "resources": {
     "host": "user's existing RTX5080 server",
     "conda_environment": "kaiwen-learn",
     "new_paid_resources": false,
-    "maximum_environments": 2,
-    "workers": "Reuse actualW1 five-worker configuration for both training streams. Start sequential independent subprocesses; no worker scan or extra benchmark.",
+    "maximum_environments": 1,
+    "workers": "Reuse actual r21 five-worker configuration; one PANN training stream, no worker scan.",
     "environment_changes": "Only necessary task changes in kaiwen-learn; do not alter base/other environments/system libraries/global shell configuration.",
     "actual_local_workers": 5,
-    "initial_training_concurrency": 1
+    "initial_training_concurrency": 1,
+    "torch_device": "cuda",
+    "torch_threads": 2,
+    "jax_process_environment": {
+      "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+      "JAX_ENABLE_X64": "true",
+      "note": "Already set by the existing wrapper; retain. Actual PANN GPU operation is still pending, no separate pressure/import test."
+    }
   },
   "learning": {
     "candidate_can_start_before_E30_E60_pass": true,
     "candidate_requires": "Correct initial stand, effective permitted actions, real TM02 loading and original causal/physical failure semantics.",
     "active_streams": [
-      {
-        "group": "PPO_RAW_S5",
-        "seed": 0
-      },
       {
         "group": "PANN_PPO_S5",
         "seed": 0
@@ -168,28 +172,45 @@
     "unfinished_buffer_rule": "Save valid tail,optimizer,RNG,normalization and counts during ordinary shutdown. Continue in a later actual training window; do not require a separate recovery exercise.",
     "incomplete_environment_snapshot_rule": "Start a new physical session if full environment state was not saved. Record real boundaries and do not claim uninterrupted physics or fabricate missing successors.",
     "evidence": "Use normal update logs,real trajectories and saved checkpoint. Do not replace real learning by mock tests or inflate results into convergence/benefit claims.",
-    "schedule": "RAW then PANN, sequential independent subprocesses inside the same W123 window; do not reset deadline at phase changes.",
-    "first_update_total_target": 512,
+    "schedule": "Only PANN seed0 in this window, independent initialization or its own actual continuation. Complete publication and stop.",
+    "first_update_total_target": 256,
     "required_updates_per_stream": 1,
     "shares_actor_or_optimizer_between_groups": false,
-    "controller_change_during_w123": false,
-    "entrypoint_adaptation": [
+    "pann_runtime": "Torch CUDA and PPO have run. Existing wrapper already sets JAX GPU sharing/x64 options. Frozen B ideal online observation and recovery queries still require actual PANN execution; use existing weights path and no independent tests.",
+    "recording": "For this short W123 collect complete existing episode recording for all actual episodes, rather than full_recording only for the first. Preserve existing frequencies/schema, raw trajectories, actual arrays,transition/rollout/update data and normal checkpoints; no extra diagnostics fields.",
+    "estimated_cost": {
+      "reference": "RAW first256, four actual sessions",
+      "physical_s": 127.6483999998091,
+      "physical_session_wall_s": 6136.766442766966,
+      "slowdown": 48.075545347815854,
+      "transitions_per_physical_session_hour": 150.1768086817503,
+      "RAW256_session_h": 1.7046573452130462,
+      "is_PANN_wall_time_promise": false,
+      "excludes": "PANN first compilation,online observation/private queries,new fixes,rendering/upload"
+    },
+    "completed_reference_stream": {
+      "group": "PPO_RAW_S5",
+      "seed": 0,
+      "transitions": 256,
+      "updates": 1,
+      "policy_evaluated_after_update": false,
+      "loss_metrics_saved": false
+    },
+    "completed_entrypoint_adaptations": [
       "Use existing r21 engineering candidate and W1 local paths, not R11 frozen_controller index.",
       "Reuse original PPO settings and explicitly map R12 learning fields to the existing joint_learning interface.",
       "Use R12 outputs and the single current window deadline, nominal,60s sessions,curriculum off,5workers.",
       "Remove six-stream waiting and update actual counts after optimization.",
       "Mark sample-target/window truncation before buffer/GAE; physical terminal takes priority; do not count pending actions with no physical elapsed time."
     ],
-    "pann_runtime": "Existing MaterialObserver uses JAX GPU/x64; W1 did not verify it or PPO dependencies. Resolve concrete dependency/weight issues in actual startup inside kaiwen-learn; no separate import/mock/recovery suite.",
-    "recording": "For this short W123 collect complete existing episode recording for all actual episodes, rather than full_recording only for the first. Preserve existing frequencies/schema, raw trajectories, actual arrays,transition/rollout/update data and normal checkpoints; no extra diagnostics fields.",
-    "estimated_cost": {
-      "reference_attempt": "w1-S5-r21-E30-02",
-      "slowdown": 41.917391027632,
-      "one_stream256_full_half_second_samples_serial_h": 1.4903961254269156,
-      "two_streams256_each_serial_h": 2.980792250853831,
-      "is_wall_time_promise": false,
-      "excludes": "new code/dependency work,onlinePANN,rendering/upload and changed rollout/resource behavior"
-    }
+    "next_runtime_work": [
+      "Use implemented R12 single-stream CLI with this window's explicit start/deadline and --group PANN_PPO_S5.",
+      "Start from independent seed0; never pass the RAW checkpoint as PANN resume.",
+      "Retain fixed B ideal,independent causal state,original observation/action/reward/normalization and r21 physics.",
+      "Resolve concrete PANN/JAX/weight/dependency errors during actual training only; keep real partial data and stop at the window deadline."
+    ],
+    "pann_evidence": "Use ordinary rollout/episode logs for observer/query counts,extra wall time and the12 actual recovery-feature values. Report zero or uninformative features honestly; do not demand artificial nonzero values,read truth q/e or add a diagnostic framework.",
+    "controller_change_during_current_window": false
   },
   "control_and_evaluation": {
     "keep_original_robot_material_pd_torque_and_thresholds": true,
@@ -197,12 +218,6 @@
     "control_hold_s": 0.002,
     "logical_planning_dt_s": 0.02,
     "prediction_horizon_s": 0.35,
-    "support_candidate_if_evidence_still_applies": {
-      "cadence_Hz": 2,
-      "duty": 0.55,
-      "scale_clearance_and_both_profile_times": 0.8181818181818182,
-      "interpretation": "Single hypothesis; reference speed scale preserved,clearance reduced and acceleration increased. Check actual support,not only nominal gait."
-    },
     "ladder": [
       "E30",
       "E60",
@@ -214,7 +229,9 @@
     "training_and_posthoc_prefixes_are_not_formal_qualification": true,
     "automatically_run_extra_rigid_regression": false,
     "additional_run_rule": "Only when it directly answers the current concrete failure/change; no unrelated matrix.",
-    "formal_mission_wall_rule": "Use actual cost to schedule within the current4h window. Do not automatically start an over-budget long mission or stitch interrupted portions into success."
+    "formal_mission_wall_rule": "Use actual cost to schedule within the current4h window. Do not automatically start an over-budget long mission or stitch interrupted portions into success.",
+    "current_window": "Keep r21 and original route/material/reward/physics fixed. No control/geometry/threshold/curriculum change in W3.",
+    "next_control_question": "After W3, inspect lateral strip exit and return support using actual trajectories. Route-progress reward currently does not itself certify original material traversal. Do not claim learned bypass or silently alter current comparison."
   },
   "process": {
     "physical_start_hard_count_cap": null,
@@ -246,8 +263,8 @@
     "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "create_result_index_only_after_actual_execution": true,
     "handoff": "Update only the six current-handoff lines in docs/TERRAIN_MEMORY_PLAN.md plus necessary normal run results.",
-    "publication": "Commit source/patches/configs/run scripts/environment records/small results. Upload all W1 unpublished and all W123 actual videos/raw trajectories/physical-prediction-material arrays/rollouts/checkpoints/logs to GitHubRelease as appropriate, not just continuation checkpoints. Reference unchanged previously published dependencies.",
-    "unfinished_upload": "At4h record actual pending paths and upload status, keep real outputs, continue W123 publication next window. Never declare complete publication while assets are missing.",
+    "publication": "W1 and RAW are already published. Upload all new PANN source/config/environment changes,ordinary logs,full videos,raw trajectories,all generated physical/prediction/material chunks,rollouts and checkpoints to the same Git/Release structure. Reuse unchanged assets by URL.",
+    "unfinished_upload": "At4h preserve exact pending new paths/status and real partial training state; next window continues that task, never claims all uploaded before completion.",
     "extra_archive_on_user_pc": false,
     "preserve_normal_working_files_and_actual_history": true,
     "release_tag": "tm-s1-go2-local-readiness-r12",
@@ -262,25 +279,24 @@
       "actual Go2 scene/XML/mesh,normalization and needed model assets not already publicly referenced; unchanged published assets use original links"
     ],
     "w1_catchup": {
-      "status_at_review": "not_published_to_release",
-      "directory": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w1-S5-r21-E30-02",
-      "known_files": [
-        "trajectory.npz",
-        "physical-000.npz",
-        "prediction-000.npz",
-        "material-0000.npz through material-0012.npz"
-      ],
-      "known_three_array_bytes": 59613628,
-      "material_chunk_sizes": "read existing files on execution host; not available in GitHub result metadata",
-      "video": "Locate retained full video or render once from original saved trajectory; do not rerun physics.",
-      "previous_release_upload_required_false_superseded": true
+      "status": "published",
+      "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12",
+      "do_not_repeat_upload_or_redownload": true
     },
     "artifact_index": "Use existing result index for category,relative path,size,Git/ReleaseURL and upload status; no second audit document.",
     "publication_check": "One normal comparison of expected artifact names/sizes with uploaded asset list; no full-repository hashing or redownload verification. Preserve any already-generated digest fields without extra certification work.",
     "max_release_asset_bytes_exclusive": 2147483648,
     "no_large_binary_in_regular_git_history": true,
     "upload_packaging": "Only split/package as necessary for transfer on execution host; no extra PC mirror/archive after publication.",
-    "training_complete_does_not_imply_publication_complete": true
+    "training_complete_does_not_imply_publication_complete": true,
+    "existing_publication_at_review": {
+      "source_commit": "4f18facb193c33628090f848986c37afb1844178",
+      "release_assets": 246,
+      "release_bytes": 2229777826,
+      "videos": 5,
+      "checkpoint_files": 4,
+      "pending_paths": []
+    }
   },
   "history": {
     "R11_remains_paused": true,
@@ -288,9 +304,37 @@
     "R12_counts_persist_across_windows": true,
     "previous_full_assessment_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/402894f7a865a2905e651d45b6746521dcd6eef7/docs/TERRAIN_MEMORY_PLAN.md",
     "R12_W1_complete_at_review": true,
-    "reviewed_W1_result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w1-S5-r21-E30-02.json"
+    "reviewed_W1_result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w1-S5-r21-E30-02.json",
+    "RAW_window_scope": {
+      "updated_utc": "2026-10-29T13:34:13Z",
+      "user_instruction": "Finish RAW and complete publication, then stop for user analysis before PANN.",
+      "active_streams": [
+        {
+          "group": "PPO_RAW_S5",
+          "seed": 0
+        }
+      ],
+      "target_real_transitions": 256,
+      "target_updates": 1,
+      "PANN_start_authorized_this_window": false,
+      "preserve_original_absolute_deadline": true,
+      "status": "RAW_complete_published_PANN_deferred_for_user_review",
+      "actual_transitions": 256,
+      "actual_updates": 1
+    },
+    "user_review_round": 13,
+    "RAW_reviewed_source_commit": "4f18facb193c33628090f848986c37afb1844178",
+    "RAW_first_update_complete": true,
+    "RAW_original_loss_missing_preserved": true,
+    "previous_W123_plan_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c7d6c1d3cb29d8ca75899b5326727d9f68cfb650/docs/TERRAIN_MEMORY_PLAN.md",
+    "deferred_earlier_support_hypothesis": {
+      "cadence_Hz": 2,
+      "duty": 0.55,
+      "scale_clearance_and_both_profile_times": 0.8181818181818182,
+      "interpretation": "Single hypothesis; reference speed scale preserved,clearance reduced and acceleration increased. Check actual support,not only nominal gait."
+    }
   },
-  "reviewed_source_commit": "e70de2b4de10fb60ec4c844a1012b5c35931a6c1",
+  "reviewed_source_commit": "4f18facb193c33628090f848986c37afb1844178",
   "literature": [
     {
       "url": "https://arxiv.org/abs/1707.06347",
@@ -308,20 +352,11 @@
     }
   ],
   "current_window_scope": {
-    "updated_utc": "2026-10-29T13:34:13Z",
-    "user_instruction": "Finish RAW and complete publication, then stop for user analysis before PANN.",
-    "active_streams": [
-      {
-        "group": "PPO_RAW_S5",
-        "seed": 0
-      }
-    ],
-    "target_real_transitions": 256,
-    "target_updates": 1,
-    "PANN_start_authorized_this_window": false,
-    "preserve_original_absolute_deadline": true,
-    "status": "RAW_complete_published_PANN_deferred_for_user_review",
-    "actual_transitions": 256,
-    "actual_updates": 1
+    "task": "W3_PANN",
+    "group": "PANN_PPO_S5",
+    "seed": 0,
+    "objective": "Only independent PANN first256 real transitions and one PPO update, then full publication and stop.",
+    "RAW": "Completed and retained at256/1; no RAW resampling,extra update,loss reconstruction or post-update evaluation in this window.",
+    "automatic_next_task": false
   }
 }

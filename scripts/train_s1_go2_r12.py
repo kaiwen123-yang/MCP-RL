@@ -17,9 +17,19 @@ def main():
     a=p.parse_args()
     contract=json.loads((ROOT/CONFIG).read_text())
     old=json.loads((ROOT/contract["reuse"]["runtime_physics_ppo_and_task_settings"]).read_text())
-    contract["joint_learning"]=copy.deepcopy(old["joint_learning"])
-    contract["joint_learning"].update(standard_target_transitions_per_stream=contract["learning"]["first_update_target_per_assigned_stream"],
-        cross_stream_wait=False,streams=1,active_streams=[dict(group=a.group,seed=a.seed)],actor_dt_s=contract["learning"]["actor_dt_s"])
+    # Retain numerical PPO/shared-observation settings, not the old R11 campaign.
+    shared=old["joint_learning"]
+    contract["joint_learning"]={key:copy.deepcopy(shared[key]) for key in (
+        "ppo","actor_action","shared_observation","pann","pann_sha256","pann_features",
+        "on_policy_and_independence","bootstrap_rule")}
+    contract["joint_learning"].update(
+        standard_target_transitions_per_stream=contract["learning"]["first_update_target_per_assigned_stream"],
+        standard_target_total_transitions=contract["learning"]["first_update_target_per_assigned_stream"],
+        cross_stream_wait=False,streams=1,groups=[a.group],seeds=[a.seed],
+        active_streams=[dict(group=a.group,seed=a.seed)],actor_dt_s=contract["learning"]["actor_dt_s"],
+        shared_controller="Existing S5-r21 engineering candidate; not formally qualified.",
+        start_condition=contract["learning"]["candidate_requires"],curriculum_enabled=False,
+        schedule=contract["learning"]["schedule"])
     contract["resources"].update(torch_device="cuda",torch_threads=2)
     hard=a.window_start_unix+contract["execution"]["maximum_window_wall_s"]
     deadline=min(a.deadline_unix,hard)
@@ -49,7 +59,7 @@ def main():
         c.update(run_id=contract["run_id"],stage="S1R12",r12_contract=contract,
             campaign_budget=contract["execution"],r11_training=True,r11_policy=True,
             case_key=None,case_identity=None,predecessor_attempt=None,
-            window=dict(task="W123",started_unix_s=a.window_start_unix,run_deadline_unix_s=deadline,hard_deadline_unix_s=hard))
+            window=dict(task=contract["current_task"],started_unix_s=a.window_start_unix,run_deadline_unix_s=deadline,hard_deadline_unix_s=hard))
         c["outputs"]["root"]=contract["outputs"]["compact_root"]
         args=arguments(name,"S5-r21","nominal","training","continuing_acquisition",workers=5)
         args.config=CONFIG
@@ -78,7 +88,7 @@ def main():
                 updates=stream.backend.update_count,tail_buffer=len(stream.buffer),episodes=stream.episode,
                 physics_s=stream.physics_s,output=str(output.relative_to(ROOT)),
                 checkpoint=str((output/f"resume-state-ep{stream.episode:05d}.pt").relative_to(ROOT)))
-            idx.update(current_task="W123",protocol_revision=contract["protocol_revision"],status="W123_training",
+            idx.update(current_task=contract["current_task"],protocol_revision=contract["protocol_revision"],status=f"{a.group}_training",
                 training_runs=len(streams),training_transitions=sum(x["actual_transitions"] for x in streams.values()),
                 training_updates=sum(x["updates"] for x in streams.values()),window=c["window"])
         print(json.dumps(record),flush=True)

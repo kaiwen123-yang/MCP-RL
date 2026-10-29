@@ -297,12 +297,15 @@ class PolicyMaterial(JointMaterial):
         truncated=not (physical_failure or timeout or success)
         self.collect_pending(t,self.mission,observation,physical_failure or timeout or success,truncated,physical_failure,timeout)
         result=super().finish(result)
+        # Variable policy actions are recorded in cap-decisions/transitions.
+        result.update(cap_profile='ppo_policy',requested_cap_m_s=None)
         result.pop('development_intent',None)
         result['execution_intent']='Standard PPO in the actual S5/Go2/material loop'
         result['material']['observer_enabled']=self.observer is not None
         result['policy']=dict(group=self.group,seed=self.stream.seed,training=self.stream.training,
             total_transitions=self.stream.samples,stage=self.stage,session_limit_s=self.session_s,
             cap_to_reference_increment_latency_s=.002,
+            action_record='cap-decisions.json and training transitions.jsonl',
             terminated=physical_failure or timeout or success,truncated=truncated,
             effective_translation_s=self.effective_time,normalization=self.stream.normalization,
             observer=self.observer.timing() if self.observer is not None else None)

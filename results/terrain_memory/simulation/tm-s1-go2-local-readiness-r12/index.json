@@ -1,6 +1,6 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
-  "status": "RAW_first_update_complete_PANN_deferred_by_user",
+  "status": "RAW_reviewed_PANN_first_update_planned",
   "attempts": [
     {
       "attempt": "w1-S5-r21-E30",
@@ -615,14 +615,14 @@
   "first_physical_start_unix_s": 1793272712.7896276,
   "window": {
     "task": "W123",
-    "started_unix_s": 1793277066.0,
-    "run_deadline_unix_s": 1793289666.0,
-    "hard_deadline_unix_s": 1793291466.0
+    "started_unix_s": 1793277066,
+    "run_deadline_unix_s": 1793289666,
+    "hard_deadline_unix_s": 1793291466
   },
   "protocol_revision": "linked_w123_max4h_v3",
-  "current_task": "RAW_review",
+  "current_task": "RAW_review_complete",
   "training_transitions": 256,
-  "next_task": "analyze_published_RAW_before_authorizing_PANN",
+  "next_task": "W3_PANN_first256_independent_window",
   "pre_runner_initialization_failures": [
     {
       "error": "Python MuJoCo loaded the frozen MPC library through global LD_LIBRARY_PATH: undefined symbol mj_jacDot",
@@ -733,7 +733,7 @@
       "cumulative_samples": 256,
       "update_count": 1,
       "optimizer_steps_per_parameter": [
-        16.0
+        16
       ],
       "optimizer_parameter_states": 13,
       "parameter_change_l2_from_preupdate": {
@@ -3050,15 +3050,7 @@
     "large_results_location": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w1-S5-r21-E30-02",
     "release_upload_required": false
   },
-  "deferred_streams": [
-    {
-      "group": "PANN_PPO_S5",
-      "seed": 0,
-      "actual_transitions": 0,
-      "updates": 0,
-      "status": "deferred_by_user_for_RAW_review"
-    }
-  ],
+  "deferred_streams": [],
   "current_window_initialization_fixes": [
     {
       "issue": "tianshou missing at actual entrypoint startup",
@@ -3087,5 +3079,92 @@
     "original_episode_status_preserved": true,
     "physics_or_optimizer_replayed": false,
     "evidence": "training/PPO_RAW_S5-seed0/learning.jsonl"
-  }
+  },
+  "raw_review": {
+    "user_progress_round": 13,
+    "reviewed_source_commit": "4f18facb193c33628090f848986c37afb1844178",
+    "decision": "RAW first-update engineering goal completed; proceed to independent PANN first256/one update in the next user-started window.",
+    "sample_summary": {
+      "count": 256,
+      "dt_sum": 127.6483999998091,
+      "effective": 205,
+      "cap_min": 0.18991373240947723,
+      "cap_max": 0.2398702934384346,
+      "cap_mean": 0.21405546743189702,
+      "cap_std": 0.010841469704232163,
+      "reward_sum": -21.589753394641047,
+      "terminal": [
+        75,
+        119,
+        196
+      ],
+      "truncation": [
+        256
+      ]
+    },
+    "timing": {
+      "physics_s": 127.64839999980923,
+      "wall_s": 6136.766442766966,
+      "planning_s": 5263.534488921898,
+      "physics_wall_s": 714.3390790114063,
+      "material_wall_s": 595.2820078355435,
+      "startup_s": 80.41908148713992,
+      "slowdown": 48.075545347815854,
+      "transitions_per_hour": 150.1768086817503,
+      "planning_share": 0.8577048740588304
+    },
+    "all_sampled_before_first_update": true,
+    "post_update_policy_evaluation": false,
+    "original_loss_missing": true,
+    "physical_rollouts_repeated": false,
+    "optimizer_repeated": false,
+    "material_traversal_completed_sessions": 0,
+    "read_only_rollout_findings": {
+      "positive_elapsed_all256": true,
+      "finite_arrays": true,
+      "within_episode_successor_alignment": true,
+      "RAW_recovery_channels_zero": true,
+      "terminal_samples": [
+        75,
+        119,
+        196
+      ],
+      "external_truncation_samples": [
+        256
+      ]
+    },
+    "publication_at_review": {
+      "release_count": 246,
+      "release_bytes": 2229777826,
+      "manifest_count": 262,
+      "expected_release_count": 246,
+      "mismatch_count": 0,
+      "counts": {
+        "other": 65,
+        "videos": 5,
+        "npz": 172,
+        "checkpoints": 4
+      }
+    },
+    "metadata_caveat": "Old requested_cap_m_s=.25/cap_profile=constant are inherited defaults; actual requested policy cap is recorded per transition. Historical files retained.",
+    "next_window": {
+      "task": "W3_PANN",
+      "group": "PANN_PPO_S5",
+      "seed": 0,
+      "target_cumulative_transitions": 256,
+      "target_updates": 1,
+      "max_wall_s": 14400,
+      "automatic_following_task": false,
+      "RAW_checkpoint_to_PANN": false
+    }
+  },
+  "previous_window_deferred_streams": [
+    {
+      "group": "PANN_PPO_S5",
+      "seed": 0,
+      "actual_transitions": 0,
+      "updates": 0,
+      "status": "deferred_by_user_for_RAW_review"
+    }
+  ]
 }

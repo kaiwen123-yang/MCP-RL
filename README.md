@@ -1,20 +1,22 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
-## 当前入口：复用已完成W1，连续推进W2→W3
+## 当前入口：RAW首次更新已完成，下一窗口仅推进PANN
 
-**R12/W1本地适配已完成，材料E30未通过，PPO尚未开始。** 5080/kaiwen-learn复用r21，3次积分前错误已处理，1次真实物理任务运行12.5182s、62,591步、墙钟524.73s。实际材料加载成立，12.324s侧出条带，12.5182s非足端接触；最大应变.0169273<.02。[真实结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w1-S5-r21-E30-02.json)
+**第13轮RAW首次真实学习工程目标完成。** 现有R12 run中，RAW seed0已采256条真实转移（205条有效平移）、完成1次PPO更新、尾buffer0。四个真实会话共127.6484s，三次非足端接触、最后一次目标截断后发生日志异常。原loss标量缺失已保留，更新后checkpoint已保存。PANN尚未启动。[实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)
 
-用户最新要求将W1/W2/W3连接成**W123联合启动任务**。W1直接复用，不重跑。完成同一R12训练适配后，顺序运行RAW seed0与PANN seed0，各累计256真实转移并首次更新；有时间就自动接下一流，不因阶段名称停下。单窗口仍最多4小时，共用一个截止，未完下窗口继续，不自动扩展到控制改版/长评价/租卡。
+全部四条轨迹均来自首次更新前策略，完整往返和有效材料E30/E60仍为0；较长运行不能称训练后改善。两条到达远端并返程的轨迹都曾侧出材料条带。RAW实际cap约.189914～.239870m/s，旧顶层constant/.25字段不代表真实动作。
 
-首先读取[AGENTS](AGENTS.md)和[当前交接/具体计划](docs/TERRAIN_MEMORY_PLAN.md)，按[更新契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)直接推进；不重读整套历史或增加防御性测试、哈希认证、恢复演习。
+用户已选择RAW完成、发布、审查后再继续。**下一窗口只做PANN seed0累计256真实转移和一次更新，完整发布后停止。** 复用W1/r21/5workers和现有R12入口，独立初始化PANN，不重复RAW、不补做原loss、不自动串W4/长评价/租卡。单窗口最多4h，未完续接本组实际进度。
 
-**发布范围改为完整科研产物。** 本次审查时W1大数组仅在本地，R12 Release未创建。下一窗口补传W1，并将本轮源码、环境记录、全程视频、原始轨迹、所有实际大数组、训练记录和checkpoint完整发布到Git/GitHub Release。已公开且未变的依赖引用原链接即可。上传未完成如实标pending；发布后不在用户电脑另做下载/镜像/复制归档。
+先读[AGENTS](AGENTS.md)和[主计划当前交接](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。启动wrapper已去掉上轮固定时间，必须显式传本窗口group/start/deadline。
 
-正式评价继续逐case30→60→300→600；工程首次更新不等于任务成功或PANN收益。后续仍先解决共同执行器的侧偏/承载问题，再依据实际学习成本决定上云。
+**W1和RAW完整科研产物已交付。** [Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12)有246资产、2,229,777,826字节，包括5个视频、172个NPZ、4个checkpoint；源码/环境/小记录在Git。下一窗口追加全部实际PANN产物，沿用现有上传方式，不回下载、不在用户电脑另做归档。
+
+正式评价继续E30→E60→E300→E600。后续重点为横向路线保持、返程支撑以及任务目标与学习信号的一致性；首先完成现有PANN联合运行链。
 
 ## 历史说明
 
-以下保留R11及更早入口和结果原文。历史文字中的“当前”“本轮”、预算与门禁只适用于对应run；当前R12采用本页顶部的W123联动与每窗口4小时规则。[R11原计划](https://github.com/kaiwen123-yang/MCP-RL/blob/25947cfae9b2a48a872327bb63e9b36f76fe2dac/docs/TERRAIN_MEMORY_PLAN.md)和全部实际结果保留。
+以下保留R11及更早入口和结果原文。历史文字中的“当前”“本轮”、预算与门禁只适用于对应run；当前任务采用本页顶部的独立PANN窗口与最多4小时规则。[R11原计划](https://github.com/kaiwen123-yang/MCP-RL/blob/25947cfae9b2a48a872327bb63e9b36f76fe2dac/docs/TERRAIN_MEMORY_PLAN.md)和全部实际结果保留。
 
 ## 历史 R11：材料执行与阶梯评价
 
