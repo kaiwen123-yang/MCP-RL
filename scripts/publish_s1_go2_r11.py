@@ -14,6 +14,8 @@ LINKS=ROOT/CONTRACT['outputs']['large_root']/'release-upload-links'
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('action',choices=['draft','upload','status','finish'])
+    parser.add_argument('--workers',type=int,default=8)
+    parser.add_argument('--exclude-prefix',action='append',default=[])
     args=parser.parse_args()
     credentials=json.loads(sys.stdin.read())
     env=dict(os.environ,GH_TOKEN=credentials['token'],GITHUB_TOKEN=credentials['token'],
@@ -76,6 +78,7 @@ def main():
         LINKS.mkdir(parents=True,exist_ok=True)
         todo=[]
         for item in expected:
+            if any(item['name'].startswith(prefix) for prefix in args.exclude_prefix):continue
             if item['size']>=2*1024**3:raise RuntimeError('Asset exceeds release limit: '+item['name'])
             prior=remote.get(item['name'])
             if prior and matches(item,prior):continue
@@ -122,8 +125,8 @@ def main():
                 return dict(name=name,uploaded=False,wall_s=time.time()-begin,
                     error=type(error).__name__,network_detail=next((label for token,label in [('CERTIFICATE_VERIFY_FAILED','certificate_verify_failed'),('UNEXPECTED_EOF','unexpected_tls_eof'),('EOF occurred','unexpected_tls_eof'),('WRONG_VERSION_NUMBER','wrong_tls_version'),('timed out','timeout'),('Connection refused','connection_refused')] if token in str(error)),None),http_status=error.response.status_code if error.response is not None else None)
         failed=0;completed=0;iterator=iter(todo)
-        with ThreadPoolExecutor(8) as pool:
-            pending={pool.submit(upload,path) for path in [next(iterator,None) for _ in range(min(8,len(todo)))]}
+        with ThreadPoolExecutor(args.workers) as pool:
+            pending={pool.submit(upload,path) for path in [next(iterator,None) for _ in range(min(args.workers,len(todo)))]}
             while pending:
                 done,pending=wait(pending,return_when=FIRST_COMPLETED)
                 for future in done:
@@ -162,6 +165,8 @@ def main():
     while tag['type']=='tag':tag=api(f"repos/{REPO}/git/tags/{tag['sha']}")['object']
     if tag['sha']!=head:raise RuntimeError('Release tag does not name the final evidence commit')
     with index_file(SMALL,CONTRACT) as j:
+        j['status']='paused_by_user_review_published'
+        j['pause']['publication_complete']=True
         j['publication'].update(status='published_verified',evidence_commit=head,published_tag_commit=tag['sha'],
             release_url=public['html_url'],all_assets_verified=True,assets=checked,asset_count=len(checked),
             asset_bytes=sum(x['size'] for x in checked),verified_unix_s=time.time(),
