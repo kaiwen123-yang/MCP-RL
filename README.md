@@ -2,7 +2,7 @@
 
 **默认计算位置（2026-10-30 起）：AutoDL 西北 B 区 D57，SSH 别名 `autodl-d57`。** 后续训练、仿真和项目计算统一使用该实例。RTX PRO 6000 96GB ×1、25 vCPU、120GB 内存；[实际环境与复用来源](experiments/terrain_memory/compute-environment.json)。
 
-## 当前入口：完整链路支撑联调＋跨窗口多次PPO更新
+## 当前入口：支撑联调＋tmux连续训练
 
 **最新实际成果仍为D57 PANN_PPO_S5 seed0的256条真实转移（208有效）和1次PPO更新，尾buffer0；RAW历史256/205有效/1更新保留。** PANN首次12个真实会话125.0854s均在更新前，原loss和全部产物已发布；本次计划修订没有启动新的服务器训练。[PANN实际结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json) · [实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)
 
@@ -10,9 +10,11 @@
 
 **支撑问题恢复为当前主线。** ep10的既有MPC预测在6.20s已选中会于6.514s进入躯干接触margin的轨迹，并允许触地后恢复；真实在6.561s因相同非足接触立即终止。先用实际冻结源码核对并纠正这一控制目标错配，再直接在完整链路中训练；不先增加独立E30准入试验，不以更多更新代替控制修正。
 
-**取消“只续到第二次更新就停”的安排。** 首个跨窗口里程碑为同一记录控制版新增1024条/4次更新，当前起点对应累计1280条/5次。每256条更新后继续；四小时是单窗口墙钟边界，不是训练总额度。按已测113.89条/h，纯采样参考约8.99h，另加修正、编译与发布，分多个新窗口接续。
+**取消“只续到第二次更新就停”的安排。** 首个跨窗口里程碑为同一记录控制版新增1024条/4次更新，当前起点对应累计1280条/5次。每256条更新后继续。用户已授权训练在AutoDL tmux持续十小时或更长；四小时仅限制Codex交互，启动后看到真实采样/日志正常即可离开。按已测113.89条/h，纯采样参考约8.99h，后台默认16h预算、到目标提前停止。
 
-先读[AGENTS](AGENTS.md)与[主计划顶部6行/第4节](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。训练入口已支持契约中的active_controller_build；实际修正后记录新build和空buffer起点，沿用本组最新checkpoint，不把旧版数据当新版，不重采首批或RAW。保留20MPC workers、Torch2、OMP/BLAS1和现有D57环境。
+先读[AGENTS](AGENTS.md)与[主计划顶部6行/第4节](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。训练入口支持active_controller_build，并用--background-job将后台deadline与交互4h分开；实际修正后记录新build和空buffer起点，沿用本组最新checkpoint，不把旧版数据当新版，不重采首批或RAW。保留20MPC workers、Torch2、OMP/BLAS1和现有D57环境。
+
+后台启动入口为[启动器](scripts/start_s1_go2_r12_tmux.py)：激活现有D57环境后运行 `python scripts/start_s1_go2_r12_tmux.py --resume <本组最新checkpoint> --session s1-joint --hours 16`。先查看是否已有作业，避免重复启动。job目录保存启动信息/标准日志/退出记录；已有collection、learning与checkpoint继续正常更新，无需逐步盯守。训练停止后下一次交互再完整渲染与发布，启动器不会自动上传或提交Git，publication_pending与训练状态分开。
 
 [论文清单](literature/terrain_memory_sources.json)新增4篇2024—2026相关一手来源，并更新2篇既有论文的当前用途，分别约束软地支撑、控制/学习联合执行与记忆解释，明确仿真、真机和预印本边界。不是新一轮论文复现任务。
 
@@ -27,7 +29,7 @@ cd /root/autodl-tmp/MCP-RL
 source scripts/autodl_d57_env.sh
 ```
 
-Python 3.12 项目环境直接复用镜像的 PyTorch 2.8.0+cu128；MuJoCo 3.2.3、JAX 0.6.2 CUDA、Optax 0.2.5、Tianshou 0.5.1 等依赖按 [requirements-autodl-d57.txt](requirements-autodl-d57.txt) 安装。r21 执行器及其运行资源、原 Go2 资产、MJPC Python 接口和冻结 B ideal 权重从原 5080 服务器复用。原RAW checkpoint与完整历史保留在原执行端及Release；PANN已在D57独立完成首次256/1，下一窗口只恢复本组实际checkpoint。libegl1与imageio已在真实运行/渲染中补齐，直接复用现有环境。
+Python 3.12 项目环境直接复用镜像的 PyTorch 2.8.0+cu128；MuJoCo 3.2.3、JAX 0.6.2 CUDA、Optax 0.2.5、Tianshou 0.5.1 等依赖按 [requirements-autodl-d57.txt](requirements-autodl-d57.txt) 安装。r21 执行器及其运行资源、原 Go2 资产、MJPC Python 接口和冻结 B ideal 权重从原 5080 服务器复用。原RAW checkpoint与完整历史保留在原执行端及Release；PANN已在D57独立完成首次256/1，下一阶段只恢复本组实际checkpoint。libegl1与imageio已在真实运行/渲染中补齐，直接复用现有环境。
 
 默认联网顺序为官方学术加速优先；同一联网操作连续三次网络失败，再使用用户电脑 VPN 的 SSH 反向隧道。服务器端分别执行：
 
@@ -47,7 +49,7 @@ source scripts/autodl_network.sh pc
 
 ## 历史说明
 
-以下保留R11及更早入口和结果原文。历史文字中的“当前”“本轮”、预算与门禁只适用于对应run；当前任务采用本页顶部的完整链路联调阶段与单窗口最多4小时规则。[R11原计划](https://github.com/kaiwen123-yang/MCP-RL/blob/25947cfae9b2a48a872327bb63e9b36f76fe2dac/docs/TERRAIN_MEMORY_PLAN.md)和全部实际结果保留。
+以下保留R11及更早入口和结果原文。历史文字中的“当前”“本轮”、预算与门禁只适用于对应run；当前任务采用本页顶部的完整链路联调阶段、交互最多4小时与独立tmux长训练预算。[R11原计划](https://github.com/kaiwen123-yang/MCP-RL/blob/25947cfae9b2a48a872327bb63e9b36f76fe2dac/docs/TERRAIN_MEMORY_PLAN.md)和全部实际结果保留。
 
 ## 历史 R11：材料执行与阶梯评价
 

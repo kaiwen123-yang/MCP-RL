@@ -1,6 +1,6 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
-  "status": "joint_support_and_multi_update_phase_planned",
+  "status": "joint_support_and_detached_training_planned",
   "attempts": [
     {
       "attempt": "w1-S5-r21-E30",
@@ -1231,7 +1231,7 @@
     "run_deadline_unix_s": 1793371623,
     "hard_deadline_unix_s": 1793374023
   },
-  "protocol_revision": "joint_support_continuous_learning_v7",
+  "protocol_revision": "joint_support_detached_training_v8",
   "current_task": "W34_JOINT_SUPPORT_LEARNING",
   "training_transitions": 512,
   "next_task": "W34_JOINT_SUPPORT_LEARNING",
@@ -6556,7 +6556,7 @@
       "check": "One normal name/size/upload-state comparison; no full hash pass or downloads"
     }
   },
-  "next_action": "Confirm and correct the retained ep10 MPC non-foot-contact objective mismatch in the actual full loop; continue PANN seed0 toward1024new transitions/4new updates on a recorded controller across<=4hwindows,not stopping after each update. Publish all actual outputs.",
+  "next_action": "Finish the evidenced support correction if still pending,launch the current PANN phase in AutoDL tmux with its own explicit job deadline,and leave after real sampling/logging are working. Interactive4hdoes not stop the authorized job. Next visit inspects existing progress and completes publication.",
   "pann_review": {
     "reviewed_source_commit": "f8bfb4629a1d342f49a63a446ebd2a19151075d8",
     "source_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json",
@@ -6691,5 +6691,22 @@
       "server_execution_started": false
     },
     "counts_and_existing_results_unchanged": true
+  },
+  "detached_training_execution_plan": {
+    "status": "planned_not_started_by_this_review",
+    "source_plan_commit": "5ea1740cecfa71a75860a7f6ac1c5aed78238b44",
+    "interactive_maximum_s": 14400,
+    "user_authorized_background_training": true,
+    "default_background_budget_s": 57600,
+    "target_PANN_transitions": 1280,
+    "target_PANN_updates": 5,
+    "new_phase_transitions": 1024,
+    "new_phase_updates": 4,
+    "launcher": "scripts/start_s1_go2_r12_tmux.py",
+    "session_default": "s1-joint",
+    "handoff_condition": "Actual physics/sample counts advance and normal logs are written;no mandatory wait for256or a new update.",
+    "publication": "Pending until actual rendering/upload/Git steps complete;not automated by this launcher.",
+    "actual_new_training_started": false,
+    "actual_results_unchanged": true
   }
 }

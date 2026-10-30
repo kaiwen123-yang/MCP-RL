@@ -11,7 +11,8 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--group", required=True, choices=["PPO_RAW_S5","PANN_PPO_S5"])
     p.add_argument("--seed", type=int, default=0, choices=[0])
-    p.add_argument("--window-start-unix", type=float, required=True)
+    p.add_argument("--window-start-unix", "--job-start-unix", dest="window_start_unix", type=float, required=True)
+    p.add_argument("--background-job", action="store_true", help="Use the declared job deadline independently of the interactive four-hour window.")
     p.add_argument("--deadline-unix", type=float, required=True)
     p.add_argument("--resume")
     a=p.parse_args()
@@ -34,12 +35,13 @@ def main():
     build=contract["reuse"]["active_controller_build"]
     workers=contract["resources"]["mpc_workers"]
     pann_weights=ROOT/contract["resources"]["pann_weights_path"]
-    hard=a.window_start_unix+contract["execution"]["maximum_window_wall_s"]
+    execution_mode="background_job" if a.background_job else "interactive_window"
+    hard=a.deadline_unix if a.background_job else a.window_start_unix+contract["execution"]["maximum_window_wall_s"]
     deadline=min(a.deadline_unix,hard)
     small=ROOT/contract["outputs"]["compact_root"]
     output=ROOT/contract["outputs"]["large_root"]/"training"/f"{a.group}-seed{a.seed}"
     output.mkdir(parents=True,exist_ok=True)
-    dump(small/"training-deadline.json",dict(window_start_unix_s=a.window_start_unix,deadline_unix_s=deadline,hard_deadline_unix_s=hard))
+    dump(small/"training-deadline.json",dict(execution_mode=execution_mode,window_start_unix_s=a.window_start_unix,deadline_unix_s=deadline,hard_deadline_unix_s=hard))
     dump(output/"training-contract.json",contract)
     stream=PolicyStream(ROOT,a.group,a.seed,contract,output,checkpoint=a.resume)
     initial_transitions,initial_updates=stream.samples,stream.backend.update_count
@@ -54,7 +56,8 @@ def main():
         workers=workers,pann_weights_path=str(pann_weights),
         protocol_revision=contract["protocol_revision"],initial_condition="nominal",curriculum_enabled=False,
         resume_checkpoint=a.resume,continuous_environment_restored=False,
-        window_start_unix_s=a.window_start_unix,deadline_unix_s=deadline,hard_deadline_unix_s=hard))
+        execution_mode=execution_mode,window_start_unix_s=a.window_start_unix,deadline_unix_s=deadline,hard_deadline_unix_s=hard))
+    last_result=None
     while stream.samples<stream.target and time.time()<deadline:
         session=contract["learning"]["initial_acquisition_session_s"]
         stream.episode+=1
@@ -64,7 +67,7 @@ def main():
         c.update(run_id=contract["run_id"],stage="S1R12",r12_contract=contract,
             campaign_budget=contract["execution"],r11_training=True,r11_policy=True,
             case_key=None,case_identity=None,predecessor_attempt=None,
-            window=dict(task=contract["current_task"],started_unix_s=a.window_start_unix,run_deadline_unix_s=deadline,hard_deadline_unix_s=hard))
+            window=dict(task=contract["current_task"],execution_mode=execution_mode,started_unix_s=a.window_start_unix,run_deadline_unix_s=deadline,hard_deadline_unix_s=hard))
         c["outputs"]["root"]=contract["outputs"]["compact_root"]
         args=arguments(name,build,"nominal","training","continuing_acquisition",workers=workers)
         args.config=CONFIG
@@ -78,6 +81,7 @@ def main():
             joint=PolicyMaterial(ROOT,r9,stream,0,session,agent=agent,full_recording=True)
             joint.training_deadline_path=small/"training-deadline.json"
             result=run(args,c,joint)
+            last_result=result
         record=dict(episode=stream.episode,attempt=name,controller_build=build,condition="nominal",stage=0,
             session_limit_s=session,transitions=stream.samples-before,reason=result["reason"],
             stage_status=result["stage_status"],simulation_s=result["simulation_s"],wall_s=result["wall_s"],
@@ -103,7 +107,9 @@ def main():
         unupdated_fragment=len(stream.buffer),physics_s=stream.physics_s,session_records=stream.session_records,
         target=stream.target,continuous_environment_snapshot=False,
         invocation_started_unix_s=invocation_started_unix_s,invocation_wall_s=time.time()-invocation_started_unix_s,
-        controller_build=build,
+        controller_build=build,execution_mode=execution_mode,
+        last_stage_status=last_result["stage_status"] if last_result else None,
+        last_episode_reason=last_result["reason"] if last_result else None,
         phase_initial_transitions=contract["learning"]["phase_initial_transitions"],
         phase_new_transitions=stream.samples-contract["learning"]["phase_initial_transitions"],
         phase_initial_updates=contract["learning"]["phase_initial_updates"],
