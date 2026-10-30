@@ -6597,7 +6597,7 @@
     "pann_input": {
       "nonzero_rows": 77,
       "soft_query_rows": 109,
-      "max_abs_recovery_m": 0.00007579985260963441,
+      "max_abs_recovery_m": 7.579985260963441e-05,
       "benefit_established": false
     },
     "timing": {
@@ -6722,5 +6722,27 @@
     "extra_pc_archive": false,
     "summary_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job>.json",
     "actual_server_execution_started_by_this_review": false
+  },
+  "W34_controller_repair": {
+    "build": "S5-r22",
+    "based_on": "S5-r21",
+    "status": "compiled",
+    "specification": "experiments/terrain_memory/s1-go2-r11-S5-r22.json",
+    "source_patch": "experiments/terrain_memory/s1-go2-r11-S5-r22.patch",
+    "build_script": "scripts/prepare_s1_go2_r12_support.py",
+    "build_wall_s": 365.4723587036133,
+    "version_boundary": {
+      "parent_controller_build": "S5-r21",
+      "active_controller_build": "S5-r22",
+      "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt",
+      "actual_transitions": 256,
+      "actual_updates": 1,
+      "parent_tail_buffer": 0,
+      "new_controller_initial_buffer": 0,
+      "restoration": "PANN seed0 actor,critic,optimizer,RNG and normalization from its own ep00012; historical r21 samples retain their original version."
+    },
+    "formal_qualification": false,
+    "evidence": "Existing ep10 saved prediction states only; no new physics before joint training.",
+    "next_action": "Launch the authorized single PANN seed0 detached pipeline."
   }
 }

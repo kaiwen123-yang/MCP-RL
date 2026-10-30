@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "joint_support_and_automatic_publication_planned",
+  "status": "joint_support_learning_configured",
   "protocol_revision": "joint_support_detached_autopublish_v9",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-10-30",
@@ -12,8 +12,9 @@
     "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
     "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
     "source_reference_commit": "25947cfae9b2a48a872327bb63e9b36f76fe2dac",
-    "rule": "Reuse the working D57 full PANN-PPO-MPC loop and original physical/PPO/task semantics. First correct the evidenced MPC non-foot-contact objective mismatch if confirmed in the frozen source. Record the actual new build here after a real repair; do not label an unbuilt candidate as executed.",
-    "active_controller_build": "S5-r21"
+    "rule": "Reuse the working D57 PANN-PPO-MPC loop with the compiled S5-r22 trunk-clearance correction based on actual r21 source and retained ep10 predictions. Original physical/PPO/task settings are retained.",
+    "active_controller_build": "S5-r22",
+    "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r22.json"
   },
   "execution": {
     "mode": "interactive_setup_and_detached_training",
@@ -320,15 +321,15 @@
       "Mark sample-target/window truncation before buffer/GAE; physical terminal takes priority; do not count pending actions with no physical elapsed time."
     ],
     "next_runtime_work": [
-      "Use existing ep10 and actual frozen source to finish the evidence-backed support correction if still pending; preserve already-completed work.",
-      "Record the actual active_controller_build and clear version/sample boundary. Keep original physical/PPO semantics and the current single stream.",
+      "S5-r22 support-objective correction compiled on D57; proceed directly to authorized joint sampling without an independent E30 gate.",
+      "Record the actual S5-r21 to S5-r22 boundary at PANN256/1 with empty tail; retain the original single-stream settings and collect1024new/4new updates.",
       "Use server-native gh login and an independent network route,then launch scripts/start_s1_go2_r12_tmux.py with latest--resume,--hours,--postprocess-hours and--network-mode. It runs training followed by automatic rendering,Release upload and Git push.",
       "Observe actual sampling and log progress briefly,record session/job directory/checkpoint/target/deadline,and leave the tmux job running when the interactive session ends. No need to wait for a PPO batch.",
       "At the next visit inspect existing job/logs first;review actual stopped counts and last stage/reason. A zero shell exit code alone does not establish target completion.",
       "After training exit,the recorded tmux job automatically renders and publishes all new artifacts. On return inspect the published job result;only unfinished stages need manual follow-up."
     ],
     "pann_evidence": "Use ordinary rollout/episode logs for observer/query counts,extra wall time and the12 actual recovery-feature values. Report zero or uninformative features honestly; do not demand artificial nonzero values,read truth q/e or add a diagnostic framework.",
-    "controller_change_during_current_window": "One evidence-backed support-objective correction is authorized; record a new engineering build if changed. Keep the resulting version stable during the multi-update observation phase unless a concrete failure requires another correction.",
+    "controller_change_during_current_window": "S5-r22 is compiled and recorded. Keep this controller/configuration/executor fixed throughout the detached job; only consider further changes after the actual job has stopped.",
     "target_cumulative_transitions_per_stream": 1280,
     "target_cumulative_updates_per_stream": 5,
     "additional_transitions_from_reviewed_checkpoint": 1024,
@@ -338,7 +339,17 @@
     "phase_initial_transitions": 256,
     "phase_initial_updates": 1,
     "controller_boundary_rule": "Current parent checkpoint has an empty tail. Warm-start its own actor/critic/optimizer/RNG/normalization; start new-controller sampling from an empty on-policy buffer. Preserve original counts and record build,parent checkpoint and phase-initial counts. If actual progress is newer, do not mix an older controller's pending buffer into a new-controller update or silently discard it; finish that batch on its recorded controller or preserve it as unconsumed evidence.",
-    "phase_count_rule": "Existing r21 samples remain historical. If the controller is repaired at the current256/1 boundary, report1280/5 cumulative AND1024/4 on the new build. If the actual boundary changes, set phase_initial counts to actual values and cumulative target to those counts+1024/+4."
+    "phase_count_rule": "Existing r21 samples remain historical. If the controller is repaired at the current256/1 boundary, report1280/5 cumulative AND1024/4 on the new build. If the actual boundary changes, set phase_initial counts to actual values and cumulative target to those counts+1024/+4.",
+    "controller_version_boundary": {
+      "parent_controller_build": "S5-r21",
+      "active_controller_build": "S5-r22",
+      "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt",
+      "actual_transitions": 256,
+      "actual_updates": 1,
+      "parent_tail_buffer": 0,
+      "new_controller_initial_buffer": 0,
+      "restoration": "PANN seed0 actor,critic,optimizer,RNG and normalization from its own ep00012; historical r21 samples retain their original version."
+    }
   },
   "control_and_evaluation": {
     "keep_original_robot_material_pd_torque_and_thresholds": true,
@@ -591,7 +602,7 @@
     "task": "W34_JOINT_SUPPORT_LEARNING",
     "group": "PANN_PPO_S5",
     "seed": 0,
-    "objective": "Finish pending support repair,prepare server-native GitHub/network access,and launch the full training→render→Release→Git pipeline. Confirm real sampling then hand off;no need to return just to initiate publication.",
+    "objective": "Run the compiled S5-r22 full PANN-PPO-MPC loop from its own latest checkpoint,then automatically render,upload to the existing Release and push results. Handoff after actual sampling advances.",
     "initial_transitions": 256,
     "initial_updates": 1,
     "target_cumulative_transitions": 1280,
@@ -601,7 +612,7 @@
     "automatic_next_task": false,
     "server_execution_completed_by_this_plan": false,
     "RAW": "Preserve historical256/1; no RAW replay or loss reconstruction during this PANN engineering phase.",
-    "current_build": "S5-r21 until a real support correction is compiled/recorded.",
+    "current_build": "S5-r22",
     "window_budget_s": 14400,
     "background_training_authorized": true,
     "background_default_budget_s": 57600,

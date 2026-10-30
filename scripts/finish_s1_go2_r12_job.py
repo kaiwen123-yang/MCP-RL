@@ -124,6 +124,13 @@ def main():
     for file in sorted(jobdir.rglob("*")):
         if file.is_file():
             asset(file, name + "__" + file.relative_to(jobdir).as_posix().replace("/", "__"), "job_record")
+    # A newly built controller is evidence for this job; retain its executable
+    # and ordinary build record alongside the already versioned source patch.
+    controller = ROOT / "work/r11-frozen" / job["controller_build"]
+    for filename in ("agent_server", "identity.json", "build.log"):
+        file = controller / filename
+        if file.is_file():
+            asset(file, "controller__" + job["controller_build"] + "__" + filename, "controller")
     assets = list(assets_by_name.values())
     write(manifest_path, assets)
     for action in ("upload", "finish"):
@@ -191,7 +198,7 @@ def main():
         plan[position] = line
     plan_path.write_text("\n".join(plan) + "\n")
 
-    staged = {summary_path, manifest_path, small / "index.json", plan_path}
+    staged = {summary_path, manifest_path, small / "index.json", small / "training-deadline.json", plan_path}
     staged.update(records.glob(name + "__*"))
     for episode in episodes:
         staged.update(small.glob(episode.name + "*.json"))

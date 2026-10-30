@@ -1,0 +1,56 @@
+--- S5-r21/mjpc/tasks/quadruped/quadruped.cc
++++ S5-r22/mjpc/tasks/quadruped/quadruped.cc
+@@ -403,6 +403,21 @@
+     }
+   }
+ 
++  // W34: the real task terminates at the first forbidden trunk-floor contact.
++  // Penalize that same geometry/margin in each predicted state, before contact
++  // can become an attractive support and recovery strategy.
++  const double* clearance = GetCustomNumericData(model, "r12_trunk_clearance");
++  if (clearance) {
++    for (int geom : trunk_collision_geoms_) {
++      const double margin = mju_max(model->geom_margin[floor_geom_id_],
++                                    model->geom_margin[geom]);
++      const double distance = mj_geomDistance(model, data, floor_geom_id_,
++                                              geom, 1.0, nullptr);
++      const double over = margin - distance;
++      residual[counter++] = 0.5*(over + mju_sqrt(over*over + 1e-12))/clearance[0];
++    }
++  }
++
+   // sensor dim sanity check
+   CheckSensorDim(model, counter);
+ }
+@@ -719,6 +734,20 @@
+   // ----------  model identifiers  ----------
+   residual_.torso_body_id_ = mj_name2id(model, mjOBJ_XBODY, "trunk");
+   if (residual_.torso_body_id_ < 0) mju_error("body 'trunk' not found");
++
++  residual_.trunk_collision_geoms_.clear();
++  if (GetCustomNumericData(model, "r12_trunk_clearance")) {
++    residual_.floor_geom_id_ = mj_name2id(model, mjOBJ_GEOM, "floor");
++    const int floor = residual_.floor_geom_id_;
++    for (int geom = 0; geom < model->ngeom; ++geom) {
++      if (model->geom_bodyid[geom] == residual_.torso_body_id_ &&
++          ((model->geom_contype[geom] & model->geom_conaffinity[floor]) ||
++           (model->geom_contype[floor] & model->geom_conaffinity[geom]))) {
++        residual_.trunk_collision_geoms_.push_back(geom);
++      }
++    }
++  }
++
+ 
+   residual_.head_site_id_ = mj_name2id(model, mjOBJ_SITE, "head");
+   if (residual_.head_site_id_ < 0) mju_error("site 'head' not found");
+--- S5-r21/mjpc/tasks/quadruped/quadruped.h
++++ S5-r22/mjpc/tasks/quadruped/quadruped.h
+@@ -211,6 +211,8 @@
+     int balance_cost_id_      = -1;
+     int height_cost_id_       = -1;
+     int foot_geom_id_[kNumFoot];
++    int floor_geom_id_ = -1;
++    std::vector<int> trunk_collision_geoms_;
+     bool soft_landing_ = false;
+     bool slow_approach_ = false;
+     int shoulder_body_id_[kNumFoot];

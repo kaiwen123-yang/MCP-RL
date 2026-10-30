@@ -252,6 +252,15 @@ def write_equilibrium_settings(xml_path, config, arm):
             values['r11_domain_margin']=[domain['onset_m'],domain['scale_m']]
             index=next(i for i,sensor in enumerate(sensors) if sensor.tag!='user')
             sensors.insert(index,ET.Element('user',name='MaterialDomainMargin',dim='4',user=f"0 {domain['weight']} 0 {domain['weight']}"))
+        if config.get('r12_trunk_clearance'):
+            clearance=config['r12_trunk_clearance']
+            ET.SubElement(custom,'numeric',name='r12_trunk_clearance',
+                data=format(clearance['scale_m'],'.17g'))
+            values['r12_trunk_clearance']=clearance['scale_m']
+            index=next(i for i,sensor in enumerate(sensors) if sensor.tag!='user')
+            sensors.insert(index,ET.Element('user',name='TrunkClearance',
+                dim=str(clearance['residual_dimension']),
+                user=f"0 {clearance['weight']} 0 {clearance['weight']}"))
         tree.write(xml_path,encoding='unicode')
         cost_weights={'Orientation':.03 if arm=='AUTHOR_N' else 1.,'Angmom':0.}
         if config.get('actual_terrain')=='rigid' and config.get('controller_formulation') in ('GN','GNC'):
@@ -259,6 +268,8 @@ def write_equilibrium_settings(xml_path, config, arm):
             if config['normal_landing'].get('material_support_height') and not config.get('r11_moving_body_support'):cost_weights['MaterialSupportHeight']=0.
         if config.get('r11_domain_margin'):
             cost_weights['MaterialDomainMargin']=0. if config.get('actual_terrain')=='rigid' else config['r11_domain_margin']['weight']
+        if config.get('r12_trunk_clearance'):
+            cost_weights['TrunkClearance']=config['r12_trunk_clearance']['weight']
         return dict(arm=arm,prediction_profile='AUTHOR_N' if arm=='AUTHOR_N' else 'C',
             numerics=values,cost_weights=cost_weights,
             prediction_smoothing_width_m=None,refsafe='preserved',plant_options='unchanged',
