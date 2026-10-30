@@ -1,6 +1,6 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
-  "status": "PANN_first_update_complete_published",
+  "status": "PANN_first_update_reviewed_continuation_planned",
   "attempts": [
     {
       "attempt": "w1-S5-r21-E30",
@@ -1227,14 +1227,14 @@
   "first_physical_start_unix_s": 1793272712.7896276,
   "window": {
     "task": "W3_PANN_AUTODL",
-    "started_unix_s": 1793359623.0,
-    "run_deadline_unix_s": 1793371623.0,
-    "hard_deadline_unix_s": 1793374023.0
+    "started_unix_s": 1793359623,
+    "run_deadline_unix_s": 1793371623,
+    "hard_deadline_unix_s": 1793374023
   },
-  "protocol_revision": "autodl_single_pann_25vcpu_v5",
-  "current_task": "W3_PANN_AUTODL",
+  "protocol_revision": "pann_same_version_continuation_v6",
+  "current_task": "PANN_first_update_review_complete",
   "training_transitions": 512,
-  "next_task": "W3_PANN_first256_independent_window",
+  "next_task": "W3_PANN_CONTINUE_256_to_512",
   "pre_runner_initialization_failures": [
     {
       "error": "Python MuJoCo loaded the frozen MPC library through global LD_LIBRARY_PATH: undefined symbol mj_jacDot",
@@ -6556,5 +6556,77 @@
       "check": "One normal name/size/upload-state comparison; no full hash pass or downloads"
     }
   },
-  "next_action": "Stopped after authorized PANN256/one update and full publication."
+  "next_action": "Continue existing PANN seed0 from256/1to512/2 on unchanged D57/r21/20workers,using its own checkpoint. Publish all new artifacts within one<=4hwindow andstop.",
+  "pann_review": {
+    "reviewed_source_commit": "f8bfb4629a1d342f49a63a446ebd2a19151075d8",
+    "source_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json",
+    "training_goal_complete": true,
+    "all_first_batch_physics_pre_update": true,
+    "post_update_physics": false,
+    "actual_transitions": 256,
+    "effective_transitions": 208,
+    "updates": 1,
+    "tail_buffer": 0,
+    "original_loss_saved": true,
+    "physical_sessions": 12,
+    "natural_physical_failures": 11,
+    "target_truncations": 1,
+    "completed_material_traversals": 0,
+    "completed_round_trips": 0,
+    "primary_physical_issue": "Outbound material entry/traversal support,impact and pitching;no recorded side exit or return.",
+    "best_outbound_example": {
+      "episode": 8,
+      "max_x_m": 2.166091898614083,
+      "strip_east_x_m": 2.2,
+      "remaining_to_strip_exit_m": 0.033908101385917266,
+      "success": false
+    },
+    "retained_diagnostic_example": {
+      "episode": 10,
+      "failure_simulation_s": 6.561000000004997,
+      "geom_pair": [
+        0,
+        13
+      ],
+      "bodies": "floor/trunk front-lower collision sphere",
+      "front_right_normal_force_at_6_45_s_N": 423.38028866145635,
+      "pitch_at_6_56_s_rad": 0.5678460126434981,
+      "pitch_velocity_at_6_56_s_rad_s": 6.451805403864917,
+      "scope": "Retained500Hz trajectory observations;not proof of every intermediate physical contact or unique root cause."
+    },
+    "pann_input": {
+      "nonzero_rows": 77,
+      "soft_query_rows": 109,
+      "max_abs_recovery_m": 0.00007579985260963441,
+      "benefit_established": false
+    },
+    "timing": {
+      "collection_wall_s": 8092.132189273834,
+      "transitions_per_collection_hour": 113.88840152927628,
+      "planning_fraction_of_collection": 0.708595569505273,
+      "observer_plus_query_fraction_of_collection": 0.08408105531501063
+    },
+    "comparison": "Old5080 RAW and current D57 PANN are not a matched benefit or speed experiment;preserve versions and do not attribute earlier failures to PANN.",
+    "publication": {
+      "manifest_entries": 602,
+      "release_entries": 563,
+      "release_bytes": 3742547022,
+      "mismatch": [],
+      "pending": []
+    },
+    "next_window": {
+      "task": "W3_PANN_CONTINUE",
+      "group": "PANN_PPO_S5",
+      "seed": 0,
+      "initial_transitions": 256,
+      "initial_updates": 1,
+      "target_cumulative_transitions": 512,
+      "target_cumulative_updates": 2,
+      "rollout_transitions": 256,
+      "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt",
+      "controller_changed": false,
+      "server_execution_started": false
+    },
+    "note": "This review does not rewrite previous window_outcome(RAW),PANN_first_update or actual attempts. New continuation has not run."
+  }
 }

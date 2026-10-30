@@ -2,19 +2,19 @@
 
 **默认计算位置（2026-10-30 起）：AutoDL 西北 B 区 D57，SSH 别名 `autodl-d57`。** 后续训练、仿真和项目计算统一使用该实例。RTX PRO 6000 96GB ×1、25 vCPU、120GB 内存；[实际环境与复用来源](experiments/terrain_memory/compute-environment.json)。
 
-## 当前入口：AutoDL 25vCPU推进PANN，单窗口最多4小时
+## 当前入口：PANN首次学习已完成，下一窗口同版续训256→512
 
-**第13轮RAW首次真实学习工程目标完成。** 现有R12 run中，RAW seed0已采256条真实转移（205条有效平移）、完成1次PPO更新、尾buffer0。四个真实会话共127.6484s，三次非足端接触、最后一次目标截断后发生日志异常。原loss标量缺失已保留，更新后checkpoint已保存。PANN尚未启动。[实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)
+**最新D57轮完成PANN_PPO_S5 seed0的256条真实转移（208条有效平移）和第一次PPO更新。** 12个真实会话累计125.0854s，原loss已保存、尾buffer0、全部新增产物已发布。RAW历史256条/205有效/1次更新保持原记录。[PANN实际结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json) · [实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)
 
-全部四条轨迹均来自首次更新前策略，完整往返和有效材料E30/E60仍为0；较长运行不能称训练后改善。两条到达远端并返程的轨迹都曾侧出材料条带。RAW实际cap约.189914～.239870m/s，旧顶层constant/.25字段不代表真实动作。
+12个会话全部发生在首次更新前：8次机身非足端接触、2次材料域限、1次跌倒、1次目标截断；没有完整材料贯穿/往返或正式E30/E60资格。77条输入含非零PANN恢复特征，说明信号已进入策略，不能据此声称收益。当前卡点在去程材料进入/穿越的支撑与冲击；本轮没有正式侧出或返程，不套用旧RAW的失败解释。
 
-用户于2026-10-30指定现有AutoDL实例：**25vCPU Xeon8470Q、RTX PRO6000 96GB、120GB内存，系统盘30GB/数据盘50GB。下一窗口必要迁移后直接做PANN seed0累计256真实转移和一次更新，完整发布后停止。** 首窗单流20MPC workers、Torch2、OMP/BLAS1，复用r21与原物理/算法设置；这是未实测起点，按真实采样耗时调整。全部工作最多4h，不重复RAW、不补造loss、不自动串W4或长评价。
+**下一窗口直接从本组checkpoint续采累计256→512、更新1→2，完整发布后停止。** 保持D57/r21/20workers、原PPO/奖励/物理/归一化与因果观察，不重采首批或RAW，不先追加E30门禁。新增256条提供第一次更新后的真实行为；4h包含全部工作，通常3.5h收尾，未完按真实进度续接。
 
-先读[AGENTS](AGENTS.md)和[主计划当前交接](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。wrapper现使用仓库相对目录与当前激活Python，workers和PANN权重路径读当前契约；显式传本窗口group/start/deadline。执行时读取用户正在补充的SSH/环境记录，不猜连接地址。D57依赖和资产已配置完成，真实PANN采集/更新仍未执行。
+实际采集吞吐113.89条/h，运行MPC规划占70.86%，PANN观察＋查询占8.41%；先重写GPU查询不解决主要耗时。资源配置继续单流20MPC workers、Torch2、OMP/BLAS1，复用已运行的Python3.12.3项目环境。
 
-**W1和RAW完整科研产物已交付。** [Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12)有246资产、2,229,777,826字节，包括5个视频、172个NPZ、4个checkpoint；源码/环境/小记录在Git。下一窗口追加全部实际PANN产物，沿用现有上传方式，不回下载、不在用户电脑另做归档。
+先读[AGENTS](AGENTS.md)和[主计划当前交接](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。训练入口已改为明确累计目标512，每个rollout仍256；--resume本组ep00012或本任务更新的实际checkpoint，并传本窗口start/deadline。用本次invocation新增计数与耗时报吞吐，避免旧collection.wall_s包含跨窗停机。
 
-正式评价继续E30→E60→E300→E600。后续重点为横向路线保持、返程支撑以及任务目标与学习信号的一致性；首先完成现有PANN联合运行链。
+[Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12)已有563资产/3,742,547,022字节，本轮新增317资产及12段视频，pending为空。下一窗口完整追加全部新源码、环境变化、视频、原始轨迹、大数组、rollout和checkpoint；从D57直接发布，不下载回用户电脑额外归档。正式评价仍按同版E30→E60→E300→E600单独认定。
 
 ## D57 环境与联网
 
@@ -25,7 +25,7 @@ cd /root/autodl-tmp/MCP-RL
 source scripts/autodl_d57_env.sh
 ```
 
-Python 3.12 项目环境直接复用镜像的 PyTorch 2.8.0+cu128；MuJoCo 3.2.3、JAX 0.6.2 CUDA、Optax 0.2.5、Tianshou 0.5.1 等依赖按 [requirements-autodl-d57.txt](requirements-autodl-d57.txt) 安装。r21 执行器及其运行资源、原 Go2 资产、MJPC Python 接口和冻结 B ideal 权重从原 5080 服务器复用。原 RAW checkpoint 与完整历史仍留在原执行端及 Release，PANN继续独立初始化。此次环境配置没有产生新训练、物理任务或性能结果。
+Python 3.12 项目环境直接复用镜像的 PyTorch 2.8.0+cu128；MuJoCo 3.2.3、JAX 0.6.2 CUDA、Optax 0.2.5、Tianshou 0.5.1 等依赖按 [requirements-autodl-d57.txt](requirements-autodl-d57.txt) 安装。r21 执行器及其运行资源、原 Go2 资产、MJPC Python 接口和冻结 B ideal 权重从原 5080 服务器复用。原RAW checkpoint与完整历史保留在原执行端及Release；PANN已在D57独立完成首次256/1，下一窗口只恢复本组实际checkpoint。libegl1与imageio已在真实运行/渲染中补齐，直接复用现有环境。
 
 默认联网顺序为官方学术加速优先；同一联网操作连续三次网络失败，再使用用户电脑 VPN 的 SSH 反向隧道。服务器端分别执行：
 

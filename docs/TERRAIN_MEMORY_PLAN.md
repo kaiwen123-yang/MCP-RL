@@ -1,109 +1,117 @@
-# S1 当前推进：AutoDL 25vCPU计算安排与PANN首次学习
+# S1 最新D57轮复盘与下一窗口：PANN同版续训256→512
 
 ## 当前交接（每窗口结束只更新这6行）
 
-- 当前任务：W3 PANN_PPO_S5 seed0累计256真实转移、首次PPO更新及完整发布已完成；本窗口结束，不自动追加训练、控制修复或评价。
-- 当前状态：PANN256条均dt>0，其中208条有效平移、48条其他真实样本；更新1次、尾buffer0、物理125.0854s；12会话无完整材料穿越或往返。RAW原256/205有效/1次更新保持原记录。
-- 已完成：D57单流20MPC workers、Torch2、OMP/OpenBLAS/MKL各1；补齐实际启动所需libegl1和渲染所需imageio；原loss、rollout、全部checkpoint、12段视频与实际数组均已发布。采集/更新8092.13s，新增317个Release资产，pending=0。
-- 当前问题：8次非足端接触、2次材料域限越界、1次机身跌倒；最后一会话达到256条后外部截断。77条策略输入含非零PANN恢复特征；更新后策略未评价，不据此宣称收益或资格通过。
-- 下一步：已按本窗口边界停止；仅在新的用户任务中分析现有结果或安排后续工作。原RAW loss缺项保留，不重采RAW、不补造loss、不自动接长评价。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL，work/envs/d57；PANN自身checkpoint为outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt；[实际结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json)与[发布索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)。
+- 当前任务：最新PANN首次学习审查完成；下一窗口只在D57从PANN自身checkpoint续采256→512条，完成第2次PPO更新并完整发布。
+- 当前状态：RAW256/205有效/1更新与PANN256/208有效/1更新均成立，尾buffer均0；PANN原loss已保存；材料贯穿、完整往返和正式E30/E60仍0。
+- 已完成：PANN12个真实会话125.0854s/625427物理步、77条输入含非零恢复特征；采集8092.13s；新增317个Release资产，全部发布；本次已修累计目标映射并增加本次续训计时字段。
+- 当前问题：首批11次自然失败全发生在首次更新前，集中去程材料进入/穿越时的冲击、前俯及支撑；PANN更新后行为尚无记录，不能判学习无效或指定唯一控制修复。
+- 下一步：保持r21/20workers/原奖励与全部物理算法设置，显式resume并用本窗口新时间；再采新256条，不新增E30门禁、不重跑RAW或首批、不做benchmark/恢复/哈希测试。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL，source scripts/autodl_d57_env.sh；PANN自身outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt；审查基点f8bfb462，原Release已563资产/3,742,547,022字节/pending0。
 
-## 1. 本轮实际结论
+## 1. 实际进展与结论
 
-用户称为第13轮的这次推进，沿用`tm-s1-go2-local-readiness-r12`目录。无需改名、复制或重建run。上一窗口按用户要求在RAW后停止；本计划覆盖旧“RAW后自动接PANN”的文字，只安排一个独立PANN窗口。
+最新审查固定在[f8bfb462](https://github.com/kaiwen123-yang/MCP-RL/commit/f8bfb4629a1d342f49a63a446ebd2a19151075d8)，继续使用tm-s1-go2-local-readiness-r12，不因用户轮次名称或主机变化另建run清零。主证据为[PANN首次更新结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json)、原episode结果、transitions、实际rollout和[learning日志](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/training__PANN_PPO_S5-seed0__learning.jsonl)。
 
-**RAW首次真实学习工程目标完成，材料控制任务仍未通过。** [索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)和[全部256条转移](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/training__PPO_RAW_S5-seed0__transitions.jsonl)支持以下记录：
+**PANN＋PPO＋MPC的首次真实学习工程目标已经完成，可以继续同版训练。** 冻结PANN在线观察与恢复特征进入Actor，PPO实际更新Actor/Critic；不代表PANN/MPC全部端到端更新、材料任务成功或算法收益成立。
 
-| 真实会话 | 转移/有效平移 | 仿真秒 | 结局与路线 |
-|---|---:|---:|---|
-| ep00002 | 75/54 | 37.4260 | 到远端并返程，10.304s曾侧出条带，最终非足端接触 |
-| ep00004 | 44/40 | 21.8460 | 去程非足端接触，未完整穿过材料 |
-| ep00005 | 77/57 | 38.3764 | 到远端并返程，16.174s曾侧出条带，最终非足端接触 |
-| ep00006 | 60/54 | 30.0000 | 曾侧出条带；到第256条外部截断并更新，随后日志异常 |
+| 项目 | RAW历史 | PANN本轮 |
+|---|---:|---:|
+| 真实转移/有效平移 | 256/205 | 256/208 |
+| PPO更新 | 1 | 1 |
+| 实际物理会话 | 4 | 12 |
+| 仿真秒 | 127.6484 | 125.0854 |
+| 有效尾buffer | 0 | 0 |
+| 原始loss | 缺失，保持原记录 | 已保存 |
+| 首次更新后的物理行为 | 尚无 | 尚无 |
+| 完整材料贯穿/往返/正式E30 | 0 | 0 |
 
-ep00001/03是零步初始化失败；另有一次Tianshou缺失发生在物理会话前。四条物理任务共638,242步，最大应变均<.02、无material_domain_exit，原条带贯穿均未成立。编号不能当作六条物理失败。
+共512条来自两个独立流，不是同一策略训练512条。PANN256条均dt>0、编号连续；11真实terminal和末条目标truncation正确，episode内next_obs与下一obs衔接，已检查rollout数值有限。48条站立/转向等其他真实样本保留，不删除重采。一次更新有16个optimizer steps，loss10.44815、value loss20.90845、approxKL.00100657、clip fraction.015625；发布摘要记录Actor/Critic参数改变。一次loss不能判收敛，未另做checkpoint认证或重跑更新。
 
-全部256条dt>0；真实terminal在75/119/196，唯一truncated在256。RAW最后12个PANN特征通道为0；有效平移205，其余51是站立/转向等真实样本，不删除重采。实际cap约.189914～.239870m/s；旧结果顶层constant/.25是沿用元数据，以transitions/cap-decisions为准。
+77/256条输入有非零12维恢复通道；109条有软地查询，其中32条恢复值为0。最大恢复约75.8μm，归一化后.0758。零信号可能对应刚地/未加载/无恢复，不能要求人为制造非零。信号进入输入不等于预测准确、策略利用或任务收益；PANN仍未进入每个MPC候选的完整材料动力学。
 
-[更新证据](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/training__PPO_RAW_S5-seed0__learning.jsonl)显示一次更新、各参数16个Adam步、Actor/Critic发生变化、尾buffer0。旧`samples`键冲突发生在更新后，原loss标量未保存；保留缺项，不重新优化或虚构原始loss。全部四会话发生在首次更新之前，较长轨迹不能归因于学习；更新后的策略没有物理评价。
+## 2. 失败集中在哪里
 
-## 2. 已完成的修复与本次小修
+| 会话 | 仿真秒 | 样本/有效 | 最大x/m | 结局 |
+|---|---:|---:|---:|---|
+| 01 | 14.8614 | 30/26 | 1.2071 | 机身非足端接触 |
+| 02 | 8.9672 | 18/14 | 1.3766 | 机身非足端接触 |
+| 03 | 8.4678 | 17/13 | 1.2195 | 机身非足端接触 |
+| 04 | 7.6034 | 16/12 | 1.0005 | 机身非足端接触 |
+| 05 | 12.0446 | 25/21 | 1.3815 | 材料域限，最大应变.0201540 |
+| 06 | 19.2942 | 39/35 | 1.2615 | 材料域限，最大应变.0202249 |
+| 07 | 9.0826 | 19/15 | 1.3522 | 机身非足端接触 |
+| 08 | 12.9206 | 26/22 | 2.1661 | 机身非足端接触 |
+| 09 | 10.0426 | 21/17 | 1.4413 | 机身非足端接触 |
+| 10 | 6.5610 | 14/10 | .8207 | 机身非足端接触 |
+| 11 | 11.7400 | 24/20 | 1.5115 | 机身跌倒 |
+| 12 | 3.5000 | 7/3 | .1106 | 达256条后正常目标截断 |
 
-R12入口、旧字段适配、六流等待关闭、CUDA设备、自然新会话创建Agent、Agent.model、截断顺序、零时长过滤及更新后计数均已实际接通。继续复用，不再列作待开发。
+这是11次自然物理失败＋1次目标截断；另有一次缺libEGL.so.1的零步启动失败已修复，渲染缺imageio也已修复，没有为渲染重跑物理。**12是达到256条后的实际会话数，不是12次实验上限。**
 
-本次只做直接影响下一次启动/解释的小修：wrapper移除上窗口写死的start/deadline，统一接收既有Python参数；任务元数据读取当前契约；保存单流所需PPO和共同观测设置，去掉继承R11六流大目标和正式冻结门禁的无效说明；新策略结果标为`ppo_policy`，保留真实动作记录。未改变PPO数学、奖励、控制器或已有RAW结果。
+所有PANN会话的侧出标记均为空，所有自然失败都没有到3m远端/返程。当前主要问题应更新为去程材料进入与穿越时的支撑、冲击和姿态保持；旧RAW侧出与返程风险保留为历史，不能套作本轮原因。ep08距条带东界x2.2仅3.39cm，接近的是条带出口，不是完整往返。ep06运行最久却只到x1.2615，不能只看存活秒数。
 
-## 3. 当前窗口：AutoDL迁移直接接W3
+[ep10结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00010.json)及其已发布trajectory/XML可直接定位症状：geom0是floor，geom13是trunk前下部球形碰撞体。6.45s前右足采样法向力约423.4N；6.38→6.56s pitch从.00085升到.568rad、pitch角速度升到6.45rad/s，随后机身前下部触地。6.504s起到末尾500Hz样点四足接触均0，不能据此断言所有中间物理步连续失撑。末行qpos/qvel与诊断时间不同是已有记录规则，不是新日志错误。
 
-用户于2026-10-30指定新执行端，覆盖先在5080完成后再决定租卡的旧安排。使用已提供的AutoDL实例，不另购实例或扩大租赁。SSH别名autodl-d57与数据盘工作区已配置，具体版本见计算环境配置；本次设置未启动训练，不新建迁移报告或认证流程。
+ep04/05也有约−.96/−1.69m/s的落足速度峰值。r21已做因果卸载面、承载深度和向下参考修复，不能把它当作完全刚地或没有支撑参考。现有证据尚不足以选择唯一源码修复，不立即改duty、代价权重或放宽.02阈值。
 
-### 3.1 资源与计算分配
+## 3. 计算与比较边界
 
-| 资源 | 截图配置 | 当前用途 |
-|---|---|---|
-| CPU | 25vCPU，Xeon Platinum8470Q | 单个真实环境，MPC20workers；其余约5vCPU调度余量给物理循环、JAX/Torch、RPC及I/O |
-| GPU | RTX PRO6000，96GB×1 | PPO与PANN用CUDA；保留JAX按需分配和x64，不为占满显存扩大网络/batch |
-| 内存 | 120GB | 正常物理状态、MPC线程状态、材料数组与记录；不以占满内存为目标 |
-| 磁盘 | 系统盘30GB、数据盘50GB | 工作区与输出优先放数据盘；这不是120GB磁盘，实际新增产物逐窗口直传Git/Release |
-| 镜像 | Ubuntu22.04，Python3.12，Torch2.8.0，CUDA12.8 | 按用户复用镜像要求使用独立Python3.12.3项目venv与Tianshou0.5.1，复用镜像Torch2.8/cu128；依赖已安装 |
+| 环节 | 秒 | 占采集/更新8092.13s |
+|---|---:|---:|
+| 运行中MPC规划 | 5734.05 | 70.86% |
+| 初始化规划 | 228.57 | 2.82% |
+| 物理循环 | 1096.43 | 13.55% |
+| PANN观察器 | 605.67 | 7.48% |
+| PANN恢复查询 | 74.72 | .92% |
+| 反馈与状态/参数RPC | 152.08 | 1.88% |
 
-**首窗具体值：单流、MPC20、Torch2、OMP/OpenBLAS/MKL各1。** 这是软计算预算，不代表系统所有运行时线程总数严格等于25，更不代表25个独占物理核。当前导数任务按预测时间节点并行，候选轨迹数和优化迭代数独立于worker数；因此先增加worker有源码依据，但不承诺线性加速或逐位相同。保持0.2ms物理步、2ms控制保持、20ms规划周期、0.35s预测，以及原节点/候选/迭代工作量。
+材料参考764.21s已含在物理循环中，不能再相加；首次编译8.97s是共享law重复记录的字段，不能乘12。PANN观察与查询合计8.41%，全部理想消除也只约1.09倍总加速，先改GPU scan不是当前优先事项。规划平均约.916s/次，相对20ms逻辑规划周期仍属离线慢仿真，未证明实时性。采集吞吐113.89条/h、有效92.53条/h；新256条参考成本约2.25h，后续轨迹变化会改变成本，不能承诺时长。
 
-用正常真实会话已有计时观察MPC、物理、PANN与总墙钟，再算全部/有效转移每小时。不额外做worker扫描。若实际任务发现20workers调度收益不足，依据该次记录在下一自然会话或下一窗口调整并记录；不丢弃真实样本，不反复启动同任务“证明配置”。旧RAW约102.28分钟/256条、规划占85.77%，只能说明旧链的主要瓶颈，不能直接当AutoDL PANN加速基线。
+D57与旧RAW的r21已有二进制记录、MuJoCo3.2.3、主要数值/代价/物理设置一致；主机、worker5→20、软件环境、PANN输入与实际轨迹不同，现有数据不是匹配收益或加速对照。旧RAW与新PANN首会话前5个cap几乎一致，2.5–3s路线增量已经分离，而本轮首会话8.5s才有非零恢复输入。因此不能把更早失败归因于PANN特征或学习恶化；不为此增加确定性认证任务。D57可见CPU affinity范围不等于25vCPU配额，不按可见208个逻辑CPU增开worker。
 
-### 3.2 必要迁移与真实任务
+## 4. 下一窗口只做同版PANN第二批
 
-| 项目 | 本窗执行 |
+**选择继续训练，而不是先追加一轮泛化的“稳定性验证”。** 第一批全部在首次更新前，尚无学习后真实行为；失败症状可定位但没有唯一具体实现错误。PPO本来就需要采样—更新—再采样。继续同版收集新256条能直接填补当前最有价值的证据缺口，不要求先通过全部E30/E60。
+
+| 项目 | 明确安排 |
 |---|---|
-| 工作区 | 建议/root/autodl-tmp/MCP-RL；SSH记录已有正常工作区就沿用，不为符合建议路径重新复制 |
-| 环境 | 激活项目环境，恢复需要的MuJoCo3.2.3、匹配的MPC Python客户端、PPO/PANN依赖；不搬整套旧IsaacLab工作站，不同时升级Tianshou接口 |
-| 执行器/资产 | 沿用r21源码及已发布资产；只取本任务需要的包。二进制在真实启动暴露兼容问题才按原源码必要构建，不先复现全部旧轮次 |
-| 权重 | 冻结B ideal，默认放work/assets/B_random1000--ideal-potentials.npz；实际已有路径则改契约resources.pann_weights_path |
-| 唯一训练流 | PANN_PPO_S5 seed0；独立初始化或继续自己的实际checkpoint，绝不加载RAW权重/样本 |
-| 采集与算法 | nominal、60s连续会话、课程关闭；累计256真实转移/首次更新；原PPO/奖励/归一化、2Hz cap[.18,.25]与因果信息边界 |
-| 时间/交付 | 最多4h含全部准备/运行/渲染/上传，通常3.5h收尾；目标完成即完整发布并停止，未完保存真实进度 |
-| 实际验证 | 本次真实采集、更新、普通loss/特征/轨迹与checkpoint就是证据；不增加测试套件、恢复演习或发布认证 |
+| 起点 | 本组resume-state-ep00012.pt，累计256/1、尾buffer0 |
+| 目标 | 累计512真实转移、2次更新，即新增256/1；未完按真实进度续接 |
+| 执行端 | autodl-d57现有Python3.12项目环境，不重建依赖 |
+| 固定设置 | r21、20workers、Torch2、OMP/BLAS1、原PPO/奖励/归一化/材料/阈值、nominal60s会话、课程关闭 |
+| 模型 | 冻结B ideal，原独立因果观察/恢复通道、2Hz cap[.18,.25] |
+| 原有成果 | RAW与PANN首批全部保留，不配对重采、不清零、不重复原优化器更新 |
+| 直接观察 | 第一更新后的真实失效位置/方式、到达进度、支撑/前俯、奖励与普通PANN特征记录 |
+| 截止 | 全部工作≤4h，通常3.5h收尾；到目标/实际阻塞/截止停止，不自动串别的任务 |
 
-已将wrapper改为从脚本位置找仓库、使用当前激活的Python；不再跳回/home/fanyuan或旧Conda。匹配的MPC客户端由当前项目环境提供。训练入口的元数据和Agent启动从同一个resources.mpc_workers读取20，冻结权重同样从契约读取，Torch设置不再被入口无声覆盖。SSH、所需依赖与复用资产已在D57配置完成；真实闭环适配仍由后续授权的实际训练确认。
-
-入口仍为：
+现有入口目标仍为256时，直接resume会立即退出。本次已改为读取learning.target_cumulative_transitions_per_stream=512，**每次rollout仍256，PPO数学不变**。只增加本次invocation起点、耗时及初始/新增样本和更新计数，用于避免恢复后的旧collection.wall_s把跨窗口停机算成采集耗时；不改公共恢复逻辑、不另建诊断框架。
 
 ```bash
-bash scripts/run_s1_go2_r12_training.sh --group PANN_PPO_S5 --seed 0 --window-start-unix <本窗口首次活动时间> --deadline-unix <预留收尾后的训练截止>
+source scripts/autodl_d57_env.sh
+bash scripts/run_s1_go2_r12_training.sh \
+  --group PANN_PPO_S5 --seed 0 \
+  --resume outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt \
+  --window-start-unix <本窗口首次活动Unix时间> \
+  --deadline-unix <预留发布后的训练截止Unix时间>
 ```
 
-时间从首次阅读/连接活动计算，不到训练启动才重置。首次无PANN进度时不传--resume；实际已有PANN进度则只续自己的checkpoint和累计目标。如果最新交接已完成256/1，复用成果，不重复这个目标。真实physical terminal/外部截断和有效尾buffer沿用已有机制，普通更新不reset。
+若本任务已有后续部分进度，接续其最新checkpoint而不是退回ep12。新物理会话符合原来没有完整环境snapshot的恢复语义。目标截止/窗口截止仍在入buffer/GAE前标截断，真实physical terminal优先。第二次更新完成时是否又执行过物理，要分别报告，不把新256条叫“第二次更新后表现”。
 
-用正常episode/rollout记录观察器推进、查询次数、12个恢复特征和实际耗时；为零如实报告。当前PANN查询有多次主机/GPU往返的可能，只有实际运行确认耗时后，才在后续独立窗口处理相应实现；本窗不提前重写PANN积分或加入GPU压力测试。
+之后的窗口按新增证据选择：继续同版训练，或围绕反复出现的支撑失配只改一项。当前不自动改控制器/奖励、不做worker扫描、不并行第二组、不启动长评价。正式E30→E60→E300→E600继续同版逐case；训练与正式资格分别记录。
 
-### 3.3 后续并行方式与窗口拆分
+## 5. 完整发布与四小时边界
 
-当前PANN首次学习完成并审查后，下个窗口优先解决已有侧向/支撑问题或明确安排继续训练，不自动串起来。如果后续有两个明确独立训练seed/组或评价case，可先用**2流×8MPC workers，每流Torch2、OMP/BLAS1**，用真实任务总吞吐选择资源分配。
+本轮北京时间19:27:03开始、21:43:35训练停止、21:51:49发布清单确认，约2h24m46s完成，符合4h。Release现有563资产、3,742,547,022字节，其中本轮新增317资产/1,512,769,196字节与12段视频；全部窗口共17视频/364NPZ/17PT。现有602条清单包含563个Release条目及Git小记录，正常名称/大小/上传状态核对无差异，pending为空。
 
-当前入口仍为单流。实际启动两流前，只需对具体共享资源做必要改动：现有training-deadline.json改为流内路径，各流独立策略/优化器/RNG/物理状态/输出/checkpoint；现有index已有flock、Agent会自动选端口，直接复用。多个环境给同一个PPO策略采样是另一项collector工作，当前不开发。旧六流等待和48h campaign继续关闭；并行子进程也共用同一窗口4h截止。
+下一窗口追加全部实际新增源码、配置、必要环境变化、日志、每个episode完整视频、原始轨迹、物理/预测/材料数组、rollout/checkpoint和有效尾buffer。视频从保存轨迹渲染，旧资产引用原链接。D57直接上传Git/原Release，正常看一次清单；不全量hash、不回下载复验，**不在用户电脑另做下载、镜像、复制、压缩或归档**。训练状态与发布状态分别报告。
 
-正式评价保持同控制器/worker/权重等配置的E30→E60→E300→E600。旧5080 RAW与新AutoDL PANN首批仅支持工程判断；后续匹配比较使用相同执行配置。256是首次更新目标，不是以后永远只准采256；后续训练在明确任务窗口内按实际吞吐持续接续，保留真实累计进度。
+开头最多5行后直接执行，结束只更新顶部6行和正常结果。禁止额外单元/mock/冒烟/导入/形状测试套件、无关回归、独立benchmark、恢复演习、通用fallback、反复计划或审查报告。
 
-官方运行依据：[AutoDL数据盘](https://www.autodl.com/docs/instance_data/)、[PyTorch2.8/cu128的Python3.11发行包](https://download.pytorch.org/whl/cu128/torch/)、[Tianshou0.5.1](https://pypi.org/project/tianshou/0.5.1/)、[CPU线程与过度并行](https://docs.pytorch.org/docs/2.8/notes/cpu_threading_torchscript_inference.html)、[JAX显存](https://docs.jax.dev/en/latest/gpu_memory_allocation.html)。Python3.11是减少迁移变量的选择，不意味着3.12必然不兼容；不得因此重建已经正常工作的环境。
+## 6. 论文如何指导后续
 
-## 4. 完整发布与轻量交接
+- [PPO](https://arxiv.org/abs/1707.06347)：采样与优化交替；当前刚完成第一次优化，应继续获得更新后交互。256/512是窗口目标，不是论文给出的收敛标准。
+- [RLOC，III-B/III-D/VI-H](https://arxiv.org/html/2012.03094v3)：高层学习通过低层控制执行，控制可执行域会限制探索；优化控制在环时rollout常占主耗时。指导区分速度决策与短时支撑，不要求复制其全部模块或换SAC/TD3。
+- [STANCE，IV](https://arxiv.org/html/1904.12306v2)：软地支撑脚随接触变形运动，支撑参考需要与接触动力学相容。后续对照实际/预测/参考支撑，定位具体失配后只修一项，不新增论文复现或E30前置大门禁。
 
-[现有Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12)已有246资产、约2.23GB，包括5个完整视频、172个NPZ和4个checkpoint；环境/小记录另在Git。现有清单中应传Release的文件名/大小与资产列表一致，W1和RAW没有待传项。一个小episode JSON保存在Git，原loss缺失已明示。
-
-下一窗口只追加本轮新增/变化源码、配置、环境记录、正常日志，以及全部实际PANN视频、原始轨迹、物理/预测/材料数组、rollout和checkpoint。继续每个实际episode完整记录，视频从保存轨迹渲染；不为补材料重跑物理。引用已发布且未变的r21/PANN/场景资产，避免重复上传。
-
-AutoDL执行端直接采用实际可用的Git/Release传输；旧5080的curl代理是历史实现，不写死复制到新服务器，也不为迁移重建一套发布平台。现有索引记录大小/URL/状态，正常看一次清单即可；不全量hash、不回下载复验，不在用户电脑另做镜像/复制/压缩归档。训练状态与发布状态分开记录，未传完如实pending。
-
-开头最多5行后直接工作；结束只更新顶部6行和正常结果。禁止重复全仓审查、单元/mock/冒烟/导入/形状测试、通用fallback、无关矩阵及新的日报/归档包。
-
-## 5. 后续方向与论文依据
-
-PANN首次链路完成后再审查，下一窗口不自动开始后续研究。共同控制器优先看侧向离开材料条带和返程承载交接。当前奖励含路线进度，却没有单独的原条带贯穿项；已经出现侧出后仍得进度分的样本。它们来自更新前策略，不能叫“学会绕路”，但在长时间扩训前应对齐任务目标、执行能力与学习信号；本次先保持两组相同条件，不同时重写奖励和控制器。
-
-PPO目前仅调2Hz速度上限，不能承诺修复快速支撑失效。更换控制器后标明版本边界，不拿旧RAW和新PANN当收益对照。正式评价仍逐case同版E30→E60→E300→E600，训练前缀不替代资格。用户已选择AutoDL；按本计划的25vCPU资源配置继续解决在线链和控制问题，再用实际采样成本安排后续窗口，不再等待5080阶段作为云端前置门禁。
-
-- [PPO](https://arxiv.org/abs/1707.06347)：交互采样与优化交替；256/四小时是项目工程安排，一次更新不代表收敛。
-- [RLOC，§VI-H](https://arxiv.org/html/2012.03094v3)：优化控制在环时采样可能主导成本；本轮不据此换SAC/TD3或控制平台。
-- [STANCE，§IV](https://arxiv.org/html/1904.12306v2)：软地支撑运动与接触动力学需要相容，指导后续具体支撑分析，不增加首次PANN训练前的复现门禁。
-- [JAX GPU内存说明](https://docs.jax.dev/en/latest/gpu_memory_allocation.html)：现有wrapper已关闭默认预分配以共用GPU；保持已有设置，在真实运行中处理具体问题。
+原RAW审查与AutoDL资源安排保留在[ac1753d历史计划](https://github.com/kaiwen123-yang/MCP-RL/blob/ac1753d69d2e17408a157d273fc08313de13628c/docs/TERRAIN_MEMORY_PLAN.md)，原PANN窗口结果保留在[f8bfb462](https://github.com/kaiwen123-yang/MCP-RL/blob/f8bfb4629a1d342f49a63a446ebd2a19151075d8/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json)。旧当前任务与首次目标不再驱动新窗口。

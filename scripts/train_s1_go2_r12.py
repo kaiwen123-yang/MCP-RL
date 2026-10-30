@@ -15,6 +15,7 @@ def main():
     p.add_argument("--deadline-unix", type=float, required=True)
     p.add_argument("--resume")
     a=p.parse_args()
+    invocation_started_unix_s=time.time()
     contract=json.loads((ROOT/CONFIG).read_text())
     old=json.loads((ROOT/contract["reuse"]["runtime_physics_ppo_and_task_settings"]).read_text())
     # Retain numerical PPO/shared-observation settings, not the old R11 campaign.
@@ -23,8 +24,8 @@ def main():
         "ppo","actor_action","shared_observation","pann","pann_sha256","pann_features",
         "on_policy_and_independence","bootstrap_rule")}
     contract["joint_learning"].update(
-        standard_target_transitions_per_stream=contract["learning"]["first_update_target_per_assigned_stream"],
-        standard_target_total_transitions=contract["learning"]["first_update_target_per_assigned_stream"],
+        standard_target_transitions_per_stream=contract["learning"]["target_cumulative_transitions_per_stream"],
+        standard_target_total_transitions=contract["learning"]["target_cumulative_transitions_per_stream"],
         cross_stream_wait=False,streams=1,groups=[a.group],seeds=[a.seed],
         active_streams=[dict(group=a.group,seed=a.seed)],actor_dt_s=contract["learning"]["actor_dt_s"],
         shared_controller="Existing S5-r21 engineering candidate; not formally qualified.",
@@ -40,6 +41,7 @@ def main():
     dump(small/"training-deadline.json",dict(window_start_unix_s=a.window_start_unix,deadline_unix_s=deadline,hard_deadline_unix_s=hard))
     dump(output/"training-contract.json",contract)
     stream=PolicyStream(ROOT,a.group,a.seed,contract,output,checkpoint=a.resume)
+    initial_transitions,initial_updates=stream.samples,stream.backend.update_count
     if a.resume is None:
         prefix=f"train-{a.group}-s{a.seed}-ep"
         stream.episode=max([0]+[int(x.name[len(prefix):]) for x in output.parent.parent.glob(prefix+"*") if x.is_dir()])
@@ -99,6 +101,9 @@ def main():
     dump(output/"stopped.json",dict(actual_transitions=stream.samples,updates=stream.backend.update_count,
         unupdated_fragment=len(stream.buffer),physics_s=stream.physics_s,session_records=stream.session_records,
         target=stream.target,continuous_environment_snapshot=False,
+        invocation_started_unix_s=invocation_started_unix_s,invocation_wall_s=time.time()-invocation_started_unix_s,
+        initial_transitions=initial_transitions,new_transitions=stream.samples-initial_transitions,
+        initial_updates=initial_updates,new_updates=stream.backend.update_count-initial_updates,
         reason="target_reached" if stream.samples>=stream.target else "deadline_or_technical_stop",
         deadline_unix_s=deadline,stopped_unix_s=time.time()))
     stream.log.close()
