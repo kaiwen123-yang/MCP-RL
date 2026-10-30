@@ -36,5 +36,17 @@
   "assets_published": 16,
   "assets_expected": 16,
   "videos": [],
-  "git_delivery": "This report is prepared for this commit; its presence on GitHub records successful delivery. A push failure is retained locally as pending."
+  "git_delivery": "This report is prepared for this commit; its presence on GitHub records successful delivery. A push failure is retained locally as pending.",
+  "technical_failure_diagnosis": {
+    "failed_build": "S5-r23",
+    "failed_job": "job-20261030T160418Z",
+    "physical_steps": 0,
+    "new_transitions": 0,
+    "observed_cache_configuration": "MUJOCO_MPC_MUJOCO_GIT_TAG=088079eff0450e32b98ee743141780ed68307506",
+    "observed_actual_dependency_commit": "476599f8b6175ef5a3040c47ebb3cd99a83c5365",
+    "cause": "Upstream cmake/FindOrFetch.cmake sets UPDATE_DISCONNECTED TRUE; changing GIT_TAG did not update the populated source checkout.",
+    "correction": "Explicitly check out the recorded MuJoCo dependency before configuring and building; record the actual dependency HEAD in identity.json.",
+    "support_residual_unchanged": true,
+    "original_failure_preserved": true
+  }
 }

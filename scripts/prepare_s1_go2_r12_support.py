@@ -9,7 +9,7 @@ import subprocess
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-BUILD = "S5-r23"
+BUILD = "S5-r24"
 
 def main():
     prior = ROOT / "work/r11-frozen/S5-r21"
@@ -84,6 +84,12 @@ def main():
         f'  "{prior / "runtime-tasks"}" "${{CMAKE_CURRENT_BINARY_DIR}}"\n'
         ')\nadd_dependencies(libmjpc copy_model_resources)\n')
     builddir = source / "build-autodl"
+    # FindOrFetch uses UPDATE_DISCONNECTED, so changing its cached GIT_TAG
+    # does not move an already populated dependency checkout.
+    mujoco_source = builddir / "_deps/mujoco-src"
+    if mujoco_source.is_dir():
+        subprocess.run(["git", "checkout", "--detach",
+            "088079eff0450e32b98ee743141780ed68307506"], cwd=mujoco_source, check=True)
     begin = time.time()
     command = ["cmake", "-S", str(source), "-B", str(builddir), "-DCMAKE_BUILD_TYPE=Release",
         "-DMJPC_BUILD_TESTS=OFF", "-DMJPC_GRPC_BUILD_TESTS=OFF", "-DPYMJPC_BUILD_TESTS=OFF",
@@ -109,7 +115,9 @@ def main():
         binary_sha256=hashlib.file_digest((frozen / "agent_server").open("rb"), "sha256").hexdigest(),
         source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         build_started_unix_s=begin, build_wall_s=time.time()-begin,
-        build_command=command, original_runtime_library_reused=True)
+        build_command=command, original_runtime_library_reused=True,
+        mujoco_dependency_commit=subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=mujoco_source, text=True).strip())
     for relative in (cc, header):
         identity["source_files_sha256"][str(relative)] = hashlib.file_digest(
             (frozen / relative).open("rb"), "sha256").hexdigest()

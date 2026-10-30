@@ -134,11 +134,11 @@
     "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json"
   },
   "W34_preparation": {
-    "controller_build": "S5-r23",
+    "controller_build": "S5-r24",
     "based_on": "S5-r21",
     "upstream_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
     "build_script": "scripts/prepare_s1_go2_r12_support.py",
-    "build_wall_s": 156.46235370635986,
+    "build_wall_s": 215.22708201408386,
     "cmake": "3.22.1",
     "cxx": "g++11.4.0",
     "build_workers": 8,
@@ -173,6 +173,18 @@
       "gdb=12.1-0ubuntu1~22.04.3",
       "libc6:amd64=2.35-0ubuntu3.15",
       "libc6-dev:amd64=2.35-0ubuntu3.15"
-    ]
+    ],
+    "cached_dependency_correction": {
+      "failed_build": "S5-r23",
+      "failed_job": "job-20261030T160418Z",
+      "physical_steps": 0,
+      "new_transitions": 0,
+      "observed_cache_configuration": "MUJOCO_MPC_MUJOCO_GIT_TAG=088079eff0450e32b98ee743141780ed68307506",
+      "observed_actual_dependency_commit": "476599f8b6175ef5a3040c47ebb3cd99a83c5365",
+      "cause": "Upstream cmake/FindOrFetch.cmake sets UPDATE_DISCONNECTED TRUE; changing GIT_TAG did not update the populated source checkout.",
+      "correction": "Explicitly check out the recorded MuJoCo dependency before configuring and building; record the actual dependency HEAD in identity.json.",
+      "support_residual_unchanged": true,
+      "original_failure_preserved": true
+    }
   }
 }

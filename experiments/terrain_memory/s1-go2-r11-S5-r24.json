@@ -1,0 +1,72 @@
+{
+  "build": "S5-r24",
+  "based_on": "S5-r21",
+  "r12_trunk_clearance": {
+    "enabled": true,
+    "scale_m": 0.001,
+    "weight": 176,
+    "residual_dimension": 7,
+    "residual": "For each original trunk collision geom: smooth_positive(max(floor_margin,geom_margin)-signed_geom_distance)/0.001; quadratic norm, 1 micrometre hinge smoothing.",
+    "geometry": "Original floor and seven trunk collision geoms (7..13 in retained ep10), selected from trunk body and original collision masks. Actual runner permits all leg-body contacts and terminates on trunk-floor contact.",
+    "activation": "Every predicted state, including the original terminal knot. No true material q/e, new sensor, geometry, margin or plant terminal change.",
+    "scale_basis": "The original trunk margin is 1 mm. Retain MaterialDomainMargin's 176-node weight so a one-scale forbidden-contact deficit at a single prediction knot contributes 0.5 to the horizon-mean cost. This is a soft optimization penalty, not a hard feasibility guarantee.",
+    "evidence": {
+      "attempt": "train-PANN_PPO_S5-s0-ep00010",
+      "physical_terminal_s": 6.561,
+      "analysis": "Kinematic evaluation of saved prediction states only; no physical rerun or optimization. Listed existing components are Upright, MaterialSupportHeight and MaterialDomainMargin, not a complete cost replay.",
+      "plans": [
+        {
+          "origin_s": 6.2,
+          "min_trunk_distance_m": -0.00747585324275335,
+          "margin_nodes": 19,
+          "mean_existing_upright": 0.09809100817078051,
+          "mean_existing_material_support_height": 1.0002124618828836,
+          "mean_existing_material_domain_margin": 1.5508668464994655e-10,
+          "mean_new_clearance_cost": 326.04971044077064
+        },
+        {
+          "origin_s": 6.3,
+          "min_trunk_distance_m": -0.00861997186200543,
+          "margin_nodes": 64,
+          "mean_existing_upright": 0.22149410509709846,
+          "mean_existing_material_support_height": 1.7478425392450054,
+          "mean_existing_material_domain_margin": 5.717635510159174e-11,
+          "mean_new_clearance_cost": 457.04837094559747
+        },
+        {
+          "origin_s": 6.54,
+          "min_trunk_distance_m": -0.007465493219757105,
+          "margin_nodes": 14,
+          "mean_existing_upright": 0.24676057764484857,
+          "mean_existing_material_support_height": 0.1949366047702901,
+          "mean_existing_material_domain_margin": 1.3437691516389316e-10,
+          "mean_new_clearance_cost": 274.8735659762887
+        }
+      ]
+    },
+    "qualification": "Engineering correction followed directly by the authorized W34 PANN training; no E30/E60 qualification or controller benefit claimed."
+  },
+  "startup_build_correction": {
+    "failed_build": "S5-r22",
+    "failed_job": "job-20261030T155257Z",
+    "physical_steps": 0,
+    "new_transitions": 0,
+    "symptom": "Agent initialization SIGSEGV in GetCustomNumericData, called by R10ContactForce during mj_loadXML.",
+    "cause": "The first D57 rebuild selected official MuJoCo tag3.2.3 headers but reused the original library built at088079e. Both report323; mjModel layouts differ (including nflexelemedge,nC,eq_objtype).",
+    "correction": "Compile against the recorded original dependency commit088079eff0450e32b98ee743141780ed68307506; retain the original running shared library and the unchanged trunk-clearance residual.",
+    "inherited_source": "experiments/terrain_memory/s1-go2-wb-baseline.json:mujoco_dependency_commit",
+    "original_failure_preserved": true
+  },
+  "cached_dependency_correction": {
+    "failed_build": "S5-r23",
+    "failed_job": "job-20261030T160418Z",
+    "physical_steps": 0,
+    "new_transitions": 0,
+    "observed_cache_configuration": "MUJOCO_MPC_MUJOCO_GIT_TAG=088079eff0450e32b98ee743141780ed68307506",
+    "observed_actual_dependency_commit": "476599f8b6175ef5a3040c47ebb3cd99a83c5365",
+    "cause": "Upstream cmake/FindOrFetch.cmake sets UPDATE_DISCONNECTED TRUE; changing GIT_TAG did not update the populated source checkout.",
+    "correction": "Explicitly check out the recorded MuJoCo dependency before configuring and building; record the actual dependency HEAD in identity.json.",
+    "support_residual_unchanged": true,
+    "original_failure_preserved": true
+  }
+}

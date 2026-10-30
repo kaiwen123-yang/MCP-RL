@@ -7111,28 +7111,38 @@
     "actual_server_execution_started_by_this_review": false
   },
   "W34_controller_repair": {
-    "build": "S5-r23",
+    "build": "S5-r24",
     "based_on": "S5-r21",
     "status": "compiled",
-    "specification": "experiments/terrain_memory/s1-go2-r11-S5-r23.json",
-    "source_patch": "experiments/terrain_memory/s1-go2-r11-S5-r23.patch",
+    "specification": "experiments/terrain_memory/s1-go2-r11-S5-r24.json",
+    "source_patch": "experiments/terrain_memory/s1-go2-r11-S5-r24.patch",
     "build_script": "scripts/prepare_s1_go2_r12_support.py",
-    "build_wall_s": 156.46235370635986,
+    "build_wall_s": 215.22708201408386,
     "version_boundary": {
       "parent_controller_build": "S5-r21",
-      "active_controller_build": "S5-r23",
+      "active_controller_build": "S5-r24",
       "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt",
       "actual_transitions": 256,
       "actual_updates": 1,
       "parent_tail_buffer": 0,
       "new_controller_initial_buffer": 0,
       "restoration": "PANN seed0 actor,critic,optimizer,RNG and normalization from its own ep00012; historical r21 samples retain their original version.",
-      "zero_step_failed_build": "S5-r22",
-      "zero_step_failed_job": "job-20261030T155257Z"
+      "zero_step_failures": [
+        {
+          "build": "S5-r22",
+          "job": "job-20261030T155257Z",
+          "new_transitions": 0
+        },
+        {
+          "build": "S5-r23",
+          "job": "job-20261030T160418Z",
+          "new_transitions": 0
+        }
+      ]
     },
     "formal_qualification": false,
     "evidence": "Existing ep10 saved prediction states only; no new physics before joint training.",
-    "next_action": "Launch S5-r23 from the unchanged PANN256/1 checkpoint; preserve the published zero-step ep00013.",
+    "next_action": "Launch S5-r24 from unchanged PANN256/1 checkpoint; preserve published zero-step ep00013 and ep00014.",
     "initial_failed_build": {
       "failed_build": "S5-r22",
       "failed_job": "job-20261030T155257Z",
@@ -7142,6 +7152,18 @@
       "cause": "The first D57 rebuild selected official MuJoCo tag3.2.3 headers but reused the original library built at088079e. Both report323; mjModel layouts differ (including nflexelemedge,nC,eq_objtype).",
       "correction": "Compile against the recorded original dependency commit088079eff0450e32b98ee743141780ed68307506; retain the original running shared library and the unchanged trunk-clearance residual.",
       "inherited_source": "experiments/terrain_memory/s1-go2-wb-baseline.json:mujoco_dependency_commit",
+      "original_failure_preserved": true
+    },
+    "cached_dependency_correction": {
+      "failed_build": "S5-r23",
+      "failed_job": "job-20261030T160418Z",
+      "physical_steps": 0,
+      "new_transitions": 0,
+      "observed_cache_configuration": "MUJOCO_MPC_MUJOCO_GIT_TAG=088079eff0450e32b98ee743141780ed68307506",
+      "observed_actual_dependency_commit": "476599f8b6175ef5a3040c47ebb3cd99a83c5365",
+      "cause": "Upstream cmake/FindOrFetch.cmake sets UPDATE_DISCONNECTED TRUE; changing GIT_TAG did not update the populated source checkout.",
+      "correction": "Explicitly check out the recorded MuJoCo dependency before configuring and building; record the actual dependency HEAD in identity.json.",
+      "support_residual_unchanged": true,
       "original_failure_preserved": true
     }
   },
