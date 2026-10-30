@@ -11,7 +11,7 @@ RUN='tm-s1-go2-local-readiness-r12'
 REPO='kaiwen123-yang/MCP-RL'
 SMALL=ROOT/'results/terrain_memory/simulation'/RUN
 LARGE=ROOT/'outputs/terrain_memory/simulation'/RUN
-ENV=Path('/home/fanyuan/miniconda3/envs/kaiwen-learn/bin')
+ENV=Path(sys.executable).parent
 
 def main():
     p=argparse.ArgumentParser()
@@ -23,8 +23,7 @@ def main():
     args=p.parse_args()
     credentials=json.load(sys.stdin)
     env=dict(os.environ,GODEBUG='http2client=0',GH_TOKEN=credentials['token'],PATH=str(ENV)+os.pathsep+os.environ['PATH'])
-    proxy=subprocess.check_output([str(ENV/'git'),'config','--get-urlmatch','http.proxy','https://github.com'],cwd=ROOT,text=True).strip()
-    env.update(https_proxy=proxy,http_proxy=proxy)
+    proxy=env.get('https_proxy',env.get('HTTPS_PROXY',''))
     def update(change):
         with (SMALL/'index.lock').open('a') as lock:
             fcntl.flock(lock,fcntl.LOCK_EX)
@@ -109,7 +108,7 @@ def main():
             '--connect-timeout','30','--max-time',str(min(300,int(args.deadline_unix-time.time()))),
             '--request','POST','--data-binary','@'+str(path),url],input=config,cwd=ROOT,env=env,text=True,
             stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-        if response.returncode:raise RuntimeError('curl upload failed: '+response.stderr.replace(proxy,'[existing proxy]')+' '+response.stdout[:250])
+        if response.returncode:raise RuntimeError('curl upload failed: '+(response.stderr.replace(proxy,'[existing proxy]') if proxy else response.stderr)+' '+response.stdout[:250])
         actual=json.loads(response.stdout)
         if actual['size']!=row['size']:raise RuntimeError('Uploaded size differs: '+row['name'])
         def uploaded(j):

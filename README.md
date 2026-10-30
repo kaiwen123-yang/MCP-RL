@@ -1,5 +1,7 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
+**默认计算位置（2026-10-30 起）：AutoDL 西北 B 区 D57，SSH 别名 `autodl-d57`。** 后续训练、仿真和项目计算统一使用该实例。RTX PRO 6000 96GB ×1、25 vCPU、120GB 内存；[实际环境与复用来源](experiments/terrain_memory/compute-environment.json)。
+
 ## 当前入口：AutoDL 25vCPU推进PANN，单窗口最多4小时
 
 **第13轮RAW首次真实学习工程目标完成。** 现有R12 run中，RAW seed0已采256条真实转移（205条有效平移）、完成1次PPO更新、尾buffer0。四个真实会话共127.6484s，三次非足端接触、最后一次目标截断后发生日志异常。原loss标量缺失已保留，更新后checkpoint已保存。PANN尚未启动。[实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)
@@ -8,11 +10,38 @@
 
 用户于2026-10-30指定现有AutoDL实例：**25vCPU Xeon8470Q、RTX PRO6000 96GB、120GB内存，系统盘30GB/数据盘50GB。下一窗口必要迁移后直接做PANN seed0累计256真实转移和一次更新，完整发布后停止。** 首窗单流20MPC workers、Torch2、OMP/BLAS1，复用r21与原物理/算法设置；这是未实测起点，按真实采样耗时调整。全部工作最多4h，不重复RAW、不补造loss、不自动串W4或长评价。
 
-先读[AGENTS](AGENTS.md)和[主计划当前交接](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。wrapper现使用仓库相对目录与当前激活Python，workers和PANN权重路径读当前契约；显式传本窗口group/start/deadline。执行时读取用户正在补充的SSH/环境记录，不猜连接地址。本次已更新入口/资源计划，尚未声称在新服务器运行成功。
+先读[AGENTS](AGENTS.md)和[主计划当前交接](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。wrapper现使用仓库相对目录与当前激活Python，workers和PANN权重路径读当前契约；显式传本窗口group/start/deadline。执行时读取用户正在补充的SSH/环境记录，不猜连接地址。D57依赖和资产已配置完成，真实PANN采集/更新仍未执行。
 
 **W1和RAW完整科研产物已交付。** [Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12)有246资产、2,229,777,826字节，包括5个视频、172个NPZ、4个checkpoint；源码/环境/小记录在Git。下一窗口追加全部实际PANN产物，沿用现有上传方式，不回下载、不在用户电脑另做归档。
 
 正式评价继续E30→E60→E300→E600。后续重点为横向路线保持、返程支撑以及任务目标与学习信号的一致性；首先完成现有PANN联合运行链。
+
+## D57 环境与联网
+
+在用户电脑执行 `ssh autodl-d57`。服务器项目目录为 `/root/autodl-tmp/MCP-RL`，进入项目环境：
+
+```bash
+cd /root/autodl-tmp/MCP-RL
+source scripts/autodl_d57_env.sh
+```
+
+Python 3.12 项目环境直接复用镜像的 PyTorch 2.8.0+cu128；MuJoCo 3.2.3、JAX 0.6.2 CUDA、Optax 0.2.5、Tianshou 0.5.1 等依赖按 [requirements-autodl-d57.txt](requirements-autodl-d57.txt) 安装。r21 执行器及其运行资源、原 Go2 资产、MJPC Python 接口和冻结 B ideal 权重从原 5080 服务器复用。原 RAW checkpoint 与完整历史仍留在原执行端及 Release，PANN继续独立初始化。此次环境配置没有产生新训练、物理任务或性能结果。
+
+默认联网顺序为官方学术加速优先；同一联网操作连续三次网络失败，再使用用户电脑 VPN 的 SSH 反向隧道。服务器端分别执行：
+
+```bash
+source scripts/autodl_network.sh academic
+# 三次网络失败后，在电脑端先启动下面的隧道，再切换：
+source scripts/autodl_network.sh pc
+```
+
+电脑端的备用隧道入口：
+
+```powershell
+& .\scripts\start_d57_vpn_tunnel.ps1 -LocalProxyPort <电脑当前Clash端口>
+```
+
+服务器也已安装 Mihomo（Clash 内核）1.19.33，并复用用户授权的两个节点。`source scripts/autodl_network.sh clash` 会启动或复用 `d57-clash` 后台会话并选择服务器本地代理；此方式不依赖电脑持续开机。该容器没有 systemd，实例重启后再次执行此命令即可启动。私有配置在 `/root/.config/mihomo/config.yaml`，只监听回环地址，未启用 TUN 或外部管理端口；配置及节点凭据不进 Git。`source scripts/autodl_network.sh direct` 清除当前 shell 的代理变量。
 
 ## 历史说明
 

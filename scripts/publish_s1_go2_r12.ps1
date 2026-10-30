@@ -4,8 +4,9 @@ param(
     [string[]]$Asset = @(),
     [switch]$Dependencies,
     [Parameter(Mandatory=$true)][double]$DeadlineUnix,
-    [string]$SshHost = 'fy-5080',
-    [string]$RemoteRoot = '/home/fanyuan/projects/kaiwen-learning/terrain-memory-r12'
+    [string]$SshHost = 'autodl-d57',
+    [string]$RemoteRoot = '/root/autodl-tmp/MCP-RL',
+    [ValidateSet('academic','pc','clash','direct')][string]$NetworkMode = 'academic'
 )
 # Only API metadata crosses this machine. Artifact bytes stay on the execution host.
 $ErrorActionPreference = 'Stop'
@@ -25,6 +26,6 @@ foreach ($name in $Attempt) { $arguments += @('--attempt', $name) }
 foreach ($name in $Asset) { $arguments += @('--asset', $name) }
 if ($Dependencies) { $arguments += '--dependencies' }
 $quoted = $arguments | ForEach-Object { "'" + $_.Replace("'", "'\''") + "'" }
-$remote = "cd '$RemoteRoot' && timeout $remaining /home/fanyuan/miniconda3/envs/kaiwen-learn/bin/python -u scripts/publish_s1_go2_r12.py " + ($quoted -join ' ')
+$remote = "cd '$RemoteRoot' && source scripts/autodl_network.sh '$NetworkMode' && timeout $remaining work/envs/d57/bin/python -u scripts/publish_s1_go2_r12.py " + ($quoted -join ' ')
 $credentials | ssh $SshHost $remote
 if ($LASTEXITCODE -ne 0) { throw "Publication command exited with code $LASTEXITCODE." }

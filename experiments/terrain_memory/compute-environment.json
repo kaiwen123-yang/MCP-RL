@@ -1,0 +1,119 @@
+{
+  "effective_date": "2026-10-30",
+  "scope": "Default host for future project training, simulation, compilation, rendering and related computation; job execution still follows the active user request and experiment contract.",
+  "ssh_alias": "autodl-d57",
+  "provider": "AutoDL",
+  "region": "northwest B",
+  "machine": "D57",
+  "hardware": {
+    "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "gpu_count": 1,
+    "gpu_memory_mib_reported": 97887,
+    "driver": "595.71.05",
+    "cpu": "Intel Xeon Platinum 8470Q",
+    "vcpu_quota": 25,
+    "memory_limit_bytes": 128849018880,
+    "system_disk_gb": 30,
+    "free_data_disk_gb": 50,
+    "paid_data_disk_gb": 0
+  },
+  "workspace": "/root/autodl-tmp/MCP-RL",
+  "environment": {
+    "activation": "source scripts/autodl_d57_env.sh",
+    "path": "work/envs/d57",
+    "type": "venv with system-site-packages",
+    "python": "3.12.3",
+    "base_python": "/root/miniconda3",
+    "base_reused": [
+      "PyTorch 2.8.0+cu128",
+      "CUDA wheel libraries",
+      "Triton 3.4.0"
+    ],
+    "requirements": "requirements-autodl-d57.txt",
+    "installed": {
+      "torch": "2.8.0+cu128",
+      "numpy": "1.26.4",
+      "scipy": "1.15.3",
+      "numba": "0.59.1",
+      "mujoco": "3.2.3",
+      "jax": "0.6.2",
+      "jaxlib": "0.6.2",
+      "jax-cuda12-plugin": "0.6.2",
+      "optax": "0.2.5",
+      "tianshou": "0.5.1",
+      "gymnasium": "1.2.1",
+      "grpcio": "1.85.0",
+      "protobuf": "7.36.1",
+      "imageio-ffmpeg": "0.6.0",
+      "ninja": "1.13.2",
+      "pybind11": "3.1.0"
+    },
+    "system_tools": [
+      "git",
+      "gh",
+      "tmux",
+      "ffmpeg",
+      "cmake",
+      "gcc",
+      "g++",
+      "rsync"
+    ],
+    "package_dependency_check": "No broken requirements found"
+  },
+  "reused_runtime": {
+    "source_host": "Existing RTX 5080 server; historical data retained there",
+    "source_projects": [
+      "terrain-memory-r12",
+      "terrain-memory-s1-go2-wb",
+      "terrain-memory-study"
+    ],
+    "controller": "work/r11-frozen/S5-r21",
+    "controller_resources": "work/r11-frozen/S5-r21/runtime-tasks",
+    "controller_library": "work/r11-frozen/S5-r21/lib/libmujoco.so.3.2.3",
+    "robot_assets": "work/assets",
+    "mjpc_python": "work/upstreams/mujoco_mpc/python",
+    "pann_weights": "work/assets/B_random1000--ideal-potentials.npz",
+    "transfer": "Streamed SSH tar between execution hosts through the user's computer without a local archive",
+    "rebuilt_controller": false,
+    "source_code_reference": "3b673bcc35d9391caf5e1a8273432fb59ab39d60"
+  },
+  "network": {
+    "default": "AutoDL official academic acceleration",
+    "fallback_trigger": "Three consecutive network failures of the same operation; argument/configuration errors are repaired separately",
+    "fallback": "User-computer VPN over SSH reverse forwarding, using scripts/start_d57_vpn_tunnel.ps1",
+    "server_mode_selector": "source scripts/autodl_network.sh academic|pc|clash|direct",
+    "independent_clash": {
+      "implementation": "Mihomo v1.19.33",
+      "private_config": "/root/.config/mihomo/config.yaml",
+      "private_config_mode": "0600",
+      "authorized_nodes": 2,
+      "listen_scope": "loopback only",
+      "tun": false,
+      "external_controller": false,
+      "process": "tmux session d57-clash",
+      "after_instance_restart": "Source clash mode to start the background process again",
+      "github_read": "Successfully read repository main through the server proxy"
+    },
+    "setup_transfer_outcomes": {
+      "repository_fetch": "Academic acceleration succeeded on second transfer attempt",
+      "mihomo_download": "Academic acceleration succeeded on second network transfer attempt",
+      "pc_fallback_activated": false
+    }
+  },
+  "scientific_execution": {
+    "new_physical_tasks": 0,
+    "new_training_runs": 0,
+    "new_policy_updates": 0,
+    "standalone_benchmarks": 0,
+    "historical_raw_checkpoint_migrated": false,
+    "note": "Setup and package/runtime asset availability are recorded here. Existing RAW evidence belongs to its original RTX5080/Python3.11/Torch2.7 environment; no D57 closed-loop result is claimed."
+  },
+  "secrets": "SSH addresses/passwords/private keys, subscription URLs, external proxy endpoints and node credentials are excluded from Git.",
+  "execution_plan_reference": "ac1753d69d2e17408a157d273fc08313de13628c",
+  "execution_resources": {
+    "mpc_workers": 20,
+    "torch_threads": 2,
+    "blas_threads": 1,
+    "measured_in_real_training": false
+  }
+}

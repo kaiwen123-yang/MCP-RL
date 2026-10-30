@@ -3,11 +3,11 @@
 ## 当前交接（每窗口结束只更新这6行）
 
 - 当前任务：在用户现有AutoDL实例完成必要迁移，直接推进W3 PANN seed0首次累计256真实转移/一次PPO更新，发布后停止。
-- 当前状态：仓库已确认RAW256条/1次更新/205条有效平移/尾buffer0；PANN0条/0次；原材料E30/E60和完整往返仍为0；本次资源调整尚未在AutoDL执行。
-- 已完成：W1及RAW全部实际产物已发布；R12入口已有真实采集/更新/恢复能力；本次去掉旧主机路径及硬编码5workers，配置改为AutoDL单流20workers。
+- 当前状态：仓库已确认RAW256条/1次更新/205条有效平移/尾buffer0；PANN0条/0次；原材料E30/E60和完整往返仍为0；D57依赖与资产已配置；20workers下真实采集/更新尚未执行。
+- 已完成：W1及RAW全部实际产物已发布；R12入口已有真实采集/更新/恢复能力；已去掉旧主机路径及硬编码5workers，契约采用AutoDL单流20workers；D57项目环境、r21/Go2/MJPC接口/B ideal和独立Clash已配置。
 - 当前问题：PANN在线观察/恢复查询待实际运行；共同执行器仍有侧出条带和返程支撑失败；RAW原loss缺失、更新后策略尚未评价；迁移只处理真实运行暴露的问题。
-- 下一步：读取即将推送的SSH/环境记录并沿用其实际工作区；20MPC workers、Torch2、OMP/BLAS1，保留r21和原数值设置；不重跑RAW，不另做benchmark/恢复/哈希测试，单窗口全部工作≤4h。
-- 续接位置：优先SSH记录里的AutoDL工作区，建议数据盘/root/autodl-tmp/MCP-RL；沿用tm-s1-go2-local-readiness-r12及原Release；PANN独立目录/自身checkpoint；旧5080工作区只作历史来源，不再固定为执行端。
+- 下一步：在D57项目目录执行source scripts/autodl_d57_env.sh后按新用户授权窗口启动；20MPC workers、Torch2、OMP/BLAS1，保留r21和原数值设置；不重跑RAW，不另做benchmark/恢复/哈希测试，单窗口全部工作≤4h。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL，环境work/envs/d57；实际配置见experiments/terrain_memory/compute-environment.json。沿用tm-s1-go2-local-readiness-r12及原Release；PANN独立目录/自身checkpoint；原RAW checkpoint与历史保留在5080和Release，未复制到D57。
 
 ## 1. 本轮实际结论
 
@@ -36,7 +36,7 @@ R12入口、旧字段适配、六流等待关闭、CUDA设备、自然新会话�
 
 ## 3. 当前窗口：AutoDL迁移直接接W3
 
-用户于2026-10-30指定新执行端，覆盖先在5080完成后再决定租卡的旧安排。使用已提供的AutoDL实例，不另购实例或扩大租赁。SSH连接与实际目录由用户正在运行的Codex补入；读取其最新记录即可，不为等记录而新建迁移报告、重复计划或认证流程。
+用户于2026-10-30指定新执行端，覆盖先在5080完成后再决定租卡的旧安排。使用已提供的AutoDL实例，不另购实例或扩大租赁。SSH别名autodl-d57与数据盘工作区已配置，具体版本见计算环境配置；本次设置未启动训练，不新建迁移报告或认证流程。
 
 ### 3.1 资源与计算分配
 
@@ -46,7 +46,7 @@ R12入口、旧字段适配、六流等待关闭、CUDA设备、自然新会话�
 | GPU | RTX PRO6000，96GB×1 | PPO与PANN用CUDA；保留JAX按需分配和x64，不为占满显存扩大网络/batch |
 | 内存 | 120GB | 正常物理状态、MPC线程状态、材料数组与记录；不以占满内存为目标 |
 | 磁盘 | 系统盘30GB、数据盘50GB | 工作区与输出优先放数据盘；这不是120GB磁盘，实际新增产物逐窗口直传Git/Release |
-| 镜像 | Ubuntu22.04，Python3.12，Torch2.8.0，CUDA12.8 | 保留新GPU软件栈；项目优先独立Python3.11/Tianshou0.5.1环境，已实际跑通的环境直接复用 |
+| 镜像 | Ubuntu22.04，Python3.12，Torch2.8.0，CUDA12.8 | 按用户复用镜像要求使用独立Python3.12.3项目venv与Tianshou0.5.1，复用镜像Torch2.8/cu128；依赖已安装 |
 
 **首窗具体值：单流、MPC20、Torch2、OMP/OpenBLAS/MKL各1。** 这是软计算预算，不代表系统所有运行时线程总数严格等于25，更不代表25个独占物理核。当前导数任务按预测时间节点并行，候选轨迹数和优化迭代数独立于worker数；因此先增加worker有源码依据，但不承诺线性加速或逐位相同。保持0.2ms物理步、2ms控制保持、20ms规划周期、0.35s预测，以及原节点/候选/迭代工作量。
 
@@ -65,7 +65,7 @@ R12入口、旧字段适配、六流等待关闭、CUDA设备、自然新会话�
 | 时间/交付 | 最多4h含全部准备/运行/渲染/上传，通常3.5h收尾；目标完成即完整发布并停止，未完保存真实进度 |
 | 实际验证 | 本次真实采集、更新、普通loss/特征/轨迹与checkpoint就是证据；不增加测试套件、恢复演习或发布认证 |
 
-已将wrapper改为从脚本位置找仓库、使用当前激活的Python；不再跳回/home/fanyuan或旧Conda。匹配的MPC客户端由当前项目环境提供。训练入口的元数据和Agent启动从同一个resources.mpc_workers读取20，冻结权重同样从契约读取，Torch设置不再被入口无声覆盖。SSH、编译和依赖在执行端按实际记录完成；本次仓库改动不等于已经完成AutoDL适配。
+已将wrapper改为从脚本位置找仓库、使用当前激活的Python；不再跳回/home/fanyuan或旧Conda。匹配的MPC客户端由当前项目环境提供。训练入口的元数据和Agent启动从同一个resources.mpc_workers读取20，冻结权重同样从契约读取，Torch设置不再被入口无声覆盖。SSH、所需依赖与复用资产已在D57配置完成；真实闭环适配仍由后续授权的实际训练确认。
 
 入口仍为：
 

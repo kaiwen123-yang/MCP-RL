@@ -127,8 +127,8 @@
     }
   ],
   "resources": {
-    "host": "User-provided AutoDL instance",
-    "hardware_source": "User screenshot,2026-10-30; runtime not yet measured in this planning update",
+    "host": "autodl-d57: AutoDL northwest B / D57",
+    "hardware_source": "User selection and D57 runtime inventory,2026-10-30; 20-worker workload remains unmeasured",
     "gpu": "1xRTX PRO 6000,96GB VRAM",
     "allocated_vcpu": 25,
     "cpu_model": "Intel Xeon Platinum8470Q",
@@ -145,7 +145,7 @@
     "provision_additional_paid_resources": false,
     "project_root_recommendation": "/root/autodl-tmp/MCP-RL",
     "path_rule": "Use actual paths in the new SSH/runtime record if already created; do not move/recreate a working environment just to match a recommended path.",
-    "environment_policy": "Prefer an isolated Python3.11 environment retaining Tianshou0.5.1 and actual project interfaces,with Torch2.8/cu128. If the actual project already runs in the recorded Python3.12 environment,reuse it. Restore required MuJoCo3.2.3/MPC client/PANN dependencies only,not the entire old IsaacLab workstation.",
+    "environment_policy": "Reuse image Python3.12.3 and Torch2.8.0+cu128 through the dedicated D57 venv with system-site-packages,as requested by the user. MuJoCo3.2.3,matching MPC Python client,Tianshou0.5.1 and PANN dependencies are installed. No new closed-loop run has been performed during setup.",
     "environment_changes": "Only necessary changes in the project environment. Resolve concrete errors from the actual training launch; no environment matrix/import/smoke test stage.",
     "maximum_environments": 1,
     "initial_training_concurrency": 1,
@@ -172,7 +172,9 @@
       "shared_window_deadline": true,
       "same_actor_vector_collector_required_now": false,
       "expand_rule": "Use actual useful throughput and task demand. Do not automatically start6streams or make every process request25threads."
-    }
+    },
+    "python_environment": "work/envs/d57",
+    "compute_environment": "experiments/terrain_memory/compute-environment.json"
   },
   "learning": {
     "candidate_can_start_before_E30_E60_pass": true,
