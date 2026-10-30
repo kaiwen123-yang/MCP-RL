@@ -1,6 +1,6 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
-  "status": "joint_support_and_detached_training_planned",
+  "status": "joint_support_and_automatic_publication_planned",
   "attempts": [
     {
       "attempt": "w1-S5-r21-E30",
@@ -1231,7 +1231,7 @@
     "run_deadline_unix_s": 1793371623,
     "hard_deadline_unix_s": 1793374023
   },
-  "protocol_revision": "joint_support_detached_training_v8",
+  "protocol_revision": "joint_support_detached_autopublish_v9",
   "current_task": "W34_JOINT_SUPPORT_LEARNING",
   "training_transitions": 512,
   "next_task": "W34_JOINT_SUPPORT_LEARNING",
@@ -6556,7 +6556,7 @@
       "check": "One normal name/size/upload-state comparison; no full hash pass or downloads"
     }
   },
-  "next_action": "Finish the evidenced support correction if still pending,launch the current PANN phase in AutoDL tmux with its own explicit job deadline,and leave after real sampling/logging are working. Interactive4hdoes not stop the authorized job. Next visit inspects existing progress and completes publication.",
+  "next_action": "Launch the current full-loop phase with server-native GitHub auth and independent network;the same tmux job automatically renders retained trajectories,uploads all actual new assets and pushes scoped results after training,including negative/partial results. Inspect the published jobs summary on return;resume only unfinished postprocessing.",
   "pann_review": {
     "reviewed_source_commit": "f8bfb4629a1d342f49a63a446ebd2a19151075d8",
     "source_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json",
@@ -6705,8 +6705,22 @@
     "launcher": "scripts/start_s1_go2_r12_tmux.py",
     "session_default": "s1-joint",
     "handoff_condition": "Actual physics/sample counts advance and normal logs are written;no mandatory wait for256or a new update.",
-    "publication": "Pending until actual rendering/upload/Git steps complete;not automated by this launcher.",
+    "publication": "Superseded:automatic rendering/Release/Git publication is now attached to the tmux training job.",
     "actual_new_training_started": false,
     "actual_results_unchanged": true
+  },
+  "automatic_publication_plan": {
+    "source_plan_commit": "04b7522f9641f55f28d1ff3b0225e6ade5438f6b",
+    "enabled": true,
+    "postprocess_entrypoint": "scripts/finish_s1_go2_r12_job.py",
+    "default_postprocess_wall_s": 14400,
+    "deadline_starts": "after training exits",
+    "server_native_auth": true,
+    "pc_tunnel_required": false,
+    "training_failure_still_publishes": true,
+    "git_force_push": false,
+    "extra_pc_archive": false,
+    "summary_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job>.json",
+    "actual_server_execution_started_by_this_review": false
   }
 }

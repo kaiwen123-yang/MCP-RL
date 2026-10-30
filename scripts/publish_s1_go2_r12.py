@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Publish retained R12 files directly from the execution host.
 
-No physics, downloads, hashes or Git mutations. Authenticated gh metadata and
-token arrive as a JSON object on stdin (see the PowerShell launcher).
+No physics, downloads, hashes or Git mutations. Use --server-auth for the
+server gh login, or the existing credential JSON on stdin for manual publication.
 """
 import argparse, fcntl, json, os, shutil, subprocess, sys, time
 from pathlib import Path
@@ -13,6 +13,26 @@ SMALL=ROOT/'results/terrain_memory/simulation'/RUN
 LARGE=ROOT/'outputs/terrain_memory/simulation'/RUN
 ENV=Path(sys.executable).parent
 
+def server_credentials(deadline):
+    """Read the server's existing GitHub login without writing its token to disk."""
+    token=os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
+    if not token:
+        token=subprocess.check_output(['gh','auth','token','--hostname','github.com'],
+            text=True,stderr=subprocess.PIPE,timeout=30).strip()
+    env=dict(os.environ,GH_TOKEN=token,GODEBUG='http2client=0')
+    def api(endpoint,*flags):
+        remaining=deadline-time.time()
+        if remaining<=0:raise TimeoutError('Publication deadline reached')
+        try:
+            output=subprocess.check_output(['gh','api',endpoint,*flags],
+                env=env,text=True,stderr=subprocess.PIPE,timeout=min(120,remaining))
+        except subprocess.CalledProcessError as error:
+            raise RuntimeError('GitHub API failed: '+error.stderr.replace(token,'[credential]').strip()) from None
+        return json.loads(output)
+    release=api(f'repos/{REPO}/releases/tags/{RUN}')
+    pages=api(f'repos/{REPO}/releases/{release["id"]}/assets?per_page=100','--paginate','--slurp')
+    return dict(token=token,release_metadata=release,remote_assets=[row for page in pages for row in page])
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('action',choices=['upload','finish'])
@@ -20,8 +40,11 @@ def main():
     p.add_argument('--dependencies',action='store_true')
     p.add_argument('--asset',action='append',default=[])
     p.add_argument('--deadline-unix',type=float,required=True)
+    p.add_argument('--server-auth',action='store_true')
+    p.add_argument('--manifest',type=Path,help='Explicit job asset list: path,name,category.')
     args=p.parse_args()
-    credentials=json.load(sys.stdin)
+    manifest=json.loads(args.manifest.read_text()) if args.manifest else None
+    credentials=server_credentials(args.deadline_unix) if args.server_auth else json.load(sys.stdin)
     env=dict(os.environ,GODEBUG='http2client=0',GH_TOKEN=credentials['token'],PATH=str(ENV)+os.pathsep+os.environ['PATH'])
     proxy=env.get('https_proxy',env.get('HTTPS_PROXY',''))
     def update(change):
@@ -31,7 +54,7 @@ def main():
             (SMALL/'index.json').write_text(json.dumps(value,indent=2)+'\n')
     release=credentials['release_metadata']
     remote={row['name']:row for row in credentials['remote_assets']}
-    if args.action=='upload':
+    if args.action=='upload' and not args.server_auth:
         for row in json.loads((SMALL/'index.json').read_text()).get('publication',{}).get('assets',[]):
             if row['status']=='uploaded' and row['name'] not in remote:
                 remote[row['name']]=dict(row,state='uploaded')
@@ -41,21 +64,28 @@ def main():
     if args.action=='finish':
         def finish(j):
             q=j['publication']; missing=[]
-            registered={row['path'] for row in q['assets']}
-            for folder in LARGE.iterdir():
-                if folder.is_dir() and folder.name!='release-upload-links':
-                    missing.extend(str(file.relative_to(ROOT)) for file in folder.rglob('*')
-                        if file.is_file() and str(file.relative_to(ROOT)) not in registered)
-            for row in q['assets']:
+            registered={row['path'] for row in q.get('assets',[])}
+            selected={row['name'] for row in manifest} if manifest is not None else None
+            if manifest is not None:
+                names={row['name'] for row in q.get('assets',[])}
+                missing.extend(row['path'] for row in manifest if row['name'] not in names)
+            else:
+                for folder in LARGE.iterdir():
+                    if folder.is_dir() and folder.name!='release-upload-links':
+                        missing.extend(str(file.relative_to(ROOT)) for file in folder.rglob('*')
+                            if file.is_file() and str(file.relative_to(ROOT)) not in registered)
+            for row in q.get('assets',[]):
+                if selected is not None and row['name'] not in selected:continue
                 actual=remote.get(row['name'])
                 if row.get('status')=='git_recorded':continue
                 okay=actual and actual['state']=='uploaded' and actual['size']==row['size']
                 row['status']='uploaded' if okay else 'publication_pending'
                 if okay:row['url']=actual['browser_download_url']
                 else:missing.append(row['path'])
-            q.update(status='published' if not missing else 'publication_pending',pending_paths=missing,
+            missing=sorted(set(missing+[row['path'] for row in q.get('assets',[]) if row['status'] not in ('uploaded','git_recorded')]))
+            q.update(status='published' if not missing and not q.get('pending_jobs') else 'publication_pending',pending_paths=missing,
                 pending_categories=['missing Release assets'] if missing else [],
-                scope='W1, RAW and all actual independent PANN outputs retained in this R12 run',
+                scope='Registered R12 assets; current job checked against its explicit manifest' if manifest is not None else 'All retained R12 files',
                 asset_count=sum(x['status']=='uploaded' for x in q['assets']),
                 asset_bytes=sum(x['size'] for x in q['assets'] if x['status']=='uploaded'),
                 verification='One normal name/size/upload-state comparison; no full hash pass or downloads',checked_unix_s=time.time())
@@ -71,6 +101,8 @@ def main():
             if file.is_file():inputs.append((file,'dependency__go2__'+file.relative_to(ROOT/'work/assets/go2').as_posix().replace('/','__'),'dependency'))
         for name in ['scene_flat.xml','rigid-T1R-resolved.json']:
             inputs.append((ROOT/'work/assets'/name,'dependency__'+name,'dependency'))
+    if manifest is not None:
+        inputs.extend((ROOT/row['path'],row['name'],row['category']) for row in manifest)
     expected=[]
     for file,name,category in inputs:
         size=file.stat().st_size
@@ -117,6 +149,7 @@ def main():
         update(uploaded)
         print(json.dumps(dict(name=row['name'],size=row['size'],status='uploaded',wall_s=round(time.time()-begin,2))),flush=True)
     for row in expected:
+        if time.time()>=args.deadline_unix:break
         try:
             upload(row)
         except (RuntimeError, subprocess.TimeoutExpired) as error:

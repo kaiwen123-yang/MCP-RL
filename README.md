@@ -2,7 +2,7 @@
 
 **默认计算位置（2026-10-30 起）：AutoDL 西北 B 区 D57，SSH 别名 `autodl-d57`。** 后续训练、仿真和项目计算统一使用该实例。RTX PRO 6000 96GB ×1、25 vCPU、120GB 内存；[实际环境与复用来源](experiments/terrain_memory/compute-environment.json)。
 
-## 当前入口：支撑联调＋tmux连续训练
+## 当前入口：支撑联调＋tmux训练、自动渲染与发布
 
 **最新实际成果仍为D57 PANN_PPO_S5 seed0的256条真实转移（208有效）和1次PPO更新，尾buffer0；RAW历史256/205有效/1更新保留。** PANN首次12个真实会话125.0854s均在更新前，原loss和全部产物已发布；本次计划修订没有启动新的服务器训练。[PANN实际结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json) · [实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)
 
@@ -10,11 +10,11 @@
 
 **支撑问题恢复为当前主线。** ep10的既有MPC预测在6.20s已选中会于6.514s进入躯干接触margin的轨迹，并允许触地后恢复；真实在6.561s因相同非足接触立即终止。先用实际冻结源码核对并纠正这一控制目标错配，再直接在完整链路中训练；不先增加独立E30准入试验，不以更多更新代替控制修正。
 
-**取消“只续到第二次更新就停”的安排。** 首个跨窗口里程碑为同一记录控制版新增1024条/4次更新，当前起点对应累计1280条/5次。每256条更新后继续。用户已授权训练在AutoDL tmux持续十小时或更长；四小时仅限制Codex交互，启动后看到真实采样/日志正常即可离开。按已测113.89条/h，纯采样参考约8.99h，后台默认16h预算、到目标提前停止。
+**取消“只续到第二次更新就停”的安排。** 首个跨窗口里程碑为同一记录控制版新增1024条/4次更新，当前起点对应累计1280条/5次。每256条更新后继续。用户已授权训练在AutoDL tmux持续十小时或更长；四小时仅限制Codex交互，启动后看到真实采样/日志正常即可离开。按已测113.89条/h，纯采样参考约8.99h，后台默认16h训练预算、到目标提前停止，随后自动渲染并发布，后处理从训练退出起默认另计4h。
 
 先读[AGENTS](AGENTS.md)与[主计划顶部6行/第4节](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。训练入口支持active_controller_build，并用--background-job将后台deadline与交互4h分开；实际修正后记录新build和空buffer起点，沿用本组最新checkpoint，不把旧版数据当新版，不重采首批或RAW。保留20MPC workers、Torch2、OMP/BLAS1和现有D57环境。
 
-后台启动入口为[启动器](scripts/start_s1_go2_r12_tmux.py)：激活现有D57环境后运行 `python scripts/start_s1_go2_r12_tmux.py --resume <本组最新checkpoint> --session s1-joint --hours 16`。先查看是否已有作业，避免重复启动。job目录保存启动信息/标准日志/退出记录；已有collection、learning与checkpoint继续正常更新，无需逐步盯守。训练停止后下一次交互再完整渲染与发布，启动器不会自动上传或提交Git，publication_pending与训练状态分开。
+后台启动入口为[启动器](scripts/start_s1_go2_r12_tmux.py)：激活现有D57环境后运行 `python scripts/start_s1_go2_r12_tmux.py --resume <本组最新checkpoint> --session s1-joint --hours 16 --postprocess-hours 4 --network-mode academic`。先查看是否已有作业，避免重复启动；服务器需有持久gh登录、Git身份和独立网络。训练结束自动调用[后处理入口](scripts/finish_s1_go2_r12_job.py)，渲染实际轨迹、上传全部新资产并推送小结果/索引/交接。原results下的 `jobs/<job名>.json` 汇总训练结果、视频链接、发布状态及错误。真实失败也收尾，pending时只续后处理，不重跑训练；不需要下一次对话才开始发布。
 
 [论文清单](literature/terrain_memory_sources.json)新增4篇2024—2026相关一手来源，并更新2篇既有论文的当前用途，分别约束软地支撑、控制/学习联合执行与记忆解释，明确仿真、真机和预印本边界。不是新一轮论文复现任务。
 

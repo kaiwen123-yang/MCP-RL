@@ -1,13 +1,13 @@
-# S1：支撑联调与tmux长时间联合训练
+# S1：支撑联调与tmux训练、自动渲染、自动发布
 
 ## 当前交接（按实际交接只更新这6行）
 
-- 当前任务：W34_JOINT_SUPPORT_LEARNING；完成必要支撑修正后，在D57 tmux持续运行完整PANN→PPO→MPC训练，Codex确认实际采样正常即可退出。
-- 当前状态：已发布实际成果仍为RAW256/205有效/1更新与PANN256/208有效/1更新；本次只调整执行方式，没有启动服务器作业或产生新样本。
-- 已完成：已定位ep10预测允许躯干接触后恢复的目标错配；入口支持记录controller build；本次新增tmux启动器并拆开交互4h与后台作业deadline。
-- 当前问题：支撑修正仍需在实际冻结源码实施并由联合采样观察；“程序持续采样”不等于机器人任务已经成功。现有目标和物理失败定义不变。
-- 下一步：先看已有作业；若未运行则完成必要修正并从最新本组checkpoint启动tmux，同版新增1024/4、当前累计目标1280/5，默认后台预算16h、到目标提前停。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；本组最新checkpoint；启动后填写实际session/job目录/截止/当前计数，训练与publication_pending分开，下一次查看后完整发布。
+- 当前任务：W34_JOINT_SUPPORT_LEARNING；完整PANN→PPO→MPC训练结束后，tmux自动渲染新轨迹、上传原Release并推送结果，无需下一次对话才启动发布。
+- 当前状态：已发布实际成果仍为RAW256/205有效/1更新与PANN256/208有效/1更新；本次只实现自动收尾，没有启动D57训练或产生新结果。
+- 已完成：入口已拆开交互4h与后台训练deadline；本次接入finish入口、服务器gh认证、独立后处理预算、按job记录的资产清单与自动Git结果推送。
+- 当前问题：仍按已有ep10证据完成必要支撑修正；自动发布前在服务器配置持久gh登录、Git身份与独立网络，不能依赖电脑传token或保持隧道。
+- 下一步：先看已有作业；无作业则修正并启动完整pipeline，同版新增1024/4，当前累计目标1280/5；默认训练16h、结束后渲染发布另计4h，各阶段达成即结束。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；启动记录给出session/job目录，结果入口为原results下jobs/<job名>.json；失败保留pending并只续后处理，不在用户电脑归档。
 
 ## 1. 实际进展与结论
 
@@ -92,9 +92,9 @@ ep04/05也有约−.96/−1.69m/s的落足速度峰值。r21已做因果卸载�
 
 D57与旧RAW的r21已有二进制记录、MuJoCo3.2.3、主要数值/代价/物理设置一致；主机、worker5→20、软件环境、PANN输入与实际轨迹不同，现有数据不是匹配收益或加速对照。旧RAW与新PANN首会话前5个cap几乎一致，2.5–3s路线增量已经分离，而本轮首会话8.5s才有非零恢复输入。因此不能把更早失败归因于PANN特征或学习恶化；不为此增加确定性认证任务。D57可见CPU affinity范围不等于25vCPU配额，不按可见208个逻辑CPU增开worker。
 
-## 4. 当前执行：短交互完成修正，tmux承担连续训练
+## 4. 当前执行：短交互启动，tmux完成训练与自动发布
 
-用户已明确授权在AutoDL用tmux运行十小时甚至更久，启动后确认真实采样正常即可结束对话，稍后查看日志。本节覆盖旧的“所有后台进程也必须在4h内停止”规则；支撑修正与连续多次更新的研究目标不变。
+用户已明确授权在AutoDL用tmux运行十小时甚至更久，启动后确认真实采样正常即可结束对话，稍后查看日志。本节覆盖旧的“后台也必须4h内停止”和“下次对话才启动发布”规则。用户已进一步明确授权自动渲染和自动推送；支撑修正与连续多次更新的研究目标不变。
 
 ### 4.1 两个时间边界
 
@@ -104,7 +104,7 @@ D57与旧RAW的r21已有二进制记录、MuJoCo3.2.3、主要数值/代价/物�
 | tmux训练作业 | 使用独立记录的job start/deadline；默认允许16h，可用--hours明确设置；达到样本目标提前结束 |
 | 普通物理失败 | 记录真实terminal/checkpoint，继续下一自然会话 |
 | 技术中断 | 停止并保留实际日志，不加无限重启循环 |
-| 后续发布 | 作业停止后下一次交互完成渲染/Git/Release，不要求后台训练为本次交互收尾而中断 |
+| 自动后处理 | 从训练退出起另计默认4h，渲染保存轨迹、上传Release、推送结果；不使用已经耗尽的训练deadline |
 
 当前1024新样本按已测吞吐参考约8.99h，16h是留有余量的作业预算，不是要求运行满16h或新的训练总额度。窗口结束不再重置环境、切断半批采样或要求重新计划。实例仍需保持运行；tmux支持客户端断开，不保留关机/重启后的进程。
 
@@ -113,6 +113,8 @@ D57与旧RAW的r21已有二进制记录、MuJoCo3.2.3、主要数值/代价/物�
 先查看是否已有同一tmux作业。若正在运行，读取现有进度并交接，不重复启动、不覆盖其deadline。
 
 若尚未启动，使用已有ep10与实际冻结r21源码处理已定位的非足接触目标错配；只做一项有依据的修正，保持原几何、margin、材料/力矩/失败定义。已完成的修正不重做，也不先跑重复基线。确认并编译后记录reuse.active_controller_build。
+
+前台先提交实际源码/配置，准备服务器持久gh登录、Git作者身份和可独立运行的academic/clash/direct网络。启动器会读取目标Release并确认仓库写权限，使用gh凭据助手；不输出token、不写入job.json，不做凭据测试矩阵。仅有电脑端临时token或PC隧道时，先完成服务器实际发布准备再交接。
 
 随后直接在完整PANN观察、PPO决策、MPC规划与Go2/材料反馈链路中训练。现有训练本身提供实验数据，不新增E30准入测试。
 
@@ -139,12 +141,12 @@ cd /root/autodl-tmp/MCP-RL
 source scripts/autodl_d57_env.sh
 python scripts/start_s1_go2_r12_tmux.py \
   --resume outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt \
-  --session s1-joint --hours 16
+  --session s1-joint --hours 16 --postprocess-hours 4 --network-mode academic
 ```
 
-启动器在原outputs根目录下生成带时间的job目录，保存job.json、run-job.sh、train.log，以及进程结束后的exit-code.txt/finished-at.txt；正常训练仍使用原stream输出位置。它调用现有训练入口的--background-job和--job-start-unix，使同一个job deadline传给原runtime与PolicyMaterial。前台模式仍保留4h限制。
+启动器在原outputs根目录下生成带时间的job目录，保存job.json、run-job.sh、train.log，以及训练结束后的training-exit-code.txt/training-finished-at.txt；正常训练仍使用原stream输出位置。训练输出关闭后自动调用finish_s1_go2_r12_job.py，训练非零退出也会发布已有真实结果。它调用现有训练入口的--background-job和--job-start-unix，使同一个job deadline传给原runtime与PolicyMaterial。前台模式仍保留4h限制。
 
-默认session名固定为s1-joint，已有同名session时tmux拒绝再次启动；先查看，不要换个名字绕开并发限制。不要额外套4h timeout，也不要在退出对话时kill这个用户已授权的作业。
+默认session名固定为s1-joint，整个训练和后处理期间都占用该session；已有同名session时tmux拒绝再次启动；先查看，不要换个名字绕开并发限制。不要额外套4h timeout，也不要在退出对话时kill这个用户已授权的作业。
 
 ### 4.4 日志已经足够，不新增监控框架
 
@@ -158,17 +160,38 @@ python scripts/start_s1_go2_r12_tmux.py \
 
 回来后看tmux是否仍在运行，再读collection/learning；已经退出则看stopped和最后episode，并确认stopped的invocation_started_unix_s属于本次job（不早于job.json的started_unix_s）；新作业运行时可能仍留有上一作业的stopped。exit0本身不证明目标完成，因为现有runtime可把技术中断写成结果后正常退出。原collection.wall_s可能含历史停机；本次吞吐仍以invocation新增计数/耗时为准。
 
-### 4.5 完成后接着做什么
+### 4.5 自动收尾的实际步骤
 
-作业停止后用实际结果判断支撑修正、多次更新后的路线变化与剩余失败。阶段终点发生的最后一次更新，若后面没有物理执行，不能称已经评价了它的效果。
+1. 读取本job的新attempt列表，逐个用保存的trajectory/model/result调用现有渲染脚本。已有完整视频直接复用；零步或不完整轨迹说明原因，保留其余证据。渲染失败不重新运行物理，半截视频不作为正式视频上传。
+2. 给本job变化的训练小记录保存固定版本，使用job前缀；新rollout/checkpoint仍用原服务器路径、按job命名。旧未变的大文件引用原发布，不重复归档。
+3. 生成一份明确的本job资产清单，使用服务器gh认证调用现有publisher。源码及小结果进Git，全部实际新视频、原始轨迹、物理/预测/材料数组、rollout/checkpoint、job记录进原Release。
+4. 只做一次名称/大小/上传状态核对。渲染和上传日志写紧凑记录，闭合后再进入Git；不上传持续变化的自身发布日志，不做全量hash/回下载复验。
+5. 写jobs/<job名>.json、正常索引和顶部6行交接，记录训练实际计数/最后原因、视频链接、资产发布状态和pending。按本任务路径提交并普通push到main，不force、不顺手提交其他工作。
+6. 渲染、上传或推送出现实际错误时，保留具体错误和pending，继续发布能完成的结果。修复后对同一个job运行finish入口即可续接，复用视频、快照和已上传资产，不重训。
 
-先完整发布本次所有实际产物，再按结果继续训练或做同版E30→E60→E300→E600。当前启动器不自动调用渲染、Release上传或Git提交；这些在下一次交互使用已有脚本完成。publication_pending应如实保留，不能把“tmux任务启动/退出”写成“训练与发布全部完成”。
+结果入口为[现有R12结果目录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/)下jobs/<job名>.json；实际作业结束并推送后可在GitHub直接查看摘要和原Release的视频/数据链接。训练达标与发布完成分别报告，失败实验也保留。Git推送失败时本地保留提交和pending，不能声称远端已更新。
+
+例如只接续已有job的后处理（使用该job真实的训练退出码）：
+
+```bash
+source scripts/autodl_d57_env.sh
+source scripts/autodl_network.sh academic
+python scripts/finish_s1_go2_r12_job.py \
+  --job-dir outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/<job名> \
+  --training-exit-code <该job训练退出码> --hours 4
+```
+
+如果旧版tmux训练已经在运行，不重启它；先读取其job/退出记录，为该既有任务补接一次训练结束后的finish步骤。新启动的任务直接执行整条pipeline。后台运行中不修改该任务的控制器或同时启动第二条采样流。
+
+### 4.6 结果到达后再做研究判断
+
+用户回来直接查看已发布的job摘要、视频、路线与支撑记录。阶段终点的最后一次更新若没有后续物理执行，仍不能称已经评价该次更新的效果。依据实际多次更新趋势决定继续学习或同版E30→E60→E300→E600；存在发布pending时先续其后处理。
 
 ## 5. 完整发布与交接
 
 本轮北京时间19:27:03开始、21:43:35训练停止、21:51:49发布清单确认，约2h24m46s完成，符合4h。Release现有563资产、3,742,547,022字节，其中本轮新增317资产/1,512,769,196字节与12段视频；全部窗口共17视频/364NPZ/17PT。现有602条清单包含563个Release条目及Git小记录，正常名称/大小/上传状态核对无差异，pending为空。
 
-离开本次交互前推送已完成源码、配置和启动记录；后台训练生成的数据正常保留在D57。作业停止后下一次交互追加全部实际新增环境记录、日志、每个episode完整视频、原始轨迹、物理/预测/材料数组、rollout/checkpoint和有效尾buffer。视频从保存轨迹渲染，旧资产引用原链接。D57直接上传Git/原Release，正常看一次清单；不全量hash、不回下载复验，**不在用户电脑另做下载、镜像、复制、压缩或归档**。训练状态与发布状态分别报告。可变collection/progress/learning等记录按本次job发布新版本，不能覆盖旧Release同名证据。
+离开本次交互前推送已完成源码、配置和启动记录；训练退出后自动追加全部实际新增环境记录、日志、每个episode完整视频、原始轨迹、物理/预测/材料数组、rollout/checkpoint和有效尾buffer。视频从保存轨迹渲染，旧资产引用原链接。D57直接上传Git/原Release，正常看一次清单；不全量hash、不回下载复验，**不在用户电脑另做下载、镜像、复制、压缩或归档**。训练状态与发布状态分别报告。可变collection/progress/learning等记录按本次job发布新版本，不能覆盖旧Release同名证据。
 
 开头最多5行后直接执行，退出交互时只更新顶部6行和正常结果，明确后台是否仍运行与发布待办；不要为交互收尾停止已授权训练。禁止额外单元/mock/冒烟/导入/形状测试套件、无关回归、独立benchmark、恢复演习、通用fallback、反复计划或审查报告。
 

@@ -1,11 +1,11 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "joint_support_and_detached_training_planned",
-  "protocol_revision": "joint_support_detached_training_v8",
+  "status": "joint_support_and_automatic_publication_planned",
+  "protocol_revision": "joint_support_detached_autopublish_v9",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-10-30",
-  "supersedes_plan_commit": "5ea1740cecfa71a75860a7f6ac1c5aed78238b44",
+  "supersedes_plan_commit": "04b7522f9641f55f28d1ff3b0225e6ade5438f6b",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
   "current_task": "W34_JOINT_SUPPORT_LEARNING",
   "reuse": {
@@ -23,14 +23,14 @@
     "includes": [
       "interactive reading and implementation",
       "necessary build",
+      "server-native publication setup",
       "tmux launch and brief real-sampling observation",
-      "interactive analysis and handoff",
-      "source/config publication"
+      "source/config push and handoff"
     ],
-    "stop_when": "End the interactive session after implementation and actual sampling/logging are working,or at its4h limit. Leave the explicitly launched tmux job running. That job stops at its sample target,its own deadline,or a real technical interruption.",
+    "stop_when": "End interactive work after implementation,server-native GitHub/network setup and real-sampling handoff,or at its4h limit. The tmux pipeline continues training then automatic rendering/publication under separate recorded budgets.",
     "automatically_chain_tasks": false,
     "autonomous_48h_campaign_enabled": false,
-    "unfinished_task_rule": "At the next user visit,inspect the existing tmux job and actual logs first. Do not restart a running stream or replace its deadline. Resume only if it has actually stopped and more work is needed.",
+    "unfinished_task_rule": "On return inspect the existing tmux pipeline and job summary first. Do not duplicate the running stream. If rendering/publication is pending,continue only that recorded job's postprocessing.",
     "background_overrun_authorized": true,
     "default_reads": [
       "AGENTS.md",
@@ -50,7 +50,7 @@
     "allowed_chain": [
       "existing_evidence_and_one_support_correction",
       "detached_full_loop_training",
-      "later_result_review_and_publication"
+      "automatic_render_release_and_git_push"
     ],
     "chain_shares_one_absolute_deadline": false,
     "current_completed_prerequisite": {
@@ -74,7 +74,7 @@
         "post_update_physics": false
       }
     },
-    "compute_time_policy": "Use the existing D57 instance. Codex interactive work remains<=4h. User explicitly authorizes the recorded tmux training job to continue10h or longer after the chat/SSH client disconnects. No additional paid instance is authorized.",
+    "compute_time_policy": "Existing D57 only. Interactive work remains<=4h;authorized background training may run10h or longer. Automatic rendering and Git/Release publication follow with a separate default4hbudget from training exit. No extra paid instance or endless restarts.",
     "background_job": {
       "authorized_by": "User explicitly requested tmux training for ten hours or longer,with departure after actual startup and later inspection of logs.",
       "default_maximum_wall_s": 57600,
@@ -91,9 +91,23 @@
       ],
       "ordinary_physical_failure": "Save the real terminal and continue the next natural episode,as the current training loop already does.",
       "automatic_restart": false,
-      "post_training": "Retain all actual outputs and mark publication pending. Next interactive visit renders/uploads with existing scripts; this launcher does not auto-publish or auto-commit.",
+      "post_training": "Automatically render all available new physical trajectories,version changing records,upload all actual job assets to the existing Release,write the job result and push scoped Git results. Training failures still publish retained negative/partial evidence.",
       "disconnect_semantics": "Detaching or closing the client leaves the server job running. Instance shutdown/reboot ends the process; resume from saved checkpoint later.",
-      "concurrent_training_streams": 1
+      "concurrent_training_streams": 1,
+      "default_postprocess_wall_s": 14400,
+      "postprocess_clock": "Starts when training exits;independent of the already elapsed training/interactive deadline.",
+      "postprocess_entrypoint": "scripts/finish_s1_go2_r12_job.py",
+      "publication_auth": "Persistent server gh login with repository write access,configured Git credential helper and author identity. Credentials stay outside repository/job logs;no Windows stdin injection is needed.",
+      "network_modes": [
+        "academic",
+        "clash",
+        "direct"
+      ],
+      "network_rule": "Use a server-independent working route. The automatic job must not depend on the user's PC proxy or client staying online.",
+      "autopublish": true,
+      "failure_policy": "Record stage errors and pending paths;publish other available results. Do not re-run physics to create videos or endlessly restart training/upload. A failed push keeps the local commit for a later ordinary retry;never force-push.",
+      "result_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job-name>.json",
+      "resume_publication": "Rerun the finish entrypoint for the same job after correcting the concrete error;reuse retained videos,snapshots and already uploaded assets,without re-training."
     }
   },
   "tasks": [
@@ -308,10 +322,10 @@
     "next_runtime_work": [
       "Use existing ep10 and actual frozen source to finish the evidence-backed support correction if still pending; preserve already-completed work.",
       "Record the actual active_controller_build and clear version/sample boundary. Keep original physical/PPO semantics and the current single stream.",
-      "Launch scripts/start_s1_go2_r12_tmux.py with the active stream's latest --resume and explicit --hours. The training entrypoint's --background-job uses the job deadline throughout existing runtime and policy checks.",
+      "Use server-native gh login and an independent network route,then launch scripts/start_s1_go2_r12_tmux.py with latest--resume,--hours,--postprocess-hours and--network-mode. It runs training followed by automatic rendering,Release upload and Git push.",
       "Observe actual sampling and log progress briefly,record session/job directory/checkpoint/target/deadline,and leave the tmux job running when the interactive session ends. No need to wait for a PPO batch.",
       "At the next visit inspect existing job/logs first;review actual stopped counts and last stage/reason. A zero shell exit code alone does not establish target completion.",
-      "Render and publish all actual new outputs using existing scripts after the job stops,with publication status tracked separately. No extra user-PC archive."
+      "After training exit,the recorded tmux job automatically renders and publishes all new artifacts. On return inspect the published job result;only unfinished stages need manual follow-up."
     ],
     "pann_evidence": "Use ordinary rollout/episode logs for observer/query counts,extra wall time and the12 actual recovery-feature values. Report zero or uninformative features honestly; do not demand artificial nonzero values,read truth q/e or add a diagnostic framework.",
     "controller_change_during_current_window": "One evidence-backed support-objective correction is authorized; record a new engineering build if changed. Keep the resulting version stable during the multi-update observation phase unless a concrete failure requires another correction.",
@@ -393,9 +407,9 @@
     "compact_root": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "create_result_index_only_after_actual_execution": true,
-    "handoff": "At interactive departure update the six lines with running/failed status,controller,tmux session,job directory,target/deadline,current counts and publication_pending. On return inspect the existing job before starting anything.",
-    "publication": "Push actual source/config changes and launch metadata before leaving when available. Background training keeps full outputs on D57. After it stops,the next interactive visit renders and publishes all new logs/videos/arrays/rollouts/checkpoints using existing scripts. Do not label running or merely finished training as published.",
-    "unfinished_upload": "Record exact pending paths/status separately from training. Complete publication on the next interactive visit; a running authorized background job need not stop for the interactive4h boundary.",
+    "handoff": "At interactive departure record session/job/target/deadlines/current counts and automatic publication. The finishing job updates the same six lines and normal index/job result with actual training outcome,Release links and any pending failures.",
+    "publication": "Foreground Codex commits/pushes actual source/config changes and launch metadata. After training,the tmux job renders all available new full trajectories,uploads every actual new artifact to the same Release,and commits/pushes the scoped compact results,index and six-line handoff. No user-PC archive.",
+    "unfinished_upload": "Automatic postprocessing records pending paths and concrete errors,and still attempts to push the partial report. A later invocation resumes this same postprocessing job without new physics. No false published status when upload/push is incomplete.",
     "extra_archive_on_user_pc": false,
     "preserve_normal_working_files_and_actual_history": true,
     "release_tag": "tm-s1-go2-local-readiness-r12",
@@ -429,8 +443,17 @@
       "pending_paths": []
     },
     "transfer_rule": "Use the transfer method that works on the new AutoDL host. Do not hardcode or rebuild the old workstation proxy; fix an actual upload failure only. Do not route through the user's PC for archiving.",
-    "storage_rule": "Use the existing AutoDL data disk/workspace. Keep all unfinished outputs/checkpoints;50GB disk is distinct from RAM/VRAM. Background outputs may await the next publication visit; no silent deletion or extra storage purchase.",
-    "mutable_record_publication": "New versions of changing collection/progress/learning/stream records use job-specific Release names or existing versioned publication handling;do not overwrite prior published evidence or attempt the same name with a new size."
+    "storage_rule": "Use the existing D57 data disk/workspace. Preserve actual outputs/checkpoints and normal per-job versions of mutable records;publish automatically when training exits. No user-PC mirror,silent research-data deletion or extra storage purchase.",
+    "mutable_record_publication": "At training end save the job's changed non-binary training records under its stream-records snapshot with job-specific Release names. New binary rollouts/checkpoints use original server paths and job-specific names;reuse immutable prior assets. Do not upload logs while they are still being written.",
+    "automatic_publication": {
+      "enabled": true,
+      "entrypoint": "scripts/finish_s1_go2_r12_job.py",
+      "training_failure_still_triggers_postprocess": true,
+      "video_source": "Saved actual trajectory/model/result only;zero-step or missing-trajectory episodes retain evidence and a rendering-unavailable reason.",
+      "manifest": "One explicit per-job asset list,existing index asset statuses and one name/size/upload-state comparison.",
+      "git_scope": "This job's compact result files,index and handoff;source changes committed before launch. No blanket git add,no unrelated changes,no force push.",
+      "status": "Keep training target attainment,rendering completeness,Release upload and Git delivery distinct in the job summary."
+    }
   },
   "history": {
     "R11_remains_paused": true,
@@ -518,6 +541,12 @@
       "user_instruction": "Run10h-or-longer training in AutoDL tmux;leave the conversation after stable startup and let logs record progress.",
       "replaces": "The prior rule requiring every background process to stop at the4hinteractive deadline.",
       "preserves": "Support correction/current multi-update phase,single D57 stream,original physical criteria and complete later Git/Release publication."
+    },
+    "automatic_publication_authorization": {
+      "source_plan_commit": "04b7522f9641f55f28d1ff3b0225e6ade5438f6b",
+      "user_instruction": "Add automatic rendering and automatic push so the later inspection is convenient.",
+      "replaces": "The prior rule requiring the next interactive visit to initiate rendering and publication.",
+      "server_execution_by_this_plan": false
     }
   },
   "reviewed_source_commit": "f8bfb4629a1d342f49a63a446ebd2a19151075d8",
@@ -562,7 +591,7 @@
     "task": "W34_JOINT_SUPPORT_LEARNING",
     "group": "PANN_PPO_S5",
     "seed": 0,
-    "objective": "Finish any pending support correction,launch the complete-loop training job in tmux,confirm actual sample/log progress and hand off. The authorized job can continue past this interactive window.",
+    "objective": "Finish pending support repair,prepare server-native GitHub/network access,and launch the full training→render→Release→Git pipeline. Confirm real sampling then hand off;no need to return just to initiate publication.",
     "initial_transitions": 256,
     "initial_updates": 1,
     "target_cumulative_transitions": 1280,
@@ -575,6 +604,8 @@
     "current_build": "S5-r21 until a real support correction is compiled/recorded.",
     "window_budget_s": 14400,
     "background_training_authorized": true,
-    "background_default_budget_s": 57600
+    "background_default_budget_s": 57600,
+    "automatic_postprocess": true,
+    "default_postprocess_budget_s": 14400
   }
 }
