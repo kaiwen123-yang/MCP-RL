@@ -1,14 +1,14 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
-## 当前入口：RAW首次更新已完成，下一窗口仅推进PANN
+## 当前入口：AutoDL 25vCPU推进PANN，单窗口最多4小时
 
 **第13轮RAW首次真实学习工程目标完成。** 现有R12 run中，RAW seed0已采256条真实转移（205条有效平移）、完成1次PPO更新、尾buffer0。四个真实会话共127.6484s，三次非足端接触、最后一次目标截断后发生日志异常。原loss标量缺失已保留，更新后checkpoint已保存。PANN尚未启动。[实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)
 
 全部四条轨迹均来自首次更新前策略，完整往返和有效材料E30/E60仍为0；较长运行不能称训练后改善。两条到达远端并返程的轨迹都曾侧出材料条带。RAW实际cap约.189914～.239870m/s，旧顶层constant/.25字段不代表真实动作。
 
-用户已选择RAW完成、发布、审查后再继续。**下一窗口只做PANN seed0累计256真实转移和一次更新，完整发布后停止。** 复用W1/r21/5workers和现有R12入口，独立初始化PANN，不重复RAW、不补做原loss、不自动串W4/长评价/租卡。单窗口最多4h，未完续接本组实际进度。
+用户于2026-10-30指定现有AutoDL实例：**25vCPU Xeon8470Q、RTX PRO6000 96GB、120GB内存，系统盘30GB/数据盘50GB。下一窗口必要迁移后直接做PANN seed0累计256真实转移和一次更新，完整发布后停止。** 首窗单流20MPC workers、Torch2、OMP/BLAS1，复用r21与原物理/算法设置；这是未实测起点，按真实采样耗时调整。全部工作最多4h，不重复RAW、不补造loss、不自动串W4或长评价。
 
-先读[AGENTS](AGENTS.md)和[主计划当前交接](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。启动wrapper已去掉上轮固定时间，必须显式传本窗口group/start/deadline。
+先读[AGENTS](AGENTS.md)和[主计划当前交接](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。wrapper现使用仓库相对目录与当前激活Python，workers和PANN权重路径读当前契约；显式传本窗口group/start/deadline。执行时读取用户正在补充的SSH/环境记录，不猜连接地址。本次已更新入口/资源计划，尚未声称在新服务器运行成功。
 
 **W1和RAW完整科研产物已交付。** [Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12)有246资产、2,229,777,826字节，包括5个视频、172个NPZ、4个checkpoint；源码/环境/小记录在Git。下一窗口追加全部实际PANN产物，沿用现有上传方式，不回下载、不在用户电脑另做归档。
 

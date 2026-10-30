@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-cd /home/fanyuan/projects/kaiwen-learning/terrain-memory-r12
-export PATH=/home/fanyuan/miniconda3/envs/kaiwen-learn/bin:$PATH
-export PYTHONPATH=$PWD/src:/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/work/terrain-memory/upstreams/mujoco_mpc-go2/python
+# Activate the recorded project environment before invoking this wrapper.
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." || exit
+export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
 unset LD_LIBRARY_PATH
-export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 export XLA_PYTHON_CLIENT_PREALLOCATE=false
 export JAX_ENABLE_X64=true
-# Pass this window's explicit group/start/deadline to the existing Python CLI.
-exec nice -n 10 python -u scripts/train_s1_go2_r12.py "$@"
+# Explicit group/start/deadline belong to this window; use the active Python.
+exec python -u scripts/train_s1_go2_r12.py "$@"
