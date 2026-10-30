@@ -2,12 +2,12 @@
 
 ## 当前交接（按实际交接只更新这6行）
 
-- 当前任务：W34后台作业job-20261030T155257Z已结束训练与自动后处理；训练达标=False，发布=published。
+- 当前任务：W34后台作业job-20261030T160418Z已结束训练与自动后处理；训练达标=False，发布=published。
 - 当前状态：本组实际累计256条/1次更新，目标1280/5；训练记录不代表正式E30资格。
-- 已完成：本job保留1个新attempt，视频可用0，资产已发布16/16；控制版S5-r22。
+- 已完成：本job保留1个新attempt，视频可用0，资产已发布16/16；控制版S5-r23。
 - 当前问题：最后物理原因None；待传0项，待处理视频0项，具体错误见本job摘要。
 - 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261030T155257Z.json；原Release，用户电脑不另归档。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261030T160418Z.json；原Release，用户电脑不另归档。
 
 ## 1. 实际进展与结论
 
