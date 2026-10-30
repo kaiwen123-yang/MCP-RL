@@ -134,11 +134,11 @@
     "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json"
   },
   "W34_preparation": {
-    "controller_build": "S5-r22",
+    "controller_build": "S5-r23",
     "based_on": "S5-r21",
     "upstream_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
     "build_script": "scripts/prepare_s1_go2_r12_support.py",
-    "build_wall_s": 365.4723587036133,
+    "build_wall_s": 156.46235370635986,
     "cmake": "3.22.1",
     "cxx": "g++11.4.0",
     "build_workers": 8,
@@ -156,6 +156,23 @@
     "persistent_server_gh_login": true,
     "git_author_configured": true,
     "independent_network_mode": "clash",
-    "publication_credentials_in_repository": false
+    "publication_credentials_in_repository": false,
+    "mujoco_dependency_commit": "088079eff0450e32b98ee743141780ed68307506",
+    "initial_failed_build": {
+      "failed_build": "S5-r22",
+      "failed_job": "job-20261030T155257Z",
+      "physical_steps": 0,
+      "new_transitions": 0,
+      "symptom": "Agent initialization SIGSEGV in GetCustomNumericData, called by R10ContactForce during mj_loadXML.",
+      "cause": "The first D57 rebuild selected official MuJoCo tag3.2.3 headers but reused the original library built at088079e. Both report323; mjModel layouts differ (including nflexelemedge,nC,eq_objtype).",
+      "correction": "Compile against the recorded original dependency commit088079eff0450e32b98ee743141780ed68307506; retain the original running shared library and the unchanged trunk-clearance residual.",
+      "inherited_source": "experiments/terrain_memory/s1-go2-wb-baseline.json:mujoco_dependency_commit",
+      "original_failure_preserved": true
+    },
+    "debugger_and_runtime_packages": [
+      "gdb=12.1-0ubuntu1~22.04.3",
+      "libc6:amd64=2.35-0ubuntu3.15",
+      "libc6-dev:amd64=2.35-0ubuntu3.15"
+    ]
   }
 }

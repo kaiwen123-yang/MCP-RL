@@ -45,9 +45,10 @@ def main():
     dump(output/"training-contract.json",contract)
     stream=PolicyStream(ROOT,a.group,a.seed,contract,output,checkpoint=a.resume)
     initial_transitions,initial_updates=stream.samples,stream.backend.update_count
-    if a.resume is None:
-        prefix=f"train-{a.group}-s{a.seed}-ep"
-        stream.episode=max([0]+[int(x.name[len(prefix):]) for x in output.parent.parent.glob(prefix+"*") if x.is_dir()])
+    # A failed initialization may retain an attempt without a newer checkpoint.
+    # Continue checkpoint counts, but never reuse that retained attempt's ID.
+    prefix=f"train-{a.group}-s{a.seed}-ep"
+    stream.episode=max([stream.episode]+[int(x.name[len(prefix):]) for x in output.parent.parent.glob(prefix+"*") if x.is_dir()])
     binary=ROOT/"work/r11-frozen"/build/"agent_server"
     os.environ["LD_LIBRARY_PATH"]=str(binary.parent/"lib")
     os.environ["MJPC_TASKS_DIR"]=str(binary.parent/"runtime-tasks")

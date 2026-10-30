@@ -36,5 +36,16 @@
   "assets_published": 16,
   "assets_expected": 16,
   "videos": [],
-  "git_delivery": "This report is prepared for this commit; its presence on GitHub records successful delivery. A push failure is retained locally as pending."
+  "git_delivery": "This report is prepared for this commit; its presence on GitHub records successful delivery. A push failure is retained locally as pending.",
+  "technical_failure_diagnosis": {
+    "failed_build": "S5-r22",
+    "failed_job": "job-20261030T155257Z",
+    "physical_steps": 0,
+    "new_transitions": 0,
+    "symptom": "Agent initialization SIGSEGV in GetCustomNumericData, called by R10ContactForce during mj_loadXML.",
+    "cause": "The first D57 rebuild selected official MuJoCo tag3.2.3 headers but reused the original library built at088079e. Both report323; mjModel layouts differ (including nflexelemedge,nC,eq_objtype).",
+    "correction": "Compile against the recorded original dependency commit088079eff0450e32b98ee743141780ed68307506; retain the original running shared library and the unchanged trunk-clearance residual.",
+    "inherited_source": "experiments/terrain_memory/s1-go2-wb-baseline.json:mujoco_dependency_commit",
+    "original_failure_preserved": true
+  }
 }

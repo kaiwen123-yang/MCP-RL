@@ -9,7 +9,7 @@ import subprocess
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-BUILD = "S5-r22"
+BUILD = "S5-r23"
 
 def main():
     prior = ROOT / "work/r11-frozen/S5-r21"
@@ -87,9 +87,12 @@ def main():
     begin = time.time()
     command = ["cmake", "-S", str(source), "-B", str(builddir), "-DCMAKE_BUILD_TYPE=Release",
         "-DMJPC_BUILD_TESTS=OFF", "-DMJPC_GRPC_BUILD_TESTS=OFF", "-DPYMJPC_BUILD_TESTS=OFF",
-        "-DBUILD_TESTING=OFF", "-DMJPC_BUILD_GRPC_SERVICE=ON", "-DMUJOCO_MPC_MUJOCO_GIT_TAG=3.2.3"]
-    log_path = source / "build-S5-r22.log"
+        "-DBUILD_TESTING=OFF", "-DMJPC_BUILD_GRPC_SERVICE=ON", "-DMUJOCO_MPC_MUJOCO_GIT_TAG=088079eff0450e32b98ee743141780ed68307506"]
+    log_path = source / f"build-{BUILD}.log"
     with log_path.open("w") as log:
+        log.write("The previous zero-step S5-r22 startup used release-tag headers against the retained pre-release library.\n")
+        log.write("This build restores the original MuJoCo dependency commit 088079eff0450e32b98ee743141780ed68307506.\n")
+        log.flush()
         subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=True)
         subprocess.run(["cmake", "--build", str(builddir), "--target", "agent_server", "-j", "8"],
                        stdout=log, stderr=subprocess.STDOUT, check=True)
