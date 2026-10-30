@@ -55,7 +55,7 @@ def main():
                 else:missing.append(row['path'])
             q.update(status='published' if not missing else 'publication_pending',pending_paths=missing,
                 pending_categories=['missing Release assets'] if missing else [],
-                scope='W1 and all actual RAW outputs; PANN deferred by user',
+                scope='W1, RAW and all actual independent PANN outputs retained in this R12 run',
                 asset_count=sum(x['status']=='uploaded' for x in q['assets']),
                 asset_bytes=sum(x['size'] for x in q['assets'] if x['status']=='uploaded'),
                 verification='One normal name/size/upload-state comparison; no full hash pass or downloads',checked_unix_s=time.time())

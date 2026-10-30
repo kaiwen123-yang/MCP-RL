@@ -2,12 +2,12 @@
 
 ## 当前交接（每窗口结束只更新这6行）
 
-- 当前任务：在用户现有AutoDL实例完成必要迁移，直接推进W3 PANN seed0首次累计256真实转移/一次PPO更新，发布后停止。
-- 当前状态：仓库已确认RAW256条/1次更新/205条有效平移/尾buffer0；PANN0条/0次；原材料E30/E60和完整往返仍为0；D57依赖与资产已配置；20workers下真实采集/更新尚未执行。
-- 已完成：W1及RAW全部实际产物已发布；R12入口已有真实采集/更新/恢复能力；已去掉旧主机路径及硬编码5workers，契约采用AutoDL单流20workers；D57项目环境、r21/Go2/MJPC接口/B ideal和独立Clash已配置。
-- 当前问题：PANN在线观察/恢复查询待实际运行；共同执行器仍有侧出条带和返程支撑失败；RAW原loss缺失、更新后策略尚未评价；迁移只处理真实运行暴露的问题。
-- 下一步：在D57项目目录执行source scripts/autodl_d57_env.sh后按新用户授权窗口启动；20MPC workers、Torch2、OMP/BLAS1，保留r21和原数值设置；不重跑RAW，不另做benchmark/恢复/哈希测试，单窗口全部工作≤4h。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL，环境work/envs/d57；实际配置见experiments/terrain_memory/compute-environment.json。沿用tm-s1-go2-local-readiness-r12及原Release；PANN独立目录/自身checkpoint；原RAW checkpoint与历史保留在5080和Release，未复制到D57。
+- 当前任务：W3 PANN_PPO_S5 seed0累计256真实转移、首次PPO更新及完整发布已完成；本窗口结束，不自动追加训练、控制修复或评价。
+- 当前状态：PANN256条均dt>0，其中208条有效平移、48条其他真实样本；更新1次、尾buffer0、物理125.0854s；12会话无完整材料穿越或往返。RAW原256/205有效/1次更新保持原记录。
+- 已完成：D57单流20MPC workers、Torch2、OMP/OpenBLAS/MKL各1；补齐实际启动所需libegl1和渲染所需imageio；原loss、rollout、全部checkpoint、12段视频与实际数组均已发布。采集/更新8092.13s，新增317个Release资产，pending=0。
+- 当前问题：8次非足端接触、2次材料域限越界、1次机身跌倒；最后一会话达到256条后外部截断。77条策略输入含非零PANN恢复特征；更新后策略未评价，不据此宣称收益或资格通过。
+- 下一步：已按本窗口边界停止；仅在新的用户任务中分析现有结果或安排后续工作。原RAW loss缺项保留，不重采RAW、不补造loss、不自动接长评价。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL，work/envs/d57；PANN自身checkpoint为outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt；[实际结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json)与[发布索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)。
 
 ## 1. 本轮实际结论
 

@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "AutoDL_PANN_first_update_planned",
+  "status": "AutoDL_PANN_first_update_complete_published",
   "protocol_revision": "autodl_single_pann_25vcpu_v5",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-10-30",
@@ -104,8 +104,13 @@
       "condition": "nominal",
       "target_cumulative_transitions": 256,
       "done": "256 cumulative real PANN transitions, one actual update with ordinary logs/checkpoint, all actual outputs published; otherwise preserve actual partial progress at deadline.",
-      "status": "planned_on_provided_AutoDL",
-      "stop_after": true
+      "status": "completed_published_stopped",
+      "stop_after": true,
+      "actual_transitions": 256,
+      "effective_transitions": 208,
+      "actual_updates": 1,
+      "tail_buffer": 0,
+      "loss_metrics_saved": true
     },
     {
       "id": "W4",
@@ -128,7 +133,7 @@
   ],
   "resources": {
     "host": "autodl-d57: AutoDL northwest B / D57",
-    "hardware_source": "User selection and D57 runtime inventory,2026-10-30; 20-worker workload remains unmeasured",
+    "hardware_source": "User-selected D57 runtime inventory; single-stream 20-worker collection executed on 2026-10-30.",
     "gpu": "1xRTX PRO 6000,96GB VRAM",
     "allocated_vcpu": 25,
     "cpu_model": "Intel Xeon Platinum8470Q",
@@ -150,7 +155,7 @@
     "maximum_environments": 1,
     "initial_training_concurrency": 1,
     "mpc_workers": 20,
-    "workers": "Both Python metadata and Agent --mjpc_workers read mpc_workers.20 is an unmeasured starting point; retain original optimizer iterations,candidate count,prediction nodes and physical/control clocks.",
+    "workers": "Both Python metadata and Agent --mjpc_workers read mpc_workers=20; actual first256 completed with original optimizer iterations, candidates, prediction nodes and clocks.",
     "torch_device": "cuda",
     "torch_threads": 2,
     "blas_threads": 1,
@@ -210,7 +215,7 @@
     "first_update_total_target": 256,
     "required_updates_per_stream": 1,
     "shares_actor_or_optimizer_between_groups": false,
-    "pann_runtime": "Torch CUDA worked on5080. AutoDL PANN operation has not yet been executed by this planning update. Wrapper uses active project Python and installed matching MPC client; read frozen weights from resources.pann_weights_path.",
+    "pann_runtime": "Executed frozen B ideal through the existing JAX GPU/x64 observer and recovery queries; PPO used Torch CUDA. Actual first256/one update completed on D57.",
     "recording": "All actual episodes retain complete existing recording and frequencies/schema,raw trajectories,physical/prediction/material chunks,transition/rollout/update data and checkpoints. No extra diagnostic platform.",
     "estimated_cost": {
       "reference": "Historical5080 RAW first256,four actual sessions; not an AutoDL or PANN speed estimate",
@@ -238,11 +243,7 @@
       "Mark sample-target/window truncation before buffer/GAE; physical terminal takes priority; do not count pending actions with no physical elapsed time."
     ],
     "next_runtime_work": [
-      "Read latest non-secret SSH/runtime handoff and reuse the provided instance/workspace. Keep existing r21 source and assets; fetch only required already-published dependencies.",
-      "Use the portable existing R12 CLI in the active project environment,with this window's actual start/deadline and group PANN_PPO_S5.",
-      "Read workers and frozen weights from this contract; current single-stream MPC20,Torch2,OMP/BLAS1. Keep planning work and original numerical/physical/PPO/reward settings.",
-      "Start independent seed0 unless actual PANN progress already exists,then continue its own checkpoint/cumulative target; never use RAW weights/samples or redo completed work.",
-      "Resolve concrete startup/runtime errors in the actual training path. Keep actual partial data,ordinary loss/features/timing and complete publication within4h."
+      "W3 first256/one update and publication are complete. Stop; any further sampling, control repair or evaluation requires a new user task."
     ],
     "pann_evidence": "Use ordinary rollout/episode logs for observer/query counts,extra wall time and the12 actual recovery-feature values. Report zero or uninformative features honestly; do not demand artificial nonzero values,read truth q/e or add a diagnostic framework.",
     "controller_change_during_current_window": false
@@ -404,6 +405,12 @@
     "objective": "Necessary AutoDL migration followed directly by independent PANN first256/one update,full publication,andstop within4h.",
     "RAW": "Completed256/1 retained; no RAW resampling,extra update,loss reconstruction or post-update evaluation in this window.",
     "automatic_next_task": false,
-    "server_execution_completed_by_this_plan": false
+    "server_execution_completed_by_this_plan": true,
+    "actual_result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json",
+    "actual_window_start_unix_s": 1793359623,
+    "actual_training_stop_unix_s": 1793367815.5115805,
+    "actual_hard_deadline_unix_s": 1793374023,
+    "publication_status": "published",
+    "stopped": true
   }
 }

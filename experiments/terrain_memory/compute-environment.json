@@ -46,7 +46,8 @@
       "protobuf": "7.36.1",
       "imageio-ffmpeg": "0.6.0",
       "ninja": "1.13.2",
-      "pybind11": "3.1.0"
+      "pybind11": "3.1.0",
+      "imageio": "2.37.0"
     },
     "system_tools": [
       "git",
@@ -58,7 +59,12 @@
       "g++",
       "rsync"
     ],
-    "package_dependency_check": "No broken requirements found"
+    "package_dependency_check": "No broken requirements found",
+    "system_packages_added_by_actual_training": {
+      "libegl1": "1.4.0-1"
+    },
+    "actual_startup_fix": "Initial D57 training import stopped before physics because the EGL dispatcher libEGL.so.1 was absent; installed libegl1 and continued the same authorized PANN window. Existing project Python/Torch and r21 binaries retained.",
+    "actual_render_fix": "First saved-trajectory render found imageio absent; installed imageio==2.37.0 and rerendered the same retained trajectory without physics."
   },
   "reused_runtime": {
     "source_host": "Existing RTX 5080 server; historical data retained there",
@@ -106,7 +112,8 @@
     "new_policy_updates": 0,
     "standalone_benchmarks": 0,
     "historical_raw_checkpoint_migrated": false,
-    "note": "Setup and package/runtime asset availability are recorded here. Existing RAW evidence belongs to its original RTX5080/Python3.11/Torch2.7 environment; no D57 closed-loop result is claimed."
+    "note": "Setup and package/runtime asset availability are recorded here. Existing RAW evidence belongs to its original RTX5080/Python3.11/Torch2.7 environment; no D57 closed-loop result is claimed.",
+    "scope": "Original setup-only record before the PANN window; actual execution is recorded below."
   },
   "secrets": "SSH addresses/passwords/private keys, subscription URLs, external proxy endpoints and node credentials are excluded from Git.",
   "execution_plan_reference": "ac1753d69d2e17408a157d273fc08313de13628c",
@@ -114,6 +121,16 @@
     "mpc_workers": 20,
     "torch_threads": 2,
     "blas_threads": 1,
-    "measured_in_real_training": false
+    "measured_in_real_training": true
+  },
+  "actual_PANN_window": {
+    "group": "PANN_PPO_S5",
+    "seed": 0,
+    "physical_sessions": 12,
+    "transitions": 256,
+    "effective_transitions": 208,
+    "updates": 1,
+    "collection_wall_s": 8092.132189273834,
+    "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json"
   }
 }

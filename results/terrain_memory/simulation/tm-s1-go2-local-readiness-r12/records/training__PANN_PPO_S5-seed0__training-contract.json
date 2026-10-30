@@ -1,0 +1,458 @@
+{
+  "run_id": "tm-s1-go2-local-readiness-r12",
+  "stage": "S1R12",
+  "status": "AutoDL_PANN_first_update_planned",
+  "protocol_revision": "autodl_single_pann_25vcpu_v5",
+  "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
+  "revision_date": "2026-10-30",
+  "supersedes_plan_commit": "3b673bcc35d9391caf5e1a8273432fb59ab39d60",
+  "plan": "docs/TERRAIN_MEMORY_PLAN.md",
+  "current_task": "W3_PANN_AUTODL",
+  "reuse": {
+    "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
+    "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
+    "source_reference_commit": "25947cfae9b2a48a872327bb63e9b36f76fe2dac",
+    "rule": "Reuse actual r21 fixes and original physical/observation/reward/PPO/formal-task settings. Do not inherit R11 paused-run paths/status,48h autonomous campaign,6-stream wait or mandatory formal-freeze gate for early engineering sampling."
+  },
+  "execution": {
+    "mode": "one_assigned_stream_per_window",
+    "maximum_window_wall_s": 14400,
+    "begin_wrapup_after_s": 12600,
+    "clock_starts": "First activity of this new window including reading; pass its actual timestamp explicitly to the existing CLI. Never reuse the previous window's absolute deadline.",
+    "includes": [
+      "reading",
+      "editing",
+      "building only if concretely necessary",
+      "actual training",
+      "analysis",
+      "rendering retained trajectories",
+      "publishing"
+    ],
+    "stop_when": "PANN first256/one update and publication complete, a concrete unresolved blocker, or4h from first activity. Do not chain RAW,W4,formal evaluation or provision additional instances.",
+    "automatically_chain_tasks": false,
+    "autonomous_48h_campaign_enabled": false,
+    "unfinished_task_rule": "A later user-started window continues only unfinished AutoDL setup,PANN sampling or publication from actual progress and PANN's own checkpoint/cumulative target. Never restart W1/RAW or completed PANN work to validate migration.",
+    "background_overrun_authorized": false,
+    "default_reads": [
+      "AGENTS.md",
+      "current handoff and task row in docs/TERRAIN_MEMORY_PLAN.md"
+    ],
+    "avoid_default_bulk_reads": [
+      "README history",
+      "entire R11 index",
+      "full logs/arrays",
+      "all old plans and papers"
+    ],
+    "opening_plan_max_lines": 5,
+    "handoff_max_lines": 6,
+    "new_handoff_document_required": false,
+    "within_task_chain_enabled": false,
+    "allowed_chain": [
+      "W3_PANN_AUTODL"
+    ],
+    "chain_shares_one_absolute_deadline": true,
+    "current_completed_prerequisite": {
+      "W1": "Local r21 execution complete; original material E30 remains unqualified.",
+      "RAW": {
+        "transitions": 256,
+        "effective_transitions": 205,
+        "updates": 1,
+        "tail_buffer": 0,
+        "loss_metrics_saved": false,
+        "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PPO_RAW_S5-seed0/resume-state-ep00006.pt"
+      },
+      "reuse_without_new_test": true
+    },
+    "compute_time_policy": "Use the user's already-provided AutoDL instance. Setup,actual sampling,rendering and publication share one4h budget; no background training/queue survives the window deadline."
+  },
+  "tasks": [
+    {
+      "id": "W123",
+      "goal": "Historical linked task stopped after RAW and complete publication; next task is independent W3.",
+      "phases": [
+        "reuse_W1",
+        "W2",
+        "publication"
+      ],
+      "done": "W1 and RAW completed; PANN not run in that window. Do not restart the linked chain.",
+      "status": "ended_after_RAW_at_user_request"
+    },
+    {
+      "id": "W1",
+      "goal": "Port necessary paths/build/assets to5080 and actually run r21 materialE30.",
+      "done": "One real E30 record. Repair ordinary build/runtime errors directly; report partial only at deadline or a concrete blocker that cannot be resolved with available access/resources. E30 success is not required to prove migration.",
+      "status": "completed"
+    },
+    {
+      "id": "W2",
+      "goal": "RAW seed0 actual first PPO update on the existing interactive candidate.",
+      "group": "PPO_RAW_S5",
+      "seed": 0,
+      "condition": "nominal",
+      "target_cumulative_transitions": 256,
+      "done": "Already completed256 real transitions and one update; missing original loss remains disclosed.",
+      "status": "completed",
+      "actual_transitions": 256,
+      "actual_updates": 1,
+      "loss_metrics_saved": false
+    },
+    {
+      "id": "W3",
+      "goal": "Use the provided AutoDL instance,restore only required runtime/assets,and connect frozen causal PANN to actual sampling and its first PPO update.",
+      "group": "PANN_PPO_S5",
+      "seed": 0,
+      "condition": "nominal",
+      "target_cumulative_transitions": 256,
+      "done": "256 cumulative real PANN transitions, one actual update with ordinary logs/checkpoint, all actual outputs published; otherwise preserve actual partial progress at deadline.",
+      "status": "planned_on_provided_AutoDL",
+      "stop_after": true
+    },
+    {
+      "id": "W4",
+      "goal": "One evidence-backed support-handoff correction, with directly relevant realE30.",
+      "done": "Actual result and earliest remaining mismatch; no parameter matrix.",
+      "status": "deferred_not_authorized_in_W3_window"
+    },
+    {
+      "id": "W5",
+      "goal": "Same-version qualifiedE30 then original materialE60; reuse existing same-version prerequisite.",
+      "done": "Actual complete mission or recorded concrete failure, not extra audit tasks.",
+      "status": "deferred_not_authorized_in_W3_window"
+    },
+    {
+      "id": "W6",
+      "goal": "Later AutoDL learning in user-started<=4h windows; improve useful samples/hour using actual task timing.",
+      "done": "Actual new samples/updates,normal checkpoint and specific resource/remaining-work conclusion.",
+      "status": "deferred_not_authorized_in_W3_window"
+    }
+  ],
+  "resources": {
+    "host": "autodl-d57: AutoDL northwest B / D57",
+    "hardware_source": "User selection and D57 runtime inventory,2026-10-30; 20-worker workload remains unmeasured",
+    "gpu": "1xRTX PRO 6000,96GB VRAM",
+    "allocated_vcpu": 25,
+    "cpu_model": "Intel Xeon Platinum8470Q",
+    "memory_GB": 120,
+    "system_disk_GB": 30,
+    "data_disk_GB": 50,
+    "image_record": {
+      "pytorch": "2.8.0",
+      "python": "3.12",
+      "os": "Ubuntu22.04",
+      "cuda": "12.8"
+    },
+    "use_existing_user_provided_instance": true,
+    "provision_additional_paid_resources": false,
+    "project_root_recommendation": "/root/autodl-tmp/MCP-RL",
+    "path_rule": "Use actual paths in the new SSH/runtime record if already created; do not move/recreate a working environment just to match a recommended path.",
+    "environment_policy": "Reuse image Python3.12.3 and Torch2.8.0+cu128 through the dedicated D57 venv with system-site-packages,as requested by the user. MuJoCo3.2.3,matching MPC Python client,Tianshou0.5.1 and PANN dependencies are installed. No new closed-loop run has been performed during setup.",
+    "environment_changes": "Only necessary changes in the project environment. Resolve concrete errors from the actual training launch; no environment matrix/import/smoke test stage.",
+    "maximum_environments": 1,
+    "initial_training_concurrency": 1,
+    "mpc_workers": 20,
+    "workers": "Both Python metadata and Agent --mjpc_workers read mpc_workers.20 is an unmeasured starting point; retain original optimizer iterations,candidate count,prediction nodes and physical/control clocks.",
+    "torch_device": "cuda",
+    "torch_threads": 2,
+    "blas_threads": 1,
+    "cpu_budget_rule": "20MPC workers plus about5vCPU of headroom for physical loop,JAX/Torch,RPC andI/O. This is a soft compute budget,not a guarantee that all framework threads total25 or25dedicated physical cores.",
+    "pann_weights_path": "work/assets/B_random1000--ideal-potentials.npz",
+    "jax_process_environment": {
+      "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+      "JAX_ENABLE_X64": "true",
+      "note": "Retain existing sharing and numerical settings. No memory stress test,new allocator or precision change to fill96GB."
+    },
+    "throughput_rule": "Use normal actual episode timing and total/effective transitions per wall hour. Distinguish first compilation and PANN cost from MPC cost. No separate worker scan or benchmark; do not promise linear CPU/GPU speedup.",
+    "later_parallel_layout": {
+      "status": "future_specific_task_only_not_implemented_or_started_in_W3",
+      "independent_streams": 2,
+      "mpc_workers_per_stream": 8,
+      "torch_threads_per_stream": 2,
+      "blas_threads_per_stream": 1,
+      "isolation": "Separate group/seed policy,optimizer,RNG,environment,output/checkpoint and per-stream deadline. Existing index flock and Agent automatic ports suffice; no extra lock/port framework.",
+      "shared_window_deadline": true,
+      "same_actor_vector_collector_required_now": false,
+      "expand_rule": "Use actual useful throughput and task demand. Do not automatically start6streams or make every process request25threads."
+    },
+    "python_environment": "work/envs/d57",
+    "compute_environment": "experiments/terrain_memory/compute-environment.json"
+  },
+  "learning": {
+    "candidate_can_start_before_E30_E60_pass": true,
+    "candidate_requires": "Correct initial stand, effective permitted actions, real TM02 loading and original causal/physical failure semantics.",
+    "active_streams": [
+      {
+        "group": "PANN_PPO_S5",
+        "seed": 0
+      }
+    ],
+    "cross_stream_wait": false,
+    "rollout_transitions": 256,
+    "first_update_target_per_assigned_stream": 256,
+    "mandatory_paired512_pilot": false,
+    "mandatory_repeat_pilot_after_every_candidate": false,
+    "mandatory_exit_restart_resume_drill": false,
+    "mandatory_parameter_reload_comparison": false,
+    "initial_acquisition_session_s": 60,
+    "initial_condition": "nominal",
+    "initial_curriculum_enabled": false,
+    "actor_dt_s": 0.5,
+    "cap_m_s": [
+      0.18,
+      0.25
+    ],
+    "pann": "Keep frozen B ideal and causal2ms observer; no true q/e input.",
+    "ordinary_update_resets_environment": false,
+    "explicit_task_end_rule": "If first256 or wall deadline is the declared end, mark external truncation before inserting the real final transition into buffer/GAE/update. True physical terminal has priority. Use actual pre-reset observation and do not add a failure/timeout bonus or penalty.",
+    "unfinished_buffer_rule": "Save valid tail,optimizer,RNG,normalization and counts during ordinary shutdown. Continue in a later actual training window; do not require a separate recovery exercise.",
+    "incomplete_environment_snapshot_rule": "Start a new physical session if full environment state was not saved. Record real boundaries and do not claim uninterrupted physics or fabricate missing successors.",
+    "evidence": "Use normal update logs,real trajectories and saved checkpoint. Do not replace real learning by mock tests or inflate results into convergence/benefit claims.",
+    "schedule": "Only PANN seed0 on the provided AutoDL instance in this<=4h window. Restore necessary runtime and start real training; independent initialization or PANN's own actual continuation. Publish and stop.",
+    "first_update_total_target": 256,
+    "required_updates_per_stream": 1,
+    "shares_actor_or_optimizer_between_groups": false,
+    "pann_runtime": "Torch CUDA worked on5080. AutoDL PANN operation has not yet been executed by this planning update. Wrapper uses active project Python and installed matching MPC client; read frozen weights from resources.pann_weights_path.",
+    "recording": "All actual episodes retain complete existing recording and frequencies/schema,raw trajectories,physical/prediction/material chunks,transition/rollout/update data and checkpoints. No extra diagnostic platform.",
+    "estimated_cost": {
+      "reference": "Historical5080 RAW first256,four actual sessions; not an AutoDL or PANN speed estimate",
+      "physical_s": 127.6483999998091,
+      "physical_session_wall_s": 6136.766442766966,
+      "slowdown": 48.075545347815854,
+      "transitions_per_physical_session_hour": 150.1768086817503,
+      "RAW256_session_h": 1.7046573452130462,
+      "is_PANN_wall_time_promise": false,
+      "excludes": "PANN first compilation,online observation/private queries,new fixes,rendering/upload"
+    },
+    "completed_reference_stream": {
+      "group": "PPO_RAW_S5",
+      "seed": 0,
+      "transitions": 256,
+      "updates": 1,
+      "policy_evaluated_after_update": false,
+      "loss_metrics_saved": false
+    },
+    "completed_entrypoint_adaptations": [
+      "Use existing r21 engineering candidate and W1 local paths, not R11 frozen_controller index.",
+      "Reuse original PPO settings and explicitly map R12 learning fields to the existing joint_learning interface.",
+      "Use R12 outputs and the single current window deadline, nominal,60s sessions,curriculum off,5workers.",
+      "Remove six-stream waiting and update actual counts after optimization.",
+      "Mark sample-target/window truncation before buffer/GAE; physical terminal takes priority; do not count pending actions with no physical elapsed time."
+    ],
+    "next_runtime_work": [
+      "Read latest non-secret SSH/runtime handoff and reuse the provided instance/workspace. Keep existing r21 source and assets; fetch only required already-published dependencies.",
+      "Use the portable existing R12 CLI in the active project environment,with this window's actual start/deadline and group PANN_PPO_S5.",
+      "Read workers and frozen weights from this contract; current single-stream MPC20,Torch2,OMP/BLAS1. Keep planning work and original numerical/physical/PPO/reward settings.",
+      "Start independent seed0 unless actual PANN progress already exists,then continue its own checkpoint/cumulative target; never use RAW weights/samples or redo completed work.",
+      "Resolve concrete startup/runtime errors in the actual training path. Keep actual partial data,ordinary loss/features/timing and complete publication within4h."
+    ],
+    "pann_evidence": "Use ordinary rollout/episode logs for observer/query counts,extra wall time and the12 actual recovery-feature values. Report zero or uninformative features honestly; do not demand artificial nonzero values,read truth q/e or add a diagnostic framework.",
+    "controller_change_during_current_window": false
+  },
+  "control_and_evaluation": {
+    "keep_original_robot_material_pd_torque_and_thresholds": true,
+    "physics_dt_s": 0.0002,
+    "control_hold_s": 0.002,
+    "logical_planning_dt_s": 0.02,
+    "prediction_horizon_s": 0.35,
+    "ladder": [
+      "E30",
+      "E60",
+      "E300",
+      "E600"
+    ],
+    "same_case_predecessor_required": true,
+    "same_version_qualification_survives_window_change": true,
+    "training_and_posthoc_prefixes_are_not_formal_qualification": true,
+    "automatically_run_extra_rigid_regression": false,
+    "additional_run_rule": "Only when it directly answers the current concrete failure/change; no unrelated matrix.",
+    "formal_mission_wall_rule": "Use actual cost to schedule within the current4h window. Do not automatically start an over-budget long mission or stitch interrupted portions into success.",
+    "current_window": "Keep r21 source and original route/material/reward/physics fixed. AutoDL worker count changes execution resources; record it normally. No controller/reward/precision/curriculum change in W3.",
+    "next_control_question": "After W3, inspect lateral strip exit and return support using actual trajectories. Route-progress reward currently does not itself certify original material traversal. Do not claim learned bypass or silently alter current comparison.",
+    "comparison_after_migration": "Old5080 RAW and AutoDL PANN first updates are engineering evidence,not a matched learning-benefit/runtime comparison. Later formal comparisons share host/runtime/controller/worker setting and original per-case staged qualification."
+  },
+  "process": {
+    "physical_start_hard_count_cap": null,
+    "repeat_identical_failure_without_new_evidence": false,
+    "routine_manual_hash_inventory_required": false,
+    "full_asset_redownload_verification_required": false,
+    "minimal_provenance": [
+      "Git commit",
+      "configuration name",
+      "checkpoint path",
+      "normal environment record",
+      "necessary real result",
+      "one asset list with names/sizes/URLs/status"
+    ],
+    "hash_use": "Existing automatic fields may remain; investigate a specific corruption/wrong-file problem only when evidence requires it. No new routine certification stage.",
+    "prohibited_extra_work": [
+      "unit/mock/smoke/import/shape test suites",
+      "generic defensive fallback",
+      "unrelated regression matrix",
+      "separate benchmark",
+      "repeated planning/review documents",
+      "forced restore drills",
+      "rerun physics solely to recreate a video or overwrite a retained failure",
+      "duplicated local archive after publication"
+    ],
+    "work_first_rule": "One short opening<=5lines,then setup/fix/actual sampling. No planning-only intermediate stage,extra reports,manual certification or routine restoration exercises."
+  },
+  "outputs": {
+    "compact_root": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
+    "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
+    "create_result_index_only_after_actual_execution": true,
+    "handoff": "Update only the six current-handoff lines in docs/TERRAIN_MEMORY_PLAN.md plus necessary normal run results.",
+    "publication": "W1 and RAW remain published. Upload all new AutoDL source/config/environment changes,ordinary logs,full videos,raw trajectories,generated array chunks,rollouts and checkpoints directly from the execution host to the same Git/Release. Reuse unchanged assets by URL.",
+    "unfinished_upload": "At4h preserve exact pending new paths/status and real partial training state; next window continues that task, never claims all uploaded before completion.",
+    "extra_archive_on_user_pc": false,
+    "preserve_normal_working_files_and_actual_history": true,
+    "release_tag": "tm-s1-go2-local-readiness-r12",
+    "complete_research_artifact_publication_required": true,
+    "required_categories": [
+      "all current source changes and relevant execution/render/publication scripts",
+      "resolved configuration and ordinary logs,including initialization/negative results",
+      "actual conda and pip dependency records,driver/runtime and launch/environment changes without credentials",
+      "full videos from every actual episode's saved trajectory,including failure/truncation",
+      "all retained raw robot trajectories and physical/prediction/material array chunks",
+      "all actual PPO transitions,rollouts,learning logs,checkpoints and valid resume tail",
+      "actual Go2 scene/XML/mesh,normalization and needed model assets not already publicly referenced; unchanged published assets use original links"
+    ],
+    "w1_catchup": {
+      "status": "published",
+      "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12",
+      "do_not_repeat_upload_or_redownload": true
+    },
+    "artifact_index": "Use existing result index for category,relative path,size,Git/ReleaseURL and upload status; no second audit document.",
+    "publication_check": "One normal comparison of expected artifact names/sizes with uploaded asset list; no full-repository hashing or redownload verification. Preserve any already-generated digest fields without extra certification work.",
+    "max_release_asset_bytes_exclusive": 2147483648,
+    "no_large_binary_in_regular_git_history": true,
+    "upload_packaging": "Only split/package as necessary for transfer on execution host; no extra PC mirror/archive after publication.",
+    "training_complete_does_not_imply_publication_complete": true,
+    "existing_publication_at_review": {
+      "source_commit": "4f18facb193c33628090f848986c37afb1844178",
+      "release_assets": 246,
+      "release_bytes": 2229777826,
+      "videos": 5,
+      "checkpoint_files": 4,
+      "pending_paths": []
+    },
+    "transfer_rule": "Use the transfer method that works on the new AutoDL host. Do not hardcode or rebuild the old workstation proxy; fix an actual upload failure only. Do not route through the user's PC for archiving.",
+    "storage_rule": "Keep repository,needed assets and outputs on the AutoDL data disk or the existing recorded workspace.50GB disk is distinct from120GB RAM/96GB VRAM. Publish each window; preserve unfinished outputs/checkpoints,do not silently delete research data or buy extra storage."
+  },
+  "history": {
+    "R11_remains_paused": true,
+    "rewrite_R11_counts_or_results": false,
+    "R12_counts_persist_across_windows": true,
+    "previous_full_assessment_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/402894f7a865a2905e651d45b6746521dcd6eef7/docs/TERRAIN_MEMORY_PLAN.md",
+    "R12_W1_complete_at_review": true,
+    "reviewed_W1_result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w1-S5-r21-E30-02.json",
+    "RAW_window_scope": {
+      "updated_utc": "2026-10-29T13:34:13Z",
+      "user_instruction": "Finish RAW and complete publication, then stop for user analysis before PANN.",
+      "active_streams": [
+        {
+          "group": "PPO_RAW_S5",
+          "seed": 0
+        }
+      ],
+      "target_real_transitions": 256,
+      "target_updates": 1,
+      "PANN_start_authorized_this_window": false,
+      "preserve_original_absolute_deadline": true,
+      "status": "RAW_complete_published_PANN_deferred_for_user_review",
+      "actual_transitions": 256,
+      "actual_updates": 1
+    },
+    "user_review_round": 13,
+    "RAW_reviewed_source_commit": "4f18facb193c33628090f848986c37afb1844178",
+    "RAW_first_update_complete": true,
+    "RAW_original_loss_missing_preserved": true,
+    "previous_W123_plan_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c7d6c1d3cb29d8ca75899b5326727d9f68cfb650/docs/TERRAIN_MEMORY_PLAN.md",
+    "deferred_earlier_support_hypothesis": {
+      "cadence_Hz": 2,
+      "duty": 0.55,
+      "scale_clearance_and_both_profile_times": 0.8181818181818182,
+      "interpretation": "Single hypothesis; reference speed scale preserved,clearance reduced and acceleration increased. Check actual support,not only nominal gait."
+    },
+    "pre_AutoDL_execution_resources": {
+      "host": "RTX5080",
+      "mpc_workers": 5,
+      "torch_threads": 2,
+      "blas_threads": 2,
+      "reference_commit": "3b673bcc35d9391caf5e1a8273432fb59ab39d60"
+    }
+  },
+  "reviewed_source_commit": "4f18facb193c33628090f848986c37afb1844178",
+  "literature": [
+    {
+      "url": "https://arxiv.org/abs/1707.06347",
+      "use": "Actual interaction and optimization alternate;256 here is an engineering target,not a convergence claim."
+    },
+    {
+      "url": "https://arxiv.org/html/2012.03094v3",
+      "section": "VI-H",
+      "use": "Optimizer-in-loop rollout can dominate cost;keep existingPPO and measure actual sampling,do not copy other modules'algorithms/runtime."
+    },
+    {
+      "url": "https://arxiv.org/html/1904.12306v2",
+      "section": "IV",
+      "use": "Compliant stance/contact consistency informs subsequent support repair,not a new prerequisite for first learning."
+    }
+  ],
+  "current_window_scope": {
+    "task": "W3_PANN_AUTODL",
+    "group": "PANN_PPO_S5",
+    "seed": 0,
+    "objective": "Necessary AutoDL migration followed directly by independent PANN first256/one update,full publication,andstop within4h.",
+    "RAW": "Completed256/1 retained; no RAW resampling,extra update,loss reconstruction or post-update evaluation in this window.",
+    "automatic_next_task": false,
+    "server_execution_completed_by_this_plan": false
+  },
+  "joint_learning": {
+    "ppo": {
+      "implementation": "existing standard Tianshou PPO core; no algorithm/platform replacement",
+      "hidden_sizes": [
+        64,
+        64
+      ],
+      "learning_rate": 0.0003,
+      "initial_std": 0.35,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip": 0.2,
+      "value_coef": 0.5,
+      "entropy_coef": 0,
+      "max_grad_norm": 0.5,
+      "epochs_per_update": 4,
+      "rollout_transitions": 256,
+      "minibatch_size": 64,
+      "device": "Resolve on authorized hardware once before training; use the same actor/critic device policy for both groups. A small PPO network need not be enlarged to occupy VRAM."
+    },
+    "actor_action": "single speed cap [.18,.25] m/s; .215+.035*sample.action, where existing sample.action is already tanh(raw); retain raw action/log_prob",
+    "shared_observation": "Retain R9 public proprioception/task phase/goals/strip and preceding1s at20Hz. Same schema across all training and formal30/60/300/600/optional durations: old finite-task flag and remaining-time channels always zero. Evaluator enforces the actual deadlines/criteria. No true material q/e.",
+    "pann": "Frozen B_random1000--ideal seed0 and original normalization; independent causal LearnedColumns world state, no true material q/e input",
+    "pann_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
+    "pann_features": "Preserve R9 2 ms causal observer, latest completed plan t+.20 s four footprints, private zero-load recovery at2/200/500 ms and12 area-weighted signed depressions. Shared public query positions/masks; RAW prediction channels zero. Match world keys, not array row indices; queries do not alter truth or observer.",
+    "on_policy_and_independence": "Separate parameters, optimizer, normalizers, seeds and environment/MPC/material/observer state for each stream. Collect each256-transition fragment under its fixed behavior policy; update only that stream and then continue its state. Do not mix other seeds or stale-policy fragments to fake on-policy data. Archive frozen evaluation normalizers with checkpoints.",
+    "bootstrap_rule": "True physical/material terminal: bootstrap0. Rollout cut: bootstrap actual successor, retain live environment. External60/300/600 acquisition truncation: bootstrap saved final pre-reset observation, stop GAE trace across reset. Record unmet curriculum promotion and technical interruption separately. Never bootstrap reset observation or fabricate physical failure. Keep distinct bootstrap and trace-continuation masks.",
+    "standard_target_transitions_per_stream": 256,
+    "standard_target_total_transitions": 256,
+    "cross_stream_wait": false,
+    "streams": 1,
+    "groups": [
+      "PANN_PPO_S5"
+    ],
+    "seeds": [
+      0
+    ],
+    "active_streams": [
+      {
+        "group": "PANN_PPO_S5",
+        "seed": 0
+      }
+    ],
+    "actor_dt_s": 0.5,
+    "shared_controller": "Existing S5-r21 engineering candidate; not formally qualified.",
+    "start_condition": "Correct initial stand, effective permitted actions, real TM02 loading and original causal/physical failure semantics.",
+    "curriculum_enabled": false,
+    "schedule": "Only PANN seed0 on the provided AutoDL instance in this<=4h window. Restore necessary runtime and start real training; independent initialization or PANN's own actual continuation. Publish and stop."
+  }
+}
