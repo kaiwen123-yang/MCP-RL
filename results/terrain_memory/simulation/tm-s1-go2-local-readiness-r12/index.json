@@ -1,6 +1,6 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
-  "status": "PANN_first_update_reviewed_continuation_planned",
+  "status": "joint_support_and_multi_update_phase_planned",
   "attempts": [
     {
       "attempt": "w1-S5-r21-E30",
@@ -1231,10 +1231,10 @@
     "run_deadline_unix_s": 1793371623,
     "hard_deadline_unix_s": 1793374023
   },
-  "protocol_revision": "pann_same_version_continuation_v6",
-  "current_task": "PANN_first_update_review_complete",
+  "protocol_revision": "joint_support_continuous_learning_v7",
+  "current_task": "W34_JOINT_SUPPORT_LEARNING",
   "training_transitions": 512,
-  "next_task": "W3_PANN_CONTINUE_256_to_512",
+  "next_task": "W34_JOINT_SUPPORT_LEARNING",
   "pre_runner_initialization_failures": [
     {
       "error": "Python MuJoCo loaded the frozen MPC library through global LD_LIBRARY_PATH: undefined symbol mj_jacDot",
@@ -6556,7 +6556,7 @@
       "check": "One normal name/size/upload-state comparison; no full hash pass or downloads"
     }
   },
-  "next_action": "Continue existing PANN seed0 from256/1to512/2 on unchanged D57/r21/20workers,using its own checkpoint. Publish all new artifacts within one<=4hwindow andstop.",
+  "next_action": "Confirm and correct the retained ep10 MPC non-foot-contact objective mismatch in the actual full loop; continue PANN seed0 toward1024new transitions/4new updates on a recorded controller across<=4hwindows,not stopping after each update. Publish all actual outputs.",
   "pann_review": {
     "reviewed_source_commit": "f8bfb4629a1d342f49a63a446ebd2a19151075d8",
     "source_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json",
@@ -6625,8 +6625,71 @@
       "rollout_transitions": 256,
       "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt",
       "controller_changed": false,
-      "server_execution_started": false
+      "server_execution_started": false,
+      "status": "superseded_before_execution",
+      "superseded_by": "W34_JOINT_SUPPORT_LEARNING"
     },
     "note": "This review does not rewrite previous window_outcome(RAW),PANN_first_update or actual attempts. New continuation has not run."
+  },
+  "joint_support_review": {
+    "reviewed_source_commit": "baf4584b868379450202405c3e8d868027bf1ead",
+    "actual_training_result_commit": "f8bfb4629a1d342f49a63a446ebd2a19151075d8",
+    "method": "Read existing source/ep10 trajectory,XML and prediction-000; no new server experiment or training.",
+    "new_training_runs": 0,
+    "evidence": {
+      "episode": "train-PANN_PPO_S5-s0-ep00010",
+      "prediction_asset": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00010__prediction-000.npz",
+      "actual_terminal_s": 6.561000000004997,
+      "geom_pair": [
+        0,
+        13
+      ],
+      "sphere_local_center_m": [
+        0.293,
+        0,
+        -0.06
+      ],
+      "sphere_radius_m": 0.047,
+      "collision_margin_m": 0.001,
+      "calculation": "base_z+(rotation(q)*sphere_local_center).z-radius; original floor z=0",
+      "selected_predictions": [
+        {
+          "origin_s": 6.2,
+          "min_sphere_bottom_m": -0.007475853242753447,
+          "first_margin_entry_s": 6.514
+        },
+        {
+          "origin_s": 6.3,
+          "min_sphere_bottom_m": -0.008619971862005374,
+          "first_margin_entry_s": 6.522
+        },
+        {
+          "origin_s": 6.54,
+          "min_sphere_bottom_m": -0.007465493219757216,
+          "first_margin_entry_s": 6.562
+        }
+      ],
+      "actual_terminal_sphere_bottom_m": 0.000363035290528238,
+      "finding": "Selected MPC trajectories permit trunk contact and subsequent recovery,while the real task terminates at first prohibited contact. Check actual frozen source for a missing/inactive/misscaled corresponding cost; not proof of the sole support cause."
+    },
+    "decision": {
+      "support_repair_in_current_phase": true,
+      "full_algorithm_loop_already_connected": true,
+      "pann_weights_frozen": true,
+      "new_transitions_target": 1024,
+      "new_updates_target": 4,
+      "initial_PANN_transitions": 256,
+      "initial_PANN_updates": 1,
+      "cumulative_PANN_target": 1280,
+      "cumulative_PANN_updates_target": 5,
+      "rollout_transitions": 256,
+      "stop_after_each_update": false,
+      "maximum_window_s": 14400,
+      "controller_build": "S5-r21 until a real support repair is built/recorded",
+      "new_build_sample_boundary": "Record actual parent checkpoint and phase initial counts; current tail0; retain old r21 data as historical.",
+      "separate_E30_admission_run_required": false,
+      "server_execution_started": false
+    },
+    "counts_and_existing_results_unchanged": true
   }
 }

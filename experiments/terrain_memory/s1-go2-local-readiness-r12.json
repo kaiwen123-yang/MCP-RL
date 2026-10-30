@@ -1,21 +1,22 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "PANN_first_update_reviewed_continuation_planned",
-  "protocol_revision": "pann_same_version_continuation_v6",
+  "status": "joint_support_and_multi_update_phase_planned",
+  "protocol_revision": "joint_support_continuous_learning_v7",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-10-30",
-  "supersedes_plan_commit": "f8bfb4629a1d342f49a63a446ebd2a19151075d8",
+  "supersedes_plan_commit": "baf4584b868379450202405c3e8d868027bf1ead",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
-  "current_task": "W3_PANN_CONTINUE",
+  "current_task": "W34_JOINT_SUPPORT_LEARNING",
   "reuse": {
     "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
     "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
     "source_reference_commit": "25947cfae9b2a48a872327bb63e9b36f76fe2dac",
-    "rule": "Reuse actual r21 fixes and original physical/observation/reward/PPO/formal-task settings. Do not inherit R11 paused-run paths/status,48h autonomous campaign,6-stream wait or mandatory formal-freeze gate for early engineering sampling."
+    "rule": "Reuse the working D57 full PANN-PPO-MPC loop and original physical/PPO/task semantics. First correct the evidenced MPC non-foot-contact objective mismatch if confirmed in the frozen source. Record the actual new build here after a real repair; do not label an unbuilt candidate as executed.",
+    "active_controller_build": "S5-r21"
   },
   "execution": {
-    "mode": "one_assigned_stream_per_window",
+    "mode": "one_integrated_phase_across_user_started_windows",
     "maximum_window_wall_s": 14400,
     "begin_wrapup_after_s": 12600,
     "clock_starts": "First activity of this new window including reading; pass its actual timestamp explicitly to the existing CLI. Never reuse the previous window's absolute deadline.",
@@ -28,10 +29,10 @@
       "rendering retained trajectories",
       "publishing"
     ],
-    "stop_when": "PANN reaches cumulative512 real transitions/2updates and new outputs are published,an actual unresolved blocker,or4h from first activity. No automatic control repair,RAW replay,formal evaluation or extra instances.",
+    "stop_when": "Within each <=4h window, work on the current support correction and then continuous full-loop training until the reserved wrap-up time, actual blocker or phase target. A normal 256-transition PPO update is not a stop or review gate.",
     "automatically_chain_tasks": false,
     "autonomous_48h_campaign_enabled": false,
-    "unfinished_task_rule": "Continue only this PANN stream's actual checkpoint and cumulative512 target in a later user-started<=4h window. Keep all existing samples/updates; do not replay completed training or stop because a physical-episode count reaches12.",
+    "unfinished_task_rule": "A later user-started <=4h window resumes this same phase, current controller and latest PANN checkpoint. Preserve actual samples/updates/tail and publication status; no fresh plan or replay of completed work.",
     "background_overrun_authorized": false,
     "default_reads": [
       "AGENTS.md",
@@ -47,9 +48,11 @@
     "opening_plan_max_lines": 5,
     "handoff_max_lines": 6,
     "new_handoff_document_required": false,
-    "within_task_chain_enabled": false,
+    "within_task_chain_enabled": true,
     "allowed_chain": [
-      "W3_PANN_CONTINUE"
+      "existing_evidence_and_one_support_correction",
+      "full_loop_training",
+      "publication"
     ],
     "chain_shares_one_absolute_deadline": true,
     "current_completed_prerequisite": {
@@ -73,7 +76,7 @@
         "post_update_physics": false
       }
     },
-    "compute_time_policy": "Use the user's already-provided AutoDL instance. Setup,actual sampling,rendering and publication share one4h budget; no background training/queue survives the window deadline."
+    "compute_time_policy": "Use the existing AutoDL D57 instance. Each user-started window includes reading, necessary repair/build, real training, rendering and publication. No process or queue may overrun that window's deadline."
   },
   "tasks": [
     {
@@ -128,32 +131,49 @@
       "group": "PANN_PPO_S5",
       "seed": 0,
       "condition": "nominal",
-      "status": "planned",
+      "status": "superseded_before_execution_by_W34",
       "initial_cumulative_transitions": 256,
       "initial_cumulative_updates": 1,
       "target_cumulative_transitions": 512,
       "target_cumulative_updates": 2,
       "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt",
-      "done": "Actual cumulative512/2,normal loss and full new artifacts published; or preserve actual partial state at4h.",
-      "stop_after": true
+      "done": "The one-extra-update-only plan was superseded; it was not executed by this review.",
+      "stop_after": false
     },
     {
       "id": "W4",
-      "goal": "Later,repair one identified outbound support/landing mismatch using retained nominal-support,actual force/pitch and prediction records; run a directly relevant real task.",
-      "done": "One evidence-backed correction and actual result. No speculative duty/weight sweep and no new general E30/E60 training gate.",
-      "status": "deferred_not_part_of_W3C"
+      "goal": "Correct the concrete MPC-selected non-foot-contact trajectory versus immediate physical termination mismatch inside the full PANN-PPO-MPC loop.",
+      "done": "One source-confirmed correction and actual full-loop sampling evidence; training itself is the relevant experiment, not a new mandatory E30 gate.",
+      "status": "merged_into_current_W34"
     },
     {
       "id": "W5",
       "goal": "Same-version qualifiedE30 then original materialE60; reuse existing same-version prerequisite.",
       "done": "Actual complete mission or recorded concrete failure, not extra audit tasks.",
-      "status": "deferred_not_authorized_in_W3_window"
+      "status": "later_formal_ladder_not_a_training_gate"
     },
     {
       "id": "W6",
       "goal": "Later AutoDL learning in user-started<=4h windows; improve useful samples/hour using actual task timing.",
       "done": "Actual new samples/updates,normal checkpoint and specific resource/remaining-work conclusion.",
-      "status": "deferred_not_authorized_in_W3_window"
+      "status": "future_scaling_after_current_joint_phase"
+    },
+    {
+      "id": "W34",
+      "status": "planned_not_executed",
+      "goal": "Integrated support-objective correction followed by multiple PPO updates in the real PANN-PPO-MPC-material loop across <=4h windows.",
+      "group": "PANN_PPO_S5",
+      "seed": 0,
+      "condition": "nominal",
+      "initial_cumulative_transitions": 256,
+      "initial_cumulative_updates": 1,
+      "target_cumulative_transitions": 1280,
+      "target_cumulative_updates": 5,
+      "new_transitions_on_recorded_controller": 1024,
+      "new_updates_on_recorded_controller": 4,
+      "stop_after_each_update": false,
+      "done": "Record the support change or actual unresolved finding, collect 1024 new real transitions and 4 new updates on a recorded controller version, retain full outputs. This is an initial trend milestone, not convergence or the total training allowance.",
+      "diagnostic_entry": "Use retained ep10 and actual frozen source, then the normal training entrypoint. A separate frozen-actor diagnostic run is optional only if it answers a specific remaining ambiguity."
     }
   ],
   "resources": {
@@ -180,7 +200,7 @@
     "maximum_environments": 1,
     "initial_training_concurrency": 1,
     "mpc_workers": 20,
-    "workers": "Keep the actual20worker D57/r21 setting during this same-version continuation; no worker scan or concurrent second stream.",
+    "workers": "Keep single-stream20MPC workers on D57; support repair may require one necessary build, not a worker/concurrency/GPU benchmark.",
     "torch_device": "cuda",
     "torch_threads": 2,
     "blas_threads": 1,
@@ -231,11 +251,11 @@
     ],
     "pann": "Keep frozen B ideal and causal2ms observer; no true q/e input.",
     "ordinary_update_resets_environment": false,
-    "explicit_task_end_rule": "At the cumulative512 sample target or window end,mark external truncation before buffer/GAE/update. True physical terminal has priority. Use actual pre-reset observations and no artificial failure bonus/penalty.",
+    "explicit_task_end_rule": "At the current phase cumulative sample target or window end,mark external truncation before buffer/GAE/update. True physical terminal has priority. Use actual pre-reset observations and no artificial failure bonus/penalty.",
     "unfinished_buffer_rule": "Save valid tail,optimizer,RNG,normalization and counts during ordinary shutdown. Continue in a later actual training window; do not require a separate recovery exercise.",
     "incomplete_environment_snapshot_rule": "Start a new physical session if full environment state was not saved. Record real boundaries and do not claim uninterrupted physics or fabricate missing successors.",
     "evidence": "Use normal update logs,real trajectories and saved checkpoint. Do not replace real learning by mock tests or inflate results into convergence/benefit claims.",
-    "schedule": "One same-version PANN seed0 continuation window:256to512 real transitions,1to2updates,then publish andstop. Natural physical failures start new real sessions; no fixed episode-count ceiling.",
+    "schedule": "One integrated support/learning phase across user-started<=4h windows. After the evidenced correction, collect1024 NEW transitions/4 NEW updates on the recorded controller, currently cumulative256to1280/1to5. Each ordinary256 update continues the live loop; no per-update human stop or12-episode cap.",
     "shares_actor_or_optimizer_between_groups": false,
     "pann_runtime": "Executed frozen B ideal through the existing JAX GPU/x64 observer and recovery queries; PPO used Torch CUDA. Actual first256/one update completed on D57.",
     "recording": "All actual episodes retain complete existing recording and frequencies/schema,raw trajectories,physical/prediction/material chunks,transition/rollout/update data and checkpoints. No extra diagnostic platform.",
@@ -249,7 +269,8 @@
       "reference_256_collection_h": 2.2478144970205096,
       "whole_window_to_publication_s": 8686.357312440872,
       "is_next_window_time_promise": false,
-      "note": "Use only to reserve wrap-up time; future post-update trajectories can change cost. No separate timing benchmark."
+      "note": "Reference only:1024new samples~8.99h pure collection; support repair,build,render,upload add time. Usually3-4 or more<=4h windows,not a per-window update promise or benchmark.",
+      "additional_1024_collection_h": 8.991257988082038
     },
     "completed_reference_stream": {
       "group": "PPO_RAW_S5",
@@ -267,20 +288,25 @@
       "Mark sample-target/window truncation before buffer/GAE; physical terminal takes priority; do not count pending actions with no physical elapsed time."
     ],
     "next_runtime_work": [
-      "Activate the already-working D57 environment and use the retained r21/20workers/frozenPANN runtime.",
-      "Use explicit --resume for this PANN stream and this window's actual start/deadline. Existing first256 are complete and must not be recollected.",
-      "The R12 entrypoint now maps target_cumulative_transitions_per_stream=512; rollout size remains256 and PPO math is unchanged.",
-      "Record ordinary post-update sampling,loss,features and actual invocation time/new counts; no optimizer/restore certification or independent evaluation task.",
-      "Publish all newly generated episodes/arrays/videos/logs/rollouts/checkpoints and update six-line handoff; stop at target or deadline."
+      "Reuse retained ep10 predictions and geometry to locate the actual MPC cost/termination mismatch in frozen r21 source; no fresh baseline simulation solely for diagnosis.",
+      "Make one necessary support-objective correction if source confirms it, and record the actual new reuse.active_controller_build. Do not relax physical non-foot-contact,material or torque criteria.",
+      "Use scripts/run_s1_go2_r12_training.sh with this PANN stream's latest --resume and this window's actual start/deadline. The training entrypoint reads active_controller_build for configuration,binary,arguments and records.",
+      "Continue PANN observer,policy decisions,MPC and real material execution throughout sampling. Frozen PANN inference and online MPC remain part of the complete algorithm while PPO optimizes its own parameters.",
+      "Collect toward the multi-update phase target without a stop at each256; retain ordinary loss,episode records,raw predictions and checkpoints. Physical failure is a real episode boundary,not automatic replanning paperwork.",
+      "At wrap-up publish all actual new artifacts and update the six-line handoff. Continue the same task from actual progress in the next user-started window."
     ],
     "pann_evidence": "Use ordinary rollout/episode logs for observer/query counts,extra wall time and the12 actual recovery-feature values. Report zero or uninformative features honestly; do not demand artificial nonzero values,read truth q/e or add a diagnostic framework.",
-    "controller_change_during_current_window": false,
-    "target_cumulative_transitions_per_stream": 512,
-    "target_cumulative_updates_per_stream": 2,
-    "additional_transitions_from_reviewed_checkpoint": 256,
-    "additional_updates_from_reviewed_checkpoint": 1,
+    "controller_change_during_current_window": "One evidence-backed support-objective correction is authorized; record a new engineering build if changed. Keep the resulting version stable during the multi-update observation phase unless a concrete failure requires another correction.",
+    "target_cumulative_transitions_per_stream": 1280,
+    "target_cumulative_updates_per_stream": 5,
+    "additional_transitions_from_reviewed_checkpoint": 1024,
+    "additional_updates_from_reviewed_checkpoint": 4,
     "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt",
-    "resume_mode": "Continue PANN seed0 actor,critic,optimizer,RNG,normalization and cumulative counts; do not initialize a fresh policy or use RAW data. Actual newer PANN checkpoint within this task takes precedence after a partial window."
+    "resume_mode": "Continue this PANN seed0's own actor,critic,optimizer,RNG,normalization and counts. Use latest actual checkpoint; do not initialize a new policy or use RAW data. Record any actual controller boundary without claiming old samples belong to the new build.",
+    "phase_initial_transitions": 256,
+    "phase_initial_updates": 1,
+    "controller_boundary_rule": "Current parent checkpoint has an empty tail. Warm-start its own actor/critic/optimizer/RNG/normalization; start new-controller sampling from an empty on-policy buffer. Preserve original counts and record build,parent checkpoint and phase-initial counts. If actual progress is newer, do not mix an older controller's pending buffer into a new-controller update or silently discard it; finish that batch on its recorded controller or preserve it as unconsumed evidence.",
+    "phase_count_rule": "Existing r21 samples remain historical. If the controller is repaired at the current256/1 boundary, report1280/5 cumulative AND1024/4 on the new build. If the actual boundary changes, set phase_initial counts to actual values and cumulative target to those counts+1024/+4."
   },
   "control_and_evaluation": {
     "keep_original_robot_material_pd_torque_and_thresholds": true,
@@ -300,10 +326,24 @@
     "automatically_run_extra_rigid_regression": false,
     "additional_run_rule": "Only when it directly answers the current concrete failure/change; no unrelated matrix.",
     "formal_mission_wall_rule": "Use actual cost to schedule within the current4h window. Do not automatically start an over-budget long mission or stitch interrupted portions into success.",
-    "current_window": "Keep current r21,D57,20workers,PPO,reward,normalization,features,geometry,thresholds and original clocks unchanged; collect first real behavior after update1.",
-    "next_control_question": "Current PANN failures are outbound material-entry/traversal support and impact,not return or side-exit. Retained ep10 shows front-lower trunk contact after pitching/support loss; ep5/6 hit strain domain. Diagnose earliest nominal/actual/predicted support mismatch before any single later control change.",
+    "current_window": "Support debugging stays in the full PANN-PPO-MPC loop. Correct one evidenced MPC objective/interface mismatch, then keep that controller version,PPO reward,physical model,thresholds,clocks and20workers fixed for the multi-update phase.",
+    "next_control_question": "ep10 selected MPC trajectories allow the front-lower trunk sphere to enter the actual non-foot-contact margin and recover,whereas the real executor terminates immediately at that contact. Check actual frozen source for missing/inactive/misscaled clearance/contact residual; correct the evidenced mismatch before blind additional sampling.",
     "comparison_after_migration": "Old5080 RAW and AutoDL PANN first updates are engineering evidence,not a matched learning-benefit/runtime comparison. Later formal comparisons share host/runtime/controller/worker setting and original per-case staged qualification.",
-    "training_gate": "Formal E30/E60 completion is not required to continue this already-working training loop. Training records are not formal stage qualification and two updates do not establish benefit."
+    "training_gate": "Formal E30/E60 completion is not a prerequisite for this integrated development/training phase. No separate E30 admission run is required; the actual full-loop training is the directly relevant experiment. Training records do not become formal qualification.",
+    "support_correction": {
+      "priority": "Align optimizer-selected support/clearance behavior with the unchanged real no-nonfoot-contact termination.",
+      "evidence_episode": "train-PANN_PPO_S5-s0-ep00010",
+      "selected_prediction_start_s": 6.2,
+      "first_predicted_contact_margin_entry_s": 6.514,
+      "prediction_horizon_s": 0.35,
+      "min_predicted_trunk_sphere_bottom_m": -0.00748,
+      "actual_terminal_s": 6.561,
+      "actual_terminal_sphere_bottom_m": 0.000363,
+      "collision_margin_m": 0.001,
+      "method": "Use the same actual body geometry/contact margin and an optimizer-compatible residual. Inspect existing cost decomposition and physical scaling; do not prescribe an arbitrary weight or sweep duty,torque and reward together.",
+      "limitation": "This is an evidenced objective mismatch,not proof of the sole cause or that one penalty guarantees success. Replanning/contact approximations remain; compare actual follow-up behavior.",
+      "experimental_check": "Use ensuing normal full-loop training to inspect selected predicted clearance,actual non-foot contact,material-domain exits,forward progress,landing force/pitch and torque saturation from existing recordings."
+    }
   },
   "process": {
     "physical_start_hard_count_cap": null,
@@ -335,8 +375,8 @@
     "compact_root": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "create_result_index_only_after_actual_execution": true,
-    "handoff": "Update only the six current-handoff lines plus actual normal results; compare new post-update collection with retained pre-update PANN episodes descriptively,not as a statistically established gain.",
-    "publication": "W1,RAW and PANN first256 are already fully published. Directly publish all new continuation source/config/environment changes,ordinary logs,full videos,raw trajectories,array chunks,rollouts and checkpoints from D57 to the same Git/Release. Reuse previous URLs.",
+    "handoff": "Update six current-handoff lines and normal actual results: current build/parent checkpoint,phase and window new counts,actual post-update behavior,timing,publication. No new review document per update.",
+    "publication": "Prior W1/RAW/PANN first256 remain published. Publish all actual new support source/build/config/env changes,ordinary logs,videos,trajectories,arrays,rollouts and checkpoints from D57 to the same Git/Release; reuse prior URLs.",
     "unfinished_upload": "At4h preserve exact pending new paths/status and real partial training state; next window continues that task, never claims all uploaded before completion.",
     "extra_archive_on_user_pc": false,
     "preserve_normal_working_files_and_actual_history": true,
@@ -445,37 +485,69 @@
       "RAW256_session_h": 1.7046573452130462,
       "is_PANN_wall_time_promise": false,
       "excludes": "PANN first compilation,online observation/private queries,new fixes,rendering/upload"
+    },
+    "superseded_second_update_only_plan": {
+      "source_commit": "baf4584b868379450202405c3e8d868027bf1ead",
+      "task": "W3_PANN_CONTINUE",
+      "target": 512,
+      "updates": 2,
+      "status": "Superseded in response to user review before this plan executed new server work.",
+      "reason": "One further update was an overly narrow phase boundary and should not postpone the evidenced support issue."
     }
   },
   "reviewed_source_commit": "f8bfb4629a1d342f49a63a446ebd2a19151075d8",
   "literature": [
     {
-      "url": "https://arxiv.org/abs/1707.06347",
-      "use": "Alternate actual environment sampling and optimization; first update alone cannot assess learned behavior.512is this window's cumulative target,not a convergence threshold."
+      "id": "TM02",
+      "url": "https://arxiv.org/abs/2401.14270",
+      "use": "Preserve causal viscoelastic history; keep the material model frozen during initial integrated control learning."
     },
     {
-      "url": "https://arxiv.org/html/2012.03094v3",
-      "section": "III-B/III-D/VI-H",
-      "use": "High-level learning acts through low-level executable control; optimizer-in-loop sampling often dominates cost. No wholesale algorithm/controller replacement."
+      "id": "TM28",
+      "url": "https://ddebenedittis.github.io/soft_bilinear_inverted_pendulum_astro/",
+      "use": "Planning and tracking should both respect soft-contact behavior; inspect their support/constraint consistency."
     },
     {
-      "url": "https://arxiv.org/html/1904.12306v2",
-      "section": "IV",
-      "use": "Soft-terrain stance must reflect contact deformation. Later compare actual,predicted and reference support before selecting one concrete repair; not a new training prerequisite."
+      "id": "TM29",
+      "url": "https://portalcientifico.upm.es/en/ipublic/item/10381051",
+      "use": "Study contact state,CoM support and swing/landing speed together; mud mechanics are not the project's recovering material."
+    },
+    {
+      "id": "TM30",
+      "url": "https://pure.qub.ac.uk/en/publications/terrain-adaptive-quadrupedal-locomotion-using-model-predictive-co/",
+      "use": "Recent integrated MPC/contact/impedance/model-correction example; simulated evidence,not a requirement to add SINDy."
+    },
+    {
+      "id": "TM13",
+      "url": "https://arxiv.org/abs/2604.04221",
+      "use": "Learned dynamics must actually affect MPC prediction to claim model coupling; future deeper integration,not a current rewrite."
+    },
+    {
+      "id": "TM31",
+      "url": "https://arxiv.org/abs/2510.12717",
+      "use": "Train RL with MPC in the loop over many sampling/update cycles; torque residual and GPU-parallel architecture differ from the current cap policy."
+    },
+    {
+      "id": "TM14",
+      "url": "https://arxiv.org/abs/2603.03138",
+      "use": "Useful persistent-memory organization for forward/backward locomotion; geometric memory does not itself model material loading/recovery."
     }
   ],
   "current_window_scope": {
-    "task": "W3_PANN_CONTINUE",
+    "task": "W34_JOINT_SUPPORT_LEARNING",
     "group": "PANN_PPO_S5",
     "seed": 0,
-    "objective": "Same-version PANN continuation256to512/updates1to2,full new publication,andstop within4h.",
+    "objective": "One evidence-based support correction plus actual continuous full-loop learning; this phase spans fresh<=4h windows.",
     "initial_transitions": 256,
     "initial_updates": 1,
-    "target_cumulative_transitions": 512,
-    "target_cumulative_updates": 2,
+    "target_cumulative_transitions": 1280,
+    "target_cumulative_updates": 5,
     "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt",
+    "stop_at_each_update": false,
     "automatic_next_task": false,
     "server_execution_completed_by_this_plan": false,
-    "RAW": "Retained256/1; no replay,loss reconstruction or additional RAW sampling in this window."
+    "RAW": "Preserve historical256/1; no RAW replay or loss reconstruction during this PANN engineering phase.",
+    "current_build": "S5-r21 until a real support correction is compiled/recorded.",
+    "window_budget_s": 14400
   }
 }

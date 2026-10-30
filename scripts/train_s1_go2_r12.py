@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R12 single-stream sampling on the retained r21 source and configured host."""
+"""R12 full-loop sampling on the recorded controller build and configured host."""
 import argparse, copy, json, os, time
 from run_s1_go2_r11 import configuration, arguments
 from s1_go2_r11_protocol import ROOT
@@ -28,9 +28,10 @@ def main():
         standard_target_total_transitions=contract["learning"]["target_cumulative_transitions_per_stream"],
         cross_stream_wait=False,streams=1,groups=[a.group],seeds=[a.seed],
         active_streams=[dict(group=a.group,seed=a.seed)],actor_dt_s=contract["learning"]["actor_dt_s"],
-        shared_controller="Existing S5-r21 engineering candidate; not formally qualified.",
+        shared_controller=f'Engineering candidate {contract["reuse"]["active_controller_build"]}; not formally qualified.',
         start_condition=contract["learning"]["candidate_requires"],curriculum_enabled=False,
         schedule=contract["learning"]["schedule"])
+    build=contract["reuse"]["active_controller_build"]
     workers=contract["resources"]["mpc_workers"]
     pann_weights=ROOT/contract["resources"]["pann_weights_path"]
     hard=a.window_start_unix+contract["execution"]["maximum_window_wall_s"]
@@ -45,10 +46,10 @@ def main():
     if a.resume is None:
         prefix=f"train-{a.group}-s{a.seed}-ep"
         stream.episode=max([0]+[int(x.name[len(prefix):]) for x in output.parent.parent.glob(prefix+"*") if x.is_dir()])
-    binary=ROOT/"work/r11-frozen/S5-r21/agent_server"
+    binary=ROOT/"work/r11-frozen"/build/"agent_server"
     os.environ["LD_LIBRARY_PATH"]=str(binary.parent/"lib")
     os.environ["MJPC_TASKS_DIR"]=str(binary.parent/"runtime-tasks")
-    dump(output/"stream-identity.json",dict(group=a.group,seed=a.seed,engineering_candidate="S5-r21",
+    dump(output/"stream-identity.json",dict(group=a.group,seed=a.seed,engineering_candidate=build,
         formal_qualification=False,normalization=stream.normalization,ppo=stream.backend.provenance(),
         workers=workers,pann_weights_path=str(pann_weights),
         protocol_revision=contract["protocol_revision"],initial_condition="nominal",curriculum_enabled=False,
@@ -58,18 +59,18 @@ def main():
         session=contract["learning"]["initial_acquisition_session_s"]
         stream.episode+=1
         name=f"train-{a.group}-s{a.seed}-ep{stream.episode:05d}"
-        c,r9=configuration("S5-r21","E60",.215,training_duration=session)
+        c,r9=configuration(build,"E60",.215,training_duration=session)
         r9["pann"]["weights_path"]=str(pann_weights)
         c.update(run_id=contract["run_id"],stage="S1R12",r12_contract=contract,
             campaign_budget=contract["execution"],r11_training=True,r11_policy=True,
             case_key=None,case_identity=None,predecessor_attempt=None,
             window=dict(task=contract["current_task"],started_unix_s=a.window_start_unix,run_deadline_unix_s=deadline,hard_deadline_unix_s=hard))
         c["outputs"]["root"]=contract["outputs"]["compact_root"]
-        args=arguments(name,"S5-r21","nominal","training","continuing_acquisition",workers=workers)
+        args=arguments(name,build,"nominal","training","continuing_acquisition",workers=workers)
         args.config=CONFIG
         args.cohort=contract["protocol_revision"]
         before=stream.samples
-        # This r21 AgentService permits one Init. A natural new physical
+        # The retained AgentService permits one Init. A natural new physical
         # session owns a new Agent; ordinary PPO updates keep the live Agent.
         with (output/"persistent-mpc.log").open("a") as log, Agent(task_id="Quadruped Flat",
                 server_binary_path=str(binary),extra_flags=[f"--mjpc_workers={workers}"],
@@ -77,7 +78,7 @@ def main():
             joint=PolicyMaterial(ROOT,r9,stream,0,session,agent=agent,full_recording=True)
             joint.training_deadline_path=small/"training-deadline.json"
             result=run(args,c,joint)
-        record=dict(episode=stream.episode,attempt=name,condition="nominal",stage=0,
+        record=dict(episode=stream.episode,attempt=name,controller_build=build,condition="nominal",stage=0,
             session_limit_s=session,transitions=stream.samples-before,reason=result["reason"],
             stage_status=result["stage_status"],simulation_s=result["simulation_s"],wall_s=result["wall_s"],
             completed_round_trips=result["completed_round_trips"],
@@ -90,7 +91,7 @@ def main():
             streams=idx.setdefault("training_streams",{})
             streams[f"{a.group}-seed{a.seed}"]=dict(group=a.group,seed=a.seed,actual_transitions=stream.samples,
                 updates=stream.backend.update_count,tail_buffer=len(stream.buffer),episodes=stream.episode,
-                physics_s=stream.physics_s,output=str(output.relative_to(ROOT)),
+                physics_s=stream.physics_s,controller_build=build,output=str(output.relative_to(ROOT)),
                 checkpoint=str((output/f"resume-state-ep{stream.episode:05d}.pt").relative_to(ROOT)))
             idx.update(current_task=contract["current_task"],protocol_revision=contract["protocol_revision"],status=f"{a.group}_training",
                 training_runs=len(streams),training_transitions=sum(x["actual_transitions"] for x in streams.values()),
@@ -102,6 +103,11 @@ def main():
         unupdated_fragment=len(stream.buffer),physics_s=stream.physics_s,session_records=stream.session_records,
         target=stream.target,continuous_environment_snapshot=False,
         invocation_started_unix_s=invocation_started_unix_s,invocation_wall_s=time.time()-invocation_started_unix_s,
+        controller_build=build,
+        phase_initial_transitions=contract["learning"]["phase_initial_transitions"],
+        phase_new_transitions=stream.samples-contract["learning"]["phase_initial_transitions"],
+        phase_initial_updates=contract["learning"]["phase_initial_updates"],
+        phase_new_updates=stream.backend.update_count-contract["learning"]["phase_initial_updates"],
         initial_transitions=initial_transitions,new_transitions=stream.samples-initial_transitions,
         initial_updates=initial_updates,new_updates=stream.backend.update_count-initial_updates,
         reason="target_reached" if stream.samples>=stream.target else "deadline_or_technical_stop",

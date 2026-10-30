@@ -2,19 +2,21 @@
 
 **默认计算位置（2026-10-30 起）：AutoDL 西北 B 区 D57，SSH 别名 `autodl-d57`。** 后续训练、仿真和项目计算统一使用该实例。RTX PRO 6000 96GB ×1、25 vCPU、120GB 内存；[实际环境与复用来源](experiments/terrain_memory/compute-environment.json)。
 
-## 当前入口：PANN首次学习已完成，下一窗口同版续训256→512
+## 当前入口：完整链路支撑联调＋跨窗口多次PPO更新
 
-**最新D57轮完成PANN_PPO_S5 seed0的256条真实转移（208条有效平移）和第一次PPO更新。** 12个真实会话累计125.0854s，原loss已保存、尾buffer0、全部新增产物已发布。RAW历史256条/205有效/1次更新保持原记录。[PANN实际结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json) · [实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)
+**最新实际成果仍为D57 PANN_PPO_S5 seed0的256条真实转移（208有效）和1次PPO更新，尾buffer0；RAW历史256/205有效/1更新保留。** PANN首次12个真实会话125.0854s均在更新前，原loss和全部产物已发布；本次计划修订没有启动新的服务器训练。[PANN实际结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json) · [实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)
 
-12个会话全部发生在首次更新前：8次机身非足端接触、2次材料域限、1次跌倒、1次目标截断；没有完整材料贯穿/往返或正式E30/E60资格。77条输入含非零PANN恢复特征，说明信号已进入策略，不能据此声称收益。当前卡点在去程材料进入/穿越的支撑与冲击；本轮没有正式侧出或返程，不套用旧RAW的失败解释。
+当前PANN观察→PPO限速→MPC→Go2/材料反馈已经连通；联合联调不要求同时解冻所有模型。PANN仍冻结，PPO负责学习，MPC在线优化；PANN尚未进入每个MPC候选的完整材料动力学。RAW是对照组，不是需要拼入的算法模块。
 
-**下一窗口直接从本组checkpoint续采累计256→512、更新1→2，完整发布后停止。** 保持D57/r21/20workers、原PPO/奖励/物理/归一化与因果观察，不重采首批或RAW，不先追加E30门禁。新增256条提供第一次更新后的真实行为；4h包含全部工作，通常3.5h收尾，未完按真实进度续接。
+**支撑问题恢复为当前主线。** ep10的既有MPC预测在6.20s已选中会于6.514s进入躯干接触margin的轨迹，并允许触地后恢复；真实在6.561s因相同非足接触立即终止。先用实际冻结源码核对并纠正这一控制目标错配，再直接在完整链路中训练；不先增加独立E30准入试验，不以更多更新代替控制修正。
 
-实际采集吞吐113.89条/h，运行MPC规划占70.86%，PANN观察＋查询占8.41%；先重写GPU查询不解决主要耗时。资源配置继续单流20MPC workers、Torch2、OMP/BLAS1，复用已运行的Python3.12.3项目环境。
+**取消“只续到第二次更新就停”的安排。** 首个跨窗口里程碑为同一记录控制版新增1024条/4次更新，当前起点对应累计1280条/5次。每256条更新后继续；四小时是单窗口墙钟边界，不是训练总额度。按已测113.89条/h，纯采样参考约8.99h，另加修正、编译与发布，分多个新窗口接续。
 
-先读[AGENTS](AGENTS.md)和[主计划当前交接](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。训练入口已改为明确累计目标512，每个rollout仍256；--resume本组ep00012或本任务更新的实际checkpoint，并传本窗口start/deadline。用本次invocation新增计数与耗时报吞吐，避免旧collection.wall_s包含跨窗停机。
+先读[AGENTS](AGENTS.md)与[主计划顶部6行/第4节](docs/TERRAIN_MEMORY_PLAN.md)，按[当前契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)执行。训练入口已支持契约中的active_controller_build；实际修正后记录新build和空buffer起点，沿用本组最新checkpoint，不把旧版数据当新版，不重采首批或RAW。保留20MPC workers、Torch2、OMP/BLAS1和现有D57环境。
 
-[Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12)已有563资产/3,742,547,022字节，本轮新增317资产及12段视频，pending为空。下一窗口完整追加全部新源码、环境变化、视频、原始轨迹、大数组、rollout和checkpoint；从D57直接发布，不下载回用户电脑额外归档。正式评价仍按同版E30→E60→E300→E600单独认定。
+[论文清单](literature/terrain_memory_sources.json)新增4篇2024—2026相关一手来源，并更新2篇既有论文的当前用途，分别约束软地支撑、控制/学习联合执行与记忆解释，明确仿真、真机和预印本边界。不是新一轮论文复现任务。
+
+[Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12)现有563资产/3,742,547,022字节/pending0。新增源码、环境记录、全部视频、轨迹、大数组、rollout和checkpoint继续从D57直接发布；不在用户电脑另做归档。正式评价仍为同版E30→E60→E300→E600，训练成功与正式资格分开记录。
 
 ## D57 环境与联网
 
@@ -45,7 +47,7 @@ source scripts/autodl_network.sh pc
 
 ## 历史说明
 
-以下保留R11及更早入口和结果原文。历史文字中的“当前”“本轮”、预算与门禁只适用于对应run；当前任务采用本页顶部的独立PANN窗口与最多4小时规则。[R11原计划](https://github.com/kaiwen123-yang/MCP-RL/blob/25947cfae9b2a48a872327bb63e9b36f76fe2dac/docs/TERRAIN_MEMORY_PLAN.md)和全部实际结果保留。
+以下保留R11及更早入口和结果原文。历史文字中的“当前”“本轮”、预算与门禁只适用于对应run；当前任务采用本页顶部的完整链路联调阶段与单窗口最多4小时规则。[R11原计划](https://github.com/kaiwen123-yang/MCP-RL/blob/25947cfae9b2a48a872327bb63e9b36f76fe2dac/docs/TERRAIN_MEMORY_PLAN.md)和全部实际结果保留。
 
 ## 历史 R11：材料执行与阶梯评价
 

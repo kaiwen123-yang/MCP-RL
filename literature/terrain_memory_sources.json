@@ -215,7 +215,18 @@
         "继续复用解析机器人动力学，只增广本任务必要的材料状态和接触闭合关系",
         "记录材料状态推进、候选展开、MPC 和控制输出的实际整链路耗时，区别优化频率与模型离散时间"
       ],
-      "scope_note": "原方法以残差 Koopman 预测与凸 QP 为核心，并报告 Go1/Jetson Xavier NX 实验；本项目未复现该算法，不采用其性能数字作为 Go2/NX 保证。本文只借鉴模型组织与计算口径，不新增 Koopman、完整机器人神经世界模型或另一套控制框架。"
+      "scope_note": "原方法以残差 Koopman 预测与凸 QP 为核心，并报告 Go1/Jetson Xavier NX 实验；本项目未复现该算法，不采用其性能数字作为 Go2/NX 保证。本文只借鉴模型组织与计算口径，不新增 Koopman、完整机器人神经世界模型或另一套控制框架。",
+      "current_joint_review": {
+        "reviewed_utc": "2026-10-30",
+        "title": "RK-MPC: Residual Koopman Model Predictive Control for Quadruped Locomotion in Offroad Environments",
+        "year": 2026,
+        "publication_status": "arXiv预印本：2026-04-05提交，2026-04-07修订；已核对页面未提供正式发表信息。",
+        "url": "https://arxiv.org/abs/2604.04221",
+        "primary_project_or_doi": "https://doi.org/10.48550/arXiv.2604.04221",
+        "method_verified": "已读arXiv摘要：以提升坐标中的线性残差预测修正名义动力学，并把残差模型嵌入凸QP形式的MPC；报告Gazebo和Go1真机实验及机载500Hz控制。",
+        "application_to_current_stage": "提醒联调必须追踪学习模型输出如何实际影响控制决策与物理结果。当前先修复已定位的MPC目标错配，并继续同版PANN—PPO—MPC链路；不立即更换为Koopman模型。",
+        "limitations": "不是PPO联合训练方案；越野接触扰动与草、碎石、雪、冰验证不等于持久黏弹恢复验证。500Hz属于论文系统，不能作为本项目吞吐承诺。核对范围为摘要，未复现。"
+      }
     },
     {
       "id": "TM14",
@@ -231,7 +242,18 @@
         "后续记忆 RL 比较对齐可获得的历史、空间和任务信息，不能仅因出现地形记忆/返程字样就判断创新重复",
         "借鉴固定大小记忆状态与循环推理的部署组织，区分仿真训练真值和实际可部署输入"
       ],
-      "scope_note": "原文以向前视觉形成几何记忆并支持倒退通过台阶/沟隙，部署平台为 Lite3/RK3588；不等于已建立踩踏导致的材料内状态演化，也不据此断言其合理适配不能解决本任务。原文特权 Critic 仅用于训练，不能直接作为本项目实机 MPC 的可调用终端价值；若部署 Critic，它的输入必须来自实际估计或可计算预测。只作横向对照与方法借鉴，不新增技能/导航支线或全文复现门槛。"
+      "scope_note": "原文以向前视觉形成几何记忆并支持倒退通过台阶/沟隙，部署平台为 Lite3/RK3588；不等于已建立踩踏导致的材料内状态演化，也不据此断言其合理适配不能解决本任务。原文特权 Critic 仅用于训练，不能直接作为本项目实机 MPC 的可调用终端价值；若部署 Critic，它的输入必须来自实际估计或可计算预测。只作横向对照与方法借鉴，不新增技能/导航支线或全文复现门槛。",
+      "current_joint_review": {
+        "reviewed_utc": "2026-10-30",
+        "title": "Look Forward to Walk Backward: Efficient Terrain Memory for Backward Locomotion with Forward Vision",
+        "year": 2026,
+        "publication_status": "2026-03-03 arXiv预印本；作者注明Accepted for 2026 IEEE International Conference on Robotics and Automation (ICRA)。",
+        "url": "https://arxiv.org/abs/2603.03138",
+        "primary_project_or_doi": "https://doi.org/10.48550/arXiv.2603.03138",
+        "method_verified": "已读arXiv摘要：前进时由前向深度视觉和本体信息写入关联记忆，倒退时取回；采用delta-rule选择性更新，部署时每步计算量及记忆状态大小固定，报告仿真和真实机器人实验。",
+        "application_to_current_stage": "用于区分往返任务中的持续记忆与短时观测历史。项目材料状态应在跨足、跨步及返程时按实际接触和时间演化；当前支撑联调不应误清材料状态，也无需为此新增视觉记忆网络。",
+        "limitations": "论文记忆主要服务于前视地形几何与倒退避障，不是受压材料的黏弹恢复状态；不能作为本项目材料记忆有效性的证据。核对范围为摘要与作者接收说明，未复现。"
+      }
     },
     {
       "id": "TM15",
@@ -717,6 +739,50 @@
           "mechanism": "结构化动作通道消融在训练和评测中均固定对应通道，并为各消融重新训练策略，使保留通道有机会适应；仅在评测时删除输入或通道不能等价地证明该模块对可训练系统的必要性。"
         }
       ]
+    },
+    {
+      "id": "TM28",
+      "title": "Soft Bilinear Inverted Pendulum: a Model to Enable Locomotion with Soft Contacts",
+      "year": 2025,
+      "publication_status": "IEEE Transactions on Systems, Man, and Cybernetics: Systems；作者记录为2024-12-04在线发表，2025年卷期。",
+      "url": "https://ddebenedittis.github.io/soft_bilinear_inverted_pendulum_astro/",
+      "primary_project_or_doi": "https://doi.org/10.1109/TSMC.2024.3504342",
+      "method_verified": "已读作者项目的摘要与方法说明：上层MPC运动规划采用软双线性倒立摆模型，下层全身跟踪控制也显式考虑软接触；报告多机器人仿真和SOLO12软地真机实验。",
+      "application_to_current_stage": "支持在完整链路内处理预测、支撑规划与执行的一致性。当前优先修复ep10中MPC允许预测躯干触地后恢复、而真实环境立即终止的目标错配，再在同一版本连续采样与更新。此具体修复来自本项目证据，并非论文结论。",
+      "limitations": "不是PANN/PPO框架，未证明跨足或返程的持久黏弹材料记忆；不能把其软接触模型或性能直接移植。核对范围为作者项目内容，未复现论文。"
+    },
+    {
+      "id": "TM29",
+      "title": "Walking in Mud: Modeling, Control, and Experiments of Quadruped Locomotion",
+      "year": 2025,
+      "publication_status": "IEEE/ASME Transactions on Mechatronics，2025年期刊论文；作者机构记录的在线日期为2025-06-06。",
+      "url": "https://portalcientifico.upm.es/en/ipublic/item/10381051",
+      "primary_project_or_doi": "https://doi.org/10.1109/TMECH.2025.3560588",
+      "method_verified": "已读作者机构摘要及机构收录论文片段：在Go1真泥地上比较六个控制器版本，组合缓行步态、足与基底接触检测、模型驱动质心定位和摆腿速度监测。",
+      "application_to_current_stage": "把支撑问题放回整机闭环：结合接触状态、质心运动和摆腿时序分析失败，避免只增加高层限速更新却没有改变实际失撑机制。完成目标错配修复后，使用同版连续训练中的轨迹判断收益。",
+      "limitations": "泥地包含屈服、耗散和拔足吸附，不等同本项目黏弹恢复；其缓行步态不能直接替换目标步态。论文的六个控制器版本也不是本项目训练次数上限。未复现实验。"
+    },
+    {
+      "id": "TM30",
+      "title": "Terrain-adaptive quadrupedal locomotion using model predictive control with impedance control and SINDy model enhancement",
+      "year": 2026,
+      "publication_status": "International Journal of Robust and Nonlinear Control，2026-08-14提前在线发表；作者机构标记为同行评审期刊论文。",
+      "url": "https://pure.qub.ac.uk/en/publications/terrain-adaptive-quadrupedal-locomotion-using-model-predictive-co/",
+      "primary_project_or_doi": "https://doi.org/10.1002/rnc.70700",
+      "method_verified": "已读作者机构摘要：MPC结合自适应阻抗、导纳、四状态接触检测和SINDy角速度动力学修正；验证范围为PyBullet中的坡面、顺应性表面及轨迹跟踪仿真。",
+      "application_to_current_stage": "支持接触、力跟踪、模型修正协同调试。用于解释为何当前应修复支撑和控制目标错配，再继续完整链路训练；不据此新增SINDy模块或复现任务。",
+      "limitations": "已核对来源仅报告仿真，不能表述为真机验证；未证实跨足及返程材料记忆。各模块收益不能推导为本项目的预期改善幅度。核对范围为摘要，未复现。"
+    },
+    {
+      "id": "TM31",
+      "title": "Residual MPC: Blending Reinforcement Learning with GPU-Parallelized Model Predictive Control",
+      "year": 2025,
+      "publication_status": "2025-10-14 arXiv预印本；作者页面注释为TRO submission preprint，不能据此称为已接收。",
+      "url": "https://arxiv.org/abs/2510.12717",
+      "primary_project_or_doi": "https://doi.org/10.48550/arXiv.2510.12717",
+      "method_verified": "已读摘要及正文的架构和计算部分：GPU并行MPC处于RL训练闭环内，策略与MPC在100Hz下运行并在扭矩层融合残差；研究平台为MIT Humanoid，含真机验证。",
+      "application_to_current_stage": "支持在实际MPC闭环中连续采样、更新和观察学习趋势。当前同版新增1024样本、四次更新、跨不超过四小时窗口执行，是本项目的工程预算，不是论文给出的充分训练量或收敛保证。",
+      "limitations": "研究对象是人形机器人；扭矩残差的控制权限远大于本项目2Hz速度上限。不能直接移植训练预算、性能或GPU并行实现，也不要求下一窗口重写GPU MPC。仅核对相关正文，未复现。"
     }
   ],
   "upstream": {
@@ -783,5 +849,6 @@
       "scope_note": "先用相同初态、冻结plan及统一ZOH输入辨别数值/接触差异，再据完整任务评价。未来真实闭环采用不同反馈/重规划动作，不能拿其远期差值单独归因于动力学。新数值候选尚未运行；不从文档推荐推导本项目必然成功、精确等价或NX实时。"
     }
   ],
-  "execution_scope_note": "旧条目中“当前”“本轮”“不启动训练”等表述保留其原访问/选择日期及所述阶段的历史适用范围，不构成对R9的当前限制。R9按各条目的r9_application、当前AGENTS.md及docs/TERRAIN_MEMORY_PLAN.md第5.10节执行，已授权在冻结S3的真实闭环中从零训练标准PPO；旧研究事实与历史结果不改写。"
+  "execution_scope_note": "旧条目中“当前”“本轮”及阶段限制按各自历史日期理解。当前R12在D57执行完整PANN-PPO-MPC支撑联调和跨≤4h窗口连续学习，以AGENTS.md与docs/TERRAIN_MEMORY_PLAN.md顶部及第4节为准。本次新增TM28–TM31，并更新既有TM13/TM14当前用途，记录一手来源、实际阅读范围与适用边界；不等于完成复现，也不构成额外阅读/测试门槛。",
+  "last_updated": "2026-10-30"
 }

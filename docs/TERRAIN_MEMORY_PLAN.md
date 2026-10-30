@@ -1,19 +1,19 @@
-# S1 最新D57轮复盘与下一窗口：PANN同版续训256→512
+# S1：完整链路支撑联调与连续多次PPO更新
 
 ## 当前交接（每窗口结束只更新这6行）
 
-- 当前任务：最新PANN首次学习审查完成；下一窗口只在D57从PANN自身checkpoint续采256→512条，完成第2次PPO更新并完整发布。
-- 当前状态：RAW256/205有效/1更新与PANN256/208有效/1更新均成立，尾buffer均0；PANN原loss已保存；材料贯穿、完整往返和正式E30/E60仍0。
-- 已完成：PANN12个真实会话125.0854s/625427物理步、77条输入含非零恢复特征；采集8092.13s；新增317个Release资产，全部发布；本次已修累计目标映射并增加本次续训计时字段。
-- 当前问题：首批11次自然失败全发生在首次更新前，集中去程材料进入/穿越时的冲击、前俯及支撑；PANN更新后行为尚无记录，不能判学习无效或指定唯一控制修复。
-- 下一步：保持r21/20workers/原奖励与全部物理算法设置，显式resume并用本窗口新时间；再采新256条，不新增E30门禁、不重跑RAW或首批、不做benchmark/恢复/哈希测试。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL，source scripts/autodl_d57_env.sh；PANN自身outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt；审查基点f8bfb462，原Release已563资产/3,742,547,022字节/pending0。
+- 当前任务：W34_JOINT_SUPPORT_LEARNING；先纠正已定位的支撑/非足接触目标错配，再在完整PANN→PPO→MPC闭环中连续学习，跨多个≤4h窗口。
+- 当前状态：实际仍是RAW256/205有效/1更新与PANN256/208有效/1更新，尾buffer均0；材料贯穿、完整往返和正式E30/E60仍0，本次修订未执行新训练。
+- 已完成：PANN首次接线/真实更新/全部发布；本次读取已有ep10预测发现选中轨迹允许躯干触地后恢复；已将训练入口改为读取记录的controller build，并更新6篇相关来源的当前用途。
+- 当前问题：真实非足接触即终止，而6.20s所选预测已在6.514s进入躯干接触margin；优先核对并修正MPC对应残差。尚不能称唯一根因或断言PANN无效。
+- 下一步：现有D57环境中完成一项有依据的支撑纠正，直接联合采样；同版新增1024条/4次更新，当前起点对应累计1280/5；不在第2次或每次更新强制停审。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL，source scripts/autodl_d57_env.sh；本组resume-state-ep00012.pt或后续最新实际checkpoint；记录控制版及新版本起始计数，4h含发布，原Release563资产/pending0。
 
 ## 1. 实际进展与结论
 
 最新审查固定在[f8bfb462](https://github.com/kaiwen123-yang/MCP-RL/commit/f8bfb4629a1d342f49a63a446ebd2a19151075d8)，继续使用tm-s1-go2-local-readiness-r12，不因用户轮次名称或主机变化另建run清零。主证据为[PANN首次更新结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json)、原episode结果、transitions、实际rollout和[learning日志](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/training__PANN_PPO_S5-seed0__learning.jsonl)。
 
-**PANN＋PPO＋MPC的首次真实学习工程目标已经完成，可以继续同版训练。** 冻结PANN在线观察与恢复特征进入Actor，PPO实际更新Actor/Critic；不代表PANN/MPC全部端到端更新、材料任务成功或算法收益成立。
+**PANN＋PPO＋MPC的首次真实学习工程目标已经完成，下一步应在完整闭环中联调支撑并连续学习。** 冻结PANN在线观察与恢复特征进入Actor，PPO实际更新Actor/Critic；不代表PANN/MPC全部端到端更新、材料任务成功或算法收益成立。
 
 | 项目 | RAW历史 | PANN本轮 |
 |---|---:|---:|
@@ -53,7 +53,29 @@
 
 [ep10结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00010.json)及其已发布trajectory/XML可直接定位症状：geom0是floor，geom13是trunk前下部球形碰撞体。6.45s前右足采样法向力约423.4N；6.38→6.56s pitch从.00085升到.568rad、pitch角速度升到6.45rad/s，随后机身前下部触地。6.504s起到末尾500Hz样点四足接触均0，不能据此断言所有中间物理步连续失撑。末行qpos/qvel与诊断时间不同是已有记录规则，不是新日志错误。
 
-ep04/05也有约−.96/−1.69m/s的落足速度峰值。r21已做因果卸载面、承载深度和向下参考修复，不能把它当作完全刚地或没有支撑参考。现有证据尚不足以选择唯一源码修复，不立即改duty、代价权重或放宽.02阈值。
+ep04/05也有约−.96/−1.69m/s的落足速度峰值。r21已做因果卸载面、承载深度和向下参考修复，不能把它当作完全刚地或没有支撑参考。本次进一步读取既有预测数组后，已经定位到可优先纠正的目标错配；不据此同时扫描duty、提高力矩或放宽.02阈值。
+
+### 2.1 新定位：预测允许躯干触地后恢复，执行却立即终止
+
+使用同episode的[原预测数组](https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00010__prediction-000.npz)、trajectory与XML：330条计划，每条0.35s/176节点；所检查计划首状态与对应真实qpos一致。躯干前下部球体局部位置[.293,0,−.06]m、半径.047m，接触margin为.001m。按保存的姿态旋转该局部位置并减去半径，得到相对地面的最低点。
+
+| 计划起点/s | 所选预测最低球底/mm | 首次进入1mm接触margin/s |
+|---|---:|---:|
+| 6.20 | −7.476 | 6.514 |
+| 6.30 | −8.620 | 6.522 |
+| 6.54 | −7.465 | 6.562 |
+
+6.20→6.514的0.314s处在原0.35s horizon内。实际6.561s终止时球底约+.363mm，已进入1mm margin；与geom0↔13接触一致。末段6.54→6.56s的预测pitch约.567rad，实际约.568rad。因此不是MPC完全没预见前俯；至少这些选中轨迹允许了真实任务禁止的接触，后续又预测恢复。
+
+检查已发布cost与r21继承链，已有Upright/Height/Balance、MaterialSupportHeight、LandingVelocity/Indentation、MaterialDomainMargin等，未找到直接对应非足触地终止的躯干clearance/contact项。**下一窗口先核对服务器实际冻结源码；若缺失则加入相关可优化残差，若已有则修其激活/参考/尺度。** 使用原几何与接触margin，按现有cost分解定尺度，不预先拍权重，不改真实失败定义。这是当前明确的联调入口，不是“一项补丁保证解决所有失撑”的结论。
+
+[r21配置](../experiments/terrain_memory/s1-go2-r11-S5-r21.json)与[补丁](../experiments/terrain_memory/s1-go2-r11-S5-r21.patch)已有因果卸载面、承载深度和向下参考修正；实际继承r20→r16，不包含另一分支r17/r18的全部修改。行走期support_active=False也不能解读为所有动态支撑残差关闭。
+
+### 2.2 “完整算法联合”具体指什么
+
+现有闭环已经包含：真实足端观测→因果PANN材料状态/恢复查询→12维恢复特征→PPO每0.5s输出cap→MPC关节目标→原Go2/材料执行→下一观测。RAW是基线，不是完整算法需要拼入的第四个模块。
+
+当前继续冻结PANN权重、训练PPO Actor/Critic、保留MPC在线优化，是有意保持可解释的联合执行配置。PANN输出尚未进入每个MPC候选的完整材料状态及导数，不能称端到端联合优化。此后若需要扩大模型耦合或动作权限，应由同版多次更新的真实失效证据决定；现在不用重新接一次已接好的链路。
 
 ## 3. 计算与比较边界
 
@@ -70,22 +92,42 @@ ep04/05也有约−.96/−1.69m/s的落足速度峰值。r21已做因果卸载�
 
 D57与旧RAW的r21已有二进制记录、MuJoCo3.2.3、主要数值/代价/物理设置一致；主机、worker5→20、软件环境、PANN输入与实际轨迹不同，现有数据不是匹配收益或加速对照。旧RAW与新PANN首会话前5个cap几乎一致，2.5–3s路线增量已经分离，而本轮首会话8.5s才有非零恢复输入。因此不能把更早失败归因于PANN特征或学习恶化；不为此增加确定性认证任务。D57可见CPU affinity范围不等于25vCPU配额，不按可见208个逻辑CPU增开worker。
 
-## 4. 下一窗口只做同版PANN第二批
+## 4. 当前执行：支撑纠正与多次更新属于同一阶段
 
-**选择继续训练，而不是先追加一轮泛化的“稳定性验证”。** 第一批全部在首次更新前，尚无学习后真实行为；失败症状可定位但没有唯一具体实现错误。PPO本来就需要采样—更新—再采样。继续同版收集新256条能直接填补当前最有价值的证据缺口，不要求先通过全部E30/E60。
+上一版把“再收集一次更新后的行为”收窄成了“只到第2次更新就停”，又推迟支撑纠正，边界过窄。首批全部在更新前只说明不能评判学习效果，不能作为延后已有控制问题的理由。本节覆盖上一版W3C；任务进入W34，不重新计run或清零。
 
-| 项目 | 明确安排 |
+### 4.1 第一窗口直接做什么
+
+1. **用既有数据核对一个问题。** 先看ep10和实际r21冻结源码，确认选定预测触地与真实终止的残差错配；约前20分钟用于这个具体接口，不重复审全仓、不先跑新基线。
+2. **做一项有依据的控制纠正。** 若缺少对应躯干接触/离地距离代价，按原几何/margin接入优化器可处理的残差；若已有则修激活/参考/尺度。目标是纠正被选轨迹的控制目标，不是让记录通过。修正/必要编译可以争取前约1小时完成，但这只是安排参考，不能保证；找不到具体缺口就如实保留假设，直接用联合采样继续查，不凑补丁。
+3. **直接启动真实完整链路训练。** 训练本身观察修正的效果，PANN、PPO决策、MPC和材料反馈全部在线。不强制追加一轮独立E30，不等完全没有失败才训练；正常terminal后继续下一自然会话。
+4. **到约3.5小时收尾。** 保存实际进度、尾buffer和所有产物，4小时内完成当前窗口。下一新窗口只从这些状态续接，不再安排同一问题的计划阶段。
+
+诊断时如确有需要可以临时固定Actor权重来排除策略变化，但它仍按真实观测决策，PANN/MPC/环境仍在闭环内；这不是另立必做测试任务。默认直接使用后续训练作为真实实验。
+
+### 4.2 首个跨窗口里程碑
+
+| 项目 | 当前安排 |
 |---|---|
-| 起点 | 本组resume-state-ep00012.pt，累计256/1、尾buffer0 |
-| 目标 | 累计512真实转移、2次更新，即新增256/1；未完按真实进度续接 |
-| 执行端 | autodl-d57现有Python3.12项目环境，不重建依赖 |
-| 固定设置 | r21、20workers、Torch2、OMP/BLAS1、原PPO/奖励/归一化/材料/阈值、nominal60s会话、课程关闭 |
-| 模型 | 冻结B ideal，原独立因果观察/恢复通道、2Hz cap[.18,.25] |
-| 原有成果 | RAW与PANN首批全部保留，不配对重采、不清零、不重复原优化器更新 |
-| 直接观察 | 第一更新后的真实失效位置/方式、到达进度、支撑/前俯、奖励与普通PANN特征记录 |
-| 截止 | 全部工作≤4h，通常3.5h收尾；到目标/实际阻塞/截止停止，不自动串别的任务 |
+| 父checkpoint | PANN自身resume-state-ep00012.pt，实际256/1、空tail；若已有新进度则用最新本组checkpoint |
+| 新阶段数据 | 在一个记录的控制器版本上新增1024真实转移、4次PPO更新 |
+| 当前累计目标 | 1280条/5次；旧r21的256/1保留，不算修正版本的新数据 |
+| 更新节奏 | rollout256不变；每次更新后继续采样，不强制reset或人工停审 |
+| 资源 | 现有D57单流20workers、Torch2、OMP/BLAS1；不加实例，不扫worker |
+| 保持项 | 原PPO奖励/归一化/2Hz cap[.18,.25]、冻结B ideal、因果观察、原材料/PD/力矩/失败阈值、nominal60s采集会话 |
+| 观察 | 预测躯干clearance、实际非足接触/材料域限、接触后寿命、贯穿/路线进度、前俯/冲击/饱和、奖励与普通loss |
+| 预算 | 1024条按实测约8.99h纯采集，修正/编译/渲染/上传另计；通常3–4个或更多≤4h窗口，不能承诺每窗几次更新 |
+| 阶段含义 | 初步观察多次更新趋势，非收敛标准/训练总额度；后续按实际问题追加批次或进入正式阶梯 |
 
-现有入口目标仍为256时，直接resume会立即退出。本次已改为读取learning.target_cumulative_transitions_per_stream=512，**每次rollout仍256，PPO数学不变**。只增加本次invocation起点、耗时及初始/新增样本和更新计数，用于避免恢复后的旧collection.wall_s把跨窗口停机算成采集耗时；不改公共恢复逻辑、不另建诊断框架。
+只有一次更新时，所有已知PANN物理结果都来自更新前。到四次新更新后，阶段内会陆续出现此前几次更新后的真实行为，可看趋势。最终一次更新若恰在样本目标终点，不能声称已经观察了它之后的物理；后续正式E30或继续采样才提供该证据。
+
+控制修正后允许warm-start原PANN策略，不要求丢掉已有成果。当前尾buffer0正好可建立清晰版本边界；记录新build、父checkpoint和phase_initial计数即可。**不能混用旧控制器未消费buffer，也不能把旧样本改名成新版。** 若实际已有更晚部分进度，按真实边界调整目标为起点+1024/+4；保留未消费数据，必要时先在旧版完成该批，不静默丢弃或伪造连续环境。确定一个版本后尽量保持到观察里程碑；具体错误需再修时记录新边界。
+
+### 4.3 现有入口的必要改动
+
+训练入口现在读取契约reuse.active_controller_build，统一用于configuration、Agent二进制、运行参数和正常结果；默认仍是已存在的S5-r21，**只有实际修正并编译后才填写新build**。从而不会文档写新控制器、真实采样仍硬编码r21。阶段初始/新增计数加在普通stopped记录中，不引入新诊断平台，也没有改PPO数学。
+
+执行仍用同一个入口和本组最新checkpoint；传当前窗口首次活动时间与预留发布后的训练截止：
 
 ```bash
 source scripts/autodl_d57_env.sh
@@ -96,9 +138,13 @@ bash scripts/run_s1_go2_r12_training.sh \
   --deadline-unix <预留发布后的训练截止Unix时间>
 ```
 
-若本任务已有后续部分进度，接续其最新checkpoint而不是退回ep12。新物理会话符合原来没有完整环境snapshot的恢复语义。目标截止/窗口截止仍在入buffer/GAE前标截断，真实physical terminal优先。第二次更新完成时是否又执行过物理，要分别报告，不把新256条叫“第二次更新后表现”。
+本次只准备计划和上述入口改动，没有编译新支撑控制器，也没有运行新训练。服务器执行Codex应完成实际修正、采样和发布，不能把本段预定目标登记为已完成。普通物理失败不触发新一轮审批；只有真实技术阻塞、阶段目标或窗口截止结束本次执行。
 
-之后的窗口按新增证据选择：继续同版训练，或围绕反复出现的支撑失配只改一项。当前不自动改控制器/奖励、不做worker扫描、不并行第二组、不启动长评价。正式E30→E60→E300→E600继续同版逐case；训练与正式资格分别记录。
+### 4.4 阶段后判断方向
+
+看同版连续记录中实际躯干触地是否减少、材料内进度与接触后寿命是否改善，材料域越界是否成为主要剩余问题；不能只看loss下降或最快的一条。变化可用于工程决策，但单seed、少量更新和控制器变更不能证明PANN相对RAW的论文收益。
+
+若支撑和路线出现改善，继续增加同版真实学习并按原协议做冻结策略E30→E60→E300→E600；正式任务仍逐级，不把训练片段算资格。若仍在相同支撑机制快速失败，则检查预测约束/力跟踪/动作权限，而不是无限追加同样的采样。只有控制执行可用而PANN信息作用仍不清时，再考虑预测材料状态更深进入MPC、扩展高层动作或同版RAW/PANN对照，避免把多个研究变量一次全改。
 
 ## 5. 完整发布与四小时边界
 
@@ -108,10 +154,19 @@ bash scripts/run_s1_go2_r12_training.sh \
 
 开头最多5行后直接执行，结束只更新顶部6行和正常结果。禁止额外单元/mock/冒烟/导入/形状测试套件、无关回归、独立benchmark、恢复演习、通用fallback、反复计划或审查报告。
 
-## 6. 论文如何指导后续
+## 6. 本次文献更新：以问题相关性决定用途
 
-- [PPO](https://arxiv.org/abs/1707.06347)：采样与优化交替；当前刚完成第一次优化，应继续获得更新后交互。256/512是窗口目标，不是论文给出的收敛标准。
-- [RLOC，III-B/III-D/VI-H](https://arxiv.org/html/2012.03094v3)：高层学习通过低层控制执行，控制可执行域会限制探索；优化控制在环时rollout常占主耗时。指导区分速度决策与短时支撑，不要求复制其全部模块或换SAC/TD3。
-- [STANCE，IV](https://arxiv.org/html/1904.12306v2)：软地支撑脚随接触变形运动，支撑参考需要与接触动力学相容。后续对照实际/预测/参考支撑，定位具体失配后只修一项，不新增论文复现或E30前置大门禁。
+原清单已有27篇且包含2026条目；不足在上一版当前计划反复只用PPO/RLOC/STANCE概括，没有把近期软地接触和联合控制工作转成具体决策。本次在[原文献清单](../literature/terrain_memory_sources.json)新增TM28–TM31，并更新既有TM13/TM14的当前用途，记录实际阅读范围与证据级别，不声称已复现。
 
-原RAW审查与AutoDL资源安排保留在[ac1753d历史计划](https://github.com/kaiwen123-yang/MCP-RL/blob/ac1753d69d2e17408a157d273fc08313de13628c/docs/TERRAIN_MEMORY_PLAN.md)，原PANN窗口结果保留在[f8bfb462](https://github.com/kaiwen123-yang/MCP-RL/blob/f8bfb4629a1d342f49a63a446ebd2a19151075d8/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json)。旧当前任务与首次目标不再驱动新窗口。
+| 来源 | 可借鉴的具体内容 | 当前边界与用途 |
+|---|---|---|
+| [TM28 Soft Bilinear Inverted Pendulum](https://ddebenedittis.github.io/soft_bilinear_inverted_pendulum_astro/)，2024在线/2025卷 | MPC规划和全身跟踪都处理软接触；作者报告SOLO12实验 | 用于检查预测与执行的一致性；本项目非足接触缺口来自自身数据，不是论文替我们证明 |
+| [TM29 Walking in Mud](https://portalcientifico.upm.es/en/ipublic/item/10381051)，2025期刊 | Go1实泥地；接触检测、质心位置、摆腿速度一起控制 | 说明支撑应在整机闭环处理；泥地屈服/吸附不同于本项目黏弹恢复，不能照搬慢步态 |
+| [TM30 Terrain-adaptive MPC + impedance + SINDy](https://pure.qub.ac.uk/en/publications/terrain-adaptive-quadrupedal-locomotion-using-model-predictive-co/)，2026-08期刊在线 | 接触检测、阻抗/导纳、动力学修正一体化 | 已核对证据为PyBullet仿真；不用它当真机证明或新增SINDy任务 |
+| [TM13 RK-MPC](https://arxiv.org/abs/2604.04221)，2026预印本 | 学习残差真正嵌入MPC预测，报告Go1仿真/真机 | 区分“PANN被调用”与“材料记忆进入MPC候选动力学”；后者是后续研究，不立即换Koopman |
+| [TM31 Residual MPC](https://arxiv.org/abs/2510.12717)，2025投稿预印本 | GPU并行MPC在RL训练环中，扭矩层残差连续学习 | 支持完整闭环多轮采样/更新；MIT Humanoid、100Hz扭矩残差与本项目2Hz cap权限不同，不照抄训练量或重写GPU MPC |
+| [TM14 LF2WB](https://arxiv.org/abs/2603.03138)，2026，作者注明ICRA接收 | 前进写入、倒退读取固定大小关联记忆 | 几何记忆与材料加载/恢复状态不同；借鉴记忆组织，不引入无关视觉模块 |
+
+原[TM02黏弹PANN](https://arxiv.org/abs/2401.14270)仍是材料历史建模的重要直接来源，不能因2024年份就丢掉；PPO等基础方法也保留。近期论文没有给出“1024条/4更新就足够”的结论，该数值来自当前吞吐与工程观察需求。借鉴应落到控制/采样决策，不能变成大规模阅读、复现或认证前置阶段。
+
+本次覆盖的旧第二更新计划见[baf4584b](https://github.com/kaiwen123-yang/MCP-RL/blob/baf4584b868379450202405c3e8d868027bf1ead/docs/TERRAIN_MEMORY_PLAN.md)；原RAW审查和AutoDL资源安排见[ac1753d](https://github.com/kaiwen123-yang/MCP-RL/blob/ac1753d69d2e17408a157d273fc08313de13628c/docs/TERRAIN_MEMORY_PLAN.md)，原PANN实际结果见[f8bfb462](https://github.com/kaiwen123-yang/MCP-RL/blob/f8bfb4629a1d342f49a63a446ebd2a19151075d8/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json)。历史结果保持原样，旧当前任务不再驱动新窗口。
