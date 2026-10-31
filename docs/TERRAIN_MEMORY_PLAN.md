@@ -2,12 +2,12 @@
 
 ## 当前交接（按实际交接只更新这6行）
 
-- 当前任务：W34_JOINT_SUPPORT_LEARNING；D57 tmux session s1-joint 正在运行完整训练→自动渲染→Release上传→Git推送流程，job=job-20261030T161045Z。
-- 当前状态：2026-10-31T00:13:36+08:00 已观察PANN seed0累计261条/1次更新，新控制版新增5条/0次；真实计数257→261、物理时间与普通日志增长，当前无即时技术错误。
-- 已完成：S5-r24支撑修正与MuJoCo固定依赖实际构建已提交85eb641；从本组ep00012的256/1、空buffer接续，服务器持久gh登录、Git身份及独立clash网络可用。
-- 当前问题：两次零步初始化失败（S5-r22头文件ABI错配、S5-r23离线CMake缓存未切换）已修复并分别保留发布；当前采样仍在进行，不代表阶段达标或E30资格。
-- 下一步：同版新增1024条/4次更新，累计目标1280/5；训练最迟2026-10-31T16:10:45+08:00结束，训练退出后另计4h自动收尾，失败/部分结果也发布；本次交互结束不停止后台。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261030T161045Z；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261030T161045Z.json，原R12 Release；发布pending只续后处理，不重训或归档到用户电脑。
+- 当前任务：W34后台作业job-20261030T161045Z已结束训练与自动后处理；训练达标=True，发布=publication_pending。
+- 当前状态：本组实际累计1280条/5次更新，目标1280/5；训练记录不代表正式E30资格。
+- 已完成：本job保留30个新attempt，视频可用30，资产已发布456/1010；控制版S5-r24。
+- 当前问题：最后物理原因training_checkpoint_complete；待传554项，待处理视频0项，具体错误见本job摘要。
+- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261030T161045Z.json；原Release，用户电脑不另归档。
 
 ## 1. 实际进展与结论
 
