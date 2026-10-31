@@ -79,7 +79,14 @@
       "url": "https://arxiv.org/html/2107.02955v1",
       "pdf_url": "https://arxiv.org/pdf/2107.02955v1",
       "filename": "TM04_nonrigid_rl_2107.02955v1.pdf",
-      "read_for_execution": "地面模型、观测历史、训练设置与评价；区分弹性地块和本项目材料内变量"
+      "read_for_execution": "地面模型、观测历史、训练设置与评价；区分弹性地块和本项目材料内变量",
+      "W35_review": {
+        "reviewed_on": "2026-10-31",
+        "primary_url": "https://arxiv.org/pdf/2107.02955",
+        "verified": "IV节：每0.75s一个动作，27维Bezier机身/摆足参考，含历史和足端速度观测。",
+        "application": "判断动作能改变什么，不能只凭2Hz判定无效。",
+        "limitations": "弹性地块/Laikago仿真，不是持久TM02记忆；本次未核出可靠总训练量。"
+      }
     },
     {
       "id": "TM05",
@@ -199,7 +206,14 @@
         "由 Go2 自身动力学与完整运动确定各腿载荷需求，不继续将 S0 的预设力波形当整机任务",
         "由 MPC/WBC 在其余腿维持身体支撑的条件下实现接触计划，分别保存计划力和实际反力"
       ],
-      "scope_note": "原文研究可塌陷地面及主动试探，不是本项目黏弹地块恢复模型；不移植整套探测状态机、塌陷场景或经验位移阈值。原文控制频率不是本项目 NX 实时性能，不把它列为进入 S1 的全文复现门槛。"
+      "scope_note": "原文研究可塌陷地面及主动试探，不是本项目黏弹地块恢复模型；不移植整套探测状态机、塌陷场景或经验位移阈值。原文控制频率不是本项目 NX 实时性能，不把它列为进入 S1 的全文复现门槛。",
+      "W35_review": {
+        "reviewed_on": "2026-10-31",
+        "primary_url": "https://arxiv.org/html/2510.21369v1",
+        "verified": "用整步优化建立接触力包络，MPC与状态机协调探测和支撑。",
+        "application": "分析整步承载能力，不能只看足底高度。",
+        "limitations": "坍塌地面问题；W35不新增探测状态机。"
+      }
     },
     {
       "id": "TM13",
@@ -226,6 +240,12 @@
         "method_verified": "已读arXiv摘要：以提升坐标中的线性残差预测修正名义动力学，并把残差模型嵌入凸QP形式的MPC；报告Gazebo和Go1真机实验及机载500Hz控制。",
         "application_to_current_stage": "提醒联调必须追踪学习模型输出如何实际影响控制决策与物理结果。当前先修复已定位的MPC目标错配，并继续同版PANN—PPO—MPC链路；不立即更换为Koopman模型。",
         "limitations": "不是PPO联合训练方案；越野接触扰动与草、碎石、雪、冰验证不等于持久黏弹恢复验证。500Hz属于论文系统，不能作为本项目吞吐承诺。核对范围为摘要，未复现。"
+      },
+      "W35_review": {
+        "reviewed_on": "2026-10-31",
+        "primary_url": "https://arxiv.org/abs/2604.04221",
+        "application": "区分学习特征与真正进入MPC的学习残差；同版学习停滞时考虑候选材料耦合。",
+        "limitations": "残差辨识不是PPO训练；作者Go1/NX报告不代表本项目性能。"
       }
     },
     {
@@ -738,7 +758,15 @@
           "source_section": "§III-D",
           "mechanism": "结构化动作通道消融在训练和评测中均固定对应通道，并为各消融重新训练策略，使保留通道有机会适应；仅在评测时删除输入或通道不能等价地证明该模块对可训练系统的必要性。"
         }
-      ]
+      ],
+      "W35_review": {
+        "reviewed_on": "2026-10-31",
+        "primary_url": "https://tarikbanus.com/icra2027.html",
+        "publication_status": "2026年预印本；作者页注明ICRA 2027 under review。",
+        "verified": "作者页列出完整Go2控制环、3 seed各8510万transitions、256环境、100Hz/25维结构化参考；落足消融影响最大。",
+        "application": "当前1280/5属于早期；继续完整闭环学习，未来动作扩展应针对接触失效。",
+        "limitations": "平地仿真、策略参考加WBIC，不是当前iLQG MPC；整套硬件迁移未验证，不照搬样本预算。"
+      }
     },
     {
       "id": "TM28",
@@ -749,7 +777,13 @@
       "primary_project_or_doi": "https://doi.org/10.1109/TSMC.2024.3504342",
       "method_verified": "已读作者项目的摘要与方法说明：上层MPC运动规划采用软双线性倒立摆模型，下层全身跟踪控制也显式考虑软接触；报告多机器人仿真和SOLO12软地真机实验。",
       "application_to_current_stage": "支持在完整链路内处理预测、支撑规划与执行的一致性。当前优先修复ep10中MPC允许预测躯干触地后恢复、而真实环境立即终止的目标错配，再在同一版本连续采样与更新。此具体修复来自本项目证据，并非论文结论。",
-      "limitations": "不是PANN/PPO框架，未证明跨足或返程的持久黏弹材料记忆；不能把其软接触模型或性能直接移植。核对范围为作者项目内容，未复现论文。"
+      "limitations": "不是PANN/PPO框架，未证明跨足或返程的持久黏弹材料记忆；不能把其软接触模型或性能直接移植。核对范围为作者项目内容，未复现论文。",
+      "W35_review": {
+        "reviewed_on": "2026-10-31",
+        "primary_url": "https://ddebenedittis.github.io/soft_bilinear_inverted_pendulum_astro/",
+        "application": "规划与跟踪同时处理软接触，用于审视载荷/冲击可行性。",
+        "limitations": "SOLO12软接触结果不证明本项目几何软惩罚等于TM02候选积分或硬约束。"
+      }
     },
     {
       "id": "TM29",
@@ -782,7 +816,14 @@
       "primary_project_or_doi": "https://doi.org/10.48550/arXiv.2510.12717",
       "method_verified": "已读摘要及正文的架构和计算部分：GPU并行MPC处于RL训练闭环内，策略与MPC在100Hz下运行并在扭矩层融合残差；研究平台为MIT Humanoid，含真机验证。",
       "application_to_current_stage": "支持在实际MPC闭环中连续采样、更新和观察学习趋势。当前同版新增1024样本、四次更新、跨不超过四小时窗口执行，是本项目的工程预算，不是论文给出的充分训练量或收敛保证。",
-      "limitations": "研究对象是人形机器人；扭矩残差的控制权限远大于本项目2Hz速度上限。不能直接移植训练预算、性能或GPU并行实现，也不要求下一窗口重写GPU MPC。仅核对相关正文，未复现。"
+      "limitations": "研究对象是人形机器人；扭矩残差的控制权限远大于本项目2Hz速度上限。不能直接移植训练预算、性能或GPU并行实现，也不要求下一窗口重写GPU MPC。仅核对相关正文，未复现。",
+      "W35_review": {
+        "reviewed_on": "2026-10-31",
+        "primary_url": "https://arxiv.org/html/2510.12717v1",
+        "verified": "IV-C为2048并行环境；V-B每次PPO迭代24仿真步；100Hz，选用关节目标残差与扭矩融合。",
+        "application": "支持MPC闭环中连续多次更新。",
+        "limitations": "MIT人形、GPU并行MPC与扭矩权限不同于2Hz速度cap；不移植吞吐或收敛预算。"
+      }
     }
   ],
   "upstream": {
@@ -850,5 +891,5 @@
     }
   ],
   "execution_scope_note": "旧条目中“当前”“本轮”及阶段限制按各自历史日期理解。当前R12在D57执行完整PANN-PPO-MPC支撑联调和跨≤4h窗口连续学习，以AGENTS.md与docs/TERRAIN_MEMORY_PLAN.md顶部及第4节为准。本次新增TM28–TM31，并更新既有TM13/TM14当前用途，记录一手来源、实际阅读范围与适用边界；不等于完成复现，也不构成额外阅读/测试门槛。",
-  "last_updated": "2026-10-30"
+  "last_updated": "2026-10-31"
 }

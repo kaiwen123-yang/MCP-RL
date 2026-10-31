@@ -13,28 +13,60 @@ SMALL=ROOT/'results/terrain_memory/simulation'/RUN
 LARGE=ROOT/'outputs/terrain_memory/simulation'/RUN
 ENV=Path(sys.executable).parent
 
-def server_credentials(deadline, release_tags):
+def server_credentials(deadline, release_tags, manifest=None, manifest_path=None, job_name=None, source_commit=None):
     """Read the server's existing GitHub login without writing its token to disk."""
     token=os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
     if not token:
         token=subprocess.check_output(['gh','auth','token','--hostname','github.com'],
             text=True,stderr=subprocess.PIPE,timeout=30).strip()
     env=dict(os.environ,GH_TOKEN=token,GODEBUG='http2client=0')
-    def api(endpoint,*flags):
+    def api(endpoint,*flags,missing_ok=False):
         remaining=deadline-time.time()
         if remaining<=0:raise TimeoutError('Publication deadline reached')
         try:
             output=subprocess.check_output(['gh','api',endpoint,*flags],
                 env=env,text=True,stderr=subprocess.PIPE,timeout=min(120,remaining))
         except subprocess.CalledProcessError as error:
+            if missing_ok and 'HTTP 404' in error.stderr:return None
             raise RuntimeError('GitHub API failed: '+error.stderr.replace(token,'[credential]').strip()) from None
         return json.loads(output)
     releases={};remote_assets={}
-    for tag in sorted(release_tags):
-        release=api(f'repos/{REPO}/releases/tags/{tag}')
+    def load_release(tag,create=False):
+        if tag in releases:return
+        release=api(f'repos/{REPO}/releases/tags/{tag}',missing_ok=create)
+        if release is None:
+            release=api(f'repos/{REPO}/releases','--method','POST',
+                '-f',f'tag_name={tag}','-f',f'target_commitish={source_commit}',
+                '-f',f'name={tag}','-f',f'body=Retained S1 outputs for {job_name}; source {source_commit}.',
+                '-f','make_latest=false')
         pages=api(f'repos/{REPO}/releases/{release["id"]}/assets?per_page=100','--paginate','--slurp')
         releases[tag]=release
         remote_assets[tag]=[row for page in pages for row in page]
+    for tag in sorted(release_tags):load_release(tag)
+    if manifest is not None and job_name:
+        # Saved destinations are immutable on retry. Reserve both remote assets
+        # and this manifest's assigned names before placing any new files.
+        occupied={tag:{row['name'] for row in rows} for tag,rows in remote_assets.items()}
+        for row in manifest:
+            if row.get('release_tag') and (ROOT/row['path']).stat().st_size:
+                occupied.setdefault(row['release_tag'],set()).add(row['name'])
+        part=1
+        try:
+            for row in manifest:
+                if row.get('release_tag') or not (ROOT/row['path']).stat().st_size:continue
+                while True:
+                    tag=f'{RUN}-{job_name}-part{part:02d}'
+                    load_release(tag,create=True)
+                    names=occupied.setdefault(tag,{x['name'] for x in remote_assets[tag]})
+                    if row['name'] in names or len(names)<900:
+                        row['release_tag']=tag
+                        names.add(row['name'])
+                        break
+                    part+=1
+        finally:
+            # Persist partial assignment even if a later Release cannot be
+            # created; the next finish invocation resumes the same destinations.
+            manifest_path.write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n')
     return dict(token=token,releases=releases,remote_assets=remote_assets)
 
 def main():
@@ -46,21 +78,30 @@ def main():
     p.add_argument('--deadline-unix',type=float,required=True)
     p.add_argument('--server-auth',action='store_true')
     p.add_argument('--manifest',type=Path,help='Explicit job asset list: path,name,category.')
+    p.add_argument('--job-name',help='Route unassigned job assets into Releases of at most900files.')
+    p.add_argument('--source-commit',help='Actual job source commit for newly created Release tags.')
     args=p.parse_args()
+    if args.job_name and not (args.server_auth and args.manifest and args.source_commit):
+        p.error('--job-name requires --server-auth,--manifest and --source-commit')
     manifest=json.loads(args.manifest.read_text()) if args.manifest else None
-    # The original release reached GitHub's 1000-asset cap during W34.
-    # Explicit manifest destinations retain original assets and route only
-    # missing files to the same job's continuation release.
-    destination_rows=manifest if manifest is not None else json.loads((SMALL/'index.json').read_text()).get('publication',{}).get('assets',[])
-    destinations={row['name']:row.get('release_tag',RUN) for row in destination_rows}
+    registered=json.loads((SMALL/'index.json').read_text()).get('publication',{}).get('assets',[])
+    if manifest is not None:
+        retained={row['name']:row.get('release_tag',RUN) for row in registered}
+        for row in manifest:
+            if row['name'] in retained:row.setdefault('release_tag',retained[row['name']])
+    destination_rows=manifest if manifest is not None else registered
     if args.server_auth:
-        credentials=server_credentials(args.deadline_unix,set(destinations.values())|{RUN})
+        tags={row.get('release_tag',RUN) for row in destination_rows}|{RUN}
+        credentials=server_credentials(args.deadline_unix,tags,
+            manifest=manifest if args.action=='upload' else None,manifest_path=args.manifest,
+            job_name=args.job_name,source_commit=args.source_commit)
         releases=credentials['releases']
         remotes={tag:{row['name']:row for row in rows} for tag,rows in credentials['remote_assets'].items()}
     else:
         credentials=json.load(sys.stdin)
         releases={RUN:credentials['release_metadata']}
         remotes={RUN:{row['name']:row for row in credentials['remote_assets']}}
+    destinations={row['name']:row.get('release_tag',RUN) for row in destination_rows}
     env=dict(os.environ,GODEBUG='http2client=0',GH_TOKEN=credentials['token'],PATH=str(ENV)+os.pathsep+os.environ['PATH'])
     proxy=env.get('https_proxy',env.get('HTTPS_PROXY',''))
     def update(change):
@@ -181,3 +222,4 @@ def main():
             print(json.dumps(dict(name=row['name'],status='publication_pending',error=message)),flush=True)
         if time.time()>=args.deadline_unix:break
 if __name__=='__main__':main()
+

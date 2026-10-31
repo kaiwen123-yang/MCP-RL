@@ -1,6 +1,6 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
-  "status": "PANN_PPO_S5_training",
+  "status": "W34_complete_W35_planned",
   "attempts": [
     {
       "attempt": "w1-S5-r21-E30",
@@ -2928,10 +2928,10 @@
     "run_deadline_unix_s": 1793434245.671586,
     "hard_deadline_unix_s": 1793434245.671586
   },
-  "protocol_revision": "joint_support_detached_autopublish_v9",
-  "current_task": "W34_JOINT_SUPPORT_LEARNING",
+  "protocol_revision": "same_r24_continuation_final_eval_v10",
+  "current_task": "W35_SAME_R24_CONTINUE_AND_EVAL",
   "training_transitions": 1536,
-  "next_task": "W34_JOINT_SUPPORT_LEARNING",
+  "next_task": "W35_SAME_R24_CONTINUE_AND_EVAL",
   "pre_runner_initialization_failures": [
     {
       "error": "Python MuJoCo loaded the frozen MPC library through global LD_LIBRARY_PATH: undefined symbol mj_jacDot",
@@ -17549,7 +17549,10 @@
       "physics_s": 630.0591999996213,
       "controller_build": "S5-r24",
       "output": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0",
-      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00044.pt"
+      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00044.pt",
+      "effective_transitions": 1000,
+      "physical_episodes": 42,
+      "latest_update_has_post_update_physics": false
     }
   },
   "training_updates": 6,
@@ -17710,7 +17713,7 @@
       "check": "One normal name/size/upload-state comparison; no full hash pass or downloads"
     }
   },
-  "next_action": "Leave the single s1-joint pipeline running; finish automatically renders and publishes after its actual training exit.",
+  "next_action": "Check existing tmux first;complete the necessary R12 frozen-final-policy evaluation adapter,then continue ownPANN ep44 on same r24 +2048/8 to3328/13;E30/eligible E60 after training;automatic render/Release parts/Git. No PC archive.",
   "pann_review": {
     "reviewed_source_commit": "f8bfb4629a1d342f49a63a446ebd2a19151075d8",
     "source_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/pann-first-update.json",
@@ -17751,7 +17754,7 @@
     "pann_input": {
       "nonzero_rows": 77,
       "soft_query_rows": 109,
-      "max_abs_recovery_m": 7.579985260963441e-05,
+      "max_abs_recovery_m": 0.00007579985260963441,
       "benefit_established": false
     },
     "timing": {
@@ -17844,43 +17847,87 @@
       "separate_E30_admission_run_required": false,
       "server_execution_started": false
     },
-    "counts_and_existing_results_unchanged": true
+    "counts_and_existing_results_unchanged": true,
+    "status": "historical_pre_W34_review_correction_now_executed"
   },
   "detached_training_execution_plan": {
-    "status": "planned_not_started_by_this_review",
-    "source_plan_commit": "5ea1740cecfa71a75860a7f6ac1c5aed78238b44",
+    "status": "W35_planned_not_started_by_this_review",
+    "reviewed_source_commit": "1b92c53023d71c5a30f6f9dbc6cfa6d72ec5c0ae",
     "interactive_maximum_s": 14400,
     "user_authorized_background_training": true,
-    "default_background_budget_s": 57600,
-    "target_PANN_transitions": 1280,
-    "target_PANN_updates": 5,
-    "new_phase_transitions": 1024,
-    "new_phase_updates": 4,
+    "default_background_budget_s": 100800,
+    "target_PANN_transitions": 3328,
+    "target_PANN_updates": 13,
+    "new_phase_transitions": 2048,
+    "new_phase_updates": 8,
+    "controller_build": "S5-r24",
+    "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00044.pt",
     "launcher": "scripts/start_s1_go2_r12_tmux.py",
     "session_default": "s1-joint",
-    "handoff_condition": "Actual physics/sample counts advance and normal logs are written;no mandatory wait for256or a new update.",
-    "publication": "Superseded:automatic rendering/Release/Git publication is now attached to the tmux training job.",
-    "actual_new_training_started": false,
-    "actual_results_unchanged": true
+    "final_evaluation": {
+      "planned": true,
+      "implementation_status": "requires_existing_R12_entrypoint_and_pipeline_adaptation_in_next_execution",
+      "purpose": "Observe the final actually updated policy rather than treating the preceding rollout as its evaluation.",
+      "group": "PANN_PPO_S5",
+      "seed": 0,
+      "condition": "nominal",
+      "levels": [
+        "E30",
+        "E60"
+      ],
+      "maximum_wall_s": 14400,
+      "clock_starts": "After training exits;independent of training and publication budgets.",
+      "checkpoint_selection": "The last actual completed PPO update at the declared phase end/deadline;checkpoint-003328.pt if target reached. Never choose the best-looking checkpoint. Use an existing valid updated policy if training is partial,and report its actual count.",
+      "deterministic_policy_mean": true,
+      "ppo_updates": false,
+      "frozen_normalization": true,
+      "solver_workers": 20,
+      "entrypoint": "scripts/run_s1_go2_r12.py",
+      "necessary_changes": [
+        "Use contract active controller,group/seed/checkpoint/level/current R12 outputs and explicit background evaluation deadline instead of W1 r21/FIXED/E30.",
+        "Reuse PolicyStream(training=False),existing evaluator and qualification;predecessor resolved paths use passed c.outputs.root rather than only old R11 root.",
+        "Wire after training and before finish;record an independent evaluation start/deadline/result in this job.",
+        "Use separate evaluation attempts/directories;never modify training collection/stopped/checkpoints. Add every actual evaluation trajectory/video/array to the job's existing render/publish manifest."
+      ],
+      "E30_rule": "Complete independent30s observation,original far3m arrival and legal outbound material traversal;continue original turn/return. No requirement for a full round trip by30s or deliberate far-end parking.",
+      "E60_rule": "Only the exact same case's E30 passes;independent original full roundtrip/holding and60s observation.",
+      "downstream_after_failed_E30": "Record E60 blocked_by_predecessor with the true reason;no automatic retry or physical rerun to obtain a pass.",
+      "technical_failure": "Record missing/partial evaluation and continue publication of all actual outputs;do not replay completed training.",
+      "automatically_run_E300_E600": false,
+      "full_21_case_matrix": false,
+      "result_reporting": "Job summary records training attainment,evaluation outcomes/blocked or partial stages,andpublication independently."
+    },
+    "handoff_condition": "Actual sample/physics/log progress;no mandatory wait for256or a newupdate.",
+    "actual_new_training_started": false
   },
   "automatic_publication_plan": {
     "source_plan_commit": "04b7522f9641f55f28d1ff3b0225e6ade5438f6b",
     "enabled": true,
     "postprocess_entrypoint": "scripts/finish_s1_go2_r12_job.py",
-    "default_postprocess_wall_s": 14400,
-    "deadline_starts": "after training exits",
+    "default_postprocess_wall_s": 21600,
+    "deadline_starts": "After final evaluation completes or is explicitly unavailable.",
     "server_native_auth": true,
     "pc_tunnel_required": false,
     "training_failure_still_publishes": true,
     "git_force_push": false,
     "extra_pc_archive": false,
     "summary_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job>.json",
-    "actual_server_execution_started_by_this_review": false
+    "actual_server_execution_started_by_this_review": false,
+    "reviewed_source_commit": "1b92c53023d71c5a30f6f9dbc6cfa6d72ec5c0ae",
+    "new_release_parts": {
+      "enabled_for_new_jobs": true,
+      "max_new_nonempty_assets_per_release": 900,
+      "naming": "<run>-<job>-partNN",
+      "existing_destinations": "Preserve manifest/index release_tag and reuse unchanged published assets.",
+      "create_target": "job.source_commit",
+      "server_execution_of_new_partitioning": "not_run_by_this_review"
+    },
+    "existing_pipeline_actual_evidence": "job-20261030T161045Z"
   },
   "W34_controller_repair": {
     "build": "S5-r24",
     "based_on": "S5-r21",
-    "status": "compiled_and_real_sampling_started",
+    "status": "executed_in_30_physical_sessions",
     "specification": "experiments/terrain_memory/s1-go2-r11-S5-r24.json",
     "source_patch": "experiments/terrain_memory/s1-go2-r11-S5-r24.patch",
     "build_script": "scripts/prepare_s1_go2_r12_support.py",
@@ -17909,7 +17956,7 @@
     },
     "formal_qualification": false,
     "evidence": "Existing ep10 saved prediction states only; no new physics before joint training.",
-    "next_action": "Keep S5-r24 and the current execution contract fixed during this running job.",
+    "next_action": "Reuse S5-r24 for the planned W35 same-controller phase;no repeat build or forced new support patch.",
     "initial_failed_build": {
       "failed_build": "S5-r22",
       "failed_job": "job-20261030T155257Z",
@@ -17984,5 +18031,538 @@
       "pending_assets": [],
       "render_pending": []
     }
+  },
+  "W34_joint_learning_review": {
+    "source_commit": "1b92c53023d71c5a30f6f9dbc6cfa6d72ec5c0ae",
+    "job": "job-20261030T161045Z",
+    "actual": {
+      "new_transitions": 1024,
+      "new_effective_transitions": 792,
+      "cumulative_transitions": 1280,
+      "cumulative_effective_transitions": 1000,
+      "new_updates": 4,
+      "cumulative_updates": 5,
+      "new_optimizer_steps": 64,
+      "actual_physical_episodes": 30,
+      "initialization_failures_excluded": [
+        13,
+        14
+      ],
+      "new_physics_s": 504.9737999996063,
+      "cumulative_physics_s": 630.0591999996213,
+      "invocation_wall_s": 38348.2941467762,
+      "transitions_per_hour": 96.12943892342346,
+      "effective_transitions_per_hour": 74.35011291733532,
+      "unupdated_fragment": 0,
+      "post_final_update_physics": false,
+      "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00044.pt",
+      "started_beijing": "2026-10-31T00:10:47.392153+08:00",
+      "ended_beijing": "2026-10-31T10:49:55.686306+08:00"
+    },
+    "route": {
+      "far_arrival_episodes": [
+        15,
+        16,
+        19,
+        34,
+        35,
+        41,
+        44
+      ],
+      "return_start_episodes": [
+        15,
+        16,
+        19,
+        34,
+        35,
+        41,
+        44
+      ],
+      "qualified_outbound_crossing_episodes": [
+        16,
+        34,
+        41
+      ],
+      "side_exit_episodes": [
+        15,
+        19,
+        26,
+        27,
+        28,
+        32,
+        35,
+        39,
+        44
+      ],
+      "complete_round_trips": 0,
+      "formal_qualification": false,
+      "median_duration_s": 11.066100000000887,
+      "mean_duration_s": 16.832459999986874,
+      "max_duration_s": 42.987799999926494,
+      "episodes_reaching_30s": [
+        15,
+        16,
+        18,
+        19,
+        34,
+        35,
+        41,
+        44
+      ],
+      "terminal_reasons": {
+        "material_domain_exit": 15,
+        "body_fall": 6,
+        "invalid_contact:[[0, 13, 0, 1]]": 8,
+        "training_checkpoint_complete": 1
+      },
+      "phase_terminal_reasons": [
+        {
+          "phase": "return",
+          "reason": "material_domain_exit",
+          "count": 3
+        },
+        {
+          "phase": "outbound",
+          "reason": "material_domain_exit",
+          "count": 12
+        },
+        {
+          "phase": "outbound",
+          "reason": "body_fall",
+          "count": 5
+        },
+        {
+          "phase": "return",
+          "reason": "body_fall",
+          "count": 1
+        },
+        {
+          "phase": "outbound",
+          "reason": "invalid_contact:[[0, 13, 0, 1]]",
+          "count": 6
+        },
+        {
+          "phase": "return",
+          "reason": "invalid_contact:[[0, 13, 0, 1]]",
+          "count": 2
+        },
+        {
+          "phase": "return",
+          "reason": "training_checkpoint_complete",
+          "count": 1
+        }
+      ]
+    },
+    "features": {
+      "nonzero_recovery_observations": 288,
+      "soft_query_observations": 411,
+      "max_recovery_um": 100.94279479980469,
+      "observations_by_phase": {
+        "initial_stand": 150,
+        "outbound": 642,
+        "far_hold": 28,
+        "turn": 91,
+        "return": 113
+      },
+      "return_soft_queries": 55,
+      "return_nonzero_recovery": 45
+    },
+    "batches": [
+      {
+        "policy_update_count_during_collection": 1,
+        "sample_range": [
+          257,
+          512
+        ],
+        "episode_range": [
+          15,
+          19
+        ],
+        "effective_transitions": 204,
+        "reward_sum": -32.3871878234859,
+        "reward_mean": -0.1265124524354918,
+        "mean_cap_m_s": 0.21634616303621101,
+        "ended_episodes": 4,
+        "terminal_reasons": {
+          "material_domain_exit": 3,
+          "body_fall": 1
+        },
+        "note": "Episode endings assigned to the batch containing their terminal transition; episodes may span update boundaries.",
+        "nonzero_recovery_observations": 93,
+        "soft_query_observations": 121,
+        "max_recovery_um": 100.94279479980469
+      },
+      {
+        "policy_update_count_during_collection": 2,
+        "sample_range": [
+          513,
+          768
+        ],
+        "episode_range": [
+          19,
+          29
+        ],
+        "effective_transitions": 200,
+        "reward_sum": -90.82827427936002,
+        "reward_mean": -0.35479794640375006,
+        "mean_cap_m_s": 0.21388889556055232,
+        "ended_episodes": 10,
+        "terminal_reasons": {
+          "body_fall": 2,
+          "material_domain_exit": 5,
+          "invalid_contact:[[0, 13, 0, 1]]": 3
+        },
+        "note": "Episode endings assigned to the batch containing their terminal transition; episodes may span update boundaries.",
+        "nonzero_recovery_observations": 53,
+        "soft_query_observations": 87,
+        "max_recovery_um": 66.90914916992188
+      },
+      {
+        "policy_update_count_during_collection": 3,
+        "sample_range": [
+          769,
+          1024
+        ],
+        "episode_range": [
+          29,
+          36
+        ],
+        "effective_transitions": 196,
+        "reward_sum": -60.71008027186163,
+        "reward_mean": -0.23714875106195948,
+        "mean_cap_m_s": 0.21558868352771013,
+        "ended_episodes": 7,
+        "terminal_reasons": {
+          "body_fall": 2,
+          "material_domain_exit": 3,
+          "invalid_contact:[[0, 13, 0, 1]]": 2
+        },
+        "note": "Episode endings assigned to the batch containing their terminal transition; episodes may span update boundaries.",
+        "nonzero_recovery_observations": 78,
+        "soft_query_observations": 114,
+        "max_recovery_um": 88.28324890136719
+      },
+      {
+        "policy_update_count_during_collection": 4,
+        "sample_range": [
+          1025,
+          1280
+        ],
+        "episode_range": [
+          36,
+          44
+        ],
+        "effective_transitions": 192,
+        "reward_sum": -70.10363867569754,
+        "reward_mean": -0.2738423385769435,
+        "mean_cap_m_s": 0.21553987185719733,
+        "ended_episodes": 9,
+        "terminal_reasons": {
+          "material_domain_exit": 4,
+          "invalid_contact:[[0, 13, 0, 1]]": 3,
+          "body_fall": 1,
+          "training_checkpoint_complete": 1
+        },
+        "note": "Episode endings assigned to the batch containing their terminal transition; episodes may span update boundaries.",
+        "nonzero_recovery_observations": 64,
+        "soft_query_observations": 89,
+        "max_recovery_um": 55.55577850341797
+      }
+    ],
+    "learning": [
+      {
+        "loss": 10.448149919509888,
+        "loss/clip": -0.006077286903746426,
+        "loss/vf": 20.908454596996307,
+        "loss/ent": 0.3675718232989311,
+        "optimizer_steps": 16,
+        "samples": 256,
+        "behavior_logprob_max_error": 5.960464477539063e-8,
+        "approx_kl": 0.001006569480523467,
+        "clip_fraction": 0.015625,
+        "advantage_mean": -4.906523704528809,
+        "update_count": 1,
+        "cumulative_samples": 256,
+        "wall_s": 8090.914804697037
+      },
+      {
+        "loss": 3.52475605905056,
+        "loss/clip": -0.005046681151725352,
+        "loss/vf": 7.05960550904274,
+        "loss/ent": 0.3655189275741577,
+        "optimizer_steps": 16,
+        "samples": 256,
+        "behavior_logprob_max_error": 4.76837158203125e-7,
+        "approx_kl": 0.0021749758161604404,
+        "clip_fraction": 0.015625,
+        "advantage_mean": -0.9335669279098511,
+        "update_count": 2,
+        "cumulative_samples": 512,
+        "wall_s": 26636.59580039978
+      },
+      {
+        "loss": 5.21852445602417,
+        "loss/clip": -0.004089341615326703,
+        "loss/vf": 10.44522750377655,
+        "loss/ent": 0.3659970387816429,
+        "optimizer_steps": 16,
+        "samples": 256,
+        "behavior_logprob_max_error": 4.76837158203125e-7,
+        "approx_kl": 0.002042247448116541,
+        "clip_fraction": 0.015625,
+        "advantage_mean": -2.3006093502044678,
+        "update_count": 3,
+        "cumulative_samples": 768,
+        "wall_s": 35691.64092850685
+      },
+      {
+        "loss": 3.130032405257225,
+        "loss/clip": -0.015752003528177738,
+        "loss/vf": 6.29156881570816,
+        "loss/ent": 0.36694998294115067,
+        "optimizer_steps": 16,
+        "samples": 256,
+        "behavior_logprob_max_error": 2.384185791015625e-7,
+        "approx_kl": 0.0057076262310147285,
+        "clip_fraction": 0.08203125,
+        "advantage_mean": -0.8162392377853394,
+        "update_count": 4,
+        "cumulative_samples": 1024,
+        "wall_s": 45696.61167263985
+      },
+      {
+        "loss": 2.5204047188162804,
+        "loss/clip": -0.011176416301168501,
+        "loss/vf": 5.063162267208099,
+        "loss/ent": 0.36816979199647903,
+        "optimizer_steps": 16,
+        "samples": 256,
+        "behavior_logprob_max_error": 9.5367431640625e-7,
+        "approx_kl": 0.003310516709461808,
+        "clip_fraction": 0.05078125,
+        "advantage_mean": -0.7510993480682373,
+        "update_count": 5,
+        "cumulative_samples": 1280,
+        "wall_s": 55270.437173843384
+      }
+    ],
+    "timing": {
+      "startup_planning": {
+        "total_s": 587.9845029935241,
+        "fraction_of_invocation_wall": 0.015332742070430628
+      },
+      "planning": {
+        "total_s": 25297.740842109546,
+        "fraction_of_invocation_wall": 0.6596836027512383
+      },
+      "feedback": {
+        "total_s": 188.90208462066948,
+        "fraction_of_invocation_wall": 0.0049259579552002
+      },
+      "state_parameter_rpc": {
+        "total_s": 375.1647899057716,
+        "fraction_of_invocation_wall": 0.0097830893981841
+      },
+      "physics": {
+        "total_s": 6077.272348387167,
+        "fraction_of_invocation_wall": 0.1584756892999388
+      },
+      "pann_observation": {
+        "total_s": 4887.511907353997,
+        "fraction_of_invocation_wall": 0.12745056895222737
+      },
+      "pann_query": {
+        "total_s": 267.36517876572907,
+        "fraction_of_invocation_wall": 0.006972022738284057
+      }
+    },
+    "sources": {
+      "job_summary": "https://github.com/kaiwen123-yang/MCP-RL/blob/1b92c53023d71c5a30f6f9dbc6cfa6d72ec5c0ae/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261030T161045Z.json",
+      "stopped": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261030T161045Z/job-20261030T161045Z__stream-records__stopped.json",
+      "transitions": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261030T161045Z/job-20261030T161045Z__stream-records__transitions.jsonl",
+      "learning": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261030T161045Z/job-20261030T161045Z__stream-records__learning.jsonl"
+    },
+    "predicted_clearance_review": {
+      "method": "Analytic floor clearance of geom13 sphere, local[.293,0,-.06],radius .047, original floor0 and margin .001; saved selected predictions and trajectory only; no optimization or physics rerun.",
+      "plan_checks": [
+        {
+          "origin_s": 40.99999999993113,
+          "actual_bottom_mm": 179.30023503573688,
+          "prediction_min_bottom_mm": 99.44066268499937,
+          "first_margin_entry_s": null,
+          "margin_nodes": 0,
+          "sphere_cost_mean": 2.6982232886451064e-16,
+          "first_state_qpos_error": 0
+        },
+        {
+          "origin_s": 41.9999999999288,
+          "actual_bottom_mm": 151.0100564442561,
+          "prediction_min_bottom_mm": 148.80496643399073,
+          "first_margin_entry_s": null,
+          "margin_nodes": 0,
+          "sphere_cost_mean": 2.048293401321646e-16,
+          "first_state_qpos_error": 0
+        },
+        {
+          "origin_s": 42.399999999927864,
+          "actual_bottom_mm": 163.68614361883465,
+          "prediction_min_bottom_mm": 87.53604081132953,
+          "first_margin_entry_s": null,
+          "margin_nodes": 0,
+          "sphere_cost_mean": 2.1984621277441516e-16,
+          "first_state_qpos_error": 0
+        },
+        {
+          "origin_s": 42.5999999999274,
+          "actual_bottom_mm": 202.764064226219,
+          "prediction_min_bottom_mm": 6.120150670174358,
+          "first_margin_entry_s": null,
+          "margin_nodes": 0,
+          "sphere_cost_mean": 8.318386613861114e-15,
+          "first_state_qpos_error": 0
+        },
+        {
+          "origin_s": 42.639999999927305,
+          "actual_bottom_mm": 190.9558535256925,
+          "prediction_min_bottom_mm": 5.419182637422276,
+          "first_margin_entry_s": null,
+          "margin_nodes": 0,
+          "sphere_cost_mean": 1.0752076030261152e-14,
+          "first_state_qpos_error": 0
+        },
+        {
+          "origin_s": 42.699999999927165,
+          "actual_bottom_mm": 181.224302888924,
+          "prediction_min_bottom_mm": 5.57726932314112,
+          "first_margin_entry_s": null,
+          "margin_nodes": 0,
+          "sphere_cost_mean": 1.0545609573262924e-14,
+          "first_state_qpos_error": 0
+        },
+        {
+          "origin_s": 42.79999999992693,
+          "actual_bottom_mm": 172.33941593231012,
+          "prediction_min_bottom_mm": 2.127366902504188,
+          "first_margin_entry_s": null,
+          "margin_nodes": 0,
+          "sphere_cost_mean": 7.968451703995093e-14,
+          "first_state_qpos_error": 0
+        },
+        {
+          "origin_s": 42.8999999999267,
+          "actual_bottom_mm": 77.57176507489484,
+          "prediction_min_bottom_mm": 0.855421736320007,
+          "first_margin_entry_s": 42.98999999992649,
+          "margin_nodes": 1,
+          "sphere_cost_mean": 0.01045168716421508,
+          "first_state_qpos_error": 0
+        },
+        {
+          "origin_s": 42.939999999926606,
+          "actual_bottom_mm": 47.66490667136451,
+          "prediction_min_bottom_mm": 0.9547715732519946,
+          "first_margin_entry_s": 42.98999999992649,
+          "margin_nodes": 1,
+          "sphere_cost_mean": 0.0010230552784591593,
+          "first_state_qpos_error": 0
+        },
+        {
+          "origin_s": 42.95999999992656,
+          "actual_bottom_mm": 29.427364243997403,
+          "prediction_min_bottom_mm": 0.9570242671480267,
+          "first_margin_entry_s": 42.98999999992649,
+          "margin_nodes": 1,
+          "sphere_cost_mean": 0.0009237067907877233,
+          "first_state_qpos_error": 0
+        },
+        {
+          "origin_s": 42.97999999992651,
+          "actual_bottom_mm": 8.210733034042136,
+          "prediction_min_bottom_mm": 0.3140991278445804,
+          "first_margin_entry_s": 42.987999999926494,
+          "margin_nodes": 3,
+          "sphere_cost_mean": 0.3637781972450027,
+          "first_state_qpos_error": 0
+        }
+      ],
+      "prediction_to_actual": [
+        {
+          "origin_s": 42.5999999999274,
+          "time_s": 42.94999999992658,
+          "pred_bottom_mm": 27.785609845808786,
+          "actual_bottom_mm": 38.89745034891186,
+          "pred_z": 0.1498529403090611,
+          "actual_z": 0.2339535512720529
+        },
+        {
+          "origin_s": 42.699999999927165,
+          "time_s": 42.987999999926494,
+          "pred_bottom_mm": 15.270822735170942,
+          "actual_bottom_mm": 0.8764905876966766,
+          "pred_z": 0.1871454342107586,
+          "actual_z": 0.20040435090299763
+        },
+        {
+          "origin_s": 42.79999999992693,
+          "time_s": 42.987999999926494,
+          "pred_bottom_mm": 2.127366902504188,
+          "actual_bottom_mm": 0.8764905876966766,
+          "pred_z": 0.19147828046928067,
+          "actual_z": 0.20040435090299763
+        },
+        {
+          "origin_s": 42.8999999999267,
+          "time_s": 42.987999999926494,
+          "pred_bottom_mm": 1.352364651165741,
+          "actual_bottom_mm": 0.8764905876966766,
+          "pred_z": 0.19853033098084827,
+          "actual_z": 0.20040435090299763
+        },
+        {
+          "origin_s": 42.95999999992656,
+          "time_s": 42.987999999926494,
+          "pred_bottom_mm": 1.4647936465722808,
+          "actual_bottom_mm": 0.8764905876966766,
+          "pred_z": 0.19915512139992267,
+          "actual_z": 0.20040435090299763
+        },
+        {
+          "origin_s": 42.97999999992651,
+          "time_s": 42.987999999926494,
+          "pred_bottom_mm": 0.5156056397880928,
+          "actual_bottom_mm": 0.8764905876966766,
+          "pred_z": 0.2000492226800872,
+          "actual_z": 0.20040435090299763
+        }
+      ],
+      "actual_terminal_s": 42.987799999926494,
+      "actual_terminal_sphere_bottom_mm": 0.8764905876966766,
+      "sources": {
+        "trajectory": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261030T161045Z/train-PANN_PPO_S5-s0-ep00034__trajectory.npz",
+        "prediction": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261030T161045Z/train-PANN_PPO_S5-s0-ep00034__prediction-001.npz",
+        "model": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261030T161045Z/train-PANN_PPO_S5-s0-ep00034__model__G1-project-go2.xml"
+      }
+    },
+    "reviewed_on": "2026-10-31",
+    "method": "Read published job snapshots,ep15–44,actual four rollouts and selected ep34 prediction/trajectory/XML;no new physics,optimizer steps,build or server tests.",
+    "formal_claims": {
+      "E30_passes": 0,
+      "E60_passes": 0,
+      "complete_roundtrips": 0,
+      "matched_PANN_benefit_established": false
+    },
+    "publication": {
+      "status": "published",
+      "job_manifest_rows": 1010,
+      "release_files": 965,
+      "git_records": 45,
+      "release_bytes": 7019542295,
+      "available_videos": 30,
+      "aggregate_release_files": 1554,
+      "aggregate_release_bytes": 10877164624,
+      "pending": []
+    },
+    "interpretation": "The integrated learning/execution milestone and three legal outbound traversals are real progress. First r24 episode reached far endpoint before any new PPO update;four batch rewards are not a reliable learning-benefit result. Material-domain exits,soft-clearance limits,side exit and sparse return coverage remain.",
+    "decision": "Continue same r24 +2048/8 with a final frozen-policy nominal E30/eligible E60;no mandatory new repair/admission test."
   }
 }

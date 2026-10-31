@@ -18,12 +18,14 @@ def main():
     p.add_argument("--resume", required=True, help="Latest actual checkpoint of the active stream.")
     p.add_argument("--session", default="s1-joint")
     p.add_argument("--hours", type=float, help="Training budget; defaults to the execution contract.")
-    p.add_argument("--postprocess-hours", type=float, default=4,
-                   help="Separate rendering/publication budget after training.")
+    p.add_argument("--postprocess-hours", type=float,
+                   help="Separate rendering/publication budget; defaults to the execution contract.")
     p.add_argument("--network-mode", choices=["academic", "clash", "direct"], default="academic")
     a = p.parse_args()
     contract = json.loads(CONFIG.read_text())
     active = contract["learning"]["active_streams"][0]
+    if a.postprocess_hours is None:
+        a.postprocess_hours = contract["execution"]["background_job"]["default_postprocess_wall_s"] / 3600
     seconds = (a.hours * 3600 if a.hours is not None
                else contract["execution"]["background_job"]["default_maximum_wall_s"])
     if seconds <= 0 or a.postprocess_hours <= 0:
@@ -82,7 +84,7 @@ def main():
     record = dict(
         session=a.session, job_directory=str(directory.relative_to(ROOT)),
         source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-        controller_build=contract["reuse"]["active_controller_build"],
+        controller_build=contract["reuse"]["active_controller_build"], current_task=contract["current_task"],
         group=active["group"], seed=active["seed"], resume_checkpoint=a.resume,
         started_unix_s=started, deadline_unix_s=deadline,
         initial_transitions=collection.get("collected_transitions"), initial_updates=collection.get("updates"),

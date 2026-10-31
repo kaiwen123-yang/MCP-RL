@@ -50,7 +50,8 @@ def main():
                                           else x.stat().st_mtime >= job["started_unix_s"])))
     binaries = previous.get("training_binary_paths", [str(x.relative_to(ROOT)) for x in sorted(stream.rglob("*"))
                             if x.is_file() and x.suffix in (".pt", ".npz") and x.stat().st_mtime >= job["started_unix_s"]])
-    summary = dict(job=name, source_commit=job["source_commit"], controller_build=job["controller_build"],
+    summary = dict(job=name, current_task=job.get("current_task", "S1"),
+                   source_commit=job["source_commit"], controller_build=job["controller_build"],
                    training_exit_code=a.training_exit_code, postprocess_started_unix_s=started,
                    deadline_unix_s=deadline, work_deadline_unix_s=work_deadline,
                    publication_status="publication_pending", render=[], errors=[],
@@ -139,7 +140,8 @@ def main():
     for action in ("upload", "finish"):
         log = records / f"{name}__{action}.txt"
         error = command([sys.executable, "scripts/publish_s1_go2_r12.py", action, "--server-auth",
-                         "--manifest", str(manifest_path), "--deadline-unix", str(work_deadline)], log)
+                         "--manifest", str(manifest_path), "--job-name", name,
+                         "--source-commit", job["source_commit"], "--deadline-unix", str(work_deadline)], log)
         if error:
             summary["errors"].append(dict(stage=action, error=error))
 
@@ -195,7 +197,7 @@ def main():
     first = next(i for i, line in enumerate(plan) if line.startswith("## 当前交接"))
     slots = [i for i in range(first + 1, len(plan)) if plan[i].startswith("- ")][:6]
     handoff = [
-        f"- 当前任务：W34后台作业{name}已结束训练与自动后处理；训练达标={summary['training']['target_reached']}，发布={summary['publication_status']}。",
+        f"- 当前任务：{summary['current_task']}后台作业{name}已结束训练与自动后处理；训练达标={summary['training']['target_reached']}，发布={summary['publication_status']}。",
         f"- 当前状态：本组实际累计{samples}条/{updates}次更新，目标{job['target_transitions']}/{job['target_updates']}；训练记录不代表正式E30资格。",
         f"- 已完成：本job保留{len(episodes)}个新attempt，视频可用{len(summary['videos'])}，资产已发布{summary['assets_published']}/{len(assets)}；控制版{job['controller_build']}。",
         f"- 当前问题：最后物理原因{stopped.get('last_episode_reason')}；待传{len(pending)}项，待处理视频{len(missing_videos)}项，具体错误见本job摘要。",
@@ -247,3 +249,4 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
