@@ -56,6 +56,9 @@ def main():
                    publication_status="publication_pending", render=[], errors=[],
                    attempts=[x.name for x in episodes], training_binary_paths=binaries,
                    manifest=str(manifest_path.relative_to(ROOT)), release_url=f'https://github.com/{REPO}/releases/tag/{contract["outputs"]["release_tag"]}')
+    for key in ("publication_resume", "release_urls"):
+        if key in previous:
+            summary[key] = previous[key]
     write(summary_path, summary)
 
     def command(argv, log):
