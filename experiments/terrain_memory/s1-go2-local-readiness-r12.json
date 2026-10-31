@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "W34_complete_W35_planned",
+  "status": "W35_ready_to_launch",
   "protocol_revision": "same_r24_continuation_final_eval_v10",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-10-31",
@@ -113,7 +113,7 @@
       "failure_policy": "Record stage errors and pending paths;publish other available results. Do not re-run physics to create videos or endlessly restart training/upload. A failed push keeps the local commit for a later ordinary retry;never force-push.",
       "result_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job-name>.json",
       "resume_publication": "Continue the same job's finish only after a concrete delivery error;reuse videos,snapshots and explicit Release destinations without re-running training/evaluation.",
-      "final_evaluation_adapter_status": "required_in_next_execution_not_implemented_by_this_review",
+      "final_evaluation_adapter_status": "implemented_in_R12_entrypoint_and_tmux_pipeline; actual_final_evaluation_pending_training",
       "postprocessing_release_policy": "New unassigned nonempty assets go to deterministic per-job partNN Releases,max900assets each;retain all existing manifest/index destinations and reuse already published files."
     }
   },
@@ -224,7 +224,7 @@
     },
     {
       "id": "W35",
-      "status": "planned_not_executed",
+      "status": "ready_to_launch",
       "goal": "Continue the same r24 full PANN-PPO-MPC loop for a substantive further phase,then observe its final frozen policy under the original nominal E30/E60 ladder.",
       "group": "PANN_PPO_S5",
       "seed": 0,
@@ -360,7 +360,7 @@
     "next_runtime_work": [
       "Check the existing tmux job first. W34 is completed in published records; do not duplicate any newer live job.",
       "Reuse S5-r24 and own-PANN ep44 at1280/5; continue2048new samples/8updates to3328/13 without another build or pre-training E30 gate.",
-      "Adapt the existing R12 frozen-policy evaluation entry and current-root predecessor lookup, then wire final nominal E30/eligible E60 between training and publication as described in post_training_evaluation.",
+      "Implemented existing R12 evaluation adapter,current-root predecessor lookup,and final-policy E30/conditional E60 between training and publication. Actual final evaluation is pending the end of this job.",
       "Push actual source/config; launch one tmux pipeline with28h training,4h evaluation and6h publication budgets. Observe actual sampling briefly and leave.",
       "Use the updated publisher's saved per-job partNN destinations; include every actual evaluation attempt as well as all training outputs. Continue only pending postprocessing after a delivery failure.",
       "Report legal passage,side exits,return exposure,roundtrips,final-policy outcomes and actual training counts separately; no score-based checkpoint selection or PC archive."
@@ -426,7 +426,7 @@
     "training_and_posthoc_prefixes_are_not_formal_qualification": true,
     "automatically_run_extra_rigid_regression": false,
     "additional_run_rule": "Only when it directly answers the current concrete failure/change; no unrelated matrix.",
-    "formal_mission_wall_rule": "Formal evaluation is a separately declared task with its own explicit execution budget. Keep original continuous mission durations and case qualification; never stitch interrupted portions into a successful long mission. This background training launcher does not start formal evaluation.",
+    "formal_mission_wall_rule": "Formal evaluation starts after this job training exits, uses its independent 4h deadline, and preserves the original continuous durations and exact-case qualification. Never stitch interrupted portions into a pass.",
     "current_window": "Keep the successful r24 implementation,original reward/action/PANN/physics and20workers fixed for this2048-transition phase. Adapt only the final evaluation entry and publication plumbing;no compulsory control-patch admission stage.",
     "next_control_question": "After substantive same-r24 learning,judge legal material passage,side exit,return/round-trip progress and frozen-policy outcomes. If flat,resolve the observed material-prediction/load or route/action-authority bottleneck instead of extending cap-only training indefinitely.",
     "comparison_after_migration": "Old5080 RAW and AutoDL PANN first updates are engineering evidence,not a matched learning-benefit/runtime comparison. Later formal comparisons share host/runtime/controller/worker setting and original per-case staged qualification.",
@@ -449,7 +449,7 @@
     },
     "post_training_evaluation": {
       "planned": true,
-      "implementation_status": "requires_existing_R12_entrypoint_and_pipeline_adaptation_in_next_execution",
+      "implementation_status": "implemented_in_R12_entrypoint_and_tmux_pipeline; actual_final_evaluation_pending_training",
       "purpose": "Observe the final actually updated policy rather than treating the preceding rollout as its evaluation.",
       "group": "PANN_PPO_S5",
       "seed": 0,
@@ -478,7 +478,8 @@
       "technical_failure": "Record missing/partial evaluation and continue publication of all actual outputs;do not replay completed training.",
       "automatically_run_E300_E600": false,
       "full_21_case_matrix": false,
-      "result_reporting": "Job summary records training attainment,evaluation outcomes/blocked or partial stages,andpublication independently."
+      "result_reporting": "Job summary records training attainment,evaluation outcomes/blocked or partial stages,andpublication independently.",
+      "enabled": true
     },
     "primary_progress_metrics": [
       "legal outbound material traversals",
@@ -585,7 +586,7 @@
         "create_target": "job.source_commit",
         "server_execution_of_new_partitioning": "not_run_by_this_review"
       },
-      "evaluation_assets": "After necessary evaluation adapter wiring,include every actual eval attempt in the same job render/manifest as training."
+      "evaluation_assets": "Every explicit job evaluation attempt is included with training in rendering and the asset manifest; its policy logs are under the job directory."
     }
   },
   "history": {
@@ -783,7 +784,7 @@
     "background_training_authorized": true,
     "background_default_budget_s": 100800,
     "final_evaluation_budget_s": 14400,
-    "final_evaluation_adapter_status": "required_not_yet_implemented",
+    "final_evaluation_adapter_status": "implemented_in_R12_entrypoint_and_tmux_pipeline; actual_final_evaluation_pending_training",
     "automatic_postprocess": true,
     "default_postprocess_budget_s": 21600
   }

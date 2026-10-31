@@ -56,7 +56,7 @@ def prerequisite(c,index,purpose,terrain):
             a.get('evaluation_stage',{}).get('level')==prior and a.get('stage_status')=='passed' and a.get('qualification_usable',True)]
     if not passes:raise ValueError(f'{level} requires this exact case to pass independent {prior}')
     previous=passes[-1]['attempt']
-    actual=json.loads((ROOT/CONTRACT['outputs']['compact_root']/(previous+'-resolved.json')).read_text())
+    actual=json.loads((ROOT/c.get('outputs',{}).get('root',CONTRACT['outputs']['compact_root'])/(previous+'-resolved.json')).read_text())
     if actual['workers']!=c['evaluation_workers']:
         raise ValueError('The declared predecessor used different solver workers; re-establish qualification for the changed execution setting')
     return previous

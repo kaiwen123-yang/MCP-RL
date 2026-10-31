@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Run R12 training, rendering and GitHub publication in one detached tmux job."""
+"""Run R12 training, final evaluation, rendering and GitHub publication in one detached tmux job."""
 import argparse
 from datetime import datetime, timezone
 import json
 import os
+import platform
 from pathlib import Path
 import shlex
 import subprocess
+import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,6 +52,21 @@ def main():
     job_name = "job-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     directory = ROOT / contract["outputs"]["large_root"] / job_name
     directory.mkdir(parents=True, exist_ok=False)
+    (directory / "execution-contract.json").write_text(json.dumps(contract, indent=2) + "\n")
+    environment = dict(python=sys.version, executable=sys.executable, platform=platform.platform(),
+                       recorded_environment="experiments/terrain_memory/compute-environment.json",
+                       controller_build=contract["reuse"]["active_controller_build"],
+                       mpc_workers=contract["resources"]["mpc_workers"],
+                       torch_threads=contract["resources"]["torch_threads"],
+                       environment={key: os.environ.get(key) for key in (
+                           "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+                           "XLA_PYTHON_CLIENT_PREALLOCATE", "JAX_ENABLE_X64", "MUJOCO_GL")})
+    (directory / "environment.json").write_text(json.dumps(environment, indent=2) + "\n")
+    with (directory / "pip-packages.txt").open("w") as output:
+        subprocess.run([sys.executable, "-m", "pip", "list", "--format=freeze"], stdout=output, stderr=subprocess.STDOUT, check=True)
+    with (directory / "gpu-runtime.txt").open("w") as output:
+        subprocess.run(["nvidia-smi", "--query-gpu=name,driver_version,memory.total", "--format=csv"],
+                       stdout=output, stderr=subprocess.STDOUT, check=True)
     command = [
         "bash", "scripts/run_s1_go2_r12_training.sh",
         "--group", active["group"], "--seed", str(active["seed"]),
@@ -62,7 +79,10 @@ def main():
         "python", "-u", "scripts/finish_s1_go2_r12_job.py",
         "--job-dir", str(directory), "--hours", str(a.postprocess_hours),
     ]
-    # Close training output before rendering/uploading the immutable job files.
+    evaluation = [
+        "python", "-u", "scripts/run_s1_go2_r12.py", "--job-dir", str(directory),
+    ]
+    # Close training/evaluation output before rendering and publishing job files.
     script.write_text("\n".join([
         "#!/usr/bin/env bash",
         "set -e",
@@ -76,6 +96,12 @@ def main():
         "set -e",
         "printf '%s\\n' \"$training_exit\" > " + shlex.quote(str(directory / "training-exit-code.txt")),
         "date -u '+%Y-%m-%dT%H:%M:%SZ' > " + shlex.quote(str(directory / "training-finished-at.txt")),
+        "set +e",
+        shlex.join(evaluation) + " > " + shlex.quote(str(directory / "evaluation.log")) + " 2>&1",
+        "evaluation_exit=$?",
+        "set -e",
+        "printf '%s\\n' \"$evaluation_exit\" > " + shlex.quote(str(directory / "evaluation-exit-code.txt")),
+        "date -u '+%Y-%m-%dT%H:%M:%SZ' > " + shlex.quote(str(directory / "evaluation-finished-at.txt")),
         shlex.join(postprocess) + ' --training-exit-code "$training_exit"',
         "",
     ]))
@@ -94,7 +120,10 @@ def main():
         network_mode=a.network_mode, postprocess_hours=a.postprocess_hours,
         initial_attempts=sorted(p.name for p in (ROOT / contract["outputs"]["large_root"]).glob(
             f'train-{active["group"]}-s{active["seed"]}-ep*') if p.is_dir()),
-        publication_status="automatic_after_training",
+        evaluation_command=evaluation,
+        evaluation_hours=contract["control_and_evaluation"]["post_training_evaluation"]["maximum_wall_s"] / 3600,
+        evaluation_status="pending_training",
+        publication_status="automatic_after_training_and_evaluation",
         result_summary=f'{contract["outputs"]["compact_root"]}/jobs/{job_name}.json',
     )
     metadata = directory / "job.json"
@@ -105,7 +134,7 @@ def main():
     record["status"] = "launched"
     metadata.write_text(json.dumps(record, indent=2) + "\n")
     print(json.dumps(record, indent=2))
-    print("Detach leaves training, rendering and publication running in this tmux session.")
+    print("Detach leaves training, final evaluation, rendering and publication running in this tmux session.")
     print("Inspect the job result summary for training outcome, Release URLs and publication errors.")
 
 

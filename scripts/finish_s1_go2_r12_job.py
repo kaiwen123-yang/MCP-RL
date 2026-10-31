@@ -23,6 +23,68 @@ def write(path, value):
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n")
 
 
+def training_outcomes(episodes, small, binaries, latest_resume, initial_transitions):
+    """Summarize the original route criteria and saved policy observations."""
+    import numpy as np
+    from s1_go2_r11_runtime import PHASES
+
+    outcome = dict(physical_episodes=0, results_available=0, results_unavailable=[],
+                   legal_outbound_traversals=0, side_exits=0, far_arrivals=0,
+                   return_episodes=0, completed_roundtrips=0, physical_failures_by_phase={},
+                   saved_observations=0, nonzero_pann_observations=0,
+                   return_observations=0, return_nonzero_pann_observations=0,
+                   observation_source="New saved rollouts plus final valid resume tail; no inferred missing observations.")
+    for episode in episodes:
+        result = read(small / (episode.name + ".json"))
+        if not result.get("stage_progress"):
+            outcome["results_unavailable"].append(episode.name)
+            continue
+        outcome["results_available"] += 1
+        outcome["physical_episodes"] += int(result.get("simulation_s", 0) > 0)
+        progress = result["stage_progress"]
+        traversal = progress["material_traversal"]
+        outcome["legal_outbound_traversals"] += int(traversal["completed"])
+        outcome["side_exits"] += int(traversal["lateral_exit_s"] is not None)
+        outcome["far_arrivals"] += int(progress["far_arrival_s"] is not None)
+        outcome["return_episodes"] += int(progress["return_start_s"] is not None)
+        outcome["completed_roundtrips"] += result["completed_round_trips"]
+        reason = result["reason"]
+        kind = next((x for x in ("material_domain_exit", "invalid_contact", "body_fall") if reason.startswith(x)), None)
+        if kind:
+            phase = result["transitions"][-1]["phase"] if result["transitions"] else "unrecorded"
+            phases = outcome["physical_failures_by_phase"].setdefault(kind, {})
+            phases[phase] = phases.get(phase, 0) + 1
+
+    def observations(values):
+        obs = np.asarray(values)
+        obs = obs.reshape(-1, obs.shape[-1])
+        # Existing shared-observation layout: 80 channels precede the nine phases.
+        returning = obs[:, 80 + PHASES.index("return")] > .5
+        nonzero = np.any(obs[:, -12:] != 0, axis=1)
+        outcome["saved_observations"] += len(obs)
+        outcome["nonzero_pann_observations"] += int(nonzero.sum())
+        outcome["return_observations"] += int(returning.sum())
+        outcome["return_nonzero_pann_observations"] += int((returning & nonzero).sum())
+
+    recorded_samples = set()
+    for relative in binaries:
+        path = ROOT / relative
+        if path.name.startswith("rollout-") and path.suffix == ".npz":
+            first, last = map(int, path.stem.split("-")[1:])
+            sample_ids = np.arange(first, last + 1)
+            with np.load(path) as data:
+                observations(data["obs"][sample_ids > initial_transitions])
+            recorded_samples.update(sample_ids.tolist())
+    if latest_resume:
+        import torch
+        saved = torch.load(ROOT / latest_resume, map_location="cpu", weights_only=False)
+        tail = saved.get("buffer", [])
+        for sample_id, row in enumerate(tail, saved["samples"] - len(tail) + 1):
+            if sample_id > initial_transitions and sample_id not in recorded_samples:
+                observations(row["obs"].numpy())
+    return outcome
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--job-dir", type=Path, required=True)
@@ -31,7 +93,7 @@ def main():
     a = p.parse_args()
     jobdir = (ROOT / a.job_dir).resolve()
     job = read(jobdir / "job.json")
-    contract = read(CONFIG)
+    contract = read(jobdir / "execution-contract.json") or read(CONFIG)
     small, large = (ROOT / contract["outputs"][k] for k in ("compact_root", "large_root"))
     name = jobdir.name
     started = time.time()
@@ -44,15 +106,22 @@ def main():
     records.mkdir(parents=True, exist_ok=True)
     stream = large / "training" / f'{job["group"]}-seed{job["seed"]}'
     initial = set(job.get("initial_attempts", []))
+    evaluation = read(jobdir / "evaluation.json") or dict(
+        status="unavailable" if job.get("evaluation_command") else "not_scheduled_for_job",
+        reason="See evaluation.log and evaluation-exit-code.txt" if job.get("evaluation_command") else None,
+        attempts=[], stages=[])
     episodes = ([large / x for x in previous["attempts"]] if "attempts" in previous else
                 sorted(x for x in large.glob(f'train-{job["group"]}-s{job["seed"]}-ep*')
                        if x.is_dir() and (x.name not in initial if "initial_attempts" in job
                                           else x.stat().st_mtime >= job["started_unix_s"])))
+    episodes = sorted({x.name: x for x in episodes + [large / x for x in evaluation["attempts"]]}.values())
     binaries = previous.get("training_binary_paths", [str(x.relative_to(ROOT)) for x in sorted(stream.rglob("*"))
                             if x.is_file() and x.suffix in (".pt", ".npz") and x.stat().st_mtime >= job["started_unix_s"]])
     summary = dict(job=name, current_task=job.get("current_task", "S1"),
                    source_commit=job["source_commit"], controller_build=job["controller_build"],
-                   training_exit_code=a.training_exit_code, postprocess_started_unix_s=started,
+                   training_exit_code=a.training_exit_code, evaluation=evaluation,
+                   training_started_unix_s=job["started_unix_s"], training_deadline_unix_s=job["deadline_unix_s"],
+                   postprocess_started_unix_s=started,
                    deadline_unix_s=deadline, work_deadline_unix_s=work_deadline,
                    publication_status="publication_pending", render=[], errors=[],
                    attempts=[x.name for x in episodes], training_binary_paths=binaries,
@@ -158,12 +227,18 @@ def main():
     summary.update(training=dict(actual_transitions=samples, updates=updates,
                        target_transitions=job["target_transitions"], target_updates=job["target_updates"],
                        target_reached=bool(stopped and samples >= job["target_transitions"] and updates >= job["target_updates"]),
+                       initial_transitions=job.get("initial_transitions"), new_transitions=samples-job["initial_transitions"],
+                       initial_updates=job.get("initial_updates"), new_updates=updates-job["initial_updates"],
+                       unupdated_fragment=stopped.get("unupdated_fragment", collection.get("unupdated_fragment")),
                        reason=stopped.get("reason"), last_stage_status=stopped.get("last_stage_status"),
                        last_episode_reason=stopped.get("last_episode_reason")),
                    pending_assets=pending, render_pending=missing_videos,
                    assets_published=sum(x["path"] not in pending for x in assets), assets_expected=len(assets),
                    videos=[dict(attempt=x["attempt"], url=registered.get(x["attempt"] + "__full-mission-material-overlay.mp4", {}).get("url"))
                            for x in summary["render"] if x["status"] in ("rendered", "existing")])
+    summary["training"]["outcomes"] = training_outcomes(
+        [x for x in episodes if x.name.startswith("train-")], small, binaries,
+        read(snapshots / "progress.json").get("checkpoint"), job["initial_transitions"])
     summary["release_urls"] = {
         tag: f"https://github.com/{REPO}/releases/tag/{tag}"
         for tag in sorted({registered.get(x["name"], {}).get("release_tag", contract["outputs"]["release_tag"])
@@ -178,6 +253,7 @@ def main():
         current = read(small / "index.json")
         current.setdefault("background_jobs", {})[name] = dict(
             summary=str(summary_path.relative_to(ROOT)), training=summary.get("training"),
+            evaluation=summary.get("evaluation"),
             publication_status=summary["publication_status"], pending_assets=summary.get("pending_assets", []),
             render_pending=summary.get("render_pending", []))
         publication = current.setdefault("publication", {})
@@ -196,11 +272,13 @@ def main():
     plan = plan_path.read_text().splitlines()
     first = next(i for i, line in enumerate(plan) if line.startswith("## 当前交接"))
     slots = [i for i in range(first + 1, len(plan)) if plan[i].startswith("- ")][:6]
+    eval_text = "，".join(f"{x['level']}={x['stage_status']}" for x in evaluation["stages"]) or evaluation["status"]
+    outcomes = summary["training"]["outcomes"]
     handoff = [
-        f"- 当前任务：{summary['current_task']}后台作业{name}已结束训练与自动后处理；训练达标={summary['training']['target_reached']}，发布={summary['publication_status']}。",
-        f"- 当前状态：本组实际累计{samples}条/{updates}次更新，目标{job['target_transitions']}/{job['target_updates']}；训练记录不代表正式E30资格。",
+        f"- 当前任务：{summary['current_task']}后台作业{name}已结束；训练达标={summary['training']['target_reached']}，评价={evaluation['status']}，发布={summary['publication_status']}。",
+        f"- 当前状态：本job新增{summary['training']['new_transitions']}条/{summary['training']['new_updates']}次更新，累计{samples}/{updates}，目标{job['target_transitions']}/{job['target_updates']}；末端{eval_text}。",
         f"- 已完成：本job保留{len(episodes)}个新attempt，视频可用{len(summary['videos'])}，资产已发布{summary['assets_published']}/{len(assets)}；控制版{job['controller_build']}。",
-        f"- 当前问题：最后物理原因{stopped.get('last_episode_reason')}；待传{len(pending)}项，待处理视频{len(missing_videos)}项，具体错误见本job摘要。",
+        f"- 当前问题：训练合规贯穿{outcomes['legal_outbound_traversals']}、侧出{outcomes['side_exits']}、返程{outcomes['return_episodes']}、完整往返{outcomes['completed_roundtrips']}；末次{stopped.get('last_episode_reason')}；待传{len(pending)}、待视频{len(missing_videos)}。",
         "- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。",
         f"- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要{summary_path.relative_to(ROOT)}；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。",
     ]
@@ -242,7 +320,8 @@ def main():
             plan_path.write_text("\n".join(plan) + "\n")
         print(json.dumps(summary, ensure_ascii=False), flush=True)
         return 1
-    print(json.dumps(dict(job=name, training=summary["training"], publication_status=summary["publication_status"],
+    print(json.dumps(dict(job=name, training=summary["training"], evaluation=summary["evaluation"],
+                          publication_status=summary["publication_status"],
                           summary=f"https://github.com/{REPO}/blob/main/{summary_path.relative_to(ROOT)}"), ensure_ascii=False), flush=True)
     return 0 if complete else 1
 
