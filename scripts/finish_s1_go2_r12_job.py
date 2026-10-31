@@ -159,6 +159,11 @@ def main():
                    assets_published=sum(x["path"] not in pending for x in assets), assets_expected=len(assets),
                    videos=[dict(attempt=x["attempt"], url=registered.get(x["attempt"] + "__full-mission-material-overlay.mp4", {}).get("url"))
                            for x in summary["render"] if x["status"] in ("rendered", "existing")])
+    summary["release_urls"] = {
+        tag: f"https://github.com/{REPO}/releases/tag/{tag}"
+        for tag in sorted({registered.get(x["name"], {}).get("release_tag", contract["outputs"]["release_tag"])
+                           for x in assets})
+    }
     complete = not pending and not missing_videos and not summary["errors"]
     summary.update(publication_status="published" if complete else "publication_pending",
                    git_delivery="This report is prepared for this commit; its presence on GitHub records successful delivery. A push failure is retained locally as pending.")
@@ -192,7 +197,7 @@ def main():
         f"- 已完成：本job保留{len(episodes)}个新attempt，视频可用{len(summary['videos'])}，资产已发布{summary['assets_published']}/{len(assets)}；控制版{job['controller_build']}。",
         f"- 当前问题：最后物理原因{stopped.get('last_episode_reason')}；待传{len(pending)}项，待处理视频{len(missing_videos)}项，具体错误见本job摘要。",
         "- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。",
-        f"- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要{summary_path.relative_to(ROOT)}；原Release，用户电脑不另归档。",
+        f"- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要{summary_path.relative_to(ROOT)}；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。",
     ]
     for position, line in zip(slots, handoff):
         plan[position] = line

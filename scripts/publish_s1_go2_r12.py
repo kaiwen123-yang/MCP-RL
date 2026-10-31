@@ -13,7 +13,7 @@ SMALL=ROOT/'results/terrain_memory/simulation'/RUN
 LARGE=ROOT/'outputs/terrain_memory/simulation'/RUN
 ENV=Path(sys.executable).parent
 
-def server_credentials(deadline):
+def server_credentials(deadline, release_tags):
     """Read the server's existing GitHub login without writing its token to disk."""
     token=os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
     if not token:
@@ -29,9 +29,13 @@ def server_credentials(deadline):
         except subprocess.CalledProcessError as error:
             raise RuntimeError('GitHub API failed: '+error.stderr.replace(token,'[credential]').strip()) from None
         return json.loads(output)
-    release=api(f'repos/{REPO}/releases/tags/{RUN}')
-    pages=api(f'repos/{REPO}/releases/{release["id"]}/assets?per_page=100','--paginate','--slurp')
-    return dict(token=token,release_metadata=release,remote_assets=[row for page in pages for row in page])
+    releases={};remote_assets={}
+    for tag in sorted(release_tags):
+        release=api(f'repos/{REPO}/releases/tags/{tag}')
+        pages=api(f'repos/{REPO}/releases/{release["id"]}/assets?per_page=100','--paginate','--slurp')
+        releases[tag]=release
+        remote_assets[tag]=[row for page in pages for row in page]
+    return dict(token=token,releases=releases,remote_assets=remote_assets)
 
 def main():
     p=argparse.ArgumentParser()
@@ -44,7 +48,19 @@ def main():
     p.add_argument('--manifest',type=Path,help='Explicit job asset list: path,name,category.')
     args=p.parse_args()
     manifest=json.loads(args.manifest.read_text()) if args.manifest else None
-    credentials=server_credentials(args.deadline_unix) if args.server_auth else json.load(sys.stdin)
+    # The original release reached GitHub's 1000-asset cap during W34.
+    # Explicit manifest destinations retain original assets and route only
+    # missing files to the same job's continuation release.
+    destination_rows=manifest if manifest is not None else json.loads((SMALL/'index.json').read_text()).get('publication',{}).get('assets',[])
+    destinations={row['name']:row.get('release_tag',RUN) for row in destination_rows}
+    if args.server_auth:
+        credentials=server_credentials(args.deadline_unix,set(destinations.values())|{RUN})
+        releases=credentials['releases']
+        remotes={tag:{row['name']:row for row in rows} for tag,rows in credentials['remote_assets'].items()}
+    else:
+        credentials=json.load(sys.stdin)
+        releases={RUN:credentials['release_metadata']}
+        remotes={RUN:{row['name']:row for row in credentials['remote_assets']}}
     env=dict(os.environ,GODEBUG='http2client=0',GH_TOKEN=credentials['token'],PATH=str(ENV)+os.pathsep+os.environ['PATH'])
     proxy=env.get('https_proxy',env.get('HTTPS_PROXY',''))
     def update(change):
@@ -52,14 +68,15 @@ def main():
             fcntl.flock(lock,fcntl.LOCK_EX)
             value=json.loads((SMALL/'index.json').read_text());change(value)
             (SMALL/'index.json').write_text(json.dumps(value,indent=2)+'\n')
-    release=credentials['release_metadata']
-    remote={row['name']:row for row in credentials['remote_assets']}
+    release=releases[RUN]
+    remote=remotes[RUN]
     if args.action=='upload' and not args.server_auth:
         for row in json.loads((SMALL/'index.json').read_text()).get('publication',{}).get('assets',[]):
             if row['status']=='uploaded' and row['name'] not in remote:
                 remote[row['name']]=dict(row,state='uploaded')
     def metadata(j):
         q=j.setdefault('publication',{});q.update(status='publication_pending',release_id=release['id'],release_url=release['html_url'],release_tag=RUN)
+        q.setdefault('release_destinations',{}).update({tag:dict(id=row['id'],url=row['html_url']) for tag,row in releases.items()})
     update(metadata)
     if args.action=='finish':
         def finish(j):
@@ -76,7 +93,7 @@ def main():
                             if file.is_file() and str(file.relative_to(ROOT)) not in registered)
             for row in q.get('assets',[]):
                 if selected is not None and row['name'] not in selected:continue
-                actual=remote.get(row['name'])
+                actual=remotes[row.get('release_tag',RUN)].get(row['name'])
                 if row.get('status')=='git_recorded':continue
                 okay=actual and actual['state']=='uploaded' and actual['size']==row['size']
                 row['status']='uploaded' if okay else 'publication_pending'
@@ -107,20 +124,21 @@ def main():
     for file,name,category in inputs:
         size=file.stat().st_size
         if size>=2*1024**3:raise RuntimeError('Asset requires transfer splitting: '+str(file))
-        expected.append(dict(name=name,path=str(file.relative_to(ROOT)),size=size,category=category,
-            url=f'https://github.com/{REPO}/releases/download/{RUN}/{name}',status='publication_pending'))
+        tag=destinations.get(name,RUN)
+        expected.append(dict(name=name,path=str(file.relative_to(ROOT)),size=size,category=category,release_tag=tag,
+            url=f'https://github.com/{REPO}/releases/download/{tag}/{name}',status='publication_pending'))
     if args.asset:expected=[row for row in expected if row['name'] in args.asset]
     def register(j):
         q=j['publication'];rows={x['name']:x for x in q.get('assets',[])}
         for row in expected:
-            old=rows.get(row['name']);actual=remote.get(row['name'])
+            old=rows.get(row['name']);actual=remotes[row['release_tag']].get(row['name'])
             if actual and actual['size']==row['size'] and actual['state']=='uploaded':row['status']='uploaded'
             elif actual:raise RuntimeError('Existing asset differs; retained without replacement: '+row['name'])
             rows[row['name']]=row
         q['assets']=list(rows.values())
     update(register)
     def upload(row):
-        actual=remote.get(row['name'])
+        actual=remotes[row['release_tag']].get(row['name'])
         if actual:return
         path=ROOT/row['path']
         if row['size']==0:
@@ -135,7 +153,8 @@ def main():
         # Actual gh and requests uploads failed with 408/TLS EOF on this proxy.
         # Native curl pins HTTP/1 and TLS1.2; credential header is stdin only.
         config='header = "Authorization: Bearer '+env['GH_TOKEN']+'"\nheader = "Accept: application/vnd.github+json"\nheader = "Content-Type: application/octet-stream"\n'
-        url=release['upload_url'].split('{')[0]+'?name='+row['name']
+        destination=releases[row['release_tag']]
+        url=destination['upload_url'].split('{')[0]+'?name='+row['name']
         response=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2','--silent','--show-error','--fail-with-body',
             '--connect-timeout','30','--max-time',str(min(300,int(args.deadline_unix-time.time()))),
             '--request','POST','--data-binary','@'+str(path),url],input=config,cwd=ROOT,env=env,text=True,
