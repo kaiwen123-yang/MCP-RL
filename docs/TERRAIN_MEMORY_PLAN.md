@@ -2,12 +2,12 @@
 
 ## 当前交接（按实际交接只更新这6行）
 
-- 当前任务：W34作业job-20261030T161045Z已于2026-10-31 10:49:56+08:00完成训练；s1-joint当前只运行同job的finish后处理续传。
-- 当前状态：累计1280真实转移/5次PPO更新，同版S5-r24新增1024/4，尾buffer0；30会话含29物理失败与1次目标截断，完整往返0。
-- 已完成：30/30视频已渲染；2026-10-31T11:50:23+08:00本job远端资产已传445项，空记录45项已进Git；续传Release已成功接收34项。
-- 当前问题：原Release达到1000资产上限，既有资产均保留；本job剩余520项/3633994160字节已改向同仓库job续传Release，仍在上传。
-- 下一步：复用现有视频和已上传资产，只完成缺失上传、名称/大小核对及普通Git推送；后处理原截止2026-10-31 14:49:56+08:00保持不变，不重训。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261030T161045Z.json；原Release已链接续传Release，具体资产地址见同一索引。
+- 当前任务：W34后台作业job-20261030T161045Z已结束训练与自动后处理；训练达标=True，发布=published。
+- 当前状态：本组实际累计1280条/5次更新，目标1280/5；训练记录不代表正式E30资格。
+- 已完成：本job保留30个新attempt，视频可用30，资产已发布1010/1010；控制版S5-r24。
+- 当前问题：最后物理原因training_checkpoint_complete；待传0项，待处理视频0项，具体错误见本job摘要。
+- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261030T161045Z.json；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。
 
 ## 1. 实际进展与结论
 
