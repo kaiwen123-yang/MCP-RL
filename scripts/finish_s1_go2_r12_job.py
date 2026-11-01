@@ -90,6 +90,7 @@ def main():
     p.add_argument("--job-dir", type=Path, required=True)
     p.add_argument("--training-exit-code", type=int, required=True)
     p.add_argument("--hours", type=float, default=4)
+    p.add_argument("--deadline-unix", type=float, help="Keep the original absolute postprocess deadline on resume.")
     a = p.parse_args()
     jobdir = (ROOT / a.job_dir).resolve()
     job = read(jobdir / "job.json")
@@ -97,7 +98,7 @@ def main():
     small, large = (ROOT / contract["outputs"][k] for k in ("compact_root", "large_root"))
     name = jobdir.name
     started = time.time()
-    deadline = started + a.hours * 3600
+    deadline = a.deadline_unix if a.deadline_unix is not None else started + a.hours * 3600
     work_deadline = max(started, deadline - 120)
     summary_path = small / "jobs" / (name + ".json")
     manifest_path = small / "jobs" / (name + "-assets.json")
