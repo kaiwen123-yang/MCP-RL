@@ -2,12 +2,12 @@
 
 ## 当前交接（按实际交接只更新这6行）
 
-- 当前任务：W35_SAME_R24_CONTINUE_AND_EVAL；D57 tmux s1-joint / job-20261031T101803Z已于北京时间2026-10-31 18:18:03启动，后台继续。
-- 当前状态：PANN seed0从ep44续学，ep45真实采样累计1286条/5更新，本job新增6条/0更新、记录物理3.000s，tail6；最新已完成更新checkpoint-001280.pt。
-- 已完成：源码/配置b422a863已推送；R12固定策略评价、当前根目录前序资格、同job评价资产与分片发布已接线；r24/20MPCworkers/Torch2/BLAS1，磁盘实测可用311G。
-- 当前问题：训练尚在运行，末端E30/E60与渲染/Release尚未执行；ep00044恢复Actor/Critic/optimizer/RNG/归一化/计数，物理世界从新会话开始；不将启动采样称为新更新或资格通过。
-- 下一步：训练目标3328/13，截止北京时间11-01 22:18:03；结束后独立评价最多4h，再渲染发布最多6h；若前段用满，后两段预计最晚11-02 02:18、08:18，实际deadline分别写入job评价/摘要。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261031T101803Z.json与job目录正常日志；建议11-01 16:00初查、11-02 08:30查看全预算后结果，pending仅续后处理，不重复启动或改deadline。
+- 当前任务：W35_SAME_R24_CONTINUE_AND_EVAL后台作业job-20261031T101803Z已结束；训练达标=True，评价=completed，发布=publication_pending。
+- 当前状态：本job新增2048条/8次更新，累计3328/13，目标3328/13；末端E30=physical_material_failure，E60=blocked_by_predecessor。
+- 已完成：本job保留74个新attempt，视频可用74，资产已发布2198/2220；控制版S5-r24。
+- 当前问题：训练合规贯穿1、侧出23、返程7、完整往返3；末次training_checkpoint_complete；待传22、待视频0。
+- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261031T101803Z.json；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。
 
 ## 1. 最新实际进展
 
