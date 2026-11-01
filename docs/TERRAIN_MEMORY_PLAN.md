@@ -2,10 +2,10 @@
 
 ## 当前交接（按实际交接只更新这6行）
 
-- 当前任务：W35_SAME_R24_CONTINUE_AND_EVAL后台作业job-20261031T101803Z已结束；训练达标=True，评价=completed，发布=publication_pending。
+- 当前任务：W35_SAME_R24_CONTINUE_AND_EVAL后台作业job-20261031T101803Z已结束；训练达标=True，评价=completed，发布=published。
 - 当前状态：本job新增2048条/8次更新，累计3328/13，目标3328/13；末端E30=physical_material_failure，E60=blocked_by_predecessor。
-- 已完成：本job保留74个新attempt，视频可用74，资产已发布2198/2220；控制版S5-r24。
-- 当前问题：训练合规贯穿1、侧出23、返程7、完整往返3；末次training_checkpoint_complete；待传22、待视频0。
+- 已完成：本job保留74个新attempt，视频可用74，资产已发布2232/2232；控制版S5-r24。
+- 当前问题：训练合规贯穿1、侧出23、返程7、完整往返3；末次training_checkpoint_complete；待传0、待视频0。
 - 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261031T101803Z.json；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。
 
