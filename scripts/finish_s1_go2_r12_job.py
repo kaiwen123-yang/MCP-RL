@@ -205,7 +205,8 @@ def main():
                             if x.is_file() and x.suffix in (".pt", ".npz") and x.stat().st_mtime >= job["started_unix_s"]])
     summary = dict(job=name, current_task=job.get("current_task", "S1"),
                    source_commit=job["source_commit"], controller_build=job["controller_build"],
-                   training_exit_code=a.training_exit_code, evaluation=evaluation,
+                   training_exit_code=job.get("budget_extension",{}).get("continuation_exit_code",a.training_exit_code),
+                   budget_extension=job.get("budget_extension"),evaluation=evaluation,
                    training_started_unix_s=job["started_unix_s"], training_deadline_unix_s=job["deadline_unix_s"],
                    postprocess_started_unix_s=started,
                    deadline_unix_s=deadline, work_deadline_unix_s=work_deadline,

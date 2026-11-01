@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import shutil
 import subprocess
 import sys
 import time
@@ -96,11 +97,67 @@ def evaluate(a, contract):
     return result
 
 
+def continue_authorized_budget(jobdir, job, contract):
+    """Use this job's explicitly extended budget after its original process exits.
+
+    The existing tmux stays alive. No signal or restart is sent to training.
+    A saved, naturally truncated same-version tail resumes only at the old
+    deadline, with the original job start and unchanged cumulative target.
+    """
+    extension=job.get('budget_extension')
+    if not extension or extension['status']!='scheduled_at_original_deadline':
+        return
+    large=ROOT/contract['outputs']['large_root']
+    stream=large/'training'/f'{job["group"]}-seed{job["seed"]}'
+    stopped_path=stream/'stopped.json'
+    stopped=json.loads(stopped_path.read_text()) if stopped_path.exists() else {}
+    if stopped.get('actual_transitions',0)>=job['target_transitions']:
+        extension['status']='not_needed_target_reached'
+    elif time.time()>=job['deadline_unix_s']:
+        extension['status']='not_started_extended_budget_elapsed'
+    elif (stopped.get('last_stage_status')!='budget_truncated' or
+          stopped.get('deadline_unix_s')!=extension['previous_deadline_unix_s']):
+        extension['status']='not_started_no_original_deadline_boundary'
+        extension['reason']='A technical interruption is not an authorized automatic restart.'
+    else:
+        progress=json.loads((stream/'progress.json').read_text())
+        checkpoint=Path(progress['checkpoint'])
+        if not checkpoint.is_absolute():checkpoint=ROOT/checkpoint
+        for filename in ('stopped.json','progress.json','collection.json','training-contract.json'):
+            shutil.copy2(stream/filename,jobdir/('before-budget-extension-'+filename))
+        command=[
+            'bash','scripts/run_s1_go2_r12_training.sh',
+            '--group',job['group'],'--seed',str(job['seed']),
+            '--resume',str(checkpoint),'--contract',str(jobdir/'execution-contract.json'),
+            '--background-job','--job-start-unix',str(job['started_unix_s']),
+            '--deadline-unix',str(job['deadline_unix_s'])]
+        extension.update(status='continuation_running',command=command,
+            checkpoint=str(checkpoint.relative_to(ROOT)),continuation_started_unix_s=time.time(),
+            samples_at_boundary=progress['samples'],updates_at_boundary=progress['updates'],
+            preserved_tail=progress['unupdated_fragment'],
+            original_training_exit_code=int((jobdir/'training-exit-code.txt').read_text()),
+            control_source_commit=job['source_commit'],
+            continuation_driver_commit=subprocess.check_output(
+                ['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+            physical_session='New natural session; full physical world is not restored.')
+        write(jobdir/'job.json',job)
+        print(json.dumps(dict(job=jobdir.name,budget_extension=extension)),flush=True)
+        with (jobdir/'training-extension.log').open('w') as log:
+            code=subprocess.run(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT).returncode
+        extension.update(status='continuation_finished',continuation_exit_code=code,
+                         continuation_finished_unix_s=time.time())
+        (jobdir/'training-exit-code.txt').write_text(str(code)+'\n')
+        (jobdir/'training-finished-at.txt').write_text(
+            time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())+'\n')
+    write(jobdir/'job.json',job)
+
+
 def evaluate_job(jobdir, contract):
-    started = time.time()
     jobdir = (ROOT / jobdir).resolve()
     contract = json.loads((jobdir / 'execution-contract.json').read_text())
     job = json.loads((jobdir / 'job.json').read_text())
+    continue_authorized_budget(jobdir,job,contract)
+    started = time.time()  # Evaluation owns its full four hours after all training.
     settings = contract['control_and_evaluation']['post_training_evaluation']
     deadline = started + settings['maximum_wall_s']
     record = dict(job=jobdir.name, status='running', started_unix_s=started,

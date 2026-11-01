@@ -15,9 +15,10 @@ def main():
     p.add_argument("--background-job", action="store_true", help="Use the declared job deadline independently of the interactive four-hour window.")
     p.add_argument("--deadline-unix", type=float, required=True)
     p.add_argument("--resume")
+    p.add_argument("--contract", default=CONFIG, help="Recorded job contract for an authorized budget continuation.")
     a=p.parse_args()
     invocation_started_unix_s=time.time()
-    contract=json.loads((ROOT/CONFIG).read_text())
+    contract=json.loads((ROOT/a.contract).read_text())
     old=json.loads((ROOT/contract["reuse"]["runtime_physics_ppo_and_task_settings"]).read_text())
     # Retain numerical PPO/shared-observation settings, not the old R11 campaign.
     shared=old["joint_learning"]
@@ -77,7 +78,7 @@ def main():
             window=dict(task=contract["current_task"],execution_mode=execution_mode,started_unix_s=a.window_start_unix,run_deadline_unix_s=deadline,hard_deadline_unix_s=hard))
         c["outputs"]["root"]=contract["outputs"]["compact_root"]
         args=arguments(name,build,"nominal","training","continuing_acquisition",workers=workers)
-        args.config=CONFIG
+        args.config=a.contract
         args.cohort=contract["protocol_revision"]
         before=stream.samples
         # The retained AgentService permits one Init. A natural new physical
