@@ -2,12 +2,12 @@
 
 ## 当前交接（按实际交接只更新这6行）
 
-- 当前任务：W35_SAME_R24_CONTINUE_AND_EVAL后台作业job-20261031T101803Z已结束；训练达标=True，评价=completed，发布=published。
-- 当前状态：本job新增2048条/8次更新，累计3328/13，目标3328/13；末端E30=physical_material_failure，E60=blocked_by_predecessor。
-- 已完成：本job保留74个新attempt，视频可用74，资产已发布2232/2232；控制版S5-r24。
-- 当前问题：训练合规贯穿1、侧出23、返程7、完整往返3；末次training_checkpoint_complete；待传0、待视频0。
-- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261031T101803Z.json；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。
+- 当前任务：W35_SAME_R24_CONTINUE_AND_EVAL已结束；job-20261031T101803Z训练、末端评价与Git/Release发布完成，用户授权的服务器产物清理已完成。
+- 当前状态：本job新增2048条/8更新，PANN累计3328条/13更新，tail0；最终checkpoint-003328.pt已在GitHub，服务器训练副本已清理。
+- 已完成：74段视频；三个新Release分片900/900/322项，含12项补存研究产物；本job全部2232项记录已保存，待传0、待渲染0。
+- 当前问题：最终nominal E30于12.5732s因material_domain_exit失败，E60被前序阻塞；训练1次合规贯穿、23次侧出、3次往返计数，不宣称正式资格通过。
+- 清理结果：核对GitHub远端后移除2480个研究产物副本、14.354GB，包含历史训练/旧job与本轮数据；代码、环境、分析源码和仓库紧凑记录保留。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261031T101803Z.json记录结果、Release链接与逐文件备份映射；继续研究前按需从GitHub恢复checkpoint/记录，不重复本轮训练或评价。
 
 ## 1. 最新实际进展
 
