@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "W36_implementation_planned_not_launched",
+  "status": "W36_r25_built_ready_for_joint_training",
   "protocol_revision": "stable_support_joint_v11",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-11-01",
@@ -15,7 +15,7 @@
     "rule": "Reuse the proven D57 environment and executed S5-r24 as the implementation base. Implement/build S5-r25 coordinated feasible-reference, moving-support, low-impact landing and legal-route reward changes before launching W36. Existing final-policy evaluator and Release partitioning are already operational; do not rebuild those stages.",
     "active_controller_build": "S5-r25",
     "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r25.json",
-    "active_controller_status": "planned_not_implemented_or_built_by_this_review",
+    "active_controller_status": "implemented_and_built_on_D57",
     "parent_controller_build": "S5-r24",
     "parent_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r24.json"
   },
@@ -123,7 +123,7 @@
       "resume_publication": "Continue the same job's finish only after a concrete delivery error;reuse videos,snapshots and explicit Release destinations without re-running training/evaluation.",
       "final_evaluation_adapter_status": "implemented_and_executed_in_W35;reuse",
       "postprocessing_release_policy": "New unassigned nonempty assets go to deterministic per-job partNN Releases,max900assets each;retain all existing manifest/index destinations and reuse already published files.",
-      "cleanup_after_publication": "User authorized;implementation in existing finish/publish is part of W36,not already executed by this plan."
+      "cleanup_after_publication": "Implemented in existing finish/publish: complete manifest and rendering, normal push, then remove inactive confirmed local outputs and push same job record."
     }
   },
   "tasks": [
@@ -264,14 +264,14 @@
     },
     {
       "id": "W36",
-      "status": "implementation_planned_not_launched",
+      "status": "implemented_built_pending_launch",
       "goal": "Form a usable legal PANN-PPO-MPC baseline by coordinating feasible body reference,moving support,low-impact landing/material margin and legal-route rewards,then continue substantive joint learning.",
       "group": "PANN_PPO_S5",
       "seed": 0,
       "condition": "nominal",
       "parent_controller_build": "S5-r24",
       "controller_build": "S5-r25",
-      "controller_status": "planned_implementation_required",
+      "controller_status": "built_on_D57",
       "reward_version": "W36_legal_route_progress_and_lap_alignment",
       "initial_cumulative_transitions": 3328,
       "initial_cumulative_updates": 13,
@@ -417,12 +417,10 @@
       "W36 review:launcher job initial_transitions/initial_updates read from the selected resume checkpoint,not a cleaned collection.json.Static syntax checked;not server-executed by this review."
     ],
     "next_runtime_work": [
-      "Check same-stream tmux/current results;W35 has ended and latest published checkpoint is ep117 at3328/13,tail0.Restore that one file as needed after documented cleanup;do not replay W35.",
-      "Implement/build actual S5-r25 from r24:bounded feasible reference,moving load-bearing support,low-impact landing with remaining material margin and coherent substep-path treatment;align progress/lap reward to existing legal-route definitions.",
-      "Keep PANN/observation/action dimensions and original physical/task thresholds;warm-start own learning state,record controller/reward boundary and use empty new-version on-policy buffer.",
-      "Wire scoped post-success cleanup into existing finish/publish;reuse executed final evaluator and Release parts,not a new archive/audit framework.",
-      "Push actual source/config;launch one tmux pipeline for2048new transitions/8updates,then final frozen-policy E30/conditional E60,then automatic render/publication/cleanup.Observe real sampling briefly and leave.",
-      "Report task legality,first passage,return/roundtrip,contact/support/impact and failures alongside actual learning counts.Do not substitute loss,raw laps or training prefixes for formal qualification."
+      "Actual S5-r25 build and legal-route reward implemented;ep117 restored from its published Release and confirmed3328/13,tail0.",
+      "Launch one fixed-version full joint tmux job,observe real sample growth,then leave without killing background.",
+      "At phase end reuse fixed-last-update nominal E30/eligible E60,render/publish actual results,then cleanup confirmed inactive copies after normal push.",
+      "Report legal passages/roundtrips,side exits,support/impact and physical failures;no success or material-memory benefit inferred from updates."
     ],
     "pann_evidence": "Use ordinary rollout/episode logs for observer/query counts,extra wall time and the12 actual recovery-feature values. Report zero or uninformative features honestly; do not demand artificial nonzero values,read truth q/e or add a diagnostic framework.",
     "controller_change_during_current_window": "Implement S5-r25 and the legal-route reward revision before sampling;record the boundary from r24.Once the detached job starts,keep its implementation/configuration fixed.Do not mutate a live same stream.",
@@ -439,7 +437,7 @@
     "controller_version_boundary": {
       "parent_controller_build": "S5-r24",
       "active_controller_build": "S5-r25",
-      "status": "planned_not_executed",
+      "status": "implemented_empty_ep117_tail_confirmed",
       "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
       "parent_checkpoint_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt",
       "parent_transitions": 3328,
@@ -453,7 +451,9 @@
       "enabled": false,
       "reason": "W35 completed same-r24 continuation;W36 implements a coordinated control/reward revision before a new fixed-version phase."
     },
-    "resume_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt"
+    "resume_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt",
+    "reward_version": "W36_legal_route_progress_and_lap_alignment",
+    "reward_definition": "Original reward coefficients. Progress/lap terms now use500Hzoriginal strip legality in both directions with actual material loading; side exits/incomplete passages retract provisional positive lap progress and disable further positive progress for that lap. Raw progress/laps remain recorded."
   },
   "control_and_evaluation": {
     "keep_original_robot_material_pd_torque_and_thresholds": true,
@@ -548,7 +548,7 @@
     "reward_alignment_risk": "Confirmed in W35:23first-outbound side exits and all3raw roundtrips were illegal;current signed longitudinal/lap reward is independent of traversal legality.Correct that alignment in W36,record a new reward version,retain original evaluation and history.",
     "later_decision_rule": "First establish a usable legal joint baseline;then consider throughput and matched RAW/PANN/cross-leg/return-memory comparisons.No automatic repeat of cap-only r24 training when support remains infeasible.No memory-benefit claim from this coordinated baseline change.",
     "stable_support_revision": {
-      "status": "planned_not_implemented",
+      "status": "implemented_and_built_pending_joint_sampling",
       "build": "S5-r25",
       "source_evidence": "job-20261031T101803Z-eval-PANN_PPO_S5-s0-E30",
       "feasible_reference": {
@@ -679,7 +679,7 @@
       "evaluation_assets": "Every explicit job evaluation attempt is included with training in rendering and the asset manifest; its policy logs are under the job directory.",
       "cleanup": {
         "enabled_after_implementation": true,
-        "implementation_status": "planned_required_in_W36",
+        "implementation_status": "implemented_in_existing_finish_after_successful_publication",
         "authorization": "User latest request:after all contents are pushed to GitHub,delete server copies to relieve storage.",
         "prerequisite": "All expected actual artifacts delivered;pending/render_pending empty;Release name/size/upload-state confirmed;required Git records/source ordinary push succeeded;files closed and unused by active tasks.",
         "scope": "Explicit confirmed-published research outputs/checkpoints in current or prior closed-job manifests;no broad recursive project/data-disk deletion.",
@@ -982,7 +982,7 @@
     "RAW": "Historical256/1retained independently;no RAW resampling in current baseline phase.",
     "parent_build": "S5-r24",
     "current_build": "S5-r25",
-    "current_build_status": "planned_not_implemented",
+    "current_build_status": "implemented_and_built_on_D57",
     "new_controller_build_required": true,
     "window_budget_s": 14400,
     "background_training_authorized": true,
@@ -991,6 +991,6 @@
     "final_evaluation_adapter_status": "already_implemented_and_executed_reuse",
     "automatic_postprocess": true,
     "default_postprocess_budget_s": 21600,
-    "automatic_cleanup_status": "planned_implementation_required_after_successful_publication"
+    "automatic_cleanup_status": "implemented_in_existing_finish_after_successful_publication"
   }
 }

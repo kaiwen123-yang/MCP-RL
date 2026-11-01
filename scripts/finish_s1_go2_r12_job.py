@@ -30,7 +30,9 @@ def training_outcomes(episodes, small, binaries, latest_resume, initial_transiti
 
     outcome = dict(physical_episodes=0, results_available=0, results_unavailable=[],
                    legal_outbound_traversals=0, side_exits=0, far_arrivals=0,
-                   return_episodes=0, completed_roundtrips=0, physical_failures_by_phase={},
+                   return_episodes=0, completed_roundtrips=0, legal_roundtrips=0,
+                   legal_return_traversals=0, legal_all_outbound_traversals=0,
+                   all_passage_side_exits=0, legality_records=0, physical_failures_by_phase={},
                    saved_observations=0, nonzero_pann_observations=0,
                    return_observations=0, return_nonzero_pann_observations=0,
                    observation_source="New saved rollouts plus final valid resume tail; no inferred missing observations.")
@@ -48,6 +50,13 @@ def training_outcomes(episodes, small, binaries, latest_resume, initial_transiti
         outcome["far_arrivals"] += int(progress["far_arrival_s"] is not None)
         outcome["return_episodes"] += int(progress["return_start_s"] is not None)
         outcome["completed_roundtrips"] += result["completed_round_trips"]
+        legal=result.get("legal_route")
+        if legal:
+            outcome["legality_records"] += 1
+            outcome["legal_roundtrips"] += legal["completed_roundtrips"]
+            outcome["legal_return_traversals"] += legal["legal_return_traversals"]
+            outcome["legal_all_outbound_traversals"] += legal["legal_outbound_traversals"]
+            outcome["all_passage_side_exits"] += legal["side_exits"]
         reason = result["reason"]
         kind = next((x for x in ("material_domain_exit", "invalid_contact", "body_fall") if reason.startswith(x)), None)
         if kind:
@@ -85,6 +94,69 @@ def training_outcomes(episodes, small, binaries, latest_resume, initial_transiti
     return outcome
 
 
+def cleanup_published_outputs(root, large, jobdir, assets, registered, job):
+    """Delete explicit delivered output copies after all producers and push finish."""
+    large=large.resolve()
+    keep={jobdir/name for name in ("job.json","execution-contract.json","run-job.sh","evaluation.json")}
+    before=shutil.disk_usage(large).free
+    active=set();producers=[]
+    for process in Path("/proc").iterdir():
+        if not process.name.isdigit() or int(process.name)==os.getpid():continue
+        try:
+            command=(process/"cmdline").read_bytes().replace(b"\0",b" ").decode(errors="replace")
+            cwd=(process/"cwd").resolve()
+            if cwd==root and any(name in command for name in (
+                    "train_s1_go2_r12.py","run_s1_go2_r12_training.sh",
+                    "scripts/run_s1_go2_r12.py","render_s1_go2_r12.py","agent_server")):
+                producers.append(int(process.name))
+            for fd in (process/"fd").iterdir():
+                target=fd.resolve()
+                if target.is_relative_to(large):active.add(target)
+        except (FileNotFoundError,PermissionError,ProcessLookupError):
+            continue  # A process may exit during this one /proc snapshot.
+    result=dict(status="pending_active_producers" if producers else "completed",
+        authorization="W36 explicit user authorization after full Git/Release delivery",
+        verification="Existing manifest plus publisher's name/size/upload-state comparison; no new hashes/downloads",
+        free_before_bytes=before,deleted_files=0,deleted_bytes=0,
+        preserved=[],active_producer_pids=producers,
+        retained_resources=["source/.git","compact results","work/envs","work/r11-frozen",
+                            "work/assets","work/upstreams","work/terrain-memory","work/tools"],
+        completed_unix_s=None)
+    if producers:return result
+    candidates={}
+    for asset in assets:
+        remote=registered[asset["name"]]
+        for relative in [asset["path"],*asset.get("local_copies",[])]:
+            candidates[relative]=remote
+    # The restored immutable parent is already saved in its original Release.
+    # It predates launch and is no longer used after this job has stopped.
+    parent=Path(job["resume_checkpoint"])
+    if parent.is_absolute():parent=parent.relative_to(root)
+    for remote in registered.values():
+        if remote.get("path")==str(parent) and remote.get("status")=="uploaded":
+            candidates[str(parent)]=remote
+    for relative,remote in candidates.items():
+        path=(root/relative).resolve()
+        if not path.is_relative_to(large):
+            continue  # Controller binaries/environment/runtime are retained.
+        if not path.is_file():continue
+        stat=path.stat()
+        reason=("job_resume_metadata" if path in keep else
+                "active_file" if path in active else
+                "not_delivered" if remote.get("status") not in ("uploaded","git_recorded") else
+                "changed_since_publication" if stat.st_size!=remote["size"] or (
+                    relative!=str(parent) and stat.st_mtime_ns!=remote["local_mtime_ns"]) or (
+                    relative==str(parent) and stat.st_mtime>job["started_unix_s"]) else None)
+        if reason:
+            result["preserved"].append(dict(path=relative,reason=reason));continue
+        path.unlink()
+        result["deleted_files"]+=1;result["deleted_bytes"]+=stat.st_size
+    result["free_after_bytes"]=shutil.disk_usage(large).free
+    result["free_change_bytes"]=result["free_after_bytes"]-before
+    result["completed_unix_s"]=time.time()
+    return result
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--job-dir", type=Path, required=True)
@@ -103,6 +175,19 @@ def main():
     summary_path = small / "jobs" / (name + ".json")
     manifest_path = small / "jobs" / (name + "-assets.json")
     previous = read(summary_path)
+    if previous.get("cleanup",{}).get("status")=="completed" and previous.get("publication_status")=="published":
+        # Cleanup is irreversible; retry only its retained compact-record delivery.
+        previous["cleanup_record_delivery"]="prepared_for_ordinary_push"
+        write(summary_path,previous)
+        paths=[str(summary_path.relative_to(ROOT)),str((small/"index.json").relative_to(ROOT)),
+               "docs/TERRAIN_MEMORY_PLAN.md"]
+        subprocess.run(["git","add","--",*paths],cwd=ROOT,check=True)
+        if subprocess.run(["git","diff","--cached","--quiet","--",*paths],cwd=ROOT).returncode:
+            subprocess.run(["git","commit","--only","-m",f"Record published-output cleanup for {name}","--",*paths],cwd=ROOT,check=True)
+        subprocess.run(["git","push","origin","HEAD:main"],cwd=ROOT,check=True,timeout=120)
+        print(json.dumps(dict(job=name,publication="completed",cleanup=previous["cleanup"]["status"],
+                              action="compact_record_push_only")))
+        return 0
     records = small / "records"
     records.mkdir(parents=True, exist_ok=True)
     stream = large / "training" / f'{job["group"]}-seed{job["seed"]}'
@@ -180,7 +265,9 @@ def main():
     assets_by_name = {x["name"]: x for x in read(manifest_path)} if manifest_path.exists() else {}
 
     def asset(path, remote_name, category):
-        assets_by_name.setdefault(remote_name, dict(path=str(path.relative_to(ROOT)), name=remote_name, category=category))
+        row=assets_by_name.setdefault(remote_name, dict(path=str(path.relative_to(ROOT)), name=remote_name, category=category))
+        if path.is_relative_to(snapshots):
+            row["local_copies"]=[str((stream/path.relative_to(snapshots)).relative_to(ROOT))]
 
     for episode in episodes:
         render_status = next(x["status"] for x in summary["render"] if x["attempt"] == episode.name)
@@ -201,7 +288,7 @@ def main():
     # A newly built controller is evidence for this job; retain its executable
     # and ordinary build record alongside the already versioned source patch.
     controller = ROOT / "work/r11-frozen" / job["controller_build"]
-    for filename in ("agent_server", "identity.json", "build.log"):
+    for filename in ("agent_server", "identity.json", "build.log", "initial-compile.log"):
         file = controller / filename
         if file.is_file():
             asset(file, "controller__" + job["controller_build"] + "__" + filename, "controller")
@@ -247,6 +334,7 @@ def main():
     }
     complete = not pending and not missing_videos and not summary["errors"]
     summary.update(publication_status="published" if complete else "publication_pending",
+                   cleanup=previous.get("cleanup",dict(status="pending_publication")),
                    git_delivery="This report is prepared for this commit; its presence on GitHub records successful delivery. A push failure is retained locally as pending.")
 
     def save_summary():
@@ -256,7 +344,7 @@ def main():
             summary=str(summary_path.relative_to(ROOT)), training=summary.get("training"),
             evaluation=summary.get("evaluation"),
             publication_status=summary["publication_status"], pending_assets=summary.get("pending_assets", []),
-            render_pending=summary.get("render_pending", []))
+            render_pending=summary.get("render_pending", []),cleanup=summary.get("cleanup"))
         publication = current.setdefault("publication", {})
         pending_jobs = publication.setdefault("pending_jobs", {})
         if summary["publication_status"] == "publication_pending":
@@ -276,10 +364,10 @@ def main():
     eval_text = "，".join(f"{x['level']}={x['stage_status']}" for x in evaluation["stages"]) or evaluation["status"]
     outcomes = summary["training"]["outcomes"]
     handoff = [
-        f"- 当前任务：{summary['current_task']}后台作业{name}已结束；训练达标={summary['training']['target_reached']}，评价={evaluation['status']}，发布={summary['publication_status']}。",
+        f"- 当前任务：{summary['current_task']}后台作业{name}已结束；训练达标={summary['training']['target_reached']}，评价={evaluation['status']}，发布={summary['publication_status']}，清理={summary['cleanup']['status']}。",
         f"- 当前状态：本job新增{summary['training']['new_transitions']}条/{summary['training']['new_updates']}次更新，累计{samples}/{updates}，目标{job['target_transitions']}/{job['target_updates']}；末端{eval_text}。",
         f"- 已完成：本job保留{len(episodes)}个新attempt，视频可用{len(summary['videos'])}，资产已发布{summary['assets_published']}/{len(assets)}；控制版{job['controller_build']}。",
-        f"- 当前问题：训练合规贯穿{outcomes['legal_outbound_traversals']}、侧出{outcomes['side_exits']}、返程{outcomes['return_episodes']}、完整往返{outcomes['completed_roundtrips']}；末次{stopped.get('last_episode_reason')}；待传{len(pending)}、待视频{len(missing_videos)}。",
+        f"- 当前问题：训练合规贯穿{outcomes['legal_outbound_traversals']}、侧出{outcomes['side_exits']}、返程{outcomes['return_episodes']}、合规返程{outcomes['legal_return_traversals']}、合规往返{outcomes['legal_roundtrips']}（裸计数{outcomes['completed_roundtrips']}）；末次{stopped.get('last_episode_reason')}；待传{len(pending)}、待视频{len(missing_videos)}。",
         "- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。",
         f"- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要{summary_path.relative_to(ROOT)}；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。",
     ]
@@ -321,8 +409,28 @@ def main():
             plan_path.write_text("\n".join(plan) + "\n")
         print(json.dumps(summary, ensure_ascii=False), flush=True)
         return 1
+    # Deletion is downstream of complete rendering/upload and successful normal push.
+    if complete and contract["outputs"]["automatic_publication"]["cleanup"]["enabled_after_implementation"]:
+        summary["cleanup"]=cleanup_published_outputs(ROOT,large,jobdir,assets,registered,job)
+        summary["cleanup_record_delivery"]="prepared_for_ordinary_push"
+        save_summary()
+        plan[slots[0]]=handoff[0].rsplit("，清理=",1)[0]+f"，清理={summary['cleanup']['status']}。"
+        plan[slots[2]]=handoff[2]+f" 已删除已交付副本{summary['cleanup']['deleted_files']}个/{summary['cleanup']['deleted_bytes']}字节。"
+        plan_path.write_text("\n".join(plan)+"\n")
+        try:
+            git("add","--",str(summary_path.relative_to(ROOT)),str((small/"index.json").relative_to(ROOT)),str(plan_path.relative_to(ROOT)))
+            git("commit","--only","-m",f"Record published-output cleanup for {name}","--",
+                str(summary_path.relative_to(ROOT)),str((small/"index.json").relative_to(ROOT)),str(plan_path.relative_to(ROOT)))
+            git("push","origin","HEAD:main")
+        except (OSError,subprocess.CalledProcessError,subprocess.TimeoutExpired) as error:
+            summary["cleanup_record_delivery"]="push_pending"
+            summary["errors"].append(dict(stage="cleanup_record_git",error=str(error)))
+            save_summary()
+            print(json.dumps(dict(job=name,publication="completed",cleanup=summary["cleanup"]["status"],
+                                  cleanup_record_delivery="push_pending")),flush=True)
+            return 1
     print(json.dumps(dict(job=name, training=summary["training"], evaluation=summary["evaluation"],
-                          publication_status=summary["publication_status"],
+                          publication_status=summary["publication_status"], cleanup=summary.get("cleanup"),
                           summary=f"https://github.com/{REPO}/blob/main/{summary_path.relative_to(ROOT)}"), ensure_ascii=False), flush=True)
     return 0 if complete else 1
 

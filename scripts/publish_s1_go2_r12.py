@@ -166,7 +166,7 @@ def main():
         size=file.stat().st_size
         if size>=2*1024**3:raise RuntimeError('Asset requires transfer splitting: '+str(file))
         tag=destinations.get(name,RUN)
-        expected.append(dict(name=name,path=str(file.relative_to(ROOT)),size=size,category=category,release_tag=tag,
+        expected.append(dict(name=name,path=str(file.relative_to(ROOT)),size=size,local_mtime_ns=file.stat().st_mtime_ns,category=category,release_tag=tag,
             url=f'https://github.com/{REPO}/releases/download/{tag}/{name}',status='publication_pending'))
     if args.asset:expected=[row for row in expected if row['name'] in args.asset]
     def register(j):

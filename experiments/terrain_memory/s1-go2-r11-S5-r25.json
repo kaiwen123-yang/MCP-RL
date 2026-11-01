@@ -1,0 +1,52 @@
+{
+  "build": "S5-r25",
+  "based_on": "S5-r24",
+  "status": "built_on_D57_pending_joint_sampling",
+  "configuration_overrides": {
+    "r11_body_reference": {
+      "maximum_longitudinal_lead_m": 0.15,
+      "scale_source": "Original goal-position radius; bound reference lead throughout outbound/return without moving the original endpoints.",
+      "whole_route": true
+    },
+    "r12_stable_support": {
+      "domain_depth_m": 0.001,
+      "transfer_height_scale_m": 0.001,
+      "margin_onset_m": 0.0008,
+      "margin_scale_m": 0.0002,
+      "support_weight": 1.0,
+      "placement_weight": 1.0,
+      "impact_weight": 176.0,
+      "load_demand": "m*(g+g*tanh(dz/(g*tau^2)-vz/(g*tau)))*min(sum(exp(-step/.001))/2,1), tau=.5/cadence",
+      "actual_support": "Same R10ContactNormal/rest for material; actual candidate native foot-ground forces elsewhere. No airborne foot contributes force.",
+      "support_transfer": "Phase shares request foot loads and bounded loaded heights; total load and roll/pitch moments use actual candidate forces. Geometric placement remains informative above contact.",
+      "impact": "positive(hold*max(-vz,0)+max(-vz,0)^2/(2*g)-(bottom_z+.0008))/.0002; one-g braking scale is a soft viability target, not a guaranteed deceleration.",
+      "weights_basis": "Unit normalized support/placement costs; ImpactMargin uses existing 176-node material-domain normalization. Existing weights unchanged."
+    },
+    "r12_substep_path": {
+      "enabled": true,
+      "rows": [
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "ImpactMargin"
+      ],
+      "residual": "Componentwise maximum over all ten .2ms pre-step states of each held2msinterval; terminal node separately retained.",
+      "derivatives": "Cj*prefix_A and Cj*prefix_B+Dj at the same earliest maximizing substep; A/B compose all ten transitions.",
+      "limitations": "Nonsmooth active-substep switch uses an active-branch Jacobian. Frozen-anchor candidate force is not future TM02 truth; soft costs cannot guarantee plant feasibility."
+    }
+  },
+  "inherited_gait": {
+    "cadence_Hz": 2.0,
+    "duty": 0.45,
+    "rise_s": 0.075,
+    "descent_s": 0.2,
+    "changed": false
+  },
+  "retained": "Original robot, materials/strain.02, task, torque, collision/fall limits, frozen causal PANN, PPO/observation and speed-cap dimensions.",
+  "reward_version": "W36_legal_route_progress_and_lap_alignment",
+  "qualification": "No pretraining qualification gate; ensuing real joint training and fixed final evaluation supply evidence.",
+  "build_record": {
+    "identity": "work/r11-frozen/S5-r25/identity.json",
+    "build_wall_s": 156.62319016456604,
+    "initial_compile": "An unused floor variable after the shared-force refactor was rejected by -Werror; removed before successful build. Initial log retained with controller artifacts."
+  }
+}

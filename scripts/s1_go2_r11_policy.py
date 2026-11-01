@@ -26,11 +26,82 @@ NORMALIZATION=dict(body_xy_m=3.,body_height_m=.3,body_linear_velocity_m_s=.25,
     observation_clipping=False)
 
 
+class LegalRoute:
+    """Reward account on the original 500Hz strip passage criterion.
+
+    Approach/crossing credit is provisional. A side exit or an uncompleted
+    passage retracts that lap's positive credit and disables further positive
+    progress until the next natural lap. Physics and formal evaluation are unchanged.
+    """
+    def __init__(self):
+        self.progress=0.;self.lap_credit=0.;self.completed_laps=0
+        self.raw_laps=0;self.valid=True;self.previous_phase=None;self.previous_x=None
+        self.passages=[];self.current=None;self.leg_pass={}
+        self.side_exits=0
+
+    def invalidate(self):
+        if self.valid:
+            retract=max(self.lap_credit,0.)
+            self.progress-=retract;self.lap_credit-=retract
+        self.valid=False
+
+    def update(self,t,mission,xy,bottom,grf):
+        phase=mission.phase
+        raw_laps=getattr(mission,'laps',int(phase=='complete'))
+        if self.previous_phase in ('outbound','return'):
+            direction=1 if self.previous_phase=='outbound' else -1
+            if self.valid:
+                change=direction*(float(xy[0])-self.previous_x)/6
+                self.progress+=change;self.lap_credit+=change
+        # Close the actual leg when the mission changes to its endpoint/turn.
+        if self.current is not None and phase!=self.current['direction']:
+            self.leg_pass[self.current['direction']]=self.current['completed']
+            if not self.current['completed']:self.invalidate()
+            self.current=None
+        if raw_laps>self.raw_laps:
+            self.completed_laps+=int(self.valid and self.leg_pass.get('outbound',False)
+                                     and self.leg_pass.get('return',False))
+            self.raw_laps=raw_laps
+            self.lap_credit=0.;self.valid=True;self.leg_pass={}
+        if phase in ('outbound','return'):
+            if self.current is None:
+                self.current=dict(lap=raw_laps+1,direction=phase,entry_s=None,exit_s=None,
+                    lateral_exit_s=None,material_loaded=False,completed=False)
+                self.passages.append(self.current)
+            row=self.current
+            enter=xy[0]>=.8 if phase=='outbound' else xy[0]<=2.2
+            leave=xy[0]>=2.2 if phase=='outbound' else xy[0]<=.8
+            if row['entry_s'] is None and enter:row['entry_s']=float(t)
+            if row['entry_s'] is not None and row['exit_s'] is None:
+                if abs(xy[1])>.6 and row['lateral_exit_s'] is None:
+                    row['lateral_exit_s']=float(t);self.side_exits+=1;self.invalidate()
+                half=.015811388300841896
+                inside=(bottom[:,0]>=.8+half)&(bottom[:,0]<=2.2-half)&(abs(bottom[:,1])<=.6-half)
+                row['material_loaded'] |= bool(np.any(inside&(grf[:,2]>0)))
+                if leave:
+                    row['exit_s']=float(t)
+                    row['completed']=row['lateral_exit_s'] is None and row['material_loaded']
+                    if not row['completed']:self.invalidate()
+        self.previous_x=float(xy[0]);self.previous_phase=phase
+
+    def result(self):
+        return dict(reward_version='W36_legal_route_progress_and_lap_alignment',
+            progress=self.progress,completed_roundtrips=self.completed_laps,
+            legal_outbound_traversals=sum(x['direction']=='outbound' and x['completed'] for x in self.passages),
+            legal_return_traversals=sum(x['direction']=='return' and x['completed'] for x in self.passages),
+            side_exits=self.side_exits,raw_roundtrips=self.raw_laps,passages=self.passages,
+            criterion='Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged.')
+
+
 class PolicyStream:
     def __init__(self,root,group,seed,contract,directory,training=True,checkpoint=None):
         self.root,self.group,self.seed,self.contract=root,group,seed,contract
         self.directory=Path(directory);self.directory.mkdir(parents=True,exist_ok=True)
         self.training=training
+        self.controller_build=contract.get('reuse',{}).get('active_controller_build')
+        self.reward_version=contract.get('learning',{}).get('reward_version','legacy_signed_route_and_raw_laps')
+        self.phase_initial_samples=contract.get('learning',{}).get('phase_initial_transitions',0)
+        self.phase_initial_updates=contract.get('learning',{}).get('phase_initial_updates',0)
         resources=contract.get('resources',{})
         torch.set_num_threads(resources.get('torch_threads',1));torch.set_num_interop_threads(1)
         np.random.seed(seed);torch.manual_seed(seed)
@@ -62,6 +133,9 @@ class PolicyStream:
                 torch.set_rng_state(saved['torch_rng']);np.random.set_state(saved['numpy_rng'])
                 if saved.get('cuda_rng') is not None:torch.cuda.set_rng_state_all(saved['cuda_rng'])
                 self.buffer=[{k:v.to(self.backend.config.device) for k,v in row.items()} for row in saved.get('buffer',[])]
+                if self.buffer and (saved.get('controller_build')!=self.controller_build or
+                                    saved.get('reward_version','legacy_signed_route_and_raw_laps')!=self.reward_version):
+                    raise ValueError('Preserve the saved old-version tail; it cannot enter a new-version on-policy update.')
                 self.last_observation=saved.get('last_observation')
                 self.transition_serial=saved.get('transition_serial',self.samples)
                 log_path=self.directory/'transitions.jsonl'
@@ -71,7 +145,7 @@ class PolicyStream:
                     self.discarded_after_checkpoint=latest-self.transition_serial
                     self.transition_serial=latest
                 self.restored_without_environment=True
-                self.session_records.append(dict(episode=self.episode,status='technical_interruption_on_restore',
+                self.session_records.append(dict(episode=self.episode,status='new_physical_session_on_checkpoint_restore',
                     continuous_environment_restored=False,checkpoint=str(checkpoint)))
                 existing=[int(x.stem.split('-')[-1]) for x in self.directory.glob('episode-*.json')]
                 prefix=f'train-{group}-s{seed}-ep'
@@ -94,6 +168,9 @@ class PolicyStream:
             last_observation=self.last_observation,session_boundary=resume_only,
             torch_rng=torch.get_rng_state(),numpy_rng=np.random.get_state(),
             cuda_rng=torch.cuda.get_rng_state_all() if self.backend.config.device.startswith('cuda') else None,
+            controller_build=self.controller_build,reward_version=self.reward_version,
+            phase_initial_transitions=self.phase_initial_samples,
+            phase_initial_updates=self.phase_initial_updates,
             ppo=self.backend.provenance()),p.with_suffix('.tmp'))
         p.with_suffix('.tmp').replace(p)
         summary=dict(samples=self.samples,effective_samples=self.effective_samples,
@@ -115,7 +192,12 @@ class PolicyStream:
             unupdated_fragment=len(self.buffer),stage_samples=self.stage_samples,
             wall_s=time.time()-self.begin,updated_unix_s=time.time(),collection_started_unix_s=self.begin,
             physics_s=self.physics_s,episode=self.episode,curriculum_stage=self.curriculum_stage,
-            discarded_after_checkpoint=self.discarded_after_checkpoint))+'\n')
+            discarded_after_checkpoint=self.discarded_after_checkpoint,
+            controller_build=self.controller_build,reward_version=self.reward_version,
+            phase_initial_transitions=self.phase_initial_samples,
+            phase_new_transitions=self.samples-self.phase_initial_samples,
+            phase_initial_updates=self.phase_initial_updates,
+            phase_new_updates=self.backend.update_count-self.phase_initial_updates))+'\n')
         collected.with_suffix('.tmp').replace(collected)
 
     def transition(self,pending,observation,reward,terminated,truncated,dt,effective,stage,info):
@@ -141,7 +223,10 @@ class PolicyStream:
                 **{key:value.detach().cpu().numpy() for key,value in batch.items()})
             batch.pop('next_obs')
             loss=self.backend.update(Rollout(**batch));self.buffer.clear()
-            self.learning.write(json.dumps(dict(loss,cumulative_samples=self.samples,wall_s=time.time()-self.begin))+'\n')
+            self.learning.write(json.dumps(dict(loss,cumulative_samples=self.samples,wall_s=time.time()-self.begin,
+                controller_build=self.controller_build,reward_version=self.reward_version,
+                phase_new_transitions=self.samples-self.phase_initial_samples,
+                phase_new_updates=self.backend.update_count-self.phase_initial_updates))+'\n')
             self.log.flush();self.learning.flush();self.checkpoint()
             # R12 independent streams never wait for unstarted groups or seeds.
             if self.contract['joint_learning'].get('cross_stream_wait',True):
@@ -165,6 +250,7 @@ class PolicyMaterial(JointMaterial):
         self.gait_phase=0.;self.last_control_time=0.;self.cadence=1.
         self.pending=None;self.last_snapshot=None;self.effective_time=0.;self.action_change=0.
         self.action_dependence=[]
+        self.legal_route=LegalRoute() if stream.reward_version=='W36_legal_route_progress_and_lap_alignment' else None
         if self.group=='PANN_PPO_S5':
             parameters=json.loads((root/'experiments/tm02/r2-multihistory.json').read_text())['reference_material']['parameters']
             self.observer=MaterialObserver(parameters,root/r9['pann']['weights_path'],law=stream.observer_law)
@@ -213,7 +299,9 @@ class PolicyMaterial(JointMaterial):
 
     def snapshot(self,t,mission):
         laps=getattr(mission,'laps',int(mission.phase=='complete'))
-        return np.array([t,self.route_progress,self.indent_integral,self.slip_integral,
+        progress=self.legal_route.progress if self.legal_route is not None else self.route_progress
+        if self.legal_route is not None:laps=self.legal_route.completed_laps
+        return np.array([t,progress,self.indent_integral,self.slip_integral,
             self.action_change,laps,self.effective_time])
 
     def collect_pending(self,t,mission,observation,terminated=False,truncated=False,failure=False,timeout=False):
@@ -228,11 +316,17 @@ class PolicyMaterial(JointMaterial):
                 float(dt),bool(change[6]>0),self.stage,dict(time_s=float(t),metrics=dict(
                     signed_route_fraction=float(change[1]),indentation_sq_s=float(change[2]),
                     loaded_slip_sq_s=float(change[3]),completed_circuits=int(change[5]),
-                    failure=failure,intrinsic_timeout=timeout)))
+                    failure=failure,intrinsic_timeout=timeout,
+                    reward_version=self.stream.reward_version,
+                    raw_signed_route_fraction=self.route_progress,
+                    raw_completed_circuits=getattr(mission,'laps',int(mission.phase=='complete')),
+                    side_exits=self.legal_route.side_exits if self.legal_route else None)))
 
     def control(self,t,mission):
         self.mission=mission
         measurement=self.measurements()
+        if self.legal_route is not None:
+            self.legal_route.update(t,mission,self.data.qpos[:2],measurement[0],measurement[3])
         if self.observer is not None:self.observer.observe(t,measurement[0],measurement[1])
         self.gait_phase+=2*np.pi*self.cadence*(t-self.last_control_time)
         self.cadence=mission.task['stand_settings' if mission.phase in
@@ -289,6 +383,9 @@ class PolicyMaterial(JointMaterial):
 
     def finish(self,result):
         t=float(self.data.time);measurement=self.measurements()
+        if self.legal_route is not None:
+            self.legal_route.update(t,self.mission,self.data.qpos[:2],measurement[0],measurement[3])
+            result['legal_route']=self.legal_route.result()
         if self.observer is not None and t>self.observer.time:self.observer.observe(t,measurement[0],measurement[1])
         observation=self.observation(t,self.mission,measurement)
         physical_failure=result['reason'].startswith(('material_domain_exit','body_fall','invalid_contact'))

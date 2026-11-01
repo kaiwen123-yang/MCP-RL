@@ -45,6 +45,8 @@ def main():
     dump(output/"training-contract.json",contract)
     stream=PolicyStream(ROOT,a.group,a.seed,contract,output,checkpoint=a.resume)
     initial_transitions,initial_updates=stream.samples,stream.backend.update_count
+    # r25 begins from the actual empty ep117 tail, not replayed historical rollouts.
+    stream.write_collection()
     # A failed initialization may retain an attempt without a newer checkpoint.
     # Continue checkpoint counts, but never reuse that retained attempt's ID.
     prefix=f"train-{a.group}-s{a.seed}-ep"
@@ -57,6 +59,10 @@ def main():
         workers=workers,pann_weights_path=str(pann_weights),
         protocol_revision=contract["protocol_revision"],initial_condition="nominal",curriculum_enabled=False,
         resume_checkpoint=a.resume,continuous_environment_restored=False,
+        controller_version_boundary=contract["learning"]["controller_version_boundary"],
+        reward_version=stream.reward_version,initial_tail_buffer=len(stream.buffer),
+        phase_initial_transitions=contract["learning"]["phase_initial_transitions"],
+        phase_initial_updates=contract["learning"]["phase_initial_updates"],
         execution_mode=execution_mode,window_start_unix_s=a.window_start_unix,deadline_unix_s=deadline,hard_deadline_unix_s=hard))
     last_result=None
     while stream.samples<stream.target and time.time()<deadline:
@@ -87,6 +93,7 @@ def main():
             session_limit_s=session,transitions=stream.samples-before,reason=result["reason"],
             stage_status=result["stage_status"],simulation_s=result["simulation_s"],wall_s=result["wall_s"],
             completed_round_trips=result["completed_round_trips"],
+            legal_route=result.get("legal_route"),
             complete_session=result["simulation_s"]>=session-1e-7 and result["stage_status"]=="acquisition_boundary",
             promoted=False,curriculum_enabled=False)
         stream.session_records.append(record)

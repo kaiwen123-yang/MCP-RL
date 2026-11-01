@@ -261,6 +261,21 @@ def write_equilibrium_settings(xml_path, config, arm):
             sensors.insert(index,ET.Element('user',name='TrunkClearance',
                 dim=str(clearance['residual_dimension']),
                 user=f"0 {clearance['weight']} 0 {clearance['weight']}"))
+        if config.get('r12_stable_support'):
+            stable=config['r12_stable_support']
+            values['r12_stable_support']=[stable['transfer_height_scale_m'],
+                stable['margin_onset_m'],stable['margin_scale_m']]
+            ET.SubElement(custom,'numeric',name='r12_stable_support',
+                data=_numbers(values['r12_stable_support']))
+            ET.SubElement(custom,'numeric',name='r12_substep_path',data='1')
+            values['r12_substep_path']=1
+            index=next(i for i,sensor in enumerate(sensors) if sensor.tag!='user')
+            for name,dim,weight in [('MovingSupport',3,stable['support_weight']),
+                    ('SupportPlacement',4,stable['placement_weight']),
+                    ('ImpactMargin',4,stable['impact_weight'])]:
+                sensors.insert(index,ET.Element('user',name=name,dim=str(dim),
+                    user=f"0 {weight} 0 {weight}"))
+                index+=1
         tree.write(xml_path,encoding='unicode')
         cost_weights={'Orientation':.03 if arm=='AUTHOR_N' else 1.,'Angmom':0.}
         if config.get('actual_terrain')=='rigid' and config.get('controller_formulation') in ('GN','GNC'):

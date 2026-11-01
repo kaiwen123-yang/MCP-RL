@@ -354,7 +354,8 @@ def run(args, c, joint=None):
                     joint.control(t,mission)
                 contact, grf, _ = actual_contact()
                 body_goal, heading = mission.update(t, dt, data.qpos[:3], velocity, ori, omega, bool(contact.all()))
-                if c.get('r11_body_reference') and np.any(joint.soft) and mission.phase in ('outbound','return'):
+                if c.get('r11_body_reference') and mission.phase in ('outbound','return') and (
+                        c['r11_body_reference'].get('whole_route',False) or np.any(joint.soft)):
                     direction=1. if mission.phase=='outbound' else -1.
                     lead=direction*(mission.body_target[0]-data.qpos[0])
                     limit=c['r11_body_reference']['maximum_longitudinal_lead_m']

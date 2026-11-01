@@ -1,0 +1,312 @@
+--- a/mjpc/tasks/quadruped/r10_contact.h
++++ b/mjpc/tasks/quadruped/r10_contact.h
+@@ -38,21 +38,27 @@
+     return rest;
+ }
+ 
++inline double R10ContactNormal(const mjModel* m,const mjData* d,int geom) {
++  const double* stiffness=GetCustomNumericData(m,"r10_local_contact");
++  if (!stiffness || !R10MaterialFoot(m,d,geom)) return 0;
++  const double floor=GetCustomNumericData(m,"s1_flat_ground_height")[0];
++  double point[3]; mju_copy3(point,d->geom_xpos+3*geom);
++  point[2]-=m->geom_size[3*geom];
++  return stiffness[0]*mju_max(floor+R10ContactRest(m,d,point)-point[2],0);
++}
++
+ inline void R10ContactForce(const mjModel* m,mjData* d) {
+   const double* opt=GetCustomNumericData(m,"r10_local_contact");
+   if (!opt) return;
+-  const double floor=GetCustomNumericData(m,"s1_flat_ground_height")[0];
+   for (const char* name : {"FL","FR","RL","RR"}) {
+     const int geom=mj_name2id(m,mjOBJ_GEOM,name);
+     if (!R10MaterialFoot(m,d,geom)) continue;
+     const double radius=m->geom_size[3*geom];
+     double point[3];mju_copy3(point,d->geom_xpos+3*geom);point[2]-=radius;
+-    const double rest=R10ContactRest(m,d,point);
+-    const double depth=mju_max(floor+rest-point[2],0);
+     double velocity[6];mj_objectVelocity(m,d,mjOBJ_GEOM,geom,velocity,0);
+     const double vx=velocity[3]-radius*velocity[1];
+     const double vy=velocity[4]+radius*velocity[0];
+-    const double fz=opt[0]*depth;
++    const double fz=R10ContactNormal(m,d,geom);
+     const double slip=mju_sqrt(vx*vx+vy*vy+.01*.01);
+     double force[3]={-.5*fz*vx/slip,-.5*fz*vy/slip,fz};
+     const double torque[3]={0,0,0};
+--- a/mjpc/tasks/quadruped/quadruped.cc
++++ b/mjpc/tasks/quadruped/quadruped.cc
+@@ -330,6 +330,34 @@
+     }
+     for (int i = 0; i < 4; ++i)
+       residual[counter++] = track_load ? (vertical_load[i] - ref[58+i]) / 40.0 : 0;
++  }
++
++  // W36: phase describes requested support, force describes actual support.
++  const double* stable_support=GetCustomNumericData(model,"r12_stable_support");
++  const bool moving_support=stable_support && current_mode_==kModeQuadruped &&
++                            gait!=kGaitStand;
++  double support_share[4]={0,0,0,0}, support_target[4]={0,0,0,0};
++  double requested_load=0;
++  if (moving_support) {
++    const double gravity=mju_abs(model->opt.gravity[2]);
++    const double mass=model->body_subtreemass[torso_body_id_];
++    const double cadence=parameters_[cadence_param_id_];
++    const double transfer_time=.5/cadence;
++    const double* height=GetCustomNumericData(model,"r10_material_support_height");
++    const double dz=height[0]-data->xpos[3*torso_body_id_+2];
++    const double az=gravity*mju_tanh(
++        dz/(gravity*transfer_time*transfer_time)-comvel[2]/(gravity*transfer_time));
++    double sum=0;
++    for (A1Foot foot:kFootAll) {
++      // Smooth transfer over the existing 1mm domain scale. These weights
++      // request landing; they never declare an airborne foot to be loaded.
++      support_share[foot]=mju_exp(-step[foot]/stable_support[0]);
++      sum+=support_share[foot];
++    }
++    // Nominal flight is allowed; no hard count of supporting feet is imposed.
++    requested_load=mass*(gravity+az)*mju_min(sum/2.,1.);
++    for (A1Foot foot:kFootAll)
++      support_target[foot]=requested_load*support_share[foot]/sum;
+   }
+ 
+   // S4 N: candidate normal motion, before and during actual predicted contact.
+@@ -357,8 +385,11 @@
+         if (complete_contact) {
+           const double point[3]={p[0],p[1],z+flat_ground_height[0]};
+           rest=R10ContactRest(model,data,point);
+-          loaded_target=rest-model->body_subtreemass[torso_body_id_]*
+-              mju_abs(model->opt.gravity[2])/(2*normal_stiffness[0]);
++          const double load=moving_support ? support_target[foot] :
++              model->body_subtreemass[torso_body_id_]*mju_abs(model->opt.gravity[2])/2;
++          loaded_target=rest-load/normal_stiffness[0];
++          if (moving_support)
++            loaded_target=mju_max(loaded_target,-stable_support[1]);
+         }
+         double gate = 0.5*(1-mju_tanh((z-rest-0.005)/0.002));
+         // 1 mm / 20 ms logical replanning interval; approaches zero at the plane.
+@@ -367,8 +398,10 @@
+           desired_vz=mju_max(mju_min(step_velocity[foot],0.),desired_vz);
+         velocity_residual[foot] = gate*(mju_min(velocity[5],0)-desired_vz)/0.05;
+         // 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.
+-        double over = -z - 0.00019889981664;
+-        indentation_residual[foot] = material ? 0.5*(over+mju_sqrt(over*over+1e-12))/0.001 : 0;
++        double over = moving_support && complete_contact ? loaded_target-z :
++                      -z-0.00019889981664;
++        indentation_residual[foot] = material ?
++            0.5*(over+mju_sqrt(over*over+1e-12))/0.001 : 0;
+       }
+     }
+     mju_copy(residual+counter,velocity_residual,4); counter+=4;
+@@ -416,6 +449,73 @@
+       const double over = margin - distance;
+       residual[counter++] = 0.5*(over + mju_sqrt(over*over + 1e-12))/clearance[0];
+     }
++  }
++
++  if (stable_support) {
++    double balance[3]={0,0,0}, placement[4]={0,0,0,0};
++    double impact[4]={0,0,0,0};
++    const double mass=model->body_subtreemass[torso_body_id_];
++    const double gravity=mju_abs(model->opt.gravity[2]), mg=mass*gravity;
++    double force[4]={0,0,0,0};
++    if (moving_support) {
++      for (A1Foot foot:kFootAll) {
++        const int geom=foot_geom_id_[foot];
++        if (R10MaterialFoot(model,data,geom)) {
++          force[foot]=R10ContactNormal(model,data,geom);
++          const double* p=foot_pos[foot];
++          double point[3]={p[0],p[1],p[2]-model->geom_size[3*geom]};
++          const double rest=R10ContactRest(model,data,point);
++          const double stiffness=GetCustomNumericData(model,"r10_local_contact")[0];
++          const double target=mju_max(rest-support_target[foot]/stiffness,
++                                      -stable_support[1]);
++          const double gap=point[2]-flat_ground_height[0]-target;
++          placement[foot]=support_share[foot]*
++              .5*(gap+mju_sqrt(gap*gap+1e-12))/.005;
++        } else {
++          for (int k=0;k<data->ncon;++k) {
++            const mjContact& contact=data->contact[k];
++            const bool first=contact.geom1==geom &&
++                             model->geom_bodyid[contact.geom2]==0;
++            const bool second=contact.geom2==geom &&
++                              model->geom_bodyid[contact.geom1]==0;
++            if (first || second) {
++              double local[6],world[3]; mj_contactForce(model,data,k,local);
++              mju_mulMatTVec(world,contact.frame,local,3,3);
++              force[foot]+=(second ? 1 : -1)*world[2];
++            }
++          }
++        }
++        balance[0]+=force[foot];
++        balance[1]+=(foot_pos[foot][1]-compos[1])*force[foot];
++        balance[2]-=(foot_pos[foot][0]-compos[0])*force[foot];
++      }
++      balance[0]=(balance[0]-requested_load)/mg;
++      // Original trunk length/width scales; load moments coordinate transfer.
++      balance[1]/=mg*.1;
++      balance[2]/=mg*.2;
++    }
++    for (A1Foot foot:kFootAll) {
++      const double* p=foot_pos[foot];
++      constexpr double half=.015811388300841896;
++      const double band=GetNumberOrDefault(0.,model,"r11_landing_approach_band");
++      const bool approaching=p[0]>=.8+half-band && p[0]<=2.2-half+band &&
++                            mju_abs(p[1])<=.6-half+band;
++      if (!approaching) continue;
++      const double z=p[2]-model->geom_size[3*foot_geom_id_[foot]]-flat_ground_height[0];
++      double velocity[6];
++      mj_objectVelocity(model,data,mjOBJ_GEOM,foot_geom_id_[foot],velocity,0);
++      const double down=mju_max(-velocity[5],0.);
++      const double hold=model->opt.timestep*
++          GetNumberOrDefault(1,model,"s1_control_hold_substeps");
++      // One held-input interval plus stopping distance at one g. The remaining
++      // margin is to the original .8mm prediction onset, not a relaxed domain.
++      // This is a soft viability objective, not a guarantee of foot deceleration.
++      const double over=hold*down+down*down/(2*gravity)-(z+stable_support[1]);
++      impact[foot]=.5*(over+mju_sqrt(over*over+1e-12))/stable_support[2];
++    }
++    mju_copy(residual+counter,balance,3); counter+=3;
++    mju_copy(residual+counter,placement,4); counter+=4;
++    mju_copy(residual+counter,impact,4); counter+=4;
+   }
+ 
+   // sensor dim sanity check
+--- /dev/null
++++ b/mjpc/r12_path.h
+@@ -0,0 +1,24 @@
++// W36: the same active substep defines rollout cost and its Jacobian row.
++#ifndef MJPC_R12_PATH_H_
++#define MJPC_R12_PATH_H_
++#include <vector>
++#include <mujoco/mujoco.h>
++#include "mjpc/utilities.h"
++namespace mjpc {
++inline std::vector<int> R12PathRows(const mjModel* m) {
++  std::vector<int> rows;
++  if (!GetCustomNumericData(m,"r12_substep_path")) return rows;
++  for (const char* name:{"MaterialDomainMargin","TrunkClearance","ImpactMargin"}) {
++    const int sensor=mj_name2id(m,mjOBJ_SENSOR,name);
++    for (int j=0;j<m->sensor_dim[sensor];++j)
++      rows.push_back(m->sensor_adr[sensor]+j);
++  }
++  return rows;
++}
++inline void R12AccumulatePath(double* peak,const double* value,
++                              const std::vector<int>& rows) {
++  // Earliest active substep wins ties in both rollout and differentiation.
++  for (int row:rows) if (value[row]>peak[row]) peak[row]=value[row];
++}
++}
++#endif
+--- a/mjpc/trajectory.cc
++++ b/mjpc/trajectory.cc
+@@ -22,6 +22,7 @@
+ #include <absl/random/random.h>
+ #include <mujoco/mujoco.h>
+ #include "mjpc/utilities.h"
++#include "mjpc/r12_path.h"
+ 
+ namespace mjpc {
+ namespace {
+@@ -117,6 +118,7 @@
+   // horizon
+   horizon = steps;
+   const int control_substeps = GetNumberOrDefault(1, model, "s1_control_hold_substeps");
++  const auto path_rows=R12PathRows(model);
+ 
+   // set mocap
+   for (int i = 0; i < nmocap; i++) {
+@@ -166,9 +168,12 @@
+     GetTraces(DataAt(trace, t * 3 * task->num_trace), model, data,
+               task->num_trace);
+ 
+-    // Residual and trace above belong to the node start. The second 1ms
+-    // integration uses the same policy output and must not replace them.
+-    for (int substep=1;substep<control_substeps;++substep) mj_step(model,data);
++    // Preserve node-start tracking residuals; risk rows use every .2ms
++    // pre-integration state inside this held-input interval.
++    for (int substep=1;substep<control_substeps;++substep) {
++      mj_step(model,data);
++      R12AccumulatePath(DataAt(residual,t*dim_residual),data->sensordata,path_rows);
++    }
+ 
+     // check for step warnings
+     if ((failure |= CheckWarnings(data))) {
+@@ -234,6 +239,7 @@
+   // horizon
+   horizon = steps;
+   const int control_substeps = GetNumberOrDefault(1, model, "s1_control_hold_substeps");
++  const auto path_rows=R12PathRows(model);
+ 
+   // set mocap
+   for (int i = 0; i < nmocap; i++) {
+@@ -270,9 +276,12 @@
+     GetTraces(DataAt(trace, t * 3 * task->num_trace), model, data,
+               task->num_trace);
+ 
+-    // Residual and trace above belong to the node start. The second 1ms
+-    // integration uses the same policy output and must not replace them.
+-    for (int substep=1;substep<control_substeps;++substep) mj_step(model,data);
++    // Preserve node-start tracking residuals; risk rows use every .2ms
++    // pre-integration state inside this held-input interval.
++    for (int substep=1;substep<control_substeps;++substep) {
++      mj_step(model,data);
++      R12AccumulatePath(DataAt(residual,t*dim_residual),data->sensordata,path_rows);
++    }
+ 
+     // check for step warnings
+     if ((failure |= CheckWarnings(data))) {
+--- a/mjpc/planners/model_derivatives.cc
++++ b/mjpc/planners/model_derivatives.cc
+@@ -19,6 +19,7 @@
+ #include <mujoco/mujoco.h>
+ #include "mjpc/threadpool.h"
+ #include "mjpc/utilities.h"
++#include "mjpc/r12_path.h"
+ 
+ namespace mjpc {
+ 
+@@ -87,8 +88,42 @@
+       // set action
+       mju_copy(d->ctrl, u + t * dim_action, dim_action);
+ 
+-      // Jacobians
+-      if (t == T - 1) {
++      const auto path_rows=R12PathRows(m);
++      if (!path_rows.empty() && t<T-1) {
++        const int nx=dim_state_derivative,nu=dim_action,ns=dim_sensor;
++        double* total_a=DataAt(A,t*nx*nx);
++        double* total_b=DataAt(B,t*nx*nu);
++        double* total_c=DataAt(C,t*ns*nx);
++        double* total_d=DataAt(D,t*ns*nu);
++        std::vector<double> prefix_a(nx*nx,0.),prefix_b(nx*nu,0.);
++        std::vector<double> next_a(nx*nx),next_b(nx*nu),next_c(ns*nx),next_d(ns*nu);
++        std::vector<double> peak(ns);
++        std::vector<bool> path(ns,false);
++        for (int row:path_rows) path[row]=true;
++        for (int j=0;j<nx;++j) prefix_a[j*nx+j]=1.;
++        const int substeps=GetNumberOrDefault(1,m,"s1_control_hold_substeps");
++        for (int sub=0;sub<substeps;++sub) {
++          // FD returns this substep's A/B/C/D and restores its input state.
++          mjd_transitionFD(m,d,tol,mode,next_a.data(),next_b.data(),
++                           next_c.data(),next_d.data());
++          // Recompute the nominal sensor value, exactly as rollout does.
++          mj_step(m,d);
++          for (int row=0;row<ns;++row) {
++            if (sub && (!path[row] || d->sensordata[row]<=peak[row])) continue;
++            peak[row]=d->sensordata[row];
++            mju_mulMatMat(total_c+row*nx,next_c.data()+row*nx,
++                          prefix_a.data(),1,nx,nx);
++            mju_mulMatMat(total_d+row*nu,next_c.data()+row*nx,
++                          prefix_b.data(),1,nx,nu);
++            mju_addTo(total_d+row*nu,next_d.data()+row*nu,nu);
++          }
++          mju_mulMatMat(total_a,next_a.data(),prefix_a.data(),nx,nx,nx);
++          mju_mulMatMat(total_b,next_a.data(),prefix_b.data(),nx,nx,nu);
++          mju_addTo(total_b,next_b.data(),nx*nu);
++          mju_copy(prefix_a.data(),total_a,nx*nx);
++          mju_copy(prefix_b.data(),total_b,nx*nu);
++        }
++      } else if (t == T - 1) {
+         // Jacobians
+         mjd_transitionFD(m, d, tol, mode, nullptr, nullptr,
+                          DataAt(C, t * (dim_sensor * dim_state_derivative)),
