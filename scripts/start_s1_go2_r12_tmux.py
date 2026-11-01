@@ -105,15 +105,19 @@ def main():
         shlex.join(postprocess) + ' --training-exit-code "$training_exit"',
         "",
     ]))
-    collection_path = ROOT / contract["outputs"]["large_root"] / "training" / f'{active["group"]}-seed{active["seed"]}' / "collection.json"
-    collection = json.loads(collection_path.read_text()) if collection_path.exists() else {}
+    # The selected resume state is authoritative; published working logs may be cleaned.
+    import torch
+    resume_path = Path(a.resume)
+    if not resume_path.is_absolute():
+        resume_path = ROOT / resume_path
+    resume_state = torch.load(resume_path, map_location="cpu", weights_only=False)
     record = dict(
         session=a.session, job_directory=str(directory.relative_to(ROOT)),
         source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         controller_build=contract["reuse"]["active_controller_build"], current_task=contract["current_task"],
         group=active["group"], seed=active["seed"], resume_checkpoint=a.resume,
         started_unix_s=started, deadline_unix_s=deadline,
-        initial_transitions=collection.get("collected_transitions"), initial_updates=collection.get("updates"),
+        initial_transitions=int(resume_state["samples"]), initial_updates=int(resume_state["updates"]),
         target_transitions=contract["learning"]["target_cumulative_transitions_per_stream"],
         target_updates=contract["learning"]["target_cumulative_updates_per_stream"],
         log=str(log.relative_to(ROOT)), command=command, status="prepared",

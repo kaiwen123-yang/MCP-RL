@@ -86,6 +86,15 @@
         "verified": "IV节：每0.75s一个动作，27维Bezier机身/摆足参考，含历史和足端速度观测。",
         "application": "判断动作能改变什么，不能只凭2Hz判定无效。",
         "limitations": "弹性地块/Laikago仿真，不是持久TM02记忆；本次未核出可靠总训练量。"
+      },
+      "W36_review": {
+        "reviewed_on": "2026-11-01",
+        "sources": [
+          "https://arxiv.org/pdf/2107.02955"
+        ],
+        "read_scope": "原论文方法：高层0.75s决策、27维机身/摆足参考、接触与历史观测；仅将其用于理解动作权限。",
+        "application": "当前2Hz cap不是必然太慢；底层支撑能力与可影响的动作比单纯提高高层频率更关键。本轮先保持cap，修稳定支撑。",
+        "limits": "弹性地块/Laikago仿真，不证明TM02持续材料记忆或需要照搬27维动作。"
       }
     },
     {
@@ -213,6 +222,15 @@
         "verified": "用整步优化建立接触力包络，MPC与状态机协调探测和支撑。",
         "application": "分析整步承载能力，不能只看足底高度。",
         "limitations": "坍塌地面问题；W35不新增探测状态机。"
+      },
+      "W36_review": {
+        "reviewed_on": "2026-11-01",
+        "sources": [
+          "https://arxiv.org/html/2510.21369v1"
+        ],
+        "read_scope": "核读II-B/C整步地反力需求包络、抬落足速度、机身/支撑区域与MPC接触约束。",
+        "application": "整步承载与低冲击落足协调，不把几何高度代价当成承载可行性保证。",
+        "limits": "塌陷地面与主动探测；不要求在当前系统增设探测状态机或照抄4秒探测动作。"
       }
     },
     {
@@ -766,6 +784,15 @@
         "verified": "作者页列出完整Go2控制环、3 seed各8510万transitions、256环境、100Hz/25维结构化参考；落足消融影响最大。",
         "application": "当前1280/5属于早期；继续完整闭环学习，未来动作扩展应针对接触失效。",
         "limitations": "平地仿真、策略参考加WBIC，不是当前iLQG MPC；整套硬件迁移未验证，不照搬样本预算。"
+      },
+      "W36_review": {
+        "reviewed_on": "2026-11-01",
+        "sources": [
+          "https://arxiv.org/abs/2610.24779"
+        ],
+        "read_scope": "本次复核arXiv官方摘要；原条目保留之前已读取方法段落的历史范围。",
+        "application": "可用名义控制骨架和完整执行层级参与训练；先补当前支撑可行性，再用证据决定是否扩一个结构化动作通道。",
+        "limits": "2026-10预印本，不称已录用ICRA；不复制其动作维度/训练规模或将其WBIC当成本项目iLQG MPC。"
       }
     },
     {
@@ -783,6 +810,15 @@
         "primary_url": "https://ddebenedittis.github.io/soft_bilinear_inverted_pendulum_astro/",
         "application": "规划与跟踪同时处理软接触，用于审视载荷/冲击可行性。",
         "limitations": "SOLO12软接触结果不证明本项目几何软惩罚等于TM02候选积分或硬约束。"
+      },
+      "W36_review": {
+        "reviewed_on": "2026-11-01",
+        "sources": [
+          "https://ddebenedittis.github.io/soft_bilinear_inverted_pendulum_astro/"
+        ],
+        "read_scope": "作者项目的方法、约束层级与SOLO12软接触实验说明。",
+        "application": "规划和实际跟踪共同处理软接触；机身参考、接触载荷/形变和执行相互一致。",
+        "limits": "不是PPO/PANN/TM02历史；作者代码部分依赖受限，不承诺可直接复现。"
       }
     },
     {
@@ -803,9 +839,18 @@
       "publication_status": "International Journal of Robust and Nonlinear Control，2026-08-14提前在线发表；作者机构标记为同行评审期刊论文。",
       "url": "https://pure.qub.ac.uk/en/publications/terrain-adaptive-quadrupedal-locomotion-using-model-predictive-co/",
       "primary_project_or_doi": "https://doi.org/10.1002/rnc.70700",
-      "method_verified": "已读作者机构摘要：MPC结合自适应阻抗、导纳、四状态接触检测和SINDy角速度动力学修正；验证范围为PyBullet中的坡面、顺应性表面及轨迹跟踪仿真。",
+      "method_verified": "先前核对作者机构摘要，本次进一步读期刊全文2.3–2.5节：MPC结合自适应阻抗/导纳、固定承载足锚点和基于力误差的有界参考修正，以及SINDy角速度模型修正；实验仍为PyBullet仿真。",
       "application_to_current_stage": "支持接触、力跟踪、模型修正协同调试。用于解释为何当前应修复支撑和控制目标错配，再继续完整链路训练；不据此新增SINDy模块或复现任务。",
-      "limitations": "已核对来源仅报告仿真，不能表述为真机验证；未证实跨足及返程材料记忆。各模块收益不能推导为本项目的预期改善幅度。核对范围为摘要，未复现。"
+      "limitations": "本次已读相关方法和实验边界，未复现；无真机验证，局部稳定论证不构成整个级联系统的稳定证明。不可把5cm参考偏移界照搬到当前约1mm材料有效域；未验证跨腿/返程材料记忆。",
+      "W36_review": {
+        "reviewed_on": "2026-11-01",
+        "sources": [
+          "https://onlinelibrary.wiley.com/doi/full/10.1002/rnc.70700"
+        ],
+        "read_scope": "本次读取期刊全文2.3–2.5节及实验/局限：承载足锚点、力误差的有界参考偏移、阻抗/导纳和动力学修正。",
+        "application": "将力与实际参考修正接到执行链；本轮不加入SINDy。",
+        "limits": "只报告PyBullet仿真，真机仍为后续；局部分析不等于全串联系统稳定证明；5cm偏移界不能复制到约1mm材料域。"
+      }
     },
     {
       "id": "TM31",
@@ -823,6 +868,24 @@
         "verified": "IV-C为2048并行环境；V-B每次PPO迭代24仿真步；100Hz，选用关节目标残差与扭矩融合。",
         "application": "支持MPC闭环中连续多次更新。",
         "limitations": "MIT人形、GPU并行MPC与扭矩权限不同于2Hz速度cap；不移植吞吐或收敛预算。"
+      }
+    },
+    {
+      "id": "TM32",
+      "title": "Impact-Aware Robust Convex Model Predictive Control for Quadruped Locomotion on Uncertain Terrain",
+      "year": 2026,
+      "publication_status": "IEEE Robotics and Automation Letters 11(7),7820–7827;online2026-05-11.",
+      "doi": "10.1109/LRA.2026.3692086",
+      "url": "https://doi.org/10.1109/LRA.2026.3692086",
+      "selected_on": "2026-11-01",
+      "read_for_execution": "IEEE官方摘要/出版元数据，未核读完整推导或代码。",
+      "method_verified": "摘要描述将触地冲击建模为有界动量扰动，在SRB预测中采用鲁棒min-max并松弛为QP；报告Go2仿真和硬件验证。",
+      "application_to_current_stage": "支持将触地冲击和候选路径可行性提前纳入规划，而不是只检查接触后的节点压入。",
+      "limitations": "不能据摘要声称复现其数学保证；不要求替换当前MPC或直接照搬鲁棒参数。",
+      "W36_review": {
+        "reviewed_on": "2026-11-01",
+        "source_type": "official_IEEE_abstract_and_metadata",
+        "application": "Current implementation uses the existing optimizer-compatible landing velocity/material-margin mechanism;the paper is design evidence,not a prescribed rewrite."
       }
     }
   ],
@@ -856,7 +919,14 @@
       "doi": "10.1109/LRA.2026.3732903",
       "url": "https://ieeexplore.ieee.org/abstract/document/11685272/",
       "role": "最新直接近邻；正式创新表述前取得全文逐项比较",
-      "access_note": "本轮只核到公开摘要/索引，全文未取得；不得写成已排除重合，不阻止 R1/R2 实际复现"
+      "access_note": "2026-11-01核对IEEE官方摘要/出版信息；未读取完整方法或复现。",
+      "publication_status": "IEEE Robotics and Automation Letters11(11),12552–12559;online2026-09-10.",
+      "W36_review": {
+        "reviewed_on": "2026-11-01",
+        "verified_abstract": "足地接触历史用于估计摩擦和形变特性，再调整步态；摘要报告VG塑性屈服模型、GA参数估计及仿真/Go2沙地实验。",
+        "application": "是后续新颖性与实验对照的重要近邻；不能只以使用接触历史自称创新。需证明世界地块跨腿/跨返程持续状态及支撑需求带来的因果收益。",
+        "limits": "摘要不能证明它覆盖本项目TM02恢复内变量或跨腿共享记忆；不据此宣称等价或已完成对比。"
+      }
     },
     {
       "title": "Robust bipedal locomotion on flowable slopes via foot-driven terrain manipulation",
@@ -890,6 +960,6 @@
       "scope_note": "先用相同初态、冻结plan及统一ZOH输入辨别数值/接触差异，再据完整任务评价。未来真实闭环采用不同反馈/重规划动作，不能拿其远期差值单独归因于动力学。新数值候选尚未运行；不从文档推荐推导本项目必然成功、精确等价或NX实时。"
     }
   ],
-  "execution_scope_note": "旧条目中“当前”“本轮”及阶段限制按各自历史日期理解。当前R12在D57执行完整PANN-PPO-MPC支撑联调和跨≤4h窗口连续学习，以AGENTS.md与docs/TERRAIN_MEMORY_PLAN.md顶部及第4节为准。本次新增TM28–TM31，并更新既有TM13/TM14当前用途，记录一手来源、实际阅读范围与适用边界；不等于完成复现，也不构成额外阅读/测试门槛。",
-  "last_updated": "2026-10-31"
+  "execution_scope_note": "历史条目的“当前”按其日期理解。当前W36优先完成稳定、合规的完整PANN-PPO-MPC基线，再考虑吞吐和记忆收益。已读的一手方法与仅有官方摘要的2026论文分别标注；这些阅读直接支持当前实现，不新增论文复现、独立准入或阅读轮次。执行以AGENTS.md及主计划第4节为准。",
+  "last_updated": "2026-11-01"
 }

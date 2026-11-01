@@ -1,20 +1,23 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "W35_ready_to_launch",
-  "protocol_revision": "same_r24_continuation_final_eval_v10",
+  "status": "W36_implementation_planned_not_launched",
+  "protocol_revision": "stable_support_joint_v11",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
-  "revision_date": "2026-10-31",
-  "supersedes_plan_commit": "1b92c53023d71c5a30f6f9dbc6cfa6d72ec5c0ae",
+  "revision_date": "2026-11-01",
+  "supersedes_plan_commit": "90d4fd648ae120bcd5c6bdf8c3e0d821d6242296",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
-  "current_task": "W35_SAME_R24_CONTINUE_AND_EVAL",
+  "current_task": "W36_STABLE_SUPPORT_JOINT",
   "reuse": {
     "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
     "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
-    "source_reference_commit": "25947cfae9b2a48a872327bb63e9b36f76fe2dac",
-    "rule": "Reuse the actually executed S5-r24 controller and working D57 full loop. The trunk-clearance and MuJoCo ABI/checkout fixes are complete; no new support-patch admission stage or rebuild is required for W35.",
-    "active_controller_build": "S5-r24",
-    "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r24.json"
+    "source_reference_commit": "fff9bfd53afcf7f9511ad41ea62a585f092aba2c",
+    "rule": "Reuse the proven D57 environment and executed S5-r24 as the implementation base. Implement/build S5-r25 coordinated feasible-reference, moving-support, low-impact landing and legal-route reward changes before launching W36. Existing final-policy evaluator and Release partitioning are already operational; do not rebuild those stages.",
+    "active_controller_build": "S5-r25",
+    "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r25.json",
+    "active_controller_status": "planned_not_implemented_or_built_by_this_review",
+    "parent_controller_build": "S5-r24",
+    "parent_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r24.json"
   },
   "execution": {
     "mode": "interactive_setup_and_detached_training",
@@ -23,12 +26,12 @@
     "clock_starts": "The <=4h interactive budget starts at the first Codex activity. A detached training job starts its own explicitly recorded clock at launch; the clocks are independent.",
     "includes": [
       "current handoff and directly relevant source",
-      "necessary R12 final-evaluation entrypoint adaptation",
-      "ordinary server storage/network access preparation",
-      "tmux launch and brief actual-sampling observation",
-      "source/config push and handoff"
+      "coordinated r25 support/reference/landing and legal-route reward implementation",
+      "restore latest own checkpoint after documented output cleanup",
+      "post-publication cleanup wiring in existing finish/publish",
+      "source/config push,tmux launch and brief actual-sampling handoff"
     ],
-    "stop_when": "Interactive setup ends after necessary final-evaluation adapter wiring,source/config push,and actual sampling handoff or its4h limit. Detached training,evaluation and publication use separate budgets.",
+    "stop_when": "End interactive work after the necessary implementation,source/config push and actual-sampling handoff,or at4h. If implementation is incomplete,record concrete remaining code work;do not label or launch unchanged r24 as completed r25.",
     "automatically_chain_tasks": false,
     "autonomous_48h_campaign_enabled": false,
     "unfinished_task_rule": "On return inspect the existing tmux pipeline and job summary first. Do not duplicate the running stream. If rendering/publication is pending,continue only that recorded job's postprocessing.",
@@ -49,9 +52,11 @@
     "new_handoff_document_required": false,
     "within_task_chain_enabled": true,
     "allowed_chain": [
-      "same_r24_full_loop_training",
+      "implement_S5_r25_and_legal_route_reward",
+      "full_PANN_PPO_MPC_joint_training",
       "frozen_final_checkpoint_nominal_E30_then_conditional_E60",
-      "automatic_render_release_parts_and_git_push"
+      "automatic_render_release_parts_and_git_push",
+      "cleanup_confirmed_published_inactive_research_copies_and_push_compact_record"
     ],
     "chain_shares_one_absolute_deadline": false,
     "current_completed_prerequisite": {
@@ -66,24 +71,27 @@
       },
       "reuse_without_new_test": true,
       "PANN": {
-        "transitions": 1280,
-        "effective_transitions": 1000,
-        "updates": 5,
+        "transitions": 3328,
+        "effective_transitions": 2599,
+        "updates": 13,
         "tail_buffer": 0,
         "loss_metrics_saved": true,
-        "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00044.pt",
-        "physical_episodes": 42,
+        "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
+        "checkpoint_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt",
+        "server_checkpoint_copy_present_after_recorded_cleanup": false,
+        "physical_episodes": 115,
         "post_update_physics": true,
-        "latest_update_has_post_update_physics": false,
-        "latest_job": "job-20261030T161045Z",
+        "latest_update_has_post_update_physics": true,
+        "latest_update_physics_scope": "frozen final-policy E30;no subsequent training episode claimed",
+        "latest_job": "job-20261031T101803Z",
         "latest_controller": "S5-r24"
       }
     },
-    "compute_time_policy": "Use the existing D57. Interactive<=4h;W35 training<=28h,then final-policy evaluation<=4h,then render/publication<=6h,each independently timed. Stop early at its actual target;no new paid instance or endless restarts.",
+    "compute_time_policy": "Use existing D57.Interactive<=4h;W36 training<=28h,then final-policy evaluation<=4h,then render/publication/cleanup<=6h,independent clocks.Stop early at target;report partial actual counts when budget ends.No new paid instance or performance project.",
     "background_job": {
       "authorized_by": "User explicitly requested tmux training for ten hours or longer,with departure after actual startup and later inspection of logs.",
       "default_maximum_wall_s": 100800,
-      "configurable_budget": "Launcher --hours sets an explicit budget;28h allows for the measured21.30h collection estimate for2048new transitions. It is neither a minimum runtime nor the total research budget.",
+      "configurable_budget": "Launcher --hours sets a recorded budget;28h is a working budget based on W35's22.6151h for2048new transitions.The changed controller may be slower;not a runtime or convergence promise.",
       "launcher": "scripts/start_s1_go2_r12_tmux.py",
       "session_default": "s1-joint",
       "training_flag": "--background-job",
@@ -96,7 +104,7 @@
       ],
       "ordinary_physical_failure": "Save the real terminal and continue the next natural episode,as the current training loop already does.",
       "automatic_restart": false,
-      "post_training": "After training,freeze the final actual completed-update checkpoint and run nominal E30,then E60 only if its exact predecessor passes;then render and publish all actual training/evaluation outputs. The R12 evaluation adapter and launcher call must be implemented as specified before the W35 launch.",
+      "post_training": "Reuse implemented evaluator:freeze the final actual completed-update checkpoint,nominal E30 then exact-case E60 only if E30 passes;render and publish all actual outputs,then clean confirmed-published inactive research copies and push its compact record.",
       "disconnect_semantics": "Detaching or closing the client leaves the server job running. Instance shutdown/reboot ends the process; resume from saved checkpoint later.",
       "concurrent_training_streams": 1,
       "default_postprocess_wall_s": 21600,
@@ -110,11 +118,12 @@
       ],
       "network_rule": "Use a server-independent working route. The automatic job must not depend on the user's PC proxy or client staying online.",
       "autopublish": true,
-      "failure_policy": "Record stage errors and pending paths;publish other available results. Do not re-run physics to create videos or endlessly restart training/upload. A failed push keeps the local commit for a later ordinary retry;never force-push.",
+      "failure_policy": "Record technical/stage errors and pending paths;publish all available outputs.Do not rerun physics for videos or restart training to repair delivery.Failed upload/push retains unpublished files for ordinary retry;never force-push.Delete only confirmed-delivered inactive copies.",
       "result_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job-name>.json",
       "resume_publication": "Continue the same job's finish only after a concrete delivery error;reuse videos,snapshots and explicit Release destinations without re-running training/evaluation.",
-      "final_evaluation_adapter_status": "implemented_in_R12_entrypoint_and_tmux_pipeline; actual_final_evaluation_pending_training",
-      "postprocessing_release_policy": "New unassigned nonempty assets go to deterministic per-job partNN Releases,max900assets each;retain all existing manifest/index destinations and reuse already published files."
+      "final_evaluation_adapter_status": "implemented_and_executed_in_W35;reuse",
+      "postprocessing_release_policy": "New unassigned nonempty assets go to deterministic per-job partNN Releases,max900assets each;retain all existing manifest/index destinations and reuse already published files.",
+      "cleanup_after_publication": "User authorized;implementation in existing finish/publish is part of W36,not already executed by this plan."
     }
   },
   "tasks": [
@@ -189,13 +198,13 @@
       "id": "W5",
       "goal": "Same-version qualifiedE30 then original materialE60; reuse existing same-version prerequisite.",
       "done": "Actual complete mission or recorded concrete failure, not extra audit tasks.",
-      "status": "nominal_final_PANN_E30_conditional_E60_subset_planned_in_W35"
+      "status": "W35_nominal_final_PANN_E30_executed_failed_E60_blocked;full_matrix_remains_future"
     },
     {
       "id": "W6",
       "goal": "Later balanced multi-seed learning and qualified longer evaluations on existing AutoDL;interactive<=4h while declared tmux jobs may run longer.",
       "done": "Actual new samples/updates,normal checkpoint and specific resource/remaining-work conclusion.",
-      "status": "later_after_current_same_version_learning_readout"
+      "status": "deferred_until_stable_legal_joint_baseline;not_current_performance_or_memory_benefit_campaign"
     },
     {
       "id": "W34",
@@ -224,7 +233,7 @@
     },
     {
       "id": "W35",
-      "status": "ready_to_launch",
+      "status": "completed_published_and_server_copies_cleaned",
       "goal": "Continue the same r24 full PANN-PPO-MPC loop for a substantive further phase,then observe its final frozen policy under the original nominal E30/E60 ladder.",
       "group": "PANN_PPO_S5",
       "seed": 0,
@@ -241,7 +250,42 @@
       "training_maximum_wall_s": 100800,
       "evaluation_maximum_wall_s": 14400,
       "postprocess_maximum_wall_s": 21600,
-      "done": "Actual new samples/updates with ordinary checkpoints,one frozen-final-policy nominal E30 and its eligible E60 or explicit blocking/partial reasons,then complete actual asset delivery. No promised task success/convergence."
+      "done": "Actual new samples/updates with ordinary checkpoints,one frozen-final-policy nominal E30 and its eligible E60 or explicit blocking/partial reasons,then complete actual asset delivery. No promised task success/convergence.",
+      "actual_job": "job-20261031T101803Z",
+      "actual_new_transitions": 2048,
+      "actual_new_updates": 8,
+      "actual_cumulative_transitions": 3328,
+      "actual_cumulative_updates": 13,
+      "actual_physical_episodes": 73,
+      "actual_controller_build": "S5-r24",
+      "final_E30": "failed_material_domain_exit_12.5732s",
+      "E60": "blocked_not_run",
+      "publication_status": "completed"
+    },
+    {
+      "id": "W36",
+      "status": "implementation_planned_not_launched",
+      "goal": "Form a usable legal PANN-PPO-MPC baseline by coordinating feasible body reference,moving support,low-impact landing/material margin and legal-route rewards,then continue substantive joint learning.",
+      "group": "PANN_PPO_S5",
+      "seed": 0,
+      "condition": "nominal",
+      "parent_controller_build": "S5-r24",
+      "controller_build": "S5-r25",
+      "controller_status": "planned_implementation_required",
+      "reward_version": "W36_legal_route_progress_and_lap_alignment",
+      "initial_cumulative_transitions": 3328,
+      "initial_cumulative_updates": 13,
+      "target_cumulative_transitions": 5376,
+      "target_cumulative_updates": 21,
+      "new_transitions": 2048,
+      "new_updates": 8,
+      "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
+      "resume_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt",
+      "stop_after_each_update": false,
+      "training_maximum_wall_s": 100800,
+      "evaluation_maximum_wall_s": 14400,
+      "postprocess_maximum_wall_s": 21600,
+      "done": "Actual implementation and full-loop samples/updates,final frozen-policy E30/eligible E60 or honest partial/blocking reasons,complete research delivery and scoped post-publication cleanup.No guaranteed task pass or memory-benefit claim."
     }
   ],
   "resources": {
@@ -263,7 +307,7 @@
     "provision_additional_paid_resources": false,
     "project_root_recommendation": "/root/autodl-tmp/MCP-RL",
     "path_rule": "Use actual paths in the new SSH/runtime record if already created; do not move/recreate a working environment just to match a recommended path.",
-    "environment_policy": "Reuse the actual D57 environment,MuJoCo3.2.3 retained ABI with the recorded dependency checkout088079eff0450e32b98ee743141780ed68307506,and successful S5-r24 binary. PANN1280/5 and30new videos have executed;no reinstallation or rebuild without a new concrete error.",
+    "environment_policy": "Reuse actual D57 environment,retained MuJoCo3.2.3 ABI/dependency checkout088079eff0450e32b98ee743141780ed68307506 and r24 build base.PANN3328/13 and W35 final evaluation/publication executed.Build only the required r25 change;do not reinstall or remigrate without a concrete error.",
     "environment_changes": "Only necessary changes in the project environment. Resolve concrete errors from the actual training launch; no environment matrix/import/smoke test stage.",
     "maximum_environments": 1,
     "initial_training_concurrency": 1,
@@ -293,7 +337,23 @@
     },
     "python_environment": "work/envs/d57",
     "compute_environment": "experiments/terrain_memory/compute-environment.json",
-    "storage_budget_note": "One actual free-space check before launch. W34 job published~7.02GB of files for1024new samples;budget roughly14GB-level new artifacts for2048plus actual working/evaluation overhead. This is an estimate,not verified current free disk. Do not silently delete research data,buy storage,or use a PC archive."
+    "storage_budget_note": "One actual free-space check before launch.W35 cleanup record reports75,580,424,192bytes free after deletion;not a current measurement.Image disk labels are historical,not current usable capacity.W35 new Release assets were14.264GB for2048samples plus evaluation;allow changed-output overhead.Use authorized post-publication cleanup,no PC archive or new paid storage.",
+    "disk_capacity_scope": "system/data_disk_GB fields retain the original screenshot;actual D57 capacity/free space is determined from existing runtime records and one current check.",
+    "last_recorded_cleanup": {
+      "source_commit": "90d4fd648ae120bcd5c6bdf8c3e0d821d6242296",
+      "job": "job-20261031T101803Z",
+      "deleted_files": 2482,
+      "deleted_bytes": 14353826997,
+      "available_before_bytes": 61220585472,
+      "available_after_bytes": 75580424192,
+      "status": "completed_in_uploaded_record",
+      "live_rechecked_by_this_plan": false,
+      "initial_cleanup_files": 2480,
+      "initial_cleanup_bytes": 14353820823,
+      "followup_removed_files": 2,
+      "followup_removed_bytes": 6174,
+      "free_space_measurement_scope": "Original2480-file cleanup;the later6174-byte release-note removal did not record another free-space measurement."
+    }
   },
   "learning": {
     "candidate_can_start_before_E30_E60_pass": true,
@@ -324,24 +384,22 @@
     "unfinished_buffer_rule": "Save valid tail,optimizer,RNG,normalization and counts during ordinary shutdown. Continue in a later actual training window; do not require a separate recovery exercise.",
     "incomplete_environment_snapshot_rule": "Start a new physical session if full environment state was not saved. Record real boundaries and do not claim uninterrupted physics or fabricate missing successors.",
     "evidence": "Use normal update logs,real trajectories and saved checkpoint. Do not replace real learning by mock tests or inflate results into convergence/benefit claims.",
-    "schedule": "Continue the same r24 from1280/5 with2048NEW transitions/8NEW updates to3328/13,rollout256. Natural physical terminals start another episode;ordinary updates keep the current environment. Then freeze the final actual updated policy for nominal E30/eligible E60.",
+    "schedule": "After required r25/control-reward implementation,continue complete PANN-PPO-MPC loop from3328/13 with2048NEW transitions/8NEW updates to5376/21,rollout256.Natural physical terminals start another episode;ordinary updates do not reset.Then evaluate final actual updated policy nominal E30/eligible E60.",
     "shares_actor_or_optimizer_between_groups": false,
-    "pann_runtime": "Frozen causal PANN remains in the actual loop;1024new r24 observations include288nonzero recovery inputs and45in return. PPO uses Torch CUDA. PANN is not a full candidate material-dynamics model.",
+    "pann_runtime": "Frozen causal PANN stays in full loop.W35 had509/2048nonzero recovery observations,174return observations and60nonzero return recovery inputs;this is exposure,not demonstrated benefit.PPO trains actor/critic;MPC is not a full candidate TM02/PANN dynamics model.",
     "recording": "All actual episodes retain complete existing recording and frequencies/schema,raw trajectories,physical/prediction/material chunks,transition/rollout/update data and checkpoints. No extra diagnostic platform.",
     "estimated_cost": {
-      "reference_job": "job-20261030T161045Z",
-      "source_commit": "1b92c53023d71c5a30f6f9dbc6cfa6d72ec5c0ae",
-      "collection_wall_s": 38348.2941467762,
-      "new_transitions": 1024,
-      "new_effective_transitions": 792,
-      "new_physics_s": 504.9737999996063,
-      "transitions_per_collection_hour": 96.12943892342346,
-      "effective_transitions_per_collection_hour": 74.35011291733532,
-      "reference_1024_collection_h": 10.652303929660055,
-      "additional_2048_collection_h": 21.30460785932011,
+      "reference_job": "job-20261031T101803Z",
+      "source_commit": "fff9bfd53afcf7f9511ad41ea62a585f092aba2c",
+      "new_transitions": 2048,
+      "new_effective_transitions": 1599,
+      "new_physics_s": 1006.5964,
+      "invocation_wall_s": 81414.375,
+      "transitions_per_invocation_hour": 90.559,
+      "reference_2048_invocation_h": 22.6151,
       "training_budget_h": 28,
       "is_next_window_time_promise": false,
-      "excludes": "Interactive setup,final evaluation,rendering/publication;actual trajectory and load may change throughput."
+      "scope": "r24 measured execution,not r25 performance;excludes interactive implementation,final evaluation and publication.Cumulative wall_s includes older idle gaps and is unsuitable for this estimate."
     },
     "completed_reference_stream": {
       "group": "PPO_RAW_S5",
@@ -355,59 +413,47 @@
       "R12 uses the recorded active controller; S5-r24 has completed actual full-loop sampling on D57.",
       "Original PPO numerical settings are mapped into the existing joint_learning interface without six-stream waiting.",
       "Current R12 outputs, nominal60s acquisition sessions, curriculum off and20MPCworkers are active; background and interactive deadlines are independent.",
-      "Sample-target/external truncation is recorded before buffer/GAE; real physical terminals retain priority and zero-physics actions do not become samples."
+      "Sample-target/external truncation is recorded before buffer/GAE; real physical terminals retain priority and zero-physics actions do not become samples.",
+      "W36 review:launcher job initial_transitions/initial_updates read from the selected resume checkpoint,not a cleaned collection.json.Static syntax checked;not server-executed by this review."
     ],
     "next_runtime_work": [
-      "Check the existing tmux job first. W34 is completed in published records; do not duplicate any newer live job.",
-      "Reuse S5-r24 and own-PANN ep44 at1280/5; continue2048new samples/8updates to3328/13 without another build or pre-training E30 gate.",
-      "Implemented existing R12 evaluation adapter,current-root predecessor lookup,and final-policy E30/conditional E60 between training and publication. Actual final evaluation is pending the end of this job.",
-      "Push actual source/config; launch one tmux pipeline with28h training,4h evaluation and6h publication budgets. Observe actual sampling briefly and leave.",
-      "Use the updated publisher's saved per-job partNN destinations; include every actual evaluation attempt as well as all training outputs. Continue only pending postprocessing after a delivery failure.",
-      "Report legal passage,side exits,return exposure,roundtrips,final-policy outcomes and actual training counts separately; no score-based checkpoint selection or PC archive."
+      "Check same-stream tmux/current results;W35 has ended and latest published checkpoint is ep117 at3328/13,tail0.Restore that one file as needed after documented cleanup;do not replay W35.",
+      "Implement/build actual S5-r25 from r24:bounded feasible reference,moving load-bearing support,low-impact landing with remaining material margin and coherent substep-path treatment;align progress/lap reward to existing legal-route definitions.",
+      "Keep PANN/observation/action dimensions and original physical/task thresholds;warm-start own learning state,record controller/reward boundary and use empty new-version on-policy buffer.",
+      "Wire scoped post-success cleanup into existing finish/publish;reuse executed final evaluator and Release parts,not a new archive/audit framework.",
+      "Push actual source/config;launch one tmux pipeline for2048new transitions/8updates,then final frozen-policy E30/conditional E60,then automatic render/publication/cleanup.Observe real sampling briefly and leave.",
+      "Report task legality,first passage,return/roundtrip,contact/support/impact and failures alongside actual learning counts.Do not substitute loss,raw laps or training prefixes for formal qualification."
     ],
     "pann_evidence": "Use ordinary rollout/episode logs for observer/query counts,extra wall time and the12 actual recovery-feature values. Report zero or uninformative features honestly; do not demand artificial nonzero values,read truth q/e or add a diagnostic framework.",
-    "controller_change_during_current_window": "S5-r24 is compiled and recorded. Keep this controller/configuration/executor fixed throughout the detached job; only consider further changes after the actual job has stopped.",
-    "target_cumulative_transitions_per_stream": 3328,
-    "target_cumulative_updates_per_stream": 13,
+    "controller_change_during_current_window": "Implement S5-r25 and the legal-route reward revision before sampling;record the boundary from r24.Once the detached job starts,keep its implementation/configuration fixed.Do not mutate a live same stream.",
+    "target_cumulative_transitions_per_stream": 5376,
+    "target_cumulative_updates_per_stream": 21,
     "additional_transitions_from_reviewed_checkpoint": 2048,
     "additional_updates_from_reviewed_checkpoint": 8,
-    "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00044.pt",
-    "resume_mode": "Restore this own-PANN stream's actor,critic,optimizer,RNG,normalization and counters from the latest actual checkpoint. Continue S5-r24 without reinitialization. Start a fresh physical episode because no full environment snapshot exists;retain honest boundary provenance.",
-    "phase_initial_transitions": 1280,
-    "phase_initial_updates": 5,
+    "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
+    "resume_mode": "Restore own ep117 actor,critic,optimizer,RNG,normalization and historical counters;empty tail at reviewed boundary.Start a fresh physical episode because no full environment snapshot exists.No RAW mixing or claim of uninterrupted physics.",
+    "phase_initial_transitions": 3328,
+    "phase_initial_updates": 13,
     "controller_boundary_rule": "Current parent checkpoint has an empty tail. Warm-start its own actor/critic/optimizer/RNG/normalization; start new-controller sampling from an empty on-policy buffer. Preserve original counts and record build,parent checkpoint and phase-initial counts. If actual progress is newer, do not mix an older controller's pending buffer into a new-controller update or silently discard it; finish that batch on its recorded controller or preserve it as unconsumed evidence.",
-    "phase_count_rule": "W35 reports new2048/8 and cumulative3328/13 if attained. Same-r24 totals at that point are3072/12;the earlier256/1 belongs to r21. These are learning milestones,not physical-start caps or convergence thresholds.",
+    "phase_count_rule": "W36 target is new2048/8,cumulative5376/21.Previous3328/13 includes256/1r21 and3072/12r24;preserve that history.New r25 counts are independent milestones,not physical-start caps or convergence evidence.",
     "controller_version_boundary": {
-      "parent_controller_build": "S5-r21",
-      "active_controller_build": "S5-r24",
-      "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt",
-      "actual_transitions": 256,
-      "actual_updates": 1,
+      "parent_controller_build": "S5-r24",
+      "active_controller_build": "S5-r25",
+      "status": "planned_not_executed",
+      "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
+      "parent_checkpoint_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt",
+      "parent_transitions": 3328,
+      "parent_updates": 13,
       "parent_tail_buffer": 0,
       "new_controller_initial_buffer": 0,
-      "restoration": "PANN seed0 actor,critic,optimizer,RNG and normalization from its own ep00012; historical r21 samples retain their original version.",
-      "zero_step_failures": [
-        {
-          "build": "S5-r22",
-          "job": "job-20261030T155257Z",
-          "new_transitions": 0
-        },
-        {
-          "build": "S5-r23",
-          "job": "job-20261030T160418Z",
-          "new_transitions": 0
-        }
-      ],
-      "status": "historical_actual_r21_to_r24_boundary_completed"
+      "reward_version_change": "align route-progress and lap bonus with existing legal traversal",
+      "restoration": "Own-PANN actor/critic/optimizer/RNG/normalization warm start;new data only for new-version PPO updates;historical data keep original versions."
     },
     "same_controller_continuation": {
-      "controller_build": "S5-r24",
-      "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00044.pt",
-      "initial_transitions": 1280,
-      "initial_updates": 5,
-      "tail_buffer": 0,
-      "new_build_required": false
-    }
+      "enabled": false,
+      "reason": "W35 completed same-r24 continuation;W36 implements a coordinated control/reward revision before a new fixed-version phase."
+    },
+    "resume_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt"
   },
   "control_and_evaluation": {
     "keep_original_robot_material_pd_torque_and_thresholds": true,
@@ -427,10 +473,10 @@
     "automatically_run_extra_rigid_regression": false,
     "additional_run_rule": "Only when it directly answers the current concrete failure/change; no unrelated matrix.",
     "formal_mission_wall_rule": "Formal evaluation starts after this job training exits, uses its independent 4h deadline, and preserves the original continuous durations and exact-case qualification. Never stitch interrupted portions into a pass.",
-    "current_window": "Keep the successful r24 implementation,original reward/action/PANN/physics and20workers fixed for this2048-transition phase. Adapt only the final evaluation entry and publication plumbing;no compulsory control-patch admission stage.",
-    "next_control_question": "After substantive same-r24 learning,judge legal material passage,side exit,return/round-trip progress and frozen-policy outcomes. If flat,resolve the observed material-prediction/load or route/action-authority bottleneck instead of extending cap-only training indefinitely.",
+    "current_window": "Implement feasible body reference,moving support/low-impact landing/material margin and legal-route reward as one coordinated r25 baseline revision,then keep this version fixed for full joint learning.Original physical/evaluation definitions remain.",
+    "next_control_question": "Does the coordinated revision produce reliable first legal passage and improved return support?Inspect actual contact/impact and prediction/execution mismatch before another identical extension;if support becomes stable but cap lacks task authority,consider one bounded structured action in a later evidence-led change.",
     "comparison_after_migration": "Old5080 RAW and AutoDL PANN first updates are engineering evidence,not a matched learning-benefit/runtime comparison. Later formal comparisons share host/runtime/controller/worker setting and original per-case staged qualification.",
-    "training_gate": "No E30/E60 gate before W35 learning. Frozen-final-policy E30/eligible E60 is an end-of-phase capability readout,not a prerequisite or training prefix qualification.",
+    "training_gate": "No isolated-module or E30/E60 admission gate before W36 joint learning.Necessary implementation/build/actual-run checks only;final frozen-policy E30/eligible E60 reads task capability.",
     "support_correction": {
       "priority": "Align optimizer-selected support/clearance behavior with the unchanged real no-nonfoot-contact termination.",
       "evidence_episode": "train-PANN_PPO_S5-s0-ep00010",
@@ -445,11 +491,12 @@
       "limitation": "This is an evidenced objective mismatch,not proof of the sole cause or that one penalty guarantees success. Replanning/contact approximations remain; compare actual follow-up behavior.",
       "experimental_check": "Use ensuing normal full-loop training to inspect selected predicted clearance,actual non-foot contact,material-domain exits,forward progress,landing force/pitch and torque saturation from existing recordings.",
       "status": "implemented_in_S5_r24_and_executed_in_W34",
-      "next_action": "Do not repeat this completed correction. Retained ep34 shows small late soft-penalty violations and prediction mismatch;not evidence of disconnected cost or grounds for an arbitrary weight sweep."
+      "next_action": "Reuse existing correction.W35 additionally exposes load-bearing gaps,reference lead and fast impact;coordinate these in r25 instead of re-adding clearance or arbitrarily increasing its weight.",
+      "historical_scope": "r24 trunk-clearance correction completed;not the W36 implementation."
     },
     "post_training_evaluation": {
       "planned": true,
-      "implementation_status": "implemented_in_R12_entrypoint_and_tmux_pipeline; actual_final_evaluation_pending_training",
+      "implementation_status": "implemented_and_executed_in_W35;reuse_for_actual_r25",
       "purpose": "Observe the final actually updated policy rather than treating the preceding rollout as its evaluation.",
       "group": "PANN_PPO_S5",
       "seed": 0,
@@ -460,18 +507,13 @@
       ],
       "maximum_wall_s": 14400,
       "clock_starts": "After training exits;independent of training and publication budgets.",
-      "checkpoint_selection": "The last actual completed PPO update at the declared phase end/deadline;checkpoint-003328.pt if target reached. Never choose the best-looking checkpoint. Use an existing valid updated policy if training is partial,and report its actual count.",
+      "checkpoint_selection": "Last actual completed PPO update at phase end/deadline;checkpoint-005376.pt if target reached.Never best-looking selection.If partial,use valid final updated policy and state actual counts.",
       "deterministic_policy_mean": true,
       "ppo_updates": false,
       "frozen_normalization": true,
       "solver_workers": 20,
       "entrypoint": "scripts/run_s1_go2_r12.py",
-      "necessary_changes": [
-        "Use contract active controller,group/seed/checkpoint/level/current R12 outputs and explicit background evaluation deadline instead of W1 r21/FIXED/E30.",
-        "Reuse PolicyStream(training=False),existing evaluator and qualification;predecessor resolved paths use passed c.outputs.root rather than only old R11 root.",
-        "Wire after training and before finish;record an independent evaluation start/deadline/result in this job.",
-        "Use separate evaluation attempts/directories;never modify training collection/stopped/checkpoints. Add every actual evaluation trajectory/video/array to the job's existing render/publish manifest."
-      ],
+      "necessary_changes": [],
       "E30_rule": "Complete independent30s observation,original far3m arrival and legal outbound material traversal;continue original turn/return. No requirement for a full round trip by30s or deliberate far-end parking.",
       "E60_rule": "Only the exact same case's E30 passes;independent original full roundtrip/holding and60s observation.",
       "downstream_after_failed_E30": "Record E60 blocked_by_predecessor with the true reason;no automatic retry or physical rerun to obtain a pass.",
@@ -479,19 +521,49 @@
       "automatically_run_E300_E600": false,
       "full_21_case_matrix": false,
       "result_reporting": "Job summary records training attainment,evaluation outcomes/blocked or partial stages,andpublication independently.",
-      "enabled": true
+      "enabled": true,
+      "reused_implemented_components": [
+        "R12 active-controller/group/seed/checkpoint/level and independent deadline adapter",
+        "PolicyStream(training=False),deterministic mean,frozen normalization",
+        "same-case predecessor lookup in current output root",
+        "tmux post-training evaluation and explicit attempt publication"
+      ],
+      "latest_completed_reference": {
+        "checkpoint": "checkpoint-003328.pt",
+        "outcome": "material_domain_exit",
+        "simulation_s": 12.5732,
+        "side_exit_s": 10.848,
+        "qualified": false
+      }
     },
     "primary_progress_metrics": [
-      "legal outbound material traversals",
-      "side exits",
-      "far arrivals and return exposure",
-      "complete roundtrips",
-      "failure type and phase",
+      "legal first outbound passages",
+      "legal return passages and complete roundtrips",
+      "side exits and far/return exposure",
+      "actual support loads,landing velocity and reference lead in existing records",
+      "material-domain/fall/nonfoot failures and phase",
       "final frozen nominal E30/E60",
-      "return decisions with nonzero recovery features"
+      "PANN exposure without premature benefit claim"
     ],
-    "reward_alignment_risk": "Current longitudinal progress reward has no explicit strip-side-exit term. Nine W34episodes exited sideways;sevenfar arrivals includeonlythreelegaltraversals. Retain reward in W35,but never equate reward/max_x gains with legal task gains.",
-    "later_decision_rule": "At the phase end,continue if legal route/frozen-policy evidence improves;otherwise target route alignment,material candidate/load prediction or a single bounded landing/support channel according to evidence. Do not simultaneously alter reward,action dimensions andcontroller or treat12r24updates as statistical proof of failure."
+    "reward_alignment_risk": "Confirmed in W35:23first-outbound side exits and all3raw roundtrips were illegal;current signed longitudinal/lap reward is independent of traversal legality.Correct that alignment in W36,record a new reward version,retain original evaluation and history.",
+    "later_decision_rule": "First establish a usable legal joint baseline;then consider throughput and matched RAW/PANN/cross-leg/return-memory comparisons.No automatic repeat of cap-only r24 training when support remains infeasible.No memory-benefit claim from this coordinated baseline change.",
+    "stable_support_revision": {
+      "status": "planned_not_implemented",
+      "build": "S5-r25",
+      "source_evidence": "job-20261031T101803Z-eval-PANN_PPO_S5-s0-E30",
+      "feasible_reference": {
+        "existing_hook": "r11_body_reference.maximum_longitudinal_lead_m",
+        "observed_lead_m": 1.11584,
+        "initial_scale_m": 0.15,
+        "scale_source": "Existing r2 task goal-position tolerance;reuse as explicit initial scale without grid search.",
+        "preserve": "Original3m goal,route and times;do not pin target to current body."
+      },
+      "moving_support": "Use the same candidate contact force/rest model for moving stance load demand and support transfer;account for gravity/allowed body dynamics and actual contact availability.Suspended feet are not existing support;retain geometric guidance where force derivatives are zero.No fixed-number-of-loaded-feet hard rule.",
+      "impact_and_path": "Couple contact-before descent velocity to remaining material compression margin and actual feedback execution.Address0.2ms integration-path risk between2msnodes using optimizer-compatible target/feasibility;any substep residual must align rollout,candidate cost/selection and derivatives.Logging peaks alone is not a fix.No full new differentiable TM02 platform required.",
+      "gait_change_condition": "If duty/cadence changes,update piecewise swing durations and derivatives coherently:current fixed0.20s descent gives negative rise duration at2Hz/duty0.65.No unguided gait grid.",
+      "legal_reward": "Reuse original legal-strip traversal state for progress and lap bonuses;side-exit longitudinal progress/raw laps must not count as legal task reward.Preserve original evaluation and physical termination definitions.",
+      "action_scope": "Keep cap[.18,.25],actor_dt0.5,observation and PPO/PANN dimensions this phase;no immediate new action channels or algorithm rewrite."
+    }
   },
   "process": {
     "physical_start_hard_count_cap": null,
@@ -524,7 +596,7 @@
     "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "create_result_index_only_after_actual_execution": true,
     "handoff": "Record session/job/actual targets and independent deadlines at interactive departure. Final summary distinguishes training,evaluation andpublication;use the same six-line handoff and normal index.",
-    "publication": "Before launch push actual source/config. After training and final evaluation,the same tmux job renders all available new training/evaluation trajectories,publishes every actual artifact through per-job Release parts,and pushes scoped compact results/index/handoff. No user-PC archive.",
+    "publication": "Push actual source/config before launch.After training/final evaluation,render all saved actual trajectories,publish all research artifacts through existing Release parts,push compact records,then delete only confirmed-published inactive research copies and push cleanup results.No user-PC archive.",
     "unfinished_upload": "Automatic postprocessing records pending paths and concrete errors,and still attempts to push the partial report. A later invocation resumes this same postprocessing job without new physics. No false published status when upload/push is incomplete.",
     "extra_archive_on_user_pc": false,
     "preserve_normal_working_files_and_actual_history": true,
@@ -551,23 +623,41 @@
     "upload_packaging": "Only split/package as necessary for transfer on execution host; no extra PC mirror/archive after publication.",
     "training_complete_does_not_imply_publication_complete": true,
     "existing_publication_at_review": {
-      "source_commit": "1b92c53023d71c5a30f6f9dbc6cfa6d72ec5c0ae",
-      "release_assets": 1554,
-      "release_bytes": 10877164624,
+      "source_commit": "90d4fd648ae120bcd5c6bdf8c3e0d821d6242296",
+      "latest_job": "job-20261031T101803Z",
+      "latest_job_new_release_assets": 2122,
+      "latest_job_new_release_bytes": 14263604181,
       "release_tags": [
-        "tm-s1-go2-local-readiness-r12",
-        "tm-s1-go2-local-readiness-r12-job-20261030T161045Z"
+        "tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part01",
+        "tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part02",
+        "tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03"
       ],
-      "latest_job": "job-20261030T161045Z",
-      "job_manifest_rows": 1010,
-      "job_release_assets": 965,
-      "job_git_records": 45,
-      "job_release_bytes": 7019542295,
-      "new_videos": 30,
-      "pending_paths": []
+      "job_manifest_rows": 2232,
+      "job_reused_release_assets": 3,
+      "job_git_records": 107,
+      "new_videos": 74,
+      "pending_paths": [],
+      "render_pending": [],
+      "server_cleanup": {
+        "source_commit": "90d4fd648ae120bcd5c6bdf8c3e0d821d6242296",
+        "job": "job-20261031T101803Z",
+        "deleted_files": 2482,
+        "deleted_bytes": 14353826997,
+        "available_before_bytes": 61220585472,
+        "available_after_bytes": 75580424192,
+        "status": "completed_in_uploaded_record",
+        "live_rechecked_by_this_plan": false,
+        "initial_cleanup_files": 2480,
+        "initial_cleanup_bytes": 14353820823,
+        "followup_removed_files": 2,
+        "followup_removed_bytes": 6174,
+        "free_space_measurement_scope": "Original2480-file cleanup;the later6174-byte release-note removal did not record another free-space measurement."
+      },
+      "resume_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt",
+      "checkpoint_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__checkpoint-003328.pt"
     },
     "transfer_rule": "Use the transfer method that works on the new AutoDL host. Do not hardcode or rebuild the old workstation proxy; fix an actual upload failure only. Do not route through the user's PC for archiving.",
-    "storage_rule": "Use the existing D57 data disk/workspace. Preserve actual outputs/checkpoints and normal per-job versions of mutable records;publish automatically when training exits. No user-PC mirror,silent research-data deletion or extra storage purchase.",
+    "storage_rule": "User explicitly authorized deletion of server research-output copies after complete Git/Release delivery and ordinary push success.Use existing manifest and a single name/size/upload-state comparison.Delete only confirmed-delivered inactive scoped outputs;preserve repository/.git,source,compact records,environment/runtime resources,pending or active files.Restore newest checkpoint on demand later.No full hash/redownload or PC archive.",
     "mutable_record_publication": "At training end save the job's changed non-binary training records under its stream-records snapshot with job-specific Release names. New binary rollouts/checkpoints use original server paths and job-specific names;reuse immutable prior assets. Do not upload logs while they are still being written.",
     "automatic_publication": {
       "enabled": true,
@@ -584,9 +674,30 @@
         "naming": "<run>-<job>-partNN",
         "existing_destinations": "Preserve manifest/index release_tag and reuse unchanged published assets.",
         "create_target": "job.source_commit",
-        "server_execution_of_new_partitioning": "not_run_by_this_review"
+        "server_execution_of_new_partitioning": "executed_in_W35;900/900/322new_assets"
       },
-      "evaluation_assets": "Every explicit job evaluation attempt is included with training in rendering and the asset manifest; its policy logs are under the job directory."
+      "evaluation_assets": "Every explicit job evaluation attempt is included with training in rendering and the asset manifest; its policy logs are under the job directory.",
+      "cleanup": {
+        "enabled_after_implementation": true,
+        "implementation_status": "planned_required_in_W36",
+        "authorization": "User latest request:after all contents are pushed to GitHub,delete server copies to relieve storage.",
+        "prerequisite": "All expected actual artifacts delivered;pending/render_pending empty;Release name/size/upload-state confirmed;required Git records/source ordinary push succeeded;files closed and unused by active tasks.",
+        "scope": "Explicit confirmed-published research outputs/checkpoints in current or prior closed-job manifests;no broad recursive project/data-disk deletion.",
+        "preserve": [
+          "repository/.git",
+          "source and compact Git records",
+          "work/envs/d57",
+          "work/r11-frozen",
+          "work/assets",
+          "work/upstreams",
+          "work/terrain-memory",
+          "work/tools",
+          "unpublished or actively used files"
+        ],
+        "record": "Same compact job record:deleted files/bytes,free space before/after,preserved/pending reasons;ordinary push after cleanup.If that small-record push fails,retain it for retry.",
+        "verification": "Reuse existing manifest and ordinary single metadata comparison;no new full hashes or redownload verification.",
+        "resume": "Restore only latest necessary checkpoint from its Release URL;do not re-download all historical artifacts."
+      }
     }
   },
   "history": {
@@ -707,9 +818,94 @@
       "Use R12 outputs and the single current window deadline, nominal,60s sessions,curriculum off,5workers.",
       "Remove six-stream waiting and update actual counts after optimization.",
       "Mark sample-target/window truncation before buffer/GAE; physical terminal takes priority; do not count pending actions with no physical elapsed time."
-    ]
+    ],
+    "completed_r21_to_r24_controller_boundary": {
+      "parent_controller_build": "S5-r21",
+      "active_controller_build": "S5-r24",
+      "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00012.pt",
+      "actual_transitions": 256,
+      "actual_updates": 1,
+      "parent_tail_buffer": 0,
+      "new_controller_initial_buffer": 0,
+      "restoration": "PANN seed0 actor,critic,optimizer,RNG and normalization from its own ep00012; historical r21 samples retain their original version.",
+      "zero_step_failures": [
+        {
+          "build": "S5-r22",
+          "job": "job-20261030T155257Z",
+          "new_transitions": 0
+        },
+        {
+          "build": "S5-r23",
+          "job": "job-20261030T160418Z",
+          "new_transitions": 0
+        }
+      ],
+      "status": "historical_actual_r21_to_r24_boundary_completed"
+    },
+    "completed_W35_same_controller_continuation": {
+      "controller_build": "S5-r24",
+      "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00044.pt",
+      "initial_transitions": 1280,
+      "initial_updates": 5,
+      "tail_buffer": 0,
+      "new_build_required": false
+    },
+    "publication_state_before_W35": {
+      "source_commit": "1b92c53023d71c5a30f6f9dbc6cfa6d72ec5c0ae",
+      "release_assets": 1554,
+      "release_bytes": 10877164624,
+      "release_tags": [
+        "tm-s1-go2-local-readiness-r12",
+        "tm-s1-go2-local-readiness-r12-job-20261030T161045Z"
+      ],
+      "latest_job": "job-20261030T161045Z",
+      "job_manifest_rows": 1010,
+      "job_release_assets": 965,
+      "job_git_records": 45,
+      "job_release_bytes": 7019542295,
+      "new_videos": 30,
+      "pending_paths": []
+    },
+    "completed_W35": {
+      "source_commit": "fff9bfd53afcf7f9511ad41ea62a585f092aba2c",
+      "job": "job-20261031T101803Z",
+      "new_transitions": 2048,
+      "new_effective_transitions": 1599,
+      "new_updates": 8,
+      "new_optimizer_steps": 128,
+      "new_physical_episodes": 73,
+      "new_physics_s": 1006.5964,
+      "cumulative_transitions": 3328,
+      "cumulative_effective_transitions": 2599,
+      "cumulative_updates": 13,
+      "cumulative_optimizer_steps": 208,
+      "cumulative_physical_episodes": 115,
+      "cumulative_physics_s": 1636.6556,
+      "tail_buffer": 0,
+      "controller_build": "S5-r24",
+      "controller_cumulative_transitions": 3072,
+      "controller_cumulative_updates": 12,
+      "invocation_wall_s": 81414.375,
+      "legal_outbound_passages": 1,
+      "first_outbound_side_exits": 23,
+      "far_arrivals_and_return_starts": 7,
+      "raw_roundtrip_episodes": 3,
+      "legal_roundtrips": 0,
+      "final_E30": {
+        "checkpoint": "checkpoint-003328.pt",
+        "outcome": "material_domain_exit",
+        "simulation_s": 12.5732,
+        "side_exit_s": 10.848,
+        "qualified": false
+      },
+      "E60": "blocked_by_predecessor_not_run",
+      "publication": "completed",
+      "server_research_copy_cleanup": "completed_as_recorded_not_live_rechecked"
+    },
+    "W36_review_scope": "Repository/Release/raw-array review and a minimal launcher initial-count fix for resume after output cleanup.No server execution or deletion performed by this review.",
+    "latest_cleanup_followup_commit": "90d4fd648ae120bcd5c6bdf8c3e0d821d6242296"
   },
-  "reviewed_source_commit": "1b92c53023d71c5a30f6f9dbc6cfa6d72ec5c0ae",
+  "reviewed_source_commit": "90d4fd648ae120bcd5c6bdf8c3e0d821d6242296",
   "literature": [
     {
       "id": "TM02",
@@ -729,7 +925,7 @@
     {
       "id": "TM30",
       "url": "https://pure.qub.ac.uk/en/publications/terrain-adaptive-quadrupedal-locomotion-using-model-predictive-co/",
-      "use": "Recent integrated MPC/contact/impedance/model-correction example; simulated evidence,not a requirement to add SINDy."
+      "use": "Full-text methods2.3-2.5:stance anchor and bounded force-error reference correction with impedance/admittance;simulation only.Do not add SINDy or copy5cm bounds into the1mm-domain task."
     },
     {
       "id": "TM13",
@@ -749,7 +945,7 @@
     {
       "id": "TM27",
       "url": "https://tarikbanus.com/icra2027.html",
-      "use": "Complete execution hierarchy belongs in training;large published training scale is not this cap policy's required budget. If needed,choose one evidence-backed structured landing/support channel,not all25."
+      "use": "A functional nominal controller and structured learned references support fixing support first with the full hierarchy in training.Current review rechecked abstract;earlier read scope retained."
     },
     {
       "id": "TM04",
@@ -759,33 +955,42 @@
     {
       "id": "TM12",
       "url": "https://arxiv.org/html/2510.21369v1",
-      "use": "Whole-step load-bearing feasibility motivates checking current impact/support predictions;no probing-state-machine rewrite in W35."
+      "use": "Whole-step load-bearing demand and touchdown velocity support coordinated reference/support/impact changes;do not add a probing-state-machine rewrite."
+    },
+    {
+      "id": "TM32",
+      "url": "https://doi.org/10.1109/LRA.2026.3692086",
+      "use": "Official2026abstract:anticipate touchdown impact in predictive control.This review does not claim full-method reproduction or prescribe replacing the existing MPC."
     }
   ],
   "current_window_scope": {
-    "task": "W35_SAME_R24_CONTINUE_AND_EVAL",
+    "task": "W36_STABLE_SUPPORT_JOINT",
     "group": "PANN_PPO_S5",
     "seed": 0,
-    "objective": "Same-r24 substantive continuous learning followed by final frozen-policy nominal E30/conditional E60 and automatic complete publication.",
-    "initial_transitions": 1280,
-    "initial_updates": 5,
-    "target_cumulative_transitions": 3328,
-    "target_cumulative_updates": 13,
+    "objective": "Stable legal first soft-terrain passage/return through coordinated support/reference/landing and reward correction,then full joint learning.",
+    "initial_transitions": 3328,
+    "initial_updates": 13,
+    "target_cumulative_transitions": 5376,
+    "target_cumulative_updates": 21,
     "new_transitions": 2048,
     "new_updates": 8,
-    "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00044.pt",
+    "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
+    "resume_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt",
     "stop_at_each_update": false,
     "automatic_next_task": false,
     "server_execution_completed_by_this_plan": false,
-    "RAW": "Preserve independent historical256/1;no RAW resampling in this engineering phase.",
-    "current_build": "S5-r24",
-    "new_controller_build_required": false,
+    "RAW": "Historical256/1retained independently;no RAW resampling in current baseline phase.",
+    "parent_build": "S5-r24",
+    "current_build": "S5-r25",
+    "current_build_status": "planned_not_implemented",
+    "new_controller_build_required": true,
     "window_budget_s": 14400,
     "background_training_authorized": true,
     "background_default_budget_s": 100800,
     "final_evaluation_budget_s": 14400,
-    "final_evaluation_adapter_status": "implemented_in_R12_entrypoint_and_tmux_pipeline; actual_final_evaluation_pending_training",
+    "final_evaluation_adapter_status": "already_implemented_and_executed_reuse",
     "automatic_postprocess": true,
-    "default_postprocess_budget_s": 21600
+    "default_postprocess_budget_s": 21600,
+    "automatic_cleanup_status": "planned_implementation_required_after_successful_publication"
   }
 }
