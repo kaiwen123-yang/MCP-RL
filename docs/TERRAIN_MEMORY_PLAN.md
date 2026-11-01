@@ -6,7 +6,7 @@
 - 当前状态：本job新增2048条/8更新，PANN累计3328条/13更新，tail0；最终checkpoint-003328.pt已在GitHub，服务器训练副本已清理。
 - 已完成：74段视频；三个新Release分片900/900/322项，含12项补存研究产物；本job全部2232项记录已保存，待传0、待渲染0。
 - 当前问题：最终nominal E30于12.5732s因material_domain_exit失败，E60被前序阻塞；训练1次合规贯穿、23次侧出、3次往返计数，不宣称正式资格通过。
-- 清理结果：核对GitHub远端后移除2480个研究产物副本、14.354GB，包含历史训练/旧job与本轮数据；代码、环境、分析源码和仓库紧凑记录保留。
+- 清理结果：核对GitHub远端后共移除2482个研究产物副本、14.354GB，含历史训练、旧job、本轮数据及两份旧发布说明；代码、环境、分析源码和仓库紧凑记录保留。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261031T101803Z.json记录结果、Release链接与逐文件备份映射；继续研究前按需从GitHub恢复checkpoint/记录，不重复本轮训练或评价。
 
 ## 1. 最新实际进展
