@@ -2,12 +2,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W36_STABLE_SUPPORT_JOINT已实际构建并启动S5-r25；D57单流tmux s1-joint，job job-20261101T133954Z，固定执行源码7a72c583d6fdb7a1c1741f1382cd642b2f08c484。
-- 训练：从本组ep117恢复Actor/Critic/optimizer/RNG/归一化及旧3328/13，空buffer、新物理会话；北京时间2026-11-01 21:43:28累计3330/13、r25新增2/0、tail2，ep118真实采样增长；目标5376/21。
-- 当前能力：当前只确认启动与真实采样，尚无完整r25任务结论；继续看合规去程/返程/往返、侧出、真实承载/落足和材料域/跌倒/非足接触，不能把训练前缀或更新数当成功。
-- 固定策略评价：尚未运行；训练结束固定最后实际完成更新的策略与归一化做nominal E30，通过才E60，评价另计4h；原评价与物理约束保留。
-- 发布与清理：实现源码/配置已普通push；实际视频/轨迹/数组/rollout/checkpoint等待既有链路渲染并直传Git/Release，后处理另计6h；全部交付且push成功后才清理manifest覆盖的闲置研究副本，并写同job再推送，当前未执行删除。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；训练截止北京时间2026-11-03 01:39:54，结果results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json；先看同流tmux和collection/train.log，不重复启动、不重置deadline、不kill后台。
+- 当前任务：W36_STABLE_SUPPORT_JOINT同job job-20261101T133954Z继续运行S5-r25；tmux s1-joint与训练PID5784未重启，控制/奖励源码仍为7a72c583d6fdb7a1c1741f1382cd642b2f08c484。
+- 训练：原始起点北京时间2026-11-01 21:39:54不变；2026-11-01 22:26:37累计3366/13，本轮新增38/0、tail38，ep119进行中；目标仍新增2048/8、累计5376/21，达到即结束。
+- 当前能力：已完成ep118于13.91s因body_fall结束，合规去程/返程/往返及侧出均0，随后已正常进入ep119；继续看真实承载/落足与材料域/跌倒/非足接触，采样进度不作任务成功。
+- 预算变更：用户授权同job40h，截止北京时间2026-11-03 13:39:54；当前进程仍缓存原28h截止2026-11-03 01:39:54，若届时未达目标，既有收尾入口从本job最新checkpoint续行剩余预算，保留Actor/Critic/optimizer/RNG/归一化/计数及同版本tail，另起自然物理会话，不重启tmux、不重置job起点。
+- 固定策略评价与后处理：评价尚未运行，全部训练结束后固定最后实际更新策略做nominal E30、通过才E60，仍另计4h；渲染/发布/清理仍另计6h，全部交付且普通push成功后才删已确认闲置副本，当前未执行清理。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；同job摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json记录延期方式与实际进度；只查看现有流，技术中断不自动重启，发布失败仅续后处理。
 
 ## 1. 最新实际进展
 

@@ -1,6 +1,6 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
-  "status": "W35_complete_published_server_research_copies_cleaned",
+  "status": "PANN_PPO_S5_training",
   "attempts": [
     {
       "attempt": "w1-S5-r21-E30",
@@ -6997,7 +6997,7 @@
       "arm": "S",
       "mission": "long",
       "cohort": "stable_support_joint_v11",
-      "status": "running",
+      "status": "completed",
       "physical_started": true,
       "command": [
         "scripts/train_s1_go2_r12.py",
@@ -7027,7 +7027,61 @@
         "final_hold_s": null
       },
       "execution_fingerprint": "8535882c0b187e56d22b7427ce2a24b18e3f50bf6a078a6b1924e62e885dd7dc",
-      "source_commit": "7a72c583d6fdb7a1c1741f1382cd642b2f08c484"
+      "source_commit": "7a72c583d6fdb7a1c1741f1382cd642b2f08c484",
+      "success": null,
+      "reason": "body_fall",
+      "simulation_s": 13.909999999994259,
+      "wall_s": 2023.621133396402,
+      "stage_status": "physical_material_failure",
+      "case_identity": null,
+      "qualification": {
+        "predecessor_attempt": null,
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+        "solver_workers": null,
+        "worker_setting_checked_against_predecessor": false
+      },
+      "result": "train-PANN_PPO_S5-s0-ep00118.json"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00119",
+      "stage": "G1",
+      "purpose": "training",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "long",
+      "cohort": "stable_support_joint_v11",
+      "status": "running",
+      "physical_started": true,
+      "command": [
+        "scripts/train_s1_go2_r12.py",
+        "--group",
+        "PANN_PPO_S5",
+        "--seed",
+        "0",
+        "--resume",
+        "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
+        "--background-job",
+        "--job-start-unix",
+        "1793540394.1445396",
+        "--deadline-unix",
+        "1793641194.1445396"
+      ],
+      "started_utc": "2026-11-01T14:13:51Z",
+      "case_key": null,
+      "case": null,
+      "evaluation_stage": {
+        "level": "train60",
+        "task_kind": "continuing_acquisition",
+        "duration_s": 60,
+        "target_circuits": null,
+        "route_deadline_s": null,
+        "far_hold_s": 2,
+        "home_hold_s": 2,
+        "final_hold_s": null
+      },
+      "execution_fingerprint": "8535882c0b187e56d22b7427ce2a24b18e3f50bf6a078a6b1924e62e885dd7dc",
+      "source_commit": "a0dbcdce06c00e8e65c85b373765bde7fa1e2d1a"
     }
   ],
   "stages": {},
@@ -7097,9 +7151,9 @@
     "run_deadline_unix_s": 1793641194.1445396,
     "hard_deadline_unix_s": 1793641194.1445396
   },
-  "protocol_revision": "same_r24_continuation_final_eval_v10",
+  "protocol_revision": "stable_support_joint_v11",
   "current_task": "W36_STABLE_SUPPORT_JOINT",
-  "training_transitions": 3584,
+  "training_transitions": 3612,
   "next_task": "W35_SAME_R24_CONTINUE_AND_EVAL",
   "pre_runner_initialization_failures": [
     {
@@ -46645,16 +46699,14 @@
     "PANN_PPO_S5-seed0": {
       "group": "PANN_PPO_S5",
       "seed": 0,
-      "actual_transitions": 3328,
+      "actual_transitions": 3356,
       "updates": 13,
-      "tail_buffer": 0,
-      "episodes": 117,
-      "physics_s": 1636.655599999258,
-      "controller_build": "S5-r24",
+      "tail_buffer": 28,
+      "episodes": 118,
+      "physics_s": 1650.5655999992534,
+      "controller_build": "S5-r25",
       "output": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0",
-      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
-      "local_artifacts": "removed_after_github_verification",
-      "checkpoint_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt"
+      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00118.pt"
     }
   },
   "training_updates": 14,
@@ -47343,17 +47395,19 @@
         "status": "running",
         "initial_transitions": 3328,
         "initial_updates": 13,
-        "actual_transitions": 3330,
+        "actual_transitions": 3366,
         "updates": 13,
-        "new_transitions": 2,
+        "new_transitions": 38,
         "new_updates": 0,
         "target_transitions": 5376,
         "target_updates": 21,
         "target_reached": false,
-        "unupdated_fragment": 2,
-        "episode": 118,
-        "new_physics_s": 1.0,
-        "observation": "Actual sampling after full own-state restoration; startup prefix only, no completed r25 mission or qualification claim."
+        "unupdated_fragment": 38,
+        "episode": 119,
+        "new_physics_s": 18.909999999997808,
+        "observation": "Real sampling continues;ep118 body_fall13.91s with no material passage;not a task qualification.",
+        "maximum_wall_s": 144000,
+        "average_samples_per_job_hour": 48.80619456537711
       },
       "evaluation": {
         "status": "pending_training",
@@ -47365,7 +47419,32 @@
       "cleanup": {
         "status": "pending_publication",
         "implemented": true
-      }
+      },
+      "budget_extension": {
+        "status": "scheduled_at_original_deadline",
+        "authorization": "User 2026-11-01: extend this job to40h;keep original start,existing tmux,+2048/8 target,evaluation4h and postprocess6h.",
+        "requested_unix_s": 1793543197.0640748,
+        "original_started_unix_s": 1793540394.1445396,
+        "previous_maximum_wall_s": 100800,
+        "maximum_wall_s": 144000,
+        "previous_deadline_unix_s": 1793641194.1445396,
+        "deadline_unix_s": 1793684394.1445396,
+        "implementation": "Current process retains its cached28hlimit. If incomplete at that natural deadline, existing evaluation entry resumes latest same-job state within the remaining original40hbudget,then starts its independent4hclock.",
+        "continuation_driver_commit": "ca8ad903f815925a50e69606b6462b8cfc86a30a",
+        "live_training_pid": 5784,
+        "live_training_start_ticks": 959776319,
+        "tmux_restarted": false,
+        "original_job_start_preserved": true,
+        "current_process_untouched": true,
+        "new_physical_session_only_if_boundary_continuation_is_needed": true,
+        "target_new_transitions": 2048,
+        "target_new_updates": 8,
+        "target_cumulative_transitions": 5376,
+        "target_cumulative_updates": 21,
+        "evaluation_wall_s": 14400,
+        "postprocess_wall_s": 21600
+      },
+      "training_deadline_unix_s": 1793684394.1445396
     }
   },
   "W34_joint_learning_review": {
