@@ -6988,6 +6988,46 @@
         "worker_setting_checked_against_predecessor": false
       },
       "result": "job-20261031T101803Z-eval-PANN_PPO_S5-s0-E30.json"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00118",
+      "stage": "G1",
+      "purpose": "training",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "long",
+      "cohort": "stable_support_joint_v11",
+      "status": "running",
+      "physical_started": true,
+      "command": [
+        "scripts/train_s1_go2_r12.py",
+        "--group",
+        "PANN_PPO_S5",
+        "--seed",
+        "0",
+        "--resume",
+        "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
+        "--background-job",
+        "--job-start-unix",
+        "1793540394.1445396",
+        "--deadline-unix",
+        "1793641194.1445396"
+      ],
+      "started_utc": "2026-11-01T13:40:02Z",
+      "case_key": null,
+      "case": null,
+      "evaluation_stage": {
+        "level": "train60",
+        "task_kind": "continuing_acquisition",
+        "duration_s": 60,
+        "target_circuits": null,
+        "route_deadline_s": null,
+        "far_hold_s": 2,
+        "home_hold_s": 2,
+        "final_hold_s": null
+      },
+      "execution_fingerprint": "8535882c0b187e56d22b7427ce2a24b18e3f50bf6a078a6b1924e62e885dd7dc",
+      "source_commit": "7a72c583d6fdb7a1c1741f1382cd642b2f08c484"
     }
   ],
   "stages": {},
@@ -7051,14 +7091,14 @@
   "nx_realtime_measured": false,
   "first_physical_start_unix_s": 1793272712.7896276,
   "window": {
-    "task": "W35_SAME_R24_CONTINUE_AND_EVAL_FINAL_EVAL",
-    "execution_mode": "frozen_policy_evaluation",
-    "started_unix_s": 1793523301.62758,
-    "run_deadline_unix_s": 1793537701.62758,
-    "hard_deadline_unix_s": 1793537701.62758
+    "task": "W36_STABLE_SUPPORT_JOINT",
+    "execution_mode": "background_job",
+    "started_unix_s": 1793540394.1445396,
+    "run_deadline_unix_s": 1793641194.1445396,
+    "hard_deadline_unix_s": 1793641194.1445396
   },
   "protocol_revision": "same_r24_continuation_final_eval_v10",
-  "current_task": "W35_SAME_R24_CONTINUE_AND_EVAL",
+  "current_task": "W36_STABLE_SUPPORT_JOINT",
   "training_transitions": 3584,
   "next_task": "W35_SAME_R24_CONTINUE_AND_EVAL",
   "pre_runner_initialization_failures": [
@@ -47293,6 +47333,39 @@
         "backup_manifest_commit": "6cfc8e608f1e89c23901a69db655921c2ceae34d",
         "old_release_note_backups_commit": "630b556dbdba03029c36b2936bb7b8f6ff1ea959"
       }
+    },
+    "job-20261101T133954Z": {
+      "summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json",
+      "status": "running",
+      "session": "s1-joint",
+      "controller_build": "S5-r25",
+      "training": {
+        "status": "running",
+        "initial_transitions": 3328,
+        "initial_updates": 13,
+        "actual_transitions": 3330,
+        "updates": 13,
+        "new_transitions": 2,
+        "new_updates": 0,
+        "target_transitions": 5376,
+        "target_updates": 21,
+        "target_reached": false,
+        "unupdated_fragment": 2,
+        "episode": 118,
+        "new_physics_s": 1.0,
+        "observation": "Actual sampling after full own-state restoration; startup prefix only, no completed r25 mission or qualification claim."
+      },
+      "evaluation": {
+        "status": "pending_training",
+        "hours": 4,
+        "selection": "last_actual_completed_update",
+        "stages": []
+      },
+      "publication_status": "source_pushed_outputs_pending_training_and_evaluation",
+      "cleanup": {
+        "status": "pending_publication",
+        "implemented": true
+      }
     }
   },
   "W34_joint_learning_review": {
@@ -47807,7 +47880,7 @@
       }
     },
     "reviewed_on": "2026-10-31",
-    "method": "Read published job snapshots,ep15\u201344,actual four rollouts and selected ep34 prediction/trajectory/XML;no new physics,optimizer steps,build or server tests.",
+    "method": "Read published job snapshots,ep15–44,actual four rollouts and selected ep34 prediction/trajectory/XML;no new physics,optimizer steps,build or server tests.",
     "formal_claims": {
       "E30_passes": 0,
       "E60_passes": 0,

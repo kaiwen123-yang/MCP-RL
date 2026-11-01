@@ -1,0 +1,69 @@
+{
+  "job": "job-20261101T133954Z",
+  "current_task": "W36_STABLE_SUPPORT_JOINT",
+  "status": "running",
+  "source_commit": "7a72c583d6fdb7a1c1741f1382cd642b2f08c484",
+  "controller_build": "S5-r25",
+  "session": "s1-joint",
+  "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z",
+  "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/train.log",
+  "command": [
+    "bash",
+    "scripts/run_s1_go2_r12_training.sh",
+    "--group",
+    "PANN_PPO_S5",
+    "--seed",
+    "0",
+    "--resume",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
+    "--background-job",
+    "--job-start-unix",
+    "1793540394.1445396",
+    "--deadline-unix",
+    "1793641194.1445396"
+  ],
+  "snapshot_time_beijing": "2026-11-01 21:43:28",
+  "snapshot_unix_s": 1793540608.3976412,
+  "training_started_unix_s": 1793540394.1445396,
+  "training_deadline_unix_s": 1793641194.1445396,
+  "training": {
+    "status": "running",
+    "initial_transitions": 3328,
+    "initial_updates": 13,
+    "actual_transitions": 3330,
+    "updates": 13,
+    "new_transitions": 2,
+    "new_updates": 0,
+    "target_transitions": 5376,
+    "target_updates": 21,
+    "target_reached": false,
+    "unupdated_fragment": 2,
+    "episode": 118,
+    "new_physics_s": 1.0,
+    "observation": "Actual sampling after full own-state restoration; startup prefix only, no completed r25 mission or qualification claim."
+  },
+  "evaluation": {
+    "status": "pending_training",
+    "hours": 4,
+    "selection": "last_actual_completed_update",
+    "stages": []
+  },
+  "publication_status": "source_pushed_outputs_pending_training_and_evaluation",
+  "cleanup": {
+    "status": "pending_publication",
+    "implemented": true
+  },
+  "postprocess_hours": 6,
+  "network_mode": "academic",
+  "continuation": "Keep existing tmux running; no duplicate stream, deadline reset or automatic restart.",
+  "implementation": {
+    "parent": "S5-r24",
+    "body_reference_lead_m": 0.15,
+    "moving_support": "candidate actual force and scheduled transfer share the same rest/normal model",
+    "impact_path": "10x0.2ms maxima of impact/domain/trunk residuals with active-substep chain-rule C/D",
+    "reward": "W36_legal_route_progress_and_lap_alignment",
+    "gait_unchanged": true,
+    "on_policy_initial_buffer": 0,
+    "restored_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt"
+  }
+}
