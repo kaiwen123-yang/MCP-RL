@@ -6,7 +6,7 @@
 - 实际停止：累计4497条/17更新，r25新增1169条/4更新；ep144导出尾批145条与resume-state-ep00144.pt，最近完整更新checkpoint-004352.pt。
 - 定位：同状态输入下2.002s原接触Fz154.13N、MakeDifferentiable后0.01660N；2.006/2.008s反馈修正0.8597/1.5078rad、3/5关节饱和。复算动作一致，KΔx可重构，未发现该段策略发布错配。
 - 其他问题：支撑因子全周期恒1；lead之后目标随后退且无移动速度残差；十子步完整C/D增加开销。前24回合20跌倒+4非足接触，前25回合21+4；阶段活动时间不等于有效前进。
-- Publication complete: 1060 manifest records, no pending uploads/renders. Cleanup completed: 1084 inactive copies/4678796042 bytes. Source, environment, runtime and active files retained.
+- 评价/发布/清理：原28h到40h续行与正式评价均已取消；1060项交付完成（978个Release资产、82个Git记录），27段视频，待传/待渲染为空；普通push后已删除1084个闲置副本、4678796042字节，保留源码、环境、运行资源与紧凑记录。
 - 查阅：同job摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json的regression字段、experiments/terrain_memory/s1-go2-r25-source源码快照和Release矩阵/轨迹；r26草稿未应用、未构建、未训练。
 
 ## 1. 最新实际进展
