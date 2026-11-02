@@ -22,7 +22,7 @@
     "--deadline-unix",
     "1793641194.1445396"
   ],
-  "snapshot_time_beijing": "2026-11-01 22:26:37",
+  "snapshot_time_beijing": "2026-11-02T19:48:33.658550+08:00",
   "snapshot_unix_s": 1793543197.0674312,
   "training_started_unix_s": 1793540394.1445396,
   "training_deadline_unix_s": 1793684394.1445396,
@@ -30,16 +30,16 @@
     "status": "running",
     "initial_transitions": 3328,
     "initial_updates": 13,
-    "actual_transitions": 3366,
-    "updates": 13,
-    "new_transitions": 38,
-    "new_updates": 0,
+    "actual_transitions": 4483,
+    "updates": 17,
+    "new_transitions": 1155,
+    "new_updates": 4,
     "target_transitions": 5376,
     "target_updates": 21,
     "target_reached": false,
-    "unupdated_fragment": 38,
-    "episode": 119,
-    "new_physics_s": 18.909999999997808,
+    "unupdated_fragment": 131,
+    "episode": 143,
+    "new_physics_s": 572.7171999993348,
     "observation": "Real sampling continues;ep118 body_fall13.91s with no material passage;not a task qualification.",
     "maximum_wall_s": 144000,
     "average_samples_per_job_hour": 48.80619456537711
@@ -50,7 +50,7 @@
     "selection": "last_actual_completed_update",
     "stages": []
   },
-  "publication_status": "source_pushed_outputs_pending_training_and_evaluation",
+  "publication_status": "preview_partial_full_job_pending",
   "cleanup": {
     "status": "pending_publication",
     "implemented": true
@@ -129,5 +129,187 @@
     "complete_session": false,
     "promoted": false,
     "curriculum_enabled": false
+  },
+  "preview_publication": {
+    "status": "partial",
+    "attempts": [
+      "train-PANN_PPO_S5-s0-ep00118",
+      "train-PANN_PPO_S5-s0-ep00140",
+      "train-PANN_PPO_S5-s0-ep00141"
+    ],
+    "manifest": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z-assets.json",
+    "scope": "Three completed recorded-state videos plus their actual trajectory/model/startup/cap/physical/prediction arrays;not full-job publication.",
+    "network": "academic_only",
+    "started_unix_s": 1793619861.901572,
+    "files": 24,
+    "bytes": 417017102,
+    "exit_codes": {
+      "upload": 0,
+      "finish": 0
+    },
+    "finished_unix_s": 1793620113.3629792,
+    "pending_paths": [
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00118/full-mission-material-overlay.mp4",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00118/cap-decisions.json"
+    ],
+    "uploaded_files": 22,
+    "videos": [
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00118",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part01/train-PANN_PPO_S5-s0-ep00118__full-mission-material-overlay.mp4"
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00140",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part01/train-PANN_PPO_S5-s0-ep00140__full-mission-material-overlay.mp4"
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00141",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part01/train-PANN_PPO_S5-s0-ep00141__full-mission-material-overlay.mp4"
+      }
+    ]
+  },
+  "interim_diagnostics": {
+    "timing_comparison": {
+      "r24_W35": {
+        "episodes": 73,
+        "physical_s": 1006.5963999995635,
+        "wall_s": 80967.8114542123,
+        "slowdown": 80.4372154065397,
+        "planning_count": 50392,
+        "mean_planning_s": 1.0040672945705051,
+        "planning_fraction": 0.624902145670687,
+        "timing": {
+          "startup_planning": 1426.8105589486659,
+          "planning": 50596.959107996896,
+          "feedback": 374.5009519904852,
+          "state_parameter_rpc": 763.0551365055144,
+          "physics": 11526.503610230982
+        }
+      },
+      "r25_W36": {
+        "episodes": 25,
+        "physical_s": 561.2171999993474,
+        "wall_s": 77945.37646068074,
+        "slowdown": 138.88629297315083,
+        "planning_count": 28072,
+        "mean_planning_s": 2.586334665777944,
+        "planning_fraction": 0.9314675229561955,
+        "timing": {
+          "startup_planning": 1201.931107526645,
+          "planning": 72603.58673771843,
+          "feedback": 247.68745961412787,
+          "state_parameter_rpc": 485.3951315265149,
+          "physics": 2749.387243406847
+        }
+      }
+    },
+    "direction_samples": [
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00118",
+        "t_s": 2.9999999999997025,
+        "base_x_m": -0.12998305561260207,
+        "body_target_x_m": 0.020016944387397928,
+        "vx_m_s": -0.0145681646969663,
+        "command_vx_m_s": 0.21368767722754461
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00118",
+        "t_s": 5.000000000001703,
+        "base_x_m": -0.5174165696805,
+        "body_target_x_m": -0.36741656968049996,
+        "vx_m_s": -0.10519808686542766,
+        "command_vx_m_s": 0.22221282369451223
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00118",
+        "t_s": 10.000000000003372,
+        "base_x_m": -1.118748250796476,
+        "body_target_x_m": -0.9687482507964761,
+        "vx_m_s": -0.24310270666208236,
+        "command_vx_m_s": 0.20283002594506827
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00118",
+        "t_s": 13.909999999994259,
+        "base_x_m": -0.7752777640571578,
+        "body_target_x_m": -0.625866212876903,
+        "vx_m_s": 0.2986466999514033,
+        "command_vx_m_s": 0.20300899744373974
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00140",
+        "t_s": 2.9999999999997025,
+        "base_x_m": -0.14216884068005592,
+        "body_target_x_m": 0.007831159319944075,
+        "vx_m_s": -0.2888517861854744,
+        "command_vx_m_s": 0.19050969386203137
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00140",
+        "t_s": 5.000000000001703,
+        "base_x_m": -0.5636310365377841,
+        "body_target_x_m": -0.4136310365377841,
+        "vx_m_s": -0.1240955872071792,
+        "command_vx_m_s": 0.20503700898347374
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00140",
+        "t_s": 10.000000000003372,
+        "base_x_m": -1.3354437250647382,
+        "body_target_x_m": -1.1854437250647383,
+        "vx_m_s": -0.08352496261354952,
+        "command_vx_m_s": 0.2031671006052955
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00140",
+        "t_s": 20.40579999997912,
+        "base_x_m": -2.2064112995009033,
+        "body_target_x_m": -2.0569019271271256,
+        "vx_m_s": 0.26172998891168825,
+        "command_vx_m_s": 0.21991412863537202
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00141",
+        "t_s": 2.9999999999997025,
+        "base_x_m": -0.14977842134122984,
+        "body_target_x_m": 0.0002215786587701496,
+        "vx_m_s": -0.12604893141748863,
+        "command_vx_m_s": 0.19667284766853316
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00141",
+        "t_s": 5.000000000001703,
+        "base_x_m": -0.5269827717173383,
+        "body_target_x_m": -0.3769827717173383,
+        "vx_m_s": -0.20182286207894196,
+        "command_vx_m_s": 0.2173570296667696
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00141",
+        "t_s": 10.000000000003372,
+        "base_x_m": -1.2934421912923588,
+        "body_target_x_m": -1.143442191292359,
+        "vx_m_s": -0.18703231269067128,
+        "command_vx_m_s": 0.20587405412087809
+      },
+      {
+        "attempt": "train-PANN_PPO_S5-s0-ep00141",
+        "t_s": 23.397999999972146,
+        "base_x_m": -2.1396896935175724,
+        "body_target_x_m": -1.9892880435637843,
+        "vx_m_s": -0.19822657373272465,
+        "command_vx_m_s": 0.20078702617294827
+      }
+    ],
+    "observation": "Positive requested velocity coexists with negative actual velocity; bounded body target follows the retreat into negative x. This identifies a reference/control issue before material entry;not a demonstrated unique cause.",
+    "runtime_source": "scripts/s1_go2_r11_runtime.py:lead clamp after mission.update;mission update clips body target to[0,3]before that clamp.",
+    "compute_observation": {
+      "cpu_quota_cores": 25,
+      "mpc_workers": 20,
+      "sampled_used_cpu_cores": 11.78,
+      "sampled_cpu_pressure_avg10": 0.0,
+      "scope": "One4second sample after rendering;not a lifetime performance profile."
+    },
+    "cost_change": "r25 evaluates sensor C/D at all10substeps; r24 evaluates them at node start while already composing10A/B transitions. New residual evaluation and chain-rule work is inside MPC. No function-level timing claim."
   }
 }
