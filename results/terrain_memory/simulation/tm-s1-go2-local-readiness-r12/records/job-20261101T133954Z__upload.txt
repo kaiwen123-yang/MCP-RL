@@ -937,3 +937,18 @@ Started 1793621687.3755171: scripts/publish_s1_go2_r12.py
 {"name": "controller__S5-r25__identity.json", "size": 39979, "status": "uploaded", "wall_s": 3.6}
 {"name": "controller__S5-r25__build.log", "size": 82830, "status": "uploaded", "wall_s": 2.57}
 {"name": "controller__S5-r25__initial-compile.log", "size": 21904, "status": "uploaded", "wall_s": 6.81}
+
+Started 1793631093.8938456: scripts/publish_s1_go2_r12.py
+Traceback (most recent call last):
+  File "/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py", line 224, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py", line 180, in main
+    update(register)
+  File "/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py", line 110, in update
+    value=json.loads((SMALL/'index.json').read_text());change(value)
+                                                       ^^^^^^^^^^^^^
+  File "/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py", line 177, in register
+    elif actual:raise RuntimeError('Existing asset differs; retained without replacement: '+row['name'])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Existing asset differs; retained without replacement: train-PANN_PPO_S5-s0-ep00129__full-mission-material-overlay.mp4

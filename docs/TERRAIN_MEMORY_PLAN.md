@@ -4,8 +4,8 @@
 
 - 当前任务：W36_STABLE_SUPPORT_JOINT后台作业job-20261101T133954Z已结束；训练达标=False，评价=cancelled_user_regression_stop，发布=publication_pending，清理=pending_publication。
 - 当前状态：本job新增1169条/4次更新，累计4497/17，目标5376/21；末端cancelled_user_regression_stop。
-- 已完成：本job保留27个新attempt，视频可用27，资产已发布955/1043；控制版S5-r25。
-- 当前问题：训练合规贯穿0、侧出0、返程0、合规返程0、合规往返0（裸计数0）；末次training_budget_truncated；待传88、待视频0。
+- 已完成：本job保留27个新attempt，视频可用27，资产已发布974/1058；控制版S5-r25。
+- 当前问题：训练合规贯穿0、侧出0、返程0、合规返程0、合规往返0（裸计数0）；末次training_budget_truncated；待传84、待视频0。
 - 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。
 
