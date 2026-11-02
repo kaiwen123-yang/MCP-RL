@@ -3,10 +3,10 @@
 ## 当前交接（执行后只更新这6行）
 
 - 当前任务：W36_STABLE_SUPPORT_JOINT同job job-20261101T133954Z继续运行S5-r25；tmux s1-joint与训练PID5784未重启，控制/奖励源码仍为7a72c583d6fdb7a1c1741f1382cd642b2f08c484。
-- 训练：原始起点2026-11-01 21:39:54（北京时间）不变；最新累计4483/17，r25新增1155/4，ep143进行中；目标仍新增2048/8、累计5376/21。
+- 训练：原始起点2026-11-01 21:39:54（北京时间）不变；最新累计4485/17，r25新增1157/4，ep143进行中；目标仍新增2048/8、累计5376/21。
 - 当前问题：前25个已结束回合均未合规穿越；代表轨迹显示正向速度命令下实际退行，0.15m参考随退行进入负x。r25平均MPC规划2.586s，相比W35的1.004s增加约2.58倍，占回合耗时93.15%；此处需要定向定位，不以更新数说明能力改善。
 - 预算变更：用户授权同job40h，截止北京时间2026-11-03 13:39:54；当前进程仍缓存原28h截止2026-11-03 01:39:54，若届时未达目标，既有收尾入口从本job最新checkpoint续行剩余预算，保留Actor/Critic/optimizer/RNG/归一化/计数及同版本tail，另起自然物理会话，不重启tmux、不重置job起点。
-- Preview: ep118/140/141 videos and arrays; status=partial; see same-job preview_publication. Final evaluation4h/postprocess6h unchanged; no cleanup yet.
+- Preview: ep118/140/141 videos and arrays; status=published; see same-job preview_publication. Final evaluation4h/postprocess6h unchanged; no cleanup yet.
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；同job摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json记录延期方式与实际进度；只查看现有流，技术中断不自动重启，发布失败仅续后处理。
 
 ## 1. 最新实际进展
