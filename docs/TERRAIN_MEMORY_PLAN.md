@@ -1,177 +1,251 @@
-# S1：先形成稳定、合规的完整联合基线
+# S1：r25停止后的诊断与完整联合推进计划
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W36/r25作业job-20261101T133954Z已正常停止；仅定位与完整交付，不继续修复验证或启动新训练。
-- 实际停止：累计4497条/17更新，r25新增1169条/4更新；ep144导出尾批145条与resume-state-ep00144.pt，最近完整更新checkpoint-004352.pt。
-- 定位：同状态输入下2.002s原接触Fz154.13N、MakeDifferentiable后0.01660N；2.006/2.008s反馈修正0.8597/1.5078rad、3/5关节饱和。复算动作一致，KΔx可重构，未发现该段策略发布错配。
-- 其他问题：支撑因子全周期恒1；lead之后目标随后退且无移动速度残差；十子步完整C/D增加开销。前24回合20跌倒+4非足接触，前25回合21+4；阶段活动时间不等于有效前进。
-- 评价/发布/清理：原28h到40h续行与正式评价均已取消；1060项交付完成（978个Release资产、82个Git记录），27段视频，待传/待渲染为空；普通push后已删除1084个闲置副本、4678796042字节，保留源码、环境、运行资源与紧凑记录。
-- 查阅：同job摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json的regression字段、experiments/terrain_memory/s1-go2-r25-source源码快照和Release矩阵/轨迹；r26草稿未应用、未构建、未训练。
+- 当前下一任务：**W37_CONTACT_CONSISTENT_JOINT**；计划版本S5-r26尚未实现、构建或运行。本次2026-11-03（北京时间）仅审查并发布计划。
+- 最新实际：W36/S5-r25已停止，27回合＝22跌倒＋4非足接触＋1停止截断，全部未接触材料，合规去程/往返0；旧40h延长已取消。
+- 学习状态：PANN累计4497条/17更新；最新`resume-state-ep00144.pt`含145条未更新旧尾，末次完成更新`checkpoint-004352.pt`；RAW256/1独立。
+- 核心判断：r25新增moving支撑软目标与平滑接触读数冲突、线性反馈放大；lead饱和削弱cap作用，全部子步完整C/D增加耗时。证据与未证实项见第3节。
+- 下一步：第4节实际实现r26、显式尾段迁移和已知退行停止分支，直接完整联合训练；新增2048/8观察点，累计6545/25，正常末端独立E30/条件E60。
+- 交付：W36全部1060项、27视频已发布；记录已清理1084份服务器副本/4,678,796,042字节。以后Git/Release直传，成功后清理已交付不活跃副本，无PC归档。
 
-## 1. 最新实际进展
+## 1. 原始目标与当前阶段
 
-训练/原始数组固定审查[fff9bfd5](https://github.com/kaiwen123-yang/MCP-RL/commit/fff9bfd53afcf7f9511ad41ea62a585f092aba2c)；发布前已接入[90d4fd64清理补记](https://github.com/kaiwen123-yang/MCP-RL/commit/90d4fd648ae120bcd5c6bdf8c3e0d821d6242296)，训练与控制源码未变。主证据：[W35 job](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261031T101803Z.json)、ep45–117全部实际结果、该job固定版本的learning/transitions/collection/stopped、正式E30及原始trajectory/prediction/material数组。[紧凑审查记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W35.json)保存计数、关键诊断与来源；原始材料继续使用既有Release链接，不重复归档。[上版计划](https://github.com/kaiwen123-yang/MCP-RL/blob/fff9bfd53afcf7f9511ad41ea62a585f092aba2c/docs/TERRAIN_MEMORY_PLAN.md)保留历史安排。
+长期问题仍是：**同一个世界坐标地块被前足、后足及返程反复踩踏时，如何利用可恢复材料的持久状态，让未来支撑需求反过来约束当前加载、落点和重访时间？** 原始路线见[2026-10-21冻结计划](https://github.com/kaiwen123-yang/MCP-RL/blob/4d0af25c7bcea620c7e8c9a4f5b103c4956a3fda/docs/TERRAIN_MEMORY_PLAN.md)。先做受控黏弹材料与Go2完整闭环，再证明记忆收益、泛化并进入Go2＋NX；IROS是近期投稿目标，T-RO是更高目标。工程接线不等于已经完成论文贡献。
 
-**工程闭环可以支持继续研究；可靠、合规的任务基线尚未形成。** 冻结PANN提供因果恢复特征，PPO更新Actor/Critic，MPC在线规划，真实Go2/TM02反馈；这不是全部模型权重端到端共同训练。
+当前链路已经真实运行：冻结因果PANN观察器→标准PPO速度cap→全身MuJoCo iLQG→时变全状态反馈→PD→Go2/真实TM02→观测。PANN权重冻结，但世界地块状态演化；PPO训练Actor/Critic；MPC尚未在每个候选中传播完整PANN/TM02材料历史，也不是端到端学习。2Hz标量cap是联合基线，尚不是原计划的终端重访价值或跨步支撑协同算法。
 
-| 指标 | W35新增 | PANN流累计 |
-|---|---:|---:|
-| 转移样本 | 2048 | 3328 |
-| 有效平移样本 | 1599 | 2599 |
-| PPO更新 | 8 | 13 |
-| optimizer steps | 128 | 208 |
-| 真实物理回合 | 73（ep45–117） | 115 |
-| 物理仿真时间 | 1006.5964s | 1636.6556s |
-| 未更新尾buffer | 0 | 0 |
-
-r24本身累计3072条/12更新/103物理回合，早期PANN256/1来自r21；RAW历史256/1属于独立流。ep13/14是零物理初始化失败，不计入115。W35实际invocation为北京时间2026-10-31 18:18:05至2026-11-01 16:55:00，81414.375s＝22.6151h，90.559条/h。旧collection.wall_s含窗口间隔，不能当本轮有效运行时间或纯PPO更新时间。
-
-## 2. 任务能力、失败和当前卡点
-
-### 2.1 训练数量增加，但合规任务没有可靠改善
-
-| 指标 | W34，30回合 | W35，73回合 |
-|---|---:|---:|
-| 合规去程贯穿 | 3 | 1 |
-| 首程侧出 | 9 | 23 |
-| 到远端并开始返程 | 7 | 7 |
-| 裸往返计数 | 0 | 3 |
-| 合规往返证据 | 0 | 0 |
-| 存活至少30s | 8 | 7 |
-| 回合时长中位数 | 11.0661s | 10.23s |
-
-这是持续变化的单训练流描述，不是独立同分布成功率比较，不能据此宣称显著退化；但不能把多了更新和裸往返计数说成稳定能力改善。
-
-**唯一合规去程是[ep116](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00116.json)。** 7.216s从西侧进入，23.690s从东侧贯穿，最大|y|=.55045m；26.010s到远端，28.022s站稳，34.496s开始返程，46.1606s因geom13躯干前下部触地失败。路线约72.694%，最大应变.0199818已接近.02。它证明当前体系出现过可行去程，不证明可靠往返。
-
-三次裸往返：[ep61](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00061.json)、[ep66](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00066.json)、[ep75](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00075.json)分别在首程9.470/13.688/12.118s侧出，最大|y|=.64336/.67725/.70005m，超过原条带±.6m；随后均完成回家稳定计数。因此它们不能证明软地合规往返。ep75最后在第二圈去程59.2124s材料域退出。
-
-| W35结束原因 | outbound标签 | return标签 | 合计 |
-|---|---:|---:|---:|
-| material_domain_exit | 39 | 1 | 40 |
-| body_fall | 17 | 1 | 18 |
-| invalid_contact（geom13） | 10 | 2 | 12 |
-| 60s正常采集边界 | 2 | 0 | 2 |
-| 达采样目标边界 | 1 | 0 | 1 |
-
-70次自然失败中65次发生在首次返程之前；outbound标签包含ep75的第二圈，不能把66次全部写成首次去程失败。
-
-### 2.2 最终固定策略评价仍在第一次软地通行中失败
-
-[最终E30](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261031T101803Z-eval-PANN_PPO_S5-s0-E30.json)使用实际checkpoint-003328、确定性均值动作、冻结归一化、r24/nominal/seed0/20workers，无PPO更新。7.516s进入条带，10.848s已侧出，12.5732s材料域退出；最大x=1.20332m，路线18.497%，没有远端/返程。E60是blocked_by_predecessor，未运行。E30不是要求30s内完成整个往返，但必须完成原合规去程、远端到达并观察满30s。
-
-`material_domain_exit`是TM02主应变绝对值超过.02有效域，**不是几何上走出条带**。材料厚.05m时纯竖向2%压缩约1mm；实际判据仍是主应变。该例最后RR压入1.032317mm，最大应变.02064634，材料残差约9.999e-9、error=null，没有证据将其归为求解器发散。它表示任务超出所用材料模型有效域，不等同于实物地面已损坏。
-
-### 2.3 支撑、参考与实际落足的证据
-
-只读正式E30保存数组并从原模型状态计算足端运动学，没有重跑仿真：
-
-- **参考超前：** 12.5s机身x=1.09731m，机身目标x=2.21315m，积累约1.11584m追赶误差。现有`r11_body_reference.maximum_longitudinal_lead_m`接口在r24未启用。
-- **承载间断：** 在7–12.572s的2787个500Hz记录中，以每脚Fz>1N作描述，1599点没有承载脚、1045点仅1脚，最长无脚超过此阈值区间约.288s。这是该失败段统计，不是新硬门禁；当前2Hz/duty .45 Trot本身允许短飞行，不能规定每时刻必须若干脚触地。
-- **高速落足：** 临近终止的RR下降速度约−1.41m/s，已有下降参考约−.05m/s。12.5722→12.5732s足底从+.06876mm变为−1.03232mm。末次计算合足力1239.65N触发超域后尚未施加到下一步，不能混作已执行力或单材料列的力。
-- **预测—执行差异：** 12.54s计划对12.56s RR预测足底28.124mm、vz=+.28649m/s；实际15.293mm、−.69009m/s。起点状态/动作一致，后续反馈会改变动作。它证明需处理接触阶段的执行一致性，不唯一定位为某个模型/反馈/积分bug。
-- **节点间风险：** MPC每2ms节点内部仍积分10个.2ms子步；当前残差/其C、D导数在节点组织。12.56s计划的12.572与12.574s节点从高速下降跨到回弹，保存节点压入未超1mm，实际却在相邻时段超域。代码没有完整子步峰值路径约束；尚未重放证明这条名义轨迹自身的隐藏子步是否超域。不能只增加日志就称修复。
-
-现有r24已有5mm摆高、慢下降、approach band、moving stance/body height、upright、材料域几何余量、七个躯干净空残差及当前接触锚点。**缺口不是“从来没加过慢落足”，而是目标、承载能力和真实执行仍不一致。**
-
-`LandingIndentation`只罚超目标压入，不罚缺载；`MaterialSupportHeight`是高度目标，不保证实际承载平衡；`StandSupportForce`当前关闭且只针对Stand。候选法向力仍用K0≈1.227e6N/m与当前四足印冻结锚点，不是完整未来TM02材料状态演化。
-
-### 2.4 学习目标与权限
-
-当前奖励含`5*Δsigned_route_fraction + 10*Δlaps`，纵向进展与裸圈数未依赖原条带合法性，能给侧出后的前进/往返正奖励。实际源码与三个回合都支持这是需要直接修正的目标错配，不必先另开大消融。
-
-PPO每.5s仅选择[.18,.25]m/s速度cap，不能直接修毫秒级法向冲击。8批均值cap约.215–.218，未饱和上界；奖励无单调改善，最终loss=.92606不能替代任务结果。当前不据此宣判PPO无效，也不立刻扩动作/换算法。
-
-W35的509/2048观测有非零PANN恢复输入，174条处于返程，其中60条恢复输入非零。正式评价26次同状态去掉末12维特征，最大cap变化约7.91e-6m/s，只说明该评价即时敏感性弱；不是完整闭环因果消融。尚未证明跨腿/返程记忆收益。
-
-## 3. 当前研发取舍
-
-**先让完整联合算法在原任务下稳定行动，再优化吞吐，再做记忆收益比较。** 现在可以继续实验，下一次应有针对性地改控制可行性与奖励，然后继续多次更新，不原样无限延长r24。
-
-r25作为一次协调的基线修正：有限参考前置量、移动承载与低冲击落足一起处理，奖励对齐既有合法路线；保持PANN/观测/PPO动作维度，减少同时变更。其改善先归为联合基线能力，不能直接归给材料记忆。无需独立纯MPC合格、额外E30准入或逐补丁长测试。
-
-当初步合规基线形成，再在相同控制器/奖励/主机/任务下比较独立RAW与PANN学习，并针对跨腿共享、返程重访与恢复时间建立匹配对照。单个幸运成功和降低loss都不足以进入“记忆创新收益”结论。具体后续规模依真实能力决定，本轮不提前开矩阵。
-
-## 4. 当前执行任务：W36_STABLE_SUPPORT_JOINT
-
-### 4.1 复用、恢复和版本边界
-
-先检查同流tmux与最新真实结果；不要重复正在运行的作业。当前已知W35结束，已有评价入口和partNN发布代码均真实执行过，不重做旧适配。
-
-服务器研究副本已清理。按需从Release恢复[resume-state-ep00117.pt](https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt)到原训练路径；[checkpoint-003328.pt](https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__checkpoint-003328.pt)也在同一Release，只有具体需要才再取。恢复本组Actor/Critic/optimizer/RNG/归一化/计数，保留3328/13和tail0；没有完整物理世界快照，另起自然会话。RAW旧256/1仍独立。无需回下载整批14GB、重放旧训练或恢复演习。
-
-**本次已修复一个实际续训元数据问题：** 启动器现在直接读取实际`--resume` checkpoint的`samples/updates`作为job起始计数，不再依赖已清理的`collection.json`。原实现会留下None，并使finish中的新样本/更新数相减报错。只做了该小修的静态语法检查；没有在D57启动作业或增加恢复测试阶段。
-
-复用实际r24环境、MuJoCo依赖和资产，在此基础**实际实现/构建S5-r25**，更新现有`configuration(build,...)`、prepare及必要配置接线。R12入口实际读取`experiments/terrain_memory/s1-go2-local-readiness-r12.json`；不能只新增未被读取的配置或把r25改名就声称实现。该契约已标记待实现，运行前必须让其controller specification与真实构建一致。
-
-### 4.2 一个协调修正，直接进入完整联合训练
-
-1. **限制不可达参考累积。** 复用`scripts/s1_go2_r11_runtime.py`里的`r11_body_reference.maximum_longitudinal_lead_m`。原r2有.15m值，来源是原目标位置容差，可作为首版明确尺度；不要扫一组数。限制追赶距离，同时保留3m终点、原路线/时间要求和正常前进，不把目标钉在当前位置。
-2. **移动步态的承载支撑。** 在`s1-go2-r10-contact.h`/`s1-go2-r10-normal.inc`及模型接线中复用同一候选力/卸载面计算，把实际承载集合、法向载荷与机身运动需求纳入moving stance目标；按重力、允许机身动态和原材料余量定尺度。不能把悬空脚当已承载，也不能只依赖空中梯度为零的力罚项；与已有足端/机身几何目标协调。Fz>1N统计不是新硬阈值，不能强制每步每时刻双脚/三脚承载。
-3. **接触前减速与材料剩余余量。** 改优化真正使用的目标或候选可行性，使高下降速度、有限压缩空间和实际反馈执行一致；处理.2ms积分路径中的冲击风险，不能仅看2ms端点压入。优先采用当前求解器能表达的速度—余量/路径处理；若用子步峰值残差，rollout、候选代价/选择及导数需对齐，不能保留只对起点求导的旧C/D却宣称已修复。无需先重写完整可微TM02或另建控制平台。
-4. **奖励对齐合规任务。** 在`scripts/s1_go2_r11_policy.py`与现有路线记录处，让正向进展和整圈奖励依据既有合规条带穿越状态；侧出后的纵向距离和裸圈数不能冒充合规任务奖励。保留原评价、侧出、跌倒/非足触地/材料域终止定义及全部失败记录。控制/奖励版本明确变更，旧数据不回改。
-
-当前2Hz、duty .45、固定下降.20s的摆足生成器有`rise_duration=(1-duty)/cadence-.20`。**如果为承载连续性调整duty，必须同步重参数化摆足各段时长和导数**；例如2Hz/duty .65会产生−.025s上升段，不能只改一个参数。没有证据就不改步态/频率，不同时开展参数网格。
-
-只做能发现本次实现错误的必要构建/实际运行检查，随后直接完整联合采样。观察正常日志中的参考误差、承载/落足、材料域和路线结果，沿用已有记录；不另建诊断平台或自动补丁循环。若4h内必要实现未完成，交接具体代码未完项，不能把旧r24伪称新候选启动。
-
-### 4.3 联合训练与末端评价
-
-- **新版本目标：** 新2048转移/8次更新，256条一更新；由旧3328/13到累计5376/21。从空on-policy buffer开始，历史仍保留其控制/奖励版本。这是有实质样本的观察点，不是12次启动限制、总研究上限或收敛保证。
-- **连续性：** PPO更新不强制reset环境，普通真实物理失败保存后进入下一自然回合；遇实际技术中断留现场，之后按具体错误修。无完整环境快照的续训如实记会话边界。
-- **资源：** 复用D57单流20 MPC workers、Torch2、BLAS1和当前GPU设置。暂不做worker扫描、GPU重写、向量化、多seed并行或网络扩容。
-- **时间：** 交互≤4h；后台训练≤28h，目标到达即收尾。W35的2048条实际22.6151h仅供估时，r25可能更慢。末端评价单独≤4h；渲染/发布/清理单独≤6h。预算到达时交实际数量和未完成原因，不能把新配置吞吐当保证。
-- **末端：** 固定最后实际完成更新的checkpoint及归一化（目标达到时005376），nominal/seed0/20workers、确定性均值动作、无PPO更新，独立E30，再仅在该case通过时E60。未达训练目标但有有效已更新权重则评其实际末次更新，不挑最好看的checkpoint。保留原30→60→300→600阶梯，本轮不自动展开E300/600或21-case矩阵。
-- **交接：** 源码/配置先提交，使用现有tmux启动器，`--resume <实际ep117恢复路径> --hours 28 --postprocess-hours 6 --network-mode <服务器独立可用模式>`；评价4h由契约读取。确认真实仿真/样本增长、普通日志正常即可退出，不等256条、不逐步盯守、不kill后台。保持同一已启动job版本固定。
-
-优先报告：合规去程/返程/整圈、侧出、失败阶段、真实载荷/触地速度/参考误差及最终固定策略E30/E60。稳定改善先于loss/奖励/裸往返数量；没有跨seed证据时不称可靠成功率或记忆收益。
-
-## 5. 全量发布、服务器清理和后续续接
-
-W35三个新Release有2122个资产、14,263,604,181字节；全部2232条manifest包括2122个新Release文件、3个复用旧文件、107个Git记录；74段视频，pending/render_pending均为空。发布曾有TLS/EOF与Git传输错误，之后只续后处理完成，不能表述为首次无干预成功。
-
-最新仓库清理记录显示累计删除2482个研究副本、14,353,826,997字节：首批2480个/14,353,820,823字节，后续两份已备份旧发布说明6174字节。首批记录的空闲由61,220,585,472增至75,580,424,192字节；该空间读数不是本次实时测量。清理包含旧输出与checkpoint，源码、环境、运行资产和紧凑结果保留。本次审查没有SSH实测磁盘或执行删除。
-
-**用户已明确授权以后成功交付后删除服务器冗余研究副本。** 在既有`finish_s1_go2_r12_job.py`/`publish_s1_go2_r12.py`末尾加直接的发布后清理步骤，不建新归档系统：
-
-1. 训练/评价结束后自动渲染全部可用保存轨迹。源码、环境、所有视频、原始轨迹、预测/材料大数组、rollout、checkpoint、失败/部分结果均有Git或Release去向。复用partNN与既有manifest；缺视频因原轨迹缺失则记录真实原因，不补跑物理。
-2. 本job应交付内容无pending、无render_pending，Release文件名/大小/上传状态一次正常核对，紧凑记录及必要源码已普通push成功；无需全量hash或回下载认证。保留先前已经产生的digest字段即可。
-3. 只删除manifest明确覆盖、远端已确认保存、不再被任何活跃任务使用的研究产物副本。允许清理已发布旧回合/旧checkpoint及已结束job；保留源码/.git、紧凑Git记录、环境、`work/r11-frozen`、`work/assets`、`work/upstreams`、`work/terrain-memory`、`work/tools`及当前运行必需资源。不要递归清空项目/数据盘，未发布或仍写入文件保留。
-4. 清理文件数/字节、实际空闲变化与保留项写进同job紧凑记录并普通push。若最后这次记录push失败，保留小记录续推；远端尚未保存的文件不可删。上传或推送失败只续后处理，不重训，不无限重试。
-5. 未来续训只从Release按需恢复最新状态或具体分析文件；不在用户电脑额外下载、镜像、复制、压缩或归档。检查一次实际磁盘即可，不另开存储审计轮次。
-
-自动清理接线属于W36待实现项；本计划没有把配置字段当作已经执行的功能。当前最新checkpoint仍可从第4.1节直接恢复。
-
-## 6. 论文如何用于这次修正
-
-[文献清单](../literature/terrain_memory_sources.json)记录一手来源和阅读范围。下表是落实到当前问题的用途，不要求另做复现或论文阅读阶段：
-
-| 一手论文 | 可借鉴到W36 | 边界 |
+| 层次 | 已达到 | 未达到 |
 |---|---|---|
-| [SBIP，2024在线/2025卷期](https://ddebenedittis.github.io/soft_bilinear_inverted_pendulum_astro/) | 上层规划与下层执行都处理软接触、载荷和形变；支持参考/承载/落足协调 | SOLO12软接触模型，不是当前PANN/PPO/TM02材料记忆 |
-| [Load-bearing Assessment，2025](https://arxiv.org/html/2510.21369v1) | 整步GRF包络、支撑区域及抬落足速度一起考虑 | 重点是塌陷地面和主动探测，不照搬探测状态机 |
-| [Terrain-Adaptive MPC with Impedance and SINDy，2026](https://onlinelibrary.wiley.com/doi/full/10.1002/rnc.70700) | 承载脚锚点与基于力误差的有界参考修正；MPC/阻抗/导纳协调 | 已读全文相关方法段，验证仅PyBullet；不新增SINDy，不能照搬5cm位移到本任务约1mm域 |
-| [Impact-Aware Robust Convex MPC，RA-L 2026](https://doi.org/10.1109/LRA.2026.3692086) | 把触地冲击当预测中的问题，不能只查触地后深度 | 本次核对IEEE摘要/元数据；不声称复现公式，也不改写整套MPC |
-| [Learning Structured Locomotion References，2026-10预印本](https://arxiv.org/abs/2610.24779) | 完整控制骨架参与训练，学习有物理作用的参考；支持先形成可用名义支撑 | 非已录用ICRA成果，本次复核摘要；旧条目另有方法阅读记录，不照抄动作维度/样本规模 |
-| [Non-Rigid Terrain RL，2021](https://arxiv.org/pdf/2107.02955) | .75s决策配合27维机身/摆足参考，说明权限和底层能力比只提频更关键 | 弹性地块仿真，不是持续黏弹材料的跨腿恢复记忆 |
+| 刚地基础 | R8项目S3九原任务9/9、独立连续300s任务3/3 | 不能替代材料任务或当前r25能力 |
+| 材料任务 | r24出现合规去程及返程暴露 | 合规完整往返0，末端固定策略E30失败 |
+| 联合学习 | PANN累计4497真实转移、17次PPO更新 | 无收敛、可靠成功率或PANN收益证据 |
+| 当前版本 | r25源码、失败及同状态诊断已发布 | 刚地起步退行；r26只有未使用草稿 |
+| 研究目标 | R1/R2/S0提供控制、材料辨识与决策基础 | 跨腿/返程记忆的因果收益、候选材料传播、终端重访价值、NX/实机仍待做 |
 
-另核对[Terramechanics-Aware Adaptive Quadrupedal Locomotion，RA-L 2026](https://ieeexplore.ieee.org/abstract/document/11685272/)的官方摘要/出版信息：它已利用足地接触历史估计摩擦/形变并调节步态，是后续创新对照的重要近邻。不能把“用了历史”本身视为新颖性；本项目还需证明同一世界地块跨腿/跨返程持续状态与后续支撑需求之间的因果收益。本次只核对摘要范围，不声称读到完整方法或完成对比。
+**可以推进实验，应推进修正后的完整联合版本。原样续跑r25缺乏价值，也不回到每修一个模块就另开资格测试。** 本次依据截至`718a9aff1a42eb491e57a5a237d8bf70ddfe314e`的内容；[该提交中的旧计划](https://github.com/kaiwen123-yang/MCP-RL/blob/718a9aff1a42eb491e57a5a237d8bf70ddfe314e/docs/TERRAIN_MEMORY_PLAN.md)保留历史，不回改旧结果。
 
-## 7. Codex启动词
+## 2. 这一轮推进了多少
+
+### 2.1 学习数量与任务能力分开计
+
+| 阶段 | 控制器 | 真实回合 | 新转移/更新 | PANN累计 | 任务结果 |
+|---|---|---:|---:|---:|---|
+| W3 PANN首轮 | r21 | 12 | 256/1 | 256/1 | 真实学习接通，没有整程成功 |
+| W34 | r24 | 30 | 1024/4 | 1280/5 | 3次合规去程，0完整往返 |
+| W35 | r24 | 73 | 2048/8 | 3328/13 | 1次合规去程；3次裸往返均曾侧出，合规往返0 |
+| W35末端 | r24 | 1次独立E30 | 不训练 | 3328/13 | 12.5732s材料域退出，此前已侧出；E60未运行 |
+| W36 | r25 | 27 | 1169/4，尾145 | 4497/17 | 22跌倒、4非足接触、1停止截断；无材料暴露 |
+
+PANN真实训练回合共142；ep13/14为零物理步ABI失败，不计真实回合。RAW256/1独立，不能混入PANN累计。W34中r22/r23零步失败不是完成训练的新控制器。W36原目标5376/21未达到；进程退出码0不等于实验成功。
+
+证据：[R12索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)、[W34](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261030T161045Z.json)、[W35](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261031T101803Z.json)、[W36及回归诊断](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json)。
+
+### 2.2 权限、时钟与真实成本
+
+Actor每0.5s输出`cap=.215+.035*tanh(a)`，范围[.18,.25]m/s，不直接控制脚力、关节目标、步态或力矩。658维观测＝106当前/任务/查询＋20×27历史＋12个PANN恢复特征。每256条更新，4 epochs、minibatch64；原PPO参数、归一化和冻结B ideal权重沿用。
+
+真实物理步0.2ms；目标保持/反馈2ms；逻辑重规划20ms；预测窗口.35s、176节点，每个2ms节点含10个0.2ms子步。PD、力矩界不变。逻辑频率不代表墙钟实时。
+
+| 阶段 | 回合内仿真秒 | 回合内墙钟合计 | 转移/小时 | 单次规划均值/规划占回合墙钟 |
+|---|---:|---:|---:|---:|
+| W34 r24 | 504.9738 | 10.6058h | 96.55 | 约1.001s / 66.3% |
+| W35 r24 | 1006.5964 | 22.4911h | 91.06 | 约1.004s / 62.5% |
+| W36 r25 | 579.5092 | 22.3659h | 52.27 | 约2.585s / 93.1% |
+
+W35含回合外开销的invocation为22.6151h/2048条；包含停机、上传的累计wall不可替代。按r25这段速度2048条约39.2h，28h不保证跑满。明确的子步导数开销可在本次修正中消除重复工作；不开GPU重写、worker网格或六流扩容项目。
+
+## 3. 为什么失败这么多
+
+### 3.1 r25没有进入材料学习
+
+27回合最大前进x均约`0.0000262493m`，末端x约−4.087至−.316m，材料world cells为0；1169份新增PANN恢复观测全0。条带位于x∈[.8,2.2]m、y∈[−.6,.6]m，机器人未到那里。合规去程、远端到达、返程暴露和合规往返均0。
+
+这不证明PANN网络坏了；0侧出也不代表路线改善。历史`effective_translation`只统计outbound/return阶段时间，并非有效向前运动。PPO更新真实发生，但数据缺少材料与返程暴露；相同控制器继续积累样本无法填补这个问题。
+
+### 3.2 首要假设：新增支撑软目标放大接触近似
+
+r25新增MovingSupport（Fz和只由竖直力计算的roll/pitch力矩）及SupportPlacement，依赖同一支撑分配。这是软残差目标，**不是硬等式约束**。刚地力来自经过MakeDifferentiable的规划模型，`solimp[0]`从.99变0。r21/r24已有这层平滑；新问题是r25把其瞬时接触力直接用于承重目标和残差导数。
+
+已存同一qpos/qvel/ctrl的零积分fresh-forward比较：2.002s时native总Fz154.128N、平滑模型.0166001N，相差约9285倍；2.006s时813.499N对.076865N。这不是不同时间的日志相减，也不是PANN材料误差。
+
+同一首个Trot计划内，最大原始Kδx从2.004s的.181rad增至2.006s的.860rad、2.008s的2.631rad，实际力矩饱和关节达3、5个；相应支撑Jacobian陡增。这是**优先修正的因果候选**，尚未做单因素闭环消融，不能宣称唯一根因已证明。
+
+另有确定错误：`s_i=exp(-step_i/.001)`、`availability=min(sum(s_i)/2,1)`。现2Hz、duty .45、5mm摆足下sum最小2.01347589，availability全周期恒1，包括约10%的名义飞行。因此所谓飞行减载没有生效。不能改成强制每时刻固定两脚/三脚支撑。
+
+历史限制：[R8](../results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json)S2新增支撑力跟踪曾变坏，S3兼容参考才成功；[R11](../results/terrain_memory/simulation/tm-s1-go2-material-continuation-r11/index.json)r17原生接触15.3628s失败，r18原生接触＋moving velocity残差5.2224s失败，r19平滑接触＋相同残差3.878s失败。全局关闭MakeDifferentiable或重新加速度惩罚不是直接的新解法。
+
+### 3.3 lead削弱cap，但不是最早起因
+
+r25在路线[0,3]截断后设置`target_x=base_x+direction*.15`。2.604s后饱和；5s时base约−.517m、目标−.367m，10s时base−1.119m、目标−.969m，PPO cap仍为正。饱和使cap对位置参考的直接作用消失，moving速度残差又为0。
+
+反馈异常约2.006s已经出现，早于lead饱和。局部参考为负x不必然是方向写反，已后退机器人向前的小范围参考也可能为负；真正要修的是cap对未来参考的权限、起步平滑和端点一致性。全局参考永不后退、始终在[0,3]、距已退到−1m的机器人≤.15m，三者无法同时成立。第4.2节明确区分真实任务进度与局部参考。
+
+### 3.4 动作接受链没有查出错配；子步完整C/D确有重复成本
+
+已存状态用S5-r25-inspect重算，plant积分步0，输出动作与原记录最大差0；按`nominal+K*StateDiff+原目标限幅`重构约2.2e−16。没有证据支持“选中A却执行B”；policy reference不要求是自由滚动轨迹。此诊断不是新r26实验。
+
+r24已有十子步A/B链式复合、节点起点C/D。r25在十子步都请求完整A/B/C/D再挑峰值风险行，产生重复sensor求导。尚无证据证明矩阵乘法顺序错。现有r26 path两个inc未构建应用，不算已经修好或提速。
+
+### 3.5 r24的材料问题仍然存在
+
+W35末端E30于7.516s进入材料，10.848s侧出，12.5732s材料域退出；RR压入1.032317mm、主应变.02064634，Newton残差约1e−8、无solver error。`material_domain_exit`是本构有效域，不是侧向出条带。
+
+50mm厚、.02域限对应约1mm竖向压缩尺度。r24已有5mm摆足、慢下降、支撑高度、材料余量和7个躯干净空残差，真实落足仍出现约−1.41m/s，远高于参考−.05m/s；机身参考曾超前约1.116m。目标已写入不代表能执行，软代价不保证子步路径可行。恢复向前后，还要处理这一真实承载/冲击问题；不能调软材料、放宽域限或修改终止制造成功。
+
+### 3.6 流程扩大了重复损失
+
+现训练入口只在技术中断/预算结束停，对自然fall/nonfoot始终开下一回合，使同一刚地退行持续27回合。第4.5节只增加针对现成证据的小范围phase停止分支。
+
+早期序列化/ABI、重复导数节点、步态覆盖、approach band整数截断、合法路线奖励等均有修复历史，不重新列为新任务。旧README/计划正文/契约里的ep117和r25待实现入口本次一起纠正，旧job和结果不回改。
+
+## 4. 当前执行任务：W37_CONTACT_CONSISTENT_JOINT
+
+### 4.1 实际实现一个协调的r26版本
+
+先查D57同流tmux与最新结果，有活动作业就接续，不重复启动。复用`work/envs/d57`、MuJoCo3.2.3及实际ABI依赖、原资产、20 MPC workers/Torch2/BLAS1。只查一次实际空间。本次审查未SSH、未改服务器环境、未启动新物理。
+
+1. **撤销新冲突。** 删除r25 MovingSupport、SupportPlacement及其support_share/requested_load分配；moving loaded-height/软落足恢复明确r24定义。保留r24已有全身动力学、moving姿态/高度/stance、输入参考、Stand平衡、PD/力矩界和平滑接触/前向差分。不混用native力常量/导数与平滑A/B，不任意清零或截断TV反馈。
+2. **统一前进参考。** 按第4.2节把同一因果参考包用于runtime和候选未来节点；原路线、phase、终点、合法进度不重置，不复装r18/r19的六维速度残差。
+3. **保留路径风险并去重复求导。** ImpactMargin从r12_stable_support打包条件拆出，保持其原公式、.8mm onset/.2mm scale及weight176；MaterialDomainMargin/TrunkClearance沿用。第4.3节统一数值定义、峰值选择和active-substep导数。它仍是软风险/代理模型，不包装成真实TM02硬约束。
+4. **保留已实现的学习接口。** r25合法路线奖励、冻结因果PANN、658维观测和PPO数值不改；只加第4.4节明确迁移、第4.5/4.6节停止与评价的必要接线。
+
+实际修改现有configuration/prepare/model/runtime、C++ task/trajectory/model_derivatives、policy/train/evaluate相关入口，按原方式构建S5-r26并记录配置、patch/source与运行资产。当前契约active r26明确是planned，不代表二进制或spec已经存在；实现后使实际build/spec/入口一致。不能只写一个未被读取的JSON，或给旧版改名。
+
+必要构建和实际启动检查后直接完整联合采样，无pure MPC、单模块或E30训练准入；不重建环境、不新增测试套件/恢复演习/无关矩阵/参数网格。4h内实现不完就交具体未完代码，不启动旧版冒充r26，不自动串联多个新候选。
+
+### 4.2 同一加速度有限、cap有效的局部参考
+
+原任务端点仍0/3m，phase、合法路线、圈数由真实运动触发；局部参考每次重规划可以重定位，但不重置任务进度或材料状态。
+
+每20ms正常重规划（及已有phase-change replan）建立冻结packet：active、t0、真实base x_anchor、真实endpoint、local direction、v_anchor、cap、heading/world head offset。所有候选/FD/cost共享，不随候选未来x重建，不在callback里修改共享状态。选择cap在下一正常20ms重规划进入packet；分别记录actor→参考与参考→新优化动作延迟，不宣称2ms cap→新优化动作。
+
+取H=.35s、L=.15m、v_max=.25m/s、T_lead=max(0,L/v_max−H)=.25s；加速度a=.5m/s²复用原mission。令d=sign(endpoint−x_anchor)、ell=abs(endpoint−x_anchor)，v_anchor为原mission纵向参考速度投影到d后截在[0,.25]。对τ∈[0,H]：
 
 ```text
-请在 autodl-d57:/root/autodl-tmp/MCP-RL 执行 W36_STABLE_SUPPORT_JOINT。先读 AGENTS.md、docs/TERRAIN_MEMORY_PLAN.md 顶部交接与第4节、当前R12契约及直接相关源码，最多5行开场后开始做，不再进行全仓审查或新计划轮次。
+v(s) = v_anchor + clip(cap - v_anchor, -a*s, a*s)
+t_c = abs(cap - v_anchor)/a; b = min(τ, t_c)
+I(τ) = v_anchor*b + 0.5*sign(cap-v_anchor)*a*b*b + cap*(τ-b)
+X_ref(τ) = x_anchor + d*min(ell, v_anchor*T_lead + I(τ))
+```
 
-先查同流 tmux 和最新结果，避免重复启动。已知W35完成：PANN累计3328条/13更新、tail0，最终E30在12.5732s材料域退出；服务器产物已清理。从现有Release按需恢复本组 resume-state-ep00117.pt，不能退回ep44、重跑W35或重做已完成的评价入口适配。
+稳态还原`x_anchor+d*min(ell,cap*(T_lead+τ))`。整个horizon相对**本次真实anchor**最多前视.15m，消除跨plan累计1m lead；这不是未来真实tracking error永远≤.15m的保证。加速约束/端点截断激活时，cap灵敏度可暂为0，不人为制造非零权限。
 
-以已运行r24为基础，实际实现并记录S5-r25：复用有界机身参考lead接口；协调moving stance承载力/支撑连续性、接触前减速与剩余压缩余量；处理2ms节点之间0.2ms积分路径的冲击风险，使候选选择、代价/约束和导数一致；将路线进展及往返奖励对齐既有合规条带判据。不要仅新增已有的慢落足/高度惩罚，或只把现有权重调大。若改duty，同步处理摆足分段时长与导数。原任务、材料.02域限、真实力矩/碰撞/跌倒定义不放宽。保持冻结因果PANN、现有PPO/观测及cap动作维度，不另建算法平台。
+边界必须一致：Stand→Trot、turn→return从现有mission速度状态投影后平滑衔接，状态为0时从0启动，不强制重置实际已有速度，也不能node0突然前跳4.5–6.25cm。越过端点时d指回真实endpoint，不能把负remaining截0后钉住错误anchor。Stand/far_hold/home_hold保留原S3支撑；turn/turn_home保留原moving gait与endpoint/heading，不切成S3 Stand分支；上述阶段的纵向移动packet inactive。新移动phase立即重建packet，不能沿用旧方向。y仍追踪原中心线、z保留原高度含义，不把侧偏也anchor化。
 
-修正后直接继续完整PANN+PPO+MPC联合训练，不设单模块或E30训练准入。恢复自己的Actor/Critic/optimizer/RNG/归一化/计数；新控制和奖励版本从空on-policy buffer开始，物理另起自然会话。记录旧3328/13与新版本新增量。目标再2048条/8更新，累计5376/21；它是观察点，不是试验次数上限或收敛承诺。每256条更新后继续，普通物理失败保存后进入下一会话。
+**Position residual追踪head site。** 上式先生成base参考，再用同一固定heading转换`p_head_ref=p_base_ref+Rz(heading)*[.3,0,0]`；去程加.3m、朝π返程减.3m。runtime body_target/mocap与C++ residual同packet计算，Stand已有support ref优先。不允许直接把base公式写成head目标造成30cm错位。局部参考暂在[0,3]外不改变真实端点，也不保证单靠reference必然前进。
 
-使用现有环境与单流20 MPC workers、Torch2、BLAS1；本轮不做提速工程。源码/配置提交后启动tmux，训练预算28h，末端固定最后实际更新策略和归一化做nominal E30、通过才E60，评价另计4h，渲染/发布/清理另计6h。4h只限制本次交互；确认真实采样增长、日志正常就交接退出，不逐步盯守，不kill后台。若必要实现尚未完成，留下具体代码差距，不冒充r25已完成就启动旧r24。
+### 4.3 子步风险值、峰值与导数保持同一个对象
 
-在现有finish/publish链路接上发布后清理：全部实际源码、环境、视频、轨迹、大数组、rollout/checkpoint及失败/部分结果交付Git/Release，普通push成功、待传/待渲染为空后，只删除已确认远端保存且不再被作业使用的研究产物副本。保留源码/.git、紧凑记录、环境和运行资源；保留未传/未推送或仍活跃的文件。复用现有manifest和一次名称/大小/上传状态核对，不新增全量hash、回下载认证或PC归档。发布失败仅续后处理。清理结果写入同job并推送。
+三类几何风险由唯一共同helper定义，供Residual和geometry Jacobian复用。沿用每2ms hold内十个**pre-integration state**的逐行最大风险，tie取最早子步；终端节点独立计算。不要把mj_step返回的推进后qpos/qvel和其pre-integration sensordata混在一起。
 
-收尾只更新正常结果和主计划6行交接，分别说明训练、固定策略评价、发布、清理是否完成；重点看合规去程、合规往返、侧出、承载/落足与三类失败，不把loss、裸往返计数或训练前缀当成功。
+对状态切空间和保持输入，保留十子步A/B：
+
+```text
+P_0=I, Q_0=0
+P_(j+1)=A_j*P_j
+Q_(j+1)=A_j*Q_j+B_j
+对于风险行k：j_star=earliest_argmax_j rho_k(x[j])
+C[k,:]=Jrho_k(x[j_star]) @ P[j_star]
+D[k,:]=Jrho_k(x[j_star]) @ Q[j_star]
+```
+
+当前三类风险只依赖q/v，直接control项为0；以后若换力/加速度/control-dependent风险，需加其直接D项，不能照搬。常规完整C/D只在节点起点计算一次；仅在被选中的风险子步用必要kinematics/comPos/comVel与几何/速度导数（或所需行局部差分），不重复contact solver和全部sensor Jacobian。再覆盖相应风险行。
+
+共同helper须保持原区域判断、足序、平滑/截断、单位和尺度；不抽稀子步、不把峰值改回起点、不减少十子步A/B。现有r26 inc只是实现起点；active branch在峰值切换处仍非光滑，不称全局精确梯度或真实材料可行性保证。按实际训练timing报告成本变化，不另开benchmark。
+
+### 4.4 ep144与145条旧尾的显式迁移
+
+只按需下载[resume-state-ep00144.pt](https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__training__PANN_PPO_S5-seed0__resume-state-ep00144.pt)到原`outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/`。必要时才取[checkpoint-004352.pt](https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part01/job-20261101T133954Z__training__PANN_PPO_S5-seed0__checkpoint-004352.pt)。不回ep117，不重跑r25凑batch，不回下载全历史。
+
+恢复Actor/Critic/optimizer/RNG/归一化/历史计数和episode编号。没有完整世界快照，另起物理会话；旧last_observation/pending不能接成新会话successor。PolicyStream当前遇不同controller非空tail会ValueError，需增加**一次明确版本迁移分支**：旧checkpoint与4353–4497这145条出处、版本、未使用状态保留，active buffer清空。不是删除默认保护，也不是每次resume静默清空；新r26同版resume保留自己的合法尾。
+
+```text
+历史采集4497 = 已用于更新4352 + r25旧尾145
+新增2048/8，第一批新rollout4498–4753
+目标累计6545 = 25*256已训练6400 + excluded旧尾145 + active tail0
+目标末次更新 checkpoint-006545.pt
+```
+
+沿用`len(buffer)==256`更新，不要求累计samples整除256；checkpoint/collection/job保存`excluded_old_version_transitions=145`及迁移来源。目标不能误设6400，否则仅新增1903条、7更新＋111尾。该迁移为跨控制版本warm start，不是同一MDP不间断训练或干净r24/r25因果比较。
+
+### 4.5 无人值守只停止已知的r25起步退行
+
+正常自然回合结束，原result、episode、resume均保存后，下一回合前检查`known_r25_startup_regression`，仅使用已有JSON。须同时满足：
+
+1. 自然终止reason以body_fall或invalid_contact开头；已进入outbound，没有far_hold/turn/return/home_hold等后续阶段；far_arrival_s/return_start_s明确为null，表示尚未到达。
+2. material.loaded_ever_cells明确为0且stage_progress.actual_material_loaded明确为false。
+3. initial_x取transitions[0].position_m[0]，max_x取max_x_m，final_x取final_qpos[0]；max_x−initial_x≤原goal位置容差.15m，final_x−initial_x<−.15m。
+
+已有r24 ep15–117共103回合（含44自然fall/nonfoot）0命中；r25 ep118–143的26次自然失败全命中，ep144预算截断不命中。首次ep118就会在13.91sim-s、约33.7min墙钟结束。这是对已有记录的分析，无新物理实验。
+
+第一次匹配就停本phase，是有依据的计算预算策略，表示**已知表现特征复现**，不证明唯一根因相同。字段缺失/数值坐标非有限记not_evaluable，不能默认0/false误停；未到达时间的明确null是合法值，不当作非有限错误。有限到达时间表示不匹配。没有连续N次或总尝试次数上限；普通材料失败、有明显前进、远端/返程和纯预算截断均不触发。
+
+stopped/job保存触发attempt、原物理原因、三项x、加载字段、阶段及阈值来源，原result的fall/nonfoot不改。原因从train入口传到job和evaluate_job；命中则E30/E60记skipped_due_to_startup_regression，直接完整render/publish/cleanup，不自动延预算/重启/换候选。不读dense arrays、不新建监控、不要求Codex等首回合。
+
+### 4.6 训练、评价与预算
+
+- 单流PANN seed0、256条一次更新；更新不reset，普通物理/材料失败自然续采。启动后保持源码/配置固定。
+- 交互≤4h；后台训练≤28h或新增2048/8达到；末端评价另≤4h；渲染/发布/清理另≤6h。旧r25 40h扩展不继承，不自动加时；速度/成功均待测。
+- 源码/配置普通提交推送后，复用`start_s1_go2_r12_tmux.py --resume <实际ep144路径> --hours 28 --postprocess-hours 6 --network-mode <服务器独立可用模式>`。确认真实采样和普通日志增长即可交接，不等256、不持续盯守、不kill后台。
+- 正常结束且本phase有新完整更新时，固定**本phase同controller/reward最后实际更新**的checkpoint/归一化；nominal、seed0、20workers、确定性均值、无学习，独立E30，原same-case前级通过才独立E60。满目标用006545，部分用实际末次，不挑最好看的。
+- 当前评价用目录最大checkpoint，需改成限定本phase与controller/reward身份，避免残留旧r25。无新更新写new_update_unavailable，不把ep144冒充新训练成果，不补物理考核；已知退行停止直接跳评价。
+- 原30→60→300→600阶梯不变；本段仅E30/eligible E60。按历史速度90sim-s约2.0–3.47h，E300约6.7–11.6h、E600约13.4–23.2h，只作预算估算。长级以后独立资格/预算，不拼接片段。
+- **stage_status与legal_route分别报告。** 现E30直接要求合法去程，E60/300/600更依赖完成/裸圈数；独立E60不因旧E30合法就自动合法。原状态/阈值保留，实际合规往返看合法去程、返程和整圈，不能只看passed字面。
+
+观察顺序是正向运动、真实材料加载、合规去程、返程/整圈、末端固定策略。loss/奖励/更新数、裸圈数和训练前缀不替代任务结果。
+
+## 5. GitHub交付和服务器副本清理
+
+W36已1060/1060项交付（978个Release文件＋82个Git记录）、27视频、pending/render_pending为空。记录清理1084文件/4,678,796,042字节，空闲804,752,240,640→809,433,489,408字节；这是上传记录，非本次实时磁盘实测。
+
+**复用已经执行过的finish/publish/cleanup，不在用户电脑归档。** 清理不是新的待开发平台。
+
+1. 所有实际源码、环境记录、正常/失败/截断结果、全长视频、原始轨迹、物理/预测/材料数组、transitions/rollout/checkpoint、隔离旧尾出处有Git/Release去向。复用partNN最多900资产、原URL和manifest；缺原轨迹不能渲染时记录真实原因，不补跑物理。
+2. 全部应交付完成、pending/render_pending为空，现有一次名称/大小/上传状态核对，必要源码及紧凑结果普通push成功后，才清理。不增全量hash、回下载认证或PC复制。
+3. 只删manifest覆盖、远端已确认且inactive的服务器研究副本，可含已结束旧job输出/checkpoint。源码/.git、紧凑记录、work/envs/d57、work/r11-frozen、work/assets、work/upstreams、work/terrain-memory、work/tools和未传/活跃文件保留，不递归清空项目/数据盘。
+4. 文件数/字节、实际空间变化和保留原因写同job并普通push；小记录push失败保留续推。上传失败只续后处理，不重训，不删未交付文件。
+5. 续训按需恢复最新checkpoint；不在用户电脑下载、复制、镜像、压缩或归档，不回下载全部历史。
+
+## 6. 本次采用的论文和官方依据
+
+一手来源与本项目证据共同支持下面的工程选择，不表示外部论文已验证r26。完整阅读范围及历史保留在[文献清单](../literature/terrain_memory_sources.json)。
+
+| 来源 | 相关机制 | 本次用途与边界 |
+|---|---|---|
+| [TM20 MuJoCo全身MPC v3 §III、IV-A–D](https://arxiv.org/html/2503.04613v3)及[作者固定代码](https://github.com/johnzhang3/mujoco_mpc/tree/e00c47a5adb9856af2e0f24231bb3a60d5be23c4) | PD在预测中、前向差分，软接触/TV反馈有局限 | 保留有效骨架；impratio100早已采用，不当新修复。作者硬件不是本TM02/NX验证 |
+| [MuJoCo3.2.3 Modeling](https://mujoco.readthedocs.io/en/3.2.3/modeling.html#solver-parameters) | solimp阻抗改变产生力的能力，d0=0使接触起始平滑 | MakeDifferentiable改变正向动力学，不仅改变导数；不能只关开关承诺成功 |
+| [STANCE §IV-B、VI-C](https://iit-dlslab.github.io/papers/fahmi19tro.pdf) | 力、压陷、接触加速度联立，考虑加载/卸载和内环带宽 | 借鉴接触相容原则，不照搬HyQ增益、删除Go2 PD或更改材料 |
+| [SBIP作者方法与论文](https://ddebenedittis.github.io/soft_bilinear_inverted_pendulum_astro/) | 规划和全身跟踪同时考虑软接触 | 借鉴两层一致；其接触短历史不是跨腿/返程世界记忆，当前main不等于论文固定快照 |
+| [TM27结构化参考预印本](https://arxiv.org/abs/2610.24779)、[作者页](https://tarikbanus.com/) | 已能维持nominal trot的模型骨架参与完整训练 | 先恢复可执行闭环，再判断结构化权限；ICRA2027审稿中、平地仿真，RL＋WBIC不等于本iLQG，不照搬25维/100Hz/样本量 |
+| [ICRA2025：平滑动力学上的线性反馈是否足以稳定接触计划](https://arxiv.org/html/2411.06542) | 局部线性反馈可能违反单边接触的实际可执行性 | 解释大Kδx为何不能靠输出裁剪保证稳定；研究是准动力学双臂操作，不直接移植四足参数或成功率 |
+
+共同要点是使参考、载荷/压陷、候选模型和执行相容，再讨论学习贡献。r26只处理有证据的新增冲突、参考权限与风险导数成本；完整材料候选传播、真实接触一致与反馈有效域仍有边界。没有新增论文复现/阅读门禁。
+
+## 7. 后续方向
+
+若再次命中已知刚地退行，结束交付该版，依据首段保存证据继续解释模型/残差/反馈；不以无条件加训练或改物理参数替代。
+
+若恢复向前与材料暴露，仍在压缩余量、触地冲击或返程承载失败，就沿完整链路继续建立允许载荷、压陷、接触加速度/时序的相容关系。只有cap权限确实不足时再选择一个有直接物理作用的有界动作通道；若改duty/cadence，同步分段时长和导数，不同时扩维/扫权重。
+
+形成可用合规基线后，做同执行器/奖励/硬件/资源条件的fixed/RAW/PANN、多seed与记忆消融，区分在线估计、跨足共享、返程保持和普通历史；评测时屏蔽输入不替代重新训练对照。再推进候选材料传播和终端重访价值，使未来支撑真正改变当前动作。E300/E600、实测恢复样件、NX实时、Go2硬件独立按资格/预算推进，不提前宣称完成。
+
+## 8. Codex启动词
+
+```text
+请在 autodl-d57:/root/autodl-tmp/MCP-RL 执行 W37_CONTACT_CONSISTENT_JOINT。先同步GitHub最新main，读取AGENTS.md、docs/TERRAIN_MEMORY_PLAN.md顶部6行与第4节、当前R12契约及直接相关源码；最多5行开场，随后实际实现，不重复全仓审查、新计划或论文复现。
+
+先查同流tmux和最新实际结果，避免重复启动。r25已停止：累计4497条/17更新，最新resume-state-ep00144.pt含145旧尾，27回合全部未到材料，40h扩展取消。按计划Release链接只恢复需要的最新状态，不退ep117，不原样续跑r25；复用D57现有环境、ABI、资产和服务器独立网络。
+
+实际实现并构建S5-r26：保留r24全身控制、PD/兼容输入参考和r25合法奖励；删除r25 MovingSupport/SupportPlacement及错误分配，不全局关闭MakeDifferentiable、不复装r18/r19速度残差、不任意截断反馈。按第4.2节将加速度有限、cap有效的同一局部前视packet贯穿runtime和MPC未来节点，处理启动/转向/越过端点、base-head .3m偏置和时钟；真实路线/材料状态不重置。按第4.3节统一子步风险值、峰值和active-substep导数，保留十子步A/B，避免每子步完整C/D；保留ImpactMargin原语义，已有inc仅草稿不能改名冒充实现。
+
+必要构建后直接完整PANN+PPO+MPC联合训练，无单模块/E30训练准入、测试套件、恢复演习、参数网格或通用监控。原Go2、材料.02域、力矩/碰撞/跌倒/路线/评价定义不变，冻结因果PANN、原PPO/观测/2Hz单cap。显式迁移ep144：恢复Actor/Critic/optimizer/RNG/归一化/历史4497/17，145旧尾隔离留证，空新buffer与新物理会话开始；同版以后resume保留合法tail。新增2048/8观察点，累计6545/25，记录145 excluded，第一批4498–4753。
+
+实现第4.5节已知r25起步退行的小停止分支：自然回合保存后用已有result判定，命中则保存stopped/job、跳E30/E60直接发布；原物理失败不改。普通材料失败自然续采，更新不reset；不设尝试次数上限、不持续盯守、不自动加时或串联新版本。
+
+单流20 MPC workers、Torch2、BLAS1，只查一次实际空间。源码/配置先提交推送，再用现有tmux启动器；训练28h、末端评价4h、发布清理6h各自计时，4h只限交互。确认真实采样和日志正常即可交接。正常结束且本phase有新完整更新时，固定本phase同版本末次checkpoint/归一化做nominal E30，通过才E60；无新更新或已知退行停止则记原因，不误取旧权重。stage_status与legal_route分别报告，保留30/60/300/600阶梯，本段不自动跑长级/全矩阵。
+
+复用已实现的finish/publish/cleanup：所有源码、环境、视频、原始轨迹、大数组、rollout/checkpoint及失败/部分结果从D57直传Git/Release。全部交付、普通push成功、待传/待渲染为空且文件inactive后，删除manifest覆盖的服务器研究副本；保留源码/.git、紧凑记录、环境、运行资产、未传/活跃文件。复用一次名称/大小/上传状态核对，不新增hash/回下载认证，不在我的电脑下载、复制、镜像、压缩或归档。清理数量/字节/空间变化写同job并推送；发布失败只续后处理。
+
+收尾只更新正常结果及主计划6行，分开说明实现、训练、评价、发布、清理及未完成项。重点报告实际向前、材料加载、合规去程/返程/整圈和失败机制，不以样本数/loss/裸往返/训练前缀冒充任务能力。若4h内实现未完，留下具体代码差距，不启动旧版冒充r26。
 ```

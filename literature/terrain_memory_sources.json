@@ -69,6 +69,23 @@
           "首版可声明已知材料与virgin初态；机器人状态/接触估计、控制器瞬态与材料恢复分别解释，真实隐变量仅作标明的仿真参考。"
         ],
         "boundary": "只借鉴压入、承载和接触运动相容的物理原则；不移植HyQ/c3WBC、不新增全文复现，不把已知顺应性估计包装成创新。联合首版的PANN接口不要求先将全部材料状态嵌入iLQG候选传播。"
+      },
+      "W37_review": {
+        "reviewed_on": "2026-11-03",
+        "timezone": "Asia/Shanghai",
+        "reviewer_scope": "本次协作研究代理 research_history 的实际阅读；保留早期条目的原有阅读范围与状态，以下记录不追溯改写历史。",
+        "implementation_status": "文献复核与W37/r26方案记录；未在本次研究中编译、运行、训练或复现作者系统。",
+        "sources": [
+          "https://iit-dlslab.github.io/papers/fahmi19tro.pdf"
+        ],
+        "read_scope": "下载并提取作者公开PDF，阅读全文正文、公式、实验、局限与参考文献；重点核对IV节接触一致WBC、V节估计以及VI/VII节实现和实验边界。未逐像素审阅全部图像，不把文字提取等同于复现实验。",
+        "verified_mechanisms": [
+          "Kelvin–Voigt反力F=Kε+Dε_dot与期望压陷、接触足加速度ε_ddot=-a_contact共同进入控制问题，并结合单边接触、摩擦和执行约束；不是单独加机身高度或足端PD偏移。",
+          "加载/卸载考虑地面响应时间；实现中主要估计法向刚度，阻尼估计受速度噪声限制。逐腿滑窗和运动捕捉支持的足端世界运动不等于本项目跨腿、跨返程的持久地块状态。",
+          "作者报告适合硬地的高带宽内层力矩控制可能破坏软地稳定性；该HyQ结果不能直接给出Go2增益，也不支持无依据取消PD。"
+        ],
+        "application": "W37采用r24控制骨架并撤销r25新增MovingSupport/SupportPlacement冲突，统一有效前进参考与几何风险残差值/导数。本文用于说明载荷、压陷和运动最终须相容；当前修改不声称已经实现该联合软接触约束。",
+        "limits": "不重做HyQ/c3WBC，不新增论文复现或执行门禁，不把接触刚度当材料模量，不以STANCE替代本项目完整闭环证据。完整软接触相容性仍是未解决边界。"
       }
     },
     {
@@ -526,6 +543,32 @@
           "later_only": "名义驻足Riccati终端代价或频率整形仅在完整支撑目标后仍有对应失稳证据时再考虑；R8不以实现这些机制、换优化器或新神经动力学训练为前置任务。",
           "status_note": "本次只完成来源阅读与计划应用整理，尚未编译R8修改、执行新物理任务或训练。"
         }
+      },
+      "W37_review": {
+        "reviewed_on": "2026-11-03",
+        "timezone": "Asia/Shanghai",
+        "reviewer_scope": "本次协作研究代理 research_history 的实际阅读；保留早期条目的原有阅读范围与状态，以下记录不追溯改写历史。",
+        "implementation_status": "文献复核与W37/r26方案记录；未在本次研究中编译、运行、训练或复现作者系统。",
+        "sources": [
+          "https://arxiv.org/html/2503.04613v3",
+          "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/agent.cc",
+          "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/utilities.cc",
+          "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/planners/ilqg/policy.cc",
+          "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/planners/model_derivatives.cc",
+          "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/trajectory.cc",
+          "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/tasks/quadruped/task_flat.xml"
+        ],
+        "read_scope": "阅读论文全文主要章节、公式、结果与局限，并逐文件读取上述固定提交的官方源码。代码阅读限于列出的文件，未在本次复核中构建或运行作者代码；不将全文阅读写成全文复现。",
+        "verified_mechanisms": [
+          "作者优化关节位置参考，并在正向预测中包含低层PD；名义轨迹、动作及线性反馈有共同的规划模型。",
+          "Agent::PlanIteration在OptimizePolicy/NominalTrajectory之前调用MakeDifferentiable并在之后恢复参数；joint/geom/pair的solimp[0]修改覆盖规划正向rollout与导数，不是只改变有限差分而保持预测接触不变。",
+          "Trajectory用规划模型mj_step并读取传感器残差；ModelDerivatives调用mjd_transitionFD。作者task_flat.xml未包含本项目新增的MovingSupport显式承重残差。",
+          "策略插值名义状态、动作和反馈增益，计算u_nom+Kδx后裁剪控制范围；末端裁剪本身不证明反馈处于接触线性化的有效域。论文报告特定H1试验中TV-LQR改善跟踪，同时引用平滑接触线性反馈的局限。",
+          "impratio=100和低层PD纳入预测已在当前作者执行链采用；不能重复写成新修复。论文的前向差分选择、桌面处理器和外部动捕实验不构成Go2本项目或NX实时性能保证。"
+        ],
+        "application": "W37/r26计划回到r24执行骨架，撤销r25的MovingSupport/SupportPlacement新增目标，统一cap实际作用的运动参考及几何风险值/导数；保留原有接触平滑、全状态反馈和PD，不做全局关闭solimp[0]平滑、任意增益裁剪或更换WBC。",
+        "causal_boundary": "r24已经使用MakeDifferentiable；r25新增力残差使平滑接触力直接进入承重目标及其导数，是与同状态原模型/平滑模型Fz差异和后续饱和吻合的首要因果候选。文献与源码不能单独证明它解释全部失败，也不能保证撤销后S1成功。",
+        "limits": "完整软接触相容性、反馈局部有效域和长期材料状态传播仍未解决。原模型Fz不能简单作为常量回填另一模型，A/B与C/D混用也不能被称为已经恢复一致；新文献不成为额外执行门禁。"
       }
     },
     {
@@ -793,6 +836,28 @@
         "read_scope": "本次复核arXiv官方摘要；原条目保留之前已读取方法段落的历史范围。",
         "application": "可用名义控制骨架和完整执行层级参与训练；先补当前支撑可行性，再用证据决定是否扩一个结构化动作通道。",
         "limits": "2026-10预印本，不称已录用ICRA；不复制其动作维度/训练规模或将其WBIC当成本项目iLQG MPC。"
+      },
+      "W37_review": {
+        "reviewed_on": "2026-11-03",
+        "timezone": "Asia/Shanghai",
+        "reviewer_scope": "本次协作研究代理 research_history 的实际阅读；保留早期条目的原有阅读范围与状态，以下记录不追溯改写历史。",
+        "implementation_status": "文献复核与W37/r26方案记录；未在本次研究中编译、运行、训练或复现作者系统。",
+        "sources": [
+          "https://arxiv.org/pdf/2610.24779v1",
+          "https://tarikbanus.com/icra2027.html",
+          "https://tarikbanus.com/",
+          "https://github.com/omertarikbanus/envpool"
+        ],
+        "read_scope": "研究代理成功下载并提取arXiv v1 PDF，阅读全文正文、公式、实验、局限与参考文献；此前成功读取作者项目页。根代理本轮两次访问项目页返回InternalError，故不能把其访问也写为成功；PDF是本次全文核对依据。源码核查只读公开envpool README及其依赖说明，未取得完整下层控制实现。",
+        "publication_status": "arXiv:2610.24779v1，2026-10-17；作者项目标注ICRA 2027 under review，不能称为已录用会议论文。",
+        "verified_mechanisms": [
+          "模型控制骨架可独立维持名义小跑；策略以100Hz输出25维结构化参考，下层步态、落足和WBIC以500Hz执行，完整层级位于训练环内。",
+          "动作覆盖速度/偏航残差、地面反力参考、落足点偏移、机身高度和步态速率；动作通道消融重新训练相应策略。策略主方法替代MPC自适应参考生成器，不等同于当前Actor→iLQG MPC。",
+          "验证范围为Go2平地仿真与扰动，不能推断软地持久记忆、硬件迁移或当前计算平台吞吐；论文训练规模不是本项目追加训练预算的依据。"
+        ],
+        "code_access_boundary": "公开envpool README声明自定义环境依赖同级quadcontrol仓库；https://github.com/omertarikbanus/quadcontrol 本次访问返回404。未核实完整控制源码、配置及许可，不能称整套算法已经完整开源或可直接复现。",
+        "application": "W37保留完整PANN-PPO-MPC闭环与当前cap动作，使cap实际进入一致的运动参考；先撤销r25新目标冲突。2Hz cap不能被期待修复毫秒级接触模型/反馈失配，单纯增加训练步数不能赋予缺失动作权限；这不等于仅凭2Hz判定cap必然无效。",
+        "limits": "不照搬25维动作、85.1M采样规模或WBIC，不把名义骨架要求扩成新的独立测试/论文复现门禁。只有当前完整闭环结果能确认修复与后续学习收益。"
       }
     },
     {
@@ -819,6 +884,38 @@
         "read_scope": "作者项目的方法、约束层级与SOLO12软接触实验说明。",
         "application": "规划和实际跟踪共同处理软接触；机身参考、接触载荷/形变和执行相互一致。",
         "limits": "不是PPO/PANN/TM02历史；作者代码部分依赖受限，不承诺可直接复现。"
+      },
+      "W37_review": {
+        "reviewed_on": "2026-11-03",
+        "timezone": "Asia/Shanghai",
+        "reviewer_scope": "本次协作研究代理 research_history 的实际阅读；保留早期条目的原有阅读范围与状态，以下记录不追溯改写历史。",
+        "implementation_status": "文献复核与W37/r26方案记录；未在本次研究中编译、运行、训练或复现作者系统。",
+        "sources": [
+          "https://ddebenedittis.github.io/soft_bilinear_inverted_pendulum_astro/",
+          "https://ddebenedittis.github.io/publications/soft-bilinear-inverted-pendulum-a-model-to-enable-locomotion-with-soft-contacts/",
+          "https://doi.org/10.1109/TSMC.2024.3504342",
+          "https://www.researchgate.net/publication/386440655_Soft_Bilinear_Inverted_Pendulum_A_Model_to_Enable_Locomotion_With_Soft_Contacts",
+          "https://github.com/ddebenedittis/control_quadrupeds_soft_contacts"
+        ],
+        "read_scope": "阅读作者项目与出版记录；通过ResearchGate作者版本读取全文正文、SBIP推导、MPC/WBC、实验、局限及附录的提取文本。机构开放记录可见，但其PDF下载受限，本次未成功取得该PDF；部分图表数值未可靠提取，不引用这些数值作为结论。",
+        "code_read_scope": {
+          "repository": "https://github.com/ddebenedittis/control_quadrupeds_soft_contacts",
+          "ref": "本次访问时的main；未核实为论文实验固定快照",
+          "files": [
+            "src/motion_control/whole_body_control/whole_body_controller/src/control_tasks.cpp",
+            "src/motion_control/whole_body_control/whole_body_controller/src/deformations_history_manager.cpp",
+            "src/motion_control/whole_body_control/whole_body_controller/src/prioritized_tasks.cpp",
+            "src/motion_control/whole_body_control/whole_body_controller/include/whole_body_controller/prioritized_tasks.hpp"
+          ],
+          "verified": "关键控制源码包含KV力—压陷离散关系、接触加速度—压陷关系和非负压陷约束；历史管理保存接触足最近两个控制步，新接触足清零，不是世界地块跨腿持久记忆。",
+          "boundary": "当前源码与论文的任务优先级及加载/卸载力界表述存在差异；未继续核对所有调用方和依赖，不能称当前main完整复现论文实验。"
+        },
+        "verified_mechanisms": [
+          "SBIP规划把竖直弹簧阻尼响应与水平运动联系起来；下层WBC同时处理接触力、压陷与足端加速度，体现规划与跟踪共同考虑软接触。",
+          "论文仿真和SOLO12泡沫硬件结果有其模型、测量和实验条件；不包含本项目PANN/PPO或世界地块跨腿、跨返程恢复内变量。"
+        ],
+        "application": "W37仅借鉴规划—执行的力学一致性原则，采用r24骨架撤销MovingSupport/SupportPlacement冲突，并统一参考与几何风险导数；不因此重做整套SBIP/WBC，也不称当前几何风险残差已实现论文软接触联合约束。",
+        "limits": "本次全文/源码阅读补充此前仅项目页阅读的范围，不改写W35/W36历史。完整软接触一致性仍是待解决边界，文献不新增复现或执行门禁。"
       }
     },
     {
@@ -887,6 +984,26 @@
         "source_type": "official_IEEE_abstract_and_metadata",
         "application": "Current implementation uses the existing optimizer-compatible landing velocity/material-margin mechanism;the paper is design evidence,not a prescribed rewrite."
       }
+    },
+    {
+      "id": "TM33",
+      "title": "Is Linear Feedback on Smoothed Dynamics Sufficient for Stabilizing Contact-Rich Plans?",
+      "role": "W37接触平滑与线性反馈局限的机制补充；不是新控制器复现或执行门禁",
+      "publication": "ICRA 2025；研究机构官方论文页核实会议归属",
+      "version": "arXiv:2411.06542v4",
+      "version_date": "2025-05-14",
+      "selected_on": "2026-11-03",
+      "url": "https://arxiv.org/html/2411.06542v4",
+      "pdf_url": "https://arxiv.org/pdf/2411.06542v4",
+      "institution_url": "https://rai-inst.com/resources/papers/is-linear-feedback-on-smoothed-dynamics-sufficient-for-stabilizing-contact-rich-plans/",
+      "doi_status": "本次未核实DOI，不填写推测值。",
+      "read_for_execution": "已阅读arXiv全文正文、公式、仿真/硬件结果、VII节平滑强度与单边接触分析及局限；未逐像素审阅全部图像，未读取或运行其作者实现。",
+      "verified_mechanisms": [
+        "局部线性模型不能充分表达单边接触；较强平滑可能令反馈在真实无接触时仍产生试图推/拉物体的修正。平滑利于规划不等于同一局部反馈必然可靠。",
+        "多参数鲁棒轨迹优化在求解成功的条件下可改善部分反馈表现，但其收敛困难；论文不是一个可直接搬用的稳定性保证。"
+      ],
+      "application_to_W37": "用于解释为何不能把成功计算K、动作最终限幅或上游作者使用TV-LQR当作当前反馈始终有效的证明。W37撤销r25新增目标冲突并保留r24原有反馈；不据此关闭全状态反馈、任意裁剪增益或启动新优化器。",
+      "scope_note": "研究对象为Drake准动力学双臂桌面操作及关节阻抗执行，不是MuJoCo动态Go2。只能作机制支持，不能移植其平滑参数、失败比例或归因为本仓全部失稳；接触模型和反馈有效域仍须由本项目实际闭环证据判断。"
     }
   ],
   "upstream": {
@@ -957,9 +1074,30 @@
         "solimp[0]=0用于接触/限位光滑化，会改变接触近似。不要把smooth predictor等同于原plant接触，也不要靠改软plant制造一致。",
         "mjd_transitionFD区分前向与中心差分，RK4不受支持；原生implicitfast候选无需新建导数平台。保存必要integration state与warmstart才能限定重放一致性，缺字段时不承诺逐位一致。"
       ],
-      "scope_note": "先用相同初态、冻结plan及统一ZOH输入辨别数值/接触差异，再据完整任务评价。未来真实闭环采用不同反馈/重规划动作，不能拿其远期差值单独归因于动力学。新数值候选尚未运行；不从文档推荐推导本项目必然成功、精确等价或NX实时。"
+      "scope_note": "先用相同初态、冻结plan及统一ZOH输入辨别数值/接触差异，再据完整任务评价。未来真实闭环采用不同反馈/重规划动作，不能拿其远期差值单独归因于动力学。新数值候选尚未运行；不从文档推荐推导本项目必然成功、精确等价或NX实时。",
+      "W37_review": {
+        "reviewed_on": "2026-11-03",
+        "timezone": "Asia/Shanghai",
+        "reviewer_scope": "本次协作研究代理 research_history 的实际阅读；保留早期条目的原有阅读范围与状态，以下记录不追溯改写历史。",
+        "implementation_status": "文献复核与W37/r26方案记录；未在本次研究中编译、运行、训练或复现作者系统。",
+        "sources": [
+          "https://mujoco.readthedocs.io/en/3.2.3/modeling.html",
+          "https://mujoco.readthedocs.io/en/3.2.3/computation/index.html",
+          "https://mujoco.readthedocs.io/en/3.2.3/APIreference/APIfunctions.html#mjd-transitionfd",
+          "https://mujoco.readthedocs.io/en/3.2.3/APIreference/APIfunctions.html#mj-contactforce"
+        ],
+        "read_scope": "复核与项目版本一致的官方Solver parameters/impedance、接触框架、导数与mjd_transitionFD、mj_contactForce相关完整章节或API条目；不是整本手册通读。本次未重新读取全部引擎源码，保留此前固定实现阅读记录。",
+        "verified_points": [
+          "阻抗影响约束产生力的能力；solimp[0]对应接近接触边界时的阻抗，置零用于平滑接触起始，同时改变正向接触响应，不是只对求导生效。",
+          "mjd_transitionFD针对所提供模型的mj_step计算A/B，以及其传感器输出的C/D；标准状态导数维度为2*nv+na，外部userdata或材料记忆不会自动纳入该状态。",
+          "mj_contactForce返回接触坐标系中的6维力/力矩，首轴是法向；世界Fz需正确处理contact frame、geom1/geom2及符号，存在contact记录也不必然存在有效接触力。",
+          "文档要求区分模型、积分与求导设置；原模型Fz或另一模型C/D不能未经一致性处理就嫁接到当前A/B与rollout并宣称物理闭环一致。最后一点是结合API定义的本项目工程推断。"
+        ],
+        "application": "支持定位r25新增MovingSupport与平滑规划Fz的冲突。W37采用r24骨架撤销该新增冲突，保留既有平滑/PD/全状态反馈并统一参考和几何风险导数；不全局关闭d0平滑或改变真实接触来制造一致。",
+        "limits": "官方文档说明API和模型含义，不能证明本仓唯一根因或保证r26成功。完整载荷—压陷一致性和局部反馈有效域尚未由本次修改解决；本次不运行新测试或引入额外执行门禁。"
+      }
     }
   ],
-  "execution_scope_note": "历史条目的“当前”按其日期理解。当前W36优先完成稳定、合规的完整PANN-PPO-MPC基线，再考虑吞吐和记忆收益。已读的一手方法与仅有官方摘要的2026论文分别标注；这些阅读直接支持当前实现，不新增论文复现、独立准入或阅读轮次。执行以AGENTS.md及主计划第4节为准。",
-  "last_updated": "2026-11-01"
+  "execution_scope_note": "历史条目的“当前”按其日期理解，不以W37复核改写此前阅读和执行状态。当前W37/r26计划采用r24执行骨架，撤销r25新增MovingSupport/SupportPlacement冲突，统一cap有效运动参考与几何风险残差值/导数，保留完整PANN-PPO-MPC链路、既有接触平滑、全状态反馈和PD；完整软接触一致性、反馈局部有效域及记忆收益仍需本项目证据。新增全文、源码和官方文档阅读与仅摘要来源分别标注；它们用于支持当前修复，不新增论文复现、独立测试、阅读轮次或执行门禁。实际执行范围以最新主计划与当前状态文档为准。",
+  "last_updated": "2026-11-03"
 }
