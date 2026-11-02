@@ -2,12 +2,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W36_STABLE_SUPPORT_JOINT同job job-20261101T133954Z继续运行S5-r25；tmux s1-joint与训练PID5784未重启，控制/奖励源码仍为7a72c583d6fdb7a1c1741f1382cd642b2f08c484。
-- 训练：原始起点2026-11-01 21:39:54（北京时间）不变；最新累计4485/17，r25新增1157/4，ep143进行中；目标仍新增2048/8、累计5376/21。
-- 当前问题：前25个已结束回合均未合规穿越；代表轨迹显示正向速度命令下实际退行，0.15m参考随退行进入负x。r25平均MPC规划2.586s，相比W35的1.004s增加约2.58倍，占回合耗时93.15%；此处需要定向定位，不以更新数说明能力改善。
-- 预算变更：用户授权同job40h，截止北京时间2026-11-03 13:39:54；当前进程仍缓存原28h截止2026-11-03 01:39:54，若届时未达目标，既有收尾入口从本job最新checkpoint续行剩余预算，保留Actor/Critic/optimizer/RNG/归一化/计数及同版本tail，另起自然物理会话，不重启tmux、不重置job起点。
-- Preview: ep118/140/141 videos and arrays; status=published; see same-job preview_publication. Final evaluation4h/postprocess6h unchanged; no cleanup yet.
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；同job摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json记录延期方式与实际进度；只查看现有流，技术中断不自动重启，发布失败仅续后处理。
+- 当前任务：W36/r25作业job-20261101T133954Z已正常停止；仅定位与完整交付，不继续修复验证或启动新训练。
+- 实际停止：累计4497条/17更新，r25新增1169条/4更新；ep144导出尾批145条与resume-state-ep00144.pt，最近完整更新checkpoint-004352.pt。
+- 定位：同状态输入下2.002s原接触Fz154.13N、MakeDifferentiable后0.01660N；2.006/2.008s反馈修正0.8597/1.5078rad、3/5关节饱和。复算动作一致，KΔx可重构，未发现该段策略发布错配。
+- 其他问题：支撑因子全周期恒1；lead之后目标随后退且无移动速度残差；十子步完整C/D增加开销。前24回合20跌倒+4非足接触，前25回合21+4；阶段活动时间不等于有效前进。
+- 评价/发布/清理：28h到40h续行与正式评价均已取消；已有轨迹已回放渲染，交付快照506/1053，只继续后处理；未完整交付或仍活跃的文件不清理。
+- 查阅：同job摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json的regression字段、experiments/terrain_memory/s1-go2-r25-source源码快照和Release矩阵/轨迹；r26草稿未应用、未构建、未训练。
 
 ## 1. 最新实际进展
 

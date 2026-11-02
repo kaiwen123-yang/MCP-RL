@@ -1,75 +1,11 @@
 {
   "job": "job-20261101T133954Z",
   "current_task": "W36_STABLE_SUPPORT_JOINT",
-  "status": "running",
   "source_commit": "7a72c583d6fdb7a1c1741f1382cd642b2f08c484",
   "controller_build": "S5-r25",
-  "session": "s1-joint",
-  "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z",
-  "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/train.log",
-  "command": [
-    "bash",
-    "scripts/run_s1_go2_r12_training.sh",
-    "--group",
-    "PANN_PPO_S5",
-    "--seed",
-    "0",
-    "--resume",
-    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt",
-    "--background-job",
-    "--job-start-unix",
-    "1793540394.1445396",
-    "--deadline-unix",
-    "1793641194.1445396"
-  ],
-  "snapshot_time_beijing": "2026-11-02T19:51:50.085707+08:00",
-  "snapshot_unix_s": 1793543197.0674312,
-  "training_started_unix_s": 1793540394.1445396,
-  "training_deadline_unix_s": 1793684394.1445396,
-  "training": {
-    "status": "running",
-    "initial_transitions": 3328,
-    "initial_updates": 13,
-    "actual_transitions": 4485,
-    "updates": 17,
-    "new_transitions": 1157,
-    "new_updates": 4,
-    "target_transitions": 5376,
-    "target_updates": 21,
-    "target_reached": false,
-    "unupdated_fragment": 133,
-    "episode": 143,
-    "new_physics_s": 573.717199999332,
-    "observation": "Real sampling continues;ep118 body_fall13.91s with no material passage;not a task qualification.",
-    "maximum_wall_s": 144000,
-    "average_samples_per_job_hour": 48.80619456537711
-  },
-  "evaluation": {
-    "status": "pending_training",
-    "hours": 4,
-    "selection": "last_actual_completed_update",
-    "stages": []
-  },
-  "publication_status": "preview_published_full_job_pending",
-  "cleanup": {
-    "status": "pending_publication",
-    "implemented": true
-  },
-  "postprocess_hours": 6,
-  "network_mode": "academic",
-  "continuation": "Keep existing tmux running; no duplicate stream, deadline reset or automatic restart.",
-  "implementation": {
-    "parent": "S5-r24",
-    "body_reference_lead_m": 0.15,
-    "moving_support": "candidate actual force and scheduled transfer share the same rest/normal model",
-    "impact_path": "10x0.2ms maxima of impact/domain/trunk residuals with active-substep chain-rule C/D",
-    "reward": "W36_legal_route_progress_and_lap_alignment",
-    "gait_unchanged": true,
-    "on_policy_initial_buffer": 0,
-    "restored_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00117.pt"
-  },
+  "training_exit_code": 0,
   "budget_extension": {
-    "status": "scheduled_at_original_deadline",
+    "status": "cancelled_by_user_r25_regression",
     "authorization": "User 2026-11-01: extend this job to40h;keep original start,existing tmux,+2048/8 target,evaluation4h and postprocess6h.",
     "requested_unix_s": 1793543197.0640748,
     "original_started_unix_s": 1793540394.1445396,
@@ -92,221 +28,873 @@
     "evaluation_wall_s": 14400,
     "postprocess_wall_s": 21600
   },
-  "latest_completed_episode": {
-    "episode": 118,
-    "attempt": "train-PANN_PPO_S5-s0-ep00118",
-    "controller_build": "S5-r25",
-    "condition": "nominal",
-    "stage": 0,
-    "session_limit_s": 60,
-    "transitions": 28,
-    "reason": "body_fall",
-    "stage_status": "physical_material_failure",
-    "simulation_s": 13.909999999994259,
-    "wall_s": 2023.621133396402,
-    "completed_round_trips": 0,
-    "legal_route": {
-      "reward_version": "W36_legal_route_progress_and_lap_alignment",
-      "progress": -0.1290639399869691,
-      "completed_roundtrips": 0,
-      "legal_outbound_traversals": 0,
-      "legal_return_traversals": 0,
-      "side_exits": 0,
-      "raw_roundtrips": 0,
-      "passages": [
+  "evaluation": {
+    "job": "job-20261101T133954Z",
+    "status": "cancelled_user_regression_stop",
+    "reason": "User ended r25 for control regression;render and publish retained results without more r25 physics.",
+    "attempts": [],
+    "stages": []
+  },
+  "training_started_unix_s": 1793540394.1445396,
+  "training_deadline_unix_s": 1793684394.1445396,
+  "postprocess_started_unix_s": 1793621086.8731637,
+  "deadline_unix_s": 1793642686.8731637,
+  "work_deadline_unix_s": 1793642566.8731637,
+  "publication_status": "publication_pending",
+  "render": [
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00118",
+      "status": "existing"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00119",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00119.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00120",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00120.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00121",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00121.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00122",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00122.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00123",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00123.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00124",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00124.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00125",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00125.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00126",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00126.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00127",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00127.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00128",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00128.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00129",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00129.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00130",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00130.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00131",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00131.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00132",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00132.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00133",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00133.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00134",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00134.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00135",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00135.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00136",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00136.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00137",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00137.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00138",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00138.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00139",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00139.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00140",
+      "status": "existing"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00141",
+      "status": "existing"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00142",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00142.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00143",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00143.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00144",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261101T133954Z__render__train-PANN_PPO_S5-s0-ep00144.txt"
+    }
+  ],
+  "errors": [],
+  "attempts": [
+    "train-PANN_PPO_S5-s0-ep00118",
+    "train-PANN_PPO_S5-s0-ep00119",
+    "train-PANN_PPO_S5-s0-ep00120",
+    "train-PANN_PPO_S5-s0-ep00121",
+    "train-PANN_PPO_S5-s0-ep00122",
+    "train-PANN_PPO_S5-s0-ep00123",
+    "train-PANN_PPO_S5-s0-ep00124",
+    "train-PANN_PPO_S5-s0-ep00125",
+    "train-PANN_PPO_S5-s0-ep00126",
+    "train-PANN_PPO_S5-s0-ep00127",
+    "train-PANN_PPO_S5-s0-ep00128",
+    "train-PANN_PPO_S5-s0-ep00129",
+    "train-PANN_PPO_S5-s0-ep00130",
+    "train-PANN_PPO_S5-s0-ep00131",
+    "train-PANN_PPO_S5-s0-ep00132",
+    "train-PANN_PPO_S5-s0-ep00133",
+    "train-PANN_PPO_S5-s0-ep00134",
+    "train-PANN_PPO_S5-s0-ep00135",
+    "train-PANN_PPO_S5-s0-ep00136",
+    "train-PANN_PPO_S5-s0-ep00137",
+    "train-PANN_PPO_S5-s0-ep00138",
+    "train-PANN_PPO_S5-s0-ep00139",
+    "train-PANN_PPO_S5-s0-ep00140",
+    "train-PANN_PPO_S5-s0-ep00141",
+    "train-PANN_PPO_S5-s0-ep00142",
+    "train-PANN_PPO_S5-s0-ep00143",
+    "train-PANN_PPO_S5-s0-ep00144"
+  ],
+  "training_binary_paths": [
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-003584.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-003840.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-004096.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-004352.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00118.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00119.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00120.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00121.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00122.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00123.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00124.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00125.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00126.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00127.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00128.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00129.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00130.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00131.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00132.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00133.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00134.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00135.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00136.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00137.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00138.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00139.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00140.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00141.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00142.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00143.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00144.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-003329-003584.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-003585-003840.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-003841-004096.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-004097-004352.npz"
+  ],
+  "manifest": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z-assets.json",
+  "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12",
+  "status": "stopped_user_regression",
+  "regression": {
+    "source_episode": "train-PANN_PPO_S5-s0-ep00118",
+    "replay_build": "S5-r25-inspect",
+    "plant_integration_steps": 0,
+    "replay_max_action_difference_from_original": 0.0,
+    "first_trot_plan_origin_s": 2.0019999999998124,
+    "winner": 6,
+    "action_consistency": "Reconstruct nominal+K*StateDiff then original actuator target clipping. A policy reference need not itself be a free rollout.",
+    "support_schedule": {
+      "min_sum_exp": 2.0134758939981707,
+      "max_sum_exp": 3.890677180391327,
+      "min_availability": 1.0,
+      "max_availability": 1.0,
+      "nominal_flight_fraction": 0.0999990000099999,
+      "min_availability_during_flight": 1.0,
+      "meaning": "The claimed availability factor is always1 for this swing;it does not reduce requested support during nominal flight."
+    },
+    "failure_counts": {
+      "ep118_to_141": {
+        "body_fall": 20,
+        "invalid_contact": 4
+      },
+      "ep118_to_142": {
+        "body_fall": 21,
+        "invalid_contact": 4
+      },
+      "ep118_to_144": {
+        "body_fall": 22,
+        "invalid_contact": 4,
+        "training_budget_truncated": 1
+      }
+    },
+    "effective_translation_semantics": "effective_translation_s and the historical effective sample flag count time/transitions in outbound or return phase;they do not establish positive route progress.",
+    "stopped": {
+      "samples": 4497,
+      "updates": 17,
+      "tail": 145
+    },
+    "findings": [
+      {
+        "id": "contact_force_model",
+        "status": "confirmed",
+        "description": "MovingSupport uses native-contact Fz from the MakeDifferentiable planning model;d0=.99 becomes0,with4orders of magnitude force discrepancy at onset."
+      },
+      {
+        "id": "feedback_amplification",
+        "status": "confirmed",
+        "description": "Same saved-state planner replay reproduces original actions exactly;KdeltaX reconstructs3/5torque-saturated joints at2.006/2.008s."
+      },
+      {
+        "id": "policy_acceptance_mismatch",
+        "status": "not_supported_by_replay",
+        "description": "Accepted rollout actions reconstruct from the exported feedback policy to numerical precision;do not confuse policy reference with a free rollout."
+      },
+      {
+        "id": "support_availability",
+        "status": "confirmed",
+        "description": "sum(exp(-step/.001))>=2.01347589 makes min(sum/2,1) identically1,including nominal flight."
+      },
+      {
+        "id": "reference_and_cap",
+        "status": "confirmed_later_mechanism_not_initial_cause",
+        "description": "Whole-route lead clamp follows negative base x and overrides nominal[0,3]reference clipping;moving velocity residuals remain zero,so a saturated lead removes direct cap effect on position reference."
+      },
+      {
+        "id": "full_substep_sensor_jacobians",
+        "status": "confirmed_extra_work",
+        "description": "r25 requests full C/D at all10substeps; r24 requested them at node start while already composing all10A/B. This is distinct from an unproven matrix-order bug."
+      },
+      {
+        "id": "effective_translation_label",
+        "status": "confirmed_semantic_error",
+        "description": "The field counts outbound/return phase time,not positive or legal travel. Original values preserved with corrected definitions."
+      }
+    ],
+    "source_locations": [
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/mjpc/utilities.cc",
+        "line": 60,
+        "match": "void MakeDifferentiable"
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/mjpc/agent.cc",
+        "line": 312,
+        "match": "MakeDifferentiable(model_)"
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/mjpc/tasks/quadruped/quadruped.cc",
+        "line": 350,
+        "match": "double sum=0"
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/mjpc/tasks/quadruped/quadruped.cc",
+        "line": 358,
+        "match": "requested_load=mass"
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/mjpc/tasks/quadruped/quadruped.cc",
+        "line": 489,
+        "match": "balance[1]+="
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/mjpc/tasks/quadruped/quadruped.cc",
+        "line": 282,
+        "match": "if (stand_equilibrium) {"
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/mjpc/planners/model_derivatives.cc",
+        "line": 92,
+        "match": "if (!path_rows.empty()"
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/mjpc/planners/model_derivatives.cc",
+        "line": 107,
+        "match": "mjd_transitionFD(m,d,tol,mode,next_a"
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/mjpc/planners/ilqg/planner.cc",
+        "line": 620,
+        "match": "policy.CopyFrom(candidate_policy[winner]"
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/scripts/s1_go2_r11_runtime.py",
+        "line": 360,
+        "match": "lead=direction"
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/scripts/s1_go2_r11_runtime.py",
+        "line": 363,
+        "match": "mission.body_target[0]=data.qpos"
+      },
+      {
+        "file": "experiments/terrain_memory/s1-go2-r25-source/scripts/s1_go2_r11_policy.py",
+        "line": 382,
+        "match": "self.effective_time+=dt"
+      }
+    ],
+    "unused_repair_drafts": {
+      "status": "not_built_not_applied_user_cancelled_repairs",
+      "files": [
+        "experiments/terrain_memory/s1-go2-r26-path-functions.inc",
+        "experiments/terrain_memory/s1-go2-r26-path-derivatives.inc"
+      ]
+    },
+    "contact_model_comparison": {
+      "plant_integration_steps": 0,
+      "scope": "Fresh forward solves with identical saved qpos,qvel,ctrl;only the MakeDifferentiable solimp d0 change differs. These are model comparisons,not relabelled logged force samples.",
+      "records": [
         {
-          "lap": 1,
-          "direction": "outbound",
-          "entry_s": null,
-          "exit_s": null,
-          "lateral_exit_s": null,
-          "material_loaded": false,
-          "completed": false
+          "t": 2.0019999999998124,
+          "native": {
+            "foot_Fz_N": [
+              33.943315114947765,
+              40.19662347213153,
+              43.73832560084305,
+              36.250161136813524
+            ],
+            "sum_Fz_N": 154.12842532473584,
+            "floor_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          },
+          "differentiable": {
+            "foot_Fz_N": [
+              0.004063080251160187,
+              0.0038370188358436766,
+              0.004756167478726527,
+              0.003943789025863647
+            ],
+            "sum_Fz_N": 0.016600055591594037,
+            "floor_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          }
+        },
+        {
+          "t": 2.003999999999812,
+          "native": {
+            "foot_Fz_N": [
+              60.152342706927705,
+              76.53055547592007,
+              61.118692106678935,
+              77.06008602758476
+            ],
+            "sum_Fz_N": 274.86167631711146,
+            "floor_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          },
+          "differentiable": {
+            "foot_Fz_N": [
+              0.007768058800376493,
+              0.007329273487099793,
+              0.008643982276345299,
+              0.007242142521386477
+            ],
+            "sum_Fz_N": 0.030983457085208062,
+            "floor_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          }
+        },
+        {
+          "t": 2.005999999999812,
+          "native": {
+            "foot_Fz_N": [
+              200.58021360409626,
+              196.78862357348095,
+              227.79797703415363,
+              188.33264119279914
+            ],
+            "sum_Fz_N": 813.49945540453,
+            "floor_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          },
+          "differentiable": {
+            "foot_Fz_N": [
+              0.018377067022984663,
+              0.01697167938328337,
+              0.02020811822183534,
+              0.021307734901350607
+            ],
+            "sum_Fz_N": 0.07686459952945399,
+            "floor_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          }
+        },
+        {
+          "t": 2.0079999999998117,
+          "native": {
+            "foot_Fz_N": [
+              0.0,
+              318.291644429287,
+              244.82936586685105,
+              199.13983286267484
+            ],
+            "sum_Fz_N": 762.2608431588128,
+            "floor_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          },
+          "differentiable": {
+            "foot_Fz_N": [
+              0.0,
+              0.026394064332541295,
+              0.03776879052143294,
+              0.022262305535349608
+            ],
+            "sum_Fz_N": 0.08642516038932385,
+            "floor_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          }
+        },
+        {
+          "t": 2.0099999999998115,
+          "native": {
+            "foot_Fz_N": [
+              0.0,
+              337.57760983701945,
+              229.2360799057316,
+              205.80298205159485
+            ],
+            "sum_Fz_N": 772.616671794346,
+            "floor_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          },
+          "differentiable": {
+            "foot_Fz_N": [
+              0.0,
+              0.07063340297848496,
+              0.08889838019961457,
+              0.046572701181926135
+            ],
+            "sum_Fz_N": 0.20610448436002565,
+            "floor_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          }
+        },
+        {
+          "t": 2.0199999999998104,
+          "native": {
+            "foot_Fz_N": [
+              0.0,
+              13.045179325252475,
+              0.0,
+              5.058236204596375
+            ],
+            "sum_Fz_N": 18.10341552984885,
+            "floor_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.99,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          },
+          "differentiable": {
+            "foot_Fz_N": [
+              0.0,
+              0.006951895104521999,
+              0.0,
+              0.0010024860974624933
+            ],
+            "sum_Fz_N": 0.007954381201984492,
+            "floor_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ],
+            "foot_solimp": [
+              0.0,
+              0.999,
+              0.001,
+              0.5,
+              2.0
+            ]
+          }
         }
-      ],
-      "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+      ]
     },
-    "complete_session": false,
-    "promoted": false,
-    "curriculum_enabled": false
-  },
-  "preview_publication": {
-    "status": "published",
-    "attempts": [
-      "train-PANN_PPO_S5-s0-ep00118",
-      "train-PANN_PPO_S5-s0-ep00140",
-      "train-PANN_PPO_S5-s0-ep00141"
+    "onset": [
+      {
+        "time_s": 2.0019999999998124,
+        "active_plan_origin_s": 2.0019999999998124,
+        "query_time_float32": 2.002000093460083,
+        "feedback_interpolation_fraction": 4.67301353168688e-05,
+        "recorded_target_reconstruction_max_error": 5.665374835928105e-08,
+        "accepted_rollout_action_reconstruction_max_error": 0.0,
+        "max_feedback_correction_rad": 6.475549442885864e-06,
+        "max_raw_K_delta_x_rad": 6.475549442915829e-06,
+        "max_abs_K": 401.17859190731303,
+        "torque_saturated_joints": 0,
+        "moving_support_C_max_abs": 5.202281319061086,
+        "moving_support_D_max_abs": 0.00021211298769792026
+      },
+      {
+        "time_s": 2.003999999999812,
+        "active_plan_origin_s": 2.0019999999998124,
+        "query_time_float32": 2.003999948501587,
+        "feedback_interpolation_fraction": 0.9999742508873801,
+        "recorded_target_reconstruction_max_error": 4.642721274095152e-08,
+        "accepted_rollout_action_reconstruction_max_error": 0.0,
+        "max_feedback_correction_rad": 0.18082952407872344,
+        "max_raw_K_delta_x_rad": 0.18082952407872338,
+        "max_abs_K": 720.0041837130506,
+        "torque_saturated_joints": 0,
+        "moving_support_C_max_abs": 398.3788418575607,
+        "moving_support_D_max_abs": 0.02173234178812905
+      },
+      {
+        "time_s": 2.005999999999812,
+        "active_plan_origin_s": 2.0019999999998124,
+        "query_time_float32": 2.00600004196167,
+        "feedback_interpolation_fraction": 2.098092899416546e-05,
+        "recorded_target_reconstruction_max_error": 2.9683033253569135e-08,
+        "accepted_rollout_action_reconstruction_max_error": 1.3877787807814457e-17,
+        "max_feedback_correction_rad": 0.8596651326289623,
+        "max_raw_K_delta_x_rad": 0.8596651326289623,
+        "max_abs_K": 1783.4480025574094,
+        "torque_saturated_joints": 3,
+        "moving_support_C_max_abs": 2083.4090001649042,
+        "moving_support_D_max_abs": 0.22301357663562574
+      },
+      {
+        "time_s": 2.0079999999998117,
+        "active_plan_origin_s": 2.0019999999998124,
+        "query_time_float32": 2.007999897003174,
+        "feedback_interpolation_fraction": 0.9999485016810574,
+        "recorded_target_reconstruction_max_error": 1.110724974218158e-07,
+        "accepted_rollout_action_reconstruction_max_error": 1.1102230246251565e-16,
+        "max_feedback_correction_rad": 1.5077604341062392,
+        "max_raw_K_delta_x_rad": 2.6305321593143285,
+        "max_abs_K": 4904.8179653696825,
+        "torque_saturated_joints": 5,
+        "moving_support_C_max_abs": 9401.101519425663,
+        "moving_support_D_max_abs": 0.7076162852606358
+      },
+      {
+        "time_s": 2.0099999999998115,
+        "active_plan_origin_s": 2.0019999999998124,
+        "query_time_float32": 2.009999990463257,
+        "feedback_interpolation_fraction": 0.9999952317226715,
+        "recorded_target_reconstruction_max_error": 2.8381347605410667e-08,
+        "accepted_rollout_action_reconstruction_max_error": 2.220446049250313e-16,
+        "max_feedback_correction_rad": 1.3660841323962205,
+        "max_raw_K_delta_x_rad": 3.3114996105550363,
+        "max_abs_K": 5090.064093714426,
+        "torque_saturated_joints": 7,
+        "moving_support_C_max_abs": 16238.3006980793,
+        "moving_support_D_max_abs": 1.3338055351586053
+      },
+      {
+        "time_s": 2.0119999999998113,
+        "active_plan_origin_s": 2.0019999999998124,
+        "query_time_float32": 2.01200008392334,
+        "feedback_interpolation_fraction": 4.1961764285507644e-05,
+        "recorded_target_reconstruction_max_error": 2.8381347605410667e-08,
+        "accepted_rollout_action_reconstruction_max_error": 1.1102230246251565e-16,
+        "max_feedback_correction_rad": 0.920310196104756,
+        "max_raw_K_delta_x_rad": 2.0116399152640074,
+        "max_abs_K": 3622.504104252536,
+        "torque_saturated_joints": 4,
+        "moving_support_C_max_abs": 12947.781351444699,
+        "moving_support_D_max_abs": 1.2744812907874992
+      },
+      {
+        "time_s": 2.013999999999811,
+        "active_plan_origin_s": 2.0019999999998124,
+        "query_time_float32": 2.0139999389648438,
+        "feedback_interpolation_fraction": 0.9999694825163488,
+        "recorded_target_reconstruction_max_error": 2.8381347605410667e-08,
+        "accepted_rollout_action_reconstruction_max_error": 1.3877787807814457e-17,
+        "max_feedback_correction_rad": 0.8388794741022795,
+        "max_raw_K_delta_x_rad": 2.040615400597991,
+        "max_abs_K": 5186.709217993031,
+        "torque_saturated_joints": 6,
+        "moving_support_C_max_abs": 9740.562452450931,
+        "moving_support_D_max_abs": 0.9640542129388252
+      },
+      {
+        "time_s": 2.015999999999811,
+        "active_plan_origin_s": 2.0019999999998124,
+        "query_time_float32": 2.0160000324249268,
+        "feedback_interpolation_fraction": 1.6212557962804306e-05,
+        "recorded_target_reconstruction_max_error": 5.2563597918720006e-08,
+        "accepted_rollout_action_reconstruction_max_error": 1.1102230246251565e-16,
+        "max_feedback_correction_rad": 0.8234956077661256,
+        "max_raw_K_delta_x_rad": 1.0560970914991072,
+        "max_abs_K": 3003.5730876939515,
+        "torque_saturated_joints": 1,
+        "moving_support_C_max_abs": 7103.216358962161,
+        "moving_support_D_max_abs": 0.7663697814065846
+      },
+      {
+        "time_s": 2.0179999999998106,
+        "active_plan_origin_s": 2.0019999999998124,
+        "query_time_float32": 2.0179998874664307,
+        "feedback_interpolation_fraction": 0.9999437333100261,
+        "recorded_target_reconstruction_max_error": 5.5580878122185595e-08,
+        "accepted_rollout_action_reconstruction_max_error": 2.220446049250313e-16,
+        "max_feedback_correction_rad": 1.2796216583080726,
+        "max_raw_K_delta_x_rad": 2.2822411692521345,
+        "max_abs_K": 2772.115774358351,
+        "torque_saturated_joints": 2,
+        "moving_support_C_max_abs": 7185.12262593285,
+        "moving_support_D_max_abs": 0.7543118911747249
+      },
+      {
+        "time_s": 2.0199999999998104,
+        "active_plan_origin_s": 2.0199999999998104,
+        "query_time_float32": 2.0199999809265137,
+        "feedback_interpolation_fraction": 0.0,
+        "recorded_target_reconstruction_max_error": 5.736016439605862e-08,
+        "accepted_rollout_action_reconstruction_max_error": 0.0,
+        "max_feedback_correction_rad": 6.938893903907228e-18,
+        "max_raw_K_delta_x_rad": 6.023751217339472e-18,
+        "max_abs_K": 51.47559366690689,
+        "torque_saturated_joints": 0,
+        "moving_support_C_max_abs": 8.15175553492588,
+        "moving_support_D_max_abs": 0.0005912006074038252
+      }
     ],
-    "manifest": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z-assets.json",
-    "scope": "Three completed recorded-state videos plus their actual trajectory/model/startup/cap/physical/prediction arrays;not full-job publication.",
-    "network": "academic_only",
-    "started_unix_s": 1793620249.2997055,
-    "files": 24,
-    "bytes": 417017102,
-    "exit_codes": {
-      "upload": 0,
-      "finish": 0
-    },
-    "finished_unix_s": 1793620309.8281484,
-    "pending_paths": [],
-    "uploaded_files": 24,
-    "videos": [
+    "raw_evidence": [
       {
-        "attempt": "train-PANN_PPO_S5-s0-ep00118",
-        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part01/train-PANN_PPO_S5-s0-ep00118__full-mission-material-overlay.mp4"
+        "name": "job-20261101T133954Z__regression__contact-at-saved-state.json",
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/regression/contact-at-saved-state.json",
+        "size": 5847,
+        "status": "uploaded",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__regression__contact-at-saved-state.json"
       },
       {
-        "attempt": "train-PANN_PPO_S5-s0-ep00140",
-        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part01/train-PANN_PPO_S5-s0-ep00140__full-mission-material-overlay.mp4"
+        "name": "job-20261101T133954Z__regression__analysis.json",
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/regression/analysis.json",
+        "size": 230914,
+        "status": "uploaded",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__regression__analysis.json"
       },
       {
-        "attempt": "train-PANN_PPO_S5-s0-ep00141",
-        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part01/train-PANN_PPO_S5-s0-ep00141__full-mission-material-overlay.mp4"
-      }
-    ]
-  },
-  "interim_diagnostics": {
-    "timing_comparison": {
-      "r24_W35": {
-        "episodes": 73,
-        "physical_s": 1006.5963999995635,
-        "wall_s": 80967.8114542123,
-        "slowdown": 80.4372154065397,
-        "planning_count": 50392,
-        "mean_planning_s": 1.0040672945705051,
-        "planning_fraction": 0.624902145670687,
-        "timing": {
-          "startup_planning": 1426.8105589486659,
-          "planning": 50596.959107996896,
-          "feedback": 374.5009519904852,
-          "state_parameter_rpc": 763.0551365055144,
-          "physics": 11526.503610230982
-        }
-      },
-      "r25_W36": {
-        "episodes": 25,
-        "physical_s": 561.2171999993474,
-        "wall_s": 77945.37646068074,
-        "slowdown": 138.88629297315083,
-        "planning_count": 28072,
-        "mean_planning_s": 2.586334665777944,
-        "planning_fraction": 0.9314675229561955,
-        "timing": {
-          "startup_planning": 1201.931107526645,
-          "planning": 72603.58673771843,
-          "feedback": 247.68745961412787,
-          "state_parameter_rpc": 485.3951315265149,
-          "physics": 2749.387243406847
-        }
-      }
-    },
-    "direction_samples": [
-      {
-        "attempt": "train-PANN_PPO_S5-s0-ep00118",
-        "t_s": 2.9999999999997025,
-        "base_x_m": -0.12998305561260207,
-        "body_target_x_m": 0.020016944387397928,
-        "vx_m_s": -0.0145681646969663,
-        "command_vx_m_s": 0.21368767722754461
+        "name": "job-20261101T133954Z__regression__analysis-console.json",
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/regression/analysis-console.json",
+        "size": 4933,
+        "status": "uploaded",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__regression__analysis-console.json"
       },
       {
-        "attempt": "train-PANN_PPO_S5-s0-ep00118",
-        "t_s": 5.000000000001703,
-        "base_x_m": -0.5174165696805,
-        "body_target_x_m": -0.36741656968049996,
-        "vx_m_s": -0.10519808686542766,
-        "command_vx_m_s": 0.22221282369451223
+        "name": "job-20261101T133954Z__regression__r25_saved_state__server.log",
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/regression/r25_saved_state/server.log",
+        "size": 176,
+        "status": "uploaded",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__regression__r25_saved_state__server.log"
       },
       {
-        "attempt": "train-PANN_PPO_S5-s0-ep00118",
-        "t_s": 10.000000000003372,
-        "base_x_m": -1.118748250796476,
-        "body_target_x_m": -0.9687482507964761,
-        "vx_m_s": -0.24310270666208236,
-        "command_vx_m_s": 0.20283002594506827
+        "name": "job-20261101T133954Z__regression__r25_saved_state__planner.jsonl",
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/regression/r25_saved_state/planner.jsonl",
+        "size": 1618357,
+        "status": "uploaded",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__regression__r25_saved_state__planner.jsonl"
       },
       {
-        "attempt": "train-PANN_PPO_S5-s0-ep00118",
-        "t_s": 13.909999999994259,
-        "base_x_m": -0.7752777640571578,
-        "body_target_x_m": -0.625866212876903,
-        "vx_m_s": 0.2986466999514033,
-        "command_vx_m_s": 0.20300899744373974
+        "name": "job-20261101T133954Z__regression__r25_saved_state__result.json",
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/regression/r25_saved_state/result.json",
+        "size": 21078,
+        "status": "uploaded",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__regression__r25_saved_state__result.json"
       },
       {
-        "attempt": "train-PANN_PPO_S5-s0-ep00140",
-        "t_s": 2.9999999999997025,
-        "base_x_m": -0.14216884068005592,
-        "body_target_x_m": 0.007831159319944075,
-        "vx_m_s": -0.2888517861854744,
-        "command_vx_m_s": 0.19050969386203137
-      },
-      {
-        "attempt": "train-PANN_PPO_S5-s0-ep00140",
-        "t_s": 5.000000000001703,
-        "base_x_m": -0.5636310365377841,
-        "body_target_x_m": -0.4136310365377841,
-        "vx_m_s": -0.1240955872071792,
-        "command_vx_m_s": 0.20503700898347374
-      },
-      {
-        "attempt": "train-PANN_PPO_S5-s0-ep00140",
-        "t_s": 10.000000000003372,
-        "base_x_m": -1.3354437250647382,
-        "body_target_x_m": -1.1854437250647383,
-        "vx_m_s": -0.08352496261354952,
-        "command_vx_m_s": 0.2031671006052955
-      },
-      {
-        "attempt": "train-PANN_PPO_S5-s0-ep00140",
-        "t_s": 20.40579999997912,
-        "base_x_m": -2.2064112995009033,
-        "body_target_x_m": -2.0569019271271256,
-        "vx_m_s": 0.26172998891168825,
-        "command_vx_m_s": 0.21991412863537202
-      },
-      {
-        "attempt": "train-PANN_PPO_S5-s0-ep00141",
-        "t_s": 2.9999999999997025,
-        "base_x_m": -0.14977842134122984,
-        "body_target_x_m": 0.0002215786587701496,
-        "vx_m_s": -0.12604893141748863,
-        "command_vx_m_s": 0.19667284766853316
-      },
-      {
-        "attempt": "train-PANN_PPO_S5-s0-ep00141",
-        "t_s": 5.000000000001703,
-        "base_x_m": -0.5269827717173383,
-        "body_target_x_m": -0.3769827717173383,
-        "vx_m_s": -0.20182286207894196,
-        "command_vx_m_s": 0.2173570296667696
-      },
-      {
-        "attempt": "train-PANN_PPO_S5-s0-ep00141",
-        "t_s": 10.000000000003372,
-        "base_x_m": -1.2934421912923588,
-        "body_target_x_m": -1.143442191292359,
-        "vx_m_s": -0.18703231269067128,
-        "command_vx_m_s": 0.20587405412087809
-      },
-      {
-        "attempt": "train-PANN_PPO_S5-s0-ep00141",
-        "t_s": 23.397999999972146,
-        "base_x_m": -2.1396896935175724,
-        "body_target_x_m": -1.9892880435637843,
-        "vx_m_s": -0.19822657373272465,
-        "command_vx_m_s": 0.20078702617294827
+        "name": "job-20261101T133954Z__replay-r25.log",
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/replay-r25.log",
+        "size": 17105,
+        "status": "uploaded",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__replay-r25.log"
       }
     ],
-    "observation": "Positive requested velocity coexists with negative actual velocity; bounded body target follows the retreat into negative x. This identifies a reference/control issue before material entry;not a demonstrated unique cause.",
-    "runtime_source": "scripts/s1_go2_r11_runtime.py:lead clamp after mission.update;mission update clips body target to[0,3]before that clamp.",
-    "compute_observation": {
-      "cpu_quota_cores": 25,
-      "mpc_workers": 20,
-      "sampled_used_cpu_cores": 11.78,
-      "sampled_cpu_pressure_avg10": 0.0,
-      "scope": "One4second sample after rendering;not a lifetime performance profile."
-    },
-    "cost_change": "r25 evaluates sensor C/D at all10substeps; r24 evaluates them at node start while already composing10A/B transitions. New residual evaluation and chain-rule work is inside MPC. No function-level timing claim."
+    "vertical_moment_proxy": "MovingSupport roll/pitch targets omit horizontal-force moment contributions. This source limitation has not been isolated as the sole onset cause."
+  },
+  "stop_record": {
+    "actual_transitions": 4497,
+    "updates": 17,
+    "new_transitions": 1169,
+    "new_updates": 4,
+    "unupdated_tail": 145,
+    "final_episode": 144,
+    "reason": "training_budget_truncated",
+    "process_exit_code": 0,
+    "checkpoint": "training/PANN_PPO_S5-seed0/resume-state-ep00144.pt",
+    "last_complete_update": "training/PANN_PPO_S5-seed0/checkpoint-004352.pt",
+    "no_new_training_authorized": true
   }
 }
