@@ -21,6 +21,31 @@ def server_credentials(deadline, release_tags, manifest=None, manifest_path=None
             text=True,stderr=subprocess.PIPE,timeout=30).strip()
     env=dict(os.environ,GH_TOKEN=token,GODEBUG='http2client=0')
     def api(endpoint,*flags,missing_ok=False):
+        # The academic proxy repeatedly times out on gh's TLS handshake.
+        # Use the same authenticated HTTP/1 + TLS1.2 transport as asset uploads
+        # for metadata GETs; this is not a VPN fallback or a retry loop.
+        if '--method' not in flags:
+            paginate='--paginate' in flags
+            pages=[];page=1
+            while True:
+                remaining=deadline-time.time()
+                if remaining<=0:raise TimeoutError('Publication deadline reached')
+                path=endpoint+('&' if '?' in endpoint else '?')+'page='+str(page) if paginate else endpoint
+                config='header = "Authorization: Bearer '+token+'"\nheader = "Accept: application/vnd.github+json"\n'
+                result=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2',
+                    '--silent','--show-error','--connect-timeout','20',
+                    '--max-time',str(min(120,int(remaining))),'-w','\n%{http_code}',
+                    'https://api.github.com/'+path],input=config,env=env,text=True,
+                    stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+                body,code=result.stdout.rsplit('\n',1)
+                if code=='404' and missing_ok:return None
+                if result.returncode or code!='200':
+                    raise RuntimeError('GitHub metadata GET failed: HTTP '+code+' '+result.stderr.replace(token,'[credential]')[-300:])
+                value=json.loads(body)
+                if not paginate:return value
+                pages.append(value)
+                if len(value)<100:return pages
+                page+=1
         remaining=deadline-time.time()
         if remaining<=0:raise TimeoutError('Publication deadline reached')
         try:
