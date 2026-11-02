@@ -952,3 +952,22 @@ Traceback (most recent call last):
     elif actual:raise RuntimeError('Existing asset differs; retained without replacement: '+row['name'])
                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 RuntimeError: Existing asset differs; retained without replacement: train-PANN_PPO_S5-s0-ep00129__full-mission-material-overlay.mp4
+
+Started 1793632214.154375: scripts/publish_s1_go2_r12.py
+Traceback (most recent call last):
+  File "/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py", line 249, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py", line 120, in main
+    credentials=server_credentials(args.deadline_unix,tags,
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py", line 70, in server_credentials
+    for tag in sorted(release_tags):load_release(tag)
+                                    ^^^^^^^^^^^^^^^^^
+  File "/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py", line 67, in load_release
+    pages=api(f'repos/{REPO}/releases/{release["id"]}/assets?per_page=100','--paginate','--slurp')
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py", line 43, in api
+    raise RuntimeError('GitHub metadata GET failed: HTTP '+code+' '+result.stderr.replace(token,'[credential]')[-300:])
+RuntimeError: GitHub metadata GET failed: HTTP 000 curl: (28) SSL connection timeout
+
