@@ -1,0 +1,66 @@
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -15,6 +15,8 @@
+ #include "mjpc/planners/ilqg/planner.h"
+ 
+ #include <algorithm>
++#include <fstream>
++#include <cstdlib>
+ #include <chrono>
+ #include <cstddef>
+ #include <cstdio>
+@@ -394,6 +396,17 @@
+   LogScale(linesearch_steps, 1.0, settings.min_linesearch_step,
+            num_trajectory_ - 1);
+   linesearch_steps[num_trajectory_ - 1] = 0.0;
++
++  const char* diagnostic_file=std::getenv("S1_REGRESSION_DIAGNOSTIC");
++  const bool record_transition=diagnostic_file && time>=1.999 && time<=2.021;
++  const int record_nodes=11;
++  std::vector<double> linearization_state,linearization_residual;
++  if (record_transition) {
++    linearization_state.assign(candidate_policy[0].trajectory.states.begin(),
++      candidate_policy[0].trajectory.states.begin()+record_nodes*dim_state);
++    linearization_residual.assign(candidate_policy[0].trajectory.residual.begin(),
++      candidate_policy[0].trajectory.residual.begin()+record_nodes*task->num_residual);
++  }
+ 
+   // ----- model derivatives ----- //
+   // start timer
+@@ -623,6 +636,36 @@
+     policy.feedback_scaling = 1.0;
+   }
+ 
++  if (record_transition) {
++    std::ofstream out(diagnostic_file,std::ios::app);
++    out.precision(17);
++    out<<"{\"origin\":"<<time<<",\"winner\":"<<winner
++       <<",\"accepted_cost\":"<<trajectory[winner].total_return
++       <<",\"executed_reference_cost\":"<<policy.trajectory.total_return
++       <<",\"feedback_scaling\":"<<policy.feedback_scaling
++       <<",\"nx\":"<<dim_state_derivative<<",\"ns\":"<<dim_sensor
++       <<",\"nr\":"<<task->num_residual<<",\"nodes\":[";
++    auto array=[&out](const char* key,const double* x,int n) {
++      out<<",\""<<key<<"\":[";
++      for(int j=0;j<n;++j){if(j)out<<",";out<<x[j];}out<<"]";
++    };
++    for(int k=0;k<record_nodes;++k) {
++      if(k)out<<",";
++      out<<"{\"t\":"<<policy.trajectory.times[k];
++      array("linearization_state",linearization_state.data()+k*dim_state,dim_state);
++      array("linearization_residual",linearization_residual.data()+k*task->num_residual,task->num_residual);
++      array("accepted_state",trajectory[winner].states.data()+k*dim_state,dim_state);
++      array("executed_reference_state",policy.trajectory.states.data()+k*dim_state,dim_state);
++      array("accepted_action",trajectory[winner].actions.data()+k*dim_action,dim_action);
++      array("executed_nominal_action",policy.trajectory.actions.data()+k*dim_action,dim_action);
++      array("K",policy.feedback_gain.data()+k*dim_action*dim_state_derivative,dim_action*dim_state_derivative);
++      array("C",model_derivative.C.data()+k*dim_sensor*dim_state_derivative,dim_sensor*dim_state_derivative);
++      array("D",model_derivative.D.data()+k*dim_sensor*dim_action,dim_sensor*dim_action);
++      out<<"}";
++    }
++    out<<"]}\n";
++  }
++
+   // stop timer
+   double policy_update_time = GetDuration(policy_update_start);
+ 

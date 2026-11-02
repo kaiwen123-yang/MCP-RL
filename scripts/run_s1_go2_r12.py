@@ -160,6 +160,9 @@ def evaluate_job(jobdir, contract):
     started = time.time()  # Evaluation owns its full four hours after all training.
     settings = contract['control_and_evaluation']['post_training_evaluation']
     deadline = started + settings['maximum_wall_s']
+    if not settings.get('enabled',True):
+        write(jobdir/'evaluation.json',dict(job=jobdir.name,status='cancelled_user_regression_stop',reason=settings.get('disabled_reason'),attempts=[],stages=[]))
+        return 0
     record = dict(job=jobdir.name, status='running', started_unix_s=started,
                   deadline_unix_s=deadline, controller_build=job['controller_build'],
                   group=job['group'], seed=job['seed'], condition=settings['condition'],

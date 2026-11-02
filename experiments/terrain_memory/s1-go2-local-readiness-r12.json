@@ -1,13 +1,13 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "W36_r25_built_ready_for_joint_training",
+  "status": "W36_r25_stopped_by_user_diagnosis_and_publication_only",
   "protocol_revision": "stable_support_joint_v11",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-11-01",
   "supersedes_plan_commit": "90d4fd648ae120bcd5c6bdf8c3e0d821d6242296",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
-  "current_task": "W36_STABLE_SUPPORT_JOINT",
+  "current_task": "W36_R25_STOP_AND_DIAGNOSE",
   "reuse": {
     "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
     "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
@@ -15,7 +15,7 @@
     "rule": "Reuse the proven D57 environment and executed S5-r24 as the implementation base. Implement/build S5-r25 coordinated feasible-reference, moving-support, low-impact landing and legal-route reward changes before launching W36. Existing final-policy evaluator and Release partitioning are already operational; do not rebuild those stages.",
     "active_controller_build": "S5-r25",
     "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r25.json",
-    "active_controller_status": "implemented_and_built_on_D57",
+    "active_controller_status": "historical_r25_stopped;no_repaired_controller_built_or_authorized_to_run",
     "parent_controller_build": "S5-r24",
     "parent_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r24.json"
   },
@@ -264,7 +264,7 @@
     },
     {
       "id": "W36",
-      "status": "implemented_built_pending_launch",
+      "status": "stopped_at_user_request",
       "goal": "Form a usable legal PANN-PPO-MPC baseline by coordinating feasible body reference,moving support,low-impact landing/material margin and legal-route rewards,then continue substantive joint learning.",
       "group": "PANN_PPO_S5",
       "seed": 0,
@@ -285,7 +285,14 @@
       "training_maximum_wall_s": 100800,
       "evaluation_maximum_wall_s": 14400,
       "postprocess_maximum_wall_s": 21600,
-      "done": "Actual implementation and full-loop samples/updates,final frozen-policy E30/eligible E60 or honest partial/blocking reasons,complete research delivery and scoped post-publication cleanup.No guaranteed task pass or memory-benefit claim."
+      "done": "Actual implementation and full-loop samples/updates,final frozen-policy E30/eligible E60 or honest partial/blocking reasons,complete research delivery and scoped post-publication cleanup.No guaranteed task pass or memory-benefit claim.",
+      "actual_cumulative_transitions": 4497,
+      "actual_cumulative_updates": 17,
+      "actual_new_transitions": 1169,
+      "actual_new_updates": 4,
+      "actual_unupdated_tail": 145,
+      "final_episode": 144,
+      "final_evaluation": "cancelled_user_regression_stop"
     }
   ],
   "resources": {
@@ -453,7 +460,8 @@
     },
     "resume_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__training__PANN_PPO_S5-seed0__resume-state-ep00117.pt",
     "reward_version": "W36_legal_route_progress_and_lap_alignment",
-    "reward_definition": "Original reward coefficients. Progress/lap terms now use500Hzoriginal strip legality in both directions with actual material loading; side exits/incomplete passages retract provisional positive lap progress and disable further positive progress for that lap. Raw progress/laps remain recorded."
+    "reward_definition": "Original reward coefficients. Progress/lap terms now use500Hzoriginal strip legality in both directions with actual material loading; side exits/incomplete passages retract provisional positive lap progress and disable further positive progress for that lap. Raw progress/laps remain recorded.",
+    "effective_translation_semantics": "Historical effective_samples/effective_translation_s count outbound/return phase activity,not demonstrated positive progress."
   },
   "control_and_evaluation": {
     "keep_original_robot_material_pd_torque_and_thresholds": true,
@@ -982,8 +990,8 @@
     "RAW": "Historical256/1retained independently;no RAW resampling in current baseline phase.",
     "parent_build": "S5-r24",
     "current_build": "S5-r25",
-    "current_build_status": "implemented_and_built_on_D57",
-    "new_controller_build_required": true,
+    "current_build_status": "r25_stopped",
+    "new_controller_build_required": false,
     "window_budget_s": 14400,
     "background_training_authorized": true,
     "background_default_budget_s": 100800,
@@ -991,6 +999,8 @@
     "final_evaluation_adapter_status": "already_implemented_and_executed_reuse",
     "automatic_postprocess": true,
     "default_postprocess_budget_s": 21600,
-    "automatic_cleanup_status": "implemented_in_existing_finish_after_successful_publication"
+    "automatic_cleanup_status": "implemented_in_existing_finish_after_successful_publication",
+    "training_authorized": false,
+    "latest_user_scope": "Stop,identify errors,publish all related evidence;no repair rollout or further training."
   }
 }

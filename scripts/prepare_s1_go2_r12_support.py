@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Build W36 stable support from the retained, executed S5-r24 source."""
+import argparse
 import hashlib
 import json
 from pathlib import Path
@@ -11,7 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD = "S5-r25"
 
 def main():
-    prior = ROOT / "work/r11-frozen/S5-r24"
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--build',default='S5-r25')
+    args=parser.parse_args()
+    global BUILD
+    BUILD=args.build
+    specification=json.loads((ROOT/f'experiments/terrain_memory/s1-go2-r11-{BUILD}.json').read_text())
+    prior = ROOT / "work/r11-frozen" / specification['based_on']
     frozen = ROOT / "work/r11-frozen" / BUILD
     source = ROOT / "work/terrain-memory/upstreams/mujoco_mpc-go2"
     specification = json.loads((ROOT / f"experiments/terrain_memory/s1-go2-r11-{BUILD}.json").read_text())
@@ -22,11 +29,13 @@ def main():
     shutil.copytree(prior / "mjpc", source / "mjpc", dirs_exist_ok=True)
     shutil.copy2(prior / "SOURCE_COMMIT", source / "SOURCE_COMMIT")
     patch_path = ROOT / f"experiments/terrain_memory/s1-go2-r11-{BUILD}.patch"
+    for line in patch_path.read_text().splitlines():
+        if line.startswith("+++ b/"):
+            target=source/line[6:]
+            if target.exists():target.write_text(target.read_text())
     subprocess.run(["patch", "-p1", "--forward", "--batch", "-i", str(patch_path)],
                    cwd=source, check=True)
-    changed_sources = [
-        "mjpc/tasks/quadruped/quadruped.cc", "mjpc/tasks/quadruped/r10_contact.h",
-        "mjpc/r12_path.h", "mjpc/trajectory.cc", "mjpc/planners/model_derivatives.cc"]
+    changed_sources = [line[6:] for line in patch_path.read_text().splitlines() if line.startswith('+++ b/')]
     # Reuse actual frozen task assets instead of fetching unrelated model packs.
     root_cmake = subprocess.check_output(["git", "show", "HEAD:CMakeLists.txt"], cwd=source, text=True)
     first = root_cmake.index("FetchContent_Declare(\n  menagerie")
@@ -65,7 +74,7 @@ def main():
     shutil.copy2(builddir / "bin/agent_server", frozen / "agent_server")
     shutil.copy2(log_path, frozen / "build.log")
     identity = json.loads((prior / "identity.json").read_text())
-    identity.update(build=BUILD, based_on="S5-r24", prior_binary_sha256=identity["binary_sha256"],
+    identity.update(build=BUILD, based_on=specification["based_on"], prior_binary_sha256=identity["binary_sha256"],
         binary_sha256=hashlib.file_digest((frozen / "agent_server").open("rb"), "sha256").hexdigest(),
         source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         build_started_unix_s=begin, build_wall_s=time.time()-begin,
