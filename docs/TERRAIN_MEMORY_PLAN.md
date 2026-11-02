@@ -2,12 +2,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W36/r25作业job-20261101T133954Z已正常停止；仅定位与完整交付，不继续修复验证或启动新训练。
-- 实际停止：累计4497条/17更新，r25新增1169条/4更新；ep144导出尾批145条与resume-state-ep00144.pt，最近完整更新checkpoint-004352.pt。
-- 定位：同状态输入下2.002s原接触Fz154.13N、MakeDifferentiable后0.01660N；2.006/2.008s反馈修正0.8597/1.5078rad、3/5关节饱和。复算动作一致，KΔx可重构，未发现该段策略发布错配。
-- 其他问题：支撑因子全周期恒1；lead之后目标随后退且无移动速度残差；十子步完整C/D增加开销。前24回合20跌倒+4非足接触，前25回合21+4；阶段活动时间不等于有效前进。
-- 评价/发布/清理：28h到40h续行与正式评价均已取消；已有轨迹已回放渲染，交付快照974/1059，只继续后处理；未完整交付或仍活跃的文件不清理。
-- 查阅：同job摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json的regression字段、experiments/terrain_memory/s1-go2-r25-source源码快照和Release矩阵/轨迹；r26草稿未应用、未构建、未训练。
+- 当前任务：W36_STABLE_SUPPORT_JOINT后台作业job-20261101T133954Z已结束；训练达标=False，评价=cancelled_user_regression_stop，发布=published，清理=pending_publication。
+- 当前状态：本job新增1169条/4次更新，累计4497/17，目标5376/21；末端cancelled_user_regression_stop。
+- 已完成：本job保留27个新attempt，视频可用27，资产已发布1060/1060；控制版S5-r25。
+- 当前问题：训练合规贯穿0、侧出0、返程0、合规返程0、合规往返0（裸计数0）；末次training_budget_truncated；待传0、待视频0。
+- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。
 
 ## 1. 最新实际进展
 
