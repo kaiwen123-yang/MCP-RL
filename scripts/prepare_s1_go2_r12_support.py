@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build W36 stable support from the retained, executed S5-r24 source."""
+"""Build the specified R12 revision from its retained executed source base."""
 import argparse
 import hashlib
 import json
@@ -9,11 +9,11 @@ import subprocess
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-BUILD = "S5-r25"
+BUILD = "S5-r26"
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument('--build',default='S5-r25')
+    parser.add_argument('--build',default='S5-r26')
     args=parser.parse_args()
     global BUILD
     BUILD=args.build
@@ -60,7 +60,7 @@ def main():
         "-DBUILD_TESTING=OFF", "-DMJPC_BUILD_GRPC_SERVICE=ON", "-DMUJOCO_MPC_MUJOCO_GIT_TAG=088079eff0450e32b98ee743141780ed68307506"]
     log_path = source / f"build-{BUILD}.log"
     with log_path.open("w") as log:
-        log.write("W36 r25 from executed r24; reuse pinned MuJoCo dependency and runtime.\n")
+        log.write(f"{BUILD} from executed {specification['based_on']}; reuse pinned MuJoCo dependency and runtime.\n")
         log.flush()
         subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=True)
         subprocess.run(["cmake", "--build", str(builddir), "--target", "agent_server", "-j", "8"],

@@ -1,12 +1,43 @@
 #!/usr/bin/env python3
 """R12 full-loop sampling on the recorded controller build and configured host."""
-import argparse, copy, json, os, time
+import argparse, copy, json, math, os, time
 from run_s1_go2_r11 import configuration, arguments
 from s1_go2_r11_protocol import ROOT
 from s1_go2_r11_runtime import run, dump, index_file
 from s1_go2_r11_policy import PolicyStream, PolicyMaterial
 from mujoco_mpc.agent import Agent
 CONFIG = "experiments/terrain_memory/s1-go2-local-readiness-r12.json"
+def known_r25_startup_regression(result,tolerance):
+    """One natural-terminal predicate on saved result JSON; no physics changes."""
+    evidence=dict(attempt=result.get('attempt'),goal_position_radius_m=tolerance,
+        threshold_source='Resolved original task.goal_position_radius_m',
+        original_physical_reason=result.get('reason'))
+    try:
+        reason=result['reason']
+        if not reason.startswith(('body_fall','invalid_contact')):
+            return dict(evidence,status='not_matched',detail='Not a natural fall/nonfoot terminal')
+        transitions=result['transitions'];progress=result['stage_progress']
+        phases=[x['phase'] for x in transitions]
+        initial=transitions[0]['position_m'][0]
+        maximum=result['max_x_m'];final=result['final_qpos'][0]
+        loaded=result['material']['loaded_ever_cells'];actual=progress['actual_material_loaded']
+        far=progress['far_arrival_s'];returning=progress['return_start_s']
+    except (KeyError,IndexError,TypeError,AttributeError) as error:
+        return dict(evidence,status='not_evaluable',detail='Missing required result field: '+str(error))
+    evidence.update(initial_x_m=initial,max_x_m=maximum,final_x_m=final,
+        loaded_ever_cells=loaded,actual_material_loaded=actual,observed_phases=phases,
+        far_arrival_s=far,return_start_s=returning)
+    numeric=[initial,maximum,final,loaded]+[v for v in (far,returning) if v is not None]
+    if (any(not isinstance(v,(int,float)) or isinstance(v,bool) or not math.isfinite(v) for v in numeric)
+            or not isinstance(actual,bool) or any(not isinstance(p,str) for p in phases)):
+        return dict(evidence,status='not_evaluable',detail='Nonfinite or unspecified required values')
+    later={'far_hold','turn','return','turn_home','home_hold','terminal_stand','complete'}
+    matched=('outbound' in phases and not later.intersection(phases)
+        and far is None and returning is None and loaded==0 and actual is False
+        and maximum-initial<=tolerance and final-initial < -tolerance)
+    return dict(evidence,status='matched' if matched else 'not_matched')
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--group", required=True, choices=["PPO_RAW_S5","PANN_PPO_S5"])
@@ -46,7 +77,7 @@ def main():
     dump(output/"training-contract.json",contract)
     stream=PolicyStream(ROOT,a.group,a.seed,contract,output,checkpoint=a.resume)
     initial_transitions,initial_updates=stream.samples,stream.backend.update_count
-    # r25 begins from the actual empty ep117 tail, not replayed historical rollouts.
+    # The explicit ep144 migration records excluded old data; same-version tails remain valid.
     stream.write_collection()
     # A failed initialization may retain an attempt without a newer checkpoint.
     # Continue checkpoint counts, but never reuse that retained attempt's ID.
@@ -61,11 +92,13 @@ def main():
         protocol_revision=contract["protocol_revision"],initial_condition="nominal",curriculum_enabled=False,
         resume_checkpoint=a.resume,continuous_environment_restored=False,
         controller_version_boundary=contract["learning"]["controller_version_boundary"],
-        reward_version=stream.reward_version,initial_tail_buffer=len(stream.buffer),
+        reward_version=stream.reward_version,initial_tail_buffer=len(stream.buffer),phase_id=stream.phase_id,
+        excluded_old_version_transitions=stream.excluded_old_version_transitions,
+        controller_migration=stream.controller_migration,
         phase_initial_transitions=contract["learning"]["phase_initial_transitions"],
         phase_initial_updates=contract["learning"]["phase_initial_updates"],
         execution_mode=execution_mode,window_start_unix_s=a.window_start_unix,deadline_unix_s=deadline,hard_deadline_unix_s=hard))
-    last_result=None
+    last_result=None;phase_stop=None
     while stream.samples<stream.target and time.time()<deadline:
         session=contract["learning"]["initial_acquisition_session_s"]
         stream.episode+=1
@@ -100,23 +133,35 @@ def main():
         stream.session_records.append(record)
         dump(output/f"episode-{stream.episode:05d}.json",record)
         stream.checkpoint(resume_only=True)
+        if contract['learning'].get('known_r25_startup_regression',{}).get('enabled_for_planned_phase'):
+            saved_result=json.loads((small/f'{name}.json').read_text())
+            check=known_r25_startup_regression(saved_result,c['task']['goal_position_radius_m'])
+            record['startup_regression_check']=check
+            dump(output/f'episode-{stream.episode:05d}.json',record)
+            if check['status']=='matched':phase_stop=dict(reason='known_r25_startup_regression',evidence=check)
         with index_file(small,c) as idx:
             streams=idx.setdefault("training_streams",{})
             streams[f"{a.group}-seed{a.seed}"]=dict(group=a.group,seed=a.seed,actual_transitions=stream.samples,
                 updates=stream.backend.update_count,tail_buffer=len(stream.buffer),episodes=stream.episode,
+                excluded_old_version_transitions=stream.excluded_old_version_transitions,
+                phase_id=stream.phase_id,controller_migration=stream.controller_migration,phase_stop=phase_stop,
                 physics_s=stream.physics_s,controller_build=build,output=str(output.relative_to(ROOT)),
                 checkpoint=str((output/f"resume-state-ep{stream.episode:05d}.pt").relative_to(ROOT)))
             idx.update(current_task=contract["current_task"],protocol_revision=contract["protocol_revision"],status=f"{a.group}_training",
                 training_runs=len(streams),training_transitions=sum(x["actual_transitions"] for x in streams.values()),
                 training_updates=sum(x["updates"] for x in streams.values()),window=c["window"])
         print(json.dumps(record),flush=True)
-        if result["stage_status"] in ("technical_interruption","budget_truncated"):break
+        if phase_stop or result["stage_status"] in ("technical_interruption","budget_truncated"):break
     stream.checkpoint(resume_only=True)
     dump(output/"stopped.json",dict(actual_transitions=stream.samples,updates=stream.backend.update_count,
         unupdated_fragment=len(stream.buffer),physics_s=stream.physics_s,session_records=stream.session_records,
         target=stream.target,continuous_environment_snapshot=False,
         invocation_started_unix_s=invocation_started_unix_s,invocation_wall_s=time.time()-invocation_started_unix_s,
-        controller_build=build,execution_mode=execution_mode,
+        controller_build=build,execution_mode=execution_mode,phase_id=stream.phase_id,
+        reward_version=stream.reward_version,
+        excluded_old_version_transitions=stream.excluded_old_version_transitions,
+        controller_migration=stream.controller_migration,last_completed_update=stream.last_completed_update,
+        phase_stop=phase_stop,
         last_stage_status=last_result["stage_status"] if last_result else None,
         last_episode_reason=last_result["reason"] if last_result else None,
         phase_initial_transitions=contract["learning"]["phase_initial_transitions"],
@@ -125,7 +170,7 @@ def main():
         phase_new_updates=stream.backend.update_count-contract["learning"]["phase_initial_updates"],
         initial_transitions=initial_transitions,new_transitions=stream.samples-initial_transitions,
         initial_updates=initial_updates,new_updates=stream.backend.update_count-initial_updates,
-        reason="target_reached" if stream.samples>=stream.target else "deadline_or_technical_stop",
+        reason=phase_stop["reason"] if phase_stop else ("target_reached" if stream.samples>=stream.target else "deadline_or_technical_stop"),
         deadline_unix_s=deadline,stopped_unix_s=time.time()))
     stream.log.close()
     stream.learning.close()

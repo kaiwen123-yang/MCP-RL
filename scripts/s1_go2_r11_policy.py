@@ -102,6 +102,9 @@ class PolicyStream:
         self.reward_version=contract.get('learning',{}).get('reward_version','legacy_signed_route_and_raw_laps')
         self.phase_initial_samples=contract.get('learning',{}).get('phase_initial_transitions',0)
         self.phase_initial_updates=contract.get('learning',{}).get('phase_initial_updates',0)
+        self.phase_id=contract.get('learning',{}).get('phase_id',contract.get('current_task'))
+        self.excluded_old_version_transitions=0;self.controller_migration=None
+        self.last_completed_update=None
         resources=contract.get('resources',{})
         torch.set_num_threads(resources.get('torch_threads',1));torch.set_num_interop_threads(1)
         np.random.seed(seed);torch.manual_seed(seed)
@@ -128,6 +131,9 @@ class PolicyStream:
             self.curriculum_stage=saved['curriculum_stage'];self.promotions=saved['promotions']
             self.session_records=saved['session_records'];self.backend.update_count=saved['updates']
             self.begin=saved.get('collection_started_unix_s',self.begin)
+            self.excluded_old_version_transitions=saved.get('excluded_old_version_transitions',0)
+            self.controller_migration=saved.get('controller_migration')
+            self.last_completed_update=saved.get('last_completed_update')
             if training:
                 self.backend.optimizer.load_state_dict(saved['optimizer'])
                 torch.set_rng_state(saved['torch_rng']);np.random.set_state(saved['numpy_rng'])
@@ -135,8 +141,32 @@ class PolicyStream:
                 self.buffer=[{k:v.to(self.backend.config.device) for k,v in row.items()} for row in saved.get('buffer',[])]
                 if self.buffer and (saved.get('controller_build')!=self.controller_build or
                                     saved.get('reward_version','legacy_signed_route_and_raw_laps')!=self.reward_version):
-                    raise ValueError('Preserve the saved old-version tail; it cannot enter a new-version on-policy update.')
-                self.last_observation=saved.get('last_observation')
+                    boundary=contract['learning'].get('controller_version_boundary',{})
+                    declared=root/boundary.get('parent_checkpoint','')
+                    source=Path(checkpoint)
+                    if not source.is_absolute():source=root/source
+                    explicit=(self.controller_build=='S5-r26' and saved.get('controller_build')=='S5-r25'
+                        and source.resolve()==declared.resolve() and saved['episode']==144
+                        and saved['samples']==4497 and saved['updates']==17 and len(self.buffer)==145
+                        and saved.get('reward_version')==self.reward_version
+                        and self.excluded_old_version_transitions==0)
+                    if not explicit:
+                        raise ValueError('Preserve the saved old-version tail; it cannot enter a new-version on-policy update.')
+                    self.controller_migration=dict(parent_checkpoint=str(source.relative_to(root)),
+                        parent_release_url=boundary['parent_checkpoint_release_url'],
+                        parent_controller_build='S5-r25',controller_build='S5-r26',reward_version=self.reward_version,
+                        first_excluded_transition=4353,last_excluded_transition=4497,
+                        excluded_transitions=145,used_in_new_updates=False,
+                        restored=['actor','critic','optimizer','RNG','normalization','historical_counts'],
+                        continuous_environment_restored=False,new_buffer_size=0)
+                    excluded=self.directory/'excluded-r25-004353-004497.pt'
+                    torch.save(dict(migration=self.controller_migration,buffer=saved['buffer']),excluded)
+                    self.controller_migration['isolated_tail_path']=str(excluded.relative_to(root))
+                    self.excluded_old_version_transitions=145
+                    self.buffer=[]
+                # A new physical session never inherits a pending successor.
+                # Same-version buffers retain their already recorded next_obs/value.
+                self.last_observation=None
                 self.transition_serial=saved.get('transition_serial',self.samples)
                 log_path=self.directory/'transitions.jsonl'
                 if log_path.exists():
@@ -157,6 +187,10 @@ class PolicyStream:
 
     def checkpoint(self,resume_only=False):
         p=self.directory/(f'resume-state-ep{self.episode:05d}.pt' if resume_only else f'checkpoint-{self.samples:06d}.pt')
+        if not resume_only:
+            self.last_completed_update=dict(path=str(p.relative_to(self.root)),samples=self.samples,
+                updates=self.backend.update_count,phase_id=self.phase_id,
+                controller_build=self.controller_build,reward_version=self.reward_version)
         torch.save(dict(actor=self.backend.actor.state_dict(),critic=self.backend.critic.state_dict(),
             optimizer=self.backend.optimizer.state_dict(),normalization=self.normalization,
             samples=self.samples,stage_samples=self.stage_samples,seed=self.seed,group=self.group,
@@ -170,7 +204,9 @@ class PolicyStream:
             cuda_rng=torch.cuda.get_rng_state_all() if self.backend.config.device.startswith('cuda') else None,
             controller_build=self.controller_build,reward_version=self.reward_version,
             phase_initial_transitions=self.phase_initial_samples,
-            phase_initial_updates=self.phase_initial_updates,
+            phase_initial_updates=self.phase_initial_updates,phase_id=self.phase_id,
+            excluded_old_version_transitions=self.excluded_old_version_transitions,
+            controller_migration=self.controller_migration,last_completed_update=self.last_completed_update,
             ppo=self.backend.provenance()),p.with_suffix('.tmp'))
         p.with_suffix('.tmp').replace(p)
         summary=dict(samples=self.samples,effective_samples=self.effective_samples,
@@ -178,7 +214,10 @@ class PolicyStream:
             curriculum_stage=self.curriculum_stage,promotions=self.promotions,session_records=self.session_records,
             updates=self.backend.update_count,wall_s=time.time()-self.begin,checkpoint=str(p),
             group=self.group,seed=self.seed,unupdated_fragment=len(self.buffer),
-            continuous_environment_snapshot=False)
+            continuous_environment_snapshot=False,
+            excluded_old_version_transitions=self.excluded_old_version_transitions,
+            controller_migration=self.controller_migration,phase_id=self.phase_id,
+            last_completed_update=self.last_completed_update)
         self.write_collection()
         progress=self.directory/'progress.json'
         progress.with_suffix('.tmp').write_text(json.dumps(summary,indent=2)+'\n')
@@ -193,6 +232,9 @@ class PolicyStream:
             wall_s=time.time()-self.begin,updated_unix_s=time.time(),collection_started_unix_s=self.begin,
             physics_s=self.physics_s,episode=self.episode,curriculum_stage=self.curriculum_stage,
             discarded_after_checkpoint=self.discarded_after_checkpoint,
+            excluded_old_version_transitions=self.excluded_old_version_transitions,
+            controller_migration=self.controller_migration,phase_id=self.phase_id,
+            last_completed_update=self.last_completed_update,
             controller_build=self.controller_build,reward_version=self.reward_version,
             phase_initial_transitions=self.phase_initial_samples,
             phase_new_transitions=self.samples-self.phase_initial_samples,
@@ -401,7 +443,8 @@ class PolicyMaterial(JointMaterial):
         result['material']['observer_enabled']=self.observer is not None
         result['policy']=dict(group=self.group,seed=self.stream.seed,training=self.stream.training,
             total_transitions=self.stream.samples,stage=self.stage,session_limit_s=self.session_s,
-            cap_to_reference_increment_latency_s=.002,
+            cap_to_reference_increment_latency_s=None if hasattr(self,'reference_timing') else .002,
+            reference_timing=getattr(self,'reference_timing',None),
             action_record='cap-decisions.json and training transitions.jsonl',
             terminated=physical_failure or timeout or success,truncated=truncated,
             effective_translation_s=self.effective_time,normalization=self.stream.normalization,

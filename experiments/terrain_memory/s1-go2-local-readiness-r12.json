@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "W37_contact_consistent_joint_planned_not_built_not_run",
+  "status": "W37_implemented_pending_build_and_joint_sampling",
   "protocol_revision": "contact_consistent_joint_v12",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-11-03",
@@ -15,7 +15,7 @@
     "rule": "Reuse the existing D57 environment and executed r24 controller skeleton. Plan S5-r26 by removing the r25 MovingSupport, SupportPlacement and force-allocation additions; retain legal-route reward and necessary path-risk treatment, with coherent capped body reference and active-substep derivatives. Build the actual new version before direct full PANN-PPO-MPC sampling. Existing final-policy evaluation, Release partitioning and post-publication cleanup are reused.",
     "active_controller_build": "S5-r26",
     "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r26.json",
-    "active_controller_status": "planned_not_built_not_run",
+    "active_controller_status": "implemented_pending_build",
     "parent_controller_build": "S5-r25",
     "parent_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r25.json",
     "latest_executed_controller_build": "S5-r25",
@@ -23,7 +23,7 @@
     "implementation_base_controller_build": "S5-r24",
     "implementation_base_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r24.json",
     "checkpoint_parent_controller_build": "S5-r25",
-    "specification_path_status": "Planned specification destination; this JSON edit does not create or implement S5-r26."
+    "specification_path_status": "Actual r26 specification and source patch implemented on D57."
   },
   "execution": {
     "mode": "interactive_setup_and_detached_training",
@@ -131,7 +131,7 @@
       "failure_policy": "Record technical/stage errors and pending paths;publish all available outputs.Do not rerun physics for videos or restart training to repair delivery.Failed upload/push retains unpublished files for ordinary retry;never force-push.Delete only confirmed-delivered inactive copies.",
       "result_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job-name>.json",
       "resume_publication": "Continue the same job's finish only after a concrete delivery error;reuse videos,snapshots and explicit Release destinations without re-running training/evaluation.",
-      "final_evaluation_adapter_status": "implemented_and_executed_in_W35_reuse;new_phase_checkpoint_and_regression_skip_branches_planned",
+      "final_evaluation_adapter_status": "implemented_new_phase_update_selection_and_regression_skip",
       "postprocessing_release_policy": "New unassigned nonempty assets go to deterministic per-job partNN Releases,max900assets each;retain all existing manifest/index destinations and reuse already published files.",
       "cleanup_after_publication": "Implemented in existing finish/publish: complete manifest and rendering, normal push, then remove inactive confirmed local outputs and push same job record.",
       "prior_40h_extension_inherited": false,
@@ -308,7 +308,7 @@
     },
     {
       "id": "W37",
-      "status": "planned_not_built_not_run",
+      "status": "implemented_pending_build",
       "goal": "Recover useful forward/material exposure with a contact-consistent controller inside the unchanged full PANN-PPO-MPC loop, then acquire substantive new on-policy learning and evaluate its final policy.",
       "group": "PANN_PPO_S5",
       "seed": 0,
@@ -316,7 +316,7 @@
       "implementation_base_controller_build": "S5-r24",
       "checkpoint_parent_controller_build": "S5-r25",
       "controller_build": "S5-r26",
-      "controller_status": "planned_not_built_not_run",
+      "controller_status": "implemented_pending_build",
       "reward_version": "W36_legal_route_progress_and_lap_alignment",
       "initial_cumulative_transitions": 4497,
       "initial_cumulative_updates": 17,
@@ -401,6 +401,14 @@
       "live_rechecked_by_this_plan": false,
       "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json#cleanup",
       "scope": "Published closed-job research copies only; source, environment, runtime assets and compact records retained. Free-space values are historical server readings, not measurements by this review."
+    },
+    "storage_check_at_execution": {
+      "checked_utc": "2026-11-03T07:43Z",
+      "filesystem": "/dev/md0",
+      "reported_capacity": "1000G",
+      "reported_used": "166G",
+      "reported_available": "835G",
+      "scope": "One df -h at W37 entry; no extra pre-launch scan."
     }
   },
   "learning": {
@@ -495,7 +503,7 @@
       "parent_controller_build": "S5-r25",
       "active_controller_build": "S5-r26",
       "implementation_base_controller_build": "S5-r24",
-      "status": "planned_explicit_one_time_tail_migration_not_implemented",
+      "status": "implemented_explicit_ep144_tail_migration",
       "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00144.pt",
       "parent_checkpoint_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__training__PANN_PPO_S5-seed0__resume-state-ep00144.pt",
       "parent_transitions": 4497,
@@ -524,9 +532,9 @@
     "reward_version": "W36_legal_route_progress_and_lap_alignment",
     "reward_definition": "Original reward coefficients. Progress/lap terms now use500Hzoriginal strip legality in both directions with actual material loading; side exits/incomplete passages retract provisional positive lap progress and disable further positive progress for that lap. Raw progress/laps remain recorded.",
     "effective_translation_semantics": "Historical effective_samples/effective_translation_s count outbound or return phase activity, not positive progress, useful material exposure or learning benefit.",
-    "planned_runtime_changes_status": "Documentation contract only; migration, regression-stop and phase-specific evaluation selection still require source implementation in the next execution task.",
+    "planned_runtime_changes_status": "Implemented: explicit tail migration, saved-result regression stop, phase-specific completed-update evaluation selection.",
     "known_r25_startup_regression": {
-      "status": "planned_small_post_episode_branch_not_implemented",
+      "status": "implemented_saved_natural_episode_predicate",
       "enabled_for_planned_phase": true,
       "scope": "Conservative phase-budget stop for the documented r25 behavior signature; matching does not prove the same root cause or classify every possible future failure.",
       "evaluation_point": "After run has saved its unchanged physical result and the normal episode/resume checkpoint, before launching another natural episode. No dense-array reads, polling process or Codex waiting for the first episode.",
@@ -620,7 +628,7 @@
     },
     "post_training_evaluation": {
       "planned": true,
-      "implementation_status": "existing_adapter_reused;phase_stop_and_new_phase_checkpoint_selection_planned",
+      "implementation_status": "implemented_phase_selection_and_regression_skip",
       "purpose": "Observe the final actually updated r26 phase policy under the original nominal ladder, only when the phase has a new completed update and has not stopped on the known startup regression.",
       "group": "PANN_PPO_S5",
       "seed": 0,
@@ -695,7 +703,7 @@
     "reward_alignment_risk": "W35 side exits/raw laps exposed reward mismatch. The W36 legal-route reward is already implemented and retained unchanged; do not repeat its implementation or infer task success from its presence.",
     "later_decision_rule": "First obtain useful forward/material exposure and a legal joint baseline; only then consider matched RAW/PANN/cross-leg/return-memory comparisons or a specifically justified throughput/action change. Never extend a known-regressed fixed controller merely to fill2048samples, or claim memory benefit from this controller repair.",
     "contact_consistent_revision": {
-      "status": "planned_not_built_not_run",
+      "status": "implemented_pending_build",
       "build": "S5-r26",
       "implementation_base": "S5-r24",
       "detailed_plan": "docs/TERRAIN_MEMORY_PLAN.md#4",
@@ -1301,7 +1309,7 @@
   ],
   "current_window_scope": {
     "task": "W37_CONTACT_CONSISTENT_JOINT",
-    "status": "planned_implementation_and_training_not_executed",
+    "status": "implemented_pending_build",
     "group": "PANN_PPO_S5",
     "seed": 0,
     "objective": "Repair the known startup contact/reference mismatch in the complete joint loop, recover actual forward/material exposure and continue useful on-policy learning without changing the real task.",
@@ -1321,15 +1329,15 @@
     "stop_at_each_update": false,
     "automatic_next_task": false,
     "server_execution_completed_by_this_plan": false,
-    "this_review_documentation_only": true,
-    "this_review_starts_server_work": false,
+    "this_review_documentation_only": false,
+    "this_review_starts_server_work": true,
     "RAW": "Historical256/1retained independently; no RAW resampling, optimizer sharing or old-data mixing.",
     "implementation_base_build": "S5-r24",
     "checkpoint_parent_build": "S5-r25",
     "latest_executed_build": "S5-r25",
     "latest_executed_build_status": "stopped_published_with_regression",
     "current_build": "S5-r26",
-    "current_build_status": "planned_not_built_not_run",
+    "current_build_status": "implemented_pending_build",
     "new_controller_build_required": true,
     "window_budget_s": 14400,
     "background_training_authorized": true,
@@ -1340,7 +1348,7 @@
     "automatic_postprocess": true,
     "default_postprocess_budget_s": 21600,
     "automatic_cleanup_status": "already_implemented_and_executed_reuse",
-    "latest_user_scope": "Prepare and publish the concrete W37 next-step plan. Implementation/build and direct full joint training are planned follow-up execution, not work performed by this documentation review."
+    "latest_user_scope": "2026-11-03 explicit execution authorization: implement/build r26, direct 28h joint training, eligible 4h final evaluation, 6h publication/cleanup."
   },
   "current_review_scope": {
     "kind": "documentation_only",

@@ -52,6 +52,7 @@ def main():
     job_name = "job-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     directory = ROOT / contract["outputs"]["large_root"] / job_name
     directory.mkdir(parents=True, exist_ok=False)
+    contract["learning"]["phase_id"]=job_name
     (directory / "execution-contract.json").write_text(json.dumps(contract, indent=2) + "\n")
     environment = dict(python=sys.version, executable=sys.executable, platform=platform.platform(),
                        recorded_environment="experiments/terrain_memory/compute-environment.json",
@@ -70,7 +71,7 @@ def main():
     command = [
         "bash", "scripts/run_s1_go2_r12_training.sh",
         "--group", active["group"], "--seed", str(active["seed"]),
-        "--resume", a.resume, "--background-job",
+        "--resume", a.resume, "--contract", str(directory/"execution-contract.json"), "--background-job",
         "--job-start-unix", str(started), "--deadline-unix", str(deadline),
     ]
     log = directory / "train.log"
@@ -116,6 +117,8 @@ def main():
         source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         controller_build=contract["reuse"]["active_controller_build"], current_task=contract["current_task"],
         group=active["group"], seed=active["seed"], resume_checkpoint=a.resume,
+        phase_id=job_name,reward_version=contract['learning']['reward_version'],
+        planned_excluded_old_version_transitions=contract['learning']['controller_version_boundary']['excluded_old_version_transitions_after_migration'],
         started_unix_s=started, deadline_unix_s=deadline,
         initial_transitions=int(resume_state["samples"]), initial_updates=int(resume_state["updates"]),
         target_transitions=contract["learning"]["target_cumulative_transitions_per_stream"],

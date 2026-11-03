@@ -1,0 +1,342 @@
+--- /dev/null
++++ b/mjpc/r26_risk.h
+@@ -0,0 +1,101 @@
++// W37: shared pre-integration q/v risk values and active-branch geometry FD.
++#ifndef MJPC_R26_RISK_H_
++#define MJPC_R26_RISK_H_
++#include <vector>
++#include <mujoco/mujoco.h>
++#include "mjpc/utilities.h"
++#include "mjpc/tasks/quadruped/r10_contact.h"
++namespace mjpc {
++inline double R26DomainValue(const mjModel* m,const mjData* d,int geom) {
++  if (!R10MaterialFoot(m,d,geom)) return 0;
++  const double* margin=GetCustomNumericData(m,"r11_domain_margin");
++  const double floor=GetCustomNumericData(m,"s1_flat_ground_height")[0];
++  const double over=floor+m->geom_size[3*geom]-d->geom_xpos[3*geom+2]-margin[0];
++  return .5*(over+mju_sqrt(over*over+1e-12))/margin[1];
++}
++inline double R26ClearanceValue(const mjModel* m,const mjData* d,int geom) {
++  const int floor=mj_name2id(m,mjOBJ_GEOM,"floor");
++  const double margin=mju_max(m->geom_margin[floor],m->geom_margin[geom]);
++  const double over=margin-mj_geomDistance(m,d,floor,geom,1.,nullptr);
++  return .5*(over+mju_sqrt(over*over+1e-12))/
++      GetCustomNumericData(m,"r12_trunk_clearance")[0];
++}
++inline double R26ImpactValue(const mjModel* m,const mjData* d,int geom) {
++  const double* p=d->geom_xpos+3*geom;
++  constexpr double half=.015811388300841896;
++  const double band=GetNumberOrDefault(0.,m,"r11_landing_approach_band");
++  if (p[0]<.8+half-band || p[0]>2.2-half+band || mju_abs(p[1])>.6-half+band) return 0;
++  const double* margin=GetCustomNumericData(m,"r26_impact_margin");
++  const double z=p[2]-m->geom_size[3*geom]-GetCustomNumericData(m,"s1_flat_ground_height")[0];
++  double velocity[6];mj_objectVelocity(m,d,mjOBJ_GEOM,geom,velocity,0);
++  const double down=mju_max(-velocity[5],0.);
++  const double hold=m->opt.timestep*GetNumberOrDefault(1,m,"s1_control_hold_substeps");
++  const double over=hold*down+down*down/(2*mju_abs(m->opt.gravity[2]))-(z+margin[0]);
++  return .5*(over+mju_sqrt(over*over+1e-12))/margin[1];
++}
++struct R26RiskRow { int sensor,geom,kind; };
++inline std::vector<R26RiskRow> R26RiskRows(const mjModel* m) {
++  std::vector<R26RiskRow> rows;
++  if (!GetCustomNumericData(m,"r12_substep_path")) return rows;
++  const char* names[]={"MaterialDomainMargin","TrunkClearance","ImpactMargin"};
++  for (int kind=0;kind<3;++kind) {
++    const int sensor=mj_name2id(m,mjOBJ_SENSOR,names[kind]);
++    int adr=m->sensor_adr[sensor];
++    if (kind==1) {
++      const int trunk=mj_name2id(m,mjOBJ_BODY,"trunk"),floor=mj_name2id(m,mjOBJ_GEOM,"floor");
++      for (int geom=0;geom<m->ngeom;++geom)
++        if (m->geom_bodyid[geom]==trunk &&
++            ((m->geom_contype[geom]&m->geom_conaffinity[floor]) ||
++             (m->geom_contype[floor]&m->geom_conaffinity[geom])))
++          rows.push_back({adr++,geom,kind});
++    } else {
++      // Same enum/sensor order as QuadrupedFlat: FL, HL, FR, HR.
++      for (const char* foot:{"FL","RL","FR","RR"})
++        rows.push_back({adr++,mj_name2id(m,mjOBJ_GEOM,foot),kind});
++    }
++  }
++  return rows;
++}
++inline double R26RiskValue(const mjModel* m,const mjData* d,const R26RiskRow& row) {
++  return row.kind==0 ? R26DomainValue(m,d,row.geom) :
++         row.kind==1 ? R26ClearanceValue(m,d,row.geom) : R26ImpactValue(m,d,row.geom);
++}
++inline void R26RiskKinematics(const mjModel* m,mjData* d) {
++  mj_kinematics(m,d);mj_comPos(m,d);mj_comVel(m,d);
++}
++inline void R26AccumulatePath(double* peak,const double* pre_step_sensor,
++                              const std::vector<R26RiskRow>& rows) {
++  for (const auto& row:rows)
++    if (pre_step_sensor[row.sensor]>peak[row.sensor])
++      peak[row.sensor]=pre_step_sensor[row.sensor];
++}
++// Differentiate only rows whose final active state is this substep. No contact
++// solver or sensor callbacks; all three risks have zero direct control term.
++inline void R26RiskJacobian(const mjModel* m,mjData* d,double eps,int centered,
++    const std::vector<R26RiskRow>& rows,const std::vector<int>& selected,
++    int nx,double* jac) {
++  const int nr=selected.size();
++  std::vector<double> q(d->qpos,d->qpos+m->nq),v(d->qvel,d->qvel+m->nv);
++  std::vector<double> delta(m->nv,0.),base(nr),plus(nr),minus(nr);
++  R26RiskKinematics(m,d);mju_zero(jac,nr*nx);
++  for (int r=0;r<nr;++r)base[r]=R26RiskValue(m,d,rows[selected[r]]);
++  for (int k=0;k<2*m->nv;++k) {
++    const int index=k%m->nv;
++    for (int sign=1;sign>=-1;sign-=2) {
++      if (sign<0 && !centered)break;
++      mju_copy(d->qpos,q.data(),m->nq);mju_copy(d->qvel,v.data(),m->nv);
++      if (k<m->nv) {
++        delta[index]=sign*eps;mj_integratePos(m,d->qpos,delta.data(),1.);delta[index]=0.;
++      } else d->qvel[index]+=sign*eps;
++      R26RiskKinematics(m,d);
++      auto& value=sign>0 ? plus : minus;
++      for (int r=0;r<nr;++r)value[r]=R26RiskValue(m,d,rows[selected[r]]);
++    }
++    for (int r=0;r<nr;++r)
++      jac[r*nx+k]=(plus[r]-(centered ? minus[r] : base[r]))/((centered ? 2 : 1)*eps);
++  }
++  mju_copy(d->qpos,q.data(),m->nq);mju_copy(d->qvel,v.data(),m->nv);
++  R26RiskKinematics(m,d);
++}
++}  // namespace mjpc
++#endif
+--- /dev/null
++++ b/mjpc/r26_reference.h
+@@ -0,0 +1,22 @@
++// One immutable packet per real replan, shared by every rollout and FD worker.
++#ifndef MJPC_R26_REFERENCE_H_
++#define MJPC_R26_REFERENCE_H_
++#include <mujoco/mujoco.h>
++#include "mjpc/utilities.h"
++namespace mjpc {
++inline void R26HeadReference(const mjModel* m,const mjData* d,double* target) {
++  const double* settings=GetCustomNumericData(m,"r26_reference");
++  if (!settings) return;
++  const double* p=d->userdata+84;
++  if (p[0]!=1.) return;
++  const double tau=mju_clip(d->time-p[1],0.,settings[0]);
++  const double lead=mju_max(0.,settings[1]/settings[2]-settings[0]);
++  const double dv=p[6]-p[5],a=settings[3];
++  const double b=mju_min(tau,mju_abs(dv)/a);
++  const double sign=dv>0 ? 1. : dv<0 ? -1. : 0.;
++  const double integral=p[5]*b+.5*sign*a*b*b+p[6]*(tau-b);
++  target[0]=p[2]+p[4]*mju_min(mju_abs(p[3]-p[2]),p[5]*lead+integral)+p[8];
++  target[1]=p[10]+p[9];target[2]=p[11];
++}
++}  // namespace mjpc
++#endif
+--- a/mjpc/tasks/quadruped/quadruped.cc
++++ b/mjpc/tasks/quadruped/quadruped.cc
+@@ -20,6 +20,8 @@
+ #include "mjpc/task.h"
+ #include "mjpc/utilities.h"
+ #include "mjpc/tasks/quadruped/r10_contact.h"
++#include "mjpc/r26_risk.h"
++#include "mjpc/r26_reference.h"
+ 
+ namespace mjpc {
+ std::string QuadrupedHill::XmlPath() const {
+@@ -143,6 +145,7 @@
+     target[1] = goal_pos[1];
+     target[2] = goal_pos[2];
+   }
++  R26HeadReference(model,data,target);
+   if (support) mju_copy3(target, ref + 7);
+   residual[counter++] = head[0] - target[0];
+   residual[counter++] = head[1] - target[1];
+@@ -386,37 +389,16 @@
+     }
+   }
+ 
+-  // S5-r6: forecast cost near the unchanged true material-domain boundary.
+-  const double* domain_margin = GetCustomNumericData(model, "r11_domain_margin");
+-  if (domain_margin) {
+-    constexpr double half = 0.015811388300841896;
+-    for (A1Foot foot : kFootAll) {
+-      const double* p = foot_pos[foot];
+-      const bool material = p[0]>=.8+half && p[0]<=2.2-half && mju_abs(p[1])<=.6-half;
+-      double value = 0;
+-      if (material) {
+-        const double depth = flat_ground_height[0] + model->geom_size[3*foot_geom_id_[foot]] - p[2];
+-        const double over = depth-domain_margin[0];
+-        value = .5*(over+mju_sqrt(over*over+1e-12))/domain_margin[1];
+-      }
+-      residual[counter++] = value;
+-    }
+-  }
+-
+-  // W34: the real task terminates at the first forbidden trunk-floor contact.
+-  // Penalize that same geometry/margin in each predicted state, before contact
+-  // can become an attractive support and recovery strategy.
+-  const double* clearance = GetCustomNumericData(model, "r12_trunk_clearance");
+-  if (clearance) {
+-    for (int geom : trunk_collision_geoms_) {
+-      const double margin = mju_max(model->geom_margin[floor_geom_id_],
+-                                    model->geom_margin[geom]);
+-      const double distance = mj_geomDistance(model, data, floor_geom_id_,
+-                                              geom, 1.0, nullptr);
+-      const double over = margin - distance;
+-      residual[counter++] = 0.5*(over + mju_sqrt(over*over + 1e-12))/clearance[0];
+-    }
+-  }
++  // All path values use the same q/v functions as the active-substep Jacobian.
++  if (GetCustomNumericData(model,"r11_domain_margin"))
++    for (A1Foot foot:kFootAll)
++      residual[counter++]=R26DomainValue(model,data,foot_geom_id_[foot]);
++  if (GetCustomNumericData(model,"r12_trunk_clearance"))
++    for (int geom:trunk_collision_geoms_)
++      residual[counter++]=R26ClearanceValue(model,data,geom);
++  if (GetCustomNumericData(model,"r26_impact_margin"))
++    for (A1Foot foot:kFootAll)
++      residual[counter++]=R26ImpactValue(model,data,foot_geom_id_[foot]);
+ 
+   // sensor dim sanity check
+   CheckSensorDim(model, counter);
+--- a/mjpc/trajectory.cc
++++ b/mjpc/trajectory.cc
+@@ -22,6 +22,7 @@
+ #include <absl/random/random.h>
+ #include <mujoco/mujoco.h>
+ #include "mjpc/utilities.h"
++#include "mjpc/r26_risk.h"
+ 
+ namespace mjpc {
+ namespace {
+@@ -117,6 +118,7 @@
+   // horizon
+   horizon = steps;
+   const int control_substeps = GetNumberOrDefault(1, model, "s1_control_hold_substeps");
++  const auto risk_rows=R26RiskRows(model);
+ 
+   // set mocap
+   for (int i = 0; i < nmocap; i++) {
+@@ -166,9 +168,13 @@
+     GetTraces(DataAt(trace, t * 3 * task->num_trace), model, data,
+               task->num_trace);
+ 
+-    // Residual and trace above belong to the node start. The second 1ms
+-    // integration uses the same policy output and must not replace them.
+-    for (int substep=1;substep<control_substeps;++substep) mj_step(model,data);
++    // mj_step sensordata belongs to its PRE-integration state. Consume those
++    // shared-helper values directly, never pair them with post-step qpos/qvel.
++    // Tracking stays at node start; path rows keep the earliest maximum.
++    for (int substep=1;substep<control_substeps;++substep) {
++      mj_step(model,data);
++      R26AccumulatePath(DataAt(residual,t*dim_residual),data->sensordata,risk_rows);
++    }
+ 
+     // check for step warnings
+     if ((failure |= CheckWarnings(data))) {
+@@ -234,6 +240,7 @@
+   // horizon
+   horizon = steps;
+   const int control_substeps = GetNumberOrDefault(1, model, "s1_control_hold_substeps");
++  const auto risk_rows=R26RiskRows(model);
+ 
+   // set mocap
+   for (int i = 0; i < nmocap; i++) {
+@@ -270,9 +277,13 @@
+     GetTraces(DataAt(trace, t * 3 * task->num_trace), model, data,
+               task->num_trace);
+ 
+-    // Residual and trace above belong to the node start. The second 1ms
+-    // integration uses the same policy output and must not replace them.
+-    for (int substep=1;substep<control_substeps;++substep) mj_step(model,data);
++    // mj_step sensordata belongs to its PRE-integration state. Consume those
++    // shared-helper values directly, never pair them with post-step qpos/qvel.
++    // Tracking stays at node start; path rows keep the earliest maximum.
++    for (int substep=1;substep<control_substeps;++substep) {
++      mj_step(model,data);
++      R26AccumulatePath(DataAt(residual,t*dim_residual),data->sensordata,risk_rows);
++    }
+ 
+     // check for step warnings
+     if ((failure |= CheckWarnings(data))) {
+--- a/mjpc/planners/model_derivatives.cc
++++ b/mjpc/planners/model_derivatives.cc
+@@ -19,6 +19,7 @@
+ #include <mujoco/mujoco.h>
+ #include "mjpc/threadpool.h"
+ #include "mjpc/utilities.h"
++#include "mjpc/r26_risk.h"
+ 
+ namespace mjpc {
+ 
+@@ -87,12 +88,73 @@
+       // set action
+       mju_copy(d->ctrl, u + t * dim_action, dim_action);
+ 
+-      // Jacobians
+-      if (t == T - 1) {
++      const auto risk_rows=R26RiskRows(m);
++      if (!risk_rows.empty() && t<T-1) {
++        const int nx=dim_state_derivative,nu=dim_action,ns=dim_sensor;
++        const int nr=risk_rows.size();
++        const int substeps=GetNumberOrDefault(1,m,"s1_control_hold_substeps");
++        double* total_a=DataAt(A,t*nx*nx);
++        double* total_b=DataAt(B,t*nx*nu);
++        double* total_c=DataAt(C,t*ns*nx);
++        double* total_d=DataAt(D,t*ns*nu);
++        std::vector<double> prefix_a(nx*nx,0.),prefix_b(nx*nu,0.);
++        std::vector<double> next_a(nx*nx),next_b(nx*nu);
++        std::vector<double> states(substeps*dim_state),prefixes_a(substeps*nx*nx),
++                            prefixes_b(substeps*nx*nu),peak(nr);
++        std::vector<int> active(nr,0);
++        for (int j=0;j<nx;++j)prefix_a[j*nx+j]=1.;
++        for (int sub=0;sub<substeps;++sub) {
++          // FD restores its pre-integration input. Full C/D only at node0.
++          GetState(m,d,states.data()+sub*dim_state);
++          mju_copy(prefixes_a.data()+sub*nx*nx,prefix_a.data(),nx*nx);
++          mju_copy(prefixes_b.data()+sub*nx*nu,prefix_b.data(),nx*nu);
++          mjd_transitionFD(m,d,tol,mode,next_a.data(),next_b.data(),
++                           sub==0 ? total_c : nullptr,sub==0 ? total_d : nullptr);
++          // Refresh q/v geometry after FD; do not use its perturbed/stale sensors.
++          R26RiskKinematics(m,d);
++          for (int r=0;r<nr;++r) {
++            const double value=R26RiskValue(m,d,risk_rows[r]);
++            if (!sub || value>peak[r]) {peak[r]=value;active[r]=sub;}
++          }
++          mj_step(m,d);
++          mju_mulMatMat(total_a,next_a.data(),prefix_a.data(),nx,nx,nx);
++          mju_mulMatMat(total_b,next_a.data(),prefix_b.data(),nx,nx,nu);
++          mju_addTo(total_b,next_b.data(),nx*nu);
++          mju_copy(prefix_a.data(),total_a,nx*nx);
++          mju_copy(prefix_b.data(),total_b,nx*nu);
++        }
++        // Only final selected states are differentiated, including node0.
++        for (int sub=0;sub<substeps;++sub) {
++          std::vector<int> selected;
++          for (int r=0;r<nr;++r)if (active[r]==sub)selected.push_back(r);
++          if (selected.empty())continue;
++          SetState(m,d,states.data()+sub*dim_state);d->time=h[t]+sub*m->opt.timestep;
++          std::vector<double> jac(selected.size()*nx);
++          R26RiskJacobian(m,d,tol,mode,risk_rows,selected,nx,jac.data());
++          for (int r=0;r<selected.size();++r) {
++            const int sensor=risk_rows[selected[r]].sensor;
++            mju_mulMatMat(total_c+sensor*nx,jac.data()+r*nx,
++                          prefixes_a.data()+sub*nx*nx,1,nx,nx);
++            mju_mulMatMat(total_d+sensor*nu,jac.data()+r*nx,
++                          prefixes_b.data()+sub*nx*nu,1,nx,nu);
++          }
++        }
++      } else if (t == T - 1) {
+         // Jacobians
+         mjd_transitionFD(m, d, tol, mode, nullptr, nullptr,
+                          DataAt(C, t * (dim_sensor * dim_state_derivative)),
+                          nullptr);
++        if (!risk_rows.empty()) {
++          std::vector<int> selected;
++          for (int r=0;r<risk_rows.size();++r)selected.push_back(r);
++          std::vector<double> jac(risk_rows.size()*dim_state_derivative);
++          R26RiskJacobian(m,d,tol,mode,risk_rows,selected,dim_state_derivative,jac.data());
++          for (int r=0;r<risk_rows.size();++r) {
++            mju_copy(DataAt(C,(t*dim_sensor+risk_rows[r].sensor)*dim_state_derivative),
++                     jac.data()+r*dim_state_derivative,dim_state_derivative);
++            mju_zero(DataAt(D,(t*dim_sensor+risk_rows[r].sensor)*dim_action),dim_action);
++          }
++        }
+       } else {
+         // Node-start C/D and the first 1ms state transition.
+         mjd_transitionFD(

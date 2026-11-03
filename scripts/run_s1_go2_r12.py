@@ -156,7 +156,8 @@ def evaluate_job(jobdir, contract):
     jobdir = (ROOT / jobdir).resolve()
     contract = json.loads((jobdir / 'execution-contract.json').read_text())
     job = json.loads((jobdir / 'job.json').read_text())
-    continue_authorized_budget(jobdir,job,contract)
+    if contract['current_task']!='W37_CONTACT_CONSISTENT_JOINT':
+        continue_authorized_budget(jobdir,job,contract)
     started = time.time()  # Evaluation owns its full four hours after all training.
     settings = contract['control_and_evaluation']['post_training_evaluation']
     deadline = started + settings['maximum_wall_s']
@@ -176,9 +177,42 @@ def evaluate_job(jobdir, contract):
     stream = large / 'training' / f'{job["group"]}-seed{job["seed"]}'
     try:
         import torch
-        # Atomic checkpoint-N.pt files are produced only by completed PPO updates.
-        checkpoint = max(stream.glob('checkpoint-*.pt'), key=lambda x: int(x.stem.split('-')[-1]))
-        saved = torch.load(checkpoint, map_location='cpu', weights_only=False)
+        stopped_path=stream/'stopped.json'
+        stopped=json.loads(stopped_path.read_text()) if stopped_path.exists() else {}
+        collection_path=stream/'collection.json'
+        collection=json.loads(collection_path.read_text()) if collection_path.exists() else {}
+        current_stop=stopped if stopped.get('phase_id')==job['phase_id'] else {}
+        job['phase_stop']=current_stop.get('phase_stop')
+        job['training_stop_reason']=current_stop.get('reason')
+        job['excluded_old_version_transitions']=collection.get('excluded_old_version_transitions')
+        write(jobdir/'job.json',job)
+        if current_stop.get('reason')=='known_r25_startup_regression':
+            record.update(status='skipped_due_to_startup_regression',reason=current_stop['reason'],
+                phase_stop=current_stop['phase_stop'],finished_unix_s=time.time(),
+                stages=[dict(level=level,stage_status='skipped_due_to_startup_regression',
+                    reason=current_stop['reason']) for level in settings['levels']])
+            write(destination,record)
+            return 0
+        # This pointer is written atomically with a completed PPO update, and
+        # carries the producing phase/controller/reward. Never scan old filenames.
+        last=collection.get('last_completed_update')
+        eligible=(last and last['phase_id']==job['phase_id']
+            and last['controller_build']==job['controller_build']
+            and last['reward_version']==job['reward_version']
+            and last['updates']>job['initial_updates'] and last['samples']>job['initial_transitions'])
+        if not eligible:
+            record.update(status='unavailable',reason='new_update_unavailable',
+                finished_unix_s=time.time(),stages=[dict(level=level,stage_status='not_run',
+                    reason='new_update_unavailable') for level in settings['levels']])
+            write(destination,record)
+            return 0
+        checkpoint=ROOT/last['path']
+        saved=torch.load(checkpoint,map_location='cpu',weights_only=False)
+        if not (saved['phase_id']==job['phase_id'] and saved['controller_build']==job['controller_build']
+                and saved['reward_version']==job['reward_version']
+                and saved['updates']==last['updates'] and saved['samples']==last['samples']
+                and len(saved['buffer'])==0):
+            raise ValueError('Completed-update checkpoint does not match its recorded phase identity')
         record.update(checkpoint=str(checkpoint.relative_to(ROOT)), checkpoint_transitions=saved['samples'],
                       checkpoint_updates=saved['updates'], normalization=saved['normalization'])
         del saved
@@ -227,7 +261,7 @@ def evaluate_job(jobdir, contract):
                     result = json.loads(result_path.read_text())
                     row.update({key: result.get(key) for key in (
                         'stage_status', 'success', 'reason', 'error', 'simulation_s', 'wall_s',
-                        'stage_progress', 'completed_round_trips', 'case_key', 'qualification')})
+                        'stage_progress', 'legal_route', 'completed_round_trips', 'case_key', 'qualification')})
                     row['result'] = str(result_path.relative_to(ROOT))
                 elif row['stage_status'] == 'running':
                     row.update(stage_status='technical_interruption', reason=f'No completed result; exit_code={code}; see {log.name}')

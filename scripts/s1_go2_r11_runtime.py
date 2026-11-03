@@ -337,6 +337,14 @@ def run(args, c, joint=None):
     begin = time.perf_counter()
     phase_settings = None
     previous_phase = None
+    reference_settings=c.get('r26_reference')
+    reference_packets=[]
+    if reference_settings:
+        from s1_go2_r26_reference import reference_packet,base_reference,PACKET_FIELDS
+        resolved['reference_packet_fields']=PACKET_FIELDS
+        if joint is not None:joint.reference_timing={'record':'reference-packets.json',
+            'packet_period_s':.02,'actor_to_reference':'Recorded at next normal/phase replan',
+            'reference_to_optimized_action':'Separate logical and wall times; synchronous optimization'}
     with (out/'agent-server.log').open('w') as server_log, (contextlib.nullcontext(joint.agent) if training else Agent(task_id='Quadruped Flat', model=prediction_model,
             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
             subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT), run_init=False)) as agent:
@@ -354,7 +362,7 @@ def run(args, c, joint=None):
                     joint.control(t,mission)
                 contact, grf, _ = actual_contact()
                 body_goal, heading = mission.update(t, dt, data.qpos[:3], velocity, ori, omega, bool(contact.all()))
-                if c.get('r11_body_reference') and mission.phase in ('outbound','return') and (
+                if not reference_settings and c.get('r11_body_reference') and mission.phase in ('outbound','return') and (
                         c['r11_body_reference'].get('whole_route',False) or np.any(joint.soft)):
                     direction=1. if mission.phase=='outbound' else -1.
                     lead=direction*(mission.body_target[0]-data.qpos[0])
@@ -381,6 +389,19 @@ def run(args, c, joint=None):
                 settings = 'stand_settings' if standing else 'move_and_turn_settings'
                 ts = time.perf_counter()
                 settings_changed = settings != phase_settings
+                replan_now=step%10==0 or (support and args.stage=='G1' and (settings_changed or mission_changed))
+                if reference_settings:
+                    if replan_now:
+                        data.userdata[84:96]=reference_packet(mission,t,float(data.qpos[0]),
+                            float(joint.cap) if joint is not None else c['task']['command_speed_m_s'],offset,reference_settings)
+                        reference_wall_start=time.perf_counter()
+                    packet=data.userdata[84:96]
+                    if packet[0]==1:
+                        body_goal=base_reference(packet,t,reference_settings)
+                        heading=float(packet[7])
+                    elif mission.phase in ('turn','turn_home'):
+                        # Original endpoint/turn gait, with longitudinal packet inactive.
+                        body_goal[:2]=mission.task['turnaround_xy_m' if mission.phase=='turn' else 'return_xy_m']
                 if settings_changed:
                     table = c['task'][settings]
                     # Native gait selection applies its own numeric defaults on Transition.
@@ -473,7 +494,7 @@ def run(args, c, joint=None):
                     startup['planning_total_s'] = plan_s
                     if not compact:plans.append([t, plan])
                     if policy_hook:joint.latest_plan=plan
-                elif step % 10 == 0 or (support and args.stage=='G1' and (settings_changed or mission_changed)):
+                elif replan_now:
                     tp = time.perf_counter()
                     agent.planner_step()
                     plan_s = time.perf_counter()-tp
@@ -491,6 +512,14 @@ def run(args, c, joint=None):
                 nominal_action = agent.get_action(time=t, nominal_action=True, averaging_duration=0) if support else None
                 feedback_s = time.perf_counter()-tf
                 feedback_times.append(feedback_s)
+                if reference_settings and replan_now:
+                    decision=(joint.cap_decisions[-1]['time_s'] if joint is not None and joint.cap_decisions else None)
+                    reference_packets.append(dict(packet=data.userdata[84:96].tolist(),phase=mission.phase,
+                        actor_decision_time_s=decision,
+                        actor_to_reference_s=t-decision if decision is not None else None,
+                        reference_to_optimized_action_logical_s=float(data.time)-t,
+                        reference_to_optimized_action_wall_s=time.perf_counter()-reference_wall_start,
+                        planning_wall_s=plan_s,new_optimized_action_time_s=t))
                 if step == 0:
                     startup['actual_first_feedback_action'] = action.copy()
                     dump(small/f'{args.attempt}-resolved.json', resolved)
@@ -616,6 +645,8 @@ def run(args, c, joint=None):
         np.savez_compressed(out/'trajectory.npz', **arrays, physical=np.asarray(physics),
             plan_origin=np.asarray([x[0] for x in plans]), plan_states=np.asarray([x[1]['states'] for x in plans]),
             plan_actions=np.asarray([x[1]['actions'] for x in plans]), plan_times=np.asarray([x[1]['times'] for x in plans]))
+    if reference_settings:
+        dump(out/'reference-packets.json',dict(fields=PACKET_FIELDS,packets=reference_packets))
     result = dict(attempt=args.attempt, stage=args.stage, purpose=args.purpose, condition=args.condition,
         status='completed', success=(first_completion is not None if args.mission=='single' else
             first_completion is not None and first_completion <= c['long_mission_protocol']['route_completion_deadline_s'] and

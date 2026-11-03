@@ -1,0 +1,64 @@
+{
+  "build": "S5-r26",
+  "based_on": "S5-r24",
+  "status": "implemented_pending_build",
+  "configuration_overrides": {
+    "r26_reference": {
+      "horizon_s": 0.35,
+      "maximum_lead_m": 0.15,
+      "maximum_speed_m_s": 0.25,
+      "acceleration_m_s2": 0.5,
+      "userdata_offset": 84,
+      "packet_size": 12,
+      "head_offset_m": 0.3
+    },
+    "r26_impact_margin": {
+      "onset_m": 0.0008,
+      "scale_m": 0.0002,
+      "weight": 176
+    },
+    "r12_substep_path": {
+      "enabled": true,
+      "rows": [
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "ImpactMargin"
+      ],
+      "residual": "Earliest componentwise maximum over ten pre-integration states; terminal separately.",
+      "derivatives": "Ten A/B transitions; one full node-start C/D; shared geometry FD only at final active states, composed with saved P/Q prefixes. Direct risk D is zero.",
+      "limits": "Active-branch derivative; nonsmooth peak switches and proxy-model soft risks do not guarantee true material feasibility."
+    }
+  },
+  "inherited_gait": {
+    "cadence_Hz": 2.0,
+    "duty": 0.45,
+    "rise_s": 0.075,
+    "descent_s": 0.2,
+    "changed": false
+  },
+  "retained": "Original robot, materials/strain.02, task, torque, collision/fall limits, frozen causal PANN, PPO/observation and speed-cap dimensions.",
+  "reward_version": "W36_legal_route_progress_and_lap_alignment",
+  "qualification": "Direct joint sampling after necessary build; actual progress and failures remain to be observed.",
+  "reference_packet_fields": [
+    "active",
+    "t0",
+    "x_anchor",
+    "endpoint",
+    "direction",
+    "v_anchor",
+    "cap",
+    "heading",
+    "world_head_dx",
+    "world_head_dy",
+    "base_y",
+    "base_z"
+  ],
+  "removed_from_r25": [
+    "MovingSupport",
+    "SupportPlacement",
+    "support_share/requested_load",
+    "moving loaded-height/indentation changes",
+    "candidate-dependent lead clipping"
+  ],
+  "restored_from_r24": "Unchanged moving posture/height/stance, compatible input, Stand balance, soft-landing/loaded-height, PD, MakeDifferentiable and full TV feedback."
+}

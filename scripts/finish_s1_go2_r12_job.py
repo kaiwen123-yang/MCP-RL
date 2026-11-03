@@ -35,6 +35,7 @@ def training_outcomes(episodes, small, binaries, latest_resume, initial_transiti
                    all_passage_side_exits=0, legality_records=0, physical_failures_by_phase={},
                    saved_observations=0, nonzero_pann_observations=0,
                    return_observations=0, return_nonzero_pann_observations=0,
+                   material_loaded_episodes=0,max_forward_displacement_m=None,
                    observation_source="New saved rollouts plus final valid resume tail; no inferred missing observations.")
     for episode in episodes:
         result = read(small / (episode.name + ".json"))
@@ -44,6 +45,9 @@ def training_outcomes(episodes, small, binaries, latest_resume, initial_transiti
         outcome["results_available"] += 1
         outcome["physical_episodes"] += int(result.get("simulation_s", 0) > 0)
         progress = result["stage_progress"]
+        outcome['material_loaded_episodes']+=int(progress['actual_material_loaded'])
+        forward=result['max_x_m']-result['transitions'][0]['position_m'][0]
+        outcome['max_forward_displacement_m']=forward if outcome['max_forward_displacement_m'] is None else max(outcome['max_forward_displacement_m'],forward)
         traversal = progress["material_traversal"]
         outcome["legal_outbound_traversals"] += int(traversal["completed"])
         outcome["side_exits"] += int(traversal["lateral_exit_s"] is not None)
@@ -115,7 +119,7 @@ def cleanup_published_outputs(root, large, jobdir, assets, registered, job):
         except (FileNotFoundError,PermissionError,ProcessLookupError):
             continue  # A process may exit during this one /proc snapshot.
     result=dict(status="pending_active_producers" if producers else "completed",
-        authorization="W36 explicit user authorization after full Git/Release delivery",
+        authorization="Explicit user authorization after full Git/Release delivery for this job",
         verification="Existing manifest plus publisher's name/size/upload-state comparison; no new hashes/downloads",
         free_before_bytes=before,deleted_files=0,deleted_bytes=0,
         preserved=[],active_producer_pids=producers,
@@ -320,6 +324,10 @@ def main():
                        initial_updates=job.get("initial_updates"), new_updates=updates-job["initial_updates"],
                        unupdated_fragment=stopped.get("unupdated_fragment", collection.get("unupdated_fragment")),
                        reason=stopped.get("reason"), last_stage_status=stopped.get("last_stage_status"),
+                       phase_id=collection.get('phase_id'),phase_stop=stopped.get('phase_stop'),
+                       excluded_old_version_transitions=collection.get('excluded_old_version_transitions'),
+                       controller_migration=collection.get('controller_migration'),
+                       last_completed_update=collection.get('last_completed_update'),
                        last_episode_reason=stopped.get("last_episode_reason")),
                    pending_assets=pending, render_pending=missing_videos,
                    assets_published=sum(x["path"] not in pending for x in assets), assets_expected=len(assets),
@@ -366,9 +374,9 @@ def main():
     outcomes = summary["training"]["outcomes"]
     handoff = [
         f"- 当前任务：{summary['current_task']}后台作业{name}已结束；训练达标={summary['training']['target_reached']}，评价={evaluation['status']}，发布={summary['publication_status']}，清理={summary['cleanup']['status']}。",
-        f"- 当前状态：本job新增{summary['training']['new_transitions']}条/{summary['training']['new_updates']}次更新，累计{samples}/{updates}，目标{job['target_transitions']}/{job['target_updates']}；末端{eval_text}。",
+        f"- 训练：本job新增{summary['training']['new_transitions']}条/{summary['training']['new_updates']}更新，累计{samples}/{updates}，旧尾excluded={summary['training']['excluded_old_version_transitions']}；停止原因={stopped.get('reason')}；评价独立结果{eval_text}。",
         f"- 已完成：本job保留{len(episodes)}个新attempt，视频可用{len(summary['videos'])}，资产已发布{summary['assets_published']}/{len(assets)}；控制版{job['controller_build']}。",
-        f"- 当前问题：训练合规贯穿{outcomes['legal_outbound_traversals']}、侧出{outcomes['side_exits']}、返程{outcomes['return_episodes']}、合规返程{outcomes['legal_return_traversals']}、合规往返{outcomes['legal_roundtrips']}（裸计数{outcomes['completed_roundtrips']}）；末次{stopped.get('last_episode_reason')}；待传{len(pending)}、待视频{len(missing_videos)}。",
+        f"- 任务表现：最大向前位移{outcomes['max_forward_displacement_m']}m、材料加载{outcomes['material_loaded_episodes']}回合、合规去程{outcomes['legal_all_outbound_traversals']}、合规返程{outcomes['legal_return_traversals']}、合规整圈{outcomes['legal_roundtrips']}、侧出{outcomes['all_passage_side_exits']}；末次原物理原因{stopped.get('last_episode_reason')}。",
         "- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。",
         f"- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要{summary_path.relative_to(ROOT)}；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。",
     ]

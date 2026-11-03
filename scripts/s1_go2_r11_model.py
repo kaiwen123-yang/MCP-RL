@@ -276,6 +276,21 @@ def write_equilibrium_settings(xml_path, config, arm):
                 sensors.insert(index,ET.Element('user',name=name,dim=str(dim),
                     user=f"0 {weight} 0 {weight}"))
                 index+=1
+        if config.get('r26_impact_margin'):
+            margin=config['r26_impact_margin']
+            values['r26_impact_margin']=[margin['onset_m'],margin['scale_m']]
+            ET.SubElement(custom,'numeric',name='r26_impact_margin',data=_numbers(values['r26_impact_margin']))
+            ET.SubElement(custom,'numeric',name='r12_substep_path',data='1')
+            values['r12_substep_path']=1
+            index=next(i for i,sensor in enumerate(sensors) if sensor.tag!='user')
+            sensors.insert(index,ET.Element('user',name='ImpactMargin',dim='4',
+                user=f"0 {margin['weight']} 0 {margin['weight']}"))
+        if config.get('r26_reference'):
+            ref=config['r26_reference']
+            values['r26_reference']=[ref['horizon_s'],ref['maximum_lead_m'],
+                ref['maximum_speed_m_s'],ref['acceleration_m_s2']]
+            ET.SubElement(custom,'numeric',name='r26_reference',data=_numbers(values['r26_reference']))
+            tree.getroot().find('size').set('nuserdata',str(ref['userdata_offset']+ref['packet_size']))
         tree.write(xml_path,encoding='unicode')
         cost_weights={'Orientation':.03 if arm=='AUTHOR_N' else 1.,'Angmom':0.}
         if config.get('actual_terrain')=='rigid' and config.get('controller_formulation') in ('GN','GNC'):
