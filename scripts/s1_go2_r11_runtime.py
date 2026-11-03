@@ -338,7 +338,7 @@ def run(args, c, joint=None):
     phase_settings = None
     previous_phase = None
     reference_settings=c.get('r26_reference')
-    reference_packets=[]
+    reference_packets=[];last_reference_actor_decision=None
     if reference_settings:
         from s1_go2_r26_reference import reference_packet,base_reference,PACKET_FIELDS
         resolved['reference_packet_fields']=PACKET_FIELDS
@@ -516,10 +516,13 @@ def run(args, c, joint=None):
                     decision=(joint.cap_decisions[-1]['time_s'] if joint is not None and joint.cap_decisions else None)
                     reference_packets.append(dict(packet=data.userdata[84:96].tolist(),phase=mission.phase,
                         actor_decision_time_s=decision,
-                        actor_to_reference_s=t-decision if decision is not None else None,
+                        actor_decision_age_s=t-decision if decision is not None else None,
+                        actor_to_reference_latency_s=(t-decision if decision is not None and
+                            decision!=last_reference_actor_decision else None),
                         reference_to_optimized_action_logical_s=float(data.time)-t,
                         reference_to_optimized_action_wall_s=time.perf_counter()-reference_wall_start,
                         planning_wall_s=plan_s,new_optimized_action_time_s=t))
+                    last_reference_actor_decision=decision
                 if step == 0:
                     startup['actual_first_feedback_action'] = action.copy()
                     dump(small/f'{args.attempt}-resolved.json', resolved)

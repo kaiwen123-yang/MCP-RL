@@ -206,6 +206,13 @@ def evaluate_job(jobdir, contract):
                     reason='new_update_unavailable') for level in settings['levels']])
             write(destination,record)
             return 0
+        training_exit=int((jobdir/'training-exit-code.txt').read_text())
+        if training_exit!=0 or not current_stop or current_stop.get('last_stage_status')=='technical_interruption':
+            record.update(status='unavailable',reason='training_not_normally_completed',
+                finished_unix_s=time.time(),stages=[dict(level=level,stage_status='not_run',
+                    reason='training_not_normally_completed') for level in settings['levels']])
+            write(destination,record)
+            return 0
         checkpoint=ROOT/last['path']
         saved=torch.load(checkpoint,map_location='cpu',weights_only=False)
         if not (saved['phase_id']==job['phase_id'] and saved['controller_build']==job['controller_build']

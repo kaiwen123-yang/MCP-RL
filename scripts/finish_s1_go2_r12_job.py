@@ -419,7 +419,7 @@ def main():
         print(json.dumps(summary, ensure_ascii=False), flush=True)
         return 1
     # Deletion is downstream of complete rendering/upload and successful normal push.
-    if complete and contract["outputs"]["automatic_publication"]["cleanup"]["enabled_after_implementation"]:
+    if complete and contract["outputs"]["automatic_publication"]["cleanup"]["enabled"]:
         summary["cleanup"]=cleanup_published_outputs(ROOT,large,jobdir,assets,registered,job)
         summary["cleanup_record_delivery"]="prepared_for_ordinary_push"
         save_summary()
