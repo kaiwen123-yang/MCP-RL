@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Render and publish the actual outputs of one stopped R12 tmux job."""
+"""Push compact evidence for a stopped R12 job; retain bulk outputs for the user."""
 import argparse
 import json
 import os
 from pathlib import Path
 import shutil
 import subprocess
-import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,7 +37,7 @@ def training_outcomes(episodes, small, binaries, latest_resume, initial_transiti
                    material_loaded_episodes=0,max_forward_displacement_m=None,
                    observation_source="New saved rollouts plus final valid resume tail; no inferred missing observations.")
     for episode in episodes:
-        result = read(small / (episode.name + ".json"))
+        result = read(small / (episode.name + ".json")) or read(episode / "result.json")
         if not result.get("stage_progress"):
             outcome["results_unavailable"].append(episode.name)
             continue
@@ -46,8 +45,9 @@ def training_outcomes(episodes, small, binaries, latest_resume, initial_transiti
         outcome["physical_episodes"] += int(result.get("simulation_s", 0) > 0)
         progress = result["stage_progress"]
         outcome['material_loaded_episodes']+=int(progress['actual_material_loaded'])
-        forward=result['max_x_m']-result['transitions'][0]['position_m'][0]
-        outcome['max_forward_displacement_m']=forward if outcome['max_forward_displacement_m'] is None else max(outcome['max_forward_displacement_m'],forward)
+        if result.get('transitions'):
+            forward=result['max_x_m']-result['transitions'][0]['position_m'][0]
+            outcome['max_forward_displacement_m']=forward if outcome['max_forward_displacement_m'] is None else max(outcome['max_forward_displacement_m'],forward)
         traversal = progress["material_traversal"]
         outcome["legal_outbound_traversals"] += int(traversal["completed"])
         outcome["side_exits"] += int(traversal["lateral_exit_s"] is not None)
@@ -80,15 +80,21 @@ def training_outcomes(episodes, small, binaries, latest_resume, initial_transiti
         outcome["return_nonzero_pann_observations"] += int((returning & nonzero).sum())
 
     recorded_samples = set()
+    outcome["observation_sources_unavailable"] = []
     for relative in binaries:
         path = ROOT / relative
         if path.name.startswith("rollout-") and path.suffix == ".npz":
+            if not path.is_file():
+                outcome["observation_sources_unavailable"].append(str(path))
+                continue
             first, last = map(int, path.stem.split("-")[1:])
             sample_ids = np.arange(first, last + 1)
             with np.load(path) as data:
                 observations(data["obs"][sample_ids > initial_transitions])
             recorded_samples.update(sample_ids.tolist())
-    if latest_resume:
+    if latest_resume and not (ROOT / latest_resume).is_file():
+        outcome["observation_sources_unavailable"].append(str(ROOT / latest_resume))
+    elif latest_resume:
         import torch
         saved = torch.load(ROOT / latest_resume, map_location="cpu", weights_only=False)
         tail = saved.get("buffer", [])
@@ -98,298 +104,320 @@ def training_outcomes(episodes, small, binaries, latest_resume, initial_transiti
     return outcome
 
 
-def cleanup_published_outputs(root, large, jobdir, assets, registered, job):
-    """Delete explicit delivered output copies after all producers and push finish."""
-    large=large.resolve()
-    keep={jobdir/name for name in ("job.json","execution-contract.json","run-job.sh","evaluation.json")}
-    before=shutil.disk_usage(large).free
-    active=set();producers=[]
-    for process in Path("/proc").iterdir():
-        if not process.name.isdigit() or int(process.name)==os.getpid():continue
-        try:
-            command=(process/"cmdline").read_bytes().replace(b"\0",b" ").decode(errors="replace")
-            cwd=(process/"cwd").resolve()
-            if cwd==root and any(name in command for name in (
-                    "train_s1_go2_r12.py","run_s1_go2_r12_training.sh",
-                    "scripts/run_s1_go2_r12.py","render_s1_go2_r12.py","agent_server")):
-                producers.append(int(process.name))
-            for fd in (process/"fd").iterdir():
-                target=fd.resolve()
-                if target.is_relative_to(large):active.add(target)
-        except (FileNotFoundError,PermissionError,ProcessLookupError):
-            continue  # A process may exit during this one /proc snapshot.
-    result=dict(status="pending_active_producers" if producers else "completed",
-        authorization="Explicit user authorization after full Git/Release delivery for this job",
-        verification="Existing manifest plus publisher's name/size/upload-state comparison; no new hashes/downloads",
-        free_before_bytes=before,deleted_files=0,deleted_bytes=0,
-        preserved=[],active_producer_pids=producers,
-        retained_resources=["source/.git","compact results","work/envs","work/r11-frozen",
-                            "work/assets","work/upstreams","work/terrain-memory","work/tools"],
-        completed_unix_s=None)
-    if producers:return result
-    candidates={}
-    for asset in assets:
-        remote=registered[asset["name"]]
-        for relative in [asset["path"],*asset.get("local_copies",[])]:
-            candidates[relative]=remote
-    # The restored immutable parent is already saved in its original Release.
-    # It predates launch and is no longer used after this job has stopped.
-    parent=Path(job["resume_checkpoint"])
-    if parent.is_absolute():parent=parent.relative_to(root)
-    for remote in registered.values():
-        if remote.get("path")==str(parent) and remote.get("status")=="uploaded":
-            candidates[str(parent)]=remote
-    for relative,remote in candidates.items():
-        path=(root/relative).resolve()
-        if not path.is_relative_to(large):
-            continue  # Controller binaries/environment/runtime are retained.
-        if not path.is_file():continue
-        stat=path.stat()
-        reason=("job_resume_metadata" if path in keep else
-                "active_file" if path in active else
-                "not_delivered" if remote.get("status") not in ("uploaded","git_recorded") else
-                "changed_since_publication" if stat.st_size!=remote["size"] or (
-                    relative!=str(parent) and stat.st_mtime_ns!=remote["local_mtime_ns"]) or (
-                    relative==str(parent) and stat.st_mtime>job["started_unix_s"]) else None)
-        if reason:
-            result["preserved"].append(dict(path=relative,reason=reason));continue
-        path.unlink()
-        result["deleted_files"]+=1;result["deleted_bytes"]+=stat.st_size
-    result["free_after_bytes"]=shutil.disk_usage(large).free
-    result["free_change_bytes"]=result["free_after_bytes"]-before
-    result["completed_unix_s"]=time.time()
+def learning_summary(source, initial_transitions, final_transitions):
+    """Select this job's update records, never its high-frequency transition log."""
+    result = dict(source=str(source.relative_to(ROOT)), updates=[], malformed_lines=[],
+                  initial_transitions=initial_transitions, final_transitions=final_transitions)
+    if not source.is_file():
+        result["status"] = "unavailable"
+        return result
+    with source.open() as handle:
+        for number, line in enumerate(handle, 1):
+            if not line.strip():
+                continue
+            try:
+                row = json.loads(line)
+                samples = row["cumulative_samples"]
+            except (ValueError, KeyError, TypeError):
+                result["malformed_lines"].append(number)
+                continue
+            if initial_transitions < samples <= final_transitions:
+                result["updates"].append(row)
+    result["status"] = "saved"
     return result
+
+
+def redact(text):
+    for key in ("GH_TOKEN", "GITHUB_TOKEN", "https_proxy", "HTTPS_PROXY"):
+        if os.environ.get(key):
+            text = text.replace(os.environ[key], "[redacted]")
+    return text
+
+
+def compact_records(jobdir, snapshots, small, episodes, job, evaluation, samples, index):
+    """Copy named small records and episode JSON, with bounded diagnostic tails."""
+    destination = small / "jobs" / jobdir.name
+    staged, retained, copied = set(), [], []
+    maximum_json_bytes = 2 * 1024 * 1024
+
+    def keep(source, target, limited=False):
+        if not source.is_file():
+            return None
+        size = source.stat().st_size
+        if limited and size > maximum_json_bytes:
+            retained.append(dict(path=str(source.relative_to(ROOT)), size=size,
+                                 reason="large_json_retained_local"))
+            return None
+        if source != target:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+        staged.add(target)
+        copied.append(dict(source=str(source.relative_to(ROOT)),
+                           git_path=str(target.relative_to(ROOT)), size=size))
+        return str(target.relative_to(ROOT))
+
+    # Explicit names, not arbitrary .jsonl files, logs or a recursive job archive.
+    for filename in (
+            "job.json", "execution-contract.json", "environment.json", "evaluation.json",
+            "run-job.sh", "pip-packages.txt", "gpu-runtime.txt",
+            "training-exit-code.txt", "training-finished-at.txt",
+            "evaluation-exit-code.txt", "evaluation-finished-at.txt"):
+        keep(jobdir / filename, destination / filename)
+    for filename in (
+            "training-contract.json", "stream-identity.json", "collection.json",
+            "stopped.json", "progress.json", "training-deadline.json"):
+        keep(snapshots / filename, destination / "training" / filename)
+    for source in sorted(snapshots.glob("episode-*.json")):
+        keep(source, destination / "training" / source.name)
+    learning = snapshots / "learning.json"
+    if learning.is_file():
+        keep(learning, destination / "training" / learning.name)
+    else:
+        # Old finish snapshots contain the original learning.jsonl.
+        learning = destination / "training" / "learning.json"
+        write(learning, learning_summary(snapshots / "learning.jsonl",
+                                        job["initial_transitions"], samples))
+        staged.add(learning)
+    identity = ROOT / "work/r11-frozen" / job["controller_build"] / "identity.json"
+    keep(identity, destination / "controller-identity.json")
+
+    known = {row["attempt"]: row for row in index.get("attempts", [])}
+    failures = index.get("initialization_failures", [])
+    ledger = dict(job=jobdir.name, training_exit_code=job.get("training_exit_code"),
+                  evaluation=evaluation, attempts=[])
+    unresolved = []
+    for episode in episodes:
+        result_path = small / (episode.name + ".json")
+        result = read(result_path) or read(episode / "result.json")
+        row = dict(attempt=episode.name, local_directory=str(episode.relative_to(ROOT)),
+                   result_available=bool(result), index_entry=known.get(episode.name),
+                   initialization_failures=[x for x in failures if x.get("attempt") == episode.name],
+                   compact_files=[])
+        for source in sorted(small.glob(episode.name + "*.json")):
+            saved = keep(source, source)
+            if saved:
+                row["compact_files"].append(saved)
+        for source in sorted(episode.rglob("*.json")):
+            # The normal result already exists in small; retain a standalone
+            # result.json when an interrupted/alternate writer only saved it here.
+            if source == episode / "result.json" and result_path.is_file():
+                continue
+            saved = keep(source, destination / "episodes" / episode.name / source.relative_to(episode),
+                         limited=source.name != "result.json")
+            if saved:
+                row["compact_files"].append(saved)
+        for key in ("status", "success", "reason", "error", "simulation_s", "stage_status"):
+            if key in result:
+                row[key] = result[key]
+        if not result:
+            row["result_status"] = "unavailable_see_retained_initialization_or_job_error"
+            unresolved.append(episode)
+        ledger["attempts"].append(row)
+    # Policy-side evaluation JSON may contain useful identities; raw transitions
+    # and learned weights remain under the recorded local evaluation directory.
+    for source in sorted((jobdir / "evaluation-policy").rglob("*.json")):
+        keep(source, destination / source.relative_to(jobdir), limited=True)
+
+    tails = []
+    logs = [jobdir / "train.log", jobdir / "evaluation.log"]
+    logs += [ROOT / row["log"] for row in evaluation.get("stages", []) if row.get("log")]
+    logs += [episode / "agent-server.log" for episode in unresolved]
+    for source in dict.fromkeys(logs):
+        if not source.is_file():
+            continue
+        size = source.stat().st_size
+        with source.open("rb") as handle:
+            handle.seek(max(0, size - 8192))
+            tail = handle.read().decode("utf-8", errors="replace")
+        tails.append(dict(path=str(source.relative_to(ROOT)), original_bytes=size,
+                          tail_bytes=min(size, 8192), truncated=size > 8192, text=redact(tail)))
+    ledger["bounded_log_tails"] = tails
+    ledger_path = destination / "attempt-ledger.json"
+    write(ledger_path, ledger)
+    staged.add(ledger_path)
+    return staged, dict(root=str(destination.relative_to(ROOT)),
+                        ledger=str(ledger_path.relative_to(ROOT)), files=copied,
+                        large_json_retained_local=retained,
+                        learning=str((destination / "training" / "learning.json").relative_to(ROOT)))
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--job-dir", type=Path, required=True)
     p.add_argument("--training-exit-code", type=int, required=True)
-    p.add_argument("--hours", type=float, default=4)
+    p.add_argument("--hours", type=float, default=6,
+                   help="Postprocess ceiling only; finish immediately after compact Git delivery.")
     p.add_argument("--deadline-unix", type=float, help="Keep the original absolute postprocess deadline on resume.")
     a = p.parse_args()
     jobdir = (ROOT / a.job_dir).resolve()
     job = read(jobdir / "job.json")
-    contract = read(jobdir / "execution-contract.json") or read(CONFIG)
-    small, large = (ROOT / contract["outputs"][k] for k in ("compact_root", "large_root"))
+    current = read(CONFIG)
+    frozen_path = jobdir / "execution-contract.json"
+    contract = read(frozen_path) or current
+    small, large = (ROOT / contract["outputs"][key] for key in ("compact_root", "large_root"))
     name = jobdir.name
     started = time.time()
     deadline = a.deadline_unix if a.deadline_unix is not None else started + a.hours * 3600
-    work_deadline = max(started, deadline - 120)
     summary_path = small / "jobs" / (name + ".json")
-    manifest_path = small / "jobs" / (name + "-assets.json")
     previous = read(summary_path)
-    if previous.get("cleanup",{}).get("status")=="completed" and previous.get("publication_status")=="published":
-        # Cleanup is irreversible; retry only its retained compact-record delivery.
-        previous["cleanup_record_delivery"]="prepared_for_ordinary_push"
-        write(summary_path,previous)
-        paths=[str(summary_path.relative_to(ROOT)),str((small/"index.json").relative_to(ROOT)),
-               "docs/TERRAIN_MEMORY_PLAN.md"]
-        subprocess.run(["git","add","--",*paths],cwd=ROOT,check=True)
-        if subprocess.run(["git","diff","--cached","--quiet","--",*paths],cwd=ROOT).returncode:
-            subprocess.run(["git","commit","--only","-m",f"Record published-output cleanup for {name}","--",*paths],cwd=ROOT,check=True)
-        subprocess.run(["git","push","origin","HEAD:main"],cwd=ROOT,check=True,timeout=120)
-        print(json.dumps(dict(job=name,publication="completed",cleanup=previous["cleanup"]["status"],
-                              action="compact_record_push_only")))
+    if (previous.get("cleanup", {}).get("status") == "completed"
+            and previous.get("publication_status") == "published"):
+        # This historical result was already delivered and its arrays deleted.
+        # Preserve its conclusion; never reconstruct it from a later live stream.
+        print(json.dumps(dict(job=name, publication_status="published",
+                              action="existing_published_historical_record_retained",
+                              automatic_cleanup_enabled=False,
+                              summary=str(summary_path.relative_to(ROOT))), ensure_ascii=False), flush=True)
         return 0
-    records = small / "records"
-    records.mkdir(parents=True, exist_ok=True)
+    policy = dict(
+        source=str(CONFIG.relative_to(ROOT)) + "#outputs.automatic_publication",
+        configured=current.get("outputs", {}).get("automatic_publication", {}),
+        effective=dict(delivery_mode="compact_first_local_bulk", bulk_upload_enabled=False,
+                       render_all_episodes=False,
+                       cleanup=dict(enabled=False, owner="user", status="manual_after_user_backup")),
+        execution_contract=str(frozen_path.relative_to(ROOT)),
+        scope="Current delivery policy only; frozen training/evaluation/paths/identity stay unchanged.",
+        frozen_delivery_authorization_superseded=True)
     stream = large / "training" / f'{job["group"]}-seed{job["seed"]}'
     initial = set(job.get("initial_attempts", []))
     evaluation = read(jobdir / "evaluation.json") or dict(
         status="unavailable" if job.get("evaluation_command") else "not_scheduled_for_job",
-        reason="See evaluation.log and evaluation-exit-code.txt" if job.get("evaluation_command") else None,
+        reason="See retained evaluation.log and exit code" if job.get("evaluation_command") else None,
         attempts=[], stages=[])
     episodes = ([large / x for x in previous["attempts"]] if "attempts" in previous else
                 sorted(x for x in large.glob(f'train-{job["group"]}-s{job["seed"]}-ep*')
                        if x.is_dir() and (x.name not in initial if "initial_attempts" in job
                                           else x.stat().st_mtime >= job["started_unix_s"])))
-    episodes = sorted({x.name: x for x in episodes + [large / x for x in evaluation["attempts"]]}.values())
-    binaries = previous.get("training_binary_paths", [str(x.relative_to(ROOT)) for x in sorted(stream.rglob("*"))
-                            if x.is_file() and x.suffix in (".pt", ".npz") and x.stat().st_mtime >= job["started_unix_s"]])
-    summary = dict(job=name, current_task=job.get("current_task", "S1"),
-                   source_commit=job["source_commit"], controller_build=job["controller_build"],
-                   training_exit_code=job.get("budget_extension",{}).get("continuation_exit_code",a.training_exit_code),
-                   budget_extension=job.get("budget_extension"),evaluation=evaluation,
-                   training_started_unix_s=job["started_unix_s"], training_deadline_unix_s=job["deadline_unix_s"],
-                   postprocess_started_unix_s=started,
-                   deadline_unix_s=deadline, work_deadline_unix_s=work_deadline,
-                   publication_status="publication_pending", render=[], errors=[],
-                   attempts=[x.name for x in episodes], training_binary_paths=binaries,
-                   manifest=str(manifest_path.relative_to(ROOT)), release_url=f'https://github.com/{REPO}/releases/tag/{contract["outputs"]["release_tag"]}')
-    for key in ("publication_resume", "release_urls"):
-        if key in previous:
-            summary[key] = previous[key]
-    write(summary_path, summary)
+    episodes = sorted({x.name: x for x in episodes + [large / x for x in evaluation.get("attempts", [])]}.values())
+    binaries = previous.get("training_binary_paths", [
+        str(x.relative_to(ROOT)) for x in sorted(stream.rglob("*"))
+        if x.is_file() and x.suffix in (".pt", ".npz") and x.stat().st_mtime >= job["started_unix_s"]])
 
-    def command(argv, log):
-        try:
-            with log.open("a") as output:
-                output.write(f"\nStarted {time.time()}: {argv[1]}\n")
-                output.flush()
-                r = subprocess.run(argv, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
-                                   timeout=max(1, work_deadline - time.time()))
-            return None if r.returncode == 0 else f"exit_code={r.returncode}; see {log.relative_to(ROOT)}"
-        except (OSError, subprocess.TimeoutExpired) as error:
-            with log.open("a") as output:
-                output.write("\n" + str(error) + "\n")
-            return str(error)
-
-    # Freeze small records before rendering; a retry never captures a later job's stream state.
+    # Freeze only the named compact records. Existing snapshots, including old
+    # bulk-publication snapshots, remain authoritative on a retry.
     snapshots = jobdir / "stream-records"
     if not snapshots.exists():
         snapshots.mkdir()
-        for source in sorted(stream.rglob("*")):
-            if source.is_file() and source.suffix not in (".pt", ".npz") and source.stat().st_mtime >= job["started_unix_s"]:
-                target = snapshots / source.relative_to(stream)
-                target.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source, target)
-    known = {x["attempt"]: x for x in read(small / "index.json").get("attempts", [])}
-    for episode in episodes:
-        row = dict(attempt=episode.name)
-        required = [episode / "trajectory.npz", episode / "model.mjb", small / (episode.name + ".json")]
-        if not all(x.exists() for x in required):
-            row.update(status="unavailable_no_physics" if not known.get(episode.name, {}).get("physical_started") else "failed",
-                       reason="No complete renderable trajectory/model/result; retained available files without rerunning physics.")
-        else:
-            video = read(episode / "video-asset.json")
-            retained = episode / Path(video.get("path", "missing-video")).name
-            if video and retained.is_file() and retained.stat().st_size == video.get("size"):
-                row["status"] = "existing"
-            elif time.time() >= work_deadline:
-                row.update(status="pending_deadline", reason="Postprocess deadline reached before rendering.")
-            else:
-                log = records / f"{name}__render__{episode.name}.txt"
-                error = command([sys.executable, "scripts/render_s1_go2_r12.py", "--attempt", episode.name], log)
-                row.update(status="failed" if error else "rendered", log=str(log.relative_to(ROOT)))
-                if error:
-                    row["reason"] = error
-        summary["render"].append(row)
-        write(summary_path, summary)
+        sources = [stream / filename for filename in (
+            "training-contract.json", "stream-identity.json", "collection.json",
+            "stopped.json", "progress.json")]
+        sources += sorted(stream.glob("episode-*.json"))
+        sources.append(small / "training-deadline.json")
+        for source in sources:
+            if source.is_file() and source.stat().st_mtime >= job["started_unix_s"]:
+                shutil.copy2(source, snapshots / source.name)
+        final_samples = read(snapshots / "collection.json").get("collected_transitions", job["initial_transitions"])
+        write(snapshots / "learning.json", learning_summary(
+            stream / "learning.jsonl", job["initial_transitions"], final_samples))
 
-    assets_by_name = {x["name"]: x for x in read(manifest_path)} if manifest_path.exists() else {}
-
-    def asset(path, remote_name, category):
-        row=assets_by_name.setdefault(remote_name, dict(path=str(path.relative_to(ROOT)), name=remote_name, category=category))
-        if path.is_relative_to(snapshots):
-            row["local_copies"]=[str((stream/path.relative_to(snapshots)).relative_to(ROOT))]
-
-    for episode in episodes:
-        render_status = next(x["status"] for x in summary["render"] if x["attempt"] == episode.name)
-        for file in sorted(episode.rglob("*")):
-            if file.is_file():
-                remote_name = episode.name + "__" + file.relative_to(episode).as_posix().replace("/", "__")
-                # Incomplete rendering is retained locally, then replaced by a successful replay on retry.
-                if render_status not in ("rendered", "existing") and (file.suffix == ".mp4" or file.name == "video-asset.json"):
-                    assets_by_name.pop(remote_name, None)
-                    continue
-                asset(file, remote_name, "episode")
-    for relative in binaries:
-        file = ROOT / relative
-        asset(file, name + "__training__" + stream.name + "__" + file.relative_to(stream).as_posix().replace("/", "__"), "training")
-    for file in sorted(jobdir.rglob("*")):
-        if file.is_file():
-            asset(file, name + "__" + file.relative_to(jobdir).as_posix().replace("/", "__"), "job_record")
-    # A newly built controller is evidence for this job; retain its executable
-    # and ordinary build record alongside the already versioned source patch.
-    controller = ROOT / "work/r11-frozen" / job["controller_build"]
-    for filename in ("agent_server", "identity.json", "build.log", "initial-compile.log"):
-        file = controller / filename
-        if file.is_file():
-            asset(file, "controller__" + job["controller_build"] + "__" + filename, "controller")
-    assets = list(assets_by_name.values())
-    write(manifest_path, assets)
-    for action in ("upload", "finish"):
-        log = records / f"{name}__{action}.txt"
-        error = command([sys.executable, "scripts/publish_s1_go2_r12.py", action, "--server-auth",
-                         "--manifest", str(manifest_path), "--job-name", name,
-                         "--source-commit", job["source_commit"], "--deadline-unix", str(work_deadline)], log)
-        if error:
-            summary["errors"].append(dict(stage=action, error=error))
-
-    idx = read(small / "index.json")
-    registered = {x["name"]: x for x in idx.get("publication", {}).get("assets", [])}
-    pending = [x["path"] for x in assets if registered.get(x["name"], {}).get("status") not in ("uploaded", "git_recorded")]
-    missing_videos = [x for x in summary["render"] if x["status"] in ("failed", "pending_deadline")]
     stopped = read(snapshots / "stopped.json")
     if stopped.get("invocation_started_unix_s", 0) < job["started_unix_s"]:
         stopped = {}
     collection = read(snapshots / "collection.json")
-    samples = stopped.get("actual_transitions", collection.get("collected_transitions", job.get("initial_transitions")))
-    updates = stopped.get("updates", collection.get("updates", job.get("initial_updates")))
-    summary.update(training=dict(actual_transitions=samples, updates=updates,
-                       target_transitions=job["target_transitions"], target_updates=job["target_updates"],
-                       target_reached=bool(stopped and samples >= job["target_transitions"] and updates >= job["target_updates"]),
-                       initial_transitions=job.get("initial_transitions"), new_transitions=samples-job["initial_transitions"],
-                       initial_updates=job.get("initial_updates"), new_updates=updates-job["initial_updates"],
-                       unupdated_fragment=stopped.get("unupdated_fragment", collection.get("unupdated_fragment")),
-                       reason=stopped.get("reason"), last_stage_status=stopped.get("last_stage_status"),
-                       phase_id=collection.get('phase_id'),phase_stop=stopped.get('phase_stop'),
-                       excluded_old_version_transitions=collection.get('excluded_old_version_transitions'),
-                       controller_migration=collection.get('controller_migration'),
-                       last_completed_update=collection.get('last_completed_update'),
-                       last_episode_reason=stopped.get("last_episode_reason")),
-                   pending_assets=pending, render_pending=missing_videos,
-                   assets_published=sum(x["path"] not in pending for x in assets), assets_expected=len(assets),
-                   videos=[dict(attempt=x["attempt"], url=registered.get(x["attempt"] + "__full-mission-material-overlay.mp4", {}).get("url"))
-                           for x in summary["render"] if x["status"] in ("rendered", "existing")])
-    summary["training"]["outcomes"] = training_outcomes(
-        [x for x in episodes if x.name.startswith("train-")], small, binaries,
-        read(snapshots / "progress.json").get("checkpoint"), job["initial_transitions"])
-    summary["release_urls"] = {
-        tag: f"https://github.com/{REPO}/releases/tag/{tag}"
-        for tag in sorted({registered.get(x["name"], {}).get("release_tag", contract["outputs"]["release_tag"])
-                           for x in assets})
-    }
-    complete = not pending and not missing_videos and not summary["errors"]
-    summary.update(publication_status="published" if complete else "publication_pending",
-                   cleanup=previous.get("cleanup",dict(status="pending_publication")),
-                   git_delivery="This report is prepared for this commit; its presence on GitHub records successful delivery. A push failure is retained locally as pending.")
+    progress = read(snapshots / "progress.json")
+    samples = stopped.get("actual_transitions", collection.get("collected_transitions", job["initial_transitions"]))
+    updates = stopped.get("updates", collection.get("updates", job["initial_updates"]))
+    training_exit = job.get("budget_extension", {}).get("continuation_exit_code", a.training_exit_code)
+    training = dict(actual_transitions=samples, updates=updates,
+                    target_transitions=job["target_transitions"], target_updates=job["target_updates"],
+                    target_reached=bool(stopped and samples >= job["target_transitions"] and updates >= job["target_updates"]),
+                    initial_transitions=job["initial_transitions"], new_transitions=samples-job["initial_transitions"],
+                    initial_updates=job["initial_updates"], new_updates=updates-job["initial_updates"],
+                    unupdated_fragment=stopped.get("unupdated_fragment", collection.get("unupdated_fragment")),
+                    reason=stopped.get("reason"), last_stage_status=stopped.get("last_stage_status"),
+                    phase_id=collection.get("phase_id"), phase_stop=stopped.get("phase_stop"),
+                    excluded_old_version_transitions=collection.get("excluded_old_version_transitions"),
+                    controller_migration=collection.get("controller_migration"),
+                    last_completed_update=collection.get("last_completed_update"),
+                    last_episode_reason=stopped.get("last_episode_reason"))
+    try:
+        training["outcomes"] = training_outcomes(
+            [x for x in episodes if x.name.startswith("train-")], small, binaries,
+            progress.get("checkpoint"), job["initial_transitions"])
+    except Exception as error:
+        # Optional aggregate reads must not block delivery of the original JSON.
+        # An unavailable aggregate is not a zero or a successful physical result.
+        training["outcomes"] = dict(
+            status="unavailable", error=redact(f"{type(error).__name__}: {error}")[-4000:],
+            source="Retained per-episode JSON and local rollout/resume observation summary",
+            recovery="Inspect the original compact episode records and retained local sources.")
+
+    staged, evidence = compact_records(
+        jobdir, snapshots, small, episodes, dict(job, training_exit_code=training_exit),
+        evaluation, samples, read(small / "index.json"))
+    policy_path = small / "jobs" / name / "delivery-policy.json"
+    write(policy_path, policy)
+    staged.add(policy_path)
+    latest_resume = progress.get("checkpoint")
+    local = dict(
+        status="retained_local", upload_status="not_requested", backup_owner="user",
+        deletion="User exports to their storage disk, then centrally deletes after backup.",
+        repository_root=str(ROOT), job_directory=str(jobdir.relative_to(ROOT)),
+        shared_training_directory=str(stream.relative_to(ROOT)),
+        episode_directories=[str(x.relative_to(ROOT)) for x in episodes],
+        training_binary_paths=binaries,
+        parent_resume_checkpoint=job["resume_checkpoint"],
+        latest_resume=dict(path=latest_resume, samples=progress.get("samples"),
+                           updates=progress.get("updates"), phase_id=progress.get("phase_id"),
+                           identity_source=str((snapshots / "progress.json").relative_to(ROOT))),
+        last_completed_update=training.get("last_completed_update"),
+        availability="No bulk backup or upload is claimed; historical user/deletion state is not inferred.")
+    summary = dict(
+        job=name, current_task=job.get("current_task", "S1"),
+        source_commit=job["source_commit"], controller_build=job["controller_build"],
+        training_exit_code=training_exit, budget_extension=job.get("budget_extension"),
+        training_started_unix_s=job["started_unix_s"], training_deadline_unix_s=job["deadline_unix_s"],
+        postprocess_started_unix_s=started, deadline_unix_s=deadline,
+        training=training, evaluation=evaluation, attempts=[x.name for x in episodes],
+        training_binary_paths=binaries, delivery_policy=policy, compact_evidence=evidence,
+        publication_scope="compact_git", publication_status="published", errors=[],
+        bulk_retention=local, render_status="not_requested", pending_assets=[], render_pending=[],
+        cleanup=dict(enabled=False, owner="user", status="manual_after_user_backup", deleted_files=0),
+        git_delivery="Prepared for this commit; presence on GitHub records compact delivery only. "
+                     "A failed push remains pending locally. Bulk data is not backed up by this push.")
+    # Preserve real historical destinations and outcomes, without registering
+    # any newly unselected local file as a Release publication obligation.
+    for key in ("release_url", "release_urls", "manifest", "publication_resume", "historical_bulk_publication"):
+        if key in previous:
+            summary[key] = previous[key]
+    if previous and previous.get("publication_scope") != "compact_git":
+        summary["historical_bulk_publication"] = {
+            key: previous[key] for key in (
+                "publication_status", "assets_published", "assets_expected", "pending_assets",
+                "render", "render_pending", "videos", "cleanup", "errors") if key in previous}
 
     def save_summary():
         write(summary_path, summary)
-        current = read(small / "index.json")
-        current.setdefault("background_jobs", {})[name] = dict(
-            summary=str(summary_path.relative_to(ROOT)), training=summary.get("training"),
-            evaluation=summary.get("evaluation"),
-            publication_status=summary["publication_status"], pending_assets=summary.get("pending_assets", []),
-            render_pending=summary.get("render_pending", []),cleanup=summary.get("cleanup"))
-        publication = current.setdefault("publication", {})
-        pending_jobs = publication.setdefault("pending_jobs", {})
-        if summary["publication_status"] == "publication_pending":
-            pending_jobs[name] = str(summary_path.relative_to(ROOT))
-            publication["status"] = "publication_pending"
-        else:
-            pending_jobs.pop(name, None)
-            if not pending_jobs and not publication.get("pending_paths"):
-                publication["status"] = "published"
-        write(small / "index.json", current)
+        index = read(small / "index.json")
+        index.setdefault("background_jobs", {})[name] = dict(
+            summary=str(summary_path.relative_to(ROOT)), training=training, evaluation=evaluation,
+            publication_scope="compact_git", publication_status=summary["publication_status"],
+            bulk_retention=summary["bulk_retention"], cleanup=summary["cleanup"])
+        # The Release asset/destination/pending history is deliberately untouched.
+        write(small / "index.json", index)
 
     save_summary()
     plan_path = ROOT / "docs/TERRAIN_MEMORY_PLAN.md"
     plan = plan_path.read_text().splitlines()
     first = next(i for i, line in enumerate(plan) if line.startswith("## 当前交接"))
     slots = [i for i in range(first + 1, len(plan)) if plan[i].startswith("- ")][:6]
-    eval_text = "，".join(f"{x['level']}={x['stage_status']}" for x in evaluation["stages"]) or evaluation["status"]
-    outcomes = summary["training"]["outcomes"]
+    eval_text = "，".join(f"{x['level']}={x['stage_status']}" for x in evaluation.get("stages", [])) or evaluation["status"]
+    outcomes = training["outcomes"]
     handoff = [
-        f"- 当前任务：{summary['current_task']}后台作业{name}已结束；训练达标={summary['training']['target_reached']}，评价={evaluation['status']}，发布={summary['publication_status']}，清理={summary['cleanup']['status']}。",
-        f"- 训练：本job新增{summary['training']['new_transitions']}条/{summary['training']['new_updates']}更新，累计{samples}/{updates}，旧尾excluded={summary['training']['excluded_old_version_transitions']}；停止原因={stopped.get('reason')}；评价独立结果{eval_text}。",
-        f"- 已完成：本job保留{len(episodes)}个新attempt，视频可用{len(summary['videos'])}，资产已发布{summary['assets_published']}/{len(assets)}；控制版{job['controller_build']}。",
-        f"- 任务表现：最大向前位移{outcomes['max_forward_displacement_m']}m、材料加载{outcomes['material_loaded_episodes']}回合、合规去程{outcomes['legal_all_outbound_traversals']}、合规返程{outcomes['legal_return_traversals']}、合规整圈{outcomes['legal_roundtrips']}、侧出{outcomes['all_passage_side_exits']}；末次原物理原因{stopped.get('last_episode_reason')}。",
-        "- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。",
-        f"- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要{summary_path.relative_to(ROOT)}；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。",
+        f"- 当前任务：{summary['current_task']}后台作业{name}已结束；训练达标={training['target_reached']}，评价={evaluation['status']}，紧凑Git发布={summary['publication_status']}；大文件留数据盘，用户备份后手动删除。",
+        f"- 训练：本job新增{training['new_transitions']}条/{training['new_updates']}更新，累计{samples}/{updates}，旧尾excluded={training['excluded_old_version_transitions']}；停止原因={training.get('reason')}；评价独立结果{eval_text}。",
+        f"- 已完成：保留本job全部{len(episodes)}个attempt的可用小JSON、配置、学习/评价记录及失败/零步/中断清单；控制版{job['controller_build']}；不等待视频或大文件上传。",
+        f"- 任务表现：最大向前位移{outcomes.get('max_forward_displacement_m')}m、材料加载{outcomes.get('material_loaded_episodes')}回合、合规去程{outcomes.get('legal_all_outbound_traversals')}、合规返程{outcomes.get('legal_return_traversals')}、合规整圈{outcomes.get('legal_roundtrips')}、侧出{outcomes.get('all_passage_side_exits')}；末次原物理原因{training.get('last_episode_reason')}。",
+        "- 下一步：先查看本job实际结果以继续研究；紧凑push失败仅普通重试；具体诊断再选取已有视频/数组，不为交付重跑物理，不自动上传或删除大文件。",
+        f"- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要{summary_path.relative_to(ROOT)}；checkpoint及job/episode/shared training本地位置见bulk_retention，既有Release历史保留。",
     ]
+    if outcomes.get("status") == "unavailable":
+        handoff[3] = "- 任务表现：自动汇总不可用；具体错误见job.training.outcomes.error，保留全部可用逐回合JSON，不把缺失指标记为零或成功。"
     for position, line in zip(slots, handoff):
         plan[position] = line
     plan_path.write_text("\n".join(plan) + "\n")
-
-    staged = {summary_path, manifest_path, small / "index.json", small / "training-deadline.json", plan_path}
-    staged.update(records.glob(name + "__*"))
-    for episode in episodes:
-        staged.update(small.glob(episode.name + "*.json"))
-        staged.update(records.glob(episode.name + "__*"))
-    paths = sorted(str(x.relative_to(ROOT)) for x in staged if x.is_file())
+    staged.update((summary_path, small / "index.json", plan_path))
+    paths = sorted(str(path.relative_to(ROOT)) for path in staged if path.is_file())
 
     def git(*args):
         return subprocess.run(["git", *args], cwd=ROOT, check=True, text=True,
@@ -401,47 +429,26 @@ def main():
         git("add", "--", *paths)
         changed = subprocess.run(["git", "diff", "--cached", "--quiet", "--", *paths], cwd=ROOT).returncode
         if changed:
-            git("commit", "--only", "-m", f"Record S1 background job {name} and its publication", "--", *paths)
+            git("commit", "--only", "-m", f"Record compact S1 background job {name}", "--", *paths)
         git("push", "origin", "HEAD:main")
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
         summary["publication_status"] = "publication_pending"
         detail = getattr(error, "stdout", "") or ""
         if isinstance(detail, bytes):
             detail = detail.decode(errors="replace")
-        for key in ("GH_TOKEN", "GITHUB_TOKEN", "https_proxy", "HTTPS_PROXY"):
-            if os.environ.get(key):
-                detail = detail.replace(os.environ[key], "[redacted]")
-        summary["errors"].append(dict(stage="git", error=str(error), output=detail[-4000:]))
+        summary["errors"].append(dict(stage="git", error=redact(str(error)), output=redact(detail)[-4000:]))
         save_summary()
         if slots:
-            plan[slots[0]] = handoff[0].replace("发布=published", "发布=publication_pending")
+            plan[slots[0]] = handoff[0].replace("Git发布=published", "Git发布=publication_pending")
             plan_path.write_text("\n".join(plan) + "\n")
         print(json.dumps(summary, ensure_ascii=False), flush=True)
         return 1
-    # Deletion is downstream of complete rendering/upload and successful normal push.
-    if complete and contract["outputs"]["automatic_publication"]["cleanup"]["enabled"]:
-        summary["cleanup"]=cleanup_published_outputs(ROOT,large,jobdir,assets,registered,job)
-        summary["cleanup_record_delivery"]="prepared_for_ordinary_push"
-        save_summary()
-        plan[slots[0]]=handoff[0].rsplit("，清理=",1)[0]+f"，清理={summary['cleanup']['status']}。"
-        plan[slots[2]]=handoff[2]+f" 已删除已交付副本{summary['cleanup']['deleted_files']}个/{summary['cleanup']['deleted_bytes']}字节。"
-        plan_path.write_text("\n".join(plan)+"\n")
-        try:
-            git("add","--",str(summary_path.relative_to(ROOT)),str((small/"index.json").relative_to(ROOT)),str(plan_path.relative_to(ROOT)))
-            git("commit","--only","-m",f"Record published-output cleanup for {name}","--",
-                str(summary_path.relative_to(ROOT)),str((small/"index.json").relative_to(ROOT)),str(plan_path.relative_to(ROOT)))
-            git("push","origin","HEAD:main")
-        except (OSError,subprocess.CalledProcessError,subprocess.TimeoutExpired) as error:
-            summary["cleanup_record_delivery"]="push_pending"
-            summary["errors"].append(dict(stage="cleanup_record_git",error=str(error)))
-            save_summary()
-            print(json.dumps(dict(job=name,publication="completed",cleanup=summary["cleanup"]["status"],
-                                  cleanup_record_delivery="push_pending")),flush=True)
-            return 1
-    print(json.dumps(dict(job=name, training=summary["training"], evaluation=summary["evaluation"],
-                          publication_status=summary["publication_status"], cleanup=summary.get("cleanup"),
-                          summary=f"https://github.com/{REPO}/blob/main/{summary_path.relative_to(ROOT)}"), ensure_ascii=False), flush=True)
-    return 0 if complete else 1
+    print(json.dumps(dict(job=name, training=training, evaluation=evaluation,
+                          publication_scope="compact_git", publication_status=summary["publication_status"],
+                          bulk_retention=summary["bulk_retention"], cleanup=summary["cleanup"],
+                          summary=f"https://github.com/{REPO}/blob/main/{summary_path.relative_to(ROOT)}"),
+                     ensure_ascii=False), flush=True)
+    return 0
 
 
 if __name__ == "__main__":

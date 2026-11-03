@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run R12 training, final evaluation, rendering and GitHub publication in one detached tmux job."""
+"""Run R12 training, final evaluation and compact Git delivery in one detached tmux job."""
 import argparse
 from datetime import datetime, timezone
 import json
@@ -21,7 +21,7 @@ def main():
     p.add_argument("--session", default="s1-joint")
     p.add_argument("--hours", type=float, help="Training budget; defaults to the execution contract.")
     p.add_argument("--postprocess-hours", type=float,
-                   help="Separate rendering/publication budget; defaults to the execution contract.")
+                   help="Compact publication ceiling; defaults to the contract and finishes as soon as pushed.")
     p.add_argument("--network-mode", choices=["academic", "clash", "direct"], default="academic")
     a = p.parse_args()
     contract = json.loads(CONFIG.read_text())
@@ -41,7 +41,6 @@ def main():
         'set -e; source scripts/autodl_network.sh "$1"; '
         'gh auth setup-git --hostname github.com >/dev/null; '
         'git var GIT_AUTHOR_IDENT >/dev/null; '
-        'gh api repos/kaiwen123-yang/MCP-RL/releases/tags/tm-s1-go2-local-readiness-r12 >/dev/null; '
         'gh api repos/kaiwen123-yang/MCP-RL --jq .permissions.push',
         "bash", a.network_mode,
     ], cwd=ROOT, env=auth_env, text=True, timeout=60)
@@ -83,7 +82,7 @@ def main():
     evaluation = [
         "python", "-u", "scripts/run_s1_go2_r12.py", "--job-dir", str(directory),
     ]
-    # Close training/evaluation output before rendering and publishing job files.
+    # Close training/evaluation output before publishing the compact job records.
     script.write_text("\n".join([
         "#!/usr/bin/env bash",
         "set -e",
@@ -106,7 +105,7 @@ def main():
         shlex.join(postprocess) + ' --training-exit-code "$training_exit"',
         "",
     ]))
-    # The selected resume state is authoritative; published working logs may be cleaned.
+    # The selected resume state is authoritative; bulk outputs stay on the data disk.
     import torch
     resume_path = Path(a.resume)
     if not resume_path.is_absolute():
@@ -130,19 +129,23 @@ def main():
         evaluation_command=evaluation,
         evaluation_hours=contract["control_and_evaluation"]["post_training_evaluation"]["maximum_wall_s"] / 3600,
         evaluation_status="pending_training",
-        publication_status="automatic_after_training_and_evaluation",
+        publication_status="compact_git_after_training_and_evaluation",
+        delivery_mode="compact_first_local_bulk",
+        delivery_policy_source=str(CONFIG.relative_to(ROOT)) + "#outputs.automatic_publication",
+        bulk_upload_enabled=False, automatic_cleanup_enabled=False,
         result_summary=f'{contract["outputs"]["compact_root"]}/jobs/{job_name}.json',
     )
     metadata = directory / "job.json"
     metadata.write_text(json.dumps(record, indent=2) + "\n")
-    # The fixed default session name also covers rendering and publication.
+    # The fixed default session name also covers compact Git publication.
     subprocess.run(["tmux", "new-session", "-d", "-s", a.session,
                     "-c", str(ROOT), "bash", str(script)], check=True)
     record["status"] = "launched"
     metadata.write_text(json.dumps(record, indent=2) + "\n")
     print(json.dumps(record, indent=2))
-    print("Detach leaves training, final evaluation, rendering and publication running in this tmux session.")
-    print("Inspect the job result summary for training outcome, Release URLs and publication errors.")
+    print("Detach leaves training, final evaluation and compact Git publication running in this tmux session.")
+    print("Bulk checkpoints/videos/raw arrays stay local for user backup and manual deletion; finish never cleans them.")
+    print("Inspect the job summary for actual outcomes, compact delivery and retained local checkpoint paths.")
 
 
 if __name__ == "__main__":

@@ -2,21 +2,23 @@
 
 **默认执行端：AutoDL 西北B区 D57，SSH `autodl-d57`。** RTX PRO 6000 96GB ×1、25 vCPU、120GB内存；[环境记录](experiments/terrain_memory/compute-environment.json)。
 
-## 当前：W37 接触与参考一致性修复计划，S5-r26 尚未构建或运行
+## 当前：W37 / S5-r26 已记录启动，紧凑结果先交付
 
-**当前任务为 `W37_CONTACT_CONSISTENT_JOINT`；S5-r26 状态为 `planned_not_built_not_run`。** 本次审查只更新计划与交接，没有新的服务器构建、物理执行或训练。实施顺序见[主计划第4节](docs/TERRAIN_MEMORY_PLAN.md)，启动词见同计划第8节。
+**当前任务为 `W37_CONTACT_CONSISTENT_JOINT`；仓库已记录 S5-r26 在D57构建并启动 `job-20261103T075623Z`。** 北京时间2026-11-03 15:56启动，28h上限至11月4日19:56；交接快照新增4条/0更新、累计4501/17，旧145条尾段已隔离。此为已保存快照，不是本次实时服务器查询；先接续已有作业，不重复启动。[实际启动记录](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json)；机制与预算见[主计划第4节](docs/TERRAIN_MEMORY_PLAN.md)，启动词见第8节。
 
-**最新实际结果仍是已停止的W36/S5-r25：PANN累计4497条真实转移、17次完成的PPO更新，另有145条未更新尾段，最新恢复点ep144。** 本轮新增1169条/4更新，ep118–144共27个物理回合：22跌倒、4非足接触、1预算截断。全部未触材料，新增1169条观测的PANN恢复特征均为零；合规穿越、到达远端、返程和往返均为零。用户停止本轮后，末端评价取消；不能把outbound标签或更新次数当成向前进展。[W36实际结果与回放诊断](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json)
+**最近已完整结束的阶段是W36/S5-r25：PANN累计4497条真实转移、17次完成的PPO更新，另有145条未更新尾段，父恢复点ep144。** 该轮新增1169条/4更新，ep118–144共27个物理回合：22跌倒、4非足接触、1预算截断。全部未触材料，新增1169条观测的PANN恢复特征均为零；合规穿越、到达远端、返程和往返均为零。用户停止后末端评价取消；不能把outbound标签或更新次数当成向前进展。[W36实际结果与回放诊断](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json)
 
 **W37只推进一条协调修复路线：保留r24已执行的运动骨架，撤销r25的MovingSupport、SupportPlacement及新增载荷分配，保留r25合规路线奖励与0.2ms子步风险。** runtime和MPC未来节点使用同一因果参考packet，沿用原加速度界，正确转换base目标与head site偏置；风险值与选中子步C/D共用定义，十子步A/B仍完整组合。具体公式与端点/转向例外以主计划第4节为准。不全局关闭MakeDifferentiable，不重新叠加r18/r19失败的六维moving velocity项，也不以换权重或增加同类代价代替修复。
 
 先读[AGENTS](AGENTS.md)、[主计划顶部6行及第4节](docs/TERRAIN_MEMORY_PLAN.md)和[当前R12契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)。冻结因果PANN→PPO速度cap→MPC→Go2/材料反馈保持完整，保留原材料域、力矩、路线、跌倒与非足接触定义。必要实现/构建后直接完整joint联调和多次更新，不设单模块或纯MPC准入，也不另开参数网格、并行工程或监控项目。
 
-从[最新ep144恢复状态](https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__training__PANN_PPO_S5-seed0__resume-state-ep00144.pt)恢复本组Actor/Critic、optimizer、RNG、归一化及4497/17历史计数。145条旧r25尾段保留并明确排除于新版本学习，新on-policy buffer为空，物理另起会话；不退回ep117，也不混用独立RAW历史256/1。新增目标2048条/8更新，对应累计6545条/25更新：6400条已用于更新、145条历史excluded、新尾段0。目标不是attempt cap或收敛承诺。
+W37已从[父恢复状态ep144](https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__training__PANN_PPO_S5-seed0__resume-state-ep00144.pt)恢复本组Actor/Critic、optimizer、RNG、归一化及4497/17历史计数，将145条旧r25尾段保留并排除于新版本学习，空新buffer另起物理会话。此后用本phase实际最新状态及合法tail接续，不重复初始迁移，不退回ep117，也不混用独立RAW历史256/1。新增目标2048条/8更新，对应累计6545条/25更新：6400条用于更新、145条历史excluded、新尾段0。目标不是attempt cap或收敛承诺。
 
-复用20 MPC workers、Torch2、BLAS1；交互≤4h，后台tmux训练≤28h，末端评价另计≤4h，渲染/发布/清理另计≤6h。主计划第4.5节已知r25退化条件首次符合即停止本phase，保存部分结果并发布，不继续凑样本或自动E30，不另设重复次数门槛。正常phase结束后，只评价本phase末次实际完成的新更新：固定策略/归一化nominal E30，同case合格才E60；零新更新不能取旧权重冒充本轮末端评价。stage_pass、合规贯穿/往返和阶梯资格分别报告；E300/E600留待后续，不自动启动。
+复用20 MPC workers、Torch2、BLAS1；交互≤4h，后台tmux训练≤28h，末端评价另计≤4h。紧凑交付沿用≤6h上限，普通push完成即结束，不等待视频/大文件。主计划第4.5节已知r25退化条件首次符合即停止本phase，保存部分结果并发布，不继续凑样本或自动E30，不另设重复次数门槛。正常phase结束后，只评价本phase末次实际完成的新更新：固定策略/归一化nominal E30，同case合格才E60；零新更新不能取旧权重冒充本轮末端评价。stage_pass、合规贯穿/往返和阶梯资格分别报告；E300/E600留待后续，不自动启动。
 
-W36实际交付已完成：1060/1060个资产、27段视频，待传/待渲染均为0；已记录清理1084个研究副本、4,678,796,042字节。**发布后清理已实现并执行，下一轮直接复用。** 只有应交付内容在Git/Release确认、普通push成功且文件不活跃才清理服务器副本，清理记录再推送；源码/.git、紧凑结果、环境、运行资源、活跃及未交付文件保留。视频、轨迹、大数组和checkpoint由D57直传Release，无PC下载归档、全量hash或回下载认证。[最新发布入口](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02)
+**最新交付规则（2026-11-03）：服务器完成计算 → 先推代码、配置、全部逐回合JSON、学习/评价小记录和结论 → 继续研究。** 大checkpoint、全长视频、原始轨迹/数组默认留数据盘，不自动全量渲染或上传；仅诊断需要的切片、短视频或选定权重按需上传。用户定期导出到自己的存储盘，备份完成后由用户统一删除；Codex不自动清理服务器研究输出，也不在用户电脑另做归档。紧凑交付完成与大数据备份完成分开记录，详见[主计划第5节](docs/TERRAIN_MEMORY_PLAN.md)。
+
+W36历史交付仍保留：1060/1060个资产、27段视频，待传/待渲染均为0；曾清理1084个研究副本、4,678,796,042字节。这是旧规则下的已发生事实，不能作为后续自动删除授权。[W36发布入口](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02)
 
 论文借鉴与适用边界见[主计划第6节](docs/TERRAIN_MEMORY_PLAN.md)和[文献清单](literature/terrain_memory_sources.json)；长期路线见主计划第7节。现阶段尚未形成稳定合规的材料往返基线，也未证明跨腿/返程材料记忆收益。
 
@@ -29,7 +31,7 @@ cd /root/autodl-tmp/MCP-RL
 source scripts/autodl_d57_env.sh
 ```
 
-Python 3.12 项目环境直接复用镜像的 PyTorch 2.8.0+cu128；MuJoCo 3.2.3、JAX 0.6.2 CUDA、Optax 0.2.5、Tianshou 0.5.1 等依赖记录在 [requirements-autodl-d57.txt](requirements-autodl-d57.txt)，不重新安装。原Go2资产、MJPC接口、冻结B ideal权重以及r24/r25实际运行资源已具备；复用已核对的MuJoCo依赖checkout。RAW历史与PANN最新ep144均在GitHub/Release，PANN实际累计4497条/17更新、尾段145。下一阶段按主计划恢复ep144并实施S5-r26，当前r26仍未构建/运行。已实现的发布后清理直接复用；libegl1与imageio已在真实运行/渲染中补齐。本次计划审查没有登录服务器、测量当前磁盘或改动环境。
+Python 3.12 项目环境直接复用镜像的 PyTorch 2.8.0+cu128；MuJoCo 3.2.3、JAX 0.6.2 CUDA、Optax 0.2.5、Tianshou 0.5.1 等依赖记录在 [requirements-autodl-d57.txt](requirements-autodl-d57.txt)，不重新安装。原Go2资产、MJPC接口、冻结B ideal权重和实际控制器资源已具备；复用已核对的MuJoCo依赖checkout。RAW历史与PANN父状态ep144已有GitHub/Release去向，r26已记录实际构建/采样，后续使用本phase有效resume。libegl1与imageio已在真实运行/渲染中补齐；本次交付规则更新没有登录服务器、测量当前磁盘或改动环境。
 
 后台任务使用服务器独立的clash、academic或direct可用路径，不依赖用户电脑在线。手动联网可按实际故障使用已保留的电脑隧道备用入口；它不作为无人值守作业的默认路径。服务器端示例：
 
@@ -495,9 +497,6 @@ work/envs/tm02/bin/python scripts/run_tm02_memory_study.py --config experiments/
 
 ## 成果与工作方式
 
-实际源码、配置、紧凑数据和图表推送 GitHub；必要大数组和视频从运行端直接上传 Release，索引提供实际位置与摘要。S0 交完整接触任务数据和动画；S1/实机交连续机器人任务视频，不预建空结果。GitHub 发布后不在用户电脑另做归档，不全量回下载来重复校验，不重复打包旧权重；复用主计划第5节已实现的发布后清理，保留未交付与活跃作业所需的正常输出、检查点和运行资源。
+历史数据与原发布链接保持原样。后续交付遵循本页顶部及主计划第5节：先推源码、配置、全部逐回合紧凑结果和结论，继续研究；大数据留服务器，分析需要时选择性上传，由用户定期备份并手动删除。Codex不自动清理研究输出、不额外在用户电脑归档，不新增全量回下载校验或重复打包旧权重。
 
 禁止防御性编程、单元/mock/冒烟测试、无关回归、审查报告和状态流水。旧轮Go2执行器复用与接触修补属于上述历史记录，旧矩阵不重启；当前执行W37及主计划第4节的完整joint任务，不再把“新增训练为0”作为当前限制。实验结论由实际结果决定，主问题保持不变。
-
-
-
