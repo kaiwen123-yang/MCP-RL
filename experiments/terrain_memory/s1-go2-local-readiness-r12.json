@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "implemented_pending_normal_build_not_run",
+  "status": "implemented_built_pending_launch",
   "protocol_revision": "smooth_approach_parallel_joint_v13",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-11-04",
@@ -15,7 +15,7 @@
     "rule": "Reuse the actual D57 environment and completed r26 source/model skeleton. Implement the single shared C2 approach activation, true-terminal reward settlement and minimal accepted/reference diagnostics before building r27. Then run two isolated full-joint engineering forks; original physical semantics remain.",
     "active_controller_build": "S5-r27",
     "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r27.json",
-    "active_controller_status": "implemented_pending_normal_build_not_run",
+    "active_controller_status": "implemented_built_pending_launch",
     "parent_controller_build": "S5-r26",
     "parent_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r26.json",
     "latest_executed_controller_build": "S5-r26",
@@ -23,7 +23,7 @@
     "implementation_base_controller_build": "S5-r26",
     "implementation_base_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r26.json",
     "checkpoint_parent_controller_build": "S5-r26",
-    "specification_path_status": "Actual r27 C++ patch and existing Python entrypoints implemented; normal build and real launch remain."
+    "specification_path_status": "Actual r27 C++ patch built successfully from retained r26; independent branch launch is next."
   },
   "execution": {
     "mode": "interactive_setup_and_detached_training",
@@ -564,7 +564,7 @@
       "parent_controller_build": "S5-r26",
       "active_controller_build": "S5-r27",
       "implementation_base_controller_build": "S5-r26",
-      "status": "implemented_pending_normal_build_not_run",
+      "status": "implemented_built_pending_launch",
       "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
       "parent_checkpoint_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__resume-state-ep00216.pt",
       "parent_transitions": 6545,
@@ -1442,7 +1442,7 @@
   ],
   "current_window_scope": {
     "task": "W38_SMOOTH_APPROACH_PARALLEL_JOINT",
-    "status": "implemented_pending_normal_build_not_run",
+    "status": "implemented_built_pending_launch",
     "streams": [
       {
         "stream_id": "w38-a",
@@ -1477,8 +1477,8 @@
     "latest_executed_build": "S5-r26",
     "latest_executed_build_status": "completed_W37_final_E30_failed",
     "current_build": "S5-r27",
-    "current_build_status": "implemented_pending_normal_build_not_run",
-    "new_controller_build_required": true,
+    "current_build_status": "implemented_built_pending_launch",
+    "new_controller_build_required": false,
     "window_budget_s": 14400,
     "background_training_authorized": true,
     "shared_background_training_budget_s": 100800,
@@ -1513,7 +1513,11 @@
     "reward": "scripts/s1_go2_r11_policy.py: LegalRoute.settle_physical_terminal before final transition",
     "diagnostics": "C++ policy ActionRecorded and planner Iteration; per-episode local JSONL",
     "streams": "Existing start/train/PolicyStream/evaluate/finish entries; first-fork post-restore RNG",
-    "built": false,
-    "training_started": false
+    "built": true,
+    "training_started": false,
+    "build_wall_s": 158.77915263175964,
+    "build_source_commit": "a9638e6c022879a168c41214af03b0bebaca13ec",
+    "binary": "work/r11-frozen/S5-r27/agent_server",
+    "build_identity": "work/r11-frozen/S5-r27/identity.json"
   }
 }

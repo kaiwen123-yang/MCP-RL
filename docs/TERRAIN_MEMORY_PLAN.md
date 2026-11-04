@@ -2,7 +2,7 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27 已在D57最新main上完成实际源码与双流接线，状态implemented_pending_normal_build_not_run；尚无r27物理结果。
+- 当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27 已在D57最新main上完成实际源码与双流接线，正常构建完成（158.78s），状态implemented_built_pending_launch；尚无r27物理结果。
 - 已完成W37：r26新增2048条/8更新，累计6545/25＝6400已训练＋145历史excluded＋0当前尾；最新resume-state-ep00216.pt、checkpoint-006545.pt，父历史仅计一次。
 - 真实能力：72回合中36跌倒、34躯干非足接触、1材料域退出、1达到目标截断；50回合材料加载、7回合机身入条带，合规去程/返程/整圈均0；最终E30在14.3096s失败，E60阻断。
 - 已修改：LandingVelocity/ImpactMargin共用75.25mm带内完整C2 g*r；物理终止先结清未完成贯穿正credit；现有planner/action链记录accepted/reference、winner/regularization及原始Kδx/限幅动作。

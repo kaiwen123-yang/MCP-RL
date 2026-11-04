@@ -272,6 +272,8 @@ def update_parallel_handoff(contract):
             new_transitions=collection.get("phase_new_transitions",0),
             new_updates=collection.get("phase_new_updates",0),
             tail=collection.get("unupdated_fragment",0),
+            invocation_new_transitions=collection.get("invocation_new_transitions"),
+            invocation_wall_s=collection.get("invocation_wall_s"),
             excluded=collection.get("excluded_old_version_transitions",145),
             resume=progress.get("checkpoint",job["resume_checkpoint"]),
             last_completed_update=collection.get("last_completed_update"),
@@ -293,12 +295,21 @@ def update_parallel_handoff(contract):
                      w38_distinct_new_transitions=sum(x["new_transitions"] for x in rows.values()),
                      w38_policy_counts={sid:dict(transitions=r["transitions"],updates=r["updates"]) for sid,r in rows.items()})
     current=read(CONFIG)
-    current["status"]="joint_sampling_running" if any(x["status"]=="launched" for x in rows.values()) else "computation_ended"
+    running=any(x["status"]=="launched" for x in rows.values())
+    sampled=any(x["new_transitions"]>0 for x in rows.values())
+    current["status"]=("joint_sampling_running" if sampled else "launched_waiting_for_samples") if running else "computation_ended"
+    current["actual_implementation"].update(built=True,training_started=sampled)
+    current["reuse"]["active_controller_status"]="built_and_running" if running else "built_computation_ended"
+    current["current_window_scope"].update(current_build_status=current["reuse"]["active_controller_status"],
+                                          new_controller_build_required=False)
+    current["learning"]["controller_version_boundary"]["status"]="forks_launched"
+
     current["actual_execution"]=dict(task=current["current_task"],controller_build="S5-r27",
         shared_started_unix_s=clock["started_unix_s"],deadline_unix_s=clock["deadline_unix_s"],
         streams=rows,shared_parent_counted_once=True,
         distinct_new_transitions=sum(x["new_transitions"] for x in rows.values()),
         common_elapsed_wall_s=time.time()-clock["started_unix_s"],
+        distinct_new_transitions_per_wall_s=sum(x["new_transitions"] for x in rows.values())/(time.time()-clock["started_unix_s"]),
         no_fused_optimizer_or_policy=True,bulk_retained_local=True,deleted_files=0)
     current["current_window_scope"]["status"]=current["status"]
     write(CONFIG,current)
@@ -530,10 +541,13 @@ def main():
                               timeout=max(1, min(120, deadline - time.time())))
 
     try:
-        git("add", "--", *paths)
-        changed = subprocess.run(["git", "diff", "--cached", "--quiet", "--", *paths], cwd=ROOT).returncode
-        if changed:
-            git("commit", "--only", "-m", f"Record compact S1 background job {name}", "--", *paths)
+        # Stage the shared index under its existing lock; release it before network I/O.
+        with (small/"index.lock").open("a") as index_lock:
+            fcntl.flock(index_lock,fcntl.LOCK_EX)
+            git("add", "--", *paths)
+            changed = subprocess.run(["git", "diff", "--cached", "--quiet", "--", *paths], cwd=ROOT).returncode
+            if changed:
+                git("commit", "--only", "-m", f"Record compact S1 background job {name}", "--", *paths)
         git("push", "origin", "HEAD:main")
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
         summary["publication_status"] = "publication_pending"
