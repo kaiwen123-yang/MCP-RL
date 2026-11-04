@@ -1,0 +1,164 @@
+{
+  "job": "job-20261103T075623Z",
+  "status": "completed",
+  "started_unix_s": 1793758653.3969653,
+  "deadline_unix_s": 1793773053.3969653,
+  "controller_build": "S5-r26",
+  "group": "PANN_PPO_S5",
+  "seed": 0,
+  "condition": "nominal",
+  "workers": 20,
+  "checkpoint_selection": "Select the last actual completed PPO update produced by this W37/controller/reward phase, with updates>17 and recorded phase identity; checkpoint-006545.pt at full target. On partial progress use the actual last new-phase update, never the best-looking or merely greatest old filename.",
+  "deterministic_policy_mean": true,
+  "frozen_normalization": true,
+  "ppo_updates": false,
+  "attempts": [
+    "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30"
+  ],
+  "stages": [
+    {
+      "level": "E30",
+      "attempt": "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30",
+      "stage_status": "physical_material_failure",
+      "started_unix_s": 1793758654.5564232,
+      "command": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "scripts/run_s1_go2_r12.py",
+        "--attempt",
+        "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30",
+        "--build",
+        "S5-r26",
+        "--group",
+        "PANN_PPO_S5",
+        "--seed",
+        "0",
+        "--checkpoint",
+        "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-006545.pt",
+        "--level",
+        "E30",
+        "--condition",
+        "nominal",
+        "--workers",
+        "20",
+        "--evaluation-start-unix",
+        "1793758653.3969653",
+        "--deadline-unix",
+        "1793773053.3969653",
+        "--policy-output",
+        "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/evaluation-policy/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30"
+      ],
+      "success": false,
+      "reason": "invalid_contact:[[0, 13, 0, 1]]",
+      "error": null,
+      "simulation_s": 14.309599999993328,
+      "wall_s": 990.8107349108905,
+      "stage_progress": {
+        "far_arrival_s": null,
+        "return_start_s": null,
+        "actual_route_fraction": 0.12452430649188825,
+        "full_observation": false,
+        "actual_material_loaded": true,
+        "material_traversal": {
+          "completed": false,
+          "west_entry_s": null,
+          "east_exit_s": null,
+          "lateral_exit_s": null,
+          "max_abs_base_y_during_crossing_m": null,
+          "material_loaded_during_crossing": false,
+          "original_strip_x_m": [
+            0.8,
+            2.2
+          ],
+          "original_strip_y_m": [
+            -0.6,
+            0.6
+          ],
+          "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+        }
+      },
+      "legal_route": {
+        "reward_version": "W36_legal_route_progress_and_lap_alignment",
+        "progress": 0.12452430649188735,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+      },
+      "completed_round_trips": 0,
+      "case_key": "0c71098fe23809789a75d8203c3ee6c29c24f27287b7cdaba34f10273e001091",
+      "qualification": {
+        "predecessor_attempt": null,
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+        "solver_workers": 20,
+        "worker_setting_checked_against_predecessor": false
+      },
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30.json",
+      "exit_code": 0,
+      "finished_unix_s": 1793759656.368595,
+      "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/evaluation-E30.log"
+    },
+    {
+      "level": "E60",
+      "stage_status": "blocked_by_predecessor",
+      "reason": "E30: physical_material_failure: invalid_contact:[[0, 13, 0, 1]]"
+    }
+  ],
+  "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-006545.pt",
+  "checkpoint_transitions": 6545,
+  "checkpoint_updates": 25,
+  "normalization": {
+    "body_xy_m": 3.0,
+    "body_height_m": 0.3,
+    "body_linear_velocity_m_s": 0.25,
+    "body_angular_velocity_rad_s": 1.0,
+    "joint_position": "range midpoint and half-width",
+    "joint_velocity_rad_s": 10.0,
+    "relative_feet_m": 0.3,
+    "foot_velocity_m_s": 1.0,
+    "force_N": 37.29371562,
+    "history_bottom_height_m": 0.05,
+    "pann_recovery_m": 0.001,
+    "history_frames": 20,
+    "history_dt_s": 0.05,
+    "finite_task_channels": "Always zero for every R11 training and evaluation duration",
+    "schema": [
+      "relative_goal_xy",
+      "base_z",
+      "base_quaternion_wxyz",
+      "relative_heading_sin_cos",
+      "base_velocity6",
+      "joint_position12",
+      "joint_velocity12",
+      "relative_world_feet12",
+      "foot_velocity12",
+      "contact4",
+      "GRF12",
+      "applied_cap",
+      "mission_phase9",
+      "gait_sin_cos",
+      "finite_task_flag_and_remaining_fraction",
+      "completed_plan_age",
+      "query_xy8",
+      "query_soft_mask4",
+      "history20x27",
+      "recovery4x3"
+    ],
+    "observation_clipping": false
+  },
+  "finished_unix_s": 1793759656.3704596
+}
