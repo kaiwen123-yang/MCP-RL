@@ -3,29 +3,729 @@
   "current_task": "W37_CONTACT_CONSISTENT_JOINT",
   "source_commit": "46392b284f218d2ae9b778bb2f910ba8393d77e8",
   "controller_build": "S5-r26",
-  "status": "training_running",
-  "session": "s1-joint",
-  "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z",
+  "training_exit_code": 0,
+  "budget_extension": null,
+  "evaluation": {
+    "job": "job-20261103T075623Z",
+    "status": "completed",
+    "started_unix_s": 1793758653.3969653,
+    "deadline_unix_s": 1793773053.3969653,
+    "controller_build": "S5-r26",
+    "group": "PANN_PPO_S5",
+    "seed": 0,
+    "condition": "nominal",
+    "workers": 20,
+    "checkpoint_selection": "Select the last actual completed PPO update produced by this W37/controller/reward phase, with updates>17 and recorded phase identity; checkpoint-006545.pt at full target. On partial progress use the actual last new-phase update, never the best-looking or merely greatest old filename.",
+    "deterministic_policy_mean": true,
+    "frozen_normalization": true,
+    "ppo_updates": false,
+    "attempts": [
+      "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30"
+    ],
+    "stages": [
+      {
+        "level": "E30",
+        "attempt": "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30",
+        "stage_status": "physical_material_failure",
+        "started_unix_s": 1793758654.5564232,
+        "command": [
+          "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+          "-u",
+          "scripts/run_s1_go2_r12.py",
+          "--attempt",
+          "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30",
+          "--build",
+          "S5-r26",
+          "--group",
+          "PANN_PPO_S5",
+          "--seed",
+          "0",
+          "--checkpoint",
+          "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-006545.pt",
+          "--level",
+          "E30",
+          "--condition",
+          "nominal",
+          "--workers",
+          "20",
+          "--evaluation-start-unix",
+          "1793758653.3969653",
+          "--deadline-unix",
+          "1793773053.3969653",
+          "--policy-output",
+          "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/evaluation-policy/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30"
+        ],
+        "success": false,
+        "reason": "invalid_contact:[[0, 13, 0, 1]]",
+        "error": null,
+        "simulation_s": 14.309599999993328,
+        "wall_s": 990.8107349108905,
+        "stage_progress": {
+          "far_arrival_s": null,
+          "return_start_s": null,
+          "actual_route_fraction": 0.12452430649188825,
+          "full_observation": false,
+          "actual_material_loaded": true,
+          "material_traversal": {
+            "completed": false,
+            "west_entry_s": null,
+            "east_exit_s": null,
+            "lateral_exit_s": null,
+            "max_abs_base_y_during_crossing_m": null,
+            "material_loaded_during_crossing": false,
+            "original_strip_x_m": [
+              0.8,
+              2.2
+            ],
+            "original_strip_y_m": [
+              -0.6,
+              0.6
+            ],
+            "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+          }
+        },
+        "legal_route": {
+          "reward_version": "W36_legal_route_progress_and_lap_alignment",
+          "progress": 0.12452430649188735,
+          "completed_roundtrips": 0,
+          "legal_outbound_traversals": 0,
+          "legal_return_traversals": 0,
+          "side_exits": 0,
+          "raw_roundtrips": 0,
+          "passages": [
+            {
+              "lap": 1,
+              "direction": "outbound",
+              "entry_s": null,
+              "exit_s": null,
+              "lateral_exit_s": null,
+              "material_loaded": false,
+              "completed": false
+            }
+          ],
+          "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+        },
+        "completed_round_trips": 0,
+        "case_key": "0c71098fe23809789a75d8203c3ee6c29c24f27287b7cdaba34f10273e001091",
+        "qualification": {
+          "predecessor_attempt": null,
+          "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+          "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+          "solver_workers": 20,
+          "worker_setting_checked_against_predecessor": false
+        },
+        "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30.json",
+        "exit_code": 0,
+        "finished_unix_s": 1793759656.368595,
+        "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/evaluation-E30.log"
+      },
+      {
+        "level": "E60",
+        "stage_status": "blocked_by_predecessor",
+        "reason": "E30: physical_material_failure: invalid_contact:[[0, 13, 0, 1]]"
+      }
+    ],
+    "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-006545.pt",
+    "checkpoint_transitions": 6545,
+    "checkpoint_updates": 25,
+    "normalization": {
+      "body_xy_m": 3.0,
+      "body_height_m": 0.3,
+      "body_linear_velocity_m_s": 0.25,
+      "body_angular_velocity_rad_s": 1.0,
+      "joint_position": "range midpoint and half-width",
+      "joint_velocity_rad_s": 10.0,
+      "relative_feet_m": 0.3,
+      "foot_velocity_m_s": 1.0,
+      "force_N": 37.29371562,
+      "history_bottom_height_m": 0.05,
+      "pann_recovery_m": 0.001,
+      "history_frames": 20,
+      "history_dt_s": 0.05,
+      "finite_task_channels": "Always zero for every R11 training and evaluation duration",
+      "schema": [
+        "relative_goal_xy",
+        "base_z",
+        "base_quaternion_wxyz",
+        "relative_heading_sin_cos",
+        "base_velocity6",
+        "joint_position12",
+        "joint_velocity12",
+        "relative_world_feet12",
+        "foot_velocity12",
+        "contact4",
+        "GRF12",
+        "applied_cap",
+        "mission_phase9",
+        "gait_sin_cos",
+        "finite_task_flag_and_remaining_fraction",
+        "completed_plan_age",
+        "query_xy8",
+        "query_soft_mask4",
+        "history20x27",
+        "recovery4x3"
+      ],
+      "observation_clipping": false
+    },
+    "finished_unix_s": 1793759656.3704596
+  },
   "training_started_unix_s": 1793692583.50354,
   "training_deadline_unix_s": 1793793383.50354,
-  "started_beijing": "2026-11-03T15:56:23.503540+08:00",
-  "training_deadline_beijing": "2026-11-04T19:56:23.503540+08:00",
-  "implementation": {
-    "status": "built_and_pushed",
-    "build_source_commit": "7659aa31afca1aa5c60ecef47a9d1b49b3b90fe9",
-    "build_wall_s": 159.6981167793274,
-    "source_frozen_before_sampling": true,
-    "specification": "experiments/terrain_memory/s1-go2-r11-S5-r26.json",
-    "source_patch": "experiments/terrain_memory/s1-go2-r11-S5-r26.patch"
-  },
+  "postprocess_started_unix_s": 1793759656.749998,
+  "deadline_unix_s": 1793781256.749998,
+  "work_deadline_unix_s": 1793781136.749998,
+  "publication_status": "publication_pending",
+  "render": [
+    {
+      "attempt": "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00145",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00145.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00146",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00146.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00147",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00147.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00148",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00148.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00149",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00149.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00150",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00150.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00151",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00151.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00152",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00152.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00153",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00153.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00154",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00154.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00155",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00155.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00156",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00156.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00157",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00157.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00158",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00158.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00159",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00159.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00160",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00160.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00161",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00161.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00162",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00162.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00163",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00163.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00164",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00164.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00165",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00165.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00166",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00166.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00167",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00167.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00168",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00168.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00169",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00169.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00170",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00170.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00171",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00171.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00172",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00172.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00173",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00173.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00174",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00174.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00175",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00175.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00176",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00176.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00177",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00177.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00178",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00178.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00179",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00179.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00180",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00180.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00181",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00181.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00182",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00182.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00183",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00183.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00184",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00184.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00185",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00185.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00186",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00186.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00187",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00187.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00188",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00188.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00189",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00189.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00190",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00190.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00191",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00191.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00192",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00192.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00193",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00193.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00194",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00194.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00195",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00195.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00196",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00196.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00197",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00197.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00198",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00198.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00199",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00199.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00200",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00200.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00201",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00201.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00202",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00202.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00203",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00203.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00204",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00204.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00205",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00205.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00206",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00206.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00207",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00207.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00208",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00208.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00209",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00209.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00210",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00210.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00211",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00211.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00212",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00212.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00213",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00213.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00214",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00214.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00215",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00215.txt"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00216",
+      "status": "rendered",
+      "log": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/job-20261103T075623Z__render__train-PANN_PPO_S5-s0-ep00216.txt"
+    }
+  ],
+  "errors": [],
+  "attempts": [
+    "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30",
+    "train-PANN_PPO_S5-s0-ep00145",
+    "train-PANN_PPO_S5-s0-ep00146",
+    "train-PANN_PPO_S5-s0-ep00147",
+    "train-PANN_PPO_S5-s0-ep00148",
+    "train-PANN_PPO_S5-s0-ep00149",
+    "train-PANN_PPO_S5-s0-ep00150",
+    "train-PANN_PPO_S5-s0-ep00151",
+    "train-PANN_PPO_S5-s0-ep00152",
+    "train-PANN_PPO_S5-s0-ep00153",
+    "train-PANN_PPO_S5-s0-ep00154",
+    "train-PANN_PPO_S5-s0-ep00155",
+    "train-PANN_PPO_S5-s0-ep00156",
+    "train-PANN_PPO_S5-s0-ep00157",
+    "train-PANN_PPO_S5-s0-ep00158",
+    "train-PANN_PPO_S5-s0-ep00159",
+    "train-PANN_PPO_S5-s0-ep00160",
+    "train-PANN_PPO_S5-s0-ep00161",
+    "train-PANN_PPO_S5-s0-ep00162",
+    "train-PANN_PPO_S5-s0-ep00163",
+    "train-PANN_PPO_S5-s0-ep00164",
+    "train-PANN_PPO_S5-s0-ep00165",
+    "train-PANN_PPO_S5-s0-ep00166",
+    "train-PANN_PPO_S5-s0-ep00167",
+    "train-PANN_PPO_S5-s0-ep00168",
+    "train-PANN_PPO_S5-s0-ep00169",
+    "train-PANN_PPO_S5-s0-ep00170",
+    "train-PANN_PPO_S5-s0-ep00171",
+    "train-PANN_PPO_S5-s0-ep00172",
+    "train-PANN_PPO_S5-s0-ep00173",
+    "train-PANN_PPO_S5-s0-ep00174",
+    "train-PANN_PPO_S5-s0-ep00175",
+    "train-PANN_PPO_S5-s0-ep00176",
+    "train-PANN_PPO_S5-s0-ep00177",
+    "train-PANN_PPO_S5-s0-ep00178",
+    "train-PANN_PPO_S5-s0-ep00179",
+    "train-PANN_PPO_S5-s0-ep00180",
+    "train-PANN_PPO_S5-s0-ep00181",
+    "train-PANN_PPO_S5-s0-ep00182",
+    "train-PANN_PPO_S5-s0-ep00183",
+    "train-PANN_PPO_S5-s0-ep00184",
+    "train-PANN_PPO_S5-s0-ep00185",
+    "train-PANN_PPO_S5-s0-ep00186",
+    "train-PANN_PPO_S5-s0-ep00187",
+    "train-PANN_PPO_S5-s0-ep00188",
+    "train-PANN_PPO_S5-s0-ep00189",
+    "train-PANN_PPO_S5-s0-ep00190",
+    "train-PANN_PPO_S5-s0-ep00191",
+    "train-PANN_PPO_S5-s0-ep00192",
+    "train-PANN_PPO_S5-s0-ep00193",
+    "train-PANN_PPO_S5-s0-ep00194",
+    "train-PANN_PPO_S5-s0-ep00195",
+    "train-PANN_PPO_S5-s0-ep00196",
+    "train-PANN_PPO_S5-s0-ep00197",
+    "train-PANN_PPO_S5-s0-ep00198",
+    "train-PANN_PPO_S5-s0-ep00199",
+    "train-PANN_PPO_S5-s0-ep00200",
+    "train-PANN_PPO_S5-s0-ep00201",
+    "train-PANN_PPO_S5-s0-ep00202",
+    "train-PANN_PPO_S5-s0-ep00203",
+    "train-PANN_PPO_S5-s0-ep00204",
+    "train-PANN_PPO_S5-s0-ep00205",
+    "train-PANN_PPO_S5-s0-ep00206",
+    "train-PANN_PPO_S5-s0-ep00207",
+    "train-PANN_PPO_S5-s0-ep00208",
+    "train-PANN_PPO_S5-s0-ep00209",
+    "train-PANN_PPO_S5-s0-ep00210",
+    "train-PANN_PPO_S5-s0-ep00211",
+    "train-PANN_PPO_S5-s0-ep00212",
+    "train-PANN_PPO_S5-s0-ep00213",
+    "train-PANN_PPO_S5-s0-ep00214",
+    "train-PANN_PPO_S5-s0-ep00215",
+    "train-PANN_PPO_S5-s0-ep00216"
+  ],
+  "training_binary_paths": [
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-004753.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-005009.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-005265.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-005521.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-005777.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-006033.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-006289.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-006545.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/excluded-r25-004353-004497.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00145.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00146.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00147.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00148.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00149.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00150.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00151.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00152.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00153.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00154.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00155.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00156.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00157.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00158.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00159.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00160.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00161.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00162.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00163.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00164.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00165.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00166.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00167.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00168.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00169.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00170.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00171.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00172.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00173.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00174.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00175.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00176.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00177.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00178.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00179.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00180.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00181.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00182.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00183.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00184.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00185.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00186.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00187.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00188.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00189.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00190.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00191.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00192.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00193.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00194.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00195.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00196.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00197.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00198.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00199.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00200.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00201.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00202.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00203.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00204.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00205.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00206.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00207.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00208.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00209.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00210.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00211.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00212.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00213.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00214.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00215.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-004498-004753.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-004754-005009.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-005010-005265.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-005266-005521.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-005522-005777.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-005778-006033.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-006034-006289.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-006290-006545.npz"
+  ],
+  "manifest": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z-assets.json",
+  "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12",
   "training": {
-    "actual_transitions": 4501,
-    "updates": 17,
+    "actual_transitions": 6545,
+    "updates": 25,
+    "target_transitions": 6545,
+    "target_updates": 25,
+    "target_reached": true,
     "initial_transitions": 4497,
-    "new_transitions": 4,
+    "new_transitions": 2048,
     "initial_updates": 17,
-    "new_updates": 0,
-    "unupdated_fragment": 4,
+    "new_updates": 8,
+    "unupdated_fragment": 0,
+    "reason": "target_reached",
+    "last_stage_status": "budget_truncated",
+    "phase_id": "job-20261103T075623Z",
+    "phase_stop": null,
     "excluded_old_version_transitions": 145,
     "controller_migration": {
       "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00144.pt",
@@ -49,64 +749,360 @@
       "new_buffer_size": 0,
       "isolated_tail_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/excluded-r25-004353-004497.pt"
     },
-    "phase_id": "job-20261103T075623Z",
-    "target_transitions": 6545,
-    "target_updates": 25,
-    "target_reached": false
-  },
-  "startup_observation": {
-    "observed_unix_s": 1793692752.3364408,
-    "attempt": "train-PANN_PPO_S5-s0-ep00145",
-    "actual_physics_started": true,
-    "last_saved_transition": {
-      "time_s": 1.9999999999998124,
-      "episode": 145,
-      "transition": 4501,
-      "transition_serial": 4501,
-      "reward": -0.00833333333333269,
-      "terminated": false,
-      "truncated": false,
-      "dt_s": 0.49999999999994493,
-      "effective": false,
-      "stage": 0,
-      "cap_m_s": 0.22291455864906312,
-      "raw_action": 0.230107381939888,
-      "log_prob": -0.3614332675933838,
-      "signed_route_fraction": 0.0,
-      "indentation_sq_s": 0.0,
-      "loaded_slip_sq_s": 1.6400460633655967e-13,
-      "completed_circuits": 0,
-      "failure": false,
-      "intrinsic_timeout": false,
-      "reward_version": "W36_legal_route_progress_and_lap_alignment",
-      "raw_signed_route_fraction": 0.0,
-      "raw_completed_circuits": 0,
-      "side_exits": 0
+    "last_completed_update": {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-006545.pt",
+      "samples": 6545,
+      "updates": 25,
+      "phase_id": "job-20261103T075623Z",
+      "controller_build": "S5-r26",
+      "reward_version": "W36_legal_route_progress_and_lap_alignment"
     },
-    "source": "Ordinary train.log, transitions.jsonl, collection.json and actual running attempt record.",
-    "task_capability": "No completed new episode at handoff; forward/material/legal passage and roundtrip ability remain unassessed."
+    "last_episode_reason": "training_checkpoint_complete",
+    "outcomes": {
+      "physical_episodes": 72,
+      "results_available": 72,
+      "results_unavailable": [],
+      "legal_outbound_traversals": 0,
+      "side_exits": 1,
+      "far_arrivals": 0,
+      "return_episodes": 0,
+      "completed_roundtrips": 0,
+      "legal_roundtrips": 0,
+      "legal_return_traversals": 0,
+      "legal_all_outbound_traversals": 0,
+      "all_passage_side_exits": 1,
+      "legality_records": 72,
+      "physical_failures_by_phase": {
+        "invalid_contact": {
+          "outbound": 34
+        },
+        "body_fall": {
+          "outbound": 36
+        },
+        "material_domain_exit": {
+          "outbound": 1
+        }
+      },
+      "saved_observations": 2048,
+      "nonzero_pann_observations": 62,
+      "return_observations": 0,
+      "return_nonzero_pann_observations": 0,
+      "material_loaded_episodes": 50,
+      "max_forward_displacement_m": 0.9687671968487584,
+      "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations."
+    }
   },
-  "evaluation": {
-    "status": "pending_training",
-    "stages": [],
-    "attempts": [],
-    "budget_s": 14400,
-    "selection": "Last actual completed update of this job/controller/reward; known regression skips, zero new updates unavailable."
+  "pending_assets": [
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00176/model/G1-project-go2.xml",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00185/material-0011.npz"
+  ],
+  "render_pending": [],
+  "assets_published": 2267,
+  "assets_expected": 2269,
+  "videos": [
+    {
+      "attempt": "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00145",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00145__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00146",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00146__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00147",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00147__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00148",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00148__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00149",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00149__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00150",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00150__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00151",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00151__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00152",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00152__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00153",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00153__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00154",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00154__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00155",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00155__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00156",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00156__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00157",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00157__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00158",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00158__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00159",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00159__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00160",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00160__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00161",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00161__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00162",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00162__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00163",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00163__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00164",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00164__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00165",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00165__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00166",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00166__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00167",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00167__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00168",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00168__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00169",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00169__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00170",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00170__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00171",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00171__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00172",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00172__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00173",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00173__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00174",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00174__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00175",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00175__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00176",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00176__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00177",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00177__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00178",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00178__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00179",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00179__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00180",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00180__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00181",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00181__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00182",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00182__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00183",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00183__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00184",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00184__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00185",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00185__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00186",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00186__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00187",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00187__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00188",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00188__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00189",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00189__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00190",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00190__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00191",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00191__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00192",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00192__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00193",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00193__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00194",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00194__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00195",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00195__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00196",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00196__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00197",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00197__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00198",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00198__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00199",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00199__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00200",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00200__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00201",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00201__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00202",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00202__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00203",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00203__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00204",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00204__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00205",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00205__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00206",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00206__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00207",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00207__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00208",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00208__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00209",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00209__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00210",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00210__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00211",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00211__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00212",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00212__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00213",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/train-PANN_PPO_S5-s0-ep00213__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00214",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/train-PANN_PPO_S5-s0-ep00214__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00215",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/train-PANN_PPO_S5-s0-ep00215__full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "train-PANN_PPO_S5-s0-ep00216",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/train-PANN_PPO_S5-s0-ep00216__full-mission-material-overlay.mp4"
+    }
+  ],
+  "release_urls": {
+    "tm-s1-go2-local-readiness-r12": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12",
+    "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01",
+    "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02",
+    "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03"
   },
-  "publication_status": "pending_job_completion",
-  "postprocess_budget_s": 21600,
   "cleanup": {
     "status": "pending_publication",
     "deleted_files": 0,
     "deleted_bytes": 0
   },
-  "unfinished": [
-    "background_training",
-    "eligible_final_evaluation",
-    "complete_render_and_release_publication",
-    "confirmed_inactive_copy_cleanup"
-  ],
-  "continuous_supervision": false,
-  "automatic_extension": false,
-  "automatic_new_controller": false
+  "git_delivery": "This report is prepared for this commit; its presence on GitHub records successful delivery. A push failure is retained locally as pending."
 }

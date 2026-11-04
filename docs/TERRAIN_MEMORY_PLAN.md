@@ -2,12 +2,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 实现：W37_CONTACT_CONSISTENT_JOINT 的 S5-r26 已在D57实际构建（159.70s），从r24恢复支撑骨架，统一局部参考/子步风险；运行源码与配置已推送46392b284f218d2ae9b778bb2f910ba8393d77e8。
-- 训练：tmux s1-joint / job-20261103T075623Z 自北京时间2026-11-03T15:56:23.503540+08:00运行，28h上限至2026-11-04T19:56:23.503540+08:00；交接快照新增4条/0更新，累计4501/17，r26尾4，旧r25尾145条已隔离；目标6545/25。
-- 任务表现：ep145已实际推进并保存到2.000s的转移；交接时尚无新完整回合。实际向前、材料加载、合规去程/返程/整圈待自然结果，启动采样不代表任务能力。
-- 评价：训练结束后另计4h，只取本job同版本最后实际新更新；nominal E30通过同case才E60。已知起步退行命中则跳过，无新完整更新则unavailable；不启动E300/600。
-- 发布：源码已推送；训练/评价结束后复用6h render/publish/cleanup直传Git/Release，全部实际/失败/部分资产均保留。正常摘要：results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json。
-- 清理与未完成：训练、条件评价、渲染发布、清理仍待后台完成。仅全部交付、普通push成功且文件不活跃后按manifest清理，并将数量/字节/空间变化推送同job；不延时、不换版、不持续盯守、无PC归档。
+- 当前任务：W37_CONTACT_CONSISTENT_JOINT后台作业job-20261103T075623Z已结束；训练达标=True，评价=completed，发布=publication_pending，清理=pending_publication。
+- 训练：本job新增2048条/8更新，累计6545/25，旧尾excluded=145；停止原因=target_reached；评价独立结果E30=physical_material_failure，E60=blocked_by_predecessor。
+- 已完成：本job保留73个新attempt，视频可用73，资产已发布2267/2269；控制版S5-r26。
+- 任务表现：最大向前位移0.9687671968487584m、材料加载50回合、合规去程0、合规返程0、合规整圈0、侧出1；末次原物理原因training_checkpoint_complete。
+- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。
 
 ## 1. 原始目标与当前阶段
 
