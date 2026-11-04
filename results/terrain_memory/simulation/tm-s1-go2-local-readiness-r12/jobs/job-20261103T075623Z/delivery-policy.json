@@ -1,0 +1,57 @@
+{
+  "source": "experiments/terrain_memory/s1-go2-local-readiness-r12.json#outputs.automatic_publication",
+  "configured": {
+    "enabled": true,
+    "entrypoint": "scripts/finish_s1_go2_r12_job.py",
+    "training_failure_still_triggers_postprocess": true,
+    "video_source": "On-demand rendering uses saved actual trajectory/model/result only. No automatic full-episode rendering and no new physics for videos.",
+    "manifest": "Compact Git paths and retained local job/episode/training locations in the existing job/index. Explicit selected bulk manifests are optional and separate.",
+    "git_scope": "This job's compact result files,index and handoff;source changes committed before launch. No blanket git add,no unrelated changes,no force push.",
+    "status": "Keep training target attainment, final evaluation, compact Git delivery, retained-local bulk data and user backup/deletion separate.",
+    "default_postprocess_wall_s": 21600,
+    "release_parts": {
+      "enabled_for_new_jobs": false,
+      "max_new_nonempty_assets_per_release": 900,
+      "naming": "<run>-<job>-partNN",
+      "existing_destinations": "Preserve manifest/index release_tag and reuse unchanged published assets.",
+      "create_target": "job.source_commit",
+      "server_execution_of_new_partitioning": "Already executed in W35 and W36; reuse deterministic partNN destinations and existing manifests.",
+      "scope": "Existing optional selected-asset uploader only; no default automatic Release pipeline."
+    },
+    "evaluation_assets": "Include every explicit evaluation attempt result/config in compact delivery; raw policy traces/arrays/videos remain local unless selected for analysis.",
+    "cleanup": {
+      "enabled": false,
+      "owner": "user",
+      "status": "manual_after_user_backup",
+      "authorization": "2026-11-03 latest user instruction: user periodically exports from server data disk to their own storage disk and centrally deletes after backup. Supersedes previous automatic deletion authorization.",
+      "implementation_status": "automatic_cleanup_removed_from_default_finisher",
+      "scope": "No automatic deletion of server research outputs by Codex. Historical completed cleanups remain historical facts.",
+      "preserve": [
+        "current valid resume and last completed update",
+        "all active data and runtime resources",
+        "raw evidence awaiting user backup",
+        "repository, source, compact records and environment"
+      ],
+      "record": "Record retained-local locations and unverified user-backup status in the same job; do not invent backup completion or deletion.",
+      "resume": "Use the actual latest same-phase local resume; restore an old published checkpoint only if it is the explicitly needed state and local copy is absent."
+    },
+    "phase_stop_still_triggers_postprocess": true,
+    "delivery_mode": "compact_first_local_bulk",
+    "bulk_upload_enabled": false,
+    "render_all_episodes": false,
+    "delivery_policy_source": "At finish invocation use current main contract outputs.automatic_publication for delivery authorization only, record the source/policy, and preserve the frozen job execution contract for all computation/evaluation settings."
+  },
+  "effective": {
+    "delivery_mode": "compact_first_local_bulk",
+    "bulk_upload_enabled": false,
+    "render_all_episodes": false,
+    "cleanup": {
+      "enabled": false,
+      "owner": "user",
+      "status": "manual_after_user_backup"
+    }
+  },
+  "execution_contract": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/execution-contract.json",
+  "scope": "Current delivery policy only; frozen training/evaluation/paths/identity stay unchanged.",
+  "frozen_delivery_authorization_superseded": true
+}
