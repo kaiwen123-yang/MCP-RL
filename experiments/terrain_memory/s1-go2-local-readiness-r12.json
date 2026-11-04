@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "W37_built_ready_for_direct_joint_sampling",
+  "status": "W37_joint_sampling_started_recorded",
   "protocol_revision": "contact_consistent_joint_v12",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-11-03",
@@ -12,14 +12,14 @@
     "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
     "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
     "source_reference_commit": "718a9aff1a42eb491e57a5a237d8bf70ddfe314e",
-    "rule": "Reuse the existing D57 environment and executed r24 controller skeleton. Plan S5-r26 by removing the r25 MovingSupport, SupportPlacement and force-allocation additions; retain legal-route reward and necessary path-risk treatment, with coherent capped body reference and active-substep derivatives. Build the actual new version before direct full PANN-PPO-MPC sampling. Existing final-policy evaluation, Release partitioning and post-publication cleanup are reused.",
+    "rule": "Reuse the existing D57 environment and recorded S5-r26 implementation and sampling job. Preserve the r24 skeleton, coherent reference/path-risk correction, legal-route reward and final-policy evaluation. Follow the current compact-first delivery policy; bulk outputs remain local for user backup and manual deletion.",
     "active_controller_build": "S5-r26",
     "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r26.json",
-    "active_controller_status": "built_on_D57_pending_joint_sampling",
+    "active_controller_status": "joint_sampling_started_in_recorded_handoff",
     "parent_controller_build": "S5-r25",
     "parent_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r25.json",
-    "latest_executed_controller_build": "S5-r25",
-    "latest_executed_controller_status": "stopped_with_startup_regression_published",
+    "latest_executed_controller_build": "S5-r26",
+    "latest_executed_controller_status": "joint_sampling_started_in_recorded_handoff",
     "implementation_base_controller_build": "S5-r24",
     "implementation_base_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r24.json",
     "checkpoint_parent_controller_build": "S5-r25",
@@ -31,16 +31,16 @@
     "begin_wrapup_after_s": 12600,
     "clock_starts": "The <=4h interactive budget starts at the first Codex activity. A detached training job starts its own explicitly recorded clock at launch; the clocks are independent.",
     "includes": [
-      "current six-line handoff, plan section4 and directly relevant source",
-      "implement coordinated S5-r26 contact/reference/path correction in the retained r24 skeleton",
-      "restore ep144 and explicitly migrate its145old-version tail once without replay",
-      "connect the small post-episode regression stop and phase-specific final-checkpoint selection to existing entrypoints",
-      "source/config push, one tmux launch and brief actual-sampling handoff; reuse existing publication and cleanup"
+      "current six-line handoff and actual existing W37 job records",
+      "continue the already-started fixed-version S5-r26 joint stream without rebuilding, remigrating or resetting deadlines",
+      "apply current compact-first delivery scripts/config without changing frozen computation/evaluation settings",
+      "inspect actual episode/learning/evaluation outcomes and publish compact evidence",
+      "record retained local bulk locations for user backup and manual deletion"
     ],
     "stop_when": "End interactive work after necessary implementation, source/config push and actual-sampling handoff, or at4h. If implementation is incomplete, record the concrete remaining code work; do not launch unchanged r24/r25 under an r26 label. This documentation review does not execute those server steps.",
     "automatically_chain_tasks": false,
     "autonomous_48h_campaign_enabled": false,
-    "unfinished_task_rule": "On return inspect the existing tmux pipeline and job summary first. Do not duplicate the running stream. If rendering/publication is pending,continue only that recorded job's postprocessing.",
+    "unfinished_task_rule": "Inspect the existing tmux pipeline and latest actual job records first; do not duplicate the stream or reset its deadline. Apply only the updated delivery path to an existing job. Retry a concrete compact Git delivery failure from saved records without new physics; unrequested bulk upload is not a blocking pending task.",
     "background_overrun_authorized": true,
     "default_reads": [
       "AGENTS.md",
@@ -58,11 +58,10 @@
     "new_handoff_document_required": false,
     "within_task_chain_enabled": true,
     "allowed_chain": [
-      "implement_and_normally_build_S5_r26_with_explicit_phase_migration",
-      "direct_full_PANN_PPO_MPC_joint_training",
+      "continue_existing_S5_r26_joint_job",
       "conditional_frozen_new_phase_last_update_nominal_E30_then_eligible_E60",
-      "automatic_render_release_parts_and_git_push",
-      "cleanup_confirmed_published_inactive_research_copies_and_push_compact_record"
+      "automatic_compact_git_delivery",
+      "continue_research_with_bulk_outputs_retained_for_user_backup"
     ],
     "chain_shares_one_absolute_deadline": false,
     "current_completed_prerequisite": {
@@ -96,7 +95,7 @@
       },
       "scope": "Historical execution facts to reuse, not a new admission test or proof of material-task qualification."
     },
-    "compute_time_policy": "Existing D57 only. Interactive<=4h; planned W37 training<=28h, final-policy evaluation<=4h, render/publication/cleanup<=6h, with independent clocks. Stop early at target or the specified regression/technical reason. Deliver actual partial counts at deadline. The cancelled W36 40h extension is not inherited.",
+    "compute_time_policy": "Existing D57 only. Interactive<=4h; W37 training<=28h, final-policy evaluation<=4h; compact postprocess retains the existing independent <=6h ceiling for compatibility and exits immediately when complete. No full-video or bulk-upload wait. Stop early at target or the specified regression/technical reason. Deliver actual partial counts; no inherited40h extension.",
     "background_job": {
       "authorized_by": "User explicitly requested tmux training for ten hours or longer,with departure after actual startup and later inspection of logs.",
       "default_maximum_wall_s": 100800,
@@ -114,7 +113,7 @@
       ],
       "ordinary_physical_failure": "Save the original physical terminal and continue the next natural episode, except when the explicitly defined known_r25_startup_regression signature ends this controller phase. No generic fixed failure-count or start-count cap.",
       "automatic_restart": false,
-      "post_training": "On known_r25_startup_regression, skip E30/E60 and continue complete publication. Otherwise evaluate the last actual completed update of this new phase: nominal E30 then exact-case E60 only on its pass. If no new phase update exists, record evaluation unavailable rather than select an old checkpoint. Render/publish every actual output and clean only confirmed-delivered inactive copies.",
+      "post_training": "On known_r25_startup_regression skip E30/E60 and deliver all compact evidence. Otherwise evaluate the last actual completed update of this new phase: nominal E30 then eligible exact-case E60. With no new phase update record unavailable. Push compact results immediately afterward; do not automatically render/upload/delete bulk outputs.",
       "disconnect_semantics": "Detaching or closing the client leaves the server job running. Instance shutdown/reboot ends the process; resume from saved checkpoint later.",
       "concurrent_training_streams": 1,
       "default_postprocess_wall_s": 21600,
@@ -128,12 +127,12 @@
       ],
       "network_rule": "Use a server-independent working route. The automatic job must not depend on the user's PC proxy or client staying online.",
       "autopublish": true,
-      "failure_policy": "Record technical/stage errors and pending paths;publish all available outputs.Do not rerun physics for videos or restart training to repair delivery.Failed upload/push retains unpublished files for ordinary retry;never force-push.Delete only confirmed-delivered inactive copies.",
+      "failure_policy": "Record original technical/stage failures and all available compact results. Retry failed Git delivery from saved records without physics, force push or deletion. Unrequested large checkpoints/videos/raw arrays are retained_local, not publication_pending.",
       "result_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job-name>.json",
-      "resume_publication": "Continue the same job's finish only after a concrete delivery error;reuse videos,snapshots and explicit Release destinations without re-running training/evaluation.",
+      "resume_publication": "Retry the same job compact finisher only after a concrete Git/evidence-delivery error; reuse saved records without training/evaluation replay. Optional selected large-file transfer is separate and does not gate research.",
       "final_evaluation_adapter_status": "implemented_new_phase_update_selection_and_regression_skip",
-      "postprocessing_release_policy": "New unassigned nonempty assets go to deterministic per-job partNN Releases,max900assets each;retain all existing manifest/index destinations and reuse already published files.",
-      "cleanup_after_publication": "Implemented in existing finish/publish: complete manifest and rendering, normal push, then remove inactive confirmed local outputs and push same job record.",
+      "postprocessing_release_policy": "Automatic Release upload is disabled. Reuse existing explicit selected-asset/manifest uploader only when particular diagnostic evidence is requested; retain historical Release destinations and URLs.",
+      "cleanup_after_publication": "Disabled by the latest user instruction. User periodically exports bulk outputs to their storage disk and manually deletes after backup; compact Git push never authorizes deletion.",
       "prior_40h_extension_inherited": false,
       "background_overrun_scope": "Only the interactive4hclock may be outlived by the explicitly budgeted detached job; W37 training still has its own28hlimit and no inherited/automatic extension."
     }
@@ -308,7 +307,7 @@
     },
     {
       "id": "W37",
-      "status": "built_on_D57_pending_joint_sampling",
+      "status": "joint_sampling_started_in_recorded_handoff",
       "goal": "Recover useful forward/material exposure with a contact-consistent controller inside the unchanged full PANN-PPO-MPC loop, then acquire substantive new on-policy learning and evaluate its final policy.",
       "group": "PANN_PPO_S5",
       "seed": 0,
@@ -334,7 +333,7 @@
       "training_maximum_wall_s": 100800,
       "evaluation_maximum_wall_s": 14400,
       "postprocess_maximum_wall_s": 21600,
-      "done": "Actual new-version implementation/build and joint samples/updates, eligible frozen final-policy E30/E60 or explicit skip/unavailable/partial reasons, complete actual artifact delivery and scoped cleanup. Counts are an observation point, not guaranteed completion, convergence or memory benefit.",
+      "done": "Actual implementation/build and joint samples/updates, eligible frozen final-policy E30/E60 or explicit skip/unavailable/partial reasons, and compact Git evidence delivery. Bulk artifacts remain local for user backup and manual deletion; they do not gate research. Counts do not establish convergence or memory benefit.",
       "server_execution_by_this_review": false
     }
   ],
@@ -357,7 +356,7 @@
     "provision_additional_paid_resources": false,
     "project_root_recommendation": "/root/autodl-tmp/MCP-RL",
     "path_rule": "Use actual paths in the new SSH/runtime record if already created; do not move/recreate a working environment just to match a recommended path.",
-    "environment_policy": "Reuse the actual D57 environment, retained MuJoCo3.2.3 ABI/dependency checkout088079eff0450e32b98ee743141780ed68307506, existing assets and r24 implementation base. Latest actual PANN state is r25 ep144/4497/17. Build only the necessary r26 source changes; do not reinstall, remigrate, upgrade dependencies or change precision/allocators.",
+    "environment_policy": "Reuse the actual D57 environment, MuJoCo3.2.3 ABI/dependency checkout088079eff0450e32b98ee743141780ed68307506, assets and recorded r26 build/job. W37 started from r25 ep144/4497/17; use the current phase actual latest state for future continuation. Do not reinstall, remigrate, upgrade dependencies or change precision/allocators.",
     "environment_changes": "No environment changes are planned. Resolve only a concrete error from the necessary normal build or authorized real launch; no environment matrix, import/smoke stage or dependency refresh.",
     "maximum_environments": 1,
     "initial_training_concurrency": 1,
@@ -387,7 +386,7 @@
     },
     "python_environment": "work/envs/d57",
     "compute_environment": "experiments/terrain_memory/compute-environment.json",
-    "storage_budget_note": "One actual free-space check at future launch. The latest W36 cleanup record reports1084files/4678796042bytes deleted and804752240640->809433489408bytes free; these are historical readings, not current measurements. Retain full recording and allow actual output overhead; use existing post-publication cleanup, no PC archive or new paid storage.",
+    "storage_budget_note": "Retain full raw recording and current usable resume. User periodically exports bulk outputs from the data disk to their storage disk and manually deletes after backup; no automatic research-output cleanup or Codex PC archive. Reuse the recorded W37 launch free-space check; historical cleanup/free-space figures are not current measurements.",
     "disk_capacity_scope": "system/data_disk_GB fields retain the original screenshot;actual D57 capacity/free space is determined from existing runtime records and one current check.",
     "last_recorded_cleanup": {
       "source_commit": "3bc39f21304ab0ba4f46038cede157155f1cf4e9",
@@ -440,7 +439,7 @@
     "unfinished_buffer_rule": "Save valid same-controller tail, optimizer, RNG, normalization and counters at ordinary shutdown. Preserve and resume that tail on same-version continuation. Only the explicit r25->r26 boundary isolates the historical145tail once; no silent discard, old-version replay or forced restore exercise.",
     "incomplete_environment_snapshot_rule": "Start a new physical session if full environment state was not saved. Record real boundaries and do not claim uninterrupted physics or fabricate missing successors.",
     "evidence": "Use normal update logs,real trajectories and saved checkpoint. Do not replace real learning by mock tests or inflate results into convergence/benefit claims.",
-    "schedule": "After actual r26 implementation and normal build, restore own ep1444497/17, preserve/exclude its145old-version tail once and collect2048NEW transitions/8NEW updates to6545/25 from an empty active buffer. Ordinary updates keep the live environment; ordinary failures start natural sessions unless the specified r25 regression signature stops the phase. Evaluate only eligible final new-phase updated policy.",
+    "schedule": "W37 already started from own ep1444497/17 after one-time exclusion of145old-version tail. Continue the existing fixed-version job toward2048NEW transitions/8NEW updates and6545/25; do not repeat migration or clear its current same-version tail. Ordinary updates keep the live environment; ordinary failures start natural sessions unless known_r25_startup_regression stops the phase. Evaluate only eligible final new-phase updated policy.",
     "shares_actor_or_optimizer_between_groups": false,
     "pann_runtime": "Frozen causal B ideal PANN remains inside actual sampling and query flow; PPO trains actor/critic and MPC remains online. This is full operational joint control, not end-to-end PANN training or a complete candidate TM02/PANN prediction model. W35 had509/2048nonzero recovery observations; W36 had0/1169 and no material-loaded cells, so zero features there are not evidence of a PANN defect or benefit.",
     "recording": "All actual episodes retain complete existing recording and frequencies/schema,raw trajectories,physical/prediction/material chunks,transition/rollout/update data and checkpoints. No extra diagnostic platform.",
@@ -481,11 +480,10 @@
       "LegalRoute reward version and final-policy evaluation/Release partitioning/cleanup already executed; W37 adds only the specific boundary, stop and checkpoint-selection branches."
     ],
     "next_runtime_work": [
-      "Implement and normally build actual S5-r26 as described in plan section4; remove r25 MovingSupport/SupportPlacement/allocation additions, preserve useful r24 corrections and r25 legal/path treatment.",
-      "Restore only needed ep144 checkpoint from its existing Release; implement one-time145tail exclusion with preserved4497/17counters and phase metadata.",
-      "Implement the small known_r25_startup_regression post-episode stop; carry its phase reason through stopped/job/evaluation and select only a newly completed r26 phase update for eligible evaluation.",
-      "Commit actual source/config and launch one fixed-version full joint tmux job; ordinary actual launch/log evidence suffices, with no extra test or mandatory256-sample wait.",
-      "At target/deadline or concrete stop, reuse final-policy evaluation when eligible, full render/publish and confirmed-inactive cleanup; report actual legal progress/material exposure and partial counts honestly."
+      "Inspect the existing s1-joint/job-20261103T075623Z actual state, with no duplicate build/migration/launch or deadline reset.",
+      "Apply delivery-only changes for compact-first Git publication; preserve the frozen computation/evaluation contract and active process.",
+      "Continue the authorized original training/evaluation chain and inspect complete actual episode results at completion.",
+      "At target/deadline or concrete stop, run eligible final-policy evaluation and immediately push all compact episode/learning/evaluation records and conclusions. Retain bulk outputs locally; user backs them up and manually deletes. Report actual legal progress/material exposure and partial counts honestly."
     ],
     "pann_evidence": "Use ordinary rollout/episode logs for observer/query counts,extra wall time and the12 actual recovery-feature values. Report zero or uninformative features honestly; do not demand artificial nonzero values,read truth q/e or add a diagnostic framework.",
     "controller_change_during_current_window": "Implement and freeze S5-r26 before sampling, retain the W36 legal-route reward version and record the r25 checkpoint boundary. Do not mutate a live job or train the unchanged failed r25 controller to finish its tail.",
@@ -497,7 +495,7 @@
     "resume_mode": "Restore own ep144 actor,critic,optimizer,RNG,normalization and historical4497/17/episode144 counters. Explicitly preserve and exclude the145r25tail once, start r26 with empty active buffer and a fresh physical session. Do not roll back to ep117, mix RAW data or claim uninterrupted physics.",
     "phase_initial_transitions": 4497,
     "phase_initial_updates": 17,
-    "controller_boundary_rule": "Add an explicit one-time r25->r26 migration branch to the existing old-version-tail protection. Preserve the original ep144 checkpoint/tail as published evidence, restore its trained state and counters, record145excluded transitions, and clear only the new-version active buffer. Subsequent same-r26 restores retain their own tail; the exclusion must not be applied twice. Do not fabricate a successor across physical-session boundaries.",
+    "controller_boundary_rule": "The W37 initial one-time r25->r26 migration is recorded as executed. Original ep144 checkpoint/tail remains evidence;4497/17counters were restored and145old-version transitions excluded once. Do not repeat that boundary; subsequent same-r26 restores keep their own valid tail and actual latest state. Do not fabricate a successor across physical-session boundaries.",
     "phase_count_rule": "4497historically collected =4352used in17completed updates +145old unconsumed tail. At migration retain4497 and record145excluded. New target4497+2048=6545,updates17+8=25; final6545=6400completed-update transitions+145excluded+0active tail. Do not subtract145from the sample target or assume cumulative samples are divisible by256.",
     "controller_version_boundary": {
       "parent_controller_build": "S5-r25",
@@ -574,7 +572,7 @@
         "observed_phases",
         "goal_position_radius_m"
       ],
-      "propagation": "Carry the phase stop reason and trigger evidence through stopped.json and the existing job summary. Evaluation records E30/E60 skipped_due_to_startup_regression, then existing complete publication/cleanup continues. No automatic budget extension or training restart.",
+      "propagation": "Carry the phase stop reason and trigger evidence through stopped/job/evaluation. E30/E60 record skipped_due_to_startup_regression, then compact Git delivery continues. Bulk outputs remain local, no automatic cleanup, extension or training restart.",
       "ordinary_failures": "Material-domain failures, trajectories with substantive forward progress or later route phases, and budget truncations do not match this signature; ordinary natural failures continue.",
       "retained_record_basis": {
         "r25_natural_episodes": 26,
@@ -653,7 +651,7 @@
       "E30_rule": "Complete independent30s observation,original far3m arrival and legal outbound material traversal;continue original turn/return. No requirement for a full round trip by30s or deliberate far-end parking.",
       "E60_rule": "Only the exact same case's E30 passes;independent original full roundtrip/holding and60s observation.",
       "downstream_after_failed_E30": "Record E60 blocked_by_predecessor with the true reason;no automatic retry or physical rerun to obtain a pass.",
-      "technical_failure": "Record missing/partial evaluation and continue publication of all actual outputs;do not replay completed training.",
+      "technical_failure": "Record missing/partial evaluation and publish all actual compact evidence. Keep raw outputs locally; do not replay completed training.",
       "automatically_run_E300_E600": false,
       "full_21_case_matrix": false,
       "result_reporting": "Report training targets/counts, stage_status, legal outbound/return/roundtrip metrics, skipped/unavailable/partial evaluation and publication separately. Current E60/E300/E600 pass logic does not independently establish legality of every return/circuit; do not equate a raw stage pass with a legal material roundtrip.",
@@ -703,7 +701,7 @@
     "reward_alignment_risk": "W35 side exits/raw laps exposed reward mismatch. The W36 legal-route reward is already implemented and retained unchanged; do not repeat its implementation or infer task success from its presence.",
     "later_decision_rule": "First obtain useful forward/material exposure and a legal joint baseline; only then consider matched RAW/PANN/cross-leg/return-memory comparisons or a specifically justified throughput/action change. Never extend a known-regressed fixed controller merely to fill2048samples, or claim memory benefit from this controller repair.",
     "contact_consistent_revision": {
-      "status": "built_on_D57_pending_joint_sampling",
+      "status": "joint_sampling_started_in_recorded_handoff",
       "build": "S5-r26",
       "implementation_base": "S5-r24",
       "detailed_plan": "docs/TERRAIN_MEMORY_PLAN.md#4",
@@ -786,32 +784,31 @@
     "compact_root": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "create_result_index_only_after_actual_execution": true,
-    "handoff": "Record session/job/actual targets and independent deadlines at interactive departure. Final summary distinguishes training,evaluation andpublication;use the same six-line handoff and normal index.",
-    "publication": "Push actual source/config before launch.After training/final evaluation,render all saved actual trajectories,publish all research artifacts through existing Release parts,push compact records,then delete only confirmed-published inactive research copies and push cleanup results.No user-PC archive.",
-    "unfinished_upload": "Automatic postprocessing records pending paths and concrete errors,and still attempts to push the partial report. A later invocation resumes this same postprocessing job without new physics. No false published status when upload/push is incomplete.",
+    "handoff": "Use the existing six-line handoff and job/index. Distinguish actual training, evaluation, compact Git delivery and retained-local bulk artifacts; user backup/deletion is separate.",
+    "publication": "Push actual source/config before launch. At training/final-evaluation completion push code/config identity, all episode JSON, compact learning/evaluation records and conclusions first, then continue research. Large checkpoints, full videos and raw arrays stay on the data disk by default; only selected evidence is uploaded on demand. User periodically exports to their storage disk and manually deletes after backup. Codex does not add a PC archive.",
+    "unfinished_upload": "Compact Git failure is a real delivery pending item and is retried from saved records. Unrequested bulk upload is not pending and does not block research; selected transfers retain their actual independent status. Never mark local-only raw evidence as backed up or uploaded.",
     "extra_archive_on_user_pc": false,
     "preserve_normal_working_files_and_actual_history": true,
     "release_tag": "tm-s1-go2-local-readiness-r12",
-    "complete_research_artifact_publication_required": true,
+    "complete_research_artifact_publication_required": false,
     "required_categories": [
-      "all current source changes and relevant execution/render/publication scripts",
-      "resolved configuration and ordinary logs,including initialization/negative results",
-      "actual conda and pip dependency records,driver/runtime and launch/environment changes without credentials",
-      "full videos from every actual episode's saved trajectory,including failure/truncation",
-      "all retained raw robot trajectories and physical/prediction/material array chunks",
-      "all actual PPO transitions, rollouts, learning logs, checkpoints, valid same-version resume tail and explicitly preserved/excluded old-version tail evidence",
-      "actual Go2 scene/XML/mesh,normalization and needed model assets not already publicly referenced; unchanged published assets use original links"
+      "actual source/config commits, job/phase/controller/reward/seed identity and resolved execution configuration",
+      "all per-episode result JSON and episode summaries, including success, physical failure, truncation, technical interruption and zero-step initialization attempts",
+      "compact collection/stopped/progress, per-update learning records, actual per-stream/phase counts, old-tail exclusion and latest usable local resume identity",
+      "actual frozen-policy evaluation results and explicit blocked/skipped/unavailable reasons",
+      "compact launch/environment dependency records without credentials, reused when unchanged",
+      "conclusions, next research question and local job/episode/training paths for retained raw evidence"
     ],
     "w1_catchup": {
       "status": "published",
       "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12",
       "do_not_repeat_upload_or_redownload": true
     },
-    "artifact_index": "Use existing result index for category,relative path,size,Git/ReleaseURL and upload status; no second audit document.",
-    "publication_check": "One normal comparison of expected artifact names/sizes with uploaded asset list; no full-repository hashing or redownload verification. Preserve any already-generated digest fields without extra certification work.",
+    "artifact_index": "Use the existing job and result index: compact Git paths/status, local job/episode/training locations and optional selected Release links. No second archive, mandatory full-file manifest or backup-confirmation system.",
+    "publication_check": "Ordinary Git push and one normal remote confirmation for compact records. Selected Release transfers use existing name/size/upload-state comparison only when requested. No full hashing, bulk re-download or PC archive.",
     "max_release_asset_bytes_exclusive": 2147483648,
     "no_large_binary_in_regular_git_history": true,
-    "upload_packaging": "Only split/package as necessary for transfer on execution host; no extra PC mirror/archive after publication.",
+    "upload_packaging": "Only package/split explicitly selected transfers on the execution host as needed. Default bulk outputs remain local for user-managed backup; no automatic Codex PC mirror/archive.",
     "training_complete_does_not_imply_publication_complete": true,
     "existing_publication_at_review": {
       "source_commit": "718a9aff1a42eb491e57a5a237d8bf70ddfe314e",
@@ -845,49 +842,56 @@
       "scope": "Completed W36 historical delivery observed in the reviewed repository; no server recheck, artifact reupload or deletion by this plan review."
     },
     "transfer_rule": "Use the transfer method that works on the new AutoDL host. Do not hardcode or rebuild the old workstation proxy; fix an actual upload failure only. Do not route through the user's PC for archiving.",
-    "storage_rule": "User explicitly authorized deletion of server research-output copies after complete Git/Release delivery and ordinary push success.Use existing manifest and a single name/size/upload-state comparison.Delete only confirmed-delivered inactive scoped outputs;preserve repository/.git,source,compact records,environment/runtime resources,pending or active files.Restore newest checkpoint on demand later.No full hash/redownload or PC archive.",
-    "mutable_record_publication": "At training end save the job's changed non-binary training records under its stream-records snapshot with job-specific Release names. New binary rollouts/checkpoints use original server paths and job-specific names;reuse immutable prior assets. Do not upload logs while they are still being written.",
+    "storage_rule": "Latest user instruction supersedes the previous automatic cleanup authorization. Large research outputs remain on the server; the user periodically exports them to their own storage disk and manually deletes after backup. Codex does not automatically delete research outputs, including already-uploaded copies. Compact Git delivery is not proof of bulk backup. Preserve current resume/last update and all active runtime/data files.",
+    "mutable_record_publication": "After computation ends, copy an explicit compact whitelist of actual job/config/episode/learning/evaluation records into the job-specific Git records. Do not copy all files merely because they end in JSON/JSONL or text. Raw arrays and long logs stay local; keep original execution-contract intact and record delivery override separately.",
     "automatic_publication": {
       "enabled": true,
       "entrypoint": "scripts/finish_s1_go2_r12_job.py",
       "training_failure_still_triggers_postprocess": true,
-      "video_source": "Saved actual trajectory/model/result only;zero-step or missing-trajectory episodes retain evidence and a rendering-unavailable reason.",
-      "manifest": "One explicit per-job asset list,existing index asset statuses and one name/size/upload-state comparison.",
+      "video_source": "On-demand rendering uses saved actual trajectory/model/result only. No automatic full-episode rendering and no new physics for videos.",
+      "manifest": "Compact Git paths and retained local job/episode/training locations in the existing job/index. Explicit selected bulk manifests are optional and separate.",
       "git_scope": "This job's compact result files,index and handoff;source changes committed before launch. No blanket git add,no unrelated changes,no force push.",
-      "status": "Keep training target attainment,final evaluation,rendering,Release upload andGit delivery distinct.",
+      "status": "Keep training target attainment, final evaluation, compact Git delivery, retained-local bulk data and user backup/deletion separate.",
       "default_postprocess_wall_s": 21600,
       "release_parts": {
-        "enabled_for_new_jobs": true,
+        "enabled_for_new_jobs": false,
         "max_new_nonempty_assets_per_release": 900,
         "naming": "<run>-<job>-partNN",
         "existing_destinations": "Preserve manifest/index release_tag and reuse unchanged published assets.",
         "create_target": "job.source_commit",
-        "server_execution_of_new_partitioning": "Already executed in W35 and W36; reuse deterministic partNN destinations and existing manifests."
+        "server_execution_of_new_partitioning": "Already executed in W35 and W36; reuse deterministic partNN destinations and existing manifests.",
+        "scope": "Existing optional selected-asset uploader only; no default automatic Release pipeline."
       },
-      "evaluation_assets": "Every explicit job evaluation attempt is included with training in rendering and the asset manifest; its policy logs are under the job directory.",
+      "evaluation_assets": "Include every explicit evaluation attempt result/config in compact delivery; raw policy traces/arrays/videos remain local unless selected for analysis.",
       "cleanup": {
-        "implementation_status": "already_implemented_and_executed_after_successful_publication_reuse",
-        "authorization": "User latest request:after all contents are pushed to GitHub,delete server copies to relieve storage.",
-        "prerequisite": "All expected actual artifacts delivered;pending/render_pending empty;Release name/size/upload-state confirmed;required Git records/source ordinary push succeeded;files closed and unused by active tasks.",
-        "scope": "Explicit confirmed-published research outputs/checkpoints in current or prior closed-job manifests;no broad recursive project/data-disk deletion.",
+        "enabled": false,
+        "owner": "user",
+        "status": "manual_after_user_backup",
+        "authorization": "2026-11-03 latest user instruction: user periodically exports from server data disk to their own storage disk and centrally deletes after backup. Supersedes previous automatic deletion authorization.",
+        "implementation_status": "automatic_cleanup_removed_from_default_finisher",
+        "scope": "No automatic deletion of server research outputs by Codex. Historical completed cleanups remain historical facts.",
         "preserve": [
-          "repository/.git",
-          "source and compact Git records",
-          "work/envs/d57",
-          "work/r11-frozen",
-          "work/assets",
-          "work/upstreams",
-          "work/terrain-memory",
-          "work/tools",
-          "unpublished or actively used files"
+          "current valid resume and last completed update",
+          "all active data and runtime resources",
+          "raw evidence awaiting user backup",
+          "repository, source, compact records and environment"
         ],
-        "record": "Same compact job record:deleted files/bytes,free space before/after,preserved/pending reasons;ordinary push after cleanup.If that small-record push fails,retain it for retry.",
-        "verification": "Reuse existing manifest and ordinary single metadata comparison;no new full hashes or redownload verification.",
-        "resume": "Restore only latest necessary checkpoint from its Release URL;do not re-download all historical artifacts.",
-        "enabled": true
+        "record": "Record retained-local locations and unverified user-backup status in the same job; do not invent backup completion or deletion.",
+        "resume": "Use the actual latest same-phase local resume; restore an old published checkpoint only if it is the explicitly needed state and local copy is absent."
       },
-      "phase_stop_still_triggers_postprocess": true
-    }
+      "phase_stop_still_triggers_postprocess": true,
+      "delivery_mode": "compact_first_local_bulk",
+      "bulk_upload_enabled": false,
+      "render_all_episodes": false,
+      "delivery_policy_source": "At finish invocation use current main contract outputs.automatic_publication for delivery authorization only, record the source/policy, and preserve the frozen job execution contract for all computation/evaluation settings."
+    },
+    "local_bulk_categories": [
+      "large checkpoints and full resume weights",
+      "rollout and dense raw trajectory/physics/prediction/material arrays",
+      "full-length videos and long logs",
+      "unchanged runtime/model assets and preserved old-version tail evidence"
+    ],
+    "selected_evidence_rule": "Upload only specifically needed diagnostic slices, short videos, selected K/C/D nodes or weights, with episode/time/source/selection reason. All compact episode outcomes remain mandatory; selection must not hide failures. Reuse saved trajectories without rerunning physics."
   },
   "history": {
     "R11_remains_paused": true,
@@ -1247,7 +1251,14 @@
         "latest_user_scope": "Stop,identify errors,publish all related evidence;no repair rollout or further training."
       }
     },
-    "W37_review_scope": "Repository/source/retained-record review and update of next execution documents only. No server access, control implementation/build, experiment, training, environment modification or deletion by this review."
+    "W37_review_scope": "Repository/source/retained-record review and update of next execution documents only. No server access, control implementation/build, experiment, training, environment modification or deletion by this review.",
+    "compact_first_delivery_authorization": {
+      "date": "2026-11-03",
+      "instruction": "Publish compact code/config/all episode JSON/conclusions first and continue research; large checkpoints/videos/raw arrays stay local by default. User periodically exports to their storage disk and manually deletes after backup.",
+      "supersedes": "Prior default full rendering/Release upload and automatic post-publication cleanup. Historical publications and deletions are not rewritten.",
+      "server_deployment_verified_by_this_update": false,
+      "latest_reviewed_source_commit": "b57136e1204ea30d52c5f10be58140fff9bc9619"
+    }
   },
   "reviewed_source_commit": "718a9aff1a42eb491e57a5a237d8bf70ddfe314e",
   "literature": [
@@ -1309,7 +1320,7 @@
   ],
   "current_window_scope": {
     "task": "W37_CONTACT_CONSISTENT_JOINT",
-    "status": "built_on_D57_pending_joint_sampling",
+    "status": "joint_sampling_started_in_recorded_handoff",
     "group": "PANN_PPO_S5",
     "seed": 0,
     "objective": "Repair the known startup contact/reference mismatch in the complete joint loop, recover actual forward/material exposure and continue useful on-policy learning without changing the real task.",
@@ -1330,14 +1341,14 @@
     "automatic_next_task": false,
     "server_execution_completed_by_this_plan": false,
     "this_review_documentation_only": false,
-    "this_review_starts_server_work": true,
+    "this_review_starts_server_work": false,
     "RAW": "Historical256/1retained independently; no RAW resampling, optimizer sharing or old-data mixing.",
     "implementation_base_build": "S5-r24",
     "checkpoint_parent_build": "S5-r25",
-    "latest_executed_build": "S5-r25",
-    "latest_executed_build_status": "stopped_published_with_regression",
+    "latest_executed_build": "S5-r26",
+    "latest_executed_build_status": "joint_sampling_started_in_recorded_handoff",
     "current_build": "S5-r26",
-    "current_build_status": "built_on_D57_pending_joint_sampling",
+    "current_build_status": "joint_sampling_started_in_recorded_handoff",
     "new_controller_build_required": false,
     "window_budget_s": 14400,
     "background_training_authorized": true,
@@ -1347,17 +1358,29 @@
     "final_evaluation_adapter_status": "implemented_phase_selection_and_regression_skip",
     "automatic_postprocess": true,
     "default_postprocess_budget_s": 21600,
-    "automatic_cleanup_status": "already_implemented_and_executed_reuse",
-    "latest_user_scope": "2026-11-03 explicit execution authorization: implement/build r26, direct 28h joint training, eligible 4h final evaluation, 6h publication/cleanup."
+    "automatic_cleanup_status": "disabled_user_backup_and_manual_deletion",
+    "latest_user_scope": "2026-11-03 latest steering: preserve the existing W37 computation/evaluation and deadlines; push compact evidence first, continue research, retain bulk locally for user backup/manual deletion, and do not add a Codex PC archive.",
+    "recorded_startup": {
+      "source_commit": "b57136e1204ea30d52c5f10be58140fff9bc9619",
+      "job": "job-20261103T075623Z",
+      "job_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json",
+      "snapshot_transitions": 4501,
+      "snapshot_updates": 17,
+      "new_transitions_at_handoff": 4,
+      "new_updates_at_handoff": 0,
+      "scope": "Previously published actual startup snapshot, not current server progress. Do not repeat migration/build/launch because of older planning prose."
+    },
+    "review_scope": "Repository delivery-script/config/documentation update only; no server login, deployment, process operation or new experiment. Previously recorded r26 startup is separate."
   },
   "current_review_scope": {
-    "kind": "documentation_only",
-    "reviewed_source_commit": "718a9aff1a42eb491e57a5a237d8bf70ddfe314e",
+    "kind": "repository_delivery_update",
+    "reviewed_source_commit": "b57136e1204ea30d52c5f10be58140fff9bc9619",
     "server_accessed": false,
+    "server_deployed": false,
     "controller_implemented": false,
     "controller_built": false,
     "training_started": false,
     "new_tests_or_experiments": false,
-    "scope": "This review updates the next execution plan only. W37 implementation, normal build and direct full joint training are planned follow-up work; no server execution or environment change is claimed."
+    "scope": "This review updates repository delivery scripts/config/docs to compact-first publication and user-managed bulk backup/manual deletion. The reviewed commit already records actual r26 build and sampling; this review does not start or inspect the live server process."
   }
 }

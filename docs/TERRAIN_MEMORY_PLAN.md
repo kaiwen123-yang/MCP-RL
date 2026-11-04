@@ -1,13 +1,13 @@
-# S1：r25停止后的诊断与完整联合推进计划
+# S1：r26联合作业接续与紧凑证据交付
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W37_CONTACT_CONSISTENT_JOINT后台作业job-20261103T075623Z已结束；训练达标=True，评价=completed，发布=publication_pending，清理=pending_publication。
-- 训练：本job新增2048条/8更新，累计6545/25，旧尾excluded=145；停止原因=target_reached；评价独立结果E30=physical_material_failure，E60=blocked_by_predecessor。
-- 已完成：本job保留73个新attempt，视频可用73，资产已发布2267/2269；控制版S5-r26。
-- 任务表现：最大向前位移0.9687671968487584m、材料加载50回合、合规去程0、合规返程0、合规整圈0、侧出1；末次原物理原因training_checkpoint_complete。
-- 下一步：先查看本job真实路线/支撑结果；有发布待办则从现有文件续传，禁止为补视频重跑物理；再决定继续学习或正式阶梯。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json；原Release及本job续传Release见摘要release_urls，用户电脑不另归档。
+- 当前任务：W37_CONTACT_CONSISTENT_JOINT / S5-r26 的 job-20261103T075623Z 已结束；本次合并远端紧凑交付规则与服务器实际结果，普通Git交付处理中。
+- 训练：2026-11-04北京时间10:17:33达到目标，新增2048条/8更新，累计6545/25，旧r25尾145 excluded、新尾0；最后更新checkpoint-006545.pt，恢复resume-state-ep00216.pt。
+- 任务表现：72个训练回合，36跌倒、34非足接触、1材料域退出、1目标达到截断；50回合材料加载，最大向前0.968767m，合规去程/返程/整圈均0，侧出1。
+- 评价：最终权重nominal E30于14.3096s非足接触失败，最大向前0.746252m且有材料加载；E60前级阻断，E300/600未启动。评价流程结束不等于任务通过。
+- 交付：保留已经执行的73视频渲染和Release历史；本次按最新规则先完成源码/配置、全部逐回合JSON、学习与评价小记录的普通Git推送；两个旧Release失败项不阻塞紧凑交付。
+- 保留：新版finish已同步D57；不自动删除研究输出。job、episode、shared training和有效checkpoint均留服务器，由用户导出备份后统一删除；不另做PC归档，不重跑物理。
 
 ## 1. 原始目标与当前阶段
 
@@ -19,13 +19,15 @@
 |---|---|---|
 | 刚地基础 | R8项目S3九原任务9/9、独立连续300s任务3/3 | 不能替代材料任务或当前r25能力 |
 | 材料任务 | r24出现合规去程及返程暴露 | 合规完整往返0，末端固定策略E30失败 |
-| 联合学习 | PANN累计4497真实转移、17次PPO更新 | 无收敛、可靠成功率或PANN收益证据 |
-| 当前版本 | r25源码、失败及同状态诊断已发布 | 刚地起步退行；r26只有未使用草稿 |
+| 联合学习 | W36结束4497/17；W37启动快照4501/17 | 新快照不是实时进度；无收敛、可靠成功率或PANN收益证据 |
+| 当前版本 | r26已记录构建、迁移并启动实际采样 | 尚无本次查验的完整新回合结果，不能从启动推断修复成功 |
 | 研究目标 | R1/R2/S0提供控制、材料辨识与决策基础 | 跨腿/返程记忆的因果收益、候选材料传播、终端重访价值、NX/实机仍待做 |
 
 **可以推进实验，应推进修正后的完整联合版本。原样续跑r25缺乏价值，也不回到每修一个模块就另开资格测试。** 本次依据截至`718a9aff1a42eb491e57a5a237d8bf70ddfe314e`的内容；[该提交中的旧计划](https://github.com/kaiwen123-yang/MCP-RL/blob/718a9aff1a42eb491e57a5a237d8bf70ddfe314e/docs/TERRAIN_MEMORY_PLAN.md)保留历史，不回改旧结果。
 
 ## 2. 这一轮推进了多少
+
+第2、3节保留基于`718a9aff`的W36诊断，第4节记录W37已实施的设计和仍适用的计算规则。`b57136e`已保存r26实际构建/采样交接，当前接续以顶部6行、同job实际记录和第8节为准；不重复执行初始迁移或启动。
 
 ### 2.1 学习数量与任务能力分开计
 
@@ -85,7 +87,7 @@ r25在路线[0,3]截断后设置`target_x=base_x+direction*.15`。2.604s后饱�
 
 已存状态用S5-r25-inspect重算，plant积分步0，输出动作与原记录最大差0；按`nominal+K*StateDiff+原目标限幅`重构约2.2e−16。没有证据支持“选中A却执行B”；policy reference不要求是自由滚动轨迹。此诊断不是新r26实验。
 
-r24已有十子步A/B链式复合、节点起点C/D。r25在十子步都请求完整A/B/C/D再挑峰值风险行，产生重复sensor求导。尚无证据证明矩阵乘法顺序错。现有r26 path两个inc未构建应用，不算已经修好或提速。
+r24已有十子步A/B链式复合、节点起点C/D。r25在十子步都请求完整A/B/C/D再挑峰值风险行，产生重复sensor求导。尚无证据证明矩阵乘法顺序错。`718a9aff`诊断时r26 path两个inc尚未构建应用；后来W37已记录构建/采样，但启动仍不等于已证明修复效果或提速。
 
 ### 3.5 r24的材料问题仍然存在
 
@@ -95,13 +97,13 @@ W35末端E30于7.516s进入材料，10.848s侧出，12.5732s材料域退出；RR
 
 ### 3.6 流程扩大了重复损失
 
-现训练入口只在技术中断/预算结束停，对自然fall/nonfoot始终开下一回合，使同一刚地退行持续27回合。第4.5节只增加针对现成证据的小范围phase停止分支。
+W36当时训练入口只在技术中断/预算结束停，对自然fall/nonfoot始终开下一回合，使同一刚地退行持续27回合。W37已按第4.5节接入针对现成证据的小范围phase停止分支。
 
 早期序列化/ABI、重复导数节点、步态覆盖、approach band整数截断、合法路线奖励等均有修复历史，不重新列为新任务。旧README/计划正文/契约里的ep117和r25待实现入口本次一起纠正，旧job和结果不回改。
 
-## 4. 当前执行任务：W37_CONTACT_CONSISTENT_JOINT
+## 4. W37已实施设计与既有作业规则
 
-### 4.1 实际实现一个协调的r26版本
+### 4.1 r26实现设计与已记录状态
 
 先查D57同流tmux与最新结果，有活动作业就接续，不重复启动。复用`work/envs/d57`、MuJoCo3.2.3及实际ABI依赖、原资产、20 MPC workers/Torch2/BLAS1。只查一次实际空间。本次审查未SSH、未改服务器环境、未启动新物理。
 
@@ -110,9 +112,9 @@ W35末端E30于7.516s进入材料，10.848s侧出，12.5732s材料域退出；RR
 3. **保留路径风险并去重复求导。** ImpactMargin从r12_stable_support打包条件拆出，保持其原公式、.8mm onset/.2mm scale及weight176；MaterialDomainMargin/TrunkClearance沿用。第4.3节统一数值定义、峰值选择和active-substep导数。它仍是软风险/代理模型，不包装成真实TM02硬约束。
 4. **保留已实现的学习接口。** r25合法路线奖励、冻结因果PANN、658维观测和PPO数值不改；只加第4.4节明确迁移、第4.5/4.6节停止与评价的必要接线。
 
-实际修改现有configuration/prepare/model/runtime、C++ task/trajectory/model_derivatives、policy/train/evaluate相关入口，按原方式构建S5-r26并记录配置、patch/source与运行资产。当前契约active r26明确是planned，不代表二进制或spec已经存在；实现后使实际build/spec/入口一致。不能只写一个未被读取的JSON，或给旧版改名。
+W37已记录相关configuration/prepare/model/runtime、C++ task/trajectory/model_derivatives、policy/train/evaluate入口的实际实现、S5-r26构建与采样启动。构建及运行身份见顶部提交和job，以下公式保留为设计依据；不再因旧planned描述重复构建/迁移。仍须以实际运行身份判断结果，不能给旧版改名冒充新实现。
 
-必要构建和实际启动检查后直接完整联合采样，无pure MPC、单模块或E30训练准入；不重建环境、不新增测试套件/恢复演习/无关矩阵/参数网格。4h内实现不完就交具体未完代码，不启动旧版冒充r26，不自动串联多个新候选。
+当前接续已有完整联合采样，无pure MPC、单模块或E30训练准入；不重建环境、不新增测试套件/恢复演习/无关矩阵/参数网格，不自动串联多个新候选。新的交付改动不改变本次计算定义。
 
 ### 4.2 同一加速度有限、cap有效的局部参考
 
@@ -158,7 +160,7 @@ D[k,:]=Jrho_k(x[j_star]) @ Q[j_star]
 
 只按需下载[resume-state-ep00144.pt](https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__training__PANN_PPO_S5-seed0__resume-state-ep00144.pt)到原`outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/`。必要时才取[checkpoint-004352.pt](https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part01/job-20261101T133954Z__training__PANN_PPO_S5-seed0__checkpoint-004352.pt)。不回ep117，不重跑r25凑batch，不回下载全历史。
 
-恢复Actor/Critic/optimizer/RNG/归一化/历史计数和episode编号。没有完整世界快照，另起物理会话；旧last_observation/pending不能接成新会话successor。PolicyStream当前遇不同controller非空tail会ValueError，需增加**一次明确版本迁移分支**：旧checkpoint与4353–4497这145条出处、版本、未使用状态保留，active buffer清空。不是删除默认保护，也不是每次resume静默清空；新r26同版resume保留自己的合法尾。
+W37初始迁移已恢复Actor/Critic/optimizer/RNG/归一化/历史计数和episode编号。没有完整世界快照时另起物理会话，旧last_observation/pending不能接成新会话successor。已接入的一次版本迁移保留旧checkpoint与4353–4497这145条出处、版本、未使用状态，仅在该边界清空active buffer。默认跨版保护仍保留；此后新r26同版resume保留自己的合法尾，不再次执行ep144迁移。
 
 ```text
 历史采集4497 = 已用于更新4352 + r25旧尾145
@@ -181,31 +183,38 @@ D[k,:]=Jrho_k(x[j_star]) @ Q[j_star]
 
 第一次匹配就停本phase，是有依据的计算预算策略，表示**已知表现特征复现**，不证明唯一根因相同。字段缺失/数值坐标非有限记not_evaluable，不能默认0/false误停；未到达时间的明确null是合法值，不当作非有限错误。有限到达时间表示不匹配。没有连续N次或总尝试次数上限；普通材料失败、有明显前进、远端/返程和纯预算截断均不触发。
 
-stopped/job保存触发attempt、原物理原因、三项x、加载字段、阶段及阈值来源，原result的fall/nonfoot不改。原因从train入口传到job和evaluate_job；命中则E30/E60记skipped_due_to_startup_regression，直接完整render/publish/cleanup，不自动延预算/重启/换候选。不读dense arrays、不新建监控、不要求Codex等首回合。
+stopped/job保存触发attempt、原物理原因、三项x、加载字段、阶段及阈值来源，原result的fall/nonfoot不改。原因从train入口传到job和evaluate_job；命中则E30/E60记skipped_due_to_startup_regression，直接保存并推送全部紧凑证据，大文件本地保留，不自动延预算/重启/换候选。不读dense arrays、不新建监控、不要求Codex等首回合。
 
 ### 4.6 训练、评价与预算
 
 - 单流PANN seed0、256条一次更新；更新不reset，普通物理/材料失败自然续采。启动后保持源码/配置固定。
-- 交互≤4h；后台训练≤28h或新增2048/8达到；末端评价另≤4h；渲染/发布/清理另≤6h。旧r25 40h扩展不继承，不自动加时；速度/成功均待测。
-- 源码/配置普通提交推送后，复用`start_s1_go2_r12_tmux.py --resume <实际ep144路径> --hours 28 --postprocess-hours 6 --network-mode <服务器独立可用模式>`。确认真实采样和普通日志增长即可交接，不等256、不持续盯守、不kill后台。
+- 交互≤4h；后台训练≤28h或新增2048/8达到；末端评价另≤4h；紧凑交付沿用另≤6h上限，push完成即退出，不等待大文件或消耗完整时限。旧r25 40h扩展不继承，不自动加时；速度/成功均待测。
+- W37源码/配置已提交并由现有启动器启动`job-20261103T075623Z`；接续先读同job实际状态，不再次用ep144启动、不重置28h截止。确认真实采样和普通日志增长即可交接，不等256、不持续盯守、不kill后台。
 - 正常结束且本phase有新完整更新时，固定**本phase同controller/reward最后实际更新**的checkpoint/归一化；nominal、seed0、20workers、确定性均值、无学习，独立E30，原same-case前级通过才独立E60。满目标用006545，部分用实际末次，不挑最好看的。
-- 当前评价用目录最大checkpoint，需改成限定本phase与controller/reward身份，避免残留旧r25。无新更新写new_update_unavailable，不把ep144冒充新训练成果，不补物理考核；已知退行停止直接跳评价。
+- W37已接入限定本phase与controller/reward身份的末次更新选择，不能退回目录最大checkpoint而误用旧r25。无新更新写new_update_unavailable，不把ep144冒充新训练成果，不补物理考核；已知退行停止直接跳评价。
 - 原30→60→300→600阶梯不变；本段仅E30/eligible E60。按历史速度90sim-s约2.0–3.47h，E300约6.7–11.6h、E600约13.4–23.2h，只作预算估算。长级以后独立资格/预算，不拼接片段。
 - **stage_status与legal_route分别报告。** 现E30直接要求合法去程，E60/300/600更依赖完成/裸圈数；独立E60不因旧E30合法就自动合法。原状态/阈值保留，实际合规往返看合法去程、返程和整圈，不能只看passed字面。
 
 观察顺序是正向运动、真实材料加载、合规去程、返程/整圈、末端固定策略。loss/奖励/更新数、裸圈数和训练前缀不替代任务结果。
 
-## 5. GitHub交付和服务器副本清理
+## 5. 紧凑证据先交付，大文件由用户备份和删除
 
 W36已1060/1060项交付（978个Release文件＋82个Git记录）、27视频、pending/render_pending为空。记录清理1084文件/4,678,796,042字节，空闲804,752,240,640→809,433,489,408字节；这是上传记录，非本次实时磁盘实测。
 
-**复用已经执行过的finish/publish/cleanup，不在用户电脑归档。** 清理不是新的待开发平台。
+**2026-11-03最新用户指令覆盖此前“全量上传后自动清理”。默认顺序：计算完成 → 普通Git推送紧凑证据 → 继续研究。** 大checkpoint、全长视频、原始数组留在服务器数据盘，不自动进入后台全量上传队列；用户定期导出到自己的存储盘，完成备份后由用户统一删除。历史已上传/已删除事实不回改，也不能被当成新授权。
 
-1. 所有实际源码、环境记录、正常/失败/截断结果、全长视频、原始轨迹、物理/预测/材料数组、transitions/rollout/checkpoint、隔离旧尾出处有Git/Release去向。复用partNN最多900资产、原URL和manifest；缺原轨迹不能渲染时记录真实原因，不补跑物理。
-2. 全部应交付完成、pending/render_pending为空，现有一次名称/大小/上传状态核对，必要源码及紧凑结果普通push成功后，才清理。不增全量hash、回下载认证或PC复制。
-3. 只删manifest覆盖、远端已确认且inactive的服务器研究副本，可含已结束旧job输出/checkpoint。源码/.git、紧凑记录、work/envs/d57、work/r11-frozen、work/assets、work/upstreams、work/terrain-memory、work/tools和未传/活跃文件保留，不递归清空项目/数据盘。
-4. 文件数/字节、实际空间变化和保留原因写同job并普通push；小记录push失败保留续推。上传失败只续后处理，不重训，不删未交付文件。
-5. 续训按需恢复最新checkpoint；不在用户电脑下载、复制、镜像、压缩或归档，不回下载全部历史。
+| 默认立即推GitHub | 默认留服务器 | 研究需要时再选取 |
+|---|---|---|
+| 实际源码/commit、运行配置与resolved参数、job/phase/seed/环境身份 | 大checkpoint、resume完整权重、rollout、原始轨迹/物理/预测/材料数组、长日志 | 特定权重、故障附近的原采样率片段、少数相关K/C/D节点与短视频 |
+| 全部逐回合JSON和attempt清单，包括成功、失败、零步初始化、中断/截断 | 全长视频；默认不要求每个回合先渲染 | 片段附episode、时间范围、原文件位置与选取理由 |
+| collection/stopped/逐update学习记录、实际计数与旧尾排除、本phase有效resume位置 | 共享training目录、各episode和job目录内的原始证据 | 沿用既有选择性Release上传入口和已发布URL |
+| 末端评价/skip/blocked原因、真实任务表现、结论和下一问题 | 当前有效resume和末次完成更新继续供接续使用 | 不为补视频重跑物理，不改判定阈值 |
+
+1. **精简文件种类，不精简失败记录。** 保留完整逐回合结果与明确的缺失原因；不把仅有总成功率、最好回合或训练前缀当成全部证据。JSON/JSONL后缀不代表文件一定小，按已知结果类别选取；密集数组、连续大日志不进普通Git。现有`training_outcomes`可在本地读取rollout/tail后只提交数字，缺失统计如实标记，不伪造。
+2. **紧凑发布独立完成。** `finish_s1_go2_r12_job.py`保存本job的小记录、摘要、index和6行交接后普通commit/push；默认不调用全量renderer或Release的`upload/finish`。未选上传的大文件记为本地保留，不列入必须清空的pending。Git失败保留记录并普通续推，不强推、不重训、不删除。
+3. **大数据备份和删除由用户负责。** job摘要记录job目录、episode目录、共享`training/<group>-seed<seed>/`及有效resume位置，避免只导出job目录而漏掉权重/数组。Codex不另建归档、备份确认系统或清理服务，不自动删除研究输出。用户备份时覆盖所需完整目录；仍在写入或继续训练所需的文件须保留。GitHub紧凑发布成功不等于原始数据已备份。
+4. **只改交付，不改已启动计算。** 已启动job的`execution-contract.json`继续作为计算/评价证据；新版finish单独读取当前主契约的交付策略，并在摘要记录覆盖来源，旧`cleanup=true`不能恢复自动删除。现有`run-job.sh`按路径启动finish：服务器更新到新版且finish尚未启动时可直接接续，无需重启训练。若旧后处理已运行，要检查其真实状态后处理交付阶段，不能通过重启/终止训练来换策略。
+5. **部署边界如实交接。** 本次仓库更新没有登录D57或改变运行进程，不能宣称现场自动上传/清理已经关闭。下次Codex先同步交付相关改动并检查该job采用的finish，保留源码、输出、环境、运行资源及既有deadline。后处理6h仅保留为兼容上限，紧凑交付一完成即可研究；没有全量上传等待门槛。
 
 ## 6. 本次采用的论文和官方依据
 
@@ -233,19 +242,15 @@ W36已1060/1060项交付（978个Release文件＋82个Git记录）、27视频、
 ## 8. Codex启动词
 
 ```text
-请在 autodl-d57:/root/autodl-tmp/MCP-RL 执行 W37_CONTACT_CONSISTENT_JOINT。先同步GitHub最新main，读取AGENTS.md、docs/TERRAIN_MEMORY_PLAN.md顶部6行与第4节、当前R12契约及直接相关源码；最多5行开场，随后实际实现，不重复全仓审查、新计划或论文复现。
+请接续 autodl-d57:/root/autodl-tmp/MCP-RL 的 W37_CONTACT_CONSISTENT_JOINT，按我最新的交付规则执行。先读GitHub最新main中的AGENTS.md、主计划顶部6行及第5节、当前R12契约，再查看既有tmux s1-joint和job-20261103T075623Z。仓库已记录r26实际构建/采样；4501/17只是启动快照。先核实已有作业真实状态，不重复迁移、构建、启动或重置deadline。
 
-先查同流tmux和最新实际结果，避免重复启动。r25已停止：累计4497条/17更新，最新resume-state-ep00144.pt含145旧尾，27回合全部未到材料，40h扩展取消。按计划Release链接只恢复需要的最新状态，不退ep117，不原样续跑r25；复用D57现有环境、ABI、资产和服务器独立网络。
+本次先落实交付改动：保存本地未提交工作，用正常Git同步最新finish/start和交付配置；只改变后处理授权，不改正在运行的控制、PPO、物理、奖励、训练/评价预算或冻结execution-contract。新版finish默认先推紧凑证据，不自动render、全量Release upload或cleanup；确认既有run-job.sh后续会使用新版路径。若旧finish已经运行，先检查它的真实阶段，仅处理交付进程，不为换策略中断/重启训练。不能把GitHub已推送当成服务器已部署。
 
-实际实现并构建S5-r26：保留r24全身控制、PD/兼容输入参考和r25合法奖励；删除r25 MovingSupport/SupportPlacement及错误分配，不全局关闭MakeDifferentiable、不复装r18/r19速度残差、不任意截断反馈。按第4.2节将加速度有限、cap有效的同一局部前视packet贯穿runtime和MPC未来节点，处理启动/转向/越过端点、base-head .3m偏置和时钟；真实路线/材料状态不重置。按第4.3节统一子步风险值、峰值和active-substep导数，保留十子步A/B，避免每子步完整C/D；保留ImpactMargin原语义，已有inc仅草稿不能改名冒充实现。
+默认顺序：服务器完成训练与既定评价 → 普通Git推送实际代码/config身份、全部逐回合JSON、零步/失败/中断结果、collection/stopped/学习小记录、独立评价和结论 → 继续研究。大checkpoint、全长视频、rollout和原始数组默认留数据盘，不自动全量渲染、上传、打包或列为阻塞研究的pending。需要解释某次失败时，再从既有原始数据选取相关时段、矩阵或短视频，注明来源和选择理由，不补跑物理。
 
-必要构建后直接完整PANN+PPO+MPC联合训练，无单模块/E30训练准入、测试套件、恢复演习、参数网格或通用监控。原Go2、材料.02域、力矩/碰撞/跌倒/路线/评价定义不变，冻结因果PANN、原PPO/观测/2Hz单cap。显式迁移ep144：恢复Actor/Critic/optimizer/RNG/归一化/历史4497/17，145旧尾隔离留证，空新buffer与新物理会话开始；同版以后resume保留合法tail。新增2048/8观察点，累计6545/25，记录145 excluded，第一批4498–4753。
+我会定期把大文件导出到自己的存储盘，备份完成后由我统一删除。不要自动删除服务器研究输出，也不要替我在电脑上再做归档。记录job目录、episode目录、共享training目录和有效resume/末次update位置；紧凑Git交付完成不等于大数据已备份。旧冻结契约里的cleanup=true已被这条指令覆盖。Git失败保留记录、普通续推，不强推、不重训、不删除。
 
-实现第4.5节已知r25起步退行的小停止分支：自然回合保存后用已有result判定，命中则保存stopped/job、跳E30/E60直接发布；原物理失败不改。普通材料失败自然续采，更新不reset；不设尝试次数上限、不持续盯守、不自动加时或串联新版本。
+原W37单流20workers、Torch2/BLAS1，28h训练和4h条件末端评价上限不变；已知r25退行停phase，普通物理失败自然续采。固定本phase最后实际新更新做nominal E30，同case合格才E60；无新更新/已知退行如实skip，不自动E300/600。后处理6h仅为兼容上限，紧凑push完成即结束，不等待大文件。保持≤4h交互，不新增测试套件、恢复演习、参数网格、监控/备份平台或全量哈希审计。
 
-单流20 MPC workers、Torch2、BLAS1，只查一次实际空间。源码/配置先提交推送，再用现有tmux启动器；训练28h、末端评价4h、发布清理6h各自计时，4h只限交互。确认真实采样和日志正常即可交接。正常结束且本phase有新完整更新时，固定本phase同版本末次checkpoint/归一化做nominal E30，通过才E60；无新更新或已知退行停止则记原因，不误取旧权重。stage_status与legal_route分别报告，保留30/60/300/600阶梯，本段不自动跑长级/全矩阵。
-
-复用已实现的finish/publish/cleanup：所有源码、环境、视频、原始轨迹、大数组、rollout/checkpoint及失败/部分结果从D57直传Git/Release。全部交付、普通push成功、待传/待渲染为空且文件inactive后，删除manifest覆盖的服务器研究副本；保留源码/.git、紧凑记录、环境、运行资产、未传/活跃文件。复用一次名称/大小/上传状态核对，不新增hash/回下载认证，不在我的电脑下载、复制、镜像、压缩或归档。清理数量/字节/空间变化写同job并推送；发布失败只续后处理。
-
-收尾只更新正常结果及主计划6行，分开说明实现、训练、评价、发布、清理及未完成项。重点报告实际向前、材料加载、合规去程/返程/整圈和失败机制，不以样本数/loss/裸往返/训练前缀冒充任务能力。若4h内实现未完，留下具体代码差距，不启动旧版冒充r26。
+收尾更新同job/index与主计划6行，说明真实训练/评价、紧凑发布、大数据本地保留、服务器是否实际采用新交付路径及具体未完项。依据完整逐回合证据分析向前、材料加载、合法去程/返程/整圈和失败机制，再确定下一研究动作；不以更新数或裸圈数冒充稳定能力。
 ```
