@@ -548,7 +548,7 @@ def main():
             changed = subprocess.run(["git", "diff", "--cached", "--quiet", "--", *paths], cwd=ROOT).returncode
             if changed:
                 git("commit", "--only", "-m", f"Record compact S1 background job {name}", "--", *paths)
-        git("push", "origin", "HEAD:main")
+        git("-c", "pack.window=0", "push", "--no-thin", "origin", "HEAD:main")
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
         summary["publication_status"] = "publication_pending"
         detail = getattr(error, "stdout", "") or ""

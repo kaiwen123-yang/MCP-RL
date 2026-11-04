@@ -2,12 +2,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27 已在D57最新main上完成实际源码与双流接线，正常构建完成（158.78s），状态implemented_built_pending_launch；尚无r27物理结果。
-- 已完成W37：r26新增2048条/8更新，累计6545/25＝6400已训练＋145历史excluded＋0当前尾；最新resume-state-ep00216.pt、checkpoint-006545.pt，父历史仅计一次。
-- 真实能力：72回合中36跌倒、34躯干非足接触、1材料域退出、1达到目标截断；50回合材料加载、7回合机身入条带，合规去程/返程/整圈均0；最终E30在14.3096s失败，E60阻断。
-- 已修改：LandingVelocity/ImpactMargin共用75.25mm带内完整C2 g*r；物理终止先结清未完成贯穿正credit；现有planner/action链记录accepted/reference、winner/regularization及原始Kδx/限幅动作。
-- 执行：源码/config先推，正常构建后同父ep216启动w38-a/b；各8 workers、Torch1/BLAS1、独立optimizer/buffer/RNG/job/phase/deadline文件；共同28h截止，各自E30→条件E60≤4h，compact finish/Git串行。
-- 交付边界：r26的73视频/Release历史保持，94b43d0已完成紧凑记录和两项补传，pending0；从W38执行compact-first，不自动传大权重/视频/数组、不做PC归档、不删服务器输出，用户备份后自行统一删除。
+- 当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27 已真实修改、构建并启动；共同训练绝对截止北京时间2026-11-05T22:47:30.611106+08:00，resume不重置。
+- w38-a：job-20261104T104730Z-w38-a，launched；新增1/0，累计6546/25，tail=1、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- w38-b：job-20261104T104730Z-w38-b，launched；新增1/0，累计6546/25，tail=1、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- 任务能力：w38-a尚无最终任务汇总；w38-b尚无最终任务汇总。每流仅本phase新update评价E30，同case合格才E60；不把训练更新当合规任务能力。
+- 交付：两流compact finish/Git串行且使用现有index锁；全部逐回合JSON及失败/零步/截断、job/stream学习与独立评价进Git；权重、rollout、原始数组留D57，未自动渲染/上传/删除。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见当前R12契约actual_execution.streams及正常job/index；同父工程分支，不合并optimizer或重复父历史。
 
 ## 1. 长期目标与当前实际阶段
 
