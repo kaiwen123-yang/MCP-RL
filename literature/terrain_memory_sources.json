@@ -86,6 +86,17 @@
         ],
         "application": "W37采用r24控制骨架并撤销r25新增MovingSupport/SupportPlacement冲突，统一有效前进参考与几何风险残差值/导数。本文用于说明载荷、压陷和运动最终须相容；当前修改不声称已经实现该联合软接触约束。",
         "limits": "不重做HyQ/c3WBC，不新增论文复现或执行门禁，不把接触刚度当材料模量，不以STANCE替代本项目完整闭环证据。完整软接触相容性仍是未解决边界。"
+      },
+      "W38_review": {
+        "reviewed_on": "2026-11-04",
+        "timezone": "Asia/Shanghai",
+        "implementation_status": "文献复核与r27计划；本次未运行任何新物理、训练或作者系统复现。",
+        "sources": [
+          "https://iit-dlslab.github.io/papers/fahmi19tro.pdf"
+        ],
+        "read_scope": "本次重读软接触力—压陷—接触加速度、WBC约束、VI-C低层控制和实验边界。",
+        "application": "恢复有效入口后需继续处理加载/卸载与执行相容；r26首次明显反馈异常在真实材料加载之前，故不据该论文直接降低Go2 PD。",
+        "limits": "HyQ内环带宽、KV参数和外部动捕不是本项目参数或可部署证明；不恢复不相容的MovingSupport residual。"
       }
     },
     {
@@ -569,6 +580,19 @@
         "application": "W37/r26计划回到r24执行骨架，撤销r25的MovingSupport/SupportPlacement新增目标，统一cap实际作用的运动参考及几何风险值/导数；保留原有接触平滑、全状态反馈和PD，不做全局关闭solimp[0]平滑、任意增益裁剪或更换WBC。",
         "causal_boundary": "r24已经使用MakeDifferentiable；r25新增力残差使平滑接触力直接进入承重目标及其导数，是与同状态原模型/平滑模型Fz差异和后续饱和吻合的首要因果候选。文献与源码不能单独证明它解释全部失败，也不能保证撤销后S1成功。",
         "limits": "完整软接触相容性、反馈局部有效域和长期材料状态传播仍未解决。原模型Fz不能简单作为常量回填另一模型，A/B与C/D混用也不能被称为已经恢复一致；新文献不成为额外执行门禁。"
+      },
+      "W38_review": {
+        "reviewed_on": "2026-11-04",
+        "timezone": "Asia/Shanghai",
+        "implementation_status": "文献复核与r27计划；本次未运行任何新物理、训练或作者系统复现。",
+        "sources": [
+          "https://arxiv.org/html/2503.04613v3",
+          "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/planners/ilqg/planner.cc",
+          "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/planners/model_derivatives.cc"
+        ],
+        "read_scope": "本次重读§III、IV-A–D、VI并核对固定planner/model_derivatives源码；没有复现作者实验。",
+        "application": "r26真实数据指向人工approach residual开关附近的执行反馈异常；r27保留PD-in-prediction、TV反馈和前向FD，只把Landing/Impact空间激活共同C2化。两个完整CPU规划流并行利用串行backward/rollout之外的资源，不承诺倍速。",
+        "limits": "局部可微近似不等于真实接触可行；论文刚地/硬件结果不证明TM02材料/持久记忆有效，impratio100已采用。"
       }
     },
     {
@@ -858,6 +882,19 @@
         "code_access_boundary": "公开envpool README声明自定义环境依赖同级quadcontrol仓库；https://github.com/omertarikbanus/quadcontrol 本次访问返回404。未核实完整控制源码、配置及许可，不能称整套算法已经完整开源或可直接复现。",
         "application": "W37保留完整PANN-PPO-MPC闭环与当前cap动作，使cap实际进入一致的运动参考；先撤销r25新目标冲突。2Hz cap不能被期待修复毫秒级接触模型/反馈失配，单纯增加训练步数不能赋予缺失动作权限；这不等于仅凭2Hz判定cap必然无效。",
         "limits": "不照搬25维动作、85.1M采样规模或WBIC，不把名义骨架要求扩成新的独立测试/论文复现门禁。只有当前完整闭环结果能确认修复与后续学习收益。"
+      },
+      "W38_review": {
+        "reviewed_on": "2026-11-04",
+        "timezone": "Asia/Shanghai",
+        "implementation_status": "文献复核与r27计划；本次未运行任何新物理、训练或作者系统复现。",
+        "sources": [
+          "https://arxiv.org/pdf/2610.24779v1",
+          "https://arxiv.org/abs/2610.24779",
+          "https://tarikbanus.com/"
+        ],
+        "read_scope": "本次成功下载v1 PDF并重读方法、训练、结果和限制，核对作者网页；网页HTML/项目子页访问失败未妨碍PDF读取。",
+        "application": "论文EnvPool复制完整controller–simulator loop；支持本轮隔离两个完整流。其nominal backbone原本可trot，学习有body/force/foothold等权限；本轮先修入口，不因2Hz标量cap就断言必然无效。",
+        "limits": "100Hz25D256环境/85.1M样本不是当前iLQG可直接照搬的资源。作者RL替代reference generator，平地有噪仿真且ICRA2027审稿中；quadcontrol完整代码当时不可获取，未验证软地长期记忆/硬件。"
       }
     },
     {
@@ -916,6 +953,17 @@
         ],
         "application": "W37仅借鉴规划—执行的力学一致性原则，采用r24骨架撤销MovingSupport/SupportPlacement冲突，并统一参考与几何风险导数；不因此重做整套SBIP/WBC，也不称当前几何风险残差已实现论文软接触联合约束。",
         "limits": "本次全文/源码阅读补充此前仅项目页阅读的范围，不改写W35/W36历史。完整软接触一致性仍是待解决边界，文献不新增复现或执行门禁。"
+      },
+      "W38_review": {
+        "reviewed_on": "2026-11-04",
+        "timezone": "Asia/Shanghai",
+        "implementation_status": "文献复核与r27计划；本次未运行任何新物理、训练或作者系统复现。",
+        "sources": [
+          "https://ddebenedittis.github.io/soft_bilinear_inverted_pendulum_astro/"
+        ],
+        "read_scope": "本次核对作者项目的模型、规划、层级约束和实验说明；不把当前main源码等同论文固定实验快照。",
+        "application": "规划和实际tracking共同考虑接触柔顺，未来应把有效承载/压陷关系贯穿两层。",
+        "limits": "不等于PANN/TM02跨腿与返程持久记忆，不作为W38重写WBC的依据。"
       }
     },
     {
@@ -1003,7 +1051,47 @@
         "多参数鲁棒轨迹优化在求解成功的条件下可改善部分反馈表现，但其收敛困难；论文不是一个可直接搬用的稳定性保证。"
       ],
       "application_to_W37": "用于解释为何不能把成功计算K、动作最终限幅或上游作者使用TV-LQR当作当前反馈始终有效的证明。W37撤销r25新增目标冲突并保留r24原有反馈；不据此关闭全状态反馈、任意裁剪增益或启动新优化器。",
-      "scope_note": "研究对象为Drake准动力学双臂桌面操作及关节阻抗执行，不是MuJoCo动态Go2。只能作机制支持，不能移植其平滑参数、失败比例或归因为本仓全部失稳；接触模型和反馈有效域仍须由本项目实际闭环证据判断。"
+      "scope_note": "研究对象为Drake准动力学双臂桌面操作及关节阻抗执行，不是MuJoCo动态Go2。只能作机制支持，不能移植其平滑参数、失败比例或归因为本仓全部失稳；接触模型和反馈有效域仍须由本项目实际闭环证据判断。",
+      "W38_review": {
+        "reviewed_on": "2026-11-04",
+        "timezone": "Asia/Shanghai",
+        "implementation_status": "文献复核与r27计划；本次未运行任何新物理、训练或作者系统复现。",
+        "sources": [
+          "https://arxiv.org/html/2411.06542"
+        ],
+        "read_scope": "本次重读摘要、问题定义、§VII-A/B与结论；比较平滑局部模型与单边接触的限制。",
+        "application": "r26保存的feedback reference与accepted rollout身份不能混用；大执行修正不能仅由qpos误差小断定K有错。r27补相应现有记录，不任意剪K/关反馈。",
+        "limits": "论文是准动态双臂操作，未证明本Go2唯一根因或提供可复制增益。"
+      }
+    },
+    {
+      "id": "TM34",
+      "title": "Frequency-Aware Model Predictive Control",
+      "authors": [
+        "Ruben Grandia",
+        "Farbod Farshidian",
+        "Alexey Dosovitskiy",
+        "René Ranftl",
+        "Marco Hutter"
+      ],
+      "year": 2019,
+      "publication": "IEEE Robotics and Automation Letters4(2),1517–1524",
+      "doi": "10.1109/LRA.2019.2895882",
+      "url": "https://arxiv.org/abs/1809.04539",
+      "pdf_url": "https://arxiv.org/pdf/1809.04539v2",
+      "official_record": "https://www.research-collection.ethz.ch/entities/publication/e6f35f9a-6d5c-4daf-8d6b-a8edfd99f6e5",
+      "read_source": "https://www.researchgate.net/publication/327621320_Frequency-Aware_Model_Predictive_Control",
+      "selected_on": "2026-11-04",
+      "role": "若入口修订后仍有高频执行/负载不相容，用规划内带宽约束/频率整形作为有依据的后续路线。",
+      "W38_review": {
+        "reviewed_on": "2026-11-04",
+        "timezone": "Asia/Shanghai",
+        "read_scope": "读取作者上传全文§II-B/C频率整形与状态增广、§III模型/执行层和实验/限制；ETH官方摘要/出版记录交叉核对。arXiv PDF/ETH网页部分直接open失败，未把访问失败写成全文已在该站读取。",
+        "verified_mechanism": "滤波器内部状态纳入最优控制问题；真实输入通过该表达进入动力学/约束，规划能提前卸载/调整动作，执行WBC不能重新分配破坏计划。不是MPC输出后的独立低通。",
+        "application": "W38先只修已有approach人工硬门；本论文作为条件后续机制，不并行加入频率整形/增广状态新项目。",
+        "limits": "ANYmal串联弹性执行器、kinodynamic MPC/WBC和ODE软接触与Go2 MuJoCo iLQG/TM02不同；不照搬速度/增益/滤波参数，也无当前多输入系统稳定性保证。",
+        "implementation_status": "planned_reference_only_not_implemented_or_reproduced"
+      }
     }
   ],
   "upstream": {
@@ -1096,8 +1184,20 @@
         "application": "支持定位r25新增MovingSupport与平滑规划Fz的冲突。W37采用r24骨架撤销该新增冲突，保留既有平滑/PD/全状态反馈并统一参考和几何风险导数；不全局关闭d0平滑或改变真实接触来制造一致。",
         "limits": "官方文档说明API和模型含义，不能证明本仓唯一根因或保证r26成功。完整载荷—压陷一致性和局部反馈有效域尚未由本次修改解决；本次不运行新测试或引入额外执行门禁。"
       }
+    },
+    {
+      "title": "MuJoCo3.2.3 MJX与Tianshou并行环境文档（W38）",
+      "kind": "official_documentation",
+      "reviewed_on": "2026-11-04",
+      "urls": [
+        "https://mujoco.readthedocs.io/en/3.2.3/mjx.html",
+        "https://mujoco.readthedocs.io/en/3.2.3/programming/simulation.html",
+        "https://tianshou.org/en/v0.5.0/tutorials/cheatsheet.html"
+      ],
+      "application": "区分CPU C++ MPC与GPU/JAX批量API、私有mjData/模型状态、同步策略版本与环境seed。两完整流各8workers，GPU沿用PANN/PPO。",
+      "limits": "Tianshou说明文档0.5.0而当前依赖0.5.1；未把最新MJX-Warp特性写成3.2.3现有功能，未迁移规划后端或测试吞吐。"
     }
   ],
   "execution_scope_note": "历史条目的“当前”按其日期理解，不以W37复核改写此前阅读和执行状态。当前W37/r26计划采用r24执行骨架，撤销r25新增MovingSupport/SupportPlacement冲突，统一cap有效运动参考与几何风险残差值/导数，保留完整PANN-PPO-MPC链路、既有接触平滑、全状态反馈和PD；完整软接触一致性、反馈局部有效域及记忆收益仍需本项目证据。新增全文、源码和官方文档阅读与仅摘要来源分别标注；它们用于支持当前修复，不新增论文复现、独立测试、阅读轮次或执行门禁。实际执行范围以最新主计划与当前状态文档为准。",
-  "last_updated": "2026-11-03"
+  "last_updated": "2026-11-04"
 }

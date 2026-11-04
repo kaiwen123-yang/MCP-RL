@@ -1,0 +1,1414 @@
+{
+  "schema_version": "W37_compact_evidence_review_v1",
+  "review": {
+    "repository": "kaiwen123-yang/MCP-RL",
+    "fixed_head": "3d2854510862ec9822dd4a1eee88daf4434c03d8",
+    "date_utc": "2026-11-04",
+    "job": "job-20261103T075623Z",
+    "controller_build": "S5-r26",
+    "current_task": "W37_CONTACT_CONSISTENT_JOINT",
+    "review_mode": "read_only_existing_evidence",
+    "scope": "Recomputed all 72 training result JSONs, final E30, all 2048 current-phase transitions, 8 learning rows and 8 corresponding rollout observation arrays; compared W35/r24 and W36/r25 result JSONs and small stream records.",
+    "actions_not_performed": [
+      "SSH or live server inspection",
+      "physics rollouts or new experiments",
+      "tests or build",
+      "controller/runtime/environment modifications during the retrospective analysis",
+      "checkpoint tensor deserialization",
+      "bulk video retrieval",
+      "raw data deletion"
+    ],
+    "coverage": {
+      "W37_training_result_jsons": 72,
+      "W37_final_evaluation_result_jsons": 1,
+      "comparison_W35_result_jsons": 73,
+      "comparison_W36_result_jsons": 27,
+      "W37_transition_rows": 2048,
+      "W37_learning_rows": 8,
+      "W37_rollout_files": 8,
+      "dense_arrays_embedded_in_this_review": false,
+      "success_or_failure_selection": "All episode outcomes retained; no favorable-episode subset."
+    },
+    "source_commit_note": "The fixed review HEAD is the merged evidence snapshot, not the commit first launched on the server. Source metadata changed during the job; the 72 result execution fingerprints and configuration hashes remained identical.",
+    "reported_training_start_source_commit": "46392b284f218d2ae9b778bb2f910ba8393d77e8",
+    "per_episode_reported_source_commit_counts": {
+      "46392b284f218d2ae9b778bb2f910ba8393d77e8": 1,
+      "b57136e1204ea30d52c5f10be58140fff9bc9619": 71
+    },
+    "execution_fingerprint_counts": {
+      "e2234a3a246eca6db2ab3c45bdf329af9cca5fd0601eaa733fc9715d567d3c97": 72
+    },
+    "full_configuration_sha256_counts": {
+      "eeda75be1834f7df1cf00ae7215a90644fab60e53a4a35658c66d03b724c016f": 72
+    },
+    "source_ids": [
+      "w37_results",
+      "w37_job",
+      "merged_head"
+    ],
+    "stream_identity": {
+      "group": "PANN_PPO_S5",
+      "seed": 0,
+      "conditions": {
+        "nominal": 72
+      },
+      "stages": {
+        "0": 72
+      }
+    },
+    "timezone": "Asia/Shanghai",
+    "publication_scope": "This retrospective evidence JSON is committed together with the W38 plan; its analysis did not execute controller changes or new experiments."
+  },
+  "metric_definitions": {
+    "natural_failure": "reason starts with body_fall, invalid_contact, or material_domain_exit; external collection truncations are excluded from natural-lifetime/early-late statistics.",
+    "material_loaded_episode": "material.loaded_ever_cells > 0, independently matched against stage_progress.actual_material_loaded.",
+    "body_strip_entry": "stage_progress.material_traversal.west_entry_s is not null; the base reaches the original x=.8 m entry boundary.",
+    "outbound_traversal_completed": "stage_progress.material_traversal.completed; this field describes the original outbound traversal, not all hypothetical later passages.",
+    "pann_nonzero_sample": "Any nonzero component in obs reshaped to (256,658), last 12 channels; exact nonzero, no amplitude threshold.",
+    "phase_elapsed_s": "current job collection.updated_unix_s minus job.training_started_unix_s; not cumulative stream wall_s or delayed postprocess time.",
+    "planning_share": "sum timing.planning.total_s divided by summed episode wall_s; startup_planning is reported separately.",
+    "batch_label": "An update number identifies the update consuming the 256-sample batch. Samples were collected under the preceding completed update; episodes can straddle update boundaries.",
+    "reward_sum": "Undiscounted sum of logged per-transition rewards; W35 uses a different reward version, so cross-version reward sums are not an objective ranking.",
+    "source_reference_resolution": "source_ids refer to sources below; all repo-relative paths resolve at fixed_head. Release asset names and URLs identify the independent per-job records."
+  },
+  "learning_accounting": {
+    "initial_collected_transitions": 4497,
+    "initial_updates": 17,
+    "new_transitions": 2048,
+    "new_updates": 8,
+    "final_collected_transitions": 6545,
+    "final_updates": 25,
+    "trained_transition_total": 6400,
+    "trained_old_transitions": 4352,
+    "trained_new_transitions": 2048,
+    "excluded_old_version_transitions": 145,
+    "excluded_serials_inclusive": [
+      4353,
+      4497
+    ],
+    "current_unupdated_tail": 0,
+    "conservation": "6545 collected = 6400 trained + 145 historical excluded + 0 active tail",
+    "new_serials_inclusive": [
+      4498,
+      6545
+    ],
+    "new_serial_sequence_contiguous_unique": true,
+    "optimizer_steps_per_update": 16,
+    "new_optimizer_steps_total": 128,
+    "terminal_transition_counts": {
+      "terminated_physical": 71,
+      "truncated_external": 1,
+      "neither": 1976
+    },
+    "final_episode": 216,
+    "final_episode_reason": "training_checkpoint_complete",
+    "final_episode_simulation_s": 2.4999999999997575,
+    "actual_phase_stop_reason": "target_reached",
+    "last_stage_status_note": "budget_truncated describes the target-boundary episode classification; target_reached and training_checkpoint_complete are the actual successful collection stopping reason, not a 28-hour timeout.",
+    "last_completed_update": {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-006545.pt",
+      "samples": 6545,
+      "updates": 25,
+      "phase_id": "job-20261103T075623Z",
+      "controller_build": "S5-r26",
+      "reward_version": "W36_legal_route_progress_and_lap_alignment"
+    },
+    "latest_resume_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
+    "controller_migration": {
+      "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00144.pt",
+      "parent_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__training__PANN_PPO_S5-seed0__resume-state-ep00144.pt",
+      "parent_controller_build": "S5-r25",
+      "controller_build": "S5-r26",
+      "reward_version": "W36_legal_route_progress_and_lap_alignment",
+      "first_excluded_transition": 4353,
+      "last_excluded_transition": 4497,
+      "excluded_transitions": 145,
+      "used_in_new_updates": false,
+      "restored": [
+        "actor",
+        "critic",
+        "optimizer",
+        "RNG",
+        "normalization",
+        "historical_counts"
+      ],
+      "continuous_environment_restored": false,
+      "new_buffer_size": 0,
+      "isolated_tail_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/excluded-r25-004353-004497.pt"
+    },
+    "checkpoint_verification_limit": "The ledger, saved transition batches and metadata were checked; checkpoint tensor payloads were not downloaded or deserialized.",
+    "source_ids": [
+      "w37_collection",
+      "w37_learning",
+      "w37_transitions",
+      "w37_progress",
+      "w37_stopped",
+      "w37_job",
+      "w37_rollout_update_18",
+      "w37_rollout_update_19",
+      "w37_rollout_update_20",
+      "w37_rollout_update_21",
+      "w37_rollout_update_22",
+      "w37_rollout_update_23",
+      "w37_rollout_update_24",
+      "w37_rollout_update_25"
+    ]
+  },
+  "cohort_comparison": {
+    "cohorts": {
+      "W35": {
+        "episodes": 73,
+        "natural_episodes": 70,
+        "reason_counts": {
+          "material_domain_exit": 40,
+          "invalid_contact": 12,
+          "body_fall": 18,
+          "external_session_truncation": 2,
+          "training_checkpoint_complete": 1
+        },
+        "new_transitions": 2048,
+        "phase_elapsed_s": 81416.68346881866,
+        "episode_wall_sum_s": 80967.8114542123,
+        "physics_sum_s": 1006.5963999995635,
+        "transitions_per_h": 90.55637844574778,
+        "natural_median_lifetime_s": 10.18920000000293,
+        "natural_mean_max_x_m": 1.4154908928263388,
+        "natural_median_max_x_m": 1.2630824566825676,
+        "best_max_x_m": 3.0075529846288545,
+        "loaded_episodes": 73,
+        "body_entry_episodes": 72,
+        "side_exit_episodes": 23,
+        "far_arrivals": 7,
+        "return_episodes": 7,
+        "raw_laps": 3,
+        "cap_mean_m_s": 0.21600301654183432,
+        "cap_min_m_s": 0.18588615983724593,
+        "cap_max_m_s": 0.24605655193328857,
+        "reward_sum": -590.2499370482712,
+        "planning_s": 50596.959107996896,
+        "planning_count": 50392,
+        "episode_range_inclusive": [
+          45,
+          117
+        ],
+        "controller_build": "S5-r24",
+        "original_outbound_traversal_completed_episodes": 1,
+        "phase_elapsed_h": 22.615745408005186,
+        "episode_wall_sum_h": 22.491058737281193,
+        "mean_planning_s": 1.0040672945705051,
+        "planning_share_of_episode_wall": 0.624902145670687,
+        "episode_wall_per_physics_s": 80.4372154065397,
+        "source_ids": [
+          "w35_results",
+          "w35_job",
+          "w35_collection",
+          "w35_transitions"
+        ],
+        "initial_transitions": 1280,
+        "initial_updates": 5,
+        "final_transitions": 3328,
+        "final_updates": 13,
+        "new_updates": 8,
+        "unupdated_tail": 0,
+        "historical_excluded_transitions": 0
+      },
+      "W36": {
+        "episodes": 27,
+        "natural_episodes": 26,
+        "reason_counts": {
+          "body_fall": 22,
+          "invalid_contact": 4,
+          "training_budget_truncated": 1
+        },
+        "new_transitions": 1169,
+        "phase_elapsed_s": 80691.35250806808,
+        "episode_wall_sum_s": 80517.31920588762,
+        "physics_sum_s": 579.5091999993392,
+        "transitions_per_h": 52.15428753135864,
+        "natural_median_lifetime_s": 20.41789999997909,
+        "natural_mean_max_x_m": 2.624929154278822e-05,
+        "natural_median_max_x_m": 2.624929154278822e-05,
+        "best_max_x_m": 2.624929154278822e-05,
+        "loaded_episodes": 0,
+        "body_entry_episodes": 0,
+        "side_exit_episodes": 0,
+        "far_arrivals": 0,
+        "return_episodes": 0,
+        "raw_laps": 0,
+        "cap_mean_m_s": 0.21426763078870012,
+        "cap_min_m_s": 0.18594659596681595,
+        "cap_max_m_s": 0.24381053924560547,
+        "reward_sum": -318.1756574826279,
+        "planning_s": 74943.18204593286,
+        "planning_count": 28987,
+        "episode_range_inclusive": [
+          118,
+          144
+        ],
+        "controller_build": "S5-r25",
+        "original_outbound_traversal_completed_episodes": 0,
+        "phase_elapsed_h": 22.414264585574468,
+        "episode_wall_sum_h": 22.36592200163545,
+        "mean_planning_s": 2.5854066321431284,
+        "planning_share_of_episode_wall": 0.9307709544365064,
+        "episode_wall_per_physics_s": 138.94053658851217,
+        "source_ids": [
+          "w36_results",
+          "w36_job",
+          "w36_collection",
+          "w36_transitions"
+        ],
+        "initial_transitions": 3328,
+        "initial_updates": 13,
+        "final_transitions": 4497,
+        "final_updates": 17,
+        "new_updates": 4,
+        "unupdated_tail": 145,
+        "historical_excluded_transitions": 0
+      },
+      "W37": {
+        "episodes": 72,
+        "natural_episodes": 71,
+        "reason_counts": {
+          "invalid_contact": 34,
+          "body_fall": 36,
+          "material_domain_exit": 1,
+          "training_checkpoint_complete": 1
+        },
+        "new_transitions": 2048,
+        "phase_elapsed_s": 66068.43343162537,
+        "episode_wall_sum_s": 65618.06570281461,
+        "physics_sum_s": 1006.779599999552,
+        "transitions_per_h": 111.59338305834294,
+        "natural_median_lifetime_s": 13.290199999995703,
+        "natural_mean_max_x_m": 0.6919604489573999,
+        "natural_median_max_x_m": 0.6752865724840512,
+        "best_max_x_m": 0.9687671968487584,
+        "loaded_episodes": 50,
+        "body_entry_episodes": 7,
+        "side_exit_episodes": 1,
+        "far_arrivals": 0,
+        "return_episodes": 0,
+        "raw_laps": 0,
+        "cap_mean_m_s": 0.21331314996075434,
+        "cap_min_m_s": 0.18604697585105895,
+        "cap_max_m_s": 0.24375981211662293,
+        "reward_sum": -693.4281511872493,
+        "planning_s": 55238.95880649425,
+        "planning_count": 50377,
+        "episode_range_inclusive": [
+          145,
+          216
+        ],
+        "controller_build": "S5-r26",
+        "original_outbound_traversal_completed_episodes": 0,
+        "phase_elapsed_h": 18.352342619895936,
+        "episode_wall_sum_h": 18.22724047300406,
+        "mean_planning_s": 1.0965114795738977,
+        "planning_share_of_episode_wall": 0.8418254670394046,
+        "episode_wall_per_physics_s": 65.17619715660092,
+        "source_ids": [
+          "w37_results",
+          "w37_job",
+          "w37_collection",
+          "w37_transitions"
+        ],
+        "initial_transitions": 4497,
+        "initial_updates": 17,
+        "final_transitions": 6545,
+        "final_updates": 25,
+        "new_updates": 8,
+        "unupdated_tail": 0,
+        "historical_excluded_transitions": 145
+      }
+    },
+    "interpretation": "r26 reverses r25 prematerial backward-motion regression, but its forward exploration remains substantially shorter than r24. Fewer material-domain exits do not establish material-impact robustness because exposure and route extent are lower.",
+    "comparison_limits": [
+      "Single continuing seed/stream; controller changes and reward changes are not randomized.",
+      "Natural survival time alone is not task success; r25 survived while retreating.",
+      "W35 raw lap counts are not evidence of legal material round trips."
+    ]
+  },
+  "W37_route_and_failures": {
+    "natural_failures": 71,
+    "physical_failures_by_reason_and_phase": [
+      {
+        "reason": "body_fall",
+        "phase": "outbound",
+        "count": 36
+      },
+      {
+        "reason": "invalid_contact",
+        "phase": "outbound",
+        "count": 34
+      },
+      {
+        "reason": "material_domain_exit",
+        "phase": "outbound",
+        "count": 1
+      }
+    ],
+    "invalid_contact_reason_counts": {
+      "invalid_contact:[[0, 13, 0, 1]]": 34
+    },
+    "loaded_episodes": 50,
+    "loaded_but_base_never_entered_strip": 43,
+    "body_strip_entry_episodes": [
+      160,
+      172,
+      174,
+      186,
+      195,
+      203,
+      204
+    ],
+    "body_entry_and_passage_interior_foot_loading_episodes": [
+      172,
+      174,
+      203,
+      204
+    ],
+    "loading_by_failure": [
+      {
+        "reason": "body_fall",
+        "material_loaded": false,
+        "count": 10
+      },
+      {
+        "reason": "body_fall",
+        "material_loaded": true,
+        "count": 26
+      },
+      {
+        "reason": "invalid_contact",
+        "material_loaded": false,
+        "count": 11
+      },
+      {
+        "reason": "invalid_contact",
+        "material_loaded": true,
+        "count": 23
+      },
+      {
+        "reason": "material_domain_exit",
+        "material_loaded": true,
+        "count": 1
+      }
+    ],
+    "legal_outbound_traversals": 0,
+    "legal_return_traversals": 0,
+    "far_arrivals": 0,
+    "return_episodes": 0,
+    "raw_roundtrips": 0,
+    "legal_roundtrips": 0,
+    "side_exit_episodes": [
+      186
+    ],
+    "natural_episodes_any_joint_ever_at_torque_limit": 71,
+    "natural_episodes_all_12_joints_ever_at_torque_limit": 66,
+    "torque_metric_limit": "Episode maxima show that a limit was reached at least once; they do not establish saturation duration or simultaneous 12-joint saturation.",
+    "known_r25_startup_regression_check_status_counts": {
+      "not_matched": 72
+    },
+    "source_ids": [
+      "w37_results",
+      "w37_progress",
+      "w37_job"
+    ],
+    "material_loading_flag_and_loaded_cells_agreement_count": 72,
+    "episodes_with_nonzero_material_world_cells": 68,
+    "world_cell_count_limit": "Allocated/nonzero world-cell count is distinct from cells ever carrying load; do not substitute world_cells > 0 for actual_material_loaded."
+  },
+  "early_late_descriptive_comparison": {
+    "early": {
+      "episodes_inclusive": [
+        145,
+        180
+      ],
+      "natural_episode_count": 36,
+      "reason_counts": {
+        "invalid_contact": 22,
+        "body_fall": 13,
+        "material_domain_exit": 1
+      },
+      "mean_max_x_m": 0.6852991749000655,
+      "median_max_x_m": 0.6658248682996484,
+      "mean_final_x_m": 0.6595376449634466,
+      "median_lifetime_s": 14.482899999992924,
+      "mean_lifetime_s": 14.754011111103402,
+      "material_loaded_episodes": 27,
+      "body_strip_entry_episodes": 3,
+      "original_outbound_traversal_completed_episodes": 0,
+      "far_arrivals": 0,
+      "return_started": 0,
+      "source_ids": [
+        "w37_results"
+      ]
+    },
+    "late": {
+      "episodes_inclusive": [
+        181,
+        215
+      ],
+      "natural_episode_count": 35,
+      "reason_counts": {
+        "body_fall": 23,
+        "invalid_contact": 12
+      },
+      "mean_max_x_m": 0.6988120451306583,
+      "median_max_x_m": 0.6807398870422876,
+      "mean_final_x_m": 0.6599203830847765,
+      "median_lifetime_s": 12.824599999996789,
+      "mean_lifetime_s": 13.518148571423707,
+      "material_loaded_episodes": 23,
+      "body_strip_entry_episodes": 4,
+      "original_outbound_traversal_completed_episodes": 0,
+      "far_arrivals": 0,
+      "return_started": 0,
+      "source_ids": [
+        "w37_results"
+      ]
+    },
+    "excluded_episode_216": "2.5 s target-boundary truncation, excluded from the natural-failure comparison.",
+    "late_minus_early_mean_max_x_m": 0.013512870230592777,
+    "late_minus_early_mean_final_x_m": 0.0003827381213299397,
+    "interpretation": "Mean maximum forward progress increases by about 1.35 cm, mean final x is almost unchanged, median natural lifetime decreases, and falls become more frequent. No consistent improvement is supported by this descriptive split.",
+    "causal_limit": "Unequal 36/35 natural-episode groups, one continuing stochastic stream, and overlapping policy-update episodes; no significance or causal PPO claim is made.",
+    "source_ids": [
+      "w37_results",
+      "w37_transitions"
+    ]
+  },
+  "eight_update_table": {
+    "rows": [
+      {
+        "update_consuming_batch": 18,
+        "collected_under_update": 17,
+        "first_serial": 4498,
+        "last_serial": 4753,
+        "first_episode": 145,
+        "last_episode": 153,
+        "physical_failures": 8,
+        "nonzero_pann_samples": 0,
+        "mean_cap": 0.21368725998635682,
+        "reward_mean": -0.3055080455686758,
+        "reward_sum": -78.210059665581,
+        "loss": 0.2054901598021388,
+        "critic_loss": 0.4512285925447941,
+        "approx_kl": 0.011939320713281631,
+        "clip_fraction": 0.1171875,
+        "optimizer_steps": 16,
+        "behavior_logprob_max_error": 4.76837158203125e-07,
+        "advantage_mean": 0.08509782701730728,
+        "last_episode_time_s": 6.000000000003813,
+        "samples": 256,
+        "rollout_source_id": "w37_rollout_update_18",
+        "learning_line": 1,
+        "transition_lines_inclusive": [
+          1,
+          256
+        ],
+        "batch_end_terminated": false,
+        "batch_end_truncated": false,
+        "next_observation_nonzero_pann_count": 1
+      },
+      {
+        "update_consuming_batch": 19,
+        "collected_under_update": 18,
+        "first_serial": 4754,
+        "last_serial": 5009,
+        "first_episode": 153,
+        "last_episode": 162,
+        "physical_failures": 9,
+        "nonzero_pann_samples": 5,
+        "mean_cap": 0.21356144981775174,
+        "reward_mean": -0.3443581532674298,
+        "reward_sum": -88.15568723646203,
+        "loss": 0.23837828543037176,
+        "critic_loss": 0.5003098621964455,
+        "approx_kl": 0.009905104525387287,
+        "clip_fraction": 0.1171875,
+        "optimizer_steps": 16,
+        "behavior_logprob_max_error": 3.5762786865234375e-07,
+        "advantage_mean": -0.11410536617040634,
+        "last_episode_time_s": 7.000000000005923,
+        "samples": 256,
+        "rollout_source_id": "w37_rollout_update_19",
+        "learning_line": 2,
+        "transition_lines_inclusive": [
+          257,
+          512
+        ],
+        "batch_end_terminated": false,
+        "batch_end_truncated": false,
+        "next_observation_nonzero_pann_count": 5
+      },
+      {
+        "update_consuming_batch": 20,
+        "collected_under_update": 19,
+        "first_serial": 5010,
+        "last_serial": 5265,
+        "first_episode": 162,
+        "last_episode": 169,
+        "physical_failures": 7,
+        "nonzero_pann_samples": 29,
+        "mean_cap": 0.21186774496358565,
+        "reward_mean": -0.2676358111222507,
+        "reward_sum": -68.51476764729618,
+        "loss": 0.21183992642909288,
+        "critic_loss": 0.4582619331777096,
+        "approx_kl": 0.009862413629889488,
+        "clip_fraction": 0.109375,
+        "optimizer_steps": 16,
+        "behavior_logprob_max_error": 4.76837158203125e-07,
+        "advantage_mean": 0.1297973394393921,
+        "last_episode_time_s": 12.499999999997545,
+        "samples": 256,
+        "rollout_source_id": "w37_rollout_update_20",
+        "learning_line": 3,
+        "transition_lines_inclusive": [
+          513,
+          768
+        ],
+        "batch_end_terminated": false,
+        "batch_end_truncated": false,
+        "next_observation_nonzero_pann_count": 29
+      },
+      {
+        "update_consuming_batch": 21,
+        "collected_under_update": 20,
+        "first_serial": 5266,
+        "last_serial": 5521,
+        "first_episode": 169,
+        "last_episode": 179,
+        "physical_failures": 10,
+        "nonzero_pann_samples": 4,
+        "mean_cap": 0.21296422253680247,
+        "reward_mean": -0.3793215789891563,
+        "reward_sum": -97.10632422122401,
+        "loss": 0.20459390059113503,
+        "critic_loss": 0.43912539817392826,
+        "approx_kl": 0.015049108304083347,
+        "clip_fraction": 0.234375,
+        "optimizer_steps": 16,
+        "behavior_logprob_max_error": 4.76837158203125e-07,
+        "advantage_mean": -0.25156381726264954,
+        "last_episode_time_s": 7.000000000005923,
+        "samples": 256,
+        "rollout_source_id": "w37_rollout_update_21",
+        "learning_line": 4,
+        "transition_lines_inclusive": [
+          769,
+          1024
+        ],
+        "batch_end_terminated": false,
+        "batch_end_truncated": false,
+        "next_observation_nonzero_pann_count": 5
+      },
+      {
+        "update_consuming_batch": 22,
+        "collected_under_update": 21,
+        "first_serial": 5522,
+        "last_serial": 5777,
+        "first_episode": 179,
+        "last_episode": 188,
+        "physical_failures": 9,
+        "nonzero_pann_samples": 10,
+        "mean_cap": 0.21370365735075553,
+        "reward_mean": -0.34611202339616254,
+        "reward_sum": -88.60467798941761,
+        "loss": 0.18271139729768038,
+        "critic_loss": 0.3907675351947546,
+        "approx_kl": 0.006294228136539459,
+        "clip_fraction": 0.0546875,
+        "optimizer_steps": 16,
+        "behavior_logprob_max_error": 4.76837158203125e-07,
+        "advantage_mean": -0.13138863444328308,
+        "last_episode_time_s": 2.9999999999997025,
+        "samples": 256,
+        "rollout_source_id": "w37_rollout_update_22",
+        "learning_line": 5,
+        "transition_lines_inclusive": [
+          1025,
+          1280
+        ],
+        "batch_end_terminated": false,
+        "batch_end_truncated": false,
+        "next_observation_nonzero_pann_count": 10
+      },
+      {
+        "update_consuming_batch": 23,
+        "collected_under_update": 22,
+        "first_serial": 5778,
+        "last_serial": 6033,
+        "first_episode": 188,
+        "last_episode": 197,
+        "physical_failures": 9,
+        "nonzero_pann_samples": 4,
+        "mean_cap": 0.21412365440885878,
+        "reward_mean": -0.3416002091322597,
+        "reward_sum": -87.44965353785848,
+        "loss": 0.1563192941248417,
+        "critic_loss": 0.34452035650610924,
+        "approx_kl": 0.010938145220279694,
+        "clip_fraction": 0.09375,
+        "optimizer_steps": 16,
+        "behavior_logprob_max_error": 4.76837158203125e-07,
+        "advantage_mean": -0.06672931462526321,
+        "last_episode_time_s": 8.000000000008033,
+        "samples": 256,
+        "rollout_source_id": "w37_rollout_update_23",
+        "learning_line": 6,
+        "transition_lines_inclusive": [
+          1281,
+          1536
+        ],
+        "batch_end_terminated": false,
+        "batch_end_truncated": false,
+        "next_observation_nonzero_pann_count": 5
+      },
+      {
+        "update_consuming_batch": 24,
+        "collected_under_update": 23,
+        "first_serial": 6034,
+        "last_serial": 6289,
+        "first_episode": 197,
+        "last_episode": 206,
+        "physical_failures": 10,
+        "nonzero_pann_samples": 9,
+        "mean_cap": 0.21207121675459803,
+        "reward_mean": -0.3822383657069772,
+        "reward_sum": -97.85302162098617,
+        "loss": 0.1300427969545126,
+        "critic_loss": 0.2887270115315914,
+        "approx_kl": 0.010691280476748943,
+        "clip_fraction": 0.06640625,
+        "optimizer_steps": 16,
+        "behavior_logprob_max_error": 3.5762786865234375e-07,
+        "advantage_mean": -0.08536294102668762,
+        "last_episode_time_s": 12.413999999997746,
+        "samples": 256,
+        "rollout_source_id": "w37_rollout_update_24",
+        "learning_line": 7,
+        "transition_lines_inclusive": [
+          1537,
+          1792
+        ],
+        "batch_end_terminated": true,
+        "batch_end_truncated": false,
+        "next_observation_nonzero_pann_count": 9
+      },
+      {
+        "update_consuming_batch": 25,
+        "collected_under_update": 24,
+        "first_serial": 6290,
+        "last_serial": 6545,
+        "first_episode": 207,
+        "last_episode": 216,
+        "physical_failures": 9,
+        "nonzero_pann_samples": 1,
+        "mean_cap": 0.2145259938673257,
+        "reward_mean": -0.3419295283922808,
+        "reward_sum": -87.53395926842389,
+        "loss": 0.16330438992008567,
+        "critic_loss": 0.34408594854176044,
+        "approx_kl": 0.007263555191457272,
+        "clip_fraction": 0.09375,
+        "optimizer_steps": 16,
+        "behavior_logprob_max_error": 9.5367431640625e-07,
+        "advantage_mean": -0.01058875024318695,
+        "last_episode_time_s": 2.4999999999997575,
+        "samples": 256,
+        "rollout_source_id": "w37_rollout_update_25",
+        "learning_line": 8,
+        "transition_lines_inclusive": [
+          1793,
+          2048
+        ],
+        "batch_end_terminated": false,
+        "batch_end_truncated": true,
+        "next_observation_nonzero_pann_count": 2
+      }
+    ],
+    "all_saved_observations_finite": true,
+    "maximum_rollout_vs_jsonl_reward_absolute_difference": 4.6644530549144747e-07,
+    "cap_all_samples": {
+      "mean_m_s": 0.21331314996075434,
+      "std_m_s": 0.011576787703384883,
+      "min_m_s": 0.18604697585105895,
+      "max_m_s": 0.24375981211662293,
+      "configured_bounds_m_s": [
+        0.18,
+        0.25
+      ],
+      "samples_at_either_bound": 0
+    },
+    "interpretation": "Optimization loss declines without corresponding route success, robust survival gain or a clear directional shift in mean cap. The records do not indicate PPO numeric divergence.",
+    "source_ids": [
+      "w37_learning",
+      "w37_transitions",
+      "w37_rollout_update_18",
+      "w37_rollout_update_19",
+      "w37_rollout_update_20",
+      "w37_rollout_update_21",
+      "w37_rollout_update_22",
+      "w37_rollout_update_23",
+      "w37_rollout_update_24",
+      "w37_rollout_update_25"
+    ]
+  },
+  "pann_signal_and_action_dependence": {
+    "training_observations": 2048,
+    "training_nonzero_pann_observations": 62,
+    "fraction_nonzero": 0.0302734375,
+    "nonzero_pann_episode_count": 16,
+    "nonzero_pann_by_episode": {
+      "156": 4,
+      "161": 1,
+      "163": 19,
+      "165": 1,
+      "168": 8,
+      "169": 5,
+      "180": 2,
+      "183": 6,
+      "187": 2,
+      "192": 1,
+      "194": 2,
+      "196": 1,
+      "202": 3,
+      "203": 5,
+      "204": 1,
+      "207": 1
+    },
+    "nonzero_pann_by_batch": [
+      0,
+      5,
+      29,
+      4,
+      10,
+      4,
+      9,
+      1
+    ],
+    "return_observations": 0,
+    "maximum_absolute_normalized_pann_feature": 0.09362901002168655,
+    "feature_units_note": "Last 12 recovery features are divided by .001 m in PolicyMaterial.observation; the value above is dimensionless.",
+    "E30_same_observation_feature_zeroing": {
+      "action_points": 29,
+      "exactly_unchanged_caps": 27,
+      "changed_cap_points": [
+        {
+          "time_s": 11.000000000001041,
+          "with_pann_cap_m_s": 0.2224252288788557,
+          "zero_feature_cap_m_s": 0.2224252314865589,
+          "absolute_difference_m_s": 2.6077031922699945e-09
+        },
+        {
+          "time_s": 12.499999999997545,
+          "with_pann_cap_m_s": 0.2122325100377202,
+          "zero_feature_cap_m_s": 0.21223602913320064,
+          "absolute_difference_m_s": 3.519095480436496e-06
+        }
+      ],
+      "maximum_absolute_cap_difference_m_s": 3.519095480436496e-06
+    },
+    "interpretation": "Material loading did not usually yield a nonzero queried recovery feature, and feature zeroing barely changed E30 actions on the visited states.",
+    "limits": [
+      "Sparse forward-only exposure is not evidence that PANN is generally useless.",
+      "Same-state action comparison is not a full counterfactual trajectory or causal material-benefit evaluation.",
+      "Exact nonzero count includes arbitrarily small finite values; it is not a learned-utility threshold."
+    ],
+    "source_ids": [
+      "w37_e30_action_dependence",
+      "policy_source",
+      "w37_rollout_update_18",
+      "w37_rollout_update_19",
+      "w37_rollout_update_20",
+      "w37_rollout_update_21",
+      "w37_rollout_update_22",
+      "w37_rollout_update_23",
+      "w37_rollout_update_24",
+      "w37_rollout_update_25"
+    ]
+  },
+  "terminal_credit_review": {
+    "status": "confirmed_contract_vs_implementation_mismatch",
+    "promised_behavior": "Unfinished or illegal passage retracts its provisional positive lap credit.",
+    "observed_code_path": "finish calls LegalRoute.update while phase remains outbound, then emits result and terminal transition without invalidating the unfinished passage.",
+    "natural_failure_episodes": 71,
+    "positive_final_credit_natural_failures": 70,
+    "positive_final_credit_before_base_strip_entry": 64,
+    "natural_failures_with_zero_credit": [
+      186
+    ],
+    "natural_failure_final_credit_sum": 7.668074175109223,
+    "natural_failure_retained_progress_reward": 38.340370875546114,
+    "max_episode_transition_progress_sum_minus_final_legal_progress_abs": 0.0,
+    "all_training_reward_components": {
+      "progress": 38.354548208471705,
+      "elapsed_time": -16.779659999992536,
+      "indentation": -0.004738157421223927,
+      "slip": -0.29371706671678066,
+      "physical_failure": -710,
+      "cap_change_residual": -4.704584171590454
+    },
+    "all_training_reward_sum": -693.4281511872493,
+    "natural_episode_return_range": [
+      -10.24899318460041,
+      -9.493871194953973
+    ],
+    "physical_terminal_transition_reward_range": [
+      -10.502896938454896,
+      -9.868128061038476
+    ],
+    "E30_retained_progress": 0.12452430649188735,
+    "E30_progress_reward": 0.6226215324594367,
+    "ep216_external_truncation_retained_progress": 0.0028354665851184797,
+    "fix_scope_recommendation": "Finalize an unfinished passage on genuine physical termination before collecting the final reward and serializing the result. Keep dense provisional progress during ongoing motion and distinguish external acquisition/target truncation. Do not rewrite physical failure labels, completed legal traversal counters, or historical run results.",
+    "causal_limit": "This changes the terminal credit account; it is not proven to be the primary physical failure cause. All 71 natural episode returns remain negative, and the +38.3404 retained natural progress reward is much smaller than the -710 failure total.",
+    "source_ids": [
+      "policy_source",
+      "w37_results",
+      "w37_transitions",
+      "w37_e30",
+      "w37_e30_transitions"
+    ]
+  },
+  "final_evaluation": {
+    "attempt": "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30",
+    "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/checkpoint-006545.pt",
+    "checkpoint_transitions": 6545,
+    "checkpoint_updates": 25,
+    "deterministic_policy_mean": true,
+    "normalization_frozen": true,
+    "PPO_updates": false,
+    "simulation_s": 14.309599999993328,
+    "episode_wall_s": 990.8107349108905,
+    "wrapper_wall_s": 1002.9734942913055,
+    "reason": "invalid_contact:[[0, 13, 0, 1]]",
+    "max_x_m": 0.7462517148159804,
+    "final_xy_m": [
+      0.7462517148159804,
+      0.6699638801008968
+    ],
+    "loaded_ever_cells": 36,
+    "base_west_entry_s": null,
+    "legal_outbound_traversals": 0,
+    "legal_roundtrips": 0,
+    "side_exits": 0,
+    "all_12_joint_episode_torque_maxima_at_limit": true,
+    "cap_mean_m_s": 0.2146488023054754,
+    "cap_min_m_s": 0.20479079186916352,
+    "cap_max_m_s": 0.2246992102265358,
+    "evaluation_transition_rows": 29,
+    "evaluation_samples_added_to_training": 0,
+    "later_stages": {
+      "E60": "blocked_by_predecessor",
+      "E300": "not_run",
+      "E600": "not_run"
+    },
+    "interpretation": "The base fails before strip entry; final lateral position exceeds .6 m. The passage side-exit counter remains zero because strip entry never occurred, so zero side exits is not evidence of lateral stability.",
+    "source_ids": [
+      "w37_e30",
+      "w37_e30_resolved",
+      "w37_job",
+      "w37_e30_transitions",
+      "w37_e30_caps"
+    ]
+  },
+  "timing": {
+    "phase_started_unix_s": 1793692583.50354,
+    "collection_completed_unix_s": 1793758651.9369717,
+    "phase_started_utc": "2026-11-03T07:56:23.503540+00:00",
+    "collection_completed_utc": "2026-11-04T02:17:31.936972+00:00",
+    "training_phase_elapsed_s": 66068.43343162537,
+    "training_phase_elapsed_h": 18.352342619895936,
+    "summed_episode_wall_s": 65618.06570281461,
+    "summed_physics_s": 1006.779599999552,
+    "new_samples_per_elapsed_hour": 111.59338305834294,
+    "sum_startup_planning_s": 1485.0310839731246,
+    "sum_planning_s": 55238.95880649425,
+    "sum_planning_count": 50377,
+    "sum_physics_wall_s": 5696.070201518014,
+    "sum_material_wall_s": 2798.871249301359,
+    "stream_cumulative_wall_s_not_current_phase": 398928.55797600746,
+    "stream_cumulative_wall_note": "This timer originates at the first stream collection and spans prior runs and downtime. Do not interpret ~398929 s as the duration of W37.",
+    "W36_postprocess_warning": "Use collection.updated_unix_s for actual stop; postprocess_started_unix_s is 3.20766 hours later and overstates training if used as its end.",
+    "speed_comparison_limit": "r26 average planner call is slower than r24 (1.0965 vs 1.0041 s), although overall sample throughput is higher. Reduced material exposure and different physics/material workload prevent attributing all throughput improvement to implementation speed.",
+    "source_ids": [
+      "w37_collection",
+      "w37_job",
+      "w37_results",
+      "w35_collection",
+      "w35_job",
+      "w35_results",
+      "w36_collection",
+      "w36_job",
+      "w36_results"
+    ],
+    "W36_collection_stop_to_postprocess_start_s": 11547.568408727646
+  },
+  "publication_and_compact_evidence": {
+    "fixed_head_contains_completed_episode_results": true,
+    "fixed_head_subject": "Merge current compact delivery policy with completed W37 results",
+    "historical_job_publication_status": "publication_pending",
+    "historical_git_error_interpretation": "The finisher normal push was rejected as non-fast-forward. The reviewed merge already contains completed W37 results; the retained old error is not proof of current absence on GitHub.",
+    "historical_render_count": 73,
+    "historical_assets_published": 2267,
+    "historical_assets_expected": 2269,
+    "historical_pending_assets": [
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00176/model/G1-project-go2.xml",
+        "asset_name": "train-PANN_PPO_S5-s0-ep00176__model__G1-project-go2.xml",
+        "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01",
+        "historical_status": "pending in original finisher job JSON; not reclassified as a training or evaluation failure"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep00185/material-0011.npz",
+        "asset_name": "train-PANN_PPO_S5-s0-ep00185__material-0011.npz",
+        "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02",
+        "historical_status": "pending in original finisher job JSON; not reclassified as a training or evaluation failure"
+      }
+    ],
+    "old_shared_repo_record_warning": {
+      "files": [
+        {
+          "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/training__PANN_PPO_S5-seed0__collection.json",
+          "describes": "historical initial PANN stream, episodes 1-12 / 256 samples / update 1; not W37"
+        },
+        {
+          "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/training__PANN_PPO_S5-seed0__progress.json",
+          "describes": "historical initial PANN stream, episodes 1-12 / 256 samples / update 1; not W37"
+        },
+        {
+          "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/training__PANN_PPO_S5-seed0__stopped.json",
+          "describes": "historical initial PANN stream, episodes 1-12 / 256 samples / update 1; not W37"
+        },
+        {
+          "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/training__PANN_PPO_S5-seed0__learning.jsonl",
+          "describes": "historical initial PANN stream, episodes 1-12 / 256 samples / update 1; not W37",
+          "rows": 1
+        },
+        {
+          "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/records/training__PANN_PPO_S5-seed0__transitions.jsonl",
+          "describes": "historical initial PANN stream, episodes 1-12 / 256 samples / update 1; not W37",
+          "rows": 256
+        }
+      ],
+      "correct_W37_small_record_source_ids": [
+        "w37_collection",
+        "w37_learning",
+        "w37_transitions",
+        "w37_progress",
+        "w37_stopped",
+        "w37_stream_identity"
+      ],
+      "consequence": "Use the job-specific Release part03 records for W37. Shared training__ filenames at this fixed HEAD are stale historical data, not the current phase.",
+      "latest_resolution": "94b43d0 now includes the actual job-owned training/collection.json, learning.json, progress.json, stopped.json and episode summaries; use those or the already-verified Release originals. Generic old shared names remain historical."
+    },
+    "compact_first_boundary": "Preserve r26 actual old-style renders/Release history and its later completed compact/retry delivery. Both old pending assets are resolved in94b43d0. W38 defaults to compact-first/local bulk/manual user backup and deletion; no new server deployment is claimed by this review.",
+    "source_ids": [
+      "merged_head",
+      "w37_job",
+      "w37_manifest",
+      "w37_collection",
+      "w37_learning",
+      "w37_transitions"
+    ],
+    "latest_delivery_recheck": {
+      "source_commit": "94b43d0bda02fecddc7734fc4afa00ac713d8bbe",
+      "source_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json",
+      "publication_status": "published",
+      "publication_scope": "compact_git",
+      "pending_assets": [],
+      "render_pending": [],
+      "selected_release_retry": {
+        "status": "completed",
+        "assets": [
+          {
+            "name": "train-PANN_PPO_S5-s0-ep00176__model__G1-project-go2.xml",
+            "size": 25056,
+            "state": "uploaded",
+            "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01",
+            "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/train-PANN_PPO_S5-s0-ep00176__model__G1-project-go2.xml"
+          },
+          {
+            "name": "train-PANN_PPO_S5-s0-ep00185__material-0011.npz",
+            "size": 892300,
+            "state": "uploaded",
+            "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02",
+            "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part02/train-PANN_PPO_S5-s0-ep00185__material-0011.npz"
+          }
+        ],
+        "verified_unix_s": 1793786028.1579032,
+        "verification": "One name/size/upload-state comparison; no hashes or downloads",
+        "supersedes": "The two pending paths in historical_bulk_publication; historical failure records are retained."
+      },
+      "cleanup": {
+        "enabled": false,
+        "owner": "user",
+        "status": "manual_after_user_backup",
+        "deleted_files": 0,
+        "deleted_bytes": 0
+      },
+      "compact_training_directory": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z/training",
+      "physical_analysis_unchanged": true,
+      "scope": "Rechecked latest Git snapshot before plan publication; no SSH or new physics. Historical fields above remain fixed-head facts, not current pending obligations."
+    }
+  },
+  "next_job_small_record_recommendations": {
+    "naming": "Reuse the newly published jobs/<job>/training and episode directories, with explicit stream identity for W38. Do not overwrite generic historical training__ files or introduce a new monitor.",
+    "required_existing_records": [
+      {
+        "name": "jobs/<job>.json",
+        "contents": "job/controller/reward/source identity, budgets, actual initial/final/new counters, stop reason, evaluation selection and stage outcome, links to all attempts"
+      },
+      {
+        "name": "records/<job>__stream-records__collection.json",
+        "contents": "trained/excluded/active-tail conservation, phase identity and actual last completed update"
+      },
+      {
+        "name": "records/<job>__stream-records__learning.jsonl",
+        "contents": "every completed update, loss/KL/clip/logprob agreement and exact sample boundaries"
+      },
+      {
+        "name": "records/<job>__stream-records__transitions.jsonl",
+        "contents": "all low-rate policy transitions, episode/sample identifiers, cap/action, reward components and true terminated/truncated flags"
+      },
+      {
+        "name": "records/<job>__stream-records__progress.json and stopped.json",
+        "contents": "all session outcomes including failures, interruption/phase stop and final resume/update metadata"
+      },
+      {
+        "name": "records/<job>__stream-records__stream-identity.json and training-contract.json",
+        "contents": "resolved controller/reward/configuration identity and phase migration provenance"
+      },
+      {
+        "name": "records/<job>__stream-records__episode-<episode>.json",
+        "contents": "every generated small episode record, including physical failures and target/budget truncations"
+      },
+      {
+        "name": "Every attempt result JSON and resolved configuration, indexed by <job>",
+        "contents": "all attempts, original physical reason, stage progress, base/foot loading distinction, rate extrema and execution fingerprint"
+      },
+      {
+        "name": "records/<job>__<attempt>__cap-decisions.json and material-failures.jsonl",
+        "contents": "all already-generated small action and material-failure records; empty/missing records must retain explicit status"
+      },
+      {
+        "name": "records/<job>__evaluation-policy__<attempt>__transitions.jsonl and <attempt>__pann-action-dependence.json when generated",
+        "contents": "frozen checkpoint identity and same-state PANN dependence evidence; keep blocked/unavailable evaluation statuses"
+      }
+    ],
+    "compact_derived_counts": "At normal finish, retain per-update sample count, nonzero PANN count and return-phase count in the job summary or a small review JSON using existing local rollouts. This enables later analysis without uploading full observation arrays; do not add a live monitor or a new experiment.",
+    "bulk_default": "Do not automatically render/upload all videos, checkpoints or dense raw arrays, and do not delete them. Preserve the latest resume, last completed update and active local data until the user has backed them up and manually deletes them.",
+    "failure_coverage": "Keep all successful, failed, interrupted and truncated episodes; no selection by visual quality or reward."
+  },
+  "inference_boundaries": [
+    "Target collection success is distinct from physical mission success; W37 has no legal traversal or return.",
+    "50 episodes with foot/material loading are not 50 base strip passages; only 7 base entries were observed.",
+    "Fewer material-domain exits may result from shallower exploration and earlier falls, not better material robustness.",
+    "Loss decline and normal optimizer diagnostics do not establish useful policy learning.",
+    "The observed terminal-credit mismatch is real; its share of physical failure causation is not established.",
+    "Same-state PANN feature-zeroing is local sensitivity evidence, not a full intervention trajectory.",
+    "Torque maxima are not a saturation duty-cycle measurement.",
+    "Cross-controller comparisons are descriptive; episode exposure, policy history and reward versions differ.",
+    "Release evidence was read using the exact job asset names; three key text downloads were matched to the GitHub asset digest. No live machine state was queried.",
+    "The historical publication_pending status does not override the reviewed merge. The original job JSON is preserved as historical evidence, not rewritten.",
+    "No literature or paper result is asserted by this evidence JSON."
+  ],
+  "sources": {
+    "w37_results": {
+      "kind": "repo_files",
+      "path_template": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep{episode:05d}.json",
+      "episodes_inclusive": [
+        145,
+        216
+      ],
+      "count": 72
+    },
+    "w35_results": {
+      "kind": "repo_files",
+      "path_template": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep{episode:05d}.json",
+      "episodes_inclusive": [
+        45,
+        117
+      ],
+      "count": 73
+    },
+    "w36_results": {
+      "kind": "repo_files",
+      "path_template": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-PANN_PPO_S5-s0-ep{episode:05d}.json",
+      "episodes_inclusive": [
+        118,
+        144
+      ],
+      "count": 27
+    },
+    "w37_job": {
+      "kind": "repo_file",
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json"
+    },
+    "w37_manifest": {
+      "kind": "repo_file",
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z-assets.json"
+    },
+    "w37_e30": {
+      "kind": "repo_file",
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30.json"
+    },
+    "w37_e30_resolved": {
+      "kind": "repo_file",
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30-resolved.json"
+    },
+    "policy_source": {
+      "kind": "repo_file",
+      "path": "scripts/s1_go2_r11_policy.py",
+      "line_spans": {
+        "LegalRoute_contract_and_invalidation": [
+          29,
+          94
+        ],
+        "reward_collection": [
+          349,
+          365
+        ],
+        "terminal_finish": [
+          426,
+          437
+        ]
+      }
+    },
+    "merged_head": {
+      "kind": "git_commit",
+      "sha": "3d2854510862ec9822dd4a1eee88daf4434c03d8",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/commit/3d2854510862ec9822dd4a1eee88daf4434c03d8",
+      "subject": "Merge current compact delivery policy with completed W37 results",
+      "parents": [
+        "afd47b25d03a49ae7031340436578993d1e3b794",
+        "b2e458c9be2332fc2c8c8234b79d7c2ecb6a719f"
+      ]
+    },
+    "w37_collection": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__stream-records__collection.json",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__stream-records__collection.json",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/stream-records/collection.json",
+      "bytes": 1949,
+      "sha256": "ba865dcee1bdd6a266450bab12fdc81ee0729b0996f805ca7a4f3cb9ae3acc11",
+      "github_api_digest": "sha256:ba865dcee1bdd6a266450bab12fdc81ee0729b0996f805ca7a4f3cb9ae3acc11",
+      "download_matches_github_api_digest": true
+    },
+    "w37_learning": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__stream-records__learning.jsonl",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__stream-records__learning.jsonl",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/stream-records/learning.jsonl",
+      "bytes": 4392,
+      "sha256": "6447df76c316d08d365f85addca8401a81fc3eefcf8631f14133ac4c5b9f75db",
+      "github_api_digest": "sha256:6447df76c316d08d365f85addca8401a81fc3eefcf8631f14133ac4c5b9f75db",
+      "download_matches_github_api_digest": true
+    },
+    "w37_transitions": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__stream-records__transitions.jsonl",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__stream-records__transitions.jsonl",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/stream-records/transitions.jsonl",
+      "bytes": 1369089,
+      "sha256": "60146c7d7e127f428c64bad2e45afa151526b5c9f4a3873d80993b8abc15e4e8",
+      "github_api_digest": "sha256:60146c7d7e127f428c64bad2e45afa151526b5c9f4a3873d80993b8abc15e4e8",
+      "download_matches_github_api_digest": true
+    },
+    "w37_progress": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__stream-records__progress.json",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__stream-records__progress.json",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/stream-records/progress.json",
+      "bytes": 241398,
+      "sha256": "9fbef720a4d75e36b72db4411711a093ff22583e31165be1375103e3b02dda3e"
+    },
+    "w37_stopped": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__stream-records__stopped.json",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__stream-records__stopped.json",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/stream-records/stopped.json",
+      "bytes": 241724,
+      "sha256": "6dde75b6d332504d6918f54f839d39a9dce76418f105d72fb11ecb9caa0a83bc"
+    },
+    "w37_stream_identity": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__stream-records__stream-identity.json",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__stream-records__stream-identity.json",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/stream-records/stream-identity.json",
+      "bytes": 5983,
+      "sha256": "eb86b8f14960df42e05e77345433389f8506bbe608d8443099fa6e3a4bd398bf"
+    },
+    "w35_job": {
+      "kind": "repo_file",
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261031T101803Z.json"
+    },
+    "w35_collection": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261031T101803Z__stream-records__collection.json",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__stream-records__collection.json",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261031T101803Z/stream-records/collection.json",
+      "bytes": 404,
+      "sha256": "195b46365776bc79de914aaa5a324a583ab62176941bff03c9867ee70e1ec55a"
+    },
+    "w35_learning": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261031T101803Z__stream-records__learning.jsonl",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__stream-records__learning.jsonl",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261031T101803Z/stream-records/learning.jsonl",
+      "bytes": 5153,
+      "sha256": "03b0ebf6614feb1847766a93897d4cd8d4af536eaac58276158245c02e7c9ce2"
+    },
+    "w35_transitions": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261031T101803Z__stream-records__transitions.jsonl",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261031T101803Z-part03/job-20261031T101803Z__stream-records__transitions.jsonl",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261031T101803Z/stream-records/transitions.jsonl",
+      "bytes": 1703473,
+      "sha256": "bd9433e5bf022301faeff630e6b17843f2749910314afd84ed1e0ce32515c215"
+    },
+    "w36_job": {
+      "kind": "repo_file",
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261101T133954Z.json"
+    },
+    "w36_collection": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261101T133954Z__stream-records__collection.json",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__stream-records__collection.json",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/stream-records/collection.json",
+      "bytes": 619,
+      "sha256": "4451f873983c692fe169b85a148530f5a27313aa6153d7bb3111044eda0b3740"
+    },
+    "w36_learning": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261101T133954Z__stream-records__learning.jsonl",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__stream-records__learning.jsonl",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/stream-records/learning.jsonl",
+      "bytes": 2191,
+      "sha256": "0552db20a99a0163fffd11728a0359682f60e9acd84d44eaced4c8d1534116e9"
+    },
+    "w36_transitions": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261101T133954Z__stream-records__transitions.jsonl",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__stream-records__transitions.jsonl",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261101T133954Z/stream-records/transitions.jsonl",
+      "bytes": 780393,
+      "sha256": "03674a1770af2abe8af23ffe6f5eb5349a18160e178b441abf9aaed73514f5ed"
+    },
+    "w37_e30_transitions": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__evaluation-policy__job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30__transitions.jsonl",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__evaluation-policy__job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30__transitions.jsonl",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z/evaluation-policy/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30/transitions.jsonl",
+      "bytes": 19357,
+      "sha256": "48ad6ca6b4c79c484e5c0ae5d0aa44715c3b97ab359e1532c85d3cd3cc65eeb1"
+    },
+    "w37_e30_action_dependence": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30__pann-action-dependence.json",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30__pann-action-dependence.json",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30/pann-action-dependence.json",
+      "bytes": 4455,
+      "sha256": "db30ad60f3b661be017b30fb9647d2de1c8aa65c6f4eb15d4209744fd1878c8f"
+    },
+    "w37_e30_caps": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30__cap-decisions.json",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part01/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30__cap-decisions.json",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261103T075623Z-eval-PANN_PPO_S5-s0-E30/cap-decisions.json",
+      "bytes": 4131,
+      "sha256": "8c67d56f758b5a63336ea51ea909a42a74285d9cd9c7526adb4896cc5c055ebe"
+    },
+    "w37_rollout_update_18": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-004498-004753.npz",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-004498-004753.npz",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-004498-004753.npz",
+      "bytes": 591799,
+      "sha256": "c27d7cfed8a2c7aa8ea6db44321f7b1c68f6637fe6592d47004ceee9e58cd9ec"
+    },
+    "w37_rollout_update_19": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-004754-005009.npz",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-004754-005009.npz",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-004754-005009.npz",
+      "bytes": 594438,
+      "sha256": "bfbdbbe00a94db876c22c6937d34788b569178b4edda1ffd574a200b1bda3976"
+    },
+    "w37_rollout_update_20": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-005010-005265.npz",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-005010-005265.npz",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-005010-005265.npz",
+      "bytes": 593028,
+      "sha256": "060ef74af8cae7dd05ec0c0e41cdb0308332908fedf40107ce793e3385050f86"
+    },
+    "w37_rollout_update_21": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-005266-005521.npz",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-005266-005521.npz",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-005266-005521.npz",
+      "bytes": 592317,
+      "sha256": "2c862de0a7f7849fac0ed27d64a2266c717754aa3feb61d9a40ad50698e5ae1d"
+    },
+    "w37_rollout_update_22": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-005522-005777.npz",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-005522-005777.npz",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-005522-005777.npz",
+      "bytes": 591673,
+      "sha256": "0147836e10d4a91c2b4efd5d74af108d5228fd6ff7fc346a98b76db0a6306b53"
+    },
+    "w37_rollout_update_23": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-005778-006033.npz",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-005778-006033.npz",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-005778-006033.npz",
+      "bytes": 596248,
+      "sha256": "d73e84ee3ade8b31fa0beb319907af78a45da376157dd4f5c906858372d948b3"
+    },
+    "w37_rollout_update_24": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-006034-006289.npz",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-006034-006289.npz",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-006034-006289.npz",
+      "bytes": 588105,
+      "sha256": "2130ea675f9b5dda152dc775c8450e28b65763b7d8fc030a0e941aab4a6ea2c4"
+    },
+    "w37_rollout_update_25": {
+      "kind": "github_release_asset",
+      "asset_name": "job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-006290-006545.npz",
+      "release_tag": "tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__rollout-006290-006545.npz",
+      "original_output_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/rollout-006290-006545.npz",
+      "bytes": 591157,
+      "sha256": "3f8706e5b91401afab53fbf18ac1e3a8302bd6e2b442f1c1baeff9783424bf48"
+    }
+  }
+}

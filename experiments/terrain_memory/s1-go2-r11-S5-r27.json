@@ -1,0 +1,90 @@
+{
+  "build": "S5-r27",
+  "based_on": "S5-r26",
+  "status": "planned_not_implemented_not_built_not_run",
+  "configuration_overrides": {
+    "r26_reference": {
+      "horizon_s": 0.35,
+      "maximum_lead_m": 0.15,
+      "maximum_speed_m_s": 0.25,
+      "acceleration_m_s2": 0.5,
+      "userdata_offset": 84,
+      "packet_size": 12,
+      "head_offset_m": 0.3
+    },
+    "r26_impact_margin": {
+      "onset_m": 0.0008,
+      "scale_m": 0.0002,
+      "weight": 176
+    },
+    "r12_substep_path": {
+      "enabled": true,
+      "rows": [
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "ImpactMargin"
+      ],
+      "residual": "Earliest componentwise maximum over ten pre-integration states; terminal separately.",
+      "derivatives": "Ten A/B transitions; one full node-start C/D; shared geometry FD only at final active states, composed with saved P/Q prefixes. Direct risk D is zero.",
+      "limits": "Active-branch derivative; nonsmooth peak switches and proxy-model soft risks do not guarantee true material feasibility."
+    },
+    "r27_approach_activation": {
+      "status": "planned",
+      "foot_half_width_m": 0.015811388300841896,
+      "band_m": 0.07525,
+      "full_foot_center_bounds": {
+        "xmin": 0.8158113883008419,
+        "xmax": 2.1841886116991582,
+        "abs_y_max": 0.5841886116991581
+      },
+      "smoothstep": "S(u)=v^3*(10-15*v+6*v^2), v=clip(u,0,1)",
+      "gate": "g=S((x-xmin+b)/b)*S((xmax+b-x)/b)*S((ymax+b-abs(y))/b)",
+      "applies_to": [
+        "LandingVelocity",
+        "ImpactMargin"
+      ],
+      "semantics": "Replace only their spatial boolean with the same C2gate multiplying the original residual; retain existing vertical gates,targets,weights,onset/scale.",
+      "derivatives": "Candidate cost and FD both use the complete g*r. Impact takes earliest componentwise maximum of g*r over ten pre-integration states then applies the original active-state P/Q derivative chain; terminal same formula. Landing stays node-start full C/D.",
+      "physical_boundary_unchanged": true,
+      "does_not_modify": [
+        "Ground",
+        "R10MaterialFoot or real material-force switch",
+        "material strain domain0.02",
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "original termination criteria"
+      ],
+      "limitations": "Only this artificial spatial gate becomes C2; contact/max/other branch nonsmoothness and proxy-model limitations remain. No true-TM02 feasibility guarantee."
+    }
+  },
+  "inherited_gait": {
+    "cadence_Hz": 2.0,
+    "duty": 0.45,
+    "rise_s": 0.075,
+    "descent_s": 0.2,
+    "changed": false
+  },
+  "retained": "Actual r26 reference packet/head offset, r24 motion skeleton, ten0.2ms A/B substeps, forward FD, MakeDifferentiable, TVfeedback, PD and original material/robot/torque/contact/fall/route semantics; frozen causal PANN, PPO,658Dobs,2Hz scalarcap unchanged.",
+  "reward_version": "W38_legal_route_terminal_settlement",
+  "qualification": "Planned only. Implement actual source and normal build, then direct full-joint two-stream sampling. No physical or formal qualification is claimed.",
+  "reference_packet_fields": [
+    "active",
+    "t0",
+    "x_anchor",
+    "endpoint",
+    "direction",
+    "v_anchor",
+    "cap",
+    "heading",
+    "world_head_dx",
+    "world_head_dy",
+    "base_y",
+    "base_z"
+  ],
+  "reviewed_parent_commit": "3d2854510862ec9822dd4a1eee88daf4434c03d8",
+  "additional_required_changes": {
+    "reward": "True-terminal incomplete-passage settlement before final transition; retain external-truncation semantics and actual completed legal counts.",
+    "diagnostics": "Wire actual accepted rollout versus feedback-reference identities,winner,regularization and raw Kdelta/clip actions into existing recordings. No action-path change based on an unproven selection mismatch.",
+    "parallel": "Two isolated full-joint engineering forks as declared in R12 contract; private deadlines/RNG/outputs and serialized compact finish/Git."
+  }
+}
