@@ -345,9 +345,19 @@ def run(args, c, joint=None):
         if joint is not None:joint.reference_timing={'record':'reference-packets.json',
             'packet_period_s':.02,'actor_to_reference':'Recorded at next normal/phase replan',
             'reference_to_optimized_action':'Separate logical and wall times; synchronous optimization'}
+    diagnostic_env=dict(os.environ)
+    if c.get('controller_build')=='S5-r27':
+        diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(out/'planner-records.jsonl'),
+                              MJPC_R27_ACTION_RECORD=str(out/'feedback-actions.jsonl'))
+        resolved['planner_recording']=dict(
+            best_trajectory_semantics='feedback_reference_not_accepted_rollout',
+            plans='planner-records.jsonl',actions='feedback-actions.jsonl',
+            node_slices='0 and +20ms at base-x approach windows [.4,1.2] or [1.8,2.6]',
+            raw_feedback='raw_K_delta_x before feedback scaling and actuator clipping',
+            bulk_retained_local=True)
     with (out/'agent-server.log').open('w') as server_log, (contextlib.nullcontext(joint.agent) if training else Agent(task_id='Quadruped Flat', model=prediction_model,
             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
-            subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT), run_init=False)) as agent:
+            subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT,env=diagnostic_env), run_init=False)) as agent:
         try:
             agent.model = prediction_model
             agent.init(task_id='Quadruped Flat', model=prediction_model, send_as='xml')

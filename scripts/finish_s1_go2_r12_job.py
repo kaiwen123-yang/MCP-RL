@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Push compact evidence for a stopped R12 job; retain bulk outputs for the user."""
 import argparse
+import fcntl
+import copy
 import json
 import os
 from pathlib import Path
@@ -246,6 +248,89 @@ def compact_records(jobdir, snapshots, small, episodes, job, evaluation, samples
                         learning=str((destination / "training" / "learning.json").relative_to(ROOT)))
 
 
+
+def update_parallel_handoff(contract):
+    """Keep both job states in the existing six lines and actual contract state."""
+    small=ROOT/contract["outputs"]["compact_root"]
+    large=ROOT/contract["outputs"]["large_root"]
+    clock=read(large/"w38-training-clock.json")
+    if not clock:return
+    rows={}
+    for stream_id,relative in clock["jobs"].items():
+        directory=ROOT/relative
+        job=read(directory/"job.json")
+        stream=large/"training"/f'{job["group"]}-seed{job["seed"]}'
+        collection=read(stream/"collection.json")
+        progress=read(stream/"progress.json")
+        summary=read(small/"jobs"/(directory.name+".json"))
+        evaluation=read(directory/"evaluation.json")
+        finished=(directory/"training-finished-at.txt").exists()
+        rows[stream_id]=dict(job=directory.name,phase_id=job["phase_id"],seed=job["seed"],
+            status="training_ended" if finished else job["status"],
+            transitions=collection.get("collected_transitions",job["initial_transitions"]),
+            updates=collection.get("updates",job["initial_updates"]),
+            new_transitions=collection.get("phase_new_transitions",0),
+            new_updates=collection.get("phase_new_updates",0),
+            tail=collection.get("unupdated_fragment",0),
+            excluded=collection.get("excluded_old_version_transitions",145),
+            resume=progress.get("checkpoint",job["resume_checkpoint"]),
+            last_completed_update=collection.get("last_completed_update"),
+            evaluation=evaluation.get("status","pending_training"),
+            evaluation_stages=evaluation.get("stages",[]),
+            publication=summary.get("publication_status","pending_computation"),
+            outcomes=summary.get("training",{}).get("outcomes"),
+            job_directory=relative,training_directory=str(stream.relative_to(ROOT)))
+    from s1_go2_r11_runtime import index_file
+    with index_file(small,contract) as index:
+        for sid,row in rows.items():
+            entry=index.setdefault("background_jobs",{}).setdefault(row["job"],{})
+            entry.update(stream_id=sid,phase_id=row["phase_id"],live_status=row["status"],
+                latest_counts=dict(transitions=row["transitions"],updates=row["updates"],
+                    new_transitions=row["new_transitions"],new_updates=row["new_updates"],tail=row["tail"]),
+                job_directory=row["job_directory"],training_directory=row["training_directory"],
+                latest_resume=row["resume"],deadline_unix_s=clock["deadline_unix_s"])
+        index.update(current_task=contract["current_task"],protocol_revision=contract["protocol_revision"],
+                     w38_distinct_new_transitions=sum(x["new_transitions"] for x in rows.values()),
+                     w38_policy_counts={sid:dict(transitions=r["transitions"],updates=r["updates"]) for sid,r in rows.items()})
+    current=read(CONFIG)
+    current["status"]="joint_sampling_running" if any(x["status"]=="launched" for x in rows.values()) else "computation_ended"
+    current["actual_execution"]=dict(task=current["current_task"],controller_build="S5-r27",
+        shared_started_unix_s=clock["started_unix_s"],deadline_unix_s=clock["deadline_unix_s"],
+        streams=rows,shared_parent_counted_once=True,
+        distinct_new_transitions=sum(x["new_transitions"] for x in rows.values()),
+        common_elapsed_wall_s=time.time()-clock["started_unix_s"],
+        no_fused_optimizer_or_policy=True,bulk_retained_local=True,deleted_files=0)
+    current["current_window_scope"]["status"]=current["status"]
+    write(CONFIG,current)
+    plan_path=ROOT/"docs/TERRAIN_MEMORY_PLAN.md"
+    plan=plan_path.read_text().splitlines()
+    first=next(i for i,line in enumerate(plan) if line.startswith("## 当前交接"))
+    slots=[i for i in range(first+1,len(plan)) if plan[i].startswith("- ")][:6]
+    details=[]
+    for sid in ("w38-a","w38-b"):
+        r=rows.get(sid)
+        details.append(f"- {sid}：" + (f'{r["job"]}，{r["status"]}；新增{r["new_transitions"]}/{r["new_updates"]}，累计{r["transitions"]}/{r["updates"]}，tail={r["tail"]}、excluded={r["excluded"]}；评价={r["evaluation"]}，紧凑Git={r["publication"]}。' if r else "尚未启动。"))
+    from datetime import datetime,timezone,timedelta
+    end=datetime.fromtimestamp(clock["deadline_unix_s"],timezone(timedelta(hours=8))).isoformat()
+    ability=[]
+    for sid,r in rows.items():
+        o=r["outcomes"]
+        ability.append(sid+("尚无最终任务汇总" if not o else
+            f'合规去程/返程/整圈={o.get("legal_all_outbound_traversals")}/{o.get("legal_return_traversals")}/{o.get("legal_roundtrips")}，材料加载回合={o.get("material_loaded_episodes")}'))
+    handoff=[
+        f'- 当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27 已真实修改、构建并启动；共同训练绝对截止北京时间{end}，resume不重置。',
+        *details,
+        "- 任务能力："+ "；".join(ability)+"。每流仅本phase新update评价E30，同case合格才E60；不把训练更新当合规任务能力。",
+        "- 交付：两流compact finish/Git串行且使用现有index锁；全部逐回合JSON及失败/零步/截断、job/stream学习与独立评价进Git；权重、rollout、原始数组留D57，未自动渲染/上传/删除。",
+        "- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见当前R12契约actual_execution.streams及正常job/index；同父工程分支，不合并optimizer或重复父历史。"]
+    for position,line in zip(slots,handoff):plan[position]=line
+    plan_path.write_text("\n".join(plan)+"\n")
+
+
+def current_small_root():
+    return read(CONFIG)['outputs']['compact_root']
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--job-dir", type=Path, required=True)
@@ -254,6 +339,9 @@ def main():
                    help="Postprocess ceiling only; finish immediately after compact Git delivery.")
     p.add_argument("--deadline-unix", type=float, help="Keep the original absolute postprocess deadline on resume.")
     a = p.parse_args()
+    # Serialize compact snapshots, handoff/config and Git; training keeps its own slot.
+    publication_lock=(ROOT/current_small_root()/"compact-finish.lock").open("a")
+    fcntl.flock(publication_lock,fcntl.LOCK_EX)
     jobdir = (ROOT / a.job_dir).resolve()
     job = read(jobdir / "job.json")
     current = read(CONFIG)
@@ -307,7 +395,7 @@ def main():
             "training-contract.json", "stream-identity.json", "collection.json",
             "stopped.json", "progress.json")]
         sources += sorted(stream.glob("episode-*.json"))
-        sources.append(small / "training-deadline.json")
+        sources.append(jobdir / "training-deadline.json")
         for source in sources:
             if source.is_file() and source.stat().st_mtime >= job["started_unix_s"]:
                 shutil.copy2(source, snapshots / source.name)
@@ -326,6 +414,9 @@ def main():
     training = dict(actual_transitions=samples, updates=updates,
                     target_transitions=job["target_transitions"], target_updates=job["target_updates"],
                     target_reached=bool(stopped and samples >= job["target_transitions"] and updates >= job["target_updates"]),
+                    stream_id=job.get("stream_id"),
+                    invocation_wall_s=stopped.get("invocation_wall_s",collection.get("invocation_wall_s")),
+                    invocation_new_transitions=stopped.get("new_transitions",collection.get("invocation_new_transitions")),
                     initial_transitions=job["initial_transitions"], new_transitions=samples-job["initial_transitions"],
                     initial_updates=job["initial_updates"], new_updates=updates-job["initial_updates"],
                     unupdated_fragment=stopped.get("unupdated_fragment", collection.get("unupdated_fragment")),
@@ -347,9 +438,15 @@ def main():
             source="Retained per-episode JSON and local rollout/resume observation summary",
             recovery="Inspect the original compact episode records and retained local sources.")
 
+    job.update(status="computation_ended",training_exit_code=training_exit,
+               evaluation_status=evaluation["status"])
+    write(jobdir/"job.json",job)
+    from s1_go2_r11_runtime import index_file
+    with index_file(small,contract) as locked_index:
+        index_snapshot=copy.deepcopy(locked_index)
     staged, evidence = compact_records(
         jobdir, snapshots, small, episodes, dict(job, training_exit_code=training_exit),
-        evaluation, samples, read(small / "index.json"))
+        evaluation, samples, index_snapshot)
     policy_path = small / "jobs" / name / "delivery-policy.json"
     write(policy_path, policy)
     staged.add(policy_path)
@@ -368,7 +465,7 @@ def main():
         last_completed_update=training.get("last_completed_update"),
         availability="No bulk backup or upload is claimed; historical user/deletion state is not inferred.")
     summary = dict(
-        job=name, current_task=job.get("current_task", "S1"),
+        job=name, stream_id=job.get("stream_id"), phase_id=job["phase_id"], current_task=job.get("current_task", "S1"),
         source_commit=job["source_commit"], controller_build=job["controller_build"],
         training_exit_code=training_exit, budget_extension=job.get("budget_extension"),
         training_started_unix_s=job["started_unix_s"], training_deadline_unix_s=job["deadline_unix_s"],
@@ -393,13 +490,12 @@ def main():
 
     def save_summary():
         write(summary_path, summary)
-        index = read(small / "index.json")
-        index.setdefault("background_jobs", {})[name] = dict(
-            summary=str(summary_path.relative_to(ROOT)), training=training, evaluation=evaluation,
-            publication_scope="compact_git", publication_status=summary["publication_status"],
-            bulk_retention=summary["bulk_retention"], cleanup=summary["cleanup"])
-        # The Release asset/destination/pending history is deliberately untouched.
-        write(small / "index.json", index)
+        with index_file(small,contract) as index:
+            index.setdefault("background_jobs", {})[name] = dict(
+                stream_id=job.get("stream_id"),phase_id=job["phase_id"],
+                summary=str(summary_path.relative_to(ROOT)), training=training, evaluation=evaluation,
+                publication_scope="compact_git", publication_status=summary["publication_status"],
+                bulk_retention=summary["bulk_retention"], cleanup=summary["cleanup"])
 
     save_summary()
     plan_path = ROOT / "docs/TERRAIN_MEMORY_PLAN.md"
@@ -421,6 +517,9 @@ def main():
     for position, line in zip(slots, handoff):
         plan[position] = line
     plan_path.write_text("\n".join(plan) + "\n")
+    if job.get("stream_id","").startswith("w38-"):
+        update_parallel_handoff(contract)
+        staged.add(CONFIG)
     staged.update((summary_path, small / "index.json", plan_path))
     paths = sorted(str(path.relative_to(ROOT)) for path in staged if path.is_file())
 
@@ -443,7 +542,9 @@ def main():
             detail = detail.decode(errors="replace")
         summary["errors"].append(dict(stage="git", error=redact(str(error)), output=redact(detail)[-4000:]))
         save_summary()
-        if slots:
+        if job.get("stream_id","").startswith("w38-"):
+            update_parallel_handoff(contract)
+        elif slots:
             plan[slots[0]] = handoff[0].replace("Git发布=published", "Git发布=publication_pending")
             plan_path.write_text("\n".join(plan) + "\n")
         print(json.dumps(summary, ensure_ascii=False), flush=True)

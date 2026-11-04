@@ -84,6 +84,15 @@ class LegalRoute:
                     if not row['completed']:self.invalidate()
         self.previous_x=float(xy[0]);self.previous_phase=phase
 
+    def settle_physical_terminal(self,t):
+        before=self.progress
+        if self.current is not None and not self.current['completed']:
+            self.invalidate()
+            self.current['terminal_closed_s']=float(t)
+        return dict(progress_before=before,progress_after=self.progress,
+                    retracted_positive_credit=before-self.progress,
+                    reason='true_physical_terminal')
+
     def result(self):
         return dict(reward_version='W36_legal_route_progress_and_lap_alignment',
             progress=self.progress,completed_roundtrips=self.completed_laps,
@@ -105,6 +114,9 @@ class PolicyStream:
         self.phase_id=contract.get('learning',{}).get('phase_id',contract.get('current_task'))
         self.excluded_old_version_transitions=0;self.controller_migration=None
         self.last_completed_update=None
+        self.stream_id=contract.get('learning',{}).get('stream_id')
+        self.fork_identity=None
+        self.invocation_started_unix_s=time.time()
         resources=contract.get('resources',{})
         torch.set_num_threads(resources.get('torch_threads',1));torch.set_num_interop_threads(1)
         np.random.seed(seed);torch.manual_seed(seed)
@@ -134,6 +146,7 @@ class PolicyStream:
             self.excluded_old_version_transitions=saved.get('excluded_old_version_transitions',0)
             self.controller_migration=saved.get('controller_migration')
             self.last_completed_update=saved.get('last_completed_update')
+            self.fork_identity=saved.get('fork_identity')
             if training:
                 self.backend.optimizer.load_state_dict(saved['optimizer'])
                 torch.set_rng_state(saved['torch_rng']);np.random.set_state(saved['numpy_rng'])
@@ -164,6 +177,34 @@ class PolicyStream:
                     self.controller_migration['isolated_tail_path']=str(excluded.relative_to(root))
                     self.excluded_old_version_transitions=145
                     self.buffer=[]
+                if self.controller_build=='S5-r27':
+                    if self.fork_identity is None:
+                        boundary=contract['learning']['controller_version_boundary']
+                        source=Path(checkpoint)
+                        if not source.is_absolute():source=root/source
+                        if not (source.resolve()==(root/boundary['parent_checkpoint']).resolve()
+                                and saved['controller_build']=='S5-r26'
+                                and saved['samples']==6545 and saved['updates']==25
+                                and saved['episode']==216 and not self.buffer
+                                and self.excluded_old_version_transitions==145):
+                            raise ValueError('W38 first fork requires the declared ep216 zero-tail parent.')
+                        fork_seed=contract['learning']['fork_exploration_seed']
+                        np.random.seed(fork_seed);torch.manual_seed(fork_seed)
+                        if self.backend.config.device.startswith('cuda'):torch.cuda.manual_seed_all(fork_seed)
+                        self.fork_identity=dict(stream_id=self.stream_id,seed=seed,
+                            exploration_seed=fork_seed,parent_checkpoint=str(source.relative_to(root)),
+                            parent_samples=6545,parent_updates=25,parent_episode=216,
+                            parent_controller_build=saved['controller_build'],
+                            parent_reward_version=saved['reward_version'],
+                            controller_build=self.controller_build,reward_version=self.reward_version,
+                            phase_id=self.phase_id,restored_optimizer=True,
+                            inherited_excluded=145,new_exclusions=0,
+                            reseeded_after_checkpoint_restore=True,
+                            engineering_fork_not_independent_from_scratch=True)
+                        self.begin=time.time()
+                    elif (self.fork_identity['stream_id']!=self.stream_id or
+                          saved['seed']!=seed or saved['phase_id']!=self.phase_id):
+                        raise ValueError('Resume must retain this branch stream and phase identity.')
                 # A new physical session never inherits a pending successor.
                 # Same-version buffers retain their already recorded next_obs/value.
                 self.last_observation=None
@@ -182,6 +223,7 @@ class PolicyStream:
                 existing += [int(x.name[len(prefix):]) for x in self.directory.parent.parent.glob(prefix+'*') if x.is_dir()]
                 # An interrupted started session also owns its episode number.
                 self.episode=max([self.episode]+existing)
+        self.invocation_initial_samples=self.samples
         self.log=(self.directory/'transitions.jsonl').open('a')
         self.learning=(self.directory/'learning.jsonl').open('a')
 
@@ -189,7 +231,7 @@ class PolicyStream:
         p=self.directory/(f'resume-state-ep{self.episode:05d}.pt' if resume_only else f'checkpoint-{self.samples:06d}.pt')
         if not resume_only:
             self.last_completed_update=dict(path=str(p.relative_to(self.root)),samples=self.samples,
-                updates=self.backend.update_count,phase_id=self.phase_id,
+                updates=self.backend.update_count,phase_id=self.phase_id,stream_id=self.stream_id,
                 controller_build=self.controller_build,reward_version=self.reward_version)
         torch.save(dict(actor=self.backend.actor.state_dict(),critic=self.backend.critic.state_dict(),
             optimizer=self.backend.optimizer.state_dict(),normalization=self.normalization,
@@ -207,6 +249,7 @@ class PolicyStream:
             phase_initial_updates=self.phase_initial_updates,phase_id=self.phase_id,
             excluded_old_version_transitions=self.excluded_old_version_transitions,
             controller_migration=self.controller_migration,last_completed_update=self.last_completed_update,
+            stream_id=self.stream_id,fork_identity=self.fork_identity,
             ppo=self.backend.provenance()),p.with_suffix('.tmp'))
         p.with_suffix('.tmp').replace(p)
         summary=dict(samples=self.samples,effective_samples=self.effective_samples,
@@ -217,7 +260,8 @@ class PolicyStream:
             continuous_environment_snapshot=False,
             excluded_old_version_transitions=self.excluded_old_version_transitions,
             controller_migration=self.controller_migration,phase_id=self.phase_id,
-            last_completed_update=self.last_completed_update)
+            last_completed_update=self.last_completed_update,
+            stream_id=self.stream_id,fork_identity=self.fork_identity)
         self.write_collection()
         progress=self.directory/'progress.json'
         progress.with_suffix('.tmp').write_text(json.dumps(summary,indent=2)+'\n')
@@ -227,6 +271,10 @@ class PolicyStream:
         collected=self.directory/'collection.json'
         collected.with_suffix('.tmp').write_text(json.dumps(dict(
             collected_transitions=self.samples,transition_serial=self.transition_serial,
+            stream_id=self.stream_id,fork_identity=self.fork_identity,
+            invocation_started_unix_s=self.invocation_started_unix_s,
+            invocation_wall_s=time.time()-self.invocation_started_unix_s,
+            invocation_new_transitions=self.samples-self.invocation_initial_samples,
             completed_update_transitions=self.backend.update_count*256,updates=self.backend.update_count,
             unupdated_fragment=len(self.buffer),stage_samples=self.stage_samples,
             wall_s=time.time()-self.begin,updated_unix_s=time.time(),collection_started_unix_s=self.begin,
@@ -266,6 +314,7 @@ class PolicyStream:
             batch.pop('next_obs')
             loss=self.backend.update(Rollout(**batch));self.buffer.clear()
             self.learning.write(json.dumps(dict(loss,cumulative_samples=self.samples,wall_s=time.time()-self.begin,
+                stream_id=self.stream_id,phase_id=self.phase_id,
                 controller_build=self.controller_build,reward_version=self.reward_version,
                 phase_new_transitions=self.samples-self.phase_initial_samples,
                 phase_new_updates=self.backend.update_count-self.phase_initial_updates))+'\n')
@@ -292,7 +341,7 @@ class PolicyMaterial(JointMaterial):
         self.gait_phase=0.;self.last_control_time=0.;self.cadence=1.
         self.pending=None;self.last_snapshot=None;self.effective_time=0.;self.action_change=0.
         self.action_dependence=[]
-        self.legal_route=LegalRoute() if stream.reward_version=='W36_legal_route_progress_and_lap_alignment' else None
+        self.legal_route=LegalRoute() if stream.reward_version in ('W36_legal_route_progress_and_lap_alignment','W38_legal_route_terminal_settlement') else None
         if self.group=='PANN_PPO_S5':
             parameters=json.loads((root/'experiments/tm02/r2-multihistory.json').read_text())['reference_material']['parameters']
             self.observer=MaterialObserver(parameters,root/r9['pann']['weights_path'],law=stream.observer_law)
@@ -425,12 +474,15 @@ class PolicyMaterial(JointMaterial):
 
     def finish(self,result):
         t=float(self.data.time);measurement=self.measurements()
+        physical_failure=result['reason'].startswith(('material_domain_exit','body_fall','invalid_contact'))
         if self.legal_route is not None:
             self.legal_route.update(t,self.mission,self.data.qpos[:2],measurement[0],measurement[3])
+            if physical_failure and self.stream.reward_version=='W38_legal_route_terminal_settlement':
+                result['terminal_reward_settlement']=self.legal_route.settle_physical_terminal(t)
             result['legal_route']=self.legal_route.result()
+            result['legal_route']['reward_version']=self.stream.reward_version
         if self.observer is not None and t>self.observer.time:self.observer.observe(t,measurement[0],measurement[1])
         observation=self.observation(t,self.mission,measurement)
-        physical_failure=result['reason'].startswith(('material_domain_exit','body_fall','invalid_contact'))
         timeout=False
         success=False
         truncated=not (physical_failure or timeout or success)

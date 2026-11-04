@@ -42,7 +42,7 @@ def evaluate(a, contract):
     c['outputs']['root'] = contract['outputs']['compact_root']
     args = arguments(a.attempt, build, a.condition, 'formal',
                      c['r11_stage']['task_kind'], workers=workers)
-    args.config = CONFIG
+    args.config = a.contract
     args.cohort = contract['protocol_revision']
     args.original_robot_dir = str(a.assets / 'go2')
     args.original_scene = str(a.assets / 'scene_flat.xml')
@@ -76,7 +76,9 @@ def evaluate(a, contract):
         case_config.pop('r12_contract')
         identity, _ = case_identity(case_config, a.group, a.seed, a.condition,
                                     a.checkpoint, normalization)
-        identity.update(protocol_revision=contract['formal_evaluation_protocol'], terrain='tm02_anchor')
+        identity.update(protocol_revision=contract['formal_evaluation_protocol'], terrain='tm02_anchor',
+                        job=contract['learning'].get('phase_id'),stream_id=contract['learning'].get('stream_id'),
+                        controller_build=build,reward_version=contract['learning']['reward_version'])
         c.update(case_identity=identity, case_key=stable_digest(identity), evaluation_workers=workers)
         with index_file(small, c) as idx:
             c['predecessor_attempt'] = prerequisite(c, idx, 'formal', 'tm02_anchor')
@@ -156,9 +158,19 @@ def evaluate_job(jobdir, contract):
     jobdir = (ROOT / jobdir).resolve()
     contract = json.loads((jobdir / 'execution-contract.json').read_text())
     job = json.loads((jobdir / 'job.json').read_text())
-    if contract['current_task']!='W37_CONTACT_CONSISTENT_JOINT':
+    if contract['current_task'] not in ('W37_CONTACT_CONSISTENT_JOINT','W38_SMOOTH_APPROACH_PARALLEL_JOINT'):
         continue_authorized_budget(jobdir,job,contract)
-    started = time.time()  # Evaluation owns its full four hours after all training.
+    existing=jobdir/'evaluation.json'
+    if existing.exists():
+        previous_record=json.loads(existing.read_text())
+        if previous_record.get('status')!='running':
+            print(json.dumps(previous_record),flush=True)
+            return 0
+        started=previous_record['started_unix_s']
+    else:
+        from datetime import datetime
+        started=datetime.fromisoformat((jobdir/'training-finished-at.txt').read_text().strip().replace('Z','+00:00')).timestamp()
+    # This branch's evaluation deadline is never renewed by a resumed invocation.
     settings = contract['control_and_evaluation']['post_training_evaluation']
     deadline = started + settings['maximum_wall_s']
     if not settings.get('enabled',True):
@@ -166,7 +178,7 @@ def evaluate_job(jobdir, contract):
         return 0
     record = dict(job=jobdir.name, status='running', started_unix_s=started,
                   deadline_unix_s=deadline, controller_build=job['controller_build'],
-                  group=job['group'], seed=job['seed'], condition=settings['condition'],
+                  group=job['group'], seed=job['seed'], stream_id=job.get('stream_id'), phase_id=job['phase_id'], condition=settings['condition'],
                   workers=settings['solver_workers'], checkpoint_selection=settings['checkpoint_selection'],
                   deterministic_policy_mean=True, frozen_normalization=True, ppo_updates=False,
                   attempts=[], stages=[])
@@ -199,7 +211,7 @@ def evaluate_job(jobdir, contract):
         eligible=(last and last['phase_id']==job['phase_id']
             and last['controller_build']==job['controller_build']
             and last['reward_version']==job['reward_version']
-            and last['updates']>job['initial_updates'] and last['samples']>job['initial_transitions'])
+            and last.get('stream_id')==job.get('stream_id') and last['updates']>job['initial_updates'] and last['samples']>job['initial_transitions'])
         if not eligible:
             record.update(status='unavailable',reason='new_update_unavailable',
                 finished_unix_s=time.time(),stages=[dict(level=level,stage_status='not_run',
@@ -217,6 +229,7 @@ def evaluate_job(jobdir, contract):
         saved=torch.load(checkpoint,map_location='cpu',weights_only=False)
         if not (saved['phase_id']==job['phase_id'] and saved['controller_build']==job['controller_build']
                 and saved['reward_version']==job['reward_version']
+                and saved.get('stream_id')==job.get('stream_id') and saved['group']==job['group'] and saved['seed']==job['seed']
                 and saved['updates']==last['updates'] and saved['samples']==last['samples']
                 and len(saved['buffer'])==0):
             raise ValueError('Completed-update checkpoint does not match its recorded phase identity')
@@ -241,7 +254,7 @@ def evaluate_job(jobdir, contract):
                     '--checkpoint', str(checkpoint), '--level', level,
                     '--condition', settings['condition'], '--workers', str(settings['solver_workers']),
                     '--evaluation-start-unix', str(started), '--deadline-unix', str(deadline),
-                    '--policy-output', str(policy_output),
+                    '--policy-output', str(policy_output), '--contract', str(jobdir/'execution-contract.json'),
                 ]
                 row = dict(level=level, attempt=attempt, stage_status='running',
                            started_unix_s=time.time(), command=command)
@@ -299,6 +312,7 @@ def evaluate_job(jobdir, contract):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--contract', default=CONFIG)
     p.add_argument('--job-dir', type=Path, help='Run final-policy E30/conditional E60 after this job training exits.')
     p.add_argument('--attempt')
     p.add_argument('--build')
@@ -313,7 +327,7 @@ def main():
     p.add_argument('--policy-output', type=Path)
     p.add_argument('--assets', type=Path, default=ROOT / 'work/assets')
     a = p.parse_args()
-    contract = json.loads((ROOT / CONFIG).read_text())
+    contract = json.loads((ROOT / a.contract).read_text())
     if a.job_dir is not None:
         return evaluate_job(a.job_dir, contract)
     if a.attempt is None or a.window_start_unix is None or a.deadline_unix is None:

@@ -4,7 +4,7 @@
 
 使用 AutoDL 西北B区 D57，SSH 别名 `autodl-d57`；项目 `/root/autodl-tmp/MCP-RL`，环境 `work/envs/d57`，激活 `source scripts/autodl_d57_env.sh`。RTX PRO 6000 96GB ×1、25 vCPU、120GB内存。复用现有环境、服务器独立联网和持久 GitHub 登录，不重新迁移。凭据不进入仓库或日志。
 
-**当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27；状态为 `planned_not_implemented_not_built_not_run`。** W37/S5-r26已完成，父恢复点为本组ep216、6545条/25更新、tail0、历史excluded145。以[主计划顶部6行和第4节](docs/TERRAIN_MEMORY_PLAN.md)、[W37实际结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json)及[当前R12契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)为准；计划与实际实现/构建/启动分开记录。交付规则见第5节，启动词见第8节。
+**当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27；状态为 `implemented_pending_normal_build_not_run`。** W37/S5-r26已完成，父恢复点为本组ep216、6545条/25更新、tail0、历史excluded145。以[主计划顶部6行和第4节](docs/TERRAIN_MEMORY_PLAN.md)、[W37实际结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json)及[当前R12契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json)为准；计划与实际实现/构建/启动分开记录。交付规则见第5节，启动词见第8节。
 
 1. 开场最多5行，随后直接处理当前实现。先查同流tmux与最新实际结果；已有作业运行就交接进度，不重复启动或重置deadline。默认只读当前交接、第4节及直接相关源码，不全仓审查或另开计划轮次。
 2. W37/S5-r26实际新增2048条/8更新，ep145–216共72个物理回合：36跌倒、34非足接触、1材料域退出、1达到采样目标截断；50回合实际加载材料、7回合机身投影进入条带、合法贯穿0。末端固定策略E30在14.3096s非足接触，E60被阻塞。累计6545/25中6400条用于已完成更新、145条历史excluded、tail0。W36/S5-r25的27回合、1169/4及4497/17父历史保留；不重复ep144迁移，不退回ep117，不重跑已关闭W35/W36/W37。

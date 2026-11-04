@@ -2,11 +2,11 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27，状态为计划已写入、尚未实现/构建/运行；本次复核3d285451的W37物理/学习结果及94b43d0的最新交付，未SSH或启动新物理。
+- 当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27 已在D57最新main上完成实际源码与双流接线，状态implemented_pending_normal_build_not_run；尚无r27物理结果。
 - 已完成W37：r26新增2048条/8更新，累计6545/25＝6400已训练＋145历史excluded＋0当前尾；最新resume-state-ep00216.pt、checkpoint-006545.pt，父历史仅计一次。
 - 真实能力：72回合中36跌倒、34躯干非足接触、1材料域退出、1达到目标截断；50回合材料加载、7回合机身入条带，合规去程/返程/整圈均0；最终E30在14.3096s失败，E60阻断。
-- 下一修改：LandingVelocity/ImpactMargin共用原approach band内的C2激活，候选代价/FD/子步峰值同式；另修物理终止的临时奖励关账，分清accepted rollout与feedback reference；保留r26参考、十子步、TV反馈、PD和原物理。
-- 下一计算：同父ep216分叉w38-a/b两条完整PANN联合流，各8 MPC workers、Torch1/BLAS1，各新增1024条/4更新到各自7569/29；共同28h训练截止，各自末端评价≤4h，源码先推、紧凑finish/Git串行。
+- 已修改：LandingVelocity/ImpactMargin共用75.25mm带内完整C2 g*r；物理终止先结清未完成贯穿正credit；现有planner/action链记录accepted/reference、winner/regularization及原始Kδx/限幅动作。
+- 执行：源码/config先推，正常构建后同父ep216启动w38-a/b；各8 workers、Torch1/BLAS1、独立optimizer/buffer/RNG/job/phase/deadline文件；共同28h截止，各自E30→条件E60≤4h，compact finish/Git串行。
 - 交付边界：r26的73视频/Release历史保持，94b43d0已完成紧凑记录和两项补传，pending0；从W38执行compact-first，不自动传大权重/视频/数组、不做PC归档、不删服务器输出，用户备份后自行统一删除。
 
 ## 1. 长期目标与当前实际阶段

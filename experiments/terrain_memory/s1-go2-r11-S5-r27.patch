@@ -1,0 +1,247 @@
+--- a/mjpc/r26_risk.h
++++ b/mjpc/r26_risk.h
+@@ -20,18 +20,28 @@
+   return .5*(over+mju_sqrt(over*over+1e-12))/
+       GetCustomNumericData(m,"r12_trunk_clearance")[0];
+ }
++// W38: shared C2 cost activation only; real material/contact boundaries stay exact.
++inline double R27Smoothstep(double u) {
++  const double v=mju_min(1.,mju_max(0.,u));
++  return v*v*v*(10.+v*(-15.+6.*v));
++}
++inline double R27ApproachActivation(const mjModel* m,const double* p) {
++  constexpr double half=.015811388300841896;
++  const double b=GetNumberOrDefault(0.,m,"r11_landing_approach_band");
++  return R27Smoothstep((p[0]-(.8+half)+b)/b) *
++         R27Smoothstep(((2.2-half)+b-p[0])/b) *
++         R27Smoothstep(((.6-half)+b-mju_abs(p[1]))/b);
++}
+ inline double R26ImpactValue(const mjModel* m,const mjData* d,int geom) {
+   const double* p=d->geom_xpos+3*geom;
+-  constexpr double half=.015811388300841896;
+-  const double band=GetNumberOrDefault(0.,m,"r11_landing_approach_band");
+-  if (p[0]<.8+half-band || p[0]>2.2-half+band || mju_abs(p[1])>.6-half+band) return 0;
++  const double g=R27ApproachActivation(m,p);
+   const double* margin=GetCustomNumericData(m,"r26_impact_margin");
+   const double z=p[2]-m->geom_size[3*geom]-GetCustomNumericData(m,"s1_flat_ground_height")[0];
+   double velocity[6];mj_objectVelocity(m,d,mjOBJ_GEOM,geom,velocity,0);
+   const double down=mju_max(-velocity[5],0.);
+   const double hold=m->opt.timestep*GetNumberOrDefault(1,m,"s1_control_hold_substeps");
+   const double over=hold*down+down*down/(2*mju_abs(m->opt.gravity[2]))-(z+margin[0]);
+-  return .5*(over+mju_sqrt(over*over+1e-12))/margin[1];
++  return g*.5*(over+mju_sqrt(over*over+1e-12))/margin[1];
+ }
+ struct R26RiskRow { int sensor,geom,kind; };
+ inline std::vector<R26RiskRow> R26RiskRows(const mjModel* m) {
+--- a/mjpc/tasks/quadruped/quadruped.cc
++++ b/mjpc/tasks/quadruped/quadruped.cc
+@@ -345,11 +345,8 @@
+       const double* p = foot_pos[foot];
+       const bool material = p[0] >= 0.8+half_sole && p[0] <= 2.2-half_sole &&
+                             mju_abs(p[1]) <= 0.6-half_sole;
+-      const double approach_width = GetNumberOrDefault(0., model, "r11_landing_approach_band");
+-      const bool approaching = p[0] >= .8+half_sole-approach_width &&
+-          p[0] <= 2.2-half_sole+approach_width &&
+-          mju_abs(p[1]) <= .6-half_sole+approach_width;
+-      if (material || approaching) {
++      const double approach_activation = R27ApproachActivation(model,p);
++      {
+         double z = p[2] - model->geom_size[3*foot_geom_id_[foot]] - flat_ground_height[0];
+         double velocity[6];
+         mj_objectVelocity(model,data,mjOBJ_GEOM,foot_geom_id_[foot],velocity,0);
+@@ -368,7 +365,7 @@
+         double desired_vz = -0.05*mju_tanh(mju_max(z-loaded_target,0)/0.001);
+         if (slow_approach_ && (!complete_contact || step[foot]>0))
+           desired_vz=mju_max(mju_min(step_velocity[foot],0.),desired_vz);
+-        velocity_residual[foot] = gate*(mju_min(velocity[5],0)-desired_vz)/0.05;
++        velocity_residual[foot] = approach_activation*gate*(mju_min(velocity[5],0)-desired_vz)/0.05;
+         // 15.206408*9.81 / (2*375000) m: two-foot equilibrium scale.
+         double over = -z - 0.00019889981664;
+         indentation_residual[foot] = material ? 0.5*(over+mju_sqrt(over*over+1e-12))/0.001 : 0;
+--- a/mjpc/planners/ilqg/policy.h
++++ b/mjpc/planners/ilqg/policy.h
+@@ -44,6 +44,11 @@
+   // if state == nullptr, return the nominal action without a feedback term
+   void Action(double* action, const double* state, double time) const override;
+ 
++  // Only the RPC execution path records actions, never candidate rollouts.
++  void ActionRecorded(double* action, const double* state, double time) const;
++  void ActionImpl(double* action, const double* state, double time, bool record) const;
++  unsigned long record_plan_id = 0;
++
+   // copy policy
+   void CopyFrom(const iLQGPolicy& policy, int horizon);
+ 
+--- a/mjpc/planners/ilqg/policy.cc
++++ b/mjpc/planners/ilqg/policy.cc
+@@ -15,6 +15,8 @@
+ #include "mjpc/planners/ilqg/policy.h"
+ 
+ #include <algorithm>
++#include <cstdlib>
++#include <fstream>
+ 
+ #include <mujoco/mujoco.h>
+ #include "mjpc/task.h"
+@@ -79,8 +81,14 @@
+ }
+ 
+ // set action from policy
+-void iLQGPolicy::Action(double* action, const double* state,
+-                        double time) const {
++void iLQGPolicy::Action(double* action, const double* state, double time) const {
++  ActionImpl(action,state,time,false);
++}
++void iLQGPolicy::ActionRecorded(double* action, const double* state, double time) const {
++  ActionImpl(action,state,time,true);
++}
++void iLQGPolicy::ActionImpl(double* action, const double* state,
++                          double time, bool record) const {
+   // dimension
+   int dim_state = model->nq + model->nv + model->na;
+   int dim_state_derivative = 2 * model->nv + model->na;
+@@ -148,6 +156,9 @@
+     }
+   }
+ 
++  const char* file=record && state ? std::getenv("MJPC_R27_ACTION_RECORD") : nullptr;
++  std::vector<double> nominal;
++  if(file) nominal.assign(action,action+dim_action);
+   // add feedback
+   if (state) {
+     StateDiff(model, state_scratch.data(), state_interp.data(), state, 1.0);
+@@ -156,14 +167,32 @@
+     mju_addToScl(action, action_scratch.data(), feedback_scaling, dim_action);
+   }
+ 
+-  // clamp controls
++  std::vector<double> before_clip;
++  if(file) before_clip.assign(action,action+dim_action);
++  // clamp controls: unchanged action path.
+   Clamp(action, model->actuator_ctrlrange, dim_action);
++  if(file) {
++    std::ofstream out(file,std::ios::app);out.precision(17);
++    out<<"{\"time\":"<<time<<",\"plan_id\":"<<record_plan_id
++       <<",\"feedback_scaling\":"<<feedback_scaling;
++    auto array=[&out](const char* key,const double* x,int n) {
++      out<<",\""<<key<<"\":[";
++      for(int j=0;j<n;++j){if(j)out<<",";out<<x[j];}out<<"]";
++    };
++    array("nominal_unclipped",nominal.data(),dim_action);
++    array("state_delta",state_scratch.data(),dim_state_derivative);
++    array("raw_K_delta_x",action_scratch.data(),dim_action);
++    array("action_before_clip",before_clip.data(),dim_action);
++    array("action_after_clip",action,dim_action);
++    out<<"}\n";
++  }
+ }
+ 
+ // copy policy
+ void iLQGPolicy::CopyFrom(const iLQGPolicy& policy, int horizon) {
+   // reference
+   trajectory = policy.trajectory;
++  record_plan_id = policy.record_plan_id;
+ 
+   // feedback gains
+   mju_copy(feedback_gain.data(), policy.feedback_gain.data(),
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -19,6 +19,8 @@
+ #include <cstddef>
+ #include <cstdio>
+ #include <iostream>
++#include <cstdlib>
++#include <fstream>
+ #include <shared_mutex>
+ 
+ #include <mujoco/mujoco.h>
+@@ -231,9 +233,9 @@
+                                    double time, bool use_previous) {
+   const std::shared_lock<std::shared_mutex> lock(mtx_);
+   if (use_previous) {
+-    previous_policy.Action(action, state, time);
++    previous_policy.ActionRecorded(action, state, time);
+   } else {
+-    policy.Action(action, state, time);
++    policy.ActionRecorded(action, state, time);
+   }
+ }
+ 
+@@ -394,6 +396,21 @@
+   LogScale(linesearch_steps, 1.0, settings.min_linesearch_step,
+            num_trajectory_ - 1);
+   linesearch_steps[num_trajectory_ - 1] = 0.0;
++
++  const char* diagnostic_file=std::getenv("MJPC_R27_PLAN_RECORD");
++  const double regularization_before=backward_pass.regularization;
++  // Retain only node 0 and +20ms at the entry/exit approaches for K/C/D.
++  const double base_x=candidate_policy[0].trajectory.states[0];
++  const bool record_nodes=diagnostic_file &&
++      ((base_x>=.4 && base_x<=1.2) || (base_x>=1.8 && base_x<=2.6));
++  const int slice_end=mju_min(10,horizon-2);
++  std::vector<double> linearization_state,linearization_residual;
++  if(record_nodes) {
++    linearization_state.assign(candidate_policy[0].trajectory.states.begin(),
++        candidate_policy[0].trajectory.states.begin()+(slice_end+1)*dim_state);
++    linearization_residual.assign(candidate_policy[0].trajectory.residual.begin(),
++        candidate_policy[0].trajectory.residual.begin()+(slice_end+1)*task->num_residual);
++  }
+ 
+   // ----- model derivatives ----- //
+   // start timer
+@@ -574,6 +591,7 @@
+   improvement = previous_return - trajectory[winner].total_return;
+   surprise = mju_min(mju_max(0, improvement / expected), 2);
+ 
++  const double regularization_used=backward_pass.regularization;
+   // update regularization
+   backward_pass.UpdateRegularization(settings.min_regularization,
+                                      settings.max_regularization, surprise,
+@@ -621,6 +639,47 @@
+ 
+     // feedback scaling
+     policy.feedback_scaling = 1.0;
++    policy.record_plan_id=previous_policy.record_plan_id+1;
++  }
++
++  if (diagnostic_file) {
++    std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
++    out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
++       <<",\"winner\":"<<winner
++       <<",\"regularization_used\":"<<regularization_used
++       <<",\"regularization_before\":"<<regularization_before
++       <<",\"regularization_after\":"<<backward_pass.regularization
++       <<",\"action_step\":"<<action_step
++       <<",\"accepted_cost\":"<<trajectory[winner].total_return
++       <<",\"feedback_reference_cost\":"<<policy.trajectory.total_return
++       <<",\"accepted_identity\":\"trajectory[winner]\""
++       <<",\"feedback_reference_identity\":\"policy.trajectory\""
++       <<",\"nx\":"<<dim_state_derivative<<",\"nodes\":[";
++    auto array=[&out](const char* key,const double* x,int n) {
++      out<<",\""<<key<<"\":[";
++      for(int j=0;j<n;++j){if(j)out<<",";out<<x[j];}out<<"]";
++    };
++    if(record_nodes) for(int n=0;n<2;++n) {
++      const int k=n ? slice_end : 0;
++      if(n)out<<",";
++      out<<"{\"node\":"<<k<<",\"t\":"<<policy.trajectory.times[k];
++      array("linearization_state",linearization_state.data()+k*dim_state,dim_state);
++      array("linearization_residual",linearization_residual.data()+k*task->num_residual,task->num_residual);
++      array("accepted_state",trajectory[winner].states.data()+k*dim_state,dim_state);
++      array("feedback_reference_state",policy.trajectory.states.data()+k*dim_state,dim_state);
++      array("accepted_action",trajectory[winner].actions.data()+k*dim_action,dim_action);
++      array("feedback_reference_nominal",policy.trajectory.actions.data()+k*dim_action,dim_action);
++      array("K",policy.feedback_gain.data()+k*dim_action*dim_state_derivative,dim_action*dim_state_derivative);
++      for(const char* name:{"LandingVelocity","ImpactMargin"}) {
++        int sensor=mj_name2id(model,mjOBJ_SENSOR,name),adr=model->sensor_adr[sensor];
++        out<<",\""<<name<<"\":{\"sensor_address\":"<<adr;
++        array("C",model_derivative.C.data()+(k*dim_sensor+adr)*dim_state_derivative,4*dim_state_derivative);
++        array("D",model_derivative.D.data()+(k*dim_sensor+adr)*dim_action,4*dim_action);
++        out<<"}";
++      }
++      out<<"}";
++    }
++    out<<"]}\n";
+   }
+ 
+   // stop timer

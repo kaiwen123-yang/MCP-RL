@@ -41,7 +41,7 @@ def known_r25_startup_regression(result,tolerance):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--group", required=True, choices=["PPO_RAW_S5","PANN_PPO_S5"])
-    p.add_argument("--seed", type=int, default=0, choices=[0])
+    p.add_argument("--seed", type=int, default=0)
     p.add_argument("--window-start-unix", "--job-start-unix", dest="window_start_unix", type=float, required=True)
     p.add_argument("--background-job", action="store_true", help="Use the declared job deadline independently of the interactive four-hour window.")
     p.add_argument("--deadline-unix", type=float, required=True)
@@ -50,6 +50,8 @@ def main():
     a=p.parse_args()
     invocation_started_unix_s=time.time()
     contract=json.loads((ROOT/a.contract).read_text())
+    active=next(x for x in contract["learning"]["active_streams"] if x["group"]==a.group and x["seed"]==a.seed)
+    contract["learning"].update(stream_id=active.get("stream_id"),fork_exploration_seed=active.get("fork_exploration_seed"))
     old=json.loads((ROOT/contract["reuse"]["runtime_physics_ppo_and_task_settings"]).read_text())
     # Retain numerical PPO/shared-observation settings, not the old R11 campaign.
     shared=old["joint_learning"]
@@ -73,12 +75,13 @@ def main():
     small=ROOT/contract["outputs"]["compact_root"]
     output=ROOT/contract["outputs"]["large_root"]/"training"/f"{a.group}-seed{a.seed}"
     output.mkdir(parents=True,exist_ok=True)
-    dump(small/"training-deadline.json",dict(execution_mode=execution_mode,window_start_unix_s=a.window_start_unix,deadline_unix_s=deadline,hard_deadline_unix_s=hard))
+    deadline_path=ROOT/contract["learning"]["training_deadline_path"]
+    dump(deadline_path,dict(execution_mode=execution_mode,window_start_unix_s=a.window_start_unix,deadline_unix_s=deadline,hard_deadline_unix_s=hard))
     dump(output/"training-contract.json",contract)
     stream=PolicyStream(ROOT,a.group,a.seed,contract,output,checkpoint=a.resume)
     initial_transitions,initial_updates=stream.samples,stream.backend.update_count
-    # The explicit ep144 migration records excluded old data; same-version tails remain valid.
-    stream.write_collection()
+    # First fork is persisted before physics; ordinary resume retains its own RNG and legal tail.
+    stream.checkpoint(resume_only=True)
     # A failed initialization may retain an attempt without a newer checkpoint.
     # Continue checkpoint counts, but never reuse that retained attempt's ID.
     prefix=f"train-{a.group}-s{a.seed}-ep"
@@ -87,6 +90,8 @@ def main():
     os.environ["LD_LIBRARY_PATH"]=str(binary.parent/"lib")
     os.environ["MJPC_TASKS_DIR"]=str(binary.parent/"runtime-tasks")
     dump(output/"stream-identity.json",dict(group=a.group,seed=a.seed,engineering_candidate=build,
+        stream_id=stream.stream_id,fork_identity=stream.fork_identity,
+        training_deadline_path=str(deadline_path.relative_to(ROOT)),
         formal_qualification=False,normalization=stream.normalization,ppo=stream.backend.provenance(),
         workers=workers,pann_weights_path=str(pann_weights),
         protocol_revision=contract["protocol_revision"],initial_condition="nominal",curriculum_enabled=False,
@@ -116,11 +121,15 @@ def main():
         before=stream.samples
         # The retained AgentService permits one Init. A natural new physical
         # session owns a new Agent; ordinary PPO updates keep the live Agent.
+        diagnostic_env=dict(os.environ)
+        episode_output=output.parent.parent/name
+        diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(episode_output/"planner-records.jsonl"),
+                              MJPC_R27_ACTION_RECORD=str(episode_output/"feedback-actions.jsonl"))
         with (output/"persistent-mpc.log").open("a") as log, Agent(task_id="Quadruped Flat",
                 server_binary_path=str(binary),extra_flags=[f"--mjpc_workers={workers}"],
-                subprocess_kwargs=dict(stdout=log,stderr=log),run_init=False) as agent:
+                subprocess_kwargs=dict(stdout=log,stderr=log,env=diagnostic_env),run_init=False) as agent:
             joint=PolicyMaterial(ROOT,r9,stream,0,session,agent=agent,full_recording=True)
-            joint.training_deadline_path=small/"training-deadline.json"
+            joint.training_deadline_path=deadline_path
             result=run(args,c,joint)
             last_result=result
         record=dict(episode=stream.episode,attempt=name,controller_build=build,condition="nominal",stage=0,
@@ -142,18 +151,25 @@ def main():
         with index_file(small,c) as idx:
             streams=idx.setdefault("training_streams",{})
             streams[f"{a.group}-seed{a.seed}"]=dict(group=a.group,seed=a.seed,actual_transitions=stream.samples,
+                stream_id=stream.stream_id,fork_identity=stream.fork_identity,
+                phase_initial_transitions=stream.phase_initial_samples,
+                phase_new_transitions=stream.samples-stream.phase_initial_samples,
+                phase_new_updates=stream.backend.update_count-stream.phase_initial_updates,
                 updates=stream.backend.update_count,tail_buffer=len(stream.buffer),episodes=stream.episode,
                 excluded_old_version_transitions=stream.excluded_old_version_transitions,
                 phase_id=stream.phase_id,controller_migration=stream.controller_migration,phase_stop=phase_stop,
                 physics_s=stream.physics_s,controller_build=build,output=str(output.relative_to(ROOT)),
                 checkpoint=str((output/f"resume-state-ep{stream.episode:05d}.pt").relative_to(ROOT)))
             idx.update(current_task=contract["current_task"],protocol_revision=contract["protocol_revision"],status=f"{a.group}_training",
-                training_runs=len(streams),training_transitions=sum(x["actual_transitions"] for x in streams.values()),
-                training_updates=sum(x["updates"] for x in streams.values()),window=c["window"])
+                training_runs=len(streams),training_transitions=sum(x["phase_new_transitions"] if x.get("fork_identity") else x["actual_transitions"] for x in streams.values()),
+                training_updates=None,training_updates_by_stream={k:v["updates"] for k,v in streams.items()},
+                training_count_semantics="Shared parent history once; branch updates are separate policies.",
+                window=c["window"])
         print(json.dumps(record),flush=True)
         if phase_stop or result["stage_status"] in ("technical_interruption","budget_truncated"):break
     stream.checkpoint(resume_only=True)
     dump(output/"stopped.json",dict(actual_transitions=stream.samples,updates=stream.backend.update_count,
+        stream_id=stream.stream_id,fork_identity=stream.fork_identity,
         unupdated_fragment=len(stream.buffer),physics_s=stream.physics_s,session_records=stream.session_records,
         target=stream.target,continuous_environment_snapshot=False,
         invocation_started_unix_s=invocation_started_unix_s,invocation_wall_s=time.time()-invocation_started_unix_s,
