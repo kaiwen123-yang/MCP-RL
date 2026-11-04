@@ -198,6 +198,11 @@ def compact_records(jobdir, snapshots, small, episodes, job, evaluation, samples
             if saved:
                 row["compact_files"].append(saved)
         for source in sorted(episode.rglob("*.json")):
+            # Per-replan packets are dense raw traces despite their JSON suffix.
+            if source.name == "reference-packets.json":
+                retained.append(dict(path=str(source.relative_to(ROOT)), size=source.stat().st_size,
+                                     reason="dense_reference_trace_retained_local"))
+                continue
             # The normal result already exists in small; retain a standalone
             # result.json when an interrupted/alternate writer only saved it here.
             if source == episode / "result.json" and result_path.is_file():
