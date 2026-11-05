@@ -193,7 +193,7 @@
       ],
       "ordinary_physical_failure": "Save the original physical terminal and continue the next natural episode, except when the explicitly defined known_r25_startup_regression signature ends this controller phase. No generic fixed failure-count or start-count cap.",
       "automatic_restart": false,
-      "post_training": "Each branch selects its own last actually completed W39 update with updates>29; nominal E30 then exact-case eligible E60 within its separate 4h ceiling, using 8 solver workers. No new update is unavailable; existing known-r25 stop skips evaluation. Serialize compact finish/Git and preserve both stream states.",
+      "post_training": "Each branch selects its own last actually completed W39 update with updates>29; nominal E30 then exact-case eligible E60 within its separate 4h ceiling, using its own frozen job solver_workers. Active W39 jobs retain8; future new jobs default12 or explicitly select14 for both training and evaluation. No new update is unavailable; existing known-r25 stop skips evaluation. Serialize compact finish/Git and preserve both stream states.",
       "disconnect_semantics": "Detaching or closing the client leaves the server job running. Instance shutdown/reboot ends the process; resume from saved checkpoint later.",
       "concurrent_training_streams": 2,
       "default_postprocess_wall_s": 21600,
@@ -761,12 +761,25 @@
     "environment_changes": "No environment changes are planned. Resolve only a concrete error from the necessary normal build or authorized real launch; no environment matrix, import/smoke stage or dependency refresh.",
     "maximum_environments": 2,
     "initial_training_concurrency": 2,
-    "mpc_workers": 8,
-    "workers": "Two independent full-joint streams,8MPC workers/Torch1/BLAS1 each; both streams use the existing GPU for PANN/PPO. No worker grid or standalone benchmark.",
+    "mpc_workers": 12,
+    "workers": "Future new jobs: two independent full-joint streams,default12MPC workers each; explicit14 is also user-authorized. Each new job freezes its selected resources.mpc_workers for training and evaluation. Active W39 jobs and ordinary resumes retain their existing8. Torch1/BLAS1 and existing GPU PANN/PPO settings remain. No worker grid or standalone benchmark.",
     "torch_device": "cuda",
     "torch_threads": 1,
     "blas_threads": 1,
-    "cpu_budget_rule": "16solver workers plus both control/RPC/JAX/I/O processes share25allocated vCPU. Framework internal threads mean this is a soft CPU budget,not a strict thread-count guarantee.",
+    "cpu_budget_rule": "Future default2x12 gives24MPC workers; authorized2x14 gives28. Both layouts share25allocated vCPU with control/RPC/JAX/I/O; modest oversubscription is allowed,not a guarantee of linear speedup. Keep Torch1/BLAS1. Active W39 remains2x8 under its frozen job contracts.",
+    "future_worker_policy": {
+      "authorized_on": "2026-11-05",
+      "scope": "Only future not-yet-started jobs; do not restart,duplicate or rewrite active W39 jobs,ordinary resumes or their evaluation contracts.",
+      "default_per_stream": 12,
+      "authorized_per_stream": [
+        12,
+        14
+      ],
+      "parallel_streams": 2,
+      "launcher_option": "scripts/start_s1_go2_r12_tmux.py --workers {12,14}; optional for new jobs,disallowed with --job-dir; also freezes the selected evaluation solver_workers.",
+      "basis": "User reports approximately12CPU cores used and explicitly requests12or14workers per task with two tasks in parallel. This change did not collect a new server utilization,affinity or cgroup measurement.",
+      "execution_rule": "Judge ordinary training planning wall time,new transitions per collection/common training wall and ordinary CPU snapshots. No benchmark,worker grid or new admission gate; no changes to candidate count,iterations,horizon,physics,reward,GPU/JAX settings or existing clocks."
+    },
     "pann_weights_path": "work/assets/B_random1000--ideal-potentials.npz",
     "jax_process_environment": {
       "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
@@ -774,7 +787,7 @@
       "note": "Retain existing sharing and numerical settings. No memory stress test,new allocator or precision change to fill96GB."
     },
     "throughput_rule": "Report each stream new transitions / its current invocation collection wall, and distinct new transitions / common training wall from W39 launch to the later collection update. Do not count inherited7569 twice or include evaluation time in training-only throughput. W38 measured 145.6787299449905 distinct transitions/hour for two streams; this is not a W39 speed promise.",
-    "later_parallel_layout": "W39 continues exactly two existing branches with 8 workers each. W38 aggregate collection throughput was about30.5% above W37 in a cross-version engineering observation; controller, reward and trajectories differ, so this does not isolate the effect of the2x8 layout. No evidence supports a worker grid,2x10,third stream,shared-policy vector collection or GPU planner rewrite now.",
+    "later_parallel_layout": "Active W39 continues its two existing branches with8workers each. Future new jobs default2x12;2x14 is also user-authorized without another confirmation. W38 aggregate collection throughput was about30.5% above W37 in a cross-version engineering observation; controller,reward and trajectories differ,so this neither isolates the effect of2x8 nor establishes a speedup for12or14. No worker grid,third stream,shared-policy vector collection or GPU planner rewrite.",
     "python_environment": "work/envs/d57",
     "compute_environment": "experiments/terrain_memory/compute-environment.json",
     "storage_budget_note": "Retain full raw recording, both parent ep251 resumes and current usable W39 resumes. User exports bulk outputs to their storage disk and manually deletes after backup; no automatic cleanup or Codex PC archive. Existing W38 free-space reading is historical, not a W39 measurement.",
@@ -799,7 +812,7 @@
       "reported_available": "743G",
       "scope": "D57 live df at W39 implementation on 2026-11-05; no cleanup."
     },
-    "normal_startup_resource_snapshot": "At actual normal W39 launch one ordinary CPU/GPU utilization and RSS/VRAM snapshot may accompany observed throughput. No stress test, worker grid or monitoring platform."
+    "normal_startup_resource_snapshot": "At an actual normal new-job launch one ordinary CPU/GPU utilization and RSS/VRAM snapshot may accompany observed throughput; record the selected workers from the frozen job contract. No stress test,worker grid or monitoring platform."
   },
   "learning": {
     "candidate_can_start_before_E30_E60_pass": true,
@@ -1199,7 +1212,7 @@
       "deterministic_policy_mean": true,
       "ppo_updates": false,
       "frozen_normalization": true,
-      "solver_workers": 8,
+      "solver_workers": 12,
       "entrypoint": "scripts/run_s1_go2_r12.py",
       "necessary_changes": [
         "Consume learning.parent_map and the resolved W39 training_directory/current phase_lineage in checkpoint lookup; preserve ancestor fork_identity without treating its W38 stream as current.",

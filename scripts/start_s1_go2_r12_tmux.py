@@ -24,9 +24,13 @@ def main():
     p.add_argument("--new-phase",action="store_true",help="Create the explicitly authorized branch continuations from learning.parent_map.")
     p.add_argument("--stream",help="Explicit declared stream; omitted launches both declared continuations.")
     p.add_argument("--job-dir",type=Path,help="Continue this existing job/phase with its own saved RNG/tail.")
+    p.add_argument("--workers",type=int,choices=(12,14),
+        help="MPC workers per stream for new jobs only; default from resources.mpc_workers (12). Also used by each new job's evaluation.")
     p.add_argument("--session")
     p.add_argument("--network-mode",choices=["academic","clash","direct"],default="clash")
     a=p.parse_args()
+    if a.job_dir and a.workers is not None:
+        p.error("--workers applies only to new jobs; ordinary resume retains the existing frozen worker configuration.")
     current=json.loads(CONFIG.read_text())
     large=ROOT/current["outputs"]["large_root"]
     clock_path=ROOT/current["execution"]["background_job"]["training_clock_path"]
@@ -98,6 +102,9 @@ def main():
             name="job-"+stamp+"-"+active["stream_id"]
             directory=large/name;directory.mkdir(parents=True,exist_ok=False)
             contract=json.loads(json.dumps(current))
+            workers=a.workers if a.workers is not None else contract["resources"]["mpc_workers"]
+            contract["resources"]["mpc_workers"]=workers
+            contract["control_and_evaluation"]["post_training_evaluation"]["solver_workers"]=workers
             lineage=dict(parent["phase_lineage"],status="explicit_new_phase_continuation",
                 current_phase_id=name,parent_checkpoint=parent["resume_checkpoint"],
                 parent_transitions=saved["samples"],parent_updates=saved["updates"],
@@ -113,6 +120,7 @@ def main():
             job=dict(session=session,job_directory=str(directory.relative_to(ROOT)),
                 source_commit=source,controller_build=contract["reuse"]["active_controller_build"],
                 current_task=contract["current_task"],group=active["group"],seed=active["seed"],
+                mpc_workers=workers,evaluation_solver_workers=workers,
                 stream_id=active["stream_id"],phase_id=name,resume_checkpoint=str(resume.relative_to(ROOT)),
                 training_directory=active["training_directory"],episode_prefix=prefix,
                 parent_stream_id=parent["parent_stream_id"],phase_lineage=lineage,
@@ -128,7 +136,8 @@ def main():
                 delivery_mode="compact_first_local_bulk",bulk_upload_enabled=False,automatic_cleanup_enabled=False,
                 result_summary=f'{contract["outputs"]["compact_root"]}/jobs/{name}.json')
             environment=dict(python=sys.version,executable=sys.executable,platform=platform.platform(),
-                controller_build=job["controller_build"],mpc_workers=8,torch_threads=1,blas_threads=1,
+                controller_build=job["controller_build"],mpc_workers=workers,
+                torch_threads=contract["resources"]["torch_threads"],blas_threads=contract["resources"]["blas_threads"],
                 environment={k:os.environ.get(k) for k in ("OMP_NUM_THREADS","OPENBLAS_NUM_THREADS",
                     "MKL_NUM_THREADS","XLA_PYTHON_CLIENT_PREALLOCATE","JAX_ENABLE_X64","MUJOCO_GL")})
             write(directory/"environment.json",environment)

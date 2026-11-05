@@ -38,7 +38,9 @@ r27的C2入口门与真实终止credit结算已正确接入；plant和MPC均包�
 
 w39-a继承w38-a seed1 ep251，w39-b继承w38-b seed2 ep251，各恢复自己的optimizer/RNG/归一化，**不重新fork/reseed，不回到共同ep216**。新目录为large_root下training/w39-a/PANN_PPO_S5-seed1和training/w39-b/PANN_PPO_S5-seed2；接通每流parent map、新phase身份及train/eval/finish路径，避免覆盖父恢复点。
 
-各再收1024条/4更新至8593/33。继续两流各8 MPC workers、Torch1、BLAS1；新W39首个实际启动建立共同28h绝对训练截止，resume不重置，旧W38时钟不改。各流训练后独立≤4h评价，只用本phase末次实际新update做E30，同case合格才E60；不自动E300/600。原known_r25停止谓词保留，其他普通失败自然续采，不设失败次数上限。交互看到真实样本与普通日志推进即可离开，不等首个完整更新。
+各再收1024条/4更新至8593/33。当前W39两流继续各8 MPC workers、Torch1、BLAS1，现有进程、冻结job契约及普通resume保持原值，不为改worker重启。W39首个实际启动已建立共同28h绝对训练截止，resume不重置，旧W38时钟不改。各流训练后独立≤4h评价，只用本phase末次实际新update做E30，同case合格才E60；不自动E300/600。原known_r25停止谓词保留，其他普通失败自然续采，不设失败次数上限。交互看到真实样本与普通日志推进即可离开，不等首个完整更新。
+
+**后续尚未启动的新job默认两流各12 MPC workers；用户已授权各14，无需再次询问。** starter的`--workers {12,14}`只用于新job，写入该job契约，并让其后续评价使用相同worker数。Torch1、BLAS1、原GPU/JAX配置和两计算槽保持；28个MPC workers共享25vCPU允许适度超配，资源设置不自动改变算法、候选数或物理参数。用户报告当前约12核占用，本次没有采集新的利用率或CPU亲和性/cgroup证据。收益看正常训练已有的planning耗时、增量transitions/实际墙钟和普通CPU快照，不新增benchmark、网格或准入测试；W38旧2×8吞吐记录仍按原执行事实保留。
 
 ### 交付与研究方向
 

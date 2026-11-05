@@ -267,6 +267,16 @@
     "interactive_maximum_s": 14400,
     "concurrent_compute_slots": 2,
     "mpc_workers_per_stream": 8,
+    "mpc_workers_scope": "Actual already-launched W39 jobs remain8per stream,including ordinary resume and their frozen evaluation. This is not the default for future new jobs.",
+    "future_worker_policy": {
+      "contract": "experiments/terrain_memory/s1-go2-local-readiness-r12.json#resources.future_worker_policy",
+      "default_per_stream": 12,
+      "authorized_per_stream": [
+        12,
+        14
+      ],
+      "scope": "Future not-yet-started jobs only; starter --workers selects and freezes the same worker count for that job's training and evaluation. Do not restart or rewrite active W39 for this resource change."
+    },
     "torch_threads": 1,
     "blas_threads": 1,
     "shared_training_maximum_s": 100800,
