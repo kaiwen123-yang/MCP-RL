@@ -2,12 +2,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT / S5-r28；状态为 planned_pending_saved_event_selection_not_implemented_not_built_not_run。本次只审查、规划并发布，没有SSH、构建或新物理。
-- 已完成W38：w38-a/w38-b各新增1024条、4更新，各累计7569/29、tail0、历史excluded145；70个新训练回合中68次自然失败、2次达到目标截断；两流合法去程/返程/往返均0。
-- 最终评价：w38-a E30在13.5634s、w38-b在13.5208s均因trunk geom13接触失败，机身均未进入x≥.8；各E60 blocked_by_predecessor，E300/E600未运行。两流紧凑Git交付已完成，大文件留D57，自动清理0。
-- 下一步：同一≤4h交互内先读取两条既有E30的关键事件短片，区分accepted候选不可行与feedback执行偏离；据证据只实现一项控制机制修订，正常构建、源码配置先推，然后直接两流完整joint训练。不另开试验准入或计划轮。
-- 续接：w39-a继承w38-a seed1的ep251；w39-b继承w38-b seed2的ep251，各保留本分支optimizer/RNG/归一化。新training目录按w39-a/b隔离；各再收1024/4至8593/33；两流各8 workers，共用新的W39 28h绝对训练预算，各末端评价≤4h。
-- 交付：全部逐回合JSON、2Hz学习转移、12维PANN特征/值函数小表和关键事件数值片段先推Git；大权重、全长视频、原数组留服务器供用户导出备份后手动删除。Codex不另做电脑归档，不自动删除，不把推送计划当作服务器部署。
+- 当前任务：W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT / S5-r28 已实际实现、正常构建并启动；共同训练绝对截止北京时间2026-11-06T15:23:54.713909+08:00，resume不重置。
+- w39-a：job-20261105T032354Z-w39-a，joint_sampling_running；新增2/0，累计7571/29，tail=2、excluded=145；评价=pending_training，紧凑Git=startup_snapshot_final_compact_delivery_pending_computation。
+- w39-b：job-20261105T032354Z-w39-b，joint_sampling_running；新增2/0，累计7571/29，tail=2、excluded=145；评价=pending_training，紧凑Git=startup_snapshot_final_compact_delivery_pending_computation。
+- 任务能力：w39-a尚无最终任务汇总；w39-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
+- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗进Git；权重、原数组和全长视频留D57，自动删除0。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 
 ## 1. 长期目标、当前阶段与阅读边界
 
