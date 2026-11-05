@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Push compact evidence for a stopped R12 job; retain bulk outputs for the user."""
+"""Push compact evidence, then queue requested raw diagnostics for a stopped job."""
 import argparse
 import fcntl
 import copy
@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -331,7 +332,7 @@ def update_parallel_handoff(contract):
         f'- 当前任务：{contract["current_task"]} / {contract["reuse"]["active_controller_build"]} 已实际实现、正常构建并启动；共同训练绝对截止北京时间{end}，resume不重置。',
         *details,
         "- 任务能力："+ "；".join(ability)+"。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。",
-        "- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗进Git；权重、原数组和全长视频留D57，自动删除0。",
+        "- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。",
         "- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。"]
     for position,line in zip(slots,handoff):plan[position]=line
     plan_path.write_text("\n".join(plan)+"\n")
@@ -375,7 +376,9 @@ def main():
     policy = dict(
         source=str(CONFIG.relative_to(ROOT)) + "#outputs.automatic_publication",
         configured=current.get("outputs", {}).get("automatic_publication", {}),
-        effective=dict(delivery_mode="compact_first_local_bulk", bulk_upload_enabled=False,
+        effective=dict(delivery_mode="compact_first_requested_diagnostics_background", bulk_upload_enabled=False,
+                       diagnostic_upload_enabled=bool(current.get("outputs", {}).get(
+                           "automatic_publication", {}).get("diagnostic_upload_enabled", False)),
                        render_all_episodes=False,
                        cleanup=dict(enabled=False, owner="user", status="manual_after_user_backup")),
         execution_contract=str(frozen_path.relative_to(ROOT)),
@@ -496,7 +499,8 @@ def main():
     staged.add(policy_path)
     latest_resume = progress.get("checkpoint")
     local = dict(
-        status="retained_local", upload_status="not_requested", backup_owner="user",
+        status="retained_local", upload_status="unselected_bulk_not_requested", backup_owner="user",
+        requested_diagnostics="Tracked separately under this job's diagnostics/evidence.json; selected raw arrays are requested uploads, not unrequested bulk.",
         deletion="User exports to their storage disk, then centrally deletes after backup.",
         repository_root=str(ROOT), job_directory=str(jobdir.relative_to(ROOT)),
         training_directory=str(stream.relative_to(ROOT)),
@@ -521,6 +525,14 @@ def main():
         cleanup=dict(enabled=False, owner="user", status="manual_after_user_backup", deleted_files=0),
         git_delivery="Prepared for this commit; presence on GitHub records compact delivery only. "
                      "A failed push remains pending locally. Bulk data is not backed up by this push.")
+    diagnostic_enabled = policy["effective"]["diagnostic_upload_enabled"]
+    if diagnostic_enabled:
+        summary["diagnostic_publication"] = dict(
+            status="tracked_separately", requested=True,
+            metadata=str((small / "jobs" / name / "diagnostics" / "evidence.json").relative_to(ROOT)),
+            manifest=str((small / "jobs" / name / "diagnostics" / "manifest.json").relative_to(ROOT)),
+            entrypoint="scripts/publish_s1_go2_r12_diagnostics.py",
+            scope="Original feedback/selected-plan/reference/execution traces and required arrays. Compact publication does not imply raw delivery completed.")
     # Preserve real historical destinations and outcomes, without registering
     # any newly unselected local file as a Release publication obligation.
     for key in ("release_url", "release_urls", "manifest", "publication_resume", "historical_bulk_publication"):
@@ -553,7 +565,7 @@ def main():
         f"- 训练：本job新增{training['new_transitions']}条/{training['new_updates']}更新，累计{samples}/{updates}，旧尾excluded={training['excluded_old_version_transitions']}；停止原因={training.get('reason')}；评价独立结果{eval_text}。",
         f"- 已完成：保留本job全部{len(episodes)}个attempt的可用小JSON、配置、学习/评价记录及失败/零步/中断清单；控制版{job['controller_build']}；不等待视频或大文件上传。",
         f"- 任务表现：最大向前位移{outcomes.get('max_forward_displacement_m')}m、材料加载{outcomes.get('material_loaded_episodes')}回合、合规去程{outcomes.get('legal_all_outbound_traversals')}、合规返程{outcomes.get('legal_return_traversals')}、合规整圈{outcomes.get('legal_roundtrips')}、侧出{outcomes.get('all_passage_side_exits')}；末次原物理原因{training.get('last_episode_reason')}。",
-        "- 下一步：先查看本job实际结果以继续研究；紧凑push失败仅普通重试；具体诊断再选取已有视频/数组，不为交付重跑物理，不自动上传或删除大文件。",
+        "- 下一步：继续研究并后台上传已请求的原始反馈/选中与参考轨迹及必要数组；状态见同job的diagnostics/evidence.json。紧凑push失败普通重试；不为交付重跑物理，不自动上传未选权重/全视频或删除研究输出。",
         f"- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要{summary_path.relative_to(ROOT)}；checkpoint及job/episode/shared training本地位置见bulk_retention，既有Release历史保留。",
     ]
     if outcomes.get("status") == "unavailable":
@@ -595,12 +607,41 @@ def main():
             plan_path.write_text("\n".join(plan) + "\n")
         print(json.dumps(summary, ensure_ascii=False), flush=True)
         return 1
+    # Raw transfer must not hold the compact/Git lock or delay another stream's
+    # result publication. Historical backfill calls the diagnostic tool directly.
+    fcntl.flock(publication_lock, fcntl.LOCK_UN)
+    publication_lock.close()
+    diagnostic_queue = None
+    if diagnostic_enabled:
+        try:
+            queued = subprocess.run(
+                [sys.executable, str(ROOT / "scripts/publish_s1_go2_r12_diagnostics.py"),
+                 "queue", "--job-dir", str(jobdir), "--hours", str(a.hours)],
+                cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
+            detail = {}
+            for line in reversed(queued.stdout.splitlines()):
+                try:
+                    detail = json.loads(line)
+                    if isinstance(detail, dict):
+                        break
+                except (ValueError, TypeError):
+                    continue
+            state = detail.get("status", "queue_pending") if isinstance(detail, dict) else "queue_pending"
+            okay = queued.returncode == 0 and state in ("queued", "already_running", "already_published")
+            diagnostic_queue = dict(returncode=0 if okay else (queued.returncode or 1),
+                                    output=redact(queued.stdout)[-4000:],
+                                    complete=okay and state == "already_published",
+                                    status=state if okay else "queue_pending")
+        except (OSError, subprocess.TimeoutExpired) as error:
+            diagnostic_queue = dict(returncode=1, status="queue_pending", complete=False,
+                                    output=redact(str(error))[-4000:])
     print(json.dumps(dict(job=name, training=training, evaluation=evaluation,
                           publication_scope="compact_git", publication_status=summary["publication_status"],
+                          diagnostic_queue=diagnostic_queue,
                           bulk_retention=summary["bulk_retention"], cleanup=summary["cleanup"],
                           summary=f"https://github.com/{REPO}/blob/main/{summary_path.relative_to(ROOT)}"),
                      ensure_ascii=False), flush=True)
-    return 0
+    return diagnostic_queue["returncode"] if diagnostic_queue else 0
 
 
 if __name__ == "__main__":

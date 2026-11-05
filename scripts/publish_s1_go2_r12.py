@@ -34,7 +34,7 @@ def server_credentials(deadline, release_tags, manifest=None, manifest_path=None
                 config='header = "Authorization: Bearer '+token+'"\nheader = "Accept: application/vnd.github+json"\n'
                 result=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2',
                     '--silent','--show-error','--connect-timeout','20',
-                    '--max-time',str(min(120,int(remaining))),'-w','\n%{http_code}',
+                    '--max-time',str(min(120,remaining)),'-w','\n%{http_code}',
                     'https://api.github.com/'+path],input=config,env=env,text=True,
                     stdout=subprocess.PIPE,stderr=subprocess.PIPE)
                 body,code=result.stdout.rsplit('\n',1)
@@ -222,10 +222,13 @@ def main():
         destination=releases[row['release_tag']]
         url=destination['upload_url'].split('{')[0]+'?name='+row['name']
         response=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2','--silent','--show-error','--fail-with-body',
-            '--connect-timeout','30','--max-time',str(min(300,int(args.deadline_unix-time.time()))),
+            '--connect-timeout','30','--max-time',str(max(.001,min(300,args.deadline_unix-time.time()))),
             '--request','POST','--data-binary','@'+str(path),url],input=config,cwd=ROOT,env=env,text=True,
             stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-        if response.returncode:raise RuntimeError('curl upload failed: '+(response.stderr.replace(proxy,'[existing proxy]') if proxy else response.stderr)+' '+response.stdout[:250])
+        if response.returncode:
+            detail=(response.stderr+' '+response.stdout).replace(credentials['token'],'[credential]')
+            if proxy:detail=detail.replace(proxy,'[existing proxy]')
+            raise RuntimeError('curl upload failed: '+detail[-2000:])
         actual=json.loads(response.stdout)
         if actual['size']!=row['size']:raise RuntimeError('Uploaded size differs: '+row['name'])
         def uploaded(j):

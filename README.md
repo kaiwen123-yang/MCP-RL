@@ -2,9 +2,9 @@
 
 **默认执行端：AutoDL西北B区D57，SSH autodl-d57。** RTX PRO 6000 96GB级GPU、25 vCPU、120GB内存；[环境记录](experiments/terrain_memory/compute-environment.json)。
 
-## 当前：W38 / S5-r27已完成；W39 / S5-r28仅计划
+## 当前：W38 / S5-r27已完成；W39 / S5-r28已启动
 
-W38两条完整PANN→PPO→MPC→Go2/TM02分支已完成采样、四次新更新和各自独立末端评价，紧凑Git交付已完成。**稳定合规的材料通行仍未形成。** 下一任务为 **W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT**；S5-r28状态为 **planned_pending_saved_event_selection_not_implemented_not_built_not_run**。本次只审查和发布计划，没有SSH、构建或运行新物理。
+W38两条完整PANN→PPO→MPC→Go2/TM02分支已完成采样、四次新更新和各自独立末端评价，紧凑Git交付已完成。**稳定合规的材料通行仍未形成。** 当前任务为 **W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT**；[9544cfe](https://github.com/kaiwen123-yang/MCP-RL/commit/9544cfedda466f8fb392e3a82caef2e4a22a1402)已实现并正常构建r28候选躯干可行性优先/restoration，[84f5867](https://github.com/kaiwen123-yang/MCP-RL/commit/84f5867943e5553946b25f2bfee4168b31fca099)的启动快照确认两流各新增2条、累计7571/29、tail2，尚0新更新。这是启动观测，不是实时计数或能力通过。本次继续补充原始诊断后台交付和未来评价日志开关；这些补充尚未由本会话部署D57。
 
 [主计划与启动提示词](docs/TERRAIN_MEMORY_PLAN.md) · [执行指令](AGENTS.md) · [当前R12契约](experiments/terrain_memory/s1-go2-local-readiness-r12.json) · [r28计划规格](experiments/terrain_memory/s1-go2-r11-S5-r28.json)
 
@@ -30,9 +30,9 @@ W38两条完整PANN→PPO→MPC→Go2/TM02分支已完成采样、四次新更�
 
 ### 现在要解决什么
 
-r27的C2入口门与真实终止credit结算已正确接入；plant和MPC均包含同一PD与力矩限制。K0/K∞阈值的差别由原契约明确保留，也不是本次确证的新bug。当前需要区分：accepted计划是否本身走向原躯干终止，还是局部feedback在接触/饱和活动集合变化后破坏了原计划。原始r27 planner/action数值未进入Git，不能用r26事件时间代替它。
+r27的C2入口门与真实终止credit结算已正确接入；plant和MPC均包含同一PD与力矩限制。K0/K∞阈值的差别由原契约明确保留，也不是本次确证的新bug。当前需要区分：accepted计划是否本身走向原躯干终止，还是局部feedback在接触/饱和活动集合变化后破坏了原计划。[61fd022补传](https://github.com/kaiwen123-yang/MCP-RL/commit/61fd022af3ff8ce1d2a88f42e17639311788e42f)已包含两流各1024条学习/PANN/value记录与两条E30事件数值窗；完整原始轨迹仍待后台Release。两流早期饱和和材料接触的先后不同，不能把所有失稳都归因于材料或末端最大Kδx。
 
-下一Codex在同一≤4h交互内先从服务器两条既有E30提取约一至两秒关键事件窗，对齐实际动作/力矩/Fz与plan身份；按[主计划4.2](docs/TERRAIN_MEMORY_PLAN.md)选择一项证据支持的控制修订，正常构建、代码配置先推，然后直接完整联合训练。保留原Go2、材料.02域、接触/力矩/跌倒/路线、r27 C2、r26十子步/参考packet、冻结PANN、658维观察/2Hz cap及W38奖励。不另设孤立模块、纯MPC、E30准入或测试/参数网格。
+下一Codex保护正在采样的两个W39任务及其共同截止2026-11-06 07:23:54.713909 UTC，同时启动W38原始诊断补传、读取已补传窗口和必要原文件。r28所选机制已冻结，后续分析解释该实验并服务下一明确版本，不重新选择/构建/启动当前控制器。详见[主计划4.2/5.3](docs/TERRAIN_MEMORY_PLAN.md)。保留原Go2、材料.02域、接触/力矩/跌倒/路线、r27 C2、r26十子步/参考packet、冻结PANN、658维观察/2Hz cap及W38奖励。不另设孤立模块、纯MPC、E30准入或测试/参数网格。
 
 ### W39恢复与预算
 
@@ -42,9 +42,13 @@ w39-a继承w38-a seed1 ep251，w39-b继承w38-b seed2 ep251，各恢复自己的
 
 ### 交付与研究方向
 
-**先推关键代码/配置、全部逐回合JSON、学习/评价与结论，然后继续研究。** 补齐2Hz学习转移、12维PANN/value小表和关键事件数值窗；这些是分析必需的小证据，不能一并视为大原始数据过滤。W38既有记录从保存文件导出补推，无需重跑。两流计算并行，finish/Git串行、保留两流状态。
+**2026-11-05补充：先推代码/配置、全部逐回合JSON、学习/评价和结论，原始分析证据随后后台上传。** 每回合完整feedback-actions、planner-records、reference-packets与trajectory/prediction，以及必要physical/material/rollout数组均属已请求证据，不因raw/NPZ/超过2MB跳过；Git放元数据/URL/状态，原始内容用Release，保持原精度与采样率。
 
-大checkpoint、全长视频和密集原数组默认留服务器，用户定期导出至自己的存储盘，备份后自行统一删除。**Codex不自动删除服务器研究输出，不另做电脑归档，不恢复默认全量渲染/上传。** r26旧交付历史保持，不重复；紧凑Git发布不是大数据备份完成。
+已提供[scripts/publish_s1_go2_r12_diagnostics.py](scripts/publish_s1_go2_r12_diagnostics.py)的prepare/run/queue入口，旧W38两job直接补传，不重跑会覆盖W39交接的旧finisher。新正常finish在compact Git成功且释放锁后排队。优先两条E30及最早自然失败，服务器本地复审可与上传、W39准备并行；实际控制修订仍以真实时序为依据。完整命令和范围见[主计划第5节](docs/TERRAIN_MEMORY_PLAN.md)。当前会话无法连接D57，未取得或上传新原文件，不声称已完成二次因果分析。
+
+历史r27没有完整accepted/K horizon，现有prediction是反馈参考，不能伪造补齐。下一轮正常构建应分别记录完整accepted和实际reference/K，并接通r28评价env和新training目录的正确诊断路径。
+
+大checkpoint、完整resume和全长视频默认留服务器，用户定期导出到自己的存储盘、备份后手动删除。**Codex不自动删除研究输出，不另做电脑归档。** 已请求诊断的pending与未选大文件的retained_local分开记录；不为交付重跑物理，不重做r26旧历史。
 
 本轮正式文献条目TM35–43覆盖A-SLS、DSMS、πⁿ MPC、Contact Trust Region、Guard Saltation、Fast CI-MPC、χ-iLQR与新的地形/在线学习研究；其中TM42由已有补充来源转为正式编号，摘要/部分阅读与方法阅读严格区分。[本轮阅读范围与迁移限制](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W38-literature.json) · [完整文献表](literature/terrain_memory_sources.json)
 

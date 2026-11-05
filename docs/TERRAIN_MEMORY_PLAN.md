@@ -6,7 +6,7 @@
 - w39-a：job-20261105T032354Z-w39-a，joint_sampling_running；新增2/0，累计7571/29，tail=2、excluded=145；评价=pending_training，紧凑Git=startup_snapshot_final_compact_delivery_pending_computation。
 - w39-b：job-20261105T032354Z-w39-b，joint_sampling_running；新增2/0，累计7571/29，tail=2、excluded=145；评价=pending_training，紧凑Git=startup_snapshot_final_compact_delivery_pending_computation。
 - 任务能力：w39-a尚无最终任务汇总；w39-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
-- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗进Git；权重、原数组和全长视频留D57，自动删除0。
+- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON/学习/数值窗先Git，已请求原始反馈/规划/参考/执行轨迹及必要数组后台Release；未选权重/全视频留D57，无电脑归档或自动删除。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 
 ## 1. 长期目标、当前阶段与阅读边界
@@ -24,9 +24,9 @@
 | 当前S1联合工程 | 双分支完整采样、更新、独立末端评价与紧凑发布均实际运行 | 稳定合规材料通行仍未建立 |
 | 论文核心 | 研究对象与基础链路清楚 | 跨腿/返程记忆改变动作并产生收益、候选历史传播、终端价值、NX/实机 |
 
-**可以继续推进，但不应原样扩大r27重复失败样本。下一轮直接做有既有轨迹证据的一项闭环修订，再继续完整联合训练。** 当前处于“稳定合法联合基线尚未形成”的工程阶段，不是已经进入记忆收益大规模验证。
+**W39已在9544cfe实现候选躯干可行性优先，并由84f5867记录两流真实采样启动；这次补充只扩展交付和读取已有数据，不重启或热改该实验。** 当前处于“稳定合法联合基线尚未形成”的工程阶段，不是已经进入记忆收益大规模验证。
 
-本次固定依据为[5e00beca](https://github.com/kaiwen123-yang/MCP-RL/commit/5e00beca0896bb5517bab8c1dcc441303e5c2098)。逐文件字节盘点覆盖4511个tracked文件、454382972 bytes，其中334个不能按UTF-8文本阅读；这不是声称语义理解了每个二进制字节。逐条分析全部70个W38新训练JSON、2条E30、2048条cap记录、8次学习更新，阅读实际r27/r26补丁、直接执行/学习/交付源码和历史主线，并检索新的原始论文。W38原始rollout/密集数组与新planner/action JSONL未进入Git，本次没有读到其内容；服务器摘要与独立复算明确区分。
+上一轮全面复核固定依据为[5e00beca](https://github.com/kaiwen123-yang/MCP-RL/commit/5e00beca0896bb5517bab8c1dcc441303e5c2098)。逐文件字节盘点覆盖4511个tracked文件、454382972 bytes，其中334个不能按UTF-8文本阅读；这不是声称语义理解了每个二进制字节。逐条分析全部70个W38新训练JSON、2条E30、2048条cap记录、8次学习更新，阅读实际r27/r26补丁、直接执行/学习/交付源码和历史主线，并检索新的原始论文。当时W38原始rollout/密集数组与planner/action JSONL未进入Git，未声称已读其内容。随后本次新增[61fd022](https://github.com/kaiwen123-yang/MCP-RL/commit/61fd022af3ff8ce1d2a88f42e17639311788e42f)的真实学习小表和E30时序窗，初步复审见5.3；完整原始数据补传与抽取窗口的阅读范围分别记录。
 
 证据文件：[W38统计与逐回合表](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W38.json)、[复算脚本](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/analyze_W38.py)、[控制审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W38-code-audit.md)、[论文阅读记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W38-literature.json)。
 
@@ -68,9 +68,9 @@
 
 小样本且来自同父策略，不能宣称统计显著恶化；但没有证据支持已经学会稳定通行。loss A约.225→.135、B约.224→.158，只说明当前优化目标拟合变化。两流cap均值约.21445/.21470m/s，范围约.18328–.24445/.18257–.24307，均未卡在[.18,.25]端点；行为log-prob复算误差最大约7.15e−7，没有发现PPO数值爆炸。
 
-服务器按已存rollout汇总的PANN非零恢复特征为22/1024与35/1024，共57/2048＝2.7832%；本次没有原rollout，不能冒充独立逐样本重算。返程暴露为0。两条E30的同状态PANN特征清零诊断均28/28点cap完全相同；它不能区分原特征为零与策略不敏感，更不是重训反事实。当前尚无记忆收益证据。2Hz标量cap既没有足够动作权限直接修复毫秒级接触，也没有遇到足够材料/返程状态去学习长期协同。
+服务器按已存rollout汇总的PANN非零恢复特征为22/1024与35/1024，共57/2048＝2.7832%；上一轮没有原rollout；本次61fd022已补12维小表并独立计数，确认相同22/35结果，仍未读取服务器原NPZ。返程暴露为0。两条E30的同状态PANN特征清零诊断均28/28点cap完全相同；它不能区分原特征为零与策略不敏感，更不是重训反事实。当前尚无记忆收益证据。2Hz标量cap既没有足够动作权限直接修复毫秒级接触，也没有遇到足够材料/返程状态去学习长期协同。
 
-真实终止结算修复已生效：68次自然失败末端legal progress全为0；67次撤回正临时credit，另一次此前侧出已经归零。撤回总进度7.75852，对应奖励38.79260。两次外部目标截断语义保留。按已保存cap、积分项和终止结果重构的68条未折扣自然回合reward约−10.454到−10.203，失败惩罚总−680；这是重构，不是读到了W38每条transition/GAE。不能与旧奖励版本直接比较总reward。
+真实终止结算修复已生效：68次自然失败末端legal progress全为0；67次撤回正临时credit，另一次此前侧出已经归零。撤回总进度7.75852，对应奖励38.79260。两次外部目标截断语义保留。按已保存cap、积分项和终止结果重构的68条未折扣自然回合reward约−10.454到−10.203，失败惩罚总−680；这是上一轮重构口径；61fd022实际transition补齐后，逐回合reward复算差不超过1.78e−15。未声称读到未保存的完整GAE过程。不能与旧奖励版本直接比较总reward。
 
 ### 2.3 独立末端评价与真实吞吐
 
@@ -110,15 +110,15 @@ plant、候选rollout、十子步A/B与实际执行均使用kp60/kd5、原关节
 
 **候选本身不可行的可能性：**实际任务允许腿部几何接触，躯干接触才终止。现有直接风险行主要覆盖四足和躯干，没有直接约束膝/胫/大腿承担支撑；高度、姿态、平均足位置只是软目标。因此优化器存在通过腿部支撑减轻足端代价的自由度，有限躯干代价也未等价于不可违反的任务终止。源码证明这条路径存在，尚未证明r27 accepted实际选中了它。
 
-**局部反馈改变接触状态的可能性：**仿射反馈依赖局部线性化，接触或饱和活动集合变化后，原K可能不再提供可实现的修正。r27确实增加了plan id、accepted/reference身份、Kδx和截断前后动作日志，但Git未携带这些数值。r26原始轨迹的反馈大变化早于真实材料加载，是历史线索；其9.378s等时间不能移植成r27事实。
+**局部反馈改变接触状态的可能性：**仿射反馈依赖局部线性化，接触或饱和活动集合变化后，原K可能不再提供可实现的修正。r27确实增加了plan id、accepted/reference身份、Kδx和截断前后动作日志，其事件窗口现已由61fd022补入Git，具体数值和不同分支的先后见5.3。r26旧9.378s等时间仍不能移植成r27事实。
 
 **模型近似可能参与：**预测使用即时线性接触代理，真实TM02携带可恢复内态。只有对齐事件表明首次分离发生在真实加载后，才能把相应模型接口作为这轮首要修订；不能仅凭“软地面”就宣布是本构根因。
 
-## 4. W39：同一执行窗口内完成证据读取、单项修订和双流联合训练
+## 4. W39已启动：已选机制、继承路径与续接边界
 
-### 4.1 先读既有两条E30关键片段，不新增物理
+### 4.1 已有事件读取与后续只读补充
 
-使用[控制审查第5节](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W38-code-audit.md)给出的两条服务器E30目录。开场≤5行，先查同流tmux/作业是否已存在；初段以约30分钟读取既有数据为目标，不另开审查任务或耗尽4h。并行处理事件提取与必要的phase/交付路径接线。
+两条E30数值窗已补入Git；先读5.3及对应numeric-evidence。需查完整源文件时使用[控制审查第5节](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W38-code-audit.md)的实际目录。开场≤5行，先查已运行W39两流，不重复启动。按第5节后台补传W38原件并做只读分析，不重导出已成功的小表，不热改当前控制器或延长训练时钟。
 
 扫描原记录，定位Stand→outbound之后首次目标截断、首次raw-PD饱和、首次大Kδx、首次实际非足承载、首次真实材料load及原终止。每事件保留前.10s/后.20s，合并重叠窗，再保留末端.10s；通常每条E30约一至两秒关键数据。0.5rad仅作与历史对照的描述阈值，不新增物理停止标准。
 
@@ -126,9 +126,9 @@ plant、候选rollout、十子步A/B与实际执行均使用kp60/kd5、原关节
 
 现有accepted只存node0与+20ms：发现违法足以证明该点违法，两端安全却不能证明十子步或整个.35s horizon安全。prediction NPZ是feedback reference，不能冒充完整accepted。纯运动学几何计算可以读取已存状态，不能伪造未存接触力或补出实际trajectory。确需训练事件作对照时，每流取最早匹配自然回合；不挑最好回合，不重跑旧物理。
 
-### 4.2 据首次可定位分离只选一项控制机制
+### 4.2 启动时的单机制选择与当前已实现范围
 
-选择规则已经具体化；**本次未读原事件，selected_mechanism保持null，r28未实现/未构建/未运行**。下一Codex在同一授权任务内自主完成必要修订，不再请求一次常规批准。
+以下是原启动时采用的选择规则。**9544cfe现已选择并实现第2项：原躯干几何上的候选可行性优先及无可行候选时的restoration；84f5867记录两流已启动。** 该修订是一次待实验验证的机制，不等于已解决首次失稳。当前任务不得再改回selected_mechanism=null、重跑实现流程或叠加另一项控制修改。
 
 1. 若先发现真实的时间、参考packet、winner身份或导数不一致，优先修该具体接口；用既有数据定位，不凭日志名称猜测。
 2. 若accepted自身已预测进入原任务的躯干终止几何，优先修候选接受的可行性语义。对每候选在原十子步及terminal、原受保护躯干几何上计算v=max[原XML margin−几何间距,0]。有v=0候选时只在其中按原任务代价J选择；没有时显式记prediction_infeasible/restoration，按(v,J)字典序选择已有候选。复用原几何/导数，不新增任意惩罚权重或改变真实终止。winner、accepted rollout、候选policy、feedback reference、improvement/surprise与regularization接受逻辑必须一致，不能只改显示的winner或冻结旧动作。这只是模型内有限候选可行性，不保证真实物理安全。
@@ -148,9 +148,9 @@ plant、候选rollout、十子步A/B与实际执行均使用kp60/kd5、原关节
 
 父权重和resume仍在服务器，未默认上传Release。各自恢复Actor/Critic、optimizer、RNG、归一化及7569/29；tail0、excluded145保持一次。不再fork/reseed，不回退共同ep216，不合并optimizer或数据。祖先fork_identity保留为W38谱系，新增phase_lineage记录W39当前身份；新phase校验不能把祖先stream当成当前stream，也不能删除原身份检查绕过迁移。
 
-**已有启动器不能只改JSON就直接完成这次迁移。** 目前它使用单一resume、硬编码w38-training-clock.json，并拒绝把已经有fork_identity的checkpoint当作新首次fork；train起始checkpoint也可能在旧目录重写ep251。必须在现有入口接通显式每流parent map、新phase授权边界、新training_directory以及所有train/eval/finish消费者。父目录只读，新回合编号从≥252自然延续，结果按job/stream唯一标识。保留已有same-phase resume保护，不删旧W38时钟来“续命”。
+9544cfe已接通每流parent map、W39独立training目录、新phase_lineage及train/eval/finish消费者，并保留各父ep251与原恢复检查。84f5867的两job启动快照已提供真实source/build/clock和采样证据；不把这些已完成接线再作为新任务重做。后续resume只沿本phase实际作业继续，不重新fork/reseed，不删除旧W38时钟。
 
-首次实际W39启动才创建w39-training-clock.json并确定共同28h截止；第二流启动和普通resume不重置。每流目标新增1024条/4更新，达到8593/33＝8448已训练＋145历史excluded、tail0，末次checkpoint-008593。当前新控制版本不变更W38奖励。首个新batch为7570–7825，形成本分支update30。
+首次实际W39启动已创建w39-training-clock.json，共同28h截止为2026-11-06T07:23:54.713909Z（北京时间15:23:54.713909）；第二流启动和普通resume不重置。每流目标新增1024条/4更新，达到8593/33＝8448已训练＋145历史excluded、tail0，末次checkpoint-008593。当前新控制版本不变更W38奖励。首个新batch为7570–7825，形成本分支update30。
 
 两流都达标时W39共新增2048，实验树独特历史为10641；它仍不是一个10641条或37更新的单策略。新策略资格只来自其本phase本分支实际新update。
 
@@ -166,23 +166,86 @@ plant、候选rollout、十子步A/B与实际执行均使用kp60/kd5、原关节
 
 正常结束只选该stream/phase/controller/reward最后实际完成的新update（updates>29），固定策略均值/归一化执行nominal E30；原同case资格通过才独立E60。零新update不拿父策略凑评价。保持原30→60→300→600阶梯、原远端3m/完整往返/路线和时长；本phase只安排E30及合格E60，不自动跑300/600或21-case矩阵。stage_pass与合规贯穿/往返分开报告。
 
-## 5. 紧凑交付：补齐有用数值，保留用户手动备份与删除
+## 5. 已请求的原始诊断证据：先推小记录，再后台传完整分析数据
 
-用户确认的顺序是：服务器完成计算 → 先推关键代码/配置/全部逐回合JSON/结论 → 继续研究。大检查点、全长视频、原始数组默认不推。W38已按此完成；每流161个紧凑文件记录，errors/pending为空，本地大文件保留、删除0。r26已执行的旧Release历史不重做。
+2026-11-05用户补充授权：**原始反馈修正、优化器选中轨迹、参考轨迹以及判断问题所需的数组，一并上传。** 这些数据从本次起属于已请求的诊断证据，不再因“raw/NPZ/超过2MB”自动排除。大checkpoint、完整resume和全长视频仍默认留服务器；分析确需其他数组时可继续扩展明确清单，不必再为常规诊断请求一次批准。
 
-W38暴露的交付缺口是：关键planner/action数值与2Hz学习记录也被当作raw全部留服务器，导致下一轮审查只能看到路径和最大值。**需要新增的是小而可分析的证据，不是恢复全量归档。**
+### 5.1 每个实际回合都要交付的控制诊断
 
-后续必须随Git发布：
+| 类别 | 已有文件与内容 | 发布方式 |
+|---|---|---|
+| 原始反馈修正 | feedback-actions.jsonl：state_delta、原始Kδx、feedback scaling、nominal、截断前后动作、plan id/时间 | 完整原记录，允许无损gzip；Release |
+| 优化器接受结果 | planner-records.jsonl：winner、cost、regularization、accepted/reference/linearization角色及已有数值 | 完整原记录；缺失的历史full horizon明确not_recorded |
+| 路线参考packet | reference-packets.json及字段定义 | 完整文件；它不是优化器状态轨迹 |
+| 完整反馈参考轨迹 | 全部prediction-*.npz | 原NPZ、原精度，不能改名为accepted |
+| 真实执行轨迹 | trajectory.npz、startup.npz | 原NPZ；区分实际执行、初始化RPC及末行时钟 |
+| 必要模型与解释信息 | model/G1-project-go2.xml、model.mjb、已有result/resolved/身份记录；prediction-model.xml存在时附上 | Git小记录＋Release模型文件；逐attempt保留实际source commit |
+| 材料事件 | material-events.jsonl、material-failures.jsonl、cap-decisions.json与已有摘要 | 完整记录；合法空文件记present_empty |
+| 学习证据 | 本phase全部2Hz transitions及新rollout-*.npz，包含原obs/next_obs/value/next_value/log-prob/reward/终止标志 | 小记录/索引先Git，原rollout可Release；不上传整个模型权重替代数据 |
 
-- 全部实际回合结果JSON，包含失败、目标/预算截断、中断与零步；分支、phase、代码、配置、模型/奖励身份明确。
-- 全部2Hz学习转移的小记录：时间/dt、phase、原始动作与cap、reward及组成、terminated/truncated、行为log-prob与行为版本；从既有rollout导出value/next-value及12维PANN恢复特征小表。无需658维全观察与密集原数组，但应能复核终止、bootstrap与暴露率。
-- 每回合低体积事件摘要，以及最终E30按第4.1节选取的数值窗：真实执行/接触和existing plan/action切片，保持采样率/时间/脚序/身份/选取规则。文件过大可按事件拆小文件，不能以通用2MB过滤悄悄丢掉必需证据。
-- 正常learning/update/collection/stopped、独立评价、blocked/skipped/unavailable原因、每流实际吞吐与结论；写清本地job/episode/training目录及可用resume。
-- 本次已有W38的低频转移/PANN/value小表与两条E30关键窗，下一执行会话从保存文件一次性导出补推，无须恢复整轮上传、渲染或重跑物理。
+密集physical-*.npz和material-*.npz/material-final.npz优先覆盖最终评价和每流各原物理终止原因的首个自然失败；遇到其余关键case，通过显式attempt继续补传整文件。保留原采样率、列和数值精度，不用降采样图、最大值或事件摘要替代原始证据。短事件窗仍有助于快速阅读，但完整已选源文件同时可取。
 
-选择关键时段不能选择性隐藏失败；所有回合结局始终全量保留。存在字段未存就明确标记missing，不伪造数值。原始数据仍按现有频率留服务器，可用于后续追查。
+现有r27只保存条件位置窗内accepted/K的node0与+20ms，**没有完整accepted rollout或完整K horizon可补传**。文件存在但没上传、文件遗失、当时从未记录、合法空记录必须分别标注。不得把reference换名、插值或重跑的结果当作当时选中轨迹。
 
-大checkpoint、完整resume、完整rollout/trajectory/physics/prediction/material数组与全长视频默认retained_local、不是upload_pending。按需选取小切片或具体权重才使用现有Release入口。不为视频重跑物理，不在用户电脑另建归档。**用户定期导出至自己的存储盘，完成备份后自行统一删除；Codex不自动删除服务器研究输出，包括已上传副本。** 推送Git不等于大数据备份完成，旧冻结契约cleanup=true不再授权默认删除。
+### 5.2 当前记录边界与下一未启动版本的完整轨迹记录
+
+在正常policy update、原buffer复用前保存完整accepted状态/动作/时间/残差/cost，以及实际安装的feedback reference状态/nominal/K/scaling/插值方式，附winner、plan id、更新起点、原模型和维度。linearization单独标注，不冒充accepted导数；现有风险子步峰值及其来源可随原记录保留。完整K每次policy update存一次，避免在每个500Hz动作查询重复整段矩阵。
+
+记录扩展不重跑候选，不修改控制选择、代价、导数、限幅、真实物理和奖励。完整2ms节点轨迹也不等于完整0.2ms子步接触过程，覆盖范围必须写清。9544cfe已运行的r28仍只保留旧两节点accepted/K及新增候选标量，完整accepted/K扩展留给下一明确未启动版本的正常实现/构建；不重建或中断当前两流，不宣称已存在。
+
+9544cfe已修训练episode实际路径，并在训练/评价2Hz日志写入实际value/next_value、12维PANN及action_change分项；这些不再是待重做任务。旧W38评价缺失值仍不能事后推理冒充原值。本次另修runtime仅接受S5-r27的诊断环境开关，使S5-r28尚未启动的新评价Agent也能写已有planner/action日志；这是Python记录接线，不改C++算法或重启正在跑的训练。该开关仍只提供当前二进制已有的两节点粒度，完整accepted/K并未因此出现。本会话未在D57部署这个补充。
+
+### 5.3 本次W38补传与复审顺序
+
+范围由两个已完成job的attempts确定：70训练＋2条E30，共72个真实attempt。优先两条最终E30及每流第一个自然失败ep217的完整控制/物理/材料文件；随后补齐A的ep218（invalid_contact）、ep226（material_domain_exit）及B的ep218（body_fall）的密集数组，并完成全部其余回合的核心反馈、规划、参考和执行轨迹。其他必要case可显式追加。两条E30及两个ep217已声明的trajectory＋physical＋prediction合计289556325 bytes，全部72回合这三类合计5143218280 bytes；这是原result manifest的大小，不包含JSONL/material/model，也不是本次服务器现存实测。
+
+**上一轮统计和源码结论保留；61fd022新增的小表和事件窗已在本次读取，完整原始数据仍待补传。** D57端可以直接读取本地原文件分析，同时后台补传；不必等所有Release文件完成才做W39目录/恢复/记录接线等工作。当前W39已经实际运行，保留9544cfe所选机制；不热改正在执行的控制器、重启重复作业或重置deadline。补传和只读分析并行进行，结论用于解释本轮及后续明确版本。
+
+新增证据见[A数值索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261104T104730Z-w38-a/numeric-evidence/index.json)和[B数值索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261104T104730Z-w38-b/numeric-evidence/index.json)。每流1024条训练记录均与保存的PANN/value数组匹配，序号6546–7569连续；各989普通＋34真实terminated＋1目标truncated，34次终止bootstrap均0，目标截断保留next_value。当前12维PANN非零分别22/35条，合计57/2048＝2.7832%，返程样本0；53个加载过材料的回合不能当成53个充分学习到记忆的回合。每条E30虽有28条真实标量transition，但value/next_value及当前/next PANN均未原始保存，导出诚实留null，不能事后造值。action_change分项缺字段是原metrics记录缺口，原奖励已包含该项，逐回合奖励与原公式复算一致。
+
+两条E30事件窗口分别覆盖0.6288s和1.4048s，不能称为完整回合轨迹。以下时间均为原模拟时间，原始来源为各event-windows/<E30>/event-summary.json，控制与物理行保存在同目录window文件：
+
+| 事件 | A / seed1 | B / seed2 |
+|---|---:|---:|
+| 首次raw-PD饱和 | 6.9900s | 11.2220s |
+| 首次abs(raw Kδx)>0.5rad | 13.3380s，最大5.6157rad | 11.3260s，最大0.9309rad |
+| 首次目标截断 | 13.3380s | 12.0740s |
+| 首次材料load | 13.3346s | 12.5276s |
+| 首次非足正载荷 | 13.4446s | 13.0992s |
+| 原躯干接触终止 | 13.5634s | 13.5208s |
+
+两流首次raw-PD饱和时，同一保存的实际状态下，单独nominal也已饱和，反馈没有新增饱和关节。A材料load后约3.4ms出现大反馈/目标截断，但在13.300s机身已以−0.58033m/s下降，13.334s已达−0.88297m/s，早于13.3346s的首次材料load。B则在首次材料load之前已经出现大反馈与截断。因此材料接触不是所有早期异常的共同起点，最大Kδx也不足以定位首次失稳或选定K裁剪。B首次非足承载前对应控制步的raw Kδx仅0.00667rad、无目标截断；其12.9992–13.2992s窗口非足正冲量约占总正冲量60.77%，说明接触承载问题不能仅以瞬间控制峰值解释。
+
+两条已存accepted的+20ms节点确实出现原trunk geom13负间隙：A计划699起点13.5600s，节点13.5800s间隙减margin为−0.002360m；B计划697起点13.5200s，节点13.5400s为−0.002977m。它们分别只早于真实终止3.4ms和0.8ms，而且节点预测时刻在终止之后。这证明末端存在被接受的不可行节点，支持审查候选可行性与restoration；不能据此断言它就是更早失稳的首因，或已有修订就一定能恢复任务。导出窗口内A315行、B705行已执行动作的nominal+scaling·rawKδx−before_clip最大绝对误差均为0，只排除这1020行的该种代数接线错误，不能排除所有实现问题。A计划687已存节点accepted与reference相同，B计划587的两种轨迹则有真实差别；角色差异本身不证明错接。当前4.2的候选可行性机制已经启动；以上证据用于审查其能解决的范围及解释后续结果，仍不伪造缺失的accepted完整horizon，也不临时叠加反馈裁剪。
+
+本次会话没有D57连接配置，SSH别名解析失败，未取得或上传W38完整原文件；已通过Git读取上述新补传窗口，并推送交付工具、入口接线和修订要求。必须分别记录“紧凑数值已补传/已读”与“完整原始诊断Release仍pending”，不能把工具推送当作完整数据上传完成。
+
+### 5.4 可直接执行的补传入口与后台流程
+
+使用新入口scripts/publish_s1_go2_r12_diagnostics.py：
+
+- prepare：从已完成job建立有来源和覆盖说明的诊断清单/无损传输文件，不进行网络上传。
+- run：先推小元数据和真实pending，再复用现有显式manifest Release上传器，按本job资产逐项确认并推回状态。
+- queue：建立独立tmux会话运行run；不等待网络，不占训练GPU槽位。每个job自身防止重复上传；不同job可并行，Git/index写入仍串行。
+
+W38补传直接使用该入口，**不能重跑旧finish来补文件**：旧W38 finisher会重写当期交接和r27状态，可能覆盖W39。新正常finisher则先完成compact Git、释放其锁，再queue诊断上传。每个诊断任务首次建立独立≤6h绝对传输截止，普通resume不延长，不使用已经结束的W38训练截止，也不改变W39训练预算。
+
+在D57项目环境中执行：
+
+```bash
+python scripts/publish_s1_go2_r12_diagnostics.py queue --job-dir outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a --hours 6
+python scripts/publish_s1_go2_r12_diagnostics.py queue --job-dir outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b --hours 6
+```
+
+需要某个额外完整物理/材料case时，在对应job命令追加--attempt及其原attempt名称。使用已保存文件，不重采样、不渲染新视频。当前job/输出目录以既有实际记录为准；原始执行source commit与新上传工具commit分别记录。正在跑的W39不提前按完成job排队；其正常训练/评价结束后的finisher负责排队，历史W38现在可单独补传。
+
+小元数据与manifest保存至compact_root/jobs/<job>/diagnostics/。原始证据放GitHub Release；体积大时无损压缩或按顺序分块，保存原路径、字节数、采样/时钟/脚序、分块顺序、URL及uploaded/pending/missing/not_recorded状态。复用现有name/size/upload-state核对，不新增全量hash认证、重下载或电脑归档。上传器exit0不等于全部完成，以本manifest逐项状态为准。
+
+### 5.5 存储与历史规则
+
+先推代码/配置/全部逐回合JSON/学习评价/结论，再后台上传上述**已请求**原始证据并继续研究。必须上传的诊断有pending就如实保留；未选大checkpoint/全视频才属于retained_local/not_requested。两类状态分别记录，不能把整轮一概写“raw不上传”。
+
+所有原件和有效resume继续保留服务器，由用户定期导出到自己的存储盘、备份后自行统一删除。Codex不自动删除研究输出或上传副本，不另做用户电脑归档。r26已执行的旧Release历史不重做；本次扩展是新授权，不改写W38此前按旧紧凑规则完成交付的事实。
 
 ## 6. 本轮新增论文：机制、阅读范围与迁移边界
 
@@ -204,7 +267,7 @@ W38暴露的交付缺口是：关键planner/action数值与2Hz学习记录也被
 
 ## 7. 后续研究方向与阶段判断
 
-第一步仍是W39：定位首次分离、修单项机制、完整联合训练；同时把小型可分析证据交付通。判断进展依次看真实承载/入口存活、合法去程、远端/返程覆盖、合法完整往返与同case评价；更新数、loss或脚尖加载不能单独宣布通过。
+当前先让已启动W39按冻结机制与预算继续，并后台补齐完整诊断和小型数值证据。新的只读分析用于解释本轮结果和后续明确版本，不在运行中更换机制。判断进展依次看真实承载/入口存活、合法去程、远端/返程覆盖、合法完整往返与同case评价；更新数、loss或脚尖加载不能单独宣布通过。
 
 稳定基线出现后，再选择能表达研究问题的结构：让因果地块状态和不确定性进入候选接触预测；让策略对落点、加载或重访时序拥有可解释权限；为超过.35s horizon的恢复/返程建立终端价值或上层计划。相同世界cell的跨腿、返程因果对照才验证“记忆”收益，不用仅有即时PANN清零图替代重训/闭环对照。
 
@@ -212,20 +275,20 @@ GPU推进应沿可并行模型与优化结构设计。πⁿ MPC、A-SLS和DSMS�
 
 原R1/R2负结果、codesign/PPO/adjoint不成功路径、r25退行和r24不合法裸往返全部保留；不重新命名为成功。当前可以推进实验，也有足够具体的下一步，但还没有稳定联合基线、记忆收益、实时部署或实机结果。
 
-## 8. 下一次Codex启动提示词
+## 8. 当前Codex续接与补传提示词
 
 ```text
-继续MPC+RL仓库的W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT。先查看D57现场状态并保留未提交改动，同步GitHub main的最新计划；再读AGENTS.md、docs/TERRAIN_MEMORY_PLAN.md顶部6行及第4/5节、当前R12契约和r28计划规格；r27已完成，r28只是计划，不能当作已构建。开场最多5行后直接工作；先查D57同流tmux/实际作业，不重复启动。
+继续MPC+RL，先读GitHub main的AGENTS.md、主计划顶部6行及4/5节、当前R12契约和最新两流job/index。9544cfe已实现并构建S5-r28，84f5867已记录job-20261105T032354Z-w39-a/b真实采样；这是已运行任务，不能改回planned、重新选择机制或重复启动。开场最多5行后直接工作，先核对D57现有s1-w39会话和两流进程，保留未提交修改。
 
-在同一≤4h交互内读取服务器保存的w38-a/b两条E30：按控制审查第5节提取首次目标截断、raw-PD饱和、大Kδx、实际非足承载、材料load及终止的短窗口。对齐时钟、脚序、plan id、accepted/reference/linearization、nominal、Kδx、PD请求/实际力矩和Fz。accepted只存node0/+20ms，不能冒充全horizon；不用r26旧时间作为r27事实，不重跑旧物理。
+本次新增任务是W38完整原始诊断后台补传与只读分析。安全同步本次交付补充，不替换正在运行的二进制/冻结契约、不重建C++、不热改训练进程、不重置共同截止2026-11-06T07:23:54.713909Z。按主计划5.4分别对job-20261104T104730Z-w38-a/b运行publish_s1_go2_r12_diagnostics.py queue；不要重跑旧finisher。确认queue真实状态和稳定tmux后即可继续研究，不等待全量网络传输。
 
-按主计划4.2的证据选择一项真正可定位的控制修订：先修确证的接口不一致；若accepted自身已碰原躯干终止边界，实施原margin下候选可行性优先、无可行候选显式restoration且一致更新policy/regularization；若反馈先改变活动集合，推导相应局部反馈可实现域。不要凭最大力矩预设K clip/低通，不把K0/K∞差别当新bug，不叠加四条机制。必要实现、正常构建和代码配置推送后直接完整PANN→PPO→MPC→Go2/TM02训练，不新增纯MPC/E30准入、smoke、测试套件、恢复演习、参数网格或benchmark。
+每个W38完成回合都上传完整feedback-actions.jsonl、planner-records.jsonl、reference-packets.json、trajectory.npz及全部prediction-*.npz，附已有startup、模型/配置/结果与材料事件。两条E30、A217/A218/A226、B217/B218的完整physical/material数组优先；全部本phase新rollout原NPZ和2Hz记录也上传。需要其他case时按同job显式追加--attempt；不因raw/NPZ/大于2MB静默过滤，不用摘要取代已请求原件。Git保存manifest、来源、分块顺序、URL和真实pending/missing/uploaded状态；原数组精度不变。
 
-w39-a只续w38-a seed1 ep251，w39-b只续w38-b seed2 ep251；各父7569/29、tail0、excluded145。保留各自optimizer/RNG/归一化，不重新fork/reseed。接通每流parent map、新phase_lineage和独立training/w39-a/b目录，所有train/eval/finish按契约路径，避免起始checkpoint覆盖父ep251；保留祖先fork身份与原resume保护。只在首次W39实际启动创建新的w39-training-clock.json，不改/删W38时钟。
+61fd022已补两流各1024条学习/PANN/value和两E30短窗，9544cfe还补了reference_packet对应信息，先读这些，不重做成功导出。A在材料load前已下降，B大反馈和截断先于load；末端accepted违规距终止很近，不能直接当早期唯一首因。当前r28选择的是原躯干margin候选可行性/restoration，冻结运行；进一步完整时序分析用于解释本轮和下一明确版本，不加K裁剪/低通或重跑旧物理。
 
-两流各8MPC workers、Torch1、BLAS1，保持既有GPU/JAX环境。各新增1024/4到8593/33，共享28h训练绝对截止，resume不重置；各流训练后自身≤4h评价，只选本phase末次实际新update固定策略做E30，同case合格才E60，不自动E300/600。保留原known_r25停止谓词，普通失败自然续采，不新增失败次数上限。看到真实样本/日志推进即可交接离开，不等首个更新或长期盯守。
+r28训练episode路径和2Hz value/PANN/action_change日志已在9544cfe修复。本次runtime补充仅让尚未启动的新r28评价进程开启现有planner/action日志，部署后不需要重启训练或重建C++；若评价已经启动则保留其现状。现有r27/r28完整accepted/K horizon从未记录，旧节点仅0/+20ms；prediction是反馈参考，不准改名或伪造完整accepted。完整记录扩展列入下一未启动版本，当前两流继续。
 
-完整保留原Go2、材料.02域、PD/力矩/接触/跌倒/路线与阶梯、r27 C2、r26 packet/十子步、658维观察/2Hz cap和W38奖励；不恢复r25 MovingSupport/载荷分配，不读取材料隐藏真值给PANN。
+W39保持各自父seed1/2 ep251谱系与optimizer/RNG/归一化、training/w39-a/b目录、各8workers/Torch1/BLAS1、既有28h绝对训练期限及各自≤4h末端评价。沿正常作业和实际resume续接，目标各8593/33；仅本phase新update固定策略E30，合格才E60。原known_r25停止谓词、普通失败续采和全部物理/材料/奖励约束不变，不新增失败次数上限、准入测试或benchmark。
 
-补推W38既有2Hz学习转移、12维PANN/value小表及两E30关键数值窗；后续每轮同样自动交付这些紧凑证据、全部逐回合JSON、配置、学习/评价和结论。两流计算并行、finish/Git串行且保留两流状态。大权重、全视频、密集原数组留服务器，用户导出备份后手动删除；不自动清理，不另做电脑归档，不为视频重跑物理。最后只更新正常job/index与主计划顶部6行，区分实际实现/构建/训练/评价/紧凑Git和本地大文件状态。
+正常finisher先成功推代码/配置/所有逐回合JSON/学习评价/结论，再释放compact锁并后台queue已请求诊断；两流上传可并行，Git/index短写串行。未选大checkpoint/完整resume/全视频继续留D57，用户导出备份后手动统一删除；所有原件和已上传副本都不自动删除，不另做电脑归档。收尾记录实际补传与只读分析状态，保留两流当前进度，不把工具推送或队列已启动写成数据已全部上传。
 ```
