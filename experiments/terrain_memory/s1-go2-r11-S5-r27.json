@@ -1,7 +1,7 @@
 {
   "build": "S5-r27",
   "based_on": "S5-r26",
-  "status": "joint_sampling_running",
+  "status": "completed_two_joint_streams_E30_failed",
   "configuration_overrides": {
     "r26_reference": {
       "horizon_s": 0.35,
@@ -66,7 +66,7 @@
   },
   "retained": "Actual r26 reference packet/head offset, r24 motion skeleton, ten0.2ms A/B substeps, forward FD, MakeDifferentiable, TVfeedback, PD and original material/robot/torque/contact/fall/route semantics; frozen causal PANN, PPO,658Dobs,2Hz scalarcap unchanged.",
   "reward_version": "W38_legal_route_terminal_settlement",
-  "qualification": "Built and launched as two private W38 engineering forks. No completed task/evaluation qualification at this startup handoff.",
+  "qualification": "Both W38 engineering forks completed their own +1024 transitions and +4 PPO updates. Both fixed last-new-update E30 evaluations failed on trunk contact; E60 was blocked. No legal outbound traversal, return traversal or roundtrip was achieved. These are same-parent engineering forks, not one policy with eight new updates or successful task qualification.",
   "reference_packet_fields": [
     "active",
     "t0",
@@ -92,5 +92,137 @@
     "source_commit": "a9638e6c022879a168c41214af03b0bebaca13ec",
     "binary_sha256": "5923530238efc598aee429f4cdd9bcdf347c1b5be56da10fc306a64e42e995a4",
     "identity_path": "work/r11-frozen/S5-r27/identity.json"
+  },
+  "actual_execution": {
+    "reviewed_results_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
+    "phase": "W38_SMOOTH_APPROACH_PARALLEL_JOINT",
+    "status": "completed",
+    "shared_parent_episode": 216,
+    "counting": "Each stream independently ends at 7569 transitions and 29 updates; the two streams do not combine into one trained policy.",
+    "streams": [
+      {
+        "stream_id": "w38-a",
+        "job": "job-20261104T104730Z-w38-a",
+        "seed_directory": 1,
+        "job_record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261104T104730Z-w38-a.json",
+        "training": {
+          "status": "target_reached",
+          "invocation_started_unix_s": 1793789252.4027085,
+          "invocation_wall_s": 50259.27148795128,
+          "initial_transitions": 6545,
+          "initial_updates": 25,
+          "new_transitions": 1024,
+          "new_updates": 4,
+          "actual_transitions": 7569,
+          "updates": 29,
+          "unupdated_fragment": 0,
+          "excluded_old_version_transitions": 145,
+          "last_episode": 251,
+          "physical_episodes": 35,
+          "natural_failures": {
+            "body_fall": 13,
+            "invalid_contact": 20,
+            "material_domain_exit": 1
+          },
+          "target_truncated_episodes": 1,
+          "material_loaded_episodes": 27,
+          "max_forward_displacement_m": 0.975877351871824,
+          "legal_outbound_traversals": 0,
+          "legal_return_traversals": 0,
+          "legal_roundtrips": 0
+        },
+        "evaluation": {
+          "status": "completed",
+          "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/checkpoint-007569.pt",
+          "checkpoint_transitions": 7569,
+          "checkpoint_updates": 29,
+          "E30": {
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30.json",
+            "started_unix_s": 1793839514.6161802,
+            "finished_unix_s": 1793840877.5425808,
+            "stage_status": "physical_material_failure",
+            "success": false,
+            "reason": "invalid_contact:[[0, 13, 0, 1]]",
+            "simulation_s": 13.563399999995067,
+            "wall_s": 1351.605303088203,
+            "max_x_m": 0.6067477656179624,
+            "actual_material_loaded": true,
+            "legal_progress": 0.0,
+            "legal_outbound_traversals": 0,
+            "legal_return_traversals": 0,
+            "completed_roundtrips": 0
+          },
+          "E60": {
+            "stage_status": "blocked_by_predecessor",
+            "reason": "E30: physical_material_failure: invalid_contact:[[0, 13, 0, 1]]"
+          }
+        }
+      },
+      {
+        "stream_id": "w38-b",
+        "job": "job-20261104T104730Z-w38-b",
+        "seed_directory": 2,
+        "job_record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261104T104730Z-w38-b.json",
+        "training": {
+          "status": "target_reached",
+          "invocation_started_unix_s": 1793789252.4026585,
+          "invocation_wall_s": 50608.21378946304,
+          "initial_transitions": 6545,
+          "initial_updates": 25,
+          "new_transitions": 1024,
+          "new_updates": 4,
+          "actual_transitions": 7569,
+          "updates": 29,
+          "unupdated_fragment": 0,
+          "excluded_old_version_transitions": 145,
+          "last_episode": 251,
+          "physical_episodes": 35,
+          "natural_failures": {
+            "invalid_contact": 20,
+            "body_fall": 14
+          },
+          "target_truncated_episodes": 1,
+          "material_loaded_episodes": 26,
+          "max_forward_displacement_m": 0.9349160428411607,
+          "legal_outbound_traversals": 0,
+          "legal_return_traversals": 0,
+          "legal_roundtrips": 0
+        },
+        "evaluation": {
+          "status": "completed",
+          "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/checkpoint-007569.pt",
+          "checkpoint_transitions": 7569,
+          "checkpoint_updates": 29,
+          "E30": {
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30.json",
+            "started_unix_s": 1793839863.131082,
+            "finished_unix_s": 1793841239.970352,
+            "stage_status": "physical_material_failure",
+            "success": false,
+            "reason": "invalid_contact:[[0, 13, 0, 1]]",
+            "simulation_s": 13.520799999995166,
+            "wall_s": 1365.4220230020583,
+            "max_x_m": 0.7927774383342905,
+            "actual_material_loaded": true,
+            "legal_progress": 0.0,
+            "legal_outbound_traversals": 0,
+            "legal_return_traversals": 0,
+            "completed_roundtrips": 0
+          },
+          "E60": {
+            "stage_status": "blocked_by_predecessor",
+            "reason": "E30: physical_material_failure: invalid_contact:[[0, 13, 0, 1]]"
+          }
+        }
+      }
+    ],
+    "audit": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W38-code-audit.md",
+    "diagnostic_boundary": "The actual r27 C2 gate, terminal settlement and diagnostic wiring were reviewed. New planner/action JSONL and raw arrays were not read in this audit; causal event order remains unverified."
+  },
+  "next_phase": {
+    "controller_build": "S5-r28",
+    "status": "planned_not_built_not_run",
+    "plan": "docs/TERRAIN_MEMORY_PLAN.md",
+    "scope": "Separate next phase: inspect short windows from the existing W38 E30 records, select one evidence-supported controller revision, then use the planned complete-joint workflow. This r27 completion record does not claim any r28 execution."
   }
 }

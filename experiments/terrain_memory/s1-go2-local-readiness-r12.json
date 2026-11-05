@@ -1,52 +1,53 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "computation_ended",
-  "protocol_revision": "smooth_approach_parallel_joint_v13",
+  "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+  "protocol_revision": "contact_execution_repair_parallel_joint_v14",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
-  "revision_date": "2026-11-04",
-  "supersedes_plan_commit": "94b43d0bda02fecddc7734fc4afa00ac713d8bbe",
+  "revision_date": "2026-11-05",
+  "supersedes_plan_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
-  "current_task": "W38_SMOOTH_APPROACH_PARALLEL_JOINT",
+  "current_task": "W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT",
   "reuse": {
     "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
-    "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r21.json",
-    "source_reference_commit": "94b43d0bda02fecddc7734fc4afa00ac713d8bbe",
-    "rule": "Reuse the actual D57 environment and completed r26 source/model skeleton. Implement the single shared C2 approach activation, true-terminal reward settlement and minimal accepted/reference diagnostics before building r27. Then run two isolated full-joint engineering forks; original physical semantics remain.",
-    "active_controller_build": "S5-r27",
-    "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r27.json",
-    "active_controller_status": "built_computation_ended",
-    "parent_controller_build": "S5-r26",
-    "parent_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r26.json",
-    "latest_executed_controller_build": "S5-r26",
-    "latest_executed_controller_status": "completed_W37_6545_25_final_E30_failed",
-    "implementation_base_controller_build": "S5-r26",
-    "implementation_base_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r26.json",
-    "checkpoint_parent_controller_build": "S5-r26",
-    "specification_path_status": "Actual r27 C++ patch built successfully from retained r26; independent branch launch is next."
+    "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r27.json",
+    "source_reference_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
+    "rule": "Reuse the actual D57 environment and executed r27 source/model skeleton. First inspect existing W38 E30 event windows, then implement exactly one supported control correction plus required phase/delivery wiring. Freeze and normally build r28 before direct complete joint sampling; preserve original physical semantics.",
+    "active_controller_build": "S5-r28",
+    "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r28.json",
+    "active_controller_status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+    "parent_controller_build": "S5-r27",
+    "parent_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r27.json",
+    "latest_executed_controller_build": "S5-r27",
+    "latest_executed_controller_status": "completed_W38_both_7569_29_E30_failed_E60_blocked",
+    "implementation_base_controller_build": "S5-r27",
+    "implementation_base_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r27.json",
+    "checkpoint_parent_controller_build": "S5-r27",
+    "specification_path_status": "Planned r28 specification only; selected_mechanism is null. No r28 implementation, build or run is claimed."
   },
   "execution": {
     "mode": "interactive_setup_and_detached_training",
     "maximum_window_wall_s": 14400,
     "begin_wrapup_after_s": 12600,
-    "clock_starts": "The<=4hinteractive budget starts at first Codex activity. The first actual W38 stream launch establishes one shared28htraining clock/deadline; later launches/resumes never reset it. Each branch training end starts its separate<=4hfinal evaluation clock.",
+    "clock_starts": "The <=4h interactive budget starts at first Codex activity. First actual W39 launch creates a new immutable W39 28h clock; the second launch and ordinary same-phase resumes do not reset it. Each stream training end starts its own <=4h evaluation clock. Preserve W38 clocks and completed jobs.",
     "includes": [
-      "current six-line handoff, W38 plan and the directly relevant r26 implementation/results",
-      "implement the shared C2 LandingVelocity/ImpactMargin activation and physical-terminal reward settlement",
-      "connect minimal accepted-rollout/feedback-reference diagnostics in the existing record path",
-      "isolate and launch two full PANN-PPO-MPC engineering forks with normal build and source/config push",
-      "publish all compact episode/update/evaluation evidence with serialized Git delivery"
+      "Read the current handoff, W39 plan sections 4/5, actual r27 audit and the two existing W38 E30 event windows; target about 30 minutes for initial extraction within the same 4h window.",
+      "Select and implement one evidence-supported control correction; preserve C2 activation, W38 terminal settlement and original physical task.",
+      "In parallel connect explicit per-stream parent_map, new-phase lineage, new training_directory and W39 clock through existing start/train/evaluate/finish consumers.",
+      "Add mandatory compact 2Hz/value/PANN/event evidence and one-time saved-data W38 backfill without new physics.",
+      "Normal build, source/config push, then directly launch two complete joint continuation streams and hand off after real samples/logs advance."
     ],
-    "stop_when": "Complete necessary implementation/build and source/config publication, launch both authorized full-loop streams and hand off after actual samples/logs advance; end interactive work by4h. If incomplete, publish exact remaining code work, not an unchanged r26 launch.",
+    "stop_when": "After necessary saved-event analysis, one supported implementation, normal build and source/config publication, start both authorized full-joint continuations and hand off on actual sample/log progress within 4h. If saved data cannot support an implementable correction, publish extracted numeric evidence and the exact missing interface; do not rename unchanged r27 as r28 or launch blind repetition.",
     "automatically_chain_tasks": false,
     "autonomous_48h_campaign_enabled": false,
-    "unfinished_task_rule": "Inspect existing W38 tmux/jobs first; resume actual work without duplicate streams, reseeding ordinary resumes or resetting the common deadline. W37 is completed historical evidence; do not restart its computation or old delivery.",
+    "unfinished_task_rule": "Inspect existing W39 tmux/jobs first. Continue the same W39 job with its own checkpoint and original W39 deadline if present. First W39 creation requires learning.parent_map and an explicit new-phase boundary; never delete/reset W38 clocks or treat its ep251 checkpoint as a first fork.",
     "background_overrun_authorized": true,
     "default_reads": [
       "AGENTS.md",
-      "docs/TERRAIN_MEMORY_PLAN.md current six-line handoff and sections4/5",
+      "docs/TERRAIN_MEMORY_PLAN.md current six-line handoff and sections 4/5",
       "experiments/terrain_memory/s1-go2-local-readiness-r12.json",
-      "experiments/terrain_memory/s1-go2-r11-S5-r27.json"
+      "experiments/terrain_memory/s1-go2-r11-S5-r28.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W38-code-audit.md"
     ],
     "avoid_default_bulk_reads": [
       "README history",
@@ -59,8 +60,10 @@
     "new_handoff_document_required": false,
     "within_task_chain_enabled": true,
     "allowed_chain": [
-      "implement_and_build_S5_r27",
-      "launch_two_isolated_full_joint_training_streams",
+      "read_existing_W38_saved_event_windows_and_choose_one_mechanism",
+      "implement_S5_r28_and_explicit_W39_phase_compact_delivery_wiring",
+      "normal_build_and_source_config_push",
+      "launch_two_complete_joint_branch_continuations",
       "per_stream_new_last_update_nominal_E30_then_same_case_eligible_E60",
       "serialize_compact_git_delivery",
       "retain_bulk_for_user_backup_and_manual_deletion"
@@ -78,45 +81,119 @@
       },
       "reuse_without_new_test": true,
       "PANN": {
-        "transitions": 6545,
-        "updates": 25,
-        "tail_buffer": 0,
-        "completed_update_transitions": 6400,
-        "loss_metrics_saved": true,
-        "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
-        "checkpoint_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__resume-state-ep00216.pt",
-        "server_checkpoint_copy_present_after_recorded_cleanup": true,
-        "physical_episodes": 214,
-        "last_episode": 216,
-        "post_update_physics": true,
+        "controller_build": "S5-r27",
+        "status": "both_W38_streams_completed_final_E30_failed",
+        "streams": {
+          "w38-a": {
+            "job": "job-20261104T104730Z-w38-a",
+            "transitions": 7569,
+            "updates": 29,
+            "tail": 0,
+            "excluded": 145,
+            "completed_update_transitions": 7424,
+            "last_episode": 251,
+            "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+            "E30": {
+              "stage_status": "physical_material_failure",
+              "success": false,
+              "reason": "invalid_contact:[[0, 13, 0, 1]]",
+              "simulation_s": 13.563399999995067,
+              "wall_s": 1351.605303088203,
+              "max_x_m": 0.6067477656179624,
+              "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30.json",
+              "legal_route": {
+                "reward_version": "W38_legal_route_terminal_settlement",
+                "progress": 0.0,
+                "completed_roundtrips": 0,
+                "legal_outbound_traversals": 0,
+                "legal_return_traversals": 0,
+                "side_exits": 0,
+                "raw_roundtrips": 0,
+                "passages": [
+                  {
+                    "lap": 1,
+                    "direction": "outbound",
+                    "entry_s": null,
+                    "exit_s": null,
+                    "lateral_exit_s": null,
+                    "material_loaded": false,
+                    "completed": false,
+                    "terminal_closed_s": 13.563399999995067
+                  }
+                ],
+                "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+              }
+            },
+            "E60": "blocked_by_predecessor_not_run"
+          },
+          "w38-b": {
+            "job": "job-20261104T104730Z-w38-b",
+            "transitions": 7569,
+            "updates": 29,
+            "tail": 0,
+            "excluded": 145,
+            "completed_update_transitions": 7424,
+            "last_episode": 251,
+            "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+            "E30": {
+              "stage_status": "physical_material_failure",
+              "success": false,
+              "reason": "invalid_contact:[[0, 13, 0, 1]]",
+              "simulation_s": 13.520799999995166,
+              "wall_s": 1365.4220230020583,
+              "max_x_m": 0.7927774383342905,
+              "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30.json",
+              "legal_route": {
+                "reward_version": "W38_legal_route_terminal_settlement",
+                "progress": 0.0,
+                "completed_roundtrips": 0,
+                "legal_outbound_traversals": 0,
+                "legal_return_traversals": 0,
+                "side_exits": 0,
+                "raw_roundtrips": 0,
+                "passages": [
+                  {
+                    "lap": 1,
+                    "direction": "outbound",
+                    "entry_s": null,
+                    "exit_s": null,
+                    "lateral_exit_s": null,
+                    "material_loaded": false,
+                    "completed": false,
+                    "terminal_closed_s": 13.520799999995166
+                  }
+                ],
+                "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+              }
+            },
+            "E60": "blocked_by_predecessor_not_run"
+          }
+        },
         "latest_update_has_post_update_physics": true,
-        "latest_update_physics_scope": "Independent frozen-policy E30 after update25; failed at14.3096s. ep216 is target-truncated at2.5s and does not itself establish update25 task ability.",
-        "latest_job": "job-20261103T075623Z",
-        "latest_controller": "S5-r26",
-        "tail_semantics": "Parent active tail0; retain historical excluded145 exactly once. No new tail exclusion is required at the r26->r27/reward boundary.",
-        "excluded_old_version_transitions": 145
+        "latest_update_physics_scope": "Each own update29 checkpoint received an independent fixed-policy E30; both failed on trunk geom13. Neither is task-qualified.",
+        "counting": "Each branch independently has 7569/29 and tail0. Preserve excluded145 once and its own optimizer/RNG; no parent/branch merging."
       },
       "scope": "Historical execution facts to reuse, not a new admission test or proof of material-task qualification."
     },
-    "compute_time_policy": "Interactive<=4h. Both W38 training streams share one28h absolute deadline starting at the first actual launch; each stream has its own<=4h final evaluation after its training. Each slot runs training OR evaluation, with8solver workers. Compact delivery retains<=6h compatibility ceiling and exits on completion. No bulk wait, automatic extension or r28 chain.",
+    "compute_time_policy": "Interactive <=4h, including existing-data extraction, implementation and normal build. Two W39 streams share a fresh 28h training deadline from first actual W39 launch; each stream then has its own <=4h evaluation, one training OR evaluation compute slot per stream. Compact delivery retains the <=6h compatibility ceiling and exits on completion. No bulk wait, automatic extension or next-controller chain.",
     "background_job": {
       "authorized_by": "User explicitly requested tmux training for ten hours or longer,with departure after actual startup and later inspection of logs.",
       "default_maximum_wall_s": 100800,
-      "configurable_budget": "28h shared training wall from the first actual W38 stream launch; later stream launch does not reset it. Targets are observations, not guarantees. No automatic extension.",
+      "configurable_budget": "One new 28h W39 training clock from first actual W39 launch; later launch/resume never resets it. W38 clocks/jobs remain historical and unchanged. No automatic extension.",
       "launcher": "scripts/start_s1_go2_r12_tmux.py",
-      "session_default": "s1-w38",
+      "session_default": "s1-w39",
       "training_flag": "--background-job",
       "startup_handoff": "Confirm actual physics/sample counts advance and normal logs exist, then leave the fixed job running. The post-episode stop executes unattended; no requirement to wait for the first episode,256samples or a separate stability trial.",
       "supervision": "Reuse existing result, episode, collection, learning, checkpoint and stopped records. A small check in the natural episode loop handles the known r25 signature; no polling agent, continuous dense-array reader or new monitoring service.",
       "stop_conditions": [
-        "this branch reaches1024new transitions/4new updates",
-        "shared W38 absolute training deadline",
+        "this branch reaches 1024 new transitions / 4 new updates",
+        "shared W39 absolute training deadline",
         "actual technical interruption in this branch",
         "existing known_r25_startup_regression after a saved natural episode"
       ],
       "ordinary_physical_failure": "Save the original physical terminal and continue the next natural episode, except when the explicitly defined known_r25_startup_regression signature ends this controller phase. No generic fixed failure-count or start-count cap.",
       "automatic_restart": false,
-      "post_training": "Each branch selects its own last actual new-phase update; nominal E30 then same-case eligible E60 within its separate4h ceiling, using8solver workers. No new update is unavailable; known-r25 stop skips evaluation. Serialize compact finish/Git; report both branches without overwriting the other live state.",
+      "post_training": "Each branch selects its own last actually completed W39 update with updates>29; nominal E30 then exact-case eligible E60 within its separate 4h ceiling, using 8 solver workers. No new update is unavailable; existing known-r25 stop skips evaluation. Serialize compact finish/Git and preserve both stream states.",
       "disconnect_semantics": "Detaching or closing the client leaves the server job running. Instance shutdown/reboot ends the process; resume from saved checkpoint later.",
       "concurrent_training_streams": 2,
       "default_postprocess_wall_s": 21600,
@@ -133,28 +210,42 @@
       "failure_policy": "Record original technical/stage failures and all available compact results. Retry failed Git delivery from saved records without physics, force push or deletion. Unrequested large checkpoints/videos/raw arrays are retained_local, not publication_pending.",
       "result_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job-name>.json",
       "resume_publication": "Retry the same job compact finisher only after a concrete Git/evidence-delivery error; reuse saved records without training/evaluation replay. Optional selected large-file transfer is separate and does not gate research.",
-      "final_evaluation_adapter_status": "implemented_new_phase_update_selection_and_regression_skip",
+      "final_evaluation_adapter_status": "Existing phase/stream selection reused; W39 parent_map and training_directory consumption must be wired before launch.",
       "postprocessing_release_policy": "Automatic Release upload is disabled. Reuse existing explicit selected-asset/manifest uploader only when particular diagnostic evidence is requested; retain historical Release destinations and URLs.",
       "cleanup_after_publication": "Disabled by the latest user instruction. User periodically exports bulk outputs to their storage disk and manually deletes after backup; compact Git push never authorizes deletion.",
       "prior_40h_extension_inherited": false,
-      "background_overrun_scope": "Only the explicitly budgeted detached computation may outlive the interactive4hwindow. Both training branches share one28hdeadline; each slot may then finish its independently budgeted evaluation. No inherited40h or automatic extension.",
+      "background_overrun_scope": "Only the explicitly budgeted W39 detached computation may outlive the interactive 4h window. Both training branches share one new 28h deadline; each slot may then finish its own <=4h evaluation. No inherited W38/40h extension.",
       "parallel_layout": [
         {
-          "stream_id": "w38-a",
+          "stream_id": "w39-a",
           "group": "PANN_PPO_S5",
           "seed": 1,
-          "fork_exploration_seed": 2026110401
+          "parent_stream_id": "w38-a",
+          "parent_map_key": "w39-a",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1"
         },
         {
-          "stream_id": "w38-b",
+          "stream_id": "w39-b",
           "group": "PANN_PPO_S5",
           "seed": 2,
-          "fork_exploration_seed": 2026110402
+          "parent_stream_id": "w38-b",
+          "parent_map_key": "w39-b",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2"
         }
       ],
-      "training_clock": "One parent orchestration timestamp/deadline shared by both jobs; per-job files are private copies, not a shared mutable training-deadline.json.",
+      "training_clock": "Create once at first actual W39 launch; second stream and ordinary W39 resume reuse it. Preserve W38 clock and jobs; never reset either phase to extend its deadline.",
       "evaluation_slots": "At most two compute slots total: one training or evaluation process per stream.",
-      "publication_serialization": "Reuse existing index flock; serialize compact summaries/handoff/Git operations in the parent orchestration. Only stage job-owned completed small records; report both streams."
+      "publication_serialization": "Reuse existing index flock; serialize compact summaries/handoff/Git operations in the parent orchestration. Only stage job-owned completed small records; report both streams.",
+      "training_clock_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w39-training-clock.json",
+      "parent_map_source": "learning.parent_map",
+      "new_phase_boundary_status": "required_not_implemented",
+      "required_entrypoint_changes": [
+        "start_s1_go2_r12_tmux.py must accept the explicit per-stream parent map and authorized new W39 phase instead of one shared --resume / first-fork path.",
+        "Preserve ancestor fork_identity and add phase_lineage; ordinary same-phase resume must validate its own current W39 job/stream identity and retain RNG/tail/deadline.",
+        "Pass the new training_directory through train, PolicyStream initial save/resume, final evaluator checkpoint selection, finisher outcome reads and compact publication; never rewrite the W38 ep251 parent directory.",
+        "Use the W39 clock path and actual controller/reward in launcher and finisher rather than hard-coded W38/S5-r27 identity.",
+        "Namespaced actual episode/job/stream records start naturally at episode >=252 and must not overwrite W38 results."
+      ]
     }
   },
   "tasks": [
@@ -365,10 +456,10 @@
     },
     {
       "id": "W38",
-      "status": "planned_not_implemented_not_built_not_run",
+      "status": "completed_both_targets_E30_failed_E60_blocked_compact_published",
       "goal": "Remove the evidenced artificial approach-cost discontinuity within the full joint loop, then use two parallel complete engineering forks to assess approach stability, legal material exposure and useful learning.",
       "controller_build": "S5-r27",
-      "controller_status": "planned_not_implemented_not_built_not_run",
+      "controller_status": "built_and_executed_on_D57",
       "reward_version": "W38_legal_route_terminal_settlement",
       "streams": [
         {
@@ -398,12 +489,243 @@
       "evaluation_maximum_wall_s_per_stream": 14400,
       "postprocess_maximum_wall_s": 21600,
       "server_execution_by_this_review": false,
-      "done": "Implement/build/launch r27 with actual full-joint samples/updates in both isolated streams; report all partial or completed results, own final-update evaluation and compact Git publication. This is not a promise of successful material traversal or independent-from-scratch multi-seed evidence."
+      "done": "Both W38 streams completed their own +1024 transitions/+4 updates to 7569/29, tail0, excluded145. Both final update29 E30s failed on trunk contact; E60 blocked. All 70 training outcomes and both evaluations were compact-published; zero legal traversals/roundtrips, bulk local, deletion0.",
+      "actual_streams": {
+        "w38-a": {
+          "job": "job-20261104T104730Z-w38-a",
+          "status": "completed_training_and_evaluation_compact_published",
+          "controller_build": "S5-r27",
+          "seed": 1,
+          "initial_transitions": 6545,
+          "initial_updates": 25,
+          "new_transitions": 1024,
+          "new_updates": 4,
+          "transitions": 7569,
+          "updates": 29,
+          "tail": 0,
+          "excluded": 145,
+          "completed_update_transitions": 7424,
+          "last_episode": 251,
+          "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+          "invocation_wall_s": 50259.26255226135,
+          "transitions_per_invocation_hour": 73.34767389725927,
+          "outcomes": {
+            "physical_episodes": 35,
+            "results_available": 35,
+            "results_unavailable": [],
+            "legal_outbound_traversals": 0,
+            "side_exits": 0,
+            "far_arrivals": 0,
+            "return_episodes": 0,
+            "completed_roundtrips": 0,
+            "legal_roundtrips": 0,
+            "legal_return_traversals": 0,
+            "legal_all_outbound_traversals": 0,
+            "all_passage_side_exits": 0,
+            "legality_records": 35,
+            "physical_failures_by_phase": {
+              "body_fall": {
+                "outbound": 13
+              },
+              "invalid_contact": {
+                "outbound": 20
+              },
+              "material_domain_exit": {
+                "outbound": 1
+              }
+            },
+            "saved_observations": 1024,
+            "nonzero_pann_observations": 22,
+            "return_observations": 0,
+            "return_nonzero_pann_observations": 0,
+            "material_loaded_episodes": 27,
+            "max_forward_displacement_m": 0.975877351871824,
+            "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+            "observation_sources_unavailable": []
+          },
+          "E30": {
+            "stage_status": "physical_material_failure",
+            "success": false,
+            "reason": "invalid_contact:[[0, 13, 0, 1]]",
+            "simulation_s": 13.563399999995067,
+            "wall_s": 1351.605303088203,
+            "max_x_m": 0.6067477656179624,
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30.json",
+            "legal_route": {
+              "reward_version": "W38_legal_route_terminal_settlement",
+              "progress": 0.0,
+              "completed_roundtrips": 0,
+              "legal_outbound_traversals": 0,
+              "legal_return_traversals": 0,
+              "side_exits": 0,
+              "raw_roundtrips": 0,
+              "passages": [
+                {
+                  "lap": 1,
+                  "direction": "outbound",
+                  "entry_s": null,
+                  "exit_s": null,
+                  "lateral_exit_s": null,
+                  "material_loaded": false,
+                  "completed": false,
+                  "terminal_closed_s": 13.563399999995067
+                }
+              ],
+              "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+            }
+          },
+          "E60": "blocked_by_predecessor_not_run",
+          "publication_status": "published",
+          "compact_files": 161,
+          "errors": [],
+          "pending_assets": [],
+          "deleted_files": 0
+        },
+        "w38-b": {
+          "job": "job-20261104T104730Z-w38-b",
+          "status": "completed_training_and_evaluation_compact_published",
+          "controller_build": "S5-r27",
+          "seed": 2,
+          "initial_transitions": 6545,
+          "initial_updates": 25,
+          "new_transitions": 1024,
+          "new_updates": 4,
+          "transitions": 7569,
+          "updates": 29,
+          "tail": 0,
+          "excluded": 145,
+          "completed_update_transitions": 7424,
+          "last_episode": 251,
+          "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+          "invocation_wall_s": 50608.204859972,
+          "transitions_per_invocation_hour": 72.8419435188407,
+          "outcomes": {
+            "physical_episodes": 35,
+            "results_available": 35,
+            "results_unavailable": [],
+            "legal_outbound_traversals": 0,
+            "side_exits": 1,
+            "far_arrivals": 0,
+            "return_episodes": 0,
+            "completed_roundtrips": 0,
+            "legal_roundtrips": 0,
+            "legal_return_traversals": 0,
+            "legal_all_outbound_traversals": 0,
+            "all_passage_side_exits": 1,
+            "legality_records": 35,
+            "physical_failures_by_phase": {
+              "invalid_contact": {
+                "outbound": 20
+              },
+              "body_fall": {
+                "outbound": 14
+              }
+            },
+            "saved_observations": 1024,
+            "nonzero_pann_observations": 35,
+            "return_observations": 0,
+            "return_nonzero_pann_observations": 0,
+            "material_loaded_episodes": 26,
+            "max_forward_displacement_m": 0.9349160428411607,
+            "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+            "observation_sources_unavailable": []
+          },
+          "E30": {
+            "stage_status": "physical_material_failure",
+            "success": false,
+            "reason": "invalid_contact:[[0, 13, 0, 1]]",
+            "simulation_s": 13.520799999995166,
+            "wall_s": 1365.4220230020583,
+            "max_x_m": 0.7927774383342905,
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30.json",
+            "legal_route": {
+              "reward_version": "W38_legal_route_terminal_settlement",
+              "progress": 0.0,
+              "completed_roundtrips": 0,
+              "legal_outbound_traversals": 0,
+              "legal_return_traversals": 0,
+              "side_exits": 0,
+              "raw_roundtrips": 0,
+              "passages": [
+                {
+                  "lap": 1,
+                  "direction": "outbound",
+                  "entry_s": null,
+                  "exit_s": null,
+                  "lateral_exit_s": null,
+                  "material_loaded": false,
+                  "completed": false,
+                  "terminal_closed_s": 13.520799999995166
+                }
+              ],
+              "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+            }
+          },
+          "E60": "blocked_by_predecessor_not_run",
+          "publication_status": "published",
+          "compact_files": 161,
+          "errors": [],
+          "pending_assets": [],
+          "deleted_files": 0
+        }
+      },
+      "actual_distinct_new_transitions": 2048,
+      "actual_distinct_new_transitions_per_training_hour": 145.6787299449905
+    },
+    {
+      "id": "W39",
+      "task": "W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT",
+      "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+      "goal": "Read saved W38 failure events, repair one evidenced contact/execution mechanism in the complete joint controller, then continue both existing branches and evaluate their own last new updates.",
+      "controller_build": "S5-r28",
+      "controller_status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+      "selected_mechanism": null,
+      "implementation_base_controller_build": "S5-r27",
+      "checkpoint_parent_controller_build": "S5-r27",
+      "reward_version": "W38_legal_route_terminal_settlement",
+      "streams": [
+        {
+          "stream_id": "w39-a",
+          "group": "PANN_PPO_S5",
+          "seed": 1,
+          "parent_stream_id": "w38-a",
+          "parent_map_key": "w39-a",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1"
+        },
+        {
+          "stream_id": "w39-b",
+          "group": "PANN_PPO_S5",
+          "seed": 2,
+          "parent_stream_id": "w38-b",
+          "parent_map_key": "w39-b",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2"
+        }
+      ],
+      "parent_map_source": "learning.parent_map",
+      "parent_transitions_per_stream": 7569,
+      "parent_updates_per_stream": 29,
+      "parent_tail_per_stream": 0,
+      "historical_excluded_per_stream": 145,
+      "new_exclusions": 0,
+      "new_fork": false,
+      "reseed": false,
+      "new_transitions_per_stream": 1024,
+      "new_updates_per_stream": 4,
+      "target_cumulative_transitions_per_stream": 8593,
+      "target_cumulative_updates_per_stream": 33,
+      "unique_new_transitions_total_target": 2048,
+      "experiment_tree_unique_history_at_both_targets": 10641,
+      "interactive_maximum_wall_s": 14400,
+      "shared_training_maximum_wall_s": 100800,
+      "evaluation_maximum_wall_s_per_stream": 14400,
+      "postprocess_maximum_wall_s": 21600,
+      "server_execution_by_this_review": false,
+      "done": "Necessary saved-event selection and one control revision plus phase/delivery wiring, normal build and source/config push, then actual complete-joint new samples/updates and own fixed E30/eligible E60. Report partial evidence honestly; no unchanged-r27 relaunch, isolated admission experiment or promised task success."
     }
   ],
   "resources": {
     "host": "autodl-d57: AutoDL northwest B / D57",
-    "hardware_source": "Completed W37 environment record: NVIDIA RTX PRO6000 Blackwell Server Edition,97887MiB;25vCPU/Xeon8470Q/120GB. No live server query or free-space measurement by this review.",
+    "hardware_source": "Completed D57 environment records and W38 two-stream execution: NVIDIA RTX PRO6000 Blackwell Server Edition, 97887MiB; 25vCPU/Xeon8470Q/120GB. No live server query or W39 free-space measurement by this review.",
     "gpu": "1xNVIDIA RTX PRO6000 Blackwell Server Edition,96GB class,97887MiB recorded",
     "allocated_vcpu": 25,
     "cpu_model": "Intel Xeon Platinum8470Q",
@@ -420,7 +742,7 @@
     "provision_additional_paid_resources": false,
     "project_root_recommendation": "/root/autodl-tmp/MCP-RL",
     "path_rule": "Use actual paths in the new SSH/runtime record if already created; do not move/recreate a working environment just to match a recommended path.",
-    "environment_policy": "Reuse work/envs/d57, MuJoCo3.2.3 ABI088079eff0450e32b98ee743141780ed68307506 and the completed r26 assets/source skeleton. Build r27 only after its actual edits; do not reinstall/migrate/upgrade dependencies or change precision/allocators.",
+    "environment_policy": "Reuse work/envs/d57, MuJoCo3.2.3 ABI088079eff0450e32b98ee743141780ed68307506 and executed r27 assets/source skeleton. Build r28 only after one evidence-selected correction and required phase/delivery edits. Do not reinstall/migrate/upgrade dependencies or change precision/allocators.",
     "environment_changes": "No environment changes are planned. Resolve only a concrete error from the necessary normal build or authorized real launch; no environment matrix, import/smoke stage or dependency refresh.",
     "maximum_environments": 2,
     "initial_training_concurrency": 2,
@@ -436,11 +758,11 @@
       "JAX_ENABLE_X64": "true",
       "note": "Retain existing sharing and numerical settings. No memory stress test,new allocator or precision change to fill96GB."
     },
-    "throughput_rule": "Report each branch newly collected transitions/its current invocation collection wall and aggregate distinct new transitions/common elapsed wall; do not sum inherited6545or restored historicalwall. Useful task metrics remain separate. No promised speedup.",
-    "later_parallel_layout": "W38 plans/requires exactly two isolated engineering forks. Shared-policy synchronous vector collection and MJX/GPU planner rewrites are separate future protocol/implementation work, not part of this launch.",
+    "throughput_rule": "Report each stream new transitions / its current invocation collection wall, and distinct new transitions / common training wall from W39 launch to the later collection update. Do not count inherited7569 twice or include evaluation time in training-only throughput. W38 measured 145.6787299449905 distinct transitions/hour for two streams; this is not a W39 speed promise.",
+    "later_parallel_layout": "W39 continues exactly two existing branches with 8 workers each. W38 aggregate collection throughput was about30.5% above W37 in a cross-version engineering observation; controller, reward and trajectories differ, so this does not isolate the effect of the2x8 layout. No evidence supports a worker grid,2x10,third stream,shared-policy vector collection or GPU planner rewrite now.",
     "python_environment": "work/envs/d57",
     "compute_environment": "experiments/terrain_memory/compute-environment.json",
-    "storage_budget_note": "Retain full raw recording and current usable resume. User periodically exports bulk outputs from the data disk to their storage disk and manually deletes after backup; no automatic research-output cleanup or Codex PC archive. Reuse the recorded W37 launch free-space check; historical cleanup/free-space figures are not current measurements.",
+    "storage_budget_note": "Retain full raw recording, both parent ep251 resumes and current usable W39 resumes. User exports bulk outputs to their storage disk and manually deletes after backup; no automatic cleanup or Codex PC archive. Existing W38 free-space reading is historical, not a W39 measurement.",
     "disk_capacity_scope": "system/data_disk_GB fields retain the original screenshot;actual D57 capacity/free space is determined from existing runtime records and one current check.",
     "last_recorded_cleanup": {
       "source_commit": "3bc39f21304ab0ba4f46038cede157155f1cf4e9",
@@ -460,24 +782,29 @@
       "reported_capacity": "1000G",
       "reported_used": "222G",
       "reported_available": "779G",
-      "scope": "One current df at W38 entry; no cleanup."
-    }
+      "scope": "Historical one-time df at W38 entry; no cleanup. No W39 server storage query has been performed by this review."
+    },
+    "normal_startup_resource_snapshot": "At actual normal W39 launch one ordinary CPU/GPU utilization and RSS/VRAM snapshot may accompany observed throughput. No stress test, worker grid or monitoring platform."
   },
   "learning": {
     "candidate_can_start_before_E30_E60_pass": true,
-    "candidate_requires": "Necessary actual r27 shared-C2 implementation, terminal reward settlement, private stream/deadline/RNG/output wiring and normal build. Direct full-joint sampling; no independent rigid/E30/single-module admission stage.",
+    "candidate_requires": "Within the same interactive window inspect saved W38 event data, select and implement one supported r28 correction, wire explicit W39 parent_map/phase_lineage/training_directory/clock and mandatory compact numeric evidence, then normal build and direct full-joint sampling. No independent rigid/E30/single-module admission stage.",
     "active_streams": [
       {
-        "stream_id": "w38-a",
+        "stream_id": "w39-a",
         "group": "PANN_PPO_S5",
         "seed": 1,
-        "fork_exploration_seed": 2026110401
+        "parent_stream_id": "w38-a",
+        "parent_map_key": "w39-a",
+        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1"
       },
       {
-        "stream_id": "w38-b",
+        "stream_id": "w39-b",
         "group": "PANN_PPO_S5",
         "seed": 2,
-        "fork_exploration_seed": 2026110402
+        "parent_stream_id": "w38-b",
+        "parent_map_key": "w39-b",
+        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2"
       }
     ],
     "cross_stream_wait": false,
@@ -497,33 +824,41 @@
     "pann": "Keep frozen B ideal and causal2ms observer; no true q/e input.",
     "ordinary_update_resets_environment": false,
     "explicit_task_end_rule": "At sample target or deadline mark external truncation before buffer/GAE/update; true physical terminals retain priority. The known-r25 regression rule is checked only after the natural terminal and result/checkpoint are saved, then ends the phase without rewriting that physical result.",
-    "unfinished_buffer_rule": "Parent active tail0; historical excluded145 remains once. Save and resume each branch valid same-controller/reward tail, optimizer, normalization and RNG. Never re-exclude145, silently discard new tails, or reuse old-version data in a new update.",
+    "unfinished_buffer_rule": "Both W38 parents have active tail0; retain historical excluded145 exactly once. Restore each own branch optimizer/RNG/normalization and start the new r28 phase with buffer0. Ordinary W39 same-controller/reward resumes retain their own new tail; never re-exclude145, silently discard new tails, mix branches or use old-controller data for new updates.",
     "incomplete_environment_snapshot_rule": "Start a new physical session if full environment state was not saved. Record real boundaries and do not claim uninterrupted physics or fabricate missing successors.",
     "evidence": "Use normal update logs,real trajectories and saved checkpoint. Do not replace real learning by mock tests or inflate results into convergence/benefit claims.",
-    "schedule": "From the same r26 ep2166545/25tail0 parent, fork w38-a/b explicitly after restoration; each acquires1024NEW transitions and4NEW256-sample updates to own7569/29. Ordinary updates retain the live physical episode; ordinary failures start natural sessions except the existing known-r25 stop.",
+    "schedule": "Continue w39-a only from w38-a seed1 ep251 and w39-b only from w38-b seed2 ep251, each7569/29tail0. No new fork or reseed. Each collects1024 new transitions in four256-sample updates to its own8593/33. First new batch7570..7825 makes update30. Ordinary updates retain the live physical episode; ordinary failures continue except the unchanged known-r25 stop.",
     "shares_actor_or_optimizer_between_groups": false,
-    "pann_runtime": "Frozen causal B ideal remains in both private material observers and GPU query paths; PPO trains actor/critic, MPC remains online. This is operational joint control, not end-to-end PANN training or complete material-history candidate propagation. W37 had62/2048nonzero recovery observations and no return data; no memory benefit has yet been shown.",
-    "recording": "Retain all actual episodes and existing full local frequencies/arrays/rollout/checkpoints. Add only required plan identity and accepted-vs-feedback-reference/raw-feedback diagnostics in the existing path. Publish compact per-job/per-stream update and outcome records; selected event slices only when needed.",
+    "pann_runtime": "Frozen causal B ideal stays in each private observer and GPU query path; PPO trains Actor/Critic and MPC remains online. W38 server rollout summaries report22/1024 and35/1024 nonzero PANN observations, with no return data. Raw observation values were not in Git for this review; the mandatory small export will expose all12 features. This does not show memory benefit or complete candidate material-history propagation.",
+    "recording": "Retain existing full local frequencies, arrays, rollout and checkpoints. Publish all actual episode outcomes, all2Hz learning transitions with reward/terminal/bootstrap/value/logprob/policy-version fields and12 PANN features, low-volume per-episode event summaries and final E30 numeric event windows. Do not omit required evidence via a generic2MB filter; split named compact exports instead.",
     "estimated_cost": {
-      "reference_job": "job-20261031T101803Z",
-      "source_commit": "fff9bfd53afcf7f9511ad41ea62a585f092aba2c",
-      "new_transitions": 2048,
-      "new_effective_transitions": 1599,
-      "new_physics_s": 1006.5964,
-      "invocation_wall_s": 81414.375,
-      "transitions_per_invocation_hour": 90.559,
-      "reference_2048_invocation_h": 22.6151,
+      "reference_phase": "W38",
+      "reference_controller": "S5-r27",
+      "reviewed_source_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
+      "streams": {
+        "w38-a": {
+          "job": "job-20261104T104730Z-w38-a",
+          "new_transitions": 1024,
+          "new_updates": 4,
+          "invocation_wall_s": 50259.26255226135,
+          "transitions_per_invocation_hour": 73.34767389725927
+        },
+        "w38-b": {
+          "job": "job-20261104T104730Z-w38-b",
+          "new_transitions": 1024,
+          "new_updates": 4,
+          "invocation_wall_s": 50608.204859972,
+          "transitions_per_invocation_hour": 72.8419435188407
+        }
+      },
+      "distinct_new_transitions": 2048,
+      "common_training_started_unix_s": 1793789250.6111062,
+      "last_collection_updated_unix_s": 1793839860.6075194,
+      "common_training_wall_s": 50609.996413230896,
+      "distinct_transitions_per_common_training_hour": 145.6787299449905,
       "training_budget_h": 28,
       "is_next_window_time_promise": false,
-      "r25_reference": {
-        "job": "job-20261101T133954Z",
-        "new_transitions": 1169,
-        "episode_wall_h": 22.36592200163545,
-        "physics_s": 579.5091999993392,
-        "wall_s_per_sim_s": 138.94053658851217,
-        "scope": "Sum of27saved physical-episode wall times; excludes outside-episode overhead. No r26 throughput inferred."
-      },
-      "scope": "Historical execution only. Changed-controller throughput is unknown;28h may finish with partial counts. Use invocation wall for actual throughput, not restored cumulative wall including idle gaps."
+      "scope": "Training-only shared elapsed denominator ends at the later collection update; excludes later E30/finish. W39 controller and trajectories may alter throughput. Use actual current invocation, not restored historical wall."
     },
     "completed_reference_stream": {
       "group": "PPO_RAW_S5",
@@ -538,64 +873,71 @@
       "Historical completed single-stream behavior: Nominal60s acquisition sessions, curriculum off and20MPCworkers already executed on D57; background and interactive clocks are independent.",
       "Sample-target/deadline truncation is marked before buffer/GAE, physical terminals take priority and zero-duration pending actions do not become samples.",
       "Launcher initial_transitions/initial_updates are read from the actual selected resume checkpoint, not from cleaned collection.json; reuse this implemented correction.",
-      "Historical completed single-stream behavior: LegalRoute reward version and final-policy evaluation/Release partitioning/cleanup already executed; W37 adds only the specific boundary, stop and checkpoint-selection branches."
+      "Historical completed single-stream behavior: LegalRoute, final-policy evaluation, Release partitioning and the old cleanup were executed. W37 subsequently implemented the specific boundary, known-r25 stop and new-update checkpoint selection. Old cleanup is historical and does not authorize current deletion."
     ],
     "next_runtime_work": [
-      "implement r27 shared C2 approach activation in candidate residual and complete derivative/active-substep value",
-      "settle provisional positive route credit on true physical termination before final transition; preserve external truncation semantics",
-      "wire accepted rollout versus feedback reference and raw Kdelta diagnostics into actual build, without changing policy recentering based on an unproven mismatch",
-      "select explicit stream/job/session identities, private deadline communication and declared seed identifiers in existing launcher/train/evaluator",
-      "restore ep216 then once fork exploration RNG; save parent/phase identity without double-counting or re-excluding history",
-      "reuse runtime index lock in finish and serialize compact Git/handoff while both full compute slots run independently"
+      "Extract both existing W38 E30 event windows and W38 low-frequency transition/value/PANN tables from saved records; do not rerun physics.",
+      "Select exactly one supported timing/reference/derivative, candidate-feasibility, feedback-domain or material-interface correction under plan section4.2; selected_mechanism remains null until actual evidence is read.",
+      "Implement the selected mechanism on r27 while preserving C2 gate, causal reference packet, ten A/B substeps, TV feedback, PD and all original physical/evaluation semantics.",
+      "Extend the existing launcher with explicit learning.parent_map, authorized new-phase creation and w39-training-clock.json; no new fork, reseed or deletion/reset of W38 clock.",
+      "Preserve ancestor fork_identity, add current phase_lineage and thread each new training_directory through train/PolicyStream/evaluation/finish and compact-record consumers.",
+      "Extend existing compact finisher with required low-frequency learning/PANN/value/event exports; serialize Git and retain raw bulk without automatic deletion.",
+      "Normal build and source/config publication, then direct complete-joint sampling in both branch continuations; hand off after real sample/log progress."
     ],
     "pann_evidence": "Use ordinary rollout/episode logs for observer/query counts,extra wall time and the12 actual recovery-feature values. Report zero or uninformative features honestly; do not demand artificial nonzero values,read truth q/e or add a diagnostic framework.",
-    "controller_change_during_current_window": "Implement and freeze r27 plus W38 terminal-settlement reward before either branch starts. Do not mutate running controllers/reward or label old r26 as r27.",
-    "target_cumulative_transitions_per_stream": 7569,
-    "target_cumulative_updates_per_stream": 29,
+    "controller_change_during_current_window": "Select, implement and freeze one S5-r28 control revision before either W39 branch starts. Keep W38 reward unchanged. Do not mutate running controllers/reward or rename unchanged r27 as r28.",
+    "target_cumulative_transitions_per_stream": 8593,
+    "target_cumulative_updates_per_stream": 33,
     "additional_transitions_from_reviewed_checkpoint": 1024,
     "additional_updates_from_reviewed_checkpoint": 4,
-    "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
-    "resume_mode": "explicit_two_engineering_forks_from_same_parent_zero_tail",
-    "phase_initial_transitions": 6545,
-    "phase_initial_updates": 25,
-    "controller_boundary_rule": "r26->r27 and W36 reward->W38 terminal settlement is a declared warm-start boundary with zero active tail; inherit excluded145once. Record new phase lineage separately from the historical r25->r26 migration.",
-    "phase_count_rule": "Count parent6545/25once. Each fork uses only its own new on-policy data. At full target each has7569/29=7424trained+145excluded; the two models are not one8593/33policy.",
+    "resume_checkpoint": null,
+    "resume_mode": "explicit_per_stream_parent_map_new_phase_continuation_no_fork_no_reseed",
+    "phase_initial_transitions": 7569,
+    "phase_initial_updates": 29,
+    "controller_boundary_rule": "Declared r27->r28 new-phase continuation, same W38 reward and zero active parent tails. w39-a restores only w38-a ep251; w39-b only w38-b ep251. Keep excluded145 once, preserve ancestor fork_identity, add current phase_lineage and use new training directories. Parent directories/clocks remain unchanged.",
+    "phase_count_rule": "Each branch begins7569/29=7424trained+145excluded and ends8593/33=8448trained+145excluded if target reached. Its first new batch is7570..7825/update30. Both streams add2048 distinct transitions to an experiment tree of10641 counted once, not one10641-sample or37-update policy.",
     "controller_version_boundary": {
-      "parent_controller_build": "S5-r26",
-      "active_controller_build": "S5-r27",
-      "implementation_base_controller_build": "S5-r26",
-      "status": "forks_launched",
-      "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
-      "parent_checkpoint_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__resume-state-ep00216.pt",
-      "parent_transitions": 6545,
-      "parent_updates": 25,
-      "parent_completed_update_transitions": 6400,
+      "parent_controller_build": "S5-r27",
+      "active_controller_build": "S5-r28",
+      "implementation_base_controller_build": "S5-r27",
+      "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+      "parent_checkpoint": null,
+      "parent_checkpoint_release_url": null,
+      "parent_map_source": "learning.parent_map",
+      "parent_transitions": 7569,
+      "parent_updates": 29,
+      "parent_completed_update_transitions": 7424,
       "parent_tail_buffer": 0,
       "excluded_old_version_transitions_after_migration": 145,
       "new_exclusions": 0,
       "new_controller_initial_buffer": 0,
-      "reward_version_change": true,
-      "parent_reward_version": "W36_legal_route_progress_and_lap_alignment",
+      "reward_version_change": false,
+      "parent_reward_version": "W38_legal_route_terminal_settlement",
       "reward_version": "W38_legal_route_terminal_settlement",
-      "restoration": "Restore parent Actor/Critic/optimizer/normalization/history. On the first fork only, reseed NumPy/Torch/CUDA after checkpoint restoration using this stream fork_exploration_seed. Start a new physical session if no full environment snapshot exists.",
-      "idempotence": "Persist applied fork identity; same-branch resume preserves its own RNG and tail and never reseeds or re-excludes145.",
+      "restoration": "Restore each explicit parent branch Actor/Critic/optimizer/RNG/normalization/history. No reseed or new first-fork operation. Start a fresh physical session if its full state was not saved; never claim uninterrupted physics.",
+      "idempotence": "Record a new authorized W39 phase_lineage once while preserving the unchanged W38 fork_identity. Ordinary W39 resume validates current job/stream/phase, retains RNG/new tail and never resets the W39 clock or re-excludes145.",
       "first_new_rollout": {
-        "first_transition": 6546,
-        "last_transition": 6801,
-        "updates_after": 26
+        "first_transition": 7570,
+        "last_transition": 7825,
+        "updates_after": 30
       },
-      "target_checkpoint": "checkpoint-007569.pt",
-      "counter_semantics": "Serial numbers are namespaced by stream/phase; parent history is shared lineage, not twice observed data."
+      "target_checkpoint": "checkpoint-008593.pt",
+      "counter_semantics": "Serial numbers are namespaced by current stream/phase. Historical common ancestry is counted once; inherited branch histories and optimizers are never fused.",
+      "path_consumption_status": "planned_required_in_existing_start_train_PolicyStream_evaluation_finish",
+      "parent_directories_read_only": true,
+      "next_episode_minimum": 252
     },
     "same_controller_continuation": {
       "enabled": true,
-      "scope": "After the declared initial r27 fork, ordinary same-branch resume preserves its own optimizer/RNG/tail and deadline. It does not repeat the fork reseed."
+      "scope": "After explicit r27->r28 W39 phase creation, ordinary same-stream same-job W39 resume retains its own optimizer/RNG/tail and original W39 deadline; it never repeats phase migration or reseeds.",
+      "ancestor_fork_identity_unchanged": true,
+      "current_identity_source": "phase_lineage plus current job/stream/phase"
     },
-    "resume_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__resume-state-ep00216.pt",
+    "resume_release_url": null,
     "reward_version": "W38_legal_route_terminal_settlement",
     "reward_definition": "Original reward coefficients and strip legality. On true physical termination explicitly close an incomplete active passage and retract its provisional positive credit before the final transition. Preserve completed legal traversal counts, live dense progress and external truncation semantics; do not turn all partial collection boundaries into task failures.",
     "effective_translation_semantics": "Historical effective_samples/effective_translation_s count outbound or return phase activity, not positive progress, useful material exposure or learning benefit.",
-    "planned_runtime_changes_status": "planned_not_implemented_not_built_not_run",
+    "planned_runtime_changes_status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
     "known_r25_startup_regression": {
       "status": "implemented_saved_natural_episode_predicate",
       "enabled_for_planned_phase": true,
@@ -650,26 +992,157 @@
       }
     },
     "forks": {
-      "kind": "two_warm_start_engineering_forks_not_independent_from_scratch_seeds",
+      "kind": "continuation_of_two_existing_W38_branches_no_new_fork",
       "streams": [
         {
-          "stream_id": "w38-a",
+          "stream_id": "w39-a",
           "group": "PANN_PPO_S5",
           "seed": 1,
-          "fork_exploration_seed": 2026110401
+          "parent_stream_id": "w38-a",
+          "parent_map_key": "w39-a",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1"
         },
         {
-          "stream_id": "w38-b",
+          "stream_id": "w39-b",
           "group": "PANN_PPO_S5",
           "seed": 2,
-          "fork_exploration_seed": 2026110402
+          "parent_stream_id": "w38-b",
+          "parent_map_key": "w39-b",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2"
         }
       ],
-      "reseed_after_restore_once": true,
+      "new_fork_enabled": false,
+      "reseed_after_restore_once": false,
       "actor_optimizer_buffer_shared": false,
       "material_world_shared": false,
       "group": "PANN_PPO_S5",
-      "parent_history_count_once": true
+      "parent_history_count_once": true,
+      "ancestor_forks_reference": "history.completed_W38_protocol.forks",
+      "identity_rule": "Keep the original W38 fork_identity as ancestry; current W39 identity is phase_lineage, not a rewritten ancestor fork."
+    },
+    "parent_map": {
+      "w39-a": {
+        "parent_stream_id": "w38-a",
+        "parent_job": "job-20261104T104730Z-w38-a",
+        "parent_phase_id": "job-20261104T104730Z-w38-a",
+        "group": "PANN_PPO_S5",
+        "seed": 1,
+        "parent_controller_build": "S5-r27",
+        "parent_reward_version": "W38_legal_route_terminal_settlement",
+        "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+        "resume_release_url": null,
+        "availability": "retained_local_on_D57_not_default_uploaded",
+        "parent_training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1",
+        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1",
+        "parent_episode": 251,
+        "parent_transitions": 7569,
+        "parent_updates": 29,
+        "parent_completed_update_transitions": 7424,
+        "parent_tail": 0,
+        "excluded_old_version_transitions": 145,
+        "new_exclusions": 0,
+        "ancestor_fork_identity": {
+          "stream_id": "w38-a",
+          "seed": 1,
+          "exploration_seed": 2026110401,
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
+          "parent_samples": 6545,
+          "parent_updates": 25,
+          "parent_episode": 216,
+          "parent_controller_build": "S5-r26",
+          "parent_reward_version": "W36_legal_route_progress_and_lap_alignment",
+          "controller_build": "S5-r27",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "phase_id": "job-20261104T104730Z-w38-a",
+          "restored_optimizer": true,
+          "inherited_excluded": 145,
+          "new_exclusions": 0,
+          "reseeded_after_checkpoint_restore": true,
+          "engineering_fork_not_independent_from_scratch": true
+        },
+        "restore": [
+          "actor",
+          "critic",
+          "optimizer",
+          "RNG",
+          "normalization",
+          "historical_counts"
+        ],
+        "new_fork": false,
+        "reseed_after_restore": false,
+        "parent_directory_read_only": true,
+        "phase_lineage": {
+          "status": "record_on_explicit_new_W39_phase_creation",
+          "parent_stream_id": "w38-a",
+          "parent_phase_id": "job-20261104T104730Z-w38-a",
+          "current_stream_id": "w39-a",
+          "current_phase_id": null,
+          "controller_build": "S5-r28",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream."
+        }
+      },
+      "w39-b": {
+        "parent_stream_id": "w38-b",
+        "parent_job": "job-20261104T104730Z-w38-b",
+        "parent_phase_id": "job-20261104T104730Z-w38-b",
+        "group": "PANN_PPO_S5",
+        "seed": 2,
+        "parent_controller_build": "S5-r27",
+        "parent_reward_version": "W38_legal_route_terminal_settlement",
+        "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+        "resume_release_url": null,
+        "availability": "retained_local_on_D57_not_default_uploaded",
+        "parent_training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2",
+        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2",
+        "parent_episode": 251,
+        "parent_transitions": 7569,
+        "parent_updates": 29,
+        "parent_completed_update_transitions": 7424,
+        "parent_tail": 0,
+        "excluded_old_version_transitions": 145,
+        "new_exclusions": 0,
+        "ancestor_fork_identity": {
+          "stream_id": "w38-b",
+          "seed": 2,
+          "exploration_seed": 2026110402,
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
+          "parent_samples": 6545,
+          "parent_updates": 25,
+          "parent_episode": 216,
+          "parent_controller_build": "S5-r26",
+          "parent_reward_version": "W36_legal_route_progress_and_lap_alignment",
+          "controller_build": "S5-r27",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "phase_id": "job-20261104T104730Z-w38-b",
+          "restored_optimizer": true,
+          "inherited_excluded": 145,
+          "new_exclusions": 0,
+          "reseeded_after_checkpoint_restore": true,
+          "engineering_fork_not_independent_from_scratch": true
+        },
+        "restore": [
+          "actor",
+          "critic",
+          "optimizer",
+          "RNG",
+          "normalization",
+          "historical_counts"
+        ],
+        "new_fork": false,
+        "reseed_after_restore": false,
+        "parent_directory_read_only": true,
+        "phase_lineage": {
+          "status": "record_on_explicit_new_W39_phase_creation",
+          "parent_stream_id": "w38-b",
+          "parent_phase_id": "job-20261104T104730Z-w38-b",
+          "current_stream_id": "w39-b",
+          "current_phase_id": null,
+          "controller_build": "S5-r28",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream."
+        }
+      }
     }
   },
   "control_and_evaluation": {
@@ -690,14 +1163,14 @@
     "automatically_run_extra_rigid_regression": false,
     "additional_run_rule": "Only when it directly answers the current concrete failure/change; no unrelated matrix.",
     "formal_mission_wall_rule": "Formal evaluation starts after this job training exits, uses its independent 4h deadline, and preserves the original continuous durations and exact-case qualification. Never stitch interrupted portions into a pass.",
-    "current_window": "Implement the single shared C2 spatial activation for LandingVelocity and ImpactMargin on the actual r26 skeleton, with matching candidate values/complete product derivatives/substep peak selection. Fix true-terminal provisional reward settlement and minimal accepted/reference diagnostics; preserve physical task and execute two full joint forks.",
-    "next_control_question": "Does removing the artificial approach residual jump reduce entry feedback kicks and create stable, legal material traversal and useful learning in two complete joint forks?",
-    "comparison_after_migration": "Both W38 streams share r26 ep216weights/history, then use distinct post-restore exploration seeds. This is not an independent-from-scratch seed study or RAW/PANN causal comparison. Controller/reward/worker changes mean r26-vs-r27 is an engineering comparison, not isolated statistical attribution.",
-    "training_gate": "Necessary implementation and normal build followed directly by full-joint training; no E30,rigid-control,single-module,benchmark or restore admission test.",
+    "current_window": "Within the same <=4h task inspect existing W38 E30 events, select one supported contact/execution repair, implement r28 and required phase/delivery wiring, normally build and launch two complete-joint continuations. Retain r27 C2, W38 reward and original plant/task.",
+    "next_control_question": "Where does the first identifiable separation arise: timing/reference/derivative wiring, accepted candidate terminal geometry, feedback actuator/contact active set, or prediction/material interface? Select one repair from existing saved evidence, then measure actual legal task capability.",
+    "comparison_after_migration": "Each W39 branch continues its own W38 ep251 Actor/Critic/optimizer/RNG/history with no reseed. The branches share earlier ancestry but are never merged. W38-vs-W39 is an engineering intervention comparison, not an independent-from-scratch seed study or isolated RAW/PANN causal estimate.",
+    "training_gate": "Saved-data mechanism selection, necessary implementation and normal build, then direct complete-joint training. No new E30/rigid/single-module/mock/smoke/restore or throughput admission experiment.",
     "post_training_evaluation": {
       "planned": true,
-      "implementation_status": "implemented_private_contract_phase_stream_selection",
-      "purpose": "Evaluate the last actual completed new update of each own r27/reward branch, after its training; separate from collection counts and legality claims.",
+      "implementation_status": "Existing independent evaluation reused; W39 training_directory/current-phase consumers require explicit wiring before launch.",
+      "purpose": "Evaluate the last actually completed new update of each own W39/r28/W38-reward branch after training; collection counts, stage status and legal traversal remain separate.",
       "group": "PANN_PPO_S5",
       "condition": "nominal",
       "levels": [
@@ -706,16 +1179,17 @@
       ],
       "maximum_wall_s": 14400,
       "clock_starts": "Each stream training end starts its own<=4hevaluation budget; each stream occupies at most one compute slot at a time.",
-      "checkpoint_selection": "Each own job/stream/controller/reward phase must have updates>25. At target use its checkpoint-007569.pt; on partial progress use its actual last new update. Never select the other branch, parent or best-looking checkpoint.",
+      "checkpoint_selection": "Require this own W39 job/stream/controller/reward phase and updates>29. At full target use its new training_directory/checkpoint-008593.pt; at partial target select its actual last completed new update. Never use the other branch, W38 parent or a best-looking checkpoint.",
       "deterministic_policy_mean": true,
       "ppo_updates": false,
       "frozen_normalization": true,
       "solver_workers": 8,
       "entrypoint": "scripts/run_s1_go2_r12.py",
       "necessary_changes": [
-        "Match explicit job/stream/controller/reward/checkpoint/condition/level in evaluator and same-case predecessor lookup.",
-        "Separate each branch own evaluation deadline and output prefix.",
-        "Keep existing known-r25 skip and no-new-update unavailable semantics."
+        "Consume learning.parent_map and the resolved W39 training_directory/current phase_lineage in checkpoint lookup; preserve ancestor fork_identity without treating its W38 stream as current.",
+        "Keep explicit current job/stream/controller/reward/checkpoint/condition/level and same-case predecessor identity.",
+        "Use each own independent evaluation deadline and unique output namespace.",
+        "Retain unchanged known-r25 skip and no-new-update unavailable semantics; compact delivery still proceeds."
       ],
       "E30_rule": "Complete independent30s observation,original far3m arrival and legal outbound material traversal;continue original turn/return. No requirement for a full round trip by30s or deliberate far-end parking.",
       "E60_rule": "Only the exact same case's E30 passes;independent original full roundtrip/holding and60s observation.",
@@ -732,12 +1206,38 @@
         "tmux post-training evaluation and explicit attempt publication"
       ],
       "latest_completed_reference": {
-        "checkpoint": "checkpoint-006545.pt",
-        "controller": "S5-r26",
-        "outcome": "invalid_contact:[[0, 13, 0, 1]]",
-        "simulation_s": 14.3096,
-        "max_x_m": 0.7462517148,
-        "qualified": false
+        "controller": "S5-r27",
+        "phase": "W38",
+        "streams": {
+          "w38-a": {
+            "job": "job-20261104T104730Z-w38-a",
+            "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/checkpoint-007569.pt",
+            "controller": "S5-r27",
+            "checkpoint_transitions": 7569,
+            "checkpoint_updates": 29,
+            "outcome": "invalid_contact:[[0, 13, 0, 1]]",
+            "simulation_s": 13.563399999995067,
+            "max_x_m": 0.6067477656179624,
+            "qualified": false,
+            "E60": "blocked_by_predecessor",
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30.json"
+          },
+          "w38-b": {
+            "job": "job-20261104T104730Z-w38-b",
+            "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/checkpoint-007569.pt",
+            "controller": "S5-r27",
+            "checkpoint_transitions": 7569,
+            "checkpoint_updates": 29,
+            "outcome": "invalid_contact:[[0, 13, 0, 1]]",
+            "simulation_s": 13.520799999995166,
+            "max_x_m": 0.7927774383342905,
+            "qualified": false,
+            "E60": "blocked_by_predecessor",
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30.json"
+          }
+        },
+        "both_E30_failed": true,
+        "both_E60_blocked": true
       },
       "regression_stop": {
         "reason": "known_r25_startup_regression",
@@ -750,26 +1250,41 @@
         "reason": "new_update_unavailable",
         "run_physics": false,
         "continue_publication": true,
-        "detail": "No completed update belongs to this W38 job/stream/controller/reward phase; publish actual partial evidence without parent or other-stream fallback."
+        "detail": "No completed update belongs to this W39 job/stream/controller/reward phase with updates>29; publish actual partial evidence without W38 parent or other-stream fallback."
       },
       "latest_executed_job_evaluation": {
-        "job": "job-20261103T075623Z",
-        "status": "E30_failed_E60_blocked",
-        "new_formal_attempts": 1
+        "phase": "W38",
+        "streams": {
+          "w38-a": {
+            "job": "job-20261104T104730Z-w38-a",
+            "status": "E30_failed_E60_blocked",
+            "new_formal_attempts": 1
+          },
+          "w38-b": {
+            "job": "job-20261104T104730Z-w38-b",
+            "status": "E30_failed_E60_blocked",
+            "new_formal_attempts": 1
+          }
+        },
+        "new_formal_attempts_total": 2
       },
       "later_long_evaluation": "Retain independent same-case30->60->300->600 qualification. This phase schedules only E30/eligibleE60 within4h. E300/E600 require a later explicit long-job budget and actual same-case predecessor; never stitch truncated segments or automatically run a full matrix.",
       "streams": [
         {
-          "stream_id": "w38-a",
+          "stream_id": "w39-a",
           "group": "PANN_PPO_S5",
           "seed": 1,
-          "fork_exploration_seed": 2026110401
+          "parent_stream_id": "w38-a",
+          "parent_map_key": "w39-a",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1"
         },
         {
-          "stream_id": "w38-b",
+          "stream_id": "w39-b",
           "group": "PANN_PPO_S5",
           "seed": 2,
-          "fork_exploration_seed": 2026110402
+          "parent_stream_id": "w38-b",
+          "parent_map_key": "w39-b",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2"
         }
       ]
     },
@@ -782,8 +1297,36 @@
       "final frozen nominal E30/E60",
       "PANN exposure without premature benefit claim"
     ],
-    "reward_alignment_risk": "Confirmed W37 physical-terminal incomplete-passage credit bug affects70/71natural failures but only+38.34037 versus-710failure penalties; repair it without claiming sole physical cause.",
-    "later_decision_rule": "Use actual r27 entry/feedback/material evidence before choosing contact-feasible feedback, frequency-aware input planning or a physically meaningful reference action. No automatic new controller series, weight grid or GPU rewrite."
+    "reward_alignment_risk": "W38 true-terminal settlement is implemented and all68natural training failures plus both E30s retract incomplete credit to0. Preserve the same reward definition in W39. The raw2Hz value/next-value/PANN export is still needed to independently audit bootstrap/feature exposure; do not infer physical convergence from reward repair.",
+    "later_decision_rule": "Only one evidence-selected r28 mechanism in this phase. If existing records cannot support an implementable correction, publish the actual extracted numbers and exact missing interface; do not launch unchanged r27 or add a parameter grid, arbitrary K clip/low-pass, force-allocation objectives or a new planning round.",
+    "mechanism_selection": {
+      "selected_mechanism": null,
+      "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+      "source": "docs/TERRAIN_MEMORY_PLAN.md sections4.1-4.2",
+      "initial_saved_data_target_wall_s": 1800,
+      "inside_existing_interactive_budget": true,
+      "allowed_priority_order": [
+        {
+          "condition": "A real timing, reference-packet, winner-identity or derivative mismatch is localized in saved events.",
+          "revision": "Fix that specific interface; do not infer it from diagnostic labels."
+        },
+        {
+          "condition": "Recorded accepted candidate states already violate original task-terminal trunk geometry.",
+          "revision": "Use original margins/geoms across all ten candidate substeps and terminal. v=max[margin-distance,0]; among v=0 candidates minimize originalJ, else explicitly record prediction_infeasible/restoration and choose existing candidates lexicographically by(v,J). Keep winner/accepted/policy/reference/improvement/surprise/regularization consistent. This is model-local finite-candidate feasibility, not true-plant safety."
+        },
+        {
+          "condition": "Observed accepted slices are admissible but executed feedback changes actuator/contact active sets first.",
+          "revision": "Derive the specific local state-dependent actuation/contact-domain correction, with correct constraint derivatives and whole-hold consistency in optimization/candidate/execution. Do not preselect K clipping/scaling/low-pass; two safe saved nodes do not prove full-horizon safety."
+        },
+        {
+          "condition": "First localized separation follows actual material loading.",
+          "revision": "Repair the identified prediction/material interface or approximation only. Do not feed hidden true q/e to PANN, relax strain0.02 or replace the entire model without evidence."
+        }
+      ],
+      "stack_multiple_mechanisms": false,
+      "parameter_grid": false,
+      "insufficient_evidence": "Publish numeric extraction and exact unavailable interface; no unchanged-r27 relabel/28h rerun and no invented absent accepted states/forces."
+    }
   },
   "process": {
     "physical_start_hard_count_cap": null,
@@ -809,7 +1352,7 @@
       "rerun physics solely to recreate a video or overwrite a retained failure",
       "duplicated local archive after publication"
     ],
-    "work_first_rule": "The requested review publishes a concrete W38 plan only and starts no server work. Subsequent Codex execution reads current handoff/direct code, implements necessary changes and normal build, then starts two real full-joint streams within4h. No repeated audit, separate admission tests or restore drills.",
+    "work_first_rule": "This review publishes a concrete W39 plan and compact retrospective evidence only; no SSH, controller build or new experiment. Next authorized execution reads the existing W38 event windows and implements one supported correction plus phase/delivery wiring in the same <=4h task, normally builds and directly starts both complete-joint continuations. No extra approval round, physical admission test or restore drill.",
     "regression_stop_scope": "Retain only the existing post-episode known-r25 signature; it stops the affected branch. No new attempt/failure cap or generic monitoring framework."
   },
   "outputs": {
@@ -817,7 +1360,7 @@
     "large_root": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12",
     "create_result_index_only_after_actual_execution": true,
     "handoff": "Update ordinary job/index and the current six lines with BOTH stream states. Distinguish actual training, evaluation, compact Git and local-only bulk. Do not overwrite another active stream or equate compact push with backup.",
-    "publication": "From W38: push actual source/config before launch. After each stream completes its training/final evaluation, serialize publication of all compact episode/update/evaluation records and conclusions, then continue research. Bulk checkpoints/videos/raw arrays stay local for user backup/manual deletion. Preserve completed r26 old-style delivery history; do not redo it.",
+    "publication": "W39: publish actual changed source/config before launch. After each branch training/evaluation serialize all compact episode/update/2Hz-learning/PANN-value/event-window evidence and conclusions, then continue research. Also backfill W38 small numeric evidence once from saved files. Large checkpoints/videos/raw arrays remain local for user backup/manual deletion; preserve prior r26 Release and W38 compact publication history.",
     "unfinished_upload": "Compact Git failure is a real delivery pending item and is retried from saved records. Unrequested bulk upload is not pending and does not block research; selected transfers retain their actual independent status. Never mark local-only raw evidence as backed up or uploaded.",
     "extra_archive_on_user_pc": false,
     "preserve_normal_working_files_and_actual_history": true,
@@ -830,7 +1373,11 @@
       "actual frozen-policy evaluation results and explicit blocked/skipped/unavailable reasons",
       "compact launch/environment dependency records without credentials, reused when unchanged",
       "conclusions, next research question and local job/episode/training paths for retained raw evidence",
-      "Job/stream-namespaced collection/progress/stopped/learning plus compact transition/terminal/event summaries; never a stale overwritten generic records file."
+      "Job/stream-namespaced collection/progress/stopped/learning plus compact transition/terminal/event summaries; never a stale overwritten generic records file.",
+      "All2Hz learning transition small records: time/dt, phase, raw action and cap, total reward/components, terminated/truncated, behavior log-prob and behavior policy version.",
+      "Small value/next-value and12-dimensional PANN recovery-feature table exported from saved rollouts, linked by stream/phase/episode/transition; full658D observations and dense arrays are not required in Git.",
+      "Low-volume per-episode event summaries and finalE30 numeric event windows from existing actual action/plan/physical/material records; explicit missing fields, sample rates, time axes, foot order and accepted/reference/linearization roles.",
+      "One-time W38 low-frequency transition/value/PANN and both E30 numeric-window backfill from existing saved files in the next execution session, without rerender, physics replay or full archive."
     ],
     "w1_catchup": {
       "status": "published",
@@ -844,26 +1391,42 @@
     "upload_packaging": "Only package/split explicitly selected transfers on the execution host as needed. Default bulk outputs remain local for user-managed backup; no automatic Codex PC mirror/archive.",
     "training_complete_does_not_imply_publication_complete": true,
     "existing_publication_at_review": {
-      "reviewed_commit": "94b43d0bda02fecddc7734fc4afa00ac713d8bbe",
-      "job": "job-20261103T075623Z",
-      "compact_git": "published",
-      "current_pending_assets": [],
-      "historical_videos": 73,
-      "selected_release_retry": "completed for ep176 XML and ep185 material-0011.npz",
-      "cleanup_deleted_files": 0,
-      "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json",
-      "scope": "Read repository evidence only; this review did not perform server delivery."
+      "reviewed_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
+      "phase": "W38",
+      "streams": {
+        "w38-a": {
+          "job": "job-20261104T104730Z-w38-a",
+          "compact_git": "published",
+          "compact_files": 161,
+          "errors": [],
+          "current_pending_assets": [],
+          "cleanup_deleted_files": 0,
+          "bulk_status": "retained_local_for_user_backup_and_manual_deletion",
+          "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261104T104730Z-w38-a.json"
+        },
+        "w38-b": {
+          "job": "job-20261104T104730Z-w38-b",
+          "compact_git": "published",
+          "compact_files": 161,
+          "errors": [],
+          "current_pending_assets": [],
+          "cleanup_deleted_files": 0,
+          "bulk_status": "retained_local_for_user_backup_and_manual_deletion",
+          "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261104T104730Z-w38-b.json"
+        }
+      },
+      "scope": "Both completed compact deliveries are present in repository evidence; no server access or delivery performed by this review. W38 required low-frequency value/PANN and event-window backfill is new pending extraction, not a failure of its original bulk-local policy."
     },
     "transfer_rule": "Use the transfer method that works on the new AutoDL host. Do not hardcode or rebuild the old workstation proxy; fix an actual upload failure only. Do not route through the user's PC for archiving.",
     "storage_rule": "Latest user instruction supersedes the previous automatic cleanup authorization. Large research outputs remain on the server; the user periodically exports them to their own storage disk and manually deletes after backup. Codex does not automatically delete research outputs, including already-uploaded copies. Compact Git delivery is not proof of bulk backup. Preserve current resume/last update and all active runtime/data files.",
-    "mutable_record_publication": "Freeze per-job/per-stream snapshots for compact publication; existing generic early records are not current W37/W38 evidence. Serialize finish/Git, reuse shared index lock, and stage only declared completed job-owned paths.",
+    "mutable_record_publication": "Freeze current job/stream/phase snapshots for compact publication; generic historical records are not current W39 evidence. Preserve completed W38 records, serialize finish/Git with the existing index lock, and stage only declared job-owned records plus explicitly named W38 compact backfill.",
     "automatic_publication": {
       "enabled": true,
       "entrypoint": "scripts/finish_s1_go2_r12_job.py",
       "training_failure_still_triggers_postprocess": true,
       "video_source": "On-demand rendering uses saved actual trajectory/model/result only. No automatic full-episode rendering and no new physics for videos.",
       "manifest": "Compact Git paths and retained local job/episode/training locations in the existing job/index. Explicit selected bulk manifests are optional and separate.",
-      "git_scope": "This job's compact result files,index and handoff;source changes committed before launch. No blanket git add,no unrelated changes,no force push.",
+      "git_scope": "This job compact results, all required2Hz/value/PANN/event exports, index and handoff; source/config before launch. Explicitly named W38 saved-data backfill may also be staged. No blanket git add, unrelated changes or force push.",
       "status": "Keep training target attainment, final evaluation, compact Git delivery, retained-local bulk data and user backup/deletion separate.",
       "default_postprocess_wall_s": 21600,
       "release_parts": {
@@ -875,7 +1438,7 @@
         "server_execution_of_new_partitioning": "Already executed in W35 and W36; reuse deterministic partNN destinations and existing manifests.",
         "scope": "Existing optional selected-asset uploader only; no default automatic Release pipeline."
       },
-      "evaluation_assets": "Include every explicit evaluation attempt result/config in compact delivery; raw policy traces/arrays/videos remain local unless selected for analysis.",
+      "evaluation_assets": "Include every explicit evaluation result/config and required finalE30 numeric event windows in compact Git. Full raw policy/planner/action traces, arrays and full-length videos remain local.",
       "cleanup": {
         "enabled": false,
         "owner": "user",
@@ -896,7 +1459,9 @@
       "delivery_mode": "compact_first_local_bulk",
       "bulk_upload_enabled": false,
       "render_all_episodes": false,
-      "delivery_policy_source": "At finish invocation use current main contract outputs.automatic_publication for delivery authorization only, record the source/policy, and preserve the frozen job execution contract for all computation/evaluation settings."
+      "delivery_policy_source": "At finish invocation use current main contract outputs.automatic_publication for delivery authorization only, record the source/policy, and preserve the frozen job execution contract for all computation/evaluation settings.",
+      "compact_numeric_evidence_source": "outputs.compact_numeric_evidence",
+      "compact_export_implementation_status": "planned_required_W39_numeric_evidence_and_W38_saved_backfill_not_implemented"
     },
     "local_bulk_categories": [
       "large checkpoints and full resume weights",
@@ -904,8 +1469,62 @@
       "full-length videos and long logs",
       "unchanged runtime/model assets and preserved old-version tail evidence"
     ],
-    "selected_evidence_rule": "Upload only specifically needed diagnostic slices, short videos, selected K/C/D nodes or weights, with episode/time/source/selection reason. All compact episode outcomes remain mandatory; selection must not hide failures. Reuse saved trajectories without rerunning physics.",
-    "parallel_publication_rule": "Independent compute, serialized compact finish and Git; parent orchestration preserves both stream handoff states and uses existing index locking. No new scheduling/monitoring platform."
+    "selected_evidence_rule": "All actual episode outcomes and all2Hz transition/value/12-PANN compact records are mandatory. Retain low-volume episode event summaries and selected numeric final-E30 windows with exact time/identity/field-order/source/selection rule; split named files if needed rather than silently omit them at2MB. Selection never hides failures. Full raw arrays/videos remain local; use saved data without physics replay.",
+    "parallel_publication_rule": "Independent compute, serialized compact finish and Git; parent orchestration preserves both stream handoff states and uses existing index locking. No new scheduling/monitoring platform.",
+    "compact_numeric_evidence": {
+      "status": "planned_required_export_not_implemented",
+      "all_2Hz_transitions": true,
+      "value_and_next_value": true,
+      "pann_recovery_features": 12,
+      "full_observation_dimensions_required": false,
+      "event_window_s": {
+        "before": 0.1,
+        "after": 0.2,
+        "terminal_tail": 0.1
+      },
+      "events": [
+        "first executed target clipping",
+        "first raw-PD torque saturation",
+        "first abs(raw_K_delta_x)>0.5rad descriptive event",
+        "first actual nonfoot load with Fz/support fraction",
+        "first actual material load",
+        "original terminal"
+      ],
+      "raw_K_comparison_threshold_rad": 0.5,
+      "threshold_is_physical_stop_rule": false,
+      "event_selection": "Scan saved events after actual Stand->outbound, merge overlapping windows and retain terminal tail. Typical1-2s perE30; all episode outcomes remain complete. If a training contrast is needed choose earliest matching natural episode per stream, not best result.",
+      "alignment": "Join actual executed target/time to action records and overlapping plan_id. Exclude unintegrated time0RPC requests and final-row clock mismatches. Map risk FL/RL/FR/RR to runtime FL/FR/RL/RR. Preserve accepted/reference/linearization identities.",
+      "accepted_coverage": "Existing accepted slices are only node0 and+20ms. Unsafe recorded point proves that point; safe endpoints do not prove intervening substeps or full0.35s horizon. PredictionNPZ is feedback reference, not full accepted rollout.",
+      "file_size_policy": "Explicit required compact exports may be split by episode/event; a generic2MB filter must not silently discard required evidence. Do not indiscriminately put denseJSONL/logs in Git.",
+      "missing_field_policy": "Report exact missing/unavailable saved fields and sources. Do not infer unstored raw observations, forces or accepted trajectory nodes.",
+      "bulk_recording_unchanged": true
+    },
+    "W38_compact_backfill": {
+      "status": "pending_saved_data_export_next_execution_session",
+      "review_did_not_read_server_raw": true,
+      "streams": {
+        "w38-a": {
+          "job": "job-20261104T104730Z-w38-a",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1",
+          "E30_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30"
+        },
+        "w38-b": {
+          "job": "job-20261104T104730Z-w38-b",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2",
+          "E30_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30"
+        }
+      },
+      "required": [
+        "all existing2Hz transition small records",
+        "value/next-value and12PANN feature table",
+        "both finalE30 numeric event windows"
+      ],
+      "new_physics": false,
+      "automatic_render": false,
+      "full_bulk_upload": false,
+      "automatic_delete": false,
+      "publication": "Explicit small backfill into existing compact result/review paths; preserve W38 completed results and all local raw data."
+    }
   },
   "history": {
     "R11_remains_paused": true,
@@ -1375,9 +1994,777 @@
       "status": "implemented_in_S5_r24_and_executed_in_W34",
       "next_action": "Reuse the executed r24 geometric clearance correction. W37 addresses the r25 contact/reference/feedback regression and consistent path derivatives; do not re-add this same correction or arbitrarily increase its weight.",
       "historical_scope": "Completed r24 correction with W34/W35 physical evidence; neither a new W37 result nor a prerequisite test."
+    },
+    "completed_W38_implementation": {
+      "controller_patch": "experiments/terrain_memory/s1-go2-r11-S5-r27.patch",
+      "reward": "scripts/s1_go2_r11_policy.py: LegalRoute.settle_physical_terminal before final transition",
+      "diagnostics": "C++ policy ActionRecorded and planner Iteration; per-episode local JSONL",
+      "streams": "Existing start/train/PolicyStream/evaluate/finish entries; first-fork post-restore RNG",
+      "built": true,
+      "training_started": true,
+      "build_wall_s": 158.77915263175964,
+      "build_source_commit": "a9638e6c022879a168c41214af03b0bebaca13ec",
+      "binary": "work/r11-frozen/S5-r27/agent_server",
+      "build_identity": "work/r11-frozen/S5-r27/identity.json"
+    },
+    "completed_W38_actual_execution": {
+      "task": "W38_SMOOTH_APPROACH_PARALLEL_JOINT",
+      "controller_build": "S5-r27",
+      "shared_started_unix_s": 1793789250.6111062,
+      "deadline_unix_s": 1793890050.6111062,
+      "streams": {
+        "w38-a": {
+          "job": "job-20261104T104730Z-w38-a",
+          "phase_id": "job-20261104T104730Z-w38-a",
+          "seed": 1,
+          "status": "training_ended",
+          "transitions": 7569,
+          "updates": 29,
+          "new_transitions": 1024,
+          "new_updates": 4,
+          "tail": 0,
+          "invocation_new_transitions": 1024,
+          "invocation_wall_s": 50259.26255226135,
+          "excluded": 145,
+          "resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+          "last_completed_update": {
+            "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/checkpoint-007569.pt",
+            "samples": 7569,
+            "updates": 29,
+            "phase_id": "job-20261104T104730Z-w38-a",
+            "stream_id": "w38-a",
+            "controller_build": "S5-r27",
+            "reward_version": "W38_legal_route_terminal_settlement"
+          },
+          "evaluation": "completed",
+          "evaluation_stages": [
+            {
+              "level": "E30",
+              "attempt": "job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30",
+              "stage_status": "physical_material_failure",
+              "started_unix_s": 1793839514.6161802,
+              "command": [
+                "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+                "-u",
+                "scripts/run_s1_go2_r12.py",
+                "--attempt",
+                "job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30",
+                "--build",
+                "S5-r27",
+                "--group",
+                "PANN_PPO_S5",
+                "--seed",
+                "1",
+                "--checkpoint",
+                "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/checkpoint-007569.pt",
+                "--level",
+                "E30",
+                "--condition",
+                "nominal",
+                "--workers",
+                "8",
+                "--evaluation-start-unix",
+                "1793839513.0",
+                "--deadline-unix",
+                "1793853913.0",
+                "--policy-output",
+                "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a/evaluation-policy/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30",
+                "--contract",
+                "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a/execution-contract.json"
+              ],
+              "success": false,
+              "reason": "invalid_contact:[[0, 13, 0, 1]]",
+              "error": null,
+              "simulation_s": 13.563399999995067,
+              "wall_s": 1351.605303088203,
+              "stage_progress": {
+                "far_arrival_s": null,
+                "return_start_s": null,
+                "actual_route_fraction": 0.10078972985911269,
+                "full_observation": false,
+                "actual_material_loaded": true,
+                "material_traversal": {
+                  "completed": false,
+                  "west_entry_s": null,
+                  "east_exit_s": null,
+                  "lateral_exit_s": null,
+                  "max_abs_base_y_during_crossing_m": null,
+                  "material_loaded_during_crossing": false,
+                  "original_strip_x_m": [
+                    0.8,
+                    2.2
+                  ],
+                  "original_strip_y_m": [
+                    -0.6,
+                    0.6
+                  ],
+                  "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+                }
+              },
+              "legal_route": {
+                "reward_version": "W38_legal_route_terminal_settlement",
+                "progress": 0.0,
+                "completed_roundtrips": 0,
+                "legal_outbound_traversals": 0,
+                "legal_return_traversals": 0,
+                "side_exits": 0,
+                "raw_roundtrips": 0,
+                "passages": [
+                  {
+                    "lap": 1,
+                    "direction": "outbound",
+                    "entry_s": null,
+                    "exit_s": null,
+                    "lateral_exit_s": null,
+                    "material_loaded": false,
+                    "completed": false,
+                    "terminal_closed_s": 13.563399999995067
+                  }
+                ],
+                "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+              },
+              "completed_round_trips": 0,
+              "case_key": "dc7393707269fa963ebe70056f628c6260796c0e9b2d5731acfda7d47aea567d",
+              "qualification": {
+                "predecessor_attempt": null,
+                "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+                "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+                "solver_workers": 8,
+                "worker_setting_checked_against_predecessor": false
+              },
+              "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30.json",
+              "exit_code": 0,
+              "finished_unix_s": 1793840877.5425808,
+              "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a/evaluation-E30.log"
+            },
+            {
+              "level": "E60",
+              "stage_status": "blocked_by_predecessor",
+              "reason": "E30: physical_material_failure: invalid_contact:[[0, 13, 0, 1]]"
+            }
+          ],
+          "publication": "published",
+          "outcomes": {
+            "physical_episodes": 35,
+            "results_available": 35,
+            "results_unavailable": [],
+            "legal_outbound_traversals": 0,
+            "side_exits": 0,
+            "far_arrivals": 0,
+            "return_episodes": 0,
+            "completed_roundtrips": 0,
+            "legal_roundtrips": 0,
+            "legal_return_traversals": 0,
+            "legal_all_outbound_traversals": 0,
+            "all_passage_side_exits": 0,
+            "legality_records": 35,
+            "physical_failures_by_phase": {
+              "body_fall": {
+                "outbound": 13
+              },
+              "invalid_contact": {
+                "outbound": 20
+              },
+              "material_domain_exit": {
+                "outbound": 1
+              }
+            },
+            "saved_observations": 1024,
+            "nonzero_pann_observations": 22,
+            "return_observations": 0,
+            "return_nonzero_pann_observations": 0,
+            "material_loaded_episodes": 27,
+            "max_forward_displacement_m": 0.975877351871824,
+            "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+            "observation_sources_unavailable": []
+          },
+          "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1"
+        },
+        "w38-b": {
+          "job": "job-20261104T104730Z-w38-b",
+          "phase_id": "job-20261104T104730Z-w38-b",
+          "seed": 2,
+          "status": "training_ended",
+          "transitions": 7569,
+          "updates": 29,
+          "new_transitions": 1024,
+          "new_updates": 4,
+          "tail": 0,
+          "invocation_new_transitions": 1024,
+          "invocation_wall_s": 50608.204859972,
+          "excluded": 145,
+          "resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+          "last_completed_update": {
+            "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/checkpoint-007569.pt",
+            "samples": 7569,
+            "updates": 29,
+            "phase_id": "job-20261104T104730Z-w38-b",
+            "stream_id": "w38-b",
+            "controller_build": "S5-r27",
+            "reward_version": "W38_legal_route_terminal_settlement"
+          },
+          "evaluation": "completed",
+          "evaluation_stages": [
+            {
+              "level": "E30",
+              "attempt": "job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30",
+              "stage_status": "physical_material_failure",
+              "started_unix_s": 1793839863.131082,
+              "command": [
+                "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+                "-u",
+                "scripts/run_s1_go2_r12.py",
+                "--attempt",
+                "job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30",
+                "--build",
+                "S5-r27",
+                "--group",
+                "PANN_PPO_S5",
+                "--seed",
+                "2",
+                "--checkpoint",
+                "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/checkpoint-007569.pt",
+                "--level",
+                "E30",
+                "--condition",
+                "nominal",
+                "--workers",
+                "8",
+                "--evaluation-start-unix",
+                "1793839861.0",
+                "--deadline-unix",
+                "1793854261.0",
+                "--policy-output",
+                "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b/evaluation-policy/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30",
+                "--contract",
+                "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b/execution-contract.json"
+              ],
+              "success": false,
+              "reason": "invalid_contact:[[0, 13, 0, 1]]",
+              "error": null,
+              "simulation_s": 13.520799999995166,
+              "wall_s": 1365.4220230020583,
+              "stage_progress": {
+                "far_arrival_s": null,
+                "return_start_s": null,
+                "actual_route_fraction": 0.13227859374493925,
+                "full_observation": false,
+                "actual_material_loaded": true,
+                "material_traversal": {
+                  "completed": false,
+                  "west_entry_s": null,
+                  "east_exit_s": null,
+                  "lateral_exit_s": null,
+                  "max_abs_base_y_during_crossing_m": null,
+                  "material_loaded_during_crossing": false,
+                  "original_strip_x_m": [
+                    0.8,
+                    2.2
+                  ],
+                  "original_strip_y_m": [
+                    -0.6,
+                    0.6
+                  ],
+                  "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+                }
+              },
+              "legal_route": {
+                "reward_version": "W38_legal_route_terminal_settlement",
+                "progress": 0.0,
+                "completed_roundtrips": 0,
+                "legal_outbound_traversals": 0,
+                "legal_return_traversals": 0,
+                "side_exits": 0,
+                "raw_roundtrips": 0,
+                "passages": [
+                  {
+                    "lap": 1,
+                    "direction": "outbound",
+                    "entry_s": null,
+                    "exit_s": null,
+                    "lateral_exit_s": null,
+                    "material_loaded": false,
+                    "completed": false,
+                    "terminal_closed_s": 13.520799999995166
+                  }
+                ],
+                "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+              },
+              "completed_round_trips": 0,
+              "case_key": "78d1f9ee92ba6e1fca82599deb1208e2988ef0076711a993e735a2649fb0977c",
+              "qualification": {
+                "predecessor_attempt": null,
+                "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+                "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+                "solver_workers": 8,
+                "worker_setting_checked_against_predecessor": false
+              },
+              "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30.json",
+              "exit_code": 0,
+              "finished_unix_s": 1793841239.970352,
+              "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b/evaluation-E30.log"
+            },
+            {
+              "level": "E60",
+              "stage_status": "blocked_by_predecessor",
+              "reason": "E30: physical_material_failure: invalid_contact:[[0, 13, 0, 1]]"
+            }
+          ],
+          "publication": "published",
+          "outcomes": {
+            "physical_episodes": 35,
+            "results_available": 35,
+            "results_unavailable": [],
+            "legal_outbound_traversals": 0,
+            "side_exits": 1,
+            "far_arrivals": 0,
+            "return_episodes": 0,
+            "completed_roundtrips": 0,
+            "legal_roundtrips": 0,
+            "legal_return_traversals": 0,
+            "legal_all_outbound_traversals": 0,
+            "all_passage_side_exits": 1,
+            "legality_records": 35,
+            "physical_failures_by_phase": {
+              "invalid_contact": {
+                "outbound": 20
+              },
+              "body_fall": {
+                "outbound": 14
+              }
+            },
+            "saved_observations": 1024,
+            "nonzero_pann_observations": 35,
+            "return_observations": 0,
+            "return_nonzero_pann_observations": 0,
+            "material_loaded_episodes": 26,
+            "max_forward_displacement_m": 0.9349160428411607,
+            "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+            "observation_sources_unavailable": []
+          },
+          "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b",
+          "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2"
+        }
+      },
+      "shared_parent_counted_once": true,
+      "distinct_new_transitions": 2048,
+      "common_elapsed_wall_s": 51991.51211667061,
+      "distinct_new_transitions_per_wall_s": 0.039391045125206185,
+      "no_fused_optimizer_or_policy": true,
+      "bulk_retained_local": true,
+      "deleted_files": 0
+    },
+    "completed_W38_protocol": {
+      "task_before_completion_refresh": {
+        "id": "W38",
+        "status": "planned_not_implemented_not_built_not_run",
+        "goal": "Remove the evidenced artificial approach-cost discontinuity within the full joint loop, then use two parallel complete engineering forks to assess approach stability, legal material exposure and useful learning.",
+        "controller_build": "S5-r27",
+        "controller_status": "planned_not_implemented_not_built_not_run",
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "streams": [
+          {
+            "stream_id": "w38-a",
+            "group": "PANN_PPO_S5",
+            "seed": 1,
+            "fork_exploration_seed": 2026110401
+          },
+          {
+            "stream_id": "w38-b",
+            "group": "PANN_PPO_S5",
+            "seed": 2,
+            "fork_exploration_seed": 2026110402
+          }
+        ],
+        "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
+        "parent_transitions": 6545,
+        "parent_updates": 25,
+        "parent_tail": 0,
+        "historical_excluded": 145,
+        "new_transitions_per_stream": 1024,
+        "new_updates_per_stream": 4,
+        "target_cumulative_transitions_per_stream": 7569,
+        "target_cumulative_updates_per_stream": 29,
+        "unique_new_transitions_total_target": 2048,
+        "shared_training_maximum_wall_s": 100800,
+        "evaluation_maximum_wall_s_per_stream": 14400,
+        "postprocess_maximum_wall_s": 21600,
+        "server_execution_by_this_review": false,
+        "done": "Implement/build/launch r27 with actual full-joint samples/updates in both isolated streams; report all partial or completed results, own final-update evaluation and compact Git publication. This is not a promise of successful material traversal or independent-from-scratch multi-seed evidence."
+      },
+      "current_window_scope_at_reviewed_head": {
+        "task": "W38_SMOOTH_APPROACH_PARALLEL_JOINT",
+        "status": "computation_ended",
+        "streams": [
+          {
+            "stream_id": "w38-a",
+            "group": "PANN_PPO_S5",
+            "seed": 1,
+            "fork_exploration_seed": 2026110401
+          },
+          {
+            "stream_id": "w38-b",
+            "group": "PANN_PPO_S5",
+            "seed": 2,
+            "fork_exploration_seed": 2026110402
+          }
+        ],
+        "objective": "Eliminate the evidenced artificial approach-cost discontinuity and evaluate actual full-joint task progress through two isolated warm-start forks.",
+        "initial_transitions_per_stream": 6545,
+        "initial_updates_per_stream": 25,
+        "initial_completed_update_transitions": 6400,
+        "parent_unupdated_tail": 0,
+        "planned_excluded_old_version_transitions": 145,
+        "new_exclusions": 0,
+        "target_cumulative_transitions_per_stream": 7569,
+        "target_cumulative_updates_per_stream": 29,
+        "new_transitions_per_stream": 1024,
+        "new_updates_per_stream": 4,
+        "total_unique_new_transitions_target": 2048,
+        "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
+        "resume_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__resume-state-ep00216.pt",
+        "target_checkpoint": "checkpoint-007569.pt",
+        "implementation_base_build": "S5-r26",
+        "checkpoint_parent_build": "S5-r26",
+        "latest_executed_build": "S5-r26",
+        "latest_executed_build_status": "completed_W37_final_E30_failed",
+        "current_build": "S5-r27",
+        "current_build_status": "built_computation_ended",
+        "new_controller_build_required": false,
+        "window_budget_s": 14400,
+        "background_training_authorized": true,
+        "shared_background_training_budget_s": 100800,
+        "training_deadline_rule": "First actual W38 launch starts the common28hdeadline; later launch/resume does not reset it.",
+        "final_evaluation_budget_s_per_stream": 14400,
+        "automatic_postprocess": true,
+        "default_postprocess_budget_s": 21600,
+        "automatic_cleanup_status": "disabled_user_backup_and_manual_deletion",
+        "server_execution_completed_by_this_plan": false,
+        "this_review_documentation_only": true,
+        "this_review_starts_server_work": false,
+        "latest_user_scope": "2026-11-04: preserve r26 as executed; next round use compact-first, no PC archive or automatic server deletion; parallelize useful full experiments within25vCPU/96GB-class GPU."
+      },
+      "controller_version_boundary": {
+        "parent_controller_build": "S5-r26",
+        "active_controller_build": "S5-r27",
+        "implementation_base_controller_build": "S5-r26",
+        "status": "forks_launched",
+        "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
+        "parent_checkpoint_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__resume-state-ep00216.pt",
+        "parent_transitions": 6545,
+        "parent_updates": 25,
+        "parent_completed_update_transitions": 6400,
+        "parent_tail_buffer": 0,
+        "excluded_old_version_transitions_after_migration": 145,
+        "new_exclusions": 0,
+        "new_controller_initial_buffer": 0,
+        "reward_version_change": true,
+        "parent_reward_version": "W36_legal_route_progress_and_lap_alignment",
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "restoration": "Restore parent Actor/Critic/optimizer/normalization/history. On the first fork only, reseed NumPy/Torch/CUDA after checkpoint restoration using this stream fork_exploration_seed. Start a new physical session if no full environment snapshot exists.",
+        "idempotence": "Persist applied fork identity; same-branch resume preserves its own RNG and tail and never reseeds or re-excludes145.",
+        "first_new_rollout": {
+          "first_transition": 6546,
+          "last_transition": 6801,
+          "updates_after": 26
+        },
+        "target_checkpoint": "checkpoint-007569.pt",
+        "counter_semantics": "Serial numbers are namespaced by stream/phase; parent history is shared lineage, not twice observed data."
+      },
+      "forks": {
+        "kind": "two_warm_start_engineering_forks_not_independent_from_scratch_seeds",
+        "streams": [
+          {
+            "stream_id": "w38-a",
+            "group": "PANN_PPO_S5",
+            "seed": 1,
+            "fork_exploration_seed": 2026110401
+          },
+          {
+            "stream_id": "w38-b",
+            "group": "PANN_PPO_S5",
+            "seed": 2,
+            "fork_exploration_seed": 2026110402
+          }
+        ],
+        "reseed_after_restore_once": true,
+        "actor_optimizer_buffer_shared": false,
+        "material_world_shared": false,
+        "group": "PANN_PPO_S5",
+        "parent_history_count_once": true
+      },
+      "scope": "Historical W38 planning/launch metadata retained without rewriting its former status strings; completed result records take precedence."
+    },
+    "completed_W37_prerequisite_record": {
+      "transitions": 6545,
+      "updates": 25,
+      "tail_buffer": 0,
+      "completed_update_transitions": 6400,
+      "loss_metrics_saved": true,
+      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
+      "checkpoint_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__resume-state-ep00216.pt",
+      "server_checkpoint_copy_present_after_recorded_cleanup": true,
+      "physical_episodes": 214,
+      "last_episode": 216,
+      "post_update_physics": true,
+      "latest_update_has_post_update_physics": true,
+      "latest_update_physics_scope": "Independent frozen-policy E30 after update25; failed at14.3096s. ep216 is target-truncated at2.5s and does not itself establish update25 task ability.",
+      "latest_job": "job-20261103T075623Z",
+      "latest_controller": "S5-r26",
+      "tail_semantics": "Parent active tail0; retain historical excluded145 exactly once. No new tail exclusion is required at the r26->r27/reward boundary.",
+      "excluded_old_version_transitions": 145
+    },
+    "pre_W39_cost_reference": {
+      "reference_job": "job-20261031T101803Z",
+      "source_commit": "fff9bfd53afcf7f9511ad41ea62a585f092aba2c",
+      "new_transitions": 2048,
+      "new_effective_transitions": 1599,
+      "new_physics_s": 1006.5964,
+      "invocation_wall_s": 81414.375,
+      "transitions_per_invocation_hour": 90.559,
+      "reference_2048_invocation_h": 22.6151,
+      "training_budget_h": 28,
+      "is_next_window_time_promise": false,
+      "r25_reference": {
+        "job": "job-20261101T133954Z",
+        "new_transitions": 1169,
+        "episode_wall_h": 22.36592200163545,
+        "physics_s": 579.5091999993392,
+        "wall_s_per_sim_s": 138.94053658851217,
+        "scope": "Sum of27saved physical-episode wall times; excludes outside-episode overhead. No r26 throughput inferred."
+      },
+      "scope": "Historical execution only. Changed-controller throughput is unknown;28h may finish with partial counts. Use invocation wall for actual throughput, not restored cumulative wall including idle gaps."
+    },
+    "publication_state_before_W39": {
+      "reviewed_commit": "94b43d0bda02fecddc7734fc4afa00ac713d8bbe",
+      "job": "job-20261103T075623Z",
+      "compact_git": "published",
+      "current_pending_assets": [],
+      "historical_videos": 73,
+      "selected_release_retry": "completed for ep176 XML and ep185 material-0011.npz",
+      "cleanup_deleted_files": 0,
+      "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261103T075623Z.json",
+      "scope": "Read repository evidence only; this review did not perform server delivery."
+    },
+    "previous_final_evaluation_reference_W37": {
+      "latest_completed_reference": {
+        "checkpoint": "checkpoint-006545.pt",
+        "controller": "S5-r26",
+        "outcome": "invalid_contact:[[0, 13, 0, 1]]",
+        "simulation_s": 14.3096,
+        "max_x_m": 0.7462517148,
+        "qualified": false
+      },
+      "latest_executed_job_evaluation": {
+        "job": "job-20261103T075623Z",
+        "status": "E30_failed_E60_blocked",
+        "new_formal_attempts": 1
+      }
+    },
+    "completed_W38": {
+      "reviewed_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
+      "task": "W38_SMOOTH_APPROACH_PARALLEL_JOINT",
+      "controller_build": "S5-r27",
+      "status": "completed_both_targets_E30_failed_E60_blocked_compact_published",
+      "streams": {
+        "w38-a": {
+          "job": "job-20261104T104730Z-w38-a",
+          "status": "completed_training_and_evaluation_compact_published",
+          "controller_build": "S5-r27",
+          "seed": 1,
+          "initial_transitions": 6545,
+          "initial_updates": 25,
+          "new_transitions": 1024,
+          "new_updates": 4,
+          "transitions": 7569,
+          "updates": 29,
+          "tail": 0,
+          "excluded": 145,
+          "completed_update_transitions": 7424,
+          "last_episode": 251,
+          "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+          "invocation_wall_s": 50259.26255226135,
+          "transitions_per_invocation_hour": 73.34767389725927,
+          "outcomes": {
+            "physical_episodes": 35,
+            "results_available": 35,
+            "results_unavailable": [],
+            "legal_outbound_traversals": 0,
+            "side_exits": 0,
+            "far_arrivals": 0,
+            "return_episodes": 0,
+            "completed_roundtrips": 0,
+            "legal_roundtrips": 0,
+            "legal_return_traversals": 0,
+            "legal_all_outbound_traversals": 0,
+            "all_passage_side_exits": 0,
+            "legality_records": 35,
+            "physical_failures_by_phase": {
+              "body_fall": {
+                "outbound": 13
+              },
+              "invalid_contact": {
+                "outbound": 20
+              },
+              "material_domain_exit": {
+                "outbound": 1
+              }
+            },
+            "saved_observations": 1024,
+            "nonzero_pann_observations": 22,
+            "return_observations": 0,
+            "return_nonzero_pann_observations": 0,
+            "material_loaded_episodes": 27,
+            "max_forward_displacement_m": 0.975877351871824,
+            "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+            "observation_sources_unavailable": []
+          },
+          "E30": {
+            "stage_status": "physical_material_failure",
+            "success": false,
+            "reason": "invalid_contact:[[0, 13, 0, 1]]",
+            "simulation_s": 13.563399999995067,
+            "wall_s": 1351.605303088203,
+            "max_x_m": 0.6067477656179624,
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30.json",
+            "legal_route": {
+              "reward_version": "W38_legal_route_terminal_settlement",
+              "progress": 0.0,
+              "completed_roundtrips": 0,
+              "legal_outbound_traversals": 0,
+              "legal_return_traversals": 0,
+              "side_exits": 0,
+              "raw_roundtrips": 0,
+              "passages": [
+                {
+                  "lap": 1,
+                  "direction": "outbound",
+                  "entry_s": null,
+                  "exit_s": null,
+                  "lateral_exit_s": null,
+                  "material_loaded": false,
+                  "completed": false,
+                  "terminal_closed_s": 13.563399999995067
+                }
+              ],
+              "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+            }
+          },
+          "E60": "blocked_by_predecessor_not_run",
+          "publication_status": "published",
+          "compact_files": 161,
+          "errors": [],
+          "pending_assets": [],
+          "deleted_files": 0
+        },
+        "w38-b": {
+          "job": "job-20261104T104730Z-w38-b",
+          "status": "completed_training_and_evaluation_compact_published",
+          "controller_build": "S5-r27",
+          "seed": 2,
+          "initial_transitions": 6545,
+          "initial_updates": 25,
+          "new_transitions": 1024,
+          "new_updates": 4,
+          "transitions": 7569,
+          "updates": 29,
+          "tail": 0,
+          "excluded": 145,
+          "completed_update_transitions": 7424,
+          "last_episode": 251,
+          "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+          "invocation_wall_s": 50608.204859972,
+          "transitions_per_invocation_hour": 72.8419435188407,
+          "outcomes": {
+            "physical_episodes": 35,
+            "results_available": 35,
+            "results_unavailable": [],
+            "legal_outbound_traversals": 0,
+            "side_exits": 1,
+            "far_arrivals": 0,
+            "return_episodes": 0,
+            "completed_roundtrips": 0,
+            "legal_roundtrips": 0,
+            "legal_return_traversals": 0,
+            "legal_all_outbound_traversals": 0,
+            "all_passage_side_exits": 1,
+            "legality_records": 35,
+            "physical_failures_by_phase": {
+              "invalid_contact": {
+                "outbound": 20
+              },
+              "body_fall": {
+                "outbound": 14
+              }
+            },
+            "saved_observations": 1024,
+            "nonzero_pann_observations": 35,
+            "return_observations": 0,
+            "return_nonzero_pann_observations": 0,
+            "material_loaded_episodes": 26,
+            "max_forward_displacement_m": 0.9349160428411607,
+            "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+            "observation_sources_unavailable": []
+          },
+          "E30": {
+            "stage_status": "physical_material_failure",
+            "success": false,
+            "reason": "invalid_contact:[[0, 13, 0, 1]]",
+            "simulation_s": 13.520799999995166,
+            "wall_s": 1365.4220230020583,
+            "max_x_m": 0.7927774383342905,
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30.json",
+            "legal_route": {
+              "reward_version": "W38_legal_route_terminal_settlement",
+              "progress": 0.0,
+              "completed_roundtrips": 0,
+              "legal_outbound_traversals": 0,
+              "legal_return_traversals": 0,
+              "side_exits": 0,
+              "raw_roundtrips": 0,
+              "passages": [
+                {
+                  "lap": 1,
+                  "direction": "outbound",
+                  "entry_s": null,
+                  "exit_s": null,
+                  "lateral_exit_s": null,
+                  "material_loaded": false,
+                  "completed": false,
+                  "terminal_closed_s": 13.520799999995166
+                }
+              ],
+              "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+            }
+          },
+          "E60": "blocked_by_predecessor_not_run",
+          "publication_status": "published",
+          "compact_files": 161,
+          "errors": [],
+          "pending_assets": [],
+          "deleted_files": 0
+        }
+      },
+      "distinct_new_transitions": 2048,
+      "independent_new_updates_per_stream": 4,
+      "physical_training_episodes": 70,
+      "natural_failures": 68,
+      "target_truncated_episodes": 2,
+      "legal_outbound_traversals": 0,
+      "legal_return_traversals": 0,
+      "legal_roundtrips": 0,
+      "common_training_start_unix_s": 1793789250.6111062,
+      "last_collection_updated_unix_s": 1793839860.6075194,
+      "common_training_elapsed_wall_s": 50609.996413230896,
+      "distinct_new_transitions_per_training_hour": 145.6787299449905,
+      "throughput_scope": "2048 distinct new transitions divided by first shared launch to the later collection.updated_unix_s; excludes evaluation/publication after collection. Preserved original actual_execution common_elapsed_wall_s includes later time and is not reused as training-only throughput.",
+      "same_parent_engineering_branches_not_independent_from_scratch": true,
+      "bulk_retained_local": true,
+      "deleted_files": 0
     }
   },
-  "reviewed_source_commit": "94b43d0bda02fecddc7734fc4afa00ac713d8bbe",
+  "reviewed_source_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
   "literature": [
     {
       "id": "TM02",
@@ -1441,48 +2828,63 @@
     }
   ],
   "current_window_scope": {
-    "task": "W38_SMOOTH_APPROACH_PARALLEL_JOINT",
-    "status": "computation_ended",
+    "task": "W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT",
+    "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
     "streams": [
       {
-        "stream_id": "w38-a",
+        "stream_id": "w39-a",
         "group": "PANN_PPO_S5",
         "seed": 1,
-        "fork_exploration_seed": 2026110401
+        "parent_stream_id": "w38-a",
+        "parent_map_key": "w39-a",
+        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1"
       },
       {
-        "stream_id": "w38-b",
+        "stream_id": "w39-b",
         "group": "PANN_PPO_S5",
         "seed": 2,
-        "fork_exploration_seed": 2026110402
+        "parent_stream_id": "w38-b",
+        "parent_map_key": "w39-b",
+        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2"
       }
     ],
-    "objective": "Eliminate the evidenced artificial approach-cost discontinuity and evaluate actual full-joint task progress through two isolated warm-start forks.",
-    "initial_transitions_per_stream": 6545,
-    "initial_updates_per_stream": 25,
-    "initial_completed_update_transitions": 6400,
+    "objective": "Choose one supported contact/execution repair from saved W38 failure events, then continue each existing branch through complete joint updates and independent fixed evaluation.",
+    "selected_mechanism": null,
+    "initial_transitions_per_stream": 7569,
+    "initial_updates_per_stream": 29,
+    "initial_completed_update_transitions": 7424,
     "parent_unupdated_tail": 0,
     "planned_excluded_old_version_transitions": 145,
     "new_exclusions": 0,
-    "target_cumulative_transitions_per_stream": 7569,
-    "target_cumulative_updates_per_stream": 29,
+    "target_cumulative_transitions_per_stream": 8593,
+    "target_cumulative_updates_per_stream": 33,
     "new_transitions_per_stream": 1024,
     "new_updates_per_stream": 4,
     "total_unique_new_transitions_target": 2048,
-    "resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00216.pt",
-    "resume_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261103T075623Z-part03/job-20261103T075623Z__training__PANN_PPO_S5-seed0__resume-state-ep00216.pt",
-    "target_checkpoint": "checkpoint-007569.pt",
-    "implementation_base_build": "S5-r26",
-    "checkpoint_parent_build": "S5-r26",
-    "latest_executed_build": "S5-r26",
-    "latest_executed_build_status": "completed_W37_final_E30_failed",
-    "current_build": "S5-r27",
-    "current_build_status": "built_computation_ended",
-    "new_controller_build_required": false,
+    "experiment_tree_unique_history_at_both_targets": 10641,
+    "resume_checkpoint": null,
+    "resume_release_url": null,
+    "parent_map_source": "learning.parent_map",
+    "target_checkpoint": "checkpoint-008593.pt",
+    "first_new_rollout": {
+      "first_transition": 7570,
+      "last_transition": 7825,
+      "updates_after": 30
+    },
+    "implementation_base_build": "S5-r27",
+    "checkpoint_parent_build": "S5-r27",
+    "latest_executed_build": "S5-r27",
+    "latest_executed_build_status": "completed_W38_both_E30_failed_E60_blocked",
+    "current_build": "S5-r28",
+    "current_build_status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+    "new_controller_build_required": true,
+    "new_fork": false,
+    "reseed": false,
     "window_budget_s": 14400,
     "background_training_authorized": true,
     "shared_background_training_budget_s": 100800,
-    "training_deadline_rule": "First actual W38 launch starts the common28hdeadline; later launch/resume does not reset it.",
+    "training_clock_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w39-training-clock.json",
+    "training_deadline_rule": "First actual W39 launch creates a new common28h deadline; second launch and ordinary W39 resume do not reset it. Preserve W38 clock/jobs and never reset old deadlines.",
     "final_evaluation_budget_s_per_stream": 14400,
     "automatic_postprocess": true,
     "default_postprocess_budget_s": 21600,
@@ -1490,382 +2892,95 @@
     "server_execution_completed_by_this_plan": false,
     "this_review_documentation_only": true,
     "this_review_starts_server_work": false,
-    "latest_user_scope": "2026-11-04: preserve r26 as executed; next round use compact-first, no PC archive or automatic server deletion; parallelize useful full experiments within25vCPU/96GB-class GPU."
+    "latest_user_scope": "2026-11-05: analyze completed r27, publish the next concrete single-mechanism full-joint parallel plan; no SSH/build/physics in this review. Next execution continues each own ep251 branch, compact numeric evidence first, no PC archive or automatic deletion."
   },
   "current_review_scope": {
-    "kind": "completed_W37_evidence_review_and_W38_plan",
-    "reviewed_source_commit": "94b43d0bda02fecddc7734fc4afa00ac713d8bbe",
-    "review_date": "2026-11-04",
-    "timezone": "Asia/Shanghai",
+    "kind": "completed_W38_evidence_review_and_W39_plan",
+    "reviewed_source_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
+    "review_date": "2026-11-05",
+    "timezone": "Etc/UTC",
     "server_accessed": false,
     "server_deployed": false,
     "controller_implemented": false,
     "controller_built": false,
     "training_started": false,
     "new_tests_or_experiments": false,
-    "read_only_analysis": "All72W37training JSON,2048transitions,8learning batches/rollouts,final E30selected raw arrays/events,actual r26source and execution paths,prior cohorts and primary papers.",
-    "scope": "Plan/specification/documentation and compact retrospective analysis only. Actual r27 implementation/build and two-stream launch are the next Codex execution task.",
-    "analysis_source_commit": "3d2854510862ec9822dd4a1eee88daf4434c03d8",
-    "latest_delivery_checked": "243changed paths after the frozen analysis head: job-owned compact evidence,index/summary,handoff and excluding dense reference packets from default finish. No changed physical episode results or controller/training code."
+    "read_only_analysis": "All70new W38 training resultJSON, both finalE30 results/resolved configurations,2048cap records,8learning update records, actual r27/r26 patches and direct runtime/learning/delivery code, historical context and primary papers. New W38 raw rollout/NPZ/planner/actionJSONL contents were not read.",
+    "scope": "Plan/specification/documentation and compact retrospective audit only. Preserve actual completed r27 history. Saved-event extraction, evidence-selected r28 implementation/build and both W39 continuations remain next execution work.",
+    "analysis_source_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
+    "latest_delivery_checked": "Both W38 jobs compact-published161file records each; errors/pending empty, full bulk retained locally and deletion0. Missing small numeric learning/feedback evidence is explicitly planned for saved-data backfill."
+  },
+  "planned_implementation": {
+    "controller_build": "S5-r28",
+    "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+    "selected_mechanism": null,
+    "base_controller_build": "S5-r27",
+    "mechanism_selection_source": "control_and_evaluation.mechanism_selection",
+    "phase_wiring_source": "execution.background_job.required_entrypoint_changes",
+    "compact_evidence_source": "outputs.compact_numeric_evidence",
+    "implemented": false,
+    "built": false,
+    "training_started": false,
+    "retained": "r27C2 gate, r26causal packet/head offset/ten A-B substeps, TVfeedback/PD, original robot/material/contact/torque/fall/route semantics,658Dobs, frozenPANN and2Hzcap, W38terminal reward.",
+    "excluded_reinstatements": [
+      "r25 MovingSupport/SupportPlacement and load allocation",
+      "r18/r19 failed legacy velocity objectives",
+      "arbitrary new force objectives, K clipping/low-pass or parameter grid"
+    ],
+    "no_new_physical_admission_gate": true
   },
   "actual_implementation": {
-    "controller_patch": "experiments/terrain_memory/s1-go2-r11-S5-r27.patch",
-    "reward": "scripts/s1_go2_r11_policy.py: LegalRoute.settle_physical_terminal before final transition",
-    "diagnostics": "C++ policy ActionRecorded and planner Iteration; per-episode local JSONL",
-    "streams": "Existing start/train/PolicyStream/evaluate/finish entries; first-fork post-restore RNG",
-    "built": true,
-    "training_started": true,
-    "build_wall_s": 158.77915263175964,
-    "build_source_commit": "a9638e6c022879a168c41214af03b0bebaca13ec",
-    "binary": "work/r11-frozen/S5-r27/agent_server",
-    "build_identity": "work/r11-frozen/S5-r27/identity.json"
+    "controller_build": "S5-r28",
+    "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+    "selected_mechanism": null,
+    "implemented": false,
+    "built": false,
+    "training_started": false,
+    "build_wall_s": null,
+    "build_source_commit": null,
+    "binary": null,
+    "build_identity": null,
+    "planned_details": "planned_implementation",
+    "prior_completed_implementation": "history.completed_W38_implementation",
+    "scope": "W39 has not been implemented, built or run by this review; preserved completed W38 implementation is historical."
   },
   "actual_execution": {
-    "task": "W38_SMOOTH_APPROACH_PARALLEL_JOINT",
-    "controller_build": "S5-r27",
-    "shared_started_unix_s": 1793789250.6111062,
-    "deadline_unix_s": 1793890050.6111062,
+    "task": "W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT",
+    "controller_build": "S5-r28",
+    "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+    "server_accessed_by_this_review": false,
+    "server_deployed": false,
+    "training_started": false,
+    "evaluation_started": false,
+    "shared_started_unix_s": null,
+    "deadline_unix_s": null,
     "streams": {
-      "w38-a": {
-        "job": "job-20261104T104730Z-w38-a",
-        "phase_id": "job-20261104T104730Z-w38-a",
+      "w39-a": {
+        "status": "not_started",
+        "job": null,
+        "phase_id": null,
         "seed": 1,
-        "status": "training_ended",
-        "transitions": 7569,
-        "updates": 29,
-        "new_transitions": 1024,
-        "new_updates": 4,
-        "tail": 0,
-        "invocation_new_transitions": 1024,
-        "invocation_wall_s": 50259.26255226135,
-        "excluded": 145,
-        "resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
-        "last_completed_update": {
-          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/checkpoint-007569.pt",
-          "samples": 7569,
-          "updates": 29,
-          "phase_id": "job-20261104T104730Z-w38-a",
-          "stream_id": "w38-a",
-          "controller_build": "S5-r27",
-          "reward_version": "W38_legal_route_terminal_settlement"
-        },
-        "evaluation": "completed",
-        "evaluation_stages": [
-          {
-            "level": "E30",
-            "attempt": "job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30",
-            "stage_status": "physical_material_failure",
-            "started_unix_s": 1793839514.6161802,
-            "command": [
-              "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
-              "-u",
-              "scripts/run_s1_go2_r12.py",
-              "--attempt",
-              "job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30",
-              "--build",
-              "S5-r27",
-              "--group",
-              "PANN_PPO_S5",
-              "--seed",
-              "1",
-              "--checkpoint",
-              "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/checkpoint-007569.pt",
-              "--level",
-              "E30",
-              "--condition",
-              "nominal",
-              "--workers",
-              "8",
-              "--evaluation-start-unix",
-              "1793839513.0",
-              "--deadline-unix",
-              "1793853913.0",
-              "--policy-output",
-              "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a/evaluation-policy/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30",
-              "--contract",
-              "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a/execution-contract.json"
-            ],
-            "success": false,
-            "reason": "invalid_contact:[[0, 13, 0, 1]]",
-            "error": null,
-            "simulation_s": 13.563399999995067,
-            "wall_s": 1351.605303088203,
-            "stage_progress": {
-              "far_arrival_s": null,
-              "return_start_s": null,
-              "actual_route_fraction": 0.10078972985911269,
-              "full_observation": false,
-              "actual_material_loaded": true,
-              "material_traversal": {
-                "completed": false,
-                "west_entry_s": null,
-                "east_exit_s": null,
-                "lateral_exit_s": null,
-                "max_abs_base_y_during_crossing_m": null,
-                "material_loaded_during_crossing": false,
-                "original_strip_x_m": [
-                  0.8,
-                  2.2
-                ],
-                "original_strip_y_m": [
-                  -0.6,
-                  0.6
-                ],
-                "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
-              }
-            },
-            "legal_route": {
-              "reward_version": "W38_legal_route_terminal_settlement",
-              "progress": 0.0,
-              "completed_roundtrips": 0,
-              "legal_outbound_traversals": 0,
-              "legal_return_traversals": 0,
-              "side_exits": 0,
-              "raw_roundtrips": 0,
-              "passages": [
-                {
-                  "lap": 1,
-                  "direction": "outbound",
-                  "entry_s": null,
-                  "exit_s": null,
-                  "lateral_exit_s": null,
-                  "material_loaded": false,
-                  "completed": false,
-                  "terminal_closed_s": 13.563399999995067
-                }
-              ],
-              "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
-            },
-            "completed_round_trips": 0,
-            "case_key": "dc7393707269fa963ebe70056f628c6260796c0e9b2d5731acfda7d47aea567d",
-            "qualification": {
-              "predecessor_attempt": null,
-              "protocol_revision": "staged_evaluation_30_60_300_600_v2",
-              "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
-              "solver_workers": 8,
-              "worker_setting_checked_against_predecessor": false
-            },
-            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30.json",
-            "exit_code": 0,
-            "finished_unix_s": 1793840877.5425808,
-            "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a/evaluation-E30.log"
-          },
-          {
-            "level": "E60",
-            "stage_status": "blocked_by_predecessor",
-            "reason": "E30: physical_material_failure: invalid_contact:[[0, 13, 0, 1]]"
-          }
-        ],
-        "publication": "published",
-        "outcomes": {
-          "physical_episodes": 35,
-          "results_available": 35,
-          "results_unavailable": [],
-          "legal_outbound_traversals": 0,
-          "side_exits": 0,
-          "far_arrivals": 0,
-          "return_episodes": 0,
-          "completed_roundtrips": 0,
-          "legal_roundtrips": 0,
-          "legal_return_traversals": 0,
-          "legal_all_outbound_traversals": 0,
-          "all_passage_side_exits": 0,
-          "legality_records": 35,
-          "physical_failures_by_phase": {
-            "body_fall": {
-              "outbound": 13
-            },
-            "invalid_contact": {
-              "outbound": 20
-            },
-            "material_domain_exit": {
-              "outbound": 1
-            }
-          },
-          "saved_observations": 1024,
-          "nonzero_pann_observations": 22,
-          "return_observations": 0,
-          "return_nonzero_pann_observations": 0,
-          "material_loaded_episodes": 27,
-          "max_forward_displacement_m": 0.975877351871824,
-          "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
-          "observation_sources_unavailable": []
-        },
-        "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-a",
-        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1"
+        "training_started": false,
+        "evaluation_started": false,
+        "new_transitions": 0,
+        "new_updates": 0,
+        "parent_map_key": "w39-a"
       },
-      "w38-b": {
-        "job": "job-20261104T104730Z-w38-b",
-        "phase_id": "job-20261104T104730Z-w38-b",
+      "w39-b": {
+        "status": "not_started",
+        "job": null,
+        "phase_id": null,
         "seed": 2,
-        "status": "training_ended",
-        "transitions": 7569,
-        "updates": 29,
-        "new_transitions": 1024,
-        "new_updates": 4,
-        "tail": 0,
-        "invocation_new_transitions": 1024,
-        "invocation_wall_s": 50608.204859972,
-        "excluded": 145,
-        "resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
-        "last_completed_update": {
-          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/checkpoint-007569.pt",
-          "samples": 7569,
-          "updates": 29,
-          "phase_id": "job-20261104T104730Z-w38-b",
-          "stream_id": "w38-b",
-          "controller_build": "S5-r27",
-          "reward_version": "W38_legal_route_terminal_settlement"
-        },
-        "evaluation": "completed",
-        "evaluation_stages": [
-          {
-            "level": "E30",
-            "attempt": "job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30",
-            "stage_status": "physical_material_failure",
-            "started_unix_s": 1793839863.131082,
-            "command": [
-              "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
-              "-u",
-              "scripts/run_s1_go2_r12.py",
-              "--attempt",
-              "job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30",
-              "--build",
-              "S5-r27",
-              "--group",
-              "PANN_PPO_S5",
-              "--seed",
-              "2",
-              "--checkpoint",
-              "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/checkpoint-007569.pt",
-              "--level",
-              "E30",
-              "--condition",
-              "nominal",
-              "--workers",
-              "8",
-              "--evaluation-start-unix",
-              "1793839861.0",
-              "--deadline-unix",
-              "1793854261.0",
-              "--policy-output",
-              "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b/evaluation-policy/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30",
-              "--contract",
-              "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b/execution-contract.json"
-            ],
-            "success": false,
-            "reason": "invalid_contact:[[0, 13, 0, 1]]",
-            "error": null,
-            "simulation_s": 13.520799999995166,
-            "wall_s": 1365.4220230020583,
-            "stage_progress": {
-              "far_arrival_s": null,
-              "return_start_s": null,
-              "actual_route_fraction": 0.13227859374493925,
-              "full_observation": false,
-              "actual_material_loaded": true,
-              "material_traversal": {
-                "completed": false,
-                "west_entry_s": null,
-                "east_exit_s": null,
-                "lateral_exit_s": null,
-                "max_abs_base_y_during_crossing_m": null,
-                "material_loaded_during_crossing": false,
-                "original_strip_x_m": [
-                  0.8,
-                  2.2
-                ],
-                "original_strip_y_m": [
-                  -0.6,
-                  0.6
-                ],
-                "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
-              }
-            },
-            "legal_route": {
-              "reward_version": "W38_legal_route_terminal_settlement",
-              "progress": 0.0,
-              "completed_roundtrips": 0,
-              "legal_outbound_traversals": 0,
-              "legal_return_traversals": 0,
-              "side_exits": 0,
-              "raw_roundtrips": 0,
-              "passages": [
-                {
-                  "lap": 1,
-                  "direction": "outbound",
-                  "entry_s": null,
-                  "exit_s": null,
-                  "lateral_exit_s": null,
-                  "material_loaded": false,
-                  "completed": false,
-                  "terminal_closed_s": 13.520799999995166
-                }
-              ],
-              "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
-            },
-            "completed_round_trips": 0,
-            "case_key": "78d1f9ee92ba6e1fca82599deb1208e2988ef0076711a993e735a2649fb0977c",
-            "qualification": {
-              "predecessor_attempt": null,
-              "protocol_revision": "staged_evaluation_30_60_300_600_v2",
-              "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
-              "solver_workers": 8,
-              "worker_setting_checked_against_predecessor": false
-            },
-            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30.json",
-            "exit_code": 0,
-            "finished_unix_s": 1793841239.970352,
-            "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b/evaluation-E30.log"
-          },
-          {
-            "level": "E60",
-            "stage_status": "blocked_by_predecessor",
-            "reason": "E30: physical_material_failure: invalid_contact:[[0, 13, 0, 1]]"
-          }
-        ],
-        "publication": "published",
-        "outcomes": {
-          "physical_episodes": 35,
-          "results_available": 35,
-          "results_unavailable": [],
-          "legal_outbound_traversals": 0,
-          "side_exits": 1,
-          "far_arrivals": 0,
-          "return_episodes": 0,
-          "completed_roundtrips": 0,
-          "legal_roundtrips": 0,
-          "legal_return_traversals": 0,
-          "legal_all_outbound_traversals": 0,
-          "all_passage_side_exits": 1,
-          "legality_records": 35,
-          "physical_failures_by_phase": {
-            "invalid_contact": {
-              "outbound": 20
-            },
-            "body_fall": {
-              "outbound": 14
-            }
-          },
-          "saved_observations": 1024,
-          "nonzero_pann_observations": 35,
-          "return_observations": 0,
-          "return_nonzero_pann_observations": 0,
-          "material_loaded_episodes": 26,
-          "max_forward_displacement_m": 0.9349160428411607,
-          "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
-          "observation_sources_unavailable": []
-        },
-        "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261104T104730Z-w38-b",
-        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2"
+        "training_started": false,
+        "evaluation_started": false,
+        "new_transitions": 0,
+        "new_updates": 0,
+        "parent_map_key": "w39-b"
       }
     },
-    "shared_parent_counted_once": true,
-    "distinct_new_transitions": 2048,
-    "common_elapsed_wall_s": 51991.51211667061,
-    "distinct_new_transitions_per_wall_s": 0.039391045125206185,
-    "no_fused_optimizer_or_policy": true,
-    "bulk_retained_local": true,
-    "deleted_files": 0
+    "distinct_new_transitions": 0,
+    "parent_counts_and_paths": "learning.parent_map",
+    "prior_completed_execution": "history.completed_W38_actual_execution",
+    "scope": "These are explicit not-started W39 fields, not a new server observation. No W39 clock exists by virtue of this plan, and no W38 job/clock/data has been reset."
   }
 }

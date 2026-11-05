@@ -1,0 +1,248 @@
+{
+  "build": "S5-r28",
+  "based_on": "S5-r27",
+  "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+  "task": "W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT",
+  "reviewed_source_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
+  "plan": "docs/TERRAIN_MEMORY_PLAN.md#4",
+  "configuration_overrides": {
+    "r26_reference": {
+      "horizon_s": 0.35,
+      "maximum_lead_m": 0.15,
+      "maximum_speed_m_s": 0.25,
+      "acceleration_m_s2": 0.5,
+      "userdata_offset": 84,
+      "packet_size": 12,
+      "head_offset_m": 0.3
+    },
+    "r26_impact_margin": {
+      "onset_m": 0.0008,
+      "scale_m": 0.0002,
+      "weight": 176
+    },
+    "r12_substep_path": {
+      "enabled": true,
+      "rows": [
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "ImpactMargin"
+      ],
+      "residual": "Earliest componentwise maximum over ten pre-integration states; terminal separately.",
+      "derivatives": "Ten A/B transitions; one full node-start C/D; shared geometry FD only at final active states, composed with saved P/Q prefixes. Direct risk D is zero.",
+      "limits": "Active-branch derivative; nonsmooth peak switches and proxy-model soft risks do not guarantee true material feasibility."
+    },
+    "r27_approach_activation": {
+      "status": "implemented_shared_cost_and_FD",
+      "foot_half_width_m": 0.015811388300841896,
+      "band_m": 0.07525,
+      "full_foot_center_bounds": {
+        "xmin": 0.8158113883008419,
+        "xmax": 2.1841886116991582,
+        "abs_y_max": 0.5841886116991581
+      },
+      "smoothstep": "S(u)=v^3*(10-15*v+6*v^2), v=clip(u,0,1)",
+      "gate": "g=S((x-xmin+b)/b)*S((xmax+b-x)/b)*S((ymax+b-abs(y))/b)",
+      "applies_to": [
+        "LandingVelocity",
+        "ImpactMargin"
+      ],
+      "semantics": "Replace only their spatial boolean with the same C2gate multiplying the original residual; retain existing vertical gates,targets,weights,onset/scale.",
+      "derivatives": "Candidate cost and FD both use the complete g*r. Impact takes earliest componentwise maximum of g*r over ten pre-integration states then applies the original active-state P/Q derivative chain; terminal same formula. Landing stays node-start full C/D.",
+      "physical_boundary_unchanged": true,
+      "does_not_modify": [
+        "Ground",
+        "R10MaterialFoot or real material-force switch",
+        "material strain domain0.02",
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "original termination criteria"
+      ],
+      "limitations": "Only this artificial spatial gate becomes C2; contact/max/other branch nonsmoothness and proxy-model limitations remain. No true-TM02 feasibility guarantee."
+    }
+  },
+  "inherited_gait": {
+    "cadence_Hz": 2,
+    "duty": 0.45,
+    "rise_s": 0.075,
+    "descent_s": 0.2,
+    "changed": false
+  },
+  "retained": "Original Go2, TM02 0.02 domain, torque/contact/fall/route and ladder semantics; actual r27 shared C2 gate and r26 causal packet, ten substeps, TV feedback and PD. Frozen causal PANN, 658D observation, PPO 2Hz scalar cap, unchanged W38 reward. No hidden material truth input.",
+  "reward_version": "W38_legal_route_terminal_settlement",
+  "reference_packet_fields": [
+    "active",
+    "t0",
+    "x_anchor",
+    "endpoint",
+    "direction",
+    "v_anchor",
+    "cap",
+    "heading",
+    "world_head_dx",
+    "world_head_dy",
+    "base_y",
+    "base_z"
+  ],
+  "qualification": "Plan only. W38/r27 final E30 failed in both branches. No S5-r28 binary, physics, learning, formal qualification or server deployment exists from this review.",
+  "selection": {
+    "status": "pending_read_of_existing_W38_E30_event_windows",
+    "selected_mechanism": null,
+    "execution_scope": "Within the same <=4h implementation/launch session; not a new physical admission test or another planning round.",
+    "read_first": "Both already saved W38 E30s, with first clipping/PD saturation, large raw Kdelta, nonfoot support, material load and terminal event windows; align actual executed actions, contact forces and existing plan slices.",
+    "window_s": {
+      "before_event": 0.1,
+      "after_event": 0.2,
+      "additional_terminal_tail": 0.1
+    },
+    "evidence_limits": [
+      "Only accepted node0 and node10(+20ms) are saved; safe endpoints do not prove full-horizon or substep feasibility.",
+      "Full prediction NPZ is the feedback reference, not full accepted rollout.",
+      "No W38 raw JSONL/NPZ read by this review; W37 event times cannot be copied as W38 facts.",
+      "Map risk FL/RL/FR/RR order to runtime FL/FR/RL/RR; exclude unexecuted startup RPC and mismatched final timestamps."
+    ],
+    "ordered_decisions": [
+      {
+        "condition": "Earliest divergence is a demonstrated clock/reference/selected-policy/derivative mismatch",
+        "action": "Repair that specific implementation interface; do not change control mechanism on a speculative mismatch."
+      },
+      {
+        "condition": "A saved accepted nominal slice already enters the original protected-trunk terminal geometry",
+        "action": "Use candidate feasibility before the original objective, with explicit no-feasible-candidate restoration and coherent acceptance/policy/regularization semantics.",
+        "candidate_feasibility": {
+          "violation": "v=max over candidate original protected trunk geoms, ten substeps and terminal of positive_part(original XML margin - geometry gap)",
+          "selection": "If any candidate v=0, minimize original J over those candidates. Otherwise record prediction_infeasible/restoration and lexicographically minimize (v,J) among the existing candidates.",
+          "must_update_coherently": [
+            "winner",
+            "accepted rollout",
+            "candidate policy",
+            "feedback reference",
+            "improvement and surprise",
+            "regularization acceptance"
+          ],
+          "reuse": "Existing original-geometry risk values and derivatives; do not invent a new tuning weight.",
+          "limitation": "Finite-candidate model feasibility only, not a guarantee for the real TM02 plant. Do not freeze the previous action or silently call an infeasible candidate safe."
+        }
+      },
+      {
+        "condition": "Available nominal evidence has no observed violation and execution feedback changes the actuator/contact active set before the failure",
+        "action": "Derive one repair to the demonstrated local feedback feasible domain, including state derivatives and held-action substeps where relevant. No prespecified K clip, simple gain scaling or posthoc low-pass."
+      },
+      {
+        "condition": "Earliest demonstrated prediction/plant divergence occurs after true material load",
+        "action": "Repair the specific model/interface approximation with causal available state; no oracle q/e, relaxed true domain, or wholesale unqualified model replacement."
+      }
+    ],
+    "one_control_mechanism_only": true,
+    "insufficient_evidence": "Publish the actual extracted numerical evidence and exact missing interface; do not relabel unchanged r27 as r28 and blindly launch another28h. No generic repeated review/plan cycle.",
+    "known_non_bugs": [
+      "Plant and MPC already share kp60/kd5, original target ctrlrange and actuator force saturation.",
+      "K0=1227272.7273N/m and equilibrium Kinf=375000N/m have distinct inherited roles; loaded_target already uses K0. The active indentation onset is a one-sided Kinf penalty, not an equality target.",
+      "The r27 C2 and true-terminal credit repair are already implemented and retained."
+    ]
+  },
+  "implementation_contract": {
+    "status": "not_implemented",
+    "normal_build_required": true,
+    "preparation": "Extend the existing prepare/build entrypoint from actual r27 with only the evidence-selected r28 correction. Do not declare a patch or binary as present until it actually exists.",
+    "parallel_work": [
+      "Read and export saved E30 critical events",
+      "Implement necessary new-phase parent/directory/clock and compact-evidence plumbing"
+    ],
+    "phase_identity": "Preserve ancestral W38 fork_identity, record a new W39 phase_lineage and current stream/phase/controller identity. Do not remove existing resume protections.",
+    "new_phase_paths": "Pass explicit per-stream parent map and training_directory through start/train/eval/finish; parent ep251 paths are read-only. Current initial checkpoint writes must not overwrite old ep251.",
+    "clock": "Create w39-training-clock.json only at first actual W39 launch. Never delete or reset w38-training-clock.json; later W39 launches/resumes share its own absolute deadline.",
+    "source_before_launch": true,
+    "physical_test_gate": false,
+    "no_suites_or_grids": true
+  },
+  "streams": [
+    {
+      "stream_id": "w39-a",
+      "parent_stream_id": "w38-a",
+      "group": "PANN_PPO_S5",
+      "seed": 1,
+      "parent_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+      "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1",
+      "parent_transitions": 7569,
+      "parent_updates": 29,
+      "parent_tail": 0,
+      "historical_excluded": 145,
+      "restore": "Own Actor/Critic, optimizer, RNG, normalization and history; no new fork reseeding.",
+      "new_exclusions": 0,
+      "new_transitions": 1024,
+      "new_updates": 4,
+      "target_transitions": 8593,
+      "target_updates": 33,
+      "first_new_batch": [
+        7570,
+        7825
+      ],
+      "first_new_update": 30,
+      "first_new_episode_at_least": 252
+    },
+    {
+      "stream_id": "w39-b",
+      "parent_stream_id": "w38-b",
+      "group": "PANN_PPO_S5",
+      "seed": 2,
+      "parent_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+      "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2",
+      "parent_transitions": 7569,
+      "parent_updates": 29,
+      "parent_tail": 0,
+      "historical_excluded": 145,
+      "restore": "Own Actor/Critic, optimizer, RNG, normalization and history; no new fork reseeding.",
+      "new_exclusions": 0,
+      "new_transitions": 1024,
+      "new_updates": 4,
+      "target_transitions": 8593,
+      "target_updates": 33,
+      "first_new_batch": [
+        7570,
+        7825
+      ],
+      "first_new_update": 30,
+      "first_new_episode_at_least": 252
+    }
+  ],
+  "execution": {
+    "interactive_maximum_s": 14400,
+    "concurrent_compute_slots": 2,
+    "mpc_workers_per_stream": 8,
+    "torch_threads": 1,
+    "blas_threads": 1,
+    "shared_training_maximum_s": 100800,
+    "final_evaluation_maximum_s_per_stream": 14400,
+    "compact_postprocess_maximum_s": 21600,
+    "after_build": "Direct full PANN-PPO-MPC-Go2/TM02 training; no pure-MPC, E30 admission, smoke/mock/test suite, restore drill, parameter or worker grid, separate benchmark.",
+    "known_r25_stop": "Preserve the exact existing R12 learning.known_r25_startup_regression predicate and publication/skip behavior.",
+    "ordinary_failures": "Save unchanged physical terminal and continue natural episodes; no new attempt/failure count cap.",
+    "evaluation": "Own current-phase last actual completed new update (updates>29), fixed mean/frozen normalization nominal E30, then only exact-case eligible E60. No parent fallback, E300/E600 or automatic full matrix.",
+    "counting": "Each final branch8593/33=8448trained+145excluded. W39 adds2048 unique samples; full tree at both targets10641, not one policy or combined optimizer."
+  },
+  "compact_evidence": {
+    "required": [
+      "Every episode JSON including failure/zero-step/interruption/truncation",
+      "All2Hz transitions with reward components, action/cap, time/dt, terminated/truncated, behavior logprob/version",
+      "Saved value/next-value and12PANN recovery features in small per-transition tables",
+      "Critical event numerical windows with actual sample clocks/rate/selection rule and available plan/action slices",
+      "Per-stream learning, last own update, frozen evaluation and explicit blocked/skipped/unavailable status",
+      "Actual source/config/phase identities, local retained paths, conclusions and measured useful throughput"
+    ],
+    "W38_catchup": "Extract existing saved low-rate records and both E30 critical windows once; no new physics or full bulk transfer.",
+    "large_outputs": "Retain on server for user export/backup/manual deletion; no automatic cleanup or PC archive.",
+    "mandatory_small_evidence_size_rule": "Split into meaningful small event/transition files if needed; do not silently omit required evidence under a generic raw/2MB filter."
+  },
+  "actual_implementation": {
+    "implemented": false,
+    "built": false,
+    "patch": null,
+    "binary": null
+  },
+  "actual_execution": {
+    "server_accessed_by_review": false,
+    "training_started": false,
+    "evaluation_started": false,
+    "streams": []
+  }
+}

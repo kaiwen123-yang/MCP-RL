@@ -1,0 +1,661 @@
+{
+  "schema_version": "W38_literature_review_v1",
+  "review": {
+    "review_id": "W38-literature",
+    "reviewed_on_beijing": "2026-11-05",
+    "timezone": "Asia/Shanghai",
+    "reviewed_source_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
+    "readers": [
+      "root",
+      "research_history"
+    ],
+    "scope": "2026-11-05 W38/r27结果之后的聚焦一手文献复核；只读研究，不作为新实验、控制实现或复现结果。",
+    "registry": "literature/terrain_memory_sources.json",
+    "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+  },
+  "catalog_accounting": {
+    "previous_formal_papers": 34,
+    "formal_papers_after_update": 43,
+    "new_formal_entries": [
+      "TM35",
+      "TM36",
+      "TM37",
+      "TM38",
+      "TM39",
+      "TM40",
+      "TM41",
+      "TM42",
+      "TM43"
+    ],
+    "new_entries_with_substantive_fulltext_reading": [
+      "TM35",
+      "TM36",
+      "TM37",
+      "TM38",
+      "TM39",
+      "TM40",
+      "TM41"
+    ],
+    "official_abstract_only_new_entry": [
+      "TM42"
+    ],
+    "partial_reading_new_entry": [
+      "TM43"
+    ],
+    "existing_paper_updates": [
+      "TM31",
+      "TM32"
+    ],
+    "promoted_existing_additional_source": [
+      "TM42"
+    ],
+    "count_boundary": "新增9个正式编号，其中TM42已在补充来源列表；不是9篇首次发现或9篇全文通读。TM31/32不计新论文，全文获取、相关章节读完与全篇通读分别记录。"
+  },
+  "records": [
+    {
+      "id": "TM31",
+      "title": "Residual MPC: Blending Reinforcement Learning with GPU-Parallelized Model Predictive Control",
+      "record_kind": "existing_paper_publication_and_reading_update",
+      "reader_identity": "root",
+      "publication_update": "Author publication page now lists IEEE Transactions on Robotics, 2026; DOI 10.1109/TRO.2026.3721669. Existing arXiv paper downloaded is v1, 2025-10-14; this is not counted as a new paper.",
+      "primary_sources": [
+        "https://seungwoo-hong.github.io/publications/",
+        "https://arxiv.org/abs/2510.12717",
+        "https://doi.org/10.1109/TRO.2026.3721669"
+      ],
+      "read_scope": "Verified author publication metadata and abstract, downloaded v1, inspected selected GPU implementation and torque-residual architecture passages; not a full read of the journal revision.",
+      "use_boundary": "Torque-level residual authority and a GPU-parallel kinodynamic MPC are architectural changes; this paper does not establish that more cap-only training will repair current fast contact failures. No automatic controller replacement is planned.",
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    },
+    {
+      "id": "TM32",
+      "record_kind": "existing_paper_abstract_and_publication_recheck",
+      "reader_identity": "research_history",
+      "title": "Impact-Aware Robust Convex MPC for Quadruped Locomotion on Uncertain Terrain",
+      "publication": "IEEE Robotics and Automation Letters11(7),7820-7827,2026; publication date2026-05-11",
+      "doi": "10.1109/LRA.2026.3692086",
+      "urls": [
+        "https://doi.org/10.1109/LRA.2026.3692086",
+        "https://ieeexplore.ieee.org/document/11513962/"
+      ],
+      "read_scope": {
+        "read": [
+          "official IEEE indexed abstract and metadata"
+        ],
+        "not_read": [
+          "full text, equations, implementation"
+        ],
+        "access_limit": "IEEE page required JavaScript/anti-bot response; author full text not obtained; ResearchGate only offered request-full-text."
+      },
+      "mechanism_from_abstract": "Bounded impact momentum disturbance in an SRB model, min-max optimization transformed into a QP with a relaxation mechanism.",
+      "recommended_use": "May support the distinction between touchdown disturbance robustness and a smooth impact penalty, but already TM32 and not a newly discovered paper.",
+      "limitations": [
+        "Abstract-only; cannot infer exact feasible set, bounds, implementation or guarantees."
+      ],
+      "do_not_claim": [
+        "Do not count as a new source beyondTM01-34.",
+        "Do not say full-text read."
+      ],
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    },
+    {
+      "id": "TM35",
+      "title": "Planning to Learn: Real-Time Robust Adaptive Control on the GPU with Guaranteed Future Learning",
+      "record_kind": "new_formal_paper_entry",
+      "reader_identity": "root",
+      "year": 2026,
+      "version": "arXiv:2610.20925v1, 2026-10-14",
+      "publication_status": "preprint",
+      "primary_sources": [
+        "https://arxiv.org/abs/2610.20925v1",
+        "https://arxiv.org/pdf/2610.20925v1",
+        "https://trustworthyrobotics.github.io/adaptive_sls/",
+        "https://github.com/trustworthyrobotics/adaptive_sls"
+      ],
+      "read_scope": "Downloaded complete v1 PDF; read problem formulation and SLS preliminaries (section III), estimator and uncertainty update (IV A-B), selected reachability/constraint derivations (IV C-E), quadruped and Crazyflie experiments and conclusion. Appendix proofs not read in full. Author project methods and official repository README read; implementation not audited or reproduced.",
+      "mechanism": "Augment the physical state with parameter estimates. Propagate correlated disturbance, parameter error and estimate-update effects through SLS; forecast the bounded uncertainty remaining after future observations, rather than holding the initial uncertainty fixed over the horizon.",
+      "author_reported_evidence": "Equations 12-15 update the estimate and zonotope generators; quadruped experiment uses 61 states, 12 inputs and 8 unknown joint-damping parameters, with parameter observations gated to swing. Section V reports 38/40 stable runs, versus 24/40 for non-adaptive SLS, and median solve time 16.1 ms under a 32 ms budget. These are author results on that model, not this repository.",
+      "project_use": "A close long-term analogue for putting evolving terrain knowledge inside candidate prediction: current loading changes both future material state and what can be inferred. Current frozen PANN observations plus scalar cap do not yet implement this coupling.",
+      "limits": [
+        "The demonstration learns joint damping, not a recovering, spatially persistent terrain constitutive state.",
+        "The formulation requires a meaningful bounded parameter/disturbance model and estimator dynamics; the current PANN has no calibrated uncertainty tube.",
+        "A GPU-compatible SLS solver is a different implementation from the CPU MuJoCo iLQG backend. No transferable speed or safety guarantee is claimed.",
+        "Not a precondition or proposed wholesale replacement for W39."
+      ],
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    },
+    {
+      "id": "TM36",
+      "title": "Shooting for Contact: Contact-Implicit Multiple Shooting for Dynamic Motion Retargeting",
+      "record_kind": "new_formal_paper_entry",
+      "reader_identity": "root",
+      "year": 2026,
+      "version": "arXiv:2608.03116v2, 2026-10-25",
+      "publication_status": "preprint",
+      "primary_sources": [
+        "https://arxiv.org/abs/2608.03116v2",
+        "https://arxiv.org/pdf/2608.03116v2",
+        "https://shooting-for-contact.github.io/",
+        "https://github.com/sesteban951/shooting-for-contact"
+      ],
+      "read_scope": "Downloaded full v2 PDF; read sections II-III dynamics, differentiable simulator, multiple-shooting formulation, cost and receding-horizon control, selected gait-library and hardware/result passages. Read author project methods and limitation-relevant distinctions. Not a full source-code audit or reproduction.",
+      "mechanism": "Optimize shooting-node states and command control points; enforce continuity with the simulator's integrated transition map. Fine contact substeps are chained between coarser shooting nodes. Constraints and costs include whole-body dynamics, actuation, state/body tracking, realized torque and command increments.",
+      "author_reported_evidence": "Equations 5a-d define the constrained NLP; equations 10-12 distinguish realized-torque cost from raw position-command cost and add command-rate regularization. A PD command is not itself a torque. Author references are dynamically feasible in the chosen simulator, and policies are trained against these references.",
+      "project_use": "Inspect the actual accepted trajectory and executed command/support chain, not only a kinematic reference or reduced objective. A future input-bandwidth change belongs inside prediction and optimization with the same actuator interface.",
+      "limits": [
+        "MuJoCo simulator feasibility does not establish true TM02 material feasibility.",
+        "Its main result is offline or receding-window motion retargeting and imitation RL, not the current online PANN-PPO-cap-iLQG architecture.",
+        "Do not replace the whole solver or add output low-pass filtering under this citation in W39.",
+        "No evidence from this paper identifies the unique cause of the r27 failures."
+      ],
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    },
+    {
+      "id": "TM37",
+      "title": "Accelerating and Scaling MPC-Guided Reinforcement Learning for Humanoid Locomotion and Manipulation",
+      "record_kind": "new_formal_paper_entry",
+      "reader_identity": "root",
+      "year": 2026,
+      "version": "arXiv:2606.05687v1, 2026-06-04",
+      "publication_status": "preprint",
+      "primary_sources": [
+        "https://arxiv.org/abs/2606.05687v1",
+        "https://arxiv.org/pdf/2606.05687v1",
+        "https://caltech-amber.github.io/mpc-guided-rl/",
+        "https://github.com/junhengl/mpc-rl"
+      ],
+      "read_scope": "Downloaded full v1 PDF; read sections II-IV formulation, prediction-landmark rewards, parallel-in-horizon solver and training/PD interface, and relevant section V solver and locomotion comparisons. Did not reproduce experiments or audit the full solver implementation.",
+      "mechanism": "The pi^n MPC solver exposes both environment and horizon dimensions to batched GPU ADMM, using time-varying dynamics directly rather than assembling a large QP or keeping serial Riccati recursion. Centroidal MPC trajectories guide training rewards; deployment uses a learned low-level policy.",
+      "author_reported_evidence": "Equations 18-22 lift the previous input and split the optimization into local horizon-parallel updates. Training uses 4096 environments, 200 Hz physics and a 50 Hz joint-position policy. Prediction landmarks compare predictions with the realized state at their matching timestamp. Reported default MPC guidance is N=10 at 10 Hz; increasing rate did not improve every metric.",
+      "project_use": "Explains what real GPU scaling requires: a batch-compatible solver and environment, not simply more VRAM or setting a Torch device. The current 88% CPU-planning share motivates a later, explicitly budgeted backend project.",
+      "limits": [
+        "Centroidal contact-wrench MPC and training-only guidance differ from full-body iLQG in the execution loop.",
+        "The author's humanoid policy has 29 joint-position actions; it is not the current 2 Hz scalar cap.",
+        "MuJoCo/TM02 0.2 ms material dynamics, persistent cell history, original contact/torque thresholds and evaluation semantics must remain equivalent in any later backend migration.",
+        "Do not copy Themis-specific 1-2 Hz gain choices to Go2, or claim a CUDA switch provides the paper's throughput."
+      ],
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    },
+    {
+      "id": "TM38",
+      "record_kind": "new_formal_paper_entry_not_previously_TM01_TM34",
+      "reader_identity": "research_history",
+      "title": "Dexterous Contact-Rich Manipulation via the Contact Trust Region",
+      "authors": [
+        "H. J. Terry Suh",
+        "Tao Pang",
+        "Tong Zhao",
+        "Russ Tedrake"
+      ],
+      "publication": "2025 preprint, latest arXiv v4 2025-11-03; IJRR volume 45 issue 9 (2026)",
+      "doi": "10.1177/02783649251398875",
+      "urls": [
+        "https://arxiv.org/abs/2505.02291",
+        "https://arxiv.org/html/2505.02291v4",
+        "https://rai-inst.com/resources/papers/dexterous-contact-rich-manipulation-via-the-contact-trust-region/",
+        "https://ctr.theaiinstitute.com/"
+      ],
+      "read_scope": {
+        "canonical_version": "2505.02291v4",
+        "read_in_full": [
+          "sections 2.1-2.6 (CQDC assumptions and contact smoothing)",
+          "sections 3.1-3.6 (CTR and R-CTR derivation, bounds)",
+          "sections 4.1-4.4 (trajectory optimization, initialization, examples, MPC)",
+          "sections 6.1-6.3 (second-order simulation and hardware)",
+          "section 9.2 (limitations)"
+        ],
+        "read_partially": [
+          "abstract and introduction",
+          "section 5 experiments",
+          "section 7 global-planner introduction",
+          "section 9.1.2 RL exploration remarks"
+        ],
+        "not_read": [
+          "complete section 5 results analysis",
+          "complete sections 7-8 global planner",
+          "appendix",
+          "source code; project page says code coming soon"
+        ],
+        "figures": "captions/text read; not a pixel-by-pixel inspection"
+      },
+      "mechanisms": [
+        {
+          "location": "Eq18-19",
+          "detail": "Joint local affine models of next configuration q+ and average contact force lambda; lambda is force and h*lambda is impulse."
+        },
+        {
+          "location": "Eq24",
+          "detail": "Full CTR intersects an ellipsoidal perturbation region with the local dynamics, primal contact-velocity feasibility, and dual friction-cone feasibility; it is a convex SOCP local model, not a guarantee for true nonlinear dynamics."
+        },
+        {
+          "location": "Eq26-27",
+          "detail": "Actual optimization uses relaxed R-CTR, dropping primal feasibility to avoid overconservatism while retaining dual contact-force cone feasibility. Action-only form fixes delta_q=0."
+        },
+        {
+          "location": "Eq37 and Algorithm1",
+          "detail": "A constrained SOCP local optimization replaces an iLQR-style Bellman step; nominal trajectory is rolled out with unsmoothed dynamics, local model is built from smoothed dynamics."
+        },
+        {
+          "location": "section3.6.2",
+          "detail": "Joint/actuation bounds are steady-state approximations; authors explicitly exclude dynamic transient torque."
+        }
+      ],
+      "relevance": "A local feedback/optimization correction must respect unilateral contact and actuator authority. A smooth gradient or isotropic small correction alone does not define a physically useful domain.",
+      "limitations": [
+        "Model is quasi-dynamic, configuration-only, highly damped, not full floating-base Go2 dynamics.",
+        "Anitescu contact relaxation introduces hydroplaning; barrier smoothing produces force at a distance.",
+        "The actual R-CTR does not enforce full primal contact feasibility.",
+        "Second-order deployment uses 1-2 second action chunks and contact-reestablishment initialization; do not copy this to dynamic locomotion.",
+        "Section9.2 explicitly reports unresolved occasional contact loss in second-order simulation/hardware and says legged use may need balance constraints.",
+        "No proof that this solves the repository r27 failures; no material-memory validation."
+      ],
+      "recommended_use": "Use as rationale to examine the local domain of planned/feedback corrections; any MuJoCo dynamic-state, PD and contact feasibility mapping must be derived for this repository.",
+      "do_not_claim": [
+        "Do not call posthoc K clipping a CTR implementation.",
+        "Do not add another force residual using unvalidated MakeDifferentiable forces and call it force feasibility.",
+        "Do not call the controller robust or torque-safe merely because a local cone or steady-state torque bound exists."
+      ],
+      "version_caution": "Downloaded RAI PDF MotionSets_TRO2024-1.pdf is an older draft with different FTR/CTR naming. Canonical equation references above use arXiv v4 HTML, not that draft.",
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    },
+    {
+      "id": "TM39",
+      "record_kind": "new_formal_paper_entry_not_previously_TM01_TM34",
+      "reader_identity": "research_history",
+      "title": "Robustifying Model-Based Locomotion by Zero-order Stochastic Nonlinear Model Predictive Control with Guard Saltation Matrix",
+      "authors": [
+        "Sotaro Katayama",
+        "Noriaki Takasugi",
+        "Mitsuhisa Kaneko",
+        "Norio Nagatsuka",
+        "Masaya Kinoshita"
+      ],
+      "publication": "IROS2024; arXiv2403.14159v2, 2024-09-13",
+      "doi": null,
+      "urls": [
+        "https://arxiv.org/abs/2403.14159",
+        "https://arxiv.org/html/2403.14159v2",
+        "https://arxiv.org/pdf/2403.14159v2",
+        "https://www.sony.com/en/SonyInfo/technology/publications/robustifying-model-based-locomotion-by-zero-order-stochastic-nonlinear-model-predictive-control-with-guard-saltation-matrix/"
+      ],
+      "read_scope": {
+        "read_in_full": [
+          "main text sections I-VI, including formulation, saltation/guard covariance, approximation, simulation, hardware and conclusion"
+        ],
+        "not_read": [
+          "referenced papers",
+          "implementation source code"
+        ],
+        "figures": "text/captions read; no pixel-by-pixel plot extraction"
+      },
+      "mechanisms": [
+        {
+          "location": "Eq9",
+          "formula": "P_next=(A+B*K)*P*(A+B*K)^T+Gamma*W*Gamma^T",
+          "detail": "Closed-loop covariance propagation on smooth segments."
+        },
+        {
+          "location": "Eq10",
+          "formula": "P_plus_hat=Xi_x*P_minus*Xi_x^T+Xi_g*C_g*Xi_g^T",
+          "detail": "Propagates uncertainty from contact guard height/timing separately from state perturbations."
+        },
+        {
+          "location": "Eq12-13",
+          "detail": "Uses an EKF-like covariance update at observed contact events to reduce excessive covariance growth."
+        },
+        {
+          "location": "Eq15 and zero-order RTI formulation",
+          "detail": "Covariance produces constraint backoff; sensitivity of covariance/backoff is omitted in the optimization step, using warm-started gains to reduce runtime cost."
+        }
+      ],
+      "relevance": "A landing perturbation changes when contact happens and therefore the post-contact state. Smooth state Jacobians and isotropic process noise alone do not explicitly capture that effect.",
+      "limitations": [
+        "Prescribed mode sequence and switching times, not unconstrained new-contact discovery.",
+        "Requires a well-defined guard, reset map, and transverse crossing; direct formula is unsuitable at grazing singularities.",
+        "Multiple-foot extension is explicitly heuristic; no general simultaneous-contact guarantee.",
+        "Dynamics use a full centroidal model; experiments are a wheeled telescopic-leg robot and a simulated humanoid, not Go2 soft-terrain whole-body control.",
+        "Authors tune process covariance for conditioning, clip large backoffs and soften some state constraints.",
+        "Swing-foot collisions remain a failure mode; emergency replanning is unresolved."
+      ],
+      "recommended_use": "If existing r27 event traces show predicted/actual touchdown timing or contact mode mismatch, use the hybrid transition structure to guide a mode-consistent local model; do not graft a saltation matrix onto already integrated compliant MuJoCo dynamics without deriving the event model.",
+      "do_not_claim": [
+        "No unconditional stability guarantee on this repository.",
+        "No evidence that r27 feedback failed from a saltation defect before examining existing event traces.",
+        "Do not copy the printed backoff inequality sign without reconciling the repository constraint convention."
+      ],
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    },
+    {
+      "id": "TM40",
+      "record_kind": "new_formal_paper_entry_not_previously_TM01_TM34",
+      "reader_identity": "research_history",
+      "title": "Fast Contact-Implicit Model-Predictive Control",
+      "authors": [
+        "Simon Le Cleac’h",
+        "Taylor Howell",
+        "Shuo Yang",
+        "Chi-Yen Lee",
+        "John Zhang",
+        "Arun Bishop",
+        "Mac Schwager",
+        "Zachary Manchester"
+      ],
+      "publication": "IEEE Transactions on Robotics40 (2024),1617-1629; first preprint2021, latest arXivv3 2023-01-06",
+      "doi": "10.1109/TRO.2024.3351554",
+      "urls": [
+        "https://roboticexplorationlab.org/papers/contact_implicit_mpc_paper.pdf",
+        "https://arxiv.org/abs/2107.05616",
+        "https://ieeexplore.ieee.org/document/10384795/",
+        "https://github.com/dojo-sim/ContactImplicitMPC.jl"
+      ],
+      "read_scope": {
+        "manuscript": "Downloaded author-lab PDF, not asserted byte-identical to publisher final version.",
+        "read_in_full": [
+          "sections III-IV (contact dynamics, interior-point differentiation, fast LCP, controller, height heuristic)",
+          "sections V-VI (simulation, Go1 execution, limitations and future work)"
+        ],
+        "read_partially": [
+          "abstract, introduction, related work"
+        ],
+        "code": "Official GitHub repository landing page verified, not an implementation audit.",
+        "figures": "captions/tables read; not video or full pixel inspection"
+      },
+      "mechanisms": [
+        {
+          "location": "Eq19-21",
+          "detail": "Reference-dependent mass/Jacobian/contact-geometry approximations retain a nonlinear complementarity structure in a time-varying LCP. The local controller can change contact timing and modes without integer optimization."
+        },
+        {
+          "location": "Eq14,17 and sectionIV.C/G",
+          "detail": "Differentiate an interior-point solution with finite central-path parameter; near-hard subgradients omit nearby mode information. Online planning commonly uses kappa approximately1e-4; nonlinear verification uses approximately1e-6."
+        },
+        {
+          "location": "Eq31-38",
+          "detail": "Upper-level trajectory optimization uses lower-level LCP dynamics; a contact-height estimate updates signed distance after measured contact. Short horizons, warm starts, fixed iterations and prefactorization limit runtime."
+        },
+        {
+          "location": "sectionV.B",
+          "detail": "Go1 hardware uses a simplified 36-state point-foot model with force controls and no leg dynamics; a pretuned1000Hz torque controller realizes desired foot forces. MPC is approximately100Hz with0.10-0.15s horizons."
+        }
+      ],
+      "relevance": "Contact switching structure can be preserved even with useful smoothing. However, the executed low-level force controller and a realizable reference remain essential parts of reported behavior.",
+      "limitations": [
+        "Substantial backend/contact-solver replacement relative to the current MuJoCo whole-body iLQG, not a short drop-in patch.",
+        "Reference trajectories must already be good; offline contact-implicit generation is explicitly unreliable.",
+        "The authors explicitly report conventional convexMPC is more robust for general locomotion because it additionally has online Raibert foothold selection.",
+        "No deformable-memory model or Go2 terrain success proof.",
+        "Do not advertise2024 publication as an algorithm first proposed in2024 or2026."
+      ],
+      "recommended_use": "Use the authors own limitations to avoid treating smooth derivatives or free contact switching as sufficient. The repository must connect plausible references, contact response and low-level execution.",
+      "do_not_claim": [
+        "Do not map the paper force-input Go1 results directly to our joint-position+PD execution.",
+        "Do not infer a guaranteed speedup from a different LCP implementation."
+      ],
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    },
+    {
+      "id": "TM41",
+      "record_kind": "new_formal_paper_entry_not_previously_TM01_TM34",
+      "reader_identity": "research_history",
+      "title": "Convergent iLQR for Safe Trajectory Planning and Control of Legged Robots",
+      "authors": [
+        "James Zhu",
+        "J. Joe Payne",
+        "Aaron M. Johnson"
+      ],
+      "publication": "ICRA2024; arXiv2304.00346v3,2024-03-04",
+      "doi": null,
+      "urls": [
+        "https://arxiv.org/abs/2304.00346",
+        "https://arxiv.org/html/2304.00346v3",
+        "https://ieeexplore.ieee.org/document/10611641",
+        "https://www.cmu.edu/me/robomechanicslab/publications.html"
+      ],
+      "read_scope": {
+        "read_in_full": [
+          "main text sections I-VI in arXivv3 HTML, including equations, algorithm, examples and limitations"
+        ],
+        "not_read": [
+          "implementation source code",
+          "all cited works"
+        ],
+        "figures": "captions and data tables read; not pixel-by-pixel plot inspection"
+      },
+      "mechanisms": [
+        {
+          "location": "Eq1-2",
+          "formula": "Phi=(A_N-B_N*K_N)*Xi_(N-1,N)*...*Xi_(1,2)*(A_1-B_1*K_1); chi=||Phi||_2",
+          "detail": "Measures worst-case local initial-to-final error growth, including hybrid event saltation."
+        },
+        {
+          "location": "Eq7 and Algorithm1",
+          "detail": "Two backward passes separate the tracking gains used to evaluate convergence from the search gains used to find a better trajectory. A line search accepts a lower convergence-augmented cost."
+        },
+        {
+          "location": "Eq8-11",
+          "detail": "Derivatives of the maximum singular value involve derivatives of the closed-loop state maps and saltation; implementation uses finite differences and BFGS."
+        }
+      ],
+      "relevance": "Even equal tracking gains can behave very differently on different nominal trajectories. A lower nominal objective is not evidence that the trajectory can be tracked with the available local feedback authority.",
+      "limitations": [
+        "MATLAB simulations of a rocket hopper and a planar spring-legged quadruped only; hardware is future work.",
+        "The four-dimensional derivative tensor needed for exact Hessians is expensive; authors describe current algorithm as useful for offline planning, not established real-time full-body control.",
+        "Quadruped convergence measure improves60.52 to41.35, remaining greater than1; improved robustness is not universal contraction.",
+        "Linear analysis assumes nearby trajectories undergo the same mode transition.",
+        "Not a hard actuator feasibility or contact-force guarantee."
+      ],
+      "recommended_use": "Supports keeping accepted trajectory, feedback reference and actual tracking performance distinct; do not add chi cost or a new convergence qualification matrix to the immediate r28 on this evidence.",
+      "do_not_claim": [
+        "No proven Go2 soft-terrain stability.",
+        "Do not confuse the optimization search gains with the deployed tracking gains."
+      ],
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    },
+    {
+      "id": "TM42",
+      "record_kind": "promoted_existing_additional_source_abstract_only",
+      "reader_identity": "research_history",
+      "title": "Terramechanics-Aware Adaptive Quadrupedal Locomotion via Foot-Terrain Interaction Model",
+      "publication": "IEEE Robotics and Automation Letters11(11),12552-12559,2026; publication date2026-09-10",
+      "doi": "10.1109/LRA.2026.3732903",
+      "urls": [
+        "https://ieeexplore.ieee.org/abstract/document/11685272/",
+        "https://doi.org/10.1109/LRA.2026.3732903"
+      ],
+      "read_scope": {
+        "read": [
+          "official IEEE indexed abstract and bibliographic metadata"
+        ],
+        "not_read": [
+          "full text, equations, implementation, complete experimental protocol"
+        ],
+        "access_limit": "Official full page returned418; no author full text found in focused title/DOI searches. No access workaround attempted."
+      },
+      "mechanism_from_abstract": "VirtualGround introduces plastic-yield-inspired nonlinear foot-terrain forces, including sinkage, shear saturation and declining bearing capacity. A gait adaptation component estimates friction/deformability from contact history and adjusts gait features.",
+      "reported_evidence_from_abstract": "IsaacSim and MPM Newton Physics simulations plus Go2 experiments on sand/tile/beach; details not independently read.",
+      "relevance": "Contact history can inform a control variable with gait authority, rather than only a risk score. Plastic deformation and recoverable viscoelastic material memory must be kept distinct.",
+      "limitations": [
+        "Cannot report equations, reproduction parameters or measured success from unseen full text.",
+        "The current PANN2Hz scalarcap has different action authority from gait adaptation.",
+        "Do not change ground-truth material solely to make the controller succeed."
+      ],
+      "recommended_use": "New relevant terrain-neighbor lead with explicit abstract-only status; not execution prerequisite or sole basis for r28.",
+      "do_not_claim": [
+        "Not a full-text read.",
+        "Not proof that this repository material model or control architecture succeeds."
+      ],
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    },
+    {
+      "id": "TM43",
+      "record_kind": "new_formal_paper_entry_not_previously_TM01_TM34",
+      "reader_identity": "research_history",
+      "title": "Adaptive Legged Locomotion via Online Learning for MPC",
+      "authors": [
+        "Hongyu Zhou",
+        "Xiaoyu Zhang",
+        "Vasileios Tzoumas"
+      ],
+      "publication": "arXiv2510.15626v1,2025-10-17; peer-reviewed acceptance not verified",
+      "doi": null,
+      "urls": [
+        "https://arxiv.org/abs/2510.15626",
+        "https://arxiv.org/html/2510.15626v1",
+        "https://arxiv.org/pdf/2510.15626v1"
+      ],
+      "read_scope": {
+        "read": [
+          "abstract and introduction",
+          "method outline describing random-Fourier-feature residual model and online gradient update"
+        ],
+        "not_read": [
+          "complete theory/proofs, all method equations, full experiments, source code"
+        ],
+        "downloaded": "FullPDF and text saved; download does not equal full reading."
+      },
+      "mechanism_from_read_sections": "Learn an additive dynamics residual with random Fourier features and online supervised gradient updates, then insert the current model into MPC; authors state dynamic regret bounds under assumptions.",
+      "relevance": "A separate modeling correction route if executed-transition error dominates; not a remedy for feedback/PD authority loss and not a replacement for already causal PANN memory.",
+      "limitations": [
+        "Current reading is insufficient to recommend an implementation.",
+        "Reported validation is simulation rather than verified Go2 material traversal.",
+        "Do not cite stated regret guarantee without checking all assumptions."
+      ],
+      "recommended_use": "Preserve as a partially read candidate, not one of the four core new full-method readings and not an execution gate.",
+      "implementation_status": "literature_review_only_not_implemented_built_run_or_reproduced"
+    }
+  ],
+  "cross_paper_synthesis": {
+    "supported": "Useful contact gradients, executable references, unilateral force consistency and actuator authority are distinct requirements. Smooth costs alone do not establish the others.",
+    "r27_known": "Per current_joint/root read-only analysis: C2 gate/accounting is wired; twoE30 runs still fail at trunk contact. All joints having ever saturated is insufficient to diagnose a particular feedback spike.",
+    "r27_unknown": "Accepted-rollout/feedback/reference/time-resolvedKdelta diagnostics remain server-only. Literature cannot determine whether nominal plan, local correction, or low-level execution first becomes invalid.",
+    "practical_advice": "Use the already generated twoE30 event windows to separate nominal plan from feedback-updated command and actually clipped/applied torque. Then choose one directly supported repair inside the existing whole-body+TVfeedback+PD backbone. Do not add arbitrary gains, force residuals or another large qualification suite.",
+    "transfer_boundary": "No paper reviewed here validates this Go2 recoverable-material PANN setup or dictates one proven r28 patch.",
+    "colleague_verified_actuator_facts": {
+      "source": "current_joint研究代理于2026-11-05的只读源码核对；research_history未独立重复该源码审计。",
+      "facts": [
+        "Plant and MPC use the sameXML kp60/kd5, joint qtarget ctrlrange and23.7/45.43Nm forcerange.",
+        "Candidate and TV execution both clip qtarget; mjd_transitionFD A/B includes the samePD and torque saturation.",
+        "Riccati boxQP explicitly bounds qtarget angle; torque saturation and contact modes remain implicit in dynamics, not an explicit state-dependent feedback feasibility set."
+      ],
+      "consequences": [
+        "The claim that rollout omits torque limits is false.",
+        "An instantaneous projection to the unsaturatedPD target interval, if nonempty, would produce the same current torque as existing forcerange clipping; it is not an established impact reduction fix."
+      ]
+    },
+    "conditional_implementation_advice": {
+      "existing_evidence_first": "Use already produced E30 event traces, without a new benchmark or training admission gate, to distinguish unsafe accepted nominal rollout from damage introduced after feedback.",
+      "if_accepted_rollout_already_contains_terminal_nonfoot_contact": "Consider lexicographic physical-feasibility-first candidate acceptance, using the same terminal trunk/nonfoot geometry and native forward substeps before objective ranking. ExistingTrunkClearance gradient/risk may provide search direction; do not reintroduce a contact force target. This is a project-specific engineering inference, not a CTR or saltation reproduction.",
+      "infeasible_case": "If all candidates remain physically infeasible, report restoration/infeasibility rather than claiming safety. Do not turn the rule into another count-based external qualification gate.",
+      "if_only_feedback_updated_execution_becomes_invalid": "First locate the exact contact/actuator regime and reference consistency that is violated. The reviewed literature supports considering local contact-executable correction, but does not prescribe a proven small r28 patch for thisMuJoCo dynamic pipeline.",
+      "do_not_preset": [
+        "No arbitraryKclip or gain change.",
+        "No global smoothing removal.",
+        "No claim that another instantaneous torque projection repairs missing limits.",
+        "No addedchi cost, saltation covariance layer,SOCP orWBC replacement before evidence supports that scope."
+      ]
+    }
+  },
+  "reading_and_transfer_boundaries": [
+    "各原文URL、版本与实际读取范围逐条保存；读者身份区分root与research_history，合并不意味着另一代理重复全文阅读。",
+    "原始PDF/HTML、完整原文、下载哈希清单及临时工具引用ID不进入此紧凑交付。",
+    "论文报告的实验、吞吐、约束或保证均属于作者模型与实验条件，不等于本项目Go2材料穿越已成功。",
+    "当前2Hz标量cap不等于足端、步态、关节或扭矩残差权限；GPU显存不能直接改变CPU C++ iLQG的算法结构。",
+    "从已有r27两E30事件段区分accepted nominal自身问题与feedback之后的问题，是项目证据判断；不能从论文直接推出唯一r28根因或修复。",
+    "本复核不预设任意K裁剪、全局去平滑、新力残差、输出低通、saltation/chi代价或完整SOCP/WBC后端替换；实际修订范围由最新主计划与已有事件证据决定。"
+  ],
+  "sources": [
+    {
+      "id": "TM31",
+      "urls": [
+        "https://seungwoo-hong.github.io/publications/",
+        "https://arxiv.org/abs/2510.12717",
+        "https://doi.org/10.1109/TRO.2026.3721669"
+      ]
+    },
+    {
+      "id": "TM32",
+      "urls": [
+        "https://doi.org/10.1109/LRA.2026.3692086",
+        "https://ieeexplore.ieee.org/document/11513962/"
+      ]
+    },
+    {
+      "id": "TM35",
+      "urls": [
+        "https://arxiv.org/abs/2610.20925v1",
+        "https://arxiv.org/pdf/2610.20925v1",
+        "https://trustworthyrobotics.github.io/adaptive_sls/",
+        "https://github.com/trustworthyrobotics/adaptive_sls"
+      ]
+    },
+    {
+      "id": "TM36",
+      "urls": [
+        "https://arxiv.org/abs/2608.03116v2",
+        "https://arxiv.org/pdf/2608.03116v2",
+        "https://shooting-for-contact.github.io/",
+        "https://github.com/sesteban951/shooting-for-contact"
+      ]
+    },
+    {
+      "id": "TM37",
+      "urls": [
+        "https://arxiv.org/abs/2606.05687v1",
+        "https://arxiv.org/pdf/2606.05687v1",
+        "https://caltech-amber.github.io/mpc-guided-rl/",
+        "https://github.com/junhengl/mpc-rl"
+      ]
+    },
+    {
+      "id": "TM38",
+      "urls": [
+        "https://arxiv.org/abs/2505.02291",
+        "https://arxiv.org/html/2505.02291v4",
+        "https://rai-inst.com/resources/papers/dexterous-contact-rich-manipulation-via-the-contact-trust-region/",
+        "https://ctr.theaiinstitute.com/"
+      ]
+    },
+    {
+      "id": "TM39",
+      "urls": [
+        "https://arxiv.org/abs/2403.14159",
+        "https://arxiv.org/html/2403.14159v2",
+        "https://arxiv.org/pdf/2403.14159v2",
+        "https://www.sony.com/en/SonyInfo/technology/publications/robustifying-model-based-locomotion-by-zero-order-stochastic-nonlinear-model-predictive-control-with-guard-saltation-matrix/"
+      ]
+    },
+    {
+      "id": "TM40",
+      "urls": [
+        "https://roboticexplorationlab.org/papers/contact_implicit_mpc_paper.pdf",
+        "https://arxiv.org/abs/2107.05616",
+        "https://ieeexplore.ieee.org/document/10384795/",
+        "https://github.com/dojo-sim/ContactImplicitMPC.jl"
+      ]
+    },
+    {
+      "id": "TM41",
+      "urls": [
+        "https://arxiv.org/abs/2304.00346",
+        "https://arxiv.org/html/2304.00346v3",
+        "https://ieeexplore.ieee.org/document/10611641",
+        "https://www.cmu.edu/me/robomechanicslab/publications.html"
+      ]
+    },
+    {
+      "id": "TM42",
+      "urls": [
+        "https://ieeexplore.ieee.org/abstract/document/11685272/",
+        "https://doi.org/10.1109/LRA.2026.3732903"
+      ]
+    },
+    {
+      "id": "TM43",
+      "urls": [
+        "https://arxiv.org/abs/2510.15626",
+        "https://arxiv.org/html/2510.15626v1",
+        "https://arxiv.org/pdf/2510.15626v1"
+      ]
+    }
+  ]
+}
