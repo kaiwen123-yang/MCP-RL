@@ -3,11 +3,11 @@
 ## 当前交接（执行后只更新这6行）
 
 - 当前任务：W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT / S5-r28 已实际实现、正常构建并启动；共同训练绝对截止北京时间2026-11-06T15:23:54.713909+08:00，resume不重置。
-- w39-a：job-20261105T032354Z-w39-a，joint_sampling_running；新增2/0，累计7571/29，tail=2、excluded=145；评价=pending_training，紧凑Git=startup_snapshot_final_compact_delivery_pending_computation。
-- w39-b：job-20261105T032354Z-w39-b，joint_sampling_running；新增2/0，累计7571/29，tail=2、excluded=145；评价=pending_training，紧凑Git=startup_snapshot_final_compact_delivery_pending_computation。
+- w39-a：job-20261105T032354Z-w39-a，joint_sampling_running；新增21/0，累计7590/29，tail=21、excluded=145；评价=pending_training，紧凑Git=live_snapshot_final_delivery_pending_computation。
+- w39-b：job-20261105T032354Z-w39-b，joint_sampling_running；新增21/0，累计7590/29，tail=21、excluded=145；评价=pending_training，紧凑Git=live_snapshot_final_delivery_pending_computation。
 - 任务能力：w39-a尚无最终任务汇总；w39-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
-- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON/学习/数值窗先Git，已请求原始反馈/规划/参考/执行轨迹及必要数组后台Release；未选权重/全视频留D57，无电脑归档或自动删除。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
+- 交付：101cc15已部署D57，49783b5使补传tmux显式加载官方学术加速；W38两条诊断队列已运行，各36回合、合计1077文件，优先指定7回合密集数组；manifest先Git、原件Release仍pending，自动删除0。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；两流job/index保留实时计数、原父分支和共同截止；W38 diagnostics/evidence.json记录各自6h补传截止。已有numeric-evidence已读，完整时序因果追查尚未完成。
 
 ## 1. 长期目标、当前阶段与阅读边界
 
