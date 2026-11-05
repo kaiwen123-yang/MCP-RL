@@ -2,12 +2,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT / S5-r28 已实际实现、正常构建并启动；共同训练绝对截止北京时间2026-11-06T15:23:54.713909+08:00，resume不重置。
-- w39-a：job-20261105T032354Z-w39-a，joint_sampling_running；新增204/0，累计7773/29，tail=204、excluded=145；评价=pending_training，紧凑Git=live_snapshot_final_delivery_pending_computation。
-- w39-b：job-20261105T032354Z-w39-b，joint_sampling_running；新增203/0，累计7772/29，tail=203、excluded=145；评价=pending_training，紧凑Git=live_snapshot_final_delivery_pending_computation。
+- 当前任务：W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT / S5-r28运行中；现有两流训练/后续评价/环境均为8 workers，原PID与共同截止北京时间2026-11-06 15:23:54保留，未重启。
+- w39-a：job-20261105T032354Z-w39-a，joint_sampling_running；新增576/2，累计8145/31，tail=64、excluded=145；评价=pending_training，紧凑Git=live_snapshot_final_delivery_pending_computation。
+- w39-b：job-20261105T032354Z-w39-b，joint_sampling_running；新增577/2，累计8146/31，tail=65、excluded=145；评价=pending_training，紧凑Git=live_snapshot_final_delivery_pending_computation。
 - 任务能力：w39-a尚无最终任务汇总；w39-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
-- 交付：101cc15已部署D57；W38全部72回合诊断已发布，A545/545、B532/532，pending0，含指定7回合密集数组与8个本phase原始rollout；官方学术加速6项TLS失败已原截止内续传，manifest/URL及最终状态已Git，自动删除0。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；W39仍用原两流进程、父分支、二进制及共同截止。W38两份diagnostics/evidence.json均published；已有numeric-evidence已读，完整时序因果追查尚未完成。
+- 资源与交付：ccf4919已部署D57，新job默认两流各12 workers，--workers 14已授权并同步训练/评价/环境；当前W39不变。W38诊断A545/545、B532/532已逐项核对远端name/size/state，pending0；W39先compact Git后后台queue已请求原件，自动删除0。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 
 ## 1. 长期目标、当前阶段与阅读边界
 

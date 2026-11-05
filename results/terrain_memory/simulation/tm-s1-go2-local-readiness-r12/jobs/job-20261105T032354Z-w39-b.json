@@ -55,16 +55,52 @@
     "engineering_fork_not_independent_from_scratch": true
   },
   "training": {
-    "actual_transitions": 7772,
-    "updates": 29,
-    "new_transitions": 203,
-    "new_updates": 0,
-    "tail": 203,
+    "actual_transitions": 8146,
+    "updates": 31,
+    "new_transitions": 577,
+    "new_updates": 2,
+    "tail": 65,
     "excluded": 145,
     "target_transitions": 8593,
     "target_updates": 33,
     "observed_episode": 257,
-    "last_transition_time_s": 0.9999999999999225
+    "last_transition_time_s": 0.9999999999999225,
+    "last_completed_update": {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-008081.pt",
+      "samples": 8081,
+      "updates": 31,
+      "phase_id": "job-20261105T032354Z-w39-b",
+      "stream_id": "w39-b",
+      "phase_lineage": {
+        "status": "explicit_new_phase_continuation",
+        "parent_stream_id": "w38-b",
+        "parent_phase_id": "job-20261104T104730Z-w38-b",
+        "current_stream_id": "w39-b",
+        "current_phase_id": "job-20261105T032354Z-w39-b",
+        "controller_build": "S5-r28",
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+        "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+        "parent_transitions": 7569,
+        "parent_updates": 29,
+        "parent_episode": 251,
+        "inherited_excluded": 145,
+        "new_exclusions": 0,
+        "new_fork": false,
+        "reseeded_after_checkpoint_restore": false,
+        "restored": [
+          "actor",
+          "critic",
+          "optimizer",
+          "RNG",
+          "normalization",
+          "historical_counts"
+        ]
+      },
+      "controller_build": "S5-r28",
+      "reward_version": "W38_legal_route_terminal_settlement"
+    },
+    "latest_resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00268.pt"
   },
   "evaluation": {
     "status": "pending_training",
@@ -72,7 +108,7 @@
     "E60": "only_same_case_qualified",
     "new_update_required": true
   },
-  "publication_status": "startup_snapshot_final_compact_delivery_pending_computation",
+  "publication_status": "live_snapshot_final_delivery_pending_computation",
   "bulk_retention": {
     "status": "retained_local",
     "automatic_deleted_files": 0,
@@ -122,5 +158,47 @@
     "frozen_contract_modified": false,
     "network": "official_autodl_academic",
     "future_diagnostic_queue": "normal finisher after compact Git"
-  }
+  },
+  "resource_policy_observation": {
+    "at_unix_s": 1793877996.8383393,
+    "source": "live collection, normal completed-episode timing and one ordinary ps snapshot",
+    "training_workers": 8,
+    "evaluation_workers": 8,
+    "torch_threads": 1,
+    "blas_threads": 1,
+    "new_transitions": 577,
+    "new_updates": 2,
+    "collection_updated_unix_s": 1793877967.7744288,
+    "own_collection_wall_s": 28931.248069763184,
+    "own_new_transitions_per_hour": 71.79780129053393,
+    "planning_completed_episodes": 17,
+    "planning_calls": 13939,
+    "planning_total_s": 24858.065523106605,
+    "planning_mean_ms": 1783.3464038386257,
+    "planning_fraction_completed_episode_wall": 0.8787994302319437,
+    "cpu_snapshot": {
+      "at_unix_s": 1793877996.8383393,
+      "columns": "   PID   PPID %CPU   RSS NLWP     ELAPSED COMMAND",
+      "rows": [
+        "279824 279819 10.4 3586848 881   08:02:42 python -u scripts/train_s1_go2_r12.py --group PANN_PPO_S5 --seed 2 --resume /root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt --contract /root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b/execution-contract.json --background-job --job-start-unix 1793849034.713909 --deadline-unix 1793949834.713909",
+        "279825 279818 10.4 3653092 879   08:02:42 python -u scripts/train_s1_go2_r12.py --group PANN_PPO_S5 --seed 1 --resume /root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt --contract /root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-a/execution-contract.json --background-job --job-start-unix 1793849034.713909 --deadline-unix 1793949834.713909",
+        "303246 279824  614 2540700 33       09:04 /root/autodl-tmp/MCP-RL/work/r11-frozen/S5-r28/agent_server --mjpc_port=54531 --mjpc_workers=8",
+        "303448 279825  604 2540040 33       06:30 /root/autodl-tmp/MCP-RL/work/r11-frozen/S5-r28/agent_server --mjpc_port=56529 --mjpc_workers=8"
+      ],
+      "cpu_percent_scope": "ps process lifetime average; one core is100percent. No CPU hard-limit inference.",
+      "loadavg": "29.41 26.61 24.90 25/12371 303972"
+    },
+    "policy_deployed_commit": "ccf4919",
+    "future_new_jobs": {
+      "streams": 2,
+      "default_workers": 12,
+      "authorized_workers": 14,
+      "torch_threads": 1,
+      "blas_threads": 1
+    },
+    "current_job_changed": false,
+    "current_deadline_unix_s": 1793949834.713909,
+    "observed_speedup_from_12_or_14": null
+  },
+  "observed_at_unix_s": 1793877996.8383393
 }
