@@ -4,8 +4,8 @@
 
 - 当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27 已真实修改、构建并启动；共同训练绝对截止北京时间2026-11-05T22:47:30.611106+08:00，resume不重置。
 - w38-a：job-20261104T104730Z-w38-a，training_ended；新增1024/4，累计7569/29，tail=0、excluded=145；评价=completed，紧凑Git=published。
-- w38-b：job-20261104T104730Z-w38-b，training_ended；新增1024/4，累计7569/29，tail=0、excluded=145；评价=running，紧凑Git=pending_computation。
-- 任务能力：w38-a合规去程/返程/整圈=0/0/0，材料加载回合=27；w38-b尚无最终任务汇总。每流仅本phase新update评价E30，同case合格才E60；不把训练更新当合规任务能力。
+- w38-b：job-20261104T104730Z-w38-b，training_ended；新增1024/4，累计7569/29，tail=0、excluded=145；评价=completed，紧凑Git=published。
+- 任务能力：w38-a合规去程/返程/整圈=0/0/0，材料加载回合=27；w38-b合规去程/返程/整圈=0/0/0，材料加载回合=26。每流仅本phase新update评价E30，同case合格才E60；不把训练更新当合规任务能力。
 - 交付：两流compact finish/Git串行且使用现有index锁；全部逐回合JSON及失败/零步/截断、job/stream学习与独立评价进Git；权重、rollout、原始数组留D57，未自动渲染/上传/删除。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见当前R12契约actual_execution.streams及正常job/index；同父工程分支，不合并optimizer或重复父历史。
 
