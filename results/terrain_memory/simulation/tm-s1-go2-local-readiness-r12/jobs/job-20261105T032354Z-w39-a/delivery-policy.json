@@ -1,0 +1,68 @@
+{
+  "source": "experiments/terrain_memory/s1-go2-local-readiness-r12.json#outputs.automatic_publication",
+  "configured": {
+    "enabled": true,
+    "entrypoint": "scripts/finish_s1_go2_r12_job.py",
+    "training_failure_still_triggers_postprocess": true,
+    "video_source": "On-demand rendering uses saved actual trajectory/model/result only. No automatic full-episode rendering and no new physics for videos.",
+    "manifest": "Compact Git records and local source locations in the ordinary job/index, plus a small requested-diagnostic asset index with source/coverage, actual status, Release names/sizes/URLs and package-part mapping. This is not a mandatory inventory or upload of all unrequested bulk.",
+    "git_scope": "This job compact results, required2Hz/value/PANN/event exports, requested-diagnostic asset index/status, ordinary index and handoff; source/config before launch. Explicit W38 saved-data backfill is authorized. No blanket staging, unrelated changes or force push.",
+    "status": "Keep training target attainment, final evaluation, compact Git, explicitly requested diagnostic Release delivery, retained-local originals/unrequested bulk and user backup/deletion separate. Requested evidence stays pending until uploaded and indexed, or is explicitly reported unavailable.",
+    "default_postprocess_wall_s": 21600,
+    "release_parts": {
+      "enabled_for_new_jobs": true,
+      "max_new_nonempty_assets_per_release": 900,
+      "naming": "<run>-<job>-partNN",
+      "existing_destinations": "Preserve manifest/index release_tag and reuse unchanged published assets.",
+      "create_target": "job.source_commit",
+      "server_execution_of_new_partitioning": "Already executed in W35 and W36; reuse deterministic partNN destinations and existing manifests.",
+      "scope": "Enabled for explicitly requested diagnostic evidence under outputs.requested_diagnostic_evidence: each new finished attempt core raw traces/trajectory/prediction plus model/metadata/small material logs, and necessary dense physical/material arrays. No blanket checkpoint/full-video upload. Reuse actual published destinations; uploader records its chosen tags/parts."
+    },
+    "evaluation_assets": "Every evaluation result/config and numeric event summary goes to compact Git first. Release evidence includes original feedback/planner/reference, trajectory and all prediction files, matching model/metadata/small material logs, and complete high-rate physical/material arrays with Git asset links. Include both saved W38 E30s. Do not truncate/downsample arrays; full videos/weights remain unrequested unless separately selected.",
+    "cleanup": {
+      "enabled": false,
+      "owner": "user",
+      "status": "manual_after_user_backup",
+      "authorization": "2026-11-04 confirmation: r26 retains its executed historical workflow; from W38 user periodically exports from server data disk to their own storage disk and manually deletes after backup. No automatic deletion of server research outputs or extra PC archive.",
+      "implementation_status": "automatic_cleanup_removed_from_default_finisher",
+      "scope": "No automatic deletion of server research outputs by Codex. Historical completed cleanups remain historical facts.",
+      "preserve": [
+        "current valid resume and last completed update",
+        "all active data and runtime resources",
+        "raw evidence awaiting user backup",
+        "repository, source, compact records and environment"
+      ],
+      "record": "Record retained-local locations and unverified user-backup status in the same job; do not invent backup completion or deletion.",
+      "resume": "Use the actual latest same-phase local resume; restore an old published checkpoint only if it is the explicitly needed state and local copy is absent."
+    },
+    "phase_stop_still_triggers_postprocess": true,
+    "delivery_mode": "compact_first_requested_diagnostics_release_local_unrequested_bulk",
+    "bulk_upload_enabled": false,
+    "render_all_episodes": false,
+    "delivery_policy_source": "At finish use current main outputs.automatic_publication and outputs.requested_diagnostic_evidence for delivery authorization only; record their source. Preserve the frozen job contract for all computation, evaluation, phase counters, budgets and stopping rules. Later delivery authorization must not rewrite old physical results or imply live deployment.",
+    "compact_numeric_evidence_source": "outputs.compact_numeric_evidence",
+    "compact_export_implementation_status": "Saved-data exporters and W38 numeric exports published in61fd022; W39 normal-finisher/phase integration remains required before launch. Diagnostic manifest/transition/rollout transport is locally implemented; no D57 deployment claimed by this supplement.",
+    "bulk_upload_scope": "False applies only to blanket/unrequested bulk; the separately enabled requested diagnostic upload is mandatory and may include dense arrays or whole large files.",
+    "diagnostic_upload_enabled": true,
+    "diagnostic_entrypoint": "scripts/publish_s1_go2_r12_diagnostics.py",
+    "diagnostic_policy_source": "outputs.requested_diagnostic_evidence",
+    "diagnostic_implementation_status": "implemented_locally_saved_data_checked_not_deployed_or_run_on_D57_in_this_session",
+    "diagnostic_interface_source": "outputs.requested_diagnostic_evidence.CLI",
+    "diagnostic_queue_after_compact_success_and_lock_release": true,
+    "W38_catchup_uses_old_finisher": false
+  },
+  "effective": {
+    "delivery_mode": "compact_first_requested_diagnostics_background",
+    "bulk_upload_enabled": false,
+    "diagnostic_upload_enabled": true,
+    "render_all_episodes": false,
+    "cleanup": {
+      "enabled": false,
+      "owner": "user",
+      "status": "manual_after_user_backup"
+    }
+  },
+  "execution_contract": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-a/execution-contract.json",
+  "scope": "Current delivery policy only; frozen training/evaluation/paths/identity stay unchanged.",
+  "frozen_delivery_authorization_superseded": true
+}
