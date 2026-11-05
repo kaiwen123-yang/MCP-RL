@@ -20657,7 +20657,7 @@
       "arm": "S",
       "mission": "single",
       "cohort": "contact_execution_repair_parallel_joint_v14",
-      "status": "running",
+      "status": "completed",
       "physical_started": true,
       "command": [
         "scripts/run_s1_go2_r12.py",
@@ -20765,7 +20765,86 @@
         "final_hold_s": null
       },
       "execution_fingerprint": "fd2c76ebc8a0629580453ed88f608cff060abb5d6fa216d58561cab751534ac2",
-      "source_commit": "52652577205a7e5711f22209ea32c701f99eea7b"
+      "source_commit": "52652577205a7e5711f22209ea32c701f99eea7b",
+      "success": false,
+      "reason": "body_fall",
+      "simulation_s": 17.591999999985678,
+      "wall_s": 1791.9116810690612,
+      "stage_status": "physical_material_failure",
+      "case_identity": {
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "group": "PANN_PPO_S5",
+        "seed": 2,
+        "condition": "nominal",
+        "initial_state": {
+          "id": "nominal",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        "initial_material": "virgin ReferenceColumns, independent session",
+        "common_configuration_sha256": "87356024c214c35a8c1a978c2357d1e523ba291a1ccd2468be77c81a0df1bc00",
+        "execution_sources": {
+          "s1_go2_r11_runtime.py": "184c0cf3a4e2a75cab739555d159ac9ed86727e5f0e82da0ec2b32a1c4123b42",
+          "s1_go2_r11_model.py": "f0a2c70c76989f8db331faf81952a5bfdba2ab260105185c5f03e5224545e440",
+          "s1_go2_joint_material.py": "7bbbac1919a1bdfb39df20be74dd48a09a713869f430352485b842b91ddd28e6",
+          "s1_go2_wb_equilibrium.py": "56ce578557138cd1072a1036252a18785eeadca3b9268562c5ed008fe46bcfa0",
+          "s1_go2_support_reference.py": "6d1e5c0eb9fdb85a7335e8ea4f19e31d4e7b5f310b3d79fdb6225d28d8105060",
+          "s1_go2_r11_policy.py": "90f4b8c4954d5ab3ac2d8af754ee2bbc1c46fa1b7c6211e4eeed6a391b3da9e0",
+          "s1_go2_r10_observer.py": "fb3651518fa8d30eab51ecdefdad75211c31237787584f18422523434b34260a"
+        },
+        "material_sources": {
+          "src/tm02/__init__.py": "a2b8ef472a11d0c86b5ced29b83989a30571d77c9197f7beefcb986676e9d38c",
+          "src/tm02/evaluate.py": "b0dd0693bf6d5a9874f2666fddcc17421150d8fd5205498fbcd3759e34b7bebc",
+          "src/tm02/figures.py": "6e7dfc0547bfd9f79fd4a795d5e361a17e8edab78b3f3fc1979bffc892d7e362",
+          "src/tm02/material.py": "745e52257c2dcd73d7588a82f74556946e6c51565e41dbee5b2ac41b8dece14c",
+          "src/tm02/memory_data.py": "02cf5f14511a2a42c3d0cd11a56648d4b38f62d2fb1c7139b520416f20f0d6a7",
+          "src/tm02/memory_evaluate.py": "171ec6c3ebe61f4fdf7e1ba0e77c35f7d4948b5bb99d42c4061973d3dfec0a68",
+          "src/tm02/memory_figures.py": "174b3026214a3fbeeda58b846b8f67be98a60dc65689bc912ec1cc37c5b5e9de",
+          "src/tm02/memory_training.py": "8c26be254f5421c9cb0653fcfb3f857f9a813c7f38b05d66e42f39309b48c301",
+          "src/tm02/multihistory.py": "3a4340318f66bd2765f85574e013e4d2c5dd0eab2a1b6fd4c5ed3a54e92066e3",
+          "src/tm02/multihistory_evaluate.py": "c6c88bde32e10ea5c8efb991dafffa8cc2ba626aa2c99fa95593ce11279f29d5",
+          "src/tm02/multihistory_figures.py": "d49397a43831dadb9cdef13fd8292b0b231100345de8fd60baae0a700c649444",
+          "src/tm02/multihistory_revisit.py": "56706712ecd668711b3991001bbe09bd3d2ed24dbdb5bef8a56e65bfb3d4e259",
+          "src/tm02/reference.py": "3102068a86e4e75c3831a297fb8ba5c7c3df355c5b62e64beec400a0a07179ce",
+          "src/tm02/s0.py": "9d561ff7c357ef5db34940915ac9fb428dffb7e027c5ff6889d22b5a8fce92fc",
+          "src/tm02/s0_figures.py": "2a76afd09c4eadeb4533cfdf9e0874e21d841eb056ebfce321f1010ea72d05a9",
+          "src/tm02/s0_results.py": "d8773fca6736ad540288777a766440fb7b58b8442b023f48eb8859a3300db03a",
+          "src/tm02/s1_contact.py": "c62e97d0f079fa9d7f960797731fb4a364af3220ba951af9f0cfe57f93affdc5",
+          "src/tm02/s1_force.py": "af5dcddfe4412a65dd6bedfef9b78bd350389e910a701323f2ff8ff37d706de2",
+          "src/tm02/s1_material.py": "6a6f0dfb28a1249210ee076e0703ac7f834a42c54f50793d88302d408c60fc52",
+          "src/tm02/s1_planner.py": "8142626017ccda5735e5d8a8a1bfc038e353040191887adc62614f247f18155f",
+          "src/tm02/s1_prediction.py": "0abd3335c59d6f0d8ee3de2b82b2fde9c75c3a47a84a76c776955686772a3692",
+          "src/tm02/s1_robot.py": "414e89f33414c610cde367ee93bc2bdda83685734ae4d4f671e346c23c13351a",
+          "src/tm02/s1_stance.py": "6adad847dbd3135516c2399b5b176de301f7ae0e88467f13f1cc20ac13e529d9",
+          "src/tm02/s1_transition.py": "4f43ef5622bdee597f8cf37bf686e4758966cf64d641c1fc914d02f696a25e36"
+        },
+        "binary_sha256": "43dbdba4c27028e76f7151129ea71d1456568f7e1c3aadd3f1ec98f04eb1f1fd",
+        "fixed_cap_m_s": null,
+        "checkpoint_sha256": "f7647c76f2e7eb65cb7918c9416737d4aa82f9b04cb56b9ebad2eaac88a187b4",
+        "normalizer_sha256": "2180314d860dd936b4775c8e325713466f5dd06ce913f917b88d04f93521ff55",
+        "terrain": "tm02_anchor",
+        "job": "job-20261105T032354Z-w39-b",
+        "stream_id": "w39-b",
+        "controller_build": "S5-r28",
+        "reward_version": "W38_legal_route_terminal_settlement"
+      },
+      "qualification": {
+        "predecessor_attempt": null,
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+        "solver_workers": 8,
+        "worker_setting_checked_against_predecessor": false
+      },
+      "result": "job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30.json"
     }
   ],
   "stages": {},
@@ -107430,7 +107509,7 @@
         "finished_unix_s": 1793901586.181538
       },
       "publication_scope": "compact_git",
-      "publication_status": "published",
+      "publication_status": "publication_pending",
       "bulk_retention": {
         "status": "retained_local",
         "upload_status": "unselected_bulk_not_requested",
@@ -107614,6 +107693,477 @@
     "job-20261105T032354Z-w39-b": {
       "stream_id": "w39-b",
       "phase_id": "job-20261105T032354Z-w39-b",
+      "summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261105T032354Z-w39-b.json",
+      "training": {
+        "actual_transitions": 8593,
+        "updates": 33,
+        "target_transitions": 8593,
+        "target_updates": 33,
+        "target_reached": true,
+        "stream_id": "w39-b",
+        "invocation_wall_s": 52039.95899271965,
+        "invocation_new_transitions": 1024,
+        "initial_transitions": 7569,
+        "new_transitions": 1024,
+        "initial_updates": 29,
+        "new_updates": 4,
+        "unupdated_fragment": 0,
+        "reason": "target_reached",
+        "last_stage_status": "budget_truncated",
+        "phase_id": "job-20261105T032354Z-w39-b",
+        "phase_lineage": {
+          "status": "explicit_new_phase_continuation",
+          "parent_stream_id": "w38-b",
+          "parent_phase_id": "job-20261104T104730Z-w38-b",
+          "current_stream_id": "w39-b",
+          "current_phase_id": "job-20261105T032354Z-w39-b",
+          "controller_build": "S5-r28",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+          "parent_transitions": 7569,
+          "parent_updates": 29,
+          "parent_episode": 251,
+          "inherited_excluded": 145,
+          "new_exclusions": 0,
+          "new_fork": false,
+          "reseeded_after_checkpoint_restore": false,
+          "restored": [
+            "actor",
+            "critic",
+            "optimizer",
+            "RNG",
+            "normalization",
+            "historical_counts"
+          ]
+        },
+        "controller_build": "S5-r28",
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "phase_stop": null,
+        "excluded_old_version_transitions": 145,
+        "controller_migration": {
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00144.pt",
+          "parent_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__training__PANN_PPO_S5-seed0__resume-state-ep00144.pt",
+          "parent_controller_build": "S5-r25",
+          "controller_build": "S5-r26",
+          "reward_version": "W36_legal_route_progress_and_lap_alignment",
+          "first_excluded_transition": 4353,
+          "last_excluded_transition": 4497,
+          "excluded_transitions": 145,
+          "used_in_new_updates": false,
+          "restored": [
+            "actor",
+            "critic",
+            "optimizer",
+            "RNG",
+            "normalization",
+            "historical_counts"
+          ],
+          "continuous_environment_restored": false,
+          "new_buffer_size": 0,
+          "isolated_tail_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/excluded-r25-004353-004497.pt"
+        },
+        "last_completed_update": {
+          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-008593.pt",
+          "samples": 8593,
+          "updates": 33,
+          "phase_id": "job-20261105T032354Z-w39-b",
+          "stream_id": "w39-b",
+          "phase_lineage": {
+            "status": "explicit_new_phase_continuation",
+            "parent_stream_id": "w38-b",
+            "parent_phase_id": "job-20261104T104730Z-w38-b",
+            "current_stream_id": "w39-b",
+            "current_phase_id": "job-20261105T032354Z-w39-b",
+            "controller_build": "S5-r28",
+            "reward_version": "W38_legal_route_terminal_settlement",
+            "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+            "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+            "parent_transitions": 7569,
+            "parent_updates": 29,
+            "parent_episode": 251,
+            "inherited_excluded": 145,
+            "new_exclusions": 0,
+            "new_fork": false,
+            "reseeded_after_checkpoint_restore": false,
+            "restored": [
+              "actor",
+              "critic",
+              "optimizer",
+              "RNG",
+              "normalization",
+              "historical_counts"
+            ]
+          },
+          "controller_build": "S5-r28",
+          "reward_version": "W38_legal_route_terminal_settlement"
+        },
+        "last_episode_reason": "training_checkpoint_complete",
+        "last_update_is_own_current_phase_new_update": true,
+        "outcomes": {
+          "physical_episodes": 29,
+          "results_available": 29,
+          "results_unavailable": [],
+          "legal_outbound_traversals": 0,
+          "side_exits": 1,
+          "far_arrivals": 0,
+          "return_episodes": 0,
+          "completed_roundtrips": 0,
+          "legal_roundtrips": 0,
+          "legal_return_traversals": 0,
+          "legal_all_outbound_traversals": 0,
+          "all_passage_side_exits": 1,
+          "legality_records": 29,
+          "physical_failures_by_phase": {
+            "body_fall": {
+              "outbound": 20
+            },
+            "material_domain_exit": {
+              "outbound": 3
+            },
+            "invalid_contact": {
+              "outbound": 4
+            }
+          },
+          "saved_observations": 1024,
+          "nonzero_pann_observations": 56,
+          "return_observations": 0,
+          "return_nonzero_pann_observations": 0,
+          "material_loaded_episodes": 26,
+          "max_forward_displacement_m": 1.0969191613048754,
+          "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+          "observation_sources_unavailable": []
+        }
+      },
+      "evaluation": {
+        "job": "job-20261105T032354Z-w39-b",
+        "status": "completed",
+        "started_unix_s": 1793901077.0,
+        "deadline_unix_s": 1793915477.0,
+        "controller_build": "S5-r28",
+        "group": "PANN_PPO_S5",
+        "seed": 2,
+        "stream_id": "w39-b",
+        "phase_id": "job-20261105T032354Z-w39-b",
+        "phase_lineage": {
+          "status": "explicit_new_phase_continuation",
+          "parent_stream_id": "w38-b",
+          "parent_phase_id": "job-20261104T104730Z-w38-b",
+          "current_stream_id": "w39-b",
+          "current_phase_id": "job-20261105T032354Z-w39-b",
+          "controller_build": "S5-r28",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+          "parent_transitions": 7569,
+          "parent_updates": 29,
+          "parent_episode": 251,
+          "inherited_excluded": 145,
+          "new_exclusions": 0,
+          "new_fork": false,
+          "reseeded_after_checkpoint_restore": false,
+          "restored": [
+            "actor",
+            "critic",
+            "optimizer",
+            "RNG",
+            "normalization",
+            "historical_counts"
+          ]
+        },
+        "condition": "nominal",
+        "workers": 8,
+        "checkpoint_selection": "Require this own W39 job/stream/controller/reward phase and updates>29. At full target use its new training_directory/checkpoint-008593.pt; at partial target select its actual last completed new update. Never use the other branch, W38 parent or a best-looking checkpoint.",
+        "deterministic_policy_mean": true,
+        "frozen_normalization": true,
+        "ppo_updates": false,
+        "attempts": [
+          "job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30"
+        ],
+        "stages": [
+          {
+            "level": "E30",
+            "attempt": "job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30",
+            "stage_status": "physical_material_failure",
+            "started_unix_s": 1793901079.1983902,
+            "command": [
+              "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+              "-u",
+              "scripts/run_s1_go2_r12.py",
+              "--attempt",
+              "job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30",
+              "--build",
+              "S5-r28",
+              "--group",
+              "PANN_PPO_S5",
+              "--seed",
+              "2",
+              "--checkpoint",
+              "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-008593.pt",
+              "--level",
+              "E30",
+              "--condition",
+              "nominal",
+              "--workers",
+              "8",
+              "--evaluation-start-unix",
+              "1793901077.0",
+              "--deadline-unix",
+              "1793915477.0",
+              "--policy-output",
+              "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b/evaluation-policy/job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30",
+              "--contract",
+              "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b/execution-contract.json"
+            ],
+            "success": false,
+            "reason": "body_fall",
+            "error": null,
+            "simulation_s": 17.591999999985678,
+            "wall_s": 1791.9116810690612,
+            "stage_progress": {
+              "far_arrival_s": null,
+              "return_start_s": null,
+              "actual_route_fraction": 0.12519929716604572,
+              "full_observation": false,
+              "actual_material_loaded": true,
+              "material_traversal": {
+                "completed": false,
+                "west_entry_s": null,
+                "east_exit_s": null,
+                "lateral_exit_s": null,
+                "max_abs_base_y_during_crossing_m": null,
+                "material_loaded_during_crossing": false,
+                "original_strip_x_m": [
+                  0.8,
+                  2.2
+                ],
+                "original_strip_y_m": [
+                  -0.6,
+                  0.6
+                ],
+                "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+              }
+            },
+            "legal_route": {
+              "reward_version": "W38_legal_route_terminal_settlement",
+              "progress": 0.0,
+              "completed_roundtrips": 0,
+              "legal_outbound_traversals": 0,
+              "legal_return_traversals": 0,
+              "side_exits": 0,
+              "raw_roundtrips": 0,
+              "passages": [
+                {
+                  "lap": 1,
+                  "direction": "outbound",
+                  "entry_s": null,
+                  "exit_s": null,
+                  "lateral_exit_s": null,
+                  "material_loaded": false,
+                  "completed": false,
+                  "terminal_closed_s": 17.591999999985678
+                }
+              ],
+              "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+            },
+            "completed_round_trips": 0,
+            "case_key": "1a1892b9b5f7cec13706bdeb24815d26d99a149897660928bd2fc8d7ef5bec9d",
+            "qualification": {
+              "predecessor_attempt": null,
+              "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+              "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+              "solver_workers": 8,
+              "worker_setting_checked_against_predecessor": false
+            },
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30.json",
+            "exit_code": 0,
+            "finished_unix_s": 1793902883.647435,
+            "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b/evaluation-E30.log"
+          },
+          {
+            "level": "E60",
+            "stage_status": "blocked_by_predecessor",
+            "reason": "E30: physical_material_failure: body_fall"
+          }
+        ],
+        "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-008593.pt",
+        "checkpoint_transitions": 8593,
+        "checkpoint_updates": 33,
+        "normalization": {
+          "body_xy_m": 3.0,
+          "body_height_m": 0.3,
+          "body_linear_velocity_m_s": 0.25,
+          "body_angular_velocity_rad_s": 1.0,
+          "joint_position": "range midpoint and half-width",
+          "joint_velocity_rad_s": 10.0,
+          "relative_feet_m": 0.3,
+          "foot_velocity_m_s": 1.0,
+          "force_N": 37.29371562,
+          "history_bottom_height_m": 0.05,
+          "pann_recovery_m": 0.001,
+          "history_frames": 20,
+          "history_dt_s": 0.05,
+          "finite_task_channels": "Always zero for every R11 training and evaluation duration",
+          "schema": [
+            "relative_goal_xy",
+            "base_z",
+            "base_quaternion_wxyz",
+            "relative_heading_sin_cos",
+            "base_velocity6",
+            "joint_position12",
+            "joint_velocity12",
+            "relative_world_feet12",
+            "foot_velocity12",
+            "contact4",
+            "GRF12",
+            "applied_cap",
+            "mission_phase9",
+            "gait_sin_cos",
+            "finite_task_flag_and_remaining_fraction",
+            "completed_plan_age",
+            "query_xy8",
+            "query_soft_mask4",
+            "history20x27",
+            "recovery4x3"
+          ],
+          "observation_clipping": false
+        },
+        "finished_unix_s": 1793902883.6503706
+      },
+      "publication_scope": "compact_git",
+      "publication_status": "published",
+      "bulk_retention": {
+        "status": "retained_local",
+        "upload_status": "unselected_bulk_not_requested",
+        "backup_owner": "user",
+        "requested_diagnostics": "Tracked separately under this job's diagnostics/evidence.json; selected raw arrays are requested uploads, not unrequested bulk.",
+        "deletion": "User exports to their storage disk, then centrally deletes after backup.",
+        "repository_root": "/root/autodl-tmp/MCP-RL",
+        "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b",
+        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2",
+        "episode_directories": [
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00252",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00253",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00254",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00255",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00256",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00257",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00258",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00259",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00260",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00261",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00262",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00263",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00264",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00265",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00266",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00267",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00268",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00269",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00270",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00271",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00272",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00273",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00274",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00275",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00276",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00277",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00278",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00279",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-b-PANN_PPO_S5-s2-ep00280"
+        ],
+        "training_binary_paths": [
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-007825.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-008081.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-008337.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-008593.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00252.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00253.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00254.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00255.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00256.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00257.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00258.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00259.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00260.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00261.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00262.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00263.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00264.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00265.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00266.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00267.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00268.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00269.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00270.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00271.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00272.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00273.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00274.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00275.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00276.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00277.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00278.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00279.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/rollout-007570-007825.npz",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/rollout-007826-008081.npz",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/rollout-008082-008337.npz",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/rollout-008338-008593.npz"
+        ],
+        "parent_resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+        "latest_resume": {
+          "path": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
+          "samples": 8593,
+          "updates": 33,
+          "phase_id": "job-20261105T032354Z-w39-b",
+          "identity_source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b/stream-records/progress.json"
+        },
+        "last_completed_update": {
+          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-008593.pt",
+          "samples": 8593,
+          "updates": 33,
+          "phase_id": "job-20261105T032354Z-w39-b",
+          "stream_id": "w39-b",
+          "phase_lineage": {
+            "status": "explicit_new_phase_continuation",
+            "parent_stream_id": "w38-b",
+            "parent_phase_id": "job-20261104T104730Z-w38-b",
+            "current_stream_id": "w39-b",
+            "current_phase_id": "job-20261105T032354Z-w39-b",
+            "controller_build": "S5-r28",
+            "reward_version": "W38_legal_route_terminal_settlement",
+            "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+            "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+            "parent_transitions": 7569,
+            "parent_updates": 29,
+            "parent_episode": 251,
+            "inherited_excluded": 145,
+            "new_exclusions": 0,
+            "new_fork": false,
+            "reseeded_after_checkpoint_restore": false,
+            "restored": [
+              "actor",
+              "critic",
+              "optimizer",
+              "RNG",
+              "normalization",
+              "historical_counts"
+            ]
+          },
+          "controller_build": "S5-r28",
+          "reward_version": "W38_legal_route_terminal_settlement"
+        },
+        "availability": "No bulk backup or upload is claimed; historical user/deletion state is not inferred."
+      },
+      "cleanup": {
+        "enabled": false,
+        "owner": "user",
+        "status": "manual_after_user_backup",
+        "deleted_files": 0
+      },
       "live_status": "training_ended",
       "latest_counts": {
         "transitions": 8593,
@@ -108430,7 +108980,7 @@
             "reason": "E30: physical_material_failure: body_fall"
           }
         ],
-        "publication": "published",
+        "publication": "publication_pending",
         "outcomes": {
           "physical_episodes": 33,
           "results_available": 33,
@@ -108543,12 +109093,12 @@
           "controller_build": "S5-r28",
           "reward_version": "W38_legal_route_terminal_settlement"
         },
-        "evaluation": "running",
+        "evaluation": "completed",
         "evaluation_stages": [
           {
             "level": "E30",
             "attempt": "job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30",
-            "stage_status": "running",
+            "stage_status": "physical_material_failure",
             "started_unix_s": 1793901079.1983902,
             "command": [
               "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
@@ -108578,11 +109128,113 @@
               "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b/evaluation-policy/job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30",
               "--contract",
               "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b/execution-contract.json"
-            ]
+            ],
+            "success": false,
+            "reason": "body_fall",
+            "error": null,
+            "simulation_s": 17.591999999985678,
+            "wall_s": 1791.9116810690612,
+            "stage_progress": {
+              "far_arrival_s": null,
+              "return_start_s": null,
+              "actual_route_fraction": 0.12519929716604572,
+              "full_observation": false,
+              "actual_material_loaded": true,
+              "material_traversal": {
+                "completed": false,
+                "west_entry_s": null,
+                "east_exit_s": null,
+                "lateral_exit_s": null,
+                "max_abs_base_y_during_crossing_m": null,
+                "material_loaded_during_crossing": false,
+                "original_strip_x_m": [
+                  0.8,
+                  2.2
+                ],
+                "original_strip_y_m": [
+                  -0.6,
+                  0.6
+                ],
+                "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+              }
+            },
+            "legal_route": {
+              "reward_version": "W38_legal_route_terminal_settlement",
+              "progress": 0.0,
+              "completed_roundtrips": 0,
+              "legal_outbound_traversals": 0,
+              "legal_return_traversals": 0,
+              "side_exits": 0,
+              "raw_roundtrips": 0,
+              "passages": [
+                {
+                  "lap": 1,
+                  "direction": "outbound",
+                  "entry_s": null,
+                  "exit_s": null,
+                  "lateral_exit_s": null,
+                  "material_loaded": false,
+                  "completed": false,
+                  "terminal_closed_s": 17.591999999985678
+                }
+              ],
+              "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+            },
+            "completed_round_trips": 0,
+            "case_key": "1a1892b9b5f7cec13706bdeb24815d26d99a149897660928bd2fc8d7ef5bec9d",
+            "qualification": {
+              "predecessor_attempt": null,
+              "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+              "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+              "solver_workers": 8,
+              "worker_setting_checked_against_predecessor": false
+            },
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30.json",
+            "exit_code": 0,
+            "finished_unix_s": 1793902883.647435,
+            "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b/evaluation-E30.log"
+          },
+          {
+            "level": "E60",
+            "stage_status": "blocked_by_predecessor",
+            "reason": "E30: physical_material_failure: body_fall"
           }
         ],
-        "publication": "live_snapshot_final_delivery_pending_computation",
-        "outcomes": null,
+        "publication": "published",
+        "outcomes": {
+          "physical_episodes": 29,
+          "results_available": 29,
+          "results_unavailable": [],
+          "legal_outbound_traversals": 0,
+          "side_exits": 1,
+          "far_arrivals": 0,
+          "return_episodes": 0,
+          "completed_roundtrips": 0,
+          "legal_roundtrips": 0,
+          "legal_return_traversals": 0,
+          "legal_all_outbound_traversals": 0,
+          "all_passage_side_exits": 1,
+          "legality_records": 29,
+          "physical_failures_by_phase": {
+            "body_fall": {
+              "outbound": 20
+            },
+            "material_domain_exit": {
+              "outbound": 3
+            },
+            "invalid_contact": {
+              "outbound": 4
+            }
+          },
+          "saved_observations": 1024,
+          "nonzero_pann_observations": 56,
+          "return_observations": 0,
+          "return_nonzero_pann_observations": 0,
+          "material_loaded_episodes": 26,
+          "max_forward_displacement_m": 1.0969191613048754,
+          "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+          "observation_sources_unavailable": []
+        },
         "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b",
         "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2"
       }
