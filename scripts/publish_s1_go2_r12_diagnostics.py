@@ -446,7 +446,7 @@ def queue(ctx, args):
             command = [sys.executable, "-u", str(Path(__file__).resolve()), "run", "--job-dir", relative(directory)]
             for attempt in args.attempt:
                 command += ["--attempt", attempt]
-            shell = "exec " + shlex.join(command) + " >> " + shlex.quote(str(transfer / "run.log")) + " 2>&1"
+            shell = "source scripts/autodl_d57_env.sh && source scripts/autodl_network.sh academic && exec " + shlex.join(command) + " >> " + shlex.quote(str(transfer / "run.log")) + " 2>&1"
             subprocess.run(["tmux", "new-session", "-d", "-s", session, "-c", str(ROOT), shell], check=True)
     return dict(status="already_running" if active else "queued", session=session,
                 deadline=clock, deadline_expired=time.time() >= clock["deadline_unix_s"],
