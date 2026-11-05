@@ -250,22 +250,26 @@ def compact_records(jobdir, snapshots, small, episodes, job, evaluation, samples
 
 
 def update_parallel_handoff(contract):
-    """Keep both job states in the existing six lines and actual contract state."""
+    """Keep both streams in normal job/index records and the existing six lines."""
     small=ROOT/contract["outputs"]["compact_root"]
     large=ROOT/contract["outputs"]["large_root"]
-    clock=read(large/"w38-training-clock.json")
+    clock_path=contract["execution"]["background_job"].get("training_clock_path")
+    clock=read(ROOT/clock_path if clock_path else large/"w38-training-clock.json")
     if not clock:return
     rows={}
     for stream_id,relative in clock["jobs"].items():
         directory=ROOT/relative
         job=read(directory/"job.json")
-        stream=large/"training"/f'{job["group"]}-seed{job["seed"]}'
+        stream=(ROOT/job["training_directory"] if job.get("training_directory") else
+                large/"training"/f'{job["group"]}-seed{job["seed"]}')
         collection=read(stream/"collection.json")
         progress=read(stream/"progress.json")
         summary=read(small/"jobs"/(directory.name+".json"))
         evaluation=read(directory/"evaluation.json")
         finished=(directory/"training-finished-at.txt").exists()
         rows[stream_id]=dict(job=directory.name,phase_id=job["phase_id"],seed=job["seed"],
+            controller_build=job["controller_build"],reward_version=job["reward_version"],
+            phase_lineage=collection.get("phase_lineage"),
             status="training_ended" if finished else job["status"],
             transitions=collection.get("collected_transitions",job["initial_transitions"]),
             updates=collection.get("updates",job["initial_updates"]),
@@ -274,7 +278,8 @@ def update_parallel_handoff(contract):
             tail=collection.get("unupdated_fragment",0),
             invocation_new_transitions=collection.get("invocation_new_transitions"),
             invocation_wall_s=collection.get("invocation_wall_s"),
-            excluded=collection.get("excluded_old_version_transitions",145),
+            collection_updated_unix_s=collection.get("updated_unix_s"),
+            excluded=collection.get("excluded_old_version_transitions",job.get("planned_excluded_old_version_transitions")),
             resume=progress.get("checkpoint",job["resume_checkpoint"]),
             last_completed_update=collection.get("last_completed_update"),
             evaluation=evaluation.get("status","pending_training"),
@@ -283,42 +288,36 @@ def update_parallel_handoff(contract):
             outcomes=summary.get("training",{}).get("outcomes"),
             job_directory=relative,training_directory=str(stream.relative_to(ROOT)))
     from s1_go2_r11_runtime import index_file
+    phase=next(iter(clock["jobs"])).split("-")[0]
+    collected_at=[r["collection_updated_unix_s"] for r in rows.values() if r["collection_updated_unix_s"] is not None]
+    elapsed=max(collected_at)-clock["started_unix_s"] if collected_at else None
     with index_file(small,contract) as index:
         for sid,row in rows.items():
             entry=index.setdefault("background_jobs",{}).setdefault(row["job"],{})
             entry.update(stream_id=sid,phase_id=row["phase_id"],live_status=row["status"],
                 latest_counts=dict(transitions=row["transitions"],updates=row["updates"],
                     new_transitions=row["new_transitions"],new_updates=row["new_updates"],tail=row["tail"]),
+                phase_lineage=row["phase_lineage"],controller_build=row["controller_build"],
                 job_directory=row["job_directory"],training_directory=row["training_directory"],
                 latest_resume=row["resume"],deadline_unix_s=clock["deadline_unix_s"])
-        index.update(current_task=contract["current_task"],protocol_revision=contract["protocol_revision"],
-                     w38_distinct_new_transitions=sum(x["new_transitions"] for x in rows.values()),
-                     w38_policy_counts={sid:dict(transitions=r["transitions"],updates=r["updates"]) for sid,r in rows.items()})
-    current=read(CONFIG)
-    running=any(x["status"]=="launched" for x in rows.values())
-    sampled=any(x["new_transitions"]>0 for x in rows.values())
-    current["status"]=("joint_sampling_running" if sampled else "launched_waiting_for_samples") if running else "computation_ended"
-    current["actual_implementation"].update(built=True,training_started=sampled)
-    current["reuse"]["active_controller_status"]="built_and_running" if running else "built_computation_ended"
-    current["current_window_scope"].update(current_build_status=current["reuse"]["active_controller_status"],
-                                          new_controller_build_required=False)
-    current["learning"]["controller_version_boundary"]["status"]="forks_launched"
-
-    current["actual_execution"]=dict(task=current["current_task"],controller_build="S5-r27",
-        shared_started_unix_s=clock["started_unix_s"],deadline_unix_s=clock["deadline_unix_s"],
-        streams=rows,shared_parent_counted_once=True,
-        distinct_new_transitions=sum(x["new_transitions"] for x in rows.values()),
-        common_elapsed_wall_s=time.time()-clock["started_unix_s"],
-        distinct_new_transitions_per_wall_s=sum(x["new_transitions"] for x in rows.values())/(time.time()-clock["started_unix_s"]),
-        no_fused_optimizer_or_policy=True,bulk_retained_local=True,deleted_files=0)
-    current["current_window_scope"]["status"]=current["status"]
-    write(CONFIG,current)
+        index.update(current_task=contract["current_task"],protocol_revision=contract["protocol_revision"])
+        index[phase+"_distinct_new_transitions"]=sum(x["new_transitions"] for x in rows.values())
+        index[phase+"_policy_counts"]={sid:dict(transitions=r["transitions"],updates=r["updates"]) for sid,r in rows.items()}
+        index[phase+"_parallel_state"]=dict(streams=rows,clock=clock_path,
+            shared_training_started_unix_s=clock["started_unix_s"],shared_training_deadline_unix_s=clock["deadline_unix_s"],
+            measured_training_wall_s=elapsed,
+            distinct_new_transitions_per_training_hour=(sum(x["new_transitions"] for x in rows.values())/elapsed*3600 if elapsed and elapsed>0 else None),
+            throughput_scope="Ends at latest actual collection update; excludes later evaluation/finish.",
+            no_fused_optimizer_or_policy=True,bulk_retained_local=True,deleted_files=0)
     plan_path=ROOT/"docs/TERRAIN_MEMORY_PLAN.md"
     plan=plan_path.read_text().splitlines()
     first=next(i for i,line in enumerate(plan) if line.startswith("## 当前交接"))
     slots=[i for i in range(first+1,len(plan)) if plan[i].startswith("- ")][:6]
     details=[]
-    for sid in ("w38-a","w38-b"):
+    # A job snapshot narrows active_streams to itself. The shared clock plus
+    # declared parent map retain both streams, including one not launched yet.
+    stream_ids=sorted(set(clock["jobs"]) | set(contract["learning"].get("parent_map",{})))
+    for sid in stream_ids:
         r=rows.get(sid)
         details.append(f"- {sid}：" + (f'{r["job"]}，{r["status"]}；新增{r["new_transitions"]}/{r["new_updates"]}，累计{r["transitions"]}/{r["updates"]}，tail={r["tail"]}、excluded={r["excluded"]}；评价={r["evaluation"]}，紧凑Git={r["publication"]}。' if r else "尚未启动。"))
     from datetime import datetime,timezone,timedelta
@@ -329,11 +328,11 @@ def update_parallel_handoff(contract):
         ability.append(sid+("尚无最终任务汇总" if not o else
             f'合规去程/返程/整圈={o.get("legal_all_outbound_traversals")}/{o.get("legal_return_traversals")}/{o.get("legal_roundtrips")}，材料加载回合={o.get("material_loaded_episodes")}'))
     handoff=[
-        f'- 当前任务：W38_SMOOTH_APPROACH_PARALLEL_JOINT / S5-r27 已真实修改、构建并启动；共同训练绝对截止北京时间{end}，resume不重置。',
+        f'- 当前任务：{contract["current_task"]} / {contract["reuse"]["active_controller_build"]} 已实际实现、正常构建并启动；共同训练绝对截止北京时间{end}，resume不重置。',
         *details,
-        "- 任务能力："+ "；".join(ability)+"。每流仅本phase新update评价E30，同case合格才E60；不把训练更新当合规任务能力。",
-        "- 交付：两流compact finish/Git串行且使用现有index锁；全部逐回合JSON及失败/零步/截断、job/stream学习与独立评价进Git；权重、rollout、原始数组留D57，未自动渲染/上传/删除。",
-        "- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见当前R12契约actual_execution.streams及正常job/index；同父工程分支，不合并optimizer或重复父历史。"]
+        "- 任务能力："+ "；".join(ability)+"。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。",
+        "- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗进Git；权重、原数组和全长视频留D57，自动删除0。",
+        "- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。"]
     for position,line in zip(slots,handoff):plan[position]=line
     plan_path.write_text("\n".join(plan)+"\n")
 
@@ -382,14 +381,16 @@ def main():
         execution_contract=str(frozen_path.relative_to(ROOT)),
         scope="Current delivery policy only; frozen training/evaluation/paths/identity stay unchanged.",
         frozen_delivery_authorization_superseded=True)
-    stream = large / "training" / f'{job["group"]}-seed{job["seed"]}'
+    stream = (ROOT / job["training_directory"] if job.get("training_directory") else
+              large / "training" / f'{job["group"]}-seed{job["seed"]}')
     initial = set(job.get("initial_attempts", []))
     evaluation = read(jobdir / "evaluation.json") or dict(
         status="unavailable" if job.get("evaluation_command") else "not_scheduled_for_job",
         reason="See retained evaluation.log and exit code" if job.get("evaluation_command") else None,
         attempts=[], stages=[])
+    episode_prefix=job.get("episode_prefix",f'train-{job["group"]}-s{job["seed"]}-ep')
     episodes = ([large / x for x in previous["attempts"]] if "attempts" in previous else
-                sorted(x for x in large.glob(f'train-{job["group"]}-s{job["seed"]}-ep*')
+                sorted(x for x in large.glob(episode_prefix+"*")
                        if x.is_dir() and (x.name not in initial if "initial_attempts" in job
                                           else x.stat().st_mtime >= job["started_unix_s"])))
     episodes = sorted({x.name: x for x in episodes + [large / x for x in evaluation.get("attempts", [])]}.values())
@@ -432,11 +433,18 @@ def main():
                     initial_updates=job["initial_updates"], new_updates=updates-job["initial_updates"],
                     unupdated_fragment=stopped.get("unupdated_fragment", collection.get("unupdated_fragment")),
                     reason=stopped.get("reason"), last_stage_status=stopped.get("last_stage_status"),
-                    phase_id=collection.get("phase_id"), phase_stop=stopped.get("phase_stop"),
+                    phase_id=collection.get("phase_id"), phase_lineage=collection.get("phase_lineage"),
+                    controller_build=job["controller_build"], reward_version=job["reward_version"],
+                    phase_stop=stopped.get("phase_stop"),
                     excluded_old_version_transitions=collection.get("excluded_old_version_transitions"),
                     controller_migration=collection.get("controller_migration"),
                     last_completed_update=collection.get("last_completed_update"),
                     last_episode_reason=stopped.get("last_episode_reason"))
+    last_update=training["last_completed_update"]
+    training["last_update_is_own_current_phase_new_update"]=bool(last_update
+        and last_update.get("updates",0)>job["initial_updates"]
+        and all(last_update.get(key)==job.get(key) for key in
+                ("phase_id","stream_id","controller_build","reward_version")))
     try:
         training["outcomes"] = training_outcomes(
             [x for x in episodes if x.name.startswith("train-")], small, binaries,
@@ -458,6 +466,31 @@ def main():
     staged, evidence = compact_records(
         jobdir, snapshots, small, episodes, dict(job, training_exit_code=training_exit),
         evaluation, samples, index_snapshot)
+    from export_s1_go2_compact_learning import export_job
+    numeric_paths,numeric_evidence=export_job(jobdir,small,large,stream,episodes,
+        samples,progress.get("checkpoint"),evaluation)
+    staged.update(numeric_paths)
+    evidence["numeric_learning"]=numeric_evidence
+    from export_s1_go2_event_windows import export_episode
+    event_evidence={}
+    for stage in evaluation.get("stages",[]):
+        if stage.get("level")=="E30" and stage.get("attempt"):
+            episode=large/stage["attempt"]
+            result=read(small/(episode.name+".json")) or read(episode/"result.json")
+            destination=small/"jobs"/name/"numeric-evidence"/"event-windows"/episode.name
+            exported=export_episode(episode,destination,result)
+            event_summary=exported["summary"]
+            event_evidence[episode.name]=dict(
+                summary=str((destination/"event-summary.json").relative_to(ROOT)),
+                paths=[str(Path(path).relative_to(ROOT)) for path in exported["paths"]],
+                status=event_summary.get("status","saved_event_windows"),
+                event_times_s={key:(event["time_s"] if event else None)
+                               for key,event in event_summary.get("events",{}).items()},
+                accepted_violation_count=len(event_summary.get("accepted_violations",[])),
+                missing=exported["missing"])
+            staged.update(destination.rglob("*.json"))
+            staged.update(destination.rglob("*.jsonl"))
+    evidence["event_windows"]=event_evidence
     policy_path = small / "jobs" / name / "delivery-policy.json"
     write(policy_path, policy)
     staged.add(policy_path)
@@ -466,7 +499,7 @@ def main():
         status="retained_local", upload_status="not_requested", backup_owner="user",
         deletion="User exports to their storage disk, then centrally deletes after backup.",
         repository_root=str(ROOT), job_directory=str(jobdir.relative_to(ROOT)),
-        shared_training_directory=str(stream.relative_to(ROOT)),
+        training_directory=str(stream.relative_to(ROOT)),
         episode_directories=[str(x.relative_to(ROOT)) for x in episodes],
         training_binary_paths=binaries,
         parent_resume_checkpoint=job["resume_checkpoint"],
@@ -528,9 +561,8 @@ def main():
     for position, line in zip(slots, handoff):
         plan[position] = line
     plan_path.write_text("\n".join(plan) + "\n")
-    if job.get("stream_id","").startswith("w38-"):
+    if job.get("shared_clock_path"):
         update_parallel_handoff(contract)
-        staged.add(CONFIG)
     staged.update((summary_path, small / "index.json", plan_path))
     paths = sorted(str(path.relative_to(ROOT)) for path in staged if path.is_file())
 
@@ -556,7 +588,7 @@ def main():
             detail = detail.decode(errors="replace")
         summary["errors"].append(dict(stage="git", error=redact(str(error)), output=redact(detail)[-4000:]))
         save_summary()
-        if job.get("stream_id","").startswith("w38-"):
+        if job.get("shared_clock_path"):
             update_parallel_handoff(contract)
         elif slots:
             plan[slots[0]] = handoff[0].replace("Git发布=published", "Git发布=publication_pending")

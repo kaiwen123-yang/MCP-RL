@@ -110,7 +110,7 @@ def continue_authorized_budget(jobdir, job, contract):
     if not extension or extension['status']!='scheduled_at_original_deadline':
         return
     large=ROOT/contract['outputs']['large_root']
-    stream=large/'training'/f'{job["group"]}-seed{job["seed"]}'
+    stream=ROOT/job['training_directory'] if job.get('training_directory') else large/'training'/f'{job["group"]}-seed{job["seed"]}'
     stopped_path=stream/'stopped.json'
     stopped=json.loads(stopped_path.read_text()) if stopped_path.exists() else {}
     if stopped.get('actual_transitions',0)>=job['target_transitions']:
@@ -158,7 +158,7 @@ def evaluate_job(jobdir, contract):
     jobdir = (ROOT / jobdir).resolve()
     contract = json.loads((jobdir / 'execution-contract.json').read_text())
     job = json.loads((jobdir / 'job.json').read_text())
-    if contract['current_task'] not in ('W37_CONTACT_CONSISTENT_JOINT','W38_SMOOTH_APPROACH_PARALLEL_JOINT'):
+    if contract['current_task'] not in ('W37_CONTACT_CONSISTENT_JOINT','W38_SMOOTH_APPROACH_PARALLEL_JOINT','W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT'):
         continue_authorized_budget(jobdir,job,contract)
     existing=jobdir/'evaluation.json'
     if existing.exists():
@@ -178,7 +178,8 @@ def evaluate_job(jobdir, contract):
         return 0
     record = dict(job=jobdir.name, status='running', started_unix_s=started,
                   deadline_unix_s=deadline, controller_build=job['controller_build'],
-                  group=job['group'], seed=job['seed'], stream_id=job.get('stream_id'), phase_id=job['phase_id'], condition=settings['condition'],
+                  group=job['group'], seed=job['seed'], stream_id=job.get('stream_id'), phase_id=job['phase_id'],
+                  phase_lineage=job.get('phase_lineage'), condition=settings['condition'],
                   workers=settings['solver_workers'], checkpoint_selection=settings['checkpoint_selection'],
                   deterministic_policy_mean=True, frozen_normalization=True, ppo_updates=False,
                   attempts=[], stages=[])
@@ -186,7 +187,7 @@ def evaluate_job(jobdir, contract):
     write(destination, record)
     large = ROOT / contract['outputs']['large_root']
     small = ROOT / contract['outputs']['compact_root']
-    stream = large / 'training' / f'{job["group"]}-seed{job["seed"]}'
+    stream = ROOT/job['training_directory'] if job.get('training_directory') else large/'training'/f'{job["group"]}-seed{job["seed"]}'
     try:
         import torch
         stopped_path=stream/'stopped.json'
@@ -211,7 +212,8 @@ def evaluate_job(jobdir, contract):
         eligible=(last and last['phase_id']==job['phase_id']
             and last['controller_build']==job['controller_build']
             and last['reward_version']==job['reward_version']
-            and last.get('stream_id')==job.get('stream_id') and last['updates']>job['initial_updates'] and last['samples']>job['initial_transitions'])
+            and last.get('stream_id')==job.get('stream_id')
+            and last.get('phase_lineage')==job.get('phase_lineage') and last['updates']>job['initial_updates'] and last['samples']>job['initial_transitions'])
         if not eligible:
             record.update(status='unavailable',reason='new_update_unavailable',
                 finished_unix_s=time.time(),stages=[dict(level=level,stage_status='not_run',
@@ -229,7 +231,9 @@ def evaluate_job(jobdir, contract):
         saved=torch.load(checkpoint,map_location='cpu',weights_only=False)
         if not (saved['phase_id']==job['phase_id'] and saved['controller_build']==job['controller_build']
                 and saved['reward_version']==job['reward_version']
-                and saved.get('stream_id')==job.get('stream_id') and saved['group']==job['group'] and saved['seed']==job['seed']
+                and saved.get('stream_id')==job.get('stream_id')
+                and saved.get('phase_lineage')==job.get('phase_lineage')
+                and saved['group']==job['group'] and saved['seed']==job['seed']
                 and saved['updates']==last['updates'] and saved['samples']==last['samples']
                 and len(saved['buffer'])==0):
             raise ValueError('Completed-update checkpoint does not match its recorded phase identity')

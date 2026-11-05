@@ -116,6 +116,9 @@ class PolicyStream:
         self.last_completed_update=None
         self.stream_id=contract.get('learning',{}).get('stream_id')
         self.fork_identity=None
+        self.phase_lineage=None
+        self.episode_root=root/contract["outputs"]["large_root"] if "large_root" in contract["outputs"] else self.directory.parent.parent
+        self.episode_prefix=contract.get("learning",{}).get("episode_prefix",f"train-{group}-s{seed}-ep")
         self.invocation_started_unix_s=time.time()
         resources=contract.get('resources',{})
         torch.set_num_threads(resources.get('torch_threads',1));torch.set_num_interop_threads(1)
@@ -147,6 +150,7 @@ class PolicyStream:
             self.controller_migration=saved.get('controller_migration')
             self.last_completed_update=saved.get('last_completed_update')
             self.fork_identity=saved.get('fork_identity')
+            self.phase_lineage=saved.get('phase_lineage')
             if training:
                 self.backend.optimizer.load_state_dict(saved['optimizer'])
                 torch.set_rng_state(saved['torch_rng']);np.random.set_state(saved['numpy_rng'])
@@ -205,6 +209,40 @@ class PolicyStream:
                     elif (self.fork_identity['stream_id']!=self.stream_id or
                           saved['seed']!=seed or saved['phase_id']!=self.phase_id):
                         raise ValueError('Resume must retain this branch stream and phase identity.')
+                if self.controller_build=='S5-r28':
+                    parent=contract['learning']['parent_map'][self.stream_id]
+                    lineage=contract['learning']['phase_lineage']
+                    source=Path(checkpoint)
+                    if not source.is_absolute():source=root/source
+                    if self.phase_lineage is None:
+                        if not (source.resolve()==(root/parent['resume_checkpoint']).resolve()
+                                and saved['stream_id']==parent['parent_stream_id']
+                                and saved['phase_id']==parent['parent_phase_id']
+                                and saved['controller_build']==parent['parent_controller_build']=='S5-r27'
+                                and saved['reward_version']==parent['parent_reward_version']==self.reward_version
+                                and saved['group']==parent['group']==group and saved['seed']==parent['seed']==seed
+                                and saved['samples']==parent['parent_transitions']==7569
+                                and saved['updates']==parent['parent_updates']==29
+                                and saved['episode']==parent['parent_episode']==251
+                                and not self.buffer and self.excluded_old_version_transitions==145
+                                and self.fork_identity==parent['ancestor_fork_identity']
+                                and self.directory.resolve()==(root/parent['training_directory']).resolve()
+                                and self.directory.resolve()!=source.parent.resolve()
+                                and lineage['current_stream_id']==self.stream_id
+                                and lineage['current_phase_id']==self.phase_id):
+                            raise ValueError('W39 new phase requires its own declared W38 ep251 zero-tail parent and isolated output.')
+                        # RNG/optimizer were restored above. An authorized phase
+                        # boundary keeps the ancestral fork and never reseeds.
+                        self.phase_lineage=dict(lineage)
+                        self.begin=time.time()
+                    elif not (saved['stream_id']==self.stream_id
+                              and saved['phase_id']==self.phase_id
+                              and saved['group']==group and saved['seed']==seed
+                              and saved['controller_build']==self.controller_build
+                              and saved['reward_version']==self.reward_version
+                              and self.phase_lineage==lineage
+                              and self.fork_identity==parent['ancestor_fork_identity']):
+                        raise ValueError('W39 resume must retain its own current stream/phase and unchanged ancestor fork.')
                 # A new physical session never inherits a pending successor.
                 # Same-version buffers retain their already recorded next_obs/value.
                 self.last_observation=None
@@ -219,8 +257,8 @@ class PolicyStream:
                 self.session_records.append(dict(episode=self.episode,status='new_physical_session_on_checkpoint_restore',
                     continuous_environment_restored=False,checkpoint=str(checkpoint)))
                 existing=[int(x.stem.split('-')[-1]) for x in self.directory.glob('episode-*.json')]
-                prefix=f'train-{group}-s{seed}-ep'
-                existing += [int(x.name[len(prefix):]) for x in self.directory.parent.parent.glob(prefix+'*') if x.is_dir()]
+                prefix=self.episode_prefix
+                existing += [int(x.name[len(prefix):]) for x in self.episode_root.glob(prefix+'*') if x.is_dir()]
                 # An interrupted started session also owns its episode number.
                 self.episode=max([self.episode]+existing)
         self.invocation_initial_samples=self.samples
@@ -232,7 +270,7 @@ class PolicyStream:
         if not resume_only:
             self.last_completed_update=dict(path=str(p.relative_to(self.root)),samples=self.samples,
                 updates=self.backend.update_count,phase_id=self.phase_id,stream_id=self.stream_id,
-                controller_build=self.controller_build,reward_version=self.reward_version)
+                phase_lineage=self.phase_lineage,controller_build=self.controller_build,reward_version=self.reward_version)
         torch.save(dict(actor=self.backend.actor.state_dict(),critic=self.backend.critic.state_dict(),
             optimizer=self.backend.optimizer.state_dict(),normalization=self.normalization,
             samples=self.samples,stage_samples=self.stage_samples,seed=self.seed,group=self.group,
@@ -249,7 +287,7 @@ class PolicyStream:
             phase_initial_updates=self.phase_initial_updates,phase_id=self.phase_id,
             excluded_old_version_transitions=self.excluded_old_version_transitions,
             controller_migration=self.controller_migration,last_completed_update=self.last_completed_update,
-            stream_id=self.stream_id,fork_identity=self.fork_identity,
+            stream_id=self.stream_id,fork_identity=self.fork_identity,phase_lineage=self.phase_lineage,
             ppo=self.backend.provenance()),p.with_suffix('.tmp'))
         p.with_suffix('.tmp').replace(p)
         summary=dict(samples=self.samples,effective_samples=self.effective_samples,
@@ -261,7 +299,7 @@ class PolicyStream:
             excluded_old_version_transitions=self.excluded_old_version_transitions,
             controller_migration=self.controller_migration,phase_id=self.phase_id,
             last_completed_update=self.last_completed_update,
-            stream_id=self.stream_id,fork_identity=self.fork_identity)
+            stream_id=self.stream_id,fork_identity=self.fork_identity,phase_lineage=self.phase_lineage)
         self.write_collection()
         progress=self.directory/'progress.json'
         progress.with_suffix('.tmp').write_text(json.dumps(summary,indent=2)+'\n')
@@ -271,7 +309,7 @@ class PolicyStream:
         collected=self.directory/'collection.json'
         collected.with_suffix('.tmp').write_text(json.dumps(dict(
             collected_transitions=self.samples,transition_serial=self.transition_serial,
-            stream_id=self.stream_id,fork_identity=self.fork_identity,
+            stream_id=self.stream_id,fork_identity=self.fork_identity,phase_lineage=self.phase_lineage,
             invocation_started_unix_s=self.invocation_started_unix_s,
             invocation_wall_s=time.time()-self.invocation_started_unix_s,
             invocation_new_transitions=self.samples-self.invocation_initial_samples,
@@ -302,7 +340,15 @@ class PolicyStream:
         self.log.write(json.dumps(dict(time_s=info['time_s'],episode=self.episode,
             transition=self.samples+1,transition_serial=self.transition_serial,reward=reward,terminated=terminated,truncated=truncated,
             dt_s=dt,effective=effective,stage=stage,cap_m_s=pending['cap'],
-            raw_action=float(sample.raw_action.item()),log_prob=float(sample.log_prob.item()),**info['metrics']))+'\n')
+            raw_action=float(sample.raw_action.item()),log_prob=float(sample.log_prob.item()),
+            stream_id=self.stream_id,phase_id=self.phase_id,controller_build=self.controller_build,
+            behavior_updates=self.backend.update_count,value=float(sample.value.item()),
+            next_value=float(next_value.item()),
+            phase=PHASES[int(pending['obs'][0,80:89].argmax().item())],
+            next_phase=PHASES[int(next_obs[0,80:89].argmax().item())],
+            pann_recovery_m=(pending['obs'][0,-12:].detach().cpu().numpy()*.001).tolist(),
+            next_pann_recovery_m=(next_obs[0,-12:].detach().cpu().numpy()*.001).tolist(),
+            **info['metrics']))+'\n')
         self.log.flush()
         if not self.training:return
         self.buffer.append(record);self.samples+=1;self.effective_samples+=int(effective)
@@ -406,7 +452,7 @@ class PolicyMaterial(JointMaterial):
             self.stream.transition(pending,observation,float(reward),terminated,truncated,
                 float(dt),bool(change[6]>0),self.stage,dict(time_s=float(t),metrics=dict(
                     signed_route_fraction=float(change[1]),indentation_sq_s=float(change[2]),
-                    loaded_slip_sq_s=float(change[3]),completed_circuits=int(change[5]),
+                    loaded_slip_sq_s=float(change[3]),action_change=float(change[4]),completed_circuits=int(change[5]),
                     failure=failure,intrinsic_timeout=timeout,
                     reward_version=self.stream.reward_version,
                     raw_signed_route_fraction=self.route_progress,

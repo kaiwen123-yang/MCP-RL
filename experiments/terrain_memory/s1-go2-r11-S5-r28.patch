@@ -1,0 +1,230 @@
+--- a/mjpc/trajectory.h
++++ b/mjpc/trajectory.h
+@@ -83,11 +83,13 @@
+   std::vector<double> costs;     // horizon
+   std::vector<double> trace;     // (horizon   x 3)
+   double total_return;           // (1)
++  double trunk_violation = 0.0;  // max original margin-gap over held substeps and terminal
+   bool failure;                  // true if last rollout had a warning
+ 
+  private:
+   // calculates total_return and costs
+   void UpdateReturn(const Task* task);
++  void UpdateTrunkViolation(const mjModel* model);
+ };
+ 
+ }  // namespace mjpc
+--- a/mjpc/trajectory.cc
++++ b/mjpc/trajectory.cc
+@@ -84,6 +84,7 @@
+   std::fill(residual.begin(), residual.begin() + dim_residual * T, 0.0);
+   total_return = 0.0;
+   failure = false;
++  trunk_violation = 0.0;
+ 
+   // traces
+   std::fill(trace.begin(), trace.begin() + dim_trace * T, 0.0);
+@@ -106,6 +107,7 @@
+     double xfrc_rate, int steps) {
+   // reset failure flag
+   failure = false;
++  trunk_violation = 0.0;
+ 
+   // model sizes
+   int nq = model->nq;
+@@ -216,7 +218,9 @@
+   GetTraces(DataAt(trace, (horizon - 1) * 3 * task->num_trace), model, data,
+             task->num_trace);
+ 
+-  // compute return
++  // The same earliest componentwise peaks cover every pre-integration
++  // substep and terminal. Keep feasibility separate from the task cost.
++  UpdateTrunkViolation(model);
+   UpdateReturn(task);
+ }
+ 
+@@ -228,6 +232,7 @@
+     double time, const double* mocap, const double* userdata, int steps) {
+   // reset failure flag
+   failure = false;
++  trunk_violation = 0.0;
+ 
+   // model sizes
+   int nq = model->nq;
+@@ -325,8 +330,30 @@
+   GetTraces(DataAt(trace, (horizon - 1) * 3 * task->num_trace), model, data,
+             task->num_trace);
+ 
+-  // compute return
++  // The same earliest componentwise peaks cover every pre-integration
++  // substep and terminal. Keep feasibility separate from the task cost.
++  UpdateTrunkViolation(model);
+   UpdateReturn(task);
++}
++
++// Recover the original geometric margin-gap from its existing monotone
++// smooth positive-part residual. r*scale = (over + sqrt(over^2+1e-12))/2,
++// hence over = r*scale - 1e-12/(4*r*scale). The boundary is exactly r*scale=5e-7.
++// No new geometry, clearance margin, penalty weight or dynamics is introduced.
++void Trajectory::UpdateTrunkViolation(const mjModel* model) {
++  trunk_violation = 0.0;
++  if (!GetCustomNumericData(model, "r12_substep_path")) return;
++  const int sensor = mj_name2id(model, mjOBJ_SENSOR, "TrunkClearance");
++  const double scale = GetCustomNumericData(model, "r12_trunk_clearance")[0];
++  const int adr = model->sensor_adr[sensor], size = model->sensor_dim[sensor];
++  for (int t = 0; t < horizon; ++t) {
++    for (int j = 0; j < size; ++j) {
++      const double positive = residual[t * dim_residual + adr + j] * scale;
++      if (positive > 5e-7)
++        trunk_violation = mju_max(trunk_violation,
++                                 positive - 1e-12 / (4 * positive));
++    }
++  }
+ }
+ 
+ // calculates total_return and costs
+--- a/mjpc/planners/ilqg/planner.h
++++ b/mjpc/planners/ilqg/planner.h
+@@ -132,6 +132,8 @@
+ 
+   // best trajectory id
+   int winner;
++  int nominal_winner = -1;
++  int nominal_feasible_candidates = 0;
+ 
+   // settings
+   iLQGSettings settings;
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -203,6 +203,11 @@
+ 
+   // evaluate rollouts
+   int best_nominal = this->BestRollout();
++  nominal_winner = best_nominal;
++  nominal_feasible_candidates = 0;
++  for (int i = 0; i < num_trajectory_; ++i)
++    if (!trajectory[i].failure && trajectory[i].trunk_violation == 0)
++      ++nominal_feasible_candidates;
+ 
+   // check for all rollout failures
+   if (best_nominal == -1) {
+@@ -383,6 +388,7 @@
+ void iLQGPlanner::Iteration(int horizon, ThreadPool& pool) {
+   // set previous best cost
+   double previous_return = candidate_policy[0].trajectory.total_return;
++  const double previous_violation = candidate_policy[0].trajectory.trunk_violation;
+ 
+   // ----- setup ----- //
+   // resize data for rollouts
+@@ -580,22 +586,50 @@
+     winner = best_rollout;
+   }
+ 
+-  // update nominal with winner
+-  candidate_policy[0].trajectory = trajectory[winner];
++  // Preserve the candidate policy that actually generated the winner. In
++  // particular, do not overwrite candidate 0's feedback reference with its
++  // accepted rollout before CopyFrom: that would change its feedback law.
++  const double accepted_violation = trajectory[winner].trunk_violation;
++  const bool restoration = accepted_violation > 0;
++  const double violation_improvement = previous_violation - accepted_violation;
++  const double cost_improvement = previous_return - trajectory[winner].total_return;
++  int feasible_candidates = 0;
++  for (int i = 0; i < num_trajectory_; ++i)
++    if (!trajectory[i].failure && trajectory[i].trunk_violation == 0)
++      ++feasible_candidates;
+ 
+   // improvement
+   action_step = linesearch_steps[winner];
+   expected = -1.0 * action_step *
+                  (backward_pass.dV[0] + action_step * backward_pass.dV[1]) +
+              1.0e-16;
+-  improvement = previous_return - trajectory[winner].total_return;
+-  surprise = mju_min(mju_max(0, improvement / expected), 2);
+-
++  const bool feasible_comparison = previous_violation == 0 && accepted_violation == 0;
++  const bool cost_ratio_valid = feasible_comparison && expected > 0;
+   const double regularization_used=backward_pass.regularization;
+-  // update regularization
+-  backward_pass.UpdateRegularization(settings.min_regularization,
+-                                     settings.max_regularization, surprise,
+-                                     action_step);
++  if (feasible_comparison) {
++    improvement = cost_improvement;
++    surprise = cost_ratio_valid ? mju_min(mju_max(0, improvement / expected), 2) : 0;
++    // A large action step alone cannot count as accepted improvement. Reuse
++    // the existing ratio thresholds and regularization factor only after
++    // comparing the selected feasible rollout to the feasible nominal.
++    if (improvement > 0 && surprise > 0.5)
++      backward_pass.ScaleRegularization(1.0 / backward_pass.regularization_factor,
++                                       settings.min_regularization, settings.max_regularization);
++    else if (improvement <= 0 || surprise < 0.1)
++      backward_pass.ScaleRegularization(backward_pass.regularization_factor,
++                                       settings.min_regularization, settings.max_regularization);
++  } else {
++    // The cost-only dV is not a model of maximum violation. Report no cost
++    // trust ratio, and use actual feasibility progress for regularization.
++    // Equal violation with cheaper J is still not feasibility progress.
++    improvement = violation_improvement;
++    expected = 0;
++    surprise = 0;
++    backward_pass.ScaleRegularization(
++        violation_improvement > 0 ? 1.0 / backward_pass.regularization_factor
++                                  : backward_pass.regularization_factor,
++        settings.min_regularization, settings.max_regularization);
++  }
+ 
+   if (settings.verbose) {
+     std::cout << "iLQG Information\n" << '\n';
+@@ -651,10 +685,29 @@
+        <<",\"regularization_after\":"<<backward_pass.regularization
+        <<",\"action_step\":"<<action_step
+        <<",\"accepted_cost\":"<<trajectory[winner].total_return
++       <<",\"nominal_winner\":"<<nominal_winner
++       <<",\"nominal_feasible_candidates\":"<<nominal_feasible_candidates
++       <<",\"feasible_candidates\":"<<feasible_candidates
++       <<",\"nominal_trunk_violation_m\":"<<previous_violation
++       <<",\"accepted_trunk_violation_m\":"<<accepted_violation
++       <<",\"prediction_infeasible\":"<<(restoration ? "true" : "false")
++       <<",\"acceptance_mode\":\""<<(restoration ? "restoration" : "feasible_cost")<<"\""
++       <<",\"violation_improvement_m\":"<<violation_improvement
++       <<",\"cost_improvement\":"<<cost_improvement
++       <<",\"cost_ratio_valid\":"<<(cost_ratio_valid ? "true" : "false")
++       <<",\"cost_expected\":"<<(cost_ratio_valid ? std::to_string(expected) : "null")
++       <<",\"cost_surprise\":"<<(cost_ratio_valid ? std::to_string(surprise) : "null")
+        <<",\"feedback_reference_cost\":"<<policy.trajectory.total_return
+        <<",\"accepted_identity\":\"trajectory[winner]\""
+        <<",\"feedback_reference_identity\":\"policy.trajectory\""
+-       <<",\"nx\":"<<dim_state_derivative<<",\"nodes\":[";
++       <<",\"nx\":"<<dim_state_derivative<<",\"candidates\":[";
++    for (int i=0;i<num_trajectory_;++i) {
++      if(i)out<<",";
++      out<<"{\"index\":"<<i<<",\"failed\":"<<(trajectory[i].failure ? "true" : "false")
++         <<",\"trunk_violation_m\":"<<trajectory[i].trunk_violation
++         <<",\"cost\":"<<trajectory[i].total_return<<"}";
++    }
++    out<<"],\"nodes\":[";
+     auto array=[&out](const char* key,const double* x,int n) {
+       out<<",\""<<key<<"\":[";
+       for(int j=0;j<n;++j){if(j)out<<",";out<<x[j];}out<<"]";
+@@ -793,12 +846,19 @@
+ // return index of trajectory with best rollout
+ int iLQGPlanner::BestRollout() {
+   double best_return = 0;
++  double best_violation = 0;
+   int best_rollout = -1;
+ 
+   for (int j = num_trajectory_ - 1; j >= 0; j--) {
+     if (trajectory[j].failure) continue;
+     double rollout_return = trajectory[j].total_return;
+-    if (best_rollout == -1 || rollout_return < best_return) {
++    const double violation = trajectory[j].trunk_violation;
++    // Feasible candidates (v=0) dominate every infeasible candidate. If none
++    // is feasible, this is explicit finite-candidate restoration by (v,J).
++    // Exact ties retain the existing reverse-order zero-step preference.
++    if (best_rollout == -1 || violation < best_violation ||
++        (violation == best_violation && rollout_return < best_return)) {
++      best_violation = violation;
+       best_return = rollout_return;
+       best_rollout = j;
+     }

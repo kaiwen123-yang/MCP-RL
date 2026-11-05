@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+  "status": "implemented_built_ready_for_direct_joint_training",
   "protocol_revision": "contact_execution_repair_parallel_joint_v14",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
   "revision_date": "2026-11-05",
@@ -15,7 +15,7 @@
     "rule": "Reuse the actual D57 environment and executed r27 source/model skeleton. First inspect existing W38 E30 event windows, then implement exactly one supported control correction plus required phase/delivery wiring. Freeze and normally build r28 before direct complete joint sampling; preserve original physical semantics.",
     "active_controller_build": "S5-r28",
     "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r28.json",
-    "active_controller_status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+    "active_controller_status": "implemented_built_ready_for_direct_joint_training",
     "parent_controller_build": "S5-r27",
     "parent_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r27.json",
     "latest_executed_controller_build": "S5-r27",
@@ -23,7 +23,7 @@
     "implementation_base_controller_build": "S5-r27",
     "implementation_base_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r27.json",
     "checkpoint_parent_controller_build": "S5-r27",
-    "specification_path_status": "Planned r28 specification only; selected_mechanism is null. No r28 implementation, build or run is claimed."
+    "specification_path_status": "r28 implementation and normal build complete; actual launch/collection/evaluation in normal job/index records."
   },
   "execution": {
     "mode": "interactive_setup_and_detached_training",
@@ -210,7 +210,7 @@
       "failure_policy": "Record original technical/stage failures and all available compact results. Retry failed Git delivery from saved records without physics, force push or deletion. Unrequested large checkpoints/videos/raw arrays are retained_local, not publication_pending.",
       "result_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job-name>.json",
       "resume_publication": "Retry the same job compact finisher only after a concrete Git/evidence-delivery error; reuse saved records without training/evaluation replay. Optional selected large-file transfer is separate and does not gate research.",
-      "final_evaluation_adapter_status": "Existing phase/stream selection reused; W39 parent_map and training_directory consumption must be wired before launch.",
+      "final_evaluation_adapter_status": "implemented_explicit_training_directory_phase_lineage_and_own_new_update",
       "postprocessing_release_policy": "Automatic Release upload is disabled. Reuse existing explicit selected-asset/manifest uploader only when particular diagnostic evidence is requested; retain historical Release destinations and URLs.",
       "cleanup_after_publication": "Disabled by the latest user instruction. User periodically exports bulk outputs to their storage disk and manually deletes after backup; compact Git push never authorizes deletion.",
       "prior_40h_extension_inherited": false,
@@ -238,14 +238,15 @@
       "publication_serialization": "Reuse existing index flock; serialize compact summaries/handoff/Git operations in the parent orchestration. Only stage job-owned completed small records; report both streams.",
       "training_clock_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w39-training-clock.json",
       "parent_map_source": "learning.parent_map",
-      "new_phase_boundary_status": "required_not_implemented",
+      "new_phase_boundary_status": "implemented",
       "required_entrypoint_changes": [
         "start_s1_go2_r12_tmux.py must accept the explicit per-stream parent map and authorized new W39 phase instead of one shared --resume / first-fork path.",
         "Preserve ancestor fork_identity and add phase_lineage; ordinary same-phase resume must validate its own current W39 job/stream identity and retain RNG/tail/deadline.",
         "Pass the new training_directory through train, PolicyStream initial save/resume, final evaluator checkpoint selection, finisher outcome reads and compact publication; never rewrite the W38 ep251 parent directory.",
         "Use the W39 clock path and actual controller/reward in launcher and finisher rather than hard-coded W38/S5-r27 identity.",
         "Namespaced actual episode/job/stream records start naturally at episode >=252 and must not overwrite W38 results."
-      ]
+      ],
+      "required_entrypoint_changes_status": "implemented_without_restore_drills_or_physical_admission_tests"
     }
   },
   "tasks": [
@@ -780,9 +781,9 @@
     "storage_check_at_execution": {
       "filesystem": "/dev/md0",
       "reported_capacity": "1000G",
-      "reported_used": "222G",
-      "reported_available": "779G",
-      "scope": "Historical one-time df at W38 entry; no cleanup. No W39 server storage query has been performed by this review."
+      "reported_used": "258G",
+      "reported_available": "743G",
+      "scope": "D57 live df at W39 implementation on 2026-11-05; no cleanup."
     },
     "normal_startup_resource_snapshot": "At actual normal W39 launch one ordinary CPU/GPU utilization and RSS/VRAM snapshot may accompany observed throughput. No stress test, worker grid or monitoring platform."
   },
@@ -900,7 +901,7 @@
       "parent_controller_build": "S5-r27",
       "active_controller_build": "S5-r28",
       "implementation_base_controller_build": "S5-r27",
-      "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+      "status": "implemented_explicit_new_phase_ready",
       "parent_checkpoint": null,
       "parent_checkpoint_release_url": null,
       "parent_map_source": "learning.parent_map",
@@ -923,7 +924,7 @@
       },
       "target_checkpoint": "checkpoint-008593.pt",
       "counter_semantics": "Serial numbers are namespaced by current stream/phase. Historical common ancestry is counted once; inherited branch histories and optimizers are never fused.",
-      "path_consumption_status": "planned_required_in_existing_start_train_PolicyStream_evaluation_finish",
+      "path_consumption_status": "implemented_start_train_PolicyStream_evaluation_finish",
       "parent_directories_read_only": true,
       "next_episode_minimum": 252
     },
@@ -937,7 +938,7 @@
     "reward_version": "W38_legal_route_terminal_settlement",
     "reward_definition": "Original reward coefficients and strip legality. On true physical termination explicitly close an incomplete active passage and retract its provisional positive credit before the final transition. Preserve completed legal traversal counts, live dense progress and external truncation semantics; do not turn all partial collection boundaries into task failures.",
     "effective_translation_semantics": "Historical effective_samples/effective_translation_s count outbound or return phase activity, not positive progress, useful material exposure or learning benefit.",
-    "planned_runtime_changes_status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+    "planned_runtime_changes_status": "implemented_built",
     "known_r25_startup_regression": {
       "status": "implemented_saved_natural_episode_predicate",
       "enabled_for_planned_phase": true,
@@ -1169,7 +1170,7 @@
     "training_gate": "Saved-data mechanism selection, necessary implementation and normal build, then direct complete-joint training. No new E30/rigid/single-module/mock/smoke/restore or throughput admission experiment.",
     "post_training_evaluation": {
       "planned": true,
-      "implementation_status": "Existing independent evaluation reused; W39 training_directory/current-phase consumers require explicit wiring before launch.",
+      "implementation_status": "implemented_directory_and_phase_lineage_consumers",
       "purpose": "Evaluate the last actually completed new update of each own W39/r28/W38-reward branch after training; collection counts, stage status and legal traversal remain separate.",
       "group": "PANN_PPO_S5",
       "condition": "nominal",
@@ -1300,8 +1301,8 @@
     "reward_alignment_risk": "W38 true-terminal settlement is implemented and all68natural training failures plus both E30s retract incomplete credit to0. Preserve the same reward definition in W39. The raw2Hz value/next-value/PANN export is still needed to independently audit bootstrap/feature exposure; do not infer physical convergence from reward repair.",
     "later_decision_rule": "Only one evidence-selected r28 mechanism in this phase. If existing records cannot support an implementable correction, publish the actual extracted numbers and exact missing interface; do not launch unchanged r27 or add a parameter grid, arbitrary K clip/low-pass, force-allocation objectives or a new planning round.",
     "mechanism_selection": {
-      "selected_mechanism": null,
-      "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+      "selected_mechanism": "original_trunk_margin_candidate_feasibility_with_explicit_restoration",
+      "status": "selected_implemented_built",
       "source": "docs/TERRAIN_MEMORY_PLAN.md sections4.1-4.2",
       "initial_saved_data_target_wall_s": 1800,
       "inside_existing_interactive_budget": true,
@@ -1325,7 +1326,56 @@
       ],
       "stack_multiple_mechanisms": false,
       "parameter_grid": false,
-      "insufficient_evidence": "Publish numeric extraction and exact unavailable interface; no unchanged-r27 relabel/28h rerun and no invented absent accepted states/forces."
+      "insufficient_evidence": "Publish numeric extraction and exact unavailable interface; no unchanged-r27 relabel/28h rerun and no invented absent accepted states/forces.",
+      "evidence": [
+        {
+          "stream": "w38-a",
+          "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261104T104730Z-w38-a/numeric-evidence/event-windows/job-20261104T104730Z-w38-a-eval-PANN_PPO_S5-s1-E30/event-summary.json",
+          "first_observed_accepted_violation": {
+            "origin_s": 13.559999999995075,
+            "plan_id": 699,
+            "node": 10,
+            "time_s": 13.579999999995028,
+            "geom": 13,
+            "margin_m": 0.001,
+            "gap_minus_margin_m": -0.0023603267094585286
+          },
+          "event_times_s": {
+            "target_clipping": 13.337999999995592,
+            "large_raw_K_delta_x": 13.337999999995592,
+            "raw_PD_saturation": 6.990000000005902,
+            "nonfoot_contact": 13.444599999995344,
+            "nonfoot_load": 13.444599999995344,
+            "material_load": 13.3345999999956,
+            "terminal": 13.563399999995067,
+            "first_observed_accepted_trunk_violation": 13.559999999995075
+          }
+        },
+        {
+          "stream": "w38-b",
+          "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261104T104730Z-w38-b/numeric-evidence/event-windows/job-20261104T104730Z-w38-b-eval-PANN_PPO_S5-s2-E30/event-summary.json",
+          "first_observed_accepted_violation": {
+            "origin_s": 13.519999999995168,
+            "plan_id": 697,
+            "node": 10,
+            "time_s": 13.539999999995121,
+            "geom": 13,
+            "margin_m": 0.001,
+            "gap_minus_margin_m": -0.002976645920465467
+          },
+          "event_times_s": {
+            "target_clipping": 12.073999999998538,
+            "large_raw_K_delta_x": 11.326000000000281,
+            "raw_PD_saturation": 11.222000000000524,
+            "nonfoot_contact": 13.099199999996149,
+            "nonfoot_load": 13.099199999996149,
+            "material_load": 12.52759999999748,
+            "terminal": 13.520799999995166,
+            "first_observed_accepted_trunk_violation": 13.519999999995168
+          }
+        }
+      ],
+      "decision": "Both last accepted +20ms slices violate original geom13 margin. Earlier feedback active-set changes are observed, especially B before material load; they remain distinct and are not claimed solved by this finite-candidate acceptance change. No demonstrated earlier clock/packet/derivative wiring mismatch was established."
     }
   },
   "process": {
@@ -1500,8 +1550,8 @@
       "bulk_recording_unchanged": true
     },
     "W38_compact_backfill": {
-      "status": "pending_saved_data_export_next_execution_session",
-      "review_did_not_read_server_raw": true,
+      "status": "exported_and_pushed",
+      "review_did_not_read_server_raw": false,
       "streams": {
         "w38-a": {
           "job": "job-20261104T104730Z-w38-a",
@@ -1523,7 +1573,8 @@
       "automatic_render": false,
       "full_bulk_upload": false,
       "automatic_delete": false,
-      "publication": "Explicit small backfill into existing compact result/review paths; preserve W38 completed results and all local raw data."
+      "publication": "Explicit small backfill into existing compact result/review paths; preserve W38 completed results and all local raw data.",
+      "commit": "61fd022"
     }
   },
   "history": {
@@ -2829,7 +2880,7 @@
   ],
   "current_window_scope": {
     "task": "W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT",
-    "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+    "status": "implemented_built_ready_for_direct_joint_training",
     "streams": [
       {
         "stream_id": "w39-a",
@@ -2849,7 +2900,7 @@
       }
     ],
     "objective": "Choose one supported contact/execution repair from saved W38 failure events, then continue each existing branch through complete joint updates and independent fixed evaluation.",
-    "selected_mechanism": null,
+    "selected_mechanism": "original_trunk_margin_candidate_feasibility_with_explicit_restoration",
     "initial_transitions_per_stream": 7569,
     "initial_updates_per_stream": 29,
     "initial_completed_update_transitions": 7424,
@@ -2876,7 +2927,7 @@
     "latest_executed_build": "S5-r27",
     "latest_executed_build_status": "completed_W38_both_E30_failed_E60_blocked",
     "current_build": "S5-r28",
-    "current_build_status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+    "current_build_status": "implemented_built_ready_for_direct_joint_training",
     "new_controller_build_required": true,
     "new_fork": false,
     "reseed": false,
@@ -2890,9 +2941,9 @@
     "default_postprocess_budget_s": 21600,
     "automatic_cleanup_status": "disabled_user_backup_and_manual_deletion",
     "server_execution_completed_by_this_plan": false,
-    "this_review_documentation_only": true,
-    "this_review_starts_server_work": false,
-    "latest_user_scope": "2026-11-05: analyze completed r27, publish the next concrete single-mechanism full-joint parallel plan; no SSH/build/physics in this review. Next execution continues each own ep251 branch, compact numeric evidence first, no PC archive or automatic deletion."
+    "this_review_documentation_only": false,
+    "this_review_starts_server_work": true,
+    "latest_user_scope": "2026-11-05 execute W39; leave after both tmux streams show real sample/log progress, without waiting for the first completed update."
   },
   "current_review_scope": {
     "kind": "completed_W38_evidence_review_and_W39_plan",
@@ -2912,14 +2963,14 @@
   },
   "planned_implementation": {
     "controller_build": "S5-r28",
-    "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
-    "selected_mechanism": null,
+    "status": "implemented_built",
+    "selected_mechanism": "original_trunk_margin_candidate_feasibility_with_explicit_restoration",
     "base_controller_build": "S5-r27",
     "mechanism_selection_source": "control_and_evaluation.mechanism_selection",
     "phase_wiring_source": "execution.background_job.required_entrypoint_changes",
     "compact_evidence_source": "outputs.compact_numeric_evidence",
-    "implemented": false,
-    "built": false,
+    "implemented": true,
+    "built": true,
     "training_started": false,
     "retained": "r27C2 gate, r26causal packet/head offset/ten A-B substeps, TVfeedback/PD, original robot/material/contact/torque/fall/route semantics,658Dobs, frozenPANN and2Hzcap, W38terminal reward.",
     "excluded_reinstatements": [
@@ -2931,25 +2982,26 @@
   },
   "actual_implementation": {
     "controller_build": "S5-r28",
-    "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
-    "selected_mechanism": null,
-    "implemented": false,
-    "built": false,
+    "status": "implemented_built_ready_for_direct_joint_training",
+    "selected_mechanism": "original_trunk_margin_candidate_feasibility_with_explicit_restoration",
+    "implemented": true,
+    "built": true,
     "training_started": false,
-    "build_wall_s": null,
-    "build_source_commit": null,
-    "binary": null,
-    "build_identity": null,
+    "build_wall_s": 163.1117799282074,
+    "build_source_commit": "61fd022af3ff8ce1d2a88f42e17639311788e42f",
+    "binary": "work/r11-frozen/S5-r28/agent_server",
+    "build_identity": "work/r11-frozen/S5-r28/identity.json",
     "planned_details": "planned_implementation",
     "prior_completed_implementation": "history.completed_W38_implementation",
-    "scope": "W39 has not been implemented, built or run by this review; preserved completed W38 implementation is historical."
+    "scope": "Saved E30 extraction, one finite-candidate feasibility/acceptance repair and required phase/delivery plumbing; normal build complete. This configuration is frozen before actual launch.",
+    "patch": "experiments/terrain_memory/s1-go2-r11-S5-r28.patch"
   },
   "actual_execution": {
     "task": "W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT",
     "controller_build": "S5-r28",
-    "status": "planned_pending_saved_event_selection_not_implemented_not_built_not_run",
+    "status": "prelaunch_configuration_snapshot_runtime_status_owned_by_jobs_and_index",
     "server_accessed_by_this_review": false,
-    "server_deployed": false,
+    "server_deployed": true,
     "training_started": false,
     "evaluation_started": false,
     "shared_started_unix_s": null,
@@ -2981,6 +3033,6 @@
     "distinct_new_transitions": 0,
     "parent_counts_and_paths": "learning.parent_map",
     "prior_completed_execution": "history.completed_W38_actual_execution",
-    "scope": "These are explicit not-started W39 fields, not a new server observation. No W39 clock exists by virtue of this plan, and no W38 job/clock/data has been reset."
+    "scope": "D57 inspected and r28 built; this is the prelaunch configuration snapshot. Normal job/index records and six-line main-plan handoff report subsequent actual training/evaluation status; clock is created only by actual launch."
   }
 }

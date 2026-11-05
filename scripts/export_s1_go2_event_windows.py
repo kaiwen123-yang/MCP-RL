@@ -30,6 +30,8 @@ def export_episode(episode_dir, destination, result):
     start=float(times[outbound[0]]) if len(outbound) else None
     actions=read_jsonl(p/'feedback-actions.jsonl');plans=read_jsonl(p/'planner-records.jsonl')
     material=read_jsonl(p/'material-events.jsonl')
+    packets=json.loads((p/'reference-packets.json').read_text()) if (p/'reference-packets.json').exists() else {}
+    packet_map={round(x['new_optimized_action_time_s'],8):x for x in packets.get('packets',[])}
     physical_parts=[np.load(f)['physical'] for f in sorted(p.glob('physical-*.npz'))]
     physical=np.concatenate(physical_parts) if physical_parts else np.zeros((0,61))
     if not physical_parts: missing.append('physical-*.npz: per-substep values unavailable')
@@ -113,7 +115,7 @@ def export_episode(episode_dir, destination, result):
     for w,(lo,hi) in enumerate(merged):
         ti=np.flatnonzero((times>=lo-1e-9)&(times<=hi+1e-9));pi=np.flatnonzero((physical[:,0]>=lo-1e-9)&(physical[:,0]<=hi+1e-9))
         aa=[dict(control_index=int(i),control_time_s=float(times[i]),record=executed[i],derived=derived(i,executed[i])) for i in ti if i in executed]
-        ids={a['record']['plan_id'] for a in aa};pp=[dict(p,geometry=plan_geometry[p['plan_id']]) for p in plans if p['plan_id'] in ids or lo<=p['origin']<=hi]
+        ids={a['record']['plan_id'] for a in aa};pp=[dict(p,geometry=plan_geometry[p['plan_id']],reference_packet=packet_map.get(round(p['origin'],8))) for p in plans if p['plan_id'] in ids or lo<=p['origin']<=hi]
         # Each source is independently named so required small evidence cannot
         # be hidden by a generic raw-file or 2MB filter.
         for label,value in [('control',dict(columns={k:v[ti].tolist() for k,v in traj.items()},actions=aa)),
@@ -136,7 +138,7 @@ def export_episode(episode_dir, destination, result):
                     excluded_rpc_rows=excluded,unique_executed_controls=len(executed),mismatched_terminal_rows=np.flatnonzero(~np.isclose(times,traj['diagnostic_time'],rtol=0,atol=1e-10)).tolist()),
         foot_order=dict(runtime=['FL','FR','RL','RR'],risk=['FL','RL','FR','RR'],risk_to_runtime=[0,2,1,3]),
         actuator_names=[model.actuator(i).name for i in range(model.nu)],ctrlrange=urange.tolist(),forcerange=frange.tolist(),kp=60,kd=5,
-        original_protected_trunk_geoms=geoms,nonfoot_support_windows=nonfoot,
+        original_protected_trunk_geoms=geoms,reference_packet_fields=packets.get('fields'),nonfoot_support_windows=nonfoot,
         missing=missing+['Actual qpos/qvel are 500Hz, not per 0.2ms; nominal-at-actual-state comparison uses stored control states only.',
                          'No actual contact forces are synthesized from stored accepted/reference states.'],
         terminal_result={k:result[k] for k in ['attempt','controller_build','reason','simulation_s','stage_status','success','legal_route','source_commit','execution_fingerprint'] if k in result})
