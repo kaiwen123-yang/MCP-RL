@@ -4,7 +4,7 @@
 
 - 当前任务：W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT / S5-r28 已实际实现、正常构建并启动；共同训练绝对截止北京时间2026-11-06T15:23:54.713909+08:00，resume不重置。
 - w39-a：job-20261105T032354Z-w39-a，training_ended；新增1024/4，累计8593/33，tail=0、excluded=145；评价=completed，紧凑Git=publication_pending。
-- w39-b：job-20261105T032354Z-w39-b，training_ended；新增1024/4，累计8593/33，tail=0、excluded=145；评价=completed，紧凑Git=published。
+- w39-b：job-20261105T032354Z-w39-b，training_ended；新增1024/4，累计8593/33，tail=0、excluded=145；评价=completed，紧凑Git=publication_pending。
 - 任务能力：w39-a合规去程/返程/整圈=0/0/0，材料加载回合=32；w39-b合规去程/返程/整圈=0/0/0，材料加载回合=26。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
 - 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
