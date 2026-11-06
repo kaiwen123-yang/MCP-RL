@@ -6,7 +6,7 @@
 - w39-a：job-20261105T032354Z-w39-a，training_ended；新增1024/4，累计8593/33，tail=0、excluded=145；评价=completed，紧凑Git=published。
 - w39-b：job-20261105T032354Z-w39-b，training_ended；新增1024/4，累计8593/33，tail=0、excluded=145；评价=completed，紧凑Git=published。
 - 任务能力：A末次update33固定策略E30在10.476s跌倒，B在17.592s跌倒；两流E60均blocked_by_predecessor；训练与评价合法去程/返程/往返均0，尚未形成合格通行基线。
-- 交付：远端新增文档导致的compact push拒绝已通过保留双方提交、普通merge/push解决，45a0069已发布全部紧凑证据；W39原始诊断A492/B484项（合计约7.68GB）后台上传进程已启动，各首次传输截止北京时间2026-11-06 22:35:33，完成以各manifest状态为准；自动删除0。
+- 交付：45a0069/b5d408d已发布紧凑结果；原始诊断A492/B484项约7.68GB，按用户授权切到服务器独立Clash、总并发5文件(A3/B2)。实际短窗合计吞吐约6.79MB/s，尚待manifest全量确认；原截止北京时间2026-11-06 22:35:33不变，3个未完成远端占位项改名保留，自动删除0。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；diag-job-20261105T032354Z-w39-a/b仅传保存原件，训练/评价均已结束。各jobs/<job>/diagnostics/evidence.json记录上传状态，checkpoint-008593及完整resume、原始数组留D57供用户备份后手动删除。
 
 ## 1. 长期目标、当前阶段与阅读边界

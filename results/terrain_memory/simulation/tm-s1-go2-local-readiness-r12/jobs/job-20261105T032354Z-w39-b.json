@@ -1533,9 +1533,78 @@
     "deadline_unix_s": 1793975733.6139674,
     "selected_assets": 484,
     "selected_bytes": 3800510188,
-    "observed_at_unix_s": 1793954273.6379797,
+    "observed_at_unix_s": 1793956008.0723596,
     "completion_source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261105T032354Z-w39-b/diagnostics/evidence.json",
-    "complete": false
+    "complete": false,
+    "acceleration": {
+      "source_commit": "8aafe11",
+      "user_authorized_route": "isolated_server_Clash_subscription_primary",
+      "subscription_stored": "private_server_configuration_outside_repository",
+      "total_concurrent_assets": 5,
+      "per_queue_concurrency": 2,
+      "original_deadline_preserved": true,
+      "initial_measurement": {
+        "at_unix_s": 1793955588.942462,
+        "total_assets": 484,
+        "total_bytes": 3800510188,
+        "uploaded_assets": 94,
+        "uploaded_bytes": 462716177,
+        "upload_workers": 2,
+        "http_proxy": "http://127.0.0.1:17990",
+        "evidence_status": "publication_pending",
+        "errors": [
+          {
+            "action": "upload",
+            "returncode": 1,
+            "detail": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 260, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 208, in main\n    update(register)\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 138, in update\n    value=json.loads((SMALL/'index.json').read_text());change(value)\n                                                       ^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 205, in register\n    elif actual:raise RuntimeError('Existing asset differs; retained without replacement: '+row['name'])\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Existing asset differs; retained without replacement: diag__job-20261105T032354Z-w39-b__f000009-g1__prediction-000.npz\n"
+          }
+        ],
+        "deadline_unix_s": 1793975733.6139674
+      },
+      "previous_route_issue": "Academic proxy returned connection reset by peer for a57MB prediction asset; previously completed assets retained.",
+      "scope": "Only publication transport changed; no training/evaluation/physics or data deletion.",
+      "status": "observed_actual_parallel_transfer_progress",
+      "server_private_profile": "/root/.config/mihomo-w39-upload",
+      "subscription_not_in_repository": true,
+      "latest_observation": {
+        "at_unix_s": 1793956008.0723596,
+        "total_assets": 484,
+        "total_bytes": 3800510188,
+        "uploaded_assets": 186,
+        "uploaded_bytes": 1040261992,
+        "remaining_bytes": 2760248196,
+        "window_start_unix_s": 1793955748.5189042,
+        "window_start_uploaded_bytes": 462716177,
+        "window_s": 259.5534553527832,
+        "window_new_uploaded_bytes": 577545815,
+        "observed_MB_s": 2.2251517099435407,
+        "linear_eta_unix_s": 1793957248.5487657,
+        "linear_eta_beijing": "2026-11-06T17:27:28.548766+08:00",
+        "eta_scope": "Short window of actual remaining research-file uploads; file sizes/network vary. Completion requires manifest name/size/state verification."
+      },
+      "retained_incomplete_assets": [
+        {
+          "asset_id": 716477375,
+          "original_name": "diag__job-20261105T032354Z-w39-b__f000009-g1__prediction-000.npz",
+          "retained_name": "diag__job-20261105T032354Z-w39-b__f000009-g1__prediction-000.npz.interrupted-716477375",
+          "state": "starter",
+          "declared_size": 57148550,
+          "at_unix_s": 1793955728.2441058,
+          "deleted": false
+        }
+      ]
+    },
+    "retained_incomplete_remote_assets": [
+      {
+        "asset_id": 716477375,
+        "original_name": "diag__job-20261105T032354Z-w39-b__f000009-g1__prediction-000.npz",
+        "retained_name": "diag__job-20261105T032354Z-w39-b__f000009-g1__prediction-000.npz.interrupted-716477375",
+        "state": "starter",
+        "declared_size": 57148550,
+        "at_unix_s": 1793955728.2441058,
+        "deleted": false
+      }
+    ]
   },
   "historical_bulk_publication": {
     "publication_status": "live_snapshot_final_delivery_pending_computation"
