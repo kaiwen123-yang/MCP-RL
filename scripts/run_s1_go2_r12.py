@@ -158,7 +158,7 @@ def evaluate_job(jobdir, contract):
     jobdir = (ROOT / jobdir).resolve()
     contract = json.loads((jobdir / 'execution-contract.json').read_text())
     job = json.loads((jobdir / 'job.json').read_text())
-    if contract['current_task'] not in ('W37_CONTACT_CONSISTENT_JOINT','W38_SMOOTH_APPROACH_PARALLEL_JOINT','W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT'):
+    if contract['current_task'] not in ('W37_CONTACT_CONSISTENT_JOINT','W38_SMOOTH_APPROACH_PARALLEL_JOINT','W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT','W40_STABILITY_WITH_PARALLEL_GPU_MPC'):
         continue_authorized_budget(jobdir,job,contract)
     existing=jobdir/'evaluation.json'
     if existing.exists():

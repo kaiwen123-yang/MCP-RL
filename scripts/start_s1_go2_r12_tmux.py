@@ -20,14 +20,14 @@ def write(path,value):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--resume",help="Own checkpoint for ordinary resume; new W39 phases use their declared parent map.")
+    p.add_argument("--resume",help="Own checkpoint for ordinary resume; new declared phases use their declared parent map.")
     p.add_argument("--new-phase",action="store_true",help="Create the explicitly authorized branch continuations from learning.parent_map.")
     p.add_argument("--stream",help="Explicit declared stream; omitted launches both declared continuations.")
     p.add_argument("--job-dir",type=Path,help="Continue this existing job/phase with its own saved RNG/tail.")
     p.add_argument("--workers",type=int,choices=(12,14),
         help="MPC workers per stream for new jobs only; default from resources.mpc_workers (12). Also used by each new job's evaluation.")
     p.add_argument("--session")
-    p.add_argument("--network-mode",choices=["academic","clash","direct"],default="clash")
+    p.add_argument("--network-mode",choices=["academic","clash","direct"],default="academic")
     a=p.parse_args()
     if a.job_dir and a.workers is not None:
         p.error("--workers applies only to new jobs; ordinary resume retains the existing frozen worker configuration.")
@@ -73,7 +73,7 @@ def main():
         if clock and any(x["stream_id"] in clock["jobs"] for x in selected):
             raise ValueError("Stream already launched; inspect its tmux/job and use --job-dir with its own resume.")
         if not a.new_phase:
-            raise ValueError("New W39 branch continuation requires --new-phase and its declared parent_map.")
+            raise ValueError("New branch continuation requires --new-phase and its declared parent_map.")
         if a.resume and len(selected)!=1:
             raise ValueError("Two branch continuations must use their separate parent_map checkpoints.")
         jobs=[]
@@ -96,7 +96,7 @@ def main():
                     and len(saved["buffer"])==parent["parent_tail"]==0
                     and saved["excluded_old_version_transitions"]==parent["excluded_old_version_transitions"]
                     and saved["fork_identity"]==parent["ancestor_fork_identity"]):
-                raise ValueError("W39 requires the declared own W38 ep251 state, with unchanged fork ancestry.")
+                raise ValueError("New phase requires its declared own parent state with unchanged fork ancestry.")
             if (ROOT/active["training_directory"]).resolve()==resume.parent.resolve():
                 raise ValueError("The new phase must not write into its parent training directory.")
             name="job-"+stamp+"-"+active["stream_id"]

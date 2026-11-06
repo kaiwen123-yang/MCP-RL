@@ -209,28 +209,28 @@ class PolicyStream:
                     elif (self.fork_identity['stream_id']!=self.stream_id or
                           saved['seed']!=seed or saved['phase_id']!=self.phase_id):
                         raise ValueError('Resume must retain this branch stream and phase identity.')
-                if self.controller_build=='S5-r28':
+                if self.controller_build in ('S5-r28','S5-r29'):
                     parent=contract['learning']['parent_map'][self.stream_id]
                     lineage=contract['learning']['phase_lineage']
                     source=Path(checkpoint)
                     if not source.is_absolute():source=root/source
-                    if self.phase_lineage is None:
+                    if saved['phase_id']!=self.phase_id:
                         if not (source.resolve()==(root/parent['resume_checkpoint']).resolve()
                                 and saved['stream_id']==parent['parent_stream_id']
                                 and saved['phase_id']==parent['parent_phase_id']
-                                and saved['controller_build']==parent['parent_controller_build']=='S5-r27'
+                                and saved['controller_build']==parent['parent_controller_build']
                                 and saved['reward_version']==parent['parent_reward_version']==self.reward_version
                                 and saved['group']==parent['group']==group and saved['seed']==parent['seed']==seed
-                                and saved['samples']==parent['parent_transitions']==7569
-                                and saved['updates']==parent['parent_updates']==29
-                                and saved['episode']==parent['parent_episode']==251
+                                and saved['samples']==parent['parent_transitions']
+                                and saved['updates']==parent['parent_updates']
+                                and saved['episode']==parent['parent_episode']
                                 and not self.buffer and self.excluded_old_version_transitions==145
                                 and self.fork_identity==parent['ancestor_fork_identity']
                                 and self.directory.resolve()==(root/parent['training_directory']).resolve()
                                 and self.directory.resolve()!=source.parent.resolve()
                                 and lineage['current_stream_id']==self.stream_id
                                 and lineage['current_phase_id']==self.phase_id):
-                            raise ValueError('W39 new phase requires its own declared W38 ep251 zero-tail parent and isolated output.')
+                            raise ValueError('New phase requires its own declared zero-tail parent and isolated output.')
                         # RNG/optimizer were restored above. An authorized phase
                         # boundary keeps the ancestral fork and never reseeds.
                         self.phase_lineage=dict(lineage)
@@ -242,7 +242,7 @@ class PolicyStream:
                               and saved['reward_version']==self.reward_version
                               and self.phase_lineage==lineage
                               and self.fork_identity==parent['ancestor_fork_identity']):
-                        raise ValueError('W39 resume must retain its own current stream/phase and unchanged ancestor fork.')
+                        raise ValueError('Ordinary resume must retain its own current stream/phase and unchanged ancestor fork.')
                 # A new physical session never inherits a pending successor.
                 # Same-version buffers retain their already recorded next_obs/value.
                 self.last_observation=None
@@ -418,6 +418,12 @@ class PolicyMaterial(JointMaterial):
             mask=np.array([self.ground.interior(p) for p in query])
             age=t-float(plan['times'][0])
             if self.observer is not None:feature,_=self.observer.recovery(query)
+        if self.stream.controller_build=='S5-r29':
+            with (self.out/'query-exposure.jsonl').open('a') as f:
+                f.write(json.dumps(dict(time_s=t,query_xy=query.tolist(),inside=mask.tolist(),
+                    feature_nonzero=np.any(feature!=0,axis=1).tolist(),
+                    causal_observer_time_s=self.observer.time if self.observer is not None else None,
+                    phase=mission.phase,history_grid_source='material events + observer records, offline only'))+'\n')
         goal=np.array([3.,0.]) if mission.phase in ('outbound','far_hold','turn') else np.zeros(2)
         phase=np.zeros(len(PHASES));phase[PHASES.index(mission.phase)]=1
         history=np.zeros((20,27));history[-len(self.history):]=np.asarray(self.history)

@@ -346,7 +346,7 @@ def run(args, c, joint=None):
             'packet_period_s':.02,'actor_to_reference':'Recorded at next normal/phase replan',
             'reference_to_optimized_action':'Separate logical and wall times; synchronous optimization'}
     diagnostic_env=dict(os.environ)
-    if c.get('controller_build') in ('S5-r27', 'S5-r28'):
+    if c.get('controller_build') in ('S5-r27', 'S5-r28', 'S5-r29'):
         diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(out/'planner-records.jsonl'),
                               MJPC_R27_ACTION_RECORD=str(out/'feedback-actions.jsonl'))
         resolved['planner_recording']=dict(
@@ -355,6 +355,15 @@ def run(args, c, joint=None):
             node_slices='0 and +20ms at base-x approach windows [.4,1.2] or [1.8,2.6]',
             raw_feedback='raw_K_delta_x before feedback scaling and actuator clipping',
             bulk_retained_local=True)
+    r29_records=None
+    if c.get('controller_build')=='S5-r29':
+        from s1_go2_r29_records import R29Records
+        r29_records=R29Records(out,model)
+        diagnostic_env.update(MJPC_R29_SNAPSHOT=str(out/'r29-current-plan.bin'),
+                              MJPC_R29_CALL_RECORD=str(out/'planner-calls.jsonl'))
+        resolved['planner_recording'].update(node_slices='0 and +20ms without spatial gate',
+            complete_plans='r29-event-manifest.json',calls='planner-calls.jsonl',
+            execution_links='action-execution.jsonl')
     with (out/'agent-server.log').open('w') as server_log, (contextlib.nullcontext(joint.agent) if training else Agent(task_id='Quadruped Flat', model=prediction_model,
             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
             subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT,env=diagnostic_env), run_init=False)) as agent:
@@ -487,8 +496,10 @@ def run(args, c, joint=None):
                         startup_times.append(elapsed)
                         plan = agent.best_trajectory()
                         startup_plans.append(plan)
+                        if r29_records:r29_records.plan(t)
                         target = agent.get_action(time=t, nominal_action=False, averaging_duration=0)
                         startup_actions.append(target)
+                        if r29_records:r29_records.query(t,'startup_probe')
                         startup['completed_iterations'] = iteration
                         np.savez_compressed(out/'startup.npz',
                             iteration=np.arange(1, iteration+1), time_s=np.zeros(iteration),
@@ -510,6 +521,7 @@ def run(args, c, joint=None):
                     plan_s = time.perf_counter()-tp
                     planning_times.append(plan_s)
                     plan = agent.best_trajectory()
+                    if r29_records:r29_records.plan(t)
                     if not compact:plans.append([t, plan])
                     if policy_hook:joint.latest_plan=plan
                 if compact and plan_s:
@@ -536,6 +548,9 @@ def run(args, c, joint=None):
                 if step == 0:
                     startup['actual_first_feedback_action'] = action.copy()
                     dump(small/f'{args.attempt}-resolved.json', resolved)
+                if r29_records:
+                    r29_records.query(t,'applied_hold',action,data.qpos,data.qvel)
+                    r29_records.progress(t,data.qpos,mission.v,contact)
                 data.ctrl[:] = action
                 mujoco.mj_forward(model, data)
                 contact, grf, _, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
@@ -573,7 +588,12 @@ def run(args, c, joint=None):
                     raw_pd=60*(data.ctrl-data.qpos[qadr])-5*data.qvel[vadr]
                     if joint is not None and not joint.before_physics(physical_dt,mission.phase):
                         reason=joint.reason
+                        if r29_records:r29_records.event(sample_t,'material_domain_exit',candidate_applied=False,
+                            boundary_time_s=sample_t,material_state_time_s=sample_t+physical_dt)
                         break
+                    if r29_records and joint is not None and np.any(joint.soft & (joint.force[:,2]>0)):
+                        r29_records.event(sample_t,'first_material_load',first=True,boundary_time_s=sample_t,
+                            material_state_time_s=sample_t+physical_dt,candidate_applied=True)
                     if not started:first_integration_unix_s=time.time()
                     mujoco.mj_step(model, data)
                     if not started:
@@ -614,6 +634,8 @@ def run(args, c, joint=None):
                         physics.append(np.r_[sample_t, data.time, data.qfrc_actuator[vadr], data.actuator_force,
                             actual_contacts, actual_grf.ravel(), total_grf, nonfoot_grf, nonfoot_count])
                         if support:physics[-1]=np.r_[physics[-1],raw_pd]
+                    if r29_records and np.linalg.norm(nonfoot_grf)>1:
+                        r29_records.event(sample_t,'first_nonfoot_load',first=True,physical_time_s=float(data.time))
                     if invalid:
                         reason = 'invalid_contact:'+str(invalid)
                         break
@@ -634,6 +656,8 @@ def run(args, c, joint=None):
             reason = 'execution_error'
             print(error, flush=True)
         finally:
+            if r29_records:
+                resolved['r29_recording']=r29_records.finish(float(data.time),reason)
             dump(small/f'{args.attempt}-resolved.json', resolved)
     wall = time.perf_counter()-begin
     if not started:

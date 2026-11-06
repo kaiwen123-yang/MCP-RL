@@ -265,6 +265,9 @@ def prepare(ctx, args):
         for filename in ("feedback-actions.jsonl", "planner-records.jsonl", "reference-packets.json", "trajectory.npz",
                          "material-events.jsonl", "material-failures.jsonl", "model.mjb", "model/G1-project-go2.xml"):
             add(folder / filename, name, True)
+        if resolved.get('controller_build')=='S5-r29' or (folder/'r29-event-manifest.json').exists():
+            for filename in ('planner-calls.jsonl','action-execution.jsonl','r29-event-manifest.json','query-exposure.jsonl'):
+                add(folder/filename,name,True,role='r29_projection_diagnostic')
         predictions = sorted(folder.glob("prediction-*.npz"))
         if not predictions:
             add(folder / "prediction-*.npz", name, True)
