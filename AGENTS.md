@@ -4,7 +4,7 @@
 
 使用AutoDL西北B区D57，SSH别名autodl-d57；项目/root/autodl-tmp/MCP-RL，环境work/envs/d57，激活source scripts/autodl_d57_env.sh。已记录RTX PRO6000 96GB级GPU、25vCPU、120GB内存；正常启动时读取实际资源，不把历史容量当空闲量。复用服务器独立联网及持久GitHub登录，凭据不进仓库/日志。
 
-**当前事实：W39 / S5-r28两流已完成，976项原始诊断已发布；W40已授权、尚未实现/启动。** 本次原件复核已纠正上一版r29公式；以[主计划顶部6行及4/5/6节](docs/TERRAIN_MEMORY_PLAN.md)、[启动提示词](docs/S1_W40_START_PROMPT.md)、[W40计划v2](experiments/terrain_memory/s1-go2-w40-plan.json)、[新审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md)及实际job为准。没有连接D57部署，不重复旧W39或启动旧Qux中心方案。
+**当前事实：W39 / S5-r28已完成且976项诊断已发布；W40 / 更正S5-r29已构建，两条原job在s1-w40联合采样，独立s1-w40-gpu正在FP64批量预测JIT。** 本次原件复核已纠正上一版r29公式；以[主计划顶部6行及4/5/6节](docs/TERRAIN_MEMORY_PLAN.md)、[启动提示词](docs/S1_W40_START_PROMPT.md)、[W40计划v2](experiments/terrain_memory/s1-go2-w40-plan.json)、[新审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md)及实际job为准。当前真实job为job-20261106T103028Z-w40-a/b；共享截止2026-11-07 22:30:28北京时间。GPU原截止22:31:28；按各自版本/时钟续接，不重复启动，不改完整启动提示词。
 
 1. 开场最多5行后直接工作。先查同流tmux、实际job和未提交修改；若W40或GPU任务已经开始，续接实际作业，不重新fork/reseed或重复启动。默认读当前交接、上述章节、W39-raw-review/README.md与r29-math-audit.md及直接执行源码；不再重复30分钟旧窗口提取或开启泛泛计划轮。
 2. W39各新增1024/4至8593/33＝8448已训练＋145历史excluded，tail0；A最后ep284、Bep280。62训练回合含59自然失败（41跌倒、4躯干接触、14材料域退出）和3截断。58加载、30入条带、26进入且足载；合法单程/返程/往返0。最终自身update33 E30分别10.476/17.592s跌倒，E60阻塞。B有60s存活但未入材料，不能算通过。

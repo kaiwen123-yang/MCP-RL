@@ -4,12 +4,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W39 / S5-r28 两流训练和末端评价已结束；下一任务 W40_STABILITY_WITH_PARALLEL_GPU_MPC 已获用户授权、尚未实现/启动，计划为两条 r29 联合主线加一条独立 GPU MPC 适配测试任务。
-- w39-a：job-20261105T032354Z-w39-a 已结束；新增1024/4至8593/33，tail0、excluded145，最后ep284；自身update33 E30在10.476s body_fall，E60阻塞，紧凑Git已发布。
-- w39-b：job-20261105T032354Z-w39-b 已结束；新增1024/4至8593/33，tail0、excluded145，最后ep280；自身update33 E30在17.592s body_fall，E60阻塞，紧凑Git已发布。
-- 任务能力：W39训练62回合＝59次自然失败＋3次截断；58加载、30机身入条带、26进入且内部足加载；合法去程/返程/往返均0。原件显示58个loaded回合中57个先有大反馈/执行PD饱和；下一主修订为保留旧策略的非对角H投影，尚无稳定通过证据。
-- 交付：W39紧凑Git与原始诊断均已完成；北京时间2026-11-06 17:25逐项核对GitHub Release，A492/492、B484/484，合计976项/7,680,574,905字节，missing/size/state差异均0；仅补传B一项未成功文件，未重传成功资产。远端W40计划已保留合并，原截止未重置，自动删除0、电脑归档0。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；先读本计划4/5/6节、W39-raw-review/README.md与r29-math-audit.md及docs/S1_W40_START_PROMPT.md。主线各续自身W39完整resume，GPU独立目录/版本/时钟；先查现有会话，已启动的实际作业优先，不重复启动。
+- 当前任务：W40_STABILITY_WITH_PARALLEL_GPU_MPC / S5-r29 已实际实现、正常构建并启动；共同训练绝对截止北京时间2026-11-07T22:30:28.226467+08:00，resume不重置。
+- w40-a：job-20261106T103028Z-w40-a，joint_sampling_running；新增13/0，累计8606/33，tail=13、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- w40-b：job-20261106T103028Z-w40-b，joint_sampling_running；新增13/0，累计8606/33，tail=13、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- 任务能力：w40-a尚无最终任务汇总；w40-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
+- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。 GPU：s1-w40-gpu，r28同版本预测批量/FD原型正在JIT；未有速度或数值通过结论，独立截止2026-11-07 22:31:28北京时间。
 
 ## 1. 目标、已经完成的工作与本次阅读范围
 

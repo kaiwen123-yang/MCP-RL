@@ -1,0 +1,128 @@
+{
+  "task": "w40-gpu",
+  "status": "compiling_exact_model_one_substep",
+  "clock": {
+    "started_unix_s": 1793961088.128057,
+    "deadline_unix_s": 1794061888.128057
+  },
+  "version": "r28 predictor versus same r28 predictor, fixed held target; main uses r29",
+  "versions": {
+    "mujoco": "3.2.3",
+    "mjx": "3.2.3",
+    "jax": "0.6.2"
+  },
+  "source_commit": "11b87bc3333c0801bf781ad66cab70f06f7d677a",
+  "host_affinity": [
+    206,
+    207
+  ],
+  "dtype": "float64",
+  "jax_devices": [
+    "cuda:0"
+  ],
+  "tolerance": {
+    "position_rad_or_m": 5e-07,
+    "velocity": 1e-05,
+    "AB_max_abs": 0.005,
+    "risk": 1e-05
+  },
+  "matched": {
+    "dt": 0.0002,
+    "hold_substeps": 10,
+    "nu": 12,
+    "nq": 19,
+    "nv": 18,
+    "FD_eps": 1e-06,
+    "FD": "one_sided",
+    "MakeDifferentiable": "joint/geom/pair solimp0=0",
+    "coldstart": true,
+    "contact": "R10 native-foot filter + four frozen userdata patches",
+    "task_private_state": "not used by fixed-target dynamics; full cost/planner remains unimplemented"
+  },
+  "results": [],
+  "remaining": [
+    "full task residual/cost and private phase reconstruction",
+    "feedback candidate ranking",
+    "whole planner integration"
+  ],
+  "formal_qualification": false,
+  "main_hot_swap": false,
+  "fixtures": [
+    {
+      "name": "a_rigid_normal",
+      "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-a-eval-PANN_PPO_S5-s1-E30",
+      "index": 500,
+      "requested_time_s": 1.0,
+      "time": 0.9999999999999225,
+      "task_phase": 0,
+      "task_history": "saved phase only; private transitions/K/H not reconstructed"
+    },
+    {
+      "name": "a_first_large_feedback",
+      "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-a-eval-PANN_PPO_S5-s1-E30",
+      "index": 4612,
+      "requested_time_s": 9.224,
+      "time": 9.22400000000518,
+      "task_phase": 1,
+      "task_history": "saved phase only; private transitions/K/H not reconstructed"
+    },
+    {
+      "name": "a_first_load",
+      "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-a-eval-PANN_PPO_S5-s1-E30",
+      "index": 4925,
+      "requested_time_s": 9.85,
+      "time": 9.850000000003721,
+      "task_phase": 1,
+      "task_history": "saved phase only; private transitions/K/H not reconstructed"
+    },
+    {
+      "name": "b_nominal_saturation",
+      "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30",
+      "index": 7367,
+      "requested_time_s": 14.734,
+      "time": 14.733999999992339,
+      "task_phase": 1,
+      "task_history": "saved phase only; private transitions/K/H not reconstructed"
+    },
+    {
+      "name": "b_first_large_feedback",
+      "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30",
+      "index": 7522,
+      "requested_time_s": 15.044,
+      "time": 15.043999999991616,
+      "task_phase": 1,
+      "task_history": "saved phase only; private transitions/K/H not reconstructed"
+    },
+    {
+      "name": "b_pre_load_peak",
+      "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30",
+      "index": 7632,
+      "requested_time_s": 15.264,
+      "time": 15.263999999991103,
+      "task_phase": 1,
+      "task_history": "saved phase only; private transitions/K/H not reconstructed"
+    },
+    {
+      "name": "b_first_load",
+      "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261105T032354Z-w39-b-eval-PANN_PPO_S5-s2-E30",
+      "index": 7691,
+      "requested_time_s": 15.382,
+      "time": 15.381999999990828,
+      "task_phase": 1,
+      "task_history": "saved phase only; private transitions/K/H not reconstructed"
+    },
+    {
+      "name": "domain_last_domain_boundary",
+      "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261105T032354Z-w39-a-PANN_PPO_S5-s1-ep00260",
+      "index": 7182,
+      "requested_time_s": 14.3648,
+      "time": 14.3639999999932,
+      "task_phase": 1,
+      "task_history": "saved phase only; private transitions/K/H not reconstructed"
+    }
+  ],
+  "H2D_batch_construction_sync_s": 1.90848770737648,
+  "updated_unix_s": 1793961341.293743,
+  "max_host_rss_KiB": 872396,
+  "gpu_memory": "39910 MiB, 78 %"
+}

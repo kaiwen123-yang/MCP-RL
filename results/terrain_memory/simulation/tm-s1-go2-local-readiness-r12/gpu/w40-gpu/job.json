@@ -1,0 +1,38 @@
+{
+  "task": "w40-gpu",
+  "session": "s1-w40-gpu",
+  "clock": {
+    "started_unix_s": 1793961088.128057,
+    "deadline_unix_s": 1794061888.128057
+  },
+  "host_cpus": [
+    206,
+    207
+  ],
+  "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w40-gpu/gpu-resume-1793961336.log",
+  "resume": true,
+  "command": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=30s",
+    "100551",
+    "taskset",
+    "-c",
+    "206,207",
+    "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+    "-u",
+    "scripts/s1_go2_w40_gpu.py"
+  ],
+  "source_commit": "11b87bc3333c0801bf781ad66cab70f06f7d677a",
+  "dependencies": {
+    "mujoco": "3.2.3",
+    "mujoco-mjx": "3.2.3",
+    "jax": "0.6.2",
+    "jaxlib": "0.6.2",
+    "trimesh": "4.5.3"
+  },
+  "dependency_directory": "work/gpu-w40-python",
+  "main_environment_changed": false,
+  "max_compile_jobs": 2,
+  "ppo_branch": false
+}

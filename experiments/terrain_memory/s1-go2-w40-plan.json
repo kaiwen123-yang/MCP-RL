@@ -1,7 +1,7 @@
 {
   "schema_version": "S1_W40_execution_plan_v2_raw_review_corrected",
   "task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
-  "status": "main_r29_implemented_built_pending_launch",
+  "status": "main_sampling_and_independent_GPU_JIT_running",
   "date": "2026-11-06",
   "timezone": "Asia/Shanghai",
   "reviewed_results_commit": "07b0ee3e15c9f10e9b1a6a1de3997bec36f39556",
@@ -214,7 +214,7 @@
   },
   "gpu_task": {
     "stream": "w40-gpu",
-    "status": "authorized_not_implemented_or_started",
+    "status": "compiling_exact_model_one_substep",
     "is_PPO_training_branch": false,
     "directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w40-gpu",
     "session": "s1-w40-gpu",
@@ -276,7 +276,8 @@
       "report kernel speed as full control realtime"
     ],
     "saved_state_reconstruction": "q/v/time/target/mocap/96userdata and applied settings available. Explicitly match reconstructed task transition phase and initial policy/warm-start; old full H/K/internal policy absent, new tests not exact historic planner replay.",
-    "derivative_contract": "A/B of independent held-target F(x,u); do not rerun policy/QP in state-perturbed FD or substitute closed-loop A+B*K_eff; match original prediction MakeDifferentiable/coldstart/FD kink/tie semantics."
+    "derivative_contract": "A/B of independent held-target F(x,u); do not rerun policy/QP in state-perturbed FD or substitute closed-loop A+B*K_eff; match original prediction MakeDifferentiable/coldstart/FD kink/tie semantics.",
+    "actual_job": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w40-gpu/job.json"
   },
   "budgets": {
     "interactive_max_s": 14400,
@@ -370,10 +371,30 @@
   "implementation_status": {
     "r29_implemented": true,
     "r29_built": true,
-    "W40_main_started": false,
-    "GPU_backend_implemented": false,
-    "GPU_tests_run": false,
-    "server_accessed_in_review": false
+    "W40_main_started": true,
+    "GPU_backend_implemented": "batch_predictor_and_FD_prototype",
+    "GPU_tests_run": "started_JIT_no_completed_numerical_result_yet",
+    "server_accessed_in_review": false,
+    "observed_main_counts": [
+      {
+        "stream": "w40-a",
+        "collected_transitions": 8606,
+        "updates": 33,
+        "phase_new_transitions": 13,
+        "phase_new_updates": 0,
+        "unupdated_fragment": 13,
+        "excluded_old_version_transitions": 145
+      },
+      {
+        "stream": "w40-b",
+        "collected_transitions": 8606,
+        "updates": 33,
+        "phase_new_transitions": 13,
+        "phase_new_updates": 0,
+        "unupdated_fragment": 13,
+        "excluded_old_version_transitions": 145
+      }
+    ]
   },
   "raw_review_base_commit": "07b0ee3e15c9f10e9b1a6a1de3997bec36f39556",
   "raw_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md",
