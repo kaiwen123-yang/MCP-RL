@@ -1,0 +1,205 @@
+--- a/mjpc/planners/ilqg/r29_projection.h
++++ b/mjpc/planners/ilqg/r29_projection.h
+@@ -14,8 +14,119 @@
+   double primal=0, kkt=0, kkt_scaled=0, max_delta=0;
+   bool changed=false, restoration=false, converged=true;
+   int nfree=-2;
++  bool refinement_attempted=false, native_converged=true;
++  int native_nfree=-2, refinement_iterations=0;
++  double native_primal=0, native_kkt_scaled=0;
++  const char* refinement_status="not_needed";
+   const char* status="legacy_seed_no_metric";
+ };
++
++// Feasible primal active-set refinement of the SAME centered quadratic.
++// Only called when the original native result fails its existing certificate.
++// H, c, target/PD bounds and the primal/KKT tolerances remain unchanged.
++// The free Newton equation is H_FF p_F = -[H (u-c)]_F; fixed axes therefore
++// retain their H_FA (u_A-c_A) term without forming the cancelling bias -H*c.
++inline bool R29RefineProjection(const double* H, R29Projection& r, double* u) {
++  const int n=r.center.size();
++  const double primal_tol=1e-10, active_tol=1e-12, relative_tol=1e-7;
++  double scale=1;
++  for(int i=0;i<n;++i) {
++    double hc=0;
++    for(int j=0;j<n;++j) hc+=std::abs(H[i*n+j]*r.center[j]);
++    scale=std::max(scale,hc);
++  }
++  const double gradient_tol=relative_tol*scale;
++  std::vector<int> active(n),free;
++  std::vector<double> delta(n),gradient(n),direction(n),factor(n*n),rhs(n),step(n);
++  // A native factorization failure must never be reclassified as convergence
++  // merely because one iterate has small residuals. Retain the full SPD metric
++  // requirement, including when the first refinement iterate already passes.
++  std::copy_n(H,n*n,factor.begin());
++  if(mju_cholFactor(factor.data(),n,0.0)<n ||
++      !std::all_of(factor.begin(),factor.end(),[](double x){return std::isfinite(x);})) {
++    r.refinement_status="metric_not_spd";return false;
++  }
++  for(int i=0;i<n;++i) {
++    u[i]=std::clamp(u[i],r.lower[i],r.upper[i]);
++    active[i]=r.fixed[i]?2:(u[i]==r.lower[i]?-1:(u[i]==r.upper[i]?1:0));
++  }
++  // A finite numerical guard, not a physical/admission limit. On exhaustion
++  // the original technical-failure path remains in force.
++  const int max_iterations=4*n*n+32;
++  for(int iteration=0;iteration<=max_iterations;++iteration) {
++    r.refinement_iterations=iteration;
++    double primal=0,kkt=0,free_gradient=0;
++    bool finite=true;
++    for(int i=0;i<n;++i) {
++      delta[i]=u[i]-r.center[i];
++      primal=std::max(primal,std::max(r.lower[i]-u[i],u[i]-r.upper[i]));
++    }
++    free.clear();
++    for(int i=0;i<n;++i) {
++      gradient[i]=0;
++      for(int j=0;j<n;++j) gradient[i]+=H[i*n+j]*delta[j];
++      finite=finite && std::isfinite(u[i]) && std::isfinite(gradient[i]);
++      const int certificate_active=r.fixed[i]?2:
++        (u[i]<=r.lower[i]+active_tol?-1:(u[i]>=r.upper[i]-active_tol?1:0));
++      const double residual=r.fixed[i]?0:(certificate_active==-1?std::max(0.,-gradient[i]):
++        (certificate_active==1?std::max(0.,gradient[i]):std::abs(gradient[i])));
++      kkt=std::max(kkt,residual);
++      if(!active[i]) {free.push_back(i);free_gradient=std::max(free_gradient,std::abs(gradient[i]));}
++    }
++    if(!finite) {r.refinement_status="non_finite_iterate";return false;}
++    if(primal<=primal_tol && kkt/scale<=relative_tol) {
++      r.nfree=free.size();r.refinement_status="converged";return true;
++    }
++    if(iteration==max_iterations) break;
++
++    // First minimize on the current feasible face. Only at a free-stationary
++    // point release a bound whose multiplier has the wrong sign.
++    if(free.empty() || free_gradient<=gradient_tol) {
++      int release=-1;double worst=gradient_tol;
++      for(int i=0;i<n;++i) {
++        const double wrong=active[i]==-1?-gradient[i]:(active[i]==1?gradient[i]:0.);
++        if(wrong>worst) {worst=wrong;release=i;}
++      }
++      if(release<0) {r.refinement_status="stationary_precision_limit";return false;}
++      active[release]=0;
++      continue;
++    }
++
++    const int nf=free.size();
++    for(int a=0;a<nf;++a) {
++      rhs[a]=-gradient[free[a]];
++      for(int b=0;b<nf;++b) factor[a*nf+b]=H[free[a]*n+free[b]];
++    }
++    if(mju_cholFactor(factor.data(),nf,0.0)<nf) {
++      r.refinement_status="free_metric_not_spd";return false;
++    }
++    mju_cholSolve(step.data(),factor.data(),rhs.data(),nf);
++    std::fill(direction.begin(),direction.end(),0.);
++    double alpha=1.;int blocker=-1;
++    for(int a=0;a<nf;++a) {
++      const int i=free[a];direction[i]=step[a];
++      if(!std::isfinite(direction[i])) {r.refinement_status="non_finite_direction";return false;}
++      const double bound_step=direction[i]>0?(r.upper[i]-u[i])/direction[i]:
++        (direction[i]<0?(r.lower[i]-u[i])/direction[i]:2.);
++      if(bound_step<=alpha) {alpha=std::max(0.,bound_step);blocker=i;}
++    }
++    bool moved=false;
++    for(int i:free) {
++      const double previous=u[i];
++      // No projected Armijo step: follow the feasible Newton direction only
++      // as far as its first blocking bound, then add that bound to the face.
++      u[i]=std::clamp(r.center[i]+delta[i]+alpha*direction[i],r.lower[i],r.upper[i]);
++      if(i==blocker) u[i]=direction[i]>0?r.upper[i]:r.lower[i];
++      if(u[i]==r.lower[i]) active[i]=-1;
++      else if(u[i]==r.upper[i]) active[i]=1;
++      moved=moved || u[i]!=previous;
++    }
++    if(!moved && blocker<0) {r.refinement_status="stationary_precision_limit";return false;}
++  }
++  r.refinement_status="iteration_limit";
++  return false;
++}
++
+ inline R29Projection R29Project(const mjModel* m, const double* state,
+                                 const double* H, bool valid, double* u) {
+   const int n=m->nu;
+@@ -59,30 +170,43 @@
+                      qp.H.data(),qp.g.data(),nf,qp.lower.data(),qp.upper.data());
+     for(int a=0;a<nf;++a) u[free[a]]=qp.res[a];
+   }
+-  for(int i=0;i<n;++i) {
+-    r.delta[i]=u[i]-r.center[i];
+-    r.max_delta=std::max(r.max_delta,std::abs(r.delta[i]));
+-    r.primal=std::max(r.primal,std::max(r.lower[i]-u[i],u[i]-r.upper[i]));
+-  }
+-  double scale=1;
+-  for(int i=0;i<n;++i) {
+-    double hc=0;
+-    for(int j=0;j<n;++j) {r.gradient[i]+=H[i*n+j]*r.delta[j];hc+=std::abs(H[i*n+j]*r.center[j]);}
+-    scale=std::max(scale,hc);
+-    r.active[i]=r.fixed[i]?2:(u[i]<=r.lower[i]+1e-12?-1:(u[i]>=r.upper[i]-1e-12?1:0));
+-    double res=r.fixed[i]?0:(r.active[i]==-1?std::max(0.,-r.gradient[i]):
+-      (r.active[i]==1?std::max(0.,r.gradient[i]):std::abs(r.gradient[i])));
+-    r.kkt=std::max(r.kkt,res);
+-    int joint=m->actuator_trnid[2*i];
+-    r.pd[i]=60*(u[i]-state[m->jnt_qposadr[joint]])-5*state[m->nq+m->jnt_dofadr[joint]];
+-    r.violation[i]=std::max({0.,m->actuator_forcerange[2*i]-r.pd[i],r.pd[i]-m->actuator_forcerange[2*i+1]});
+-    if(!std::isfinite(u[i]) || !std::isfinite(r.gradient[i])) r.converged=false;
+-  }
+-  r.kkt_scaled=r.kkt/scale;
+-  r.converged=r.converged && r.nfree!=-1 && r.primal<=1e-10 && r.kkt_scaled<=1e-7;
++  // Identical certificate, recomputed after refinement without weakening it.
++  auto certify=[&]() {
++    r.primal=r.kkt=r.kkt_scaled=r.max_delta=0;r.converged=true;
++    std::fill(r.gradient.begin(),r.gradient.end(),0.);
++    for(int i=0;i<n;++i) {
++      r.delta[i]=u[i]-r.center[i];
++      r.max_delta=std::max(r.max_delta,std::abs(r.delta[i]));
++      r.primal=std::max(r.primal,std::max(r.lower[i]-u[i],u[i]-r.upper[i]));
++    }
++    double scale=1;
++    for(int i=0;i<n;++i) {
++      double hc=0;
++      for(int j=0;j<n;++j) {r.gradient[i]+=H[i*n+j]*r.delta[j];hc+=std::abs(H[i*n+j]*r.center[j]);}
++      scale=std::max(scale,hc);
++      r.active[i]=r.fixed[i]?2:(u[i]<=r.lower[i]+1e-12?-1:(u[i]>=r.upper[i]-1e-12?1:0));
++      double res=r.fixed[i]?0:(r.active[i]==-1?std::max(0.,-r.gradient[i]):
++        (r.active[i]==1?std::max(0.,r.gradient[i]):std::abs(r.gradient[i])));
++      r.kkt=std::max(r.kkt,res);
++      int joint=m->actuator_trnid[2*i];
++      r.pd[i]=60*(u[i]-state[m->jnt_qposadr[joint]])-5*state[m->nq+m->jnt_dofadr[joint]];
++      r.violation[i]=std::max({0.,m->actuator_forcerange[2*i]-r.pd[i],r.pd[i]-m->actuator_forcerange[2*i+1]});
++      if(!std::isfinite(u[i]) || !std::isfinite(r.gradient[i])) r.converged=false;
++    }
++    r.kkt_scaled=r.kkt/scale;
++    r.converged=r.converged && r.nfree!=-1 && r.primal<=1e-10 && r.kkt_scaled<=1e-7;
++  };
++  certify();
++  r.native_nfree=r.nfree;r.native_converged=r.converged;
++  r.native_primal=r.primal;r.native_kkt_scaled=r.kkt_scaled;
++  if(!r.converged) {
++    r.refinement_attempted=true;
++    if(!R29RefineProjection(H,r,u)) r.nfree=-1;
++    certify();
++  }
+   r.changed=r.max_delta>0;
+   r.status=!r.converged?"qp_kkt_failure":(r.restoration?"minimum_PD_violation_restoration":
+-      (inside?"legacy_center_feasible":"metric_projection"));
++      (inside?"legacy_center_feasible":(r.refinement_attempted?"metric_projection_refined":"metric_projection")));
+   return r;
+ }
+ }
+--- a/mjpc/planners/ilqg/policy.cc
++++ b/mjpc/planners/ilqg/policy.cc
+@@ -210,6 +210,14 @@
+        <<",\"restoration\":"<<(projection.restoration?"true":"false")
+        <<",\"qp_converged\":"<<(projection.converged?"true":"false")
+        <<",\"qp_nfree\":"<<projection.nfree
++       <<",\"qp_solver_revision\":\"S5-r29-qp1\""
++       <<",\"qp_native_nfree\":"<<projection.native_nfree
++       <<",\"qp_native_converged\":"<<(projection.native_converged?"true":"false")
++       <<",\"qp_native_primal_residual_rad\":"<<projection.native_primal
++       <<",\"qp_native_kkt_scaled_residual\":"<<projection.native_kkt_scaled
++       <<",\"qp_refinement_attempted\":"<<(projection.refinement_attempted?"true":"false")
++       <<",\"qp_refinement_iterations\":"<<projection.refinement_iterations
++       <<",\"qp_refinement_status\":\""<<projection.refinement_status<<"\""
+        <<",\"primal_residual_rad\":"<<projection.primal
+        <<",\"kkt_residual\":"<<projection.kkt
+        <<",\"kkt_scaled_residual\":"<<projection.kkt_scaled;

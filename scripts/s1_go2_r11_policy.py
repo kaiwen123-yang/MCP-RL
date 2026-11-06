@@ -108,6 +108,8 @@ class PolicyStream:
         self.directory=Path(directory);self.directory.mkdir(parents=True,exist_ok=True)
         self.training=training
         self.controller_build=contract.get('reuse',{}).get('active_controller_build')
+        self.controller_artifact=contract.get('reuse',{}).get('controller_artifact',self.controller_build)
+        self.controller_artifact_history=[]
         self.reward_version=contract.get('learning',{}).get('reward_version','legacy_signed_route_and_raw_laps')
         self.phase_initial_samples=contract.get('learning',{}).get('phase_initial_transitions',0)
         self.phase_initial_updates=contract.get('learning',{}).get('phase_initial_updates',0)
@@ -139,6 +141,13 @@ class PolicyStream:
         self.observer_law=None
         if checkpoint is not None:
             saved=torch.load(checkpoint,map_location='cpu',weights_only=False)
+            self.controller_artifact_history=saved.get('controller_artifact_history',[])
+            saved_artifact=saved.get('controller_artifact',saved.get('controller_build'))
+            if saved_artifact!=self.controller_artifact:
+                self.controller_artifact_history.append(dict(
+                    previous=saved_artifact,current=self.controller_artifact,
+                    first_transition=saved['samples']+1,updates_before=saved['updates'],
+                    inherited_tail=len(saved.get('buffer',[])),checkpoint=str(checkpoint)))
             self.backend.actor.load_state_dict(saved['actor']);self.backend.critic.load_state_dict(saved['critic'])
             self.normalization=saved['normalization'];self.samples=saved['samples']
             self.effective_samples=saved['effective_samples'];self.physics_s=saved['physics_s']
@@ -270,7 +279,8 @@ class PolicyStream:
         if not resume_only:
             self.last_completed_update=dict(path=str(p.relative_to(self.root)),samples=self.samples,
                 updates=self.backend.update_count,phase_id=self.phase_id,stream_id=self.stream_id,
-                phase_lineage=self.phase_lineage,controller_build=self.controller_build,reward_version=self.reward_version)
+                phase_lineage=self.phase_lineage,controller_build=self.controller_build,
+                controller_artifact=self.controller_artifact,reward_version=self.reward_version)
         torch.save(dict(actor=self.backend.actor.state_dict(),critic=self.backend.critic.state_dict(),
             optimizer=self.backend.optimizer.state_dict(),normalization=self.normalization,
             samples=self.samples,stage_samples=self.stage_samples,seed=self.seed,group=self.group,
@@ -282,7 +292,8 @@ class PolicyStream:
             last_observation=self.last_observation,session_boundary=resume_only,
             torch_rng=torch.get_rng_state(),numpy_rng=np.random.get_state(),
             cuda_rng=torch.cuda.get_rng_state_all() if self.backend.config.device.startswith('cuda') else None,
-            controller_build=self.controller_build,reward_version=self.reward_version,
+            controller_build=self.controller_build,controller_artifact=self.controller_artifact,
+            controller_artifact_history=self.controller_artifact_history,reward_version=self.reward_version,
             phase_initial_transitions=self.phase_initial_samples,
             phase_initial_updates=self.phase_initial_updates,phase_id=self.phase_id,
             excluded_old_version_transitions=self.excluded_old_version_transitions,
@@ -295,6 +306,7 @@ class PolicyStream:
             curriculum_stage=self.curriculum_stage,promotions=self.promotions,session_records=self.session_records,
             updates=self.backend.update_count,wall_s=time.time()-self.begin,checkpoint=str(p),
             group=self.group,seed=self.seed,unupdated_fragment=len(self.buffer),
+            controller_artifact=self.controller_artifact,controller_artifact_history=self.controller_artifact_history,
             continuous_environment_snapshot=False,
             excluded_old_version_transitions=self.excluded_old_version_transitions,
             controller_migration=self.controller_migration,phase_id=self.phase_id,
@@ -321,7 +333,8 @@ class PolicyStream:
             excluded_old_version_transitions=self.excluded_old_version_transitions,
             controller_migration=self.controller_migration,phase_id=self.phase_id,
             last_completed_update=self.last_completed_update,
-            controller_build=self.controller_build,reward_version=self.reward_version,
+            controller_build=self.controller_build,controller_artifact=self.controller_artifact,
+            controller_artifact_history=self.controller_artifact_history,reward_version=self.reward_version,
             phase_initial_transitions=self.phase_initial_samples,
             phase_new_transitions=self.samples-self.phase_initial_samples,
             phase_initial_updates=self.phase_initial_updates,
@@ -342,6 +355,7 @@ class PolicyStream:
             dt_s=dt,effective=effective,stage=stage,cap_m_s=pending['cap'],
             raw_action=float(sample.raw_action.item()),log_prob=float(sample.log_prob.item()),
             stream_id=self.stream_id,phase_id=self.phase_id,controller_build=self.controller_build,
+            controller_artifact=self.controller_artifact,
             behavior_updates=self.backend.update_count,value=float(sample.value.item()),
             next_value=float(next_value.item()),
             phase=PHASES[int(pending['obs'][0,80:89].argmax().item())],
@@ -361,7 +375,8 @@ class PolicyStream:
             loss=self.backend.update(Rollout(**batch));self.buffer.clear()
             self.learning.write(json.dumps(dict(loss,cumulative_samples=self.samples,wall_s=time.time()-self.begin,
                 stream_id=self.stream_id,phase_id=self.phase_id,
-                controller_build=self.controller_build,reward_version=self.reward_version,
+                controller_build=self.controller_build,controller_artifact=self.controller_artifact,
+                controller_artifact_history=self.controller_artifact_history,reward_version=self.reward_version,
                 phase_new_transitions=self.samples-self.phase_initial_samples,
                 phase_new_updates=self.backend.update_count-self.phase_initial_updates))+'\n')
             self.log.flush();self.learning.flush();self.checkpoint()

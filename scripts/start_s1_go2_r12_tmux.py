@@ -7,6 +7,7 @@ import os
 import platform
 from pathlib import Path
 import shlex
+import shutil
 import subprocess
 import sys
 import time
@@ -24,6 +25,8 @@ def main():
     p.add_argument("--new-phase",action="store_true",help="Create the explicitly authorized branch continuations from learning.parent_map.")
     p.add_argument("--stream",help="Explicit declared stream; omitted launches both declared continuations.")
     p.add_argument("--job-dir",type=Path,help="Continue this existing job/phase with its own saved RNG/tail.")
+    p.add_argument("--controller-artifact", choices=("S5-r29-qp1",),
+        help="Explicit S5-r29 numerical QP repair on an existing own job; logical controller/phase stay unchanged.")
     p.add_argument("--workers",type=int,choices=(12,14),
         help="MPC workers per stream for new jobs only; default from resources.mpc_workers (12). Also used by each new job's evaluation.")
     p.add_argument("--session")
@@ -31,11 +34,13 @@ def main():
     a=p.parse_args()
     if a.job_dir and a.workers is not None:
         p.error("--workers applies only to new jobs; ordinary resume retains the existing frozen worker configuration.")
+    if a.controller_artifact and not a.job_dir:
+        p.error("--controller-artifact applies only to an explicit --job-dir ordinary resume.")
     current=json.loads(CONFIG.read_text())
     large=ROOT/current["outputs"]["large_root"]
     clock_path=ROOT/current["execution"]["background_job"]["training_clock_path"]
     session=a.session or ("s1-"+a.stream if a.stream else current["execution"]["background_job"]["session_default"])
-    if subprocess.run(["tmux","has-session","-t",session],capture_output=True).returncode==0:
+    if subprocess.run(["tmux","has-session","-t","="+session],capture_output=True).returncode==0:
         raise ValueError("This tmux session already exists; inspect and continue it, do not duplicate launch.")
     auth_env=dict(os.environ);auth_env.pop("GH_TOKEN",None);auth_env.pop("GITHUB_TOKEN",None)
     subprocess.run(["bash","-c",'set -e; source scripts/autodl_network.sh "$1"; '
@@ -66,6 +71,22 @@ def main():
             raise ValueError("Ordinary resume requires this job's own fork checkpoint, not the parent.")
         if time.time()>=job["deadline_unix_s"]:
             raise ValueError("Original shared training deadline has elapsed; do not restart training.")
+        previous_artifact=contract["reuse"].get("controller_artifact",job["controller_build"])
+        artifact=a.controller_artifact or previous_artifact
+        if artifact!=previous_artifact and not (
+                job["controller_build"]==previous_artifact=="S5-r29"
+                and artifact=="S5-r29-qp1"
+                and saved["updates"]==job["initial_updates"]==33):
+            raise ValueError("Only the declared r29 QP repair before W40's first own update is supported.")
+        if artifact!=job["controller_build"]:
+            frozen=ROOT/"work/r11-frozen"/artifact
+            identity=json.loads((frozen/"identity.json").read_text())
+            if (identity.get("build")!=artifact or identity.get("based_on")!=job["controller_build"]
+                    or identity.get("controller_contract_build")!=job["controller_build"]
+                    or not (frozen/"agent_server").is_file()):
+                raise ValueError("Controller artifact must be the built, separately frozen repair of this logical controller.")
+        contract["reuse"]["controller_artifact"]=artifact
+        job["controller_artifact"]=artifact
         jobs=[(directory,job,contract,active,resume)]
     else:
         selected=[x for x in current["learning"]["active_streams"] if not a.stream or x["stream_id"]==a.stream]
@@ -151,6 +172,32 @@ def main():
     if launch_time>=clock["deadline_unix_s"]:raise ValueError("Shared training deadline elapsed.")
     scripts=[]
     for directory,job,contract,active,resume in jobs:
+        if a.job_dir:
+            history=directory/"resume-history"/str(time.time_ns())
+            history.mkdir(parents=True)
+            # Preserve the previous invocation's small records in this server
+            # job. No checkpoint, physics output, or GPU path is moved/deleted.
+            for name in ("job.json","execution-contract.json","run-job.sh",
+                    "training-exit-code.txt","training-finished-at.txt",
+                    "evaluation-exit-code.txt","evaluation-finished-at.txt",
+                    "evaluation.log","finish.log"):
+                source_path=directory/name
+                if source_path.is_file():shutil.copy2(source_path,history/name)
+            if (directory/"stream-records").exists():
+                (directory/"stream-records").rename(history/"stream-records")
+            from run_s1_go2_r12 import archive_unstarted_evaluation
+            old_evaluation=archive_unstarted_evaluation(directory,contract,history)
+            for name in ("training-exit-code.txt","training-finished-at.txt"):
+                if (directory/name).is_file():(directory/name).replace(history/name)
+            if old_evaluation:
+                for name in ("evaluation-exit-code.txt","evaluation-finished-at.txt"):
+                    if (directory/name).is_file():(directory/name).replace(history/name)
+            job["last_resume"]=dict(checkpoint=str(resume.relative_to(ROOT)),at_unix_s=launch_time,
+                source_commit=source,evidence_directory=str(history.relative_to(ROOT)),
+                samples=saved["samples"],updates=saved["updates"],preserved_tail=len(saved["buffer"]),
+                previous_controller_artifact=previous_artifact,controller_artifact=artifact,
+                unstarted_evaluation_archive=old_evaluation)
+            job["evaluation_status"]=("pending_training" if old_evaluation else job.get("evaluation_status"))
         job.setdefault("started_unix_s",launch_time)
         job.update(deadline_unix_s=clock["deadline_unix_s"],shared_started_unix_s=clock["started_unix_s"],
                    shared_clock_path=str(clock_path.relative_to(ROOT)),session=session,status="launched")
@@ -175,9 +222,8 @@ def main():
             "date -u '+%Y-%m-%dT%H:%M:%SZ' > "+shlex.quote(str(directory/"evaluation-finished-at.txt")),
             shlex.join(finish)+' --training-exit-code "$training_exit" > '+shlex.quote(str(directory/"finish.log"))+" 2>&1",""]))
         job.update(command=command,evaluation_command=evaluation,log=str(logfile.relative_to(ROOT)))
-        if a.job_dir:job["last_resume"]=dict(checkpoint=str(resume.relative_to(ROOT)),at_unix_s=launch_time,source_commit=source)
         write(directory/"job.json",job)
-        if not a.job_dir:write(directory/"execution-contract.json",contract)
+        write(directory/"execution-contract.json",contract)
         write(directory/"training-deadline.json",dict(
             shared_started_unix_s=clock["started_unix_s"],deadline_unix_s=clock["deadline_unix_s"],
             job=directory.name,stream_id=active["stream_id"]))

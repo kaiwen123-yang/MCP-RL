@@ -1,0 +1,2431 @@
+{
+  "scope": "Published W40 actual diagnostics, read-only inspection; no physics rerun, live D57 process observation, GPU mutation, or inferred missing H.",
+  "episodes": [
+    {
+      "attempt": "train-job-20261106T103028Z-w40-a-PANN_PPO_S5-s1-ep00285",
+      "result_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-a-PANN_PPO_S5-s1-ep00285.json",
+      "reason": "body_fall",
+      "error": null,
+      "simulation_s": 13.009999999996356,
+      "wall_s": 1065.5510031525046,
+      "slowdown": 81.90245988876272,
+      "stage_status": "physical_material_failure",
+      "max_x_m": 0.6527373111796132,
+      "min_body_height_m": 0.15669538429292698,
+      "final_body_z_m": 0.1608036353924374,
+      "loaded_cells": 0,
+      "material_events": 0,
+      "max_material_strain": 0.0,
+      "timing": {
+        "startup_planning": {
+          "count": 20,
+          "total_s": 26.154112473130226,
+          "p50_ms": 1287.2627340257168,
+          "p95_ms": 1422.206012532115,
+          "max_ms": 1468.3902636170387,
+          "logical_deadline_s": 0.02,
+          "deadline_misses": 20
+        },
+        "planning": {
+          "count": 651,
+          "total_s": 904.8518954720348,
+          "p50_ms": 1337.7530574798584,
+          "p95_ms": 1699.021083302796,
+          "max_ms": 16242.952600121498,
+          "logical_deadline_s": 0.02,
+          "deadline_misses": 651
+        },
+        "feedback": {
+          "count": 6505,
+          "total_s": 8.596182323992252,
+          "p50_ms": 1.2097042053937912,
+          "p95_ms": 1.9760735332965849,
+          "max_ms": 94.85003352165222,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 289
+        },
+        "state_parameter_rpc": {
+          "count": 6505,
+          "total_s": 12.894090134650469,
+          "p50_ms": 1.6460996121168137,
+          "p95_ms": 2.482512965798377,
+          "max_ms": 690.6498111784458,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 1583
+        },
+        "physics": {
+          "count": 6505,
+          "total_s": 69.34278421476483,
+          "p50_ms": 10.332921519875526,
+          "p95_ms": 15.109066292643545,
+          "max_ms": 399.33442883193493,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 6505
+        }
+      },
+      "query_file_bytes": 11701111,
+      "query_file_sha256": "6fe7a06e6b2990e233c2ea2ade623a61fd4622f0855c1dd412c8a2b11451dfe7",
+      "query_count": 6525,
+      "projection_status_counts": {
+        "legacy_center_feasible": 6387,
+        "metric_projection": 138
+      },
+      "raw_feedback_peak": {
+        "magnitude": 4.904293700359961,
+        "time": 12.081999778747559,
+        "plan_id": 625
+      },
+      "event_timeline": [
+        {
+          "time_s": 2.0999999999998016,
+          "kind": "command_nonprogress_2s",
+          "start_s": 1.9999999999998015,
+          "end_requested_s": 2.2999999999998018,
+          "dx_m": 0.00045461862146830906,
+          "command": [
+            0.050714500662528486,
+            8.937235560067091e-06,
+            0.0
+          ],
+          "contacts": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "end_available_s": 2.2999999999998018
+        },
+        {
+          "time_s": 10.772000000001572,
+          "kind": "feedback_added_saturation",
+          "start_s": 10.672000000001573,
+          "end_requested_s": 10.972000000001572,
+          "end_available_s": 10.972000000001572
+        },
+        {
+          "time_s": 10.772000000001572,
+          "kind": "large_raw_feedback",
+          "start_s": 10.672000000001573,
+          "end_requested_s": 10.972000000001572,
+          "end_available_s": 10.972000000001572
+        },
+        {
+          "time_s": 10.772000000001572,
+          "kind": "first_target_clip",
+          "start_s": 10.672000000001573,
+          "end_requested_s": 10.972000000001572,
+          "end_available_s": 10.972000000001572
+        },
+        {
+          "time_s": 12.063999999998561,
+          "kind": "first_nominal_PD_saturation",
+          "start_s": 11.963999999998562,
+          "end_requested_s": 12.26399999999856,
+          "end_available_s": 12.26399999999856
+        },
+        {
+          "time_s": 12.532999999997468,
+          "kind": "first_nonfoot_load",
+          "start_s": 12.432999999997469,
+          "end_requested_s": 12.732999999997467,
+          "physical_time_s": 12.533199999997468,
+          "end_available_s": 12.732999999997467
+        },
+        {
+          "time_s": 13.009999999996356,
+          "kind": "terminal",
+          "start_s": 12.909999999996357,
+          "end_requested_s": 13.209999999996356,
+          "reason": "body_fall",
+          "end_available_s": 13.009999999996356
+        }
+      ],
+      "last_saved_plan": {
+        "plan_id": 671,
+        "origin": 12.99999999999638,
+        "file": "accepted-reference-gain-H-plan000671.npz"
+      },
+      "failure_queries": [],
+      "query_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-a-diagnostics-part01/diag__job-20261106T103028Z-w40-a__f000001-g1__feedback-actions.jsonl.gz",
+      "query_count_semantics": "Includes20startup state probes; remaining queries are applied holds except final rejected query for technical episodes.",
+      "first_material_load_boundary_s": null,
+      "failure_scope": null
+    },
+    {
+      "attempt": "train-job-20261106T103028Z-w40-a-PANN_PPO_S5-s1-ep00286",
+      "result_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-a-PANN_PPO_S5-s1-ep00286.json",
+      "reason": "execution_error",
+      "error": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_r11_runtime.py\", line 552, in run\n    r29_records.query(t,'applied_hold',action,data.qpos,data.qvel)\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_r29_records.py\", line 81, in query\n    raise RuntimeError('r29 action unavailable before physics: '+row['projection_status'])\nRuntimeError: r29 action unavailable before physics: qp_kkt_failure\n",
+      "simulation_s": 11.473999999999936,
+      "wall_s": 901.1450900677592,
+      "slowdown": 78.53800680388393,
+      "stage_status": "technical_interruption",
+      "max_x_m": 0.6925708043957622,
+      "min_body_height_m": 0.2856303384324772,
+      "final_body_z_m": 0.2856303384324772,
+      "loaded_cells": 9,
+      "material_events": 38,
+      "max_material_strain": 0.00872088782152794,
+      "timing": {
+        "startup_planning": {
+          "count": 20,
+          "total_s": 25.598528645932674,
+          "p50_ms": 1265.1424733921885,
+          "p95_ms": 1345.4956835135818,
+          "max_ms": 1392.0524064451456,
+          "logical_deadline_s": 0.02,
+          "deadline_misses": 20
+        },
+        "planning": {
+          "count": 574,
+          "total_s": 762.9659131355584,
+          "p50_ms": 1318.434533663094,
+          "p95_ms": 1454.3326563201847,
+          "max_ms": 1933.2650192081928,
+          "logical_deadline_s": 0.02,
+          "deadline_misses": 574
+        },
+        "feedback": {
+          "count": 5738,
+          "total_s": 7.139728305861354,
+          "p50_ms": 1.1853044852614403,
+          "p95_ms": 1.9698249176144587,
+          "max_ms": 46.53885215520859,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 250
+        },
+        "state_parameter_rpc": {
+          "count": 5738,
+          "total_s": 10.504880463704467,
+          "p50_ms": 1.6170237213373184,
+          "p95_ms": 2.4440333247184753,
+          "max_ms": 566.4099492132664,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 1303
+        },
+        "physics": {
+          "count": 5737,
+          "total_s": 57.57868159562349,
+          "p50_ms": 9.928939864039421,
+          "p95_ms": 14.651558548212051,
+          "max_ms": 432.954628020525,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 5737
+        }
+      },
+      "query_file_bytes": 10319397,
+      "query_file_sha256": "911696a92f5fca79a7e730313834d70cf74e1664eb5bf04330169caa458ce29b",
+      "query_count": 5758,
+      "projection_status_counts": {
+        "legacy_center_feasible": 5693,
+        "metric_projection": 64,
+        "qp_kkt_failure": 1
+      },
+      "raw_feedback_peak": {
+        "magnitude": 26.210387983947758,
+        "time": 10.947999954223633,
+        "plan_id": 568
+      },
+      "event_timeline": [
+        {
+          "time_s": 2.0999999999998016,
+          "kind": "command_nonprogress_2s",
+          "start_s": 1.9999999999998015,
+          "end_requested_s": 2.2999999999998018,
+          "dx_m": 0.0004546183441154315,
+          "command": [
+            0.050714500662528486,
+            8.682895336956074e-06,
+            0.0
+          ],
+          "contacts": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "end_available_s": 2.2999999999998018
+        },
+        {
+          "time_s": 7.734000000007472,
+          "kind": "first_nominal_PD_saturation",
+          "start_s": 7.634000000007473,
+          "end_requested_s": 7.934000000007472,
+          "end_available_s": 7.934000000007472
+        },
+        {
+          "time_s": 10.692000000001759,
+          "kind": "feedback_added_saturation",
+          "start_s": 10.59200000000176,
+          "end_requested_s": 10.892000000001758,
+          "end_available_s": 10.892000000001758
+        },
+        {
+          "time_s": 10.692000000001759,
+          "kind": "large_raw_feedback",
+          "start_s": 10.59200000000176,
+          "end_requested_s": 10.892000000001758,
+          "end_available_s": 10.892000000001758
+        },
+        {
+          "time_s": 10.728000000001675,
+          "kind": "first_target_clip",
+          "start_s": 10.628000000001675,
+          "end_requested_s": 10.928000000001674,
+          "end_available_s": 10.928000000001674
+        },
+        {
+          "time_s": 11.075400000000865,
+          "kind": "first_material_load",
+          "start_s": 10.975400000000866,
+          "end_requested_s": 11.275400000000865,
+          "boundary_time_s": 11.075400000000865,
+          "material_state_time_s": 11.075600000000865,
+          "candidate_applied": true,
+          "end_available_s": 11.275400000000865
+        },
+        {
+          "time_s": 11.473999999999936,
+          "kind": "invalid_metric_or_QP",
+          "start_s": 11.373999999999937,
+          "end_requested_s": 11.673999999999936,
+          "end_available_s": 11.473999999999936
+        },
+        {
+          "time_s": 11.473999999999936,
+          "kind": "terminal",
+          "start_s": 11.373999999999937,
+          "end_requested_s": 11.673999999999936,
+          "reason": "execution_error",
+          "end_available_s": 11.473999999999936
+        }
+      ],
+      "last_saved_plan": {
+        "plan_id": 594,
+        "origin": 11.459999999999969,
+        "file": "accepted-reference-gain-H-plan000594.npz"
+      },
+      "failure_queries": [
+        {
+          "time": 11.473999977111816,
+          "plan_id": 594,
+          "feedback_scaling": 1,
+          "query_id": 5758,
+          "query_kind": "rpc_state_query",
+          "metric_valid": true,
+          "metric_source_plan_id": 594,
+          "metric_regularization": 2e-06,
+          "metric_regularization_type": 0,
+          "nominal_feedback_scale": 0.07498942093324559,
+          "action_step_alpha": 0.07498942093324559,
+          "installed_feedback_scaling": 1,
+          "projection_status": "qp_kkt_failure",
+          "projection_changed": true,
+          "restoration": false,
+          "qp_converged": false,
+          "qp_nfree": 10,
+          "primal_residual_rad": 0,
+          "kkt_residual": 0.7575004808552791,
+          "kkt_scaled_residual": 0.00011577532028205696,
+          "interpolation_nodes": [
+            6,
+            7
+          ],
+          "interpolation_fraction": 0.9999885559400781,
+          "center_before_projection": [
+            -0.05185252172959324,
+            0.8301711745185392,
+            -1.8453308364790302,
+            0.33086934082591074,
+            0.47815683710320467,
+            -2.552805668063819,
+            0.11022453620036765,
+            1.007025280188686,
+            -1.5668853080018041,
+            -0.0293606480218812,
+            0.9595330469992749,
+            -1.8595951184306956
+          ],
+          "projection_delta": [
+            0.2596813537770523,
+            0.15685941289067828,
+            -0.025176413209716086,
+            -0.3644932513554136,
+            0.4301907522917242,
+            0.44821206422468185,
+            -0.0063870726897734265,
+            -0.6761454683938086,
+            0.016474943781066065,
+            0.12325630927493095,
+            -0.16121739143247382,
+            -0.10439543301488818
+          ],
+          "instantaneous_lower": [
+            -0.3709562914551153,
+            0.4670570856097148,
+            -2.6023719524034457,
+            -0.033977253366027804,
+            0.9083475893949289,
+            -2.463025432483928,
+            -0.6861625364894057,
+            0.3308798117948775,
+            -2.619807660011574,
+            -0.4054967885010582,
+            0.5995830602854757,
+            -2.5713459931976947
+          ],
+          "instantaneous_upper": [
+            0.4190437085448847,
+            1.2570570856097147,
+            -1.0880386190701126,
+            0.7560227466339722,
+            1.698347589394929,
+            -0.9486920991505947,
+            0.10383746351059422,
+            1.1208798117948775,
+            -1.1054743266782405,
+            0.3845032114989418,
+            1.3895830602854757,
+            -1.0570126598643612
+          ],
+          "PD_u_star": [
+            11.02710741015446,
+            7.498410107970161,
+            -1.5181178371180333,
+            -23.678799429808503,
+            -23.699999999999996,
+            -23.92409028131256,
+            23.7,
+            -23.700000000000003,
+            18.73383774745015,
+            6.263546985246476,
+            -11.776044283120477,
+            -8.988673494873357
+          ],
+          "PD_violation_Nm": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3.552713678800501e-15,
+            0,
+            0,
+            0,
+            0
+          ],
+          "QP_gradient": [
+            0.42728489625575294,
+            -0.08737646096575266,
+            -0.7575004808552791,
+            0.05938356627904762,
+            0.4590918010526339,
+            -0.4094606362253632,
+            -0.04778065067261683,
+            0.06860368538072598,
+            0.02050254951996041,
+            -0.012782450160260542,
+            0.06350155004078949,
+            -0.005514580150899395
+          ],
+          "fixed_axes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "empty_axes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "active_bounds": [
+            0,
+            0,
+            0,
+            0,
+            -1,
+            0,
+            1,
+            -1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "lower_source": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "upper_source": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "u_star": [
+            0.20782883204745908,
+            0.9870305874092175,
+            -1.8705072496887463,
+            -0.03362391052950286,
+            0.9083475893949289,
+            -2.1045936038391373,
+            0.10383746351059422,
+            0.3308798117948775,
+            -1.550410364220738,
+            0.09389566125304974,
+            0.7983156555668011,
+            -1.9639905514455838
+          ],
+          "u_held": [
+            0.2078288346529007,
+            0.987030565738678,
+            -1.8705072402954102,
+            -0.03362391144037247,
+            0.9083476066589355,
+            -2.104593515396118,
+            0.10383746027946472,
+            0.330879807472229,
+            -1.5504103899002075,
+            0.09389565885066986,
+            0.7983156442642212,
+            -1.963990569114685
+          ],
+          "serialization_delta_u": [
+            2.605441612457682e-09,
+            -2.1670539473994666e-08,
+            9.393336108942663e-09,
+            -9.108696089055179e-10,
+            1.726400666868244e-08,
+            8.844301913057961e-08,
+            -3.23112950284532e-09,
+            -4.32264851690789e-09,
+            -2.5679469439765512e-08,
+            -2.4023798783634476e-09,
+            -1.1302579872030094e-08,
+            -1.766910129319399e-08
+          ],
+          "serialization_delta_tau": [
+            1.563264967474609e-07,
+            -1.30023236843968e-06,
+            5.636001665365598e-07,
+            -5.4652176534331076e-08,
+            1.0358404001209465e-06,
+            5.306581147834777e-06,
+            -1.938677701707192e-07,
+            -2.593589110144734e-07,
+            -1.5407681663859307e-06,
+            -1.4414279270180685e-07,
+            -6.781547923218056e-07,
+            -1.0601460775916394e-06
+          ],
+          "PD_u_held_same_state": [
+            11.027107566480957,
+            7.498408807737793,
+            -1.5181172735178667,
+            -23.67879948446068,
+            -23.699998964159597,
+            -23.92408497473141,
+            23.69999980613223,
+            -23.700000259358912,
+            18.733836206681982,
+            6.263546841103683,
+            -11.77604496127527,
+            -8.988674555019434
+          ],
+          "serialization_boundary_crossing": true,
+          "nominal_unclipped": [
+            -0.05185349496359194,
+            0.7399623788789312,
+            -1.8253678158600521,
+            0.33086934082591074,
+            1.3595659878858763,
+            -1.368816761234115,
+            -0.1681347667764863,
+            1.007025280188686,
+            -1.6164109457254683,
+            -0.0525677144763708,
+            0.9359946381648612,
+            -1.862271818158107
+          ],
+          "state_delta": [
+            8.966638030405427e-06,
+            -1.5049123578005086e-05,
+            3.1980819674093386e-05,
+            0.0003243609002192323,
+            -2.950122009299195e-05,
+            5.630388584849147e-05,
+            -0.0010196852587874708,
+            0.0010581818166210955,
+            0.0005332062064999921,
+            0.00036392101628301976,
+            0.0007964622660217024,
+            0.0020041097215099946,
+            0.0013041211291615618,
+            -0.001352643709756629,
+            -0.002043311565218753,
+            -0.0018682924437790696,
+            -0.00023108231384316724,
+            -0.0011713590782120864,
+            -0.0005057682909793415,
+            -0.0006177612687595715,
+            0.001244025277015448,
+            0.14993116533294437,
+            0.009707345527671829,
+            -0.010091622483833298,
+            -0.05294024834458638,
+            0.16652742301501522,
+            -0.03937528559411339,
+            0.2559151606492408,
+            0.48072530755332354,
+            0.3280523827558155,
+            -0.12580775965278768,
+            -0.10659711216019313,
+            0.2137482627839702,
+            -0.5938525886006611,
+            0.07240026934702426,
+            -0.0940991059231967
+          ],
+          "raw_K_delta_x": [
+            9.7323399870716e-07,
+            0.09020879563960787,
+            -0.019963020618978006,
+            0,
+            -0.8814091507826717,
+            -1.183988906829704,
+            0.27835930297685396,
+            0,
+            0.04952563772366422,
+            0.023207066454489597,
+            0.023538408834413736,
+            0.002676699727411424
+          ],
+          "action_before_clip": [
+            -0.05185252172959324,
+            0.8301711745185392,
+            -1.8453308364790302,
+            0.33086934082591074,
+            0.47815683710320467,
+            -2.552805668063819,
+            0.11022453620036765,
+            1.007025280188686,
+            -1.5668853080018041,
+            -0.0293606480218812,
+            0.9595330469992749,
+            -1.8595951184306956
+          ],
+          "action_after_clip": [
+            0.20782883204745908,
+            0.9870305874092175,
+            -1.8705072496887463,
+            -0.03362391052950286,
+            0.9083475893949289,
+            -2.1045936038391373,
+            0.10383746351059422,
+            0.3308798117948775,
+            -1.550410364220738,
+            0.09389566125304974,
+            0.7983156555668011,
+            -1.9639905514455838
+          ]
+        }
+      ],
+      "query_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-a-diagnostics-part01/diag__job-20261106T103028Z-w40-a__f000105-g1__feedback-actions.jsonl.gz",
+      "query_count_semantics": "Includes20startup state probes; remaining queries are applied holds except final rejected query for technical episodes.",
+      "first_material_load_boundary_s": 11.075400000000865,
+      "failure_scope": "Exact recorded rejected applied query with exact H reconstructed from saved plan594 nodes and logged interpolation; reference/action/K/H alignment independently verified."
+    },
+    {
+      "attempt": "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281",
+      "result_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281.json",
+      "reason": "material_domain_exit",
+      "error": null,
+      "simulation_s": 10.53720000000212,
+      "wall_s": 858.5868636686355,
+      "slowdown": 81.48150017732061,
+      "stage_status": "physical_material_failure",
+      "max_x_m": 0.6563054328986104,
+      "min_body_height_m": 0.2525692327766508,
+      "final_body_z_m": 0.2525692327766508,
+      "loaded_cells": 15,
+      "material_events": 129,
+      "max_material_strain": 0.020970864138884077,
+      "timing": {
+        "startup_planning": {
+          "count": 20,
+          "total_s": 25.63767020776868,
+          "p50_ms": 1269.5355685427785,
+          "p95_ms": 1364.5625982433558,
+          "max_ms": 1373.2858579605818,
+          "logical_deadline_s": 0.02,
+          "deadline_misses": 20
+        },
+        "planning": {
+          "count": 527,
+          "total_s": 722.5736651886255,
+          "p50_ms": 1340.570019558072,
+          "p95_ms": 1433.4790674969554,
+          "max_ms": 16264.1109675169,
+          "logical_deadline_s": 0.02,
+          "deadline_misses": 527
+        },
+        "feedback": {
+          "count": 5269,
+          "total_s": 6.4279298689216375,
+          "p50_ms": 1.148223876953125,
+          "p95_ms": 1.8288612365722654,
+          "max_ms": 25.439126417040825,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 97
+        },
+        "state_parameter_rpc": {
+          "count": 5269,
+          "total_s": 9.457623628899455,
+          "p50_ms": 1.5723016113042831,
+          "p95_ms": 2.3603457957506175,
+          "max_ms": 588.1004426628351,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 1036
+        },
+        "physics": {
+          "count": 5269,
+          "total_s": 55.82769703678787,
+          "p50_ms": 10.392855852842331,
+          "p95_ms": 14.691521972417831,
+          "max_ms": 400.0263474881649,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 5269
+        }
+      },
+      "query_file_bytes": 9460624,
+      "query_file_sha256": "1db9276bbe1304619a756999232a748fb32275de33b3d7edd0f0fdbf8602690f",
+      "query_count": 5289,
+      "projection_status_counts": {
+        "legacy_center_feasible": 5251,
+        "metric_projection": 38
+      },
+      "raw_feedback_peak": {
+        "magnitude": 3.8718590015500967,
+        "time": 10.378000259399414,
+        "plan_id": 539
+      },
+      "event_timeline": [
+        {
+          "time_s": 2.0999999999998016,
+          "kind": "command_nonprogress_2s",
+          "start_s": 1.9999999999998015,
+          "end_requested_s": 2.2999999999998018,
+          "dx_m": 0.00045461863437320805,
+          "command": [
+            0.050714500662528486,
+            9.28865711552887e-06,
+            0.0
+          ],
+          "contacts": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "end_available_s": 2.2999999999998018
+        },
+        {
+          "time_s": 8.088000000007828,
+          "kind": "first_nominal_PD_saturation",
+          "start_s": 7.988000000007828,
+          "end_requested_s": 8.288000000007827,
+          "end_available_s": 8.288000000007827
+        },
+        {
+          "time_s": 8.088000000007828,
+          "kind": "feedback_added_saturation",
+          "start_s": 7.988000000007828,
+          "end_requested_s": 8.288000000007827,
+          "end_available_s": 8.288000000007827
+        },
+        {
+          "time_s": 8.088000000007828,
+          "kind": "large_raw_feedback",
+          "start_s": 7.988000000007828,
+          "end_requested_s": 8.288000000007827,
+          "end_available_s": 8.288000000007827
+        },
+        {
+          "time_s": 8.206000000007553,
+          "kind": "first_target_clip",
+          "start_s": 8.106000000007553,
+          "end_requested_s": 8.406000000007552,
+          "end_available_s": 8.406000000007552
+        },
+        {
+          "time_s": 10.07780000000319,
+          "kind": "first_material_load",
+          "start_s": 9.97780000000319,
+          "end_requested_s": 10.27780000000319,
+          "boundary_time_s": 10.07780000000319,
+          "material_state_time_s": 10.07800000000319,
+          "candidate_applied": true,
+          "end_available_s": 10.27780000000319
+        },
+        {
+          "time_s": 10.52000000000216,
+          "kind": "trunk_restoration",
+          "start_s": 10.42000000000216,
+          "end_requested_s": 10.720000000002159,
+          "mode": "restored_to_feasible",
+          "plan_id": 547,
+          "end_available_s": 10.53720000000212
+        },
+        {
+          "time_s": 10.53720000000212,
+          "kind": "material_domain_exit",
+          "start_s": 10.43720000000212,
+          "end_requested_s": 10.737200000002119,
+          "candidate_applied": false,
+          "boundary_time_s": 10.53720000000212,
+          "material_state_time_s": 10.537400000002119,
+          "end_available_s": 10.53720000000212
+        },
+        {
+          "time_s": 10.53720000000212,
+          "kind": "terminal",
+          "start_s": 10.43720000000212,
+          "end_requested_s": 10.737200000002119,
+          "reason": "material_domain_exit",
+          "end_available_s": 10.53720000000212
+        }
+      ],
+      "last_saved_plan": {
+        "plan_id": 547,
+        "origin": 10.52000000000216,
+        "file": "accepted-reference-gain-H-plan000547.npz"
+      },
+      "failure_queries": [],
+      "query_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-b-diagnostics-part01/diag__job-20261106T103028Z-w40-b__f000001-g1__feedback-actions.jsonl.gz",
+      "query_count_semantics": "Includes20startup state probes; remaining queries are applied holds except final rejected query for technical episodes.",
+      "first_material_load_boundary_s": 10.07780000000319,
+      "failure_scope": null
+    },
+    {
+      "attempt": "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282",
+      "result_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282.json",
+      "reason": "execution_error",
+      "error": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_r11_runtime.py\", line 552, in run\n    r29_records.query(t,'applied_hold',action,data.qpos,data.qvel)\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_r29_records.py\", line 81, in query\n    raise RuntimeError('r29 action unavailable before physics: '+row['projection_status'])\nRuntimeError: r29 action unavailable before physics: qp_kkt_failure\n",
+      "simulation_s": 14.263999999993434,
+      "wall_s": 1099.8839967176318,
+      "slowdown": 77.1090855803518,
+      "stage_status": "technical_interruption",
+      "max_x_m": 0.5999673864502308,
+      "min_body_height_m": 0.2858113473866789,
+      "final_body_z_m": 0.28938717799463304,
+      "loaded_cells": 0,
+      "material_events": 0,
+      "max_material_strain": 0.0,
+      "timing": {
+        "startup_planning": {
+          "count": 20,
+          "total_s": 25.47567406669259,
+          "p50_ms": 1262.0191648602486,
+          "p95_ms": 1351.294717285782,
+          "max_ms": 1364.0673886984587,
+          "logical_deadline_s": 0.02,
+          "deadline_misses": 20
+        },
+        "planning": {
+          "count": 714,
+          "total_s": 950.2581258099526,
+          "p50_ms": 1323.8968225196004,
+          "p95_ms": 1423.7618922255936,
+          "max_ms": 10660.203292965889,
+          "logical_deadline_s": 0.02,
+          "deadline_misses": 714
+        },
+        "feedback": {
+          "count": 7133,
+          "total_s": 8.448929002508521,
+          "p50_ms": 1.1266805231571198,
+          "p95_ms": 1.85583159327507,
+          "max_ms": 52.45202220976353,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 162
+        },
+        "state_parameter_rpc": {
+          "count": 7133,
+          "total_s": 12.247819062322378,
+          "p50_ms": 1.5698913484811783,
+          "p95_ms": 2.4102833122015,
+          "max_ms": 567.3699229955673,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 1465
+        },
+        "physics": {
+          "count": 7132,
+          "total_s": 70.97016259841621,
+          "p50_ms": 10.075720027089119,
+          "p95_ms": 14.4989806227386,
+          "max_ms": 117.27898381650448,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 7132
+        }
+      },
+      "query_file_bytes": 12813274,
+      "query_file_sha256": "21b2ce5f8dc719a5b69f599dcee9b04afc88572a719717680ebda05f6d0a406c",
+      "query_count": 7153,
+      "projection_status_counts": {
+        "legacy_center_feasible": 7135,
+        "metric_projection": 17,
+        "qp_kkt_failure": 1
+      },
+      "raw_feedback_peak": {
+        "magnitude": 4.965448094239555,
+        "time": 14.184000015258789,
+        "plan_id": 730
+      },
+      "event_timeline": [
+        {
+          "time_s": 2.0999999999998016,
+          "kind": "command_nonprogress_2s",
+          "start_s": 1.9999999999998015,
+          "end_requested_s": 2.2999999999998018,
+          "dx_m": 0.0004546208079629866,
+          "command": [
+            0.050714500662528486,
+            8.40546259291961e-06,
+            0.0
+          ],
+          "contacts": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "end_available_s": 2.2999999999998018
+        },
+        {
+          "time_s": 11.55799999999974,
+          "kind": "first_nominal_PD_saturation",
+          "start_s": 11.45799999999974,
+          "end_requested_s": 11.75799999999974,
+          "end_available_s": 11.75799999999974
+        },
+        {
+          "time_s": 11.55799999999974,
+          "kind": "large_raw_feedback",
+          "start_s": 11.45799999999974,
+          "end_requested_s": 11.75799999999974,
+          "end_available_s": 11.75799999999974
+        },
+        {
+          "time_s": 14.043999999993947,
+          "kind": "feedback_added_saturation",
+          "start_s": 13.943999999993947,
+          "end_requested_s": 14.243999999993946,
+          "end_available_s": 14.243999999993946
+        },
+        {
+          "time_s": 14.043999999993947,
+          "kind": "first_target_clip",
+          "start_s": 13.943999999993947,
+          "end_requested_s": 14.243999999993946,
+          "end_available_s": 14.243999999993946
+        },
+        {
+          "time_s": 14.23999999999349,
+          "kind": "trunk_restoration",
+          "start_s": 14.13999999999349,
+          "end_requested_s": 14.43999999999349,
+          "mode": "restored_to_feasible",
+          "plan_id": 733,
+          "end_available_s": 14.263999999993434
+        },
+        {
+          "time_s": 14.263999999993434,
+          "kind": "invalid_metric_or_QP",
+          "start_s": 14.163999999993434,
+          "end_requested_s": 14.463999999993433,
+          "end_available_s": 14.263999999993434
+        },
+        {
+          "time_s": 14.263999999993434,
+          "kind": "terminal",
+          "start_s": 14.163999999993434,
+          "end_requested_s": 14.463999999993433,
+          "reason": "execution_error",
+          "end_available_s": 14.263999999993434
+        }
+      ],
+      "last_saved_plan": {
+        "plan_id": 734,
+        "origin": 14.259999999993443,
+        "file": "accepted-reference-gain-H-plan000734.npz"
+      },
+      "failure_queries": [
+        {
+          "time": 14.263999938964844,
+          "plan_id": 734,
+          "feedback_scaling": 1,
+          "query_id": 7153,
+          "query_kind": "rpc_state_query",
+          "metric_valid": true,
+          "metric_source_plan_id": 734,
+          "metric_regularization": 1e-06,
+          "metric_regularization_type": 0,
+          "nominal_feedback_scale": 0.005623413251903492,
+          "action_step_alpha": 0.013335214321633242,
+          "installed_feedback_scaling": 1,
+          "projection_status": "qp_kkt_failure",
+          "projection_changed": true,
+          "restoration": false,
+          "qp_converged": false,
+          "qp_nfree": 9,
+          "primal_residual_rad": 0,
+          "kkt_residual": 0.4047956971003339,
+          "kkt_scaled_residual": 3.0654075627774674e-05,
+          "interpolation_nodes": [
+            1,
+            2
+          ],
+          "interpolation_fraction": 0.9999694857049092,
+          "center_before_projection": [
+            -1.0472,
+            3.4907,
+            -1.0219717741158139,
+            -0.2943501248773339,
+            -0.14242966038941263,
+            -1.3621969175109871,
+            -0.4536904854006787,
+            0.6318876964237732,
+            -1.9763693514790979,
+            0.6815734489316858,
+            1.1903241693291042,
+            -1.5566718770660724
+          ],
+          "projection_delta": [
+            0.56879696861669,
+            -2.0208495033139453,
+            -0.041543326208639986,
+            0.015198658799553233,
+            0.00711047873742407,
+            -0.02619093116587834,
+            0.03520536264737195,
+            0.005187341756883512,
+            0.03997076830706603,
+            -0.39448022780993725,
+            0.0603350804198759,
+            -0.040743191635844056
+          ],
+          "instantaneous_lower": [
+            -0.4784030313833098,
+            0.6798504966860546,
+            -2.559147704475971,
+            -0.47683159058187113,
+            -0.1454740921884794,
+            -2.268541551641128,
+            -0.41848512275330674,
+            0.47567918633977013,
+            -2.5510428114187262,
+            -0.5029067788782514,
+            0.6019706090976734,
+            -2.4558611873065592
+          ],
+          "instantaneous_upper": [
+            0.3115969686166902,
+            1.4698504966860546,
+            -1.044814371142638,
+            0.31316840941812885,
+            0.6445259078115206,
+            -0.83776,
+            0.37151487724669324,
+            1.26567918633977,
+            -1.036709478085393,
+            0.28709322112174857,
+            1.3919706090976733,
+            -0.9415278539732258
+          ],
+          "PD_u_star": [
+            -23.7,
+            23.700000000000006,
+            44.30795624909105,
+            -11.839192529754573,
+            -23.090705367810557,
+            7.379222177855732,
+            -23.7,
+            -14.016248889546805,
+            -8.551346305198336,
+            23.7,
+            15.221318439078402,
+            6.076767116278562
+          ],
+          "PD_violation_Nm": [
+            0,
+            7.105427357601002e-15,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "QP_gradient": [
+            -0.07315186144615149,
+            -0.038226544420554315,
+            0.015288936369084738,
+            0.15411371660752415,
+            0.14311402809807383,
+            0.4047956971003339,
+            -0.0737718909483347,
+            -0.025094698925813397,
+            0.008286231558951931,
+            -0.06683883250790545,
+            -0.021983086546955355,
+            -0.009009226455996167
+          ],
+          "fixed_axes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "empty_axes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "active_bounds": [
+            -1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            -1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "lower_source": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "upper_source": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "u_star": [
+            -0.4784030313833098,
+            1.4698504966860546,
+            -1.0635151003244538,
+            -0.2791514660777807,
+            -0.13531918165198856,
+            -1.3883878486768655,
+            -0.41848512275330674,
+            0.6370750381806567,
+            -1.9363985831720318,
+            0.28709322112174857,
+            1.2506592497489801,
+            -1.5974150687019164
+          ],
+          "u_held": [
+            -0.4784030318260193,
+            1.4698505401611328,
+            -1.063515067100525,
+            -0.27915146946907043,
+            -0.13531918823719025,
+            -1.3883877992630005,
+            -0.4184851348400116,
+            0.6370750665664673,
+            -1.9363986253738403,
+            0.28709322214126587,
+            1.2506592273712158,
+            -1.5974150896072388
+          ],
+          "serialization_delta_u": [
+            -4.427094801862097e-10,
+            4.3475078204124884e-08,
+            3.322392894133941e-08,
+            -3.3912897490218086e-09,
+            -6.5852016895018295e-09,
+            4.941386499979217e-08,
+            -1.2086704859193276e-08,
+            2.8385810590947358e-08,
+            -4.220180849223709e-08,
+            1.0195173039129202e-09,
+            -2.2377764308245673e-08,
+            -2.0905322362096967e-08
+          ],
+          "serialization_delta_tau": [
+            -2.6562568811172582e-08,
+            2.608504692247493e-06,
+            1.9934357364803645e-06,
+            -2.0347738494130851e-07,
+            -3.9511210137010977e-07,
+            2.96483189998753e-06,
+            -7.252022915515965e-07,
+            1.7031486354568415e-06,
+            -2.5321085095342255e-06,
+            6.117103823477521e-08,
+            -1.3426658584947404e-06,
+            -1.254319341725818e-06
+          ],
+          "PD_u_held_same_state": [
+            -23.700000026562567,
+            23.700002608504697,
+            44.30795824252679,
+            -11.839192733231958,
+            -23.09070576292266,
+            7.379225142687632,
+            -23.70000072520229,
+            -14.01624718639817,
+            -8.551348837306847,
+            23.70000006117104,
+            15.221317096412545,
+            6.07676586195922
+          ],
+          "serialization_boundary_crossing": true,
+          "nominal_unclipped": [
+            -0.07813686281680605,
+            0.8349130964280623,
+            -1.628858513370098,
+            -0.1972789720564827,
+            0.1827167375250186,
+            -1.3869881781589324,
+            -0.0890403887685496,
+            0.6819382730025534,
+            -1.7876378647408522,
+            -0.05811110420397583,
+            0.9078074585429059,
+            -1.6233953248129873
+          ],
+          "state_delta": [
+            -4.602972195844046e-06,
+            -1.199797279478887e-05,
+            6.928503953085308e-05,
+            4.215458650723773e-05,
+            -6.594293774602357e-05,
+            -4.5968946808121174e-05,
+            -0.0002580745941246909,
+            0.0015950049383361975,
+            -0.0014438463906794041,
+            0.00032778183569160194,
+            -8.302344141841722e-05,
+            0.00016308367923367761,
+            0.00023103151063117236,
+            0.0002396708442994333,
+            -0.0002489806599195177,
+            -0.0005660630354274998,
+            0.0005421838534074297,
+            -0.0007166713465414087,
+            -0.0007796766993249521,
+            -0.006512333084345283,
+            0.037406960410569776,
+            -0.02142480265189218,
+            -0.06655777859809839,
+            -0.03478695428099429,
+            -0.07647842109570935,
+            0.8620352412010035,
+            -0.6881622420893541,
+            0.27588500794331505,
+            -0.045256715091725574,
+            0.12353885949840704,
+            0.2080784036137102,
+            0.0879862223762832,
+            -0.08038337847630911,
+            -0.19064961744982517,
+            0.36828930350771905,
+            -0.3528057040944751
+          ],
+          "raw_K_delta_x": [
+            -1.6091650662900443,
+            2.897636797508976,
+            0.6068867392542842,
+            -0.09707115282085121,
+            -0.32514639791443123,
+            0.024791260647945124,
+            -0.3646500966321291,
+            -0.05005057657878019,
+            -0.18873148673824558,
+            0.7396845531356616,
+            0.28251671078619833,
+            0.06672344774691497
+          ],
+          "action_before_clip": [
+            -1.6873019291068503,
+            3.7325498939370383,
+            -1.0219717741158139,
+            -0.2943501248773339,
+            -0.14242966038941263,
+            -1.3621969175109871,
+            -0.4536904854006787,
+            0.6318876964237732,
+            -1.9763693514790979,
+            0.6815734489316858,
+            1.1903241693291042,
+            -1.5566718770660724
+          ],
+          "action_after_clip": [
+            -0.4784030313833098,
+            1.4698504966860546,
+            -1.0635151003244538,
+            -0.2791514660777807,
+            -0.13531918165198856,
+            -1.3883878486768655,
+            -0.41848512275330674,
+            0.6370750381806567,
+            -1.9363985831720318,
+            0.28709322112174857,
+            1.2506592497489801,
+            -1.5974150687019164
+          ]
+        }
+      ],
+      "query_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-b-diagnostics-part01/diag__job-20261106T103028Z-w40-b__f000092-g1__feedback-actions.jsonl.gz",
+      "query_count_semantics": "Includes20startup state probes; remaining queries are applied holds except final rejected query for technical episodes.",
+      "first_material_load_boundary_s": null,
+      "failure_scope": "Exact recorded rejected applied query with exact H reconstructed from saved plan734 nodes and loggedinterpolation; gradient matches2.998e-14."
+    }
+  ],
+  "total_query_rows": 24725,
+  "missing_for_exact_reproduction": [],
+  "observations": [
+    "Both main technical exits correctly reject a nonconverged box-QP before its target is applied.",
+    "All failed boxes are nonempty and have no fixed axes; metrics reported valid. Both failed solutions have zero primal violation but substantial KKT errors.",
+    "Tiny float32 serialization boundary crossings cannot explain the pre-serialization KKT failure.",
+    "A285 body fall occurred before material load; B281 actual material domain exit occurred after first foot load; neither physical episode itself stopped branch training.",
+    "The command_nonprogress_2s event at t=2.1 s includes the initial 2 s stand and only 0.1 s of commanded motion; it does not establish a 2 s commanded stall.",
+    "GPU task is independently pinned and its old published snapshot does not prove live state. No GPU changes made."
+  ],
+  "audit_utc": "2026-11-06T11:40:09.650407+00:00",
+  "latest_inspected_source_commit": "e1e0e1c97a87c3135775fab69c3f6e5a7e1f993c",
+  "physical_substep_audit": [
+    {
+      "branch": "a",
+      "episode": 285,
+      "physical_samples": 65050,
+      "max_raw_pd_Nm": 64.19608389366253,
+      "max_torque_violation_Nm": 20.317923351165046,
+      "time_of_max_violation": 12.28779999999804,
+      "first_meaningful_pd_saturation_s": 12.08139999999852,
+      "saturation_count_strict": 357,
+      "saturation_count_gt_1e_4": 285,
+      "substeps": [
+        {
+          "substep": 1,
+          "count": 0,
+          "max_violation_Nm": 5.705708677083976e-06
+        },
+        {
+          "substep": 2,
+          "count": 22,
+          "max_violation_Nm": 1.4909236810475122
+        },
+        {
+          "substep": 3,
+          "count": 26,
+          "max_violation_Nm": 4.065648692214793
+        },
+        {
+          "substep": 4,
+          "count": 28,
+          "max_violation_Nm": 7.814589407466979
+        },
+        {
+          "substep": 5,
+          "count": 31,
+          "max_violation_Nm": 10.985454054758119
+        },
+        {
+          "substep": 6,
+          "count": 33,
+          "max_violation_Nm": 13.63910841250986
+        },
+        {
+          "substep": 7,
+          "count": 37,
+          "max_violation_Nm": 15.839770606211328
+        },
+        {
+          "substep": 8,
+          "count": 39,
+          "max_violation_Nm": 17.650269267161338
+        },
+        {
+          "substep": 9,
+          "count": 34,
+          "max_violation_Nm": 19.126709740727552
+        },
+        {
+          "substep": 10,
+          "count": 35,
+          "max_violation_Nm": 20.317923351165046
+        }
+      ],
+      "first_abs_roll_or_pitch_above_0_15_rad_s": 12.79399999999686,
+      "source_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-a-diagnostics-part01/diag__job-20261106T103028Z-w40-a__f000089-g1__physical-000.npz",
+      "measurement": "abs(unclipped_pd_request)-original per-actuator force limit, positive part. First substep is every10th physical row starting0; held target changes only each2ms.",
+      "1e_4_Nm_threshold_purpose": "Separate observed serialization roundoff from substantial torque clipping for analysis; does not modify original strict-saturation metrics or any task/stop rule.",
+      "interpretation": "First tick is feasible to serialization precision; later held-target ticks can exceed force limits. Original force clipping remains. Temporal evidence does not by itself prove the fall/domain exit was caused by this mechanism.",
+      "largest_violation_hold": {
+        "zero_based_actuator_index": 4,
+        "hold_start_s": 12.285999999998044,
+        "peak_time_s": 12.28779999999804,
+        "original_torque_limit_abs_Nm": 23.7,
+        "raw_PD_request_10_substeps_Nm": [
+          -18.373436975198512,
+          -23.408301503175043,
+          -27.765648692214793,
+          -31.51458940746698,
+          -34.68545405475812,
+          -37.33910841250986,
+          -39.53977060621133,
+          -41.35026926716134,
+          -42.82670974072755,
+          -44.017923351165045
+        ],
+        "applied_torque_10_substeps_Nm": [
+          -18.373436975198516,
+          -23.40830150317504,
+          -23.7,
+          -23.7,
+          -23.7,
+          -23.7,
+          -23.7,
+          -23.7,
+          -23.7,
+          -23.7
+        ]
+      }
+    },
+    {
+      "branch": "b",
+      "episode": 281,
+      "physical_samples": 52686,
+      "max_raw_pd_Nm": 59.21664416055228,
+      "max_torque_violation_Nm": 13.786644160552278,
+      "time_of_max_violation": 10.457800000002305,
+      "first_meaningful_pd_saturation_s": 8.088200000007827,
+      "saturation_count_strict": 148,
+      "saturation_count_gt_1e_4": 115,
+      "substeps": [
+        {
+          "substep": 1,
+          "count": 0,
+          "max_violation_Nm": 5.824025610223771e-06
+        },
+        {
+          "substep": 2,
+          "count": 13,
+          "max_violation_Nm": 1.94763232290558
+        },
+        {
+          "substep": 3,
+          "count": 13,
+          "max_violation_Nm": 3.992881963338178
+        },
+        {
+          "substep": 4,
+          "count": 12,
+          "max_violation_Nm": 6.659971133158784
+        },
+        {
+          "substep": 5,
+          "count": 13,
+          "max_violation_Nm": 8.76792968100088
+        },
+        {
+          "substep": 6,
+          "count": 13,
+          "max_violation_Nm": 10.413315043181832
+        },
+        {
+          "substep": 7,
+          "count": 12,
+          "max_violation_Nm": 11.676526381708378
+        },
+        {
+          "substep": 8,
+          "count": 13,
+          "max_violation_Nm": 12.624451223095335
+        },
+        {
+          "substep": 9,
+          "count": 13,
+          "max_violation_Nm": 13.312549413368757
+        },
+        {
+          "substep": 10,
+          "count": 13,
+          "max_violation_Nm": 13.786644160552278
+        }
+      ],
+      "first_abs_roll_or_pitch_above_0_15_rad_s": null,
+      "source_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-b-diagnostics-part01/diag__job-20261106T103028Z-w40-b__f000079-g1__physical-000.npz",
+      "measurement": "abs(unclipped_pd_request)-original per-actuator force limit, positive part. First substep is every10th physical row starting0; held target changes only each2ms.",
+      "1e_4_Nm_threshold_purpose": "Separate observed serialization roundoff from substantial torque clipping for analysis; does not modify original strict-saturation metrics or any task/stop rule.",
+      "interpretation": "First tick is feasible to serialization precision; later held-target ticks can exceed force limits. Original force clipping remains. Temporal evidence does not by itself prove the fall/domain exit was caused by this mechanism.",
+      "largest_violation_hold": {
+        "zero_based_actuator_index": 8,
+        "hold_start_s": 10.456000000002309,
+        "peak_time_s": 10.457800000002305,
+        "original_torque_limit_abs_Nm": 45.43,
+        "raw_PD_request_10_substeps_Nm": [
+          41.889000289975094,
+          46.08050924508566,
+          49.42288196333818,
+          52.089971133158784,
+          54.19792968100088,
+          55.84331504318183,
+          57.10652638170838,
+          58.054451223095334,
+          58.74254941336876,
+          59.21664416055228
+        ],
+        "applied_torque_10_substeps_Nm": [
+          41.88900028997509,
+          45.43,
+          45.43,
+          45.43,
+          45.43,
+          45.43,
+          45.43,
+          45.43,
+          45.43,
+          45.43
+        ]
+      }
+    }
+  ],
+  "B281_material_domain_failure": {
+    "reason": "material_domain_exit",
+    "time_s": 10.537400000002119,
+    "max_abs_principal_strain": 0.020970864138884077,
+    "bottom_m": [
+      [
+        0.9147548824967429,
+        0.09411810420461322,
+        -0.0010485432069442038
+      ],
+      [
+        0.7470990868224869,
+        -0.01819794721601048,
+        -0.00016109502453132835
+      ],
+      [
+        0.2563230378974978,
+        0.07275019499525542,
+        0.044077522405270984
+      ],
+      [
+        0.22945974991462134,
+        -0.13630892822211962,
+        0.014541675856759383
+      ]
+    ],
+    "velocity_m_s": [
+      [
+        0.6629690974560946,
+        0.015430182926599565,
+        -0.4514974153047355
+      ],
+      [
+        0.00238653391483544,
+        0.003497134130384272,
+        0.04074615375309462
+      ],
+      [
+        1.1981743701532648,
+        1.3137465591645179,
+        -0.3273752948108011
+      ],
+      [
+        -0.2744483252436952,
+        -0.517834689244114,
+        -0.1311735978507469
+      ]
+    ],
+    "force_N": [
+      [
+        -632.7394291149009,
+        -14.72660667530085,
+        1265.9654758843278
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "physical_state_time_s": 10.53720000000212,
+    "material_state_time_s": 10.537400000002119,
+    "candidate_force_interpretation": "Failed next material candidate; candidate_applied=false in event manifest. Do not claim1265.965N was applied to completed physics.",
+    "geometric_domain_check": {
+      "original_config": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
+      "thickness_m": 0.05,
+      "original_strain_absolute_limit": 0.02,
+      "equivalent_indentation_limit_m": 0.001,
+      "failed_candidate_FL_indentation_m": 0.0010485432069442038,
+      "failed_candidate_geometric_strain": 0.020970864138884077,
+      "conclusion": "Recorded geometric indentation alone exceeds original domain. Does not imply a material solver iteration failure."
+    }
+  },
+  "gpu_isolation": {
+    "task": "w40-gpu",
+    "session": "s1-w40-gpu",
+    "host_cpus": [
+      206,
+      207
+    ],
+    "deadline_unix_s": 1794061888.128057,
+    "dependencies": "work/gpu-w40-python",
+    "inputs": "Saved W39 model and fixtures; no r29 policy import",
+    "operation_performed": "none",
+    "current_live_state": "unobserved",
+    "latest_published_status": "compiling_exact_model_one_substep",
+    "latest_published_updated_unix_s": 1793961341.293743,
+    "guard": "Main repair must not stop/restart this task, alter its clock/dependencies/source, or use broad process/session cleanup."
+  },
+  "native_QP_reproduction": {
+    "status": "exact_native_failure_and_repair_reproduced",
+    "B282_metric_eigenvalue_range": [
+      0.0006807017406220037,
+      8027.203425252624
+    ],
+    "B282_metric_condition_number": 11792541.352865675,
+    "B282_reconstructed_gradient_max_abs_error": 2.9976021664879227e-14,
+    "native_solver_replay": "Separate r29 repair audit owns actual native and corrected solver results.",
+    "replay_evidence_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-stop-review/qp-replay.json",
+    "A286_metric_eigenvalue_range": [
+      6.919654128325238e-05,
+      4050.7338025911495
+    ],
+    "A286_metric_condition_number": 58539541.535893895,
+    "A286_reconstructed_gradient_max_abs_error": 2.3003821070233244e-13,
+    "verified_counts": {
+      "native_failed_cases": 2,
+      "repaired_cases": 2,
+      "unchanged_passing_cases": 9
+    },
+    "failure_cases": [
+      {
+        "case_id": "A286-q5758",
+        "native_matches_recorded_exactly": true,
+        "native_max_abs_recorded_difference_rad": 0.0,
+        "native_log_tail": [
+          "iter 100:  |grad|: 1.1       reduction: 7.9e-05   improvement: 3.13      linesearch: 0.5^10  factorized: 1  nfree: 10",
+          "BOXQP: Maximum main iterations exceeded.",
+          "iterations= 100,  factorizations= 100,  |grad|= 1.14079     , final value= -7544.95    "
+        ],
+        "refinement_iterations": 4,
+        "refinement_status": "converged",
+        "final": {
+          "primal_rad": 0.0,
+          "kkt": 3.197442310920451e-14,
+          "kkt_scaled": 4.8869263714822595e-18,
+          "scale": 6542.849365562737,
+          "active_bounds": [
+            1,
+            0,
+            0,
+            -1,
+            -1,
+            0,
+            1,
+            -1,
+            0,
+            0,
+            -1,
+            0
+          ],
+          "converged": true,
+          "centered_objective": 0.0016665556393780446
+        },
+        "max_correction_rad": 0.2512045116191136
+      },
+      {
+        "case_id": "B282-q7153",
+        "native_matches_recorded_exactly": true,
+        "native_max_abs_recorded_difference_rad": 0.0,
+        "native_log_tail": [
+          "iter 100:  |grad|: 0.3       reduction: 1e-05     improvement: 1.368     linesearch: 0.5^10  factorized: 1  nfree: 9",
+          "BOXQP: Maximum main iterations exceeded.",
+          "iterations= 100,  factorizations= 100,  |grad|= 0.303782    , final value= -6390.58    "
+        ],
+        "refinement_iterations": 5,
+        "refinement_status": "converged",
+        "final": {
+          "primal_rad": 0.0,
+          "kkt": 4.689582056016661e-13,
+          "kkt_scaled": 3.5512927641658766e-17,
+          "scale": 13205.281477597762,
+          "active_bounds": [
+            -1,
+            1,
+            0,
+            -1,
+            -1,
+            0,
+            -1,
+            0,
+            -1,
+            1,
+            1,
+            0
+          ],
+          "converged": true,
+          "centered_objective": 0.01949423346332688
+        },
+        "max_correction_rad": 0.6146442282466944
+      }
+    ]
+  },
+  "B282_planner_profile": {
+    "source_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-b-diagnostics-part01/diag__job-20261106T103028Z-w40-b__f000100-g1__planner-calls.jsonl.gz",
+    "call_count": 734,
+    "includes_startup_calls": 20,
+    "all_calls_policy_installed": true,
+    "max_reused_policy_age_s": 0,
+    "total_wall_s": 975.1267409999999,
+    "total_recorded_stages_s": 975.074413,
+    "stages": {
+      "nominal": {
+        "total_s": 281.24762999999996,
+        "wall_fraction": 0.28842161554464024,
+        "p50_ms": 378.3195
+      },
+      "model_derivative": {
+        "total_s": 426.66017999999997,
+        "wall_fraction": 0.43754330802420277,
+        "p50_ms": 576.6195
+      },
+      "cost_derivative": {
+        "total_s": 3.8415619999999997,
+        "wall_fraction": 0.003939551484415707,
+        "p50_ms": 3.4659999999999997
+      },
+      "backward_pass": {
+        "total_s": 24.210189999999997,
+        "wall_fraction": 0.024827736725968833,
+        "p50_ms": 37.2005
+      },
+      "rollouts": {
+        "total_s": 229.554562,
+        "wall_fraction": 0.23540997528648436,
+        "p50_ms": 313.961
+      },
+      "policy_update": {
+        "total_s": 9.560289,
+        "wall_fraction": 0.009804150166362836,
+        "p50_ms": 13.262999999999998
+      }
+    },
+    "interpretation": "Model differentiation and nominal/candidate simulation dominate this observed episode. Does not predict GPU speedup; backward pass alone is a small measured fraction."
+  },
+  "exact_QP_packets": [
+    {
+      "episode": "A286",
+      "plan_id": 594,
+      "query_id": 5758,
+      "source_H_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-a-diagnostics-part01/diag__job-20261106T103028Z-w40-a__f000192-g1__accepted-reference-gain-H-plan000594.npz",
+      "source_H_asset_bytes": 1660466,
+      "source_H_asset_sha256": "1882abe318f83027f42d3ab1f4594f61f389590c8b7049f76a6d7c2a910d62e9",
+      "source_query_asset": "diag__job-20261106T103028Z-w40-a__f000105-g1__feedback-actions.jsonl.gz",
+      "interpolation_nodes": [
+        6,
+        7
+      ],
+      "interpolation_fraction": 0.9999885559400781,
+      "H": [
+        [
+          4.2523325057216255,
+          -1.4162176599726652,
+          -7.0930328431888885,
+          -6.542709319246195,
+          -30.035049327182836,
+          20.646383994866266,
+          -3.039999323842564,
+          -0.9049339225211356,
+          -0.1066310368047898,
+          -0.767231557704426,
+          -0.31198059798710664,
+          -0.6074458038413484
+        ],
+        [
+          -1.4162176599726657,
+          1.0799024208148345,
+          1.8809939214173292,
+          9.906195094877065,
+          47.99587324691556,
+          -34.185529252475675,
+          3.86021458725258,
+          2.051904027305045,
+          0.37855001744842914,
+          0.9650703370164627,
+          1.1434180200608848,
+          0.8116053847411419
+        ],
+        [
+          -7.093032843188885,
+          1.8809939214173304,
+          12.217388545951259,
+          4.778253976592193,
+          19.95574849185437,
+          -12.777948652380237,
+          2.813165897768852,
+          0.12067276638051752,
+          -0.0943025357717733,
+          0.7172540803829796,
+          -0.3045120751327843,
+          0.5299555679740707
+        ],
+        [
+          -6.542709319246193,
+          9.906195094877065,
+          4.778253976592194,
+          108.47649456490463,
+          529.7694038457792,
+          -379.25954806763644,
+          40.90417546784131,
+          23.668804435376455,
+          4.529099758309864,
+          10.207067204337417,
+          13.7099282785616,
+          8.688417957780425
+        ],
+        [
+          -30.035049327182833,
+          47.99587324691556,
+          19.955748491854365,
+          529.7694038457792,
+          2588.9534505694983,
+          -1854.0659127833712,
+          199.57923517786665,
+          115.89532746057561,
+          22.21115270661444,
+          49.79710946042585,
+          67.23424301028092,
+          42.40496749471858
+        ],
+        [
+          20.64638399486626,
+          -34.185529252475675,
+          -12.777948652380244,
+          -379.25954806763644,
+          -1854.0659127833712,
+          1328.0373980814547,
+          -142.78044666933812,
+          -83.09776260745583,
+          -15.940611898711163,
+          -35.62307258967598,
+          -48.2535882235738,
+          -30.34332764614978
+        ],
+        [
+          -3.039999323842564,
+          3.86021458725258,
+          2.813165897768852,
+          40.90417546784131,
+          199.57923517786665,
+          -142.78044666933812,
+          15.52326631301056,
+          8.853162212413537,
+          1.6843325158715496,
+          3.8746747522889553,
+          5.096217701855522,
+          3.29053173614213
+        ],
+        [
+          -0.9049339225211358,
+          2.051904027305045,
+          0.12067276638051752,
+          23.66880443537645,
+          115.89532746057561,
+          -83.09776260745583,
+          8.853162212413537,
+          5.237785175206326,
+          1.0113353459200634,
+          2.208014188674948,
+          3.0625131410107396,
+          1.8852894267545912
+        ],
+        [
+          -0.10663103680478972,
+          0.3785500174484292,
+          -0.09430253577177308,
+          4.529099758309864,
+          22.21115270661444,
+          -15.940611898711161,
+          1.6843325158715496,
+          1.0113353459200634,
+          0.19708792483298368,
+          0.41990220548247004,
+          0.5949376153100764,
+          0.3593344524335643
+        ],
+        [
+          -0.7672315577044257,
+          0.9650703370164627,
+          0.7172540803829798,
+          10.207067204337417,
+          49.79710946042585,
+          -35.62307258967598,
+          3.8746747522889553,
+          2.208014188674948,
+          0.41990220548247004,
+          0.9679705497853005,
+          1.2705161104550158,
+          0.8212773406157836
+        ],
+        [
+          -0.3119805979871062,
+          1.1434180200608848,
+          -0.3045120751327845,
+          13.7099282785616,
+          67.23424301028093,
+          -48.2535882235738,
+          5.096217701855522,
+          3.0625131410107396,
+          0.5949376153100764,
+          1.2705161104550158,
+          1.802936450684065,
+          1.087402484283453
+        ],
+        [
+          -0.6074458038413482,
+          0.8116053847411419,
+          0.5299555679740707,
+          8.688417957780425,
+          42.40496749471859,
+          -30.34332764614978,
+          3.29053173614213,
+          1.885289426754591,
+          0.3593344524335643,
+          0.8212773406157836,
+          1.087402484283453,
+          0.6986905390130865
+        ]
+      ],
+      "center": [
+        -0.05185252172959324,
+        0.8301711745185392,
+        -1.8453308364790302,
+        0.33086934082591074,
+        0.47815683710320467,
+        -2.552805668063819,
+        0.11022453620036765,
+        1.007025280188686,
+        -1.5668853080018041,
+        -0.0293606480218812,
+        0.9595330469992749,
+        -1.8595951184306956
+      ],
+      "lower": [
+        -0.3709562914551153,
+        0.4670570856097148,
+        -2.6023719524034457,
+        -0.033977253366027804,
+        0.9083475893949289,
+        -2.463025432483928,
+        -0.6861625364894057,
+        0.3308798117948775,
+        -2.619807660011574,
+        -0.4054967885010582,
+        0.5995830602854757,
+        -2.5713459931976947
+      ],
+      "upper": [
+        0.4190437085448847,
+        1.2570570856097147,
+        -1.0880386190701126,
+        0.7560227466339722,
+        1.698347589394929,
+        -0.9486920991505947,
+        0.10383746351059422,
+        1.1208798117948775,
+        -1.1054743266782405,
+        0.3845032114989418,
+        1.3895830602854757,
+        -1.0570126598643612
+      ],
+      "original_u_star": [
+        0.20782883204745908,
+        0.9870305874092175,
+        -1.8705072496887463,
+        -0.03362391052950286,
+        0.9083475893949289,
+        -2.1045936038391373,
+        0.10383746351059422,
+        0.3308798117948775,
+        -1.550410364220738,
+        0.09389566125304974,
+        0.7983156555668011,
+        -1.9639905514455838
+      ],
+      "original_gradient": [
+        0.42728489625575294,
+        -0.08737646096575266,
+        -0.7575004808552791,
+        0.05938356627904762,
+        0.4590918010526339,
+        -0.4094606362253632,
+        -0.04778065067261683,
+        0.06860368538072598,
+        0.02050254951996041,
+        -0.012782450160260542,
+        0.06350155004078949,
+        -0.005514580150899395
+      ],
+      "original_qp_nfree": 10,
+      "original_kkt_scaled_residual": 0.00011577532028205696,
+      "original_primal_residual_rad": 0,
+      "metric_eigenvalues": [
+        6.919654128325238e-05,
+        0.0006741721574591509,
+        0.0006981915162543721,
+        0.0007029990743082082,
+        0.0007246800613263457,
+        0.000755368952043971,
+        0.0007846424880695444,
+        0.0008120280774337771,
+        0.0009567858427344162,
+        0.08473143821129275,
+        16.619991546807114,
+        4050.7338025911495
+      ],
+      "metric_condition_number": 58539541.535893895,
+      "reconstructed_gradient_max_abs_error": 2.3003821070233244e-13,
+      "reference_provenance_checks": {
+        "reference_nominal_action_max_abs_error": 0.0,
+        "raw_K_delta_x_max_abs_error": 2.220446049250313e-16,
+        "gradient_H_delta_max_abs_error": 2.3003821070233244e-13
+      },
+      "scope": "Exact saved H nodes combined by exact logged query interpolation; no new physics or inferred metric."
+    },
+    {
+      "episode": "B282",
+      "plan_id": 734,
+      "query_id": 7153,
+      "source_query_asset": "diag__job-20261106T103028Z-w40-b__f000092-g1__feedback-actions.jsonl.gz",
+      "interpolation_nodes": [
+        1,
+        2
+      ],
+      "interpolation_fraction": 0.9999694857049092,
+      "H": [
+        [
+          213.08627163384907,
+          33.832162455681136,
+          77.25623222833055,
+          -418.6997757753693,
+          -394.1208345342435,
+          -1109.6455782491937,
+          219.73194463146646,
+          65.11173088791632,
+          -24.407071311414278,
+          199.24405113258,
+          49.37067565894919,
+          26.317304772500368
+        ],
+        [
+          33.83216245568115,
+          5.387659272097362,
+          12.221842554790856,
+          -66.48243816538293,
+          -62.577456651736306,
+          -176.19506065552608,
+          34.887504271034096,
+          10.339789369088809,
+          -3.872823535360639,
+          31.625653079711473,
+          7.840186030017268,
+          4.177226091225241
+        ],
+        [
+          77.25623222833057,
+          12.221842554790864,
+          28.2942653096355,
+          -151.81545237487535,
+          -142.91898352888464,
+          -402.31189896770593,
+          79.66835671591696,
+          23.601455957760393,
+          -8.872107430810187,
+          72.32513635308305,
+          17.90588972644589,
+          9.554069857228514
+        ],
+        [
+          -418.69977577536923,
+          -66.48243816538299,
+          -151.81545237487526,
+          822.7431420352808,
+          774.4458693668477,
+          2180.4579913097823,
+          -431.7808099767979,
+          -127.94351519901234,
+          47.956576235812186,
+          -391.5081704006257,
+          -97.0081304001245,
+          -51.711573511552025
+        ],
+        [
+          -394.1208345342436,
+          -62.57745665173629,
+          -142.9189835288846,
+          774.445869366848,
+          728.9860064806817,
+          2052.459363036279,
+          -406.43437576737495,
+          -120.43258961592927,
+          45.14262154300554,
+          -368.5303400326141,
+          -91.31375900100336,
+          -48.67663656763373
+        ],
+        [
+          -1109.645578249193,
+          -176.19506065552596,
+          -402.31189896770593,
+          2180.4579913097828,
+          2052.4593630362792,
+          5778.737091725989,
+          -1144.3301331209084,
+          -339.08057472313385,
+          127.08926234967754,
+          -1037.5695506350103,
+          -257.0875826750697,
+          -137.04417870643323
+        ],
+        [
+          219.73194463146652,
+          34.887504271034075,
+          79.6683567159169,
+          -431.7808099767977,
+          -406.43437576737506,
+          -1144.3301331209084,
+          226.61034525499528,
+          67.1455628081048,
+          -25.164419447253216,
+          205.4585374203593,
+          50.905939853200245,
+          27.136798070297747
+        ],
+        [
+          65.11173088791637,
+          10.339789369088809,
+          23.60145595776038,
+          -127.9435151990123,
+          -120.43258961592933,
+          -339.08057472313385,
+          67.14556280810481,
+          19.897219004617803,
+          -7.457151427386132,
+          60.88095213708347,
+          15.085590865237087,
+          8.04132897850231
+        ],
+        [
+          -24.40707131141428,
+          -3.872823535360638,
+          -8.872107430810184,
+          47.9565762358122,
+          45.14262154300555,
+          127.08926234967757,
+          -25.164419447253223,
+          -7.45715142738613,
+          2.799197478408736,
+          -22.829665169355934,
+          -5.656686085917335,
+          -3.0157969245419594
+        ],
+        [
+          199.24405113257995,
+          31.625653079711487,
+          72.32513635308305,
+          -391.5081704006256,
+          -368.53034003261394,
+          -1037.5695506350103,
+          205.4585374203593,
+          60.88095213708348,
+          -22.829665169355945,
+          186.33197513316557,
+          46.167133960966396,
+          24.612127417216712
+        ],
+        [
+          49.37067565894917,
+          7.840186030017266,
+          17.90588972644588,
+          -97.00813040012451,
+          -91.31375900100336,
+          -257.0875826750697,
+          50.90593985320027,
+          15.0855908652371,
+          -5.656686085917336,
+          46.16713396096633,
+          11.441424416042464,
+          6.098306788636428
+        ],
+        [
+          26.317304772500368,
+          4.177226091225237,
+          9.554069857228514,
+          -51.71157351155203,
+          -48.67663656763372,
+          -137.04417870643329,
+          27.136798070297733,
+          8.041328978502309,
+          -3.0157969245419585,
+          24.612127417216712,
+          6.0983067886364335,
+          3.251772978127006
+        ]
+      ],
+      "center": [
+        -1.0472,
+        3.4907,
+        -1.0219717741158139,
+        -0.2943501248773339,
+        -0.14242966038941263,
+        -1.3621969175109871,
+        -0.4536904854006787,
+        0.6318876964237732,
+        -1.9763693514790979,
+        0.6815734489316858,
+        1.1903241693291042,
+        -1.5566718770660724
+      ],
+      "lower": [
+        -0.4784030313833098,
+        0.6798504966860546,
+        -2.559147704475971,
+        -0.47683159058187113,
+        -0.1454740921884794,
+        -2.268541551641128,
+        -0.41848512275330674,
+        0.47567918633977013,
+        -2.5510428114187262,
+        -0.5029067788782514,
+        0.6019706090976734,
+        -2.4558611873065592
+      ],
+      "upper": [
+        0.3115969686166902,
+        1.4698504966860546,
+        -1.044814371142638,
+        0.31316840941812885,
+        0.6445259078115206,
+        -0.83776,
+        0.37151487724669324,
+        1.26567918633977,
+        -1.036709478085393,
+        0.28709322112174857,
+        1.3919706090976733,
+        -0.9415278539732258
+      ],
+      "original_u_star": [
+        -0.4784030313833098,
+        1.4698504966860546,
+        -1.0635151003244538,
+        -0.2791514660777807,
+        -0.13531918165198856,
+        -1.3883878486768655,
+        -0.41848512275330674,
+        0.6370750381806567,
+        -1.9363985831720318,
+        0.28709322112174857,
+        1.2506592497489801,
+        -1.5974150687019164
+      ],
+      "original_gradient": [
+        -0.07315186144615149,
+        -0.038226544420554315,
+        0.015288936369084738,
+        0.15411371660752415,
+        0.14311402809807383,
+        0.4047956971003339,
+        -0.0737718909483347,
+        -0.025094698925813397,
+        0.008286231558951931,
+        -0.06683883250790545,
+        -0.021983086546955355,
+        -0.009009226455996167
+      ],
+      "original_qp_nfree": 9,
+      "original_kkt_scaled_residual": 3.0654075627774674e-05,
+      "original_primal_residual_rad": 0,
+      "metric_eigenvalues": [
+        0.0006807017406220037,
+        0.0006865771446383052,
+        0.0007079439762374253,
+        0.0007113018007228491,
+        0.0007536762920765996,
+        0.0007662965473622255,
+        0.000784019029919047,
+        0.0008808220448353539,
+        0.00927358118096323,
+        0.026079428081434097,
+        0.3216211224225654,
+        8027.203425252624
+      ],
+      "metric_condition_number": 11792541.352865675,
+      "reconstructed_gradient_max_abs_error": 2.9976021664879227e-14,
+      "scope": "Exact saved H nodes combined by exact logged query interpolation; no new physics or inferred metric.",
+      "source_H_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-b-diagnostics-part01/diag__job-20261106T103028Z-w40-b__f000156-g1__accepted-reference-gain-H-plan000734.npz",
+      "source_H_asset_bytes": 1600282,
+      "source_H_asset_sha256": "38e63015c210499887c8b6b7c92545cc535c073cd107868ab8eec0687a22e1e2",
+      "reference_provenance_checks": {
+        "reference_nominal_action_max_abs_error": 0.0,
+        "raw_K_delta_x_max_abs_error": 1.1102230246251565e-16,
+        "gradient_H_delta_max_abs_error": 2.9976021664879227e-14,
+        "method": "Same logged interpolation indices/fraction applied to saved plan734 reference actions, K and H; compare exact rejected query. No policy recomputation or new physics."
+      }
+    }
+  ],
+  "applied_query_rejections": [
+    {
+      "branch": "a",
+      "recorded_link": {
+        "query_id": 5758,
+        "time_s": 11.473999999999936,
+        "plan_id": 594,
+        "query_kind": "rejected_before_physics",
+        "applied_action_id": 5738
+      },
+      "source_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-a-diagnostics-part01/diag__job-20261106T103028Z-w40-a__f000114-g1__action-execution.jsonl.gz",
+      "interpretation": "Guard rejected this query before physics. Existing recorder increments applied_action_id before the guard; this positive ID does not mean the rejected target was applied. Future recorder can allocate the applied ID only after validation."
+    },
+    {
+      "branch": "b",
+      "recorded_link": {
+        "query_id": 7153,
+        "time_s": 14.263999999993434,
+        "plan_id": 734,
+        "query_kind": "rejected_before_physics",
+        "applied_action_id": 7133
+      },
+      "source_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-b-diagnostics-part01/diag__job-20261106T103028Z-w40-b__f000101-g1__action-execution.jsonl.gz",
+      "interpretation": "Guard rejected this query before physics. Existing recorder increments applied_action_id before the guard; this positive ID does not mean the rejected target was applied. Future recorder can allocate the applied ID only after validation."
+    }
+  ],
+  "final_episode_planner_return_counts": {
+    "a": {
+      "call_count": 594,
+      "return_reason_counts": {
+        "policy_installed": 594
+      },
+      "all_calls_updated": true,
+      "max_reused_policy_age_s": 0,
+      "source_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-a-diagnostics-part01/diag__job-20261106T103028Z-w40-a__f000113-g1__planner-calls.jsonl.gz"
+    },
+    "b": {
+      "call_count": 734,
+      "return_reason_counts": {
+        "policy_installed": 734
+      },
+      "all_calls_updated": true,
+      "max_reused_policy_age_s": 0,
+      "source_asset_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-b-diagnostics-part01/diag__job-20261106T103028Z-w40-b__f000100-g1__planner-calls.jsonl.gz"
+    }
+  },
+  "post_audit_GPU_publication": {
+    "source_commit": "03ea48d899b30827f46af9bc83ee28e627c74711",
+    "result": "gpu/w40-gpu/result.json",
+    "status": "completed_batch_layer",
+    "aligned": false,
+    "updated_unix_s": 1793965095.6467733,
+    "delivery": "gpu/w40-gpu/delivery.json",
+    "delivery_status": "publication_interrupted",
+    "main_review_changed_GPU": false,
+    "process_live_observation": false,
+    "note": "Initial GPU snapshot in gpu_isolation is historical; this later publication arrived during main-branch review. Existing main/GPU task clocks unchanged."
+  }
+}

@@ -75,6 +75,7 @@ def main():
     shutil.copy2(log_path, frozen / "build.log")
     identity = json.loads((prior / "identity.json").read_text())
     identity.update(build=BUILD, based_on=specification["based_on"], prior_binary_sha256=identity["binary_sha256"],
+        controller_contract_build=specification.get("controller_contract_build",BUILD),
         binary_sha256=hashlib.file_digest((frozen / "agent_server").open("rb"), "sha256").hexdigest(),
         source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         build_started_unix_s=begin, build_wall_s=time.time()-begin,

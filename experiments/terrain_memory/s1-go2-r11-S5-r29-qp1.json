@@ -1,0 +1,228 @@
+{
+  "build": "S5-r29-qp1",
+  "based_on": "S5-r29",
+  "status": "numerical_replay_verified_awaiting_D57_build",
+  "task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
+  "reviewed_source_commit": "e1e0e1c97a87c3135775fab69c3f6e5a7e1f993c",
+  "configuration_overrides": {
+    "r26_reference": {
+      "horizon_s": 0.35,
+      "maximum_lead_m": 0.15,
+      "maximum_speed_m_s": 0.25,
+      "acceleration_m_s2": 0.5,
+      "userdata_offset": 84,
+      "packet_size": 12,
+      "head_offset_m": 0.3
+    },
+    "r26_impact_margin": {
+      "onset_m": 0.0008,
+      "scale_m": 0.0002,
+      "weight": 176
+    },
+    "r12_substep_path": {
+      "enabled": true,
+      "rows": [
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "ImpactMargin"
+      ],
+      "residual": "Earliest componentwise maximum over ten pre-integration states; terminal separately.",
+      "derivatives": "Ten A/B transitions; one full node-start C/D; shared geometry FD only at final active states, composed with saved P/Q prefixes. Direct risk D is zero.",
+      "limits": "Active-branch derivative; nonsmooth peak switches and proxy-model soft risks do not guarantee true material feasibility."
+    },
+    "r27_approach_activation": {
+      "status": "implemented_shared_cost_and_FD",
+      "foot_half_width_m": 0.015811388300841896,
+      "band_m": 0.07525,
+      "full_foot_center_bounds": {
+        "xmin": 0.8158113883008419,
+        "xmax": 2.1841886116991582,
+        "abs_y_max": 0.5841886116991581
+      },
+      "smoothstep": "S(u)=v^3*(10-15*v+6*v^2), v=clip(u,0,1)",
+      "gate": "g=S((x-xmin+b)/b)*S((xmax+b-x)/b)*S((ymax+b-abs(y))/b)",
+      "applies_to": [
+        "LandingVelocity",
+        "ImpactMargin"
+      ],
+      "semantics": "Replace only their spatial boolean with the same C2gate multiplying the original residual; retain existing vertical gates,targets,weights,onset/scale.",
+      "derivatives": "Candidate cost and FD both use the complete g*r. Impact takes earliest componentwise maximum of g*r over ten pre-integration states then applies the original active-state P/Q derivative chain; terminal same formula. Landing stays node-start full C/D.",
+      "physical_boundary_unchanged": true,
+      "does_not_modify": [
+        "Ground",
+        "R10MaterialFoot or real material-force switch",
+        "material strain domain0.02",
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "original termination criteria"
+      ],
+      "limitations": "Only this artificial spatial gate becomes C2; contact/max/other branch nonsmoothness and proxy-model limitations remain. No true-TM02 feasibility guarantee."
+    },
+    "r28_candidate_feasibility": {
+      "enabled": true,
+      "violation": "max positive original trunk XML margin-gap across same ten pre-integration substeps and terminal",
+      "implementation": "Invert the existing monotone smoothed TrunkClearance residual at its retained componentwise maxima: y=r*scale; positive violation is y-1e-12/(4*y) only if y>5e-7. No extra weight/margin or integration.",
+      "selection": "Both nominal feedback search and action line search minimize (v,J); feasible v=0 dominates. No feasible candidate is recorded as prediction_infeasible/restoration, never as safe.",
+      "policy": "Publish the exact candidate reference/feedback that generated the selected rollout, including winner0; accepted remains separately identified.",
+      "regularization": "For feasible-to-feasible compare actual cost decrease and the existing .5/.1 ratio thresholds; step size alone cannot reduce regularization. For restoration/feasibility transition use actual decrease in v, no fabricated cost surprise. Existing factors/bounds retained.",
+      "derivatives": "Original cost and active-peak geometry derivatives unchanged; finite candidate selection is not a constrained DDP or a plant-safety guarantee."
+    },
+    "r29_policy_projection": {
+      "enabled": true,
+      "center": "legacy_target_clip",
+      "metric": "actual_successful_Quu_reg",
+      "recording": "bounded_event_ring",
+      "KKT_relative_tolerance": 1e-07,
+      "primal_tolerance_rad": 1e-10,
+      "no_fallback": true,
+      "solver_revision": "S5-r29-qp1"
+    }
+  },
+  "mechanism": {
+    "variables": 12,
+    "center": "c=legacy_target_clip(u_ff+s*K_old*delta_x), including original BoxQP active rows, alpha and interpolation",
+    "state_error": "36D tangent with original quaternion convention; map actuators to joint q/v",
+    "lower": "max(original_target_min,q+(tau_min+5*qdot)/60)",
+    "upper": "min(original_target_max,q+(tau_max+5*qdot)/60)",
+    "objective": ".5*(u-c)^T*H*(u-c); linear term -H*c, not original Q_ux",
+    "constraint": "lower(x)<=u<=upper(x)",
+    "output": "u; if c feasible return c exactly without solver",
+    "H": "same successful backward full positive-definite Quu_reg; same regularization_used/type, never backward.Quu or compressed boxqp.R",
+    "H_lifecycle": "Allocate/Reset/CopyFrom/candidates/winner/previous_policy/endpoints; actual snapshot, not mutable scratch. Full SPD failures handled by existing backward regularization loop with matched k/K/H.",
+    "K": "retain original active-set K; no reconstruction from full -H^-1*Q_ux",
+    "s": "nominal FeedbackRollouts uses searched scale; ActionRollouts explicitly1; installed deployment1; alpha already in feedforward",
+    "interpolation": "legacy state/u/K interpolation and quaternion normalization; H linear convex interpolation on same grid with original endpoint rule; do not reconstruct K from interpolated H/C",
+    "startup": "metric_valid=false legacy_seed_no_metric only before first backward and read-only seed probes; no identity substitution. Existing startup iterations unchanged; first physical applied action requires valid installed H or explicit initialization technical failure.",
+    "stateful_side_effects": "pure evaluation; diagnostic/nominal probes cannot alter QP warm-start, held target or next action",
+    "nominal_query": "null-state nominal_action=True retains legacy nominal target readout; no pretending a null state defines PD bounds",
+    "empty_intersection": "keep original target hard box; l_tau>b fixes u=b, h_tau<a fixes u=a; remaining axes normal projection. Report original raw-torque violation Nm and restoration, retain physical force clip.",
+    "singleton_and_fixed_axes": "eliminate fixed axes before mju_boxQP, including H_FA*u_A in free linear term; do not pass lower>=upper; all fixed returns assembled solution",
+    "solver_status": "primal/KKT residual and explicit convergence/failure, not nfree>=0 alone; no silent metric replacement or claimed-success fallback",
+    "effective_Jacobian": "fixed H/active set: G=d(legacy clipped c)/dx; K_eff_A=B_A; K_eff_F=G_F-H_FF^-1 H_FA(B_A-G_A). PD B=e_q+(5/60)e_v; fixed target B=0.",
+    "backward_scope": "policy projection, not complete constrained DDP; preserve original backward/value recursion as base-policy generator; do not insert K_eff into open-loop A/B",
+    "predicted_decrease": "if selected candidate projection changes policy, ratio_valid=false and expected/surprise=null. Both trunk-feasible with actual J decrease: hold mu AND regularization_rate. No J decrease: original increase. Trunk-infeasible: retain original violation branch. Unchanged policy and original comparable case: original ratio.",
+    "FD_boundary": "nominal u may be projected; inside open-loop F(x,u) FD keep target independent and fixed. Preserve one-sided1e-6 semantics and record PD kink branch; no simultaneous smoothing/FD redesign.",
+    "limits": "instantaneous interval feasibility is not10substep, material-domain, recursive or closed-loop stability guarantee",
+    "mathematics": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/r29-math-audit.md",
+    "RPC_quantization": "Record pre-RPC double u_star and actual held double(float32(u_star)), delta_u and same-state raw PD/bound residuals. QP primal/KKT uses u_star; execution saturation uses u_held. Explain exact delta_tau=60delta_u as serialization_boundary_crossing without removing actual saturation; no protocol/threshold change, no attribution of later-substep saturation to rounding."
+  },
+  "diagnostics": {
+    "all_episode_core_records": "preserve all requested original feedback/planner/reference/execution and new rollout evidence",
+    "new_full_horizon_scope": "selected event windows only, each retained plan once before buffers reused; explicitly enumerate full-horizon coverage",
+    "events": "nominal first raw-PD saturation, feedback-added saturation, max|rawKdx|>.5rad, target clipping, first material load, domain exit, nonfoot load, QP infeasibility/failure/restoration, trunk restoration, terminal; merged [-.10,+.20]s and terminal .10s; logging only, no physical stop changes",
+    "full_plan_fields": [
+      "accepted states/actions/times/cost",
+      "installed feedback reference/nominal/K with explicit alpha/scales",
+      "actual full Quu_reg metric H; original Q_u/Q_xu and old active-set identity for diagnosis only",
+      "regularization_used/type, metric_valid/source, plan id/clock/model/version",
+      "first20ms node and ten-substep PD/contact/material coverage"
+    ],
+    "representation": "lossless binary/compression, bounded in-memory event ring; do not repeat full matrices in500Hz action lines",
+    "historical_missing": "r28 full accepted/K/H and task private phase not saved; prediction NPZ feedback reference only; A260 dense physical/material not selected in original manifest",
+    "per_action_live_fields": [
+      "query_kind/applied_action_id",
+      "delta_x",
+      "nominal_feedback_scale/action_step_alpha/installed_feedback_scaling",
+      "metric_valid/source_plan_id",
+      "plan id and interpolation nodes/weights",
+      "legacy target-clipped center c and projection_delta",
+      "instantaneous bounds and fixed/empty axes",
+      "QP solution/active source/primal and KKT residual/convergence",
+      "raw_K_delta_x kept separate from projection correction",
+      "raw/final target and raw/clipped PD torque",
+      "information for effective projection Jacobian",
+      "pre-RPC u_star versus held float32-roundtrip u_held and serialization_boundary_crossing"
+    ],
+    "plan_vs_live_K": "Frozen referenceK/H each retained plan once; live projection active set/center-clamp derivative defines effective Jacobian. Original Q_ux is not projection linear term.",
+    "coverage_boundary": "Include every plan referenced by earliest pre-window action even if origin precedes window; no old spatial gate. Record incomplete beginning/end coverage; do not continue physics after termination to fill post-window.",
+    "extra_raw_findings_metrics": [
+      "query exposure denominator inside/previously loaded grid and observer missed-short-pulse offline tags",
+      "material boundary/state/physical clocks and rejected candidate never applied",
+      "touchdown vz/indentation and actual force",
+      "command remains nonzero but legal progress stalls / abnormal support posture",
+      "closed-loop accepted/actual divergence distinct from fixed-input residual"
+    ],
+    "every_planner_call": [
+      "call id",
+      "logical origin and wall duration",
+      "return reason including early backward/rollout failure",
+      "policy_updated",
+      "installed plan id",
+      "reused policy logical age",
+      "backward attempts/candidate failure status"
+    ],
+    "W39_no_new_policy": "51693 training planner calls versus51685 new plan records; all8 gapsB276 after firstfeedback/load; reuse reaches150ms. Not missing upload.",
+    "material_clock_rule": "A260 firstload material-state14.3636 to physical terminal14.3648=1.2ms; displacement boundary14.3634 to14.3648=1.4ms. Keep boundary/material-state/physical clocks distinct; failed candidate force not applied."
+  },
+  "retained": "Original Go2, TM02 0.02 domain, torque/contact/fall/route and ladder semantics; actual r27 shared C2 gate and r26 causal packet, ten substeps, TV feedback and PD. Frozen causal PANN, 658D observation, PPO 2Hz scalar cap, unchanged W38 reward. No hidden material truth input.",
+  "reward_version": "W38_legal_route_terminal_settlement",
+  "main_admission_tests": false,
+  "full_prompt": "docs/S1_W40_START_PROMPT.md",
+  "qualification": "Exact recorded-input algebra verified (both original native outputs reproduced bit for bit, both repairs pass original primal/KKT tolerances, nine adjacent accepted queries unchanged); awaiting normal isolated D57 build and continuation of original jobs. Physical stability and task qualification are unproven.",
+  "controller_contract_build": "S5-r29",
+  "solver_repair": {
+    "scope": "Numerical refinement of the identical r29 convex box projection only; immutable executed S5-r29 source/artifact remains unchanged.",
+    "trigger": "Only when original native mju_boxQP result fails the existing nfree/primal/KKT certificate.",
+    "native_success": "Return the original native action bit for bit when its original certificate passes.",
+    "objective": ".5*(u-c)^T H (u-c), identical original H, c, and state-dependent bounds.",
+    "algorithm": "Feasible primal active-set Newton. Evaluate gradient as H*(u-c); solve H_FF*p_F=-gradient_F; step only to first blocking bound; release an active bound only after the free face is stationary and its multiplier sign violates the original KKT tolerance.",
+    "fixed_axes": "Never release fixed/singleton/restoration axes. Full gradient includes H_FA*(u_A-c_A), preserving fixed/free coupling.",
+    "tolerances": {
+      "primal_rad": 1e-10,
+      "KKT_scaled": 1e-07,
+      "active_bound_rad": 1e-12,
+      "KKT_scale": "max(1,max_i sum_j abs(H_ij*c_j))"
+    },
+    "finite_iteration_guard": "4*n*n+32; failure remains explicit technical interruption, never accepted fallback.",
+    "failure_behavior": "If refinement or recertification fails, retain qp_kkt_failure and do not apply the action.",
+    "diagnostics": [
+      "qp_solver_revision",
+      "qp_native_nfree",
+      "qp_native_converged",
+      "qp_native_primal_residual_rad",
+      "qp_native_kkt_scaled_residual",
+      "qp_refinement_attempted",
+      "qp_refinement_iterations",
+      "qp_refinement_status"
+    ],
+    "observed_incident": {
+      "W40_A_episode": 286,
+      "W40_A_failed_time_s": 11.473999999999936,
+      "W40_B_episode": 282,
+      "W40_B_failed_time_s": 14.263999999993434,
+      "failure": "valid metric, nonempty box, zero primal error, native output violates KKT before physics",
+      "native_solver_exit": "Maximum main iterations exceeded after 100 iterations and 100 factorizations in both exact reproductions",
+      "native_outputs_match_recorded": "all 11 final-plan queries bit for bit",
+      "A_metric_condition": 58539541.53586103,
+      "B_metric_condition": 11792541.35614777
+    },
+    "patch": "experiments/terrain_memory/s1-go2-r11-S5-r29-qp1.patch",
+    "patch_sha256": "c89907035139a8420ed6fe235f45b3ba9acfb7e216bef30f8f6b0d69a4587f2d",
+    "does_not_change": [
+      "base backward/value recursion",
+      "H or regularization",
+      "legacy center and K",
+      "physics and target hold",
+      "physical torque/material/fall/route limits",
+      "reward or PANN/PPO observation",
+      "GPU task, environment, session, and clock"
+    ],
+    "resume_contract": "Continue each original W40 job from its own 8643/50 or 8644/51 partial buffer and full RNG/optimizer state, preserving original deadline; do not restart from W39 parent.",
+    "metric_requirement": "Refinement also verifies the full unchanged H is finite and SPD before any convergence acceptance, including native -1 cases.",
+    "verification": {
+      "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-stop-review/qp-replay.json",
+      "reproduction": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-stop-review/replay-qp.py",
+      "source_equivalence": "Exact pinned MuJoCo engine_util_solve.c box-QP implementation is byte-identical to MuJoCo3.2.3 (10399bytes).",
+      "failed_inputs_reproduced": 2,
+      "same_QP_repairs_certified": 2,
+      "adjacent_passing_queries_unchanged": 9,
+      "A_refinement_iterations": 4,
+      "B_refinement_iterations": 5,
+      "A_final_KKT_scaled": 4.8869263714822595e-18,
+      "B_final_KKT_scaled": 3.5512927641658766e-17,
+      "original_tolerances_unchanged": true,
+      "shift_only_native_control": "Both still hit100iterationlimit and violate original KKT; coordinate translation alone does not repair incident.",
+      "scope": "Recorded algebra only; no new physics episode, no main-job restart, no GPU operation."
+    }
+  }
+}

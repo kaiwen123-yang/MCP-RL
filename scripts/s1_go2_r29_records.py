@@ -8,6 +8,7 @@ class R29Records:
         self.out,self.model=out,model
         self.ring={};self.saved={};self.events=[];self.until=-1.
         self.offset=0;self.plan_offset=0;self.latest=None;self.applied=0;self.seen=set()
+        self.failure=None
         self.actions=(out/'action-execution.jsonl').open('w')
         self.nonprogress=deque()
     def plan(self,t):
@@ -72,13 +73,29 @@ class R29Records:
             link=dict(query_id=row['query_id'],time_s=t,plan_id=pid,query_kind=kind,
                       applied_action_id=None)
             if kind=='applied_hold':
-                self.applied+=1;link['applied_action_id']=self.applied
                 # Explicit numerical/initialization failure, never r28 fallback.
                 if not row['metric_valid'] or not row['qp_converged']:
                     link['query_kind']='rejected_before_physics'
                     self.actions.write(json.dumps(link)+'\n');self.actions.flush()
                     self.event(t,'invalid_metric_or_QP')
+                    self.failure=dict(schema='r29_rejected_action_v1',time_s=float(t),
+                        physics_advanced=False,query=row,
+                        rpc_target=np.asarray(action).tolist(),
+                        qpos=np.asarray(qpos).tolist(),qvel=np.asarray(qvel).tolist())
+                    # One small failure packet goes in compact JSON immediately;
+                    # diagnosing a stopped stream must not await the raw queue.
+                    plan=self.ring.get(pid)
+                    if plan is not None:
+                        nodes=row['interpolation_nodes'];fraction=row['interpolation_fraction']
+                        metric=plan['data']['H']
+                        self.failure['metric_H']=((1-fraction)*metric[nodes[0]]+
+                                                  fraction*metric[nodes[1]]).tolist()
+                        self.failure['metric_plan_id']=pid
+                    else:
+                        self.failure['metric_unavailable']='Referenced plan is absent from the retained event ring.'
+                    (self.out/'qp-failure.json').write_text(json.dumps(self.failure,indent=2)+'\n')
                     raise RuntimeError('r29 action unavailable before physics: '+row['projection_status'])
+                self.applied+=1;link['applied_action_id']=self.applied
                 link['held_target']=np.asarray(action).tolist()
                 self.actions.write(json.dumps(link)+'\n')
                 center=np.asarray(row['center_before_projection'])
@@ -98,6 +115,9 @@ class R29Records:
         self.prune(t)
         return self.latest
     def progress(self,t,qpos,command,contact):
+        if abs(command[0])<=.05:
+            self.nonprogress.clear()
+            return
         self.nonprogress.append((t,float(qpos[0])))
         while self.nonprogress and self.nonprogress[0][0]<t-2.:self.nonprogress.popleft()
         if self.nonprogress and t-self.nonprogress[0][0]>=1.99 and abs(command[0])>.05 and abs(qpos[0]-self.nonprogress[0][1])<.01:

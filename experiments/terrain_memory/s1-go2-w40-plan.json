@@ -1,10 +1,10 @@
 {
-  "schema_version": "S1_W40_execution_plan_v2_raw_review_corrected",
+  "schema_version": "S1_W40_execution_plan_v3_QP_failure_recovery",
   "task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
-  "status": "main_sampling_and_independent_GPU_JIT_running",
+  "status": "main_technical_stop_exact_QP_repair_verified_GPU_untouched",
   "date": "2026-11-06",
   "timezone": "Asia/Shanghai",
-  "reviewed_results_commit": "07b0ee3e15c9f10e9b1a6a1de3997bec36f39556",
+  "reviewed_results_commit": "e1e0e1c97a87c3135775fab69c3f6e5a7e1f993c",
   "delivery_rechecked_commit": "07b0ee3e15c9f10e9b1a6a1de3997bec36f39556",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
   "startup_prompt": "docs/S1_W40_START_PROMPT.md",
@@ -20,29 +20,58 @@
     "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/material-learning-audit.json",
     "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/r29-math-audit.md",
     "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/gpu-replay-audit.json",
-    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/read-coverage.json"
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/read-coverage.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-stop-review/README.md",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-stop-review/diagnostic-audit.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-stop-review/qp-replay.json"
   ],
   "current_execution": {
-    "phase": "W39",
-    "build": "S5-r28",
-    "status": "two_training_streams_and_final_evaluations_finished",
-    "each_samples": 8593,
-    "each_updates": 33,
-    "each_trained_samples": 8448,
-    "each_excluded": 145,
-    "each_tail": 0,
-    "training_episodes": 62,
-    "natural_failures": 59,
-    "truncations": 3,
+    "phase": "W40",
+    "build": "S5-r29",
+    "status": "both_main_streams_technically_stopped",
+    "reason": "applied_hold_QP_failed_KKT_certificate_before_physics",
+    "streams": [
+      {
+        "stream_id": "w40-a",
+        "job": "job-20261106T103028Z-w40-a",
+        "phase_id": "job-20261106T103028Z-w40-a",
+        "controller_build": "S5-r29",
+        "samples": 8643,
+        "updates": 33,
+        "tail": 50,
+        "excluded": 145,
+        "phase_new_transitions": 50,
+        "phase_new_updates": 0,
+        "episode": 286,
+        "status": "technical_interruption",
+        "reason": "qp_kkt_failure",
+        "current_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt"
+      },
+      {
+        "stream_id": "w40-b",
+        "job": "job-20261106T103028Z-w40-b",
+        "phase_id": "job-20261106T103028Z-w40-b",
+        "controller_build": "S5-r29",
+        "samples": 8644,
+        "updates": 33,
+        "tail": 51,
+        "excluded": 145,
+        "phase_new_transitions": 51,
+        "phase_new_updates": 0,
+        "episode": 282,
+        "status": "technical_interruption",
+        "reason": "qp_kkt_failure",
+        "current_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt"
+      }
+    ],
+    "final_evaluation": "unavailable_new_update_unavailable_no_attempts",
     "legal_outbound_return_roundtrip": [
       0,
       0,
       0
     ],
-    "E30_fall_s": {
-      "a": 10.476,
-      "b": 17.592
-    }
+    "repair_artifact": "S5-r29-qp1",
+    "server_restarted_by_this_review": false
   },
   "main_control": {
     "proposed_build": "S5-r29",
@@ -98,7 +127,29 @@
       "r25 MovingSupport/SupportPlacement/load allocation"
     ],
     "diagnostic_semantic_fix": "classify feasible_to_feasible_cost/restored_to_feasible/infeasible_restoration from previous and accepted v; leave historical logs unchanged",
-    "initial_existing_data_review": "Completed in W39-raw-review; next execution reads this review and checks actual source/jobs, does not repeat mandatory30min extraction or old physics."
+    "initial_existing_data_review": "Completed in W39-raw-review; next execution reads this review and checks actual source/jobs, does not repeat mandatory30min extraction or old physics.",
+    "numerical_repair": {
+      "artifact": "S5-r29-qp1",
+      "based_on": "S5-r29",
+      "controller_contract_build": "S5-r29",
+      "status": "numerical_replay_verified_awaiting_D57_build",
+      "specification": "experiments/terrain_memory/s1-go2-r11-S5-r29-qp1.json",
+      "old_native_pass_output_unchanged": true,
+      "same_H_center_bounds": true,
+      "refinement": "feasible_active_set_Newton_only_on_original_certificate_failure",
+      "primal_tolerance_rad": 1e-10,
+      "KKT_relative_tolerance": 1e-07,
+      "old_frozen_artifact_preserved": true,
+      "no_main_physical_admission_campaign": true,
+      "validation": {
+        "real_queries": 11,
+        "old_outputs_reproduced_bit_for_bit": 11,
+        "failed_cases_repaired": 2,
+        "passing_native_actions_unchanged": 9,
+        "physical_rollouts": 0,
+        "GPU_intervention": false
+      }
+    }
   },
   "main_streams": [
     {
@@ -122,7 +173,14 @@
         "normalization",
         "historical counts"
       ],
-      "preserve_ancestor_fork_identity": true
+      "preserve_ancestor_fork_identity": true,
+      "current_job": "job-20261106T103028Z-w40-a",
+      "current_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt",
+      "current_samples": 8643,
+      "current_updates": 33,
+      "current_tail": 50,
+      "resume_mode": "same_job_no_new_phase",
+      "explicit_artifact": "S5-r29-qp1"
     },
     {
       "stream_id": "w40-b",
@@ -145,7 +203,14 @@
         "normalization",
         "historical counts"
       ],
-      "preserve_ancestor_fork_identity": true
+      "preserve_ancestor_fork_identity": true,
+      "current_job": "job-20261106T103028Z-w40-b",
+      "current_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt",
+      "current_samples": 8644,
+      "current_updates": 33,
+      "current_tail": 51,
+      "resume_mode": "same_job_no_new_phase",
+      "explicit_artifact": "S5-r29-qp1"
     }
   ],
   "counts": {
@@ -177,7 +242,7 @@
     "not_one_combined_policy": true
   },
   "runtime_activation": {
-    "required": true,
+    "required": false,
     "current_R12_contract_is_completed_W39": false,
     "required_consumers": [
       "prepare/build r29 source and specification",
@@ -190,8 +255,17 @@
       "new W40 shared clock",
       "existing diagnostic queue integration"
     ],
-    "ordinary_resume": "same job frozen contract and deadline",
-    "do_not_launch_unmodified_r28_under_new_name": true
+    "ordinary_resume": "Existing W40 job, its own saved RNG/tail, explicit qp1 artifact and unchanged absolute deadline. No --new-phase or W39 parent resume.",
+    "do_not_launch_unmodified_r28_under_new_name": true,
+    "initial_phase_activation_completed": true,
+    "current_recovery_consumers": [
+      "new immutable qp1 normal build",
+      "explicit same-job artifact binding",
+      "preserved own checkpoint/tail",
+      "unstarted evaluation record retirement",
+      "fresh resumed compact snapshots",
+      "exact tmux session matching leaving GPU untouched"
+    ]
   },
   "resources": {
     "host": "autodl-d57",
@@ -214,7 +288,7 @@
   },
   "gpu_task": {
     "stream": "w40-gpu",
-    "status": "compiling_exact_model_one_substep",
+    "status": "completed_batch_layer",
     "is_PPO_training_branch": false,
     "directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w40-gpu",
     "session": "s1-w40-gpu",
@@ -277,7 +351,13 @@
     ],
     "saved_state_reconstruction": "q/v/time/target/mocap/96userdata and applied settings available. Explicitly match reconstructed task transition phase and initial policy/warm-start; old full H/K/internal policy absent, new tests not exact historic planner replay.",
     "derivative_contract": "A/B of independent held-target F(x,u); do not rerun policy/QP in state-perturbed FD or substitute closed-loop A+B*K_eff; match original prediction MakeDifferentiable/coldstart/FD kink/tie semantics.",
-    "actual_job": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w40-gpu/job.json"
+    "actual_job": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w40-gpu/job.json",
+    "current_process_observation": "No direct D57 process access. User initially reported running; latest independent publication records completed batch layer at1793965095.6467733.",
+    "latest_published_status": "completed_batch_layer",
+    "preserve_existing_task": true,
+    "deadline_unix_s": 1794061888.128057,
+    "aligned": false,
+    "delivery_status": "publication_interrupted"
   },
   "budgets": {
     "interactive_max_s": 14400,
@@ -286,10 +366,12 @@
     "per_main_final_eval_max_s": 14400,
     "compact_finish_max_s": 21600,
     "gpu_independent_max_s": 100800,
-    "gpu_clock": "create once at first actual GPU task start; finish early when tests complete",
+    "gpu_clock": "Already created; preserve gpu/w40-gpu/clock.json and its original deadline on any resume.",
     "resume_resets_deadline": false,
     "old_W39_deadlines": "historical and immutable; no extension",
-    "automatic_next_controller_chain": false
+    "automatic_next_controller_chain": false,
+    "main_existing_deadline_unix_s": 1794061828.2264671,
+    "gpu_existing_deadline_unix_s": 1794061888.128057
   },
   "evaluation": {
     "last_actual_own_new_update_gt": 33,
@@ -373,31 +455,61 @@
     "r29_built": true,
     "W40_main_started": true,
     "GPU_backend_implemented": "batch_predictor_and_FD_prototype",
-    "GPU_tests_run": "started_JIT_no_completed_numerical_result_yet",
+    "GPU_tests_run": "completed_batch_layer_aligned_false_full_planner_unimplemented",
     "server_accessed_in_review": false,
     "observed_main_counts": [
       {
         "stream": "w40-a",
-        "collected_transitions": 8606,
+        "collected_transitions": 8643,
         "updates": 33,
-        "phase_new_transitions": 13,
+        "phase_new_transitions": 50,
         "phase_new_updates": 0,
-        "unupdated_fragment": 13,
+        "unupdated_fragment": 50,
         "excluded_old_version_transitions": 145
       },
       {
         "stream": "w40-b",
-        "collected_transitions": 8606,
+        "collected_transitions": 8644,
         "updates": 33,
-        "phase_new_transitions": 13,
+        "phase_new_transitions": 51,
         "phase_new_updates": 0,
-        "unupdated_fragment": 13,
+        "unupdated_fragment": 51,
         "excluded_old_version_transitions": 145
       }
-    ]
+    ],
+    "W40_main_currently_sampling": false,
+    "qp1_implemented": true,
+    "qp1_built_on_D57_by_this_review": false,
+    "GPU_intervention": false,
+    "qp1_exact_failed_inputs_verified": true
   },
   "raw_review_base_commit": "07b0ee3e15c9f10e9b1a6a1de3997bec36f39556",
   "raw_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md",
-  "supersedes": "v1 Qux-centered local QP equivalence claim; r29 remains not implemented, built or started",
-  "compact_results_commit": "e51acd535445f617bd0486650e67df4bcc116481"
+  "supersedes": "Withdrawn v1 Qux-centered local QP equivalence claim remains withdrawn. W40 initial launch is complete; use same-job recovery after the real r29 KKT exits.",
+  "compact_results_commit": "e1e0e1c97a87c3135775fab69c3f6e5a7e1f993c",
+  "completed_W39_execution": {
+    "phase": "W39",
+    "build": "S5-r28",
+    "status": "two_training_streams_and_final_evaluations_finished",
+    "each_samples": 8593,
+    "each_updates": 33,
+    "each_trained_samples": 8448,
+    "each_excluded": 145,
+    "each_tail": 0,
+    "training_episodes": 62,
+    "natural_failures": 59,
+    "truncations": 3,
+    "legal_outbound_return_roundtrip": [
+      0,
+      0,
+      0
+    ],
+    "E30_fall_s": {
+      "a": 10.476,
+      "b": 17.592
+    }
+  },
+  "recovery_prompt": "docs/S1_W40_RECOVERY_PROMPT.md",
+  "stop_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-stop-review/README.md",
+  "latest_delivery_reviewed_commit": "03ea48d899b30827f46af9bc83ee28e627c74711"
 }

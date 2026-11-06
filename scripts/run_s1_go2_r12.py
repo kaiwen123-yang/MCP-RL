@@ -20,6 +20,38 @@ def write(path, record):
     path.write_text(json.dumps(record, indent=2, ensure_ascii=False) + '\n')
 
 
+def archive_unstarted_evaluation(jobdir, contract, destination):
+    """Retire only the no-update administrative result on an explicit resume.
+
+    Its timestamps do not describe a launched evaluation. A real attempt,
+    including an interrupted launch, keeps its original result and clock.
+    """
+    source = jobdir / 'evaluation.json'
+    if not source.is_file():
+        return None
+    record = json.loads(source.read_text())
+    if not (record.get('status') == 'unavailable'
+            and record.get('reason') == 'new_update_unavailable'
+            and record.get('attempts') == []
+            and all(row.get('stage_status') == 'not_run' and not row.get('attempt')
+                    for row in record.get('stages', []))):
+        return None
+    prefix = jobdir.name + '-eval-'
+    large = ROOT / contract['outputs']['large_root']
+    small = ROOT / contract['outputs']['compact_root']
+    if (any(large.glob(prefix + '*')) or any(small.glob(prefix + '*.json'))
+            or any(jobdir.glob('evaluation-E*.log'))):
+        return None
+    destination.mkdir(parents=True, exist_ok=True)
+    target = destination / source.name
+    source.rename(target)
+    return dict(path=str(target.relative_to(ROOT)),
+                reason='Prior no-update result had no evaluation attempt; retained before explicit same-job resume.',
+                previous_administrative_started_unix_s=record.get('started_unix_s'),
+                previous_administrative_deadline_unix_s=record.get('deadline_unix_s'),
+                actual_evaluation_attempts=0)
+
+
 def evaluate(a, contract):
     from run_s1_go2_r11 import configuration, arguments
     from s1_go2_r11_protocol import case_identity, stable_digest, prerequisite
@@ -29,8 +61,9 @@ def evaluate(a, contract):
     if time.time() >= a.deadline_unix:
         raise ValueError('The independent R12 evaluation deadline has passed')
     build = a.build or contract['reuse']['active_controller_build']
+    artifact = contract['reuse'].get('controller_artifact', build)
     workers = a.workers or contract['resources']['mpc_workers']
-    c, r9 = configuration(build, a.level, .215, 'tm02_anchor')
+    c, r9 = configuration(build, a.level, .215, 'tm02_anchor', controller_artifact=artifact)
     r9['pann']['weights_path'] = str(ROOT / contract['resources']['pann_weights_path'])
     c.update(run_id=contract['run_id'], stage='S1R12', r12_contract=contract,
              campaign_budget=contract['execution'], predecessor_attempt=None,
@@ -41,14 +74,14 @@ def evaluate(a, contract):
                          hard_deadline_unix_s=a.deadline_unix))
     c['outputs']['root'] = contract['outputs']['compact_root']
     args = arguments(a.attempt, build, a.condition, 'formal',
-                     c['r11_stage']['task_kind'], workers=workers)
+                     c['r11_stage']['task_kind'], workers=workers, controller_artifact=artifact)
     args.config = a.contract
     args.cohort = contract['protocol_revision']
     args.original_robot_dir = str(a.assets / 'go2')
     args.original_scene = str(a.assets / 'scene_flat.xml')
     args.original_resolved = str(a.assets / 'rigid-T1R-resolved.json')
-    os.environ['LD_LIBRARY_PATH'] = str(ROOT / 'work/r11-frozen' / build / 'lib')
-    os.environ['MJPC_TASKS_DIR'] = str(ROOT / 'work/r11-frozen' / build / 'runtime-tasks')
+    os.environ['LD_LIBRARY_PATH'] = str(ROOT / 'work/r11-frozen' / artifact / 'lib')
+    os.environ['MJPC_TASKS_DIR'] = str(ROOT / 'work/r11-frozen' / artifact / 'runtime-tasks')
     stream = None
     normalization = None
     small = ROOT / c['outputs']['root']
@@ -78,7 +111,8 @@ def evaluate(a, contract):
                                     a.checkpoint, normalization)
         identity.update(protocol_revision=contract['formal_evaluation_protocol'], terrain='tm02_anchor',
                         job=contract['learning'].get('phase_id'),stream_id=contract['learning'].get('stream_id'),
-                        controller_build=build,reward_version=contract['learning']['reward_version'])
+                        controller_build=build,controller_artifact=artifact,
+                        reward_version=contract['learning']['reward_version'])
         c.update(case_identity=identity, case_key=stable_digest(identity), evaluation_workers=workers)
         with index_file(small, c) as idx:
             c['predecessor_attempt'] = prerequisite(c, idx, 'formal', 'tm02_anchor')
@@ -178,6 +212,7 @@ def evaluate_job(jobdir, contract):
         return 0
     record = dict(job=jobdir.name, status='running', started_unix_s=started,
                   deadline_unix_s=deadline, controller_build=job['controller_build'],
+                  controller_artifact=contract['reuse'].get('controller_artifact', job['controller_build']),
                   group=job['group'], seed=job['seed'], stream_id=job.get('stream_id'), phase_id=job['phase_id'],
                   phase_lineage=job.get('phase_lineage'), condition=settings['condition'],
                   workers=settings['solver_workers'], checkpoint_selection=settings['checkpoint_selection'],
@@ -195,6 +230,12 @@ def evaluate_job(jobdir, contract):
         collection_path=stream/'collection.json'
         collection=json.loads(collection_path.read_text()) if collection_path.exists() else {}
         current_stop=stopped if stopped.get('phase_id')==job['phase_id'] else {}
+        training_exit=int((jobdir/'training-exit-code.txt').read_text())
+        record['training_end']=dict(process_exit_code=training_exit,
+            reason=current_stop.get('reason'),last_stage_status=current_stop.get('last_stage_status'),
+            last_episode_reason=current_stop.get('last_episode_reason'),last_error=current_stop.get('last_error'))
+        if job.get('last_resume',{}).get('unstarted_evaluation_archive'):
+            record['prior_unstarted_evaluation']=job['last_resume']['unstarted_evaluation_archive']
         job['phase_stop']=current_stop.get('phase_stop')
         job['training_stop_reason']=current_stop.get('reason')
         job['excluded_old_version_transitions']=collection.get('excluded_old_version_transitions')
@@ -211,6 +252,7 @@ def evaluate_job(jobdir, contract):
         last=collection.get('last_completed_update')
         eligible=(last and last['phase_id']==job['phase_id']
             and last['controller_build']==job['controller_build']
+            and last.get('controller_artifact',last['controller_build'])==record['controller_artifact']
             and last['reward_version']==job['reward_version']
             and last.get('stream_id')==job.get('stream_id')
             and last.get('phase_lineage')==job.get('phase_lineage') and last['updates']>job['initial_updates'] and last['samples']>job['initial_transitions'])
@@ -220,7 +262,6 @@ def evaluate_job(jobdir, contract):
                     reason='new_update_unavailable') for level in settings['levels']])
             write(destination,record)
             return 0
-        training_exit=int((jobdir/'training-exit-code.txt').read_text())
         if training_exit!=0 or not current_stop or current_stop.get('last_stage_status')=='technical_interruption':
             record.update(status='unavailable',reason='training_not_normally_completed',
                 finished_unix_s=time.time(),stages=[dict(level=level,stage_status='not_run',
@@ -230,6 +271,7 @@ def evaluate_job(jobdir, contract):
         checkpoint=ROOT/last['path']
         saved=torch.load(checkpoint,map_location='cpu',weights_only=False)
         if not (saved['phase_id']==job['phase_id'] and saved['controller_build']==job['controller_build']
+                and saved.get('controller_artifact',saved['controller_build'])==record['controller_artifact']
                 and saved['reward_version']==job['reward_version']
                 and saved.get('stream_id')==job.get('stream_id')
                 and saved.get('phase_lineage')==job.get('phase_lineage')

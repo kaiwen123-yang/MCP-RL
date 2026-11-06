@@ -6,14 +6,18 @@ from types import SimpleNamespace
 from s1_go2_r11_protocol import ROOT,CONFIG,CONTRACT,RUN,stage,case_identity,prerequisite
 from s1_go2_r11_runtime import run,render,index_file,dump
 from s1_go2_joint_material import JointMaterial
-def configuration(build,level,cap=.215,terrain='tm02_anchor',training_duration=None):
+def configuration(build,level,cap=.215,terrain='tm02_anchor',training_duration=None,controller_artifact=None):
     starting=json.loads((ROOT/CONTRACT['configuration_reuse']['starting_resolved']).read_text())['r10_configuration']
     c=copy.deepcopy(starting)
     c.pop('r10_contract',None)
-    frozen=ROOT/'work/r11-frozen'/build
+    artifact=controller_artifact or build
+    frozen=ROOT/'work/r11-frozen'/artifact
     identity=json.loads((frozen/'identity.json').read_text())
+    if artifact!=build and (identity.get('build')!=artifact or identity.get('controller_contract_build')!=build):
+        raise ValueError('Frozen numerical repair must declare its unchanged controller contract and distinct artifact identity.')
     c.update(run_id=RUN,stage='S1R11',controller_build=build,implementation_status='S5_development',
         r11_contract=CONTRACT,actual_terrain=terrain,fixed_cap_m_s=cap,r11_stage=stage(level,training_duration))
+    if controller_artifact is not None:c['controller_artifact']=artifact
     c['outputs']['root']=CONTRACT['outputs']['compact_root']
     c['campaign_budget']=CONTRACT['budget']
     c['task']['command_speed_m_s']=cap
@@ -27,8 +31,8 @@ def configuration(build,level,cap=.215,terrain='tm02_anchor',training_duration=N
     c['task']['command_speed_m_s']=cap
     c['task']['maximum_episode_s']=c['r11_stage']['duration_s']
     return c,json.loads((ROOT/'experiments/terrain_memory/s1-go2-joint.json').read_text())
-def arguments(attempt,build,condition,purpose,kind,workers=2):
-    frozen=ROOT/'work/r11-frozen'/build;assets=ROOT/'work/assets'
+def arguments(attempt,build,condition,purpose,kind,workers=2,controller_artifact=None):
+    frozen=ROOT/'work/r11-frozen'/(controller_artifact or build);assets=ROOT/'work/assets'
     return SimpleNamespace(config=CONFIG,stage='G1',purpose=purpose,condition=condition,arm='S',
         mission='long' if kind in ('continuous_finite','continuing_acquisition') else 'single',
         cohort=CONTRACT['protocol_revision'],attempt=attempt,workers=workers,author_source=str(frozen),

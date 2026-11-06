@@ -1,15 +1,15 @@
-# S1：W39 原始数据二次复核与更正后的 W40 三任务计划
+# S1：W40 两条主线 QP 故障修复，独立 GPU 任务继续
 
-日期：2026-11-06（北京时间）。**本次在原始数据全部发布后复核并修订 W40；没有在 D57 实现、构建或启动 r29 / GPU。** 新证据基准为 [07b0ee3](https://github.com/kaiwen123-yang/MCP-RL/commit/07b0ee3e15c9f10e9b1a6a1de3997bec36f39556)，原始审查见 [W39-raw-review](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md)。上一轮 e51/7150 紧凑结果审查保留历史范围；**其 r29 Qux 中心 QP 的等价性承诺已撤回，以本文件4.1及新数学审查为准。** W38/W39 旧执行历史不改写。
+日期：2026-11-06（北京时间）。主线失败证据基准为 [e1e0e1c](https://github.com/kaiwen123-yang/MCP-RL/commit/e1e0e1c97a87c3135775fab69c3f6e5a7e1f993c)；随后[03ea48d](https://github.com/kaiwen123-yang/MCP-RL/commit/03ea48d899b30827f46af9bc83ee28e627c74711)发布GPU批量层结果。**两条主线技术退出；GPU原任务保持独立，已发布batch层完成但数值未对齐。** 本次定位并精确重放实际失败QP，独立数值修复产物S5-r29-qp1通过原容差，详见[W40退出审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-stop-review/README.md)及[故障续接提示词](S1_W40_RECOVERY_PROMPT.md)。本审查未连接D57，未宣称已部署或恢复采样。下方W39历史分析及更正后的H投影数学契约保留；旧Qux中心方案仍已撤回，不改写W38/W39或原r29执行记录。
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W40_STABILITY_WITH_PARALLEL_GPU_MPC / S5-r29 已实际实现、正常构建并启动；共同训练绝对截止北京时间2026-11-07T22:30:28.226467+08:00，resume不重置。
-- w40-a：job-20261106T103028Z-w40-a，training_ended；新增50/0，累计8643/33，tail=50、excluded=145；评价=unavailable，紧凑Git=published。
-- w40-b：job-20261106T103028Z-w40-b，training_ended；新增51/0，累计8644/33，tail=51、excluded=145；评价=unavailable，紧凑Git=published。
-- 任务能力：w40-a合规去程/返程/整圈=0/0/0，材料加载回合=1；w40-b合规去程/返程/整圈=0/0/0，材料加载回合=1。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
-- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
+- 当前任务：修复W40应用动作QP的真实KKT非收敛；原S5-r29保留，使用独立产物S5-r29-qp1正常构建后原job续接。共同训练绝对截止2026-11-07T22:30:28.226467+08:00，resume不重置。
+- w40-a：job-20261106T103028Z-w40-a，ep286于11.474s技术退出；新增50/0、累计8643/33、tail50、excluded145；只续自己的resume-state-ep00286.pt。
+- w40-b：job-20261106T103028Z-w40-b，ep282于14.264s技术退出；新增51/0、累计8644/33、tail51、excluded145；只续自己的resume-state-ep00282.pt。
+- 任务能力：本轮没有新update，E30/E60均未执行；合法去程/返程/整圈均0。先恢复持续采集与原update34，再继续原9617/37目标；不能把数值修复当物理稳定性通过。
+- GPU与交付：原任务自行发布completed_batch_layer、aligned=false；数组交付publication_interrupted。原版本、独立依赖和22:31:28.128057截止不动，按真实进程及缺失项续接交付，不重跑已完成计算。紧凑结果先Git，已请求原诊断后台Release；不自动删除，不做用户电脑归档。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL，使用S1_W40_RECOVERY_PROMPT.md；普通--job-dir/--resume保留各自buffer/optimizer/RNG/phase和原时钟。本审查只完成仓库修复，未连接D57或启动新物理。
 
 ## 1. 目标、已经完成的工作与本次阅读范围
 

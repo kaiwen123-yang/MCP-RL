@@ -170,6 +170,8 @@ def compact_records(jobdir, snapshots, small, episodes, job, evaluation, samples
             "training-contract.json", "stream-identity.json", "collection.json",
             "stopped.json", "progress.json", "training-deadline.json"):
         keep(snapshots / filename, destination / "training" / filename)
+    # The live-launch copy at the job root is not a final collection record.
+    keep(snapshots / "collection.json", destination / "collection.json")
     for source in sorted(snapshots.glob("episode-*.json")):
         keep(source, destination / "training" / source.name)
     learning = snapshots / "learning.json"
@@ -181,7 +183,7 @@ def compact_records(jobdir, snapshots, small, episodes, job, evaluation, samples
         write(learning, learning_summary(snapshots / "learning.jsonl",
                                         job["initial_transitions"], samples))
         staged.add(learning)
-    identity = ROOT / "work/r11-frozen" / job["controller_build"] / "identity.json"
+    identity = ROOT / "work/r11-frozen" / job.get("controller_artifact", job["controller_build"]) / "identity.json"
     keep(identity, destination / "controller-identity.json")
 
     known = {row["attempt"]: row for row in index.get("attempts", [])}
@@ -228,6 +230,8 @@ def compact_records(jobdir, snapshots, small, episodes, job, evaluation, samples
 
     tails = []
     logs = [jobdir / "train.log", jobdir / "evaluation.log"]
+    if job.get("log"):
+        logs.append(ROOT / job["log"])
     logs += [ROOT / row["log"] for row in evaluation.get("stages", []) if row.get("log")]
     logs += [episode / "agent-server.log" for episode in unresolved]
     for source in dict.fromkeys(logs):
@@ -266,10 +270,13 @@ def update_parallel_handoff(contract):
         collection=read(stream/"collection.json")
         progress=read(stream/"progress.json")
         summary=read(small/"jobs"/(directory.name+".json"))
+        if job.get("last_resume",{}).get("at_unix_s",0)>summary.get("postprocess_started_unix_s",0):
+            summary={}
         evaluation=read(directory/"evaluation.json")
         finished=(directory/"training-finished-at.txt").exists()
         rows[stream_id]=dict(job=directory.name,phase_id=job["phase_id"],seed=job["seed"],
             controller_build=job["controller_build"],reward_version=job["reward_version"],
+            controller_artifact=job.get("controller_artifact",job["controller_build"]),
             phase_lineage=collection.get("phase_lineage"),
             status="training_ended" if finished else job["status"],
             transitions=collection.get("collected_transitions",job["initial_transitions"]),
@@ -364,6 +371,8 @@ def main():
     deadline = a.deadline_unix if a.deadline_unix is not None else started + a.hours * 3600
     summary_path = small / "jobs" / (name + ".json")
     previous = read(summary_path)
+    resumed_since_publication=(job.get("last_resume",{}).get("at_unix_s",0)
+                               > previous.get("postprocess_started_unix_s",0))
     if (previous.get("cleanup", {}).get("status") == "completed"
             and previous.get("publication_status") == "published"):
         # This historical result was already delivered and its arrays deleted.
@@ -392,18 +401,26 @@ def main():
         reason="See retained evaluation.log and exit code" if job.get("evaluation_command") else None,
         attempts=[], stages=[])
     episode_prefix=job.get("episode_prefix",f'train-{job["group"]}-s{job["seed"]}-ep')
-    episodes = ([large / x for x in previous["attempts"]] if "attempts" in previous else
+    episodes = ([large / x for x in previous["attempts"]]
+                if "attempts" in previous and not resumed_since_publication else
                 sorted(x for x in large.glob(episode_prefix+"*")
                        if x.is_dir() and (x.name not in initial if "initial_attempts" in job
                                           else x.stat().st_mtime >= job["started_unix_s"])))
     episodes = sorted({x.name: x for x in episodes + [large / x for x in evaluation.get("attempts", [])]}.values())
-    binaries = previous.get("training_binary_paths", [
+    prior_binaries=previous.get("training_binary_paths") if not resumed_since_publication else None
+    binaries = prior_binaries if prior_binaries is not None else [
         str(x.relative_to(ROOT)) for x in sorted(stream.rglob("*"))
-        if x.is_file() and x.suffix in (".pt", ".npz") and x.stat().st_mtime >= job["started_unix_s"]])
+        if x.is_file() and x.suffix in (".pt", ".npz") and x.stat().st_mtime >= job["started_unix_s"]]
 
-    # Freeze only the named compact records. Existing snapshots, including old
-    # bulk-publication snapshots, remain authoritative on a retry.
+    # The explicit starter retained the previous invocation under resume-history
+    # before opening a new one. Publication retries reuse the current snapshot.
     snapshots = jobdir / "stream-records"
+    if resumed_since_publication and snapshots.exists():
+        snapshot_start=read(snapshots/"collection.json").get("invocation_started_unix_s",0)
+        if snapshot_start<job["last_resume"]["at_unix_s"]:
+            history=jobdir/"resume-history"/("finish-"+str(time.time_ns()))
+            history.mkdir(parents=True)
+            snapshots.rename(history/"stream-records")
     if not snapshots.exists():
         snapshots.mkdir()
         sources = [stream / filename for filename in (
@@ -430,6 +447,7 @@ def main():
                     target_transitions=job["target_transitions"], target_updates=job["target_updates"],
                     target_reached=bool(stopped and samples >= job["target_transitions"] and updates >= job["target_updates"]),
                     stream_id=job.get("stream_id"),
+                    invocation_started_unix_s=stopped.get("invocation_started_unix_s",collection.get("invocation_started_unix_s")),
                     invocation_wall_s=stopped.get("invocation_wall_s",collection.get("invocation_wall_s")),
                     invocation_new_transitions=stopped.get("new_transitions",collection.get("invocation_new_transitions")),
                     initial_transitions=job["initial_transitions"], new_transitions=samples-job["initial_transitions"],
@@ -437,15 +455,18 @@ def main():
                     unupdated_fragment=stopped.get("unupdated_fragment", collection.get("unupdated_fragment")),
                     reason=stopped.get("reason"), last_stage_status=stopped.get("last_stage_status"),
                     phase_id=collection.get("phase_id"), phase_lineage=collection.get("phase_lineage"),
-                    controller_build=job["controller_build"], reward_version=job["reward_version"],
+                    controller_build=job["controller_build"],
+                    controller_artifact=contract["reuse"].get("controller_artifact",job["controller_build"]),
+                    reward_version=job["reward_version"],
                     phase_stop=stopped.get("phase_stop"),
                     excluded_old_version_transitions=collection.get("excluded_old_version_transitions"),
                     controller_migration=collection.get("controller_migration"),
                     last_completed_update=collection.get("last_completed_update"),
-                    last_episode_reason=stopped.get("last_episode_reason"))
+                    last_episode_reason=stopped.get("last_episode_reason"),last_error=stopped.get("last_error"))
     last_update=training["last_completed_update"]
     training["last_update_is_own_current_phase_new_update"]=bool(last_update
         and last_update.get("updates",0)>job["initial_updates"]
+        and last_update.get("controller_artifact",last_update.get("controller_build"))==training["controller_artifact"]
         and all(last_update.get(key)==job.get(key) for key in
                 ("phase_id","stream_id","controller_build","reward_version")))
     try:
@@ -461,7 +482,13 @@ def main():
             recovery="Inspect the original compact episode records and retained local sources.")
 
     job.update(status="computation_ended",training_exit_code=training_exit,
-               evaluation_status=evaluation["status"])
+               evaluation_status=evaluation["status"],
+               training_stop_reason=training["reason"],phase_stop=training["phase_stop"],
+               controller_artifact=contract["reuse"].get("controller_artifact",job["controller_build"]),
+               last_observed_unix_s=collection.get("updated_unix_s"),
+               observed_counts={key:collection.get(key) for key in (
+                   "collected_transitions","updates","phase_new_transitions","phase_new_updates",
+                   "unupdated_fragment","excluded_old_version_transitions")})
     write(jobdir/"job.json",job)
     from s1_go2_r11_runtime import index_file
     with index_file(small,contract) as locked_index:
@@ -524,6 +551,7 @@ def main():
     summary = dict(
         job=name, stream_id=job.get("stream_id"), phase_id=job["phase_id"], current_task=job.get("current_task", "S1"),
         source_commit=job["source_commit"], controller_build=job["controller_build"],
+        controller_artifact=job["controller_artifact"],last_resume=job.get("last_resume"),
         training_exit_code=training_exit, budget_extension=job.get("budget_extension"),
         training_started_unix_s=job["started_unix_s"], training_deadline_unix_s=job["deadline_unix_s"],
         postprocess_started_unix_s=started, deadline_unix_s=deadline,
@@ -623,9 +651,17 @@ def main():
     diagnostic_queue = None
     if diagnostic_enabled:
         try:
+            diagnostic_command=[sys.executable, str(ROOT / "scripts/publish_s1_go2_r12_diagnostics.py"),
+                "queue", "--job-dir", str(jobdir), "--hours", str(a.hours)]
+            if job.get("last_resume"):
+                # An empty selection would falsely reuse the old published
+                # manifest. The uploader retains its original absolute clock.
+                diagnostic_known=set(read(small/"jobs"/name/"diagnostics"/"evidence.json").get("attempts",[]))
+                for episode in episodes:
+                    if episode.name not in diagnostic_known:
+                        diagnostic_command += ["--attempt",episode.name]
             queued = subprocess.run(
-                [sys.executable, str(ROOT / "scripts/publish_s1_go2_r12_diagnostics.py"),
-                 "queue", "--job-dir", str(jobdir), "--hours", str(a.hours)],
+                diagnostic_command,
                 cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
             detail = {}
             for line in reversed(queued.stdout.splitlines()):

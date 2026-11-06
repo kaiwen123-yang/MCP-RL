@@ -658,6 +658,7 @@ def run(args, c, joint=None):
         finally:
             if r29_records:
                 resolved['r29_recording']=r29_records.finish(float(data.time),reason)
+                if r29_records.failure is not None:resolved['r29_failure']=r29_records.failure
             dump(small/f'{args.attempt}-resolved.json', resolved)
     wall = time.perf_counter()-begin
     if not started:
@@ -709,6 +710,7 @@ def run(args, c, joint=None):
         physical_columns=['force_evaluation_time_s','post_integration_time_s']+[f'torque_{i}' for i in range(12)]+[f'actuator_force_{i}' for i in range(12)]+[f'contact_{l}' for l in LEGS]+[f'grf_{l}_{a}' for l in LEGS for a in 'xyz']+[f'total_grf_{a}' for a in 'xyz']+[f'nonfoot_grf_{a}' for a in 'xyz']+['nonfoot_ground_contacts'],
         physical_time_note='MuJoCo mj_step forces/contact correspond to the integration evaluation, preceding its returned qpos. Force evaluation and post-integration clocks are both stored.',
         terminal_row_note='Actual final qpos/qvel are appended for physical failure and external truncation; held command and last diagnostic values retain their preceding control timestamp.')
+    if r29_records and r29_records.failure is not None:result['r29_failure']=r29_records.failure
     if campaign:
         from s1_go2_wb_equilibrium import hold_metrics
         result['hold'] = hold_metrics(arrays, first_completion, duration, args.mission)

@@ -67,6 +67,7 @@ def main():
         start_condition=contract["learning"]["candidate_requires"],curriculum_enabled=False,
         schedule=contract["learning"]["schedule"])
     build=contract["reuse"]["active_controller_build"]
+    artifact=contract["reuse"].get("controller_artifact",build)
     workers=contract["resources"]["mpc_workers"]
     pann_weights=ROOT/contract["resources"]["pann_weights_path"]
     execution_mode="background_job" if a.background_job else "interactive_window"
@@ -87,10 +88,10 @@ def main():
     # Continue checkpoint counts, but never reuse that retained attempt's ID.
     prefix=contract["learning"].get("episode_prefix",f"train-{a.group}-s{a.seed}-ep")
     stream.episode=max([stream.episode]+[int(x.name[len(prefix):]) for x in large.glob(prefix+"*") if x.is_dir()])
-    binary=ROOT/"work/r11-frozen"/build/"agent_server"
+    binary=ROOT/"work/r11-frozen"/artifact/"agent_server"
     os.environ["LD_LIBRARY_PATH"]=str(binary.parent/"lib")
     os.environ["MJPC_TASKS_DIR"]=str(binary.parent/"runtime-tasks")
-    dump(output/"stream-identity.json",dict(group=a.group,seed=a.seed,engineering_candidate=build,
+    dump(output/"stream-identity.json",dict(group=a.group,seed=a.seed,engineering_candidate=build,controller_artifact=artifact,
         stream_id=stream.stream_id,fork_identity=stream.fork_identity,phase_lineage=stream.phase_lineage,
         training_deadline_path=str(deadline_path.relative_to(ROOT)),
         formal_qualification=False,normalization=stream.normalization,ppo=stream.backend.provenance(),
@@ -109,14 +110,14 @@ def main():
         session=contract["learning"]["initial_acquisition_session_s"]
         stream.episode+=1
         name=f"{prefix}{stream.episode:05d}"
-        c,r9=configuration(build,"E60",.215,training_duration=session)
+        c,r9=configuration(build,"E60",.215,training_duration=session,controller_artifact=artifact)
         r9["pann"]["weights_path"]=str(pann_weights)
         c.update(run_id=contract["run_id"],stage="S1R12",r12_contract=contract,
             campaign_budget=contract["execution"],r11_training=True,r11_policy=True,
             case_key=None,case_identity=None,predecessor_attempt=None,
             window=dict(task=contract["current_task"],execution_mode=execution_mode,started_unix_s=a.window_start_unix,run_deadline_unix_s=deadline,hard_deadline_unix_s=hard))
         c["outputs"]["root"]=contract["outputs"]["compact_root"]
-        args=arguments(name,build,"nominal","training","continuing_acquisition",workers=workers)
+        args=arguments(name,build,"nominal","training","continuing_acquisition",workers=workers,controller_artifact=artifact)
         args.config=a.contract
         args.cohort=contract["protocol_revision"]
         before=stream.samples
@@ -136,7 +137,7 @@ def main():
             joint.training_deadline_path=deadline_path
             result=run(args,c,joint)
             last_result=result
-        record=dict(episode=stream.episode,attempt=name,controller_build=build,condition="nominal",stage=0,
+        record=dict(episode=stream.episode,attempt=name,controller_build=build,controller_artifact=artifact,condition="nominal",stage=0,
             stream_id=stream.stream_id,phase_id=stream.phase_id,
             session_limit_s=session,transitions=stream.samples-before,reason=result["reason"],
             stage_status=result["stage_status"],simulation_s=result["simulation_s"],wall_s=result["wall_s"],
@@ -177,26 +178,33 @@ def main():
         print(json.dumps(record),flush=True)
         if phase_stop or result["stage_status"] in ("technical_interruption","budget_truncated"):break
     stream.checkpoint(resume_only=True)
+    technical_stop=last_result is not None and last_result['stage_status']=='technical_interruption'
+    stop_reason=(phase_stop['reason'] if phase_stop else 'technical_interruption' if technical_stop
+        else 'target_reached' if stream.samples>=stream.target else 'deadline_reached' if time.time()>=deadline
+        else last_result['reason'] if last_result else 'stopped_without_episode')
     dump(output/"stopped.json",dict(actual_transitions=stream.samples,updates=stream.backend.update_count,
         stream_id=stream.stream_id,fork_identity=stream.fork_identity,phase_lineage=stream.phase_lineage,
         unupdated_fragment=len(stream.buffer),physics_s=stream.physics_s,session_records=stream.session_records,
         target=stream.target,continuous_environment_snapshot=False,
         invocation_started_unix_s=invocation_started_unix_s,invocation_wall_s=time.time()-invocation_started_unix_s,
-        controller_build=build,execution_mode=execution_mode,phase_id=stream.phase_id,
+        controller_build=build,controller_artifact=artifact,execution_mode=execution_mode,phase_id=stream.phase_id,
         reward_version=stream.reward_version,
         excluded_old_version_transitions=stream.excluded_old_version_transitions,
         controller_migration=stream.controller_migration,last_completed_update=stream.last_completed_update,
         phase_stop=phase_stop,
         last_stage_status=last_result["stage_status"] if last_result else None,
         last_episode_reason=last_result["reason"] if last_result else None,
+        last_error=last_result.get('error') if last_result else None,
+        last_r29_failure=last_result.get('r29_failure') if last_result else None,
         phase_initial_transitions=contract["learning"]["phase_initial_transitions"],
         phase_new_transitions=stream.samples-contract["learning"]["phase_initial_transitions"],
         phase_initial_updates=contract["learning"]["phase_initial_updates"],
         phase_new_updates=stream.backend.update_count-contract["learning"]["phase_initial_updates"],
         initial_transitions=initial_transitions,new_transitions=stream.samples-initial_transitions,
         initial_updates=initial_updates,new_updates=stream.backend.update_count-initial_updates,
-        reason=phase_stop["reason"] if phase_stop else ("target_reached" if stream.samples>=stream.target else "deadline_or_technical_stop"),
+        reason=stop_reason,
         deadline_unix_s=deadline,stopped_unix_s=time.time()))
     stream.log.close()
     stream.learning.close()
+    if technical_stop:raise SystemExit(2)
 if __name__=="__main__":main()
