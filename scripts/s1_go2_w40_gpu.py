@@ -68,7 +68,11 @@ class Predictor:
         # _full_compat permits USER residual sensors; they are computed explicitly
         # below, not silently treated as stock MJX sensors or as a full task cost.
         self.mx=mjx.put_model(m,_full_compat=True)
-        self.template=mjx.make_data(self.mx)
+        # MJX carries mesh/input arrays that may originate as float32.
+        # Preserve their values but perform every floating calculation in FP64.
+        fp64=lambda x:x.astype(jp.float64) if hasattr(x,'dtype') and np.issubdtype(x.dtype,np.floating) else x
+        self.mx=jax.tree.map(fp64,self.mx)
+        self.template=jax.tree.map(fp64,mjx.make_data(self.mx))
         self.joints=m.actuator_trnid[:,0];self.qa=m.jnt_qposadr[self.joints];self.va=m.jnt_dofadr[self.joints]
     def cpu_filter(self,m,d,g1,g2):
         return int(any(g in self.feet and inside(d.geom_xpos[g]) for g in (g1,g2)))
@@ -93,9 +97,9 @@ class Predictor:
         d.time=row['time'];d.mocap_pos[:]=row['mocap_pos'];d.mocap_quat[:]=row['mocap_quat'];d.userdata[:]=row['userdata']
         return d
     def gpu_data(self,row):
-        return self.template.replace(qpos=jp.array(row['qpos']),qvel=jp.array(row['qvel']),
-            ctrl=jp.array(row['ctrl']),time=jp.array(row['time']),mocap_pos=jp.array(row['mocap_pos']),
-            mocap_quat=jp.array(row['mocap_quat']),userdata=jp.array(row['userdata']))
+        return self.template.replace(qpos=jp.array(row['qpos'],dtype=jp.float64),qvel=jp.array(row['qvel'],dtype=jp.float64),
+            ctrl=jp.array(row['ctrl'],dtype=jp.float64),time=jp.array(row['time']),mocap_pos=jp.array(row['mocap_pos'],dtype=jp.float64),
+            mocap_quat=jp.array(row['mocap_quat'],dtype=jp.float64),userdata=jp.array(row['userdata'],dtype=jp.float64))
     def step_gpu(self,d):
         m=self.mx
         d=smooth.kinematics(m,d);d=smooth.com_pos(m,d);d=smooth.camlight(m,d)

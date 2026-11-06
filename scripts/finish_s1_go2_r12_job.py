@@ -494,6 +494,15 @@ def main():
             staged.update(destination.rglob("*.json"))
             staged.update(destination.rglob("*.jsonl"))
     evidence["event_windows"]=event_evidence
+    if job["controller_build"]=="S5-r29":
+        from export_s1_go2_r29_exposure import export_episode as export_exposure
+        selected=list(episodes)+[large/x["attempt"] for x in evaluation.get("stages",[]) if x.get("attempt")]
+        exposure_paths=[]
+        for episode in dict.fromkeys(selected):
+            if (episode/"query-exposure.jsonl").exists():
+                path=export_exposure(episode,small/"jobs"/name/"numeric-evidence"/"exposure"/episode.name)
+                staged.add(path);exposure_paths.append(str(path.relative_to(ROOT)))
+        evidence["r29_query_exposure"]=exposure_paths
     policy_path = small / "jobs" / name / "delivery-policy.json"
     write(policy_path, policy)
     staged.add(policy_path)
