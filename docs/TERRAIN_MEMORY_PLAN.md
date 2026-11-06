@@ -6,8 +6,8 @@
 
 - 当前任务：W40_STABILITY_WITH_PARALLEL_GPU_MPC / S5-r29 已实际实现、正常构建并启动；共同训练绝对截止北京时间2026-11-07T22:30:28.226467+08:00，resume不重置。
 - w40-a：job-20261106T103028Z-w40-a，training_ended；新增915/3，累计9508/36，tail=147、excluded=145；评价=unavailable，紧凑Git=published。
-- w40-b：job-20261106T103028Z-w40-b，joint_sampling_running；新增930/3，累计9523/36，tail=162、excluded=145；评价=pending_training，紧凑Git=pending_computation。
-- 任务能力：w40-a合规去程/返程/整圈=0/0/0，材料加载回合=28；w40-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
+- w40-b：job-20261106T103028Z-w40-b，training_ended；新增1024/4，累计9617/37，tail=0、excluded=145；评价=completed，紧凑Git=published。
+- 任务能力：w40-a合规去程/返程/整圈=0/0/0，材料加载回合=28；w40-b合规去程/返程/整圈=0/0/0，材料加载回合=26。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
 - 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 

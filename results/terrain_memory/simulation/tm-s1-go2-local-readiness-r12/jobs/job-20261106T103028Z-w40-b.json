@@ -5,28 +5,48 @@
   "current_task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
   "source_commit": "dbf8b78900e56b4a8ebced94d656a9a050914099",
   "controller_build": "S5-r29",
+  "controller_artifact": "S5-r29-qp1",
+  "last_resume": {
+    "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt",
+    "at_unix_s": 1793966175.7629642,
+    "source_commit": "a3879a89e94c838688aa33ec689b62580f0f9a8c",
+    "evidence_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/resume-history/1793966175762969284",
+    "samples": 8644,
+    "updates": 33,
+    "preserved_tail": 51,
+    "previous_controller_artifact": "S5-r29",
+    "controller_artifact": "S5-r29-qp1",
+    "unstarted_evaluation_archive": {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/resume-history/1793966175762969284/evaluation.json",
+      "reason": "Prior no-update result had no evaluation attempt; retained before explicit same-job resume.",
+      "previous_administrative_started_unix_s": 1793963006.0,
+      "previous_administrative_deadline_unix_s": 1793977406.0,
+      "actual_evaluation_attempts": 0
+    }
+  },
   "training_exit_code": 0,
   "budget_extension": null,
   "training_started_unix_s": 1793961028.2264671,
   "training_deadline_unix_s": 1794061828.2264671,
-  "postprocess_started_unix_s": 1793963008.5617929,
-  "deadline_unix_s": 1793984608.5617929,
+  "postprocess_started_unix_s": 1794002548.4588766,
+  "deadline_unix_s": 1794024148.4588766,
   "training": {
-    "actual_transitions": 8644,
-    "updates": 33,
+    "actual_transitions": 9617,
+    "updates": 37,
     "target_transitions": 9617,
     "target_updates": 37,
-    "target_reached": false,
+    "target_reached": true,
     "stream_id": "w40-b",
-    "invocation_wall_s": 1975.8406496047974,
-    "invocation_new_transitions": 51,
+    "invocation_started_unix_s": 1793966177.4987946,
+    "invocation_wall_s": 35091.72857451439,
+    "invocation_new_transitions": 973,
     "initial_transitions": 8593,
-    "new_transitions": 51,
+    "new_transitions": 1024,
     "initial_updates": 33,
-    "new_updates": 0,
-    "unupdated_fragment": 51,
-    "reason": "deadline_or_technical_stop",
-    "last_stage_status": "technical_interruption",
+    "new_updates": 4,
+    "unupdated_fragment": 0,
+    "reason": "target_reached",
+    "last_stage_status": "budget_truncated",
     "phase_id": "job-20261106T103028Z-w40-b",
     "phase_lineage": {
       "status": "explicit_new_phase_continuation",
@@ -80,6 +100,7 @@
       ]
     },
     "controller_build": "S5-r29",
+    "controller_artifact": "S5-r29-qp1",
     "reward_version": "W38_legal_route_terminal_settlement",
     "phase_stop": null,
     "excluded_old_version_transitions": 145,
@@ -106,24 +127,49 @@
       "isolated_tail_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/excluded-r25-004353-004497.pt"
     },
     "last_completed_update": {
-      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-008593.pt",
-      "samples": 8593,
-      "updates": 33,
-      "phase_id": "job-20261105T032354Z-w39-b",
-      "stream_id": "w39-b",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009617.pt",
+      "samples": 9617,
+      "updates": 37,
+      "phase_id": "job-20261106T103028Z-w40-b",
+      "stream_id": "w40-b",
       "phase_lineage": {
         "status": "explicit_new_phase_continuation",
-        "parent_stream_id": "w38-b",
-        "parent_phase_id": "job-20261104T104730Z-w38-b",
-        "current_stream_id": "w39-b",
-        "current_phase_id": "job-20261105T032354Z-w39-b",
-        "controller_build": "S5-r28",
+        "parent_stream_id": "w39-b",
+        "parent_phase_id": "job-20261105T032354Z-w39-b",
+        "parent_phase_lineage": {
+          "status": "explicit_new_phase_continuation",
+          "parent_stream_id": "w38-b",
+          "parent_phase_id": "job-20261104T104730Z-w38-b",
+          "current_stream_id": "w39-b",
+          "current_phase_id": "job-20261105T032354Z-w39-b",
+          "controller_build": "S5-r28",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+          "parent_transitions": 7569,
+          "parent_updates": 29,
+          "parent_episode": 251,
+          "inherited_excluded": 145,
+          "new_exclusions": 0,
+          "new_fork": false,
+          "reseeded_after_checkpoint_restore": false,
+          "restored": [
+            "actor",
+            "critic",
+            "optimizer",
+            "RNG",
+            "normalization",
+            "historical_counts"
+          ]
+        },
+        "current_stream_id": "w40-b",
+        "current_phase_id": "job-20261106T103028Z-w40-b",
+        "controller_build": "S5-r29",
         "reward_version": "W38_legal_route_terminal_settlement",
-        "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
-        "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
-        "parent_transitions": 7569,
-        "parent_updates": 29,
-        "parent_episode": 251,
+        "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
+        "parent_transitions": 8593,
+        "parent_updates": 33,
+        "parent_episode": 280,
         "inherited_excluded": 145,
         "new_exclusions": 0,
         "new_fork": false,
@@ -137,46 +183,55 @@
           "historical_counts"
         ]
       },
-      "controller_build": "S5-r28",
+      "controller_build": "S5-r29",
+      "controller_artifact": "S5-r29-qp1",
       "reward_version": "W38_legal_route_terminal_settlement"
     },
-    "last_episode_reason": "execution_error",
-    "last_update_is_own_current_phase_new_update": false,
+    "last_episode_reason": "training_checkpoint_complete",
+    "last_error": null,
+    "last_update_is_own_current_phase_new_update": true,
     "outcomes": {
-      "physical_episodes": 2,
-      "results_available": 2,
+      "physical_episodes": 34,
+      "results_available": 34,
       "results_unavailable": [],
       "legal_outbound_traversals": 0,
-      "side_exits": 0,
+      "side_exits": 1,
       "far_arrivals": 0,
       "return_episodes": 0,
       "completed_roundtrips": 0,
       "legal_roundtrips": 0,
       "legal_return_traversals": 0,
       "legal_all_outbound_traversals": 0,
-      "all_passage_side_exits": 0,
-      "legality_records": 2,
+      "all_passage_side_exits": 1,
+      "legality_records": 34,
       "physical_failures_by_phase": {
         "material_domain_exit": {
-          "outbound": 1
+          "outbound": 5
+        },
+        "body_fall": {
+          "outbound": 21
+        },
+        "invalid_contact": {
+          "outbound": 6
         }
       },
-      "saved_observations": 51,
-      "nonzero_pann_observations": 0,
+      "saved_observations": 1024,
+      "nonzero_pann_observations": 36,
       "return_observations": 0,
       "return_nonzero_pann_observations": 0,
-      "material_loaded_episodes": 1,
-      "max_forward_displacement_m": 0.6563054328986104,
+      "material_loaded_episodes": 26,
+      "max_forward_displacement_m": 1.0659947971223156,
       "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
       "observation_sources_unavailable": []
     }
   },
   "evaluation": {
     "job": "job-20261106T103028Z-w40-b",
-    "status": "unavailable",
-    "started_unix_s": 1793963006.0,
-    "deadline_unix_s": 1793977406.0,
+    "status": "completed",
+    "started_unix_s": 1794001270.0,
+    "deadline_unix_s": 1794015670.0,
     "controller_build": "S5-r29",
+    "controller_artifact": "S5-r29-qp1",
     "group": "PANN_PPO_S5",
     "seed": 2,
     "stream_id": "w40-b",
@@ -238,30 +293,254 @@
     "deterministic_policy_mean": true,
     "frozen_normalization": true,
     "ppo_updates": false,
-    "attempts": [],
+    "attempts": [
+      "job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30"
+    ],
     "stages": [
       {
         "level": "E30",
-        "stage_status": "not_run",
-        "reason": "new_update_unavailable"
+        "attempt": "job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30",
+        "stage_status": "physical_material_failure",
+        "started_unix_s": 1794001271.9219723,
+        "command": [
+          "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+          "-u",
+          "scripts/run_s1_go2_r12.py",
+          "--attempt",
+          "job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30",
+          "--build",
+          "S5-r29",
+          "--group",
+          "PANN_PPO_S5",
+          "--seed",
+          "2",
+          "--checkpoint",
+          "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009617.pt",
+          "--level",
+          "E30",
+          "--condition",
+          "nominal",
+          "--workers",
+          "12",
+          "--evaluation-start-unix",
+          "1794001270.0",
+          "--deadline-unix",
+          "1794015670.0",
+          "--policy-output",
+          "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/evaluation-policy/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30",
+          "--contract",
+          "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/execution-contract.json"
+        ],
+        "success": false,
+        "reason": "body_fall",
+        "error": null,
+        "simulation_s": 15.679999999990134,
+        "wall_s": 1264.4983408898115,
+        "stage_progress": {
+          "far_arrival_s": null,
+          "return_start_s": null,
+          "actual_route_fraction": 0.1040832440140758,
+          "full_observation": false,
+          "actual_material_loaded": true,
+          "material_traversal": {
+            "completed": false,
+            "west_entry_s": null,
+            "east_exit_s": null,
+            "lateral_exit_s": null,
+            "max_abs_base_y_during_crossing_m": null,
+            "material_loaded_during_crossing": false,
+            "original_strip_x_m": [
+              0.8,
+              2.2
+            ],
+            "original_strip_y_m": [
+              -0.6,
+              0.6
+            ],
+            "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+          }
+        },
+        "legal_route": {
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "progress": 0.0,
+          "completed_roundtrips": 0,
+          "legal_outbound_traversals": 0,
+          "legal_return_traversals": 0,
+          "side_exits": 0,
+          "raw_roundtrips": 0,
+          "passages": [
+            {
+              "lap": 1,
+              "direction": "outbound",
+              "entry_s": null,
+              "exit_s": null,
+              "lateral_exit_s": null,
+              "material_loaded": false,
+              "completed": false,
+              "terminal_closed_s": 15.679999999990134
+            }
+          ],
+          "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+        },
+        "completed_round_trips": 0,
+        "case_key": "eeaf2b0ac777a923135d99593d46552e16b6f58d177d6190c9ae693c6238316e",
+        "qualification": {
+          "predecessor_attempt": null,
+          "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+          "evaluator_sha256": "58614c4cf099dbb9e1e669cec20e2d6edde416036dedae2a1427904748b022e0",
+          "solver_workers": 12,
+          "worker_setting_checked_against_predecessor": false
+        },
+        "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30.json",
+        "exit_code": 0,
+        "finished_unix_s": 1794002548.1344218,
+        "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/evaluation-E30.log"
       },
       {
         "level": "E60",
-        "stage_status": "not_run",
-        "reason": "new_update_unavailable"
+        "stage_status": "blocked_by_predecessor",
+        "reason": "E30: physical_material_failure: body_fall"
       }
     ],
-    "reason": "new_update_unavailable",
-    "finished_unix_s": 1793963008.2628686
+    "training_end": {
+      "process_exit_code": 0,
+      "reason": "target_reached",
+      "last_stage_status": "budget_truncated",
+      "last_episode_reason": "training_checkpoint_complete",
+      "last_error": null
+    },
+    "prior_unstarted_evaluation": {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/resume-history/1793966175762969284/evaluation.json",
+      "reason": "Prior no-update result had no evaluation attempt; retained before explicit same-job resume.",
+      "previous_administrative_started_unix_s": 1793963006.0,
+      "previous_administrative_deadline_unix_s": 1793977406.0,
+      "actual_evaluation_attempts": 0
+    },
+    "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009617.pt",
+    "checkpoint_transitions": 9617,
+    "checkpoint_updates": 37,
+    "normalization": {
+      "body_xy_m": 3.0,
+      "body_height_m": 0.3,
+      "body_linear_velocity_m_s": 0.25,
+      "body_angular_velocity_rad_s": 1.0,
+      "joint_position": "range midpoint and half-width",
+      "joint_velocity_rad_s": 10.0,
+      "relative_feet_m": 0.3,
+      "foot_velocity_m_s": 1.0,
+      "force_N": 37.29371562,
+      "history_bottom_height_m": 0.05,
+      "pann_recovery_m": 0.001,
+      "history_frames": 20,
+      "history_dt_s": 0.05,
+      "finite_task_channels": "Always zero for every R11 training and evaluation duration",
+      "schema": [
+        "relative_goal_xy",
+        "base_z",
+        "base_quaternion_wxyz",
+        "relative_heading_sin_cos",
+        "base_velocity6",
+        "joint_position12",
+        "joint_velocity12",
+        "relative_world_feet12",
+        "foot_velocity12",
+        "contact4",
+        "GRF12",
+        "applied_cap",
+        "mission_phase9",
+        "gait_sin_cos",
+        "finite_task_flag_and_remaining_fraction",
+        "completed_plan_age",
+        "query_xy8",
+        "query_soft_mask4",
+        "history20x27",
+        "recovery4x3"
+      ],
+      "observation_clipping": false
+    },
+    "finished_unix_s": 1794002548.1457262
   },
   "attempts": [
+    "job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30",
     "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281",
-    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282"
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313",
+    "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314"
   ],
   "training_binary_paths": [
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-008849.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009105.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009361.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009617.pt",
     "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
     "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00281.pt",
-    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt"
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00283.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00284.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00285.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00286.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00287.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00288.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00289.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00290.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00291.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00292.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00293.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00294.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00295.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00296.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00297.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00298.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00299.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00300.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00301.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00302.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00303.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00304.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00305.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00306.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00307.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00308.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00309.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00310.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00311.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00312.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00313.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00314.pt",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/rollout-008594-008849.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/rollout-008850-009105.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/rollout-009106-009361.npz",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/rollout-009362-009617.npz"
   ],
   "delivery_policy": {
     "source": "experiments/terrain_memory/s1-go2-local-readiness-r12.json#outputs.automatic_publication",
@@ -338,12 +617,12 @@
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/job.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/job.json",
-        "size": 5869
+        "size": 7012
       },
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/execution-contract.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/execution-contract.json",
-        "size": 228307
+        "size": 228348
       },
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/environment.json",
@@ -353,12 +632,12 @@
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/evaluation.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/evaluation.json",
-        "size": 2807
+        "size": 8818
       },
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/run-job.sh",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/run-job.sh",
-        "size": 2198
+        "size": 2216
       },
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/training-exit-code.txt",
@@ -383,32 +662,37 @@
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/training-contract.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/training-contract.json",
-        "size": 231632
+        "size": 231673
       },
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/stream-identity.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/stream-identity.json",
-        "size": 8847
+        "size": 8887
       },
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/collection.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/collection.json",
-        "size": 5393
+        "size": 6519
       },
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/stopped.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/stopped.json",
-        "size": 381788
+        "size": 452017
       },
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/progress.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/progress.json",
-        "size": 381472
+        "size": 452019
       },
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/training-deadline.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/training-deadline.json",
         "size": 173
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/collection.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/collection.json",
+        "size": 6519
       },
       {
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00281.json",
@@ -421,14 +705,199 @@
         "size": 1623
       },
       {
-        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/learning.json",
-        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/learning.json",
-        "size": 253
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00283.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00283.json",
+        "size": 1721
       },
       {
-        "source": "work/r11-frozen/S5-r29/identity.json",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00284.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00284.json",
+        "size": 1939
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00285.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00285.json",
+        "size": 1940
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00286.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00286.json",
+        "size": 1938
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00287.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00287.json",
+        "size": 1938
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00288.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00288.json",
+        "size": 1996
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00289.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00289.json",
+        "size": 1939
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00290.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00290.json",
+        "size": 1981
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00291.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00291.json",
+        "size": 1997
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00292.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00292.json",
+        "size": 1704
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00293.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00293.json",
+        "size": 1953
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00294.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00294.json",
+        "size": 1953
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00295.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00295.json",
+        "size": 1941
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00296.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00296.json",
+        "size": 1936
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00297.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00297.json",
+        "size": 1954
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00298.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00298.json",
+        "size": 1946
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00299.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00299.json",
+        "size": 1940
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00300.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00300.json",
+        "size": 1706
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00301.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00301.json",
+        "size": 1997
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00302.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00302.json",
+        "size": 1951
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00303.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00303.json",
+        "size": 1996
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00304.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00304.json",
+        "size": 1982
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00305.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00305.json",
+        "size": 1953
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00306.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00306.json",
+        "size": 1719
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00307.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00307.json",
+        "size": 1938
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00308.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00308.json",
+        "size": 1940
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00309.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00309.json",
+        "size": 1941
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00310.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00310.json",
+        "size": 1955
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00311.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00311.json",
+        "size": 1964
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00312.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00312.json",
+        "size": 1941
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00313.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00313.json",
+        "size": 1951
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/episode-00314.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/episode-00314.json",
+        "size": 1683
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/learning.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/learning.json",
+        "size": 4970
+      },
+      {
+        "source": "work/r11-frozen/S5-r29-qp1/identity.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/controller-identity.json",
-        "size": 42077
+        "size": 42159
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30-resolved.json",
+        "size": 440262
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30.json",
+        "size": 25411
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/cap-decisions.json",
+        "size": 4554
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/pann-action-dependence.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/pann-action-dependence.json",
+        "size": 4904
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/r29-event-manifest.json",
+        "size": 15069
       },
       {
         "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281-resolved.json",
@@ -469,9 +938,654 @@
         "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282/r29-event-manifest.json",
         "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282/r29-event-manifest.json",
         "size": 9270
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283-resolved.json",
+        "size": 432319
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283.json",
+        "size": 21581
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283/cap-decisions.json",
+        "size": 3561
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283/r29-event-manifest.json",
+        "size": 8943
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284-resolved.json",
+        "size": 436658
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284.json",
+        "size": 21647
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284/cap-decisions.json",
+        "size": 4270
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284/r29-event-manifest.json",
+        "size": 12962
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285-resolved.json",
+        "size": 432486
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285.json",
+        "size": 17471
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285/cap-decisions.json",
+        "size": 3276
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285/r29-event-manifest.json",
+        "size": 9082
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286-resolved.json",
+        "size": 434119
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286.json",
+        "size": 21758
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286/cap-decisions.json",
+        "size": 5266
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286/r29-event-manifest.json",
+        "size": 10609
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287-resolved.json",
+        "size": 438050
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287.json",
+        "size": 21939
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287/cap-decisions.json",
+        "size": 4128
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287/r29-event-manifest.json",
+        "size": 14269
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288-resolved.json",
+        "size": 442371
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288.json",
+        "size": 21716
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288/cap-decisions.json",
+        "size": 2852
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288/r29-event-manifest.json",
+        "size": 18273
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289-resolved.json",
+        "size": 434727
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289.json",
+        "size": 21951
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289/cap-decisions.json",
+        "size": 5699
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289/r29-event-manifest.json",
+        "size": 11165
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290-resolved.json",
+        "size": 438518
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290.json",
+        "size": 21714
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290/cap-decisions.json",
+        "size": 3989
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290/r29-event-manifest.json",
+        "size": 14697
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291-resolved.json",
+        "size": 438639
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291.json",
+        "size": 21946
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291/cap-decisions.json",
+        "size": 3702
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291/r29-event-manifest.json",
+        "size": 14817
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292-resolved.json",
+        "size": 431527
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292.json",
+        "size": 21588
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292/cap-decisions.json",
+        "size": 2568
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292/r29-event-manifest.json",
+        "size": 8205
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293-resolved.json",
+        "size": 440708
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293.json",
+        "size": 21653
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293/cap-decisions.json",
+        "size": 4703
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293/r29-event-manifest.json",
+        "size": 16728
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294-resolved.json",
+        "size": 437301
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294.json",
+        "size": 21744
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294/cap-decisions.json",
+        "size": 3986
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294/r29-event-manifest.json",
+        "size": 13565
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295-resolved.json",
+        "size": 438160
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295.json",
+        "size": 17471
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295/cap-decisions.json",
+        "size": 3412
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295/r29-event-manifest.json",
+        "size": 14364
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296-resolved.json",
+        "size": 433960
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296.json",
+        "size": 21515
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296/cap-decisions.json",
+        "size": 2990
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296/r29-event-manifest.json",
+        "size": 10464
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297-resolved.json",
+        "size": 435858
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297.json",
+        "size": 21960
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297/cap-decisions.json",
+        "size": 4841
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297/r29-event-manifest.json",
+        "size": 12221
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298-resolved.json",
+        "size": 434857
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298.json",
+        "size": 21707
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298/cap-decisions.json",
+        "size": 3987
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298/r29-event-manifest.json",
+        "size": 11306
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299-resolved.json",
+        "size": 433707
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299.json",
+        "size": 17465
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299/cap-decisions.json",
+        "size": 3271
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299/r29-event-manifest.json",
+        "size": 10214
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300-resolved.json",
+        "size": 431074
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300.json",
+        "size": 21513
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300/cap-decisions.json",
+        "size": 3697
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300/r29-event-manifest.json",
+        "size": 7795
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301-resolved.json",
+        "size": 435228
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301.json",
+        "size": 17505
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301/cap-decisions.json",
+        "size": 3134
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301/r29-event-manifest.json",
+        "size": 11675
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302-resolved.json",
+        "size": 438064
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302.json",
+        "size": 21861
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302/cap-decisions.json",
+        "size": 4699
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302/r29-event-manifest.json",
+        "size": 14264
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303-resolved.json",
+        "size": 439094
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303.json",
+        "size": 21626
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303/cap-decisions.json",
+        "size": 3280
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303/r29-event-manifest.json",
+        "size": 15228
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304-resolved.json",
+        "size": 434980
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304.json",
+        "size": 17431
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304/cap-decisions.json",
+        "size": 2843
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304/r29-event-manifest.json",
+        "size": 11406
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305-resolved.json",
+        "size": 438166
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305.json",
+        "size": 21809
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305/cap-decisions.json",
+        "size": 5552
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305/r29-event-manifest.json",
+        "size": 14357
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306-resolved.json",
+        "size": 447022
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306.json",
+        "size": 22073
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306/cap-decisions.json",
+        "size": 6125
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306/r29-event-manifest.json",
+        "size": 22595
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307-resolved.json",
+        "size": 442762
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307.json",
+        "size": 22038
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307/cap-decisions.json",
+        "size": 6401
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307/r29-event-manifest.json",
+        "size": 18625
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308-resolved.json",
+        "size": 436497
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308.json",
+        "size": 21835
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308/cap-decisions.json",
+        "size": 5270
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308/r29-event-manifest.json",
+        "size": 12820
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309-resolved.json",
+        "size": 465088
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309.json",
+        "size": 21767
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309/cap-decisions.json",
+        "size": 5261
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309/r29-event-manifest.json",
+        "size": 39405
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310-resolved.json",
+        "size": 446160
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310.json",
+        "size": 22020
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310/cap-decisions.json",
+        "size": 5844
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310/r29-event-manifest.json",
+        "size": 21782
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311-resolved.json",
+        "size": 440178
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311.json",
+        "size": 23041
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311/cap-decisions.json",
+        "size": 8683
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311/r29-event-manifest.json",
+        "size": 16222
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312-resolved.json",
+        "size": 432711
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312.json",
+        "size": 17523
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312/cap-decisions.json",
+        "size": 3849
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312/r29-event-manifest.json",
+        "size": 9294
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313-resolved.json",
+        "size": 429301
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313.json",
+        "size": 17454
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313/cap-decisions.json",
+        "size": 2847
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313/r29-event-manifest.json",
+        "size": 6129
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314-resolved.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314-resolved.json",
+        "size": 435436
+      },
+      {
+        "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314.json",
+        "size": 21390
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314/cap-decisions.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314/cap-decisions.json",
+        "size": 4550
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314/r29-event-manifest.json",
+        "git_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314/r29-event-manifest.json",
+        "size": 11825
       }
     ],
     "large_json_retained_local": [
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/reference-packets.json",
+        "size": 510358,
+        "reason": "dense_reference_trace_retained_local"
+      },
       {
         "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281/reference-packets.json",
         "size": 343348,
@@ -481,21 +1595,248 @@
         "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282/reference-packets.json",
         "size": 464921,
         "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283/reference-packets.json",
+        "size": 399275,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284/reference-packets.json",
+        "size": 482351,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285/reference-packets.json",
+        "size": 360375,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286/reference-packets.json",
+        "size": 597310,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287/reference-packets.json",
+        "size": 461672,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288/reference-packets.json",
+        "size": 326006,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289/reference-packets.json",
+        "size": 645517,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290/reference-packets.json",
+        "size": 442098,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291/reference-packets.json",
+        "size": 423284,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292/reference-packets.json",
+        "size": 285222,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293/reference-packets.json",
+        "size": 536995,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294/reference-packets.json",
+        "size": 450555,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295/reference-packets.json",
+        "size": 389323,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296/reference-packets.json",
+        "size": 332958,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297/reference-packets.json",
+        "size": 549838,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298/reference-packets.json",
+        "size": 442765,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299/reference-packets.json",
+        "size": 369345,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300/reference-packets.json",
+        "size": 414199,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301/reference-packets.json",
+        "size": 352529,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302/reference-packets.json",
+        "size": 531046,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303/reference-packets.json",
+        "size": 361682,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304/reference-packets.json",
+        "size": 324479,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305/reference-packets.json",
+        "size": 628473,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306/reference-packets.json",
+        "size": 687623,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307/reference-packets.json",
+        "size": 726154,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308/reference-packets.json",
+        "size": 591426,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309/reference-packets.json",
+        "size": 596460,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310/reference-packets.json",
+        "size": 663563,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311/reference-packets.json",
+        "size": 981161,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312/reference-packets.json",
+        "size": 433196,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313/reference-packets.json",
+        "size": 321357,
+        "reason": "dense_reference_trace_retained_local"
+      },
+      {
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314/reference-packets.json",
+        "size": 520576,
+        "reason": "dense_reference_trace_retained_local"
       }
     ],
     "learning": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/training/learning.json",
     "numeric_learning": {
       "index": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/index.json",
-      "training_rows": 51,
-      "training_saved_array_matched_rows": 51,
-      "evaluation_rows": 0,
+      "training_rows": 1024,
+      "training_saved_array_matched_rows": 1024,
+      "evaluation_rows": 32,
       "training_missing_fields": {},
-      "file_count": 7
+      "file_count": 106
     },
-    "event_windows": {},
+    "event_windows": {
+      "job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30": {
+        "summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/event-summary.json",
+        "paths": [
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-00-control.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-00-physical.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-00-plans.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-00-material.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-01-control.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-01-physical.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-01-plans.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-01-material.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-02-control.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-02-physical.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-02-plans.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/window-02-material.json",
+          "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/event-windows/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/event-summary.json"
+        ],
+        "status": "saved_event_windows",
+        "event_times_s": {
+          "target_clipping": 11.044000000000938,
+          "large_raw_K_delta_x": 11.044000000000938,
+          "raw_PD_saturation": 11.044000000000938,
+          "nonfoot_contact": 11.860199999999036,
+          "nonfoot_load": 11.860199999999036,
+          "material_load": 11.629799999999573,
+          "terminal": 15.679999999990134
+        },
+        "accepted_violation_count": 0,
+        "missing": [
+          "Actual qpos/qvel are 500Hz, not per 0.2ms; nominal-at-actual-state comparison uses stored control states only.",
+          "No actual contact forces are synthesized from stored accepted/reference states."
+        ]
+      }
+    },
     "r29_query_exposure": [
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30/query-exposure-offline.json",
       "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281/query-exposure-offline.json",
-      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282/query-exposure-offline.json"
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313/query-exposure-offline.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/numeric-evidence/exposure/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314/query-exposure-offline.json"
     ]
   },
   "publication_scope": "compact_git",
@@ -511,41 +1852,139 @@
     "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b",
     "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2",
     "episode_directories": [
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30",
       "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281",
-      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282"
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00284",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00285",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00286",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00287",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00288",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00289",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00290",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00291",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00292",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00293",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00294",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00295",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00296",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00297",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00298",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00299",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00300",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00301",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00302",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00303",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00304",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00305",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00306",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00307",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00308",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00309",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00310",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00311",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00312",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00313",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00314"
     ],
     "training_binary_paths": [
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-008849.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009105.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009361.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009617.pt",
       "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
       "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00281.pt",
-      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt"
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00283.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00284.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00285.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00286.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00287.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00288.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00289.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00290.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00291.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00292.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00293.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00294.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00295.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00296.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00297.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00298.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00299.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00300.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00301.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00302.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00303.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00304.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00305.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00306.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00307.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00308.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00309.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00310.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00311.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00312.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00313.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00314.pt",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/rollout-008594-008849.npz",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/rollout-008850-009105.npz",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/rollout-009106-009361.npz",
+      "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/rollout-009362-009617.npz"
     ],
     "parent_resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
     "latest_resume": {
-      "path": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt",
-      "samples": 8644,
-      "updates": 33,
+      "path": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00314.pt",
+      "samples": 9617,
+      "updates": 37,
       "phase_id": "job-20261106T103028Z-w40-b",
       "identity_source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/stream-records/progress.json"
     },
     "last_completed_update": {
-      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/checkpoint-008593.pt",
-      "samples": 8593,
-      "updates": 33,
-      "phase_id": "job-20261105T032354Z-w39-b",
-      "stream_id": "w39-b",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009617.pt",
+      "samples": 9617,
+      "updates": 37,
+      "phase_id": "job-20261106T103028Z-w40-b",
+      "stream_id": "w40-b",
       "phase_lineage": {
         "status": "explicit_new_phase_continuation",
-        "parent_stream_id": "w38-b",
-        "parent_phase_id": "job-20261104T104730Z-w38-b",
-        "current_stream_id": "w39-b",
-        "current_phase_id": "job-20261105T032354Z-w39-b",
-        "controller_build": "S5-r28",
+        "parent_stream_id": "w39-b",
+        "parent_phase_id": "job-20261105T032354Z-w39-b",
+        "parent_phase_lineage": {
+          "status": "explicit_new_phase_continuation",
+          "parent_stream_id": "w38-b",
+          "parent_phase_id": "job-20261104T104730Z-w38-b",
+          "current_stream_id": "w39-b",
+          "current_phase_id": "job-20261105T032354Z-w39-b",
+          "controller_build": "S5-r28",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+          "parent_transitions": 7569,
+          "parent_updates": 29,
+          "parent_episode": 251,
+          "inherited_excluded": 145,
+          "new_exclusions": 0,
+          "new_fork": false,
+          "reseeded_after_checkpoint_restore": false,
+          "restored": [
+            "actor",
+            "critic",
+            "optimizer",
+            "RNG",
+            "normalization",
+            "historical_counts"
+          ]
+        },
+        "current_stream_id": "w40-b",
+        "current_phase_id": "job-20261106T103028Z-w40-b",
+        "controller_build": "S5-r29",
         "reward_version": "W38_legal_route_terminal_settlement",
-        "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
-        "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
-        "parent_transitions": 7569,
-        "parent_updates": 29,
-        "parent_episode": 251,
+        "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
+        "parent_transitions": 8593,
+        "parent_updates": 33,
+        "parent_episode": 280,
         "inherited_excluded": 145,
         "new_exclusions": 0,
         "new_fork": false,
@@ -559,7 +1998,8 @@
           "historical_counts"
         ]
       },
-      "controller_build": "S5-r28",
+      "controller_build": "S5-r29",
+      "controller_artifact": "S5-r29-qp1",
       "reward_version": "W38_legal_route_terminal_settlement"
     },
     "availability": "No bulk backup or upload is claimed; historical user/deletion state is not inferred."

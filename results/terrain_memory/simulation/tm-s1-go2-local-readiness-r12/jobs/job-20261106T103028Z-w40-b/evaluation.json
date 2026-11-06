@@ -1,9 +1,10 @@
 {
   "job": "job-20261106T103028Z-w40-b",
-  "status": "unavailable",
-  "started_unix_s": 1793963006.0,
-  "deadline_unix_s": 1793977406.0,
+  "status": "completed",
+  "started_unix_s": 1794001270.0,
+  "deadline_unix_s": 1794015670.0,
   "controller_build": "S5-r29",
+  "controller_artifact": "S5-r29-qp1",
   "group": "PANN_PPO_S5",
   "seed": 2,
   "stream_id": "w40-b",
@@ -65,19 +66,170 @@
   "deterministic_policy_mean": true,
   "frozen_normalization": true,
   "ppo_updates": false,
-  "attempts": [],
+  "attempts": [
+    "job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30"
+  ],
   "stages": [
     {
       "level": "E30",
-      "stage_status": "not_run",
-      "reason": "new_update_unavailable"
+      "attempt": "job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30",
+      "stage_status": "physical_material_failure",
+      "started_unix_s": 1794001271.9219723,
+      "command": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "scripts/run_s1_go2_r12.py",
+        "--attempt",
+        "job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30",
+        "--build",
+        "S5-r29",
+        "--group",
+        "PANN_PPO_S5",
+        "--seed",
+        "2",
+        "--checkpoint",
+        "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009617.pt",
+        "--level",
+        "E30",
+        "--condition",
+        "nominal",
+        "--workers",
+        "12",
+        "--evaluation-start-unix",
+        "1794001270.0",
+        "--deadline-unix",
+        "1794015670.0",
+        "--policy-output",
+        "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/evaluation-policy/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/execution-contract.json"
+      ],
+      "success": false,
+      "reason": "body_fall",
+      "error": null,
+      "simulation_s": 15.679999999990134,
+      "wall_s": 1264.4983408898115,
+      "stage_progress": {
+        "far_arrival_s": null,
+        "return_start_s": null,
+        "actual_route_fraction": 0.1040832440140758,
+        "full_observation": false,
+        "actual_material_loaded": true,
+        "material_traversal": {
+          "completed": false,
+          "west_entry_s": null,
+          "east_exit_s": null,
+          "lateral_exit_s": null,
+          "max_abs_base_y_during_crossing_m": null,
+          "material_loaded_during_crossing": false,
+          "original_strip_x_m": [
+            0.8,
+            2.2
+          ],
+          "original_strip_y_m": [
+            -0.6,
+            0.6
+          ],
+          "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+        }
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": 0.0,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false,
+            "terminal_closed_s": 15.679999999990134
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged."
+      },
+      "completed_round_trips": 0,
+      "case_key": "eeaf2b0ac777a923135d99593d46552e16b6f58d177d6190c9ae693c6238316e",
+      "qualification": {
+        "predecessor_attempt": null,
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "58614c4cf099dbb9e1e669cec20e2d6edde416036dedae2a1427904748b022e0",
+        "solver_workers": 12,
+        "worker_setting_checked_against_predecessor": false
+      },
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b-eval-PANN_PPO_S5-s2-E30.json",
+      "exit_code": 0,
+      "finished_unix_s": 1794002548.1344218,
+      "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/evaluation-E30.log"
     },
     {
       "level": "E60",
-      "stage_status": "not_run",
-      "reason": "new_update_unavailable"
+      "stage_status": "blocked_by_predecessor",
+      "reason": "E30: physical_material_failure: body_fall"
     }
   ],
-  "reason": "new_update_unavailable",
-  "finished_unix_s": 1793963008.2628686
+  "training_end": {
+    "process_exit_code": 0,
+    "reason": "target_reached",
+    "last_stage_status": "budget_truncated",
+    "last_episode_reason": "training_checkpoint_complete",
+    "last_error": null
+  },
+  "prior_unstarted_evaluation": {
+    "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/resume-history/1793966175762969284/evaluation.json",
+    "reason": "Prior no-update result had no evaluation attempt; retained before explicit same-job resume.",
+    "previous_administrative_started_unix_s": 1793963006.0,
+    "previous_administrative_deadline_unix_s": 1793977406.0,
+    "actual_evaluation_attempts": 0
+  },
+  "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/checkpoint-009617.pt",
+  "checkpoint_transitions": 9617,
+  "checkpoint_updates": 37,
+  "normalization": {
+    "body_xy_m": 3.0,
+    "body_height_m": 0.3,
+    "body_linear_velocity_m_s": 0.25,
+    "body_angular_velocity_rad_s": 1.0,
+    "joint_position": "range midpoint and half-width",
+    "joint_velocity_rad_s": 10.0,
+    "relative_feet_m": 0.3,
+    "foot_velocity_m_s": 1.0,
+    "force_N": 37.29371562,
+    "history_bottom_height_m": 0.05,
+    "pann_recovery_m": 0.001,
+    "history_frames": 20,
+    "history_dt_s": 0.05,
+    "finite_task_channels": "Always zero for every R11 training and evaluation duration",
+    "schema": [
+      "relative_goal_xy",
+      "base_z",
+      "base_quaternion_wxyz",
+      "relative_heading_sin_cos",
+      "base_velocity6",
+      "joint_position12",
+      "joint_velocity12",
+      "relative_world_feet12",
+      "foot_velocity12",
+      "contact4",
+      "GRF12",
+      "applied_cap",
+      "mission_phase9",
+      "gait_sin_cos",
+      "finite_task_flag_and_remaining_fraction",
+      "completed_plan_age",
+      "query_xy8",
+      "query_soft_mask4",
+      "history20x27",
+      "recovery4x3"
+    ],
+    "observation_clipping": false
+  },
+  "finished_unix_s": 1794002548.1457262
 }
