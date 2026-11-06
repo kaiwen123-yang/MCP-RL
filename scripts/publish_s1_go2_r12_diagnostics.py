@@ -343,6 +343,7 @@ def prepare(ctx, args):
                 if part.get("name") in allocations:
                     manifest.append(allocations[part["name"]])
     evidence["upload_workers"] = args.upload_workers
+    evidence["http_proxy"] = args.http_proxy
     write(destination / "manifest.json", manifest)
     write(destination / "evidence.json", evidence)
     return evidence
@@ -447,6 +448,8 @@ def queue(ctx, args):
             write(transfer / "queued-attempts.json", args.attempt)
             command = [sys.executable, "-u", str(Path(__file__).resolve()), "run", "--job-dir", relative(directory),
                        "--upload-workers", str(args.upload_workers)]
+            if args.http_proxy:
+                command += ["--http-proxy", args.http_proxy]
             for attempt in args.attempt:
                 command += ["--attempt", attempt]
             shell = "source scripts/autodl_d57_env.sh && source scripts/autodl_network.sh academic && exec " + shlex.join(command) + " >> " + shlex.quote(str(transfer / "run.log")) + " 2>&1"
@@ -462,8 +465,9 @@ def main():
     parser.add_argument("--job-dir", required=True, type=Path)
     parser.add_argument("--attempt", action="append", default=[], help="Add dense arrays for an attempt in this same job")
     parser.add_argument("--hours", type=float, default=6, help="Initial diagnostic deadline only; resume never extends it")
-    parser.add_argument("--upload-workers",type=int,choices=(1,3),
+    parser.add_argument("--upload-workers",type=int,choices=(1,2,3,4,5),
                         help="Concurrent files per queue; ordinary resume keeps its saved setting.")
+    parser.add_argument("--http-proxy",help="Explicit server-local transfer proxy; resume keeps the saved route.")
     args = parser.parse_args()
     if not math.isfinite(args.hours) or not 0 < args.hours <= 6:
         parser.error("--hours must be finite and in (0, 6]")
@@ -472,6 +476,14 @@ def main():
         ctx = context(args)
         if args.upload_workers is None:
             args.upload_workers = read(ctx[3] / "evidence.json").get("upload_workers",1)
+        if args.http_proxy is None:
+            args.http_proxy = read(ctx[3] / "evidence.json").get("http_proxy")
+        if args.http_proxy:
+            for key in ("http_proxy","https_proxy","HTTP_PROXY","HTTPS_PROXY"):
+                os.environ[key] = args.http_proxy
+            for key in ("all_proxy","ALL_PROXY"):
+                os.environ.pop(key,None)
+            os.environ["no_proxy"] = os.environ["NO_PROXY"] = "localhost,127.0.0.1,::1"
         if args.action == "queue":
             value = queue(ctx, args)
         elif args.action == "run":
