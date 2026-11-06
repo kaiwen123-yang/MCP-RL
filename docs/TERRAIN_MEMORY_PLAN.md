@@ -4,12 +4,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：修复W40应用动作QP的真实KKT非收敛；原S5-r29保留，使用独立产物S5-r29-qp1正常构建后原job续接。共同训练绝对截止2026-11-07T22:30:28.226467+08:00，resume不重置。
-- w40-a：job-20261106T103028Z-w40-a，ep286于11.474s技术退出；新增50/0、累计8643/33、tail50、excluded145；只续自己的resume-state-ep00286.pt。
-- w40-b：job-20261106T103028Z-w40-b，ep282于14.264s技术退出；新增51/0、累计8644/33、tail51、excluded145；只续自己的resume-state-ep00282.pt。
-- 任务能力：本轮没有新update，E30/E60均未执行；合法去程/返程/整圈均0。先恢复持续采集与原update34，再继续原9617/37目标；不能把数值修复当物理稳定性通过。
-- GPU与交付：原任务自行发布completed_batch_layer、aligned=false；数组交付publication_interrupted。原版本、独立依赖和22:31:28.128057截止不动，按真实进程及缺失项续接交付，不重跑已完成计算。紧凑结果先Git，已请求原诊断后台Release；不自动删除，不做用户电脑归档。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL，使用S1_W40_RECOVERY_PROMPT.md；普通--job-dir/--resume保留各自buffer/optimizer/RNG/phase和原时钟。本审查只完成仓库修复，未连接D57或启动新物理。
+- 当前任务：原W40两job已使用独立冻结S5-r29-qp1恢复真实联合采样，逻辑控制契约仍为S5-r29；共享原deadline1794061828.2264671（北京时间2026-11-07 22:30:28.226467），未重置。
+- w40-a：job-20261106T103028Z-w40-a，s1-w40-a，PID410149，ep287；当前8650/33、tail57，本次resume新增7；原buffer/optimizer/RNG/祖先/excluded145保留，各12workers。
+- w40-b：job-20261106T103028Z-w40-b，s1-w40-b，PID410191，ep283；当前8651/33、tail58，本次resume新增7；原buffer/optimizer/RNG/祖先/excluded145保留，各12workers。
+- 任务能力：当前仅确认qp1构建和恢复采样；尚无本phase新PPO update或正式E30。原四回合失败保留；继续各自9617/37目标，首次update34仍在8849，仅自身新update评价。
+- 交付：qp1源码/构建记录与同job恢复快照已准备推送；原W40诊断A182/195、B154/159，剩余按原上传期限续接，不覆盖历史来源。GPU既有数组已补齐10/10，原始数据保留，无自动删除/电脑归档。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；使用各自job-dir和最新同流resume，不new-phase。GPU计算及原finisher已自然结束，completed_batch_layer、aligned=false；本次只补传既有数组，原deadline1794061888.128057、版本和依赖均保持。
 
 ## 1. 目标、已经完成的工作与本次阅读范围
 

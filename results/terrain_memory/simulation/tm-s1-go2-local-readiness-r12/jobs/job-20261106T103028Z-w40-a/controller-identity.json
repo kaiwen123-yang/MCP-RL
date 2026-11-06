@@ -1,9 +1,9 @@
 {
   "controller": "S5",
-  "build": "S5-r29",
-  "based_on": "S5-r28",
-  "prior_binary_sha256": "43dbdba4c27028e76f7151129ea71d1456568f7e1c3aadd3f1ec98f04eb1f1fd",
-  "binary_sha256": "603d66b94dfb71b7d09d843c7b23fdc4587abe70b9c892a57433756c8533cbcd",
+  "build": "S5-r29-qp1",
+  "based_on": "S5-r29",
+  "prior_binary_sha256": "603d66b94dfb71b7d09d843c7b23fdc4587abe70b9c892a57433756c8533cbcd",
+  "binary_sha256": "c28b42b6c6685ef2424d2ebbed95c69c2324a8b8d3c3d06a0bd55707d56f8a6e",
   "source_files_sha256": {
     "mjpc/main.cc": "a831dc24ac26c077781b59f4b79647c9cd435f8c7eada8c3751561bf5623aab8",
     "mjpc/interface.cc": "cea203b8c11004d58ff58931771fea4e8f4466947af62cd7f60a08c7c6e8c817",
@@ -39,7 +39,7 @@
     "mjpc/planners/include.h": "dab3975556515109b7eb081b2b7c053c043a6ace117ada1a17e50b319c136ad5",
     "mjpc/planners/ilqs/planner.h": "25975ff5038a7af19b89593e640039130255e88ec9b96facc17bb99ac1e7b9a9",
     "mjpc/planners/ilqs/planner.cc": "6892222ce2e1a1e93672f7abead0645eb0910132444e0e775f4523610720562f",
-    "mjpc/planners/ilqg/policy.cc": "9509edda675dc51e8a2329bc1985cb04baff3afc2c89a76b3d26b39e4b28187d",
+    "mjpc/planners/ilqg/policy.cc": "9fc764b4489b5b23a3c7d6320596f7042afb3014bf3da79f8125840243d31a03",
     "mjpc/planners/ilqg/settings.h": "3bb7a19885dda77c6b46fd6deb49c0855febaee60c7c929dd162f065edf4de2b",
     "mjpc/planners/ilqg/backward_pass.cc": "e7891c3897c53b770a8b586a5fed846b944ddef3f2fc15cd5f77558307f4b6de",
     "mjpc/planners/ilqg/policy.h": "48d15ff25c05ce09b44523ce9a0f5f3bdcf748ead714ac9f1df947975d7cff47",
@@ -194,9 +194,9 @@
     "mjpc/tasks/bimanual/handover/handover.h": "c18d212014e467c1d9405ed80e72a5f1b31135b97580be9ddbf38f5e39e3f6bf",
     "mjpc/r26_risk.h": "ac5ec62d98f2afac50532a7939b7918ed5f90ceb0f2d26879cf08fe4dde12c17",
     "mjpc/r26_reference.h": "dd22dcbe5cea3072cc445fc7314a307edcf6fc461c031ead74aaeef9141029f6",
-    "mjpc/planners/ilqg/r29_projection.h": "2b5b0c57f9d42113476237665223a522f725adbe00e25bfed38f327a67cbf233"
+    "mjpc/planners/ilqg/r29_projection.h": "c7007f009426c42443657d8ba9034146be0d1c774e486d3996dbde6ded16768a"
   },
-  "source_commit": "5d3a70ff467bdf794bf066c8afb920a72937376b",
+  "source_commit": "2fbe7edd873a555c8e74a99f9972da1c71114f71",
   "configuration_overrides": {
     "r11_material_upright": {
       "residual": "Body world z-axis minus world up: [R02,R12,R22-1]",
@@ -513,11 +513,12 @@
       "recording": "bounded_event_ring",
       "KKT_relative_tolerance": 1e-07,
       "primal_tolerance_rad": 1e-10,
-      "no_fallback": true
+      "no_fallback": true,
+      "solver_revision": "S5-r29-qp1"
     }
   },
-  "build_started_unix_s": 1793960571.2862766,
-  "build_wall_s": 184.80294489860535,
+  "build_started_unix_s": 1793965905.509929,
+  "build_wall_s": 159.8309235572815,
   "build_command": [
     "cmake",
     "-S",
@@ -533,5 +534,6 @@
     "-DMUJOCO_MPC_MUJOCO_GIT_TAG=088079eff0450e32b98ee743141780ed68307506"
   ],
   "original_runtime_library_reused": true,
-  "mujoco_dependency_commit": "088079eff0450e32b98ee743141780ed68307506"
+  "mujoco_dependency_commit": "088079eff0450e32b98ee743141780ed68307506",
+  "controller_contract_build": "S5-r29"
 }

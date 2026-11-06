@@ -1,7 +1,7 @@
 {
   "schema_version": "S1_W40_execution_plan_v3_QP_failure_recovery",
   "task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
-  "status": "main_technical_stop_exact_QP_repair_verified_GPU_untouched",
+  "status": "qp1_original_jobs_resumed_real_sampling_GPU_completed_unaligned",
   "date": "2026-11-06",
   "timezone": "Asia/Shanghai",
   "reviewed_results_commit": "e1e0e1c97a87c3135775fab69c3f6e5a7e1f993c",
@@ -28,40 +28,52 @@
   "current_execution": {
     "phase": "W40",
     "build": "S5-r29",
-    "status": "both_main_streams_technically_stopped",
+    "status": "both_original_jobs_resumed_sampling",
     "reason": "applied_hold_QP_failed_KKT_certificate_before_physics",
     "streams": [
       {
         "stream_id": "w40-a",
         "job": "job-20261106T103028Z-w40-a",
         "phase_id": "job-20261106T103028Z-w40-a",
+        "session": "s1-w40-a",
         "controller_build": "S5-r29",
-        "samples": 8643,
+        "controller_artifact": "S5-r29-qp1",
+        "samples": 8650,
         "updates": 33,
-        "tail": 50,
+        "tail": 57,
         "excluded": 145,
-        "phase_new_transitions": 50,
+        "phase_new_transitions": 57,
         "phase_new_updates": 0,
-        "episode": 286,
-        "status": "technical_interruption",
-        "reason": "qp_kkt_failure",
-        "current_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt"
+        "resumed_new_transitions": 7,
+        "episode": 287,
+        "pid": 410149,
+        "status": "joint_sampling_running",
+        "previous_stop": "qp_kkt_failure",
+        "current_resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt",
+        "observed_unix_s": 1793966468.242404,
+        "deadline_unix_s": 1794061828.2264671
       },
       {
         "stream_id": "w40-b",
         "job": "job-20261106T103028Z-w40-b",
         "phase_id": "job-20261106T103028Z-w40-b",
+        "session": "s1-w40-b",
         "controller_build": "S5-r29",
-        "samples": 8644,
+        "controller_artifact": "S5-r29-qp1",
+        "samples": 8651,
         "updates": 33,
-        "tail": 51,
+        "tail": 58,
         "excluded": 145,
-        "phase_new_transitions": 51,
+        "phase_new_transitions": 58,
         "phase_new_updates": 0,
-        "episode": 282,
-        "status": "technical_interruption",
-        "reason": "qp_kkt_failure",
-        "current_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt"
+        "resumed_new_transitions": 7,
+        "episode": 283,
+        "pid": 410191,
+        "status": "joint_sampling_running",
+        "previous_stop": "qp_kkt_failure",
+        "current_resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt",
+        "observed_unix_s": 1793966468.242404,
+        "deadline_unix_s": 1794061828.2264671
       }
     ],
     "final_evaluation": "unavailable_new_update_unavailable_no_attempts",
@@ -357,7 +369,10 @@
     "preserve_existing_task": true,
     "deadline_unix_s": 1794061888.128057,
     "aligned": false,
-    "delivery_status": "publication_interrupted"
+    "delivery_status": "published",
+    "computation_running": false,
+    "verified_existing_arrays": 10,
+    "computation_restarted_for_recovery": false
   },
   "budgets": {
     "interactive_max_s": 14400,
@@ -460,28 +475,31 @@
     "observed_main_counts": [
       {
         "stream": "w40-a",
-        "collected_transitions": 8643,
+        "collected_transitions": 8650,
         "updates": 33,
-        "phase_new_transitions": 50,
+        "phase_new_transitions": 57,
         "phase_new_updates": 0,
-        "unupdated_fragment": 50,
+        "unupdated_fragment": 57,
         "excluded_old_version_transitions": 145
       },
       {
         "stream": "w40-b",
-        "collected_transitions": 8644,
+        "collected_transitions": 8651,
         "updates": 33,
-        "phase_new_transitions": 51,
+        "phase_new_transitions": 58,
         "phase_new_updates": 0,
-        "unupdated_fragment": 51,
+        "unupdated_fragment": 58,
         "excluded_old_version_transitions": 145
       }
     ],
-    "W40_main_currently_sampling": false,
+    "W40_main_currently_sampling": true,
     "qp1_implemented": true,
     "qp1_built_on_D57_by_this_review": false,
     "GPU_intervention": false,
-    "qp1_exact_failed_inputs_verified": true
+    "qp1_exact_failed_inputs_verified": true,
+    "qp1_built_on_D57": true,
+    "qp1_build_identity": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-a/controller-identity.json",
+    "actual_recovery_observed_unix_s": 1793966468.242404
   },
   "raw_review_base_commit": "07b0ee3e15c9f10e9b1a6a1de3997bec36f39556",
   "raw_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md",

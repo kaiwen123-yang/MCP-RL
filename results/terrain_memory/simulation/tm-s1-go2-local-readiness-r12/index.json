@@ -21069,6 +21069,90 @@
         "worker_setting_checked_against_predecessor": false
       },
       "result": "train-job-20261106T103028Z-w40-a-PANN_PPO_S5-s1-ep00286.json"
+    },
+    {
+      "attempt": "train-job-20261106T103028Z-w40-a-PANN_PPO_S5-s1-ep00287",
+      "stage": "G1",
+      "purpose": "training",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "long",
+      "cohort": "W40_r29_legacy_center_H_projection_v15",
+      "status": "running",
+      "physical_started": true,
+      "command": [
+        "scripts/train_s1_go2_r12.py",
+        "--group",
+        "PANN_PPO_S5",
+        "--seed",
+        "1",
+        "--resume",
+        "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-a/execution-contract.json",
+        "--background-job",
+        "--job-start-unix",
+        "1793961028.2264671",
+        "--deadline-unix",
+        "1794061828.2264671"
+      ],
+      "started_utc": "2026-11-06T11:56:20Z",
+      "case_key": null,
+      "case": null,
+      "evaluation_stage": {
+        "level": "train60",
+        "task_kind": "continuing_acquisition",
+        "duration_s": 60,
+        "target_circuits": null,
+        "route_deadline_s": null,
+        "far_hold_s": 2,
+        "home_hold_s": 2,
+        "final_hold_s": null
+      },
+      "execution_fingerprint": "f696bf5dbec77b8413cdc19f3de50189ff1a16861a990cb842577d72d5d5a205",
+      "source_commit": "a3879a89e94c838688aa33ec689b62580f0f9a8c"
+    },
+    {
+      "attempt": "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00283",
+      "stage": "G1",
+      "purpose": "training",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "long",
+      "cohort": "W40_r29_legacy_center_H_projection_v15",
+      "status": "running",
+      "physical_started": true,
+      "command": [
+        "scripts/train_s1_go2_r12.py",
+        "--group",
+        "PANN_PPO_S5",
+        "--seed",
+        "2",
+        "--resume",
+        "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/execution-contract.json",
+        "--background-job",
+        "--job-start-unix",
+        "1793961028.2264671",
+        "--deadline-unix",
+        "1794061828.2264671"
+      ],
+      "started_utc": "2026-11-06T11:56:22Z",
+      "case_key": null,
+      "case": null,
+      "evaluation_stage": {
+        "level": "train60",
+        "task_kind": "continuing_acquisition",
+        "duration_s": 60,
+        "target_circuits": null,
+        "route_deadline_s": null,
+        "far_hold_s": 2,
+        "home_hold_s": 2,
+        "final_hold_s": null
+      },
+      "execution_fingerprint": "cf63447bcbfa6ae923c1f770063081cb0f0a69764d647fb069fde94406a2dc03",
+      "source_commit": "a3879a89e94c838688aa33ec689b62580f0f9a8c"
     }
   ],
   "stages": {},
@@ -125889,13 +125973,13 @@
         "status": "manual_after_user_backup",
         "deleted_files": 0
       },
-      "live_status": "training_ended",
+      "live_status": "joint_sampling_running",
       "latest_counts": {
-        "transitions": 8643,
+        "transitions": 8650,
         "updates": 33,
-        "new_transitions": 50,
+        "new_transitions": 57,
         "new_updates": 0,
-        "tail": 50
+        "tail": 57
       },
       "phase_lineage": {
         "status": "explicit_new_phase_continuation",
@@ -125952,7 +126036,11 @@
       "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-a",
       "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1",
       "latest_resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt",
-      "deadline_unix_s": 1794061828.2264671
+      "deadline_unix_s": 1794061828.2264671,
+      "controller_artifact": "S5-r29-qp1",
+      "training_pid": 410149,
+      "session": "s1-w40-a",
+      "current_episode": 287
     },
     "job-20261106T103028Z-w40-b": {
       "stream_id": "w40-b",
@@ -126272,13 +126360,13 @@
         "status": "manual_after_user_backup",
         "deleted_files": 0
       },
-      "live_status": "training_ended",
+      "live_status": "joint_sampling_running",
       "latest_counts": {
-        "transitions": 8644,
+        "transitions": 8651,
         "updates": 33,
-        "new_transitions": 51,
+        "new_transitions": 58,
         "new_updates": 0,
-        "tail": 51
+        "tail": 58
       },
       "phase_lineage": {
         "status": "explicit_new_phase_continuation",
@@ -126335,7 +126423,11 @@
       "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b",
       "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2",
       "latest_resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt",
-      "deadline_unix_s": 1794061828.2264671
+      "deadline_unix_s": 1794061828.2264671,
+      "controller_artifact": "S5-r29-qp1",
+      "training_pid": 410191,
+      "session": "s1-w40-b",
+      "current_episode": 283
     }
   },
   "W34_joint_learning_review": {
@@ -127486,14 +127578,14 @@
     "source_files_deleted": 0,
     "pc_archive_created": false
   },
-  "w40_distinct_new_transitions": 101,
+  "w40_distinct_new_transitions": 115,
   "w40_policy_counts": {
     "w40-a": {
-      "transitions": 8643,
+      "transitions": 8650,
       "updates": 33
     },
     "w40-b": {
-      "transitions": 8644,
+      "transitions": 8651,
       "updates": 33
     }
   },
@@ -127505,6 +127597,7 @@
         "seed": 1,
         "controller_build": "S5-r29",
         "reward_version": "W38_legal_route_terminal_settlement",
+        "controller_artifact": "S5-r29-qp1",
         "phase_lineage": {
           "status": "explicit_new_phase_continuation",
           "parent_stream_id": "w39-a",
@@ -127556,15 +127649,15 @@
             "historical_counts"
           ]
         },
-        "status": "training_ended",
-        "transitions": 8643,
+        "status": "joint_sampling_running",
+        "transitions": 8650,
         "updates": 33,
-        "new_transitions": 50,
+        "new_transitions": 57,
         "new_updates": 0,
-        "tail": 50,
-        "invocation_new_transitions": 50,
-        "invocation_wall_s": 1982.040816783905,
-        "collection_updated_unix_s": 1793963011.9404657,
+        "tail": 57,
+        "invocation_new_transitions": 7,
+        "invocation_wall_s": 288.8439612388611,
+        "collection_updated_unix_s": 1793966464.3295898,
         "excluded": 145,
         "resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt",
         "last_completed_update": {
@@ -127602,48 +127695,10 @@
           "controller_build": "S5-r28",
           "reward_version": "W38_legal_route_terminal_settlement"
         },
-        "evaluation": "unavailable",
-        "evaluation_stages": [
-          {
-            "level": "E30",
-            "stage_status": "not_run",
-            "reason": "new_update_unavailable"
-          },
-          {
-            "level": "E60",
-            "stage_status": "not_run",
-            "reason": "new_update_unavailable"
-          }
-        ],
-        "publication": "published",
-        "outcomes": {
-          "physical_episodes": 2,
-          "results_available": 2,
-          "results_unavailable": [],
-          "legal_outbound_traversals": 0,
-          "side_exits": 0,
-          "far_arrivals": 0,
-          "return_episodes": 0,
-          "completed_roundtrips": 0,
-          "legal_roundtrips": 0,
-          "legal_return_traversals": 0,
-          "legal_all_outbound_traversals": 0,
-          "all_passage_side_exits": 0,
-          "legality_records": 2,
-          "physical_failures_by_phase": {
-            "body_fall": {
-              "outbound": 1
-            }
-          },
-          "saved_observations": 50,
-          "nonzero_pann_observations": 0,
-          "return_observations": 0,
-          "return_nonzero_pann_observations": 0,
-          "material_loaded_episodes": 1,
-          "max_forward_displacement_m": 0.6925708043957622,
-          "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
-          "observation_sources_unavailable": []
-        },
+        "evaluation": "pending_training",
+        "evaluation_stages": [],
+        "publication": "pending_computation",
+        "outcomes": null,
         "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-a",
         "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1"
       },
@@ -127653,6 +127708,7 @@
         "seed": 2,
         "controller_build": "S5-r29",
         "reward_version": "W38_legal_route_terminal_settlement",
+        "controller_artifact": "S5-r29-qp1",
         "phase_lineage": {
           "status": "explicit_new_phase_continuation",
           "parent_stream_id": "w39-b",
@@ -127704,15 +127760,15 @@
             "historical_counts"
           ]
         },
-        "status": "training_ended",
-        "transitions": 8644,
+        "status": "joint_sampling_running",
+        "transitions": 8651,
         "updates": 33,
-        "new_transitions": 51,
+        "new_transitions": 58,
         "new_updates": 0,
-        "tail": 51,
-        "invocation_new_transitions": 51,
-        "invocation_wall_s": 1975.8264162540436,
-        "collection_updated_unix_s": 1793963005.726758,
+        "tail": 58,
+        "invocation_new_transitions": 7,
+        "invocation_wall_s": 287.5720956325531,
+        "collection_updated_unix_s": 1793966465.0779214,
         "excluded": 145,
         "resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt",
         "last_completed_update": {
@@ -127750,48 +127806,10 @@
           "controller_build": "S5-r28",
           "reward_version": "W38_legal_route_terminal_settlement"
         },
-        "evaluation": "unavailable",
-        "evaluation_stages": [
-          {
-            "level": "E30",
-            "stage_status": "not_run",
-            "reason": "new_update_unavailable"
-          },
-          {
-            "level": "E60",
-            "stage_status": "not_run",
-            "reason": "new_update_unavailable"
-          }
-        ],
-        "publication": "published",
-        "outcomes": {
-          "physical_episodes": 2,
-          "results_available": 2,
-          "results_unavailable": [],
-          "legal_outbound_traversals": 0,
-          "side_exits": 0,
-          "far_arrivals": 0,
-          "return_episodes": 0,
-          "completed_roundtrips": 0,
-          "legal_roundtrips": 0,
-          "legal_return_traversals": 0,
-          "legal_all_outbound_traversals": 0,
-          "all_passage_side_exits": 0,
-          "legality_records": 2,
-          "physical_failures_by_phase": {
-            "material_domain_exit": {
-              "outbound": 1
-            }
-          },
-          "saved_observations": 51,
-          "nonzero_pann_observations": 0,
-          "return_observations": 0,
-          "return_nonzero_pann_observations": 0,
-          "material_loaded_episodes": 1,
-          "max_forward_displacement_m": 0.6563054328986104,
-          "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
-          "observation_sources_unavailable": []
-        },
+        "evaluation": "pending_training",
+        "evaluation_stages": [],
+        "publication": "pending_computation",
+        "outcomes": null,
         "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b",
         "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2"
       }
@@ -127799,8 +127817,8 @@
     "clock": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w40-training-clock.json",
     "shared_training_started_unix_s": 1793961028.2264671,
     "shared_training_deadline_unix_s": 1794061828.2264671,
-    "measured_training_wall_s": 1983.713998556137,
-    "distinct_new_transitions_per_training_hour": 183.29255137819732,
+    "measured_training_wall_s": 5436.851454257965,
+    "distinct_new_transitions_per_training_hour": 76.14701330045878,
     "throughput_scope": "Ends at latest actual collection update; excludes later evaluation/finish.",
     "no_fused_optimizer_or_policy": true,
     "bulk_retained_local": true,
@@ -127811,14 +127829,19 @@
     "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w40-gpu/result.json",
     "session": "s1-w40-gpu",
     "source_commit": "11b87bc3333c0801bf781ad66cab70f06f7d677a",
-    "status": "compiling_exact_model_one_substep",
+    "status": "completed_batch_layer",
     "original_clock": {
       "started_unix_s": 1793961088.128057,
       "deadline_unix_s": 1794061888.128057
     },
-    "last_observed_unix_s": 1793961566.8141637,
+    "last_observed_unix_s": 1793966468.242404,
     "ppo_lineage": false,
     "full_planner_implemented": false,
-    "completion_publisher": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w40-gpu/publish-after-current-process.sh"
+    "completion_publisher": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w40-gpu/publish-after-current-process.sh",
+    "aligned": false,
+    "computation_running": false,
+    "delivery_status": "published",
+    "verified_arrays": 10,
+    "completion_scope": "Existing batch computation naturally finished; only missing arrays supplemented."
   }
 }
