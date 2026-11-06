@@ -1,7 +1,7 @@
 {
   "build": "S5-r29-qp1",
   "based_on": "S5-r29",
-  "status": "numerical_replay_verified_awaiting_D57_build",
+  "status": "numerical_replay_verified_D57_normal_build_complete",
   "task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
   "reviewed_source_commit": "e1e0e1c97a87c3135775fab69c3f6e5a7e1f993c",
   "configuration_overrides": {
@@ -158,7 +158,7 @@
   "reward_version": "W38_legal_route_terminal_settlement",
   "main_admission_tests": false,
   "full_prompt": "docs/S1_W40_START_PROMPT.md",
-  "qualification": "Exact recorded-input algebra verified (both original native outputs reproduced bit for bit, both repairs pass original primal/KKT tolerances, nine adjacent accepted queries unchanged); awaiting normal isolated D57 build and continuation of original jobs. Physical stability and task qualification are unproven.",
+  "qualification": "Existing recorded-QP replay verified at original tolerances; D57 agent_server normal build completed. Original W40 jobs still require real resumed sampling; no new physical admission test.",
   "controller_contract_build": "S5-r29",
   "solver_repair": {
     "scope": "Numerical refinement of the identical r29 convex box projection only; immutable executed S5-r29 source/artifact remains unchanged.",
@@ -224,5 +224,16 @@
       "shift_only_native_control": "Both still hit100iterationlimit and violate original KKT; coordinate translation alone does not repair incident.",
       "scope": "Recorded algebra only; no new physics episode, no main-job restart, no GPU operation."
     }
+  },
+  "normal_build": {
+    "build": "S5-r29-qp1",
+    "based_on": "S5-r29",
+    "controller_contract_build": "S5-r29",
+    "source_commit": "2fbe7edd873a555c8e74a99f9972da1c71114f71",
+    "binary_sha256": "c28b42b6c6685ef2424d2ebbed95c69c2324a8b8d3c3d06a0bd55707d56f8a6e",
+    "prior_binary_sha256": "603d66b94dfb71b7d09d843c7b23fdc4587abe70b9c892a57433756c8533cbcd",
+    "build_started_unix_s": 1793965905.509929,
+    "build_wall_s": 159.8309235572815,
+    "mujoco_dependency_commit": "088079eff0450e32b98ee743141780ed68307506"
   }
 }
