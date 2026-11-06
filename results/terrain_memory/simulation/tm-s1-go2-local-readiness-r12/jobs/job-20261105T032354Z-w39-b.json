@@ -1383,14 +1383,8 @@
     }
   },
   "publication_scope": "compact_git",
-  "publication_status": "publication_pending",
-  "errors": [
-    {
-      "stage": "git",
-      "error": "Command '['git', '-c', 'pack.window=0', 'push', '--no-thin', 'origin', 'HEAD:main']' returned non-zero exit status 1.",
-      "output": "To https://github.com/kaiwen123-yang/MCP-RL.git\n ! [rejected]        HEAD -> main (fetch first)\nerror: failed to push some refs to 'https://github.com/kaiwen123-yang/MCP-RL.git'\nhint: Updates were rejected because the remote contains work that you do\nhint: not have locally. This is usually caused by another repository pushing\nhint: to the same ref. You may want to first integrate the remote changes\nhint: (e.g., 'git pull ...') before pushing again.\nhint: See the 'Note about fast-forwards' in 'git push --help' for details.\n"
-    }
-  ],
+  "publication_status": "published",
+  "errors": [],
   "bulk_retention": {
     "status": "retained_local",
     "upload_status": "unselected_bulk_not_requested",
@@ -1528,7 +1522,7 @@
   },
   "git_delivery": "Prepared for this commit; presence on GitHub records compact delivery only. A failed push remains pending locally. Bulk data is not backed up by this push.",
   "diagnostic_publication": {
-    "status": "tracked_separately",
+    "status": "pending_initial_queue_after_compact_git",
     "requested": true,
     "metadata": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261105T032354Z-w39-b/diagnostics/evidence.json",
     "manifest": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261105T032354Z-w39-b/diagnostics/manifest.json",
@@ -1537,5 +1531,22 @@
   },
   "historical_bulk_publication": {
     "publication_status": "live_snapshot_final_delivery_pending_computation"
+  },
+  "resolved_publication_errors": [
+    {
+      "stage": "git",
+      "error": "Command '['git', '-c', 'pack.window=0', 'push', '--no-thin', 'origin', 'HEAD:main']' returned non-zero exit status 1.",
+      "output": "To https://github.com/kaiwen123-yang/MCP-RL.git\n ! [rejected]        HEAD -> main (fetch first)\nerror: failed to push some refs to 'https://github.com/kaiwen123-yang/MCP-RL.git'\nhint: Updates were rejected because the remote contains work that you do\nhint: not have locally. This is usually caused by another repository pushing\nhint: to the same ref. You may want to first integrate the remote changes\nhint: (e.g., 'git pull ...') before pushing again.\nhint: See the 'Note about fast-forwards' in 'git push --help' for details.\n"
+    }
+  ],
+  "publication_recovery": {
+    "at_unix_s": 1793954110.318099,
+    "cause": "Remote main advanced with solver/GPU documentation; initial compact pushes rejected as non-fast-forward.",
+    "method": "Preserved local completed result commits and failure records, merged origin/main, then ordinary push succeeded.",
+    "evidence_pushed_commit": "043b64e",
+    "training_restarted": false,
+    "evaluation_repeated": false,
+    "training_deadline_changed": false,
+    "original_postprocess_deadline_preserved": 1793924484.1760182
   }
 }

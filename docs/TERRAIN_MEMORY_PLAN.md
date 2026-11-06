@@ -2,11 +2,11 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT / S5-r28 已实际实现、正常构建并启动；共同训练绝对截止北京时间2026-11-06T15:23:54.713909+08:00，resume不重置。
-- w39-a：job-20261105T032354Z-w39-a，training_ended；新增1024/4，累计8593/33，tail=0、excluded=145；评价=completed，紧凑Git=publication_pending。
-- w39-b：job-20261105T032354Z-w39-b，training_ended；新增1024/4，累计8593/33，tail=0、excluded=145；评价=completed，紧凑Git=publication_pending。
-- 任务能力：w39-a合规去程/返程/整圈=0/0/0，材料加载回合=32；w39-b合规去程/返程/整圈=0/0/0，材料加载回合=26。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
-- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
+- 当前任务：W39_CONTACT_EXECUTION_REPAIR_PARALLEL_JOINT / S5-r28两流训练与末端评价已结束；训练各新增1024/4至8593/33、tail0，原8 workers及预算保持，无重启或重跑。
+- w39-a：job-20261105T032354Z-w39-a，training_ended；新增1024/4，累计8593/33，tail=0、excluded=145；评价=completed，紧凑Git=published。
+- w39-b：job-20261105T032354Z-w39-b，training_ended；新增1024/4，累计8593/33，tail=0、excluded=145；评价=completed，紧凑Git=published。
+- 任务能力：A末次update33固定策略E30在10.476s跌倒，B在17.592s跌倒；两流E60均blocked_by_predecessor；训练与评价合法去程/返程/往返均0，尚未形成合格通行基线。
+- 交付：远端main新增文档曾导致两流compact push被拒；已保留双方提交并普通merge/push，043b64e含完整紧凑结果。W39已请求原始诊断待首次后台排队；W38原件已发布。大权重/原件留D57，自动删除0。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 
 ## 1. 长期目标、当前阶段与阅读边界
