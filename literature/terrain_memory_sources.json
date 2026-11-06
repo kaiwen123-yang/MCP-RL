@@ -1871,7 +1871,7 @@
       "version": "arXiv:2510.15626v1",
       "version_date": "2025-10-17",
       "selected_on": "2026-11-05",
-      "accessed_on": "2026-11-05",
+      "accessed_on": "2026-11-06",
       "url": "https://arxiv.org/abs/2510.15626",
       "primary_sources": [
         "https://arxiv.org/abs/2510.15626",
@@ -1918,7 +1918,226 @@
         "do_not_claim": [],
         "catalog_status": "new_formal_paper_entry_not_previously_TM01_TM34",
         "reading_status": "partial_reading_not_a_core_full_method_review"
-      }
+      },
+      "W39_reading_extension": {
+        "id": "TM43",
+        "title": "Adaptive Legged Locomotion via Online Learning for Model Predictive Control",
+        "publication_status": "arXiv 2510.15626v1, 2025-10-17; preprint in the source inspected",
+        "selected_on": "2026-11-06",
+        "accessed_on": "2026-11-06",
+        "url": "https://arxiv.org/html/2510.15626v1",
+        "primary_sources": [
+          "https://arxiv.org/html/2510.15626v1",
+          "https://arxiv.org/abs/2510.15626"
+        ],
+        "prior_review_status": "previously partial reading; this review adds method, failure cases, and computation discussion",
+        "read_for_execution": {
+          "sections": [
+            "III state/input and residual MPC",
+            "IV online least-squares update and regret statement",
+            "V-C failure cases",
+            "V-D timing"
+          ],
+          "scope": "Method/experiment/limitations passages read; no experiment reproduction or claim of every-byte reading."
+        },
+        "application_to_current_stage": "Use saved causal transitions to separate persistent prediction bias from abrupt mode mismatch. A residual model is justified only if it improves held-out multistep/contact predictions; do not use simulator hidden material states as deployment inputs.",
+        "action_and_model_difference": "Contact-force MPC with learned residual force/torque; does not propagate S1's recurrent spatial material memory.",
+        "detailed_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
+        "implementation_status": "literature_reading_only_not_implemented_or_reproduced"
+      },
+      "current_reading_status": "W39 methods/failure cases/timing extension; earlier W38 limited-reading record preserved"
+    },
+    {
+      "id": "TM44",
+      "title": "Adaptive Non-linear Centroidal MPC with Stability Guarantees for Robust Locomotion of Legged Robots",
+      "publication_status": "IEEE Robotics and Automation Letters 10(3), 2806-2813, 2025; peer-reviewed",
+      "selected_on": "2026-11-06",
+      "accessed_on": "2026-11-06",
+      "url": "https://iit-dlslab.github.io/papers/elobaid25ral.pdf",
+      "primary_sources": [
+        "https://iit-dlslab.github.io/papers/elobaid25ral.pdf",
+        "https://github.com/ami-iit/paper_elobaid_2024_stable-centroidal-mpc"
+      ],
+      "prior_review_status": "new to inspected project literature",
+      "read_for_execution": {
+        "sections": [
+          "III-A adaptive redesign and angular-momentum internal dynamics",
+          "III-B equations 15-19 and Proposition 1",
+          "IV validation",
+          "V limitations"
+        ],
+        "scope": "Method/experiment/limitations passages read; no experiment reproduction or claim of every-byte reading."
+      },
+      "application_to_current_stage": "Use as motivation to inspect attitude, angular momentum, support and executable total action alongside trunk clearance. Do not transfer its stability guarantee to r28 or introduce an unproved CLF shield as a certified fix.",
+      "action_and_model_difference": "Centroidal forces/contact locations with a separate whole-body controller; not S1's 12 PD-position targets in full-body MuJoCo.",
+      "detailed_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
+      "implementation_status": "literature_reading_only_not_implemented_or_reproduced",
+      "doi": "10.1109/LRA.2025.3536296"
+    },
+    {
+      "id": "TM45",
+      "title": "A Modular Residual Learning Framework to Enhance Model-Based Approach for Robust Locomotion",
+      "publication_status": "IEEE Robotics and Automation Letters 10(9), 9072-9079, 2025; peer-reviewed",
+      "selected_on": "2026-11-06",
+      "accessed_on": "2026-11-06",
+      "url": "https://arxiv.org/html/2507.18138v1",
+      "primary_sources": [
+        "https://arxiv.org/html/2507.18138v1",
+        "https://pure.kaist.ac.kr/en/publications/a-modular-residual-learning-framework-to-enhance-model-based-appr-2/"
+      ],
+      "prior_review_status": "new to inspected project literature",
+      "read_for_execution": {
+        "sections": [
+          "III-B nominal hybrid dynamics",
+          "III-C residual footstep module",
+          "III-D residual dynamics",
+          "IV-B module ablation",
+          "IV-D/IV-E hardware and comparative results"
+        ],
+        "scope": "Method/experiment/limitations passages read; no experiment reproduction or claim of every-byte reading."
+      },
+      "application_to_current_stage": "Separate estimation quality from action authority. First quantify whether residual prediction helps; only then consider a bounded foothold/timing channel inside the existing controller. Do not replace PANN/TM02 with a horizon-constant residual or treat every terminal failure as insufficient PPO updates.",
+      "action_and_model_difference": "100 Hz GRF MPC plus foothold/phase channels and Cartesian feedback; substantially more control authority than a 2 Hz scalar speed cap.",
+      "detailed_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
+      "implementation_status": "literature_reading_only_not_implemented_or_reproduced",
+      "doi": "10.1109/LRA.2025.3592067"
+    },
+    {
+      "id": "TM46",
+      "title": "Dual-MPC Footstep Planning for Robust Quadruped Locomotion",
+      "publication_status": "arXiv 2511.07921v1 (2025-11-11); author laboratory lists IEEE/ASME Transactions on Mechatronics, 2026. Full text read is the arXiv version; final journal DOI/version was not verified.",
+      "selected_on": "2026-11-06",
+      "accessed_on": "2026-11-06",
+      "url": "https://arxiv.org/html/2511.07921v1",
+      "primary_sources": [
+        "https://arxiv.org/html/2511.07921v1",
+        "https://msc.kaist.ac.kr/bbs/board.php?bo_table=sub5_1"
+      ],
+      "prior_review_status": "new to inspected project literature",
+      "read_for_execution": {
+        "sections": [
+          "II approximated dynamics and footstep constraints",
+          "III force/footstep coupling",
+          "IV hardware comparisons",
+          "V approximation limitations"
+        ],
+        "scope": "Method/experiment/limitations passages read; no experiment reproduction or claim of every-byte reading."
+      },
+      "application_to_current_stage": "Examine whether falls follow insufficient moment authority or poor support transitions even when the trunk margin is legal. It motivates coupling load distribution and placement; it does not prove that installing a second QP repairs the current full-body controller.",
+      "action_and_model_difference": "SRB force/foothold decisions, 20 Hz MPC and a separate 500 Hz WBC, rather than contact-implicit joint-target optimization.",
+      "detailed_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
+      "implementation_status": "literature_reading_only_not_implemented_or_reproduced"
+    },
+    {
+      "id": "TM47",
+      "title": "Contact-Implicit Model Predictive Control: Controlling Diverse Quadruped Motions Without Pre-Planned Contact Modes or Trajectories",
+      "publication_status": "International Journal of Robotics Research 44(3), 486-510, 2025; accepted version dated 2024, original preprint 2023",
+      "selected_on": "2026-11-06",
+      "accessed_on": "2026-11-06",
+      "url": "https://arxiv.org/html/2312.08961v2",
+      "primary_sources": [
+        "https://arxiv.org/html/2312.08961v2",
+        "https://pure.kaist.ac.kr/en/publications/contact-implicit-model-predictive-control-controlling-diverse-qua/"
+      ],
+      "prior_review_status": "new to inspected project literature; distinct from TM40 Fast Contact-Implicit MPC",
+      "read_for_execution": {
+        "sections": [
+          "4 relaxed contact gradients",
+          "5 physical rollout and cost terms",
+          "6 single/multiple shooting and feedback",
+          "7.3 hardware",
+          "8 dynamics gap and limitations"
+        ],
+        "scope": "Method/experiment/limitations passages read; no experiment reproduction or claim of every-byte reading."
+      },
+      "application_to_current_stage": "Inspect shifted-reference contact schedules and defect growth before the first failure. Multiple shooting is a conditional next option if warm-start sensitivity is observed. Do not weaken real collision physics or equate more solver iterations with correction of a wrong predictive state/model.",
+      "action_and_model_difference": "Torque planning plus PD, hard-contact model, and much stronger HOUND actuators; not original Go2 PD-target limits or TM02 material dynamics.",
+      "detailed_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
+      "implementation_status": "literature_reading_only_not_implemented_or_reproduced",
+      "doi": "10.1177/02783649241273645"
+    },
+    {
+      "id": "TM48",
+      "title": "Feedback-MPPI: Fast Sampling-Based MPC via Rollout Differentiation – Adios Low-Level Controllers",
+      "publication_status": "IEEE Robotics and Automation Letters 11(1), 1-8, 2026; accepted October 2025",
+      "selected_on": "2026-11-06",
+      "accessed_on": "2026-11-06",
+      "url": "https://discovery.ucl.ac.uk/id/eprint/10218402/1/RA_L_FeedbackMPPI_Final.pdf",
+      "primary_sources": [
+        "https://discovery.ucl.ac.uk/id/eprint/10218402/1/RA_L_FeedbackMPPI_Final.pdf",
+        "https://discovery.ucl.ac.uk/id/eprint/10218402/",
+        "https://github.com/tombelv/sbmpc"
+      ],
+      "prior_review_status": "new to inspected project literature",
+      "read_for_execution": {
+        "sections": [
+          "II-B solution sensitivities and Remarks 1-2",
+          "III-A quadruped simulation",
+          "III-B quadrotor hardware",
+          "III-C hybrid/constraint examples"
+        ],
+        "scope": "Method/experiment/limitations passages read; no experiment reproduction or claim of every-byte reading."
+      },
+      "application_to_current_stage": "Audit whether candidate acceptance constraints reach the derivative/gain computation and whether actual feedback changes the contact/torque active set. This supports feedback-consistency diagnostics, not a recommendation to switch S1 to MPPI or arbitrarily reduce gains.",
+      "action_and_model_difference": "Sampling-based GRF controller with 50 Hz planning/500 Hz feedback in the quadruped experiment; neither full-body iLQG nor 12 PD targets.",
+      "detailed_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
+      "implementation_status": "literature_reading_only_not_implemented_or_reproduced",
+      "doi": "10.1109/LRA.2025.3630871"
+    },
+    {
+      "id": "TM50",
+      "title": "Primal-Dual iLQR for GPU-Accelerated Learning and Control in Legged Robots (MPX)",
+      "publication_status": "IEEE Robotics and Automation Letters 11(1), 1010-1017, 2026; arXiv v3 2025-12-06",
+      "selected_on": "2026-11-06",
+      "accessed_on": "2026-11-06",
+      "url": "https://arxiv.org/html/2506.07823v3",
+      "primary_sources": [
+        "https://arxiv.org/html/2506.07823v3",
+        "https://github.com/iit-DLSLab/mpx"
+      ],
+      "prior_review_status": "explicit reuse and current-code recheck of earlier GPU review",
+      "read_for_execution": {
+        "sections": [
+          "II parallel scan/filter line search and barriers",
+          "III models",
+          "IV timing/batching/hardware",
+          "current README solver table"
+        ],
+        "scope": "Method/experiment/limitations passages read; no experiment reproduction or claim of every-byte reading."
+      },
+      "application_to_current_stage": "Preferred architecture reference for a third GPU adaptation lane: retain the real CPU plant and exact action interface while first comparing saved-state dynamics/derivatives and solver outputs. Pin code and report end-to-end latency plus CPU training throughput.",
+      "action_and_model_difference": "Paper controls differ from S1's 12 PD targets. Current MJX examples are promising infrastructure, but custom PANN/contact callbacks, 10 integration substeps, constraints and precision still need explicit matching.",
+      "detailed_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
+      "implementation_status": "literature_reading_only_not_implemented_or_reproduced",
+      "doi": "10.1109/LRA.2025.3632610"
+    },
+    {
+      "id": "TM49",
+      "title": "MPCGPU: Real-Time Nonlinear Model Predictive Control through Preconditioned Conjugate Gradient on the GPU",
+      "publication_status": "ICRA 2024; current author software measurements dated 2026-10-06, not a new 2026 paper",
+      "selected_on": "2026-11-06",
+      "accessed_on": "2026-11-06",
+      "url": "https://arxiv.org/html/2309.08079v3",
+      "primary_sources": [
+        "https://arxiv.org/html/2309.08079v3",
+        "https://a2r-lab.org/MPCGPU/",
+        "https://github.com/A2R-Lab/MPCGPU"
+      ],
+      "prior_review_status": "additional solver source beyond the earlier DIAL/MPX/GATO/Turbo shortlist",
+      "read_for_execution": {
+        "sections": [
+          "IV Schur system, GBD-PCG, parallel line search",
+          "V iiwa simulation methodology",
+          "current README status/limitations",
+          "author webpage October measurements"
+        ],
+        "scope": "Method/experiment/limitations passages read; no experiment reproduction or claim of every-byte reading."
+      },
+      "application_to_current_stage": "Secondary solver-kernel reference if a measured KKT/backward linear solve dominates. Do not port it first when derivatives/rollouts dominate, and do not present its microsecond kernel timing as S1 MPC latency.",
+      "action_and_model_difference": "Generated fixed-base rigid-body dynamics are not floating-base Go2 contact/TM02 dynamics. A linear solver component may be reusable without adopting the iiwa controller.",
+      "detailed_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
+      "implementation_status": "literature_reading_only_not_implemented_or_reproduced",
+      "doi": "10.1109/ICRA57147.2024.10611212"
     }
   ],
   "upstream": {
@@ -2036,10 +2255,21 @@
       ],
       "application": "区分CPU C++ MPC与GPU/JAX批量API、私有mjData/模型状态、同步策略版本与环境seed。两完整流各8workers，GPU沿用PANN/PPO。",
       "limits": "Tianshou说明文档0.5.0而当前依赖0.5.1；未把最新MJX-Warp特性写成3.2.3现有功能，未迁移规划后端或测试吞吐。"
+    },
+    {
+      "title": "Current MuJoCo MJX/MJWarp official backend semantics for W40 GPU task",
+      "kind": "official_documentation",
+      "reviewed_on": "2026-11-06",
+      "urls": [
+        "https://mujoco.readthedocs.io/en/latest/mjx.html",
+        "https://mujoco.readthedocs.io/en/latest/mjwarp/index.html"
+      ],
+      "application": "Choose a matched batched prediction/derivative backend; separate JAX AD from Warp FP32/throughput and non-AD behavior. Pin actual GPU environment independently.",
+      "limits": "Latest docs do not imply the existing MuJoCo3.2.3 environment already has these APIs; no backend installed or tested during this review."
     }
   ],
-  "execution_scope_note": "历史条目的“当前”按其日期理解，不以W37复核改写此前阅读和执行状态。当前W37/r26计划采用r24执行骨架，撤销r25新增MovingSupport/SupportPlacement冲突，统一cap有效运动参考与几何风险残差值/导数，保留完整PANN-PPO-MPC链路、既有接触平滑、全状态反馈和PD；完整软接触一致性、反馈局部有效域及记忆收益仍需本项目证据。新增全文、源码和官方文档阅读与仅摘要来源分别标注；它们用于支持当前修复，不新增论文复现、独立测试、阅读轮次或执行门禁。实际执行范围以最新主计划与当前状态文档为准。",
-  "last_updated": "2026-11-05",
+  "execution_scope_note": "Historical current-stage statements apply to their recorded dates. Current execution scope is W40 stability repair with two own-lineage joint streams and one newly authorized GPU adaptation/testing task, after completed W39. Literature guides evidence-based mechanisms; its guarantees and speedups are not transferred to Go2/TM02 without matching model/action assumptions. See current main plan.",
+  "last_updated": "2026-11-06",
   "W38_literature_review": {
     "reviewed_on": "2026-11-05",
     "timezone": "Asia/Shanghai",
@@ -2062,5 +2292,61 @@
     ],
     "promoted_existing_additional_source": "TM42",
     "scope_note": "原execution_scope_note中的W37/r26安排以及各条目的历史当前状态按原日期理解。2026-11-05本轮仅合并W38结束后的文献复核，未实现或运行新的控制方案。文献用于解释与选择已有事件证据支持的修订，不要求新增论文复现、独立测试、阅读轮次或执行门禁；实际下一步以最新主计划为准。"
+  },
+  "W39_literature_review": {
+    "reviewed_on": "2026-11-06",
+    "timezone": "Asia/Shanghai",
+    "source_commit": "e51acd535445f617bd0486650e67df4bcc116481",
+    "detailed_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
+    "new_control_papers": [
+      "TM44",
+      "TM45",
+      "TM46",
+      "TM47",
+      "TM48"
+    ],
+    "additional_GPU_source_with_2026_software": "TM49",
+    "prior_GPU_reading_promoted_to_catalog_not_new_discovery": "TM50",
+    "expanded_prior_reading": "TM43",
+    "abstract_only_candidates": [
+      {
+        "title": "Real-Time Control-Constrained DDP for Underactuated Balancing of Legged Robots",
+        "publication": "RA-L 2026, official IEEE RAS notice; arXiv 2608.18552",
+        "primary_urls": [
+          "https://arxiv.org/abs/2608.18552",
+          "https://www.ieee-ras.org/news/real-time-control-constrained-ddp-for-underactuated-balancing-of-legged-robots/"
+        ],
+        "web_refs": [
+          "turn121academia8",
+          "turn139view2"
+        ],
+        "reading_limit": "Abstract and official publication notice only; arXiv HTML/PDF fetches failed. Promising APG/control-constrained feasibility-driven DDP, but no claim of full-text verification or immediate adoption. Abstract evidence is simulation."
+      },
+      {
+        "title": "Enhancing quadruped robot locomotion stability on deformable terrains through contact perception and terrain classification",
+        "publication": "Meccanica 61, article 91, 2026-06-30",
+        "primary_urls": [
+          "https://link.springer.com/article/10.1007/s11012-026-02150-2"
+        ],
+        "web_refs": [
+          "turn131view1"
+        ],
+        "reading_limit": "Publisher abstract only; subscription full text unavailable. Uses a special dual-sensor foot-contact module and deformation-force-aware GRF optimization. Do not equate terrain classification with causal recovery/revisit memory, or assume our observations provide its sensors."
+      },
+      {
+        "title": "CUDA MPC: A GPU-Native Solver for Model Predictive Control",
+        "publication": "arXiv 2608.03051, 2026-08-04 preprint",
+        "primary_urls": [
+          "https://arxiv.org/abs/2608.03051"
+        ],
+        "web_refs": [
+          "turn119academia8",
+          "turn121academia9"
+        ],
+        "reading_limit": "Abstract only; full text and author code not obtained. Fused ADMM kernels are an interesting candidate, but the headline speedup is not used in recommendations."
+      }
+    ],
+    "not_all_2026_publications": true,
+    "no_new_experiments_in_review": true
   }
 }

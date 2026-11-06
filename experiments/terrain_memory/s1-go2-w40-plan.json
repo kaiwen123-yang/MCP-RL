@@ -1,0 +1,336 @@
+{
+  "schema_version": "S1_W40_execution_plan_v1",
+  "task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
+  "status": "authorized_plan_not_implemented_built_or_started",
+  "date": "2026-11-06",
+  "timezone": "Asia/Shanghai",
+  "reviewed_results_commit": "e51acd535445f617bd0486650e67df4bcc116481",
+  "delivery_rechecked_commit": "7150a6b143f35e8f1ad5e37ac819267c1d973727",
+  "plan": "docs/TERRAIN_MEMORY_PLAN.md",
+  "startup_prompt": "docs/S1_W40_START_PROMPT.md",
+  "evidence": [
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/results-audit.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/code-audit.md",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/read-coverage.json"
+  ],
+  "current_execution": {
+    "phase": "W39",
+    "build": "S5-r28",
+    "status": "two_training_streams_and_final_evaluations_finished",
+    "each_samples": 8593,
+    "each_updates": 33,
+    "each_trained_samples": 8448,
+    "each_excluded": 145,
+    "each_tail": 0,
+    "training_episodes": 62,
+    "natural_failures": 59,
+    "truncations": 3,
+    "legal_outbound_return_roundtrip": [
+      0,
+      0,
+      0
+    ],
+    "E30_fall_s": {
+      "a": 10.476,
+      "b": 17.592
+    }
+  },
+  "main_control": {
+    "proposed_build": "S5-r29",
+    "implementation_status": "planned_not_implemented",
+    "primary_mechanism": "state_dependent_actuator_constrained_local_feedback_shared_by_candidate_and_execution",
+    "evidence_basis": "Accepted/actual joint-velocity divergence, nominal and feedback-induced actuator saturation precede first material load in both saved E30s; trunk(v,J) selection operates but does not imply balance.",
+    "initial_existing_data_review_target_s": 1800,
+    "substitution_rule": "If saved original files demonstrate an earlier specific interface bug, repair that instead with explicit evidence. Do not stack mechanisms or blindly relabel unchanged r28.",
+    "qp": {
+      "variables": 12,
+      "center": "accepted line-search feedforward u_ff",
+      "state_error": "36D tangent delta_x with original quaternion convention",
+      "lower": "max(original_target_min,q+(tau_min+5*qdot)/60)",
+      "upper": "min(original_target_max,q+(tau_max+5*qdot)/60)",
+      "objective": ".5 eta^T H eta + (s C delta_x)^T eta",
+      "constraint": "lower(x)-u_ff <= eta <= upper(x)-u_ff",
+      "output": "u_ff+eta",
+      "H": "same-plan regularized non-diagonal Q_uu",
+      "C": "same-plan Q_ux",
+      "s": "actual candidate feedback_scaling, not assumed1 at every call",
+      "active_pd_boundary_derivative": "e_q+(5/60)e_v",
+      "free_derivative": "-H_FF^-1(s*C_F+H_FA*B_A)",
+      "line_search": "alpha already in u_ff; never add full Q_u again only at deployment",
+      "empty_intersection": "explicit infeasible and predeclared minimum-violation restoration with original physical torque clipping",
+      "predicted_decrease": "recompute for changed policy or record unavailable; do not keep an invalid surprise ratio",
+      "limits": "Instantaneous feasibility is neither 2ms held-action feasibility nor a closed-loop stability guarantee.",
+      "interpolation": "Define one consistent H(t),C(t),unconstrained K(t) and same candidate/deployment interpolation; independently interpolating H/C/oldK is not equivalent. Use actual regularization_used. If retaining old interpolated K as target, define corresponding QP linear term and disclose difference from original Q_ux."
+    },
+    "retained": [
+      "Go2 and original collision geometry",
+      "TM02 .02 material validity domain",
+      "kp60/kd5 and original target/torque limits",
+      "2ms control hold and ten0.2ms substeps",
+      "r28 trunk(v,J) selection",
+      "r27 C2 and r26 causal packet/A/B/P/Q",
+      "frozen causal PANN and658D observation",
+      "2Hz scalar cap and W38 reward",
+      "original fall/route/30-60-300-600 evaluation"
+    ],
+    "do_not_stack": [
+      "new reward",
+      "new gait",
+      "new action dimensions",
+      "PANN training",
+      "wholesale contact/plant replacement",
+      "r25 MovingSupport/SupportPlacement/load allocation"
+    ],
+    "diagnostic_semantic_fix": "classify feasible_to_feasible_cost/restored_to_feasible/infeasible_restoration from previous and accepted v; leave historical logs unchanged"
+  },
+  "main_streams": [
+    {
+      "stream_id": "w40-a",
+      "group": "PANN_PPO_S5",
+      "seed": 1,
+      "parent_stream_id": "w39-a",
+      "parent_phase_id": "job-20261105T032354Z-w39-a",
+      "parent_controller_build": "S5-r28",
+      "parent_reward_version": "W38_legal_route_terminal_settlement",
+      "parent_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/resume-state-ep00284.pt",
+      "parent_episode": 284,
+      "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1",
+      "new_fork": false,
+      "reseed": false,
+      "restore": [
+        "actor",
+        "critic",
+        "optimizer",
+        "RNG",
+        "normalization",
+        "historical counts"
+      ],
+      "preserve_ancestor_fork_identity": true
+    },
+    {
+      "stream_id": "w40-b",
+      "group": "PANN_PPO_S5",
+      "seed": 2,
+      "parent_stream_id": "w39-b",
+      "parent_phase_id": "job-20261105T032354Z-w39-b",
+      "parent_controller_build": "S5-r28",
+      "parent_reward_version": "W38_legal_route_terminal_settlement",
+      "parent_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
+      "parent_episode": 280,
+      "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2",
+      "new_fork": false,
+      "reseed": false,
+      "restore": [
+        "actor",
+        "critic",
+        "optimizer",
+        "RNG",
+        "normalization",
+        "historical counts"
+      ],
+      "preserve_ancestor_fork_identity": true
+    }
+  ],
+  "counts": {
+    "initial_per_stream": {
+      "samples": 8593,
+      "updates": 33,
+      "excluded": 145,
+      "tail": 0
+    },
+    "new_per_stream": {
+      "samples": 1024,
+      "updates": 4
+    },
+    "target_per_stream": {
+      "samples": 9617,
+      "updates": 37,
+      "trained_samples": 9472,
+      "excluded": 145,
+      "tail": 0
+    },
+    "first_batch": [
+      8594,
+      8849
+    ],
+    "first_new_update": 34,
+    "distinct_new_samples_both": 2048,
+    "sample_tree_after_both_targets": 12689,
+    "trained_sample_tree_after_both_targets": 12544,
+    "not_one_combined_policy": true
+  },
+  "runtime_activation": {
+    "required": true,
+    "current_R12_contract_is_completed_W39": true,
+    "required_consumers": [
+      "prepare/build r29 source and specification",
+      "parent_map and active_streams",
+      "new phase_lineage with preserved fork ancestry",
+      "isolated training paths and episode prefixes",
+      "r29 runtime diagnostic switches",
+      "training and own final-update evaluator",
+      "finisher/index/handoff",
+      "new W40 shared clock",
+      "existing diagnostic queue integration"
+    ],
+    "ordinary_resume": "same job frozen contract and deadline",
+    "do_not_launch_unmodified_r28_under_new_name": true
+  },
+  "resources": {
+    "host": "autodl-d57",
+    "recorded_vcpu": 25,
+    "recorded_gpu_GB_class": 96,
+    "recorded_ram_GB": 120,
+    "live_free_memory": "measure once at normal launch",
+    "main_default_workers_each": 12,
+    "authorized_workers_each": [
+      12,
+      14
+    ],
+    "main_parallel_streams": 2,
+    "extra_gpu_task": 1,
+    "preferred_during_gpu_task": "2x12 main MPC workers plus1-2 GPU host threads",
+    "torch_threads": 1,
+    "blas_threads": 1,
+    "main_jax_environment": "preserve actual existing FP64/sharing configuration",
+    "oversubscription": "allowed modestly; measure useful throughput and contention, not thread count or VRAM fullness"
+  },
+  "gpu_task": {
+    "stream": "w40-gpu",
+    "status": "authorized_not_implemented_or_started",
+    "is_PPO_training_branch": false,
+    "directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w40-gpu",
+    "session": "s1-w40-gpu",
+    "host_threads": [
+      1,
+      2
+    ],
+    "max_build_jobs": 2,
+    "preferred_first_backend": "MJX-JAX FP64 batch dynamics/finite differences and candidate rollout with same problem; MPX as architecture reference",
+    "one_backend_at_a_time": true,
+    "model_dimensions": {
+      "state_storage": 37,
+      "state_tangent": 36,
+      "action": 12,
+      "state_nodes": 176,
+      "physical_transitions": 175,
+      "node_dt_s": 0.002,
+      "physics_dt_s": 0.0002,
+      "horizon_s": 0.35,
+      "original_candidates": 10
+    },
+    "parallel_dimensions": "nodes x perturbation directions; preserve ten-substep prefix derivatives and terminal risk semantics",
+    "CPU_plant": "keep original Go2/TM02 CPU ground truth; no hidden material input to predictor",
+    "version_rule": "begin saved-state r28 parity if needed; when targeting r29 use an explicitly matched r29 CPU reference. Never mix versions in a parity/speed claim.",
+    "test_sources": [
+      "saved rigid-ground normal state",
+      "A first large feedback/clipping",
+      "B nominal saturation and first large feedback",
+      "first material load",
+      "first material-domain exit"
+    ],
+    "test_sequence": [
+      "one and ten substeps with original control/contacts",
+      "A/B and risk C/D",
+      "fixed full candidate outputs and ranking",
+      "one whole planner call including transfer and synchronization"
+    ],
+    "timing": [
+      "existing six internal solver timers with units",
+      "JIT/first call separately",
+      "steady-state p50/p95 on fixed bounded repeats",
+      "host-device transfer and synchronization",
+      "whole planner call",
+      "peak VRAM/host RAM",
+      "main-stream useful throughput during coexistence"
+    ],
+    "numerical_acceptance": "record raw per-variable errors and predeclare units/tolerances from original FD step and model precision; do not relax physical qualification thresholds",
+    "MJWarp_caveat": "official FP32/no automatic differentiation/throughput focus; original1e-6 FD is not automatically equivalent",
+    "optional_integration": "only after matched same-problem numerical alignment and complete backend exist: frozen own W39 policy and original CPU plant, separate short closed-loop <=original E30 duration, marked GPU integration only; no formal qualification or automatic higher ladder",
+    "dependencies": "reuse if compatible; necessary new GPU dependencies isolated and pinned; do not alter main MuJoCo3.2.3 ABI/environment",
+    "completion_rule": "deliver runnable code and actual results at completed layer, exact remaining interface/precision limit; no claim of full GPU MPC if only a batch layer exists",
+    "test_authorization": "Latest user explicitly authorizes third GPU implementation/testing; overrides historical two-slot/no-GPU-benchmark restriction for this task only",
+    "do_not_do": [
+      "third PPO lineage or merging branch optimizers",
+      "hot swap running main controller",
+      "many-backend grid",
+      "alter physics to inflate speed",
+      "report kernel speed as full control realtime"
+    ]
+  },
+  "budgets": {
+    "interactive_max_s": 14400,
+    "main_shared_training_max_s": 100800,
+    "main_clock_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w40-training-clock.json",
+    "per_main_final_eval_max_s": 14400,
+    "compact_finish_max_s": 21600,
+    "gpu_independent_max_s": 100800,
+    "gpu_clock": "create once at first actual GPU task start; finish early when tests complete",
+    "resume_resets_deadline": false,
+    "old_W39_deadlines": "historical and immutable; no extension",
+    "automatic_next_controller_chain": false
+  },
+  "evaluation": {
+    "last_actual_own_new_update_gt": 33,
+    "fixed_mean_policy": true,
+    "frozen_normalization": true,
+    "levels": [
+      "E30",
+      "same-case eligible E60"
+    ],
+    "no_parent_checkpoint_substitution": true,
+    "no_E300_E600_auto": true,
+    "preserve_known_r25_stop": true,
+    "new_failure_count_cap": null,
+    "ordinary_failure": "save and continue natural sampling",
+    "main_admission_tests": false
+  },
+  "diagnostics": {
+    "all_episode_core_records": "preserve all requested original feedback/planner/reference/execution and new rollout evidence",
+    "new_full_horizon_scope": "selected event windows only, each retained plan once before buffers reused; explicitly enumerate full-horizon coverage",
+    "events": "nominal first raw-PD saturation, feedback-added saturation, max|rawKdx|>.5rad, target clipping, first material load, domain exit, nonfoot load, QP infeasibility/failure/restoration, trunk restoration, terminal; merged [-.10,+.20]s and terminal .10s; logging only, no physical stop changes",
+    "full_plan_fields": [
+      "accepted states/actions/times/cost",
+      "installed feedback reference/nominal/K/scaling",
+      "r29 H/C and active constraints/bounds/status",
+      "plan id/clock/model/version",
+      "first20ms node and ten-substep PD/contact/material coverage"
+    ],
+    "representation": "lossless binary/compression, bounded in-memory event ring; do not repeat full matrices in500Hz action lines",
+    "historical_missing": "full accepted/K never recorded in r27/r28; cannot reconstruct as original evidence",
+    "per_action_live_fields": [
+      "delta_x",
+      "actual feedback scaling",
+      "plan id and interpolation nodes/weights",
+      "instantaneous lower/upper bounds",
+      "QP solution and active set/constraint type",
+      "solver/restoration status",
+      "raw/final actions and raw/clipped PD torque",
+      "information sufficient to reconstruct active-boundary state derivatives"
+    ],
+    "plan_vs_live_K": "Plan reference K is not the full effective online-QP Jacobian. Store frozen H/C/referenceK once per retained plan, live state/active-set per action; reconstruct effective Jacobian without duplicating432 elements each tick.",
+    "coverage_boundary": "Include every plan referenced by earliest pre-window action even if origin precedes window; no old spatial gate. Record incomplete beginning/end coverage; do not continue physics after termination to fill post-window."
+  },
+  "delivery": {
+    "compact_first": true,
+    "background_requested_diagnostics": true,
+    "no_wait_for_raw_to_continue_research": true,
+    "no_old_finisher_rerun": true,
+    "serialize_git_index": true,
+    "retain_existing_upload_route_workers_deadlines": true,
+    "unrequested_bulk": "checkpoints/full resume/full videos retained on D57 for user backup",
+    "automatic_delete_server_outputs_or_uploaded_copies": false,
+    "archive_on_user_PC": false,
+    "deletion_owner": "user after backup",
+    "no_force_push": true
+  },
+  "implementation_status": {
+    "r29_implemented": false,
+    "r29_built": false,
+    "W40_main_started": false,
+    "GPU_backend_implemented": false,
+    "GPU_tests_run": false,
+    "server_accessed_in_review": false
+  }
+}

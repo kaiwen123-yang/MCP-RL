@@ -1,5 +1,15 @@
 # S1 求解器并行与 GPU MPC 可行性审查
 
+## 2026-11-06执行更新：第三并行任务已授权
+
+**W39两流现已完成；本轮用户明确允许两条稳定性主线之外新增GPU MPC适配与测试。** 当前执行入口改为[主计划第5节](TERRAIN_MEMORY_PLAN.md#5-第三任务本轮实际做-gpu-mpc-适配与测试)、[W40计划](../experiments/terrain_memory/s1-go2-w40-plan.json)和[启动提示词](S1_W40_START_PROMPT.md)。下文2026-11-05计时、运行快照和旧“不另做benchmark/暂不增加第三任务”的安排是历史记录；后者不再阻止本轮明确授权的必要GPU数值、性能、接入测试。尚未实现/构建/运行GPU后端，本次只发布计划。
+
+W39全62回合复算：普通planning87.4371%＋启动planning2.0593%＝89.4964%回合墙钟和，平均普通规划1.785931s；两流共享训练14.4560h、2048新样本＝141.671/h。见[新审计](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/results-audit.json)。这些是同步仿真耗时，不是实时控制延迟根因。
+
+第三任务默认1–2CPU host线程，与两主线各12workers并行；需要的新依赖隔离固定版本。先做原12维PD目标问题的GPU批量预测/FD/rollout，优先FP64与原差分语义；报告真实同状态误差和整步计时，不能只有调研，也不能用缩减模型或内核微秒代表完整GPU MPC。最新官方[MuJoCo XLA](https://mujoco.readthedocs.io/en/latest/mjx.html)和[MuJoCo Warp](https://mujoco.readthedocs.io/en/latest/mjwarp/index.html)仍区分JAX自动微分与Warp吞吐/FP32限制；实际安装版本与主线MuJoCo3.2.3并不自动相同。
+
+---
+
 日期：2026-11-05。审查代码与结果固定在 [ccf4919](https://github.com/kaiwen123-yang/MCP-RL/tree/ccf49196d38be60156b62e83fdd3beabf0c6767a)。本文件记录源码审查、已保存数据复算、公开实现选型和后续工程建议；没有实现或部署 GPU MPC，没有新增物理实验，也没有改变 W39 的运行配置。
 
 发布时接续了 [5265257](https://github.com/kaiwen123-yang/MCP-RL/commit/52652577205a7e5711f22209ea32c701f99eea7b) 的服务器交接：新 worker 政策已部署，当前 W39 仍各 8 workers；新快照为 A 新增 576/2、B 新增 577/2。该提交的主计划顶部六行完整保留。下文计时审查固定于 ccf4919，W39 第 2.2 节是当时的历史快照，不替代最新交接。
