@@ -21022,7 +21022,7 @@
       "arm": "S",
       "mission": "long",
       "cohort": "W40_r29_legacy_center_H_projection_v15",
-      "status": "running",
+      "status": "completed",
       "physical_started": true,
       "command": [
         "scripts/train_s1_go2_r12.py",
@@ -21054,7 +21054,21 @@
         "final_hold_s": null
       },
       "execution_fingerprint": "ff82da52b14fc9b0325684194c9792ef02f88f124716e7a2e8c72fbe325bedae",
-      "source_commit": "f5ed75ed0c9cf9d70be4136d0c9ce635b008dcf3"
+      "source_commit": "f5ed75ed0c9cf9d70be4136d0c9ce635b008dcf3",
+      "success": null,
+      "reason": "execution_error",
+      "simulation_s": 11.473999999999936,
+      "wall_s": 901.1450900677592,
+      "stage_status": "technical_interruption",
+      "case_identity": null,
+      "qualification": {
+        "predecessor_attempt": null,
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+        "solver_workers": null,
+        "worker_setting_checked_against_predecessor": false
+      },
+      "result": "train-job-20261106T103028Z-w40-a-PANN_PPO_S5-s1-ep00286.json"
     }
   ],
   "stages": {},
@@ -21126,7 +21140,7 @@
   },
   "protocol_revision": "W40_r29_legacy_center_H_projection_v15",
   "current_task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
-  "training_transitions": 10975,
+  "training_transitions": 10998,
   "next_task": "W35_SAME_R24_CONTINUE_AND_EVAL",
   "pre_runner_initialization_failures": [
     {
@@ -117590,7 +117604,7 @@
     "w40-a": {
       "group": "PANN_PPO_S5",
       "seed": 1,
-      "actual_transitions": 8620,
+      "actual_transitions": 8643,
       "stream_id": "w40-a",
       "fork_identity": {
         "stream_id": "w38-a",
@@ -117663,11 +117677,11 @@
         ]
       },
       "phase_initial_transitions": 8593,
-      "phase_new_transitions": 27,
+      "phase_new_transitions": 50,
       "phase_new_updates": 0,
       "updates": 33,
-      "tail_buffer": 27,
-      "episodes": 285,
+      "tail_buffer": 50,
+      "episodes": 286,
       "excluded_old_version_transitions": 145,
       "phase_id": "job-20261106T103028Z-w40-a",
       "controller_migration": {
@@ -117693,10 +117707,10 @@
         "isolated_tail_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/excluded-r25-004353-004497.pt"
       },
       "phase_stop": null,
-      "physics_s": 4243.98059999718,
+      "physics_s": 4255.4545999971815,
       "controller_build": "S5-r29",
       "output": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1",
-      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00285.pt"
+      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt"
     }
   },
   "training_updates": null,
@@ -120986,13 +121000,328 @@
     "job-20261106T103028Z-w40-a": {
       "stream_id": "w40-a",
       "phase_id": "job-20261106T103028Z-w40-a",
-      "live_status": "joint_sampling_running",
-      "latest_counts": {
-        "transitions": 8642,
+      "summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-a.json",
+      "training": {
+        "actual_transitions": 8643,
         "updates": 33,
-        "new_transitions": 49,
+        "target_transitions": 9617,
+        "target_updates": 37,
+        "target_reached": false,
+        "stream_id": "w40-a",
+        "invocation_wall_s": 1982.0544955730438,
+        "invocation_new_transitions": 50,
+        "initial_transitions": 8593,
+        "new_transitions": 50,
+        "initial_updates": 33,
         "new_updates": 0,
-        "tail": 49
+        "unupdated_fragment": 50,
+        "reason": "deadline_or_technical_stop",
+        "last_stage_status": "technical_interruption",
+        "phase_id": "job-20261106T103028Z-w40-a",
+        "phase_lineage": {
+          "status": "explicit_new_phase_continuation",
+          "parent_stream_id": "w39-a",
+          "parent_phase_id": "job-20261105T032354Z-w39-a",
+          "parent_phase_lineage": {
+            "status": "explicit_new_phase_continuation",
+            "parent_stream_id": "w38-a",
+            "parent_phase_id": "job-20261104T104730Z-w38-a",
+            "current_stream_id": "w39-a",
+            "current_phase_id": "job-20261105T032354Z-w39-a",
+            "controller_build": "S5-r28",
+            "reward_version": "W38_legal_route_terminal_settlement",
+            "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+            "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+            "parent_transitions": 7569,
+            "parent_updates": 29,
+            "parent_episode": 251,
+            "inherited_excluded": 145,
+            "new_exclusions": 0,
+            "new_fork": false,
+            "reseeded_after_checkpoint_restore": false,
+            "restored": [
+              "actor",
+              "critic",
+              "optimizer",
+              "RNG",
+              "normalization",
+              "historical_counts"
+            ]
+          },
+          "current_stream_id": "w40-a",
+          "current_phase_id": "job-20261106T103028Z-w40-a",
+          "controller_build": "S5-r29",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/resume-state-ep00284.pt",
+          "parent_transitions": 8593,
+          "parent_updates": 33,
+          "parent_episode": 284,
+          "inherited_excluded": 145,
+          "new_exclusions": 0,
+          "new_fork": false,
+          "reseeded_after_checkpoint_restore": false,
+          "restored": [
+            "actor",
+            "critic",
+            "optimizer",
+            "RNG",
+            "normalization",
+            "historical_counts"
+          ]
+        },
+        "controller_build": "S5-r29",
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "phase_stop": null,
+        "excluded_old_version_transitions": 145,
+        "controller_migration": {
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00144.pt",
+          "parent_release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261101T133954Z-part02/job-20261101T133954Z__training__PANN_PPO_S5-seed0__resume-state-ep00144.pt",
+          "parent_controller_build": "S5-r25",
+          "controller_build": "S5-r26",
+          "reward_version": "W36_legal_route_progress_and_lap_alignment",
+          "first_excluded_transition": 4353,
+          "last_excluded_transition": 4497,
+          "excluded_transitions": 145,
+          "used_in_new_updates": false,
+          "restored": [
+            "actor",
+            "critic",
+            "optimizer",
+            "RNG",
+            "normalization",
+            "historical_counts"
+          ],
+          "continuous_environment_restored": false,
+          "new_buffer_size": 0,
+          "isolated_tail_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/excluded-r25-004353-004497.pt"
+        },
+        "last_completed_update": {
+          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/checkpoint-008593.pt",
+          "samples": 8593,
+          "updates": 33,
+          "phase_id": "job-20261105T032354Z-w39-a",
+          "stream_id": "w39-a",
+          "phase_lineage": {
+            "status": "explicit_new_phase_continuation",
+            "parent_stream_id": "w38-a",
+            "parent_phase_id": "job-20261104T104730Z-w38-a",
+            "current_stream_id": "w39-a",
+            "current_phase_id": "job-20261105T032354Z-w39-a",
+            "controller_build": "S5-r28",
+            "reward_version": "W38_legal_route_terminal_settlement",
+            "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+            "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+            "parent_transitions": 7569,
+            "parent_updates": 29,
+            "parent_episode": 251,
+            "inherited_excluded": 145,
+            "new_exclusions": 0,
+            "new_fork": false,
+            "reseeded_after_checkpoint_restore": false,
+            "restored": [
+              "actor",
+              "critic",
+              "optimizer",
+              "RNG",
+              "normalization",
+              "historical_counts"
+            ]
+          },
+          "controller_build": "S5-r28",
+          "reward_version": "W38_legal_route_terminal_settlement"
+        },
+        "last_episode_reason": "execution_error",
+        "last_update_is_own_current_phase_new_update": false,
+        "outcomes": {
+          "physical_episodes": 2,
+          "results_available": 2,
+          "results_unavailable": [],
+          "legal_outbound_traversals": 0,
+          "side_exits": 0,
+          "far_arrivals": 0,
+          "return_episodes": 0,
+          "completed_roundtrips": 0,
+          "legal_roundtrips": 0,
+          "legal_return_traversals": 0,
+          "legal_all_outbound_traversals": 0,
+          "all_passage_side_exits": 0,
+          "legality_records": 2,
+          "physical_failures_by_phase": {
+            "body_fall": {
+              "outbound": 1
+            }
+          },
+          "saved_observations": 50,
+          "nonzero_pann_observations": 0,
+          "return_observations": 0,
+          "return_nonzero_pann_observations": 0,
+          "material_loaded_episodes": 1,
+          "max_forward_displacement_m": 0.6925708043957622,
+          "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+          "observation_sources_unavailable": []
+        }
+      },
+      "evaluation": {
+        "job": "job-20261106T103028Z-w40-a",
+        "status": "unavailable",
+        "started_unix_s": 1793963013.0,
+        "deadline_unix_s": 1793977413.0,
+        "controller_build": "S5-r29",
+        "group": "PANN_PPO_S5",
+        "seed": 1,
+        "stream_id": "w40-a",
+        "phase_id": "job-20261106T103028Z-w40-a",
+        "phase_lineage": {
+          "status": "explicit_new_phase_continuation",
+          "parent_stream_id": "w39-a",
+          "parent_phase_id": "job-20261105T032354Z-w39-a",
+          "parent_phase_lineage": {
+            "status": "explicit_new_phase_continuation",
+            "parent_stream_id": "w38-a",
+            "parent_phase_id": "job-20261104T104730Z-w38-a",
+            "current_stream_id": "w39-a",
+            "current_phase_id": "job-20261105T032354Z-w39-a",
+            "controller_build": "S5-r28",
+            "reward_version": "W38_legal_route_terminal_settlement",
+            "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+            "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+            "parent_transitions": 7569,
+            "parent_updates": 29,
+            "parent_episode": 251,
+            "inherited_excluded": 145,
+            "new_exclusions": 0,
+            "new_fork": false,
+            "reseeded_after_checkpoint_restore": false,
+            "restored": [
+              "actor",
+              "critic",
+              "optimizer",
+              "RNG",
+              "normalization",
+              "historical_counts"
+            ]
+          },
+          "current_stream_id": "w40-a",
+          "current_phase_id": "job-20261106T103028Z-w40-a",
+          "controller_build": "S5-r29",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/resume-state-ep00284.pt",
+          "parent_transitions": 8593,
+          "parent_updates": 33,
+          "parent_episode": 284,
+          "inherited_excluded": 145,
+          "new_exclusions": 0,
+          "new_fork": false,
+          "reseeded_after_checkpoint_restore": false,
+          "restored": [
+            "actor",
+            "critic",
+            "optimizer",
+            "RNG",
+            "normalization",
+            "historical_counts"
+          ]
+        },
+        "condition": "nominal",
+        "workers": 12,
+        "checkpoint_selection": "Own current W40 phase/stream/controller/reward, updates>33 and samples>8593; no parent fallback.",
+        "deterministic_policy_mean": true,
+        "frozen_normalization": true,
+        "ppo_updates": false,
+        "attempts": [],
+        "stages": [
+          {
+            "level": "E30",
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
+          },
+          {
+            "level": "E60",
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
+          }
+        ],
+        "reason": "new_update_unavailable",
+        "finished_unix_s": 1793963014.6818955
+      },
+      "publication_scope": "compact_git",
+      "publication_status": "published",
+      "bulk_retention": {
+        "status": "retained_local",
+        "upload_status": "unselected_bulk_not_requested",
+        "backup_owner": "user",
+        "requested_diagnostics": "Tracked separately under this job's diagnostics/evidence.json; selected raw arrays are requested uploads, not unrequested bulk.",
+        "deletion": "User exports to their storage disk, then centrally deletes after backup.",
+        "repository_root": "/root/autodl-tmp/MCP-RL",
+        "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-a",
+        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1",
+        "episode_directories": [
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-a-PANN_PPO_S5-s1-ep00285",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-a-PANN_PPO_S5-s1-ep00286"
+        ],
+        "training_binary_paths": [
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00284.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00285.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt"
+        ],
+        "parent_resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/resume-state-ep00284.pt",
+        "latest_resume": {
+          "path": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt",
+          "samples": 8643,
+          "updates": 33,
+          "phase_id": "job-20261106T103028Z-w40-a",
+          "identity_source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-a/stream-records/progress.json"
+        },
+        "last_completed_update": {
+          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/checkpoint-008593.pt",
+          "samples": 8593,
+          "updates": 33,
+          "phase_id": "job-20261105T032354Z-w39-a",
+          "stream_id": "w39-a",
+          "phase_lineage": {
+            "status": "explicit_new_phase_continuation",
+            "parent_stream_id": "w38-a",
+            "parent_phase_id": "job-20261104T104730Z-w38-a",
+            "current_stream_id": "w39-a",
+            "current_phase_id": "job-20261105T032354Z-w39-a",
+            "controller_build": "S5-r28",
+            "reward_version": "W38_legal_route_terminal_settlement",
+            "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+            "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+            "parent_transitions": 7569,
+            "parent_updates": 29,
+            "parent_episode": 251,
+            "inherited_excluded": 145,
+            "new_exclusions": 0,
+            "new_fork": false,
+            "reseeded_after_checkpoint_restore": false,
+            "restored": [
+              "actor",
+              "critic",
+              "optimizer",
+              "RNG",
+              "normalization",
+              "historical_counts"
+            ]
+          },
+          "controller_build": "S5-r28",
+          "reward_version": "W38_legal_route_terminal_settlement"
+        },
+        "availability": "No bulk backup or upload is claimed; historical user/deletion state is not inferred."
+      },
+      "cleanup": {
+        "enabled": false,
+        "owner": "user",
+        "status": "manual_after_user_backup",
+        "deleted_files": 0
+      },
+      "live_status": "training_ended",
+      "latest_counts": {
+        "transitions": 8643,
+        "updates": 33,
+        "new_transitions": 50,
+        "new_updates": 0,
+        "tail": 50
       },
       "phase_lineage": {
         "status": "explicit_new_phase_continuation",
@@ -121048,7 +121377,7 @@
       "controller_build": "S5-r29",
       "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-a",
       "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1",
-      "latest_resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00285.pt",
+      "latest_resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt",
       "deadline_unix_s": 1794061828.2264671
     },
     "job-20261106T103028Z-w40-b": {
@@ -122553,8 +122882,8 @@
     "pending_files": 0
   },
   "training_transitions_by_group": {
-    "PPO_RAW_S5": 256,
-    "PANN_PPO_S5": 10719
+    "PANN_PPO_S5": 10742,
+    "PPO_RAW_S5": 256
   },
   "w39_diagnostic_transfer_acceleration": {
     "at_unix_s": 1793956008.0723596,
@@ -122583,10 +122912,10 @@
     "source_files_deleted": 0,
     "pc_archive_created": false
   },
-  "w40_distinct_new_transitions": 100,
+  "w40_distinct_new_transitions": 101,
   "w40_policy_counts": {
     "w40-a": {
-      "transitions": 8642,
+      "transitions": 8643,
       "updates": 33
     },
     "w40-b": {
@@ -122653,17 +122982,17 @@
             "historical_counts"
           ]
         },
-        "status": "joint_sampling_running",
-        "transitions": 8642,
+        "status": "training_ended",
+        "transitions": 8643,
         "updates": 33,
-        "new_transitions": 49,
+        "new_transitions": 50,
         "new_updates": 0,
-        "tail": 49,
-        "invocation_new_transitions": 49,
-        "invocation_wall_s": 1923.386649608612,
-        "collection_updated_unix_s": 1793962953.286303,
+        "tail": 50,
+        "invocation_new_transitions": 50,
+        "invocation_wall_s": 1982.040816783905,
+        "collection_updated_unix_s": 1793963011.9404657,
         "excluded": 145,
-        "resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00285.pt",
+        "resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt",
         "last_completed_update": {
           "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/checkpoint-008593.pt",
           "samples": 8593,
@@ -122699,10 +123028,48 @@
           "controller_build": "S5-r28",
           "reward_version": "W38_legal_route_terminal_settlement"
         },
-        "evaluation": "pending_training",
-        "evaluation_stages": [],
-        "publication": "pending_computation",
-        "outcomes": null,
+        "evaluation": "unavailable",
+        "evaluation_stages": [
+          {
+            "level": "E30",
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
+          },
+          {
+            "level": "E60",
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
+          }
+        ],
+        "publication": "published",
+        "outcomes": {
+          "physical_episodes": 2,
+          "results_available": 2,
+          "results_unavailable": [],
+          "legal_outbound_traversals": 0,
+          "side_exits": 0,
+          "far_arrivals": 0,
+          "return_episodes": 0,
+          "completed_roundtrips": 0,
+          "legal_roundtrips": 0,
+          "legal_return_traversals": 0,
+          "legal_all_outbound_traversals": 0,
+          "all_passage_side_exits": 0,
+          "legality_records": 2,
+          "physical_failures_by_phase": {
+            "body_fall": {
+              "outbound": 1
+            }
+          },
+          "saved_observations": 50,
+          "nonzero_pann_observations": 0,
+          "return_observations": 0,
+          "return_nonzero_pann_observations": 0,
+          "material_loaded_episodes": 1,
+          "max_forward_displacement_m": 0.6925708043957622,
+          "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+          "observation_sources_unavailable": []
+        },
         "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-a",
         "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1"
       },
@@ -122858,8 +123225,8 @@
     "clock": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w40-training-clock.json",
     "shared_training_started_unix_s": 1793961028.2264671,
     "shared_training_deadline_unix_s": 1794061828.2264671,
-    "measured_training_wall_s": 1977.5002908706665,
-    "distinct_new_transitions_per_training_hour": 182.04801367766015,
+    "measured_training_wall_s": 1983.713998556137,
+    "distinct_new_transitions_per_training_hour": 183.29255137819732,
     "throughput_scope": "Ends at latest actual collection update; excludes later evaluation/finish.",
     "no_fused_optimizer_or_policy": true,
     "bulk_retained_local": true,
