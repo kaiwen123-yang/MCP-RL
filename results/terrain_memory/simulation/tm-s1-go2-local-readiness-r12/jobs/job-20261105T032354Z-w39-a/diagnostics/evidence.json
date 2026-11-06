@@ -12,7 +12,7 @@
     "hours": 6.0,
     "deadline_unix_s": 1793975733.5280282
   },
-  "status": "publication_pending",
+  "status": "published",
   "attempts": [
     "job-20261105T032354Z-w39-a-eval-PANN_PPO_S5-s1-E30",
     "train-job-20261105T032354Z-w39-a-PANN_PPO_S5-s1-ep00252",
@@ -14356,13 +14356,7 @@
   "clock_and_role_notes": "Use each result physical_columns/physical_time_note and resolved reference_packet_fields/planner_recording for clocks, foot order and plan roles; no inferred plan_id or model identity. Future nonstandard accepted/reference/gain filenames require explicit discovery updates.",
   "retained_locally": true,
   "automatic_deletion": false,
-  "errors": [
-    {
-      "action": "upload",
-      "returncode": 1,
-      "detail": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 260, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 208, in main\n    update(register)\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 138, in update\n    value=json.loads((SMALL/'index.json').read_text());change(value)\n                                                       ^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 205, in register\n    elif actual:raise RuntimeError('Existing asset differs; retained without replacement: '+row['name'])\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Existing asset differs; retained without replacement: diag__job-20261105T032354Z-w39-a__f000091-g1__model.mjb\n"
-    }
-  ],
+  "errors": [],
   "transition_selection": {
     "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/transitions.jsonl",
     "initial_exclusive": 7569,
@@ -19305,5 +19299,30 @@
   "this_invocation_finish_verified": true,
   "checked_unix_s": 1793956734.4253416,
   "completion_scope": "This manifest only; no claim about unrelated global pending assets or unsaved accepted trajectories",
-  "last_error": "CalledProcessError: Command '['git', '-c', 'pack.window=0', 'push', '--no-thin', 'origin', 'HEAD:main']' returned non-zero exit status 1."
+  "resolved_errors": [
+    {
+      "error": {
+        "action": "upload",
+        "returncode": 1,
+        "detail": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 260, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 208, in main\n    update(register)\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 138, in update\n    value=json.loads((SMALL/'index.json').read_text());change(value)\n                                                       ^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/publish_s1_go2_r12.py\", line 205, in register\n    elif actual:raise RuntimeError('Existing asset differs; retained without replacement: '+row['name'])\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Existing asset differs; retained without replacement: diag__job-20261105T032354Z-w39-a__f000091-g1__model.mjb\n"
+      },
+      "resolved_unix_s": 1793957262.4631038,
+      "resolution": "All selected assets subsequently matched remote names, sizes and uploaded states."
+    },
+    {
+      "error": "CalledProcessError: Command '['git', '-c', 'pack.window=0', 'push', '--no-thin', 'origin', 'HEAD:main']' returned non-zero exit status 1.",
+      "resolved_unix_s": 1793957262.4631038,
+      "resolution": "Preserved and merged remote W40 plan with local publication records; ordinary push succeeded."
+    }
+  ],
+  "manual_release_verification": {
+    "checked_at": "2026-11-06T17:25:26+08:00",
+    "method": "Authenticated gh Release asset listing; compare every manifest name/local size/remote uploaded state; no content download or repeated upload.",
+    "expected_assets": 492,
+    "matched_assets": 492,
+    "matched_bytes": 3880064717,
+    "missing": 0,
+    "size_mismatches": 0,
+    "unfinished_states": 0
+  }
 }
