@@ -1,0 +1,253 @@
+{
+  "job": "job-20261106T103028Z-w40-b",
+  "training_exit_code": 0,
+  "evaluation": {
+    "job": "job-20261106T103028Z-w40-b",
+    "status": "unavailable",
+    "started_unix_s": 1793963006.0,
+    "deadline_unix_s": 1793977406.0,
+    "controller_build": "S5-r29",
+    "group": "PANN_PPO_S5",
+    "seed": 2,
+    "stream_id": "w40-b",
+    "phase_id": "job-20261106T103028Z-w40-b",
+    "phase_lineage": {
+      "status": "explicit_new_phase_continuation",
+      "parent_stream_id": "w39-b",
+      "parent_phase_id": "job-20261105T032354Z-w39-b",
+      "parent_phase_lineage": {
+        "status": "explicit_new_phase_continuation",
+        "parent_stream_id": "w38-b",
+        "parent_phase_id": "job-20261104T104730Z-w38-b",
+        "current_stream_id": "w39-b",
+        "current_phase_id": "job-20261105T032354Z-w39-b",
+        "controller_build": "S5-r28",
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+        "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed2/resume-state-ep00251.pt",
+        "parent_transitions": 7569,
+        "parent_updates": 29,
+        "parent_episode": 251,
+        "inherited_excluded": 145,
+        "new_exclusions": 0,
+        "new_fork": false,
+        "reseeded_after_checkpoint_restore": false,
+        "restored": [
+          "actor",
+          "critic",
+          "optimizer",
+          "RNG",
+          "normalization",
+          "historical_counts"
+        ]
+      },
+      "current_stream_id": "w40-b",
+      "current_phase_id": "job-20261106T103028Z-w40-b",
+      "controller_build": "S5-r29",
+      "reward_version": "W38_legal_route_terminal_settlement",
+      "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
+      "parent_transitions": 8593,
+      "parent_updates": 33,
+      "parent_episode": 280,
+      "inherited_excluded": 145,
+      "new_exclusions": 0,
+      "new_fork": false,
+      "reseeded_after_checkpoint_restore": false,
+      "restored": [
+        "actor",
+        "critic",
+        "optimizer",
+        "RNG",
+        "normalization",
+        "historical_counts"
+      ]
+    },
+    "condition": "nominal",
+    "workers": 12,
+    "checkpoint_selection": "Own current W40 phase/stream/controller/reward, updates>33 and samples>8593; no parent fallback.",
+    "deterministic_policy_mean": true,
+    "frozen_normalization": true,
+    "ppo_updates": false,
+    "attempts": [],
+    "stages": [
+      {
+        "level": "E30",
+        "stage_status": "not_run",
+        "reason": "new_update_unavailable"
+      },
+      {
+        "level": "E60",
+        "stage_status": "not_run",
+        "reason": "new_update_unavailable"
+      }
+    ],
+    "reason": "new_update_unavailable",
+    "finished_unix_s": 1793963008.2628686
+  },
+  "attempts": [
+    {
+      "attempt": "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281",
+      "local_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281",
+      "result_available": true,
+      "index_entry": {
+        "attempt": "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281",
+        "stage": "G1",
+        "purpose": "training",
+        "condition": "nominal",
+        "arm": "S",
+        "mission": "long",
+        "cohort": "W40_r29_legacy_center_H_projection_v15",
+        "status": "completed",
+        "physical_started": true,
+        "command": [
+          "scripts/train_s1_go2_r12.py",
+          "--group",
+          "PANN_PPO_S5",
+          "--seed",
+          "2",
+          "--resume",
+          "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
+          "--contract",
+          "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/execution-contract.json",
+          "--background-job",
+          "--job-start-unix",
+          "1793961028.2264671",
+          "--deadline-unix",
+          "1794061828.2264671"
+        ],
+        "started_utc": "2026-11-06T10:30:34Z",
+        "case_key": null,
+        "case": null,
+        "evaluation_stage": {
+          "level": "train60",
+          "task_kind": "continuing_acquisition",
+          "duration_s": 60,
+          "target_circuits": null,
+          "route_deadline_s": null,
+          "far_hold_s": 2,
+          "home_hold_s": 2,
+          "final_hold_s": null
+        },
+        "execution_fingerprint": "0d6bc19bb2c64ee48cd4dc6a7162e8dd6de69dbf08369d62cc3572335a13219c",
+        "source_commit": "dbf8b78900e56b4a8ebced94d656a9a050914099",
+        "success": null,
+        "reason": "material_domain_exit",
+        "simulation_s": 10.53720000000212,
+        "wall_s": 858.5868636686355,
+        "stage_status": "physical_material_failure",
+        "case_identity": null,
+        "qualification": {
+          "predecessor_attempt": null,
+          "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+          "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+          "solver_workers": null,
+          "worker_setting_checked_against_predecessor": false
+        },
+        "result": "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281.json"
+      },
+      "initialization_failures": [],
+      "compact_files": [
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281-resolved.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281/cap-decisions.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281/r29-event-manifest.json"
+      ],
+      "status": "completed",
+      "success": null,
+      "reason": "material_domain_exit",
+      "error": null,
+      "simulation_s": 10.53720000000212,
+      "stage_status": "physical_material_failure"
+    },
+    {
+      "attempt": "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282",
+      "local_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282",
+      "result_available": true,
+      "index_entry": {
+        "attempt": "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282",
+        "stage": "G1",
+        "purpose": "training",
+        "condition": "nominal",
+        "arm": "S",
+        "mission": "long",
+        "cohort": "W40_r29_legacy_center_H_projection_v15",
+        "status": "completed",
+        "physical_started": true,
+        "command": [
+          "scripts/train_s1_go2_r12.py",
+          "--group",
+          "PANN_PPO_S5",
+          "--seed",
+          "2",
+          "--resume",
+          "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-b/PANN_PPO_S5-seed2/resume-state-ep00280.pt",
+          "--contract",
+          "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/execution-contract.json",
+          "--background-job",
+          "--job-start-unix",
+          "1793961028.2264671",
+          "--deadline-unix",
+          "1794061828.2264671"
+        ],
+        "started_utc": "2026-11-06T10:44:58Z",
+        "case_key": null,
+        "case": null,
+        "evaluation_stage": {
+          "level": "train60",
+          "task_kind": "continuing_acquisition",
+          "duration_s": 60,
+          "target_circuits": null,
+          "route_deadline_s": null,
+          "far_hold_s": 2,
+          "home_hold_s": 2,
+          "final_hold_s": null
+        },
+        "execution_fingerprint": "0d6bc19bb2c64ee48cd4dc6a7162e8dd6de69dbf08369d62cc3572335a13219c",
+        "source_commit": "f5ed75ed0c9cf9d70be4136d0c9ce635b008dcf3",
+        "success": null,
+        "reason": "execution_error",
+        "simulation_s": 14.263999999993434,
+        "wall_s": 1099.8839967176318,
+        "stage_status": "technical_interruption",
+        "case_identity": null,
+        "qualification": {
+          "predecessor_attempt": null,
+          "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+          "evaluator_sha256": "6c7459f2ffe6d7926d7165ec895f7f41ac66d23926dfee6ba74cd795570629e2",
+          "solver_workers": null,
+          "worker_setting_checked_against_predecessor": false
+        },
+        "result": "train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282.json"
+      },
+      "initialization_failures": [],
+      "compact_files": [
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282-resolved.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282/cap-decisions.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261106T103028Z-w40-b/episodes/train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282/r29-event-manifest.json"
+      ],
+      "status": "completed",
+      "success": null,
+      "reason": "execution_error",
+      "error": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_r11_runtime.py\", line 552, in run\n    r29_records.query(t,'applied_hold',action,data.qpos,data.qvel)\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_r29_records.py\", line 81, in query\n    raise RuntimeError('r29 action unavailable before physics: '+row['projection_status'])\nRuntimeError: r29 action unavailable before physics: qp_kkt_failure\n",
+      "simulation_s": 14.263999999993434,
+      "stage_status": "technical_interruption"
+    }
+  ],
+  "bounded_log_tails": [
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/train.log",
+      "original_bytes": 11442,
+      "tail_bytes": 8192,
+      "truncated": true,
+      "text": "time_s\": 0.0, \"planner_s\": 1.2070486433804035}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281\", \"time_s\": 0.0, \"phase\": \"initial_stand\", \"xyz\": [9.361959106624713e-07, 1.2779941293461925e-07, 0.290193834967079], \"wall_s\": 29.63456997834146}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281\", \"time_s\": 5.000000000001703, \"phase\": \"outbound\", \"xyz\": [0.19715949359727925, 0.0024076225892977216, 0.29008566387428464], \"wall_s\": 417.26094882003963}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281\", \"time_s\": 10.000000000003372, \"phase\": \"outbound\", \"xyz\": [0.6192378390773675, 0.0033272265734643892, 0.2904241218532301], \"wall_s\": 798.2720513083041}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281\", \"stage_status\": \"physical_material_failure\", \"success\": null, \"reason\": \"material_domain_exit\", \"simulation_s\": 10.53720000000212, \"wall_s\": 858.5868636686355, \"case_key\": null}\n{\"episode\": 281, \"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281\", \"controller_build\": \"S5-r29\", \"condition\": \"nominal\", \"stage\": 0, \"stream_id\": \"w40-b\", \"phase_id\": \"job-20261106T103028Z-w40-b\", \"session_limit_s\": 60, \"transitions\": 22, \"reason\": \"material_domain_exit\", \"stage_status\": \"physical_material_failure\", \"simulation_s\": 10.53720000000212, \"wall_s\": 858.5868636686355, \"completed_round_trips\": 0, \"legal_route\": {\"reward_version\": \"W38_legal_route_terminal_settlement\", \"progress\": 0.0, \"completed_roundtrips\": 0, \"legal_outbound_traversals\": 0, \"legal_return_traversals\": 0, \"side_exits\": 0, \"raw_roundtrips\": 0, \"passages\": [{\"lap\": 1, \"direction\": \"outbound\", \"entry_s\": null, \"exit_s\": null, \"lateral_exit_s\": null, \"material_loaded\": false, \"completed\": false, \"terminal_closed_s\": 10.53720000000212}], \"criterion\": \"Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged.\"}, \"complete_session\": false, \"promoted\": false, \"curriculum_enabled\": false, \"startup_regression_check\": {\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00281\", \"goal_position_radius_m\": 0.15, \"threshold_source\": \"Resolved original task.goal_position_radius_m\", \"original_physical_reason\": \"material_domain_exit\", \"status\": \"not_matched\", \"detail\": \"Not a natural fall/nonfoot terminal\"}}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 1, \"plant_time_s\": 0.0, \"planner_s\": 1.3268828447908163}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 2, \"plant_time_s\": 0.0, \"planner_s\": 1.350622471421957}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 3, \"plant_time_s\": 0.0, \"planner_s\": 1.2750648986548185}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 4, \"plant_time_s\": 0.0, \"planner_s\": 1.2687362562865019}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 5, \"plant_time_s\": 0.0, \"planner_s\": 1.2556563597172499}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 6, \"plant_time_s\": 0.0, \"planner_s\": 1.2865967359393835}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 7, \"plant_time_s\": 0.0, \"planner_s\": 1.2635250370949507}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 8, \"plant_time_s\": 0.0, \"planner_s\": 1.2336746118962765}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 9, \"plant_time_s\": 0.0, \"planner_s\": 1.2424183078110218}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 10, \"plant_time_s\": 0.0, \"planner_s\": 1.2605132926255465}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 11, \"plant_time_s\": 0.0, \"planner_s\": 1.315464198589325}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 12, \"plant_time_s\": 0.0, \"planner_s\": 1.2551969084888697}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 13, \"plant_time_s\": 0.0, \"planner_s\": 1.3121712636202574}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 14, \"plant_time_s\": 0.0, \"planner_s\": 1.2507155537605286}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 15, \"plant_time_s\": 0.0, \"planner_s\": 1.2340719476342201}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 16, \"plant_time_s\": 0.0, \"planner_s\": 1.271083189174533}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 17, \"plant_time_s\": 0.0, \"planner_s\": 1.2245694268494844}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 18, \"plant_time_s\": 0.0, \"planner_s\": 1.2600317765027285}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 19, \"plant_time_s\": 0.0, \"planner_s\": 1.3640673886984587}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"startup_iteration\": 20, \"plant_time_s\": 0.0, \"planner_s\": 1.224611597135663}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"time_s\": 0.0, \"phase\": \"initial_stand\", \"xyz\": [9.361959106624713e-07, 1.2779941293461925e-07, 0.290193834967079], \"wall_s\": 29.889295117929578}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"time_s\": 5.000000000001703, \"phase\": \"outbound\", \"xyz\": [0.11637361790384165, -0.000474965316215878, 0.290029667509405], \"wall_s\": 410.9416703674942}\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"time_s\": 10.000000000003372, \"phase\": \"outbound\", \"xyz\": [0.4167086482016184, 0.0009856837589281918, 0.29029108394902875], \"wall_s\": 783.9320580214262}\nTraceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_r11_runtime.py\", line 552, in run\n    r29_records.query(t,'applied_hold',action,data.qpos,data.qvel)\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_r29_records.py\", line 81, in query\n    raise RuntimeError('r29 action unavailable before physics: '+row['projection_status'])\nRuntimeError: r29 action unavailable before physics: qp_kkt_failure\n\n{\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"stage_status\": \"technical_interruption\", \"success\": null, \"reason\": \"execution_error\", \"simulation_s\": 14.263999999993434, \"wall_s\": 1099.8839967176318, \"case_key\": null}\n{\"episode\": 282, \"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"controller_build\": \"S5-r29\", \"condition\": \"nominal\", \"stage\": 0, \"stream_id\": \"w40-b\", \"phase_id\": \"job-20261106T103028Z-w40-b\", \"session_limit_s\": 60, \"transitions\": 29, \"reason\": \"execution_error\", \"stage_status\": \"technical_interruption\", \"simulation_s\": 14.263999999993434, \"wall_s\": 1099.8839967176318, \"completed_round_trips\": 0, \"legal_route\": {\"reward_version\": \"W38_legal_route_terminal_settlement\", \"progress\": 0.1001434295101234, \"completed_roundtrips\": 0, \"legal_outbound_traversals\": 0, \"legal_return_traversals\": 0, \"side_exits\": 0, \"raw_roundtrips\": 0, \"passages\": [{\"lap\": 1, \"direction\": \"outbound\", \"entry_s\": null, \"exit_s\": null, \"lateral_exit_s\": null, \"material_loaded\": false, \"completed\": false}], \"criterion\": \"Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged.\"}, \"complete_session\": false, \"promoted\": false, \"curriculum_enabled\": false, \"startup_regression_check\": {\"attempt\": \"train-job-20261106T103028Z-w40-b-PANN_PPO_S5-s2-ep00282\", \"goal_position_radius_m\": 0.15, \"threshold_source\": \"Resolved original task.goal_position_radius_m\", \"original_physical_reason\": \"execution_error\", \"status\": \"not_matched\", \"detail\": \"Not a natural fall/nonfoot terminal\"}}\n"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/evaluation.log",
+      "original_bytes": 0,
+      "tail_bytes": 0,
+      "truncated": false,
+      "text": ""
+    }
+  ]
+}

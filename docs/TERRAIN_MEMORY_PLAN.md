@@ -5,11 +5,11 @@
 ## 当前交接（执行后只更新这6行）
 
 - 当前任务：W40_STABILITY_WITH_PARALLEL_GPU_MPC / S5-r29 已实际实现、正常构建并启动；共同训练绝对截止北京时间2026-11-07T22:30:28.226467+08:00，resume不重置。
-- w40-a：job-20261106T103028Z-w40-a，joint_sampling_running；新增13/0，累计8606/33，tail=13、excluded=145；评价=pending_training，紧凑Git=pending_computation。
-- w40-b：job-20261106T103028Z-w40-b，joint_sampling_running；新增13/0，累计8606/33，tail=13、excluded=145；评价=pending_training，紧凑Git=pending_computation。
-- 任务能力：w40-a尚无最终任务汇总；w40-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
+- w40-a：job-20261106T103028Z-w40-a，joint_sampling_running；新增49/0，累计8642/33，tail=49、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- w40-b：job-20261106T103028Z-w40-b，training_ended；新增51/0，累计8644/33，tail=51、excluded=145；评价=unavailable，紧凑Git=published。
+- 任务能力：w40-a尚无最终任务汇总；w40-b合规去程/返程/整圈=0/0/0，材料加载回合=1。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
 - 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。 GPU：s1-w40-gpu，r28同版本预测批量/FD原型正在JIT；未有速度或数值通过结论，独立截止2026-11-07 22:31:28北京时间。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 
 ## 1. 目标、已经完成的工作与本次阅读范围
 
