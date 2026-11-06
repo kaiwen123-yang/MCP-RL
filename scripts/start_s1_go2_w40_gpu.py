@@ -32,7 +32,9 @@ def main():
       'export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1',
       'export XLA_FLAGS="--xla_cpu_multi_thread_eigen=false --xla_gpu_force_compilation_parallelism=2"',
       'set +e',shlex.join(cmd)+' > '+shlex.quote(str(logfile))+' 2>&1',
-      'echo "$?" > '+shlex.quote(str(OUT/'exit-code.txt')),''])+'\n')
+       'echo "$?" > '+shlex.quote(str(OUT/'exit-code.txt')),
+      'source scripts/autodl_network.sh academic',
+      'python scripts/finish_s1_go2_w40_gpu.py > '+shlex.quote(str(OUT/('finish-'+stamp+'.log')))+' 2>&1',''])+'\n')
     job=dict(task='w40-gpu',session=session,clock=clock,host_cpus=cpus,log=str(logfile.relative_to(ROOT)),resume=is_resume,
       command=cmd,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
       dependencies={'mujoco':'3.2.3','mujoco-mjx':'3.2.3','jax':'0.6.2','jaxlib':'0.6.2','trimesh':'4.5.3'},
