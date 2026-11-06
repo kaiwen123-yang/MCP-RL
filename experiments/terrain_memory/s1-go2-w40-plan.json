@@ -1,18 +1,26 @@
 {
-  "schema_version": "S1_W40_execution_plan_v1",
+  "schema_version": "S1_W40_execution_plan_v2_raw_review_corrected",
   "task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
   "status": "authorized_plan_not_implemented_built_or_started",
   "date": "2026-11-06",
   "timezone": "Asia/Shanghai",
-  "reviewed_results_commit": "e51acd535445f617bd0486650e67df4bcc116481",
-  "delivery_rechecked_commit": "7150a6b143f35e8f1ad5e37ac819267c1d973727",
+  "reviewed_results_commit": "07b0ee3e15c9f10e9b1a6a1de3997bec36f39556",
+  "delivery_rechecked_commit": "07b0ee3e15c9f10e9b1a6a1de3997bec36f39556",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
   "startup_prompt": "docs/S1_W40_START_PROMPT.md",
   "evidence": [
     "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/results-audit.json",
     "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/code-audit.md",
     "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/literature.json",
-    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/read-coverage.json"
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/read-coverage.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/control-audit.md",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/control-all-attempts.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/material-learning-review.md",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/material-learning-audit.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/r29-math-audit.md",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/gpu-replay-audit.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/read-coverage.json"
   ],
   "current_execution": {
     "phase": "W39",
@@ -39,29 +47,36 @@
   "main_control": {
     "proposed_build": "S5-r29",
     "implementation_status": "planned_not_implemented",
-    "primary_mechanism": "state_dependent_actuator_constrained_local_feedback_shared_by_candidate_and_execution",
-    "evidence_basis": "Accepted/actual joint-velocity divergence, nominal and feedback-induced actuator saturation precede first material load in both saved E30s; trunk(v,J) selection operates but does not imply balance.",
-    "initial_existing_data_review_target_s": 1800,
+    "primary_mechanism": "preserve_legacy_target_clipped_policy_then_apply_state_dependent_nondiagonal_H_metric_projection_shared_by_candidates_and_execution",
+    "evidence_basis": "Full W39 raw review:57of58 loaded training episodes show large raw feedback and executed PD saturation before first load; same-policy closed-loop divergence, not fixed-input open-loop residual. No demonstrated reference/K/packet wiring error. r29 efficacy remains unproven.",
     "substitution_rule": "If saved original files demonstrate an earlier specific interface bug, repair that instead with explicit evidence. Do not stack mechanisms or blindly relabel unchanged r28.",
     "qp": {
       "variables": 12,
-      "center": "accepted line-search feedforward u_ff",
-      "state_error": "36D tangent delta_x with original quaternion convention",
+      "center": "c=legacy_target_clip(u_ff+s*K_old*delta_x), including original BoxQP active rows, alpha and interpolation",
+      "state_error": "36D tangent with original quaternion convention; map actuators to joint q/v",
       "lower": "max(original_target_min,q+(tau_min+5*qdot)/60)",
       "upper": "min(original_target_max,q+(tau_max+5*qdot)/60)",
-      "objective": ".5 eta^T H eta + (s C delta_x)^T eta",
-      "constraint": "lower(x)-u_ff <= eta <= upper(x)-u_ff",
-      "output": "u_ff+eta",
-      "H": "same-plan regularized non-diagonal Q_uu",
-      "C": "same-plan Q_ux",
-      "s": "actual candidate feedback_scaling, not assumed1 at every call",
-      "active_pd_boundary_derivative": "e_q+(5/60)e_v",
-      "free_derivative": "-H_FF^-1(s*C_F+H_FA*B_A)",
-      "line_search": "alpha already in u_ff; never add full Q_u again only at deployment",
-      "empty_intersection": "explicit infeasible and predeclared minimum-violation restoration with original physical torque clipping",
-      "predicted_decrease": "recompute for changed policy or record unavailable; do not keep an invalid surprise ratio",
-      "limits": "Instantaneous feasibility is neither 2ms held-action feasibility nor a closed-loop stability guarantee.",
-      "interpolation": "Define one consistent H(t),C(t),unconstrained K(t) and same candidate/deployment interpolation; independently interpolating H/C/oldK is not equivalent. Use actual regularization_used. If retaining old interpolated K as target, define corresponding QP linear term and disclose difference from original Q_ux."
+      "objective": ".5*(u-c)^T*H*(u-c); linear term -H*c, not original Q_ux",
+      "constraint": "lower(x)<=u<=upper(x)",
+      "output": "u; if c feasible return c exactly without solver",
+      "H": "same successful backward full positive-definite Quu_reg; same regularization_used/type, never backward.Quu or compressed boxqp.R",
+      "H_lifecycle": "Allocate/Reset/CopyFrom/candidates/winner/previous_policy/endpoints; actual snapshot, not mutable scratch. Full SPD failures handled by existing backward regularization loop with matched k/K/H.",
+      "K": "retain original active-set K; no reconstruction from full -H^-1*Q_ux",
+      "s": "nominal FeedbackRollouts uses searched scale; ActionRollouts explicitly1; installed deployment1; alpha already in feedforward",
+      "interpolation": "legacy state/u/K interpolation and quaternion normalization; H linear convex interpolation on same grid with original endpoint rule; do not reconstruct K from interpolated H/C",
+      "startup": "metric_valid=false legacy_seed_no_metric only before first backward and read-only seed probes; no identity substitution. Existing startup iterations unchanged; first physical applied action requires valid installed H or explicit initialization technical failure.",
+      "stateful_side_effects": "pure evaluation; diagnostic/nominal probes cannot alter QP warm-start, held target or next action",
+      "nominal_query": "null-state nominal_action=True retains legacy nominal target readout; no pretending a null state defines PD bounds",
+      "empty_intersection": "keep original target hard box; l_tau>b fixes u=b, h_tau<a fixes u=a; remaining axes normal projection. Report original raw-torque violation Nm and restoration, retain physical force clip.",
+      "singleton_and_fixed_axes": "eliminate fixed axes before mju_boxQP, including H_FA*u_A in free linear term; do not pass lower>=upper; all fixed returns assembled solution",
+      "solver_status": "primal/KKT residual and explicit convergence/failure, not nfree>=0 alone; no silent metric replacement or claimed-success fallback",
+      "effective_Jacobian": "fixed H/active set: G=d(legacy clipped c)/dx; K_eff_A=B_A; K_eff_F=G_F-H_FF^-1 H_FA(B_A-G_A). PD B=e_q+(5/60)e_v; fixed target B=0.",
+      "backward_scope": "policy projection, not complete constrained DDP; preserve original backward/value recursion as base-policy generator; do not insert K_eff into open-loop A/B",
+      "predicted_decrease": "if selected candidate projection changes policy, ratio_valid=false and expected/surprise=null. Both trunk-feasible with actual J decrease: hold mu AND regularization_rate. No J decrease: original increase. Trunk-infeasible: retain original violation branch. Unchanged policy and original comparable case: original ratio.",
+      "FD_boundary": "nominal u may be projected; inside open-loop F(x,u) FD keep target independent and fixed. Preserve one-sided1e-6 semantics and record PD kink branch; no simultaneous smoothing/FD redesign.",
+      "limits": "instantaneous interval feasibility is not10substep, material-domain, recursive or closed-loop stability guarantee",
+      "mathematics": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/r29-math-audit.md",
+      "RPC_quantization": "Record pre-RPC double u_star and actual held double(float32(u_star)), delta_u and same-state raw PD/bound residuals. QP primal/KKT uses u_star; execution saturation uses u_held. Explain exact delta_tau=60delta_u as serialization_boundary_crossing without removing actual saturation; no protocol/threshold change, no attribution of later-substep saturation to rounding."
     },
     "retained": [
       "Go2 and original collision geometry",
@@ -82,7 +97,8 @@
       "wholesale contact/plant replacement",
       "r25 MovingSupport/SupportPlacement/load allocation"
     ],
-    "diagnostic_semantic_fix": "classify feasible_to_feasible_cost/restored_to_feasible/infeasible_restoration from previous and accepted v; leave historical logs unchanged"
+    "diagnostic_semantic_fix": "classify feasible_to_feasible_cost/restored_to_feasible/infeasible_restoration from previous and accepted v; leave historical logs unchanged",
+    "initial_existing_data_review": "Completed in W39-raw-review; next execution reads this review and checks actual source/jobs, does not repeat mandatory30min extraction or old physics."
   },
   "main_streams": [
     {
@@ -222,13 +238,14 @@
     },
     "parallel_dimensions": "nodes x perturbation directions; preserve ten-substep prefix derivatives and terminal risk semantics",
     "CPU_plant": "keep original Go2/TM02 CPU ground truth; no hidden material input to predictor",
-    "version_rule": "begin saved-state r28 parity if needed; when targeting r29 use an explicitly matched r29 CPU reference. Never mix versions in a parity/speed claim.",
+    "version_rule": "r28 CPU versus r28 GPU or corrected H-projection r29 CPU versus same r29 GPU; do not implement withdrawn Qux-centered formula.",
     "test_sources": [
       "saved rigid-ground normal state",
       "A first large feedback/clipping",
       "B nominal saturation and first large feedback",
       "first material load",
-      "first material-domain exit"
+      "first material-domain exit",
+      "B E30 15.264s pre-first-load feedback peak omitted by old event windows"
     ],
     "test_sequence": [
       "one and ten substeps with original control/contacts",
@@ -257,7 +274,9 @@
       "many-backend grid",
       "alter physics to inflate speed",
       "report kernel speed as full control realtime"
-    ]
+    ],
+    "saved_state_reconstruction": "q/v/time/target/mocap/96userdata and applied settings available. Explicitly match reconstructed task transition phase and initial policy/warm-start; old full H/K/internal policy absent, new tests not exact historic planner replay.",
+    "derivative_contract": "A/B of independent held-target F(x,u); do not rerun policy/QP in state-perturbed FD or substitute closed-loop A+B*K_eff; match original prediction MakeDifferentiable/coldstart/FD kink/tie semantics."
   },
   "budgets": {
     "interactive_max_s": 14400,
@@ -292,25 +311,47 @@
     "events": "nominal first raw-PD saturation, feedback-added saturation, max|rawKdx|>.5rad, target clipping, first material load, domain exit, nonfoot load, QP infeasibility/failure/restoration, trunk restoration, terminal; merged [-.10,+.20]s and terminal .10s; logging only, no physical stop changes",
     "full_plan_fields": [
       "accepted states/actions/times/cost",
-      "installed feedback reference/nominal/K/scaling",
-      "r29 H/C and active constraints/bounds/status",
-      "plan id/clock/model/version",
+      "installed feedback reference/nominal/K with explicit alpha/scales",
+      "actual full Quu_reg metric H; original Q_u/Q_xu and old active-set identity for diagnosis only",
+      "regularization_used/type, metric_valid/source, plan id/clock/model/version",
       "first20ms node and ten-substep PD/contact/material coverage"
     ],
     "representation": "lossless binary/compression, bounded in-memory event ring; do not repeat full matrices in500Hz action lines",
-    "historical_missing": "full accepted/K never recorded in r27/r28; cannot reconstruct as original evidence",
+    "historical_missing": "r28 full accepted/K/H and task private phase not saved; prediction NPZ feedback reference only; A260 dense physical/material not selected in original manifest",
     "per_action_live_fields": [
+      "query_kind/applied_action_id",
       "delta_x",
-      "actual feedback scaling",
+      "nominal_feedback_scale/action_step_alpha/installed_feedback_scaling",
+      "metric_valid/source_plan_id",
       "plan id and interpolation nodes/weights",
-      "instantaneous lower/upper bounds",
-      "QP solution and active set/constraint type",
-      "solver/restoration status",
-      "raw/final actions and raw/clipped PD torque",
-      "information sufficient to reconstruct active-boundary state derivatives"
+      "legacy target-clipped center c and projection_delta",
+      "instantaneous bounds and fixed/empty axes",
+      "QP solution/active source/primal and KKT residual/convergence",
+      "raw_K_delta_x kept separate from projection correction",
+      "raw/final target and raw/clipped PD torque",
+      "information for effective projection Jacobian",
+      "pre-RPC u_star versus held float32-roundtrip u_held and serialization_boundary_crossing"
     ],
-    "plan_vs_live_K": "Plan reference K is not the full effective online-QP Jacobian. Store frozen H/C/referenceK once per retained plan, live state/active-set per action; reconstruct effective Jacobian without duplicating432 elements each tick.",
-    "coverage_boundary": "Include every plan referenced by earliest pre-window action even if origin precedes window; no old spatial gate. Record incomplete beginning/end coverage; do not continue physics after termination to fill post-window."
+    "plan_vs_live_K": "Frozen referenceK/H each retained plan once; live projection active set/center-clamp derivative defines effective Jacobian. Original Q_ux is not projection linear term.",
+    "coverage_boundary": "Include every plan referenced by earliest pre-window action even if origin precedes window; no old spatial gate. Record incomplete beginning/end coverage; do not continue physics after termination to fill post-window.",
+    "extra_raw_findings_metrics": [
+      "query exposure denominator inside/previously loaded grid and observer missed-short-pulse offline tags",
+      "material boundary/state/physical clocks and rejected candidate never applied",
+      "touchdown vz/indentation and actual force",
+      "command remains nonzero but legal progress stalls / abnormal support posture",
+      "closed-loop accepted/actual divergence distinct from fixed-input residual"
+    ],
+    "every_planner_call": [
+      "call id",
+      "logical origin and wall duration",
+      "return reason including early backward/rollout failure",
+      "policy_updated",
+      "installed plan id",
+      "reused policy logical age",
+      "backward attempts/candidate failure status"
+    ],
+    "W39_no_new_policy": "51693 training planner calls versus51685 new plan records; all8 gapsB276 after firstfeedback/load; reuse reaches150ms. Not missing upload.",
+    "material_clock_rule": "A260 firstload material-state14.3636 to physical terminal14.3648=1.2ms; displacement boundary14.3634 to14.3648=1.4ms. Keep boundary/material-state/physical clocks distinct; failed candidate force not applied."
   },
   "delivery": {
     "compact_first": true,
@@ -323,7 +364,8 @@
     "automatic_delete_server_outputs_or_uploaded_copies": false,
     "archive_on_user_PC": false,
     "deletion_owner": "user after backup",
-    "no_force_push": true
+    "no_force_push": true,
+    "W39_raw_status": "published976of976,size/state verified2026-11-06T17:25:26+08:00; do not restart old queue/finisher"
   },
   "implementation_status": {
     "r29_implemented": false,
@@ -332,5 +374,9 @@
     "GPU_backend_implemented": false,
     "GPU_tests_run": false,
     "server_accessed_in_review": false
-  }
+  },
+  "raw_review_base_commit": "07b0ee3e15c9f10e9b1a6a1de3997bec36f39556",
+  "raw_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md",
+  "supersedes": "v1 Qux-centered local QP equivalence claim; r29 remains not implemented, built or started",
+  "compact_results_commit": "e51acd535445f617bd0486650e67df4bcc116481"
 }

@@ -2,6 +2,8 @@
 
 ## 2026-11-06执行更新：第三并行任务已授权
 
+**原件二次复核更正：** W39的976项原诊断已发布；新执行依据为[原始审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md)和[重放输入合同](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/gpu-replay-audit.json)。r29现指保留旧target-clipped策略的非对角H投影，旧Qux中心公式撤回。GPU需同版本匹配，固定target的A/B不能混入policy/QP导数；成本/整planner重放需声明task phase和初始policy/warm-start，不能把未保存的旧K/H当作已上传。此更正不撤销第三并行测试授权。
+
 **W39两流现已完成；本轮用户明确允许两条稳定性主线之外新增GPU MPC适配与测试。** 当前执行入口改为[主计划第5节](TERRAIN_MEMORY_PLAN.md#5-第三任务本轮实际做-gpu-mpc-适配与测试)、[W40计划](../experiments/terrain_memory/s1-go2-w40-plan.json)和[启动提示词](S1_W40_START_PROMPT.md)。下文2026-11-05计时、运行快照和旧“不另做benchmark/暂不增加第三任务”的安排是历史记录；后者不再阻止本轮明确授权的必要GPU数值、性能、接入测试。尚未实现/构建/运行GPU后端，本次只发布计划。
 
 W39全62回合复算：普通planning87.4371%＋启动planning2.0593%＝89.4964%回合墙钟和，平均普通规划1.785931s；两流共享训练14.4560h、2048新样本＝141.671/h。见[新审计](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-review/results-audit.json)。这些是同步仿真耗时，不是实时控制延迟根因。
