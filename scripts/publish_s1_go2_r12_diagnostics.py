@@ -342,6 +342,7 @@ def prepare(ctx, args):
             for part in prior.get("parts", []):
                 if part.get("name") in allocations:
                     manifest.append(allocations[part["name"]])
+    evidence["upload_workers"] = args.upload_workers
     write(destination / "manifest.json", manifest)
     write(destination / "evidence.json", evidence)
     return evidence
@@ -409,7 +410,8 @@ def run(ctx, args):
                 command = [sys.executable, str(ROOT / "scripts/publish_s1_go2_r12.py"), action,
                            "--server-auth", "--manifest", str(destination / "manifest.json"),
                            "--job-name", directory.name + "-diagnostics", "--source-commit", job["source_commit"],
-                           "--deadline-unix", str(clock["deadline_unix_s"])]
+                           "--deadline-unix", str(clock["deadline_unix_s"]),
+                           "--upload-workers", str(args.upload_workers)]
                 result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
                                         timeout=remaining(clock) + 1)
                 with (transfer / "publisher.log").open("a") as log:
@@ -443,7 +445,8 @@ def queue(ctx, args):
         if not active:
             remaining(clock)
             write(transfer / "queued-attempts.json", args.attempt)
-            command = [sys.executable, "-u", str(Path(__file__).resolve()), "run", "--job-dir", relative(directory)]
+            command = [sys.executable, "-u", str(Path(__file__).resolve()), "run", "--job-dir", relative(directory),
+                       "--upload-workers", str(args.upload_workers)]
             for attempt in args.attempt:
                 command += ["--attempt", attempt]
             shell = "source scripts/autodl_d57_env.sh && source scripts/autodl_network.sh academic && exec " + shlex.join(command) + " >> " + shlex.quote(str(transfer / "run.log")) + " 2>&1"
@@ -459,12 +462,16 @@ def main():
     parser.add_argument("--job-dir", required=True, type=Path)
     parser.add_argument("--attempt", action="append", default=[], help="Add dense arrays for an attempt in this same job")
     parser.add_argument("--hours", type=float, default=6, help="Initial diagnostic deadline only; resume never extends it")
+    parser.add_argument("--upload-workers",type=int,choices=(1,3),
+                        help="Concurrent files per queue; ordinary resume keeps its saved setting.")
     args = parser.parse_args()
     if not math.isfinite(args.hours) or not 0 < args.hours <= 6:
         parser.error("--hours must be finite and in (0, 6]")
     ctx = None
     try:
         ctx = context(args)
+        if args.upload_workers is None:
+            args.upload_workers = read(ctx[3] / "evidence.json").get("upload_workers",1)
         if args.action == "queue":
             value = queue(ctx, args)
         elif args.action == "run":

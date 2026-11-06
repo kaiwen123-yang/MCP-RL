@@ -6,6 +6,7 @@ server gh login, or the existing credential JSON on stdin for manual publication
 """
 import argparse, fcntl, json, os, shutil, subprocess, sys, time
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 ROOT=Path(__file__).resolve().parents[1]
 RUN='tm-s1-go2-local-readiness-r12'
 REPO='kaiwen123-yang/MCP-RL'
@@ -102,6 +103,8 @@ def main():
     p.add_argument('--asset',action='append',default=[])
     p.add_argument('--deadline-unix',type=float,required=True)
     p.add_argument('--server-auth',action='store_true')
+    p.add_argument('--upload-workers',type=int,choices=(1,3),default=1,
+        help='Concurrent independent asset uploads; keep the existing absolute deadline and index lock.')
     p.add_argument('--manifest',type=Path,help='Explicit job asset list: path,name,category.')
     p.add_argument('--job-name',help='Route unassigned job assets into Releases of at most900files.')
     p.add_argument('--source-commit',help='Actual job source commit for newly created Release tags.')
@@ -233,11 +236,13 @@ def main():
         if actual['size']!=row['size']:raise RuntimeError('Uploaded size differs: '+row['name'])
         def uploaded(j):
             for item in j['publication']['assets']:
-                if item['name']==row['name']:item['status']='uploaded'
+                if item['name']==row['name']:
+                    item.update(status='uploaded',upload_wall_s=time.time()-begin,
+                                uploaded_unix_s=time.time(),upload_workers=args.upload_workers)
         update(uploaded)
         print(json.dumps(dict(name=row['name'],size=row['size'],status='uploaded',wall_s=round(time.time()-begin,2))),flush=True)
-    for row in expected:
-        if time.time()>=args.deadline_unix:break
+    def upload_one(row):
+        if time.time()>=args.deadline_unix:return
         try:
             upload(row)
         except (RuntimeError, subprocess.TimeoutExpired) as error:
@@ -248,6 +253,9 @@ def main():
                         item.update(status='publication_pending',upload_error=message)
             update(failed)
             print(json.dumps(dict(name=row['name'],status='publication_pending',error=message)),flush=True)
-        if time.time()>=args.deadline_unix:break
+    # Independent names share only short locked index writes. Each asset is
+    # attempted once; the normal manifest/name/size check skips existing uploads.
+    with ThreadPoolExecutor(max_workers=args.upload_workers) as pool:
+        list(pool.map(upload_one,expected))
 if __name__=='__main__':main()
 
