@@ -16,7 +16,12 @@ def main():
     remaining=clock['deadline_unix_s']-time.time()
     if remaining<=0:raise RuntimeError('Original GPU deadline elapsed.')
     cpus=sorted(os.sched_getaffinity(0))[-2:]
-    script=OUT/'run-gpu.sh'
+    stamp=str(int(time.time()))
+    prior_job=OUT/'job.json'
+    is_resume=prior_job.exists()
+    if is_resume:(OUT/('job-before-resume-'+stamp+'.json')).write_bytes(prior_job.read_bytes())
+    logfile=OUT/(('gpu-resume-'+stamp+'.log') if is_resume else 'gpu.log')
+    script=OUT/(('run-gpu-resume-'+stamp+'.sh') if is_resume else 'run-gpu.sh')
     cmd=['timeout','--signal=TERM','--kill-after=30s',str(int(remaining)),
          'taskset','-c',','.join(map(str,cpus)),str(ROOT/'work/envs/d57/bin/python'),'-u',
          'scripts/s1_go2_w40_gpu.py']
@@ -26,11 +31,11 @@ def main():
       'export XLA_PYTHON_CLIENT_PREALLOCATE=false JAX_ENABLE_X64=true',
       'export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1',
       'export XLA_FLAGS="--xla_cpu_multi_thread_eigen=false --xla_gpu_force_compilation_parallelism=2"',
-      'set +e',shlex.join(cmd)+' > '+shlex.quote(str(OUT/'gpu.log'))+' 2>&1',
+      'set +e',shlex.join(cmd)+' > '+shlex.quote(str(logfile))+' 2>&1',
       'echo "$?" > '+shlex.quote(str(OUT/'exit-code.txt')),''])+'\n')
-    job=dict(task='w40-gpu',session=session,clock=clock,host_cpus=cpus,
+    job=dict(task='w40-gpu',session=session,clock=clock,host_cpus=cpus,log=str(logfile.relative_to(ROOT)),resume=is_resume,
       command=cmd,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-      dependencies={'mujoco':'3.2.3','mujoco-mjx':'3.2.3','jax':'0.6.2','jaxlib':'0.6.2'},
+      dependencies={'mujoco':'3.2.3','mujoco-mjx':'3.2.3','jax':'0.6.2','jaxlib':'0.6.2','trimesh':'4.5.3'},
       dependency_directory='work/gpu-w40-python',main_environment_changed=False,
       max_compile_jobs=2,ppo_branch=False)
     (OUT/'job.json').write_text(json.dumps(job,indent=2)+'\n')
