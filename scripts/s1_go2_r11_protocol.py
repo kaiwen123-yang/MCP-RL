@@ -37,7 +37,7 @@ def case_identity(c,group,seed,condition,checkpoint=None,normalization=None):
         common_configuration_sha256=stable_digest(common),
         execution_sources={n:digest(ROOT/'scripts'/n) for n in sources},
         material_sources={str(p.relative_to(ROOT)):digest(p) for p in sorted((ROOT/'src/tm02').glob('*.py'))},
-        binary_sha256=digest(ROOT/'work/r11-frozen'/c['controller_build']/'agent_server'),
+        binary_sha256=digest(ROOT/'work/r11-frozen'/c.get('controller_artifact',c['controller_build'])/'agent_server'),
         fixed_cap_m_s=c['fixed_cap_m_s'] if checkpoint is None else None,
         checkpoint_sha256=digest(checkpoint) if checkpoint else None,
         normalizer_sha256=stable_digest(normalization) if normalization is not None else None)
