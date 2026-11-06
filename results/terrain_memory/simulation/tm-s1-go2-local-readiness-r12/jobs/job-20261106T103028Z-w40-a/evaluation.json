@@ -1,9 +1,10 @@
 {
   "job": "job-20261106T103028Z-w40-a",
   "status": "unavailable",
-  "started_unix_s": 1793963013.0,
-  "deadline_unix_s": 1793977413.0,
+  "started_unix_s": 1793997284.0,
+  "deadline_unix_s": 1794011684.0,
   "controller_build": "S5-r29",
+  "controller_artifact": "S5-r29-qp1",
   "group": "PANN_PPO_S5",
   "seed": 1,
   "stream_id": "w40-a",
@@ -70,14 +71,28 @@
     {
       "level": "E30",
       "stage_status": "not_run",
-      "reason": "new_update_unavailable"
+      "reason": "training_not_normally_completed"
     },
     {
       "level": "E60",
       "stage_status": "not_run",
-      "reason": "new_update_unavailable"
+      "reason": "training_not_normally_completed"
     }
   ],
-  "reason": "new_update_unavailable",
-  "finished_unix_s": 1793963014.6818955
+  "training_end": {
+    "process_exit_code": 2,
+    "reason": "technical_interruption",
+    "last_stage_status": "technical_interruption",
+    "last_episode_reason": "execution_error",
+    "last_error": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_r11_runtime.py\", line 552, in run\n    r29_records.query(t,'applied_hold',action,data.qpos,data.qvel)\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_r29_records.py\", line 97, in query\n    raise RuntimeError('r29 action unavailable before physics: '+row['projection_status'])\nRuntimeError: r29 action unavailable before physics: qp_kkt_failure\n"
+  },
+  "prior_unstarted_evaluation": {
+    "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-a/resume-history/1793966173728560018/evaluation.json",
+    "reason": "Prior no-update result had no evaluation attempt; retained before explicit same-job resume.",
+    "previous_administrative_started_unix_s": 1793963013.0,
+    "previous_administrative_deadline_unix_s": 1793977413.0,
+    "actual_evaluation_attempts": 0
+  },
+  "reason": "training_not_normally_completed",
+  "finished_unix_s": 1793997285.4708254
 }

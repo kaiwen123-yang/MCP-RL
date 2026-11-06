@@ -4,12 +4,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：原W40两job已使用独立冻结S5-r29-qp1恢复真实联合采样，逻辑控制契约仍为S5-r29；共享原deadline1794061828.2264671（北京时间2026-11-07 22:30:28.226467），未重置。
-- w40-a：job-20261106T103028Z-w40-a，s1-w40-a，PID410149，ep287；当前8650/33、tail57，本次resume新增7；原buffer/optimizer/RNG/祖先/excluded145保留，各12workers。
-- w40-b：job-20261106T103028Z-w40-b，s1-w40-b，PID410191，ep283；当前8651/33、tail58，本次resume新增7；原buffer/optimizer/RNG/祖先/excluded145保留，各12workers。
-- 任务能力：当前仅确认qp1构建和恢复采样；尚无本phase新PPO update或正式E30。原四回合失败保留；继续各自9617/37目标，首次update34仍在8849，仅自身新update评价。
-- 交付：qp1源码/构建记录与同job恢复快照已准备推送；原W40诊断A182/195、B154/159，剩余按原上传期限续接，不覆盖历史来源。GPU既有数组已补齐10/10，原始数据保留，无自动删除/电脑归档。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；使用各自job-dir和最新同流resume，不new-phase。GPU计算及原finisher已自然结束，completed_batch_layer、aligned=false；本次只补传既有数组，原deadline1794061888.128057、版本和依赖均保持。
+- 当前任务：W40_STABILITY_WITH_PARALLEL_GPU_MPC / S5-r29 已实际实现、正常构建并启动；共同训练绝对截止北京时间2026-11-07T22:30:28.226467+08:00，resume不重置。
+- w40-a：job-20261106T103028Z-w40-a，training_ended；新增915/3，累计9508/36，tail=147、excluded=145；评价=unavailable，紧凑Git=published。
+- w40-b：job-20261106T103028Z-w40-b，joint_sampling_running；新增930/3，累计9523/36，tail=162、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- 任务能力：w40-a合规去程/返程/整圈=0/0/0，材料加载回合=28；w40-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
+- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 
 ## 1. 目标、已经完成的工作与本次阅读范围
 
