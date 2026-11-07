@@ -14,6 +14,31 @@ SMALL=ROOT/'results/terrain_memory/simulation'/RUN
 LARGE=ROOT/'outputs/terrain_memory/simulation'/RUN
 ENV=Path(sys.executable).parent
 
+def github_rate_wait(headers_text, code, deadline):
+    """Wait only on GitHub's explicit quota/Retry-After response, within this delivery."""
+    if str(code) not in ('403', '429'):
+        return False
+    headers = {}
+    for line in headers_text.splitlines():
+        name, separator, value = line.partition(':')
+        if separator:
+            headers[name.strip().lower()] = value.strip()
+    now = time.time()
+    if 'retry-after' in headers:
+        wake = now + float(headers['retry-after']) + 1
+    elif headers.get('x-ratelimit-remaining') == '0' and 'x-ratelimit-reset' in headers:
+        wake = float(headers['x-ratelimit-reset']) + 2
+    else:
+        return False
+    wake = max(now + 1, wake)
+    if wake >= deadline:
+        raise TimeoutError('GitHub quota reset is beyond the existing publication deadline')
+    print(json.dumps(dict(event='github_rate_limit_wait',resume_unix_s=wake,
+                          wait_s=round(wake-now,2))),flush=True)
+    time.sleep(wake-now)
+    return True
+
+
 def server_credentials(deadline, release_tags, manifest=None, manifest_path=None, job_name=None, source_commit=None):
     """Read the server's existing GitHub login without writing its token to disk."""
     token=os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
@@ -24,7 +49,7 @@ def server_credentials(deadline, release_tags, manifest=None, manifest_path=None
     def api(endpoint,*flags,missing_ok=False):
         # The academic proxy repeatedly times out on gh's TLS handshake.
         # Use the same authenticated HTTP/1 + TLS1.2 transport as asset uploads
-        # for metadata GETs; this is not a VPN fallback or a retry loop.
+        # for metadata GETs. Only explicit GitHub quota responses are retried.
         if '--method' not in flags:
             paginate='--paginate' in flags
             pages=[];page=1
@@ -33,12 +58,16 @@ def server_credentials(deadline, release_tags, manifest=None, manifest_path=None
                 if remaining<=0:raise TimeoutError('Publication deadline reached')
                 path=endpoint+('&' if '?' in endpoint else '?')+'page='+str(page) if paginate else endpoint
                 config='header = "Authorization: Bearer '+token+'"\nheader = "Accept: application/vnd.github+json"\n'
-                result=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2',
-                    '--silent','--show-error','--connect-timeout','20',
-                    '--max-time',str(min(120,remaining)),'-w','\n%{http_code}',
-                    'https://api.github.com/'+path],input=config,env=env,text=True,
-                    stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-                body,code=result.stdout.rsplit('\n',1)
+                while True:
+                    remaining=deadline-time.time()
+                    if remaining<=0:raise TimeoutError('Publication deadline reached')
+                    result=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2',
+                        '--silent','--show-error','--dump-header','/dev/stderr','--connect-timeout','20',
+                        '--max-time',str(min(120,remaining)),'-w','\n%{http_code}',
+                        'https://api.github.com/'+path],input=config,env=env,text=True,
+                        stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+                    body,code=result.stdout.rsplit('\n',1)
+                    if not github_rate_wait(result.stderr,code,deadline):break
                 if code=='404' and missing_ok:return None
                 if result.returncode or code!='200':
                     raise RuntimeError('GitHub metadata GET failed: HTTP '+code+' '+result.stderr.replace(token,'[credential]')[-300:])
@@ -224,15 +253,19 @@ def main():
         config='header = "Authorization: Bearer '+env['GH_TOKEN']+'"\nheader = "Accept: application/vnd.github+json"\nheader = "Content-Type: application/octet-stream"\n'
         destination=releases[row['release_tag']]
         url=destination['upload_url'].split('{')[0]+'?name='+row['name']
-        response=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2','--silent','--show-error','--fail-with-body',
-            '--connect-timeout','30','--max-time',str(max(.001,min(300,args.deadline_unix-time.time()))),
-            '--request','POST','--data-binary','@'+str(path),url],input=config,cwd=ROOT,env=env,text=True,
-            stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        while True:
+            response=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2','--silent','--show-error','--fail-with-body',
+                '--dump-header','/dev/stderr','--write-out','\n%{http_code}',
+                '--connect-timeout','30','--max-time',str(max(.001,min(300,args.deadline_unix-time.time()))),
+                '--request','POST','--data-binary','@'+str(path),url],input=config,cwd=ROOT,env=env,text=True,
+                stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            body,code=response.stdout.rsplit('\n',1)
+            if not github_rate_wait(response.stderr,code,args.deadline_unix):break
         if response.returncode:
             detail=(response.stderr+' '+response.stdout).replace(credentials['token'],'[credential]')
             if proxy:detail=detail.replace(proxy,'[existing proxy]')
             raise RuntimeError('curl upload failed: '+detail[-2000:])
-        actual=json.loads(response.stdout)
+        actual=json.loads(body)
         if actual['size']!=row['size']:raise RuntimeError('Uploaded size differs: '+row['name'])
         def uploaded(j):
             for item in j['publication']['assets']:
