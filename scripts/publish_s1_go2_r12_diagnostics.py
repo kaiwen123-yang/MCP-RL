@@ -99,7 +99,7 @@ def context(args):
             if args.delivery_window:
                 clock.update(delivery_window=args.delivery_window,
                     prior_clock=relative(transfer / "deadline.json"),
-                    authorization="Explicit user request for W40 raw upload on 2026-11-07; server-local Clash and five total file transfers.")
+                    authorization="Explicit user-selected additional diagnostic delivery window; original clocks, published assets and server originals retained.")
         if no_deadline:
             remove_wall_deadline(clock)
             clock["hours"] = None
@@ -242,6 +242,36 @@ def package(source, item, previous, transfer, clock):
                 parts=writer.rows, reconstruction="Concatenate parts in part order, then gunzip only when codec=gzip; original bytes/columns retained")
 
 
+def published_bundle_sources(job, clock):
+    """Reuse W40 files already delivered in the retained six-ZIP stream set."""
+    path = SMALL / "raw-bundles/w40-20261107/manifest.json"
+    bundle_manifest = read(path)
+    bundles = [b for b in bundle_manifest.get("archives", []) if b["job"] == job]
+    if not bundles:
+        return {}, None
+    remotes = {}
+    for tag in sorted({b["release_tag"] for b in bundles}):
+        release = json.loads(subprocess.check_output(
+            ["gh", "api", f"repos/kaiwen123-yang/MCP-RL/releases/tags/{tag}"],
+            cwd=ROOT, text=True, timeout=request_timeout(clock.get("deadline_unix_s"), 120)))
+        remotes[tag] = {a["name"]: a for a in release["assets"]}
+    sources, archives = {}, []
+    for bundle in bundles:
+        asset = remotes[bundle["release_tag"]].get(bundle["name"])
+        if not (asset and asset["state"] == "uploaded" and asset["size"] == bundle["size"]
+                and (not bundle.get("remote_digest") or asset.get("digest") == bundle["remote_digest"])):
+            raise RuntimeError("Previously published ZIP metadata no longer matches: " + bundle["name"])
+        archives.append(dict(name=bundle["name"], release_tag=bundle["release_tag"],
+            url=asset["browser_download_url"], size=asset["size"], digest=asset.get("digest"), verified=True))
+        for item in bundle["files"]:
+            sources[item["source_path"]] = dict(item, archive=bundle["name"],
+                archive_url=asset["browser_download_url"], release_tag=bundle["release_tag"])
+    return sources, dict(status="published", manifest=relative(path), archives=archives,
+        source_files=len(sources), current_files_reused=0, checked_unix_s=time.time(),
+        verification="Existing remote asset uploaded-state/size/digest and saved member source size/mtime; no ZIP download or reupload.",
+        original_individual_assets_retained=True)
+
+
 def prepare(ctx, args):
     directory, job, transfer, destination, clock = ctx
     old = read(destination / "evidence.json")
@@ -253,6 +283,7 @@ def prepare(ctx, args):
         return pending(ctx, error)
     allocations = {x["name"]: x for x in read(destination / "manifest.json", [])}
     previous = {x["source_path"]: x for x in old.get("files", [])}
+    bundled, bundle_delivery = published_bundle_sources(directory.name, clock)
     summary, attempts, dense, records, stream, final = select(directory, job, old, args.attempt)
     evidence = dict(schema_version="R12_selected_diagnostics_v1", job=directory.name,
                     job_directory=relative(directory), stream_id=job.get("stream_id"), phase_id=job.get("phase_id"),
@@ -346,7 +377,22 @@ def prepare(ctx, args):
         item.update(source_path=source_path, file_id=prior.get("file_id", f"f{next_id:06d}"))
         try:
             remaining(clock)
+            covered = bundled.get(source_path)
+            stamp = entry["path"].stat()
+            if covered and (stamp.st_size, stamp.st_mtime_ns) == (covered["source_size"], covered["source_mtime_ns"]):
+                packed = dict(prior, **item)
+                packed.update(status="prepared", source_size=stamp.st_size,
+                    source_mtime_ns=stamp.st_mtime_ns, delivery_via="existing_published_zip",
+                    reused_archive={key: covered[key] for key in
+                        ("archive", "archive_url", "release_tag", "member", "zip_crc32")},
+                    retained_prior_individual_parts=prior.get("retained_prior_individual_parts", prior.get("parts", [])),
+                    parts=[], reconstruction="Extract the named member from the existing published ZIP; original bytes retained.")
+                evidence["files"].append(packed)
+                bundle_delivery["current_files_reused"] += 1
+                continue
             packed = package(entry["path"], item, prior, transfer, clock)
+            packed.pop("delivery_via", None)
+            packed.pop("reused_archive", None)
             for part in packed["parts"]:
                 name = re.sub(r"[^A-Za-z0-9._-]", "_", f'diag__{directory.name}__{part.get("transfer_name", Path(part["path"]).name)}')
                 part["name"] = name
@@ -361,6 +407,16 @@ def prepare(ctx, args):
             for part in prior.get("parts", []):
                 if part.get("name") in allocations:
                     manifest.append(allocations[part["name"]])
+    if old.get("resolved_prior_collision"):
+        evidence["resolved_prior_collision"] = old["resolved_prior_collision"]
+    if bundle_delivery:
+        evidence["bundle_delivery"] = bundle_delivery
+        evidence["delivery_mode"] = "existing_verified_ZIPs_plus_supplemental_assets"
+        supplemental = [f for f in evidence["files"] if f.get("delivery_via") != "existing_published_zip"]
+        evidence["supplemental_delivery"] = dict(status="publication_pending", source_files=len(supplemental),
+            source_bytes=sum(f.get("source_size", 0) for f in supplemental), asset_count=len(manifest),
+            transfer_bytes=sum(local(row["path"]).stat().st_size for row in manifest),
+            manifest=relative(destination / "manifest.json"), old_archives_reuploaded=False)
     evidence["upload_workers"] = args.upload_workers
     evidence["http_proxy"] = args.http_proxy
     write(destination / "manifest.json", manifest)
@@ -384,11 +440,13 @@ def git_delivery(destination, clock, extra=()):
                 git("commit", "--only", "-m", f"Record selected diagnostics for {destination.parent.name}", "--", *paths)
             elif diff:
                 raise RuntimeError("git diff failed")
+        git("fetch", "origin", "main")
+        git("merge", "--no-edit", "origin/main")
         git("-c", "pack.window=0", "push", "--no-thin", "origin", "HEAD:main")
 
 
 def finalize(ctx, verified):
-    _, _, _, destination, _ = ctx
+    directory, _, _, destination, clock = ctx
     evidence, manifest = read(destination / "evidence.json"), read(destination / "manifest.json", [])
     with locked(SMALL / "index.lock"):
         assets = {x["name"]: x for x in read(SMALL / "index.json").get("publication", {}).get("assets", [])}
@@ -404,7 +462,14 @@ def finalize(ctx, verified):
     complete = verified and bool(manifest) and all(x["status"] in ("uploaded", "git_recorded") for x in selected)
     complete &= not evidence["missing"] and all(x.get("status") == "prepared" for x in evidence["files"])
     complete &= evidence.get("transition_selection", {}).get("complete", False)
+    if evidence.get("bundle_delivery"):
+        _, latest_bundle = published_bundle_sources(directory.name, clock)
+        latest_bundle["current_files_reused"] = evidence["bundle_delivery"]["current_files_reused"]
+        evidence["bundle_delivery"] = latest_bundle
     for entry in evidence["files"]:
+        if entry.get("delivery_via") == "existing_published_zip":
+            stamp = local(entry["source_path"]).stat()
+            complete &= (stamp.st_size, stamp.st_mtime_ns) == (entry["source_size"], entry["source_mtime_ns"])
         for part in entry.get("parts", []):
             if part.get("direct_source"):
                 stamp = local(part["path"]).stat()
@@ -412,6 +477,18 @@ def finalize(ctx, verified):
     evidence.update(status="published" if complete else "publication_pending", assets=selected,
                     this_invocation_finish_verified=verified,
                     checked_unix_s=time.time(), completion_scope="This manifest only; no claim about unrelated global pending assets or unsaved accepted trajectories")
+    if evidence.get("supplemental_delivery"):
+        evidence["supplemental_delivery"].update(status="published" if complete else "publication_pending",
+            uploaded_assets=sum(x["status"] in ("uploaded", "git_recorded") for x in selected))
+        with locked(SMALL / "index.lock"):
+            index = read(SMALL / "index.json")
+            index.setdefault("publication", {}).setdefault("delivery_windows", {})[
+                directory.name + "-supplement"] = dict(status=evidence["status"],
+                evidence=relative(destination / "evidence.json"),
+                reused_archive_files=evidence["bundle_delivery"]["current_files_reused"],
+                supplemental_delivery=evidence["supplemental_delivery"],
+                retained_conflicting_individual_assets=True)
+            write(SMALL / "index.json", index)
     write(destination / "evidence.json", evidence)
     return evidence, extra
 
