@@ -13,6 +13,7 @@ import shlex
 import subprocess
 import sys
 import time
+from s1_go2_job_limits import expired, goal_based, remove_wall_deadline, request_timeout
 
 ROOT = Path(__file__).resolve().parents[1]
 RUN = "tm-s1-go2-local-readiness-r12"
@@ -67,7 +68,10 @@ def locked(path, nonblocking=False):
 
 
 def remaining(clock):
-    value = clock["deadline_unix_s"] - time.time()
+    deadline = clock.get("deadline_unix_s")
+    if deadline is None:
+        return None
+    value = deadline - time.time()
     if value <= 0:
         raise TimeoutError("diagnostic_deadline_expired; ordinary resume does not extend it")
     return value
@@ -88,14 +92,18 @@ def context(args):
                   if args.delivery_window else transfer / "deadline.json")
     with locked(transfer / "clock.lock"):
         clock = read(clock_path)
+        no_deadline = args.no_wall_deadline or goal_based(read(directory / "execution-contract.json"))
         if not clock:
             clock = dict(job=directory.name, started_unix_s=time.time(), hours=args.hours)
-            clock["deadline_unix_s"] = clock["started_unix_s"] + args.hours * 3600
+            clock["deadline_unix_s"] = None if no_deadline else clock["started_unix_s"] + args.hours * 3600
             if args.delivery_window:
                 clock.update(delivery_window=args.delivery_window,
                     prior_clock=relative(transfer / "deadline.json"),
                     authorization="Explicit user request for W40 raw upload on 2026-11-07; server-local Clash and five total file transfers.")
-            write(clock_path, clock)
+        if no_deadline:
+            remove_wall_deadline(clock)
+            clock["hours"] = None
+        write(clock_path, clock)
     destination = SMALL / "jobs" / directory.name / "diagnostics"
     return directory, job, transfer, destination, clock
 
@@ -367,7 +375,7 @@ def git_delivery(destination, clock, extra=()):
     def git(*command):
         return subprocess.run(["git", *command], cwd=ROOT, check=True, capture_output=True, text=True,
                               env=dict(os.environ, GIT_TERMINAL_PROMPT="0", GCM_INTERACTIVE="never"),
-                              timeout=min(120, remaining(clock)))
+                              timeout=request_timeout(clock.get("deadline_unix_s"), 120))
     with locked(SMALL / "compact-finish.lock"):
         with locked(SMALL / "index.lock"):
             git("add", "--", *paths)
@@ -422,10 +430,14 @@ def run(ctx, args):
                 command = [sys.executable, str(ROOT / "scripts/publish_s1_go2_r12.py"), action,
                            "--server-auth", "--manifest", str(destination / "manifest.json"),
                            "--job-name", directory.name + "-diagnostics", "--source-commit", job["source_commit"],
-                           "--deadline-unix", str(clock["deadline_unix_s"]),
                            "--upload-workers", str(args.upload_workers)]
+                if clock.get("deadline_unix_s") is None:
+                    command += ["--no-wall-deadline"]
+                else:
+                    command += ["--deadline-unix", str(clock["deadline_unix_s"])]
+                seconds = remaining(clock)
                 result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
-                                        timeout=remaining(clock) + 1)
+                                        timeout=None if seconds is None else seconds + 1)
                 with (transfer / "publisher.log").open("a") as log:
                     log.write(scrub(result.stdout + result.stderr))
                 if action == "finish":
@@ -459,6 +471,8 @@ def queue(ctx, args):
             write(transfer / "queued-attempts.json", args.attempt)
             command = [sys.executable, "-u", str(Path(__file__).resolve()), "run", "--job-dir", relative(directory),
                        "--upload-workers", str(args.upload_workers)]
+            if clock.get("deadline_unix_s") is None:
+                command += ["--no-wall-deadline"]
             if args.delivery_window:
                 command += ["--delivery-window", args.delivery_window]
             if args.http_proxy:
@@ -468,7 +482,7 @@ def queue(ctx, args):
             shell = "source scripts/autodl_d57_env.sh && source scripts/autodl_network.sh academic && exec " + shlex.join(command) + " >> " + shlex.quote(str(transfer / "run.log")) + " 2>&1"
             subprocess.run(["tmux", "new-session", "-d", "-s", session, "-c", str(ROOT), shell], check=True)
     return dict(status="already_running" if active else "queued", session=session,
-                deadline=clock, deadline_expired=time.time() >= clock["deadline_unix_s"],
+                deadline=clock, deadline_expired=expired(clock.get("deadline_unix_s")),
                 evidence=relative(destination / "evidence.json"))
 
 
@@ -479,6 +493,8 @@ def main():
     parser.add_argument("--attempt", action="append", default=[], help="Add dense arrays for an attempt in this same job")
     parser.add_argument("--delivery-window", help="Explicitly authorized new delivery window ID; retain the old clock, manifest allocations and uploaded assets.")
     parser.add_argument("--hours", type=float, default=6, help="Initial diagnostic deadline only; resume never extends it")
+    parser.add_argument("--no-wall-deadline", action="store_true",
+                        help="Complete the selected delivery without a fixed wall-clock deadline; keep request timeouts.")
     parser.add_argument("--upload-workers",type=int,choices=range(1,13),
                         help="Concurrent files per queue; ordinary resume keeps its saved setting.")
     parser.add_argument("--http-proxy",help="Explicit server-local transfer proxy; resume keeps the saved route.")

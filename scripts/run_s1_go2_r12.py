@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 import time
+from s1_go2_job_limits import goal_based, expired
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = 'experiments/terrain_memory/s1-go2-local-readiness-r12.json'
@@ -21,7 +22,7 @@ def write(path, record):
 
 
 def archive_unstarted_evaluation(jobdir, contract, destination):
-    """Retire only the no-update administrative result on an explicit resume.
+    """Retire only an unstarted administrative result on an explicit resume.
 
     Its timestamps do not describe a launched evaluation. A real attempt,
     including an interrupted launch, keeps its original result and clock.
@@ -31,7 +32,7 @@ def archive_unstarted_evaluation(jobdir, contract, destination):
         return None
     record = json.loads(source.read_text())
     if not (record.get('status') == 'unavailable'
-            and record.get('reason') == 'new_update_unavailable'
+            and record.get('reason') in ('new_update_unavailable', 'training_not_normally_completed')
             and record.get('attempts') == []
             and all(row.get('stage_status') == 'not_run' and not row.get('attempt')
                     for row in record.get('stages', []))):
@@ -46,7 +47,8 @@ def archive_unstarted_evaluation(jobdir, contract, destination):
     target = destination / source.name
     source.rename(target)
     return dict(path=str(target.relative_to(ROOT)),
-                reason='Prior no-update result had no evaluation attempt; retained before explicit same-job resume.',
+                reason='Prior administrative result had no evaluation attempt; retained before explicit same-job resume.',
+                previous_reason=record.get('reason'),
                 previous_administrative_started_unix_s=record.get('started_unix_s'),
                 previous_administrative_deadline_unix_s=record.get('deadline_unix_s'),
                 actual_evaluation_attempts=0)
@@ -58,7 +60,7 @@ def evaluate(a, contract):
     from s1_go2_r11_runtime import run, index_file
     from s1_go2_joint_material import JointMaterial
 
-    if time.time() >= a.deadline_unix:
+    if expired(a.deadline_unix):
         raise ValueError('The independent R12 evaluation deadline has passed')
     build = a.build or contract['reuse']['active_controller_build']
     artifact = contract['reuse'].get('controller_artifact', build)
@@ -140,6 +142,8 @@ def continue_authorized_budget(jobdir, job, contract):
     A saved, naturally truncated same-version tail resumes only at the old
     deadline, with the original job start and unchanged cumulative target.
     """
+    if goal_based(contract):
+        return
     extension=job.get('budget_extension')
     if not extension or extension['status']!='scheduled_at_original_deadline':
         return
@@ -206,7 +210,7 @@ def evaluate_job(jobdir, contract):
         started=datetime.fromisoformat((jobdir/'training-finished-at.txt').read_text().strip().replace('Z','+00:00')).timestamp()
     # This branch's evaluation deadline is never renewed by a resumed invocation.
     settings = contract['control_and_evaluation']['post_training_evaluation']
-    deadline = started + settings['maximum_wall_s']
+    deadline = None if goal_based(contract) else started + settings['maximum_wall_s']
     if not settings.get('enabled',True):
         write(jobdir/'evaluation.json',dict(job=jobdir.name,status='cancelled_user_regression_stop',reason=settings.get('disabled_reason'),attempts=[],stages=[]))
         return 0
@@ -288,7 +292,7 @@ def evaluate_job(jobdir, contract):
             if previous is not None and previous['stage_status'] != 'passed':
                 row = dict(level=level, stage_status='blocked_by_predecessor',
                            reason=f'{previous["level"]}: {previous["stage_status"]}: {previous.get("reason")}')
-            elif time.time() >= deadline:
+            elif expired(deadline):
                 row = dict(level=level, stage_status='budget_truncated', reason='Evaluation deadline before launch')
             else:
                 attempt = f'{jobdir.name}-eval-{job["group"]}-s{job["seed"]}-{level}'
@@ -299,9 +303,11 @@ def evaluate_job(jobdir, contract):
                     '--group', job['group'], '--seed', str(job['seed']),
                     '--checkpoint', str(checkpoint), '--level', level,
                     '--condition', settings['condition'], '--workers', str(settings['solver_workers']),
-                    '--evaluation-start-unix', str(started), '--deadline-unix', str(deadline),
+                    '--evaluation-start-unix', str(started),
                     '--policy-output', str(policy_output), '--contract', str(jobdir/'execution-contract.json'),
                 ]
+                if deadline is not None:
+                    command += ['--deadline-unix', str(deadline)]
                 row = dict(level=level, attempt=attempt, stage_status='running',
                            started_unix_s=time.time(), command=command)
                 record['attempts'].append(attempt)
@@ -312,7 +318,7 @@ def evaluate_job(jobdir, contract):
                     process = subprocess.Popen(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
                                                start_new_session=True)
                     try:
-                        code = process.wait(timeout=max(1, deadline - time.time()))
+                        code = process.wait(timeout=None if deadline is None else max(1, deadline - time.time()))
                     except subprocess.TimeoutExpired:
                         # The explicit evaluation budget also covers a stalled RPC/initialization.
                         os.killpg(process.pid, signal.SIGTERM)
@@ -376,8 +382,12 @@ def main():
     contract = json.loads((ROOT / a.contract).read_text())
     if a.job_dir is not None:
         return evaluate_job(a.job_dir, contract)
-    if a.attempt is None or a.window_start_unix is None or a.deadline_unix is None:
-        p.error('A single evaluation needs --attempt, --evaluation-start-unix and --deadline-unix')
+    if a.attempt is None or a.window_start_unix is None:
+        p.error('A single evaluation needs --attempt and --evaluation-start-unix')
+    if a.deadline_unix is None and not goal_based(contract):
+        p.error('Legacy evaluation requires --deadline-unix')
+    if a.deadline_unix is not None and goal_based(contract):
+        p.error('Goal-based evaluation must not be given --deadline-unix')
     if a.group != 'FIXED_S5' and a.checkpoint is None:
         p.error('Learned evaluation needs its fixed --checkpoint')
     evaluate(a, contract)

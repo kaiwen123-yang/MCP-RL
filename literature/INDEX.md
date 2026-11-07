@@ -1,5 +1,7 @@
 # 100 篇方法与理论文献索引 · v2
 
+2026-11-07 S1专题：[W40故障、接触/动作权限与GPU扩展的10篇精选及12篇版本校正](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/literature-update-20261107.md)；其中5个新条目已加入[材料记忆专题库](terrain_memory_sources.json)。本轮含Science Robotics 2026、Nature Machine Intelligence 2025、CoRL和Humanoids等新方向；阅读范围逐项标注，专题补读不改变下方历史100篇主库计数。
+
 2026-10-19独立专题：[PINN与传统模型控制、RL运动控制入门调研（2022—2026）](../notes/pinn-control-2026-10-19/INDEX.md)，[23项结构化登记](supplements/pinn-control-2026-10-19.json)。14篇主候选与9篇综述/理论/概念边界补充分开；2025大类分区为公开转录待官方复核；部分PINN机制待全文核查。未改主库/MR编号，未做复现或新实验。
 
 2026-10-16当前专题：[PhyFilter、FLAIR、Stable Koopman指定版本全文及2026 TAC/Automatica定向补查](../notes/control-frontier-2026-10-16/INDEX.md)。[三篇状态](supplements/control-2026-screening-2026-10-16.json)与[十项补查登记](supplements/control-frontier-2026-10-16.json)分别记录全文/关键段/元数据范围。Koopman正式PDF仍未取得；不改变主库数量或MR编号。

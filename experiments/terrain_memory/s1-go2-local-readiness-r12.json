@@ -1,11 +1,11 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "completed_W39_next_W40_plan_authorized_not_activated",
-  "protocol_revision": "W40_r29_legacy_center_H_projection_v15",
-  "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v2",
-  "revision_date": "2026-11-06",
-  "supersedes_plan_commit": "5e00beca0896bb5517bab8c1dcc441303e5c2098",
+  "status": "W40_reviewed_A_recovery_pending_B_completed",
+  "protocol_revision": "W40_r29_qp2_goal_based_continuation_v17",
+  "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v3_bidirectional_material_route",
+  "revision_date": "2026-11-07",
+  "supersedes_plan_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
   "current_task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
   "reuse": {
@@ -15,43 +15,46 @@
     "rule": "5d3a70f corrected H projection from retained r28; no old Qux-centered formula.",
     "active_controller_build": "S5-r29",
     "active_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r29.json",
-    "active_controller_status": "implemented_built_ready_for_direct_joint_training",
+    "active_controller_status": "W40_executed_qp1_A_technical_stop_B_target_reached",
     "parent_controller_build": "S5-r28",
     "parent_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r28.json",
-    "latest_executed_controller_build": "S5-r28",
-    "latest_executed_controller_status": "completed_W39_8593_33",
+    "latest_executed_controller_build": "S5-r29",
+    "latest_executed_controller_status": "W40_qp1_A9508_36_tail147_B9617_37_tail0",
     "implementation_base_controller_build": "S5-r28",
     "implementation_base_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r28.json",
     "checkpoint_parent_controller_build": "S5-r28",
     "specification_path_status": "Actual build identity under work/r11-frozen/S5-r29; launch after normal build and source/config push.",
-    "controller_artifact": "S5-r29-qp1",
-    "controller_artifact_specification": "experiments/terrain_memory/s1-go2-r11-S5-r29-qp1.json",
-    "controller_artifact_status": "normally_built_for_existing_W40_resume"
+    "controller_artifact": "S5-r29-qp2",
+    "controller_artifact_specification": "experiments/terrain_memory/s1-go2-r11-S5-r29-qp2.json",
+    "controller_artifact_status": "recorded_CPP_QP_replay_verified_awaiting_D57_normal_build"
   },
   "execution": {
     "mode": "interactive_setup_and_detached_training",
-    "maximum_window_wall_s": 14400,
-    "begin_wrapup_after_s": 12600,
-    "clock_starts": "First W40 actual launch creates its shared28h; independent GPU first start creates its own<=28h.",
+    "maximum_window_wall_s": null,
+    "begin_wrapup_after_s": null,
+    "clock_starts": "Preserve original starts and historical finite deadlines; explicitly resumed A and all new jobs use deadline=null and declared work goals.",
     "includes": [
-      "Read corrected5d3a70f sources",
-      "Implement H projection and r29 records",
-      "Normal build and push",
-      "Launch A/B plus independent GPU task"
+      "Read W40 final review and actual latest job state",
+      "Normal qp2 build if absent; ordinary A resume preserving source checkpoint and tail147",
+      "Parallel same-input saturated held-dynamics/derivative investigation and one evidence-based r30 correction per W41 plan",
+      "After real tail0 parents and r30 build, declare and launch two W41 continuations",
+      "Authorized no-wall GPU G1-G5 workstream: real states, resident batches, complete planner and isolated closed-loop evaluation"
     ],
     "stop_when": "After tmux stable and real samples/logs advance; no wait for training/evaluation completion.",
     "automatically_chain_tasks": false,
     "autonomous_48h_campaign_enabled": false,
-    "unfinished_task_rule": "Inspect actual W40/GPU jobs and preserve their own versions and deadlines.",
+    "unfinished_task_rule": "Inspect exact job/PID/checkpoint; preserve completed B/GPU and original frozen evidence. Authorized A continuation removes only its active wall deadline and keeps prior values in history.",
     "background_overrun_authorized": true,
     "default_reads": [
       "AGENTS.md",
-      "docs/TERRAIN_MEMORY_PLAN.md current handoff and sections4/5/6",
-      "experiments/terrain_memory/s1-go2-w40-plan.json",
-      "docs/S1_W40_START_PROMPT.md",
-      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md",
-      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/r29-math-audit.md",
-      "current actual job/contract before starting"
+      "docs/TERRAIN_MEMORY_PLAN.md current handoff",
+      "docs/S1_W41_STABILITY_PLAN.md",
+      "docs/S1_W41_START_PROMPT.md",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/README.md",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/technical-error.md",
+      "current actual job/contract/latest own checkpoint before starting",
+      "docs/S1_W41_GPU_PLAN.md",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/technical-independent-verification.md"
     ],
     "avoid_default_bulk_reads": [
       "README history",
@@ -64,11 +67,13 @@
     "new_handoff_document_required": false,
     "within_task_chain_enabled": true,
     "allowed_chain": [
-      "corrected_r29_implementation",
+      "ordinary_W40_A_qp2_resume",
+      "parallel_r30_implementation",
       "normal_build_and_push",
-      "two_joint_streams_plus_GPU",
-      "own_new_update_E30_then_eligible_E60",
-      "compact_publish_then_background_diagnostics"
+      "declared_W41_two_own_parent_continuations",
+      "own_final_update_E30_then_eligible_E60",
+      "authorized_no_wall_GPU_G1_G5",
+      "compact_then_requested_raw_publication"
     ],
     "chain_shares_one_absolute_deadline": false,
     "current_completed_prerequisite": {
@@ -177,29 +182,29 @@
       },
       "scope": "Historical execution facts to reuse, not a new admission test or proof of material-task qualification."
     },
-    "compute_time_policy": "Interactive<=4h; two main streams shared28h, each own eval<=4h; independent GPU<=28h, finish early.",
+    "compute_time_policy": "No fixed interactive/background completion cutoff; training ends by declared sample/update goal, evaluation by original physical horizon and qualification, fixture work by its finite declared scope, or explicit technical failure/user stop. Per-request and numerical safeguards remain.",
     "background_job": {
-      "authorized_by": "User explicitly requested tmux training for ten hours or longer,with departure after actual startup and later inspection of logs.",
-      "default_maximum_wall_s": 100800,
-      "configurable_budget": "W40 shared28h absolute, ordinary resume cannot extend.",
+      "authorized_by": "User 2026-11-07 explicitly removed fixed background completion deadlines; retain sample/update goals, physical durations and technical stops.",
+      "default_maximum_wall_s": null,
+      "configurable_budget": "No background wall deadline. Historical values stay in frozen records; an explicit same-job continuation records their removal.",
       "launcher": "scripts/start_s1_go2_r12_tmux.py",
       "session_default": "s1-w40",
       "training_flag": "--background-job",
       "startup_handoff": "Confirm actual physics/sample counts advance and normal logs exist, then leave the fixed job running. The post-episode stop executes unattended; no requirement to wait for the first episode,256samples or a separate stability trial.",
       "supervision": "Reuse existing result, episode, collection, learning, checkpoint and stopped records. A small check in the natural episode loop handles the known r25 signature; no polling agent, continuous dense-array reader or new monitoring service.",
       "stop_conditions": [
-        "1024 new transitions/4 updates per stream",
-        "shared W40 absolute deadline",
+        "Own declared sample/update target",
         "technical interruption",
-        "unchanged known_r25 predicate"
+        "unchanged known_r25 predicate",
+        "explicit user stop"
       ],
       "ordinary_physical_failure": "Save the original physical terminal and continue the next natural episode, except when the explicitly defined known_r25_startup_regression signature ends this controller phase. No generic fixed failure-count or start-count cap.",
       "automatic_restart": false,
-      "post_training": "Each own new update>33 fixed E30; original same-case E60 gate; <=4h per stream.",
+      "post_training": "Each own final new update fixed E30; same-case E60 gate; finish by actual result without a wall deadline.",
       "disconnect_semantics": "Detaching or closing the client leaves the server job running. Instance shutdown/reboot ends the process; resume from saved checkpoint later.",
       "concurrent_training_streams": 2,
-      "default_postprocess_wall_s": 21600,
-      "postprocess_clock": "Starts after final evaluation finishes or is explicitly unavailable;independent of training/evaluation/interactive budgets.",
+      "default_postprocess_wall_s": null,
+      "postprocess_clock": "No fixed completion deadline. Individual network request timeouts remain bounded.",
       "postprocess_entrypoint": "scripts/finish_s1_go2_r12_job.py",
       "publication_auth": "Persistent server gh login with repository write access,configured Git credential helper and author identity. Credentials stay outside repository/job logs;no Windows stdin injection is needed.",
       "network_modes": [
@@ -211,12 +216,12 @@
       "autopublish": true,
       "failure_policy": "Preserve every original technical/physical result and all available compact evidence. Compact Git and explicitly requested diagnostic upload/index failures are real pending work retried from saved records without physics, force push or deletion. Only unrequested large checkpoints/full videos/unrelated arrays are retained_local without upload obligation.",
       "result_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/<job-name>.json",
-      "resume_publication": "Resume compact Git or the requested diagnostic prepare/run/queue flow from saved delivery records; run finalizes the manifest-specific Git index/status. Do not restart training/evaluation, mutate a running job or reset deadlines to recover publication. Upload may proceed in the background while actual local saved-data analysis and W39 preparation continue.",
+      "resume_publication": "Continue only missing requested assets from the saved manifest without rerunning physics or replacing completed results. No new wall deadline; retain per-request network timeouts.",
       "final_evaluation_adapter_status": "implemented_explicit_training_directory_phase_lineage_and_own_new_update",
       "postprocessing_release_policy": "Requested diagnostics are enabled through scripts/publish_s1_go2_r12_diagnostics.py and outputs.requested_diagnostic_evidence. Every new finished attempt includes original feedback/planner/reference/trajectory/prediction plus models/metadata/small material logs; complete physical/material arrays are required for final evaluations and first natural failures by original reason/stream, with explicit additional attempts. Preserve precision, publish Release assets and Git links/status even for NPZ/>2MB, retain originals and historical URLs; blanket weight/video upload remains disabled.",
       "cleanup_after_publication": "Disabled by the latest user instruction. User periodically exports bulk outputs to their storage disk and manually deletes after backup; compact Git push never authorizes deletion.",
       "prior_40h_extension_inherited": false,
-      "background_overrun_scope": "W40 shared28h plus each own <=4h evaluation; independent third GPU <=28h.",
+      "background_overrun_scope": "Training, evaluation and requested delivery have no fixed background completion time; interactive handoff and physical task horizons are separate.",
       "parallel_layout": [
         {
           "stream_id": "w40-a",
@@ -235,7 +240,7 @@
           "parent_map_key": "w40-b"
         }
       ],
-      "training_clock": "Create once at first W40 launch; immutable28h shared by A/B and resume.",
+      "training_clock": "Preserve original started_unix_s. For explicit continuation append prior deadline to wall_limit_history and set deadline_unix_s=null.",
       "evaluation_slots": "Historical W39 has two main slots and is complete. Authorized W40 retains two main training/evaluation slots plus a separate GPU adaptation/testing task. GPU integration checks are not formal policy qualification.",
       "publication_serialization": "Compact finisher commits/pushes under the existing lock and then releases the compact-finish lock before diagnostic queue. The independent run handles manifest-specific pending/final Git index state with short existing index locks; network transfer does not hold the compact lock. W38 catchup calls the diagnostic entrypoint directly, never its old finisher, preserving newer phase and both-stream handoff.",
       "training_clock_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w40-training-clock.json",
@@ -245,7 +250,10 @@
       "required_entrypoint_changes_status": "implemented",
       "diagnostic_entrypoint": "scripts/publish_s1_go2_r12_diagnostics.py",
       "diagnostic_delivery_policy": "outputs.requested_diagnostic_evidence",
-      "diagnostic_entrypoint_implementation_status": "existing publisher plus r29 diagnostic files"
+      "diagnostic_entrypoint_implementation_status": "existing publisher plus r29 diagnostic files",
+      "wall_deadline_enabled": false,
+      "completion_policy": "sample_update_goal_no_wall_deadline",
+      "current_continuation": "W40 A only: latest own ep314/9508/36/tail147 or a later actual checkpoint; qp1 to qp2, target9617/37. B W40 already complete; do not restart it."
     },
     "diagnostic_parallel_work": {
       "source": "outputs.requested_diagnostic_evidence",
@@ -258,7 +266,7 @@
       "delivery_implementation_status": "implemented_locally_saved_data_checked_not_deployed_or_run_on_D57_in_this_session",
       "W39_scope": "Required phase/path wiring was implemented externally in9544cfe and W39 is running. Continue only separate saved-data delivery/read-only analysis; preserve existing runtime, identity and deadline."
     },
-    "next_task_activation_rule": "Implement and normally build r29 plus explicit parent_map/phase/path/clock/recording wiring, then activate this runtime contract for W40. Preserve completed W39 jobs and frozen contracts. Do not relabel unchanged r28 and launch."
+    "next_task_activation_rule": "Ordinary qp2 continuation applies only to unfinished W40 A and preserves logical r29/reward/tail. Before new W41 activation, implement and normally build the single evidence-based r30 correction and declare actual own tail0 parents, directories, clocks, target counts and frozen artifact identities. Preserve completed W40 B/GPU and all historical frozen contracts."
   },
   "tasks": [
     {
@@ -812,11 +820,11 @@
     "normal_startup_resource_snapshot": "At an actual normal new-job launch one ordinary CPU/GPU utilization and RSS/VRAM snapshot may accompany observed throughput; record the selected workers from the frozen job contract. No stress test,worker grid or monitoring platform.",
     "maximum_environments_scope": "Future W40: at most two main PPO environments plus one separately identified GPU integration/test environment; initial_training_concurrency stays2. No third PPO lineage.",
     "future_gpu_task_authorization": {
-      "date": "2026-11-06",
+      "date": "2026-11-07",
       "authorized": true,
-      "plan": "experiments/terrain_memory/s1-go2-w40-plan.json",
-      "scope": "actual GPU implementation, targeted saved-state numerical/performance tests, optional separately identified short integration test; not only a literature review",
-      "supersedes": "historical two-slot/no-GPU-benchmark restriction for this explicit task",
+      "plan": "docs/S1_W41_GPU_PLAN.md",
+      "scope": "Expanded G1-G5 real-fixture contact/derivative diagnosis, resident node/candidate batching, full task/candidate/planner integration, independent original-plant E30/E60, and one evidence-selected alternative GPU architecture. Coexist with other active GPU training; no wall deadline.",
+      "supersedes": "Earlier two-slot/no-GPU restriction and unpublished W41 draft limited to one small fixture diagnosis.",
       "main_runtime_hot_swap": false
     }
   },
@@ -1241,10 +1249,10 @@
     "training_and_posthoc_prefixes_are_not_formal_qualification": true,
     "automatically_run_extra_rigid_regression": false,
     "additional_run_rule": "Only when it directly answers the current concrete failure/change; no unrelated matrix.",
-    "formal_mission_wall_rule": "Formal evaluation starts after this job training exits, uses its independent 4h deadline, and preserves the original continuous durations and exact-case qualification. Never stitch interrupted portions into a pass.",
-    "current_window": "Within the same <=4h task inspect existing W38 E30 events, select one supported contact/execution repair, implement r28 and required phase/delivery wiring, normally build and launch two complete-joint continuations. Retain r27 C2, W38 reward and original plant/task.",
+    "formal_mission_wall_rule": "No fixed background wall completion time. Physical 30/60/300/600s horizons and same-case qualification remain; interrupted pieces never form a completed evaluation.",
+    "current_window": "Follow W41 plan: resume original W40 A using qp2; parallel one hold-consistency repair; normally build and declare W41 from actual own tail0 parents. No fixed wall cutoff or added admission test.",
     "next_control_question": "Where does the first identifiable separation arise: timing/reference/derivative wiring, accepted candidate terminal geometry, feedback actuator/contact active set, or prediction/material interface? Select one repair from existing saved evidence, then measure actual legal task capability.",
-    "comparison_after_migration": "Each W39 branch continues its own W38 ep251 Actor/Critic/optimizer/RNG/history with no reseed. The branches share earlier ancestry but are never merged. W38-vs-W39 is an engineering intervention comparison, not an independent-from-scratch seed study or isolated RAW/PANN causal estimate.",
+    "comparison_after_migration": "W40/W41 are own-branch continuations with preserved optimizer/RNG/ancestry, not independent-from-scratch or isolated RAW/PANN causal studies. W41 parent_map is set only from actual completed W40 own checkpoints.",
     "training_gate": "Saved-data mechanism selection, necessary implementation and normal build, then direct complete-joint training. No new E30/rigid/single-module/mock/smoke/restore or throughput admission experiment.",
     "post_training_evaluation": {
       "planned": true,
@@ -1256,8 +1264,8 @@
         "E30",
         "E60"
       ],
-      "maximum_wall_s": 14400,
-      "clock_starts": "Each stream training end starts its own<=4hevaluation budget; each stream occupies at most one compute slot at a time.",
+      "maximum_wall_s": null,
+      "clock_starts": "Record actual evaluation start after training; no fixed wall deadline. Preserve physical E30/E60 durations and same-case qualification.",
       "checkpoint_selection": "Own current W40 phase/stream/controller/reward, updates>33 and samples>8593; no parent fallback.",
       "deterministic_policy_mean": true,
       "ppo_updates": false,
@@ -1342,7 +1350,7 @@
         },
         "new_formal_attempts_total": 2
       },
-      "later_long_evaluation": "Retain independent same-case30->60->300->600 qualification. This phase schedules only E30/eligibleE60 within4h. E300/E600 require a later explicit long-job budget and actual same-case predecessor; never stitch truncated segments or automatically run a full matrix.",
+      "later_long_evaluation": "Retain independent same-case30->60->300->600 qualification. This phase schedules only E30/eligibleE60 without a wall-clock completion deadline. E300/E600 require the actual same-case predecessor and a declared later evaluation task; never stitch truncated segments or automatically run a full matrix.",
       "streams": [
         {
           "stream_id": "w40-a",
@@ -1360,7 +1368,8 @@
           "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2",
           "parent_map_key": "w40-b"
         }
-      ]
+      ],
+      "wall_deadline_enabled": false
     },
     "primary_progress_metrics": [
       "legal first outbound passages",
@@ -3460,7 +3469,7 @@
       }
     }
   },
-  "reviewed_source_commit": "e51acd535445f617bd0486650e67df4bcc116481",
+  "reviewed_source_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
   "literature": [
     {
       "id": "TM02",
@@ -3591,20 +3600,9 @@
     "latest_user_scope": "2026-11-05 execute W39; leave after both tmux streams show real sample/log progress, without waiting for the first completed update."
   },
   "current_review_scope": {
-    "kind": "W39_completed_raw_diagnostics_review_and_W40_prelaunch_correction",
-    "reviewed_source_commit": "07b0ee3e15c9f10e9b1a6a1de3997bec36f39556",
-    "previous_compact_review_commit": "21dc4fc8dc98dbe0159bc7a9883394eb9d543d3d",
-    "review_date": "2026-11-06",
-    "timezone": "Asia/Shanghai",
-    "server_accessed": false,
-    "server_deployed": false,
-    "controller_implemented": false,
-    "controller_built": false,
-    "training_started": false,
-    "new_tests_or_experiments": false,
-    "saved_data_and_algebra_analysis_only": true,
-    "scope": "Download and parse original W39 Release diagnostics, all62 training control records, two full E30 and8rollouts; replace invalid proposed Qux-centered feedback QP with explicit legacy-preserving H metric projection. Runtime remains historical W39 until actual W40 implementation.",
-    "audit_directory": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review"
+    "source_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
+    "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/README.md",
+    "status": "repository_and_published_W40_evidence_audited; no_D57_deployment_claim"
   },
   "planned_implementation": {
     "controller_build": "S5-r28",
@@ -3681,14 +3679,18 @@
     "scope": "D57 inspected and r28 built; this is the prelaunch configuration snapshot. Normal job/index records and six-line main-plan handoff report subsequent actual training/evaluation status; clock is created only by actual launch."
   },
   "next_authorized_plan": {
-    "task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
-    "path": "experiments/terrain_memory/s1-go2-w40-plan.json",
-    "status": "planned_not_implemented_built_or_started",
-    "main_streams": 2,
-    "additional_gpu_task": 1,
-    "activation_rule": "Implement and normally build r29 plus explicit parent_map/phase/path/clock/recording wiring, then activate this runtime contract for W40. Preserve completed W39 jobs and frozen contracts. Do not relabel unchanged r28 and launch.",
-    "latest_user_authorization": "2026-11-06: two existing full-joint continuations plus a third GPU MPC adaptation/test task; no PC archive; user backup/manual deletion only.",
-    "revision": "v2_raw_review_corrected_H_metric_projection",
-    "raw_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md"
-  }
+    "entrypoint": "docs/S1_W41_STABILITY_PLAN.md",
+    "prompt": "docs/S1_W41_START_PROMPT.md",
+    "immediate": "Build frozen qp2 and restore only unfinished W40 A; continue actual full joint sampling, then own E30/E60 by original qualification.",
+    "parallel": "Second task checks same-input saturated actuator/held dynamics and branch-consistent A/B before one measured r30 correction; whole-hold unsaturated-request projection is an optional design, not a predetermined causal fix. Authorized third GPU workstream executes docs/S1_W41_GPU_PLAN.md G1-G5 with actual shared resources; no main hot swap and no fixed wall deadline.",
+    "no_wall_deadline": true,
+    "do_not_replay_completed_W40_B_or_GPU": true,
+    "do_not_archive_on_user_PC": true,
+    "server_outputs_automatic_deletion": false,
+    "gpu_plan": "docs/S1_W41_GPU_PLAN.md",
+    "checkpoint_preservation": "Ordinary resumed invocations preserve existing source checkpoint files; latest progress may point to a restart-suffixed path. Preserve valid tail147 and all optimizer/RNG ancestry.",
+    "evaluation_route_criterion": "bidirectional_material_roundtrips_v1"
+  },
+  "historical_nested_records_note": "Nested previous execution/prelaunch/planned-implementation records retain their original versions and budgets as history. Current handoff, next_authorized_plan and explicit job snapshots take precedence; never reactivate an old task from a historical paragraph.",
+  "formal_evaluation_revision_note": "New R12 E60/E300/E600 retain previous physical/time/endpoint criteria and additionally require recorded legal outbound, return and completed roundtrips (1/5/10); original saved results and frozen contracts remain unchanged. Evaluator source hash and legacy_stage_criteria_met distinguish scoring versions."
 }

@@ -165,6 +165,12 @@ def run(args, c, joint=None):
     training = bool(c.get('r11_training'))
     policy_hook = bool(c.get('r11_policy'))
     compact = training and not joint.full_recording
+    # Fixed-cap and older-reward policies have no reward-side route account.
+    # Score new R12 evaluations with the same counter without changing reward.
+    evaluation_legal_route = None
+    if c.get('stage') == 'S1R12' and not training and getattr(joint, 'legal_route', None) is None:
+        from s1_go2_legal_route import LegalRoute
+        evaluation_legal_route = LegalRoute()
     if campaign:
         with index_file(small, c) as idx:
             idx['attempts'].append(dict(attempt=args.attempt, stage=args.stage, purpose=args.purpose,
@@ -381,6 +387,10 @@ def run(args, c, joint=None):
                     joint.control(t,mission)
                 contact, grf, _ = actual_contact()
                 body_goal, heading = mission.update(t, dt, data.qpos[:3], velocity, ori, omega, bool(contact.all()))
+                if evaluation_legal_route is not None:
+                    # Bottom and geom centre have identical XY; GRF is the actual
+                    # native/material contact measurement at this control state.
+                    evaluation_legal_route.update(t, mission, data.qpos[:2], data.geom_xpos[feet], grf)
                 if not reference_settings and c.get('r11_body_reference') and mission.phase in ('outbound','return') and (
                         c['r11_body_reference'].get('whole_route',False) or np.any(joint.soft)):
                     direction=1. if mission.phase=='outbound' else -1.
@@ -394,7 +404,8 @@ def run(args, c, joint=None):
                     if joint.stop_requested:
                         reason=joint.stop_requested
                         break
-                if c.get('stage') == 'S1R12' and time.time() >= c['window']['run_deadline_unix_s']:
+                if (c.get('stage') == 'S1R12' and c['window']['run_deadline_unix_s'] is not None
+                        and time.time() >= c['window']['run_deadline_unix_s']):
                     reason = 'window_budget_truncated'
                     break
                 if joint is not None and started and c.get('stage') == 'S1R11' and time.time() >= joint.deadline:
@@ -734,6 +745,13 @@ def run(args, c, joint=None):
                 timestep_s=float(np.median(np.diff(actual_plan_times,axis=1))),planning_origins=len(plans))
     if joint is not None:
         result=joint.finish(result)
+    if evaluation_legal_route is not None:
+        _, final_grf, _ = actual_contact()
+        evaluation_legal_route.update(float(data.time), mission, data.qpos[:2], data.geom_xpos[feet], final_grf)
+        if result['reason'].startswith(('material_domain_exit', 'body_fall', 'invalid_contact')):
+            evaluation_legal_route.settle_physical_terminal(float(data.time))
+        result['legal_route'] = evaluation_legal_route.result()
+        result['legal_route'].update(reward_version=None, account_role='independent_evaluation_only')
     if compact:
         result.update(samples_500Hz=None,recorded_control_samples=len(hist),control_record_rate_Hz=20,
             recording='Training: 20Hz robot states, 2Hz transitions, per-episode actual physical counters; no full prediction/physics dumps.')

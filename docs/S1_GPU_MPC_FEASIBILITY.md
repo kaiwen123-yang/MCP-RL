@@ -1,5 +1,9 @@
 # S1 求解器并行与 GPU MPC 可行性审查
 
+## 2026-11-07 当前执行入口
+
+W40 GPU已完成但未对齐，完整结果见[W40最终审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/README.md)。用户本次授权扩大GPU支线，当前以[W41 GPU扩展计划](S1_W41_GPU_PLAN.md)为准，包含批量动力学、完整规划和独立闭环；后台无固定完成时限。下面2026-11-05/06的任务快照、两槽安排、旧提示词与截止时间均是历史，不是新任务入口。
+
 ## 2026-11-06执行更新：第三并行任务已授权
 
 **原件二次复核更正：** W39的976项原诊断已发布；新执行依据为[原始审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/README.md)和[重放输入合同](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W39-raw-review/gpu-replay-audit.json)。r29现指保留旧target-clipped策略的非对角H投影，旧Qux中心公式撤回。GPU需同版本匹配，固定target的A/B不能混入policy/QP导数；成本/整planner重放需声明task phase和初始policy/warm-start，不能把未保存的旧K/H当作已上传。此更正不撤销第三并行测试授权。

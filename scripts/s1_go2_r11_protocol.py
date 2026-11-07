@@ -29,7 +29,7 @@ def case_identity(c,group,seed,condition,checkpoint=None,normalization=None):
         common.pop(key,None)
     common['task'].pop('maximum_episode_s',None)
     sources=['s1_go2_r11_runtime.py','s1_go2_r11_model.py','s1_go2_joint_material.py',
-             's1_go2_wb_equilibrium.py','s1_go2_support_reference.py']
+             's1_go2_wb_equilibrium.py','s1_go2_support_reference.py','s1_go2_legal_route.py']
     if checkpoint:sources+=['s1_go2_r11_policy.py','s1_go2_r10_observer.py']
     identity=dict(protocol_revision=CONTRACT['protocol_revision'],group=group,seed=seed,
         condition=condition,initial_state=next(x for x in c['single_mission_protocol']['formal_conditions'] if x['id']==condition),
@@ -85,6 +85,23 @@ def material_traversal(result,arrays):
         original_strip_x_m=[.8,2.2],original_strip_y_m=[-.6,.6],
         measurement='First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change.')
 
+
+def legal_roundtrip_qualification(result,required):
+    """Use the recorded two-way strip account for new R12 mission evaluations.
+
+    Raw endpoint laps alone can include a return that bypassed the material.
+    This reads the existing 500Hz account; it does not alter physics or rewards.
+    """
+    route=result.get('legal_route') or {}
+    counts={key:route.get(key) for key in (
+        'completed_roundtrips','legal_outbound_traversals','legal_return_traversals')}
+    available=all(isinstance(value,int) and not isinstance(value,bool) and value>=0
+                  for value in counts.values())
+    return dict(criterion='bidirectional_material_roundtrips_v1',required=required,
+        observed=counts,evidence_available=available,
+        completed=bool(available and all(value>=required for value in counts.values())))
+
+
 def evaluate_stage(result,c,joint,arrays):
     identity=c['r11_stage'];level=identity['level'];duration=identity['duration_s']
     result.update(evaluation_stage=identity,case_key=c.get('case_key'),case_identity=c.get('case_identity'),
@@ -116,10 +133,24 @@ def evaluate_stage(result,c,joint,arrays):
         achieved=bool(full and result['completed_round_trips']>=identity['target_circuits'] and
             result['first_completion_s'] is not None and result['first_completion_s']<=identity['route_deadline_s'] and
             h['endpoint_position_violation_samples']==0 and h['final_stable_s']>=2-1e-7)
+    legacy_achieved=achieved
+    legal_check=None
+    if c.get('stage')=='S1R12' and level in ('E60','E300','E600'):
+        legal_check=legal_roundtrip_qualification(result,identity['target_circuits'])
+        result['stage_progress']['legal_material_roundtrips']=legal_check
+        result['qualification']['route_criterion']=legal_check['criterion']
+        result['qualification']['legacy_stage_criteria_met']=bool(legacy_achieved)
+        achieved=bool(achieved and legal_check['completed'])
     passed=bool(achieved and not failure and not technical and not budget)
     status='passed' if passed else 'physical_material_failure' if failure else 'technical_interruption' if technical else 'budget_truncated' if budget else 'task_criteria_unmet'
     result.update(success=passed,stage_status=status,sustained_execution_success=passed,
         original_mission_success=bool(result['first_completion_s'] is not None) if level=='E60' else None)
     if not failure and not technical and not budget:
-        result['reason']='stage_passed' if passed else 'material_traversal_not_completed' if level=='E30' and not result['stage_progress']['material_traversal']['completed'] else 'stage_criteria_unmet'
+        if passed:
+            result['reason']='stage_passed'
+        elif legal_check is not None and legacy_achieved and not legal_check['completed']:
+            result['reason']=('legal_material_roundtrips_not_completed' if legal_check['evidence_available']
+                              else 'legal_material_roundtrips_unavailable')
+        else:
+            result['reason']='material_traversal_not_completed' if level=='E30' and not result['stage_progress']['material_traversal']['completed'] else 'stage_criteria_unmet'
     return result

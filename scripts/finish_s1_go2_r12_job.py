@@ -276,6 +276,8 @@ def update_parallel_handoff(contract):
         finished=(directory/"training-finished-at.txt").exists()
         rows[stream_id]=dict(job=directory.name,phase_id=job["phase_id"],seed=job["seed"],
             controller_build=job["controller_build"],reward_version=job["reward_version"],
+            deadline_unix_s=job.get("deadline_unix_s"),
+            completion_policy=job.get("completion_policy", "legacy_wall_deadline"),
             controller_artifact=job.get("controller_artifact",job["controller_build"]),
             phase_lineage=collection.get("phase_lineage"),
             status="training_ended" if finished else job["status"],
@@ -307,7 +309,8 @@ def update_parallel_handoff(contract):
                     new_transitions=row["new_transitions"],new_updates=row["new_updates"],tail=row["tail"]),
                 phase_lineage=row["phase_lineage"],controller_build=row["controller_build"],
                 job_directory=row["job_directory"],training_directory=row["training_directory"],
-                latest_resume=row["resume"],deadline_unix_s=clock["deadline_unix_s"])
+                latest_resume=row["resume"],deadline_unix_s=row["deadline_unix_s"],
+                completion_policy=row["completion_policy"])
         index.update(current_task=contract["current_task"],protocol_revision=contract["protocol_revision"])
         index[phase+"_distinct_new_transitions"]=sum(x["new_transitions"] for x in rows.values())
         index[phase+"_policy_counts"]={sid:dict(transitions=r["transitions"],updates=r["updates"]) for sid,r in rows.items()}
@@ -329,14 +332,17 @@ def update_parallel_handoff(contract):
         r=rows.get(sid)
         details.append(f"- {sid}：" + (f'{r["job"]}，{r["status"]}；新增{r["new_transitions"]}/{r["new_updates"]}，累计{r["transitions"]}/{r["updates"]}，tail={r["tail"]}、excluded={r["excluded"]}；评价={r["evaluation"]}，紧凑Git={r["publication"]}。' if r else "尚未启动。"))
     from datetime import datetime,timezone,timedelta
-    end=datetime.fromtimestamp(clock["deadline_unix_s"],timezone(timedelta(hours=8))).isoformat()
+    end=(datetime.fromtimestamp(clock['deadline_unix_s'],timezone(timedelta(hours=8))).isoformat()
+         if clock.get('deadline_unix_s') is not None else None)
     ability=[]
     for sid,r in rows.items():
         o=r["outcomes"]
         ability.append(sid+("尚无最终任务汇总" if not o else
             f'合规去程/返程/整圈={o.get("legal_all_outbound_traversals")}/{o.get("legal_return_traversals")}/{o.get("legal_roundtrips")}，材料加载回合={o.get("material_loaded_episodes")}'))
     handoff=[
-        f'- 当前任务：{contract["current_task"]} / {contract["reuse"]["active_controller_build"]} 已实际实现、正常构建并启动；共同训练绝对截止北京时间{end}，resume不重置。',
+        f'- 当前任务：{contract["current_task"]} / {contract["reuse"]["active_controller_build"]}；'
+        + (f'共同训练绝对截止北京时间{end}，resume不重置。' if end else
+           '后台按各自样本/更新目标结束，无固定墙钟完成期限；原物理时长与技术失败停止保留。'),
         *details,
         "- 任务能力："+ "；".join(ability)+"。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。",
         "- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。",
@@ -368,7 +374,8 @@ def main():
     small, large = (ROOT / contract["outputs"][key] for key in ("compact_root", "large_root"))
     name = jobdir.name
     started = time.time()
-    deadline = a.deadline_unix if a.deadline_unix is not None else started + a.hours * 3600
+    from s1_go2_job_limits import goal_based, request_timeout
+    deadline = None if goal_based(contract) else (a.deadline_unix if a.deadline_unix is not None else started + a.hours * 3600)
     summary_path = small / "jobs" / (name + ".json")
     previous = read(summary_path)
     resumed_since_publication=(job.get("last_resume",{}).get("at_unix_s",0)
@@ -619,7 +626,7 @@ def main():
         return subprocess.run(["git", *args], cwd=ROOT, check=True, text=True,
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                               env=dict(os.environ, GIT_TERMINAL_PROMPT="0", GCM_INTERACTIVE="never"),
-                              timeout=max(1, min(120, deadline - time.time())))
+                              timeout=request_timeout(deadline, 120))
 
     try:
         # Stage the shared index under its existing lock; release it before network I/O.
@@ -653,6 +660,8 @@ def main():
         try:
             diagnostic_command=[sys.executable, str(ROOT / "scripts/publish_s1_go2_r12_diagnostics.py"),
                 "queue", "--job-dir", str(jobdir), "--hours", str(a.hours)]
+            if goal_based(contract):
+                diagnostic_command += ['--no-wall-deadline']
             if job.get("last_resume"):
                 # An empty selection would falsely reuse the old published
                 # manifest. The uploader retains its original absolute clock.

@@ -1,0 +1,101 @@
+--- a/mjpc/planners/ilqg/r29_projection.h
++++ b/mjpc/planners/ilqg/r29_projection.h
+@@ -16,6 +16,7 @@
+   int nfree=-2;
+   bool refinement_attempted=false, native_converged=true;
+   int native_nfree=-2, refinement_iterations=0;
++  int refinement_face_solves=0, refinement_bound_releases=0, refinement_zero_steps=0;
+   double native_primal=0, native_kkt_scaled=0;
+   const char* refinement_status="not_needed";
+   const char* status="legacy_seed_no_metric";
+@@ -53,9 +54,15 @@
+   // A finite numerical guard, not a physical/admission limit. On exhaustion
+   // the original technical-failure path remains in force.
+   const int max_iterations=4*n*n+32;
++  // A KKT acceptance tolerance is not a test that the current free face has
++  // been minimized. With a coupled ill-conditioned H, a small free gradient
++  // can still move the face substantially; releasing a bound then can give
++  // an outward direction and a zero-step release/relock cycle. Only release
++  // after an actual full feasible Newton step on the unchanged current face.
++  bool face_minimized=false;
+   for(int iteration=0;iteration<=max_iterations;++iteration) {
+     r.refinement_iterations=iteration;
+-    double primal=0,kkt=0,free_gradient=0;
++    double primal=0,kkt=0;
+     bool finite=true;
+     for(int i=0;i<n;++i) {
+       delta[i]=u[i]-r.center[i];
+@@ -71,7 +78,7 @@
+       const double residual=r.fixed[i]?0:(certificate_active==-1?std::max(0.,-gradient[i]):
+         (certificate_active==1?std::max(0.,gradient[i]):std::abs(gradient[i])));
+       kkt=std::max(kkt,residual);
+-      if(!active[i]) {free.push_back(i);free_gradient=std::max(free_gradient,std::abs(gradient[i]));}
++      if(!active[i]) free.push_back(i);
+     }
+     if(!finite) {r.refinement_status="non_finite_iterate";return false;}
+     if(primal<=primal_tol && kkt/scale<=relative_tol) {
+@@ -81,14 +88,14 @@
+ 
+     // First minimize on the current feasible face. Only at a free-stationary
+     // point release a bound whose multiplier has the wrong sign.
+-    if(free.empty() || free_gradient<=gradient_tol) {
++    if(free.empty() || face_minimized) {
+       int release=-1;double worst=gradient_tol;
+       for(int i=0;i<n;++i) {
+         const double wrong=active[i]==-1?-gradient[i]:(active[i]==1?gradient[i]:0.);
+         if(wrong>worst) {worst=wrong;release=i;}
+       }
+       if(release<0) {r.refinement_status="stationary_precision_limit";return false;}
+-      active[release]=0;
++      active[release]=0;face_minimized=false;++r.refinement_bound_releases;
+       continue;
+     }
+ 
+@@ -101,6 +108,7 @@
+       r.refinement_status="free_metric_not_spd";return false;
+     }
+     mju_cholSolve(step.data(),factor.data(),rhs.data(),nf);
++    ++r.refinement_face_solves;
+     std::fill(direction.begin(),direction.end(),0.);
+     double alpha=1.;int blocker=-1;
+     for(int a=0;a<nf;++a) {
+@@ -110,6 +118,8 @@
+         (direction[i]<0?(r.lower[i]-u[i])/direction[i]:2.);
+       if(bound_step<=alpha) {alpha=std::max(0.,bound_step);blocker=i;}
+     }
++    face_minimized=alpha==1.;
++    if(alpha==0.) ++r.refinement_zero_steps;
+     bool moved=false;
+     for(int i:free) {
+       const double previous=u[i];
+@@ -121,7 +131,9 @@
+       else if(u[i]==r.upper[i]) active[i]=1;
+       moved=moved || u[i]!=previous;
+     }
+-    if(!moved && blocker<0) {r.refinement_status="stationary_precision_limit";return false;}
++    if(!moved && blocker<0 && !face_minimized) {
++      r.refinement_status="stationary_precision_limit";return false;
++    }
+   }
+   r.refinement_status="iteration_limit";
+   return false;
+--- a/mjpc/planners/ilqg/policy.cc
++++ b/mjpc/planners/ilqg/policy.cc
+@@ -210,13 +210,16 @@
+        <<",\"restoration\":"<<(projection.restoration?"true":"false")
+        <<",\"qp_converged\":"<<(projection.converged?"true":"false")
+        <<",\"qp_nfree\":"<<projection.nfree
+-       <<",\"qp_solver_revision\":\"S5-r29-qp1\""
++       <<",\"qp_solver_revision\":\"S5-r29-qp2\""
+        <<",\"qp_native_nfree\":"<<projection.native_nfree
+        <<",\"qp_native_converged\":"<<(projection.native_converged?"true":"false")
+        <<",\"qp_native_primal_residual_rad\":"<<projection.native_primal
+        <<",\"qp_native_kkt_scaled_residual\":"<<projection.native_kkt_scaled
+        <<",\"qp_refinement_attempted\":"<<(projection.refinement_attempted?"true":"false")
+        <<",\"qp_refinement_iterations\":"<<projection.refinement_iterations
++       <<",\"qp_refinement_face_solves\":"<<projection.refinement_face_solves
++       <<",\"qp_refinement_bound_releases\":"<<projection.refinement_bound_releases
++       <<",\"qp_refinement_zero_steps\":"<<projection.refinement_zero_steps
+        <<",\"qp_refinement_status\":\""<<projection.refinement_status<<"\""
+        <<",\"primal_residual_rad\":"<<projection.primal
+        <<",\"kkt_residual\":"<<projection.kkt

@@ -1,19 +1,29 @@
-# Codex：S1先稳定运行；W40两条联合主线＋一条GPU MPC任务
+# Codex：W40 A 数值续接与 W41 稳定联合执行
 
-## 执行入口
+## 当前执行入口
 
-使用AutoDL西北B区D57，SSH别名autodl-d57；项目/root/autodl-tmp/MCP-RL，环境work/envs/d57，激活source scripts/autodl_d57_env.sh。已记录RTX PRO6000 96GB级GPU、25vCPU、120GB内存；正常启动时读取实际资源，不把历史容量当空闲量。复用服务器独立联网及持久GitHub登录，凭据不进仓库/日志。
+先读 [当前交接](docs/TERRAIN_MEMORY_PLAN.md)、[W41 计划](docs/S1_W41_STABILITY_PLAN.md)、[GPU扩展计划](docs/S1_W41_GPU_PLAN.md)、[启动提示词](docs/S1_W41_START_PROMPT.md) 和 [W40 最终审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/README.md)。本文件及用户 2026-11-07 指令覆盖旧 W38–W40 执行期限和过时断点；历史报告与原运行条件保留。
 
-**当前事实：S5-r29-qp1已在D57正常构建，W40两个原job已在s1-w40-a/b恢复并产生新样本。** 逻辑契约仍为S5-r29；本次恢复源A ep286/8643/33/tail50、B ep282/8644/33/tail51，当前计数以主计划顶部及实际job/index为准。原r29冻结目录、50/51tail、optimizer/RNG、祖先和excluded145保留；不重复启动、不new-phase。主线原deadline1794061828.2264671未变。已定位原因与数值修复见[W40退出审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-stop-review/README.md)和[恢复提示词](docs/S1_W40_RECOVERY_PROMPT.md)，原完整启动提示词不改。GPU计算已自然结束，completed_batch_layer、aligned=false；本次只补传既有数组，10/10已核验，原版本/依赖/截止1794061888.128057保持，不重跑计算或JIT。
+默认执行端 AutoDL 西北 B 区 D57，SSH `autodl-d57`，项目 `/root/autodl-tmp/MCP-RL`，环境 `work/envs/d57`，激活 `source scripts/autodl_d57_env.sh`。记录容量为 RTX PRO 6000 96GB 级 GPU、25 vCPU、120GB RAM；现场先读实际资源，不能把总容量当空闲量。复用独立联网和持久 GitHub 登录，凭据不进仓库或日志。
 
-1. 开场最多5行后直接工作。先精确匹配tmux会话、实际PID/job/clock和未提交修改；不能用s1-w40前缀误匹配s1-w40-gpu，不kill/restartGPU。若修复后的主线已运行就继续观察，不重复启动。默认读当前交接、W40-stop-review及故障续接提示词；必要时查W39数学审查。两主线分别普通resume自己的ep286/ep282和50/51tail，不重新fork/reseed，不回退W39父点，不重开泛泛计划轮。
-2. W39各新增1024/4至8593/33＝8448已训练＋145历史excluded，tail0；A最后ep284、Bep280。62训练回合含59自然失败（41跌倒、4躯干接触、14材料域退出）和3截断。58加载、30入条带、26进入且足载；合法单程/返程/往返0。最终自身update33 E30分别10.476/17.592s跌倒，E60阻塞。B有60s存活但未入材料，不能算通过。
-3. 原件已确认58个loaded训练回合中57个先有大反馈/执行PD饱和；B E30在15.264s、load前有48.914rad原始反馈峰，实际动作受原clip限制。两E30全部14034执行动作/reference/packet身份一致；accepted→actual是闭环分歧，不能叫同输入开环残差。PANN零值主要是1820/2048 query全外域，另140未加载历史、2个短脉冲漏采。B272是有前进命令却进入异常局部平衡。旧完整accepted/K/H未存，A260无dense展开，不能伪造或重跑旧物理补齐。
-4. **r29改为旧策略输出c=原target_clip(u_ff+s*K_old*δx)之后的非对角H度量投影**：min .5(u−c)'H(u−c)，约束为原target∩当前PD区间。c可行直接返回c；H取同次成功backward真正Quu_reg。旧Qux中心公式撤回，不半改backward/value或声称完整constrained DDP。候选/nominal搜索/部署共享纯求值；action candidate显式s=1，nominal搜索才用其s，alpha只进前馈一次。H生命周期、初始legacy_seed_no_metric、首次真实动作前metric有效、固定轴消元、空区间最小违反、KKT状态、ratio不可用时mu/rate处理按数学审查落实。保持2ms hold/十子步，不把瞬时域说成全hold安全；开环FD不能对扰动重新跑policy。修日志分类及每次planner调用返回原因/policy复用年龄，不改历史原值或把r28重命名。
-5. 保留原Go2、TM02 .02域、PD/力矩/接触/跌倒/路线和阶梯；保留r28 trunk(v,J)、r27 C2、r26因果packet/十子步A/B/TV、冻结因果PANN、658观察、2Hz cap、W38终止奖励。r25 MovingSupport/SupportPlacement等旧失败项不复活。本轮不同时改物理、奖励、步态、动作维度或PANN训练。
-6. W40初次从各自W39父分支继承已经完成。当前只能恢复training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00286.pt与training/w40-b/PANN_PPO_S5-seed2/resume-state-ep00282.pt，或服务器更晚的真实同job断点；恢复各自Actor/Critic/optimizer/RNG及50/51合法tail，保留祖先fork_identity、phase_lineage和excluded145，不新加归一化器。新artifact边界明确记入transition/checkpoint/history，原通过证书的native动作保持，失败时求同一QP而非策略回退。目标仍各9617/37、tail0，首8594–8849成update34。实际冻结qp1后用--job-dir/--resume/--controller-artifact和s1-w40-a/b会话续接，绝不--new-phase或新建共享时钟。
-7. 两主线默认各12 MPC workers，各14已授权。GPU第三任务同时运行优先2×12；Torch1/BLAS1、主线原JAX精度/共享配置保留。starter选择同步job训练和评价workers；已有job普通resume保持冻结值。25vCPU还承担控制/RPC/材料/I/O，不能把线程数当有效加速或把用户报告的12核当本会话实测。
-8. **第三条GPU MPC适配与测试已获用户明确授权，覆盖旧“两计算槽/不做GPU benchmark”限制。** 独立w40-gpu会话/目录/版本/时钟，默认1–2 host线程、编译最多2job，不新建第三PPO谱系。实际做已存状态的预测/导数/候选/整步测试及必要短接入，不只查论文。同版本对齐：r28对r28或此次H投影r29对r29；保留原12维PD、十子步、MakeDifferentiable/coldstart/接触/风险/FD精度。现有q/v/mocap/96D userdata可建fixture，task phase和初始policy/warm-start须同一声明重建；未存旧K/H不能冒充历史整planner重放。依赖隔离固定版本，主线不升级、不热换，原型按真实完成层次报告。
-9. 交互≤4h，必要实现、正常构建、推送后直接启动完整联合训练，见真实样本推进即交接。两主线首次W40启动建立共享28h绝对期限；各自训练后≤4h，仅自身本phase新update>33的固定E30，原同case合格才E60。GPU首次启动另定≤28h绝对上限，完成即停；resume不延长任何deadline。保留原known_r25停止谓词与普通失败续采，不新增失败次数上限。除第三GPU任务明确需要的针对性数值/性能/接入测试外，不加主线纯MPC/E30准入、smoke/mock、恢复演习、无关测试套件、参数网格、hash认证或独立性能campaign。
-10. 新版完整accepted/reference/K/H及基策略Q_u/Q_xu诊断按主计划6节事件窗保存，每plan一次，无损压缩；动作行记旧clip后c、新投影delta、三种scale/alpha、实际动作身份、活跃界/KKT和插值，不把原K当在线有效Jacobian。每次planner调用均记return reason/policy_updated/reused age，防止只见成功计划。补query曝光、短脉冲、触地vz/压入及未施加候选力时钟诊断，不更改actor/物理。原完整feedback/planner/reference/trajectory及请求数组照常交付。先推紧凑结果再继续研究，新诊断后台传，Git/index短写串行；W39已976/976完成，不重启旧queue/finisher、重训或重置时钟。
-11. 大checkpoint/完整resume/全视频默认留D57，用户导出存储盘备份后手动统一删除。**不在用户电脑另做归档，不自动删除任何服务器研究输出或上传副本。** 已请求反馈/选中轨迹/参考轨迹/必要数组不能因raw或大于2MB静默过滤。compact push不是备份完成，queue启动也不是upload完成；普通整合远端提交，不强推，保留同时发生的上传更新。
+## 已确认事实
+
+- W40 A 最新交付为 ep314、9508/36、有效 tail147、excluded145，因 qp1 数值故障停止。原目标9617/37只差109条/一次更新；B已完成9617/37、tail0，末次E30在15.680s跌倒。合法去程/返程/往返均0。实际最新job/断点优先于文档快照。
+- qp2 修复相同 QP 内部提前释放边界产生的零步长循环；12个真实C++输入回放通过原容差，未改H/中心/约束/物理。当前仅源码和回放已完成，尚未由此审查在D57构建或恢复。逻辑控制器仍S5-r29，产物独立S5-r29-qp2，based_on=qp1。
+- 恢复保存已修复为保留来源checkpoint，实际新路径可能带restart后缀，以progress为准；新R12 E60/E300/E600增加已有合法材料去返/往返计数要求，旧结果不改写。独立复核报告明确区分真实QP/轨迹重评分与尚未完成的D57恢复。
+- GPU原W40已完成batch predictor层，aligned=false，8例3例对齐，10份NPZ已交付；无整planner或正式资格。旧GPU入口含28h规则，现已退休，不再用它启动新任务或重跑旧JIT。
+- PANN→PPO→MPC→PD→Go2/TM02联合采样与更新已运行。长期目标是同一地块跨足/返程恢复记忆改善加载/落脚/重访时序；稳定材料通行与因果记忆收益都未建立。G0/G1是Go2配置，不是换成人形G1。
+
+## 执行规则
+
+1. 开场最多5行后直接工作。精确核对tmux/PID/job/clock和未提交修改，已运行就不重复启动。不用前缀误匹配GPU，不kill/restart已完成B/GPU，不覆盖现场研究改动或同时上传提交。
+2. 任务A正常构建独立qp2并普通resume自身最新W40断点，保留147合法tail、actor/critic/optimizer/RNG、fork_identity/phase_lineage/excluded145。此步不new-phase、不回退W39父点、不重新fork/reseed。已完成B不重跑。命令和未启动行政评价的保存语义见启动提示词。
+3. 任务B与A并行：先用已观察事件的同一x/u核对真实饱和actuator map、2ms十子步及相同分支composed A/B与有限差分，在候选/nominal/部署保持纯因果一致。按具体证据实施一个r30修复；不预设全段未裁剪PD必须不饱和，计划第4.1–4.3节是可选约束设计。若采用，不以十个旧状态静态盒交集冒充解、不把原K当投影后Jacobian、不半改backward/value声称完整约束DDP。正常构建并推送后直接完整联合训练，不另设刚地/纯MPC/E30准入、smoke/mock、恢复演习、hash认证或参数网格。
+4. 保持原Go2、TM02 .02域、PD60/5、力矩/接触/跌倒/路线、r28 trunk(v,J)、r27 C2、r26因果packet/十子步/TV、冻结PANN/658D/2Hz cap/W38奖励；不同时改步态、物理、奖励或动作维度。r25撤回项不复活，r17 native impedance/r18 body-twist旧失败不换名重试。
+5. r30未实现前不能把当前契约改成已运行W41。W41新phase须以两支自身最新tail0父点分别继续，不混optimizer/RNG或从同一父点再fork。默认每支新增2048/8；若父点9617/37则目标11665/45，否则按实际父点加算。保存新目录/parent_map/时钟路径及artifact边界。末次新update固定E30，同case真通过才E60；300/600仅在前级通过后安排。新长阶段保留bidirectional_material_roundtrips_v1，合法去程/返程/往返分别达到1/5/10次，不能只按raw圈数评分。
+6. **后台不设固定墙钟完成时间。** 用户最新要求覆盖旧交互4h、训练28h、评价4h、GPU28h。当前以样本/更新目标、声明的评价/fixture工作完成、明确技术失败或用户停止结束，活动deadline为null，旧值入历史。单次网络请求timeout、数值迭代guard及物理30/60/300/600s保留。无deadline不是无限重试/吞错；不新加泛泛失败次数上限。
+7. 默认两主线各12 MPC workers，Torch/BLAS各1；普通resume保持自身冻结workers。第三GPU任务host1–2线程、编译最多2job，必要时降低其竞争，不能三个12workers流挤25核。2×14不是默认。按实际样本/h与资源快照判断效率，显存占用不代表研究产出。
+8. GPU第三任务已获用户本次扩展授权，执行W41 GPU计划G1–G5：接触/导数定位、真实状态库扩展、176节点与候选的驻留分块计算、完整cost/phase/排序与CPU iLQG接入、独立E30/E60；有依据时只选一项MPX/TurboMPC/MJWarp替代对照。不再限为八例诊断；不重跑已完成W40或复用旧28h入口，新建无deadline任务。等价迁移保留原标准，新后端另立版本在原plant评价，不热换主线、不升级主环境。现场另一项GPU训练保持；按真实空闲量与峰值扩大microbatch，不把总96GB当全可用。
+9. 保留完整accepted/reference/K/H、Q_u/Q_xu、c/投影delta/活跃集合/KKT、每子步hold残差、每次planner返回原因和policy age、学习tail/版本/祖先及首次技术故障输入。用事件窗与无损压缩，不静默过滤已请求大文件。旧记录不存在的内容不能伪造或重跑旧物理补成历史。
+10. 先推源码/计划与紧凑结果，已请求原件后台续传；Git/index短写串行合并，不强推。queued不是published，compact完成不是全部raw交付。A修改共享clock不能覆盖已完成B自己的历史deadline/评价。
+11. **推到GitHub并核验后，不在用户电脑另外归档。不自动删除服务器研究输出或上传副本。** 大checkpoint/完整resume/视频与原件留D57，用户备份后自行统一删除。真实部署、回放、采样、能力评价分别报告，不将计划或数值修复写成稳定通行成绩。

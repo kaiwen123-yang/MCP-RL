@@ -1,0 +1,232 @@
+{
+  "review": "W40 final: numerical reliability, contact-sensitive derivatives, executable feedback and useful learning authority",
+  "review_date": "2026-11-07",
+  "repository_head_reviewed": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
+  "novelty_check": {
+    "searched": [
+      "literature/terrain_memory_sources.json",
+      "docs",
+      "notes",
+      "reviews/W38-literature.json",
+      "reviews/W39-review/literature.json"
+    ],
+    "new_core_entries": [
+      "W40-L01",
+      "W40-L03",
+      "W40-L04",
+      "W40-L05",
+      "W40-L06"
+    ],
+    "expanded_old_abstract_only_lead": "W40-L02 was previously listed, not read in full; this review reads the actual method and experiments.",
+    "new_companion_entry": "W40-L07",
+    "date_policy": "Publication date, preprint origin and actually read version are distinguished. Not all entries were first proposed in 2025/2026.",
+    "citation_policy": "Primary URLs are durable. Web ref IDs are ephemeral and a parent must open them before citing. No paper implementation or numerical result was reproduced by this literature task.",
+    "additional_new_entries": [
+      "W40-L08",
+      "W40-L09"
+    ],
+    "refreshed_existing_entries": {
+      "W40-L10": "TM37",
+      "W40-L11": "TM30"
+    },
+    "classic_reference": "W40-L12"
+  },
+  "core": [
+    {
+      "id": "W40-L01",
+      "title": "ProxQP: an Efficient and Versatile Quadratic Programming Solver for Real-Time Robotics Applications and Beyond",
+      "publication": "IEEE Transactions on Robotics, June 2025; DOI 10.1109/TRO.2025.3577107; initial journal preprint 2023",
+      "primary_urls": [
+        "https://scaron.info/publications/tro-2025.html",
+        "https://www.agimus-project.eu/media/attachments/2024/11/13/proxqp.pdf",
+        "https://github.com/Simple-Robotics/proxsuite"
+      ],
+      "read_scope": "Author publication metadata; project-hosted HAL-04198663v2 manuscript (26 September 2023), sections II–III and V on residuals, proximal primal-dual iterations, linear solves, scaling and warm starts. Not claimed byte-identical to final 2025 paper; proofs and all benchmarks not independently checked.",
+      "method": "Primal-dual proximal augmented Lagrangian, semismooth Newton subproblems, explicit residual criteria, Ruiz equilibration and reuse for consecutive QPs.",
+      "transfer": "Useful numerical design reference for separating an internal working-set decision from the final certificate. The reproduced W40 cycling bug should be fixed directly before adding a new solver dependency.",
+      "boundary": "Closest-feasible-QP mode changes the constraints being satisfied. It must not silently relax the original PD/target/TM02 contract. No project-specific speedup or physical stability guarantee follows."
+    },
+    {
+      "id": "W40-L02",
+      "title": "Real-Time Control-Constrained DDP for Underactuated Balancing of Legged Robots",
+      "publication": "IEEE Robotics and Automation Letters 2026, DOI 10.1109/LRA.2026.3723262; arXiv 2608.18552v2, 3 September 2026 (v1 19 August)",
+      "primary_urls": [
+        "https://arxiv.org/abs/2608.18552",
+        "https://arxiv.org/pdf/2608.18552v2",
+        "https://doi.org/10.1109/LRA.2026.3723262",
+        "https://onesoulkang.github.io/"
+      ],
+      "read_scope": "Actual v2 PDF downloaded and main method sections III–IV, Algorithm 1/2, simulation protocol/results and conclusion read. Web HTML/PDF reader returned DisabledError; public PDF download succeeded. No implementation or video inspected.",
+      "method": "APG identifies control-constraint active sets; KKT computes feedforward/feedback; virtual constraints and gap reduction integrate this into feasibility-driven multiple shooting, with forward projection.",
+      "transfer": "Shows why constraint-aware feedback, forward rollout and value recursion must be mutually consistent. Current r29 is an external H-metric projection, not this complete constrained DDP algorithm.",
+      "boundary": "SRBD force-input simulator with a separate controller computer, not verified Go2/TM02 hardware traversal. APG stopping based on objective change cannot replace this project's strict action certificate."
+    },
+    {
+      "id": "W40-L03",
+      "title": "DR-MPC: Fast and Feasible Dynamics-Relaxed Model-Predictive Control for Legged Locomotion",
+      "publication": "arXiv 2609.20035v1, 17 September 2026; submitted to RA-L, acceptance not verified",
+      "primary_urls": [
+        "https://arxiv.org/abs/2609.20035",
+        "https://arxiv.org/pdf/2609.20035"
+      ],
+      "read_scope": "Main PDF sections III–IV, feasibility remark, contact-aligned input parameterization, predictor-corrector stopping/status and experimental comparison/limitations read; code described as forthcoming, not audited.",
+      "method": "Penalize dynamics/friction coupling while retaining nonempty boxes; eliminate swing-force variables, align move blocks with contact switches, and factor a reduced Schur system.",
+      "transfer": "Separate optimization feasibility from physical feasibility. Parallel speedups should target a measured structured workload; keep dense control authority around contact changes.",
+      "boundary": "The paper explicitly does not guarantee exact relaxed dynamics/friction satisfaction. Its force-input SRBD and relaxed constraints are not a drop-in repair for a 12-dimensional PD-target projection; reported 4.4 ms is not transferable."
+    },
+    {
+      "id": "W40-L04",
+      "title": "Chance-Constrained Convex MPC for Robust Quadruped Locomotion Under Parametric and Additive Uncertainties",
+      "publication": "IEEE Robotics and Automation Letters 10(8):8388–8395, 2025, DOI 10.1109/LRA.2025.3585315; read arXiv 2411.03481v1, 5 November 2024",
+      "primary_urls": [
+        "https://cc-mpc.github.io/",
+        "https://arxiv.org/html/2411.03481v1",
+        "https://github.com/RIVeR-Lab/Chance-Constrained-MPC"
+      ],
+      "read_scope": "Preprint sections III–V (uncertainty propagation, deterministic chance-constraint reformulation, prior-solution tightening, simulation and Go1 hardware); journal metadata checked on author page. Final author PDF exceeds web size limit; not claimed read.",
+      "method": "Propagate state/control covariance under fixed feedback gains and tighten the friction pyramid using probabilistic margins; footstep scheduling and force-to-torque execution are separate components.",
+      "transfer": "After numerical recovery, measure feedback/execution uncertainty and reserve constraint margin according to evidence, rather than equating a feasible nominal action with robust execution.",
+      "boundary": "Gaussian approximations, user-selected covariance and fixed contact schedule limit guarantees. The project must first estimate actual residuals; arbitrary added margin or a universal fall probability claim is unsupported."
+    },
+    {
+      "id": "W40-L05",
+      "title": "Gait-Net-augmented Implicit Kino-dynamic MPC for Dynamic Variable-frequency Humanoid Locomotion over Discrete Terrains",
+      "publication": "Robotics: Science and Systems 2025, DOI 10.15607/RSS.2025.XXI.069; arXiv 2502.02934v3, 28 May 2025",
+      "primary_urls": [
+        "https://www.roboticsproceedings.org/rss21/p069.html",
+        "https://arxiv.org/html/2502.02934v3"
+      ],
+      "read_scope": "HTML sections III–VI and Algorithm 1, network training-data construction, per-step timing update, reference reconstruction, hardware results and explicit NN-SQP sensitivity/preview limitation.",
+      "method": "A network supplies bounded step duration while sequential QPs adjust footsteps/wrenches and rebuild kinematically compatible references. Network timing is not itself a QP decision variable.",
+      "transfer": "Once stable baseline locomotion exists, material history needs meaningful timing/foothold/loading authority. A scalar 2 Hz speed cap cannot directly command millisecond touchdown corrections.",
+      "boundary": "Small humanoid rigid/discrete terrain, not recoverable material. Randomized-duration labels and nominal-duration recovery do not prove globally optimal gait selection or unconditional convergence. Do not expand action space inside an unfinished PPO tail."
+    },
+    {
+      "id": "W40-L06",
+      "title": "Highly-Efficient Differentiable Simulation for Robotics",
+      "publication": "arXiv 2409.07107v3, 21 September 2026; first preprint 11 September 2024; publication acceptance not verified",
+      "primary_urls": [
+        "https://arxiv.org/abs/2409.07107",
+        "https://arxiv.org/html/2409.07107v3"
+      ],
+      "read_scope": "Latest v3 main sections II–V: contact-mode implicit differentiation, collision-frame contribution, kinematic sparsity, timing/estimation/learning experiments and limitations. Appendix proofs were not independently checked, and the complete implementation was not inspected or reproduced.",
+      "method": "Differentiate the contact solution implicitly by active mode, chain geometry/dynamics derivatives, and exploit sparse kinematics instead of differentiating all solver iterations.",
+      "transfer": "GPU diagnosis should separate forward contact disagreement, collision geometry and derivative disagreement. Analytic derivatives may later remove repeated finite differences, but only for the declared same predictor.",
+      "boundary": "Uses a different nonrelaxed NCP engine. Active-mode gradients do not cover mode boundaries; authors report noisy learning from stiff gradients. This is neither a MuJoCo 3.2.3 drop-in nor a reason to change ground truth or announce guaranteed acceleration."
+    }
+  ],
+  "companion": [
+    {
+      "id": "W40-L07",
+      "title": "ProxDDP: Proximal Constrained Trajectory Optimization",
+      "publication": "IEEE Transactions on Robotics 41:2605–2624, 24 March 2025, DOI 10.1109/TRO.2025.3554437",
+      "primary_urls": [
+        "https://simple-robotics.github.io/publications/proxddp-tro-2025/",
+        "https://github.com/Simple-Robotics/aligator"
+      ],
+      "read_scope": "Official abstract, method overview and implementation availability only; HAL full text blocked by anti-bot page. Not counted as a full-method reading.",
+      "transfer": "A complete constrained-trajectory alternative if consistent state/contact constraints become the measured need. Not a justification to replace the current controller just to resolve the reproduced face-cycling bug."
+    }
+  ],
+  "software_primary_sources": [
+    {
+      "title": "MuJoCo 3.2.3 MJX documentation",
+      "url": "https://mujoco.readthedocs.io/en/3.2.3/mjx.html",
+      "relevant_sections": "Feature parity; sharp bits; batch throughput; SAT versus native MPR mesh collision; solver iteration tradeoffs."
+    },
+    {
+      "title": "MuJoCo maintainer explanation of MJX/native discrepancy, issue 1341",
+      "url": "https://github.com/google-deepmind/mujoco/issues/1341",
+      "relevant_sections": "Maintainer comments 17 January, 30 August and 3 December 2024: convex collision and line-search differences; early termination affects numerical agreement. This is a diagnostic lead, not proof of the current custom-port root cause."
+    },
+    {
+      "title": "Current MJWarp official documentation",
+      "url": "https://mujoco.readthedocs.io/en/latest/mjwarp/index.html",
+      "checked_date": "2026-11-07",
+      "relevant_sections": "Throughput versus latency; differentiability limitation; float32 versus native float64. Current software guidance must not be retroactively attributed to pinned MJX 3.2.3."
+    }
+  ],
+  "synthesis": {
+    "immediate": "Repair the demonstrated working-set condition while preserving original QP and certificate; no need for a solver migration to fix that bug.",
+    "main_research": "Numerical convergence, nominal feasibility, feedback realizability throughout the hold, contact robustness and learned action authority are different layers. Evaluate each with the recorded control/trajectory evidence.",
+    "gpu": "User authorizes expanded isolated G1-G5 diagnostics, resident node/candidate batching, full planner and independent closed-loop experiments, with one evidence-selected alternate architecture; docs/S1_W41_GPU_PLAN.md governs. Unaligned W40 is not a main-line replacement.",
+    "not_implemented": "No cited controller, chance constraint, gait action, implicit derivative or alternative physics backend was introduced by this review.",
+    "hold_constraints": "The current H projection certifies the action at its initial state, while a 2 ms hold comprises ten evolving .2 ms substeps. Proposed r30 must account for input dependence of those states, use a shared causal predictor and distinguish linear-QP, nonlinear predicted-hold and actual-plant evidence.",
+    "research_authority": "After stable traversal, extend material history to physically meaningful timing/foothold/load authority in a new protocol; do not change action space inside the valid W40 tail."
+  },
+  "additional_verified": [
+    {
+      "id": "W40-L08",
+      "title": "Line-Search Filter Differential Dynamic Programming for Optimal Control with Nonlinear Equality Constraints",
+      "publication": "ICRA 2026 accepted; arXiv 2504.08278v7, 31 May 2026. Earlier v2 read as Interior Point Differential Dynamic Programming, Redux.",
+      "primary_urls": [
+        "https://arxiv.org/abs/2504.08278",
+        "https://arxiv.org/html/2504.08278v2",
+        "https://github.com/mingu6/InteriorPointDDP.jl"
+      ],
+      "read_scope": "Primary v2 method, optimality termination, filter line search, conclusion and future work; no benchmark reproduction.",
+      "method": "Primal-dual interior point inequality treatment with filter globalization for equalities; structure-exploiting DDP updates and local quadratic convergence under stated assumptions.",
+      "transfer": "If general hold/state constraints require a complete constrained backward pass, this provides a coherent alternative; it does not justify loosening the present QP certificate.",
+      "boundary": "Local convergence is not global convergence from arbitrary initial states; restoration and hardware NMPC integration remain follow-up topics.",
+      "earlier_read_version_title": "Interior Point Differential Dynamic Programming, Redux",
+      "earlier_read_version_publication": "arXiv 2504.08278; v2 10 June 2025; formal acceptance not verified"
+    },
+    {
+      "id": "W40-L09",
+      "title": "Parallel and Proximal Linear-Quadratic Methods for Real-Time Constrained Model-Predictive Control",
+      "publication": "RSS 2024; DOI 10.15607/RSS.2024.XX.002",
+      "primary_urls": [
+        "https://www.roboticsproceedings.org/rss20/p002.html",
+        "https://simple-robotics.github.io/publications/parallel-clqr/",
+        "https://github.com/Simple-Robotics/aligator"
+      ],
+      "read_scope": "Author project, official paper method and SOLO-12 timing table; no reproduction.",
+      "method": "Block elimination, parametric LQ subproblems and time-domain parallel decomposition inside NMPC.",
+      "transfer": "Target measured derivative/candidate/linear-solve bottlenecks rather than equating thread counts with speedup.",
+      "boundary": "SOLO-12 hardware high-level solve ran on an external M1 Ultra desktop, not onboard NX. Published scaling levels off; numbers are not transferable to this project.",
+      "earlier_preprint_title": "Parallel and Proximal Constrained Linear-Quadratic Methods for Real-Time Nonlinear MPC"
+    },
+    {
+      "id": "W40-L10",
+      "existing_entry": "TM37",
+      "title": "Accelerating and Scaling MPC-Guided Reinforcement Learning for Humanoid Locomotion and Manipulation",
+      "publication": "arXiv 2606.05687, June 2026; formal acceptance not verified",
+      "primary_urls": [
+        "https://caltech-amber.github.io/mpc-guided-rl/",
+        "https://github.com/junhengl/mpc-rl"
+      ],
+      "read_scope": "Author project and now-public official code README; update to previously listed reference, not a newly discovered paper.",
+      "method": "Centroidal MPC training guidance and parallel-in-horizon batched GPU QP, with reward/critic guidance for locomotion/manipulation.",
+      "transfer": "Useful architectural comparator if whole-body online MPC remains the data-collection bottleneck after stabilization.",
+      "boundary": "MPC-guided training is not the current RL cap to online nonlinear whole-body iLQG chain. Do not claim a direct solver swap."
+    },
+    {
+      "id": "W40-L11",
+      "existing_entry": "TM30",
+      "title": "Terrain-Adaptive Quadrupedal Locomotion Using Model Predictive Control With Impedance Control and SINDy Model Enhancement",
+      "publication": "International Journal of Robust and Nonlinear Control; early online 14 August 2026; DOI 10.1002/rnc.70700",
+      "primary_urls": [
+        "https://pure.qub.ac.uk/en/publications/terrain-adaptive-quadrupedal-locomotion-using-model-predictive-co/",
+        "https://onlinelibrary.wiley.com/doi/full/10.1002/rnc.70700",
+        "https://github.com/pjmcconnellogue/Terrain-Adaptive-Quadrupedal-Locomotion"
+      ],
+      "read_scope": "Author institutional record and paper experiment description; update to previously listed reference.",
+      "method": "Contact/terrain adaptation through impedance/admittance and SINDy angular-dynamics enhancement.",
+      "transfer": "An example of material-related information reaching a physically meaningful foot-force/compliance interface.",
+      "boundary": "PyBullet simulation validation, not demonstrated Go2 hardware passage; author public code entry now verified, not executed; not long-term recoverable material memory."
+    },
+    {
+      "id": "W40-L12",
+      "title": "Control-Limited Differential Dynamic Programming",
+      "publication": "ICRA 2014; DOI 10.1109/ICRA.2014.6907001",
+      "primary_urls": [
+        "https://roboti.us/lab/papers/TassaICRA14.pdf"
+      ],
+      "read_scope": "Author-hosted original PDF; constrained backward stage and free-subspace feedback construction.",
+      "method": "Box-constrained local control solve and corresponding feedback gain.",
+      "transfer": "Requires consistent k/K/value recursion when claiming constrained DDP.",
+      "boundary": "A fixed control box differs from state-dependent PD bounds; constrained feedback rows cannot simply be zeroed for moving bounds."
+    }
+  ],
+  "latest_update_note": "2026-11-07: see literature-update-20261107.md for ten focused papers and twelve metadata checks; original read_scope remains version-specific."
+}

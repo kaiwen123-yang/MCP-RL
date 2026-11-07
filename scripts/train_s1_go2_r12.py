@@ -6,6 +6,7 @@ from s1_go2_r11_protocol import ROOT
 from s1_go2_r11_runtime import run, dump, index_file
 from s1_go2_r11_policy import PolicyStream, PolicyMaterial
 from mujoco_mpc.agent import Agent
+from s1_go2_job_limits import goal_based, expired
 CONFIG = "experiments/terrain_memory/s1-go2-local-readiness-r12.json"
 def known_r25_startup_regression(result,tolerance):
     """One natural-terminal predicate on saved result JSON; no physics changes."""
@@ -43,8 +44,8 @@ def main():
     p.add_argument("--group", required=True, choices=["PPO_RAW_S5","PANN_PPO_S5"])
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--window-start-unix", "--job-start-unix", dest="window_start_unix", type=float, required=True)
-    p.add_argument("--background-job", action="store_true", help="Use the declared job deadline independently of the interactive four-hour window.")
-    p.add_argument("--deadline-unix", type=float, required=True)
+    p.add_argument("--background-job", action="store_true", help="Use the declared background completion policy independently of the interactive window.")
+    p.add_argument("--deadline-unix", type=float, help="Legacy explicit wall limit; omitted for goal-based background jobs.")
     p.add_argument("--resume")
     p.add_argument("--contract", default=CONFIG, help="Recorded job contract for an authorized budget continuation.")
     a=p.parse_args()
@@ -71,8 +72,15 @@ def main():
     workers=contract["resources"]["mpc_workers"]
     pann_weights=ROOT/contract["resources"]["pann_weights_path"]
     execution_mode="background_job" if a.background_job else "interactive_window"
-    hard=a.deadline_unix if a.background_job else a.window_start_unix+contract["execution"]["maximum_window_wall_s"]
-    deadline=min(a.deadline_unix,hard)
+    if goal_based(contract):
+        if a.deadline_unix is not None:
+            p.error('Goal-based jobs must not be given --deadline-unix')
+        hard=deadline=None
+    else:
+        if a.deadline_unix is None:
+            p.error('Legacy/interactive execution requires its explicit --deadline-unix')
+        hard=a.deadline_unix if a.background_job else a.window_start_unix+contract["execution"]["maximum_window_wall_s"]
+        deadline=min(a.deadline_unix,hard)
     small=ROOT/contract["outputs"]["compact_root"]
     large=ROOT/contract["outputs"]["large_root"]
     output=ROOT/contract["learning"]["training_directory"] if contract["learning"].get("training_directory") else large/"training"/f"{a.group}-seed{a.seed}"
@@ -106,7 +114,7 @@ def main():
         phase_initial_updates=contract["learning"]["phase_initial_updates"],
         execution_mode=execution_mode,window_start_unix_s=a.window_start_unix,deadline_unix_s=deadline,hard_deadline_unix_s=hard))
     last_result=None;phase_stop=None
-    while stream.samples<stream.target and time.time()<deadline:
+    while stream.samples<stream.target and not expired(deadline):
         session=contract["learning"]["initial_acquisition_session_s"]
         stream.episode+=1
         name=f"{prefix}{stream.episode:05d}"
@@ -147,7 +155,7 @@ def main():
             promoted=False,curriculum_enabled=False)
         stream.session_records.append(record)
         dump(output/f"episode-{stream.episode:05d}.json",record)
-        stream.checkpoint(resume_only=True)
+        resume_checkpoint=stream.checkpoint(resume_only=True)
         if contract['learning'].get('known_r25_startup_regression',{}).get('enabled_for_planned_phase'):
             saved_result=json.loads((small/f'{name}.json').read_text())
             check=known_r25_startup_regression(saved_result,c['task']['goal_position_radius_m'])
@@ -165,7 +173,7 @@ def main():
                 excluded_old_version_transitions=stream.excluded_old_version_transitions,
                 phase_id=stream.phase_id,controller_migration=stream.controller_migration,phase_stop=phase_stop,
                 physics_s=stream.physics_s,controller_build=build,output=str(output.relative_to(ROOT)),
-                checkpoint=str((output/f"resume-state-ep{stream.episode:05d}.pt").relative_to(ROOT)))
+                checkpoint=str(resume_checkpoint.relative_to(ROOT)))
             idx.update(current_task=contract["current_task"],protocol_revision=contract["protocol_revision"],status=f"{a.group}_training",
                 training_runs=len(streams),training_transitions=sum(x["phase_new_transitions"] if x.get("fork_identity") else x["actual_transitions"] for x in streams.values()),
                 training_updates=None,training_updates_by_stream={k:v["updates"] for k,v in streams.items()},
@@ -180,7 +188,7 @@ def main():
     stream.checkpoint(resume_only=True)
     technical_stop=last_result is not None and last_result['stage_status']=='technical_interruption'
     stop_reason=(phase_stop['reason'] if phase_stop else 'technical_interruption' if technical_stop
-        else 'target_reached' if stream.samples>=stream.target else 'deadline_reached' if time.time()>=deadline
+        else 'target_reached' if stream.samples>=stream.target else 'deadline_reached' if expired(deadline)
         else last_result['reason'] if last_result else 'stopped_without_episode')
     dump(output/"stopped.json",dict(actual_transitions=stream.samples,updates=stream.backend.update_count,
         stream_id=stream.stream_id,fork_identity=stream.fork_identity,phase_lineage=stream.phase_lineage,

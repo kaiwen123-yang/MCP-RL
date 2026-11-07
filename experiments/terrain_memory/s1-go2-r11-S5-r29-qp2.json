@@ -1,0 +1,62 @@
+{
+  "build": "S5-r29-qp2",
+  "based_on": "S5-r29-qp1",
+  "controller_contract_build": "S5-r29",
+  "status": "recorded_QP_replay_verified_awaiting_D57_normal_build",
+  "task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
+  "reviewed_source_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
+  "configuration_overrides": {
+    "r29_policy_projection": {
+      "enabled": true,
+      "center": "legacy_target_clip",
+      "metric": "actual_successful_Quu_reg",
+      "recording": "bounded_event_ring",
+      "KKT_relative_tolerance": 1e-07,
+      "primal_tolerance_rad": 1e-10,
+      "no_fallback": true,
+      "solver_revision": "S5-r29-qp2"
+    }
+  },
+  "mechanism": "Numerical correction of the same r29 .5*(u-c)^T H (u-c) projection. Keep original H, center, state-dependent box, regularization, native solver and final certificate.",
+  "solver_repair": {
+    "incident": "W40 A ep314 at24.731999999969037s, plan1257/query12387: native100iteration limit followed by qp1 608iteration release/relock cycle before physics.",
+    "root_cause": "qp1 used the final scaled KKT acceptance tolerance as a free-face stationarity test. For a coupled ill-conditioned H this can release a bound before minimizing the free face. The enlarged-face Newton direction points outwards at the released bound, so alpha=0 reactivates it; iteration count alone cannot fix the cycle.",
+    "algorithm_change": "Require an actual full feasible Newton step on the unchanged working face before releasing a wrong-sign bound. A partial or zero blocked step never certifies face minimization. Recompute the full gradient at the next iteration before accepting the original certificate or releasing a multiplier.",
+    "native_success": "Native solutions that pass the original certificate are returned unchanged, without invoking refinement.",
+    "same_QP": "Neither the objective nor any bound/PD/target/physical threshold changes. Fixed/restoration axes stay fixed; H_FA coupling retained; full H SPD check retained.",
+    "tolerances": {
+      "primal_rad": 1e-10,
+      "KKT_scaled": 1e-07,
+      "active_bound_rad": 1e-12,
+      "KKT_scale": "max(1,max_i sum_j abs(H_ij*c_j))"
+    },
+    "finite_iteration_guard": "Original4*n*n+32 retained as a numerical safeguard, not a background job completion deadline.",
+    "failure_behavior": "If refinement or the unchanged final certificate fails, record explicit qp_kkt_failure and reject before physics. No clip/fallback or permissive success.",
+    "added_diagnostics": [
+      "qp_refinement_face_solves",
+      "qp_refinement_bound_releases",
+      "qp_refinement_zero_steps"
+    ],
+    "patch": "experiments/terrain_memory/s1-go2-r11-S5-r29-qp2.patch",
+    "patch_sha256": "58db414596780691c537f59f0c01048ef8a589d392b5a412d6646e340a0fd0e9",
+    "resume_contract": "A resumes its latest own full ep314/9508/36 checkpoint and all147 valid tail transitions, preserving optimizer/RNG/ancestry/excluded145. B completedW40 at9617/37/tail0; do not silently repeat that completed job. Record qp1→qp2 boundary; no prior checkpoint overwrite.",
+    "wall_clock_policy": "User2026-11-07 supersedes prior fixed background completion deadlines. Numeric finite-iteration guards and physical evaluation horizons remain separate.",
+    "verification": {
+      "scope": "Replay recorded C++ numerical inputs only; no newly simulated episode, no admission trial, no server job or GPU operation.",
+      "script": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/replay-qp2.py",
+      "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/qp2-replay.json",
+      "recorded_cases": 12,
+      "new_failure_reproduced_bit_for_bit": true,
+      "new_failure_qp1_iterations": 608,
+      "new_failure_qp2_iterations": 3,
+      "new_failure_qp2_scaled_KKT": 5.6446565432203134e-11,
+      "new_failure_qp2_primal_rad": 0,
+      "native_passing_actions_unchanged": 9,
+      "prior_refined_cases_unchanged": 2
+    }
+  },
+  "retained": "Original Go2, TM02 0.02 domain, torque/contact/fall/route and ladder semantics; actual r27 shared C2 gate and r26 causal packet, ten substeps, TV feedback and PD. Frozen causal PANN, 658D observation, PPO 2Hz scalar cap, unchanged W38 reward. No hidden material truth input.",
+  "reward_version": "W38_legal_route_terminal_settlement",
+  "main_admission_tests": false,
+  "qualification": "Only recorded numerical replay can be claimed here; D57 must build a separate immutable artifact from frozenqp1 and report actual build identity. Physical stability and S1 passage remain unproven."
+}

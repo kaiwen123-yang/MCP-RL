@@ -7,6 +7,7 @@ server gh login, or the existing credential JSON on stdin for manual publication
 import argparse, fcntl, json, os, shutil, subprocess, sys, time
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
+from s1_go2_job_limits import expired, request_timeout
 ROOT=Path(__file__).resolve().parents[1]
 RUN='tm-s1-go2-local-readiness-r12'
 REPO='kaiwen123-yang/MCP-RL'
@@ -31,7 +32,7 @@ def github_rate_wait(headers_text, code, deadline):
     else:
         return False
     wake = max(now + 1, wake)
-    if wake >= deadline:
+    if deadline is not None and wake >= deadline:
         raise TimeoutError('GitHub quota reset is beyond the existing publication deadline')
     print(json.dumps(dict(event='github_rate_limit_wait',resume_unix_s=wake,
                           wait_s=round(wake-now,2))),flush=True)
@@ -54,16 +55,14 @@ def server_credentials(deadline, release_tags, manifest=None, manifest_path=None
             paginate='--paginate' in flags
             pages=[];page=1
             while True:
-                remaining=deadline-time.time()
-                if remaining<=0:raise TimeoutError('Publication deadline reached')
+                if expired(deadline):raise TimeoutError('Publication deadline reached')
                 path=endpoint+('&' if '?' in endpoint else '?')+'page='+str(page) if paginate else endpoint
                 config='header = "Authorization: Bearer '+token+'"\nheader = "Accept: application/vnd.github+json"\n'
                 while True:
-                    remaining=deadline-time.time()
-                    if remaining<=0:raise TimeoutError('Publication deadline reached')
+                    if expired(deadline):raise TimeoutError('Publication deadline reached')
                     result=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2',
                         '--silent','--show-error','--dump-header','/dev/stderr','--connect-timeout','20',
-                        '--max-time',str(min(120,remaining)),'-w','\n%{http_code}',
+                        '--max-time',str(request_timeout(deadline,120)),'-w','\n%{http_code}',
                         'https://api.github.com/'+path],input=config,env=env,text=True,
                         stdout=subprocess.PIPE,stderr=subprocess.PIPE)
                     body,code=result.stdout.rsplit('\n',1)
@@ -77,11 +76,10 @@ def server_credentials(deadline, release_tags, manifest=None, manifest_path=None
                 if len(value)<100:return pages
                 page+=1
         while True:
-            remaining=deadline-time.time()
-            if remaining<=0:raise TimeoutError('Publication deadline reached')
+            if expired(deadline):raise TimeoutError('Publication deadline reached')
             result=subprocess.run(['gh','api',endpoint,'--include',*flags],
                 env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
-                timeout=min(120,remaining))
+                timeout=request_timeout(deadline,120))
             header,separator,body=result.stdout.partition('\n\n')
             code=header.splitlines()[0].split()[1] if separator else ''
             if github_rate_wait(header,code,deadline):
@@ -135,11 +133,13 @@ def main():
     p.add_argument('--attempt',action='append',default=[])
     p.add_argument('--dependencies',action='store_true')
     p.add_argument('--asset',action='append',default=[])
-    p.add_argument('--deadline-unix',type=float,required=True)
+    wall=p.add_mutually_exclusive_group(required=True)
+    wall.add_argument('--deadline-unix',type=float,help='Explicit legacy publication deadline.')
+    wall.add_argument('--no-wall-deadline',action='store_true',help='Finish this manifest without a fixed job deadline.')
     p.add_argument('--server-auth',action='store_true')
-    p.add_argument('--asset-timeout-s',type=float,default=300,help='Per-asset transfer ceiling, still bounded by the immutable publication deadline.')
+    p.add_argument('--asset-timeout-s',type=float,default=300,help='Per-asset network request timeout; a legacy job deadline also bounds it when present.')
     p.add_argument('--upload-workers',type=int,choices=range(1,13),default=1,
-        help='Concurrent independent asset uploads; keep the existing absolute deadline and index lock.')
+        help='Concurrent independent asset uploads; preserve the selected wall policy and existing index lock.')
     p.add_argument('--manifest',type=Path,help='Explicit job asset list: path,name,category.')
     p.add_argument('--job-name',help='Route unassigned job assets into Releases of at most900files.')
     p.add_argument('--source-commit',help='Actual job source commit for newly created Release tags.')
@@ -262,7 +262,7 @@ def main():
         while True:
             response=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2','--silent','--show-error','--fail-with-body',
                 '--dump-header','/dev/stderr','--write-out','\n%{http_code}',
-                '--connect-timeout','30','--max-time',str(max(.001,min(args.asset_timeout_s,args.deadline_unix-time.time()))),
+                '--connect-timeout','30','--max-time',str(request_timeout(args.deadline_unix,args.asset_timeout_s)),
                 '--request','POST','--upload-file',str(path),url],input=config,cwd=ROOT,env=env,text=True,
                 stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             body,code=response.stdout.rsplit('\n',1)
@@ -281,7 +281,7 @@ def main():
         update(uploaded)
         print(json.dumps(dict(name=row['name'],size=row['size'],status='uploaded',wall_s=round(time.time()-begin,2))),flush=True)
     def upload_one(row):
-        if time.time()>=args.deadline_unix:return
+        if expired(args.deadline_unix):return
         try:
             upload(row)
         except (RuntimeError, subprocess.TimeoutExpired) as error:

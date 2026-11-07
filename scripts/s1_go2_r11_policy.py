@@ -9,6 +9,7 @@ import torch
 from response_ppo.ppo_backend import PPOBackend, PPOConfig, Rollout
 from s1_go2_r11_runtime import PHASES, contact_state
 from s1_go2_joint_material import JointMaterial
+from s1_go2_legal_route import LegalRoute
 from s1_go2_r10_observer import MaterialObserver
 
 OBSERVATION_DIM=658
@@ -24,82 +25,6 @@ NORMALIZATION=dict(body_xy_m=3.,body_height_m=.3,body_linear_velocity_m_s=.25,
         'finite_task_flag_and_remaining_fraction','completed_plan_age',
         'query_xy8','query_soft_mask4','history20x27','recovery4x3'],
     observation_clipping=False)
-
-
-class LegalRoute:
-    """Reward account on the original 500Hz strip passage criterion.
-
-    Approach/crossing credit is provisional. A side exit or an uncompleted
-    passage retracts that lap's positive credit and disables further positive
-    progress until the next natural lap. Physics and formal evaluation are unchanged.
-    """
-    def __init__(self):
-        self.progress=0.;self.lap_credit=0.;self.completed_laps=0
-        self.raw_laps=0;self.valid=True;self.previous_phase=None;self.previous_x=None
-        self.passages=[];self.current=None;self.leg_pass={}
-        self.side_exits=0
-
-    def invalidate(self):
-        if self.valid:
-            retract=max(self.lap_credit,0.)
-            self.progress-=retract;self.lap_credit-=retract
-        self.valid=False
-
-    def update(self,t,mission,xy,bottom,grf):
-        phase=mission.phase
-        raw_laps=getattr(mission,'laps',int(phase=='complete'))
-        if self.previous_phase in ('outbound','return'):
-            direction=1 if self.previous_phase=='outbound' else -1
-            if self.valid:
-                change=direction*(float(xy[0])-self.previous_x)/6
-                self.progress+=change;self.lap_credit+=change
-        # Close the actual leg when the mission changes to its endpoint/turn.
-        if self.current is not None and phase!=self.current['direction']:
-            self.leg_pass[self.current['direction']]=self.current['completed']
-            if not self.current['completed']:self.invalidate()
-            self.current=None
-        if raw_laps>self.raw_laps:
-            self.completed_laps+=int(self.valid and self.leg_pass.get('outbound',False)
-                                     and self.leg_pass.get('return',False))
-            self.raw_laps=raw_laps
-            self.lap_credit=0.;self.valid=True;self.leg_pass={}
-        if phase in ('outbound','return'):
-            if self.current is None:
-                self.current=dict(lap=raw_laps+1,direction=phase,entry_s=None,exit_s=None,
-                    lateral_exit_s=None,material_loaded=False,completed=False)
-                self.passages.append(self.current)
-            row=self.current
-            enter=xy[0]>=.8 if phase=='outbound' else xy[0]<=2.2
-            leave=xy[0]>=2.2 if phase=='outbound' else xy[0]<=.8
-            if row['entry_s'] is None and enter:row['entry_s']=float(t)
-            if row['entry_s'] is not None and row['exit_s'] is None:
-                if abs(xy[1])>.6 and row['lateral_exit_s'] is None:
-                    row['lateral_exit_s']=float(t);self.side_exits+=1;self.invalidate()
-                half=.015811388300841896
-                inside=(bottom[:,0]>=.8+half)&(bottom[:,0]<=2.2-half)&(abs(bottom[:,1])<=.6-half)
-                row['material_loaded'] |= bool(np.any(inside&(grf[:,2]>0)))
-                if leave:
-                    row['exit_s']=float(t)
-                    row['completed']=row['lateral_exit_s'] is None and row['material_loaded']
-                    if not row['completed']:self.invalidate()
-        self.previous_x=float(xy[0]);self.previous_phase=phase
-
-    def settle_physical_terminal(self,t):
-        before=self.progress
-        if self.current is not None and not self.current['completed']:
-            self.invalidate()
-            self.current['terminal_closed_s']=float(t)
-        return dict(progress_before=before,progress_after=self.progress,
-                    retracted_positive_credit=before-self.progress,
-                    reason='true_physical_terminal')
-
-    def result(self):
-        return dict(reward_version='W36_legal_route_progress_and_lap_alignment',
-            progress=self.progress,completed_roundtrips=self.completed_laps,
-            legal_outbound_traversals=sum(x['direction']=='outbound' and x['completed'] for x in self.passages),
-            legal_return_traversals=sum(x['direction']=='return' and x['completed'] for x in self.passages),
-            side_exits=self.side_exits,raw_roundtrips=self.raw_laps,passages=self.passages,
-            criterion='Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. Formal evaluator unchanged.')
 
 
 class PolicyStream:
@@ -122,6 +47,7 @@ class PolicyStream:
         self.episode_root=root/contract["outputs"]["large_root"] if "large_root" in contract["outputs"] else self.directory.parent.parent
         self.episode_prefix=contract.get("learning",{}).get("episode_prefix",f"train-{group}-s{seed}-ep")
         self.invocation_started_unix_s=time.time()
+        self._resume_checkpoint_paths={}
         resources=contract.get('resources',{})
         torch.set_num_threads(resources.get('torch_threads',1));torch.set_num_interop_threads(1)
         np.random.seed(seed);torch.manual_seed(seed)
@@ -275,7 +201,18 @@ class PolicyStream:
         self.learning=(self.directory/'learning.jsonl').open('a')
 
     def checkpoint(self,resume_only=False):
-        p=self.directory/(f'resume-state-ep{self.episode:05d}.pt' if resume_only else f'checkpoint-{self.samples:06d}.pt')
+        if resume_only:
+            # A restarted invocation must not overwrite the checkpoint it read,
+            # including an old numerical-artifact boundary at the same episode.
+            # Repeated saves within this invocation can replace its own file.
+            p=self._resume_checkpoint_paths.get(self.episode)
+            if p is None:
+                p=self.directory/f'resume-state-ep{self.episode:05d}.pt'
+                if p.exists():
+                    p=self.directory/f'resume-state-ep{self.episode:05d}-restart-{time.time_ns()}.pt'
+                self._resume_checkpoint_paths[self.episode]=p
+        else:
+            p=self.directory/f'checkpoint-{self.samples:06d}.pt'
         if not resume_only:
             self.last_completed_update=dict(path=str(p.relative_to(self.root)),samples=self.samples,
                 updates=self.backend.update_count,phase_id=self.phase_id,stream_id=self.stream_id,
@@ -316,6 +253,7 @@ class PolicyStream:
         progress=self.directory/'progress.json'
         progress.with_suffix('.tmp').write_text(json.dumps(summary,indent=2)+'\n')
         progress.with_suffix('.tmp').replace(progress)
+        return p
 
     def write_collection(self):
         collected=self.directory/'collection.json'
@@ -386,7 +324,7 @@ class PolicyStream:
                     deadline=json.loads((self.root/self.contract['outputs']['compact_root']/'training-deadline.json').read_text())['deadline_unix_s']
                     paths=list(self.directory.parent.glob('*/progress.json'))
                     amounts=[json.loads(path.read_text())['samples'] for path in paths]
-                    if self.samples-min(amounts)<=256 or time.time()>=deadline:break
+                    if self.samples-min(amounts)<=256 or (deadline is not None and time.time()>=deadline):break
                     time.sleep(5)
             print(json.dumps(dict(group=self.group,seed=self.seed,samples=self.samples,
                 physics_s=self.physics_s,wall_s=time.time()-self.begin,loss=loss['loss'])),flush=True)
@@ -507,7 +445,7 @@ class PolicyMaterial(JointMaterial):
             if self.stream.training:
                 deadline=json.loads(self.training_deadline_path.read_text())['deadline_unix_s']
                 has_transition=self.pending is not None and t>self.last_snapshot[0]
-                if time.time()>=deadline:external_end='training_budget_truncated'
+                if deadline is not None and time.time()>=deadline:external_end='training_budget_truncated'
                 elif self.stream.samples+int(has_transition)>=self.stream.target:
                     external_end='training_checkpoint_complete'
             # The runtime checks physical failure immediately after integration.

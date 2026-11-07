@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Launch the declared isolated R12 streams in tmux with one immutable training clock."""
+"""Launch declared isolated R12 streams with explicit goal/legacy wall policy."""
 import argparse
 from datetime import datetime, timezone
 import json
@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 import time
+from s1_go2_job_limits import adopt_goal_policy, goal_based, expired, remove_wall_deadline
 
 ROOT=Path(__file__).resolve().parents[1]
 CONFIG=ROOT/"experiments/terrain_memory/s1-go2-local-readiness-r12.json"
@@ -25,8 +26,10 @@ def main():
     p.add_argument("--new-phase",action="store_true",help="Create the explicitly authorized branch continuations from learning.parent_map.")
     p.add_argument("--stream",help="Explicit declared stream; omitted launches both declared continuations.")
     p.add_argument("--job-dir",type=Path,help="Continue this existing job/phase with its own saved RNG/tail.")
-    p.add_argument("--controller-artifact", choices=("S5-r29-qp1",),
+    p.add_argument("--controller-artifact", choices=("S5-r29-qp1", "S5-r29-qp2"),
         help="Explicit S5-r29 numerical QP repair on an existing own job; logical controller/phase stay unchanged.")
+    p.add_argument("--no-wall-deadline", action="store_true",
+        help="Apply the 2026-11-07 goal-based background policy; retain prior clock values in history.")
     p.add_argument("--workers",type=int,choices=(12,14),
         help="MPC workers per stream for new jobs only; default from resources.mpc_workers (12). Also used by each new job's evaluation.")
     p.add_argument("--session")
@@ -37,6 +40,7 @@ def main():
     if a.controller_artifact and not a.job_dir:
         p.error("--controller-artifact applies only to an explicit --job-dir ordinary resume.")
     current=json.loads(CONFIG.read_text())
+    no_wall_deadline=a.no_wall_deadline or goal_based(current)
     large=ROOT/current["outputs"]["large_root"]
     clock_path=ROOT/current["execution"]["background_job"]["training_clock_path"]
     session=a.session or ("s1-"+a.stream if a.stream else current["execution"]["background_job"]["session_default"])
@@ -69,23 +73,30 @@ def main():
             or saved.get("group")!=job["group"] or saved.get("seed")!=job["seed"]
             or saved.get("phase_lineage")!=job.get("phase_lineage")):
             raise ValueError("Ordinary resume requires this job's own fork checkpoint, not the parent.")
-        if time.time()>=job["deadline_unix_s"]:
+        if not no_wall_deadline and expired(job["deadline_unix_s"]):
             raise ValueError("Original shared training deadline has elapsed; do not restart training.")
+        if saved['samples'] >= job['target_transitions']:
+            raise ValueError('This job already reached its sample target; preserve its completed result.')
         previous_artifact=contract["reuse"].get("controller_artifact",job["controller_build"])
+        if saved.get('controller_artifact',saved['controller_build']) != previous_artifact:
+            raise ValueError('Resume checkpoint artifact must match this job\'s most recent artifact.')
         artifact=a.controller_artifact or previous_artifact
-        if artifact!=previous_artifact and not (
-                job["controller_build"]==previous_artifact=="S5-r29"
-                and artifact=="S5-r29-qp1"
-                and saved["updates"]==job["initial_updates"]==33):
-            raise ValueError("Only the declared r29 QP repair before W40's first own update is supported.")
+        repair_parents={'S5-r29-qp1':'S5-r29','S5-r29-qp2':'S5-r29-qp1'}
+        allowed_repair=(job['controller_build']=='S5-r29'
+            and repair_parents.get(artifact)==previous_artifact
+            and (artifact=='S5-r29-qp2' or saved['updates']==job['initial_updates']==33))
+        if artifact!=previous_artifact and not allowed_repair:
+            raise ValueError('Only the declared same-QP numerical artifact upgrade is supported on this job.')
         if artifact!=job["controller_build"]:
             frozen=ROOT/"work/r11-frozen"/artifact
             identity=json.loads((frozen/"identity.json").read_text())
-            if (identity.get("build")!=artifact or identity.get("based_on")!=job["controller_build"]
+            if (identity.get("build")!=artifact or identity.get("based_on")!=repair_parents.get(artifact)
                     or identity.get("controller_contract_build")!=job["controller_build"]
                     or not (frozen/"agent_server").is_file()):
                 raise ValueError("Controller artifact must be the built, separately frozen repair of this logical controller.")
         contract["reuse"]["controller_artifact"]=artifact
+        if no_wall_deadline:
+            adopt_goal_policy(contract)
         job["controller_artifact"]=artifact
         jobs=[(directory,job,contract,active,resume)]
     else:
@@ -123,6 +134,8 @@ def main():
             name="job-"+stamp+"-"+active["stream_id"]
             directory=large/name;directory.mkdir(parents=True,exist_ok=False)
             contract=json.loads(json.dumps(current))
+            if no_wall_deadline:
+                adopt_goal_policy(contract)
             workers=a.workers if a.workers is not None else contract["resources"]["mpc_workers"]
             contract["resources"]["mpc_workers"]=workers
             contract["control_and_evaluation"]["post_training_evaluation"]["solver_workers"]=workers
@@ -152,7 +165,9 @@ def main():
                 target_transitions=contract["learning"]["target_cumulative_transitions_per_stream"],
                 target_updates=contract["learning"]["target_cumulative_updates_per_stream"],
                 initial_attempts=sorted(x.name for x in large.glob(prefix+"*")),
-                status="prepared",network_mode=a.network_mode,postprocess_hours=6,evaluation_hours=4,
+                status="prepared",network_mode=a.network_mode,
+                postprocess_hours=None if no_wall_deadline else 6,
+                evaluation_hours=None if no_wall_deadline else 4,
                 evaluation_status="pending_training",publication_status="compact_git_after_training_and_evaluation",
                 delivery_mode="compact_first_local_bulk",bulk_upload_enabled=False,automatic_cleanup_enabled=False,
                 result_summary=f'{contract["outputs"]["compact_root"]}/jobs/{name}.json')
@@ -167,9 +182,11 @@ def main():
     launch_time=time.time()
     if clock is None:
         clock=dict(task=current["current_task"],started_unix_s=launch_time,
-            deadline_unix_s=launch_time+current["execution"]["background_job"]["default_maximum_wall_s"],
+            deadline_unix_s=None if no_wall_deadline else launch_time+current["execution"]["background_job"]["default_maximum_wall_s"],
             jobs={})
-    if launch_time>=clock["deadline_unix_s"]:raise ValueError("Shared training deadline elapsed.")
+    if no_wall_deadline:
+        remove_wall_deadline(clock, launch_time)
+    if expired(clock["deadline_unix_s"]):raise ValueError("Shared training deadline elapsed.")
     scripts=[]
     for directory,job,contract,active,resume in jobs:
         if a.job_dir:
@@ -199,14 +216,18 @@ def main():
                 unstarted_evaluation_archive=old_evaluation)
             job["evaluation_status"]=("pending_training" if old_evaluation else job.get("evaluation_status"))
         job.setdefault("started_unix_s",launch_time)
+        if no_wall_deadline:
+            remove_wall_deadline(job, launch_time)
+            job.update(postprocess_hours=None,evaluation_hours=None)
         job.update(deadline_unix_s=clock["deadline_unix_s"],shared_started_unix_s=clock["started_unix_s"],
                    shared_clock_path=str(clock_path.relative_to(ROOT)),session=session,status="launched")
         command=["bash","scripts/run_s1_go2_r12_training.sh","--group",active["group"],
             "--seed",str(active["seed"]),"--resume",str(resume),"--contract",str(directory/"execution-contract.json"),
-            "--background-job","--job-start-unix",str(job["started_unix_s"]),
-            "--deadline-unix",str(clock["deadline_unix_s"])]
+            "--background-job","--job-start-unix",str(job["started_unix_s"])]
+        if clock['deadline_unix_s'] is not None:
+            command += ['--deadline-unix',str(clock['deadline_unix_s'])]
         evaluation=[sys.executable,"-u","scripts/run_s1_go2_r12.py","--job-dir",str(directory)]
-        finish=[sys.executable,"-u","scripts/finish_s1_go2_r12_job.py","--job-dir",str(directory),"--hours","6"]
+        finish=[sys.executable,"-u","scripts/finish_s1_go2_r12_job.py","--job-dir",str(directory)]
         logfile=directory/("train-resume-"+str(int(launch_time))+".log" if a.job_dir else "train.log")
         script=directory/"run-job.sh"
         script.write_text("\n".join([
