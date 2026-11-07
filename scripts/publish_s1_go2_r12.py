@@ -76,15 +76,20 @@ def server_credentials(deadline, release_tags, manifest=None, manifest_path=None
                 pages.append(value)
                 if len(value)<100:return pages
                 page+=1
-        remaining=deadline-time.time()
-        if remaining<=0:raise TimeoutError('Publication deadline reached')
-        try:
-            output=subprocess.check_output(['gh','api',endpoint,*flags],
-                env=env,text=True,stderr=subprocess.PIPE,timeout=min(120,remaining))
-        except subprocess.CalledProcessError as error:
-            if missing_ok and 'HTTP 404' in error.stderr:return None
-            raise RuntimeError('GitHub API failed: '+error.stderr.replace(token,'[credential]').strip()) from None
-        return json.loads(output)
+        while True:
+            remaining=deadline-time.time()
+            if remaining<=0:raise TimeoutError('Publication deadline reached')
+            result=subprocess.run(['gh','api',endpoint,'--include',*flags],
+                env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                timeout=min(120,remaining))
+            header,separator,body=result.stdout.partition('\n\n')
+            code=header.splitlines()[0].split()[1] if separator else ''
+            if github_rate_wait(header,code,deadline):
+                continue
+            if result.returncode:
+                if missing_ok and (code=='404' or 'HTTP 404' in result.stderr):return None
+                raise RuntimeError('GitHub API failed: '+result.stderr.replace(token,'[credential]').strip())
+            return json.loads(body)
     releases={};remote_assets={}
     def load_release(tag,create=False):
         if tag in releases:return
@@ -258,7 +263,7 @@ def main():
             response=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2','--silent','--show-error','--fail-with-body',
                 '--dump-header','/dev/stderr','--write-out','\n%{http_code}',
                 '--connect-timeout','30','--max-time',str(max(.001,min(args.asset_timeout_s,args.deadline_unix-time.time()))),
-                '--request','POST','--data-binary','@'+str(path),url],input=config,cwd=ROOT,env=env,text=True,
+                '--request','POST','--upload-file',str(path),url],input=config,cwd=ROOT,env=env,text=True,
                 stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             body,code=response.stdout.rsplit('\n',1)
             if not github_rate_wait(response.stderr,code,args.deadline_unix):break
