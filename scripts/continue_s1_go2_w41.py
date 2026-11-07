@@ -16,7 +16,7 @@ def read(p):return json.loads(p.read_text())
 def write(p,x):p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(x,indent=2)+'\n')
 def run(*args):return subprocess.run(args,cwd=ROOT,check=True)
 def main():
-    dest=LARGE/'w41-launch.json';record=dict(status='waiting_W40_A_goal',deadline_unix_s=None,launched_streams=[])
+    dest=LARGE/'w41-launch.json';record=dict(status='waiting_W40_A_goal',deadline_unix_s=None,publication_network_mode='clash',launched_streams=[])
     write(dest,record)
     while not (A/'training-exit-code.txt').exists():time.sleep(20)
     if int((A/'training-exit-code.txt').read_text())!=0:
@@ -68,10 +68,10 @@ def main():
         run('git','commit','-m','Declare W41 own zero-tail parents and 2048-transition continuations','--',str(CONFIG.relative_to(ROOT)))
         run('git','fetch','origin','main');run('git','merge','--no-edit','origin/main');run('git','push','origin','main')
     record.update(status='parents_published',parent_map=parents);write(dest,record)
-    run(str(ROOT/'work/envs/d57/bin/python'),'scripts/start_s1_go2_r12_tmux.py','--new-phase','--no-wall-deadline','--stream','w41-b','--session','s1-w41-b','--network-mode','academic')
+    run(str(ROOT/'work/envs/d57/bin/python'),'scripts/start_s1_go2_r12_tmux.py','--new-phase','--no-wall-deadline','--stream','w41-b','--session','s1-w41-b','--network-mode','clash')
     record['launched_streams'].append('w41-b');record['status']='W41_B_running_waiting_A_evaluation';write(dest,record)
     while not (A/'evaluation-exit-code.txt').exists():time.sleep(20)
     # A's failed physical E30 blocks only its E60, not the authorized new phase.
-    run(str(ROOT/'work/envs/d57/bin/python'),'scripts/start_s1_go2_r12_tmux.py','--new-phase','--no-wall-deadline','--stream','w41-a','--session','s1-w41-a','--network-mode','academic')
+    run(str(ROOT/'work/envs/d57/bin/python'),'scripts/start_s1_go2_r12_tmux.py','--new-phase','--no-wall-deadline','--stream','w41-a','--session','s1-w41-a','--network-mode','clash')
     record['launched_streams'].append('w41-a');record['status']='both_W41_streams_launched';write(dest,record)
 if __name__=='__main__':main()
