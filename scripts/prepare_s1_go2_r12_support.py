@@ -63,7 +63,7 @@ def main():
         log.write(f"{BUILD} from executed {specification['based_on']}; reuse pinned MuJoCo dependency and runtime.\n")
         log.flush()
         subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=True)
-        subprocess.run(["cmake", "--build", str(builddir), "--target", "agent_server", "-j", "8"],
+        subprocess.run(["cmake", "--build", str(builddir), "--target", "agent_server", "-j", "6"],
                        stdout=log, stderr=subprocess.STDOUT, check=True)
     frozen.mkdir()
     shutil.copytree(source / "mjpc", frozen / "mjpc")
