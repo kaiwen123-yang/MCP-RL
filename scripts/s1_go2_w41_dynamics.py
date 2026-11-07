@@ -176,6 +176,7 @@ def measure(pred,row):
     summary=dict(fixture=row['name'],source=row['source'],index=row['index'],time_s=row['time'],
         clamp_error=max(x['clamp_error'] for x in records),
         recorded_plant_clamp_error=float(abs(row['recorded_force']-np.clip(row['recorded_raw_pd'],m.actuator_forcerange[:,0],m.actuator_forcerange[:,1])).max()),
+        recorded_actuator_with_target_clamp_error=float(abs(row['recorded_force']-np.clip(row['recorded_raw_pd']+60*(np.clip(row['ctrl'],m.actuator_ctrlrange[:,0],m.actuator_ctrlrange[:,1])-row['ctrl']),m.actuator_forcerange[:,0],m.actuator_forcerange[:,1])).max()),
         local_native_vs_independent_FD_max=float(err.max()),
         local_same_branch_max=float(err[sm].max()) if np.any(sm) else None,
         local_branch_changes=int((~sm).sum()),held_branch_changes=int((~same_hold).sum()),

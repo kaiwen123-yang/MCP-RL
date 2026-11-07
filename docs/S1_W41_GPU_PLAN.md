@@ -61,3 +61,13 @@ GPU 支线不阻塞 CPU 稳定性工作；有明确有效结果就继续 G3/G4 �
 - [JAX GPU 内存](https://docs.jax.dev/en/latest/gpu_memory_allocation.html)：多个进程共存、预分配和内存池行为。
 - [MPX](https://github.com/iit-DLSLab/mpx)、[TurboMPC](https://github.com/ToyotaResearchInstitute/turbompc)：具名独立路线，作者速度不直接转化成本项目收益。
 - [本轮新增论文及版本校正](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/literature-update-20261107.md)：可执行动作先验、接触梯度、简化预测结构及材料信息的实际控制权限。
+
+## 7. 2026-11-07 D57 实施入口
+
+新`start_s1_go2_w41_gpu.py`已建立无deadline的独立任务。`s1_go2_w41_gpu.py`使用32个新增真实W40事件、49输入的设备scan，之后按176节点顺序块覆盖8624逻辑输入；旧8例和10个NPZ不重算。完整逐子步状态、局部A/B、接触几何、求解信息与受扰终点写入该任务目录。
+
+原生`S5-r30-gpu-mjx`桥已正常构建，163.27s。独立GPU预测器通过Unix socket返回十子步状态与局部A/B；原生CPU仍拥有完整task cost/private phase、r30 QP/feedback、候选排序和iLQG backward。节点/候选以至多2个请求组运行，独立评价只用2个MPC workers，不形成第三条12-worker PPO。该接口和后续评价是新建完整栈fixture，不冒充缺失private state的历史回放。数值未对齐时明确记为新MJX接触预测器，并保持原CPU/TM02 plant。
+
+G3/G4自动使用B的不可变update37，在原初态分别执行r30原生预测器与独立GPU预测器的E30，同case通过才E60。G5只选择一个已具有前向吞吐/接触理由的MJWarp对照，隔离环境`work/envs/w41-mjwarp`固定mujoco/mujoco-warp4.0.0、warp1.19.0、numpy2.5.4；原主环境未升级。新后端明确FP32身份，保留原solver迭代/容差，记录三个具名差分尺度的敏感性，再在原plant独立E30/E60。没有把FP32结果用作原FP64等价证书。接口源码已准备，阶段执行与结果以任务result.json为准，不将未来阶段标成已完成。
+
+G1–G5结束或首次技术故障后，`finish_s1_go2_w41_gpu.py`发布本轮新原件和实际结果，保留首次输入、原始文件及已上传副本。任务没有后台完成期限；网络故障保留publication_interrupted，不把队列当published。

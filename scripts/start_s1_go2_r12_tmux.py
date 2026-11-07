@@ -150,6 +150,9 @@ def main():
                 training_directory=active["training_directory"],episode_prefix=prefix,
                 phase_lineage=lineage,
                 training_deadline_path=str((directory/"training-deadline.json").relative_to(ROOT)))
+            contract["learning"]["target_cumulative_transitions_per_stream"]=active.get("target_transitions",contract["learning"]["target_cumulative_transitions_per_stream"])
+            contract["learning"]["target_cumulative_updates_per_stream"]=active.get("target_updates",contract["learning"]["target_cumulative_updates_per_stream"])
+            contract["learning"].update(phase_initial_transitions=saved["samples"],phase_initial_updates=saved["updates"])
             contract["learning"]["active_streams"]=[active]
             job=dict(session=session,job_directory=str(directory.relative_to(ROOT)),
                 source_commit=source,controller_build=contract["reuse"]["active_controller_build"],

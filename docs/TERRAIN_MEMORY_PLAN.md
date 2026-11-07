@@ -6,12 +6,12 @@
 
 ## 当前交接（执行后只更新这6行）
 
-- 当前任务：W40最终交付已审查；S5-r29-qp2源码及12个真实QP回放已完成，尚未在D57构建/恢复；下一任务W41_STABILITY_AFTER_W40_A_RECOVERY。后续后台按样本/工作目标结束，活动deadline=null，旧期限保留为历史。
-- w40-a：job-20261106T103028Z-w40-a，ep314技术退出；本轮新增915/3，累计9508/36，tail147、excluded145；尚需109条/1次更新至原9617/37，再运行自身末次E30；实际最新现场状态优先。
-- w40-b：job-20261106T103028Z-w40-b，原目标正常完成；新增1024/4，累计9617/37，tail0、excluded145；末次E30在15.680s body_fall，E60阻塞，不重复原job。
-- 任务能力：A/B本轮合法去程/返程/往返均0/0/0，材料加载回合28/26；GPU completed_batch_layer、aligned=false，8 fixtures仅3例对齐，无整planner资格；r30尚待实现，不属于现有实验成绩。
-- 交付：W40紧凑结果及12个原始ZIP已发布，6238项源文件、原始19,210,509,738字节，ZIP共14,438,490,539字节；GPU原10份NPZ已交付。最新分析见W40-final-review；不重传已完成任务，不做用户电脑额外归档，不自动删除服务器输出。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；A最新有效自身resume优先，当前交付点training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00314.pt；W41各支仅从自身最新tail0父点继续，optimizer/RNG/祖先不混合。
+- 当前任务：W40_STABILITY_WITH_PARALLEL_GPU_MPC / S5-r29；后台按各自样本/更新目标结束，无固定墙钟完成期限；原物理时长与技术失败停止保留。
+- w40-a：job-20261106T103028Z-w40-a，launched；新增915/3，累计9508/36，tail=147、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- w40-b：job-20261106T103028Z-w40-b，training_ended；新增1024/4，累计9617/37，tail=0、excluded=145；评价=completed，紧凑Git=published。
+- 任务能力：w40-a尚无最终任务汇总；w40-b合规去程/返程/整圈=0/0/0，材料加载回合=26。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
+- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 
 ## 长期目标与当前层级
 

@@ -1,0 +1,128 @@
+--- a/mjpc/w41_gpu.h
++++ b/mjpc/w41_gpu.h
+@@ -0,0 +1,51 @@
++// W41 isolated GPU predictor bridge. CPU main artifacts do not include it.
++#ifndef MJPC_W41_GPU_H_
++#define MJPC_W41_GPU_H_
++#include <sys/socket.h>
++#include <sys/un.h>
++#include <unistd.h>
++#include <cstdlib>
++#include <cstring>
++#include <cstdint>
++#include <stdexcept>
++#include <vector>
++#include <mujoco/mujoco.h>
++namespace mjpc {
++inline const char* W41GPUPath(){return std::getenv("MJPC_W41_GPU_SOCKET");}
++inline void W41Transfer(int fd,void* data,size_t size,bool send_data){
++  char* p=static_cast<char*>(data);
++  while(size){ssize_t n=send_data?send(fd,p,size,MSG_NOSIGNAL):recv(fd,p,size,0);
++    if(n<=0)throw std::runtime_error("W41 GPU transport failed; no predictor fallback");
++    p+=n;size-=n;}
++}
++inline std::vector<double> W41GPUHold(const mjModel* m,const mjData* d,bool fd_mode){
++  int fd=socket(AF_UNIX,SOCK_STREAM,0);sockaddr_un address{};address.sun_family=AF_UNIX;
++  std::strncpy(address.sun_path,W41GPUPath(),sizeof(address.sun_path)-1);
++  if(connect(fd,reinterpret_cast<sockaddr*>(&address),sizeof(address))<0){close(fd);throw std::runtime_error("W41 GPU unavailable");}
++  uint64_t header[8]={0x573431475055,static_cast<uint64_t>(fd_mode),
++    static_cast<uint64_t>(m->nq),static_cast<uint64_t>(m->nv),static_cast<uint64_t>(m->na),
++    static_cast<uint64_t>(m->nu),static_cast<uint64_t>(m->nuserdata),static_cast<uint64_t>(m->nmocap)};
++  std::vector<double> input{d->time};
++  auto add=[&](const double* p,int n){input.insert(input.end(),p,p+n);};
++  add(d->qpos,m->nq);add(d->qvel,m->nv);add(d->act,m->na);add(d->ctrl,m->nu);
++  add(d->mocap_pos,3*m->nmocap);add(d->mocap_quat,4*m->nmocap);add(d->userdata,m->nuserdata);
++  W41Transfer(fd,header,sizeof(header),true);W41Transfer(fd,input.data(),input.size()*8,true);
++  uint64_t count=0;W41Transfer(fd,&count,8,false);
++  const uint64_t expected=10*(m->nq+m->nv+m->na)+(fd_mode?10*(2*m->nv+m->na)*(2*m->nv+m->na+m->nu):0);
++  if(count!=expected){close(fd);throw std::runtime_error("W41 GPU response/error, see first failure input");}
++  std::vector<double> result(count);W41Transfer(fd,result.data(),count*8,false);close(fd);return result;
++}
++inline void W41GPURecordedStep(const mjModel* m,mjData* d,int substep){
++  if(!W41GPUPath()){mj_step(m,d);return;}
++  static thread_local std::vector<double> held;
++  if(substep==0)held=W41GPUHold(m,d,false);
++  // Original task residual/private phase evaluates the GPU pre-integration
++  // state on CPU. Sensor/contact evidence here is native cost evaluation;
++  // GPU contact/solver evidence is retained by the separate service.
++  mj_forward(m,d);
++  const int ns=m->nq+m->nv+m->na;const double* x=held.data()+substep*ns;
++  mju_copy(d->qpos,x,m->nq);mju_copy(d->qvel,x+m->nq,m->nv);
++  mju_copy(d->act,x+m->nq+m->nv,m->na);d->time+=m->opt.timestep;
++}
++}
++#endif
+--- a/mjpc/trajectory.cc
++++ b/mjpc/trajectory.cc
+@@ -13,6 +13,7 @@
+ // limitations under the License.
+ 
+ #include "mjpc/trajectory.h"
++#include "mjpc/w41_gpu.h"
+ 
+ #include <algorithm>
+ #include <functional>
+@@ -340,7 +341,7 @@
+ 
+ // Flattened variable-contact rows, sampled from the actual candidate rollout.
+ void Trajectory::R29RecordedStep(const mjModel* m,mjData* d,int node,int substep) {
+-  if(node>=10) {mj_step(m,d);return;}
++  if(node>=10) {W41GPURecordedStep(m,d,substep);return;}
+   const size_t start=r29_prefix.size();
+   auto append=[&](const double* x,int n){r29_prefix.insert(r29_prefix.end(),x,x+n);};
+   r29_prefix.insert(r29_prefix.end(),{double(node),double(substep),d->time,0.,0.});
+@@ -350,7 +351,7 @@
+     int j=m->actuator_trnid[2*i];
+     pd[i]=60*(d->ctrl[i]-d->qpos[m->jnt_qposadr[j]])-5*d->qvel[m->jnt_dofadr[j]];
+   }
+-  mj_step(m,d);
++  W41GPURecordedStep(m,d,substep);
+   r29_prefix[start+3]=d->time;r29_prefix[start+4]=d->ncon;
+   append(d->qpos,m->nq);append(d->qvel,m->nv);append(d->act,m->na);
+   append(pd.data(),m->nu);append(d->actuator_force,m->nu);
+--- a/mjpc/planners/model_derivatives.cc
++++ b/mjpc/planners/model_derivatives.cc
+@@ -20,6 +20,7 @@
+ #include "mjpc/threadpool.h"
+ #include "mjpc/utilities.h"
+ #include "mjpc/r26_risk.h"
++#include "mjpc/w41_gpu.h"
+ 
+ namespace mjpc {
+ 
+@@ -103,20 +104,32 @@
+                             prefixes_b(substeps*nx*nu),peak(nr);
+         std::vector<int> active(nr,0);
+         for (int j=0;j<nx;++j)prefix_a[j*nx+j]=1.;
++        std::vector<double> gpu_hold;
++        if(W41GPUPath())gpu_hold=W41GPUHold(m,d,true);
+         for (int sub=0;sub<substeps;++sub) {
+           // FD restores its pre-integration input. Full C/D only at node0.
+           GetState(m,d,states.data()+sub*dim_state);
+           mju_copy(prefixes_a.data()+sub*nx*nx,prefix_a.data(),nx*nx);
+           mju_copy(prefixes_b.data()+sub*nx*nu,prefix_b.data(),nx*nu);
+-          mjd_transitionFD(m,d,tol,mode,next_a.data(),next_b.data(),
+-                           sub==0 ? total_c : nullptr,sub==0 ? total_d : nullptr);
++          if(gpu_hold.empty()) {
++            mjd_transitionFD(m,d,tol,mode,next_a.data(),next_b.data(),
++                             sub==0 ? total_c : nullptr,sub==0 ? total_d : nullptr);
++          } else {
++            if(sub==0)mjd_transitionFD(m,d,tol,mode,nullptr,nullptr,total_c,total_d);
++            const double* ab=gpu_hold.data()+substeps*dim_state+sub*nx*(nx+nu);
++            for(int row=0;row<nx;++row) {
++              mju_copy(next_a.data()+row*nx,ab+row*(nx+nu),nx);
++              mju_copy(next_b.data()+row*nu,ab+row*(nx+nu)+nx,nu);
++            }
++          }
+           // Refresh q/v geometry after FD; do not use its perturbed/stale sensors.
+           R26RiskKinematics(m,d);
+           for (int r=0;r<nr;++r) {
+             const double value=R26RiskValue(m,d,risk_rows[r]);
+             if (!sub || value>peak[r]) {peak[r]=value;active[r]=sub;}
+           }
+-          mj_step(m,d);
++          if(gpu_hold.empty())mj_step(m,d);
++          else {SetState(m,d,gpu_hold.data()+sub*dim_state);d->time=h[t]+(sub+1)*m->opt.timestep;}
+           mju_mulMatMat(total_a,next_a.data(),prefix_a.data(),nx,nx,nx);
+           mju_mulMatMat(total_b,next_a.data(),prefix_b.data(),nx,nx,nu);
+           mju_addTo(total_b,next_b.data(),nx*nu);
