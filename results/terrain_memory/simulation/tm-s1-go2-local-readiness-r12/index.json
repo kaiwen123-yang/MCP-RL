@@ -190780,6 +190780,54 @@
         "id": 437254935,
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-job-20261106T103028Z-w40-b-diagnostics-part04"
       }
+    },
+    "delivery_windows": {
+      "w40-raw-20261107-clash": {
+        "status": "background_upload_running",
+        "workers_total": 12,
+        "workers": {
+          "w40-a": 5,
+          "w40-b": 7
+        },
+        "proxy": "http://127.0.0.1:18901",
+        "scope": "User-authorized GitHub raw diagnostic delivery only",
+        "clocks": {
+          "a": {
+            "job": "job-20261106T103028Z-w40-a",
+            "started_unix_s": 1794016822.4763384,
+            "hours": 6.0,
+            "deadline_unix_s": 1794038422.4763384,
+            "delivery_window": "w40-raw-20261107-clash",
+            "prior_clock": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-a/diagnostics-transfer/deadline.json",
+            "authorization": "Explicit user request for W40 raw upload on 2026-11-07; server-local Clash and five total file transfers."
+          },
+          "b": {
+            "job": "job-20261106T103028Z-w40-b",
+            "started_unix_s": 1794016822.554864,
+            "hours": 6.0,
+            "deadline_unix_s": 1794038422.554864,
+            "delivery_window": "w40-raw-20261107-clash",
+            "prior_clock": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261106T103028Z-w40-b/diagnostics-transfer/deadline.json",
+            "authorization": "Explicit user request for W40 raw upload on 2026-11-07; server-local Clash and five total file transfers."
+          }
+        },
+        "original_training_and_GPU_clocks_changed": false,
+        "transfer_reconfiguration": {
+          "started_unix_s": 1794017888.2651756,
+          "old_upload_pids": {
+            "459698": "a",
+            "459808": "b"
+          },
+          "old_total_workers": 5,
+          "new_total_workers": 12,
+          "method": "Pause only upload scheduling under index lock, let existing curl children finish, terminate those schedulers, retain manifest and deadline, resume5+7.",
+          "inflight_drained_unix_s": 1794017893.269567,
+          "status": "twelve_workers_queued",
+          "finished_unix_s": 1794017968.7197566
+        },
+        "automatic_delete": false,
+        "updated_unix_s": 1794018009.8607242
+      }
     }
   },
   "initialization_failures": [
@@ -196431,7 +196479,7 @@
       }
     },
     "reviewed_on": "2026-10-31",
-    "method": "Read published job snapshots,ep15\u201344,actual four rollouts and selected ep34 prediction/trajectory/XML;no new physics,optimizer steps,build or server tests.",
+    "method": "Read published job snapshots,ep15–44,actual four rollouts and selected ep34 prediction/trajectory/XML;no new physics,optimizer steps,build or server tests.",
     "formal_claims": {
       "E30_passes": 0,
       "E60_passes": 0,
