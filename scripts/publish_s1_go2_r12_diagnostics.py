@@ -82,12 +82,20 @@ def context(args):
         raise FileNotFoundError(f"source job.json unavailable: {directory}")
     transfer = directory / "diagnostics-transfer"
     transfer.mkdir(exist_ok=True)
+    # A newly authorized delivery has its own immutable clock. The original
+    # upload, training and GPU clocks are never overwritten or extended.
+    clock_path = (transfer / "delivery-windows" / args.delivery_window / "deadline.json"
+                  if args.delivery_window else transfer / "deadline.json")
     with locked(transfer / "clock.lock"):
-        clock = read(transfer / "deadline.json")
+        clock = read(clock_path)
         if not clock:
             clock = dict(job=directory.name, started_unix_s=time.time(), hours=args.hours)
             clock["deadline_unix_s"] = clock["started_unix_s"] + args.hours * 3600
-            write(transfer / "deadline.json", clock)
+            if args.delivery_window:
+                clock.update(delivery_window=args.delivery_window,
+                    prior_clock=relative(transfer / "deadline.json"),
+                    authorization="Explicit user request for W40 raw upload on 2026-11-07; server-local Clash and five total file transfers.")
+            write(clock_path, clock)
     destination = SMALL / "jobs" / directory.name / "diagnostics"
     return directory, job, transfer, destination, clock
 
@@ -451,6 +459,8 @@ def queue(ctx, args):
             write(transfer / "queued-attempts.json", args.attempt)
             command = [sys.executable, "-u", str(Path(__file__).resolve()), "run", "--job-dir", relative(directory),
                        "--upload-workers", str(args.upload_workers)]
+            if args.delivery_window:
+                command += ["--delivery-window", args.delivery_window]
             if args.http_proxy:
                 command += ["--http-proxy", args.http_proxy]
             for attempt in args.attempt:
@@ -467,6 +477,7 @@ def main():
     parser.add_argument("action", choices=("prepare", "run", "queue"))
     parser.add_argument("--job-dir", required=True, type=Path)
     parser.add_argument("--attempt", action="append", default=[], help="Add dense arrays for an attempt in this same job")
+    parser.add_argument("--delivery-window", help="Explicitly authorized new delivery window ID; retain the old clock, manifest allocations and uploaded assets.")
     parser.add_argument("--hours", type=float, default=6, help="Initial diagnostic deadline only; resume never extends it")
     parser.add_argument("--upload-workers",type=int,choices=(1,2,3,4,5),
                         help="Concurrent files per queue; ordinary resume keeps its saved setting.")
@@ -474,6 +485,8 @@ def main():
     args = parser.parse_args()
     if not math.isfinite(args.hours) or not 0 < args.hours <= 6:
         parser.error("--hours must be finite and in (0, 6]")
+    if args.delivery_window and not re.fullmatch(r"[A-Za-z0-9_-]+", args.delivery_window):
+        parser.error("--delivery-window must be a simple named delivery ID")
     ctx = None
     try:
         ctx = context(args)
