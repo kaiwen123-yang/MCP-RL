@@ -103,7 +103,7 @@ def main():
     p.add_argument('--asset',action='append',default=[])
     p.add_argument('--deadline-unix',type=float,required=True)
     p.add_argument('--server-auth',action='store_true')
-    p.add_argument('--upload-workers',type=int,choices=(1,2,3,4,5),default=1,
+    p.add_argument('--upload-workers',type=int,choices=range(1,13),default=1,
         help='Concurrent independent asset uploads; keep the existing absolute deadline and index lock.')
     p.add_argument('--manifest',type=Path,help='Explicit job asset list: path,name,category.')
     p.add_argument('--job-name',help='Route unassigned job assets into Releases of at most900files.')

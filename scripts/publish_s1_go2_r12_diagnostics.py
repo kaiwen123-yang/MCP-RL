@@ -479,7 +479,7 @@ def main():
     parser.add_argument("--attempt", action="append", default=[], help="Add dense arrays for an attempt in this same job")
     parser.add_argument("--delivery-window", help="Explicitly authorized new delivery window ID; retain the old clock, manifest allocations and uploaded assets.")
     parser.add_argument("--hours", type=float, default=6, help="Initial diagnostic deadline only; resume never extends it")
-    parser.add_argument("--upload-workers",type=int,choices=(1,2,3,4,5),
+    parser.add_argument("--upload-workers",type=int,choices=range(1,13),
                         help="Concurrent files per queue; ordinary resume keeps its saved setting.")
     parser.add_argument("--http-proxy",help="Explicit server-local transfer proxy; resume keeps the saved route.")
     args = parser.parse_args()
