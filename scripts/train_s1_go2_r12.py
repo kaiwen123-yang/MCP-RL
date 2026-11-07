@@ -135,7 +135,7 @@ def main():
         episode_output=large/name
         diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(episode_output/"planner-records.jsonl"),
                               MJPC_R27_ACTION_RECORD=str(episode_output/"feedback-actions.jsonl"))
-        if build=='S5-r29':
+        if build in ('S5-r29','S5-r30'):
             diagnostic_env.update(MJPC_R29_SNAPSHOT=str(episode_output/"r29-current-plan.bin"),
                                   MJPC_R29_CALL_RECORD=str(episode_output/"planner-calls.jsonl"))
         with (output/"persistent-mpc.log").open("a") as log, Agent(task_id="Quadruped Flat",

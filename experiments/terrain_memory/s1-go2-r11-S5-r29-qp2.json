@@ -2,7 +2,7 @@
   "build": "S5-r29-qp2",
   "based_on": "S5-r29-qp1",
   "controller_contract_build": "S5-r29",
-  "status": "recorded_QP_replay_verified_awaiting_D57_normal_build",
+  "status": "normally_built",
   "task": "W40_STABILITY_WITH_PARALLEL_GPU_MPC",
   "reviewed_source_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
   "configuration_overrides": {
@@ -39,7 +39,7 @@
     ],
     "patch": "experiments/terrain_memory/s1-go2-r11-S5-r29-qp2.patch",
     "patch_sha256": "58db414596780691c537f59f0c01048ef8a589d392b5a412d6646e340a0fd0e9",
-    "resume_contract": "A resumes its latest own full ep314/9508/36 checkpoint and all147 valid tail transitions, preserving optimizer/RNG/ancestry/excluded145. B completedW40 at9617/37/tail0; do not silently repeat that completed job. Record qp1→qp2 boundary; no prior checkpoint overwrite.",
+    "resume_contract": "A resumes its latest own full ep314/9508/36 checkpoint and all147 valid tail transitions, preserving optimizer/RNG/ancestry/excluded145. B completedW40 at9617/37/tail0; do not silently repeat that completed job. Record qp1\u2192qp2 boundary; no prior checkpoint overwrite.",
     "wall_clock_policy": "User2026-11-07 supersedes prior fixed background completion deadlines. Numeric finite-iteration guards and physical evaluation horizons remain separate.",
     "verification": {
       "scope": "Replay recorded C++ numerical inputs only; no newly simulated episode, no admission trial, no server job or GPU operation.",
@@ -58,5 +58,12 @@
   "retained": "Original Go2, TM02 0.02 domain, torque/contact/fall/route and ladder semantics; actual r27 shared C2 gate and r26 causal packet, ten substeps, TV feedback and PD. Frozen causal PANN, 658D observation, PPO 2Hz scalar cap, unchanged W38 reward. No hidden material truth input.",
   "reward_version": "W38_legal_route_terminal_settlement",
   "main_admission_tests": false,
-  "qualification": "Only recorded numerical replay can be claimed here; D57 must build a separate immutable artifact from frozenqp1 and report actual build identity. Physical stability and S1 passage remain unproven."
+  "qualification": "Only recorded numerical replay can be claimed here; D57 must build a separate immutable artifact from frozenqp1 and report actual build identity. Physical stability and S1 passage remain unproven.",
+  "normal_build": {
+    "build_wall_s": 165.7254228591919,
+    "binary_sha256": "43773325577fbf796e8991adc87b658c4792823eec5735329a407d28dcf747d6",
+    "source_commit": "0ec03f71d4b22b0b5336eb9417331972b938cda9",
+    "mujoco_dependency_commit": "088079eff0450e32b98ee743141780ed68307506",
+    "source_note": "Named checked-in patch and specification applied to retained parent; parent source_commit plus patch, no main frozen artifact overwritten."
+  }
 }

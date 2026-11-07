@@ -352,7 +352,7 @@ def run(args, c, joint=None):
             'packet_period_s':.02,'actor_to_reference':'Recorded at next normal/phase replan',
             'reference_to_optimized_action':'Separate logical and wall times; synchronous optimization'}
     diagnostic_env=dict(os.environ)
-    if c.get('controller_build') in ('S5-r27', 'S5-r28', 'S5-r29'):
+    if c.get('controller_build') in ('S5-r27', 'S5-r28', 'S5-r29', 'S5-r30'):
         diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(out/'planner-records.jsonl'),
                               MJPC_R27_ACTION_RECORD=str(out/'feedback-actions.jsonl'))
         resolved['planner_recording']=dict(
@@ -362,9 +362,10 @@ def run(args, c, joint=None):
             raw_feedback='raw_K_delta_x before feedback scaling and actuator clipping',
             bulk_retained_local=True)
     r29_records=None
-    if c.get('controller_build')=='S5-r29':
+    if c.get('controller_build') in ('S5-r29','S5-r30'):
         from s1_go2_r29_records import R29Records
         r29_records=R29Records(out,model)
+        r29_records.controller=c["controller_build"]
         diagnostic_env.update(MJPC_R29_SNAPSHOT=str(out/'r29-current-plan.bin'),
                               MJPC_R29_CALL_RECORD=str(out/'planner-calls.jsonl'))
         resolved['planner_recording'].update(node_slices='0 and +20ms without spatial gate',

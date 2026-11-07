@@ -1,0 +1,156 @@
+--- a/mjpc/planners/ilqg/backward_pass.cc
++++ b/mjpc/planners/ilqg/backward_pass.cc
+@@ -21,6 +21,7 @@
+ #include "mjpc/planners/ilqg/boxqp.h"
+ #include "mjpc/planners/ilqg/policy.h"
+ #include "mjpc/planners/ilqg/settings.h"
++#include "mjpc/planners/ilqg/r29_projection.h"
+ #include "mjpc/planners/model_derivatives.h"
+ #include "mjpc/utilities.h"
+ 
+@@ -69,7 +70,7 @@
+     double *Vxxt, double *dut, double *Kt, double *dV, double *Qxt, double *Qut,
+     double *Qxxt, double *Qxut, double *Quut, double *scratch, BoxQP &boxqp,
+     const double *action, const double *action_limits, int reg_type,
+-    int limits, double* metric_out) {
++    int limits, double* metric_out, const mjModel* model, const double* state) {
+   int i, mmn = mju_max(m, n);
+   mjtNum *Vxx_reg, *Quu_reg, *Qxu_reg, *tmp, *tmp2, *tmp3;
+ 
+@@ -161,7 +162,52 @@
+   // feedback gains Kt
+   mju_zero(Kt, n * m);
+ 
+-  if (limits == 1) {
++  if (limits == 1 && model && state) {
++    // W41: solve the SAME instantaneous target/PD box used by rollout and
++    // deployment. The held dynamics retain their real actuator saturation.
++    // QP: min_k .5 k' Quu_reg k + Qu' k, l(x)-u <= k <= h(x)-u.
++    std::vector<double> factor(Quu_reg,Quu_reg+m*m),unconstrained(m),absolute(m);
++    if(mju_cholFactor(factor.data(),m,0.0)<m)return 0;
++    mju_cholSolve(unconstrained.data(),factor.data(),Qut,m);
++    for(int a=0;a<m;++a)absolute[a]=action[a]-unconstrained[a];
++    const auto qp=R29Project(model,state,Quu_reg,true,absolute.data());
++    if(!qp.converged)return 0;
++    for(int a=0;a<m;++a)dut[a]=absolute[a]-action[a];
++
++    // Fixed active branch: K_A = d bound_A / dx. A PD bound moves with
++    // joint position and velocity; a target bound/restoration axis is fixed.
++    // K_F = -H_FF^-1 (Qux_reg_F + H_FA K_A).
++    std::vector<int> free;
++    for(int a=0;a<m;++a) {
++      if(qp.active[a]==0) {free.push_back(a);continue;}
++      const int source=qp.active[a]==-1?qp.lower_source[a]:qp.upper_source[a];
++      if(!qp.fixed[a] && !qp.empty[a] && source==1) {
++        const int joint=model->actuator_trnid[2*a];
++        const int dof=model->jnt_dofadr[joint];
++        Kt[a*n+dof]=1.;Kt[a*n+model->nv+dof]=5./60.;
++      }
++      // At exact target/PD ties use the fixed-target branch; it is recorded
++      // by source==2 and is not asserted to be a two-sided derivative.
++    }
++    const int nf=free.size();
++    if(nf) {
++      std::vector<double> Hff(nf*nf),rhs(nf),sol(nf);
++      for(int a=0;a<nf;++a)for(int b=0;b<nf;++b)
++        Hff[a*nf+b]=Quu_reg[free[a]*m+free[b]];
++      if(mju_cholFactor(Hff.data(),nf,0.0)<nf)return 0;
++      for(int x=0;x<n;++x) {
++        for(int a=0;a<nf;++a) {
++          const int i=free[a];rhs[a]=-Qxu_reg[x*m+i];
++          for(int b=0;b<m;++b)if(qp.active[b]!=0)
++            rhs[a]-=Quu_reg[i*m+b]*Kt[b*n+x];
++        }
++        mju_cholSolve(sol.data(),Hff.data(),rhs.data(),nf);
++        for(int a=0;a<nf;++a)Kt[free[a]*n+x]=sol[a];
++      }
++    }
++    // The existing full Vx/Vxx/dV substitution below uses this matched k/K,
++    // including moving-bound rows and all cross terms. No K-only substitution.
++  } else if (limits == 1) {
+     // set problem
+     mju_scl(boxqp.H.data(), Quu_reg, 1.0, m * m);
+     mju_scl(boxqp.g.data(), Qut, 1.0, m);
+@@ -297,7 +343,8 @@
+           DataAt(Qxu, (t - 1) * dim_dstate * dim_action),
+           DataAt(Quu, (t - 1) * dim_action * dim_action), Q_scratch.data(),
+           boxqp, actions + (t - 1) * dim_action, action_limits,
+-          settings.regularization_type, settings.action_limits, p->metric.data()+(t-1)*dim_action*dim_action);
++          settings.regularization_type, settings.action_limits, p->metric.data()+(t-1)*dim_action*dim_action,
++          p->model,p->trajectory.states.data()+(t-1)*(p->model->nq+p->model->nv+p->model->na));
+ 
+       if(status) {
+         std::copy_n(Qu.data()+(t-1)*dim_action,dim_action,p->base_Qu.data()+(t-1)*dim_action);
+--- a/mjpc/planners/ilqg/backward_pass.h
++++ b/mjpc/planners/ilqg/backward_pass.h
+@@ -55,7 +55,8 @@
+                   double *Kt, double *dV, double *Qxt, double *Qut,
+                   double *Qxxt, double *Qxut, double *Quut, double *scratch,
+                   BoxQP &boxqp, const double *action,
+-                  const double *action_limits, int reg_type, int limits, double* metric_out = nullptr);
++                  const double *action_limits, int reg_type, int limits, double* metric_out = nullptr,
++                  const mjModel* model = nullptr, const double* state = nullptr);
+ 
+   // compute backward pass using Riccati
+   int Riccati(iLQGPolicy *p, const ModelDerivatives *md,
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -13,6 +13,7 @@
+ // limitations under the License.
+ 
+ #include "mjpc/planners/ilqg/planner.h"
++#include "mjpc/planners/ilqg/r29_projection.h"
+ 
+ #include <algorithm>
+ #include <chrono>
+@@ -526,7 +527,8 @@
+           DataAt(candidate_policy[0].trajectory.actions, t * dim_action),
+           model->actuator_ctrlrange, settings.regularization_type,
+           settings.action_limits,
+-          candidate_policy[0].metric.data()+t*dim_action*dim_action);
++          candidate_policy[0].metric.data()+t*dim_action*dim_action,
++          model,candidate_policy[0].trajectory.states.data()+t*dim_state);
+ 
+       // failure
+       if (!status) {
+@@ -548,12 +550,15 @@
+       std::copy_n(backward_pass.Qxu.data()+t*dim_state_derivative*dim_action,
+                   dim_state_derivative*dim_action,
+                   candidate_policy[0].base_Qxu.data()+t*dim_state_derivative*dim_action);
+-      for(int a=0;a<dim_action;++a) {
+-        double delta=candidate_policy[0].action_improvement[t*dim_action+a];
+-        double lo=model->actuator_ctrlrange[2*a]-candidate_policy[0].trajectory.actions[t*dim_action+a];
+-        double hi=model->actuator_ctrlrange[2*a+1]-candidate_policy[0].trajectory.actions[t*dim_action+a];
+-        candidate_policy[0].base_active[t*dim_action+a]=(delta<=lo?-1:(delta>=hi?1:0));
+-      }
++      std::vector<double> r30_action(dim_action);
++      for(int a=0;a<dim_action;++a)r30_action[a]=
++        candidate_policy[0].trajectory.actions[t*dim_action+a]+
++        candidate_policy[0].action_improvement[t*dim_action+a];
++      const auto r30_bounds=R29Project(model,
++        candidate_policy[0].trajectory.states.data()+t*dim_state,
++        candidate_policy[0].metric.data()+t*dim_action*dim_action,true,r30_action.data());
++      for(int a=0;a<dim_action;++a)
++        candidate_policy[0].base_active[t*dim_action+a]=r30_bounds.active[a];
+       // complete
+       if (t == 0) {
+         // set feedback gains and improvement at final time step
+--- a/mjpc/planners/ilqg/policy.cc
++++ b/mjpc/planners/ilqg/policy.cc
+@@ -199,6 +199,7 @@
+        <<",\"feedback_scaling\":"<<feedback_scaling
+        <<",\"query_id\":"<<++query_id<<",\"query_kind\":\"rpc_state_query\""
+        <<",\"metric_valid\":"<<(metric_valid?"true":"false")
++       <<",\"policy_method\":\"r30_matched_instantaneous_bound_riccati\""
+        <<",\"metric_source_plan_id\":"<<record_plan_id
+        <<",\"metric_regularization\":"<<metric_regularization
+        <<",\"metric_regularization_type\":"<<metric_regularization_type
+@@ -210,7 +211,7 @@
+        <<",\"restoration\":"<<(projection.restoration?"true":"false")
+        <<",\"qp_converged\":"<<(projection.converged?"true":"false")
+        <<",\"qp_nfree\":"<<projection.nfree
+-       <<",\"qp_solver_revision\":\"S5-r29-qp2\""
++       <<",\"qp_solver_revision\":\"S5-r30\""
+        <<",\"qp_native_nfree\":"<<projection.native_nfree
+        <<",\"qp_native_converged\":"<<(projection.native_converged?"true":"false")
+        <<",\"qp_native_primal_residual_rad\":"<<projection.native_primal

@@ -126,7 +126,7 @@ class R29Records:
     def finish(self,t,reason):
         self.event(t,'terminal',reason=reason)
         for event in self.events:event['end_available_s']=min(event['end_requested_s'],t)
-        result=dict(schema='r29_event_ring_v1',controller='S5-r29',plans=list(self.saved.values()),
+        result=dict(schema='r29_event_ring_v1',controller=getattr(self,'controller','S5-r29'),plans=list(self.saved.values()),
                     events=self.events,pre_window_s=.1,post_window_s=.2,terminal_s=t,
                     header_fields=['schema','plan_id','origin','horizon','ns','nu','nx','nr',
                       'regularization_used','regularization_type','nominal_feedback_scale',

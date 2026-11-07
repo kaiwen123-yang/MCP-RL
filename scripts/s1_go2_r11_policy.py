@@ -144,7 +144,7 @@ class PolicyStream:
                     elif (self.fork_identity['stream_id']!=self.stream_id or
                           saved['seed']!=seed or saved['phase_id']!=self.phase_id):
                         raise ValueError('Resume must retain this branch stream and phase identity.')
-                if self.controller_build in ('S5-r28','S5-r29'):
+                if self.controller_build in ('S5-r28','S5-r29','S5-r30'):
                     parent=contract['learning']['parent_map'][self.stream_id]
                     lineage=contract['learning']['phase_lineage']
                     source=Path(checkpoint)
@@ -371,7 +371,7 @@ class PolicyMaterial(JointMaterial):
             mask=np.array([self.ground.interior(p) for p in query])
             age=t-float(plan['times'][0])
             if self.observer is not None:feature,_=self.observer.recovery(query)
-        if self.stream.controller_build=='S5-r29':
+        if self.stream.controller_build in ('S5-r29','S5-r30'):
             with (self.out/'query-exposure.jsonl').open('a') as f:
                 f.write(json.dumps(dict(time_s=t,query_xy=query.tolist(),inside=mask.tolist(),
                     feature_nonzero=np.any(feature!=0,axis=1).tolist(),

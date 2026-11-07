@@ -170,3 +170,15 @@ A 收口期间可由一组 CPU 跑 A，另一组处理 r30 构建/开发，GPU �
 稳定材料通行后，再依次验证：冻结 PANN 是否在实际重访中影响动作；候选是否传播可恢复材料状态；动作是否能够控制足时/落脚/载荷；无记忆、局部历史、完整地块记忆和 oracle 的同信息对照；跨恢复时间/噪声/路径泛化；NX 与实机。这些阶段不能用继续调同一个速度 cap 的 loss 代替。
 
 新文献与版本状态更新见 [本次新增与深入核验](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/literature-update-20261107.md)，原 [12 篇文献记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/literature.json)：ProxQP 用于约束数值可靠性，IPDDP2/ProxDDP/2026 Control-Constrained DDP 用于完整约束轨迹优化，Chance-Constrained MPC 用于有测量依据的模型不确定性余量，DR-MPC/Parallel CLQR 用于结构化求解，Gait-Net 用于稳定后增加步时/落脚权限，MPC-guided RL 用于训练架构与 GPU 批量计算，差分接触仿真研究用于定位后端一致性。论文的速度、收敛和实机能力均不直接转移为本项目成绩。
+
+## 11. D57 实施：r30 的具体方法与证据（2026-11-07）
+
+qp2 已在独立 frozen 目录正常构建，165.73 s；A 已普通恢复原 ep314、9508/36/tail147，并保留来源文件和 restart 路径。B 原 job 没有重跑。当前 A 的实时计数由自己的 transitions/progress 决定。
+
+新增32个 A314/B E30 真实事件状态的固定输入检查保存在 `w41-dynamics`。实际 actuator map 包括原目标角内层 clip 和力矩外层 clip；float32 传输可能让目标超出原 target box 约1e-7rad，计入该内层 clip 后逐子步力矩误差最大2.843e-14 Nm。没有发现漏掉 actuator clamp。单子步原生FD与独立积分总体一致；整段FD与局部FD合成的偏差随诊断步长缩小而收敛，尤其接触/约束分支附近较大，不能把它作为确定的导数接线错误。原FP64、1e-6单边FD和十子步链不改。
+
+**实际r30选择：瞬时移动控制盒的一致受约束Riccati递推。** 在每个名义状态先求 `min_k .5 k^T H k + Qu^T k`，约束为原目标角盒与当前PD盒交集减去名义动作；`H=Quu_reg`，数值求解复用qp2。活跃PD边界的反馈行为 `K_A=e_q+(5/60)e_v`；活跃目标角边界和空区间restoration轴为零。自由行求 `H_FF K_F=-(Qux_reg_F+H_FA K_A)`。完整Vx/Vxx/dV更新使用这同一组k/K并保留交叉项，不能只改K而沿用另一组value递推。
+
+候选、nominal和部署仍共用纯因果的目标角clip及瞬时H投影，alpha仅进入前馈一次；真实十子步仍允许后续饱和。此方法是局部受约束iLQG，不是全保持段无饱和保证、一般不等式QP或完整非线性约束DDP。它纠正的是r29前向投影与后向仅目标角盒之间的控制设计不一致，尚不能归为跌倒唯一原因或已取得通行能力。
+
+S5-r30已正常构建160.52 s。按本次用户补充，独立C++构建使用最多6 jobs；GPU XLA编译仍保持2，并以同机余量约束。A使用的qp2 frozen目录未被修改。W41父点与2048/8目标必须在A实际tail0后写入，不能从尚在增长的tail提前伪造。
