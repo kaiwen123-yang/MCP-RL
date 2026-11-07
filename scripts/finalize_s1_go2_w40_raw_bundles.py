@@ -8,7 +8,7 @@ DEST=SMALL/'raw-bundles/w40-20261107'
 def main():
     m=json.loads((DEST/'manifest.json').read_text());upload=json.loads((DEST/'upload-manifest.json').read_text())
     remote={}
-    for tag in sorted({x['release_tag'] for x in upload}):
+    for tag in sorted({x['release_tag'] for x in upload if x.get('release_tag')}):
         release=json.loads(subprocess.check_output(['gh','api',f'repos/kaiwen123-yang/MCP-RL/releases/tags/{tag}'],cwd=ROOT,text=True))
         pages=json.loads(subprocess.check_output(['gh','api',f'repos/kaiwen123-yang/MCP-RL/releases/{release["id"]}/assets?per_page=100','--paginate','--slurp'],cwd=ROOT,text=True))
         for page in pages:
