@@ -8,7 +8,7 @@
 - w40-a：job-20261106T103028Z-w40-a，training_ended；新增915/3，累计9508/36，tail=147、excluded=145；评价=unavailable，紧凑Git=published。
 - w40-b：job-20261106T103028Z-w40-b，training_ended；新增1024/4，累计9617/37，tail=0、excluded=145；评价=completed，紧凑Git=published。
 - 任务能力：w40-a合规去程/返程/整圈=0/0/0，材料加载回合=28；w40-b合规去程/返程/整圈=0/0/0，材料加载回合=26。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
-- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
+- 交付：2026-11-07 11:29北京时间，用户手动上传的12个W40原始诊断ZIP（A/B各6个）已逐项核对远端名称、uploaded状态和字节大小，12/12通过，合计14,438,490,539字节，覆盖65个回合的6,238项请求源文件（原始19,210,509,738字节）。下载与逐文件映射见results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/raw-bundles/w40-20261107/manifest.json；两流diagnostics/evidence已标记published，旧散文件缺项由完整ZIP交付覆盖，原件/旧资产保留，无自动删除或电脑归档。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 
 ## 1. 目标、已经完成的工作与本次阅读范围
