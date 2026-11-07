@@ -24,7 +24,7 @@
     "implementation_base_controller_specification": "experiments/terrain_memory/s1-go2-r11-S5-r28.json",
     "checkpoint_parent_controller_build": "S5-r28",
     "specification_path_status": "Actual build identity under work/r11-frozen/S5-r29; launch after normal build and source/config push.",
-    "controller_artifact": "S5-r29-qp1"
+    "controller_artifact": "S5-r29-qp2"
   },
   "execution": {
     "mode": "interactive_setup_and_detached_training",
@@ -178,7 +178,7 @@
     "compute_time_policy": "Interactive<=4h; two main streams shared28h, each own eval<=4h; independent GPU<=28h, finish early.",
     "background_job": {
       "authorized_by": "User explicitly requested tmux training for ten hours or longer,with departure after actual startup and later inspection of logs.",
-      "default_maximum_wall_s": 100800,
+      "default_maximum_wall_s": null,
       "configurable_budget": "W40 shared28h absolute, ordinary resume cannot extend.",
       "launcher": "scripts/start_s1_go2_r12_tmux.py",
       "session_default": "s1-w40",
@@ -243,7 +243,10 @@
       "required_entrypoint_changes_status": "implemented",
       "diagnostic_entrypoint": "scripts/publish_s1_go2_r12_diagnostics.py",
       "diagnostic_delivery_policy": "outputs.requested_diagnostic_evidence",
-      "diagnostic_entrypoint_implementation_status": "existing publisher plus r29 diagnostic files"
+      "diagnostic_entrypoint_implementation_status": "existing publisher plus r29 diagnostic files",
+      "wall_deadline_enabled": false,
+      "completion_policy": "sample_update_goal_no_wall_deadline",
+      "authorization": "User instruction 2026-11-07: no fixed background completion time"
     },
     "diagnostic_parallel_work": {
       "source": "outputs.requested_diagnostic_evidence",
@@ -1303,7 +1306,7 @@
         "E30",
         "E60"
       ],
-      "maximum_wall_s": 14400,
+      "maximum_wall_s": null,
       "clock_starts": "Each stream training end starts its own<=4hevaluation budget; each stream occupies at most one compute slot at a time.",
       "checkpoint_selection": "Own current W40 phase/stream/controller/reward, updates>33 and samples>8593; no parent fallback.",
       "deterministic_policy_mean": true,
@@ -1407,7 +1410,8 @@
           "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-b/PANN_PPO_S5-seed2",
           "parent_map_key": "w40-b"
         }
-      ]
+      ],
+      "wall_deadline_enabled": false
     },
     "primary_progress_metrics": [
       "legal first outbound passages",
