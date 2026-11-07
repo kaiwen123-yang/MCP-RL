@@ -132,6 +132,7 @@ def main():
     p.add_argument('--asset',action='append',default=[])
     p.add_argument('--deadline-unix',type=float,required=True)
     p.add_argument('--server-auth',action='store_true')
+    p.add_argument('--asset-timeout-s',type=float,default=300,help='Per-asset transfer ceiling, still bounded by the immutable publication deadline.')
     p.add_argument('--upload-workers',type=int,choices=range(1,13),default=1,
         help='Concurrent independent asset uploads; keep the existing absolute deadline and index lock.')
     p.add_argument('--manifest',type=Path,help='Explicit job asset list: path,name,category.')
@@ -256,7 +257,7 @@ def main():
         while True:
             response=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2','--silent','--show-error','--fail-with-body',
                 '--dump-header','/dev/stderr','--write-out','\n%{http_code}',
-                '--connect-timeout','30','--max-time',str(max(.001,min(300,args.deadline_unix-time.time()))),
+                '--connect-timeout','30','--max-time',str(max(.001,min(args.asset_timeout_s,args.deadline_unix-time.time()))),
                 '--request','POST','--data-binary','@'+str(path),url],input=config,cwd=ROOT,env=env,text=True,
                 stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             body,code=response.stdout.rsplit('\n',1)
