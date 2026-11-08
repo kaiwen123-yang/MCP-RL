@@ -13,9 +13,12 @@ def main():
         pages=json.loads(subprocess.check_output(['gh','api',f'repos/kaiwen123-yang/MCP-RL/releases/{release["id"]}/assets?per_page=100','--paginate','--slurp'],cwd=ROOT,text=True))
         for page in pages:
             for a in page:remote[a['name']]=dict(a,release_tag=tag)
+    targets={x.get('logical_name',x['name']):x for x in upload}
     completed=True
     for b in m['archives']:
-        a=remote.get(b['name'])
+        target=targets[b['name']]
+        a=remote.get(target['name'])
+        b['asset_name']=target['name']
         good=bool(a and a['state']=='uploaded' and a['size']==b['size'])
         b.update(verified=good,url=a['browser_download_url'] if a else None,
             remote_state=a.get('state') if a else None,remote_size=a.get('size') if a else None,

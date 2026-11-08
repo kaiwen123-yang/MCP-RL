@@ -11,7 +11,10 @@ PROXY='http://127.0.0.1:18911'
 TAG=RUN+'-w41-raw-bundles-20261108'
 def write(p,v):p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(v,indent=2)+'\n')
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--resume',action='store_true');args=parser.parse_args()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--resume',action='store_true')
+    parser.add_argument('--upload-workers',type=int,choices=[1,2,4,6,12,24],default=24)
+    parser.add_argument('--asset-timeout-s',type=int,default=43200)
+    args=parser.parse_args()
     session='w41-zip-upload'
     if subprocess.run(['tmux','has-session','-t','='+session],capture_output=True).returncode==0:
         raise RuntimeError('The W41 ZIP transfer is already active; do not duplicate it.')
@@ -21,29 +24,35 @@ def main():
     history=None
     if previous:
         history=OUT/'upload-history'/str(time.time_ns());history.mkdir(parents=True)
-        for name in ['upload-job.json','run-upload.sh','upload-a.log','upload-b.log','finalize.log','upload-a-exit-code.txt','upload-b-exit-code.txt','finalize-exit-code.txt']:
-            if (OUT/name).exists():shutil.copy2(OUT/name,history/name)
+        for name in ['upload-job.json','run-upload.sh','upload-a.log','upload-b.log','upload-all.log','finalize.log','upload-a-exit-code.txt','upload-b-exit-code.txt','upload-all-exit-code.txt','finalize-exit-code.txt']:
+            if (OUT/name).exists():
+                if name.endswith('exit-code.txt'):(OUT/name).rename(history/name)
+                else:shutil.copy2(OUT/name,history/name)
     manifest=json.loads((DEST/'manifest.json').read_text())
     if manifest['archive_count']!=24:raise RuntimeError('Expected twelve independent ZIPs for each W41 stream')
     for b in manifest['archives']:
         p=ROOT/b['path']
         if p.stat().st_size!=b['size'] or p.stat().st_size>=2*1024**3:raise RuntimeError('Prepared archive size differs: '+b['name'])
+    targets=json.loads((DEST/'upload-manifest.json').read_text());tags={x['release_tag'] for x in targets}
+    if len(tags)!=1:raise ValueError('This24-ZIP delivery must target one declared release')
+    tag=next(iter(tags))
     source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
-    existing=subprocess.run(['gh','release','view',TAG,'--repo','kaiwen123-yang/MCP-RL'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+    existing=subprocess.run(['gh','release','view',tag,'--repo','kaiwen123-yang/MCP-RL'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     if existing.returncode:
-        subprocess.run(['gh','release','create',TAG,'--repo','kaiwen123-yang/MCP-RL','--target',source,
+        subprocess.run(['gh','release','create',tag,'--repo','kaiwen123-yang/MCP-RL','--target',source,
             '--title','W41 A/B full raw evidence: twelve ZIPs per stream','--notes',
             '24 independent lossless ZIPs covering the existing requested W41 A/B source manifests. Original files and previously uploaded individual assets are retained. See the repository raw-bundles/w41-20261108 manifest for members and verification.','--latest=false'],check=True,cwd=ROOT)
+    queues=[('a','upload-manifest-a.json',12),('b','upload-manifest-b.json',12)] if args.upload_workers==24 else [('all','upload-manifest.json',args.upload_workers)]
     commands=[]
-    for sid in ['a','b']:
+    for sid,filename,workers in queues:
         commands.append([sys.executable,'-u','scripts/publish_s1_go2_r12.py','upload','--server-auth','--no-wall-deadline',
-            '--manifest',str(DEST/('upload-manifest-'+sid+'.json')),'--upload-workers','12','--asset-timeout-s','7200'])
+            '--manifest',str(DEST/filename),'--upload-workers',str(workers),'--asset-timeout-s',str(args.asset_timeout_s)])
     clock=previous['clock'] if previous else dict(started_unix_s=time.time(),deadline_unix_s=None,completion_policy='all24archives_verified_or_explicit_technical_failure')
     job=dict(session=session,source_commit=source,clock=clock,archive_count=24,per_stream_archives=12,
-        transfer_workers_per_stream=12,total_transfer_workers=24,proxy=PROXY,
+        total_transfer_workers=args.upload_workers,asset_request_timeout_s=args.asset_timeout_s,proxy=PROXY,
         proxy_profile='Dedicated W41-upload Clash profile outside repository; subscription credentials not recorded',
         commands=commands,originals_retained=True,existing_release_assets_retained=True,automatic_delete=False,
-        release_tag=TAG,status='launched',invocation_started_unix_s=time.time(),
+        release_tag=tag,status='launched',invocation_started_unix_s=time.time(),
         prior_invocation_record=str((history/'upload-job.json').relative_to(ROOT)) if history else None)
     write(OUT/'upload-job.json',job);write(DEST/'upload-job.json',job)
     lines=['#!/bin/bash','set -e','cd '+shlex.quote(str(ROOT)),
@@ -51,9 +60,9 @@ def main():
         'export http_proxy='+PROXY+' https_proxy='+PROXY+' HTTP_PROXY='+PROXY+' HTTPS_PROXY='+PROXY,
         'export no_proxy=localhost,127.0.0.1,::1 NO_PROXY=localhost,127.0.0.1,::1',
         'unset all_proxy ALL_PROXY','set +e']
-    for sid,command in zip(['a','b'],commands):
+    for (sid,_,_),command in zip(queues,commands):
         lines += [shlex.join(command)+' > '+shlex.quote(str(OUT/('upload-'+sid+'.log')))+' 2>&1 &','pid_'+sid+'=$!']
-    for sid in ['a','b']:lines += ['wait "$pid_'+sid+'"','echo "$?" > '+shlex.quote(str(OUT/('upload-'+sid+'-exit-code.txt')))]
+    for sid,_,_ in queues:lines += ['wait "$pid_'+sid+'"','echo "$?" > '+shlex.quote(str(OUT/('upload-'+sid+'-exit-code.txt')))]
     lines += [shlex.join([sys.executable,'-u','scripts/finalize_s1_go2_w41_raw_bundles.py'])+' > '+shlex.quote(str(OUT/'finalize.log'))+' 2>&1',
         'echo "$?" > '+shlex.quote(str(OUT/'finalize-exit-code.txt'))]
     script=OUT/'run-upload.sh';script.write_text('\n'.join(lines)+'\n')
