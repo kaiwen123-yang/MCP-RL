@@ -14,7 +14,7 @@ def member(row,sid):
     source=Path(row['source_path']);attempt=row.get('attempt')
     if attempt:
         case='ep'+attempt.rsplit('-ep',1)[1] if '-ep' in attempt else 'evaluation-'+attempt.rsplit('-',1)[1]
-        prefix=f'w40-{sid}/{case}/'
+        prefix=f'w41-{sid}/{case}/'
         episode=LARGE/attempt
         path=ROOT/source
         if path.is_relative_to(episode):return prefix+path.relative_to(episode).as_posix()
