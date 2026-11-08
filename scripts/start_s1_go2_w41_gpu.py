@@ -26,7 +26,13 @@ def main():
         for name in ['job.json','clock.json','result.json','gpu.log','publication.log']:
             if (OUT/name).exists():shutil.copy2(OUT/name,history/name)
         if (OUT/'exit-code.txt').exists():(OUT/'exit-code.txt').rename(history/'exit-code.txt')
-        if (SMALL/'delivery.json').exists():shutil.copy2(SMALL/'delivery.json',history/'delivery.json')
+        if (SMALL/'delivery.json').exists():
+            shutil.copy2(SMALL/'delivery.json',history/'delivery.json')
+            delivery=json.loads((SMALL/'delivery.json').read_text())
+            delivery.update(status='publication_pending',active_continuation=stamp,
+                retained_published_delivery_record=str((history/'delivery.json').relative_to(ROOT)),
+                continuation_delivery='Pending new G2-G5 computation; existing verified assets retained and not reuploaded.')
+            (SMALL/'delivery.json').write_text(json.dumps(delivery,indent=2)+'\n')
         job=json.loads((OUT/'job.json').read_text());cpus=job['host_cpus']
         logfile=OUT/('gpu-resume-'+stamp+'.log');script=OUT/('run-gpu-resume-'+stamp+'.sh')
     else:

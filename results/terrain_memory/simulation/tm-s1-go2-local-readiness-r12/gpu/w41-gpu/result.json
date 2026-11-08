@@ -1,9 +1,9 @@
 {
   "task": "w41-gpu",
-  "version": "w41-resident-mjx323-fp64",
+  "version": "w41-resident-mjx323-fp64-contact-index-fix1",
   "deadline_unix_s": null,
   "started_unix_s": 1794040390.330252,
-  "status": "technical_interruption",
+  "status": "G2_node_block_completed",
   "stages": {
     "G1": [
       {
@@ -584,7 +584,13 @@
       "nodes": 176,
       "inputs_per_node": 49,
       "logical_inputs": 8624,
-      "node_blocks": []
+      "node_blocks": [
+        {
+          "node": 0,
+          "wall_s": 637.6209294199944,
+          "microbatch": 49
+        }
+      ]
     }
   },
   "original8": "retained gpu/w40-gpu; no recomputation",
@@ -601,13 +607,13 @@
     "mjx": "3.2.3"
   },
   "new_events": 32,
-  "updated_unix_s": 1794058203.0030055,
-  "host_rss_KiB": 3081840,
+  "updated_unix_s": 1794110402.3702435,
+  "host_rss_KiB": 2916392,
   "device_memory_stats": {
-    "num_allocs": 1310,
-    "bytes_in_use": 2827520,
-    "peak_bytes_in_use": 3724233984,
-    "largest_alloc_size": 3718434560,
+    "num_allocs": 396,
+    "bytes_in_use": 3109120,
+    "peak_bytes_in_use": 3721546752,
+    "largest_alloc_size": 3718435072,
     "bytes_limit": 76481888256,
     "bytes_reserved": 0,
     "peak_bytes_reserved": 0,
@@ -616,5 +622,25 @@
     "peak_pool_bytes": 4301258752
   },
   "predictor_identity": "new_mjx323_contact_predictor",
-  "first_technical_error": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_w41_gpu.py\", line 127, in main\n    t=time.perf_counter();out=resident.request(r,True);wall=time.perf_counter()-t\n                              ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_w41_gpu.py\", line 68, in request\n    return sync((self.hold if fd else self.forward)(self.data(row)))\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_w41_gpu.py\", line 60, in held_fd\n    return jax.lax.scan(step,d,None,length=10)[1]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: scan body function carry input and carry output must have equal types, but they differ:\n\n  * the input carry component carry.contact.geom1 has type int32[1007] but the corresponding output carry component has type int64[1007], so the dtypes do not match;\n\n  * the input carry component carry.contact.geom2 has type int32[1007] but the corresponding output carry component has type int64[1007], so the dtypes do not match;\n  * the input carry component carry.contact.geom has type int32[1007,2] but the corresponding output carry component has type int64[1007,2], so the dtypes do not match.\n\nRevise the function so that all output types match the corresponding input types.\n--------------------\nFor simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.\n"
+  "technical_history": [
+    {
+      "status": "technical_interruption",
+      "updated_unix_s": 1794058203.0030055,
+      "error": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_w41_gpu.py\", line 127, in main\n    t=time.perf_counter();out=resident.request(r,True);wall=time.perf_counter()-t\n                              ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_w41_gpu.py\", line 68, in request\n    return sync((self.hold if fd else self.forward)(self.data(row)))\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_w41_gpu.py\", line 60, in held_fd\n    return jax.lax.scan(step,d,None,length=10)[1]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: scan body function carry input and carry output must have equal types, but they differ:\n\n  * the input carry component carry.contact.geom1 has type int32[1007] but the corresponding output carry component has type int64[1007], so the dtypes do not match;\n\n  * the input carry component carry.contact.geom2 has type int32[1007] but the corresponding output carry component has type int64[1007], so the dtypes do not match;\n  * the input carry component carry.contact.geom has type int32[1007,2] but the corresponding output carry component has type int64[1007,2], so the dtypes do not match.\n\nRevise the function so that all output types match the corresponding input types.\n--------------------\nFor simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.\n",
+      "record": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w41-gpu/resume-history/g2-20261108T034922Z/result.json"
+    }
+  ],
+  "G1_reuse": {
+    "record": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w41-gpu/resume-history/g2-20261108T034922Z/result.json",
+    "completed_events": 32,
+    "recomputed": false
+  },
+  "continuation": {
+    "invocation": "g2-20261108T034922Z",
+    "resume_from": "G2",
+    "started_unix_s": 1794109763.0539799,
+    "deadline_unix_s": null,
+    "source_commit": "ec5982126028bd71be42648de36eaa6d71c40919",
+    "change": "Preserve contact geom1/geom2/geom integer dtypes across held FD and forward scan"
+  }
 }
