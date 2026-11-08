@@ -1,0 +1,319 @@
+{
+  "attempt": "train-job-20261107T093906Z-w41-b-PANN_PPO_S5-s2-ep00370",
+  "result_source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261107T093906Z-w41-b-PANN_PPO_S5-s2-ep00370.json",
+  "result_available": true,
+  "outcome": {
+    "status": "completed",
+    "success": null,
+    "reason": "body_fall",
+    "error": null,
+    "simulation_s": 20.661999999978523,
+    "stage_status": "physical_material_failure",
+    "completed_round_trips": 0,
+    "stage_progress": {
+      "far_arrival_s": null,
+      "return_start_s": null,
+      "actual_route_fraction": 0.14120259816747135,
+      "full_observation": false,
+      "actual_material_loaded": true,
+      "material_traversal": {
+        "completed": false,
+        "west_entry_s": 14.161999999993672,
+        "east_exit_s": null,
+        "lateral_exit_s": null,
+        "max_abs_base_y_during_crossing_m": 0.19358567855467143,
+        "material_loaded_during_crossing": true,
+        "original_strip_x_m": [
+          0.8,
+          2.2
+        ],
+        "original_strip_y_m": [
+          -0.6,
+          0.6
+        ],
+        "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+      }
+    },
+    "legal_route": {
+      "reward_version": "W38_legal_route_terminal_settlement",
+      "progress": 0.0,
+      "completed_roundtrips": 0,
+      "legal_outbound_traversals": 0,
+      "legal_return_traversals": 0,
+      "side_exits": 0,
+      "raw_roundtrips": 0,
+      "passages": [
+        {
+          "lap": 1,
+          "direction": "outbound",
+          "entry_s": 14.161999999993672,
+          "exit_s": null,
+          "lateral_exit_s": null,
+          "material_loaded": true,
+          "completed": false,
+          "terminal_closed_s": 20.661999999978523
+        }
+      ],
+      "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+    },
+    "terminal_reward_settlement": {
+      "progress_before": 0.1412025981674721,
+      "progress_after": 0.0,
+      "retracted_positive_credit": 0.1412025981674721,
+      "reason": "true_physical_terminal"
+    }
+  },
+  "route_phase_events": [
+    {
+      "time_s": 0.0,
+      "phase": "initial_stand",
+      "lap": 0,
+      "position_m": [
+        3.4227784781322575e-23,
+        -6.362046133517818e-23,
+        0.29020935793281377
+      ],
+      "velocity_m_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "omega_rad_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "all_feet_contact": false
+    },
+    {
+      "time_s": 2.0019999999998124,
+      "phase": "outbound",
+      "lap": 0,
+      "position_m": [
+        -0.0008931905704017066,
+        -2.6098247921712988e-05,
+        0.29029431328971844
+      ],
+      "velocity_m_s": [
+        -4.159887513342856e-05,
+        2.9085157700838367e-05,
+        7.392354089325892e-05
+      ],
+      "rpy_rad": [
+        -1.6909582209939043e-05,
+        -2.5245379853267025e-06,
+        -0.00012522891591460527
+      ],
+      "omega_rad_s": [
+        -9.35655491291519e-05,
+        -0.00010438939994738605,
+        -1.3215023343063903e-05
+      ],
+      "all_feet_contact": true
+    }
+  ],
+  "material_event_counts": {
+    "load": 181,
+    "release": 1206,
+    "revisit": 1029
+  },
+  "first_material_events_by_type": {
+    "load": {
+      "source_line": 1,
+      "event": {
+        "event_id": 1,
+        "time_s": 13.366399999995526,
+        "patch": 7,
+        "type": "load",
+        "leg": 1,
+        "previous_leg": -1,
+        "area_m2": 0.00011976113800821672,
+        "previous_load_event_id": -1,
+        "cross_leg": false,
+        "area_before_m2": 0.0,
+        "normal_before_N": 0.0,
+        "normal_N": 0.3661484414768777,
+        "unloaded_gap_s": null,
+        "e_before_step": [
+          0.0,
+          0.0
+        ],
+        "q_before_step": [
+          0.0,
+          0.0
+        ],
+        "preload_free_e": [
+          0.0,
+          0.0
+        ],
+        "preload_free_q": [
+          0.0,
+          0.0
+        ],
+        "xy_m": [
+          0.85,
+          -0.13
+        ],
+        "e": [
+          -4.9846026862337967e-05,
+          1.13303838013076e-05
+        ],
+        "q": [
+          -3.3059746869909743e-08,
+          9.736520747371744e-09
+        ],
+        "world_key": [
+          42,
+          -7
+        ]
+      }
+    },
+    "release": {
+      "source_line": 10,
+      "event": {
+        "event_id": 10,
+        "time_s": 13.36919999999552,
+        "patch": 7,
+        "type": "release",
+        "leg": 1,
+        "previous_load_event_id": 1,
+        "area_before_m2": 0.0001253313113100707,
+        "area_m2": 0.0,
+        "normal_before_N": 0.23087172471777062,
+        "normal_N": 0.0,
+        "e_before_step": [
+          -3.812893805202333e-05,
+          9.279478452492517e-06
+        ],
+        "q_before_step": [
+          -1.1661336432098313e-05,
+          3.433791370096845e-06
+        ],
+        "preload_free_e": [
+          -8.108015043266165e-06,
+          2.456355899684441e-06
+        ],
+        "preload_free_q": [
+          -1.16589572819016e-05,
+          3.4330012080278375e-06
+        ],
+        "e": [
+          -8.108015043266165e-06,
+          2.456355899684441e-06
+        ],
+        "q": [
+          -1.16589572819016e-05,
+          3.4330012080278375e-06
+        ],
+        "world_key": [
+          42,
+          -7
+        ]
+      }
+    },
+    "revisit": {
+      "source_line": 19,
+      "event": {
+        "event_id": 19,
+        "time_s": 13.385199999995482,
+        "patch": 7,
+        "type": "revisit",
+        "leg": 1,
+        "previous_leg": 1,
+        "area_m2": 0.00018136278732676088,
+        "previous_load_event_id": 1,
+        "cross_leg": false,
+        "area_before_m2": 0.0,
+        "normal_before_N": 0.0,
+        "normal_N": 3.2756286143954068,
+        "unloaded_gap_s": 0.01599999999996271,
+        "e_before_step": [
+          -7.978218234613212e-06,
+          2.4123536386616964e-06
+        ],
+        "q_before_step": [
+          -1.1472538215097203e-05,
+          3.371135889581237e-06
+        ],
+        "preload_free_e": [
+          -7.976588693621458e-06,
+          2.411801617033027e-06
+        ],
+        "preload_free_q": [
+          -1.147019778754388e-05,
+          3.3703597991053856e-06
+        ],
+        "xy_m": [
+          0.85,
+          -0.13
+        ],
+        "e": [
+          -0.0003024432718813641,
+          6.934635612116492e-05
+        ],
+        "q": [
+          -1.1665907037774463e-05,
+          3.4279984986274294e-06
+        ],
+        "world_key": [
+          42,
+          -7
+        ]
+      }
+    }
+  },
+  "material_event_source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261107T093906Z-w41-b-PANN_PPO_S5-s2-ep00370/material-events.jsonl",
+  "material_event_source_available": true,
+  "material_domain_exit": null,
+  "terminal": {
+    "time_s": 20.661999999978523,
+    "reason": "body_fall",
+    "final_qpos": [
+      0.8463223984344336,
+      0.022687533255586388,
+      0.15144920528377762,
+      0.8240850640709353,
+      0.5661285660720949,
+      0.013314523996709083,
+      0.014317028431157296,
+      0.03470712344373882,
+      -0.28429341899959865,
+      -1.4069401833857527,
+      -0.2936589896764255,
+      2.504996711488571,
+      -2.037133767421094,
+      -0.3884383006143941,
+      0.22038501199040905,
+      -1.0430138837417606,
+      0.9289984747435841,
+      -0.2842885725263199,
+      -2.557064510827314
+    ],
+    "final_qvel": [
+      -0.2910360737665551,
+      0.007787324599561087,
+      -0.08143538604461194,
+      2.271799350779152,
+      -1.7458371703542426,
+      2.28767412632732,
+      0.03118157853147131,
+      0.04271880669696961,
+      0.1318746564305609,
+      0.42056011984955555,
+      2.4844009685890955,
+      0.041828293768929346,
+      -0.6635941758001068,
+      0.9289340098949813,
+      0.7662862240438248,
+      -0.045355155419357945,
+      -0.09673448823879964,
+      -1.2194768156527374
+    ]
+  },
+  "scope": "Saved result/route/material-event summary, not an inferred dense contact or action trace."
+}
