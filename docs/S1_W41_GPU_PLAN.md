@@ -71,3 +71,13 @@ GPU 支线不阻塞 CPU 稳定性工作；有明确有效结果就继续 G3/G4 �
 G3/G4自动使用B的不可变update37，在原初态分别执行r30原生预测器与独立GPU预测器的E30，同case通过才E60。G5只选择一个已具有前向吞吐/接触理由的MJWarp对照，隔离环境`work/envs/w41-mjwarp`固定mujoco/mujoco-warp4.0.0、warp1.19.0、numpy2.5.4；原主环境未升级。新后端明确FP32身份，保留原solver迭代/容差，记录三个具名差分尺度的敏感性，再在原plant独立E30/E60。没有把FP32结果用作原FP64等价证书。接口源码已准备，阶段执行与结果以任务result.json为准，不将未来阶段标成已完成。
 
 G1–G5结束或首次技术故障后，`finish_s1_go2_w41_gpu.py`发布本轮新原件和实际结果，保留首次输入、原始文件及已上传副本。任务没有后台完成期限；网络故障保留publication_interrupted，不把队列当published。
+
+## 8. 2026-11-08 G2 定向续接
+
+G1 已完成32个新增事件，5例通过完整数值标准，原件已随 `w41-new-evidence-01.zip` 发布。2026-11-07 21:30 的 G2 首节点在编译阶段报错：MJX3.2.3 `collision_driver` 从 NumPy 几何编号生成JAX数组时，在x64环境下产生int64，而 `make_data` 初始contact.geom1/geom2/geom为int32，违反 `lax.scan` 的carry类型要求；尚无完成的G2节点。
+
+修复仅在held FD和held forward的每次物理步返回处，将这三个接触编号转回输入carry的整数dtype。FP64状态、接触值、原solver、1e-6差分、十子步和控制策略不变。沿实际G2首节点完成正常JAX编译和计算，不另做G1重放、smoke或参数扫描。
+
+明确入口为 `python scripts/start_s1_go2_w41_gpu.py --resume-from G2`。原G1记录、首次故障、旧job/clock/log/exit及发布记录保存在同任务resume-history下；当前结果直接复用完整G1，只推进尚未完成的G2节点，之后继续既有G3/G4/G5入口。每个G2节点完成即保存实际数组和计数。仍使用2个host线程、最多2个XLA编译jobs和原缓存，不接触W41 A/B的进程或frozen artifact；后台无墙钟截止。
+
+续接结束后的交付只选择本次新增或变化的输出，并使用包含续接ID的新ZIP资产名。旧G1数组与已发布ZIP复用，不重新打包旧原件或覆盖远端资产；旧ZIP和所有服务器原件保留。超过单资产容量的完整新流只切分传输副本，源文件不改。
