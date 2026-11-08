@@ -14,6 +14,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--resume',action='store_true')
     parser.add_argument('--upload-workers',type=int,choices=[1,2,4,6,12,24],default=24)
     parser.add_argument('--asset-timeout-s',type=int,default=43200)
+    parser.add_argument('--http-proxy',default=PROXY)
     args=parser.parse_args()
     session='w41-zip-upload'
     if subprocess.run(['tmux','has-session','-t','='+session],capture_output=True).returncode==0:
@@ -49,7 +50,7 @@ def main():
             '--manifest',str(DEST/filename),'--upload-workers',str(workers),'--asset-timeout-s',str(args.asset_timeout_s)])
     clock=previous['clock'] if previous else dict(started_unix_s=time.time(),deadline_unix_s=None,completion_policy='all24archives_verified_or_explicit_technical_failure')
     job=dict(session=session,source_commit=source,clock=clock,archive_count=24,per_stream_archives=12,
-        total_transfer_workers=args.upload_workers,asset_request_timeout_s=args.asset_timeout_s,proxy=PROXY,
+        total_transfer_workers=args.upload_workers,asset_request_timeout_s=args.asset_timeout_s,proxy=args.http_proxy,
         proxy_profile='Dedicated W41-upload Clash profile outside repository; subscription credentials not recorded',
         commands=commands,originals_retained=True,existing_release_assets_retained=True,automatic_delete=False,
         release_tag=tag,status='launched',invocation_started_unix_s=time.time(),
@@ -57,7 +58,7 @@ def main():
     write(OUT/'upload-job.json',job);write(DEST/'upload-job.json',job)
     lines=['#!/bin/bash','set -e','cd '+shlex.quote(str(ROOT)),
         'source scripts/autodl_d57_env.sh','unset GH_TOKEN GITHUB_TOKEN',
-        'export http_proxy='+PROXY+' https_proxy='+PROXY+' HTTP_PROXY='+PROXY+' HTTPS_PROXY='+PROXY,
+        'export http_proxy='+args.http_proxy+' https_proxy='+args.http_proxy+' HTTP_PROXY='+args.http_proxy+' HTTPS_PROXY='+args.http_proxy,
         'export no_proxy=localhost,127.0.0.1,::1 NO_PROXY=localhost,127.0.0.1,::1',
         'unset all_proxy ALL_PROXY','set +e']
     for (sid,_,_),command in zip(queues,commands):
