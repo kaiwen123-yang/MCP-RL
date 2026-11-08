@@ -346,7 +346,7 @@ def update_parallel_handoff(contract):
         *details,
         "- 任务能力："+ "；".join(ability)+"。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。",
         "- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。",
-        "- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。"]
+        f"- 续接位置：autodl-d57:{ROOT}；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。"]
     for position,line in zip(slots,handoff):plan[position]=line
     plan_path.write_text("\n".join(plan)+"\n")
 
@@ -610,7 +610,7 @@ def main():
         f"- 已完成：保留本job全部{len(episodes)}个attempt的可用小JSON、配置、学习/评价记录及失败/零步/中断清单；控制版{job['controller_build']}；不等待视频或大文件上传。",
         f"- 任务表现：最大向前位移{outcomes.get('max_forward_displacement_m')}m、材料加载{outcomes.get('material_loaded_episodes')}回合、合规去程{outcomes.get('legal_all_outbound_traversals')}、合规返程{outcomes.get('legal_return_traversals')}、合规整圈{outcomes.get('legal_roundtrips')}、侧出{outcomes.get('all_passage_side_exits')}；末次原物理原因{training.get('last_episode_reason')}。",
         "- 下一步：继续研究并后台上传已请求的原始反馈/选中与参考轨迹及必要数组；状态见同job的diagnostics/evidence.json。紧凑push失败普通重试；不为交付重跑物理，不自动上传未选权重/全视频或删除研究输出。",
-        f"- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL；摘要{summary_path.relative_to(ROOT)}；checkpoint及job/episode/shared training本地位置见bulk_retention，既有Release历史保留。",
+        f"- 续接位置：autodl-d57:{ROOT}；摘要{summary_path.relative_to(ROOT)}；checkpoint及job/episode/shared training本地位置见bulk_retention，既有Release历史保留。",
     ]
     if outcomes.get("status") == "unavailable":
         handoff[3] = "- 任务表现：自动汇总不可用；具体错误见job.training.outcomes.error，保留全部可用逐回合JSON，不把缺失指标记为零或成功。"

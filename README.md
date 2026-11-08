@@ -2,15 +2,17 @@
 
 **默认执行端：AutoDL西北B区D57，SSH autodl-d57。** 记录资源96GB级GPU、25vCPU、120GB内存；[环境记录](experiments/terrain_memory/compute-environment.json)。现场空闲量须实际读取。
 
-## 当前：W41两条CPU已完成审查；下一步W42接触前向实验
+## 当前：W42两条CPU联合训练已启动，W41 GPU继续运行
 
 **联合训练可以完整运行，但稳定合法材料通行仍未建立。** W41两流都完成2048新样本/8次更新并做了末次固定策略E30，130训练回合没有结果级技术中断，但有127次物理失败，合法材料去程/返程/往返均0。GPU按用户说明仍在运行，保持原任务。
 
-本次审查基于[9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724)及已交付原件。**W42/S5-r31仅为下一实验计划，尚未实现、构建或运行；本次没有登录D57或启动/改动GPU。** 不把证据审查、数学自洽或计划当作新物理能力。
+本次审查基于[9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724)及已交付原件。**W42/S5-r31现已在D57独立工作树实现、正常构建、完成指定输入核验并启动两条联合训练。GPU活动目录及任务保持。** 不把证据审查、数学自洽或计划当作新物理能力。
 
 [当前交接](docs/TERRAIN_MEMORY_PLAN.md) · [W41完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md) · [控制原件复核](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/controller-review.md) · [W42计划](docs/S1_W42_CPU_PLAN.md) · [完整启动提示词](docs/S1_W42_START_PROMPT.md) · [执行规则](AGENTS.md)
 
-### 最新真实进度
+W42启动源码：[4dcc1bb](https://github.com/kaiwen123-yang/MCP-RL/commit/4dcc1bb907819e818945039bb67281f7c4085130)。2026-11-08 23:50:26北京时间，A/B各累计11668/45、tail3（本轮各新增3/0）；已连续观察11665→11666→11668，尚无本轮固定评价或通行结论。工作树 /root/autodl-tmp/MCP-RL-w42，10+10 workers，deadline=null。目标各13713/53；实际job/PID和续接点见[运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)。[指定输入证据及r31二进制Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/w42-contact-forward-20261108)已核验，W41 24ZIP未重传。
+
+### 已完成W41结果（历史基线）
 
 | 项目 | w41-a / seed1 | w41-b / seed2 |
 |---|---:|---:|
@@ -32,7 +34,7 @@
 
 三个材料前原始记录在相同起点、近乎相同保持目标下，当前平滑规划器刚地足力约0.007–0.013N，而实际约114–247N；首2ms后关节速度已有0.39–0.44rad/s偏差。时钟、接触方向、材料来源与末状态均独立核对。它暴露需要处理的前向缺口，尚未分离solimp/coldstart各自贡献，也不是全部跌倒的唯一因果证明。[控制报告](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/controller-review.md) · [独立交叉核验](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/contact-crosscheck.md)
 
-W42/S5-r31拟将nominal/候选/成本与风险评分交给原生geom/pair接触前向，独立平滑模型只在每个原生名义子步提供锚定的代理A/B；保留r30完整k/K/value。旧r17只恢复阻抗仍失败的负结果保留，本次用明确模型分工区别于旧开关。不同时改物理、PANN、步态、奖励或动作维度。HOUND、DiffMJX、DiffContact及后续参考/残差思路详见[七篇论文机制与边界](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/literature-mechanisms.md)。
+W42/S5-r31已将nominal/候选/成本与风险评分交给原生geom/pair接触前向，独立平滑模型只在每个原生名义子步提供锚定的代理A/B；保留r30完整k/K/value。旧r17只恢复阻抗仍失败的负结果保留，本次用明确模型分工区别于旧开关。不同时改物理、PANN、步态、奖励或动作维度。HOUND、DiffMJX、DiffContact及后续参考/残差思路详见[七篇论文机制与边界](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/literature-mechanisms.md)。
 
 ### 下一步与工作方式
 

@@ -32461,6 +32461,86 @@
         "worker_setting_checked_against_predecessor": false
       },
       "result": "job-20261107T093906Z-w41-b-eval-PANN_PPO_S5-s2-E30.json"
+    },
+    {
+      "attempt": "train-job-20261108T154719Z-w42-a-PANN_PPO_S5-s1-ep00388",
+      "stage": "G1",
+      "purpose": "training",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "long",
+      "cohort": "W42_r31_native_forward_anchored_smooth_v19",
+      "status": "running",
+      "physical_started": true,
+      "command": [
+        "scripts/train_s1_go2_r12.py",
+        "--group",
+        "PANN_PPO_S5",
+        "--seed",
+        "1",
+        "--resume",
+        "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-a/PANN_PPO_S5-seed1/resume-state-ep00387.pt",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154719Z-w42-a/execution-contract.json",
+        "--background-job",
+        "--job-start-unix",
+        "1794152839.26973"
+      ],
+      "started_utc": "2026-11-08T15:47:25Z",
+      "case_key": null,
+      "case": null,
+      "evaluation_stage": {
+        "level": "train60",
+        "task_kind": "continuing_acquisition",
+        "duration_s": 60,
+        "target_circuits": null,
+        "route_deadline_s": null,
+        "far_hold_s": 2,
+        "home_hold_s": 2,
+        "final_hold_s": null
+      },
+      "execution_fingerprint": "47a6e2fe6f6ee187dfcc402bc4d50c39bf6801bb993afe70f10001199b8030f7",
+      "source_commit": "4dcc1bb907819e818945039bb67281f7c4085130"
+    },
+    {
+      "attempt": "train-job-20261108T154727Z-w42-b-PANN_PPO_S5-s2-ep00376",
+      "stage": "G1",
+      "purpose": "training",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "long",
+      "cohort": "W42_r31_native_forward_anchored_smooth_v19",
+      "status": "running",
+      "physical_started": true,
+      "command": [
+        "scripts/train_s1_go2_r12.py",
+        "--group",
+        "PANN_PPO_S5",
+        "--seed",
+        "2",
+        "--resume",
+        "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-b/PANN_PPO_S5-seed2/resume-state-ep00375.pt",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154727Z-w42-b/execution-contract.json",
+        "--background-job",
+        "--job-start-unix",
+        "1794152847.5619776"
+      ],
+      "started_utc": "2026-11-08T15:47:33Z",
+      "case_key": null,
+      "case": null,
+      "evaluation_stage": {
+        "level": "train60",
+        "task_kind": "continuing_acquisition",
+        "duration_s": 60,
+        "target_circuits": null,
+        "route_deadline_s": null,
+        "far_hold_s": 2,
+        "home_hold_s": 2,
+        "final_hold_s": null
+      },
+      "execution_fingerprint": "63a1c3460a7dd164bc10b25bd6c78e158e9656c0d8234c654cf1af86b0505b44",
+      "source_commit": "4dcc1bb907819e818945039bb67281f7c4085130"
     }
   ],
   "stages": {},
@@ -32524,14 +32604,14 @@
   "nx_realtime_measured": false,
   "first_physical_start_unix_s": 1793272712.7896276,
   "window": {
-    "task": "W41_MATCHED_BOUND_RICCATI_JOINT_FINAL_EVAL",
-    "execution_mode": "frozen_policy_evaluation",
-    "started_unix_s": 1794132438.0,
+    "task": "W42_CONTACT_FORWARD_JOINT",
+    "execution_mode": "background_job",
+    "started_unix_s": 1794152847.5619776,
     "run_deadline_unix_s": null,
     "hard_deadline_unix_s": null
   },
-  "protocol_revision": "W41_r30_matched_bound_riccati_v18",
-  "current_task": "W41_MATCHED_BOUND_RICCATI_JOINT",
+  "protocol_revision": "W42_r31_native_forward_anchored_smooth_v19",
+  "current_task": "W42_CONTACT_FORWARD_JOINT",
   "training_transitions": 17041,
   "next_task": "W41_STABILITY_AFTER_W40_A_RECOVERY",
   "pre_runner_initialization_failures": [
@@ -278680,6 +278760,144 @@
       "latest_resume": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-a/PANN_PPO_S5-seed1/resume-state-ep00387.pt",
       "deadline_unix_s": null,
       "completion_policy": "sample_update_goal_no_wall_deadline"
+    },
+    "job-20261108T154719Z-w42-a": {
+      "stream_id": "w42-a",
+      "phase_id": "job-20261108T154719Z-w42-a",
+      "live_status": "launched",
+      "latest_counts": {
+        "transitions": 11665,
+        "updates": 45,
+        "new_transitions": 0,
+        "new_updates": 0,
+        "tail": 0
+      },
+      "phase_lineage": {
+        "status": "explicit_new_phase_continuation",
+        "parent_stream_id": "w41-a",
+        "parent_phase_id": "job-20261107T100149Z-w41-a",
+        "parent_phase_lineage": {
+          "status": "explicit_new_phase_continuation",
+          "parent_stream_id": "w40-a",
+          "parent_phase_id": "job-20261106T103028Z-w40-a",
+          "parent_phase_lineage": {
+            "status": "explicit_new_phase_continuation",
+            "parent_stream_id": "w39-a",
+            "parent_phase_id": "job-20261105T032354Z-w39-a",
+            "parent_phase_lineage": {
+              "status": "explicit_new_phase_continuation",
+              "parent_stream_id": "w38-a",
+              "parent_phase_id": "job-20261104T104730Z-w38-a",
+              "current_stream_id": "w39-a",
+              "current_phase_id": "job-20261105T032354Z-w39-a",
+              "controller_build": "S5-r28",
+              "reward_version": "W38_legal_route_terminal_settlement",
+              "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+              "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+              "parent_transitions": 7569,
+              "parent_updates": 29,
+              "parent_episode": 251,
+              "inherited_excluded": 145,
+              "new_exclusions": 0,
+              "new_fork": false,
+              "reseeded_after_checkpoint_restore": false,
+              "restored": [
+                "actor",
+                "critic",
+                "optimizer",
+                "RNG",
+                "normalization",
+                "historical_counts"
+              ]
+            },
+            "current_stream_id": "w40-a",
+            "current_phase_id": "job-20261106T103028Z-w40-a",
+            "controller_build": "S5-r29",
+            "reward_version": "W38_legal_route_terminal_settlement",
+            "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/resume-state-ep00284.pt",
+            "parent_transitions": 8593,
+            "parent_updates": 33,
+            "parent_episode": 284,
+            "inherited_excluded": 145,
+            "new_exclusions": 0,
+            "new_fork": false,
+            "reseeded_after_checkpoint_restore": false,
+            "restored": [
+              "actor",
+              "critic",
+              "optimizer",
+              "RNG",
+              "normalization",
+              "historical_counts"
+            ]
+          },
+          "current_stream_id": "w41-a",
+          "current_phase_id": "job-20261107T100149Z-w41-a",
+          "controller_build": "S5-r30",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00318.pt",
+          "parent_transitions": 9617,
+          "parent_updates": 37,
+          "parent_episode": 318,
+          "inherited_excluded": 145,
+          "new_exclusions": 0,
+          "new_fork": false,
+          "reseeded_after_checkpoint_restore": false,
+          "restored": [
+            "actor",
+            "critic",
+            "optimizer",
+            "RNG",
+            "normalization",
+            "historical_counts"
+          ]
+        },
+        "current_stream_id": "w42-a",
+        "current_phase_id": "job-20261108T154719Z-w42-a",
+        "controller_build": "S5-r31",
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-a/PANN_PPO_S5-seed1/resume-state-ep00387.pt",
+        "parent_transitions": 11665,
+        "parent_updates": 45,
+        "parent_episode": 387,
+        "inherited_excluded": 145,
+        "new_exclusions": 0,
+        "new_fork": false,
+        "reseeded_after_checkpoint_restore": false,
+        "restored": [
+          "actor",
+          "critic",
+          "optimizer",
+          "RNG",
+          "normalization",
+          "historical_counts"
+        ]
+      },
+      "controller_build": "S5-r31",
+      "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154719Z-w42-a",
+      "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w42-a/PANN_PPO_S5-seed1",
+      "latest_resume": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w42-a/PANN_PPO_S5-seed1/resume-state-ep00387.pt",
+      "deadline_unix_s": null,
+      "completion_policy": "sample_update_goal_no_wall_deadline"
+    },
+    "job-20261108T154727Z-w42-b": {
+      "stream_id": "w42-b",
+      "phase_id": "job-20261108T154727Z-w42-b",
+      "live_status": "launched",
+      "latest_counts": {
+        "transitions": 11665,
+        "updates": 45,
+        "new_transitions": 0,
+        "new_updates": 0,
+        "tail": 0
+      },
+      "phase_lineage": null,
+      "controller_build": "S5-r31",
+      "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154727Z-w42-b",
+      "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w42-b/PANN_PPO_S5-seed2",
+      "latest_resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-b/PANN_PPO_S5-seed2/resume-state-ep00375.pt",
+      "deadline_unix_s": null,
+      "completion_policy": "sample_update_goal_no_wall_deadline"
     }
   },
   "W34_joint_learning_review": {
@@ -279194,7 +279412,7 @@
       }
     },
     "reviewed_on": "2026-10-31",
-    "method": "Read published job snapshots,ep15–44,actual four rollouts and selected ep34 prediction/trajectory/XML;no new physics,optimizer steps,build or server tests.",
+    "method": "Read published job snapshots,ep15\u201344,actual four rollouts and selected ep34 prediction/trajectory/XML;no new physics,optimizer steps,build or server tests.",
     "formal_claims": {
       "E30_passes": 0,
       "E60_passes": 0,
@@ -281134,5 +281352,489 @@
     "no_fused_optimizer_or_policy": true,
     "bulk_retained_local": true,
     "deleted_files": 0
+  },
+  "w42_distinct_new_transitions": 0,
+  "w42_policy_counts": {
+    "w42-a": {
+      "transitions": 11665,
+      "updates": 45
+    },
+    "w42-b": {
+      "transitions": 11665,
+      "updates": 45
+    }
+  },
+  "w42_parallel_state": {
+    "streams": {
+      "w42-a": {
+        "job": "job-20261108T154719Z-w42-a",
+        "phase_id": "job-20261108T154719Z-w42-a",
+        "seed": 1,
+        "controller_build": "S5-r31",
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "deadline_unix_s": null,
+        "completion_policy": "sample_update_goal_no_wall_deadline",
+        "controller_artifact": "S5-r31",
+        "phase_lineage": {
+          "status": "explicit_new_phase_continuation",
+          "parent_stream_id": "w41-a",
+          "parent_phase_id": "job-20261107T100149Z-w41-a",
+          "parent_phase_lineage": {
+            "status": "explicit_new_phase_continuation",
+            "parent_stream_id": "w40-a",
+            "parent_phase_id": "job-20261106T103028Z-w40-a",
+            "parent_phase_lineage": {
+              "status": "explicit_new_phase_continuation",
+              "parent_stream_id": "w39-a",
+              "parent_phase_id": "job-20261105T032354Z-w39-a",
+              "parent_phase_lineage": {
+                "status": "explicit_new_phase_continuation",
+                "parent_stream_id": "w38-a",
+                "parent_phase_id": "job-20261104T104730Z-w38-a",
+                "current_stream_id": "w39-a",
+                "current_phase_id": "job-20261105T032354Z-w39-a",
+                "controller_build": "S5-r28",
+                "reward_version": "W38_legal_route_terminal_settlement",
+                "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+                "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+                "parent_transitions": 7569,
+                "parent_updates": 29,
+                "parent_episode": 251,
+                "inherited_excluded": 145,
+                "new_exclusions": 0,
+                "new_fork": false,
+                "reseeded_after_checkpoint_restore": false,
+                "restored": [
+                  "actor",
+                  "critic",
+                  "optimizer",
+                  "RNG",
+                  "normalization",
+                  "historical_counts"
+                ]
+              },
+              "current_stream_id": "w40-a",
+              "current_phase_id": "job-20261106T103028Z-w40-a",
+              "controller_build": "S5-r29",
+              "reward_version": "W38_legal_route_terminal_settlement",
+              "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/resume-state-ep00284.pt",
+              "parent_transitions": 8593,
+              "parent_updates": 33,
+              "parent_episode": 284,
+              "inherited_excluded": 145,
+              "new_exclusions": 0,
+              "new_fork": false,
+              "reseeded_after_checkpoint_restore": false,
+              "restored": [
+                "actor",
+                "critic",
+                "optimizer",
+                "RNG",
+                "normalization",
+                "historical_counts"
+              ]
+            },
+            "current_stream_id": "w41-a",
+            "current_phase_id": "job-20261107T100149Z-w41-a",
+            "controller_build": "S5-r30",
+            "reward_version": "W38_legal_route_terminal_settlement",
+            "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00318.pt",
+            "parent_transitions": 9617,
+            "parent_updates": 37,
+            "parent_episode": 318,
+            "inherited_excluded": 145,
+            "new_exclusions": 0,
+            "new_fork": false,
+            "reseeded_after_checkpoint_restore": false,
+            "restored": [
+              "actor",
+              "critic",
+              "optimizer",
+              "RNG",
+              "normalization",
+              "historical_counts"
+            ]
+          },
+          "current_stream_id": "w42-a",
+          "current_phase_id": "job-20261108T154719Z-w42-a",
+          "controller_build": "S5-r31",
+          "reward_version": "W38_legal_route_terminal_settlement",
+          "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-a/PANN_PPO_S5-seed1/resume-state-ep00387.pt",
+          "parent_transitions": 11665,
+          "parent_updates": 45,
+          "parent_episode": 387,
+          "inherited_excluded": 145,
+          "new_exclusions": 0,
+          "new_fork": false,
+          "reseeded_after_checkpoint_restore": false,
+          "restored": [
+            "actor",
+            "critic",
+            "optimizer",
+            "RNG",
+            "normalization",
+            "historical_counts"
+          ]
+        },
+        "status": "launched",
+        "transitions": 11665,
+        "updates": 45,
+        "new_transitions": 0,
+        "new_updates": 0,
+        "tail": 0,
+        "invocation_new_transitions": 0,
+        "invocation_wall_s": 2.7603955268859863,
+        "collection_updated_unix_s": 1794152844.0282612,
+        "excluded": 145,
+        "resume": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w42-a/PANN_PPO_S5-seed1/resume-state-ep00387.pt",
+        "last_completed_update": {
+          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-a/PANN_PPO_S5-seed1/checkpoint-011665.pt",
+          "samples": 11665,
+          "updates": 45,
+          "phase_id": "job-20261107T100149Z-w41-a",
+          "stream_id": "w41-a",
+          "phase_lineage": {
+            "status": "explicit_new_phase_continuation",
+            "parent_stream_id": "w40-a",
+            "parent_phase_id": "job-20261106T103028Z-w40-a",
+            "parent_phase_lineage": {
+              "status": "explicit_new_phase_continuation",
+              "parent_stream_id": "w39-a",
+              "parent_phase_id": "job-20261105T032354Z-w39-a",
+              "parent_phase_lineage": {
+                "status": "explicit_new_phase_continuation",
+                "parent_stream_id": "w38-a",
+                "parent_phase_id": "job-20261104T104730Z-w38-a",
+                "current_stream_id": "w39-a",
+                "current_phase_id": "job-20261105T032354Z-w39-a",
+                "controller_build": "S5-r28",
+                "reward_version": "W38_legal_route_terminal_settlement",
+                "ancestor_fork_identity_rule": "Preserve the W38 fork_identity unchanged as ancestry; validate W39 current stream/phase through phase_lineage, not by treating ancestor stream as current stream.",
+                "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed1/resume-state-ep00251.pt",
+                "parent_transitions": 7569,
+                "parent_updates": 29,
+                "parent_episode": 251,
+                "inherited_excluded": 145,
+                "new_exclusions": 0,
+                "new_fork": false,
+                "reseeded_after_checkpoint_restore": false,
+                "restored": [
+                  "actor",
+                  "critic",
+                  "optimizer",
+                  "RNG",
+                  "normalization",
+                  "historical_counts"
+                ]
+              },
+              "current_stream_id": "w40-a",
+              "current_phase_id": "job-20261106T103028Z-w40-a",
+              "controller_build": "S5-r29",
+              "reward_version": "W38_legal_route_terminal_settlement",
+              "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w39-a/PANN_PPO_S5-seed1/resume-state-ep00284.pt",
+              "parent_transitions": 8593,
+              "parent_updates": 33,
+              "parent_episode": 284,
+              "inherited_excluded": 145,
+              "new_exclusions": 0,
+              "new_fork": false,
+              "reseeded_after_checkpoint_restore": false,
+              "restored": [
+                "actor",
+                "critic",
+                "optimizer",
+                "RNG",
+                "normalization",
+                "historical_counts"
+              ]
+            },
+            "current_stream_id": "w41-a",
+            "current_phase_id": "job-20261107T100149Z-w41-a",
+            "controller_build": "S5-r30",
+            "reward_version": "W38_legal_route_terminal_settlement",
+            "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w40-a/PANN_PPO_S5-seed1/resume-state-ep00318.pt",
+            "parent_transitions": 9617,
+            "parent_updates": 37,
+            "parent_episode": 318,
+            "inherited_excluded": 145,
+            "new_exclusions": 0,
+            "new_fork": false,
+            "reseeded_after_checkpoint_restore": false,
+            "restored": [
+              "actor",
+              "critic",
+              "optimizer",
+              "RNG",
+              "normalization",
+              "historical_counts"
+            ]
+          },
+          "controller_build": "S5-r30",
+          "controller_artifact": "S5-r30",
+          "reward_version": "W38_legal_route_terminal_settlement"
+        },
+        "evaluation": "pending_training",
+        "evaluation_stages": [],
+        "publication": "pending_computation",
+        "outcomes": null,
+        "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154719Z-w42-a",
+        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w42-a/PANN_PPO_S5-seed1"
+      },
+      "w42-b": {
+        "job": "job-20261108T154727Z-w42-b",
+        "phase_id": "job-20261108T154727Z-w42-b",
+        "seed": 2,
+        "controller_build": "S5-r31",
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "deadline_unix_s": null,
+        "completion_policy": "sample_update_goal_no_wall_deadline",
+        "controller_artifact": "S5-r31",
+        "phase_lineage": null,
+        "status": "launched",
+        "transitions": 11665,
+        "updates": 45,
+        "new_transitions": 0,
+        "new_updates": 0,
+        "tail": 0,
+        "invocation_new_transitions": null,
+        "invocation_wall_s": null,
+        "collection_updated_unix_s": null,
+        "excluded": 145,
+        "resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-b/PANN_PPO_S5-seed2/resume-state-ep00375.pt",
+        "last_completed_update": null,
+        "evaluation": "pending_training",
+        "evaluation_stages": [],
+        "publication": "pending_computation",
+        "outcomes": null,
+        "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154727Z-w42-b",
+        "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w42-b/PANN_PPO_S5-seed2"
+      }
+    },
+    "clock": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w42-training-clock.json",
+    "shared_training_started_unix_s": 1794152839.26973,
+    "shared_training_deadline_unix_s": null,
+    "measured_training_wall_s": 4.758531093597412,
+    "distinct_new_transitions_per_training_hour": 0.0,
+    "throughput_scope": "Ends at latest actual collection update; excludes later evaluation/finish.",
+    "no_fused_optimizer_or_policy": true,
+    "bulk_retained_local": true,
+    "deleted_files": 0
+  },
+  "w42_startup": {
+    "checked_unix_s": 1794153026.756779,
+    "checked_local": "2026-11-08T23:50:26.756916+08:00",
+    "root": "/root/autodl-tmp/MCP-RL-w42",
+    "code_commit": "4dcc1bb907819e818945039bb67281f7c4085130",
+    "artifact": "S5-r31",
+    "artifact_sha256": "3fd2d46c49ba7e2a86afd82b43c04709691e06c488455c19751d1bd19fb901d4",
+    "streams": {
+      "w42-a": {
+        "job": "job-20261108T154719Z-w42-a",
+        "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154719Z-w42-a",
+        "session": "s1-w42-a",
+        "training_pid": 654367,
+        "agent_pid": 654376,
+        "episode": 388,
+        "attempt": "train-job-20261108T154719Z-w42-a-PANN_PPO_S5-s1-ep00388",
+        "initial_transitions": 11665,
+        "samples": 11668,
+        "new_transitions": 3,
+        "updates": 45,
+        "tail": 3,
+        "excluded": 145,
+        "physical_time_s": 1.4999999999998674,
+        "growth_observations": [
+          {
+            "at": 1794152932.6791544,
+            "samples": 11666
+          },
+          {
+            "at": 1794153026.756779,
+            "samples": 11668
+          }
+        ],
+        "target_transitions": 13713,
+        "target_updates": 53,
+        "mpc_workers": 10,
+        "deadline_unix_s": null,
+        "checkpoint": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w42-a/PANN_PPO_S5-seed1/resume-state-ep00387.pt",
+        "checkpoint_scope": "Latest persisted phase checkpoint; live tail is still in memory until ordinary checkpoint save.",
+        "training_status": "running",
+        "evaluation_status": "pending_training",
+        "raw_training_delivery": "retained_on_D57_pending_normal_finish",
+        "planner_calls": 107,
+        "planner_last": {
+          "call_id": 107,
+          "origin": 1.739999999999841,
+          "wall_s": 1.590423,
+          "return_reason": "policy_installed",
+          "policy_updated": true,
+          "installed_plan_id": 107,
+          "reused_policy_age_s": 0,
+          "backward_attempts": 1,
+          "metric_valid": true,
+          "timers_us": [
+            369994,
+            814020,
+            3505,
+            41922,
+            330667,
+            30252
+          ],
+          "mujoco_warning_counts_native_cumulative_then_soft_call": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "planner_return_counts": {
+          "policy_installed": 107
+        },
+        "pythonpath": "/root/autodl-tmp/MCP-RL-w42/src:/root/autodl-tmp/MCP-RL-w42/work/upstreams/mujoco_mpc/python",
+        "runtime_root": "/root/autodl-tmp/MCP-RL-w42",
+        "execution_contract": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154719Z-w42-a/execution-contract.json",
+        "progress_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w42-a/PANN_PPO_S5-seed1/progress.json"
+      },
+      "w42-b": {
+        "job": "job-20261108T154727Z-w42-b",
+        "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154727Z-w42-b",
+        "session": "s1-w42-b",
+        "training_pid": 655195,
+        "agent_pid": 655203,
+        "episode": 376,
+        "attempt": "train-job-20261108T154727Z-w42-b-PANN_PPO_S5-s2-ep00376",
+        "initial_transitions": 11665,
+        "samples": 11668,
+        "new_transitions": 3,
+        "updates": 45,
+        "tail": 3,
+        "excluded": 145,
+        "physical_time_s": 1.4999999999998674,
+        "growth_observations": [
+          {
+            "at": 1794152932.6791544,
+            "samples": 11666
+          },
+          {
+            "at": 1794153026.756779,
+            "samples": 11668
+          }
+        ],
+        "target_transitions": 13713,
+        "target_updates": 53,
+        "mpc_workers": 10,
+        "deadline_unix_s": null,
+        "checkpoint": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w42-b/PANN_PPO_S5-seed2/resume-state-ep00375.pt",
+        "checkpoint_scope": "Latest persisted phase checkpoint; live tail is still in memory until ordinary checkpoint save.",
+        "training_status": "running",
+        "evaluation_status": "pending_training",
+        "raw_training_delivery": "retained_on_D57_pending_normal_finish",
+        "planner_calls": 101,
+        "planner_last": {
+          "call_id": 101,
+          "origin": 1.6199999999998542,
+          "wall_s": 1.637387,
+          "return_reason": "policy_installed",
+          "policy_updated": true,
+          "installed_plan_id": 101,
+          "reused_policy_age_s": 0,
+          "backward_attempts": 1,
+          "metric_valid": true,
+          "timers_us": [
+            381485,
+            775194,
+            20015,
+            45683,
+            383416,
+            31530
+          ],
+          "mujoco_warning_counts_native_cumulative_then_soft_call": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "planner_return_counts": {
+          "policy_installed": 101
+        },
+        "pythonpath": "/root/autodl-tmp/MCP-RL-w42/src:/root/autodl-tmp/MCP-RL-w42/work/upstreams/mujoco_mpc/python",
+        "runtime_root": "/root/autodl-tmp/MCP-RL-w42",
+        "execution_contract": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154727Z-w42-b/execution-contract.json",
+        "progress_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w42-b/PANN_PPO_S5-seed2/progress.json"
+      }
+    },
+    "processes": [
+      {
+        "pid": 654367,
+        "command": "python -u scripts/train_s1_go2_r12.py --group PANN_PPO_S5 --seed 1 --resume /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-a/PANN_PPO_S5-seed1/resume-state-ep00387.pt --contract /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154719Z-w42-a/execution-contract.json --background-job --job-start-unix 1794152839.26973 ",
+        "cwd": "/root/autodl-tmp/MCP-RL-w42"
+      },
+      {
+        "pid": 654376,
+        "command": "/root/autodl-tmp/MCP-RL-w42/work/r11-frozen/S5-r31/agent_server --mjpc_port=46237 --mjpc_workers=10 ",
+        "cwd": "/root/autodl-tmp/MCP-RL-w42"
+      },
+      {
+        "pid": 655195,
+        "command": "python -u scripts/train_s1_go2_r12.py --group PANN_PPO_S5 --seed 2 --resume /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-b/PANN_PPO_S5-seed2/resume-state-ep00375.pt --contract /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261108T154727Z-w42-b/execution-contract.json --background-job --job-start-unix 1794152847.5619776 ",
+        "cwd": "/root/autodl-tmp/MCP-RL-w42"
+      },
+      {
+        "pid": 655203,
+        "command": "/root/autodl-tmp/MCP-RL-w42/work/r11-frozen/S5-r31/agent_server --mjpc_port=46139 --mjpc_workers=10 ",
+        "cwd": "/root/autodl-tmp/MCP-RL-w42"
+      }
+    ],
+    "clock": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w42-training-clock.json",
+    "protected_gpu": {
+      "root": "/root/autodl-tmp/MCP-RL",
+      "root_head": "9cc42d5a9189a2bfd7e1e6cd99b9300045a16724",
+      "pids": [
+        {
+          "pid": 585559,
+          "alive": true
+        },
+        {
+          "pid": 599069,
+          "alive": true
+        },
+        {
+          "pid": 599252,
+          "alive": true
+        }
+      ],
+      "w41_status": "G2_node_block_completed",
+      "w41_updated_unix_s": 1794152809.9743996,
+      "w41_G2_completed_nodes": 60,
+      "intervention": "No task stop/restart/replacement, active source/config checkout or writable build sharing."
+    },
+    "saved_input_raw_delivery": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/w42-contact-forward-20261108",
+    "continuation": "Keep running. Ordinary resume only if the exact job stops, using its then-current own progress checkpoint and --job-dir without --new-phase."
   }
 }

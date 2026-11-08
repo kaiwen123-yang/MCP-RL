@@ -1,6 +1,6 @@
 # W42 CPU 实验计划：原生接触前向预测与平滑局部导数
 
-状态：**S5-r31 已正常构建并完成指定输入核验；准备推送后启动联合训练**。证据基线为 [9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724) 的两条已完成 W41 CPU 任务。GPU 任务按用户说明仍在运行，保持原任务。本文覆盖旧文档中恢复 W40 A、启动 W41、固定后台墙钟期限及电脑归档的过时指令。
+状态：**S5-r31 已正常构建并完成指定输入核验；两条联合训练已启动并确认真实transition增长**。证据基线为 [9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724) 的两条已完成 W41 CPU 任务。GPU 任务按用户说明仍在运行，保持原任务。本文覆盖旧文档中恢复 W40 A、启动 W41、固定后台墙钟期限及电脑归档的过时指令。
 
 [W41完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md) · [控制原件复核](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/controller-review.md) · [论文机制](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/literature-mechanisms.md) · [完整启动提示词](S1_W42_START_PROMPT.md)
 
@@ -131,3 +131,5 @@ A_s,j, B_s,j = smooth-model derivatives evaluated at (xbar_j, ubar)
 S5-r31已在独立工作树完成实现、正常构建和四个指定保存输入核验。首子步Fz误差约浮点精度；2ms关节速度最大误差A590/A635/B712/B713由0.34467/0.43351/0.38575/0.43711降为0.000756/0.009661/0.008869/0.006646 rad/s。原生held-map方向相对L2误差仍为3.044/2.165/0.575/0.986，不能称精确梯度。两个A输入新C++快照的soft A/B重算一致，十子步P/Q误差不超过1.78e-15，原生峰位置/值一致，J重算误差不超过1.39e-17。B712/B713在未恢复历史warm-start/私有phase的保存状态规划中backward_failed，保留原记录、不重试；这不是新任务回合或正式评价。
 
 原件与紧凑证据：results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w42-contact-forward/result.json；服务器原件在outputs同run的w42-contact-forward目录。四个输入不是泛化验证，原plant积分器/solver历史及材料proxy近似保持；下一项是已授权真实联合训练。
+
+实际启动：w42-a job-20261108T154719Z-w42-a / PID654367；w42-b job-20261108T154727Z-w42-b / PID655195。23:50:26各11668/45、tail3，目标各13713/53；源码4dcc1bb先推送后运行，网络academic、workers10、deadline=null。本次交接不等待训练完成；后续保持现有tmux，如进程停止再用同job最新有效断点普通resume，不能再次new-phase。
