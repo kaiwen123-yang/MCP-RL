@@ -528,7 +528,7 @@ def main():
             staged.update(destination.rglob("*.json"))
             staged.update(destination.rglob("*.jsonl"))
     evidence["event_windows"]=event_evidence
-    if job["controller_build"]=="S5-r29":
+    if job["controller_build"] in ("S5-r29","S5-r30","S5-r31"):
         from export_s1_go2_r29_exposure import export_episode as export_exposure
         selected=list(episodes)+[large/x["attempt"] for x in evaluation.get("stages",[]) if x.get("attempt")]
         exposure_paths=[]
@@ -636,6 +636,8 @@ def main():
             changed = subprocess.run(["git", "diff", "--cached", "--quiet", "--", *paths], cwd=ROOT).returncode
             if changed:
                 git("commit", "--only", "-m", f"Record compact S1 background job {name}", "--", *paths)
+        git("fetch", "origin", "main")
+        git("merge", "--no-edit", "origin/main")
         git("-c", "pack.window=0", "push", "--no-thin", "origin", "HEAD:main")
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
         summary["publication_status"] = "publication_pending"

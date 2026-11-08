@@ -1,6 +1,6 @@
 # W42 CPU 实验计划：原生接触前向预测与平滑局部导数
 
-状态：**计划已定，S5-r31 尚未实现/构建/运行**。证据基线为 [9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724) 的两条已完成 W41 CPU 任务。GPU 任务按用户说明仍在运行，保持原任务。本文覆盖旧文档中恢复 W40 A、启动 W41、固定后台墙钟期限及电脑归档的过时指令。
+状态：**S5-r31 已正常构建并完成指定输入核验；准备推送后启动联合训练**。证据基线为 [9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724) 的两条已完成 W41 CPU 任务。GPU 任务按用户说明仍在运行，保持原任务。本文覆盖旧文档中恢复 W40 A、启动 W41、固定后台墙钟期限及电脑归档的过时指令。
 
 [W41完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md) · [控制原件复核](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/controller-review.md) · [论文机制](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/literature-mechanisms.md) · [完整启动提示词](S1_W42_START_PROMPT.md)
 
@@ -123,3 +123,11 @@ A_s,j, B_s,j = smooth-model derivatives evaluated at (xbar_j, ubar)
 **所有新/续接后台不设固定墙钟完成时间。** 以2048/8样本更新目标、声明评价完成、明确技术失败或用户停止结束；deadline=null。保留数值迭代guard、单次网络请求timeout及物理30/60/300/600s；不增加泛泛失败次数上限，不吞错或无限自动重启。
 
 **GitHub推送核验后，不在用户电脑另做归档；不自动删除服务器checkpoint/resume/原件或上传副本。** 启动交接应给真实job/PID、当前transition增长、实际artifact、版本与Git提交，不将计划写成已完成实验。
+
+## 本轮执行位置与冻结配置
+
+实际工作树 /root/autodl-tmp/MCP-RL-w42，基线4e1eb97。活动GPU根 /root/autodl-tmp/MCP-RL 保持原HEAD和文件；只读引用venv、静态资产、r30父产物与已完成W41父训练目录。可写upstream及全部build依赖为新树独立副本。新CPU固定10+10 workers、Torch/BLAS1、构建-j6；使用现场可用academic独立联网。父点A ep387/B ep375，均11665/45、tail0、excluded145；目标各13713/53。新时钟为w42-training-clock.json，deadline=null。declare_s1_go2_w42.py由真实父点生成版本边界，启动器进一步冻结每流checkpoint选择；不修改历史W41记录。
+
+S5-r31已在独立工作树完成实现、正常构建和四个指定保存输入核验。首子步Fz误差约浮点精度；2ms关节速度最大误差A590/A635/B712/B713由0.34467/0.43351/0.38575/0.43711降为0.000756/0.009661/0.008869/0.006646 rad/s。原生held-map方向相对L2误差仍为3.044/2.165/0.575/0.986，不能称精确梯度。两个A输入新C++快照的soft A/B重算一致，十子步P/Q误差不超过1.78e-15，原生峰位置/值一致，J重算误差不超过1.39e-17。B712/B713在未恢复历史warm-start/私有phase的保存状态规划中backward_failed，保留原记录、不重试；这不是新任务回合或正式评价。
+
+原件与紧凑证据：results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w42-contact-forward/result.json；服务器原件在outputs同run的w42-contact-forward目录。四个输入不是泛化验证，原plant积分器/solver历史及材料proxy近似保持；下一项是已授权真实联合训练。

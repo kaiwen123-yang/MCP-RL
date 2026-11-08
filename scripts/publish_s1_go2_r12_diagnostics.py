@@ -342,6 +342,16 @@ def prepare(ctx, args):
                              reason=result.get("reason"), planner_recording=resolved.get("planner_recording"),
                              result_schema=relative(SMALL / (name + ".json")),
                              resolved_schema=relative(SMALL / (name + "-resolved.json")))
+    # W42 keeps ordinary service stdout/stderr and warning counters. Old
+    # missing logs are marked unavailable; never rerun history to create them.
+    for name in attempts:
+        for path in sorted((LARGE/name).glob("*.log"))+sorted((LARGE/name).glob("MUJOCO_LOG.TXT")):
+            add(path,name,role="service_stdout_stderr")
+    for pattern in ("*.log","*.txt"):
+        for path in sorted(directory.glob(pattern)):
+            add(path,role="job_stdout_stderr")
+    for path in sorted(stream.glob("*.log")):
+        add(path,role="training_stdout_stderr")
     try:
         info, selected, invalid = transitions(stream, transfer, job["initial_transitions"], final,
                                               old.get("transition_selection", {}), clock)

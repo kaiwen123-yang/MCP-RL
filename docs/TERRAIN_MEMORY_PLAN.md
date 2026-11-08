@@ -1,6 +1,6 @@
 # 地面材料记忆主计划：W41 CPU审查与W42接触前向实验
 
-审查基线：[9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724)，2026-11-08。**两条W41 CPU联合任务已完成，工程采样/更新/末次评价能够收口；稳定材料通行仍未建立。GPU按用户说明仍在运行，保持现有任务。** 下一轮聚焦原生接触前向与平滑局部导数分工；S5-r31尚未实现/构建/运行。
+审查基线：[9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724)，2026-11-08。**两条W41 CPU联合任务已完成，工程采样/更新/末次评价能够收口；稳定材料通行仍未建立。GPU按用户说明仍在运行，保持现有任务。** 下一轮聚焦原生接触前向与平滑局部导数分工；S5-r31已完成独立实现/正常构建/指定保存输入核验；联合训练待本轮推送后启动。
 
 [W41完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md) · [控制原件复核](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/controller-review.md) · [W42详细计划](S1_W42_CPU_PLAN.md) · [完整启动提示词](S1_W42_START_PROMPT.md) · [执行规则](../AGENTS.md)
 
@@ -37,7 +37,7 @@ W41不再因QP错误中断，不能继续把物理失败统称技术报错。真
 4. 每支末次新update固定E30，原同case通过才E60；E60/E300/E600分别要求合法去程、合法返程、完整往返三项均≥1/5/10及所有原条件。原物理时长保留，后台无固定墙钟期限。
 5. 紧凑结果先Git，原件继续后台Release；合并并发GPU提交，不强推。核验后不在用户电脑另归档、不自动删除服务器checkpoint/resume/原件。
 
-W42尚未运行，因此当前R12运行JSON保留真实W41身份，不提前把计划写成实际状态。细节以[W42计划](S1_W42_CPU_PLAN.md)与[启动提示词](S1_W42_START_PROMPT.md)为准。
+W42配置已按真实W41父点声明；尚未将声明视为已采样。细节以[W42计划](S1_W42_CPU_PLAN.md)与[启动提示词](S1_W42_START_PROMPT.md)为准。
 
 ## 证据与历史
 
@@ -45,3 +45,7 @@ W42尚未运行，因此当前R12运行JSON保留真实W41身份，不提前把�
 - [W40最终审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/README.md)、[完整科学历史](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/history-review.md)、[qp2/恢复/合法返程修复](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/technical-independent-verification.md)。
 - [W41 CPU原计划](S1_W41_STABILITY_PLAN.md)、[仍在运行的GPU任务原计划](S1_W41_GPU_PLAN.md)保留历史身份；旧W41启动词不再作为新CPU入口。
 - [原始科学路线](https://github.com/kaiwen123-yang/MCP-RL/blob/4d0af25c7bcea620c7e8c9a4f5b103c4956a3fda/docs/TERRAIN_MEMORY_PLAN.md)。
+
+## W42已执行证据
+
+S5-r31已在独立工作树完成实现、正常构建和四个指定保存输入核验。首子步Fz误差约浮点精度；2ms关节速度最大误差A590/A635/B712/B713由0.34467/0.43351/0.38575/0.43711降为0.000756/0.009661/0.008869/0.006646 rad/s。原生held-map方向相对L2误差仍为3.044/2.165/0.575/0.986，不能称精确梯度。两个A输入新C++快照的soft A/B重算一致，十子步P/Q误差不超过1.78e-15，原生峰位置/值一致，J重算误差不超过1.39e-17。B712/B713在未恢复历史warm-start/私有phase的保存状态规划中backward_failed，保留原记录、不重试；这不是新任务回合或正式评价。

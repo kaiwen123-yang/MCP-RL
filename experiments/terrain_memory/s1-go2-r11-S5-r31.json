@@ -1,0 +1,184 @@
+{
+  "build": "S5-r31",
+  "based_on": "S5-r30",
+  "status": "normally_built_saved_input_checks_completed",
+  "task": "W42_CONTACT_FORWARD_JOINT",
+  "reviewed_source_commit": "4e1eb97",
+  "configuration_overrides": {
+    "r26_reference": {
+      "horizon_s": 0.35,
+      "maximum_lead_m": 0.15,
+      "maximum_speed_m_s": 0.25,
+      "acceleration_m_s2": 0.5,
+      "userdata_offset": 84,
+      "packet_size": 12,
+      "head_offset_m": 0.3
+    },
+    "r26_impact_margin": {
+      "onset_m": 0.0008,
+      "scale_m": 0.0002,
+      "weight": 176
+    },
+    "r12_substep_path": {
+      "enabled": true,
+      "rows": [
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "ImpactMargin"
+      ],
+      "residual": "Earliest componentwise maximum over ten pre-integration states; terminal separately.",
+      "derivatives": "Ten A/B transitions; one full node-start C/D; shared geometry FD only at final active states, composed with saved P/Q prefixes. Direct risk D is zero.",
+      "limits": "Active-branch derivative; nonsmooth peak switches and proxy-model soft risks do not guarantee true material feasibility."
+    },
+    "r27_approach_activation": {
+      "status": "implemented_shared_cost_and_FD",
+      "foot_half_width_m": 0.015811388300841896,
+      "band_m": 0.07525,
+      "full_foot_center_bounds": {
+        "xmin": 0.8158113883008419,
+        "xmax": 2.1841886116991582,
+        "abs_y_max": 0.5841886116991581
+      },
+      "smoothstep": "S(u)=v^3*(10-15*v+6*v^2), v=clip(u,0,1)",
+      "gate": "g=S((x-xmin+b)/b)*S((xmax+b-x)/b)*S((ymax+b-abs(y))/b)",
+      "applies_to": [
+        "LandingVelocity",
+        "ImpactMargin"
+      ],
+      "semantics": "Replace only their spatial boolean with the same C2gate multiplying the original residual; retain existing vertical gates,targets,weights,onset/scale.",
+      "derivatives": "Candidate cost and FD both use the complete g*r. Impact takes earliest componentwise maximum of g*r over ten pre-integration states then applies the original active-state P/Q derivative chain; terminal same formula. Landing stays node-start full C/D.",
+      "physical_boundary_unchanged": true,
+      "does_not_modify": [
+        "Ground",
+        "R10MaterialFoot or real material-force switch",
+        "material strain domain0.02",
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "original termination criteria"
+      ],
+      "limitations": "Only this artificial spatial gate becomes C2; contact/max/other branch nonsmoothness and proxy-model limitations remain. No true-TM02 feasibility guarantee."
+    },
+    "r28_candidate_feasibility": {
+      "enabled": true,
+      "violation": "max positive original trunk XML margin-gap across same ten pre-integration substeps and terminal",
+      "implementation": "Invert the existing monotone smoothed TrunkClearance residual at its retained componentwise maxima: y=r*scale; positive violation is y-1e-12/(4*y) only if y>5e-7. No extra weight/margin or integration.",
+      "selection": "Both nominal feedback search and action line search minimize (v,J); feasible v=0 dominates. No feasible candidate is recorded as prediction_infeasible/restoration, never as safe.",
+      "policy": "Publish the exact candidate reference/feedback that generated the selected rollout, including winner0; accepted remains separately identified.",
+      "regularization": "For feasible-to-feasible compare actual cost decrease and the existing .5/.1 ratio thresholds; step size alone cannot reduce regularization. For restoration/feasibility transition use actual decrease in v, no fabricated cost surprise. Existing factors/bounds retained.",
+      "derivatives": "Original cost and active-peak geometry derivatives unchanged; finite candidate selection is not a constrained DDP or a plant-safety guarantee."
+    },
+    "r29_policy_projection": {
+      "enabled": true,
+      "center": "legacy_target_clip",
+      "metric": "actual_successful_Quu_reg",
+      "recording": "bounded_event_ring",
+      "KKT_relative_tolerance": 1e-07,
+      "primal_tolerance_rad": 1e-10,
+      "no_fallback": true
+    },
+    "r30_constrained_riccati": {
+      "name": "matched_instantaneous_bound_riccati",
+      "evidence": "w41-dynamics: saturated actuator mapping and local native FD agree; finite-difference composition error contracts with eps. No deterministic missing-clamp/wiring error established.",
+      "optimization": "At each nominal node solve min .5 k^T H k + Qu^T k over original target and current PD bounds, with H=Quu_reg and the retained qp2 solver.",
+      "active_feedback": "Moving PD active row has K_A=e_q+(5/60)e_v; target/restoration active row K_A=0. Free rows solve H_FF K_F=-Qux_reg_F-H_FA K_A.",
+      "value": "Full existing Vx/Vxx/dV substitution with this same k,K and unregularized Q cost model; all cross terms retained.",
+      "forward": "Retain pure instantaneous H projection of u_nom+alpha*k+s*K*dx, shared by candidate/nominal/deployed map. Alpha enters feedforward once. Nonlinear active-set changes evaluated by actual rollouts.",
+      "scope": "Local constrained iLQG for instantaneous moving bounds, not full-hold unsaturated constraints or globally constrained DDP. Real ten-substep saturated dynamics and original path risks retained.",
+      "feasibility": "Retain original minimum PD violation restoration for empty current interval, explicit status; later held substeps may saturate.",
+      "derivative": "Existing fixed-target FP64 one-sided1e-6 ten-substep composed A/B and active risk chain retained; finite-eps discrepancies are documented, not relabeled as wiring bugs.",
+      "regularization": "Original r28 (v,J) ordering; keep invalid-cost-ratio handling when projected line search differs. No fabricated model decrease.",
+      "limits": "No claim of stability, material-memory benefit or hardware capability; own final fixed-policy E30/E60 determines qualification."
+    },
+    "r31_contact_forward": {
+      "name": "native_contact_forward_anchored_smooth_derivative",
+      "forward": "Original geom/pair solimp restored after MakeDifferentiable; joint-limit smoothing retained. All nominal, warm-start, candidates, accepted, reference, costs and risks use this native-contact predictor.",
+      "derivative": "Separate frozen mjModel and private worker mjData. FP64 one-sided 1e-6 soft-minus-soft MuJoCo tangent FD at each native 0.2ms substep; ten fixed-target substeps.",
+      "anchor": "dx_next=A_s*dx+B_s*du around the native successor; P_next=A_s*P, Q_next=A_s*Q+B_s. P0=I,Q0=0; next linearization state is native.",
+      "residual": "Native node-start C/D and native componentwise earliest risk peaks; active geometry Jacobians composed with proxy P/Q.",
+      "callbacks": "Same planning snapshot, task callback, mocap/control/time/userdata; derivative-model pointer registered before worker scheduling and cleared after join.",
+      "riccati": "Retain r30 full k/K/Vx/Vxx/dV and qp2 tolerances, moving instantaneous PD bounds; no K clip or feedback rescale.",
+      "acceptance": "Original native trunk(v,J) ordering; actual cost decrease separate from approximate surrogate expected decrease and ratio.",
+      "limitations": "Original proxy material, integrator and coldstart remain; not full TM02 truth or exact plant Jacobians, no stability guarantee. Old r17 failure retained.",
+      "recording": "Existing bounded event ring plus native/soft substep states, native peak locations, first-hold A_s/B_s and full held proxy A/B."
+    }
+  },
+  "mechanism": {
+    "name": "native_contact_forward_anchored_smooth_derivative",
+    "forward": "Original geom/pair solimp restored after MakeDifferentiable; joint-limit smoothing retained. All nominal, warm-start, candidates, accepted, reference, costs and risks use this native-contact predictor.",
+    "derivative": "Separate frozen mjModel and private worker mjData. FP64 one-sided 1e-6 soft-minus-soft MuJoCo tangent FD at each native 0.2ms substep; ten fixed-target substeps.",
+    "anchor": "dx_next=A_s*dx+B_s*du around the native successor; P_next=A_s*P, Q_next=A_s*Q+B_s. P0=I,Q0=0; next linearization state is native.",
+    "residual": "Native node-start C/D and native componentwise earliest risk peaks; active geometry Jacobians composed with proxy P/Q.",
+    "callbacks": "Same planning snapshot, task callback, mocap/control/time/userdata; derivative-model pointer registered before worker scheduling and cleared after join.",
+    "riccati": "Retain r30 full k/K/Vx/Vxx/dV and qp2 tolerances, moving instantaneous PD bounds; no K clip or feedback rescale.",
+    "acceptance": "Original native trunk(v,J) ordering; actual cost decrease separate from approximate surrogate expected decrease and ratio.",
+    "limitations": "Original proxy material, integrator and coldstart remain; not full TM02 truth or exact plant Jacobians, no stability guarantee. Old r17 failure retained.",
+    "recording": "Existing bounded event ring plus native/soft substep states, native peak locations, first-hold A_s/B_s and full held proxy A/B."
+  },
+  "diagnostics": {
+    "all_episode_core_records": "preserve all requested original feedback/planner/reference/execution and new rollout evidence",
+    "new_full_horizon_scope": "selected event windows only, each retained plan once before buffers reused; explicitly enumerate full-horizon coverage",
+    "events": "nominal first raw-PD saturation, feedback-added saturation, max|rawKdx|>.5rad, target clipping, first material load, domain exit, nonfoot load, QP infeasibility/failure/restoration, trunk restoration, terminal; merged [-.10,+.20]s and terminal .10s; logging only, no physical stop changes",
+    "full_plan_fields": [
+      "accepted states/actions/times/cost",
+      "installed feedback reference/nominal/K with explicit alpha/scales",
+      "actual full Quu_reg metric H; original Q_u/Q_xu and old active-set identity for diagnosis only",
+      "regularization_used/type, metric_valid/source, plan id/clock/model/version",
+      "first20ms node and ten-substep PD/contact/material coverage"
+    ],
+    "representation": "lossless binary/compression, bounded in-memory event ring; do not repeat full matrices in500Hz action lines",
+    "historical_missing": "r28 full accepted/K/H and task private phase not saved; prediction NPZ feedback reference only; A260 dense physical/material not selected in original manifest",
+    "per_action_live_fields": [
+      "query_kind/applied_action_id",
+      "delta_x",
+      "nominal_feedback_scale/action_step_alpha/installed_feedback_scaling",
+      "metric_valid/source_plan_id",
+      "plan id and interpolation nodes/weights",
+      "legacy target-clipped center c and projection_delta",
+      "instantaneous bounds and fixed/empty axes",
+      "QP solution/active source/primal and KKT residual/convergence",
+      "raw_K_delta_x kept separate from projection correction",
+      "raw/final target and raw/clipped PD torque",
+      "information for effective projection Jacobian",
+      "pre-RPC u_star versus held float32-roundtrip u_held and serialization_boundary_crossing"
+    ],
+    "plan_vs_live_K": "Frozen referenceK/H each retained plan once; live projection active set/center-clamp derivative defines effective Jacobian. Original Q_ux is not projection linear term.",
+    "coverage_boundary": "Include every plan referenced by earliest pre-window action even if origin precedes window; no old spatial gate. Record incomplete beginning/end coverage; do not continue physics after termination to fill post-window.",
+    "extra_raw_findings_metrics": [
+      "query exposure denominator inside/previously loaded grid and observer missed-short-pulse offline tags",
+      "material boundary/state/physical clocks and rejected candidate never applied",
+      "touchdown vz/indentation and actual force",
+      "command remains nonzero but legal progress stalls / abnormal support posture",
+      "closed-loop accepted/actual divergence distinct from fixed-input residual"
+    ],
+    "every_planner_call": [
+      "call id",
+      "logical origin and wall duration",
+      "return reason including early backward/rollout failure",
+      "policy_updated",
+      "installed plan id",
+      "reused policy logical age",
+      "backward attempts/candidate failure status"
+    ],
+    "W39_no_new_policy": "51693 training planner calls versus51685 new plan records; all8 gapsB276 after firstfeedback/load; reuse reaches150ms. Not missing upload.",
+    "material_clock_rule": "A260 firstload material-state14.3636 to physical terminal14.3648=1.2ms; displacement boundary14.3634 to14.3648=1.4ms. Keep boundary/material-state/physical clocks distinct; failed candidate force not applied.",
+    "worker_warning_counter_semantics": "planner-calls stores worker counter snapshots after derivatives; native CheckWarnings resets counters on rollout checks, smooth mjData starts from copied native data. These are not a cumulative all-process warning total. Emitted stdout/stderr and physical counters are also retained."
+  },
+  "retained": "Original Go2, TM02 0.02 domain, torque/contact/fall/route and ladder semantics; actual r27 shared C2 gate and r26 causal packet, ten substeps, TV feedback and PD. Frozen causal PANN, 658D observation, PPO 2Hz scalar cap, unchanged W38 reward. No hidden material truth input.",
+  "reward_version": "W38_legal_route_terminal_settlement",
+  "main_admission_tests": false,
+  "full_prompt": "docs/S1_W42_START_PROMPT.md",
+  "qualification": "Targeted wiring evidence only. B712/B713 fresh-policy backward failures and proxy direction errors retained; joint training and fixed-policy task capability pending.",
+  "controller_contract_build": "S5-r31",
+  "reuse_populated_dependency_sources": true,
+  "normal_build": {
+    "build_wall_s": 201.1016788482666,
+    "binary_sha256": "3fd2d46c49ba7e2a86afd82b43c04709691e06c488455c19751d1bd19fb901d4",
+    "based_on": "S5-r30",
+    "base_source_commit": "4e1eb974e91121e5d54fe702ca88ffcc7b83dffe",
+    "patch_sha256": "ee4f592ca60b19355e6ec29dff95527d8246ca6ff6c123a16159f81cb2059e85",
+    "mujoco_dependency_commit": "088079eff0450e32b98ee743141780ed68307506",
+    "source_note": "Isolated normal build from retained S5-r30 plus this exact checked-in patch. Final successful invocation timing; dependency compilation preceded it.",
+    "identity_path": "work/r11-frozen/S5-r31/identity.json"
+  },
+  "saved_input_evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w42-contact-forward/result.json"
+}

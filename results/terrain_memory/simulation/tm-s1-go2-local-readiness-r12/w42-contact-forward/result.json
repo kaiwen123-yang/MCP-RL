@@ -1,0 +1,863 @@
+{
+  "task": "W42_CONTACT_FORWARD_JOINT",
+  "artifact": "S5-r31",
+  "deadline_unix_s": null,
+  "scope": "Four saved W41 inputs only. Same recorded held u for native/soft/reconstructed-plant comparisons.",
+  "limitations": "Actual first-substep post-state and qacc warmstart were not saved; plant replay uses zero initial solver history. Recorded2ms endpoint/force are separate. Material proxy remains approximate; no full TM02 truth claim.",
+  "results": [
+    {
+      "fixture": "A590",
+      "source": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261107T100149Z-w41-a-eval-PANN_PPO_S5-s1-E30",
+      "origin_s": 11.380000000000155,
+      "exact_held_target": true,
+      "first_Fz_N": {
+        "recorded": 166.05004022959747,
+        "native": 166.05004022959747,
+        "soft": 0.009354149303252336,
+        "reconstructed_plant": 166.05004022959758
+      },
+      "hold_force_error_max_N": {
+        "native": 0.22119207293772547,
+        "soft": 166.04068608029422
+      },
+      "recorded_hold_joint_velocity_error": {
+        "native": 0.0007558189157509162,
+        "soft": 0.34467282916064
+      },
+      "reconstructed_plant_state_error_02ms": {
+        "native": 0.00012156620722484821,
+        "soft": 0.038886182176139206
+      },
+      "reconstructed_plant_state_error_2ms": {
+        "native": 0.0007558189157503784,
+        "soft": 0.3446728291606398
+      },
+      "soft_soft_independent_FD_max": 1.1102230246251565e-16,
+      "zero_order_native_anchor_max": 0.0,
+      "native_direction": {
+        "epsilon": 1e-06,
+        "source": "normalized negative saved regularized Newton feedforward -H^-1 Q_u; old plan, not a new optimization claim",
+        "absolute_error": 1.6232597536561735,
+        "relative_l2_error": 3.043935185947273,
+        "cosine": 0.478336678760179,
+        "contact_branch_changes": 0
+      },
+      "cpp": {
+        "binary": "S5-r31",
+        "model_roles": "zero_order_native_anchor_soft_minus_soft_FD",
+        "snapshot_plan_id": 1,
+        "native_step_replay_max": 1.0820845901173704e-19,
+        "soft_step_replay_max": 9.402065714522748e-20,
+        "cpp_soft_AB_recompute_max": 0.0,
+        "composed_A_max": 1.7763568394002505e-15,
+        "composed_B_max": 1.7763568394002505e-15,
+        "native_nominal_continuity_max": 0.0,
+        "native_peak_value_error": 0.0,
+        "native_peak_substep_mismatch": 0,
+        "native_accepted_J": 0.08359872646178218,
+        "independent_J": 0.08359872646178217,
+        "J_error": 1.3877787807814457e-17,
+        "cost_terms": {
+          "Upright": {
+            "weight": 1.0,
+            "norm": 6,
+            "mean_cost": 0.008929617155927628,
+            "max_stage_cost": 0.012039619826305283,
+            "max_abs_residual": 0.03475658576743434,
+            "max_stage_node": 81,
+            "fraction_of_total": 0.10681522953594125
+          },
+          "Height": {
+            "weight": 1.0,
+            "norm": 6,
+            "mean_cost": 0.004760995986703403,
+            "max_stage_cost": 0.00837858359504317,
+            "max_abs_residual": 0.027211897226444542,
+            "max_stage_node": 175,
+            "fraction_of_total": 0.05695058032827725
+          },
+          "Position": {
+            "weight": 0.2,
+            "norm": 2,
+            "mean_cost": 0.010520106005843917,
+            "max_stage_cost": 0.020546396921558924,
+            "max_abs_residual": 0.17548186615229167,
+            "max_stage_node": 175,
+            "fraction_of_total": 0.12584050560451143
+          },
+          "Gait": {
+            "weight": 2.0,
+            "norm": 6,
+            "mean_cost": 1.3878238786123763e-08,
+            "max_stage_cost": 3.2069090186159777e-07,
+            "max_abs_residual": 8.988507994291822e-05,
+            "max_stage_node": 16,
+            "fraction_of_total": 1.6601016993325025e-07
+          },
+          "Balance": {
+            "weight": 0.2,
+            "norm": 2,
+            "mean_cost": 0.0007413519241337221,
+            "max_stage_cost": 0.0013021616886643467,
+            "max_abs_residual": 0.036618057558446326,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.008867981074719328
+          },
+          "Effort": {
+            "weight": 0.08,
+            "norm": 0,
+            "mean_cost": 0.003932165753943418,
+            "max_stage_cost": 0.012061689773441422,
+            "max_abs_residual": 0.4440481857581534,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.047036192061383125
+          },
+          "Posture": {
+            "weight": 0.02,
+            "norm": 0,
+            "mean_cost": 0.000901931467947992,
+            "max_stage_cost": 0.0020979370525618067,
+            "max_abs_residual": 0.3694907685686152,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.010788818276559718
+          },
+          "Orientation": {
+            "weight": 1.0,
+            "norm": 0,
+            "mean_cost": 0.0004837127960160234,
+            "max_stage_cost": 0.0014709357057504906,
+            "max_abs_residual": 0.054219071918011744,
+            "max_stage_node": 175,
+            "fraction_of_total": 0.005786126374032224
+          },
+          "Angmom": {
+            "weight": 0.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.17837486609355913,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandLinearVelocity": {
+            "weight": 1.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandAngularVelocity": {
+            "weight": 1.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandAbsoluteHeight": {
+            "weight": 1.0,
+            "norm": 6,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandFootPosition": {
+            "weight": 0.1,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandFootVelocity": {
+            "weight": 0.02,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandSupportForce": {
+            "weight": 0.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "LandingVelocity": {
+            "weight": 0.02,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "LandingIndentation": {
+            "weight": 0.1,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "MaterialSupportHeight": {
+            "weight": 1.0,
+            "norm": 0,
+            "mean_cost": 0.05332883149302652,
+            "max_stage_cost": 0.12031432182801137,
+            "max_abs_residual": 0.4905391357027722,
+            "max_stage_node": 175,
+            "fraction_of_total": 0.6379144007343966
+          },
+          "MaterialDomainMargin": {
+            "weight": 176.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "TrunkClearance": {
+            "weight": 176.0,
+            "norm": 0,
+            "mean_cost": 7.543600664216005e-16,
+            "max_stage_cost": 8.023751112180473e-16,
+            "max_abs_residual": 1.5975692990721768e-09,
+            "max_stage_node": 174,
+            "fraction_of_total": 9.023583233250117e-15
+          },
+          "ImpactMargin": {
+            "weight": 176.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          }
+        },
+        "candidates": [
+          {
+            "index": 0,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.08813139716241115,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 1,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.0881228237995528,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 2,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.0881079254096876,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 3,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.08812334056881119,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 4,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.08802555544826701,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 5,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.08781766671751136,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 6,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.08735215915930215,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 7,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.0861718176809737,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 8,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.08359872646178218,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 9,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.08810875490677274,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          }
+        ],
+        "actual_cost_decrease": 0.0045100284449905576,
+        "proxy_expected_decrease": 0.005979263313999805,
+        "cost_ratio_valid": true,
+        "cost_ratio": 0.754278,
+        "regularization": 1,
+        "no_improvement_reason": "none",
+        "replay_scope": "One optimization at saved real state with saved task parameters/weights/userdata. Private old task-phase/warm-start history not reconstructed; no new physical episode."
+      }
+    },
+    {
+      "fixture": "A635",
+      "source": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261107T100149Z-w41-a-eval-PANN_PPO_S5-s1-E30",
+      "origin_s": 12.279999999998058,
+      "exact_held_target": true,
+      "first_Fz_N": {
+        "recorded": 127.54105687612059,
+        "native": 127.54105687612055,
+        "soft": 0.007157232874012726,
+        "reconstructed_plant": 127.54105687612059
+      },
+      "hold_force_error_max_N": {
+        "native": 0.3393828507730632,
+        "soft": 259.63337661449106
+      },
+      "recorded_hold_joint_velocity_error": {
+        "native": 0.009661424978571517,
+        "soft": 0.43351034855709014
+      },
+      "reconstructed_plant_state_error_02ms": {
+        "native": 0.0009060740137048218,
+        "soft": 0.037355748555972
+      },
+      "reconstructed_plant_state_error_2ms": {
+        "native": 0.009661424978849684,
+        "soft": 0.433510348557128
+      },
+      "soft_soft_independent_FD_max": 1.1102230246251565e-16,
+      "zero_order_native_anchor_max": 0.0,
+      "native_direction": {
+        "epsilon": 1e-06,
+        "source": "normalized negative saved regularized Newton feedforward -H^-1 Q_u; old plan, not a new optimization claim",
+        "absolute_error": 1.5049894570131792,
+        "relative_l2_error": 2.1647195449488015,
+        "cosine": 0.5844328779891149,
+        "contact_branch_changes": 0
+      },
+      "cpp": {
+        "binary": "S5-r31",
+        "model_roles": "zero_order_native_anchor_soft_minus_soft_FD",
+        "snapshot_plan_id": 1,
+        "native_step_replay_max": 8.457756327232208e-20,
+        "soft_step_replay_max": 9.390154313701983e-20,
+        "cpp_soft_AB_recompute_max": 0.0,
+        "composed_A_max": 8.881784197001252e-16,
+        "composed_B_max": 8.881784197001252e-16,
+        "native_nominal_continuity_max": 0.0,
+        "native_peak_value_error": 0.0,
+        "native_peak_substep_mismatch": 0,
+        "native_accepted_J": 0.0760471739408507,
+        "independent_J": 0.0760471739408507,
+        "J_error": 0.0,
+        "cost_terms": {
+          "Upright": {
+            "weight": 1.0,
+            "norm": 6,
+            "mean_cost": 0.0048400304187555115,
+            "max_stage_cost": 0.017925160917499898,
+            "max_abs_residual": 0.03965293371083519,
+            "max_stage_node": 175,
+            "fraction_of_total": 0.06364510563561605
+          },
+          "Height": {
+            "weight": 1.0,
+            "norm": 6,
+            "mean_cost": 0.004294325060687988,
+            "max_stage_cost": 0.007776398081855096,
+            "max_abs_residual": 0.026126312668952878,
+            "max_stage_node": 175,
+            "fraction_of_total": 0.05646922611520191
+          },
+          "Position": {
+            "weight": 0.2,
+            "norm": 2,
+            "mean_cost": 0.010886678295624343,
+            "max_stage_cost": 0.02133397454246502,
+            "max_abs_residual": 0.1807599715935222,
+            "max_stage_node": 175,
+            "fraction_of_total": 0.14315690815929563
+          },
+          "Gait": {
+            "weight": 2.0,
+            "norm": 6,
+            "mean_cost": 0.0006992856723055185,
+            "max_stage_cost": 0.0016571379825717977,
+            "max_abs_residual": 0.005003017397393523,
+            "max_stage_node": 105,
+            "fraction_of_total": 0.009195419580606915
+          },
+          "Balance": {
+            "weight": 0.2,
+            "norm": 2,
+            "mean_cost": 0.0017056163253931658,
+            "max_stage_cost": 0.0027877416215968624,
+            "max_abs_residual": 0.054007050264437306,
+            "max_stage_node": 122,
+            "fraction_of_total": 0.022428398545352782
+          },
+          "Effort": {
+            "weight": 0.08,
+            "norm": 0,
+            "mean_cost": 0.0028839089330057054,
+            "max_stage_cost": 0.0040445805135185245,
+            "max_abs_residual": 0.22000724817679285,
+            "max_stage_node": 175,
+            "fraction_of_total": 0.037922631224255654
+          },
+          "Posture": {
+            "weight": 0.02,
+            "norm": 0,
+            "mean_cost": 0.00041311630970341617,
+            "max_stage_cost": 0.0005785680960637492,
+            "max_abs_residual": 0.16982437123295735,
+            "max_stage_node": 175,
+            "fraction_of_total": 0.00543236899276148
+          },
+          "Orientation": {
+            "weight": 1.0,
+            "norm": 0,
+            "mean_cost": 2.002202927605229e-06,
+            "max_stage_cost": 4.7370363324354814e-06,
+            "max_abs_residual": 0.003077994513536005,
+            "max_stage_node": 67,
+            "fraction_of_total": 2.632843304818319e-05
+          },
+          "Angmom": {
+            "weight": 0.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.13513264852317583,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandLinearVelocity": {
+            "weight": 1.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandAngularVelocity": {
+            "weight": 1.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandAbsoluteHeight": {
+            "weight": 1.0,
+            "norm": 6,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandFootPosition": {
+            "weight": 0.1,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandFootVelocity": {
+            "weight": 0.02,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "StandSupportForce": {
+            "weight": 0.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "LandingVelocity": {
+            "weight": 0.02,
+            "norm": 0,
+            "mean_cost": 1.7943964129680166e-07,
+            "max_stage_cost": 2.157300906134686e-05,
+            "max_abs_residual": 0.04644665756557105,
+            "max_stage_node": 2,
+            "fraction_of_total": 2.359583295447236e-06
+          },
+          "LandingIndentation": {
+            "weight": 0.1,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "MaterialSupportHeight": {
+            "weight": 1.0,
+            "norm": 0,
+            "mean_cost": 0.050322031277621075,
+            "max_stage_cost": 0.12263908836053841,
+            "max_abs_residual": 0.4952556680352854,
+            "max_stage_node": 175,
+            "fraction_of_total": 0.6617212536623837
+          },
+          "MaterialDomainMargin": {
+            "weight": 176.0,
+            "norm": 0,
+            "mean_cost": 0.0,
+            "max_stage_cost": 0.0,
+            "max_abs_residual": 0.0,
+            "max_stage_node": 0,
+            "fraction_of_total": 0.0
+          },
+          "TrunkClearance": {
+            "weight": 176.0,
+            "norm": 0,
+            "mean_cost": 7.104754415546781e-16,
+            "max_stage_cost": 7.441485902164511e-16,
+            "max_abs_residual": 1.4615392229799795e-09,
+            "max_stage_node": 174,
+            "fraction_of_total": 9.34256205374948e-15
+          },
+          "ImpactMargin": {
+            "weight": 176.0,
+            "norm": 0,
+            "mean_cost": 5.184369051639438e-12,
+            "max_stage_cost": 8.267685189971832e-12,
+            "max_abs_residual": 3.0645209731222485e-07,
+            "max_stage_node": 10,
+            "fraction_of_total": 6.817306657143929e-11
+          }
+        },
+        "candidates": [
+          {
+            "index": 0,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.0778691664550939,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 1,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.077857508927252,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 2,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.07785442301907687,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 3,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.07783601064182631,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 4,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.07778228168246579,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 5,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.07770294583457946,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 6,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.07751379590616272,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 7,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.07707503160120244,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 8,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.0760471739408507,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          },
+          {
+            "index": 9,
+            "failed": false,
+            "trunk_violation_m": 0,
+            "cost": 0.07785589612608429,
+            "projection_count": 0,
+            "projection_failed_count": 0,
+            "actuator_restoration_count": 0
+          }
+        ],
+        "actual_cost_decrease": 0.001808722185233605,
+        "proxy_expected_decrease": 0.002596772326759098,
+        "cost_ratio_valid": true,
+        "cost_ratio": 0.696527,
+        "regularization": 1,
+        "no_improvement_reason": "none",
+        "replay_scope": "One optimization at saved real state with saved task parameters/weights/userdata. Private old task-phase/warm-start history not reconstructed; no new physical episode."
+      }
+    },
+    {
+      "fixture": "B712",
+      "source": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261107T093906Z-w41-b-eval-PANN_PPO_S5-s2-E30",
+      "origin_s": 13.819999999994469,
+      "exact_held_target": true,
+      "first_Fz_N": {
+        "recorded": 113.94012836120417,
+        "native": 113.94012836120415,
+        "soft": 0.007191392318435498,
+        "reconstructed_plant": 113.94012836120407
+      },
+      "hold_force_error_max_N": {
+        "native": 0.13000892533378305,
+        "soft": 114.41159145638078
+      },
+      "recorded_hold_joint_velocity_error": {
+        "native": 0.00886921635939486,
+        "soft": 0.385748914767825
+      },
+      "reconstructed_plant_state_error_02ms": {
+        "native": 0.0012200767072059193,
+        "soft": 0.04277715147918701
+      },
+      "reconstructed_plant_state_error_2ms": {
+        "native": 0.008869216359394638,
+        "soft": 0.38574891476782425
+      },
+      "soft_soft_independent_FD_max": 2.220446049250313e-16,
+      "zero_order_native_anchor_max": 0.0,
+      "native_direction": {
+        "epsilon": 1e-06,
+        "source": "normalized negative saved regularized Newton feedforward -H^-1 Q_u; old plan, not a new optimization claim",
+        "absolute_error": 0.8174978157751563,
+        "relative_l2_error": 0.5747036567221576,
+        "cosine": 0.8726525512427189,
+        "contact_branch_changes": 0
+      },
+      "cpp": {
+        "binary": "S5-r31",
+        "status": "no_policy_installed",
+        "call": {
+          "call_id": 1,
+          "origin": 13.819999999994469,
+          "wall_s": 4.18522,
+          "return_reason": "backward_failed",
+          "policy_updated": false,
+          "installed_plan_id": 0,
+          "reused_policy_age_s": 13.819999999994469,
+          "backward_attempts": 5,
+          "metric_valid": false,
+          "timers_us": [
+            1186297,
+            2990454,
+            6091,
+            1850,
+            0,
+            0
+          ],
+          "mujoco_warning_counts_native_cumulative_then_soft_call": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "replay_scope": "Saved real input; fresh home policy has no historical warm-start/K or private gait-phase state. Failed backward is retained without retry or fallback.",
+        "accepted_J": null,
+        "linearization_snapshot": "Unavailable because no policy was installed; same-input held evidence is retained separately."
+      }
+    },
+    {
+      "fixture": "B713",
+      "source": "/root/autodl-tmp/MCP-RL/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261107T093906Z-w41-b-eval-PANN_PPO_S5-s2-E30",
+      "origin_s": 13.839999999994422,
+      "exact_held_target": true,
+      "first_Fz_N": {
+        "recorded": 246.8765241078107,
+        "native": 246.8765241078132,
+        "soft": 0.013398219619675734,
+        "reconstructed_plant": 246.87652410781237
+      },
+      "hold_force_error_max_N": {
+        "native": 0.6951826218379722,
+        "soft": 246.863125888191
+      },
+      "recorded_hold_joint_velocity_error": {
+        "native": 0.006646241987767809,
+        "soft": 0.437114035635644
+      },
+      "reconstructed_plant_state_error_02ms": {
+        "native": 0.004060043187021994,
+        "soft": 0.10523340156500982
+      },
+      "reconstructed_plant_state_error_2ms": {
+        "native": 0.006646241986497492,
+        "soft": 0.4371140356323585
+      },
+      "soft_soft_independent_FD_max": 2.220446049250313e-16,
+      "zero_order_native_anchor_max": 0.0,
+      "native_direction": {
+        "epsilon": 1e-06,
+        "source": "normalized negative saved regularized Newton feedforward -H^-1 Q_u; old plan, not a new optimization claim",
+        "absolute_error": 1.2633613296875368,
+        "relative_l2_error": 0.9855698752698736,
+        "cosine": 0.8056993738076272,
+        "contact_branch_changes": 0
+      },
+      "cpp": {
+        "binary": "S5-r31",
+        "status": "no_policy_installed",
+        "call": {
+          "call_id": 1,
+          "origin": 13.839999999994422,
+          "wall_s": 4.094945,
+          "return_reason": "backward_failed",
+          "policy_updated": false,
+          "installed_plan_id": 0,
+          "reused_policy_age_s": 13.839999999994422,
+          "backward_attempts": 5,
+          "metric_valid": false,
+          "timers_us": [
+            1115213,
+            2971210,
+            6118,
+            1877,
+            0,
+            0
+          ],
+          "mujoco_warning_counts_native_cumulative_then_soft_call": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "replay_scope": "Saved real input; fresh home policy has no historical warm-start/K or private gait-phase state. Failed backward is retained without retry or fallback.",
+        "accepted_J": null,
+        "linearization_snapshot": "Unavailable because no policy was installed; same-input held evidence is retained separately."
+      }
+    }
+  ],
+  "status": "completed_targeted_saved_input_checks",
+  "wall_s": 9.174275076016784
+}
