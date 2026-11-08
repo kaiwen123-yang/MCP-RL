@@ -1,0 +1,4777 @@
+{
+  "schema": "w41_offline_controller_audit_v1",
+  "base_commit": "9cc42d5a9189a2bfd7e1e6cd99b9300045a16724",
+  "norm_source": "https://github.com/johnzhang3/mujoco_mpc/blob/e00c47a5adb9856af2e0f24231bb3a60d5be23c4/mjpc/norm.cc",
+  "source_inputs": {
+    "w41-a/evaluation-E30/accepted-reference-gain-H-plan000590.npz": {
+      "bytes": 1682668,
+      "sha256": "88d75092a25527c226427a393a31f62799035e0dfaeec641ba7cc3fecfb8cab8"
+    },
+    "w41-a/evaluation-E30/accepted-reference-gain-H-plan000634.npz": {
+      "bytes": 1688833,
+      "sha256": "967f5e026e03d631f908e89f9158b0ca05079ce7c4d70129da68731e33d2e558"
+    },
+    "w41-a/evaluation-E30/accepted-reference-gain-H-plan000635.npz": {
+      "bytes": 1683500,
+      "sha256": "37892417c8aca0501bcfd9b21ea6e05183c2f6a1d61dbe647e6a8bac2c3bf729"
+    },
+    "w41-a/evaluation-E30/accepted-reference-gain-H-plan000663.npz": {
+      "bytes": 1629504,
+      "sha256": "75811e1a939b2c46a77ab53238a73abb383d8dba4b7497923f6612fbec2b6d7a"
+    },
+    "w41-a/evaluation-E30/accepted-reference-gain-H-plan000725.npz": {
+      "bytes": 1230481,
+      "sha256": "d1fbb21fc5267b61f0b50cfd082ce392c56f003610f5f7d920c6f7d4dc1f4567"
+    },
+    "w41-a/evaluation-E30/model/G1-project-go2.xml": {
+      "bytes": 25056,
+      "sha256": "29b0008781b90338c7da0e06dec6b729efbc1d60f659390b51672b0c6bf13645"
+    },
+    "w41-a/evaluation-E30/trajectory.npz": {
+      "bytes": 7700136,
+      "sha256": "31b91027219e431627b8d289462bf5a2538804dacc5750e1c225f5d2e0b078a8"
+    },
+    "w41-a/evaluation-E30/physical-000.npz": {
+      "bytes": 16634776,
+      "sha256": "0f77e9b050099673872ce6a098aa66562a59eb19b8d6613c8354c1e402bcd727"
+    },
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261107T100149Z-w41-a-eval-PANN_PPO_S5-s1-E30-resolved.json": {
+      "bytes": 447886,
+      "sha256": "16af269960bac9f64d736860351fda56e725fb587f51b159aa30728a6d7dcbd3"
+    },
+    "w41-b/evaluation-E30/accepted-reference-gain-H-plan000712.npz": {
+      "bytes": 1693138,
+      "sha256": "014b6ff4b4a1857f8ce3e0884fdb0d84e60fc31bab1617b0cd7ac43fce792d62"
+    },
+    "w41-b/evaluation-E30/accepted-reference-gain-H-plan000713.npz": {
+      "bytes": 1695010,
+      "sha256": "b27f750eb4bec143cfa714f414b799aaf2ec755cace84f55628f74057d1a1b83"
+    },
+    "w41-b/evaluation-E30/accepted-reference-gain-H-plan000737.npz": {
+      "bytes": 1695078,
+      "sha256": "39b89bdd161da5e161eaa757e797f853539a32d46e69b6c663395b96d7905fb7"
+    },
+    "w41-b/evaluation-E30/accepted-reference-gain-H-plan001440.npz": {
+      "bytes": 1229635,
+      "sha256": "820724ed01fc614b3d8229a9fce0496673cfc04f372d2aae14beb92902851f4b"
+    },
+    "w41-b/evaluation-E30/model/G1-project-go2.xml": {
+      "bytes": 25056,
+      "sha256": "29b0008781b90338c7da0e06dec6b729efbc1d60f659390b51672b0c6bf13645"
+    },
+    "w41-b/evaluation-E30/trajectory.npz": {
+      "bytes": 15564909,
+      "sha256": "f0b50c9e383d99e9157634ce8b6a3804f22b038c9764833a4af090f0b95303d1"
+    },
+    "w41-b/evaluation-E30/physical-000.npz": {
+      "bytes": 33219788,
+      "sha256": "17941e512c595e5090045e1be41657e4437d8310a68b9d0b9b2a729c200b10e6"
+    },
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261107T093906Z-w41-b-eval-PANN_PPO_S5-s2-E30-resolved.json": {
+      "bytes": 448432,
+      "sha256": "279489d5db8b348d76acd43b4f6e33968e842ea46ab21db7b371cf36652d1be2"
+    }
+  },
+  "streams": {
+    "w41-a": {
+      "applied_locomotion_settings": {
+        "time_s": 2.0019999999998124,
+        "declared_parameters": {
+          "Gait": "Trot",
+          "Cadence": 2.0,
+          "Duty ratio": 0.45,
+          "Amplitude": 0.005
+        },
+        "task_parameters": {
+          "Duty ratio": 0.45,
+          "Gait": "Trot",
+          "Arm posture": 0.2,
+          "Amplitude": 0.005,
+          "Flip dir": "Back Flip",
+          "Walk speed": 0.0,
+          "Walk turn": 0.0,
+          "Gait switch": "Manual",
+          "Heading": 0.0,
+          "Cadence": 2.0,
+          "Biped type": "Foot Stand"
+        },
+        "cost_weights": {
+          "Height": 1.0,
+          "Gait": 2.0,
+          "Angmom": 0.0,
+          "StandAngularVelocity": 1.0,
+          "Upright": 1.0,
+          "StandLinearVelocity": 1.0,
+          "MaterialDomainMargin": 176.0,
+          "Position": 0.2,
+          "LandingIndentation": 0.1,
+          "LandingVelocity": 0.02,
+          "Posture": 0.02,
+          "ImpactMargin": 176.0,
+          "TrunkClearance": 176.0,
+          "MaterialSupportHeight": 1.0,
+          "Balance": 0.2,
+          "StandFootPosition": 0.1,
+          "Orientation": 1.0,
+          "Effort": 0.08,
+          "StandFootVelocity": 0.02,
+          "StandSupportForce": 0.0,
+          "StandAbsoluteHeight": 1.0
+        }
+      },
+      "stall_9_to_11": {
+        "start_s": 9.000000000005702,
+        "last_sample_s": 10.998000000001046,
+        "net_progress_speed_m_s": 0.014468784691154157,
+        "mean_command_x_m_s": 0.22181650558627006,
+        "all_four_contact_fraction": 0.948,
+        "max_foot_x_m": 0.7285217349922307,
+        "max_abs_yaw_rad": 0.008471105057254909,
+        "heading_targets": [
+          0.0
+        ],
+        "executed_feedback_count": 1000,
+        "projection_changed_count": 0,
+        "active_bound_count": 0,
+        "qp_not_converged_count": 0
+      },
+      "first_feedback_over_1rad": {
+        "time": 12.284000396728516,
+        "plan_id": 635,
+        "raw_K_delta_x_max_rad": 1.4383562626147113,
+        "projection_changed": true,
+        "qp_converged": true,
+        "reconstruction_max_error": 1.1102230246251565e-16,
+        "components": {
+          "base_translation": {
+            "max_abs_state_delta": 0.00010466923439750309,
+            "max_abs_action_contribution_rad": 0.23752107914060536
+          },
+          "base_rotation": {
+            "max_abs_state_delta": 7.659245489095661e-05,
+            "max_abs_action_contribution_rad": 0.0445873320239027
+          },
+          "joint_position": {
+            "max_abs_state_delta": 0.0014140971297684768,
+            "max_abs_action_contribution_rad": 0.3142180628122975
+          },
+          "base_velocity": {
+            "max_abs_state_delta": 0.0507745994812741,
+            "max_abs_action_contribution_rad": 0.4383740948874637
+          },
+          "joint_velocity": {
+            "max_abs_state_delta": 0.568256430977462,
+            "max_abs_action_contribution_rad": 0.4036556937504421
+          }
+        }
+      },
+      "plans": [
+        {
+          "file": "accepted-reference-gain-H-plan000590.npz",
+          "plan_id": 590,
+          "origin_s": 11.380000000000155,
+          "saved_cost": 0.01460930310655987,
+          "recomputed_cost": 0.014609303106559866,
+          "cost_error": 3.469446951953614e-18,
+          "accepted_predicted_base_dx_m": -0.011018917597123368,
+          "cost_terms": {
+            "Upright": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 1.4664417146321838e-05,
+              "max_stage_cost": 0.00023786004442524766,
+              "max_abs_residual": 0.004709150561221824,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.0010037725303773885
+            },
+            "Height": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0006926389807921932,
+              "max_stage_cost": 0.0023895064948225297,
+              "max_abs_residual": 0.01403104632144736,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.04741081595337594
+            },
+            "Position": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.007794282074902686,
+              "max_stage_cost": 0.014773109325933738,
+              "max_abs_residual": 0.14220639149819048,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.5335149813821646
+            },
+            "Gait": {
+              "weight": 2.0,
+              "norm": 6,
+              "mean_cost": 0.0010819745772215452,
+              "max_stage_cost": 0.0020420208686114313,
+              "max_abs_residual": 0.005554177778810607,
+              "max_stage_node": 34,
+              "fraction_of_total": 0.07406065637283665
+            },
+            "Balance": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.0007768863658392231,
+              "max_stage_cost": 0.0014005319793888667,
+              "max_abs_residual": 0.038070896964192746,
+              "max_stage_node": 32,
+              "fraction_of_total": 0.053177510259910056
+            },
+            "Effort": {
+              "weight": 0.08,
+              "norm": 0,
+              "mean_cost": 0.0015222385772273451,
+              "max_stage_cost": 0.004474950043227977,
+              "max_abs_residual": 0.21558796751761974,
+              "max_stage_node": 42,
+              "fraction_of_total": 0.10419652232034463
+            },
+            "Posture": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.002059811157715495,
+              "max_stage_cost": 0.002124928115855131,
+              "max_abs_residual": 0.3746655182259181,
+              "max_stage_node": 39,
+              "fraction_of_total": 0.140993115324618
+            },
+            "Orientation": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 6.4898126215369215e-06,
+              "max_stage_cost": 1.0465182911324695e-05,
+              "max_abs_residual": 0.004574959705024299,
+              "max_stage_node": 160,
+              "fraction_of_total": 0.00044422465426313646
+            },
+            "Angmom": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.08836786428540198,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandLinearVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAngularVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAbsoluteHeight": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootPosition": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandSupportForce": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingIndentation": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "MaterialSupportHeight": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0006603171430928702,
+              "max_stage_cost": 0.016504380381229942,
+              "max_abs_residual": 0.18168313285074067,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.0451984012020652
+            },
+            "MaterialDomainMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "TrunkClearance": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 6.486208324781417e-16,
+              "max_stage_cost": 6.920184886451054e-16,
+              "max_abs_residual": 1.4404449855121015e-09,
+              "max_stage_node": 175,
+              "fraction_of_total": 4.4397794182728545e-14
+            },
+            "ImpactMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            }
+          },
+          "gain_check": {
+            "free_stationarity_scaled_max": 4.163336342344337e-17,
+            "active_row_expected_error_max": 0.0,
+            "active_rows": 0,
+            "moving_pd_rows": 0,
+            "min_eigenvalue_H": 0.0006555454560863009,
+            "max_condition_H": 2.155063362574862,
+            "max_abs_K": 126.42342178443883,
+            "regularization_type": 0
+          },
+          "first_hold": {
+            "origin": 11.380000000000155,
+            "same_initial_state_max_error": 0.0,
+            "candidate_initial_state_max_error": 0.0,
+            "actual_vs_candidate_first_target_max_rad": 2.258132320243078e-06,
+            "first_hold_end_s": 11.38200000000015,
+            "first_hold_base_position_error_max_m": 1.9956561614742352e-05,
+            "first_hold_joint_position_error_max_rad": 0.00039499390911812426,
+            "first_hold_base_velocity_error_max_mixed": 0.018228262236955933,
+            "first_hold_joint_velocity_error_max_rad_s": 0.3446754286927399,
+            "first_hold_force_series": [
+              {
+                "substep": 0,
+                "time": 11.380000000000155,
+                "predicted_native_floor_foot_fz_N": 0.009354219804655796,
+                "actual_total_ground_fz_N": 166.05004022959747,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.0001354879392181374,
+                "max_raw_pd_difference_Nm": 0.00013548793921458469
+              },
+              {
+                "substep": 1,
+                "time": 11.380200000000155,
+                "predicted_native_floor_foot_fz_N": 0.013321989543764606,
+                "actual_total_ground_fz_N": 166.04598259340855,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.19484387816693527,
+                "max_raw_pd_difference_Nm": 0.1948438781669406
+              },
+              {
+                "substep": 2,
+                "time": 11.380400000000154,
+                "predicted_native_floor_foot_fz_N": 0.022897212856106304,
+                "actual_total_ground_fz_N": 166.0038833430295,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.38503388272772554,
+                "max_raw_pd_difference_Nm": 0.38503388272773265
+              },
+              {
+                "substep": 3,
+                "time": 11.380600000000154,
+                "predicted_native_floor_foot_fz_N": 0.04500978491109446,
+                "actual_total_ground_fz_N": 165.92902091599535,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.5706165956878948,
+                "max_raw_pd_difference_Nm": 0.5706165956878806
+              },
+              {
+                "substep": 4,
+                "time": 11.380800000000153,
+                "predicted_native_floor_foot_fz_N": 0.09131877063991914,
+                "actual_total_ground_fz_N": 165.82603848043618,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.7516883900322853,
+                "max_raw_pd_difference_Nm": 0.7516883900322657
+              },
+              {
+                "substep": 5,
+                "time": 11.381000000000153,
+                "predicted_native_floor_foot_fz_N": 0.17917731449577903,
+                "actual_total_ground_fz_N": 165.6990172063243,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.9283362128841759,
+                "max_raw_pd_difference_Nm": 0.9283362128841839
+              },
+              {
+                "substep": 6,
+                "time": 11.381200000000153,
+                "predicted_native_floor_foot_fz_N": 0.3324571393954799,
+                "actual_total_ground_fz_N": 165.5515412667427,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.1006330869919339,
+                "max_raw_pd_difference_Nm": 1.1006330869919339
+              },
+              {
+                "substep": 7,
+                "time": 11.381400000000152,
+                "predicted_native_floor_foot_fz_N": 0.5822541693443023,
+                "actual_total_ground_fz_N": 165.38675551090267,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.2686335826769408,
+                "max_raw_pd_difference_Nm": 1.2686335826769337
+              },
+              {
+                "substep": 8,
+                "time": 11.381600000000152,
+                "predicted_native_floor_foot_fz_N": 0.9674938367768022,
+                "actual_total_ground_fz_N": 165.20741660153627,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.4323689860618174,
+                "max_raw_pd_difference_Nm": 1.432368986061828
+              },
+              {
+                "substep": 9,
+                "time": 11.381800000000151,
+                "predicted_native_floor_foot_fz_N": 1.5354537144644966,
+                "actual_total_ground_fz_N": 165.0159383561668,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.591842113699144,
+                "max_raw_pd_difference_Nm": 1.5918421136991379
+              }
+            ],
+            "limitation": "Targets almost equal, not replayed identically. Actual total ground force includes nonfoot force; it equals foot force only where nonfoot force/count are zero. Material can contribute after loading; strict rigid-contact inference uses pre-material rows only. No same-input claim after this first hold."
+          }
+        },
+        {
+          "file": "accepted-reference-gain-H-plan000634.npz",
+          "plan_id": 634,
+          "origin_s": 12.259999999998104,
+          "saved_cost": 0.045244918385871025,
+          "recomputed_cost": 0.04524491838587103,
+          "cost_error": 6.938893903907228e-18,
+          "accepted_predicted_base_dx_m": 0.009956612467979187,
+          "cost_terms": {
+            "Upright": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0017086718835040906,
+              "max_stage_cost": 0.017699888311742136,
+              "max_abs_residual": 0.031138088621724097,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.03776494564387744
+            },
+            "Height": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0026474693608642716,
+              "max_stage_cost": 0.015588072772988328,
+              "max_abs_residual": 0.03860095639508232,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.05851418137801342
+            },
+            "Position": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.006170900707455904,
+              "max_stage_cost": 0.011346331322024818,
+              "max_abs_residual": 0.12061411156726809,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.13638881287899365
+            },
+            "Gait": {
+              "weight": 2.0,
+              "norm": 6,
+              "mean_cost": 0.0003457562134189761,
+              "max_stage_cost": 0.0010622741358200585,
+              "max_abs_residual": 0.005502720342526482,
+              "max_stage_node": 107,
+              "fraction_of_total": 0.00764187948070093
+            },
+            "Balance": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.0008299678908616212,
+              "max_stage_cost": 0.001497210783406136,
+              "max_abs_residual": 0.038975128144876914,
+              "max_stage_node": 58,
+              "fraction_of_total": 0.018343891877166067
+            },
+            "Effort": {
+              "weight": 0.08,
+              "norm": 0,
+              "mean_cost": 0.002777123884497272,
+              "max_stage_cost": 0.01446110177213101,
+              "max_abs_residual": 0.3984283576721387,
+              "max_stage_node": 58,
+              "fraction_of_total": 0.06137979652902867
+            },
+            "Posture": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0008941431059832468,
+              "max_stage_cost": 0.0031145339358641284,
+              "max_abs_residual": 0.3113854846638867,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.01976228796254095
+            },
+            "Orientation": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 4.072807116348427e-05,
+              "max_stage_cost": 0.0001769941829005854,
+              "max_abs_residual": 0.01881374600818216,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.0009001689607689232
+            },
+            "Angmom": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.21689157247348578,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandLinearVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAngularVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAbsoluteHeight": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootPosition": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandSupportForce": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.00016634675739610107,
+              "max_stage_cost": 0.008714061731299093,
+              "max_abs_residual": 0.9334913888773755,
+              "max_stage_node": 137,
+              "fraction_of_total": 0.003676584317766112
+            },
+            "LandingIndentation": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "MaterialSupportHeight": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.027735108672923725,
+              "max_stage_cost": 0.3062477171416689,
+              "max_abs_residual": 0.7826208751901126,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.6129994187719604
+            },
+            "MaterialDomainMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "TrunkClearance": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 6.875795651741534e-16,
+              "max_stage_cost": 9.24226616964684e-16,
+              "max_abs_residual": 1.7597451273942966e-09,
+              "max_stage_node": 175,
+              "fraction_of_total": 1.5196835129862206e-14
+            },
+            "ImpactMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.0019287018378016483,
+              "max_stage_cost": 0.32138547090555436,
+              "max_abs_residual": 0.06043267017041986,
+              "max_stage_node": 137,
+              "fraction_of_total": 0.04262803219916821
+            }
+          },
+          "gain_check": {
+            "free_stationarity_scaled_max": 3.3306690738754696e-16,
+            "active_row_expected_error_max": 0.0,
+            "active_rows": 41,
+            "moving_pd_rows": 41,
+            "min_eigenvalue_H": 0.0006555454571954345,
+            "max_condition_H": 84004.1938973022,
+            "max_abs_K": 677.3783335756109,
+            "regularization_type": 0
+          },
+          "first_hold": {
+            "origin": 12.259999999998104,
+            "same_initial_state_max_error": 0.0,
+            "candidate_initial_state_max_error": 0.0,
+            "actual_vs_candidate_first_target_max_rad": 3.1743838182496376e-06,
+            "first_hold_end_s": 12.2619999999981,
+            "first_hold_base_position_error_max_m": 2.2844427752966023e-05,
+            "first_hold_joint_position_error_max_rad": 0.0003607941843253304,
+            "first_hold_base_velocity_error_max_mixed": 0.036517576719851924,
+            "first_hold_joint_velocity_error_max_rad_s": 0.7192214284769285,
+            "first_hold_force_series": [
+              {
+                "substep": 0,
+                "time": 12.259999999998104,
+                "predicted_native_floor_foot_fz_N": 0.00832360607736476,
+                "actual_total_ground_fz_N": 141.17486993552464,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.00019046302909941915,
+                "max_raw_pd_difference_Nm": 0.00019046302909497825
+              },
+              {
+                "substep": 1,
+                "time": 12.260199999998104,
+                "predicted_native_floor_foot_fz_N": 0.011689941097718797,
+                "actual_total_ground_fz_N": 141.25074712704748,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.18380381433622972,
+                "max_raw_pd_difference_Nm": 0.1838038143362244
+              },
+              {
+                "substep": 2,
+                "time": 12.260399999998103,
+                "predicted_native_floor_foot_fz_N": 0.019437089744807356,
+                "actual_total_ground_fz_N": 141.3170919498088,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.3634775117441791,
+                "max_raw_pd_difference_Nm": 0.3634775117441684
+              },
+              {
+                "substep": 3,
+                "time": 12.260599999998103,
+                "predicted_native_floor_foot_fz_N": 0.03662480991668365,
+                "actual_total_ground_fz_N": 141.3749684797861,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.5391033756125552,
+                "max_raw_pd_difference_Nm": 0.5391033756125703
+              },
+              {
+                "substep": 4,
+                "time": 12.260799999998103,
+                "predicted_native_floor_foot_fz_N": 0.07169332729433522,
+                "actual_total_ground_fz_N": 141.42531685855343,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.7107552734419471,
+                "max_raw_pd_difference_Nm": 0.7107552734419462
+              },
+              {
+                "substep": 5,
+                "time": 12.260999999998102,
+                "predicted_native_floor_foot_fz_N": 0.1371486945066368,
+                "actual_total_ground_fz_N": 141.46896855394544,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.8784920204447104,
+                "max_raw_pd_difference_Nm": 0.8784920204447122
+              },
+              {
+                "substep": 6,
+                "time": 12.261199999998102,
+                "predicted_native_floor_foot_fz_N": 0.2501351087056871,
+                "actual_total_ground_fz_N": 141.5066596717988,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.0423510347752085,
+                "max_raw_pd_difference_Nm": 1.0423510347752103
+              },
+              {
+                "substep": 7,
+                "time": 12.261399999998101,
+                "predicted_native_floor_foot_fz_N": 0.4786485760905297,
+                "actual_total_ground_fz_N": 537.4813302128252,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.2023411094986898,
+                "max_raw_pd_difference_Nm": 1.2023411094986853
+              },
+              {
+                "substep": 8,
+                "time": 12.2615999999981,
+                "predicted_native_floor_foot_fz_N": 0.8631428379561703,
+                "actual_total_ground_fz_N": 469.87958580246806,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.041415810268454,
+                "max_raw_pd_difference_Nm": 2.0414158102684556
+              },
+              {
+                "substep": 9,
+                "time": 12.2617999999981,
+                "predicted_native_floor_foot_fz_N": 1.4647282891514246,
+                "actual_total_ground_fz_N": 135.02476918748994,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 3.751506691656118,
+                "max_raw_pd_difference_Nm": 3.75150669165612
+              }
+            ],
+            "limitation": "Targets almost equal, not replayed identically. Actual total ground force includes nonfoot force; it equals foot force only where nonfoot force/count are zero. Material can contribute after loading; strict rigid-contact inference uses pre-material rows only. No same-input claim after this first hold."
+          }
+        },
+        {
+          "file": "accepted-reference-gain-H-plan000635.npz",
+          "plan_id": 635,
+          "origin_s": 12.279999999998058,
+          "saved_cost": 0.4545868371395368,
+          "recomputed_cost": 0.4545868371395366,
+          "cost_error": 1.6653345369377348e-16,
+          "accepted_predicted_base_dx_m": 0.007440475919981315,
+          "cost_terms": {
+            "Upright": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.001773035223577621,
+              "max_stage_cost": 0.013988821285516845,
+              "max_abs_residual": 0.029165013382077304,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.0039003223998617083
+            },
+            "Height": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.002851615452929801,
+              "max_stage_cost": 0.015227669153708795,
+              "max_abs_residual": 0.03808011869928346,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.006272982893375089
+            },
+            "Position": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.006205815813982183,
+              "max_stage_cost": 0.011722951572237834,
+              "max_abs_residual": 0.12308024541269402,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.013651551930170145
+            },
+            "Gait": {
+              "weight": 2.0,
+              "norm": 6,
+              "mean_cost": 0.000281167052725055,
+              "max_stage_cost": 0.00101473616579692,
+              "max_abs_residual": 0.005478230162590036,
+              "max_stage_node": 96,
+              "fraction_of_total": 0.0006185112056791693
+            },
+            "Balance": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.0008021773286075735,
+              "max_stage_cost": 0.0015756278825012184,
+              "max_abs_residual": 0.03997466797277349,
+              "max_stage_node": 48,
+              "fraction_of_total": 0.0017646294680577015
+            },
+            "Effort": {
+              "weight": 0.08,
+              "norm": 0,
+              "mean_cost": 0.0032511796241341396,
+              "max_stage_cost": 0.01352374356950968,
+              "max_abs_residual": 0.3921838885275875,
+              "max_stage_node": 48,
+              "fraction_of_total": 0.007151944047900757
+            },
+            "Posture": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0008818852620031139,
+              "max_stage_cost": 0.0029544217193073477,
+              "max_abs_residual": 0.32216882504478306,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.0019399709581393288
+            },
+            "Orientation": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 3.975085511126995e-05,
+              "max_stage_cost": 0.00016008792981646335,
+              "max_abs_residual": 0.017892742425007234,
+              "max_stage_node": 175,
+              "fraction_of_total": 8.744392020103372e-05
+            },
+            "Angmom": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.18192311437553174,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandLinearVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAngularVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAbsoluteHeight": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootPosition": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandSupportForce": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.00021443725303776256,
+              "max_stage_cost": 0.007530397150928598,
+              "max_abs_residual": 0.867778608176357,
+              "max_stage_node": 128,
+              "fraction_of_total": 0.0004717190105791393
+            },
+            "LandingIndentation": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "MaterialSupportHeight": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.03132993318850868,
+              "max_stage_cost": 0.29585721568831136,
+              "max_abs_residual": 0.7692297650095339,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.06891957845865183
+            },
+            "MaterialDomainMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "TrunkClearance": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 6.910908326041024e-16,
+              "max_stage_cost": 9.0788523772545e-16,
+              "max_abs_residual": 1.733987953222993e-09,
+              "max_stage_node": 175,
+              "fraction_of_total": 1.520261424533879e-15
+            },
+            "ImpactMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.40695584008491875,
+              "max_stage_cost": 34.34324241991401,
+              "max_abs_residual": 0.6247072548399758,
+              "max_stage_node": 2,
+              "fraction_of_total": 0.8952213457073827
+            }
+          },
+          "gain_check": {
+            "free_stationarity_scaled_max": 6.627422439387162e-16,
+            "active_row_expected_error_max": 0.0,
+            "active_rows": 63,
+            "moving_pd_rows": 63,
+            "min_eigenvalue_H": 0.0006555454556302651,
+            "max_condition_H": 38894.891916622364,
+            "max_abs_K": 2269.0523963689134,
+            "regularization_type": 0
+          },
+          "first_hold": {
+            "origin": 12.279999999998058,
+            "same_initial_state_max_error": 0.0,
+            "candidate_initial_state_max_error": 0.0,
+            "actual_vs_candidate_first_target_max_rad": 5.7114939666647047e-08,
+            "first_hold_end_s": 12.281999999998053,
+            "first_hold_base_position_error_max_m": 2.4281550140003993e-05,
+            "first_hold_joint_position_error_max_rad": 0.0003873151680031661,
+            "first_hold_base_velocity_error_max_mixed": 0.02378820544354921,
+            "first_hold_joint_velocity_error_max_rad_s": 0.43351045332183447,
+            "first_hold_force_series": [
+              {
+                "substep": 0,
+                "time": 12.279999999998058,
+                "predicted_native_floor_foot_fz_N": 0.00715723114588741,
+                "actual_total_ground_fz_N": 127.54105687612059,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 3.426896384439715e-06,
+                "max_raw_pd_difference_Nm": 3.4268963808870012e-06
+              },
+              {
+                "substep": 1,
+                "time": 12.280199999998057,
+                "predicted_native_floor_foot_fz_N": 0.010121067825522207,
+                "actual_total_ground_fz_N": 127.47424489125855,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.1872303535325841,
+                "max_raw_pd_difference_Nm": 0.18723035353258766
+              },
+              {
+                "substep": 2,
+                "time": 12.280399999998057,
+                "predicted_native_floor_foot_fz_N": 0.01706441856082438,
+                "actual_total_ground_fz_N": 127.40651728298737,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.37011437178129825,
+                "max_raw_pd_difference_Nm": 0.3701143717813071
+              },
+              {
+                "substep": 3,
+                "time": 12.280599999998056,
+                "predicted_native_floor_foot_fz_N": 0.03806466287778081,
+                "actual_total_ground_fz_N": 259.6714412912497,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.5487695919636764,
+                "max_raw_pd_difference_Nm": 0.5487695919636693
+              },
+              {
+                "substep": 4,
+                "time": 12.280799999998056,
+                "predicted_native_floor_foot_fz_N": 0.0784173335690255,
+                "actual_total_ground_fz_N": 241.8532412908743,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.7031558435010368,
+                "max_raw_pd_difference_Nm": 0.7031558435010279
+              },
+              {
+                "substep": 5,
+                "time": 12.280999999998055,
+                "predicted_native_floor_foot_fz_N": 0.166139558000205,
+                "actual_total_ground_fz_N": 227.22795351103665,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.8565063064089316,
+                "max_raw_pd_difference_Nm": 0.85650630640892
+              },
+              {
+                "substep": 6,
+                "time": 12.281199999998055,
+                "predicted_native_floor_foot_fz_N": 0.3284973789167248,
+                "actual_total_ground_fz_N": 215.45615694068317,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.1669945168739275,
+                "max_raw_pd_difference_Nm": 1.1669945168739133
+              },
+              {
+                "substep": 7,
+                "time": 12.281399999998055,
+                "predicted_native_floor_foot_fz_N": 0.600278488539841,
+                "actual_total_ground_fz_N": 208.06937279765944,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.4636532368723323,
+                "max_raw_pd_difference_Nm": 1.4636532368723465
+              },
+              {
+                "substep": 8,
+                "time": 12.281599999998054,
+                "predicted_native_floor_foot_fz_N": 1.0244009418348263,
+                "actual_total_ground_fz_N": 201.91050119252304,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.7303987854188705,
+                "max_raw_pd_difference_Nm": 1.730398785418859
+              },
+              {
+                "substep": 9,
+                "time": 12.281799999998054,
+                "predicted_native_floor_foot_fz_N": 1.6524525398729282,
+                "actual_total_ground_fz_N": 196.76509990709187,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.9716109877564492,
+                "max_raw_pd_difference_Nm": 1.9716109877564572
+              }
+            ],
+            "limitation": "Targets almost equal, not replayed identically. Actual total ground force includes nonfoot force; it equals foot force only where nonfoot force/count are zero. Material can contribute after loading; strict rigid-contact inference uses pre-material rows only. No same-input claim after this first hold."
+          }
+        },
+        {
+          "file": "accepted-reference-gain-H-plan000663.npz",
+          "plan_id": 663,
+          "origin_s": 12.839999999996753,
+          "saved_cost": 1.1013101764625997,
+          "recomputed_cost": 1.1013101764625997,
+          "cost_error": 0.0,
+          "accepted_predicted_base_dx_m": 0.02378668952228924,
+          "cost_terms": {
+            "Upright": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.021432180434759116,
+              "max_stage_cost": 0.19057412742226984,
+              "max_abs_residual": 0.14408058879041033,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.01946062144236161
+            },
+            "Height": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.005200071273911725,
+              "max_stage_cost": 0.015758371101688484,
+              "max_abs_residual": 0.03884579704309862,
+              "max_stage_node": 157,
+              "fraction_of_total": 0.004721713632588337
+            },
+            "Position": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.004496978766989025,
+              "max_stage_cost": 0.01013646670165177,
+              "max_abs_residual": 0.11268121702788803,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.00408329902247275
+            },
+            "Gait": {
+              "weight": 2.0,
+              "norm": 6,
+              "mean_cost": 0.004433384228388342,
+              "max_stage_cost": 0.04373641377152083,
+              "max_abs_residual": 0.03997272403832719,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.004025554583204107
+            },
+            "Balance": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.0026468130389115164,
+              "max_stage_cost": 0.010979653018122766,
+              "max_abs_residual": 0.10086893216955639,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.0024033311372941824
+            },
+            "Effort": {
+              "weight": 0.08,
+              "norm": 0,
+              "mean_cost": 0.010140453430218565,
+              "max_stage_cost": 0.16533785725670186,
+              "max_abs_residual": 0.9086,
+              "max_stage_node": 8,
+              "fraction_of_total": 0.009207627103555537
+            },
+            "Posture": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0034845934147041653,
+              "max_stage_cost": 0.010284546490477744,
+              "max_abs_residual": 0.554239706248823,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.0031640435993215412
+            },
+            "Orientation": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.000731715541404979,
+              "max_stage_cost": 0.0029028234122246283,
+              "max_abs_residual": 0.0761394801708463,
+              "max_stage_node": 155,
+              "fraction_of_total": 0.0006644045946758106
+            },
+            "Angmom": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.9628242325290437,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandLinearVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAngularVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAbsoluteHeight": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootPosition": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandSupportForce": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0033278989605361577,
+              "max_stage_cost": 0.03581023296264014,
+              "max_abs_residual": 1.8923545831339401,
+              "max_stage_node": 39,
+              "fraction_of_total": 0.003021763560948238
+            },
+            "LandingIndentation": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 4.970665308182802e-07,
+              "max_stage_cost": 5.6560195394116164e-05,
+              "max_abs_residual": 0.03363337491067947,
+              "max_stage_node": 129,
+              "fraction_of_total": 4.51341085773723e-07
+            },
+            "MaterialSupportHeight": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.06963683298697108,
+              "max_stage_cost": 0.27450462188559854,
+              "max_abs_residual": 0.7409515799100486,
+              "max_stage_node": 147,
+              "fraction_of_total": 0.06323089940986842
+            },
+            "MaterialDomainMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 1.890832938675337e-10,
+              "max_stage_cost": 4.2791624642015153e-10,
+              "max_abs_residual": 2.205149568263072e-06,
+              "max_stage_node": 129,
+              "fraction_of_total": 1.7168940949485084e-10
+            },
+            "TrunkClearance": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 7.038993257955465e-16,
+              "max_stage_cost": 8.641825966772972e-16,
+              "max_abs_residual": 1.6767975896669896e-09,
+              "max_stage_node": 134,
+              "fraction_of_total": 6.391472092416925e-16
+            },
+            "ImpactMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.9757787571301901,
+              "max_stage_cost": 55.88231000984447,
+              "max_abs_residual": 0.7968853431389166,
+              "max_stage_node": 1,
+              "fraction_of_total": 0.8860162904009337
+            }
+          },
+          "gain_check": {
+            "free_stationarity_scaled_max": 2.7325391829845694e-15,
+            "active_row_expected_error_max": 0.0,
+            "active_rows": 283,
+            "moving_pd_rows": 283,
+            "min_eigenvalue_H": 3.027520164619492e-05,
+            "max_condition_H": 88829.00087852801,
+            "max_abs_K": 38975.37526004574,
+            "regularization_type": 0
+          },
+          "first_hold": {
+            "origin": 12.839999999996753,
+            "same_initial_state_max_error": 0.0,
+            "candidate_initial_state_max_error": 0.0,
+            "actual_vs_candidate_first_target_max_rad": 1.894384376277536e-05,
+            "first_hold_end_s": 12.841999999996748,
+            "first_hold_base_position_error_max_m": 8.211949361347504e-06,
+            "first_hold_joint_position_error_max_rad": 0.0008999532814155109,
+            "first_hold_base_velocity_error_max_mixed": 0.03470605143471933,
+            "first_hold_joint_velocity_error_max_rad_s": 1.2295864919627166,
+            "first_hold_force_series": [
+              {
+                "substep": 0,
+                "time": 12.839999999996753,
+                "predicted_native_floor_foot_fz_N": 0.013697128602967505,
+                "actual_total_ground_fz_N": 63.00996780467439,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.0011366306257656333,
+                "max_raw_pd_difference_Nm": 0.0011366306257656333
+              },
+              {
+                "substep": 1,
+                "time": 12.840199999996752,
+                "predicted_native_floor_foot_fz_N": 0.0240336425799898,
+                "actual_total_ground_fz_N": 63.21082146451096,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.24811173610115134,
+                "max_raw_pd_difference_Nm": 0.24811173610114778
+              },
+              {
+                "substep": 2,
+                "time": 12.840399999996752,
+                "predicted_native_floor_foot_fz_N": 0.05343172676422825,
+                "actual_total_ground_fz_N": 63.33617844727516,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.49057133395636754,
+                "max_raw_pd_difference_Nm": 0.490571333956364
+              },
+              {
+                "substep": 3,
+                "time": 12.840599999996751,
+                "predicted_native_floor_foot_fz_N": 0.15094061892196595,
+                "actual_total_ground_fz_N": 373.43373189711735,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.7273689980247013,
+                "max_raw_pd_difference_Nm": 0.7273689980246996
+              },
+              {
+                "substep": 4,
+                "time": 12.84079999999675,
+                "predicted_native_floor_foot_fz_N": 0.32551607687028533,
+                "actual_total_ground_fz_N": 66.21326360768137,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.575337930391022,
+                "max_raw_pd_difference_Nm": 2.575337930391022
+              },
+              {
+                "substep": 5,
+                "time": 12.84099999999675,
+                "predicted_native_floor_foot_fz_N": 0.716179228557809,
+                "actual_total_ground_fz_N": 66.07056071231762,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.4556571127048485,
+                "max_raw_pd_difference_Nm": 2.455657112704852
+              },
+              {
+                "substep": 6,
+                "time": 12.84119999999675,
+                "predicted_native_floor_foot_fz_N": 1.4689194591663455,
+                "actual_total_ground_fz_N": 65.91506385723974,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.347358798546967,
+                "max_raw_pd_difference_Nm": 2.3473587985469706
+              },
+              {
+                "substep": 7,
+                "time": 12.84139999999675,
+                "predicted_native_floor_foot_fz_N": 2.7681025857634904,
+                "actual_total_ground_fz_N": 65.75267011830817,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.247759896790022,
+                "max_raw_pd_difference_Nm": 2.247759896790022
+              },
+              {
+                "substep": 8,
+                "time": 12.841599999996749,
+                "predicted_native_floor_foot_fz_N": 4.833170048442894,
+                "actual_total_ground_fz_N": 370.01522790895035,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.153556770669521,
+                "max_raw_pd_difference_Nm": 2.1535567706695247
+              },
+              {
+                "substep": 9,
+                "time": 12.841799999996748,
+                "predicted_native_floor_foot_fz_N": 7.912029992446525,
+                "actual_total_ground_fz_N": 331.9974327446499,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 4.4165912587267755,
+                "max_raw_pd_difference_Nm": 4.416591258726779
+              }
+            ],
+            "limitation": "Targets almost equal, not replayed identically. Actual total ground force includes nonfoot force; it equals foot force only where nonfoot force/count are zero. Material can contribute after loading; strict rigid-contact inference uses pre-material rows only. No same-input claim after this first hold."
+          }
+        },
+        {
+          "file": "accepted-reference-gain-H-plan000725.npz",
+          "plan_id": 725,
+          "origin_s": 14.079999999993863,
+          "saved_cost": 5.158623475225256,
+          "recomputed_cost": 5.158623475225257,
+          "cost_error": 8.881784197001252e-16,
+          "accepted_predicted_base_dx_m": -0.04612187857472139,
+          "cost_terms": {
+            "Upright": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 1.9142257991871807,
+              "max_stage_cost": 2.158346084623465,
+              "max_abs_residual": 1.2623769455291391,
+              "max_stage_node": 65,
+              "fraction_of_total": 0.37107298262422495
+            },
+            "Height": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.1359714022808169,
+              "max_stage_cost": 0.20318045296470433,
+              "max_abs_residual": 0.2398681569198354,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.02635807845519866
+            },
+            "Position": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.02917659419522478,
+              "max_stage_cost": 0.043059723712831476,
+              "max_abs_residual": 0.2585148092921616,
+              "max_stage_node": 165,
+              "fraction_of_total": 0.005655887531886741
+            },
+            "Gait": {
+              "weight": 2.0,
+              "norm": 6,
+              "mean_cost": 0.4666594677055895,
+              "max_stage_cost": 1.0730356068846818,
+              "max_abs_residual": 0.3442752411254563,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.09046201374199196
+            },
+            "Balance": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.023298843971735306,
+              "max_stage_cost": 0.032580152432758545,
+              "max_abs_residual": 0.2416078078434462,
+              "max_stage_node": 47,
+              "fraction_of_total": 0.004516484694731076
+            },
+            "Effort": {
+              "weight": 0.08,
+              "norm": 0,
+              "mean_cost": 0.012103578093997924,
+              "max_stage_cost": 0.05289584565555666,
+              "max_abs_residual": 0.8518238488923453,
+              "max_stage_node": 71,
+              "fraction_of_total": 0.0023462805828195106
+            },
+            "Posture": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.17224846846049843,
+              "max_stage_cost": 0.19016249986103753,
+              "max_abs_residual": 3.126049930157619,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.03339039363654604
+            },
+            "Orientation": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0006988332020725619,
+              "max_stage_cost": 0.0027148174718217037,
+              "max_abs_residual": 0.07363602861193765,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.00013546892992457576
+            },
+            "Angmom": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 1.5113837339376963,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandLinearVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAngularVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAbsoluteHeight": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootPosition": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandSupportForce": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingIndentation": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "MaterialSupportHeight": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 2.404240476309961,
+              "max_stage_cost": 5.556378530784482,
+              "max_abs_residual": 3.333580216759297,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.4660624075117204
+            },
+            "MaterialDomainMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "TrunkClearance": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 3.893057156983947e-15,
+              "max_stage_cost": 5.561657298900334e-15,
+              "max_abs_residual": 5.2559137597718575e-09,
+              "max_stage_node": 11,
+              "fraction_of_total": 7.546697632964873e-16
+            },
+            "ImpactMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 1.1818176291947465e-08,
+              "max_stage_cost": 1.4472671015414788e-06,
+              "max_abs_residual": 0.0001282427986518103,
+              "max_stage_node": 77,
+              "fraction_of_total": 2.2909553970560744e-09
+            }
+          },
+          "gain_check": {
+            "free_stationarity_scaled_max": 1.1102230246251565e-16,
+            "active_row_expected_error_max": 0.0,
+            "active_rows": 1673,
+            "moving_pd_rows": 1038,
+            "min_eigenvalue_H": 0.00012787251904116195,
+            "max_condition_H": 62.66844239178192,
+            "max_abs_K": 590.7594030084832,
+            "regularization_type": 0
+          },
+          "first_hold": {
+            "origin": 14.079999999993863,
+            "same_initial_state_max_error": 0.0,
+            "candidate_initial_state_max_error": 0.0,
+            "actual_vs_candidate_first_target_max_rad": 1.4214745647223026e-07,
+            "first_hold_end_s": 14.081999999993858,
+            "first_hold_base_position_error_max_m": 1.564577155302449e-05,
+            "first_hold_joint_position_error_max_rad": 0.0015243368390657486,
+            "first_hold_base_velocity_error_max_mixed": 0.04749450604176886,
+            "first_hold_joint_velocity_error_max_rad_s": 1.131100854461538,
+            "first_hold_force_series": [
+              {
+                "substep": 0,
+                "time": 14.079999999993863,
+                "predicted_native_floor_foot_fz_N": 0.013069193710530037,
+                "actual_total_ground_fz_N": 132.1346821449551,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    52,
+                    23
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 8.528847388333816e-06,
+                "max_raw_pd_difference_Nm": 8.528847388333816e-06
+              },
+              {
+                "substep": 1,
+                "time": 14.080199999993862,
+                "predicted_native_floor_foot_fz_N": 0.04264294348749585,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    52,
+                    23
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.150927311632472,
+                "max_raw_pd_difference_Nm": 1.150927311632465
+              },
+              {
+                "substep": 2,
+                "time": 14.080399999993862,
+                "predicted_native_floor_foot_fz_N": 0.2695802334925396,
+                "actual_total_ground_fz_N": 176.01059557706756,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    52,
+                    23
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.9158098511108648,
+                "max_raw_pd_difference_Nm": 0.915809851110879
+              },
+              {
+                "substep": 3,
+                "time": 14.080599999993861,
+                "predicted_native_floor_foot_fz_N": 1.0594881119806265,
+                "actual_total_ground_fz_N": 166.99092939189126,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    52,
+                    23
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.106236835637624,
+                "max_raw_pd_difference_Nm": 2.106236835637638
+              },
+              {
+                "substep": 4,
+                "time": 14.080799999993861,
+                "predicted_native_floor_foot_fz_N": 2.9419335974444025,
+                "actual_total_ground_fz_N": 158.8175085637138,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    52,
+                    23
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 3.141113901152366,
+                "max_raw_pd_difference_Nm": 3.141113901152359
+              },
+              {
+                "substep": 5,
+                "time": 14.08099999999386,
+                "predicted_native_floor_foot_fz_N": 6.521477068461525,
+                "actual_total_ground_fz_N": 151.3951388712492,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    52,
+                    23
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 4.02058697503859,
+                "max_raw_pd_difference_Nm": 4.020586975038604
+              },
+              {
+                "substep": 6,
+                "time": 14.08119999999386,
+                "predicted_native_floor_foot_fz_N": 12.333678411345133,
+                "actual_total_ground_fz_N": 144.63906852409295,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    52,
+                    23
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 4.736277452652743,
+                "max_raw_pd_difference_Nm": 4.73627745265275
+              },
+              {
+                "substep": 7,
+                "time": 14.08139999999386,
+                "predicted_native_floor_foot_fz_N": 20.680288558467147,
+                "actual_total_ground_fz_N": 138.47390002849377,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    52,
+                    23
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 5.274664094649751,
+                "max_raw_pd_difference_Nm": 5.274664094649765
+              },
+              {
+                "substep": 8,
+                "time": 14.081599999993859,
+                "predicted_native_floor_foot_fz_N": 31.506696531637512,
+                "actual_total_ground_fz_N": 132.8326257513806,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    52,
+                    23
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 5.623244843383027,
+                "max_raw_pd_difference_Nm": 5.623244843383027
+              },
+              {
+                "substep": 9,
+                "time": 14.081799999993859,
+                "predicted_native_floor_foot_fz_N": 44.3833056445887,
+                "actual_total_ground_fz_N": 127.6557629772249,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 5.777537019632902,
+                "max_raw_pd_difference_Nm": 5.777537019632902
+              }
+            ],
+            "limitation": "Targets almost equal, not replayed identically. Actual total ground force includes nonfoot force; it equals foot force only where nonfoot force/count are zero. Material can contribute after loading; strict rigid-contact inference uses pre-material rows only. No same-input claim after this first hold."
+          }
+        }
+      ]
+    },
+    "w41-b": {
+      "applied_locomotion_settings": {
+        "time_s": 2.0019999999998124,
+        "declared_parameters": {
+          "Gait": "Trot",
+          "Cadence": 2.0,
+          "Duty ratio": 0.45,
+          "Amplitude": 0.005
+        },
+        "task_parameters": {
+          "Arm posture": 0.2,
+          "Walk speed": 0.0,
+          "Walk turn": 0.0,
+          "Flip dir": "Back Flip",
+          "Cadence": 2.0,
+          "Gait": "Trot",
+          "Gait switch": "Manual",
+          "Duty ratio": 0.45,
+          "Amplitude": 0.005,
+          "Biped type": "Foot Stand",
+          "Heading": 0.0
+        },
+        "cost_weights": {
+          "Height": 1.0,
+          "MaterialDomainMargin": 176.0,
+          "Orientation": 1.0,
+          "StandAbsoluteHeight": 1.0,
+          "StandFootPosition": 0.1,
+          "LandingIndentation": 0.1,
+          "StandSupportForce": 0.0,
+          "Angmom": 0.0,
+          "StandAngularVelocity": 1.0,
+          "StandLinearVelocity": 1.0,
+          "MaterialSupportHeight": 1.0,
+          "TrunkClearance": 176.0,
+          "Effort": 0.08,
+          "Posture": 0.02,
+          "LandingVelocity": 0.02,
+          "Upright": 1.0,
+          "Balance": 0.2,
+          "Position": 0.2,
+          "Gait": 2.0,
+          "ImpactMargin": 176.0,
+          "StandFootVelocity": 0.02
+        }
+      },
+      "stall_9_to_11": {
+        "start_s": 9.000000000005702,
+        "last_sample_s": 10.998000000001046,
+        "net_progress_speed_m_s": 0.009797931244729219,
+        "mean_command_x_m_s": 0.2080984690617028,
+        "all_four_contact_fraction": 0.887,
+        "max_foot_x_m": 0.5551874188184983,
+        "max_abs_yaw_rad": 0.006504179281481059,
+        "heading_targets": [
+          0.0
+        ],
+        "executed_feedback_count": 1000,
+        "projection_changed_count": 0,
+        "active_bound_count": 0,
+        "qp_not_converged_count": 0
+      },
+      "first_feedback_over_1rad": {
+        "time": 13.843999862670898,
+        "plan_id": 713,
+        "raw_K_delta_x_max_rad": 1.1782425762181445,
+        "projection_changed": true,
+        "qp_converged": true,
+        "reconstruction_max_error": 2.7755575615628914e-17,
+        "components": {
+          "base_translation": {
+            "max_abs_state_delta": 0.0001106768689879134,
+            "max_abs_action_contribution_rad": 0.18401845248833135
+          },
+          "base_rotation": {
+            "max_abs_state_delta": 0.00030437099992312817,
+            "max_abs_action_contribution_rad": 0.026583705954876996
+          },
+          "joint_position": {
+            "max_abs_state_delta": 0.0013575932355449627,
+            "max_abs_action_contribution_rad": 0.2680591771425559
+          },
+          "base_velocity": {
+            "max_abs_state_delta": 0.15211303612449367,
+            "max_abs_action_contribution_rad": 0.4253445501912582
+          },
+          "joint_velocity": {
+            "max_abs_state_delta": 0.5564707028188041,
+            "max_abs_action_contribution_rad": 0.2742366904411221
+          }
+        }
+      },
+      "plans": [
+        {
+          "file": "accepted-reference-gain-H-plan000712.npz",
+          "plan_id": 712,
+          "origin_s": 13.819999999994469,
+          "saved_cost": 0.010652627945605102,
+          "recomputed_cost": 0.010652627945605104,
+          "cost_error": 1.734723475976807e-18,
+          "accepted_predicted_base_dx_m": 0.014113627448974264,
+          "cost_terms": {
+            "Upright": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 8.604712414128213e-05,
+              "max_stage_cost": 0.00043452873736892633,
+              "max_abs_residual": 0.005894396824245391,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.008077548993606045
+            },
+            "Height": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0008632087026382448,
+              "max_stage_cost": 0.0028008430434341286,
+              "max_abs_residual": 0.015228662621145805,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.08103246513874297
+            },
+            "Position": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.0049644960112949525,
+              "max_stage_cost": 0.00941785348156507,
+              "max_abs_residual": 0.10784246102390793,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.466034863570273
+            },
+            "Gait": {
+              "weight": 2.0,
+              "norm": 6,
+              "mean_cost": 0.0007595786426200423,
+              "max_stage_cost": 0.0020417835832257855,
+              "max_abs_residual": 0.005552127150329489,
+              "max_stage_node": 66,
+              "fraction_of_total": 0.07130434353838645
+            },
+            "Balance": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.0005588376435530379,
+              "max_stage_cost": 0.0017131354387417308,
+              "max_abs_residual": 0.04226584417327506,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.052460073364675654
+            },
+            "Effort": {
+              "weight": 0.08,
+              "norm": 0,
+              "mean_cost": 0.0018539940776727592,
+              "max_stage_cost": 0.005698636430145144,
+              "max_abs_residual": 0.22086456441912844,
+              "max_stage_node": 32,
+              "fraction_of_total": 0.17404100538756273
+            },
+            "Posture": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.00023553073762822127,
+              "max_stage_cost": 0.0003539644715000305,
+              "max_abs_residual": 0.1283729438783675,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.022110106429220865
+            },
+            "Orientation": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 5.587800559118789e-06,
+              "max_stage_cost": 1.4691343992710583e-05,
+              "max_abs_residual": 0.005420560132480116,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.000524546674083752
+            },
+            "Angmom": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.13369771726784516,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandLinearVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAngularVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAbsoluteHeight": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootPosition": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandSupportForce": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 4.7084038460133015e-07,
+              "max_stage_cost": 8.328876152660105e-06,
+              "max_abs_residual": 0.028859792363529063,
+              "max_stage_node": 42,
+              "fraction_of_total": 4.419945829381774e-05
+            },
+            "LandingIndentation": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "MaterialSupportHeight": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0013169650773228701,
+              "max_stage_cost": 0.022248417379564765,
+              "max_abs_residual": 0.21094272862350466,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.12362818677678526
+            },
+            "MaterialDomainMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "TrunkClearance": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 6.534430238776653e-16,
+              "max_stage_cost": 7.009807573527407e-16,
+              "max_abs_residual": 1.4531154057806361e-09,
+              "max_stage_node": 175,
+              "fraction_of_total": 6.134101624634817e-14
+            },
+            "ImpactMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 7.911287789319833e-06,
+              "max_stage_cost": 0.0006474922901819415,
+              "max_abs_residual": 0.002712538835438144,
+              "max_stage_node": 2,
+              "fraction_of_total": 0.0007426606683080253
+            }
+          },
+          "gain_check": {
+            "free_stationarity_scaled_max": 1.1102230246251565e-16,
+            "active_row_expected_error_max": 0.0,
+            "active_rows": 0,
+            "moving_pd_rows": 0,
+            "min_eigenvalue_H": 0.0006555454565493282,
+            "max_condition_H": 2.7536244970215145,
+            "max_abs_K": 220.87992382852278,
+            "regularization_type": 0
+          },
+          "first_hold": {
+            "origin": 13.819999999994469,
+            "same_initial_state_max_error": 0.0,
+            "candidate_initial_state_max_error": 0.0,
+            "actual_vs_candidate_first_target_max_rad": 5.95364120226094e-08,
+            "first_hold_end_s": 13.821999999994464,
+            "first_hold_base_position_error_max_m": 1.4573741823398212e-05,
+            "first_hold_joint_position_error_max_rad": 0.0004398433582466499,
+            "first_hold_base_velocity_error_max_mixed": 0.021982887728171505,
+            "first_hold_joint_velocity_error_max_rad_s": 0.38574875735635594,
+            "first_hold_force_series": [
+              {
+                "substep": 0,
+                "time": 13.819999999994469,
+                "predicted_native_floor_foot_fz_N": 0.007191390618555836,
+                "actual_total_ground_fz_N": 113.94012836120417,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 3.572184724021099e-06,
+                "max_raw_pd_difference_Nm": 3.5721847222447423e-06
+              },
+              {
+                "substep": 1,
+                "time": 13.820199999994468,
+                "predicted_native_floor_foot_fz_N": 0.010657216282781289,
+                "actual_total_ground_fz_N": 114.18278975545641,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.21440256438401661,
+                "max_raw_pd_difference_Nm": 0.2144025643839953
+              },
+              {
+                "substep": 2,
+                "time": 13.820399999994468,
+                "predicted_native_floor_foot_fz_N": 0.019295560889710274,
+                "actual_total_ground_fz_N": 114.28796964103154,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.42433411140436306,
+                "max_raw_pd_difference_Nm": 0.42433411140435595
+              },
+              {
+                "substep": 3,
+                "time": 13.820599999994467,
+                "predicted_native_floor_foot_fz_N": 0.039343265068677295,
+                "actual_total_ground_fz_N": 114.37898450518502,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.6302578097102014,
+                "max_raw_pd_difference_Nm": 0.6302578097101961
+              },
+              {
+                "substep": 4,
+                "time": 13.820799999994467,
+                "predicted_native_floor_foot_fz_N": 0.08123160667486912,
+                "actual_total_ground_fz_N": 114.47370330379101,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.8322246481391318,
+                "max_raw_pd_difference_Nm": 0.8322246481391247
+              },
+              {
+                "substep": 5,
+                "time": 13.820999999994466,
+                "predicted_native_floor_foot_fz_N": 0.16041951317654612,
+                "actual_total_ground_fz_N": 114.57201106580587,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.0302079125266488,
+                "max_raw_pd_difference_Nm": 1.0302079125266363
+              },
+              {
+                "substep": 6,
+                "time": 13.821199999994466,
+                "predicted_native_floor_foot_fz_N": 0.298075855226272,
+                "actual_total_ground_fz_N": 114.67378647416109,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.2241345785535458,
+                "max_raw_pd_difference_Nm": 1.2241345785535405
+              },
+              {
+                "substep": 7,
+                "time": 13.821399999994465,
+                "predicted_native_floor_foot_fz_N": 0.5213942806918035,
+                "actual_total_ground_fz_N": 114.77890371076393,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.4138665995228763,
+                "max_raw_pd_difference_Nm": 1.4138665995228568
+              },
+              {
+                "substep": 8,
+                "time": 13.821599999994465,
+                "predicted_native_floor_foot_fz_N": 0.8643450999632214,
+                "actual_total_ground_fz_N": 114.88723402381203,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.5991855195978673,
+                "max_raw_pd_difference_Nm": 1.5991855195978726
+              },
+              {
+                "substep": 9,
+                "time": 13.821799999994465,
+                "predicted_native_floor_foot_fz_N": 1.3677205343794507,
+                "actual_total_ground_fz_N": 114.99864705070158,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  0,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.779761962943411,
+                "max_raw_pd_difference_Nm": 1.7797619629433985
+              }
+            ],
+            "limitation": "Targets almost equal, not replayed identically. Actual total ground force includes nonfoot force; it equals foot force only where nonfoot force/count are zero. Material can contribute after loading; strict rigid-contact inference uses pre-material rows only. No same-input claim after this first hold."
+          }
+        },
+        {
+          "file": "accepted-reference-gain-H-plan000713.npz",
+          "plan_id": 713,
+          "origin_s": 13.839999999994422,
+          "saved_cost": 0.012629734708875278,
+          "recomputed_cost": 0.012629734708875276,
+          "cost_error": 1.734723475976807e-18,
+          "accepted_predicted_base_dx_m": 0.017167665203323357,
+          "cost_terms": {
+            "Upright": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 6.751499327551878e-05,
+              "max_stage_cost": 0.0002872874569521053,
+              "max_abs_residual": 0.004630656957859219,
+              "max_stage_node": 141,
+              "fraction_of_total": 0.00534571745422919
+            },
+            "Height": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0007230769431962356,
+              "max_stage_cost": 0.0009810232739140279,
+              "max_abs_residual": 0.00891315143914223,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.05725195024786299
+            },
+            "Position": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.00475523190244701,
+              "max_stage_cost": 0.008972368263174086,
+              "max_abs_residual": 0.10478211830819717,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.37651083035856425
+            },
+            "Gait": {
+              "weight": 2.0,
+              "norm": 6,
+              "mean_cost": 0.0008612843909988435,
+              "max_stage_cost": 0.0021008559719973494,
+              "max_abs_residual": 0.005647301680644201,
+              "max_stage_node": 52,
+              "fraction_of_total": 0.06819497090414688
+            },
+            "Balance": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.0005569324727649947,
+              "max_stage_cost": 0.001205966487817753,
+              "max_abs_residual": 0.0352305650290371,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.04409692567600983
+            },
+            "Effort": {
+              "weight": 0.08,
+              "norm": 0,
+              "mean_cost": 0.0028377201255708985,
+              "max_stage_cost": 0.010582273678468005,
+              "max_abs_residual": 0.370177096433969,
+              "max_stage_node": 139,
+              "fraction_of_total": 0.2246856478764159
+            },
+            "Posture": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.00037510241140021277,
+              "max_stage_cost": 0.00044919326848756087,
+              "max_abs_residual": 0.14408081512341042,
+              "max_stage_node": 124,
+              "fraction_of_total": 0.029699943826739097
+            },
+            "Orientation": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 9.227298187900509e-06,
+              "max_stage_cost": 3.553232768819003e-05,
+              "max_abs_residual": 0.00842991060629169,
+              "max_stage_node": 34,
+              "fraction_of_total": 0.0007306011092549887
+            },
+            "Angmom": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.1553938630739674,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandLinearVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAngularVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAbsoluteHeight": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootPosition": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandSupportForce": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 2.93741624147765e-06,
+              "max_stage_cost": 6.534408294040348e-05,
+              "max_abs_residual": 0.08079376844422034,
+              "max_stage_node": 2,
+              "fraction_of_total": 0.00023257940955904983
+            },
+            "LandingIndentation": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "MaterialSupportHeight": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0003484180084155538,
+              "max_stage_cost": 0.001537100918472932,
+              "max_abs_residual": 0.05544548527108284,
+              "max_stage_node": 175,
+              "fraction_of_total": 0.027587120113513587
+            },
+            "MaterialDomainMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "TrunkClearance": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 6.496492997874063e-16,
+              "max_stage_cost": 6.591160655736696e-16,
+              "max_abs_residual": 1.3954115640757436e-09,
+              "max_stage_node": 141,
+              "fraction_of_total": 5.143807964001644e-14
+            },
+            "ImpactMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.0020922887463759813,
+              "max_stage_cost": 0.1454915253462834,
+              "max_abs_residual": 0.04066094917763063,
+              "max_stage_node": 46,
+              "fraction_of_total": 0.16566371302365282
+            }
+          },
+          "gain_check": {
+            "free_stationarity_scaled_max": 5.475079343003428e-16,
+            "active_row_expected_error_max": 0.0,
+            "active_rows": 0,
+            "moving_pd_rows": 0,
+            "min_eigenvalue_H": 0.0006555454554595541,
+            "max_condition_H": 1956.0192974117822,
+            "max_abs_K": 1658.5408751645332,
+            "regularization_type": 0
+          },
+          "first_hold": {
+            "origin": 13.839999999994422,
+            "same_initial_state_max_error": 0.0,
+            "candidate_initial_state_max_error": 0.0,
+            "actual_vs_candidate_first_target_max_rad": 5.151283959291958e-06,
+            "first_hold_end_s": 13.841999999994417,
+            "first_hold_base_position_error_max_m": 2.4081465583414285e-05,
+            "first_hold_joint_position_error_max_rad": 0.0006386349560894011,
+            "first_hold_base_velocity_error_max_mixed": 0.09101625153419252,
+            "first_hold_joint_velocity_error_max_rad_s": 0.43711689534181974,
+            "first_hold_force_series": [
+              {
+                "substep": 0,
+                "time": 13.839999999994422,
+                "predicted_native_floor_foot_fz_N": 0.013398257478738521,
+                "actual_total_ground_fz_N": 246.8765241078107,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.00030907703755733706,
+                "max_raw_pd_difference_Nm": 0.00030907703755778115
+              },
+              {
+                "substep": 1,
+                "time": 13.840199999994422,
+                "predicted_native_floor_foot_fz_N": 0.0233708183782942,
+                "actual_total_ground_fz_N": 228.2315297815174,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.5272674710999823,
+                "max_raw_pd_difference_Nm": 0.5272674710999801
+              },
+              {
+                "substep": 2,
+                "time": 13.840399999994421,
+                "predicted_native_floor_foot_fz_N": 0.05201936983499469,
+                "actual_total_ground_fz_N": 213.12362958015794,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 0.9530699864324035,
+                "max_raw_pd_difference_Nm": 0.9530699864324057
+              },
+              {
+                "substep": 3,
+                "time": 13.84059999999442,
+                "predicted_native_floor_foot_fz_N": 0.1168164984387983,
+                "actual_total_ground_fz_N": 202.3686011189132,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.295728082720629,
+                "max_raw_pd_difference_Nm": 1.2957280827206294
+              },
+              {
+                "substep": 4,
+                "time": 13.84079999999442,
+                "predicted_native_floor_foot_fz_N": 0.24407415398940463,
+                "actual_total_ground_fz_N": 196.55424282058266,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.5639798898416828,
+                "max_raw_pd_difference_Nm": 1.563979889841678
+              },
+              {
+                "substep": 5,
+                "time": 13.84099999999442,
+                "predicted_native_floor_foot_fz_N": 0.4702972858853473,
+                "actual_total_ground_fz_N": 191.80538536774282,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.7592399230243316,
+                "max_raw_pd_difference_Nm": 1.7592399230243365
+              },
+              {
+                "substep": 6,
+                "time": 13.84119999999442,
+                "predicted_native_floor_foot_fz_N": 0.8432485496181934,
+                "actual_total_ground_fz_N": 187.9169201377386,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.8961524585635274,
+                "max_raw_pd_difference_Nm": 1.8961524585635319
+              },
+              {
+                "substep": 7,
+                "time": 13.841399999994419,
+                "predicted_native_floor_foot_fz_N": 1.422715678551497,
+                "actual_total_ground_fz_N": 184.72353050736234,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 1.9863920045668024,
+                "max_raw_pd_difference_Nm": 1.9863920045668058
+              },
+              {
+                "substep": 8,
+                "time": 13.841599999994418,
+                "predicted_native_floor_foot_fz_N": 2.2809461523620045,
+                "actual_total_ground_fz_N": 182.09191035704967,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.039240296982186,
+                "max_raw_pd_difference_Nm": 2.0392402969821832
+              },
+              {
+                "substep": 9,
+                "time": 13.841799999994418,
+                "predicted_native_floor_foot_fz_N": 3.502681564235437,
+                "actual_total_ground_fz_N": 179.91451851890324,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  1
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    65
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.062050796668551,
+                "max_raw_pd_difference_Nm": 2.0620507966685477
+              }
+            ],
+            "limitation": "Targets almost equal, not replayed identically. Actual total ground force includes nonfoot force; it equals foot force only where nonfoot force/count are zero. Material can contribute after loading; strict rigid-contact inference uses pre-material rows only. No same-input claim after this first hold."
+          }
+        },
+        {
+          "file": "accepted-reference-gain-H-plan000737.npz",
+          "plan_id": 737,
+          "origin_s": 14.319999999993303,
+          "saved_cost": 65.5523256181734,
+          "recomputed_cost": 65.55232561817341,
+          "cost_error": 1.4210854715202004e-14,
+          "accepted_predicted_base_dx_m": 0.020165795643474427,
+          "cost_terms": {
+            "Upright": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0013976074943859633,
+              "max_stage_cost": 0.005978790107615838,
+              "max_abs_residual": 0.023190240405780993,
+              "max_stage_node": 175,
+              "fraction_of_total": 2.1320486820356185e-05
+            },
+            "Height": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0009530218269385373,
+              "max_stage_cost": 0.0074754075412059515,
+              "max_abs_residual": 0.0255717484971911,
+              "max_stage_node": 175,
+              "fraction_of_total": 1.4538337396138484e-05
+            },
+            "Position": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.005161962632934396,
+              "max_stage_cost": 0.009648470099622719,
+              "max_abs_residual": 0.10924440013251391,
+              "max_stage_node": 175,
+              "fraction_of_total": 7.874568269326691e-05
+            },
+            "Gait": {
+              "weight": 2.0,
+              "norm": 6,
+              "mean_cost": 0.0016890288499300187,
+              "max_stage_cost": 0.023755364970482466,
+              "max_abs_residual": 0.023415881931290454,
+              "max_stage_node": 175,
+              "fraction_of_total": 2.5766116365851105e-05
+            },
+            "Balance": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.0004658742926709807,
+              "max_stage_cost": 0.0022305740278033004,
+              "max_abs_residual": 0.0477695240834487,
+              "max_stage_node": 0,
+              "fraction_of_total": 7.106907165805021e-06
+            },
+            "Effort": {
+              "weight": 0.08,
+              "norm": 0,
+              "mean_cost": 0.004095176539831272,
+              "max_stage_cost": 0.05048514210226124,
+              "max_abs_residual": 0.9086,
+              "max_stage_node": 1,
+              "fraction_of_total": 6.2471872679006e-05
+            },
+            "Posture": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0008224533757861113,
+              "max_stage_cost": 0.004562808779059024,
+              "max_abs_residual": 0.3874717737375561,
+              "max_stage_node": 175,
+              "fraction_of_total": 1.2546517122469538e-05
+            },
+            "Orientation": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 1.7045815798457905e-05,
+              "max_stage_cost": 0.00012672681317300267,
+              "max_abs_residual": 0.015919722568588573,
+              "max_stage_node": 1,
+              "fraction_of_total": 2.6003373088158147e-07
+            },
+            "Angmom": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.33344300803046445,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandLinearVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAngularVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAbsoluteHeight": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootPosition": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandSupportForce": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0018819443868486733,
+              "max_stage_cost": 0.12300629824862021,
+              "max_abs_residual": 3.1371448574298615,
+              "max_stage_node": 1,
+              "fraction_of_total": 2.8709040741140878e-05
+            },
+            "LandingIndentation": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "MaterialSupportHeight": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0011649487457398215,
+              "max_stage_cost": 0.02101429188438528,
+              "max_abs_residual": 0.20500874071309877,
+              "max_stage_node": 175,
+              "fraction_of_total": 1.7771280191115853e-05
+            },
+            "MaterialDomainMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "TrunkClearance": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 6.492792517038993e-16,
+              "max_stage_cost": 6.875211256174858e-16,
+              "max_abs_residual": 1.4348383592377445e-09,
+              "max_stage_node": 175,
+              "fraction_of_total": 9.904747780968068e-18
+            },
+            "ImpactMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 65.53467655421255,
+              "max_stage_cost": 6196.253349371336,
+              "max_abs_residual": 7.4718005815830795,
+              "max_stage_node": 1,
+              "fraction_of_total": 0.9997307637250941
+            }
+          },
+          "gain_check": {
+            "free_stationarity_scaled_max": 4.78775842644316e-16,
+            "active_row_expected_error_max": 0.0,
+            "active_rows": 19,
+            "moving_pd_rows": 19,
+            "min_eigenvalue_H": 0.0006555454592884909,
+            "max_condition_H": 2734453.7168908436,
+            "max_abs_K": 102359.64560380926,
+            "regularization_type": 0
+          },
+          "first_hold": {
+            "origin": 14.319999999993303,
+            "same_initial_state_max_error": 0.0,
+            "candidate_initial_state_max_error": 0.0,
+            "actual_vs_candidate_first_target_max_rad": 5.792463153575511e-08,
+            "first_hold_end_s": 14.321999999993299,
+            "first_hold_base_position_error_max_m": 3.861343916455873e-05,
+            "first_hold_joint_position_error_max_rad": 0.0010676345940308085,
+            "first_hold_base_velocity_error_max_mixed": 0.15649123708836665,
+            "first_hold_joint_velocity_error_max_rad_s": 1.3958883224562726,
+            "first_hold_force_series": [
+              {
+                "substep": 0,
+                "time": 14.319999999993303,
+                "predicted_native_floor_foot_fz_N": 0.10127594154486544,
+                "actual_total_ground_fz_N": 820.3375529673206,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  1,
+                  1,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 3.4754778965861988e-06,
+                "max_raw_pd_difference_Nm": 3.475477893033485e-06
+              },
+              {
+                "substep": 1,
+                "time": 14.320199999993303,
+                "predicted_native_floor_foot_fz_N": 0.18506079814253812,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.372065501477074,
+                "max_raw_pd_difference_Nm": 2.372065501477076
+              },
+              {
+                "substep": 2,
+                "time": 14.320399999993302,
+                "predicted_native_floor_foot_fz_N": 0.40139335752205135,
+                "actual_total_ground_fz_N": 120.02264969921012,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  1,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.316201888871376,
+                "max_raw_pd_difference_Nm": 2.3162018888713742
+              },
+              {
+                "substep": 3,
+                "time": 14.320599999993302,
+                "predicted_native_floor_foot_fz_N": 0.8697116348281677,
+                "actual_total_ground_fz_N": 122.25910182148884,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  1,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.2711152769641103,
+                "max_raw_pd_difference_Nm": 2.2711152769641103
+              },
+              {
+                "substep": 4,
+                "time": 14.320799999993302,
+                "predicted_native_floor_foot_fz_N": 1.7608318019282407,
+                "actual_total_ground_fz_N": 122.84862719070189,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  1,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.2249820837420486,
+                "max_raw_pd_difference_Nm": 2.224982083742054
+              },
+              {
+                "substep": 5,
+                "time": 14.320999999993301,
+                "predicted_native_floor_foot_fz_N": 8.116539359695839,
+                "actual_total_ground_fz_N": 644.1100259515656,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  1,
+                  1,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.177319264773061,
+                "max_raw_pd_difference_Nm": 2.1773192647730575
+              },
+              {
+                "substep": 6,
+                "time": 14.3211999999933,
+                "predicted_native_floor_foot_fz_N": 29.953190868456407,
+                "actual_total_ground_fz_N": 578.0332098266557,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  1,
+                  1,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 2.5509564644896585,
+                "max_raw_pd_difference_Nm": 2.5509564644896665
+              },
+              {
+                "substep": 7,
+                "time": 14.3213999999933,
+                "predicted_native_floor_foot_fz_N": 65.179535987108,
+                "actual_total_ground_fz_N": 520.1933734001672,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  1,
+                  1,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 4.534858780453433,
+                "max_raw_pd_difference_Nm": 4.534858780453445
+              },
+              {
+                "substep": 8,
+                "time": 14.3215999999933,
+                "predicted_native_floor_foot_fz_N": 110.17805032297788,
+                "actual_total_ground_fz_N": 469.5460416257329,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  1,
+                  1,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 5.947540087913012,
+                "max_raw_pd_difference_Nm": 5.947540087913001
+              },
+              {
+                "substep": 9,
+                "time": 14.3217999999933,
+                "predicted_native_floor_foot_fz_N": 197.6837726215295,
+                "actual_total_ground_fz_N": 426.5432044636728,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  1,
+                  1,
+                  0
+                ],
+                "predicted_pairs": [
+                  [
+                    0,
+                    26
+                  ],
+                  [
+                    0,
+                    39
+                  ],
+                  [
+                    0,
+                    52
+                  ]
+                ],
+                "max_actuator_force_difference_Nm": 6.777186631904485,
+                "max_raw_pd_difference_Nm": 6.777186631904477
+              }
+            ],
+            "limitation": "Targets almost equal, not replayed identically. Actual total ground force includes nonfoot force; it equals foot force only where nonfoot force/count are zero. Material can contribute after loading; strict rigid-contact inference uses pre-material rows only. No same-input claim after this first hold."
+          }
+        },
+        {
+          "file": "accepted-reference-gain-H-plan001440.npz",
+          "plan_id": 1440,
+          "origin_s": 28.379999999960535,
+          "saved_cost": 4.372909639363969,
+          "recomputed_cost": 4.372909639363972,
+          "cost_error": 3.552713678800501e-15,
+          "accepted_predicted_base_dx_m": -0.01902569630117812,
+          "cost_terms": {
+            "Upright": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 2.031329697245511,
+              "max_stage_cost": 2.1999450572637613,
+              "max_abs_residual": 1.288414677145603,
+              "max_stage_node": 102,
+              "fraction_of_total": 0.4645258797391849
+            },
+            "Height": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.1125548745513894,
+              "max_stage_cost": 0.25720254419404087,
+              "max_abs_residual": 0.2944984758456498,
+              "max_stage_node": 27,
+              "fraction_of_total": 0.025739126539042825
+            },
+            "Position": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.09754933404056407,
+              "max_stage_cost": 0.11142077758050753,
+              "max_abs_residual": 0.6370557384422286,
+              "max_stage_node": 139,
+              "fraction_of_total": 0.02230764915937123
+            },
+            "Gait": {
+              "weight": 2.0,
+              "norm": 6,
+              "mean_cost": 0.5347483467889258,
+              "max_stage_cost": 1.251681130788943,
+              "max_abs_residual": 0.3886058930088135,
+              "max_stage_node": 26,
+              "fraction_of_total": 0.12228662169811116
+            },
+            "Balance": {
+              "weight": 0.2,
+              "norm": 2,
+              "mean_cost": 0.028669075220164184,
+              "max_stage_cost": 0.08521058591306618,
+              "max_abs_residual": 0.51636994501068,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.006556063944722632
+            },
+            "Effort": {
+              "weight": 0.08,
+              "norm": 0,
+              "mean_cost": 0.034300908802720034,
+              "max_stage_cost": 0.10346418044974925,
+              "max_abs_residual": 0.9086,
+              "max_stage_node": 34,
+              "fraction_of_total": 0.007843955542541008
+            },
+            "Posture": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.19874374196936115,
+              "max_stage_cost": 0.30994753502403666,
+              "max_abs_residual": 3.194499415250774,
+              "max_stage_node": 146,
+              "fraction_of_total": 0.04544885633590816
+            },
+            "Orientation": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.002794606355925352,
+              "max_stage_cost": 0.021424841665180588,
+              "max_abs_residual": 0.20588992080717092,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0006390725138175551
+            },
+            "Angmom": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 1.6068724790370776,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandLinearVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAngularVelocity": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandAbsoluteHeight": {
+              "weight": 1.0,
+              "norm": 6,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootPosition": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandFootVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "StandSupportForce": {
+              "weight": 0.0,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingVelocity": {
+              "weight": 0.02,
+              "norm": 0,
+              "mean_cost": 0.0,
+              "max_stage_cost": 0.0,
+              "max_abs_residual": 0.0,
+              "max_stage_node": 0,
+              "fraction_of_total": 0.0
+            },
+            "LandingIndentation": {
+              "weight": 0.1,
+              "norm": 0,
+              "mean_cost": 4.343228247481573e-21,
+              "max_stage_cost": 3.9264816992287634e-19,
+              "max_abs_residual": 2.8023139364563576e-09,
+              "max_stage_node": 0,
+              "fraction_of_total": 9.93212438780986e-22
+            },
+            "MaterialSupportHeight": {
+              "weight": 1.0,
+              "norm": 0,
+              "mean_cost": 1.3322190543894097,
+              "max_stage_cost": 3.851023187724674,
+              "max_abs_residual": 2.7752560918678024,
+              "max_stage_node": 27,
+              "fraction_of_total": 0.30465277452730016
+            },
+            "MaterialDomainMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 1.885859382237702e-16,
+              "max_stage_cost": 1.7046030607719407e-14,
+              "max_abs_residual": 1.3917790531170482e-08,
+              "max_stage_node": 0,
+              "fraction_of_total": 4.312596275170221e-17
+            },
+            "TrunkClearance": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 1.4490656096931796e-15,
+              "max_stage_cost": 2.4680007823739966e-15,
+              "max_abs_residual": 3.1822877666343174e-09,
+              "max_stage_node": 27,
+              "fraction_of_total": 3.3137332558830144e-16
+            },
+            "ImpactMargin": {
+              "weight": 176.0,
+              "norm": 0,
+              "mean_cost": 3.3003864343131275e-16,
+              "max_stage_cost": 1.72997119000335e-14,
+              "max_abs_residual": 1.3917790531170482e-08,
+              "max_stage_node": 0,
+              "fraction_of_total": 7.54734651867437e-17
+            }
+          },
+          "gain_check": {
+            "free_stationarity_scaled_max": 8.326672684688674e-17,
+            "active_row_expected_error_max": 0.0,
+            "active_rows": 1645,
+            "moving_pd_rows": 710,
+            "min_eigenvalue_H": 1.9999999999995065e-06,
+            "max_condition_H": 2698.1023511162957,
+            "max_abs_K": 459.7529615091648,
+            "regularization_type": 0
+          },
+          "first_hold": {
+            "origin": 28.379999999960535,
+            "same_initial_state_max_error": 0.0,
+            "candidate_initial_state_max_error": 0.0,
+            "actual_vs_candidate_first_target_max_rad": 1.0843806208526985e-07,
+            "first_hold_end_s": 28.38199999996053,
+            "first_hold_base_position_error_max_m": 1.680933825187747e-07,
+            "first_hold_joint_position_error_max_rad": 5.321681912651144e-05,
+            "first_hold_base_velocity_error_max_mixed": 0.01137630003288681,
+            "first_hold_joint_velocity_error_max_rad_s": 0.044694104731911155,
+            "first_hold_force_series": [
+              {
+                "substep": 0,
+                "time": 28.379999999960535,
+                "predicted_native_floor_foot_fz_N": 0,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [],
+                "max_actuator_force_difference_Nm": 6.506283739327046e-06,
+                "max_raw_pd_difference_Nm": 6.506283725116191e-06
+              },
+              {
+                "substep": 1,
+                "time": 28.380199999960535,
+                "predicted_native_floor_foot_fz_N": 0,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [],
+                "max_actuator_force_difference_Nm": 0.028793932378469833,
+                "max_raw_pd_difference_Nm": 0.028793932378473386
+              },
+              {
+                "substep": 2,
+                "time": 28.380399999960535,
+                "predicted_native_floor_foot_fz_N": 0,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [],
+                "max_actuator_force_difference_Nm": 0.055083327709340324,
+                "max_raw_pd_difference_Nm": 0.055083327709368746
+              },
+              {
+                "substep": 3,
+                "time": 28.380599999960534,
+                "predicted_native_floor_foot_fz_N": 0,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [],
+                "max_actuator_force_difference_Nm": 0.08063768680723626,
+                "max_raw_pd_difference_Nm": 0.08063768680724337
+              },
+              {
+                "substep": 4,
+                "time": 28.380799999960534,
+                "predicted_native_floor_foot_fz_N": 0,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [],
+                "max_actuator_force_difference_Nm": 0.10493253635658562,
+                "max_raw_pd_difference_Nm": 0.10493253635659983
+              },
+              {
+                "substep": 5,
+                "time": 28.380999999960533,
+                "predicted_native_floor_foot_fz_N": 0,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [],
+                "max_actuator_force_difference_Nm": 0.1280143745036071,
+                "max_raw_pd_difference_Nm": 0.1280143745036213
+              },
+              {
+                "substep": 6,
+                "time": 28.381199999960533,
+                "predicted_native_floor_foot_fz_N": 0,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [],
+                "max_actuator_force_difference_Nm": 0.14992797032334693,
+                "max_raw_pd_difference_Nm": 0.1499279703233256
+              },
+              {
+                "substep": 7,
+                "time": 28.381399999960532,
+                "predicted_native_floor_foot_fz_N": 0,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [],
+                "max_actuator_force_difference_Nm": 0.17071644345631398,
+                "max_raw_pd_difference_Nm": 0.1707164434563211
+              },
+              {
+                "substep": 8,
+                "time": 28.38159999996053,
+                "predicted_native_floor_foot_fz_N": 0,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [],
+                "max_actuator_force_difference_Nm": 0.19042133880289214,
+                "max_raw_pd_difference_Nm": 0.19042133880289214
+              },
+              {
+                "substep": 9,
+                "time": 28.38179999996053,
+                "predicted_native_floor_foot_fz_N": 0,
+                "actual_total_ground_fz_N": 0.0,
+                "actual_nonfoot_fz_N": 0.0,
+                "actual_nonfoot_contact_count": 0,
+                "actual_contacts": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "predicted_pairs": [],
+                "max_actuator_force_difference_Nm": 0.2090826966470729,
+                "max_raw_pd_difference_Nm": 0.20908269664708
+              }
+            ],
+            "limitation": "Targets almost equal, not replayed identically. Actual total ground force includes nonfoot force; it equals foot force only where nonfoot force/count are zero. Material can contribute after loading; strict rigid-contact inference uses pre-material rows only. No same-input claim after this first hold."
+          }
+        }
+      ]
+    }
+  }
+}
