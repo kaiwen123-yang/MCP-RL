@@ -1,0 +1,74 @@
+{
+  "schema": "r29_event_ring_v1",
+  "controller": "S5-r31",
+  "plans": [
+    {
+      "plan_id": 216,
+      "origin": 3.8999999999996033,
+      "file": "accepted-reference-gain-H-plan000216.npz"
+    },
+    {
+      "plan_id": 217,
+      "origin": 3.919999999999601,
+      "file": "accepted-reference-gain-H-plan000217.npz"
+    },
+    {
+      "plan_id": 218,
+      "origin": 3.939999999999599,
+      "file": "accepted-reference-gain-H-plan000218.npz"
+    },
+    {
+      "plan_id": 219,
+      "origin": 3.9599999999995967,
+      "file": "accepted-reference-gain-H-plan000219.npz"
+    },
+    {
+      "plan_id": 220,
+      "origin": 3.9799999999995945,
+      "file": "accepted-reference-gain-H-plan000220.npz"
+    }
+  ],
+  "events": [
+    {
+      "time_s": 3.9999999999995923,
+      "kind": "terminal",
+      "start_s": 3.8999999999995922,
+      "end_requested_s": 4.1999999999995925,
+      "reason": "training_checkpoint_complete",
+      "end_available_s": 3.9999999999995923
+    }
+  ],
+  "pre_window_s": 0.1,
+  "post_window_s": 0.2,
+  "terminal_s": 3.9999999999995923,
+  "header_fields": [
+    "schema",
+    "plan_id",
+    "origin",
+    "horizon",
+    "ns",
+    "nu",
+    "nx",
+    "nr",
+    "regularization_used",
+    "regularization_type",
+    "nominal_feedback_scale",
+    "action_step_alpha",
+    "installed_feedback_scaling",
+    "representation",
+    "nuserdata",
+    "accepted_cost"
+  ],
+  "plan_coverage": "Only listed plans have full accepted/reference/K/H; no old reconstruction.",
+  "raw_binary": "r29-current-plan.bin is a current transport buffer, not a history.",
+  "substep_clock": "Each encoded row: node,substep,before,after,ncontact; pre-state,post-state,rawPD,actuator_force,qfrc_passive,residual; then ncontact*(geom1,geom2,6 contact-frame forces).",
+  "r31_schema": {
+    "model_roles": "native geom/pair forward; independent smooth derivatives at native substeps",
+    "native_soft_substeps": "(T-1,10,1+3*ns+nu): time,native_pre,held_u,native_post,soft_post",
+    "native_risk_peaks": "(T-1,nrisk,2): native maximum,earliest active substep",
+    "first_soft_AB": "(10,nx*nx+nx*nu): row-major one-step A_s then B_s at native states",
+    "held_proxy_A": "(T-1,nx,nx)",
+    "held_proxy_B": "(T-1,nx,nu)",
+    "scope": "Approximate local model, no plant Jacobian or stability claim"
+  }
+}
