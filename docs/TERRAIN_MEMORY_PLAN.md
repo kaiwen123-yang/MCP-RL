@@ -85,6 +85,6 @@ W42 曾在 t=0 重复 startup 中将 λ/rate 累积到 λ=1e6，并让全部后�
 ## 历史证据入口
 
 - 当前任务：W44_MOTION_OPTIMIZATION_JOINT / S5-r33；后台按各自样本/更新目标结束，无固定墙钟完成期限；原物理时长与技术失败停止保留。
-- w44-a：job-20261110T143358Z-w44-a，launched；新增0/0，累计14225/55，tail=0、excluded=145；评价=pending_training，紧凑Git=pending_computation。
-- w44-b：job-20261110T143400Z-w44-b，launched；新增0/0，累计14225/55，tail=0、excluded=145；评价=pending_training，紧凑Git=pending_computation。
-- 任务能力：w44-a尚无最终任务汇总；w44-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
+- w44-a：job-20261110T143358Z-w44-a，launched；新增333/1，累计14558/56，tail=77、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- w44-b：job-20261110T143400Z-w44-b，training_ended；新增301/1，累计14526/56，tail=45、excluded=145；评价=skipped_due_to_startup_regression，紧凑Git=published。
+- 任务能力：w44-a尚无最终任务汇总；w44-b合规去程/返程/整圈=0/0/0，材料加载回合=4。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
