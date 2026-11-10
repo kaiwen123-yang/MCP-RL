@@ -6,12 +6,14 @@
 
 ## 当前交接
 
-- 当前任务：W43 / S5-r32 已由提交865af7a启动，两CPU与G5均无固定墙钟期限；每CPU目标14225/55。
-- w43-a：job-20261110T035658Z-w43-a，训练PID728826，native PID728872，10workers；活动ep406，新增5，live累计13718/53、tail5；持久断点13713/53、tail0。观测时间和来源见index.w43_launch_observation。
-- w43-b：job-20261110T035700Z-w43-b，训练PID728865，native PID729645，10workers；活动ep394，新增5，live累计13718/53、tail5；持久断点13713/53、tail0。观测时间和来源见index.w43_launch_observation。
-- 任务能力：当前仅启动后的初始站立采样；update55及本流固定E30尚未到达，材料通行/往返/记忆收益没有新资格结论。
-- 交付：实现865af7a与启动身份已推main；r32新证据/产物包413151713字节已发布，size及SHA256与远端digest一致，见w43-optimizer-inputs/delivery.json；两流训练/评价原件与G5本invocation新增产物完成后自动发布，尚未标published。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL-w42，tmux s1-w43-a/b；GPU树/root/autodl-tmp/MCP-RL，tmux s1-w41-gpu，invocation g5-20261110T033858Z。已有作业勿再次new-phase。
+本次实际核对（2026-11-10T15:57:05+08:00）：W43-A/B仍运行，分别新增348 / 342条，各完成1次新更新到update54。四个已完成60秒采集回合均无技术中断，λ重置有效，但去程段约后退28mm、四足全程接触、材料加载和合法去返/往返全零。G5同一invocation仍在独立E30，最近检查物理5.64秒，303次planner均返回policy_installed，当前日志未见新技术异常。最新数字和源路径见index.w43_progress_observation；继续现有作业至原目标，末次评价尚未开始。
+
+- 当前任务：W43_OPTIMIZER_LIFECYCLE_JOINT / S5-r32；后台按各自样本/更新目标结束，无固定墙钟完成期限；原物理时长与技术失败停止保留。
+- w43-a：job-20261110T035658Z-w43-a，launched；新增348/1，累计14061/54，tail=92、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- w43-b：job-20261110T035700Z-w43-b，launched；新增342/1，累计14055/54，tail=86、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- 任务能力：w43-a尚无最终任务汇总；w43-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
+- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL-w42；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 
 | 工作流 | 最新完成状态 | 下一起点 |
 |---|---|---|
