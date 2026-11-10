@@ -1,0 +1,24 @@
+{
+  "status": "technical_interruption",
+  "dtype": "float32",
+  "deadline_unix_s": null,
+  "versions": {
+    "mujoco": "4.0.0",
+    "warp": "1.19.0"
+  },
+  "predictor_only": true,
+  "original_cpu_plant_unchanged": true,
+  "first_error": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_w41_warp_backend.py\", line 117, in main\n    t=time.perf_counter();states,ab=pred.request(row,True,eps);wall=time.perf_counter()-t\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/scripts/s1_go2_w41_warp_backend.py\", line 83, in request\n    mjw.step(self.wm,self.d);wp.synchronize();self.load(row,fd)\n    ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/warp_util.py\", line 123, in wrapper\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/forward.py\", line 3552, in step\n    forward(m, d)\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/warp_util.py\", line 123, in wrapper\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/forward.py\", line 3540, in forward\n    _forward(m, d)\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/forward.py\", line 3526, in _forward\n    solver.solve(m, d)\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/warp_util.py\", line 123, in wrapper\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/solver.py\", line 4626, in solve\n    _solve(m, d, ctx)\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/solver.py\", line 4692, in _solve\n    wp.capture_while(nsolving, while_body=_solver_iteration, m=m, d=d, ctx=ctx, nsolving=nsolving, compact=compact)\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/warp/_src/context.py\", line 14212, in capture_while\n    while_body(**kwargs)\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/warp_util.py\", line 123, in wrapper\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/solver.py\", line 4459, in _solver_iteration\n    _linesearch(m, d, ctx)\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/warp_util.py\", line 123, in wrapper\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/solver.py\", line 1720, in _linesearch\n    _linesearch_iterative(m, d, ctx, fuse_jv)\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/solver.py\", line 1512, in _linesearch_iterative\n    wp.launch_tiled(\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/warp/_src/context.py\", line 12420, in launch_tiled\n    return launch(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/warp/_src/context.py\", line 12087, in launch\n    pack_args(fwd_args, params, adjoint=False)\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/warp/_src/context.py\", line 12082, in pack_args\n    params.append(pack_arg(kernel, arg_type, arg_name, a, device, adjoint))\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/warp/_src/context.py\", line 11005, in pack_arg\n    raise RuntimeError(\nRuntimeError: Error launching kernel '_linesearch_iterative_kernel__locals__kernel', argument 'opt_tolerance' expects an array of type array(ndim=1, dtype=float32), but passed value has type float.\n",
+  "stages": [],
+  "fd_steps": [
+    0.0003,
+    0.001,
+    0.003
+  ],
+  "selected_fd_step": 0.001,
+  "solver": {
+    "iterations": 100,
+    "tolerance": 1e-08,
+    "native_tolerance_retained": true
+  }
+}
