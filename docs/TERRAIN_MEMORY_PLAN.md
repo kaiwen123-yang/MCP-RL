@@ -7,10 +7,10 @@
 ## 当前交接
 
 - 当前任务：W43 / S5-r32 已由提交865af7a启动，两CPU与G5均无固定墙钟期限；每CPU目标14225/55。
-- w43-a：job-20261110T035658Z-w43-a，训练PID728826，native PID728872，10workers；活动ep406，已记录新增2、累计13715/53、live tail2。最近持久断点仍13713/53、tail0；实时值与观测时刻见index.w43_launch_observation。
-- w43-b：job-20261110T035700Z-w43-b，训练PID728865，native PID729645，10workers；活动ep394，已记录新增2、累计13715/53、live tail2。最近持久断点仍13713/53、tail0；实时值与观测时刻见index.w43_launch_observation。
+- w43-a：job-20261110T035658Z-w43-a，训练PID728826，native PID728872，10workers；活动ep406，新增5，live累计13718/53、tail5；持久断点13713/53、tail0。观测时间和来源见index.w43_launch_observation。
+- w43-b：job-20261110T035700Z-w43-b，训练PID728865，native PID729645，10workers；活动ep394，新增5，live累计13718/53、tail5；持久断点13713/53、tail0。观测时间和来源见index.w43_launch_observation。
 - 任务能力：当前仅启动后的初始站立采样；update55及本流固定E30尚未到达，材料通行/往返/记忆收益没有新资格结论。
-- 交付：实现/spec/真实父点已推main；r32保存输入与最终binary新包正在Release上传，queued与published见w43-optimizer-inputs/delivery.json；两流完成后自动compact→原件发布。
+- 交付：实现865af7a与启动身份已推main；r32新证据/产物包413151713字节已发布，size及SHA256与远端digest一致，见w43-optimizer-inputs/delivery.json；两流训练/评价原件与G5本invocation新增产物完成后自动发布，尚未标published。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL-w42，tmux s1-w43-a/b；GPU树/root/autodl-tmp/MCP-RL，tmux s1-w41-gpu，invocation g5-20261110T033858Z。已有作业勿再次new-phase。
 
 | 工作流 | 最新完成状态 | 下一起点 |
