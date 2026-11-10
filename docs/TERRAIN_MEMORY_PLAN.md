@@ -1,10 +1,17 @@
 # 地面材料记忆主计划：W42驻留审查与W43优化器修正
 
-**当前两CPU和原GPU任务均已结束。下一步先修正优化器数值状态，再做双流完整联合实验，同时从GPU失败的G5阶段续接。** 本轮审查没有登录D57或启动新物理；GPU接口修复已入仓库并通过限定范围检查，CPU S5-r32尚未实现/构建/运行。
+**2026-11-10 已在 D57 实现 S5-r32，正在完成保存输入核验后启动 W43 双流；旧 W42 结果保留。** GPU 已以 g5-20261110T033858Z 从 G5 续接，6 个 fixture × 3 个 FD 尺度完成，独立 E30 正在初始化规划，尚无物理任务通过结论。
 
 [W42完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/README.md) · [CPU原件报告](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/cpu-report.md) · [GPU报告](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/gpu-review.md) · [W43实施计划](S1_W43_STABILITY_PLAN.md) · [完整启动提示词](S1_W43_START_PROMPT.md) · [执行规则](../AGENTS.md)
 
 ## 当前交接
+
+- 当前任务：W43_OPTIMIZER_LIFECYCLE_JOINT / S5-r32；后台无固定墙钟期限。
+- w43-a：自身 W42 ep405，13713/53、tail0、excluded145；本轮目标14225/55，待启动。
+- w43-b：自身 W42 ep393，13713/53、tail0、excluded145；本轮目标14225/55，待启动。
+- 任务能力：r32 尚无新联合训练或末次评价成绩。
+- 交付：实现、正常构建和保存输入证据完成后先推 Git；新原件后台 Release。
+- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL-w42；GPU 独立 /root/autodl-tmp/MCP-RL。
 
 | 工作流 | 最新完成状态 | 下一起点 |
 |---|---|---|
@@ -51,4 +58,4 @@ W41有127/130训练回合物理失败；W42变成全程驻留，两者不能混�
 - [W42原计划](S1_W42_CPU_PLAN.md)、[原启动词](S1_W42_START_PROMPT.md)、[W41 GPU原计划](S1_W41_GPU_PLAN.md)仅作历史，不再视为当前启动指令。
 - [原始科学路线](https://github.com/kaiwen123-yang/MCP-RL/blob/4d0af25c7bcea620c7e8c9a4f5b103c4956a3fda/docs/TERRAIN_MEMORY_PLAN.md)。
 
-当前仍未完成r32干预、CUDA修复实跑、稳定材料往返或记忆因果实验。实现与真实成绩分别报告，后续凭新结果推进。
+当前已完成r32正常构建及保存输入干预，CUDA的6fixture/18FD请求已运行。W43联合训练与GPU固定评价依实际job/index推进；稳定材料往返和记忆因果收益仍未建立。

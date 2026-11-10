@@ -135,7 +135,7 @@ def main():
         episode_output=large/name
         diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(episode_output/"planner-records.jsonl"),
                               MJPC_R27_ACTION_RECORD=str(episode_output/"feedback-actions.jsonl"))
-        if build in ('S5-r29','S5-r30','S5-r31'):
+        if build in ('S5-r29','S5-r30','S5-r31','S5-r32'):
             diagnostic_env.update(MJPC_R29_SNAPSHOT=str(episode_output/"r29-current-plan.bin"),
                                   MJPC_R29_CALL_RECORD=str(episode_output/"planner-calls.jsonl"))
         with (output/f"agent-server-ep{stream.episode:05d}.log").open("w") as log, Agent(task_id="Quadruped Flat",

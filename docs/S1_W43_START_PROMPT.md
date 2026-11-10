@@ -1,6 +1,6 @@
 # W43 完整启动提示词
 
-2026-11-10。以下整段交给能连接 D57 的 Codex，对应 [W43实施计划](S1_W43_STABILITY_PLAN.md)。**W42及原GPU任务均已结束；GPU修复已入仓库，CPU S5-r32尚待实现、构建和运行。** 当前根r12仍是真实W42，不能直接用它启动W43。此入口替代旧启动词、后台固定墙钟期限和电脑归档指令，历史结果不改。
+2026-11-10。下文保留本轮原始启动授权；实际实施/运行状态见 [W43计划](S1_W43_STABILITY_PLAN.md) 和 [运行索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)。S5-r32现已实现/正常构建，真实W43父点和512/2目标已声明；已有W43作业只能按其冻结job普通resume，不能重复new-phase。GPU本轮invocation为g5-20261110T033858Z。
 
 ```text
 

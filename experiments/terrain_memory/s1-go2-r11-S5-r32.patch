@@ -1,0 +1,511 @@
+--- a/mjpc/grpc/agent_service.cc
++++ b/mjpc/grpc/agent_service.cc
+@@ -14,6 +14,7 @@
+ 
+ #include "mjpc/grpc/agent_service.h"
+ #include "mjpc/r31_model_roles.h"
++#include "mjpc/planners/ilqg/planner.h"
+ 
+ #include <string_view>
+ #include <vector>
+@@ -221,8 +222,13 @@
+     return {grpc::StatusCode::FAILED_PRECONDITION, "Init not called."};
+   }
+   agent_.plan_enabled = true;
++
+   agent_.PlanIteration(&thread_pool_);
+-
++  if(const auto* planner=dynamic_cast<const mjpc::iLQGPlanner*>(&agent_.ActivePlanner());
++      planner && !planner->R32Deployable()) {
++    return {grpc::StatusCode::FAILED_PRECONDITION,
++            std::string("r32 no deployable current policy: ")+planner->r29_return_reason};
++  }
+   return grpc::Status::OK;
+ }
+ 
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -22,6 +22,9 @@
+ #include <iostream>
+ #include <cstdlib>
+ #include <fstream>
++#include <sstream>
++#include <cmath>
++#include "mjpc/tasks/quadruped/quadruped.h"
+ #include <shared_mutex>
+ 
+ #include <mujoco/mujoco.h>
+@@ -135,6 +138,7 @@
+   }
+ 
+   r29_call_id=0;r29_policy_origin=0;
++  r32 = R32Problem{};
+   // values
+   action_step = 0.0;
+   feedback_scaling = 0.0;
+@@ -154,6 +158,125 @@
+ 
+ void iLQGPlanner::UpdateNumTrajectoriesFromGUI() {
+   num_trajectory_ = mju_min(num_rollouts_gui_, kMaxTrajectory);
++}
++
++
++// An exact snapshot comparison, not an optimization-call counter. The model
++// and derivative roles are immutable for this allocated planner. Reset clears
++// the identity; all varying task/gait/reference fields are represented here.
++void iLQGPlanner::R32BeginProblem(int horizon) {
++  r32.lambda_before=backward_pass.regularization;
++  r32.rate_before=backward_pass.regularization_rate;
++  r32.attempts.clear();
++  r32.deployable=false;r32.incumbent_valid=false;r32.deployment="none";
++  std::vector<double> physical={time};
++  physical.insert(physical.end(),state.begin(),state.end());
++  std::vector<double> goal={double(horizon),double(task->mode),task->risk,
++    double(settings.regularization_type),double(settings.action_limits),
++    double(settings.nominal_feedback_scaling),double(derivative_skip_),
++    double(policy.representation)};
++  auto append=[&goal](const std::vector<double>& v){goal.insert(goal.end(),v.begin(),v.end());};
++  append(mocap);append(userdata);append(task->parameters);append(task->weight);append(task->norm_parameter);
++  for(auto n:task->norm)goal.push_back(double(n));
++  if(const auto* quadruped=dynamic_cast<const QuadrupedFlat*>(task)) {
++    auto v=quadruped->R32PlanningState();
++    goal.insert(goal.end(),v.begin(),v.end());
++  }
++  const bool state_changed=physical!=r32.physical,goal_changed=goal!=r32.goal;
++  r32.reset_reason="same_problem";
++  if(!r32.epoch || state_changed || goal_changed) {
++    r32.reset_reason=!r32.epoch ? "reset_or_initialize" :
++      (state_changed ? (goal_changed ? "physical_and_reference_changed" : "physical_state_or_time_changed")
++                     : "reference_goal_weights_or_gait_changed");
++    ++r32.epoch;r32.iterations=0;r32.stopped=false;r32.stop_reason="none";
++    backward_pass.regularization=1.;backward_pass.regularization_rate=1.;
++    r32.physical=std::move(physical);r32.goal=std::move(goal);
++  }
++}
++
++void iLQGPlanner::R32ReuseIncumbent(const char* reason) {
++  r29_return_reason=reason;
++  r32.deployable=r32.incumbent_valid && r32.scored_epoch==r32.epoch &&
++    r32.scored_policy==policy.record_plan_id;
++  r32.deployment=r32.deployable ? "reused_current_native_scored_incumbent" : "no_deployable_candidate";
++  // A failed current problem cannot silently expose the old policy as valid.
++  // Its trajectory remains available for diagnosis; the service returns error.
++}
++
++void iLQGPlanner::R32RecordAttempt(const char* status, int horizon, int failed_node,
++    const Trajectory& nominal, double lambda_used, double rate_used,
++    double native_decrease) {
++  const bool valid=candidate_policy[0].metric_valid;
++  auto& p=candidate_policy[0];
++  std::vector<double> station(horizon*dim_action,0.);
++  double qu_max=0,k_max=0,K_max=0,station_max=0,nominal_bound_violation=0;
++  if(valid) for(int t=0;t<horizon-1;++t) for(int a=0;a<dim_action;++a) {
++    const int j=model->actuator_trnid[2*a],qi=model->jnt_qposadr[j],vi=model->jnt_dofadr[j];
++    const double q=nominal.states[t*dim_state+qi],v=nominal.states[t*dim_state+model->nq+vi];
++    const double lo=model->actuator_ctrlrange[2*a],hi=model->actuator_ctrlrange[2*a+1];
++    const double pl=q+(5*v+model->actuator_forcerange[2*a])/60.;
++    const double ph=q+(5*v+model->actuator_forcerange[2*a+1])/60.;
++    double lower=std::max(lo,pl),upper=std::min(hi,ph);
++    if(lower>upper)lower=upper=(pl>hi?hi:lo); // original instantaneous restoration interval
++    const int i=t*dim_action+a;
++    const double u=nominal.actions[i],g=p.base_Qu[i];
++    // Unit-step projected gradient mapping at the nominal, independent of H/lambda.
++    station[i]=u-std::clamp(u-g,lower,upper);
++    qu_max=std::max(qu_max,std::abs(g));
++    k_max=std::max(k_max,std::abs(p.action_improvement[i]));
++    station_max=std::max(station_max,std::abs(station[i]));
++    nominal_bound_violation=std::max(nominal_bound_violation,std::max(lower-u,u-upper));
++  }
++  if(valid) for(int i=0;i<(horizon-1)*dim_action*dim_state_derivative;++i)
++    K_max=std::max(K_max,std::abs(p.feedback_gain[i]));
++  std::ostringstream out;out.precision(17);
++  out<<"{\"attempt\":"<<r29_backward_attempts<<",\"epoch_iteration\":"<<r32.iterations
++    <<",\"status\":\""<<status<<"\",\"backward_complete\":"<<(valid?"true":"false")
++    <<",\"failed_node\":"<<failed_node<<",\"lambda_used\":"<<lambda_used
++    <<",\"rate_used\":"<<rate_used<<",\"lambda_after\":"<<backward_pass.regularization
++    <<",\"rate_after\":"<<backward_pass.regularization_rate;
++  if(valid) out<<",\"dV_unscaled\":["<<backward_pass.dV[0]<<","<<backward_pass.dV[1]<<"]"
++    <<",\"Qu_unregularized_max\":"<<qu_max<<",\"projected_gradient_inf\":"<<station_max
++    <<",\"nominal_bound_violation\":"<<nominal_bound_violation
++    <<",\"k_unscaled_max\":"<<k_max<<",\"K_max\":"<<K_max
++    <<",\"native_decrease\":"<<native_decrease
++    <<",\"proxy_full_step_decrease\":"<<-backward_pass.dV[0]-backward_pass.dV[1];
++
++  if(valid) {
++    out<<",\"nominal_current_cost\":"<<nominal.total_return
++       <<",\"nominal_current_trunk_violation\":"<<nominal.trunk_violation<<",\"native_candidates\":[";
++    for(int i=0;i<num_trajectory_;++i) {
++      if(i)out<<",";
++      out<<"{\"index\":"<<i<<",\"alpha\":"<<linesearch_steps[i]
++         <<",\"failed\":"<<(trajectory[i].failure?"true":"false")<<",\"cost\":";
++      if(std::isfinite(trajectory[i].total_return))out<<trajectory[i].total_return;else out<<"null";
++      out<<",\"trunk_violation\":";
++      if(std::isfinite(trajectory[i].trunk_violation))out<<trajectory[i].trunk_violation;else out<<"null";
++      out<<",\"projection_count\":"<<r29_projected[i]<<",\"projection_failed_count\":"<<r29_failed[i]
++         <<",\"actuator_restoration_count\":"<<r29_restored[i]<<"}";
++    }
++    out<<"]";
++  }
++  out<<"}";r32.attempts.push_back(out.str());
++  if(const char* file=std::getenv("MJPC_R29_SNAPSHOT")) {
++    std::ofstream bin(std::string(file)+".search",std::ios::binary|std::ios::trunc);
++    double header[]={32.,double(r29_call_id),double(r32.epoch),time,double(horizon),
++      double(dim_state),double(dim_action),double(dim_state_derivative),lambda_used,rate_used,
++      double(valid),double(failed_node),double(policy.record_plan_id),double(r29_backward_attempts),
++      backward_pass.dV[0],backward_pass.dV[1]};
++    bin.write(reinterpret_cast<char*>(header),sizeof(header));
++    auto write=[&bin](const std::vector<double>& v,int n) {
++      bin.write(reinterpret_cast<const char*>(v.data()),n*sizeof(double));
++    };
++    write(nominal.states,horizon*dim_state);write(nominal.actions,(horizon-1)*dim_action);
++    write(p.action_improvement,horizon*dim_action);
++    write(p.feedback_gain,horizon*dim_action*dim_state_derivative);
++    write(p.metric,horizon*dim_action*dim_action);
++    write(p.base_Qu,horizon*dim_action);write(p.base_Qxu,horizon*dim_state_derivative*dim_action);
++    write(backward_pass.Vx,horizon*dim_state_derivative);
++    write(backward_pass.Vxx,horizon*dim_state_derivative*dim_state_derivative);
++    write(station,horizon*dim_action);
++  }
+ }
+ 
+ // optimize nominal policy using iLQG
+@@ -165,11 +288,18 @@
+   rollouts_compute_time=policy_update_compute_time=0;
+   // freeze the GUI value once per optimization step.
+   UpdateNumTrajectoriesFromGUI();
+-  // get nominal trajectory
++
++  R32BeginProblem(horizon);
++  // Every call scores the incumbent at the actual current state/reference.
+   this->NominalTrajectory(horizon, pool);
+-
+-  // iteration
+-  this->Iteration(horizon, pool);
++  if(nominal_winner<0) {
++    r32.stopped=true;r32.stop_reason="all_nominal_rollouts_failed";
++    R32ReuseIncumbent(r32.stop_reason);
++  } else if(r32.stopped) {
++    R32ReuseIncumbent(r32.stop_reason);
++  } else {
++    this->Iteration(horizon, pool);
++  }
+   if(const char* file=std::getenv("MJPC_R29_CALL_RECORD")) {
+     std::ofstream out(file,std::ios::app);out.precision(17);
+     bool updated=old_plan!=policy.record_plan_id;
+@@ -190,6 +320,31 @@
+       if(w) {out<<",";}
+       out<<model_derivative.r31_warnings[w];
+     }
++
++    out<<"],\"problem_epoch\":"<<r32.epoch<<",\"epoch_reset_reason\":\""<<r32.reset_reason<<"\""
++       <<",\"epoch_iterations\":"<<r32.iterations<<",\"epoch_stopped\":"<<(r32.stopped?"true":"false")
++       <<",\"stop_reason\":\""<<r32.stop_reason<<"\",\"deployment_status\":\""<<r32.deployment<<"\""
++       <<",\"lambda_before_epoch\":"<<r32.lambda_before<<",\"rate_before_epoch\":"<<r32.rate_before
++       <<",\"lambda_after\":"<<backward_pass.regularization<<",\"rate_after\":"<<backward_pass.regularization_rate
++       <<",\"policy_generation_epoch\":"<<r32.generation_epoch
++       <<",\"policy_generation_call\":"<<r32.generation_call
++       <<",\"policy_generation_time\":"<<r32.generation_time
++       <<",\"policy_age_s\":"<<time-r32.generation_time
++       <<",\"incumbent_scored_epoch\":"<<r32.scored_epoch<<",\"incumbent_scored_id\":"<<r32.scored_policy
++       <<",\"incumbent_valid\":"<<(r32.incumbent_valid?"true":"false")
++       <<",\"incumbent_current_cost\":";
++    if(r32.incumbent_valid)out<<r32.incumbent_cost;else out<<"null";
++    out<<",\"incumbent_current_trunk_violation\":";
++    if(r32.incumbent_valid)out<<r32.incumbent_violation;else out<<"null";
++
++    out<<",\"deployed_scored_epoch\":"<<(r32.deployable?r32.epoch:0)
++       <<",\"deployed_scored_policy_id\":"<<(r32.deployable?policy.record_plan_id:0)
++       <<",\"deployed_current_cost\":";
++    if(r32.deployable)out<<(updated?trajectory[winner].total_return:r32.incumbent_cost);else out<<"null";
++    out<<",\"deployed_current_trunk_violation\":";
++    if(r32.deployable)out<<(updated?trajectory[winner].trunk_violation:r32.incumbent_violation);else out<<"null";
++    out<<",\"search_attempts\":[";
++    for(int i=0;i<r32.attempts.size();++i){if(i)out<<",";out<<r32.attempts[i];}
+     out<<"]}\n";
+   }
+ }
+@@ -230,6 +385,20 @@
+   // feedback rollouts (parallel)
+   this->FeedbackRollouts(horizon, pool);
+ 
++
++  r32.scored_epoch=r32.epoch;r32.scored_policy=policy.record_plan_id;
++  // LogScale is ascending; locate the exact installed gain scale rather than
++  // treating candidate zero (.001) as the scale-one incumbent.
++  int incumbent=-1;
++  for(int i=0;i<num_trajectory_;++i)
++    if(candidate_policy[i].feedback_scaling==policy.feedback_scaling)incumbent=i;
++  r32.incumbent_valid=incumbent>=0 && policy.record_plan_id>0 && policy.metric_valid &&
++    !trajectory[incumbent].failure && std::isfinite(trajectory[incumbent].total_return) &&
++    std::isfinite(trajectory[incumbent].trunk_violation);
++  if(r32.incumbent_valid) {
++    r32.incumbent_cost=trajectory[incumbent].total_return;
++    r32.incumbent_violation=trajectory[incumbent].trunk_violation;
++  }
+   // evaluate rollouts
+   int best_nominal = this->BestRollout();
+   nominal_winner = best_nominal;
+@@ -240,16 +409,7 @@
+ 
+   // check for all rollout failures
+   if (best_nominal == -1) {
+-    // The policy's traj's first state is not the correct initial state, but
+-    // what alternative do we have, if all rollouts from the current initial
+-    // state failed?
+-    {
+-      const std::shared_lock<std::shared_mutex> lock(mtx_);
+-      candidate_policy[0].trajectory = policy.trajectory;
+-    }
+-
+-    // set feedback scaling
+-    feedback_scaling = 0.0;
++    feedback_scaling=0.;
+   } else {
+     // update nominal with winner
+     candidate_policy[0].trajectory = trajectory[best_nominal];
+@@ -478,16 +638,21 @@
+ 
+   // ----- backward pass ----- //
+   // start timer
+-  auto backward_pass_start = std::chrono::steady_clock::now();
+-
+-  // initialize backward pass
+-  int regularization_iteration = 0;
+-  int backward_pass_status = 0;
+-  int t;
+-  candidate_policy[0].metric_valid=false;
+-  while (regularization_iteration < settings.max_regularization_iterations &&
+-         backward_pass_status == 0) {
+-    ++r29_backward_attempts;
++
++
++  const Trajectory r32_nominal=candidate_policy[0].trajectory;
++  bool accepted=false;
++  double backward_pass_time=0,rollouts_time=0,regularization_used=0,rate_used=0;
++  const char* last_failure="backward_failed";
++  for(int regularization_iteration=0;
++      regularization_iteration<settings.max_regularization_iterations;++regularization_iteration) {
++    int backward_pass_status=0,t=-1;
++    ++r29_backward_attempts;++r32.iterations;
++    candidate_policy[0].trajectory=r32_nominal;
++    candidate_policy[0].metric_valid=false;
++    regularization_used=backward_pass.regularization;
++    rate_used=backward_pass.regularization_rate;
++    auto bp_start=std::chrono::steady_clock::now();
+     // reset cost-to-go approximation difference
+     mju_zero(backward_pass.dV, 2);
+ 
+@@ -595,56 +760,43 @@
+       }
+     }
+ 
+-    // increase regularization
+-    if (backward_pass.regularization <= settings.max_regularization &&
+-        backward_pass_status == 0) {
+-      backward_pass.ScaleRegularization(backward_pass.regularization_factor,
+-                                        settings.min_regularization,
+-                                        settings.max_regularization);
+-      regularization_iteration += 1;
++
++    backward_pass_time+=GetDuration(bp_start);
++    const bool retry=regularization_iteration+1<settings.max_regularization_iterations;
++    if(!backward_pass_status) {
++      last_failure="backward_failed";
++      if(retry)backward_pass.ScaleRegularization(backward_pass.regularization_factor,
++          settings.min_regularization,settings.max_regularization);
++      R32RecordAttempt(last_failure,horizon,t,r32_nominal,regularization_used,rate_used,0.);
++      continue;
+     }
+-  }
+-
+-  // end timer
+-  double backward_pass_time = GetDuration(backward_pass_start);
+-
+-  // terminate early if backward pass failure
+-  if (backward_pass_status == 0) {
+-    // set timers
+-    model_derivative_compute_time = model_derivative_time;
+-    cost_derivative_compute_time = cost_derivative_time;
+-    rollouts_compute_time = 0.0;
+-    backward_pass_compute_time = backward_pass_time;
+-    policy_update_compute_time = 0.0;
+-    r29_return_reason="backward_failed";
+-    return;
+-  }
+-
+-  // ----- rollout policy ----- //
+-  auto rollouts_start = std::chrono::steady_clock::now();
+-
+-  // copy policy
+-  for (int j = 1; j < num_trajectory_; j++) {
+-    candidate_policy[j].CopyFrom(candidate_policy[0], horizon);
+-    candidate_policy[j].representation = candidate_policy[0].representation;
+-  }
+-
+-  // feedback rollouts (parallel)
+-  this->ActionRollouts(horizon, pool);
+-
+-  // ----- evaluate rollouts ----- //
+-
+-  // get best rollout
+-  int best_rollout = this->BestRollout();
+-  if (best_rollout == -1) {
++    auto ro_start=std::chrono::steady_clock::now();
++    for(int j=1;j<num_trajectory_;++j) {
++      candidate_policy[j].CopyFrom(candidate_policy[0],horizon);
++      candidate_policy[j].representation=candidate_policy[0].representation;
++    }
++    this->ActionRollouts(horizon,pool);
++    const int best=this->BestRollout();
++    rollouts_time+=GetDuration(ro_start);
++    const bool descent=best>=0 &&
++      (trajectory[best].trunk_violation<previous_violation ||
++       (trajectory[best].trunk_violation==previous_violation &&
++        trajectory[best].total_return<previous_return));
++    if(descent) {winner=best;accepted=true;break;}
++    last_failure=best<0 ? "all_action_rollouts_failed" : "native_search_stagnation";
++    if(retry)backward_pass.ScaleRegularization(backward_pass.regularization_factor,
++        settings.min_regularization,settings.max_regularization);
++    R32RecordAttempt(last_failure,horizon,-1,r32_nominal,regularization_used,rate_used,
++        best>=0 ? previous_return-trajectory[best].total_return : 0.);
++  }
++  if(!accepted) {
++    r32.stopped=true;r32.stop_reason=last_failure;
+     model_derivative_compute_time=model_derivative_time;
+     cost_derivative_compute_time=cost_derivative_time;
+     backward_pass_compute_time=backward_pass_time;
+-    rollouts_compute_time=GetDuration(rollouts_start);
+-    r29_return_reason="all_action_rollouts_failed";
++    rollouts_compute_time=rollouts_time;policy_update_compute_time=0;
++    R32ReuseIncumbent(last_failure);
+     return;
+-  } else {
+-    winner = best_rollout;
+   }
+ 
+   // Preserve the candidate policy that actually generated the winner. In
+@@ -667,7 +819,6 @@
+   const bool feasible_comparison = previous_violation == 0 && accepted_violation == 0;
+   const bool projection_changed=r29_projected[winner]>0 || r29_restored[winner]>0;
+   const bool cost_ratio_valid = feasible_comparison && expected > 0 && !projection_changed;
+-  const double regularization_used=backward_pass.regularization;
+   if (feasible_comparison) {
+     improvement = cost_improvement;
+     surprise = cost_ratio_valid ? mju_min(mju_max(0, improvement / expected), 2) : 0;
+@@ -723,8 +874,9 @@
+     std::cout << "\n\n";
+   }
+ 
+-  // stop timer
+-  double rollouts_time = GetDuration(rollouts_start);
++
++  R32RecordAttempt("accepted_native_descent",horizon,-1,r32_nominal,
++                   regularization_used,rate_used,cost_improvement);
+ 
+   // ----- policy update ----- //
+   // start timer
+@@ -739,13 +891,23 @@
+     policy.feedback_scaling = 1.0;
+     policy.record_plan_id=previous_policy.record_plan_id+1;
+     policy.action_step_alpha=action_step;
++
+     r29_return_reason="policy_installed";
++    r32.deployable=true;r32.deployment="accepted_native_descent";
++    r32.generation_epoch=r32.epoch;r32.generation_call=r29_call_id;r32.generation_time=time;
++
+   }
+ 
+   if (diagnostic_file) {
+     std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
+     out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+-       <<",\"controller_artifact\":\"S5-r31\""
++
++       <<",\"controller_artifact\":\"S5-r32\""
++       <<",\"problem_epoch\":"<<r32.epoch<<",\"source_call_id\":"<<r29_call_id
++       <<",\"policy_generation_epoch\":"<<r32.generation_epoch
++       <<",\"dV_unscaled\":["<<backward_pass.dV[0]<<","<<backward_pass.dV[1]<<"]"
++       <<",\"regularization_rate_used\":"<<rate_used
++       <<",\"regularization_rate_after\":"<<backward_pass.regularization_rate
+        <<",\"forward_model\":\"native_geom_pair_joint_limit_smooth\""
+        <<",\"derivative_model\":\"frozen_smooth_at_native_substeps\""
+        <<",\"local_model\":\"zero_order_native_anchor_soft_minus_soft_FD\""
+@@ -821,7 +983,7 @@
+   // the bounded event ring and compresses each selected plan once.
+   if(const char* file=std::getenv("MJPC_R29_SNAPSHOT")) {
+     std::ofstream out(file,std::ios::binary|std::ios::trunc);
+-    double header[]={31.,double(policy.record_plan_id),time,double(horizon),
++    double header[]={32.,double(policy.record_plan_id),time,double(horizon),
+       double(dim_state),double(dim_action),double(dim_state_derivative),
+       double(task->num_residual),policy.metric_regularization,double(policy.metric_regularization_type),
+       policy.nominal_feedback_scale,policy.action_step_alpha,policy.feedback_scaling,
+@@ -945,7 +1107,8 @@
+   int best_rollout = -1;
+ 
+   for (int j = num_trajectory_ - 1; j >= 0; j--) {
+-    if (trajectory[j].failure) continue;
++    if (trajectory[j].failure || !std::isfinite(trajectory[j].total_return) ||
++        !std::isfinite(trajectory[j].trunk_violation)) continue;
+     double rollout_return = trajectory[j].total_return;
+     const double violation = trajectory[j].trunk_violation;
+     // Feasible candidates (v=0) dominate every infeasible candidate. If none
+--- a/mjpc/planners/ilqg/planner.h
++++ b/mjpc/planners/ilqg/planner.h
+@@ -16,6 +16,7 @@
+ #define MJPC_PLANNERS_ILQG_PLANNER_H_
+ 
+ #include <shared_mutex>
++#include <string>
+ #include <vector>
+ 
+ #include <mujoco/mujoco.h>
+@@ -89,6 +90,26 @@
+   int BestRollout();
+ 
+   void UpdateNumTrajectoriesFromGUI();
++
++
++  void R32BeginProblem(int horizon);
++  void R32ReuseIncumbent(const char* reason);
++  void R32RecordAttempt(const char* status, int horizon, int failed_node,
++                       const Trajectory& nominal, double lambda_used,
++                       double rate_used, double native_decrease);
++  bool R32Deployable() const { return r32.deployable; }
++  struct R32Problem {
++    unsigned long epoch=0, iterations=0, generation_epoch=0, generation_call=0;
++    unsigned long scored_epoch=0, scored_policy=0;
++    std::vector<double> physical, goal;
++    bool stopped=false, deployable=false, incumbent_valid=false;
++    double lambda_before=1, rate_before=1, generation_time=0;
++    double incumbent_cost=0, incumbent_violation=0;
++    const char* reset_reason="reset_or_initialize";
++    const char* stop_reason="none";
++    const char* deployment="none";
++    std::vector<std::string> attempts;
++  } r32;
+ 
+   // ----- members ----- //
+   mjModel* model;
+--- a/mjpc/tasks/quadruped/quadruped.h
++++ b/mjpc/tasks/quadruped/quadruped.h
+@@ -234,6 +234,21 @@
+     double land_rot_acc_      = 0;
+   };
+ 
++
++  // Native task state affecting the current residual, without userdata changes.
++  std::vector<double> R32PlanningState() const {
++    const std::lock_guard<std::mutex> lock(mutex_);
++    const auto& r=residual_;
++    std::vector<double> v={double(r.current_mode_),r.last_transition_time_,
++      r.mode_start_time_,r.speed_,r.angvel_,r.ground_,r.save_gait_switch_,
++      r.current_gait_,r.phase_start_,r.phase_start_time_,r.phase_velocity_,
++      r.gait_switch_time_};
++    for(auto [p,n]:{std::pair{r.position_,3},std::pair{r.heading_,2},
++                    std::pair{r.orientation_,4},std::pair{r.com_vel_,2}})
++      v.insert(v.end(),p,p+n);
++    v.insert(v.end(),r.save_weight_.begin(),r.save_weight_.end());
++    return v;
++  }
+   QuadrupedFlat() : residual_(this) {}
+   void TransitionLocked(mjModel* model, mjData* data) override;
+ 

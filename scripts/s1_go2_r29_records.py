@@ -6,12 +6,32 @@ import numpy as np
 class R29Records:
     def __init__(self,out,model):
         self.out,self.model=out,model
-        self.ring={};self.saved={};self.events=[];self.until=-1.
+        self.ring={};self.saved={};self.search_ring={};self.search_saved={};self.events=[];self.until=-1.
         self.offset=0;self.plan_offset=0;self.latest=None;self.applied=0;self.seen=set()
         self.failure=None
         self.actions=(out/'action-execution.jsonl').open('w')
         self.nonprogress=deque()
+    def search_plan(self,t):
+        p=self.out/'r29-current-plan.bin.search'
+        if not p.exists():return
+        raw=np.fromfile(p,dtype='<f8');h=raw[:16];call=int(h[1])
+        if call in self.search_ring or call in self.search_saved:return
+        T,ns,nu,nx=map(int,h[4:8]);cursor=16;data={'search_header':h.copy()}
+        for key,shape in [
+            ('nominal_states',(T,ns)),('nominal_actions',(T-1,nu)),
+            ('k_unscaled',(T,nu)),('K',(T,nu,nx)),('H',(T,nu,nu)),
+            ('Qu_unregularized',(T,nu)),('Qxu_unregularized',(T,nx,nu)),
+            ('Vx',(T,nx)),('Vxx',(T,nx,nx)),('projected_gradient',(T,nu))]:
+            n=int(np.prod(shape));data[key]=raw[cursor:cursor+n].reshape(shape).copy();cursor+=n
+        self.search_ring[call]={'origin':float(h[3]),'data':data}
+        if t<=self.until:self.save_search(call)
+    def save_search(self,call):
+        if call in self.search_saved:return
+        row=self.search_ring[call];name=f'r32-search-call{call:06d}.npz'
+        np.savez_compressed(self.out/name,**row['data'])
+        self.search_saved[call]=dict(call_id=call,origin=row['origin'],file=name)
     def plan(self,t):
+        self.search_plan(t)
         p=self.out/'r29-current-plan.bin'
         if not p.exists():return
         raw=np.fromfile(p,dtype='<f8');h=raw[:16]
@@ -29,7 +49,7 @@ class R29Records:
         take('base_Qxu',(T,nx,nu));take('base_active',(T,nu));take('userdata',(int(h[14]),))
         if cursor<len(raw):
             count=int(raw[cursor]);cursor+=1;take('accepted_prefix_substeps',(count,))
-        if int(h[0])==31:
+        if int(h[0]) in (31,32):
             for key in ('r31_native_soft_substeps','r31_native_risk_peaks','r31_first_soft_AB'):
                 count=int(raw[cursor]);cursor+=1;take(key,(count,))
             take('r31_held_proxy_A',(T-1,nx,nx))
@@ -53,6 +73,8 @@ class R29Records:
         np.savez_compressed(self.out/name,**row['data'])
         self.saved[pid]=dict(plan_id=pid,origin=row['origin'],file=name)
     def prune(self,t):
+        for call,row in list(self.search_ring.items()):
+            if row['origin']<t-.12:del self.search_ring[call]
         for pid,row in list(self.ring.items()):
             if row['origin']<t-.12 and row['last_ref']<t-.12:
                 del self.ring[pid]
@@ -64,6 +86,8 @@ class R29Records:
         self.until=max(self.until,end)
         for pid,row in self.ring.items():
             if row['origin']>=start or row['last_ref']>=start:self.save(pid)
+        for call,row in self.search_ring.items():
+            if row['origin']>=start:self.save_search(call)
     def query(self,t,kind,action=None,qpos=None,qvel=None):
         p=self.out/'feedback-actions.jsonl'
         if not p.exists():return None
@@ -139,7 +163,7 @@ class R29Records:
                     plan_coverage='Only listed plans have full accepted/reference/K/H; no old reconstruction.',
                     raw_binary='r29-current-plan.bin is a current transport buffer, not a history.',
                     substep_clock='Each encoded row: node,substep,before,after,ncontact; pre-state,post-state,rawPD,actuator_force,qfrc_passive,residual; then ncontact*(geom1,geom2,6 contact-frame forces).')
-        if getattr(self,'controller',None)=='S5-r31':
+        if getattr(self,'controller',None) in ('S5-r31','S5-r32'):
             result['r31_schema']=dict(
                 model_roles='native geom/pair forward; independent smooth derivatives at native substeps',
                 native_soft_substeps='(T-1,10,1+3*ns+nu): time,native_pre,held_u,native_post,soft_post',
@@ -147,6 +171,13 @@ class R29Records:
                 first_soft_AB='(10,nx*nx+nx*nu): row-major one-step A_s then B_s at native states',
                 held_proxy_A='(T-1,nx,nx)',held_proxy_B='(T-1,nx,nu)',
                 scope='Approximate local model, no plant Jacobian or stability claim')
+        if getattr(self,'controller',None)=='S5-r32':
+            result['r32_search']=dict(plans=list(self.search_saved.values()),
+                header_fields=['schema','call_id','problem_epoch','origin','horizon','ns','nu','nx',
+                  'lambda_used','rate_used','backward_complete','failed_node','incumbent_plan_id',
+                  'attempt','dV0_unscaled','dV1_unscaled'],
+                scope='Last actual numerical attempt for each selected call; partial failed-backward arrays are not valid full Riccati results. Stops with no new attempt retain the prior search identity.',
+                gradient='u-clip(u-Qu, original instantaneous target/PD bounds); independent of H/lambda, surrogate only')
         (self.out/'r29-event-manifest.json').write_text(json.dumps(result,indent=2)+'\n')
         self.actions.close()
         return result
