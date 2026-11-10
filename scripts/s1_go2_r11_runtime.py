@@ -372,6 +372,10 @@ def run(args, c, joint=None):
         mechanism = c['r12_contract']['reuse']['selected_mechanism']
         diagnostic_env['MJPC_R33_MECHANISM'] = mechanism
         resolved['r33_optimizer_mechanism'] = dict(c['r33_optimizer_mechanism'], selected_mechanism=mechanism)
+        resolved['r31_model_roles_scope'] = 'Inherited base contract; r33 selected mechanism below determines the actual derivative roles.'
+        if mechanism == 'N':
+            resolved['author_prediction_approximation']['derivatives'] = (
+                'Same soft Gauss-Newton metric pass as S, followed by native-contact finite differences for the local direction; native forward acceptance.')
     r29_records=None
     if c.get('controller_build') in ('S5-r29','S5-r30','S5-r31','S5-r32','S5-r33'):
         from s1_go2_r29_records import R29Records

@@ -534,7 +534,11 @@ def main():
         exposure_paths=[]
         for episode in dict.fromkeys(selected):
             if (episode/"query-exposure.jsonl").exists():
-                path=export_exposure(episode,small/"jobs"/name/"numeric-evidence"/"exposure"/episode.name)
+                initialization_failure=next((row for row in index_snapshot.get("initialization_failures",[])
+                    if row.get("attempt")==episode.name),None)
+                path=export_exposure(episode,small/"jobs"/name/"numeric-evidence"/"exposure"/episode.name,
+                    initialization_failure=initialization_failure,
+                    resolved=read(small/(episode.name+"-resolved.json")))
                 staged.add(path);exposure_paths.append(str(path.relative_to(ROOT)))
         evidence["r29_query_exposure"]=exposure_paths
     policy_path = small / "jobs" / name / "delivery-policy.json"

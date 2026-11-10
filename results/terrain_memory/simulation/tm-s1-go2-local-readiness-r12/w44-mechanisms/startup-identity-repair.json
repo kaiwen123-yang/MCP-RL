@@ -1,0 +1,42 @@
+{
+  "kind": "restore_complete_r32_configuration_inheritance",
+  "time_unix_s": 1794321770.1589384,
+  "cause": "Manual artifact identity finalization replaced complete inherited overrides with the r33 incremental override map. Normal prepare already uses prior overrides.update(spec overrides).",
+  "missing_parent_keys": [
+    "normal_landing",
+    "r11_combination",
+    "r11_combined_repair",
+    "r11_contact_completion",
+    "r11_contact_timing",
+    "r11_derivative_schedule",
+    "r11_domain_margin",
+    "r11_landing_approach_band",
+    "r11_landing_band_scalar_fix",
+    "r11_material_upright",
+    "r11_moving_body_support",
+    "r11_moving_stance_height",
+    "r11_parameter_application",
+    "r11_prediction_coldstart",
+    "r11_slow_approach",
+    "r12_trunk_clearance",
+    "task"
+  ],
+  "prior_override_count": 10,
+  "restored_override_count": 27,
+  "merge_rule": "configuration_overrides = {**frozen_S5_r32.configuration_overrides, **r33_spec.configuration_overrides}",
+  "binary_unchanged": true,
+  "binary_sha256": "2d2f74813c235f70f165be706625b67a5fd279827a0a13c5ee4f95b1c1341466",
+  "old_identity_sha256": "5c3e994fcf833dd1674708f5cde97815ad9e979967734500af91f4ee9de34e0f",
+  "affected_jobs": [
+    "job-20261110T143358Z-w44-a",
+    "job-20261110T143400Z-w44-b"
+  ],
+  "failed_physical_steps": 0,
+  "new_samples_before_repair": 0,
+  "new_updates_before_repair": 0,
+  "saved_problem_comparison": "Unaffected: all four compared model XMLs are the original complete W43 native models; same compiled binary retained.",
+  "diagnosis": "One gdb replay of the actual failed initial PlannerStep, no plant stepping: SIGSEGV in Trajectory::UpdateTrunkViolation; r12_substep_path exists but omitted r12_trunk_clearance numeric/sensor dereferenced.",
+  "continuation": "Ordinary resume own W44 resume/phase/clock, next unoccupied episodes412/400; preserve failed411/399.",
+  "gdb_log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143358Z-w44-a-PANN_PPO_S5-s1-ep00411/startup-crash-replay/gdb.log",
+  "new_identity_sha256": "c132c5795373f8d1ce0758626219a280c7c923e2caf65e515810ecd4f5e5516a"
+}
