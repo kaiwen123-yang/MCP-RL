@@ -2,7 +2,7 @@
 
 日期：2026-11-10。审查基点：`c4b3f9adc698b15de5c94ef952e2884f3abfec62`。
 
-**2026-11-10 实施状态：S5-r32 已实现并正常构建，根 r12 已声明 W43 的真实双父点与每流 512/2 目标。** 两支保存输入的 epoch/reset/停止状态已经观测：t0 第12次用完5次尝试后锁定，13–20次不再增长阻尼；2.000/2.002秒的新问题从1/1开始。稀疏 outbound 未找到 native 下降，A4秒无可部署候选，均保留，不称任务通过。[针对性证据](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w43-optimizer-inputs/result.json)。首版候选索引接线错误与修复前产物也保留。CPU联合训练按以下原定目标执行；GPU g5-20261110T033858Z 已完成6fixture/18FD请求并进入独立E30初始化。
+**2026-11-10 实施状态：S5-r32 已实现并正常构建，根 r12 已声明 W43 的真实双父点与每流 512/2 目标。** 两支保存输入的 epoch/reset/停止状态已经观测：t0 第12次用完5次尝试后锁定，13–20次不再增长阻尼；2.000/2.002秒的新问题从1/1开始。稀疏 outbound 未找到 native 下降，A4秒无可部署候选，均保留，不称任务通过。[针对性证据](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w43-optimizer-inputs/result.json)。首版候选索引接线错误与修复前产物也保留。CPU联合训练按以下原定目标执行；GPU g5-20261110T033858Z 已完成6fixture/18FD请求并进入独立E30物理；两CPU各10workers的W43作业已启动并出现有效transition增长。
 
 ## 1. 决策与研究目标
 

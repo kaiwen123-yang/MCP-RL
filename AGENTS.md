@@ -2,6 +2,8 @@
 
 ## 当前入口与已确认事实
 
+2026-11-10 实际启动：W43-A/B job分别为job-20261110T035658Z-w43-a、job-20261110T035700Z-w43-b，源码865af7a；均10workers、目标14225/55、deadline=null，已看到真实transition增长。GPU g5-20261110T033858Z已完成6fixture/18FD并进入独立E30物理。优先检查这些现有作业，不重复new-phase；最新live/durable计数分别见运行索引。
+
 先读 [当前交接](docs/TERRAIN_MEMORY_PLAN.md)、[W43实施计划](docs/S1_W43_STABILITY_PLAN.md)、[完整启动提示词](docs/S1_W43_START_PROMPT.md)和[本轮审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/README.md)。本文件与用户最新要求覆盖旧W40/W41/W42启动、后台墙钟期限和电脑归档指令，历史结果身份保留。
 
 - W42/S5-r31已实现、构建、训练及末次评价结束。A/B各+2048/8到13713/53，tail0/excluded145，末ep405/393。36训练=34个60秒采集边界+2个4秒目标截断，结果级技术错误和自然终止均0；材料加载/合法去返/往返0。两E30满30秒未完成材料通行，E60未运行。最大base x仅0.0245873mm，不能称稳定行走。

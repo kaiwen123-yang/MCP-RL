@@ -2,11 +2,11 @@
 
 **默认执行端：AutoDL西北B区D57，SSH autodl-d57。** 记录总容量25vCPU、120GB RAM、96GB级GPU；[环境记录](experiments/terrain_memory/compute-environment.json)。实际空闲量以现场为准。
 
-## 当前：W43 优化器生命周期已实现，双流联合实验启动中
+## 当前：W43 优化器生命周期已实现，双流联合实验已运行
 
 **S5-r32 已正常构建，W43 各自继承 W42 ep405/393，13713/53 → 14225/55，每流只新增512/2。** 实际训练与评价状态见运行索引。保存输入证明相同t0停滞后不再增加阻尼，新状态/参考从λ/rate=1/1开始；稀疏outbound仍无native下降、A4秒接续无可部署候选，负结果保留。该核验没有推进新plant物理，也不代表稳定行走通过。[r32输入证据](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w43-optimizer-inputs/result.json)
 
-GPU以g5-20261110T033858Z从G5续接，6个fixture×3个FD尺度已完成，独立冻结W40-B/update37/r30契约下的E30正在初始化规划。旧G4技术失败保留；其他两条GPU训练未停止。以下W42统计作为历史结果保留。
+GPU以g5-20261110T033858Z从G5续接，6个fixture×3个FD尺度已完成，独立冻结W40-B/update37/r30契约下的E30已进入真实物理。旧G4技术失败保留；其他两条GPU训练未停止。以下W42统计作为历史结果保留。
 
 [当前交接](docs/TERRAIN_MEMORY_PLAN.md) · [W42完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/README.md) · [W43计划](docs/S1_W43_STABILITY_PLAN.md) · [完整启动提示词](docs/S1_W43_START_PROMPT.md)
 
