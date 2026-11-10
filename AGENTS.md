@@ -1,17 +1,21 @@
-# Codex：W41 CPU审查完成，执行W42接触前向实验
+# Codex：W42训练与评价结束，请求材料已交付
 
 ## 当前执行入口
 
-先读[当前交接](docs/TERRAIN_MEMORY_PLAN.md)、[W42 CPU计划](docs/S1_W42_CPU_PLAN.md)、[完整启动提示词](docs/S1_W42_START_PROMPT.md)及[W41 CPU审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md)。本文件和用户最新要求覆盖旧W40续接、W41启动、后台墙钟期限及电脑归档指令。历史结果/运行条件保留；W41 GPU按用户说明仍在运行，不重启或替换。
+先读[当前交接](docs/TERRAIN_MEMORY_PLAN.md)、[W42 CPU计划](docs/S1_W42_CPU_PLAN.md)、[完整启动提示词](docs/S1_W42_START_PROMPT.md)及[W41 CPU审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md)。本文件和用户最新要求覆盖旧W40续接、W41启动、后台墙钟期限及电脑归档指令。历史结果/运行条件保留。W42两流及末次评价已结束；W41 GPU自行结束，但G4/G5技术失败，未经新指令不重跑。
 
 默认执行端AutoDL西北B区D57，SSH `autodl-d57`，活动GPU根目录`/root/autodl-tmp/MCP-RL`，环境`work/envs/d57`。记录容量25vCPU、120GB RAM、96GB GPU；先读现场空闲量。新CPU已使用独立`/root/autodl-tmp/MCP-RL-w42`工作树，现有认证和只读依赖复用，凭据不进日志/仓库。
 
 ## 已确认事实
 
+- W42两条CPU已完成各自2048条/8更新，分别到13713/53、tail0、excluded145。两条末次update53 E30均运行满30s，以material_traversal_not_completed未通过；E60 blocked_by_predecessor。36个训练回合为34个60s采集边界和2个样本目标截断，结果级技术错误0；材料加载与合法去程/返程/往返均0，最大base x约0.025mm。
+- 2026-11-10交付：W42-A/B当前请求清单各829项已在远端按名称、uploaded状态和大小核对，无遗漏。A两项上传中断的starter资产保留，完整内容用新名称补传；清单已指向新资产。GPU旧29,337,276字节包和新增95,663,446字节包均已发布，新增包SHA256与远端digest一致。原件、检查点及上传副本保留D57；不在电脑归档，不自动删除。
+- W41 GPU于2026-11-10 06:07自行结束，G2完成176/176节点；G4 native/MJX E30均因缺少evaluation-start-unix参数而未进入物理运行，G5因opt_tolerance标量/数组类型错误技术中断。结果与失败原件已发布；不是闭环资格通过。本次只补发布，没有重跑GPU。
+
 - W41-A/B均完成各自2048新样本/8更新，分别到11665/45，tail0、excluded145。A末ep387，B末ep375；末次固定E30分别14.100/28.408s跌倒，合法材料去程/返程/往返均0，E60未获前级资格。
 - 130训练回合中127物理失败、3合法截断、0结果级技术中断。qp2与r30完整约束Riccati已真实运行，不再恢复W40，不重跑已完成W41。结果无error不等于所有内部warning为零。
 - 原始输入复核显示刚地前向支撑明显失配：同起点近乎同目标的预测Fz约0.007–0.013N，实际114–247N；旧审查未做严格同输入replay；W42四输入结果见w42-contact-forward/result.json，首保持前向偏差降低但代理方向仍有偏差。材料前欠推进期间动作投影未改变动作，九份plan的J/k/K复算一致。
-- W42/S5-r31已实现、正常构建并完成指定保存输入核验，两条训练已启动并有真实transition增长：原生geom/pair前向＋沿每个原生名义子步锚定的独立平滑代理A/B。不是已验证的物理修复，也不是只把旧r17开关换名。
+- W42/S5-r31已实现、正常构建并完成指定保存输入核验，两条训练已结束且完成末次评价：原生geom/pair前向＋沿每个原生名义子步锚定的独立平滑代理A/B。不是已验证的物理修复，也不是只把旧r17开关换名。
 - 长期目标是同地块跨足/返程恢复记忆改善加载、落点和重访。PANN→PPO→MPC→PD联合学习已运行；当前稳定材料通行、完整候选内恢复历史传播、记忆因果收益尚未建立。旧r24合法去程保留；G0/G1是Go2配置。
 
 ## 执行规则

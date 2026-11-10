@@ -1,6 +1,6 @@
 # W42 CPU 实验计划：原生接触前向预测与平滑局部导数
 
-状态：**S5-r31 已正常构建并完成指定输入核验；两条联合训练已启动并确认真实transition增长**。证据基线为 [9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724) 的两条已完成 W41 CPU 任务。GPU 任务按用户说明仍在运行，保持原任务。本文覆盖旧文档中恢复 W40 A、启动 W41、固定后台墙钟期限及电脑归档的过时指令。
+状态：**W42两流训练、末次评价及请求清单交付已完成；E30均未通过。以下保留原执行协议，不重复启动。**
 
 [W41完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md) · [控制原件复核](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/controller-review.md) · [论文机制](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/literature-mechanisms.md) · [完整启动提示词](S1_W42_START_PROMPT.md)
 
@@ -133,3 +133,7 @@ S5-r31已在独立工作树完成实现、正常构建和四个指定保存输�
 原件与紧凑证据：results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w42-contact-forward/result.json；服务器原件在outputs同run的w42-contact-forward目录。四个输入不是泛化验证，原plant积分器/solver历史及材料proxy近似保持；下一项是已授权真实联合训练。
 
 实际启动：w42-a job-20261108T154719Z-w42-a / PID654367；w42-b job-20261108T154727Z-w42-b / PID655195。23:50:26各11668/45、tail3，目标各13713/53；源码4dcc1bb先推送后运行，网络academic、workers10、deadline=null。本次交接不等待训练完成；后续保持现有tmux，如进程停止再用同job最新有效断点普通resume，不能再次new-phase。
+
+W42两条CPU已完成各自2048条/8更新，分别到13713/53、tail0、excluded145。两条末次update53 E30均运行满30s，以material_traversal_not_completed未通过；E60 blocked_by_predecessor。36个训练回合为34个60s采集边界和2个样本目标截断，结果级技术错误0；材料加载与合法去程/返程/往返均0，最大base x约0.025mm。
+
+2026-11-10交付：W42-A/B当前请求清单各829项已在远端按名称、uploaded状态和大小核对，无遗漏。A两项上传中断的starter资产保留，完整内容用新名称补传；清单已指向新资产。GPU旧29,337,276字节包和新增95,663,446字节包均已发布，新增包SHA256与远端digest一致。原件、检查点及上传副本保留D57；不在电脑归档，不自动删除。

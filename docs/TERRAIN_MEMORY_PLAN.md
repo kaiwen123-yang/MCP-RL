@@ -1,17 +1,18 @@
 # 地面材料记忆主计划：W41 CPU审查与W42接触前向实验
 
-审查基线：[9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724)，2026-11-08。**两条W41 CPU联合任务已完成，工程采样/更新/末次评价能够收口；稳定材料通行仍未建立。GPU按用户说明仍在运行，保持现有任务。** 下一轮聚焦原生接触前向与平滑局部导数分工；S5-r31已完成独立实现/正常构建/指定保存输入核验；两条W42联合训练已启动并确认真实transition增长。
+W42两条CPU已完成各自2048条/8更新，分别到13713/53、tail0、excluded145。两条末次update53 E30均运行满30s，以material_traversal_not_completed未通过；E60 blocked_by_predecessor。36个训练回合为34个60s采集边界和2个样本目标截断，结果级技术错误0；材料加载与合法去程/返程/往返均0，最大base x约0.025mm。
 
+W41 GPU于2026-11-10 06:07自行结束，G2完成176/176节点；G4 native/MJX E30均因缺少evaluation-start-unix参数而未进入物理运行，G5因opt_tolerance标量/数组类型错误技术中断。结果与失败原件已发布；不是闭环资格通过。本次只补发布，没有重跑GPU。
 [W41完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md) · [控制原件复核](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/controller-review.md) · [W42详细计划](S1_W42_CPU_PLAN.md) · [完整启动提示词](S1_W42_START_PROMPT.md) · [执行规则](../AGENTS.md)
 
 ## 当前交接
 
-- 当前任务：W42_CONTACT_FORWARD_JOINT / S5-r31；后台按各自样本/更新目标结束，无固定墙钟完成期限；原物理时长与技术失败停止保留。
-- w42-a：job-20261108T154719Z-w42-a，training_ended；新增2048/8，累计13713/53，tail=0、excluded=145；评价=completed，紧凑Git=published。
-- w42-b：job-20261108T154727Z-w42-b，training_ended；新增2048/8，累计13713/53，tail=0、excluded=145；评价=completed，紧凑Git=published。
-- 任务能力：w42-a合规去程/返程/整圈=0/0/0，材料加载回合=0；w42-b合规去程/返程/整圈=0/0/0，材料加载回合=0。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
-- 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
-- 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL-w42；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
+- 当前任务：W42_CONTACT_FORWARD_JOINT / S5-r31 已完成并结束，未获得材料任务资格；不要重复原目标训练或评价。
+- w42-a：job-20261108T154719Z-w42-a，13713/53、tail0、excluded145，最后ep405；末次E30满30s未完成材料通行，E60未运行。
+- w42-b：job-20261108T154727Z-w42-b，13713/53、tail0、excluded145，最后ep393；末次E30满30s未完成材料通行，E60未运行。
+- 任务能力：两支均原地驻留，材料加载及合法去程/返程/往返0/0/0；不以长存活、更新完成或前向误差降低宣称稳定通行。
+- 交付：CPU紧凑结果和两份829项原件清单已核验；GPU新增证据包已发布并保留G4/G5技术失败，详见现有运行index和各delivery/evidence.json。
+- 位置：autodl-d57:/root/autodl-tmp/MCP-RL-w42为CPU源码与结果；GPU原件仍在/root/autodl-tmp/MCP-RL。全部研究原件/检查点保留，用户自行备份和清理。
 
 ## 长期目标与当前层级
 
@@ -51,3 +52,7 @@ W42配置已按真实W41父点声明；尚未将声明视为已采样。细节�
 S5-r31已在独立工作树完成实现、正常构建和四个指定保存输入核验。首子步Fz误差约浮点精度；2ms关节速度最大误差A590/A635/B712/B713由0.34467/0.43351/0.38575/0.43711降为0.000756/0.009661/0.008869/0.006646 rad/s。原生held-map方向相对L2误差仍为3.044/2.165/0.575/0.986，不能称精确梯度。两个A输入新C++快照的soft A/B重算一致，十子步P/Q误差不超过1.78e-15，原生峰位置/值一致，J重算误差不超过1.39e-17。B712/B713在未恢复历史warm-start/私有phase的保存状态规划中backward_failed，保留原记录、不重试；这不是新任务回合或正式评价。
 
 启动源码4dcc1bb已推送并核对远端；两流均观测到11665→11666→11668。指定输入原件及r31二进制已经发布并按远端size/digest核验：https://github.com/kaiwen123-yang/MCP-RL/releases/tag/w42-contact-forward-20261108 。本轮训练原件继续保留D57，结束后的自动紧凑Git及Release尚未开始。GPU PID585559保留，G2已记录60节点；其他GPU PID599069/599252继续运行。精确job/clock/progress与最新持久断点见运行index的w42_startup；当前样本tail为活动内存状态，不能把它误称已经写入初始resume文件。
+
+## 2026-11-10交付收口
+
+2026-11-10交付：W42-A/B当前请求清单各829项已在远端按名称、uploaded状态和大小核对，无遗漏。A两项上传中断的starter资产保留，完整内容用新名称补传；清单已指向新资产。GPU旧29,337,276字节包和新增95,663,446字节包均已发布，新增包SHA256与远端digest一致。原件、检查点及上传副本保留D57；不在电脑归档，不自动删除。

@@ -2,15 +2,17 @@
 
 **默认执行端：AutoDL西北B区D57，SSH autodl-d57。** 记录资源96GB级GPU、25vCPU、120GB内存；[环境记录](experiments/terrain_memory/compute-environment.json)。现场空闲量须实际读取。
 
-## 当前：W42两条CPU联合训练已启动，W41 GPU继续运行
+## 当前：W42训练、末次评价及请求材料已交付
 
-**联合训练可以完整运行，但稳定合法材料通行仍未建立。** W41两流都完成2048新样本/8次更新并做了末次固定策略E30，130训练回合没有结果级技术中断，但有127次物理失败，合法材料去程/返程/往返均0。GPU按用户说明仍在运行，保持原任务。
+W42两条CPU已完成各自2048条/8更新，分别到13713/53、tail0、excluded145。两条末次update53 E30均运行满30s，以material_traversal_not_completed未通过；E60 blocked_by_predecessor。36个训练回合为34个60s采集边界和2个样本目标截断，结果级技术错误0；材料加载与合法去程/返程/往返均0，最大base x约0.025mm。
 
-本次审查基于[9cc42d5](https://github.com/kaiwen123-yang/MCP-RL/commit/9cc42d5a9189a2bfd7e1e6cd99b9300045a16724)及已交付原件。**W42/S5-r31现已在D57独立工作树实现、正常构建、完成指定输入核验并启动两条联合训练。GPU活动目录及任务保持。** 不把证据审查、数学自洽或计划当作新物理能力。
+2026-11-10交付：W42-A/B当前请求清单各829项已在远端按名称、uploaded状态和大小核对，无遗漏。A两项上传中断的starter资产保留，完整内容用新名称补传；清单已指向新资产。GPU旧29,337,276字节包和新增95,663,446字节包均已发布，新增包SHA256与远端digest一致。原件、检查点及上传副本保留D57；不在电脑归档，不自动删除。
 
-[当前交接](docs/TERRAIN_MEMORY_PLAN.md) · [W41完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md) · [控制原件复核](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/controller-review.md) · [W42计划](docs/S1_W42_CPU_PLAN.md) · [完整启动提示词](docs/S1_W42_START_PROMPT.md) · [执行规则](AGENTS.md)
+W41 GPU于2026-11-10 06:07自行结束，G2完成176/176节点；G4 native/MJX E30均因缺少evaluation-start-unix参数而未进入物理运行，G5因opt_tolerance标量/数组类型错误技术中断。结果与失败原件已发布；不是闭环资格通过。本次只补发布，没有重跑GPU。
 
-W42启动源码：[4dcc1bb](https://github.com/kaiwen123-yang/MCP-RL/commit/4dcc1bb907819e818945039bb67281f7c4085130)。2026-11-08 23:50:26北京时间，A/B各累计11668/45、tail3（本轮各新增3/0）；已连续观察11665→11666→11668，尚无本轮固定评价或通行结论。工作树 /root/autodl-tmp/MCP-RL-w42，10+10 workers，deadline=null。目标各13713/53；实际job/PID和续接点见[运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)。[指定输入证据及r31二进制Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/w42-contact-forward-20261108)已核验，W41 24ZIP未重传。
+[当前交接](docs/TERRAIN_MEMORY_PLAN.md) · [A结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261108T154719Z-w42-a.json) · [B结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261108T154727Z-w42-b.json) · [GPU交付](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w41-gpu/delivery.json)
+
+源码基于4dcc1bb，GPU最终证据发布提交079a186；准确清单见各job的diagnostics/evidence.json与运行index。W42已结束，不再以原目标resume或new-phase；后续机制必须另立阶段，保留本轮原地驻留负结果。
 
 ### 已完成W41结果（历史基线）
 
