@@ -1,5 +1,19 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
+## W44 当前执行位置（2026-11-10）
+
+S5-r33 已实施、正常构建并完成四问题有限比较，已冻结主机制 **N**：与 S 使用同一曲率度量 D，改用原生接触 FD 方向，完整重算约束 Riccati并由native评分决定安装。**W44双流已声明，尚待本轮推送核验后启动。**
+
+两个4.00s问题中，N以更低原生成本给出+2.864/+2.620mm的0.35s预测前移；S仍后退。N晚段仍后退且不优于S，所有四个N计划均四足承载。这仅支持进入真实双流验证，不构成摆步、闭环起步、材料通行或记忆收益。
+
+四例参数/权重/步态上下文一致，S/N的D逐字节一致，16安装策略完整身份与实际评分匹配。有效16调用有480次native rollout、113.092s；另16次重建selection索引错误造成的无效上下文调用（490次rollout、111.994s）完整保留并排除，旧物理回合重跑0。
+
+两流分别继承自身W43 ep00410/ep00398，各14225/55、tail0、excluded145，目标14737/57（+512/+2），workers10+10，deadline=null。CPU使用/root/autodl-tmp/MCP-RL-w42私有可写source/build；现有GPU继续原作业，不重启、不热改。新W44网络声明direct，因为本次GitHub API的Clash/academic失败、direct成功；只改变新作业shell。
+
+[四问题完整证据](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w44-mechanisms/summary.json) · [r33规格](experiments/terrain_memory/s1-go2-r11-S5-r33.json) · [运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json)
+
+> 以下W43审查和W44原始授权保留形成时语境；其中“尚未实施/尚未声明”不再代表最新状态。以本页上方和运行索引为准。
+
 **默认执行端：AutoDL 西北 B 区 D57，SSH `autodl-d57`。** 记录总容量 25 vCPU、120 GB RAM、96 GB 级 GPU；[环境记录](experiments/terrain_memory/compute-environment.json)。实际空闲量以现场为准。
 
 ## 当前：W43 两 CPU 已完成；W44 优先修运动优化，现有 GPU 继续
