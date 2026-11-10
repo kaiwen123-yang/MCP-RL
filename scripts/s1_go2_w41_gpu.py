@@ -9,6 +9,7 @@ import jax.numpy as jp
 from mujoco.mjx._src import math as jmath
 from s1_go2_w40_gpu import Predictor,state,diff
 from s1_go2_w41_dynamics import CPUHold,event_rows,contact_record
+from s1_go2_gpu_evaluation import summarize_completion
 ROOT=Path(__file__).resolve().parents[1]
 LARGE=ROOT/'outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12'
 OUT=LARGE/'gpu/w41-gpu'
@@ -79,31 +80,39 @@ class Resident:
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--resume-from',choices=['G2'])
+    parser.add_argument('--resume-from',choices=['G2','G4','G5'])
     parser.add_argument('--resume-record',type=Path)
     parser.add_argument('--invocation')
+    parser.add_argument('--g4-backends',nargs='+',choices=['native','mjx'],default=['native','mjx'])
     args=parser.parse_args()
     OUT.mkdir(parents=True,exist_ok=True);SMALL.mkdir(parents=True,exist_ok=True)
     if args.resume_from:
         if args.resume_record is None or not args.invocation:
-            parser.error('G2 continuation requires its preserved result record and invocation ID')
+            parser.error('Continuation requires its preserved result record and invocation ID')
         report=json.loads(args.resume_record.read_text())
+        # Correct legacy G3 claims before the first running-state publication.
+        # Completion belongs only to the end of this new invocation.
+        summarize_completion(report)
+        report.pop('completion',None)
         if len(report['stages'].get('G1',[]))!=report['new_events']:
-            raise ValueError('G2 continuation requires the completed G1 record; do not rerun G1')
+            raise ValueError('Continuation requires the completed G1 record; do not rerun G1')
+        if args.resume_from=='G4' and len(report['stages'].get('G2',{}).get('node_blocks',[]))!=176:
+            raise ValueError('G4 continuation requires the already completed G2 record')
         if report.get('first_technical_error'):
             report.setdefault('technical_history',[]).append(dict(
                 status=report['status'],updated_unix_s=report['updated_unix_s'],
                 error=report.pop('first_technical_error'),record=str(args.resume_record.relative_to(ROOT))))
         report['G1_reuse']=dict(record=str(args.resume_record.relative_to(ROOT)),
             completed_events=len(report['stages']['G1']),recomputed=False)
-        report['continuation']=dict(invocation=args.invocation,resume_from='G2',
+        report['continuation']=dict(invocation=args.invocation,resume_from=args.resume_from,
             started_unix_s=time.time(),deadline_unix_s=None,
             source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-            change='Preserve contact geom1/geom2/geom integer dtypes across held FD and forward scan')
-        report['version']='w41-resident-mjx323-fp64-contact-index-fix1'
-        report['status']='G2_resuming'
+            change=('Preserve contact index dtypes' if args.resume_from=='G2' else
+                    'Repair evaluation launch/device tolerance and preserve completed earlier stages'))
+        report['version']='w41-resident-mjx323-fp64-stage-fix2'
+        report['status']=args.resume_from+'_resuming'
     else:
-        report=dict(task='w41-gpu',version='w41-resident-mjx323-fp64-contact-index-fix1',deadline_unix_s=None,
+        report=dict(task='w41-gpu',version='w41-resident-mjx323-fp64-stage-fix2',deadline_unix_s=None,
             started_unix_s=time.time(),status='G1_preparing',stages={},original8='retained gpu/w40-gpu; no recomputation',
             physical_plant='original CPU Go2/TM02',equivalent_backend=False,
             source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
@@ -115,13 +124,22 @@ def main():
         for p in [OUT/'result.json',SMALL/'result.json']:write(p,report)
         print(json.dumps(dict(status=status,events=len(report['stages'].get('G1',[])),time=time.time())),flush=True)
     try:
+        if args.resume_from=='G5':
+            # G5 is independent: reuse the preserved fixtures and contracts,
+            # without constructing or recompiling the completed MJX G1/G2 path.
+            report['G2_reuse']=dict(record=str(args.resume_record.relative_to(ROOT)),
+                completed_nodes=len(report['stages'].get('G2',{}).get('node_blocks',[])),recomputed=False)
+            from s1_go2_w41_mjwarp import run_selected_alternative
+            run_selected_alternative(report,publish)
+            status=summarize_completion(report);publish(status)
+            return 1 if report['completion']['active_technical_failures'] else 0
         if args.resume_from:
             metadata=json.loads((OUT/'fixtures.json').read_text());row0=dict(metadata[0])
             with np.load(OUT/(row0['name']+'-gpu.npz')) as saved:
                 row0.update(qpos=saved['input_prefix'][0,:19],qvel=saved['input_prefix'][0,19:37],
                     ctrl=saved['ctrl'],userdata=saved['userdata'],mocap_pos=saved['mocap_pos'],mocap_quat=saved['mocap_quat'])
             resident=Resident(ROOT/row0['source']/'model.mjb');m=resident.m
-            publish('G2_resuming_completed_G1_reused')
+            publish(args.resume_from+'_resuming_completed_G1_reused')
         else:
             rows=event_rows();write(OUT/'fixtures.json',[{k:v for k,v in r.items() if not isinstance(v,np.ndarray)} for r in rows])
             resident=Resident(ROOT/rows[0]['source']/'model.mjb');m=resident.m
@@ -160,6 +178,13 @@ def main():
         # The existing negative result can continue only under an explicit NEW
         # predictor identity; numerical tolerances remain the original values.
         report['predictor_identity']=('equivalent_mjx323' if report['equivalent_backend'] else 'new_mjx323_contact_predictor')
+        if args.resume_from=='G4':
+            report['G2_reuse']=dict(record=str(args.resume_record.relative_to(ROOT)),
+                completed_nodes=len(report['stages']['G2']['node_blocks']),recomputed=False)
+            from s1_go2_w41_gpu_bridge import integrated_evaluation
+            integrated_evaluation(resident,report,publish,backends=args.g4_backends)
+            status=summarize_completion(report);publish(status)
+            return 1 if report['completion']['active_technical_failures'] else 0
         source=ROOT/row0['source']
         plan_path=(ROOT/report['stages']['G2']['source'] if args.resume_from else sorted(source.glob('accepted-reference-gain-H-plan*.npz'))[0])
         with np.load(plan_path) as z:plan={k:z[k] for k in z.files}
@@ -183,12 +208,13 @@ def main():
         # G3/G4 execute through the actual native cost/private-phase/iLQG outer
         # loop; the isolated predictor is explicit and never installed in A/B.
         from s1_go2_w41_gpu_bridge import integrated_evaluation
-        integrated_evaluation(resident,report,publish)
-        publish('completed_declared_gpu_stages')
+        integrated_evaluation(resident,report,publish,backends=args.g4_backends)
+        status=summarize_completion(report);publish(status)
+        return 1 if report['completion']['active_technical_failures'] else 0
     except Exception:
         if args.invocation and report['status'].startswith('G2') and 'r' in locals():
             failure=OUT/'resume-history'/args.invocation/'first-G2-failure-input.npz'
             np.savez_compressed(failure,**{k:v for k,v in r.items() if isinstance(v,np.ndarray)},time_s=r['time'],node=i)
             report['first_failure_input']=str(failure.relative_to(ROOT))
         report['first_technical_error']=traceback.format_exc();publish('technical_interruption');raise
-if __name__=='__main__':main()
+if __name__=='__main__':raise SystemExit(main())

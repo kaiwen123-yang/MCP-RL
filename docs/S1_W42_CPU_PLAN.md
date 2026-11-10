@@ -1,5 +1,7 @@
 # W42 CPU 实验计划：原生接触前向预测与平滑局部导数
 
+> 2026-11-10：本文件保留历史身份，当前执行入口为 [W43计划](S1_W43_STABILITY_PLAN.md) 和 [W43完整启动提示词](S1_W43_START_PROMPT.md)。W42及原GPU已结束；GPU只按新计划从失败阶段续接，不重复已完成目标。
+
 状态：**W42两流训练、末次评价及请求清单交付已完成；E30均未通过。以下保留原执行协议，不重复启动。**
 
 [W41完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md) · [控制原件复核](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/controller-review.md) · [论文机制](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/literature-mechanisms.md) · [完整启动提示词](S1_W42_START_PROMPT.md)

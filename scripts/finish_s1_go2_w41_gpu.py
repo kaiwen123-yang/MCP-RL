@@ -42,8 +42,14 @@ def main():
             files += [p for p in native.iterdir() if p.is_file()]
         result=json.loads((OUT/'result.json').read_text())
         attempts=[x['attempt'] for x in result.get('stages',{}).get('G4',[])]
+        attempts += [x['attempt'] for x in result.get('stages',{}).get('G5',{}).get('result',{}).get('evaluations',[])]
         if (OUT/'mjwarp-result.json').exists():
             attempts += [x['attempt'] for x in json.loads((OUT/'mjwarp-result.json').read_text()).get('evaluations',[])]
+        if args.continuation:
+            # Retained G4/G5 rows may reference earlier, already published
+            # physical attempts outside OUT. Only this invocation owns new
+            # sibling evaluation outputs; previous assets remain in delivery.
+            attempts=[attempt for attempt in attempts if '-'+args.continuation+'-' in attempt]
         for attempt in attempts:
             folder=OUT.parents[1]/attempt
             if folder.exists():files += [p for p in folder.rglob('*') if p.is_file() and p.suffix in extensions]
