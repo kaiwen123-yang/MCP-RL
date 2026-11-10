@@ -1,0 +1,567 @@
+--- a/mjpc/planners/ilqg/backward_pass.h
++++ b/mjpc/planners/ilqg/backward_pass.h
+@@ -56,7 +56,7 @@
+                   double *Qxxt, double *Qxut, double *Quut, double *scratch,
+                   BoxQP &boxqp, const double *action,
+                   const double *action_limits, int reg_type, int limits, double* metric_out = nullptr,
+-                  const mjModel* model = nullptr, const double* state = nullptr);
++                  const mjModel* model = nullptr, const double* state = nullptr, const double* r33_D = nullptr);
+ 
+   // compute backward pass using Riccati
+   int Riccati(iLQGPolicy *p, const ModelDerivatives *md,
+--- a/mjpc/planners/ilqg/backward_pass.cc
++++ b/mjpc/planners/ilqg/backward_pass.cc
+@@ -70,7 +70,7 @@
+     double *Vxxt, double *dut, double *Kt, double *dV, double *Qxt, double *Qut,
+     double *Qxxt, double *Qxut, double *Quut, double *scratch, BoxQP &boxqp,
+     const double *action, const double *action_limits, int reg_type,
+-    int limits, double* metric_out, const mjModel* model, const double* state) {
++    int limits, double* metric_out, const mjModel* model, const double* state, const double* r33_D) {
+   int i, mmn = mju_max(m, n);
+   mjtNum *Vxx_reg, *Quu_reg, *Qxu_reg, *tmp, *tmp2, *tmp3;
+ 
+@@ -141,7 +141,7 @@
+   if (mu) {
+     if (reg_type == kControlRegularization) {
+       for (i = 0; i < m; i++) {
+-        Quu_reg[i * m + i] += mu;  // Quu_reg = Quut + mu*eye(m)
++        Quu_reg[i * m + i] += mu * (r33_D ? r33_D[i] : 1.0);
+       }
+     } else if (reg_type == kStateControlRegularization) {
+       mju_mulMatTMat(tmp, At, Bt, n, n, m);
+--- a/mjpc/planners/model_derivatives.h
++++ b/mjpc/planners/model_derivatives.h
+@@ -28,6 +28,7 @@
+ // data and methods for model derivatives
+ class ModelDerivatives {
+  public:
++  bool r33_native_direction = false;
+   // constructor
+   ModelDerivatives() = default;
+ 
+--- a/mjpc/planners/model_derivatives.cc
++++ b/mjpc/planners/model_derivatives.cc
+@@ -55,7 +55,7 @@
+   // per worker. Callbacks see the same task/residual; userdata/time/control
+   // are copied from each native nominal substep, never rolled on the soft path.
+   UniqueMjModel smooth(mj_copyModel(nullptr,m),mj_deleteModel);
+-  MakeDifferentiable(smooth.get());
++  if (!r33_native_direction) MakeDifferentiable(smooth.get());
+   std::vector<UniqueMjData> smooth_data;
+   for (int i=0;i<pool.NumThreads();++i)
+     smooth_data.emplace_back(mj_makeData(smooth.get()),mj_deleteData);
+--- a/mjpc/planners/ilqg/policy.cc
++++ b/mjpc/planners/ilqg/policy.cc
+@@ -285,6 +285,7 @@
+ // copy policy
+ void iLQGPolicy::CopyFrom(const iLQGPolicy& policy, int horizon) {
+   // reference
++  representation=policy.representation;feedback_scaling=policy.feedback_scaling;
+   trajectory = policy.trajectory;
+   record_plan_id = policy.record_plan_id;
+   metric_valid=policy.metric_valid;metric_regularization=policy.metric_regularization;
+--- a/mjpc/planners/ilqg/planner.h
++++ b/mjpc/planners/ilqg/planner.h
+@@ -92,6 +92,19 @@
+   void UpdateNumTrajectoriesFromGUI();
+ 
+ 
++  std::string r33_mechanism="S";
++  bool r33_imported=false, r33_archive_valid=false;
++  iLQGPolicy r33_archive_policy, r33_nominal_policy;
++  Trajectory r33_archive_trajectory, r33_nominal_trajectory;
++  std::string r33_source="none";
++  std::vector<double> r33_D;
++  double r33_scale_mean=0, r33_scale_floor=0;
++  int r33_rollouts=0, r33_slots=0, r33_cache_hits=0, r33_derivative_passes=0;
++  void R33Import(int horizon);
++  void R33Consider(const iLQGPolicy& p,const Trajectory& tr,int horizon,
++                   int kind,int slot,double alpha,const std::string& source);
++  void R33Structured(int horizon,ThreadPool& pool);
++  void R33WriteSnapshot(int horizon);
+   void R32BeginProblem(int horizon);
+   void R32ReuseIncumbent(const char* reason);
+   void R32RecordAttempt(const char* status, int horizon, int failed_node,
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -279,15 +279,119 @@
+   }
+ }
+ 
++
++void iLQGPlanner::R33Import(int horizon) {
++  if(r33_imported)return;
++  r33_imported=true;
++  const char* name=std::getenv("MJPC_R33_INPUT_POLICY");if(!name)return;
++  std::ifstream in(name,std::ios::binary);
++  double h[16];in.read(reinterpret_cast<char*>(h),sizeof(h));
++  if(!in || int(h[3])!=horizon || int(h[4])!=dim_state || int(h[5])!=dim_action ||
++     int(h[6])!=dim_state_derivative || int(h[7])!=task->num_residual)
++    mju_error("r33 saved policy dimensions/header mismatch");
++  auto read=[&](std::vector<double>& v,int n){in.read(reinterpret_cast<char*>(v.data()),n*sizeof(double));};
++  auto& tr=policy.trajectory;tr.horizon=horizon;
++  read(tr.states,horizon*dim_state);read(tr.actions,(horizon-1)*dim_action);
++  std::copy_n(tr.actions.data()+(horizon-2)*dim_action,dim_action,tr.actions.data()+(horizon-1)*dim_action);
++  read(tr.times,horizon);read(tr.residual,horizon*task->num_residual);
++  read(policy.feedback_gain,horizon*dim_action*dim_state_derivative);
++  read(policy.metric,horizon*dim_action*dim_action);read(policy.base_Qu,horizon*dim_action);
++  read(policy.base_Qxu,horizon*dim_action*dim_state_derivative);read(policy.base_active,horizon*dim_action);
++  if(!in)mju_error("r33 saved policy truncated");
++  policy.record_plan_id=h[1];policy.metric_valid=true;policy.metric_regularization=h[8];
++  policy.metric_regularization_type=h[9];policy.nominal_feedback_scale=h[10];
++  policy.action_step_alpha=h[11];policy.feedback_scaling=h[12];policy.representation=h[13];
++}
++
++void iLQGPlanner::R33Consider(const iLQGPolicy& p,const Trajectory& tr,int horizon,
++    int kind,int slot,double alpha,const std::string& source) {
++  ++r33_slots;
++  const bool valid=p.metric_valid && !tr.failure && std::isfinite(tr.total_return) &&
++                   std::isfinite(tr.trunk_violation);
++  if(valid && (!r33_archive_valid || tr.trunk_violation<r33_archive_trajectory.trunk_violation ||
++     (tr.trunk_violation==r33_archive_trajectory.trunk_violation &&
++      tr.total_return<r33_archive_trajectory.total_return))) {
++    r33_archive_policy=p;r33_archive_trajectory=tr;r33_archive_valid=true;r33_source=source;
++  }
++  if(const char* path=std::getenv("MJPC_R29_SNAPSHOT")) {
++    std::ofstream out(std::string(path)+".r33-candidates",std::ios::binary|std::ios::app);
++    double h[]={33.,double(r29_call_id),double(kind),double(slot),alpha,double(horizon),
++      double(dim_state),double(dim_action),double(dim_state_derivative),double(task->num_residual),
++      p.feedback_scaling,tr.total_return,tr.trunk_violation,double(tr.failure),double(p.metric_valid),
++      time,p.metric_regularization,double(p.representation),double(p.record_plan_id)};
++    out.write(reinterpret_cast<char*>(h),sizeof(h));
++    auto w=[&](const std::vector<double>& v,int n){out.write(reinterpret_cast<const char*>(v.data()),n*sizeof(double));};
++    for(const auto* t:{&tr,&p.trajectory}) {
++      w(t->states,horizon*dim_state);w(t->actions,(horizon-1)*dim_action);
++      w(t->times,horizon);w(t->residual,horizon*task->num_residual);
++    }
++    w(p.feedback_gain,horizon*dim_action*dim_state_derivative);w(p.metric,horizon*dim_action*dim_action);
++    w(p.base_Qu,horizon*dim_action);w(p.base_Qxu,horizon*dim_action*dim_state_derivative);
++    w(p.base_active,horizon*dim_action);
++    double n=tr.r29_prefix.size();out.write(reinterpret_cast<char*>(&n),sizeof(double));w(tr.r29_prefix,int(n));
++    n=tr.r33_foot_rows.size();out.write(reinterpret_cast<char*>(&n),sizeof(double));w(tr.r33_foot_rows,int(n));
++  }
++}
++
++// One P32 batch: two cached baseline identities and 15 signed pairs.
++void iLQGPlanner::R33Structured(int horizon,ThreadPool& pool) {
++  if(!r33_archive_valid) {R32ReuseIncumbent("no_scored_structured_base");return;}
++  const iLQGPolicy base=r33_nominal_policy;
++  const Trajectory base_tr=r33_nominal_trajectory;
++  r33_cache_hits+=2; // incumbent and best nominal were scored in the nominal stage.
++  const int previous_count=num_trajectory_;num_trajectory_=30;
++  for(int j=0;j<30;++j) {
++    auto& p=candidate_policy[j];p=base;
++    const int group=(j/2)/3, onset_index=(j/2)%3;
++    const double sign=(j%2==0?1.:-1.),onset=.08*onset_index,duration=.16;
++    for(int t=0;t<horizon;++t) {
++      const double z=(p.trajectory.times[t]-time-onset)/duration;
++      if(z<=0 || z>=1)continue;
++      for(int leg=0;leg<4;++leg) if(group==leg || (group==4 && (leg==0 || leg==3))) {
++        p.trajectory.actions[t*dim_action+3*leg]+=.04*sign*std::sin(2*3.141592653589793*z);
++        p.trajectory.actions[t*dim_action+3*leg+1]+=.04*sign*std::sin(3.141592653589793*z);
++        p.trajectory.actions[t*dim_action+3*leg+2]-=.08*sign*std::sin(3.141592653589793*z);
++      }
++    }
++  }
++  int before=pool.GetCount();
++  for(int j=0;j<30;++j)pool.Schedule([&,j](){
++    auto f=[&,j](double* u,const double* x,double t){
++      bool changed,failed,restored;candidate_policy[j].ActionImpl(u,x,t,false,&changed,&failed,&restored);
++      r29_projected[j]+=changed;r29_failed[j]+=failed;r29_restored[j]+=restored;
++    };
++    r29_projected[j]=r29_failed[j]=r29_restored[j]=0;
++    trajectory[j].Rollout(f,task,model,data_[ThreadPool::WorkerId()].get(),state.data(),time,
++                          mocap.data(),userdata.data(),horizon);
++    if(r29_failed[j])trajectory[j].failure=true;
++  });
++  pool.WaitCount(before+30);pool.ResetCount();r33_rollouts+=30;
++  for(int j=0;j<30;++j)R33Consider(candidate_policy[j],trajectory[j],horizon,2,j+2,
++                                 j%2==0?1.:-1.,"structured_"+std::to_string(j+2));
++  num_trajectory_=previous_count;
++}
++
+ // optimize nominal policy using iLQG
+ void iLQGPlanner::OptimizePolicy(int horizon, ThreadPool& pool) {
+   auto call_start=std::chrono::steady_clock::now();
++  if(const char* mode=std::getenv("MJPC_R33_MECHANISM"))r33_mechanism=mode;
++  if(r33_mechanism!="S" && r33_mechanism!="N" && r33_mechanism!="P" && r33_mechanism!="R32")
++    mju_error("r33 unknown declared mechanism");
++  R33Import(horizon);
++  r33_archive_valid=false;r33_source="none";r33_rollouts=r33_slots=r33_cache_hits=r33_derivative_passes=0;
++  r33_D.clear();r33_scale_mean=r33_scale_floor=0;
++  if(const char* f=std::getenv("MJPC_R29_SNAPSHOT"))
++    std::ofstream(std::string(f)+".r33-candidates",std::ios::binary|std::ios::trunc);
+   unsigned long old_plan=policy.record_plan_id;
+   ++r29_call_id;r29_return_reason="entered";r29_backward_attempts=0;
+   model_derivative_compute_time=cost_derivative_compute_time=backward_pass_compute_time=0;
+   rollouts_compute_time=policy_update_compute_time=0;
+   // freeze the GUI value once per optimization step.
+   UpdateNumTrajectoriesFromGUI();
++  num_trajectory_=std::min(num_trajectory_,10);
++  settings.max_regularization_iterations=std::min(settings.max_regularization_iterations,5);
++  if(r33_mechanism!="R32" && settings.regularization_type!=kControlRegularization)
++    mju_error("r33 declared metric requires control regularization");
+ 
+   R32BeginProblem(horizon);
+   // Every call scores the incumbent at the actual current state/reference.
+@@ -297,9 +401,23 @@
+     R32ReuseIncumbent(r32.stop_reason);
+   } else if(r32.stopped) {
+     R32ReuseIncumbent(r32.stop_reason);
++  } else if(r33_mechanism=="P") {
++    R33Structured(horizon,pool);
+   } else {
+     this->Iteration(horizon, pool);
+   }
++  if(r33_archive_valid) {
++    const bool same=r33_source=="incumbent";
++    if(!same) {
++      previous_policy=policy;policy=r33_archive_policy;policy.record_plan_id=old_plan+1;
++      r32.generation_epoch=r32.epoch;r32.generation_call=r29_call_id;r32.generation_time=time;
++    }
++    r32.deployable=true;r32.deployment="best_current_scored_complete_policy";
++    r29_return_reason=same?"incumbent_retained":"policy_installed";
++    r32.incumbent_cost=r33_archive_trajectory.total_return;
++    r32.incumbent_violation=r33_archive_trajectory.trunk_violation;
++    R33WriteSnapshot(horizon);
++  } else {r32.deployable=false;r32.deployment="no_deployable_candidate";}
+   if(const char* file=std::getenv("MJPC_R29_CALL_RECORD")) {
+     std::ofstream out(file,std::ios::app);out.precision(17);
+     bool updated=old_plan!=policy.record_plan_id;
+@@ -340,10 +458,24 @@
+     out<<",\"deployed_scored_epoch\":"<<(r32.deployable?r32.epoch:0)
+        <<",\"deployed_scored_policy_id\":"<<(r32.deployable?policy.record_plan_id:0)
+        <<",\"deployed_current_cost\":";
+-    if(r32.deployable)out<<(updated?trajectory[winner].total_return:r32.incumbent_cost);else out<<"null";
++    if(r32.deployable)out<<r33_archive_trajectory.total_return;else out<<"null";
+     out<<",\"deployed_current_trunk_violation\":";
+-    if(r32.deployable)out<<(updated?trajectory[winner].trunk_violation:r32.incumbent_violation);else out<<"null";
+-    out<<",\"search_attempts\":[";
++    if(r32.deployable)out<<r33_archive_trajectory.trunk_violation;else out<<"null";
++    out<<",\"r33_mechanism\":\""<<r33_mechanism<<"\",\"candidate_source\":\""<<r33_source<<"\""
++       <<",\"native_new_rollouts\":"<<r33_rollouts<<",\"candidate_records\":"<<r33_slots
++       <<",\"cache_hits\":"<<r33_cache_hits<<",\"derivative_passes\":"<<r33_derivative_passes
++       <<",\"D_mean_source\":"<<r33_scale_mean<<",\"D_floor\":"<<r33_scale_floor
++       <<",\"chosen_alpha\":"<<policy.action_step_alpha<<",\"chosen_expected\":"<<expected
++       <<",\"chosen_actual\":"<<improvement<<",\"chosen_ratio_unclipped\":"<<(expected>0?improvement/expected:0)
++       <<",\"task_weights\":[";
++    for(int i=0;i<task->weight.size();++i){if(i)out<<",";out<<task->weight[i];}
++    out<<"],\"task_parameters\":[";
++    for(int i=0;i<task->parameters.size();++i){if(i)out<<",";out<<task->parameters[i];}
++    out<<"],\"gait_context\":[";
++    if(const auto* q=dynamic_cast<const QuadrupedFlat*>(task)) {
++      auto v=q->R32PlanningState();for(int i=0;i<v.size();++i){if(i)out<<",";out<<v[i];}
++    }
++    out<<"],\"search_attempts\":[";
+     for(int i=0;i<r32.attempts.size();++i){if(i)out<<",";out<<r32.attempts[i];}
+     out<<"]}\n";
+   }
+@@ -407,6 +539,10 @@
+     if (!trajectory[i].failure && trajectory[i].trunk_violation == 0)
+       ++nominal_feasible_candidates;
+ 
++  r33_rollouts+=num_trajectory_;
++  for(int i=0;i<num_trajectory_;++i)R33Consider(candidate_policy[i],trajectory[i],horizon,0,i,
++      candidate_policy[i].feedback_scaling,i==incumbent?"incumbent":"nominal_"+std::to_string(i));
++  if(best_nominal>=0) {r33_nominal_policy=candidate_policy[best_nominal];r33_nominal_trajectory=trajectory[best_nominal];}
+   // check for all rollout failures
+   if (best_nominal == -1) {
+     feedback_scaling=0.;
+@@ -610,6 +746,7 @@
+   auto model_derivative_start = std::chrono::steady_clock::now();
+ 
+   // compute model and sensor Jacobians
++  model_derivative.r33_native_direction=false;++r33_derivative_passes;
+   model_derivative.Compute(
+       model, data_, candidate_policy[0].trajectory.states.data(),
+       candidate_policy[0].trajectory.actions.data(),
+@@ -633,6 +770,44 @@
+       task->norm_parameter.data(), task->num_norm_parameter.data(), task->risk,
+       horizon, pool);
+ 
++  // Freeze the metric from the SAME soft residual GN curvature for S and N.
++  if(r33_mechanism!="R32") {
++    r33_D.resize(horizon*dim_action);
++    for(int t=0;t<horizon-1;++t)for(int a=0;a<dim_action;++a) {
++      double d=std::max(0.,cost_derivative.cuu[t*dim_action*dim_action+a*dim_action+a]);
++      r33_D[t*dim_action+a]=d;r33_scale_mean+=d;
++    }
++    r33_scale_mean/=((horizon-1)*dim_action);
++    double weight_scale=0,range_square=0;
++    for(double w:task->weight)weight_scale+=std::max(0.,w);
++    for(int a=0;a<dim_action;++a) {
++      double span=model->actuator_ctrlrange[2*a+1]-model->actuator_ctrlrange[2*a];
++      range_square+=span*span;
++    }
++    const double characteristic=weight_scale/(horizon*range_square);
++    r33_scale_floor=1e-6*(r33_scale_mean>0?r33_scale_mean:characteristic);
++    if(!(r33_scale_floor>0))mju_error("r33 objective has no positive characteristic curvature");
++    for(int t=0;t<horizon-1;++t)for(int a=0;a<dim_action;++a)
++      r33_D[t*dim_action+a]=std::max(r33_D[t*dim_action+a],r33_scale_floor);
++    std::copy_n(r33_D.data()+(horizon-2)*dim_action,dim_action,r33_D.data()+(horizon-1)*dim_action);
++    if(const char* f=std::getenv("MJPC_R29_SNAPSHOT")) {
++      std::ofstream out(std::string(f)+".r33-scale",std::ios::binary|std::ios::trunc);
++      double h[]={33.,double(r29_call_id),double(horizon),double(dim_action),r33_scale_mean,r33_scale_floor};
++      out.write(reinterpret_cast<char*>(h),sizeof(h));
++      out.write(reinterpret_cast<char*>(r33_D.data()),r33_D.size()*sizeof(double));
++    }
++  }
++  if(r33_mechanism=="N") {
++    model_derivative.r33_native_direction=true;++r33_derivative_passes;
++    model_derivative.Compute(model,data_,candidate_policy[0].trajectory.states.data(),
++      candidate_policy[0].trajectory.actions.data(),candidate_policy[0].trajectory.times.data(),
++      dim_state,dim_state_derivative,dim_action,dim_sensor,horizon,
++      settings.fd_tolerance,settings.fd_mode,pool,derivative_skip_);
++    cost_derivative.Compute(candidate_policy[0].trajectory.residual.data(),model_derivative.C.data(),
++      model_derivative.D.data(),dim_state_derivative,dim_action,dim_max,dim_sensor,task->num_residual,
++      task->dim_norm_residual.data(),task->num_term,task->weight.data(),task->norm.data(),
++      task->norm_parameter.data(),task->num_norm_parameter.data(),task->risk,horizon,pool);
++  }
+   // end timer
+   double cost_derivative_time = GetDuration(cost_derivative_start);
+ 
+@@ -699,7 +874,8 @@
+           model->actuator_ctrlrange, settings.regularization_type,
+           settings.action_limits,
+           candidate_policy[0].metric.data()+t*dim_action*dim_action,
+-          model,candidate_policy[0].trajectory.states.data()+t*dim_state);
++          model,candidate_policy[0].trajectory.states.data()+t*dim_state,
++          r33_D.empty()?nullptr:r33_D.data()+t*dim_action);
+ 
+       // failure
+       if (!status) {
+@@ -776,6 +952,10 @@
+       candidate_policy[j].representation=candidate_policy[0].representation;
+     }
+     this->ActionRollouts(horizon,pool);
++    r33_rollouts+=num_trajectory_;
++    for(int i=0;i<num_trajectory_;++i)R33Consider(candidate_policy[i],trajectory[i],horizon,1,
++      regularization_iteration*num_trajectory_+i,linesearch_steps[i],
++      "alpha_"+std::to_string(regularization_iteration)+"_"+std::to_string(i));
+     const int best=this->BestRollout();
+     rollouts_time+=GetDuration(ro_start);
+     const bool descent=best>=0 &&
+@@ -902,7 +1082,7 @@
+     std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
+     out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+ 
+-       <<",\"controller_artifact\":\"S5-r32\""
++       <<",\"controller_artifact\":\"S5-r33\""
+        <<",\"problem_epoch\":"<<r32.epoch<<",\"source_call_id\":"<<r29_call_id
+        <<",\"policy_generation_epoch\":"<<r32.generation_epoch
+        <<",\"dV_unscaled\":["<<backward_pass.dV[0]<<","<<backward_pass.dV[1]<<"]"
+@@ -979,41 +1159,6 @@
+     out<<"]}\n";
+   }
+ 
+-  // One binary transport snapshot per newly installed plan. Python retains
+-  // the bounded event ring and compresses each selected plan once.
+-  if(const char* file=std::getenv("MJPC_R29_SNAPSHOT")) {
+-    std::ofstream out(file,std::ios::binary|std::ios::trunc);
+-    double header[]={32.,double(policy.record_plan_id),time,double(horizon),
+-      double(dim_state),double(dim_action),double(dim_state_derivative),
+-      double(task->num_residual),policy.metric_regularization,double(policy.metric_regularization_type),
+-      policy.nominal_feedback_scale,policy.action_step_alpha,policy.feedback_scaling,
+-      double(policy.representation),double(model->nuserdata),trajectory[winner].total_return};
+-    out.write(reinterpret_cast<char*>(header),sizeof(header));
+-    auto write=[&out](const std::vector<double>& v,int n) {
+-      out.write(reinterpret_cast<const char*>(v.data()),n*sizeof(double));
+-    };
+-    for(const auto* tr:{&trajectory[winner],&policy.trajectory}) {
+-      write(tr->states,horizon*dim_state);write(tr->actions,(horizon-1)*dim_action);
+-      write(tr->times,horizon);write(tr->residual,horizon*task->num_residual);
+-    }
+-    write(policy.feedback_gain,horizon*dim_action*dim_state_derivative);
+-    write(policy.metric,horizon*dim_action*dim_action);
+-    write(policy.base_Qu,horizon*dim_action);
+-    write(policy.base_Qxu,horizon*dim_action*dim_state_derivative);
+-    write(policy.base_active,horizon*dim_action);
+-    write(userdata,model->nuserdata);
+-    double count=trajectory[winner].r29_prefix.size();
+-    out.write(reinterpret_cast<char*>(&count),sizeof(double));
+-    write(trajectory[winner].r29_prefix,int(count));
+-    for(const auto* v:{&model_derivative.r31_substeps,
+-                       &model_derivative.r31_risk_peaks,
+-                       &model_derivative.r31_first_AB}) {
+-      double size=v->size();out.write(reinterpret_cast<char*>(&size),sizeof(double));
+-      write(*v,int(size));
+-    }
+-    write(model_derivative.A,(horizon-1)*dim_state_derivative*dim_state_derivative);
+-    write(model_derivative.B,(horizon-1)*dim_state_derivative*dim_action);
+-  }
+   // stop timer
+   double policy_update_time = GetDuration(policy_update_start);
+ 
+@@ -1037,6 +1182,8 @@
+                    &task = this->task, &state = this->state, &time = this->time,
+                    &mocap = this->mocap, horizon, &userdata = this->userdata,
+                    i]() {
++      candidate_policy[i].feedback_scaling=1.;
++      candidate_policy[i].action_step_alpha=linesearch_steps[i];
+       // scale improvement
+       mju_addScl(candidate_policy[i].trajectory.actions.data(),
+                  candidate_policy[i].trajectory.actions.data(),
+@@ -1124,4 +1271,42 @@
+   return best_rollout;
+ }
+ 
++void iLQGPlanner::R33WriteSnapshot(int horizon) {
++  // One binary transport snapshot per newly installed plan. Python retains
++  // the bounded event ring and compresses each selected plan once.
++  if(const char* file=std::getenv("MJPC_R29_SNAPSHOT")) {
++    std::ofstream out(file,std::ios::binary|std::ios::trunc);
++    double header[]={32.,double(policy.record_plan_id),time,double(horizon),
++      double(dim_state),double(dim_action),double(dim_state_derivative),
++      double(task->num_residual),policy.metric_regularization,double(policy.metric_regularization_type),
++      policy.nominal_feedback_scale,policy.action_step_alpha,policy.feedback_scaling,
++      double(policy.representation),double(model->nuserdata),r33_archive_trajectory.total_return};
++    out.write(reinterpret_cast<char*>(header),sizeof(header));
++    auto write=[&out](const std::vector<double>& v,int n) {
++      out.write(reinterpret_cast<const char*>(v.data()),n*sizeof(double));
++    };
++    for(const auto* tr:{&r33_archive_trajectory,&policy.trajectory}) {
++      write(tr->states,horizon*dim_state);write(tr->actions,(horizon-1)*dim_action);
++      write(tr->times,horizon);write(tr->residual,horizon*task->num_residual);
++    }
++    write(policy.feedback_gain,horizon*dim_action*dim_state_derivative);
++    write(policy.metric,horizon*dim_action*dim_action);
++    write(policy.base_Qu,horizon*dim_action);
++    write(policy.base_Qxu,horizon*dim_action*dim_state_derivative);
++    write(policy.base_active,horizon*dim_action);
++    write(userdata,model->nuserdata);
++    double count=r33_archive_trajectory.r29_prefix.size();
++    out.write(reinterpret_cast<char*>(&count),sizeof(double));
++    write(r33_archive_trajectory.r29_prefix,int(count));
++    for(const auto* v:{&model_derivative.r31_substeps,
++                       &model_derivative.r31_risk_peaks,
++                       &model_derivative.r31_first_AB}) {
++      double size=v->size();out.write(reinterpret_cast<char*>(&size),sizeof(double));
++      write(*v,int(size));
++    }
++    write(model_derivative.A,(horizon-1)*dim_state_derivative*dim_state_derivative);
++    write(model_derivative.B,(horizon-1)*dim_state_derivative*dim_action);
++  }
++}
++
+ }  // namespace mjpc
+--- a/mjpc/trajectory.h
++++ b/mjpc/trajectory.h
+@@ -73,6 +73,12 @@
+   // Existing first 20ms rollout samples, no extra integration or forward pass.
+   void R29RecordedStep(const mjModel* model,mjData* data,int node,int substep);
+   std::vector<double> r29_prefix;
++  // Actual rollout node observations: time, then FL/FR/RL/RR rows of
++  // xyz, bottom_z, native world Fz, instantaneous material proxy Fz, ncontact.
++  // PRE-integration node values and terminal; no additional forward/step.
++  void R33RecordFeet(const mjModel* model,const mjData* data,double state_time);
++  std::vector<double> r33_foot_rows;
++
+   // ----- members ----- //
+   int horizon;                   // trajectory length
+   int dim_state;                 // states dimension
+--- a/mjpc/trajectory.cc
++++ b/mjpc/trajectory.cc
+@@ -23,6 +23,7 @@
+ #include <mujoco/mujoco.h>
+ #include "mjpc/utilities.h"
+ #include "mjpc/r26_risk.h"
++#include "mjpc/tasks/quadruped/r10_contact.h"
+ 
+ namespace mjpc {
+ namespace {
+@@ -106,6 +107,7 @@
+     double time, const double* mocap, const double* userdata, double xfrc_std,
+     double xfrc_rate, int steps) {
+   r29_prefix.clear();
++  r33_foot_rows.clear();
+   // reset failure flag
+   failure = false;
+   trunk_violation = 0.0;
+@@ -210,6 +212,7 @@
+ 
+   // final forward
+   mj_forward(model, data);
++  R33RecordFeet(model,data,data->time);
+ 
+   // final residual
+   mju_copy(DataAt(residual, (horizon - 1) * dim_residual), data->sensordata,
+@@ -232,6 +235,7 @@
+     const Task* task, const mjModel* model, mjData* data, const double* state,
+     double time, const double* mocap, const double* userdata, int steps) {
+   r29_prefix.clear();
++  r33_foot_rows.clear();
+   // reset failure flag
+   failure = false;
+   trunk_violation = 0.0;
+@@ -323,6 +327,7 @@
+ 
+   // final forward
+   mj_forward(model, data);
++  R33RecordFeet(model,data,data->time);
+ 
+   // final residual
+   mju_copy(DataAt(residual, (horizon - 1) * dim_residual), data->sensordata,
+@@ -340,7 +345,12 @@
+ 
+ // Flattened variable-contact rows, sampled from the actual candidate rollout.
+ void Trajectory::R29RecordedStep(const mjModel* m,mjData* d,int node,int substep) {
+-  if(node>=10) {mj_step(m,d);return;}
++  const double observation_time=d->time;
++  if(node>=10) {
++    mj_step(m,d);
++    if(substep==0) R33RecordFeet(m,d,observation_time);
++    return;
++  }
+   const size_t start=r29_prefix.size();
+   auto append=[&](const double* x,int n){r29_prefix.insert(r29_prefix.end(),x,x+n);};
+   r29_prefix.insert(r29_prefix.end(),{double(node),double(substep),d->time,0.,0.});
+@@ -351,6 +361,7 @@
+     pd[i]=60*(d->ctrl[i]-d->qpos[m->jnt_qposadr[j]])-5*d->qvel[m->jnt_dofadr[j]];
+   }
+   mj_step(m,d);
++  if(substep==0) R33RecordFeet(m,d,observation_time);
+   r29_prefix[start+3]=d->time;r29_prefix[start+4]=d->ncon;
+   append(d->qpos,m->nq);append(d->qvel,m->nv);append(d->act,m->na);
+   append(pd.data(),m->nu);append(d->actuator_force,m->nu);
+@@ -358,6 +369,41 @@
+   for(int c=0;c<d->ncon;++c) {
+     r29_prefix.push_back(d->contact[c].geom[0]);r29_prefix.push_back(d->contact[c].geom[1]);
+     double force[6];mj_contactForce(m,d,c,force);append(force,6);
++  }
++}
++
++
++// Read the existing native solve at the rollout node. MuJoCo's geom/contact
++// arrays after mj_step belong to the pre-integration state, just as residuals.
++void Trajectory::R33RecordFeet(const mjModel* m,const mjData* d,double state_time) {
++  r33_foot_rows.push_back(state_time);
++  const double* material=GetCustomNumericData(m,"r10_local_contact");
++  const double floor=GetNumberOrDefault(0,m,"s1_flat_ground_height");
++  for(const char* name : {"FL","FR","RL","RR"}) {
++    const int geom=mj_name2id(m,mjOBJ_GEOM,name);
++    const double* xyz=d->geom_xpos+3*geom;
++    const double bottom=xyz[2]-m->geom_size[3*geom];
++    double native_fz=0;
++    int contacts=0;
++    for(int c=0;c<d->ncon;++c) {
++      const auto& contact=d->contact[c];
++      const bool first=contact.geom[0]==geom && m->geom_bodyid[contact.geom[1]]==0;
++      const bool second=contact.geom[1]==geom && m->geom_bodyid[contact.geom[0]]==0;
++      if(first || second) {
++        double wrench[6],world[3];
++        mj_contactForce(m,d,c,wrench);
++        mju_mulMatTVec(world,contact.frame,wrench,3,3);
++        native_fz+=(second ? 1 : -1)*world[2];
++        ++contacts;
++      }
++    }
++    double material_fz=0;
++    if(material && R10MaterialFoot(m,d,geom)) {
++      const double point[3]={xyz[0],xyz[1],bottom};
++      material_fz=material[0]*mju_max(floor+R10ContactRest(m,d,point)-bottom,0);
++    }
++    r33_foot_rows.insert(r33_foot_rows.end(),{
++        xyz[0],xyz[1],xyz[2],bottom,native_fz,material_fz,double(contacts)});
+   }
+ }
+ 
