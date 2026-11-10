@@ -148,12 +148,20 @@ def execute_case(label,mechanism,workers):
             agent.set_mode('Quadruped')
             agent.set_task_parameters({'Gait switch':'Manual','Gait':fixture['settings']['task_parameters']['Gait']})
             agent.set_state(**state)
-            agent.set_task_parameters(fixture['settings']['task_parameters'])
+            # The upstream selection setter indexes only selection numerics.
+            # Flip/Biped names therefore alias Cadence/Amplitude; these inactive
+            # fields already equal the saved XML defaults and are not rewritten.
+            numeric={k:v for k,v in fixture['settings']['task_parameters'].items() if not isinstance(v,str)}
+            agent.set_task_parameters(numeric)
             agent.set_cost_weights(fixture['settings']['cost_weights'])
             agent.set_state(**state)
             record['readback_parameters']=agent.get_task_parameters()
             record['readback_weights']=agent.get_cost_weights()
             record['readback_mode']=agent.get_mode()
+            if record['readback_parameters']!=fixture['settings']['task_parameters']:
+                raise ValueError('Recovered task parameter readback differs before any solver call: '+repr(record['readback_parameters']))
+            if record['readback_weights']!=fixture['settings']['cost_weights']:
+                raise ValueError('Recovered task weight readback differs before any solver call')
             begin=time.monotonic();agent.planner_step();record['planner_rpc_wall_s']=time.monotonic()-begin
             record['installed_action_at_origin']=np.asarray(agent.get_action(time=state['time'])).tolist()
             records=R29Records(run,model);records.controller='S5-r33'
