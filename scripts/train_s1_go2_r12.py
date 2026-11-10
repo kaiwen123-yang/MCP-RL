@@ -135,10 +135,10 @@ def main():
         episode_output=large/name
         diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(episode_output/"planner-records.jsonl"),
                               MJPC_R27_ACTION_RECORD=str(episode_output/"feedback-actions.jsonl"))
-        if build in ('S5-r29','S5-r30'):
+        if build in ('S5-r29','S5-r30','S5-r31'):
             diagnostic_env.update(MJPC_R29_SNAPSHOT=str(episode_output/"r29-current-plan.bin"),
                                   MJPC_R29_CALL_RECORD=str(episode_output/"planner-calls.jsonl"))
-        with (output/"persistent-mpc.log").open("a") as log, Agent(task_id="Quadruped Flat",
+        with (output/f"agent-server-ep{stream.episode:05d}.log").open("w") as log, Agent(task_id="Quadruped Flat",
                 server_binary_path=str(binary),extra_flags=[f"--mjpc_workers={workers}"],
                 subprocess_kwargs=dict(stdout=log,stderr=log,env=diagnostic_env),run_init=False) as agent:
             joint=PolicyMaterial(ROOT,r9,stream,0,session,agent=agent,full_recording=True)

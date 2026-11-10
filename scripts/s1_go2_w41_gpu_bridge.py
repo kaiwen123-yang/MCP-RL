@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 import jax
 from s1_go2_w41_gpu import ROOT,LARGE,OUT,SMALL,write,sync
+from s1_go2_gpu_evaluation import evaluation_command,summarize_completion
 
 def recv_exact(conn,n):
     chunks=[]
@@ -80,33 +81,45 @@ def serve_evaluation(resident,command,env,prefix,report,publish):
     return dict(exit_code=process.returncode,requests=requests,wall_s=time.monotonic()-begin,
         batch_wall_p50_s=float(np.median(wall)) if wall else None,log=str(logpath.relative_to(ROOT)))
 
-def integrated_evaluation(resident,report,publish):
-    config=json.loads((ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json').read_text())
+def integrated_evaluation(resident,report,publish,backends=('native','mjx')):
+    invocation=report.get('continuation',{}).get('invocation')
+    source_contract=(OUT/'native-evaluation-contract.json'
+                     if report.get('continuation',{}).get('resume_from') in ('G4','G5')
+                     else ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json')
+    config=json.loads(source_contract.read_text())
     # The same immutable own update37 is used for the new predictor and native
     # comparison. Neither result is a repeated W40 job or an extra PPO lineage.
     checkpoint=LARGE/'training/w40-b/PANN_PPO_S5-seed2/checkpoint-009617.pt'
     if not checkpoint.is_file():raise FileNotFoundError('Declared immutable W40 B update37 checkpoint missing')
     report['stages']['G3']=dict(status='native_full_stack_integration',
+        source_contract=str(source_contract.relative_to(ROOT)),
+        requested_backends=list(backends),
+        evaluation_contracts={},
         checkpoint=str(checkpoint.relative_to(ROOT)),private_state='New named fresh mission; original native private task phase advances through original TransitionLocked',
         cost='Original native101 residuals, weights, risk, ten-substep path maxima',
         candidates='Original10 feedback/action candidates, GPU forward in up-to-two-candidate blocks, native r30 QP and (v,J) sorting',
         derivatives='GPU local A/B + native node-start sensor C/D and native risk geometry Jacobians at GPU prefix states',
         fixture_identity='w41-gpu-new-full-stack-seed2-update37; not a historical planner replay',
         complete_candidate_transport='gzip binary sequence: uint64 request,mode,response_count;153 float64 input;response_count float64 output. All forward/derivative requests retained; native planner records own costs/ranking.')
-    report['stages']['G4']=[]
+    # A selected backend continuation supersedes only that backend's rows.
+    # Unselected historical failures remain visible in the overall report.
+    report['stages']['G4']=[row for row in report['stages'].get('G4',[])
+                          if row.get('backend') not in backends]
     env=dict(os.environ);env['PYTHONPATH']=':'.join(x for x in env.get('PYTHONPATH','').split(':') if 'gpu-w40-python' not in x)
     for backend,artifact in [('native','S5-r30'),('mjx','S5-r30-gpu-mjx')]:
+        if backend not in backends:continue
         contract=copy.deepcopy(config)
         contract.update(current_task='W41_GPU_'+backend.upper()+'_FIXED_POLICY',protocol_revision='W41_GPU_'+backend.upper()+'_v1')
         contract['reuse'].update(active_controller_build='S5-r30',controller_artifact=artifact)
         contract['resources']['mpc_workers']=2
         contract['learning'].update(phase_id='w41-gpu-'+backend,stream_id='w41-gpu-eval')
-        file=OUT/(backend+'-evaluation-contract.json');write(file,contract)
+        prefix=backend+('-'+invocation if invocation else '')
+        file=OUT/(prefix+'-evaluation-contract.json');write(file,contract)
+        report['stages']['G3']['evaluation_contracts'][backend]=str(file.relative_to(ROOT))
+        evaluation_started=time.time()
         for level in ['E30','E60']:
-            attempt='w41-gpu-'+backend+'-PANN_PPO_S5-s2-update37-'+level
-            command=[str(ROOT/'work/envs/d57/bin/python'),'-u','scripts/run_s1_go2_r12.py',
-                '--contract',str(file),'--attempt',attempt,'--build','S5-r30','--group','PANN_PPO_S5',
-                '--seed','2','--checkpoint',str(checkpoint),'--level',level,'--workers','2']
+            attempt='w41-gpu-'+prefix+'-PANN_PPO_S5-s2-update37-'+level
+            command=evaluation_command(ROOT,file,attempt,checkpoint,level,evaluation_started)
             publish('G4_'+backend+'_'+level+'_running')
             if backend=='mjx':execution=serve_evaluation(resident,command,env,attempt,report,publish)
             else:
@@ -116,11 +129,17 @@ def integrated_evaluation(resident,report,publish):
             resultpath=ROOT/contract['outputs']['compact_root']/(attempt+'.json')
             result=json.loads(resultpath.read_text()) if resultpath.exists() else dict(stage_status='technical_interruption',reason='No physical result; see retained execution log')
             row=dict(backend=backend,level=level,attempt=attempt,execution=execution,
-                result={k:result.get(k) for k in ['stage_status','reason','success','simulation_s','wall_s','legal_route','qualification','stage_progress']})
+                evaluation_started_unix_s=evaluation_started,deadline_unix_s=None,
+                result={k:result.get(k) for k in ['stage_status','reason','error','success','simulation_s','wall_s','legal_route','qualification','stage_progress']})
             report['stages']['G4'].append(row);publish('G4_'+backend+'_'+level+'_completed')
             if not result.get('success'):break
-    report['stages']['G3']['status']='completed_actual_outer_loop'
+    summarize_completion(report)
     # G5 is one selected forward-throughput/contact comparison, never a
     # collection of unrelated algorithms. The new backend has its own identity.
+    previous_g5=report['stages'].get('G5',{})
+    if (previous_g5.get('exit_code')==0 and previous_g5.get('result',{}).get('status')
+            =='completed_independent_MJWarp_comparison'):
+        report['G5_reuse']=dict(result_record=previous_g5.get('result_record'),recomputed=False)
+        return
     from s1_go2_w41_mjwarp import run_selected_alternative
     run_selected_alternative(report,publish)

@@ -29,6 +29,11 @@ class R29Records:
         take('base_Qxu',(T,nx,nu));take('base_active',(T,nu));take('userdata',(int(h[14]),))
         if cursor<len(raw):
             count=int(raw[cursor]);cursor+=1;take('accepted_prefix_substeps',(count,))
+        if int(h[0])==31:
+            for key in ('r31_native_soft_substeps','r31_native_risk_peaks','r31_first_soft_AB'):
+                count=int(raw[cursor]);cursor+=1;take(key,(count,))
+            take('r31_held_proxy_A',(T-1,nx,nx))
+            take('r31_held_proxy_B',(T-1,nx,nu))
         self.ring[pid]={'origin':float(h[2]),'last_ref':float(t),'data':data}
         if t<=self.until:self.save(pid)
         planner=self.out/'planner-records.jsonl'
@@ -134,6 +139,14 @@ class R29Records:
                     plan_coverage='Only listed plans have full accepted/reference/K/H; no old reconstruction.',
                     raw_binary='r29-current-plan.bin is a current transport buffer, not a history.',
                     substep_clock='Each encoded row: node,substep,before,after,ncontact; pre-state,post-state,rawPD,actuator_force,qfrc_passive,residual; then ncontact*(geom1,geom2,6 contact-frame forces).')
+        if getattr(self,'controller',None)=='S5-r31':
+            result['r31_schema']=dict(
+                model_roles='native geom/pair forward; independent smooth derivatives at native substeps',
+                native_soft_substeps='(T-1,10,1+3*ns+nu): time,native_pre,held_u,native_post,soft_post',
+                native_risk_peaks='(T-1,nrisk,2): native maximum,earliest active substep',
+                first_soft_AB='(10,nx*nx+nx*nu): row-major one-step A_s then B_s at native states',
+                held_proxy_A='(T-1,nx,nx)',held_proxy_B='(T-1,nx,nu)',
+                scope='Approximate local model, no plant Jacobian or stability claim')
         (self.out/'r29-event-manifest.json').write_text(json.dumps(result,indent=2)+'\n')
         self.actions.close()
         return result

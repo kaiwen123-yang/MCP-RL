@@ -20,6 +20,26 @@ def write(path,value):
     path.parent.mkdir(parents=True,exist_ok=True)
     path.write_text(json.dumps(value,indent=2,ensure_ascii=False)+"\n")
 
+
+def phase_metadata(parent, active, controller_build, artifact):
+    """Describe the actual selected parent, not a historical phase template."""
+    return dict(parent_stream_id=parent["parent_stream_id"],parent_phase_id=parent["parent_phase_id"],
+        parent_controller_build=parent["parent_controller_build"],active_controller_build=controller_build,
+        parent_controller_artifact=parent["parent_controller_artifact"],controller_artifact=artifact,
+        implementation_base_controller_build="S5-r30" if controller_build=="S5-r31" else parent["parent_controller_build"],
+        parent_checkpoint=parent["resume_checkpoint"],parent_transitions=parent["parent_transitions"],
+        parent_updates=parent["parent_updates"],parent_completed_update_transitions=parent["parent_completed_update_transitions"],
+        parent_tail_buffer=parent["parent_tail"],excluded_old_version_transitions_after_migration=parent["excluded_old_version_transitions"],
+        new_exclusions=0,new_controller_initial_buffer=0,reward_version_change=False,
+        parent_reward_version=parent["parent_reward_version"],reward_version=parent["parent_reward_version"],
+        restoration="Own actor/critic/optimizer/normalization/RNG/history; no new fork/reseed.",
+        first_new_rollout=dict(first_transition=parent["parent_transitions"]+1,
+            last_transition=parent["parent_transitions"]+256,update=parent["parent_updates"]+1),
+        target_checkpoint=f'checkpoint-{active["target_transitions"]:06d}.pt',
+        target_transitions=active["target_transitions"],target_updates=active["target_updates"],
+        next_episode_minimum=parent["parent_episode"]+1,parent_directories_read_only=True,
+        idempotence="Declare once; ordinary same-job resume retains own clock/RNG/tail.")
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--resume",help="Own checkpoint for ordinary resume; new declared phases use their declared parent map.")
@@ -30,7 +50,7 @@ def main():
         help="Explicit S5-r29 numerical QP repair on an existing own job; logical controller/phase stay unchanged.")
     p.add_argument("--no-wall-deadline", action="store_true",
         help="Apply the 2026-11-07 goal-based background policy; retain prior clock values in history.")
-    p.add_argument("--workers",type=int,choices=(12,14),
+    p.add_argument("--workers",type=int,choices=(10,11,12,14),
         help="MPC workers per stream for new jobs only; default from resources.mpc_workers (12). Also used by each new job's evaluation.")
     p.add_argument("--session")
     p.add_argument("--network-mode",choices=["academic","clash","direct"],default="academic")
@@ -154,8 +174,17 @@ def main():
             contract["learning"]["target_cumulative_updates_per_stream"]=active.get("target_updates",contract["learning"]["target_cumulative_updates_per_stream"])
             contract["learning"].update(phase_initial_transitions=saved["samples"],phase_initial_updates=saved["updates"])
             contract["learning"]["active_streams"]=[active]
+            contract["learning"]["controller_version_boundary"]=phase_metadata(parent,active,
+                contract["reuse"]["active_controller_build"],contract["reuse"].get("controller_artifact",contract["reuse"]["active_controller_build"]))
+            contract["control_and_evaluation"]["post_training_evaluation"]["checkpoint_selection"]=dict(
+                stream_id=active["stream_id"],parent_checkpoint=parent["resume_checkpoint"],
+                parent_updates=saved["updates"],parent_transitions=saved["samples"],
+                target_updates=active["target_updates"],target_transitions=active["target_transitions"],
+                rule="Own final new update with matching stream/phase/controller/artifact/reward; no parent fallback.")
+
             job=dict(session=session,job_directory=str(directory.relative_to(ROOT)),
                 source_commit=source,controller_build=contract["reuse"]["active_controller_build"],
+                controller_artifact=contract["reuse"].get("controller_artifact",contract["reuse"]["active_controller_build"]),
                 current_task=contract["current_task"],group=active["group"],seed=active["seed"],
                 mpc_workers=workers,evaluation_solver_workers=workers,
                 stream_id=active["stream_id"],phase_id=name,resume_checkpoint=str(resume.relative_to(ROOT)),
@@ -175,6 +204,7 @@ def main():
                 delivery_mode="compact_first_local_bulk",bulk_upload_enabled=False,automatic_cleanup_enabled=False,
                 result_summary=f'{contract["outputs"]["compact_root"]}/jobs/{name}.json')
             environment=dict(python=sys.version,executable=sys.executable,platform=platform.platform(),
+                runtime_root=str(ROOT),pythonpath=os.environ.get("PYTHONPATH"),
                 controller_build=job["controller_build"],mpc_workers=workers,
                 torch_threads=contract["resources"]["torch_threads"],blas_threads=contract["resources"]["blas_threads"],
                 environment={k:os.environ.get(k) for k in ("OMP_NUM_THREADS","OPENBLAS_NUM_THREADS",

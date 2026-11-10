@@ -352,7 +352,7 @@ def run(args, c, joint=None):
             'packet_period_s':.02,'actor_to_reference':'Recorded at next normal/phase replan',
             'reference_to_optimized_action':'Separate logical and wall times; synchronous optimization'}
     diagnostic_env=dict(os.environ)
-    if c.get('controller_build') in ('S5-r27', 'S5-r28', 'S5-r29', 'S5-r30'):
+    if c.get('controller_build') in ('S5-r27', 'S5-r28', 'S5-r29', 'S5-r30','S5-r31'):
         diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(out/'planner-records.jsonl'),
                               MJPC_R27_ACTION_RECORD=str(out/'feedback-actions.jsonl'))
         resolved['planner_recording']=dict(
@@ -361,8 +361,14 @@ def run(args, c, joint=None):
             node_slices='0 and +20ms at base-x approach windows [.4,1.2] or [1.8,2.6]',
             raw_feedback='raw_K_delta_x before feedback scaling and actuator clipping',
             bulk_retained_local=True)
+    if c.get('controller_build')=='S5-r31':
+        resolved['r31_model_roles']=c['r31_contact_forward']
+        resolved['author_prediction_approximation']=dict(
+            contact_forward='original geom/pair solimp',joint_limits='existing smoothing',
+            derivatives='independent smooth model at every native nominal substep',
+            remaining='Original planner integrator, coldstart and causal material proxy retained')
     r29_records=None
-    if c.get('controller_build') in ('S5-r29','S5-r30'):
+    if c.get('controller_build') in ('S5-r29','S5-r30','S5-r31'):
         from s1_go2_r29_records import R29Records
         r29_records=R29Records(out,model)
         r29_records.controller=c["controller_build"]
@@ -371,7 +377,7 @@ def run(args, c, joint=None):
         resolved['planner_recording'].update(node_slices='0 and +20ms without spatial gate',
             complete_plans='r29-event-manifest.json',calls='planner-calls.jsonl',
             execution_links='action-execution.jsonl')
-    with (out/'agent-server.log').open('w') as server_log, (contextlib.nullcontext(joint.agent) if training else Agent(task_id='Quadruped Flat', model=prediction_model,
+    with (contextlib.nullcontext(None) if training else (out/'agent-server.log').open('w')) as server_log, (contextlib.nullcontext(joint.agent) if training else Agent(task_id='Quadruped Flat', model=prediction_model,
             server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
             subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT,env=diagnostic_env), run_init=False)) as agent:
         try:
@@ -758,6 +764,16 @@ def run(args, c, joint=None):
             recording='Training: 20Hz robot states, 2Hz transitions, per-episode actual physical counters; no full prediction/physics dumps.')
     from s1_go2_r11_protocol import evaluate_stage
     result=evaluate_stage(result,c,joint,arrays)
+    result['mujoco_warning_counts']={str(mujoco.mjtWarning(i)):dict(
+        number=int(data.warning[i].number),lastinfo=int(data.warning[i].lastinfo))
+        for i in range(int(mujoco.mjtWarning.mjNWARNING))}
+    service_log=(joint.stream.directory/f'agent-server-ep{joint.stream.episode:05d}.log') if training else out/'agent-server.log'
+    if service_log.exists():
+        warning_lines=[line.rstrip() for line in service_log.read_text(errors='replace').splitlines()
+                       if 'WARNING' in line.upper()]
+        result['agent_server_warning_lines']=dict(count=len(warning_lines),
+            source=str(service_log.relative_to(ROOT)),scope='Emitted service log lines, not a claim that suppressed worker warning counters are zero.')
+        dump(out/'mujoco-warnings.json',dict(plant=result['mujoco_warning_counts'],service_warning_lines=warning_lines))
     result['full_configuration_sha256']=resolved['full_configuration_sha256']
     dump(small/f'{args.attempt}.json',result)
     with index_file(small,c) as idx:

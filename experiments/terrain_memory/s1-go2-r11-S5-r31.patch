@@ -1,0 +1,251 @@
+--- a/mjpc/agent.cc
++++ b/mjpc/agent.cc
+@@ -310,6 +310,12 @@
+       pair_solimp_[i] = model_->pair_solimp[mjNIMP * i];
+     }
+     MakeDifferentiable(model_);
++    // W42 forward model: restore native geom/pair contact impedance.
++    // Joint-limit smoothing and the existing integrator/coldstart stay intact.
++    for (int i=0;i<model_->ngeom;++i)
++      model_->geom_solimp[mjNIMP*i]=geom_solimp_[i];
++    for (int i=0;i<model_->npair;++i)
++      model_->pair_solimp[mjNIMP*i]=pair_solimp_[i];
+   }
+ 
+   // R11: numerical predictor state is independent of worker solver history.
+--- a/mjpc/grpc/agent_service.cc
++++ b/mjpc/grpc/agent_service.cc
+@@ -13,6 +13,7 @@
+ // limitations under the License.
+ 
+ #include "mjpc/grpc/agent_service.h"
++#include "mjpc/r31_model_roles.h"
+ 
+ #include <string_view>
+ #include <vector>
+@@ -76,7 +77,7 @@
+ 
+ void residual_sensor_callback(const mjModel* m, mjData* d, int stage) {
+   // with the `m == model` guard in place, no need to clear the callback.
+-  if (m == agent_model || m == model) {
++  if (m == agent_model || m == model || m == mjpc::r31_derivative_model) {
+     if (stage == mjSTAGE_ACC) {
+       task->Residual(m, d, d->sensordata);
+     }
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -184,7 +184,13 @@
+        <<",\"metric_valid\":"<<(policy.metric_valid?"true":"false")
+        <<",\"timers_us\":["<<nominal_compute_time<<","<<model_derivative_compute_time
+        <<","<<cost_derivative_compute_time<<","<<backward_pass_compute_time
+-       <<","<<rollouts_compute_time<<","<<policy_update_compute_time<<"]}\n";
++       <<","<<rollouts_compute_time<<","<<policy_update_compute_time<<"]";
++    out<<",\"mujoco_warning_counts_native_cumulative_then_soft_call\":[";
++    for(int w=0;w<model_derivative.r31_warnings.size();++w) {
++      if(w) {out<<",";}
++      out<<model_derivative.r31_warnings[w];
++    }
++    out<<"]}\n";
+   }
+ }
+ 
+@@ -739,6 +745,14 @@
+   if (diagnostic_file) {
+     std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
+     out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
++       <<",\"controller_artifact\":\"S5-r31\""
++       <<",\"forward_model\":\"native_geom_pair_joint_limit_smooth\""
++       <<",\"derivative_model\":\"frozen_smooth_at_native_substeps\""
++       <<",\"local_model\":\"zero_order_native_anchor_soft_minus_soft_FD\""
++       <<",\"nominal_cost\":"<<previous_return
++       <<",\"proxy_expected_decrease\":"<<expected
++       <<",\"no_improvement_reason\":\""<<(cost_improvement>0 ? "none" :
++          (violation_improvement>0 ? "trunk_restoration_cost_not_decreased" : "no_native_cost_decrease"))<<"\""
+        <<",\"winner\":"<<winner
+        <<",\"regularization_used\":"<<regularization_used
+        <<",\"regularization_before\":"<<regularization_before
+@@ -758,7 +772,7 @@
+        <<",\"cost_expected\":"<<(cost_ratio_valid ? std::to_string(expected) : "null")
+        <<",\"cost_surprise\":"<<(cost_ratio_valid ? std::to_string(surprise) : "null")
+        <<",\"cost_ratio_reason\":\""<<(projection_changed?"actuator_projection_changed_policy":
+-           (feasible_comparison?"original_local_model":"trunk_violation_comparison"))<<"\""
++           (feasible_comparison?"approximate_smooth_local_model_on_native_nominal":"trunk_violation_comparison"))<<"\""
+        <<",\"nominal_feedback_scale\":"<<feedback_scaling
+        <<",\"action_step_alpha\":"<<action_step<<",\"installed_feedback_scaling\":1"
+        <<",\"metric_valid\":"<<(policy.metric_valid?"true":"false")
+@@ -807,7 +821,7 @@
+   // the bounded event ring and compresses each selected plan once.
+   if(const char* file=std::getenv("MJPC_R29_SNAPSHOT")) {
+     std::ofstream out(file,std::ios::binary|std::ios::trunc);
+-    double header[]={29.,double(policy.record_plan_id),time,double(horizon),
++    double header[]={31.,double(policy.record_plan_id),time,double(horizon),
+       double(dim_state),double(dim_action),double(dim_state_derivative),
+       double(task->num_residual),policy.metric_regularization,double(policy.metric_regularization_type),
+       policy.nominal_feedback_scale,policy.action_step_alpha,policy.feedback_scaling,
+@@ -829,6 +843,14 @@
+     double count=trajectory[winner].r29_prefix.size();
+     out.write(reinterpret_cast<char*>(&count),sizeof(double));
+     write(trajectory[winner].r29_prefix,int(count));
++    for(const auto* v:{&model_derivative.r31_substeps,
++                       &model_derivative.r31_risk_peaks,
++                       &model_derivative.r31_first_AB}) {
++      double size=v->size();out.write(reinterpret_cast<char*>(&size),sizeof(double));
++      write(*v,int(size));
++    }
++    write(model_derivative.A,(horizon-1)*dim_state_derivative*dim_state_derivative);
++    write(model_derivative.B,(horizon-1)*dim_state_derivative*dim_action);
+   }
+   // stop timer
+   double policy_update_time = GetDuration(policy_update_start);
+--- a/mjpc/planners/ilqg/policy.cc
++++ b/mjpc/planners/ilqg/policy.cc
+@@ -199,7 +199,7 @@
+        <<",\"feedback_scaling\":"<<feedback_scaling
+        <<",\"query_id\":"<<++query_id<<",\"query_kind\":\"rpc_state_query\""
+        <<",\"metric_valid\":"<<(metric_valid?"true":"false")
+-       <<",\"policy_method\":\"r30_matched_instantaneous_bound_riccati\""
++       <<",\"policy_method\":\"r31_native_forward_anchored_smooth_r30_riccati\""
+        <<",\"metric_source_plan_id\":"<<record_plan_id
+        <<",\"metric_regularization\":"<<metric_regularization
+        <<",\"metric_regularization_type\":"<<metric_regularization_type
+@@ -211,7 +211,7 @@
+        <<",\"restoration\":"<<(projection.restoration?"true":"false")
+        <<",\"qp_converged\":"<<(projection.converged?"true":"false")
+        <<",\"qp_nfree\":"<<projection.nfree
+-       <<",\"qp_solver_revision\":\"S5-r30\""
++       <<",\"qp_solver_revision\":\"S5-r29-qp2\""
+        <<",\"qp_native_nfree\":"<<projection.native_nfree
+        <<",\"qp_native_converged\":"<<(projection.native_converged?"true":"false")
+        <<",\"qp_native_primal_residual_rad\":"<<projection.native_primal
+--- a/mjpc/planners/model_derivatives.cc
++++ b/mjpc/planners/model_derivatives.cc
+@@ -20,6 +20,7 @@
+ #include "mjpc/threadpool.h"
+ #include "mjpc/utilities.h"
+ #include "mjpc/r26_risk.h"
++#include "mjpc/r31_model_roles.h"
+ 
+ namespace mjpc {
+ 
+@@ -50,6 +51,22 @@
+                                int dim_state_derivative, int dim_action,
+                                int dim_sensor, int T, double tol, int mode,
+                                ThreadPool& pool, int skip) {
++  // One immutable smooth model for this planning snapshot, independent data
++  // per worker. Callbacks see the same task/residual; userdata/time/control
++  // are copied from each native nominal substep, never rolled on the soft path.
++  UniqueMjModel smooth(mj_copyModel(nullptr,m),mj_deleteModel);
++  MakeDifferentiable(smooth.get());
++  std::vector<UniqueMjData> smooth_data;
++  for (int i=0;i<pool.NumThreads();++i)
++    smooth_data.emplace_back(mj_makeData(smooth.get()),mj_deleteData);
++  r31_derivative_model=smooth.get();
++  const int hold=GetNumberOrDefault(1,m,"s1_control_hold_substeps");
++  const int nr=R26RiskRows(m).size();
++  const int width=1+3*dim_state+dim_action;
++  r31_substeps.assign((T-1)*hold*width,0.);
++  r31_risk_peaks.assign((T-1)*nr*2,0.);
++  r31_first_AB.assign(hold*(dim_state_derivative*dim_state_derivative+
++                          dim_state_derivative*dim_action),0.);
+   // reset indices
+   evaluate_.clear();
+   interpolate_.clear();
+@@ -77,10 +94,12 @@
+   // evaluate derivatives
+   int count_before = pool.GetCount();
+   for (int t : evaluate_) {
+-    pool.Schedule([&m, &data, &A = A, &B = B, &C = C, &D = D, &x, &u, &h,
++    pool.Schedule([&, &A = A, &B = B, &C = C, &D = D,
+                    dim_state, dim_state_derivative, dim_action, dim_sensor, tol,
+                    mode, t, T]() {
+       mjData* d = data[ThreadPool::WorkerId()].get();
++      mjData* sd = smooth_data[ThreadPool::WorkerId()].get();
++      const mjModel* sm=smooth.get();
+       // set state
+       SetState(m, d, x + t * dim_state);
+       d->time = h[t];
+@@ -108,8 +127,23 @@
+           GetState(m,d,states.data()+sub*dim_state);
+           mju_copy(prefixes_a.data()+sub*nx*nx,prefix_a.data(),nx*nx);
+           mju_copy(prefixes_b.data()+sub*nx*nu,prefix_b.data(),nx*nu);
+-          mjd_transitionFD(m,d,tol,mode,next_a.data(),next_b.data(),
+-                           sub==0 ? total_c : nullptr,sub==0 ? total_d : nullptr);
++          // C/D use the native node state and native residual evaluation.
++          if(sub==0) mjd_transitionFD(m,d,tol,mode,nullptr,nullptr,total_c,total_d);
++          mj_copyData(sd,sm,d);
++          // MuJoCo performs soft(perturbed)-soft(base), including quaternion
++          // tangent differences. No native baseline enters this FD numerator.
++          mjd_transitionFD(sm,sd,tol,mode,next_a.data(),next_b.data(),nullptr,nullptr);
++          double* record=r31_substeps.data()+(t*substeps+sub)*width;
++          record[0]=d->time;
++          GetState(m,d,record+1);
++          mju_copy(record+1+dim_state,d->ctrl,nu);
++          // Diagnostic soft successor only; the nominal remains in d.
++          mj_step(sm,sd);
++          GetState(sm,sd,record+1+2*dim_state+nu);
++          if(t==0) {
++            double* ab=r31_first_AB.data()+sub*(nx*nx+nx*nu);
++            mju_copy(ab,next_a.data(),nx*nx);mju_copy(ab+nx*nx,next_b.data(),nx*nu);
++          }
+           // Refresh q/v geometry after FD; do not use its perturbed/stale sensors.
+           R26RiskKinematics(m,d);
+           for (int r=0;r<nr;++r) {
+@@ -117,13 +151,20 @@
+             if (!sub || value>peak[r]) {peak[r]=value;active[r]=sub;}
+           }
+           mj_step(m,d);
++          GetState(m,d,record+1+dim_state+nu);
++          // Zero perturbation is anchored at this native successor. P/Q
++          // propagate only tangent perturbations, not the soft absolute state.
+           mju_mulMatMat(total_a,next_a.data(),prefix_a.data(),nx,nx,nx);
+           mju_mulMatMat(total_b,next_a.data(),prefix_b.data(),nx,nx,nu);
+           mju_addTo(total_b,next_b.data(),nx*nu);
+           mju_copy(prefix_a.data(),total_a,nx*nx);
+           mju_copy(prefix_b.data(),total_b,nx*nu);
+         }
+-        // Only final selected states are differentiated, including node0.
++        for(int r=0;r<nr;++r) {
++          r31_risk_peaks[(t*nr+r)*2]=peak[r];
++          r31_risk_peaks[(t*nr+r)*2+1]=active[r];
++        }
++        // Only native selected states are differentiated, including node0.
+         for (int sub=0;sub<substeps;++sub) {
+           std::vector<int> selected;
+           for (int r=0;r<nr;++r)if (active[r]==sub)selected.push_back(r);
+@@ -183,6 +224,12 @@
+   }
+   pool.WaitCount(count_before + evaluate_.size());
+   pool.ResetCount();
++  r31_warnings.assign(2*mjNWARNING,0.);
++  for(int i=0;i<pool.NumThreads();++i) for(int w=0;w<mjNWARNING;++w) {
++    r31_warnings[w]+=data[i]->warning[w].number;
++    r31_warnings[mjNWARNING+w]+=smooth_data[i]->warning[w].number;
++  }
++  r31_derivative_model=nullptr;
+ 
+   // interpolate derivatives
+   count_before = pool.GetCount();
+--- a/mjpc/planners/model_derivatives.h
++++ b/mjpc/planners/model_derivatives.h
+@@ -57,6 +57,10 @@
+   std::vector<double> D;  // output Jacobians wrt action
+                           //   (T * dim_sensor * dim_action)
+ 
++  // W42 transport for the existing bounded event ring. Native pre/post states,
++  // independent soft successors, held A/B, and native risk peak locations.
++  std::vector<double> r31_substeps, r31_risk_peaks, r31_first_AB, r31_warnings;
++
+   // indices
+   std::vector<int> evaluate_;
+   std::vector<int> interpolate_;
+--- a/mjpc/r31_model_roles.h
++++ b/mjpc/r31_model_roles.h
+@@ -0,0 +1,8 @@
++// W42: registered only while a frozen derivative model is used by workers.
++#ifndef MJPC_R31_MODEL_ROLES_H_
++#define MJPC_R31_MODEL_ROLES_H_
++#include <mujoco/mujoco.h>
++namespace mjpc {
++inline const mjModel* r31_derivative_model = nullptr;
++}
++#endif

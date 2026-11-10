@@ -1,50 +1,49 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
-**默认执行端：AutoDL西北B区D57，SSH autodl-d57。** 记录资源 RTX PRO 6000 96GB级GPU、25 vCPU、120GB内存；[环境记录](experiments/terrain_memory/compute-environment.json)。现场空闲量须实际读取。
+**默认执行端：AutoDL西北B区D57，SSH autodl-d57。** 记录总容量25vCPU、120GB RAM、96GB级GPU；[环境记录](experiments/terrain_memory/compute-environment.json)。实际空闲量以现场为准。
 
-## 当前：W40 最终结果已审查；qp2 数值修复就绪，下一步 W41 稳定联合执行
+## 当前：W42驻留原因已定位，W43先修求解器状态
 
-PANN→PPO→全身MPC→PD→Go2/TM02 的联合训练已经实际运行，**稳定合法材料通行与记忆因果收益尚未建立**。W40 B完成原样本目标，A因新的QP数值故障技术退出；GPU支线完成batch predictor层但未对齐。
+**两条CPU任务和原GPU任务均已结束，当前仍没有稳定合法材料通行。** 本次完整审查以c4b3f9a交付为基点，复算两流全部紧凑训练/评价记录、两次完整E30原件、四个完整计划矩阵及GPU两个证据包。GPU两处明确入口/类型错误及结果汇总、续接、发布路径已修正；CPU S5-r32尚待实施与真实验证。
 
-本次审查基于 [c438f54](https://github.com/kaiwen123-yang/MCP-RL/commit/c438f5463659ab7c8d3a7f5eced251639e14b2ef) 及已交付原件，完成真实故障回放、独立qp2 patch、恢复文件保护、新长阶段合法返程评分修复、无固定后台截止时间的运行/评价/发布改造及W41计划。**本次没有在D57构建或恢复训练，r30尚待实现；不将源码修复记成新的物理能力。**
+[当前交接](docs/TERRAIN_MEMORY_PLAN.md) · [W42完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/README.md) · [W43计划](docs/S1_W43_STABILITY_PLAN.md) · [完整启动提示词](docs/S1_W43_START_PROMPT.md)
 
-[当前交接](docs/TERRAIN_MEMORY_PLAN.md) · [W40完整评估](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/README.md) · [历史逐阶段审计](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/history-review.md) · [W41计划](docs/S1_W41_STABILITY_PLAN.md) · [GPU扩展计划](docs/S1_W41_GPU_PLAN.md) · [启动提示词](docs/S1_W41_START_PROMPT.md) · [执行规则](AGENTS.md)
-
-### 最新真实进度
-
-| 项目 | w40-a / seed1 | w40-b / seed2 |
+| 项目 | W42-A / seed1 | W42-B / seed2 |
 |---|---:|---:|
-| 本轮新增样本 / 更新 | 915 / 3 | 1024 / 4 |
-| 各自累计 / 更新 | 9508 / 36 | 9617 / 37 |
-| 有效tail / 历史excluded | 147 / 145 | 0 / 145 |
-| 训练回合 | 30 | 34 |
-| 自然失败 / 技术中断 / 目标截断 | 28 / 2 / 0 | 32 / 1 / 1 |
-| 材料加载回合 | 28 | 26 |
-| 合法去程 / 返程 / 往返 | 0 / 0 / 0 | 0 / 0 / 0 |
-| 末次策略E30 | 技术中断后未真正运行 | update37，15.680s跌倒 |
-| E60 | 无前级资格 | blocked_by_predecessor |
+| 本轮新增样本 / 更新 | 2048 / 8 | 2048 / 8 |
+| 各自累计 / 更新 | 13713 / 53 | 13713 / 53 |
+| tail / 历史excluded | 0 / 145 | 0 / 145 |
+| 本轮末断点 | ep405 | ep393 |
+| 训练回合 | 18 | 18 |
+| 自然物理终止 / 结果级技术中断 | 0 / 0 | 0 / 0 |
+| 60秒采集边界 / 目标截断 | 17 / 1 | 17 / 1 |
+| 材料加载 / 合法去返及往返 | 0 / 0 | 0 / 0 |
+| 末次固定E30 | 满30秒、未完成材料通行 | 满30秒、未完成材料通行 |
+| E60 | 前级未通过，未执行 | 前级未通过，未执行 |
 
-合计1939条独特新样本、7次更新；60次自然失败为38跌倒、12躯干接触、10材料域退出。A原目标9617/37只差109条/一次更新，147条合法tail不能丢。两支独立，更新数不能相加当成一个模型。历史r24曾有合法去程，完整合法往返仍未建立。
+### 为什么没有跌倒却仍不能完成任务
 
-### 为什么先修稳定执行
+两条E30在t=0的重复startup中，前11次改善站立成本；第12–20次没有native下降，却继续累乘λ/rate到λ=1e6。后续全部1501次非零时刻规划沿用该上限。2.002秒outbound、正指令与参考确实切换，完整矩阵Qu非零，却被巨大阻尼压成约1.5e-10rad局部前馈，K约2e-7。最大base x仅0.0245873mm，两流不同cap几乎得到同一驻留轨迹。
 
-A314的qp1发生自由面尚未最小化就提前释放边界、步长为零后反复锁回的循环。qp2保留原H/中心/约束/容差，12个真实C++ QP回放全部通过；A314由608次失败变为3步通过，9个原生通过动作与2个旧refinement解逐bit不变。[技术报告](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/technical-error.md)。
+这给出优先修正数值状态生命周期的具体依据，尚不证明reset后就能稳定行走。r31原生前向误差缩小是实际进步，代理方向仍有偏差。W41的127/130物理失败与W42的全程驻留应分开分析；安装policy、训练更新或站满时长不等于控制有效。[CPU完整证据与图](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/cpu-report.md)
 
-瞬时PD投影已生效，但同一目标保持2ms时q/v变化，后续子步仍会出现被原actuator clamp截断的请求。A314/B E30首子步超限仅约7e-6 Nm，后九子步最大请求超限18.788/28.492 Nm；不是实际扭矩越过物理上限。先核对相同输入下饱和执行器、保持动力学与导数在候选/nominal/部署是否一致，再据证据选择单一r30修复；全段不饱和投影只是候选，可能限制恢复动作，不能预认定为唯一根因修复。不同时改物理、奖励、步态或动作维度。
+### GPU完成的是计算阶段，尚无物理闭环成绩
 
-另修复了同目录恢复覆盖来源checkpoint的漏洞，新路径以progress为准；新R12 E60/E300/E600使用已有合法材料去程/返程/往返计数补齐资格条件，历史结果不改写。[独立技术复核](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/technical-independent-verification.md)。
+G1完成32输入，仅5/32对齐；G2完成176状态探针（175控制节点），耗时42.288小时。G4 native/MJX缺必需evaluation-start-unix，CLI exit2且物理未开始；G5把Warp容差device array覆盖成float，首次kernel类型错误。旧顶层completed标签不能代表成功。
 
-W40约173.465独特样本/h，W39约141.671/h；版本、workers与轨迹混杂，不能说是纯并行收益。规划仍占回合墙钟86.66%。GPU8 fixtures仅3例对齐，尚无完整cost/phase/候选排序/整planner，当前计时工作量不同，不能给严格加速比。新GPU任务将扩大真实状态覆盖、驻留节点/候选批量、完整规划接口和独立闭环测试，见GPU扩展计划；本次尚未运行这些新实验。
+本次已补评价时钟、在原设备数组fill原声明1e-8，并区分技术失败、物理开始与成功；支持G5单独续接、冻结W40-B/r30契约、新invocation原件发布。实际CLI和真实Warp CPU-device类型核验通过，CUDA/完整Go2仍未验证。下一步从G5恢复，复用已完成G1/G2，不默认重做旧MJX多日闭环。[GPU审查与修复边界](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/gpu-review.md)
 
-### 下一步与工作方式
+### 下一轮及长期方向
 
-先普通resume A自己的最新断点到原目标，同时实现r30；随后从A/B各自最新tail0父点新建W41，两流各新增2048条/8次更新，末次固定E30→有条件E60。默认两流各12 MPC workers、Torch/BLAS各1，GPU第三任务host1–2线程、编译最多2jobs；真实吞吐决定分配。
+W43/S5-r32分开管理warm trajectory、当前部署策略与每个MPC问题的λ/rate/停止状态；保留native接受与所有原物理条件。针对本轮真实启动/首次outbound输入验证接线后，双流分别继承自身W42末点，各+512/2到14225/55。这是本轮完整目标，不默认扩2048；末次新策略按原E30→E60→E300→E600合法去返/往返条件评价。默认两CPU各10workers、GPU约2host核，依据现场余量和实际吞吐调整。
 
-**所有后续新/续接后台不设置固定墙钟完成期限**，按样本/更新、物理评价或声明工作完成、明确技术失败、用户停止结束。保留网络单次请求timeout、数值迭代guard和物理30/60/300/600s评价长度。已完成W40 GPU旧入口退休，不再复用含28h限制的旧脚本。
+长期问题仍是同地块跨足/返程可恢复材料历史怎样改善加载、落点与重访。冻结PANN→PPO cap→MPC→TV→PD联合链已运行；本轮没有材料加载，不能证明记忆收益。若生命周期修正后仍缺接触探索，再另立结构化样条候选/native评分/实际赢家/局部精化实验，不本轮同时改一串奖励、步态和物理。
 
-GitHub交付并核验后**不在用户电脑另外归档，不自动删除服务器研究输出或上传副本**。W40的12个ZIP、6238项源文件和GPU10份NPZ已经交付。新结果先紧凑Git，已请求原件后台继续，queued不等于published。
+本次新增七组一手论文：JMLR2025 iLQR/DDP收敛、Whole-Body MPPI、DIAL-MPC、Reference-Free MPC、Global CI-MPC、Model Tensor Planning、RSS2026 Variance-Reduced MPPI。算法机制、接口和适用边界见[文献报告](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/literature-mechanisms.md)。
 
-本次完整读取实验基准提交c438f54的6013个tracked blob、645,462,015字节；精选原始审计实际读取约2.787GB，GPU10份数组全部重读。语义阅读、字节扫描与未重读的历史Release/视频严格区分。覆盖清单、独立复核、可复算脚本和新增/更新文献均在[最终审查目录](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/)。
+**新建/续接后台无固定墙钟截止。** 样本目标、物理时长、数值guard及网络timeout保留。GitHub交付核验后不在用户电脑另归档，不自动删除服务器研究原件/断点/上传副本。CPU/GPU并发写Git和index时整合最新远端，不强推。
+
+W42请求原件各829项、GPU两个包已完整发布。本次tracked字节清单覆盖7770文件、874426108字节，不冒称所有历史原件均已逐字语义重读；实际语义审查及原件读取范围在[覆盖说明](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/README.md)明确列出。
 
 ## D57 环境与联网
 
@@ -55,7 +54,7 @@ cd /root/autodl-tmp/MCP-RL
 source scripts/autodl_d57_env.sh
 ```
 
-Python 3.12 项目环境直接复用镜像的 PyTorch 2.8.0+cu128；MuJoCo 3.2.3、JAX 0.6.2 CUDA、Optax 0.2.5、Tianshou 0.5.1 等依赖记录在 [requirements-autodl-d57.txt](requirements-autodl-d57.txt)，不重新安装。原Go2资产、MJPC接口、冻结B ideal权重和实际控制器资源已具备；复用已核对的MuJoCo依赖checkout。RAW历史与PANN历史父状态ep144已有GitHub/Release去向；W40 A以qp1在ep314技术退出，B已完成原样本目标；最新qp2源码待D57独立构建，W41各自父点以实际最新tail0为准。libegl1与imageio已在真实运行/渲染中补齐；本次文档更新没有登录服务器、测量当前磁盘或改动环境。
+Python 3.12 项目环境直接复用镜像的 PyTorch 2.8.0+cu128；MuJoCo 3.2.3、JAX 0.6.2 CUDA、Optax 0.2.5、Tianshou 0.5.1 等依赖记录在 [requirements-autodl-d57.txt](requirements-autodl-d57.txt)，不重新安装。原Go2资产、MJPC接口、冻结B ideal权重和实际控制器资源已具备；复用已核对的MuJoCo依赖checkout。RAW历史与PANN历史父状态ep144已有GitHub/Release去向；W42 A/B已到13713/53、tail0。当前下一步是W43/S5-r32，分别继承自身W42末断点，并独立续接GPU G5，父点以现场有效状态为准。libegl1与imageio已在真实运行/渲染中补齐；本次文档更新没有登录服务器、测量当前磁盘或改动环境。
 
 后台任务使用服务器独立的clash、academic或direct可用路径，不依赖用户电脑在线。手动联网可按实际故障使用已保留的电脑隧道备用入口；它不作为无人值守作业的默认路径。服务器端示例：
 
@@ -75,7 +74,7 @@ source scripts/autodl_network.sh pc
 
 ## 历史说明
 
-以下保留W35、R11及更早结果和协议的历史身份。历史文字中的“当前”“本轮”、预算与门禁只适用于对应run；当前执行入口统一为本页顶部及[W41计划](docs/S1_W41_STABILITY_PLAN.md)，[启动提示词](docs/S1_W41_START_PROMPT.md)单独提供。[R11原计划](https://github.com/kaiwen123-yang/MCP-RL/blob/25947cfae9b2a48a872327bb63e9b36f76fe2dac/docs/TERRAIN_MEMORY_PLAN.md)和全部实际结果保留。
+以下保留W35、R11及更早结果和协议的历史身份。历史文字中的“当前”“本轮”、预算与门禁只适用于对应run；当前执行入口统一为本页顶部及[W43计划](docs/S1_W43_STABILITY_PLAN.md)，[启动提示词](docs/S1_W43_START_PROMPT.md)单独提供。[R11原计划](https://github.com/kaiwen123-yang/MCP-RL/blob/25947cfae9b2a48a872327bb63e9b36f76fe2dac/docs/TERRAIN_MEMORY_PLAN.md)和全部实际结果保留。
 
 ## 历史 R12/W35：同r24续训及末端评价
 
@@ -114,7 +113,7 @@ R11已按用户2026-10-29的要求暂停，发布现有成果供审查。累计2
 
 ## 历史结果原文
 
-以下保留旧结果与协议叙述；旧“当前”“本轮”、额度和阶段门槛仅属于对应历史run。当前执行以顶部W40最终审查及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。R10原协议的完整版本见[02595603历史主计划](https://github.com/kaiwen123-yang/MCP-RL/blob/025956032e2a3aa1e0c9881f2eda307301c77522/docs/TERRAIN_MEMORY_PLAN.md)。
+以下保留旧结果与协议叙述；旧“当前”“本轮”、额度和阶段门槛仅属于对应历史run。当前执行以顶部W41 CPU审查及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。R10原协议的完整版本见[02595603历史主计划](https://github.com/kaiwen123-yang/MCP-RL/blob/025956032e2a3aa1e0c9881f2eda307301c77522/docs/TERRAIN_MEMORY_PLAN.md)。
 
 
 **R10 实际结果（2026-10-28）：开发额度12/12已结束，材料完整任务0/9，联合PPO未启动。** 12次启动包括3次零物理步初始化失败和9次真实Go2材料任务；累计107.9750秒、539875个0.2ms物理步。G、G＋N与G＋N＋C均保留完整记录，C的局部力参考和支撑高度修正逐版保存。最终0.215m/s版本通过去程和远端转向，在返程32.5672秒触发原材料域；仍未完成原任务。
@@ -133,7 +132,7 @@ R11已按用户2026-10-29的要求暂停，发布现有成果供审查。累计2
 
 同一空间地块的材料状态跨腿、跨步、跨返程持续演化；后续支撑需求反过来约束当前踩踏。第一版从具有可测恢复过程的黏弹性材料开始。
 
-## R9历史冻结协议（当前执行以顶部与W41计划为准）
+## R9历史冻结协议（当前执行以顶部与W42计划为准）
 
 **第八轮已完成项目Go2同版9/9原任务＋3/3连续300秒，S3继续冻结。R9实际完成8次材料适配尝试，0/8整程成功；训练前置条件未通过且适配额度已用尽。** 以下保留原定联合协议，其中PANN观察器、PPO训练及正式21+3评价均未执行，不能作为已完成成果。最新实际状态见本页顶部与[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)。
 
@@ -229,7 +228,7 @@ G1保留15.206408kg、0.0002s真实物理步、原接触及23.7/45.43Nm逐关节
 
 ## S1第六轮历史结果（已冻结）：完成路径往返，终点连续稳定未通过
 
-以下保留第六轮当时的执行范围和停止决定；其中“本轮结束”等只适用于已关闭的旧run，当前执行以顶部W40最终审查及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。原第五轮及更早结果继续保留。
+以下保留第六轮当时的执行范围和停止决定；其中“本轮结束”等只适用于已关闭的旧run，当前执行以顶部W41 CPU审查及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。原第五轮及更早结果继续保留。
 
 **第六轮已完成固定范围执行：1次G0完整任务启动，0次完整成功；G1开发与正式均未执行。** 本轮 `tm-s1-go2-wb-startup-r6` 使用实现 `ce3e03255e6e229fd61cac458b514fb6ea162314`，保留第五轮和所有历史结果。没有训练PANN/PPO、接入TM02或启用硬件。
 

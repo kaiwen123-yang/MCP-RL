@@ -32,7 +32,10 @@ def main():
     for line in patch_path.read_text().splitlines():
         if line.startswith("+++ b/"):
             target=source/line[6:]
-            if target.exists():target.write_text(target.read_text())
+            if target.exists() and not (prior/line[6:]).exists():
+                target.unlink()  # New patch file from an incomplete build only.
+            elif target.exists():
+                target.write_text(target.read_text())
     subprocess.run(["patch", "-p1", "--forward", "--batch", "-i", str(patch_path)],
                    cwd=source, check=True)
     changed_sources = [line[6:] for line in patch_path.read_text().splitlines() if line.startswith('+++ b/')]
@@ -58,6 +61,10 @@ def main():
     command = ["cmake", "-S", str(source), "-B", str(builddir), "-DCMAKE_BUILD_TYPE=Release",
         "-DMJPC_BUILD_TESTS=OFF", "-DMJPC_GRPC_BUILD_TESTS=OFF", "-DPYMJPC_BUILD_TESTS=OFF",
         "-DBUILD_TESTING=OFF", "-DMJPC_BUILD_GRPC_SERVICE=ON", "-DMUJOCO_MPC_MUJOCO_GIT_TAG=088079eff0450e32b98ee743141780ed68307506"]
+    # The isolated W42 checkout has private copies of the already pinned
+    # dependency sources. Prevent CMake from repopulating them over the network.
+    if specification.get("reuse_populated_dependency_sources"):
+        command.append("-DFETCHCONTENT_FULLY_DISCONNECTED=ON")
     log_path = source / f"build-{BUILD}.log"
     with log_path.open("w") as log:
         log.write(f"{BUILD} from executed {specification['based_on']}; reuse pinned MuJoCo dependency and runtime.\n")

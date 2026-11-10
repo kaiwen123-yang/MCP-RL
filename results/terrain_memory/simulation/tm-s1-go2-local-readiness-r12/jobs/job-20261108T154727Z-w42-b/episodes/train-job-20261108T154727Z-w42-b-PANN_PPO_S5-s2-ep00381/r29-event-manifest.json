@@ -1,0 +1,178 @@
+{
+  "schema": "r29_event_ring_v1",
+  "controller": "S5-r31",
+  "plans": [
+    {
+      "plan_id": 220,
+      "origin": 3.9799999999995945,
+      "file": "accepted-reference-gain-H-plan000220.npz"
+    },
+    {
+      "plan_id": 221,
+      "origin": 3.9999999999995923,
+      "file": "accepted-reference-gain-H-plan000221.npz"
+    },
+    {
+      "plan_id": 222,
+      "origin": 4.0199999999996345,
+      "file": "accepted-reference-gain-H-plan000222.npz"
+    },
+    {
+      "plan_id": 223,
+      "origin": 4.039999999999677,
+      "file": "accepted-reference-gain-H-plan000223.npz"
+    },
+    {
+      "plan_id": 224,
+      "origin": 4.059999999999719,
+      "file": "accepted-reference-gain-H-plan000224.npz"
+    },
+    {
+      "plan_id": 225,
+      "origin": 4.079999999999761,
+      "file": "accepted-reference-gain-H-plan000225.npz"
+    },
+    {
+      "plan_id": 226,
+      "origin": 4.099999999999803,
+      "file": "accepted-reference-gain-H-plan000226.npz"
+    },
+    {
+      "plan_id": 227,
+      "origin": 4.119999999999846,
+      "file": "accepted-reference-gain-H-plan000227.npz"
+    },
+    {
+      "plan_id": 228,
+      "origin": 4.139999999999888,
+      "file": "accepted-reference-gain-H-plan000228.npz"
+    },
+    {
+      "plan_id": 229,
+      "origin": 4.15999999999993,
+      "file": "accepted-reference-gain-H-plan000229.npz"
+    },
+    {
+      "plan_id": 230,
+      "origin": 4.179999999999972,
+      "file": "accepted-reference-gain-H-plan000230.npz"
+    },
+    {
+      "plan_id": 231,
+      "origin": 4.200000000000014,
+      "file": "accepted-reference-gain-H-plan000231.npz"
+    },
+    {
+      "plan_id": 232,
+      "origin": 4.220000000000057,
+      "file": "accepted-reference-gain-H-plan000232.npz"
+    },
+    {
+      "plan_id": 233,
+      "origin": 4.240000000000099,
+      "file": "accepted-reference-gain-H-plan000233.npz"
+    },
+    {
+      "plan_id": 234,
+      "origin": 4.260000000000141,
+      "file": "accepted-reference-gain-H-plan000234.npz"
+    },
+    {
+      "plan_id": 235,
+      "origin": 4.280000000000183,
+      "file": "accepted-reference-gain-H-plan000235.npz"
+    },
+    {
+      "plan_id": 3016,
+      "origin": 59.89999999988708,
+      "file": "accepted-reference-gain-H-plan003016.npz"
+    },
+    {
+      "plan_id": 3017,
+      "origin": 59.91999999988703,
+      "file": "accepted-reference-gain-H-plan003017.npz"
+    },
+    {
+      "plan_id": 3018,
+      "origin": 59.939999999886986,
+      "file": "accepted-reference-gain-H-plan003018.npz"
+    },
+    {
+      "plan_id": 3019,
+      "origin": 59.95999999988694,
+      "file": "accepted-reference-gain-H-plan003019.npz"
+    },
+    {
+      "plan_id": 3020,
+      "origin": 59.97999999988689,
+      "file": "accepted-reference-gain-H-plan003020.npz"
+    },
+    {
+      "plan_id": 3021,
+      "origin": 59.999999999886846,
+      "file": "accepted-reference-gain-H-plan003021.npz"
+    }
+  ],
+  "events": [
+    {
+      "time_s": 4.0919999999997865,
+      "kind": "command_nonprogress_2s",
+      "start_s": 3.9919999999997864,
+      "end_requested_s": 4.291999999999787,
+      "dx_m": -2.1647715624197885e-05,
+      "command": [
+        0.19834722712341532,
+        1.0807969453989192e-06,
+        0.0
+      ],
+      "contacts": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "end_available_s": 4.291999999999787
+    },
+    {
+      "time_s": 59.999999999886846,
+      "kind": "terminal",
+      "start_s": 59.899999999886845,
+      "end_requested_s": 60.19999999988685,
+      "reason": "stage_horizon_reached",
+      "end_available_s": 59.999999999886846
+    }
+  ],
+  "pre_window_s": 0.1,
+  "post_window_s": 0.2,
+  "terminal_s": 59.999999999886846,
+  "header_fields": [
+    "schema",
+    "plan_id",
+    "origin",
+    "horizon",
+    "ns",
+    "nu",
+    "nx",
+    "nr",
+    "regularization_used",
+    "regularization_type",
+    "nominal_feedback_scale",
+    "action_step_alpha",
+    "installed_feedback_scaling",
+    "representation",
+    "nuserdata",
+    "accepted_cost"
+  ],
+  "plan_coverage": "Only listed plans have full accepted/reference/K/H; no old reconstruction.",
+  "raw_binary": "r29-current-plan.bin is a current transport buffer, not a history.",
+  "substep_clock": "Each encoded row: node,substep,before,after,ncontact; pre-state,post-state,rawPD,actuator_force,qfrc_passive,residual; then ncontact*(geom1,geom2,6 contact-frame forces).",
+  "r31_schema": {
+    "model_roles": "native geom/pair forward; independent smooth derivatives at native substeps",
+    "native_soft_substeps": "(T-1,10,1+3*ns+nu): time,native_pre,held_u,native_post,soft_post",
+    "native_risk_peaks": "(T-1,nrisk,2): native maximum,earliest active substep",
+    "first_soft_AB": "(10,nx*nx+nx*nu): row-major one-step A_s then B_s at native states",
+    "held_proxy_A": "(T-1,nx,nx)",
+    "held_proxy_B": "(T-1,nx,nu)",
+    "scope": "Approximate local model, no plant Jacobian or stability claim"
+  }
+}

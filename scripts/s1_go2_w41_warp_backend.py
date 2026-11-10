@@ -5,9 +5,12 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 import numpy as np,mujoco,warp as wp,mujoco_warp as mjw
 from mujoco_warp._src import support as sup
+from s1_go2_gpu_evaluation import evaluation_command,technical_failure
 ROOT=Path(__file__).resolve().parents[1]
 LARGE=ROOT/'outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12'
-OUT=LARGE/'gpu/w41-gpu';SMALL=ROOT/'results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w41-gpu'
+SOURCE=LARGE/'gpu/w41-gpu'
+OUT=Path(os.environ.get('S1_W41_GPU_STAGE_DIR',str(SOURCE)))
+SMALL=ROOT/'results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12'/OUT.relative_to(LARGE)
 @wp.func
 def inside(p:wp.vec3):
     return p[0]>=0.8158113883008419 and p[0]<=2.1841886116991582 and wp.abs(p[1])<=0.5841886116991581
@@ -53,7 +56,11 @@ class WarpPredictor:
         path=OUT/'mjwarp-predictor.xml';tree.write(path,encoding='unicode')
         m=self.m=mujoco.MjModel.from_xml_path(str(path));m.geom_solimp[:,0]=0;m.jnt_solimp[:,0]=0;m.pair_solimp[:,0]=0
         m.opt.disableflags|=int(mujoco.mjtDisableBit.mjDSBL_WARMSTART)
-        self.wm=mjw.put_model(m);self.wm.opt.tolerance=float(m.opt.tolerance)
+        self.wm=mjw.put_model(m)
+        # put_model stores Option.tolerance as a device array and defaults to
+        # max(native_tolerance, 1e-6). Preserve the declared 1e-8 value in that
+        # array; replacing the field with a float breaks the solver kernel ABI.
+        self.wm.opt.tolerance.fill_(float(m.opt.tolerance))
         self.d=mjw.make_data(m,nworld=49,nconmax=128,njmax=768)
         self.feet=wp.array([m.geom(n).id for n in ['FL','RL','FR','RR']],dtype=int)
         self.stiff=float(m.numeric('r10_local_contact').data[0]);self.floor=float(m.numeric('s1_flat_ground_height').data[0])
@@ -102,27 +109,36 @@ def recv(conn,n):
     return b
 
 def main():
+    OUT.mkdir(parents=True,exist_ok=True)
+    invocation=os.environ.get('S1_W41_GPU_INVOCATION')
     report=dict(status='preparing_actual_MJWarp_adapter',dtype='float32',deadline_unix_s=None,
         versions=dict(mujoco=mujoco.__version__,warp=wp.__version__),predictor_only=True,original_cpu_plant_unchanged=True,
         first_error=None,stages=[],fd_steps=[3e-4,1e-3,3e-3],selected_fd_step=1e-3)
     try:
-        fixture=json.loads((OUT/'fixtures.json').read_text());xml=ROOT/fixture[0]['source']/'model/G1-project-go2.xml'
+        fixture=json.loads((SOURCE/'fixtures.json').read_text());xml=ROOT/fixture[0]['source']/'model/G1-project-go2.xml'
         pred=WarpPredictor(xml)
-        report['solver']=dict(iterations=int(pred.m.opt.iterations),tolerance=float(pred.m.opt.tolerance),native_tolerance_retained=True)
+        report['solver']=dict(iterations=int(pred.m.opt.iterations),tolerance=float(pred.m.opt.tolerance),
+            device_tolerance=pred.wm.opt.tolerance.numpy().tolist(),device_tolerance_dtype=str(pred.wm.opt.tolerance.dtype),
+            native_tolerance_retained=True,representation='Original declared tolerance, represented in FP32 device array')
         for i in [0,4,11,20,23,27]:
             z=np.load(LARGE/'w41-dynamics/native-v2'/(fixture[i]['name']+'.npz'));x=z['starts'][0]
             row=dict(time=fixture[i]['time'],qpos=x[:19],qvel=x[19:37],ctrl=x[37:],userdata=z['userdata'],mocap_pos=z['mocap_pos'],mocap_quat=z['mocap_quat'])
             values=[];measure=[]
             for eps in report['fd_steps']:
+                first_call=pred.graph is None
                 t=time.perf_counter();states,ab=pred.request(row,True,eps);wall=time.perf_counter()-t
-                values.append(ab);measure.append(dict(eps=eps,wall_s=wall,AB_max=float(abs(ab).max())))
+                values.append(ab);measure.append(dict(eps=eps,wall_s=wall,AB_max=float(abs(ab).max()),
+                    first_call_includes_compilation=first_call))
                 np.savez_compressed(OUT/f'mjwarp-{i:02d}-eps{eps:g}.npz',states=states,AB=ab,input=x,userdata=row['userdata'])
             report['stages'].append(dict(fixture=fixture[i]['name'],step_sensitivity=measure,
                 adjacent_relative_AB_changes=[float(np.linalg.norm(values[j]-values[j+1])/max(np.linalg.norm(values[j+1]),1e-12)) for j in [0,1]],
                 interpretation='Exploratory FP32 finite-difference sensitivity, not equivalent-FP64 qualification or an admission gate'))
             write(OUT/'mjwarp-result.json',report)
         pred.eps=report['selected_fd_step']
-        config=json.loads((ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json').read_text())
+        source_contract=Path(os.environ.get('S1_W41_GPU_SOURCE_CONTRACT',str(
+            SOURCE/'native-evaluation-contract.json' if invocation
+            else ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json')))
+        config=json.loads(source_contract.read_text());report['source_contract']=str(source_contract.relative_to(ROOT))
         config.update(current_task='W41_GPU_MJWARP_FIXED_POLICY',protocol_revision='W41_MJWARP4_FP32_v1')
         config['reuse'].update(active_controller_build='S5-r30',controller_artifact='S5-r30-gpu-warp')
         config['resources']['mpc_workers']=2;config['learning'].update(phase_id='w41-gpu-mjwarp',stream_id='w41-gpu-eval')
@@ -131,11 +147,11 @@ def main():
         if path.exists():path.rename(path.with_name('w41-mjwarp-'+str(time.time_ns())+'.sock'))
         server=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM);server.bind(str(path));server.listen(4)
         env=dict(os.environ,MJPC_W41_GPU_SOCKET=str(path));checkpoint=LARGE/'training/w40-b/PANN_PPO_S5-seed2/checkpoint-009617.pt'
-        report['evaluations']=[]
+        report['evaluations']=[];evaluation_started=time.time()
         for level in ['E30','E60']:
-            attempt='w41-gpu-mjwarp-PANN_PPO_S5-s2-update37-'+level
-            args=[str(ROOT/'work/envs/d57/bin/python'),'-u','scripts/run_s1_go2_r12.py','--contract',str(contract),'--attempt',attempt,
-                '--build','S5-r30','--group','PANN_PPO_S5','--seed','2','--checkpoint',str(checkpoint),'--level',level,'--workers','2']
+            prefix='w41-gpu-mjwarp'+('-'+invocation if invocation else '')
+            attempt=prefix+'-PANN_PPO_S5-s2-update37-'+level
+            args=evaluation_command(ROOT,contract,attempt,checkpoint,level,evaluation_started)
             cmd=['bash','-c','source scripts/autodl_d57_env.sh; exec '+shlex.join(args)]
             count=0;report['status']='independent_'+level+'_running';write(OUT/'mjwarp-result.json',report)
             with (OUT/(attempt+'.log')).open('w') as log:
@@ -152,15 +168,23 @@ def main():
                 result_path=ROOT/config['outputs']['compact_root']/(attempt+'.json')
                 result=json.loads(result_path.read_text()) if result_path.exists() else {'success':False,'stage_status':'technical_interruption','reason':'See native evaluation log'}
                 report['evaluations'].append(dict(level=level,attempt=attempt,requests=count,exit_code=process.returncode,
-                    result={k:result.get(k) for k in ['success','reason','stage_status','simulation_s','wall_s','legal_route','qualification']}))
+                    evaluation_started_unix_s=evaluation_started,deadline_unix_s=None,
+                    result={k:result.get(k) for k in ['success','reason','error','stage_status','simulation_s','wall_s','legal_route','qualification']}))
                 write(OUT/'mjwarp-result.json',report)
                 if not result.get('success'):break
-        server.close();report['status']='completed_independent_MJWarp_comparison'
+        server.close()
+        report['status']=('technical_interruption' if any(map(technical_failure,report['evaluations']))
+                          else 'completed_independent_MJWarp_comparison')
+        return 1 if report['status']=='technical_interruption' else 0
     except Exception:
         report.update(status='technical_interruption',first_error=traceback.format_exc())
         if 'raw' in locals():np.savez_compressed(OUT/'mjwarp-first-failure-input.npz',input=raw)
+        elif 'row' in locals():
+            np.savez_compressed(OUT/'mjwarp-first-failure-input.npz',
+                **{k:v for k,v in row.items() if isinstance(v,np.ndarray)},
+                time_s=row['time'],fixture_index=i,fd_epsilon=eps)
         if 'process' in locals() and process.poll() is None:process.terminate();process.wait()
         raise
     finally:
         write(OUT/'mjwarp-result.json',report);write(SMALL/'mjwarp-result.json',report)
-if __name__=='__main__':main()
+if __name__=='__main__':raise SystemExit(main())
