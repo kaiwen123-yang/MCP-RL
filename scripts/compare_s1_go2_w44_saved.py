@@ -163,6 +163,13 @@ def execute_case(label,mechanism,workers):
             record['status']='completed'
     except Exception as exc:
         error=exc;record.update(status='technical_failure',error=repr(exc),traceback=traceback.format_exc())
+    if error and 'no deployable current policy' in str(error):
+        record['status']='no_deployable_policy'
+        records=R29Records(run,model);records.controller='S5-r33'
+        records.plan(state['time'])
+        records.event(state['time'],'no_deployable_saved_input',fixture=label,mechanism=mechanism)
+        record['event_manifest']=records.finish(state['time'],'no_deployable_policy_no_plant_step')
+        error=None
     record['total_wall_s']=time.monotonic()-started
     if (run/'planner-calls.jsonl').exists():record['calls']=read_jsonl(run/'planner-calls.jsonl')
     if (run/'planner-records.jsonl').exists():record['accepted_records']=read_jsonl(run/'planner-records.jsonl')
@@ -227,6 +234,19 @@ def analyze_case(label,mechanism):
                 if not np.isfinite(summary[key]):summary[key]=None
         else:summary=candidate_summary(candidate,fixture,model)
         summaries.append(summary)
+    scale=run/'r29-current-plan.bin.r33-scale'
+    if scale.exists():
+        raw=np.fromfile(scale,dtype='<f8');D=raw[6:].reshape(int(raw[2]),int(raw[3]))
+        result['scale']=dict(source_mean=float(raw[4]),degenerate_floor=float(raw[5]),
+            D=quantiles(D),D_sha256=hashlib.sha256(D.astype('<f8').tobytes()).hexdigest(),
+            units='Native trajectory cost / radian^2; mu dimensionless')
+    result['raw_candidate_file']=file_record(run/'r29-current-plan.bin.r33-candidates')
+    if result['status']=='no_deployable_policy':
+        result.update(candidates=summaries,selected=None,full_policy_native_installation_identity_verified=False,
+            installation='No policy installed; explicit FAILED_PRECONDITION retained.',
+            cost_recomputation_max_abs_error=max(abs(c.get('native_J_recompute_error',0)) for c in summaries))
+        write(run/'analysis.json',result)
+        return result
     raw=np.fromfile(run/'r29-current-plan.bin',dtype='<f8');h=raw[:16]
     arrays,_=take_policy_arrays(raw,16,*map(int,h[3:8]))
     selected_hash=policy_hash(arrays,float(h[12]),int(h[13]))
@@ -240,13 +260,6 @@ def analyze_case(label,mechanism):
         matching_scored_candidate_records=[c['candidate_record'] for c in selected],
         full_policy_native_installation_identity_verified=True,
         cost_recomputation_max_abs_error=max(abs(c.get('native_J_recompute_error',0)) for c in summaries))
-    scale=run/'r29-current-plan.bin.r33-scale'
-    if scale.exists():
-        raw=np.fromfile(scale,dtype='<f8');D=raw[6:].reshape(int(raw[2]),int(raw[3]))
-        result['scale']=dict(source_mean=float(raw[4]),degenerate_floor=float(raw[5]),
-            D=quantiles(D),D_sha256=hashlib.sha256(D.astype('<f8').tobytes()).hexdigest(),
-            units='Native trajectory cost / radian^2; mu dimensionless')
-    result['raw_candidate_file']=file_record(run/'r29-current-plan.bin.r33-candidates')
     write(run/'analysis.json',result)
     return result
 
@@ -261,7 +274,7 @@ def summarize(cases,mechanisms):
             for key in ('task_weights','task_parameters','gait_context')}
         if not all(contexts[case[0]].values()):raise ValueError('Methods did not share the same reconstructed task context')
         by_mode={r['mechanism']:r for r in records}
-        if 'S' in by_mode and 'N' in by_mode:
+        if 'S' in by_mode and 'N' in by_mode and 'scale' in by_mode['S'] and 'scale' in by_mode['N']:
             scale_pairs[case[0]]=by_mode['S']['scale']['D_sha256']==by_mode['N']['scale']['D_sha256']
             if not scale_pairs[case[0]]:raise ValueError('S and N did not share identical D')
     report=dict(schema='w44_finite_mechanism_comparison_v1',status='completed',physical_episodes=0,
@@ -271,8 +284,9 @@ def summarize(cases,mechanisms):
         budget_note='P32 candidate slots are not worker count or equal compute to S/N; native/FD/nominal calls and walltime are separately reported.')
     write(SMALL/'summary.json',report)
     print(json.dumps([dict(fixture=r['fixture'],mechanism=r['mechanism'],source=r['calls'][-1]['candidate_source'],
-        J=r['selected']['native_J'],v=r['selected']['trunk_violation'],dx=r['selected']['predicted_dx_m'],
-        feet=r['selected']['feet']['maximum_bottom_per_foot_m'],wall_s=r['total_wall_s']) for r in results],indent=2))
+        J=r['selected']['native_J'] if r['selected'] else None,v=r['selected']['trunk_violation'] if r['selected'] else None,
+        dx=r['selected']['predicted_dx_m'] if r['selected'] else None,
+        feet=r['selected']['feet']['maximum_bottom_per_foot_m'] if r['selected'] else None,wall_s=r['total_wall_s']) for r in results],indent=2))
     return report
 
 

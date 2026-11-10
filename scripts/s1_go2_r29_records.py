@@ -116,7 +116,13 @@ class R29Records:
                 rows=[json.loads(line) for line in f]
                 self.plan_offset=f.tell()
             for row in rows:
-                if row['acceptance_mode']!='feasible_to_feasible_cost':
+                if row.get('controller_artifact') == 'S5-r33' and 'acceptance_mode' not in row:
+                    # A scored nominal/structured archive winner has no alpha
+                    # model ratio. Its recorded native violation defines this event.
+                    if row['accepted_trunk_violation'] > 0:
+                        self.event(t,'trunk_restoration',mode='scored_archive_restoration',
+                            candidate_source=row['candidate_source'],plan_id=row['plan_id'])
+                elif row['acceptance_mode']!='feasible_to_feasible_cost':
                     self.event(t,'trunk_restoration',mode=row['acceptance_mode'],plan_id=row['plan_id'])
         self.prune(t)
     def save(self,pid):
