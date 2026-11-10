@@ -160,7 +160,7 @@
    void R32RecordAttempt(const char* status, int horizon, int failed_node,
 --- a/mjpc/planners/ilqg/planner.cc
 +++ b/mjpc/planners/ilqg/planner.cc
-@@ -279,15 +279,124 @@
+@@ -279,15 +279,130 @@
    }
  }
  
@@ -193,7 +193,13 @@
 +  ++r33_slots;
 +  const bool valid=p.metric_valid && !tr.failure && std::isfinite(tr.total_return) &&
 +                   std::isfinite(tr.trunk_violation);
-+  if(valid && (!r33_archive_valid || tr.trunk_violation<r33_archive_trajectory.trunk_violation ||
++  // Alpha search retains the original strict native acceptance even when
++  // startup has no deployable metric. All candidates are still recorded.
++  const bool eligible=kind!=1 ||
++    tr.trunk_violation<r33_nominal_trajectory.trunk_violation ||
++    (tr.trunk_violation==r33_nominal_trajectory.trunk_violation &&
++     tr.total_return<r33_nominal_trajectory.total_return);
++  if(valid && eligible && (!r33_archive_valid || tr.trunk_violation<r33_archive_trajectory.trunk_violation ||
 +     (tr.trunk_violation==r33_archive_trajectory.trunk_violation &&
 +      tr.total_return<r33_archive_trajectory.total_return))) {
 +    r33_archive_policy=p;r33_archive_trajectory=tr;r33_archive_valid=true;r33_source=source;
@@ -285,7 +291,7 @@
  
    R32BeginProblem(horizon);
    // Every call scores the incumbent at the actual current state/reference.
-@@ -297,9 +406,40 @@
+@@ -297,9 +412,40 @@
      R32ReuseIncumbent(r32.stop_reason);
    } else if(r32.stopped) {
      R32ReuseIncumbent(r32.stop_reason);
@@ -326,7 +332,7 @@
    if(const char* file=std::getenv("MJPC_R29_CALL_RECORD")) {
      std::ofstream out(file,std::ios::app);out.precision(17);
      bool updated=old_plan!=policy.record_plan_id;
-@@ -340,10 +480,32 @@
+@@ -340,10 +486,32 @@
      out<<",\"deployed_scored_epoch\":"<<(r32.deployable?r32.epoch:0)
         <<",\"deployed_scored_policy_id\":"<<(r32.deployable?policy.record_plan_id:0)
         <<",\"deployed_current_cost\":";
@@ -362,7 +368,7 @@
      for(int i=0;i<r32.attempts.size();++i){if(i)out<<",";out<<r32.attempts[i];}
      out<<"]}\n";
    }
-@@ -407,6 +569,14 @@
+@@ -407,6 +575,14 @@
      if (!trajectory[i].failure && trajectory[i].trunk_violation == 0)
        ++nominal_feasible_candidates;
  
@@ -377,7 +383,7 @@
    // check for all rollout failures
    if (best_nominal == -1) {
      feedback_scaling=0.;
-@@ -610,6 +780,7 @@
+@@ -610,6 +786,7 @@
    auto model_derivative_start = std::chrono::steady_clock::now();
  
    // compute model and sensor Jacobians
@@ -385,7 +391,7 @@
    model_derivative.Compute(
        model, data_, candidate_policy[0].trajectory.states.data(),
        candidate_policy[0].trajectory.actions.data(),
-@@ -633,6 +804,44 @@
+@@ -633,6 +810,44 @@
        task->norm_parameter.data(), task->num_norm_parameter.data(), task->risk,
        horizon, pool);
  
@@ -430,7 +436,7 @@
    // end timer
    double cost_derivative_time = GetDuration(cost_derivative_start);
  
-@@ -699,7 +908,8 @@
+@@ -699,7 +914,8 @@
            model->actuator_ctrlrange, settings.regularization_type,
            settings.action_limits,
            candidate_policy[0].metric.data()+t*dim_action*dim_action,
@@ -440,7 +446,7 @@
  
        // failure
        if (!status) {
-@@ -776,6 +986,10 @@
+@@ -776,6 +992,10 @@
        candidate_policy[j].representation=candidate_policy[0].representation;
      }
      this->ActionRollouts(horizon,pool);
@@ -451,7 +457,7 @@
      const int best=this->BestRollout();
      rollouts_time+=GetDuration(ro_start);
      const bool descent=best>=0 &&
-@@ -902,7 +1116,8 @@
+@@ -902,7 +1122,8 @@
      std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
      out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
  
@@ -461,7 +467,7 @@
         <<",\"problem_epoch\":"<<r32.epoch<<",\"source_call_id\":"<<r29_call_id
         <<",\"policy_generation_epoch\":"<<r32.generation_epoch
         <<",\"dV_unscaled\":["<<backward_pass.dV[0]<<","<<backward_pass.dV[1]<<"]"
-@@ -979,41 +1194,6 @@
+@@ -979,41 +1200,6 @@
      out<<"]}\n";
    }
  
@@ -503,7 +509,7 @@
    // stop timer
    double policy_update_time = GetDuration(policy_update_start);
  
-@@ -1037,6 +1217,8 @@
+@@ -1037,6 +1223,8 @@
                     &task = this->task, &state = this->state, &time = this->time,
                     &mocap = this->mocap, horizon, &userdata = this->userdata,
                     i]() {
@@ -512,7 +518,7 @@
        // scale improvement
        mju_addScl(candidate_policy[i].trajectory.actions.data(),
                   candidate_policy[i].trajectory.actions.data(),
-@@ -1124,4 +1306,42 @@
+@@ -1124,4 +1312,42 @@
    return best_rollout;
  }
  
