@@ -9,6 +9,7 @@ SMALL=ROOT/'results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--resume-from',choices=['G2','G4','G5'])
+    parser.add_argument('--network-mode',choices=['academic','clash','direct'],default='academic')
     parser.add_argument('--g4-backends',nargs='+',choices=['native','mjx'],default=['native','mjx'])
     args=parser.parse_args()
     session='s1-w41-gpu'
@@ -56,7 +57,7 @@ def main():
             G2_recomputed=False if args.resume_from in ('G4','G5') else None))
         job['active_invocation']=stamp
     command+=['--g4-backends',*args.g4_backends]
-    job.update(status='launched',command=command,log=str(logfile.relative_to(ROOT)),active_source_commit=source,deadline_unix_s=None)
+    job.update(status='launched',command=command,log=str(logfile.relative_to(ROOT)),active_source_commit=source,deadline_unix_s=None,network_mode=args.network_mode)
     (OUT/'job.json').write_text(json.dumps(job,indent=2)+'\n')
     lines=['#!/bin/bash','set -e','cd '+shlex.quote(str(ROOT)),
         'source scripts/autodl_d57_env.sh','export PYTHONPATH="$PWD/work/gpu-w40-python:$PYTHONPATH"',
@@ -69,7 +70,7 @@ def main():
     if stamp:
         # Publication owns new names and includes only continuation additions.
         finish=[str(ROOT/'work/envs/d57/bin/python'),'-u','scripts/finish_s1_go2_w41_gpu.py','--continuation',stamp]
-        lines+=['source scripts/autodl_network.sh clash >/dev/null','unset GH_TOKEN GITHUB_TOKEN',
+        lines+=['source scripts/autodl_network.sh '+args.network_mode+' >/dev/null','unset GH_TOKEN GITHUB_TOKEN',
             shlex.join(finish)+' > '+shlex.quote(str(OUT/('publication-'+stamp+'.log')))+' 2>&1']
     script.write_text('\n'.join(lines)+'\n')
     subprocess.run(['tmux','new-session','-d','-s',session,'bash',str(script)],check=True)
