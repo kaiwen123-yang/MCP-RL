@@ -1,8 +1,10 @@
-# 地面材料记忆主计划：W43 最终驻留审查与 W44 运动优化
+# 地面材料记忆主计划：W44 原生导数联合验证运行中
 
 ## W44 当前执行位置（2026-11-10）
 
-S5-r33 已实施、正常构建并完成四问题有限比较，已冻结主机制 **N**：与 S 使用同一曲率度量 D，改用原生接触 FD 方向，完整重算约束 Riccati并由native评分决定安装。**W44双流已声明，尚待本轮推送核验后启动。**
+S5-r33 已实施、正常构建并完成四问题有限比较，已冻结主机制 **N**：与 S 使用同一曲率度量 D，改用原生接触 FD 方向，完整重算约束 Riccati并由native评分决定安装。**W44双流已在原job/clock下普通续接运行，已观察真实transition持续增长。不要再次使用--new-phase。**
+首次两个启动均在0物理步因artifact身份丢失17项父配置而中断，错误及gdb依据已保留。完整父配置继承现已恢复，同一二进制未改变；修正身份和失败原件见Release补充包。每流当前进展与磁盘续接点不同，实时计数见运行索引w44_live_observation；update57固定评价尚待训练目标完成。
+
 
 两个4.00s问题中，N以更低原生成本给出+2.864/+2.620mm的0.35s预测前移；S仍后退。N晚段仍后退且不优于S，所有四个N计划均四足承载。这仅支持进入真实双流验证，不构成摆步、闭环起步、材料通行或记忆收益。
 
@@ -82,7 +84,7 @@ W42 曾在 t=0 重复 startup 中将 λ/rate 累积到 λ=1e6，并让全部后�
 
 ## 历史证据入口
 
-- [W42完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W42-final-review/README.md)：含当时tracked字节清单及CPU/GPU实际读取范围，不是本轮全仓库逐字语义审阅声明。
-- [W41审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/README.md)、[历史比较](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W41-cpu-review/history-comparison.md)、[W40审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/README.md)。
-- [W43原计划](S1_W43_STABILITY_PLAN.md)、[原启动词](S1_W43_START_PROMPT.md)、[W42原计划](S1_W42_CPU_PLAN.md)、[W41 GPU原计划](S1_W41_GPU_PLAN.md)保留历史身份，不再作为重复启动指令。
-- [原始科学路线](https://github.com/kaiwen123-yang/MCP-RL/blob/4d0af25c7bcea620c7e8c9a4f5b103c4956a3fda/docs/TERRAIN_MEMORY_PLAN.md)。
+- 当前任务：W44_MOTION_OPTIMIZATION_JOINT / S5-r33；后台按各自样本/更新目标结束，无固定墙钟完成期限；原物理时长与技术失败停止保留。
+- w44-a：job-20261110T143358Z-w44-a，launched；新增0/0，累计14225/55，tail=0、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- w44-b：job-20261110T143400Z-w44-b，launched；新增0/0，累计14225/55，tail=0、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- 任务能力：w44-a尚无最终任务汇总；w44-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。

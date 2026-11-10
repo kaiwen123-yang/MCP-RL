@@ -1,0 +1,67 @@
+{
+  "identity": {
+    "stream_id": "w44-b",
+    "phase_id": "job-20261110T143400Z-w44-b",
+    "controller_build": "S5-r33",
+    "reward_version": "W38_legal_route_terminal_settlement",
+    "source_commit": "d75e660bbc3b51ab3fc5333156e2784e33d080c2",
+    "initial_updates": 55,
+    "job": "job-20261110T143400Z-w44-b",
+    "group": "PANN_PPO_S5",
+    "seed": 2
+  },
+  "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2",
+  "initial_transitions": 14225,
+  "final_transitions": 14225,
+  "training": {
+    "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/transitions.jsonl",
+    "source_available": true,
+    "rows": 0,
+    "saved_array_matched_rows": 0,
+    "missing_fields": {},
+    "missing_reward_components": {},
+    "files": []
+  },
+  "evaluation": {},
+  "array_sources": [],
+  "schema": {
+    "transition_clock": "time_s is transition end in that episode; action held over [time_s-dt_s,time_s]",
+    "actor_nominal_rate_Hz": 2,
+    "truncated_last_interval_retained": true,
+    "PANN": "Causal observer recovery at 0.002/0.2/0.5 s, each foot, metres; saved normalized obs[-12:] times0.001.",
+    "foot_order": [
+      "FL",
+      "FR",
+      "RL",
+      "RR"
+    ],
+    "recovery_horizons_s": [
+      0.002,
+      0.2,
+      0.5
+    ],
+    "phase_channels": "obs[80:89] in original fixed nine-phase order",
+    "phases": [
+      "initial_stand",
+      "outbound",
+      "turn",
+      "return",
+      "terminal_stand",
+      "complete",
+      "far_hold",
+      "home_hold",
+      "turn_home"
+    ],
+    "value": "Saved behavior value/next_value; no network recomputation. bootstrap_value is zero on physical terminated, next_value on external truncated.",
+    "reward_components": "Original recorded increments; action_change absent in W38 logs is reported missing, not inferred from reward.",
+    "behavior_version": "Recorded at sampling when available, otherwise saved update boundaries (new update applies after its last sampled transition).",
+    "evaluation_W38_missing": "Original fixed-policy W38 evaluation saved transition scalars but no rollout values/features; unavailable fields remain null."
+  },
+  "files": [
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b/numeric-evidence/episodes/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00399-events.json"
+  ],
+  "new_physics": false,
+  "bulk_retained_local": true,
+  "deleted_files": 0,
+  "full_observations_exported": false
+}

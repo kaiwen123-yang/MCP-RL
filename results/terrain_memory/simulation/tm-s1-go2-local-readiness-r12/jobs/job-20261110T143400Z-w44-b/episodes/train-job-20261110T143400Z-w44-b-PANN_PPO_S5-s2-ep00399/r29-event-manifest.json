@@ -1,0 +1,112 @@
+{
+  "schema": "r29_event_ring_v1",
+  "controller": "S5-r33",
+  "plans": [],
+  "events": [
+    {
+      "time_s": 0.0,
+      "kind": "terminal",
+      "start_s": 0.0,
+      "end_requested_s": 0.2,
+      "reason": "execution_error",
+      "end_available_s": 0.0
+    }
+  ],
+  "pre_window_s": 0.1,
+  "post_window_s": 0.2,
+  "terminal_s": 0.0,
+  "header_fields": [
+    "schema",
+    "plan_id",
+    "origin",
+    "horizon",
+    "ns",
+    "nu",
+    "nx",
+    "nr",
+    "regularization_used",
+    "regularization_type",
+    "nominal_feedback_scale",
+    "action_step_alpha",
+    "installed_feedback_scaling",
+    "representation",
+    "nuserdata",
+    "accepted_cost"
+  ],
+  "plan_coverage": "Only listed plans have full accepted/reference/K/H; no old reconstruction.",
+  "raw_binary": "r29-current-plan.bin is a current transport buffer, not a history.",
+  "substep_clock": "Each encoded row: node,substep,before,after,ncontact; pre-state,post-state,rawPD,actuator_force,qfrc_passive,residual; then ncontact*(geom1,geom2,6 contact-frame forces).",
+  "r31_schema": {
+    "model_roles": "native geom/pair forward; independent smooth derivatives at native substeps",
+    "native_soft_substeps": "(T-1,10,1+3*ns+nu): time,native_pre,held_u,native_post,soft_post",
+    "native_risk_peaks": "(T-1,nrisk,2): native maximum,earliest active substep",
+    "first_soft_AB": "(10,nx*nx+nx*nu): row-major one-step A_s then B_s at native states",
+    "held_proxy_A": "(T-1,nx,nx)",
+    "held_proxy_B": "(T-1,nx,nu)",
+    "scope": "Approximate local model, no plant Jacobian or stability claim"
+  },
+  "r32_search": {
+    "plans": [],
+    "header_fields": [
+      "schema",
+      "call_id",
+      "problem_epoch",
+      "origin",
+      "horizon",
+      "ns",
+      "nu",
+      "nx",
+      "lambda_used",
+      "rate_used",
+      "backward_complete",
+      "failed_node",
+      "incumbent_plan_id",
+      "attempt",
+      "dV0_unscaled",
+      "dV1_unscaled"
+    ],
+    "scope": "Last actual numerical attempt for each selected call; partial failed-backward arrays are not valid full Riccati results. Stops with no new attempt retain the prior search identity.",
+    "gradient": "u-clip(u-Qu, original instantaneous target/PD bounds); independent of H/lambda, surrogate only"
+  },
+  "r33_candidates": {
+    "calls": [],
+    "header_fields": [
+      "schema",
+      "call_id",
+      "kind",
+      "slot",
+      "alpha",
+      "horizon",
+      "ns",
+      "nu",
+      "nx",
+      "nr",
+      "feedback_scale",
+      "native_J",
+      "trunk_violation",
+      "failure",
+      "metric_valid",
+      "origin",
+      "mu",
+      "representation",
+      "input_plan_id"
+    ],
+    "kind": {
+      "0": "nominal",
+      "1": "alpha",
+      "2": "structured"
+    },
+    "full_policy": "Each candidate preserves its native accepted rollout and exact reference/actions/times/K/H/feedback scale; JSON planner calls carry selection and high-precision expected/actual descent.",
+    "foot_rows": "Each row: time, then FL/FR/RL/RR each geom_xyz,foot_bottom_z,native_world_Fz,proxy_material_Fz,native_contact_count; after mj_step fields refer to its pre-integration node.",
+    "scale_header": [
+      "schema",
+      "call_id",
+      "horizon",
+      "nu",
+      "mean",
+      "floor"
+    ],
+    "scale_units": "D is diagonal Hessian units cost/rad^2; mu is dimensionless.",
+    "scope": "Bounded native event windows including non-winners. Missing scale means no matching scale was computed by this call, not a zero matrix."
+  }
+}
