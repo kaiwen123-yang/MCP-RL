@@ -9,9 +9,9 @@
 本次实际核对（2026-11-10T15:57:05+08:00）：W43-A/B仍运行，分别新增348 / 342条，各完成1次新更新到update54。四个已完成60秒采集回合均无技术中断，λ重置有效，但去程段约后退28mm、四足全程接触、材料加载和合法去返/往返全零。G5同一invocation仍在独立E30，最近检查物理5.64秒，303次planner均返回policy_installed，当前日志未见新技术异常。最新数字和源路径见index.w43_progress_observation；继续现有作业至原目标，末次评价尚未开始。
 
 - 当前任务：W43_OPTIMIZER_LIFECYCLE_JOINT / S5-r32；后台按各自样本/更新目标结束，无固定墙钟完成期限；原物理时长与技术失败停止保留。
-- w43-a：job-20261110T035658Z-w43-a，launched；新增348/1，累计14061/54，tail=92、excluded=145；评价=pending_training，紧凑Git=pending_computation。
-- w43-b：job-20261110T035700Z-w43-b，launched；新增342/1，累计14055/54，tail=86、excluded=145；评价=pending_training，紧凑Git=pending_computation。
-- 任务能力：w43-a尚无最终任务汇总；w43-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
+- w43-a：job-20261110T035658Z-w43-a，training_ended；新增512/2，累计14225/55，tail=0、excluded=145；评价=completed，紧凑Git=published。
+- w43-b：job-20261110T035700Z-w43-b，training_ended；新增512/2，累计14225/55，tail=0、excluded=145；评价=running，紧凑Git=pending_computation。
+- 任务能力：w43-a合规去程/返程/整圈=0/0/0，材料加载回合=0；w43-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
 - 交付：两流compact finish/Git串行，使用原index锁；全部逐回合JSON、2Hz学习转移、12维PANN/value小表与E30关键事件窗先Git；已请求的原始反馈/规划/参考轨迹及必要数组由diagnostics入口后台Release，未选权重/全视频留D57，无自动删除。
 - 续接位置：autodl-d57:/root/autodl-tmp/MCP-RL-w42；各job、training目录与有效resume见正常job/index的两流状态；分别继承自身父分支，optimizer/RNG/归一化不混合。
 
