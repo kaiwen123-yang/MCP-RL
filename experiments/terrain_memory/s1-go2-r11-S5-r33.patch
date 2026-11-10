@@ -31,11 +31,12 @@
        mju_mulMatTMat(tmp, At, Bt, n, n, m);
 --- a/mjpc/planners/model_derivatives.h
 +++ b/mjpc/planners/model_derivatives.h
-@@ -28,6 +28,7 @@
+@@ -28,6 +28,8 @@
  // data and methods for model derivatives
  class ModelDerivatives {
   public:
 +  bool r33_native_direction = false;
++  unsigned long r33_transition_fd_calls=0,r33_risk_fd_calls=0;
    // constructor
    ModelDerivatives() = default;
  
@@ -50,6 +51,80 @@
    std::vector<UniqueMjData> smooth_data;
    for (int i=0;i<pool.NumThreads();++i)
      smooth_data.emplace_back(mj_makeData(smooth.get()),mj_deleteData);
+@@ -91,6 +91,7 @@
+     }
+   }
+ 
++  std::vector<unsigned long> r33_fd_counts(T,0),r33_risk_counts(T,0);
+   // evaluate derivatives
+   int count_before = pool.GetCount();
+   for (int t : evaluate_) {
+@@ -128,11 +129,11 @@
+           mju_copy(prefixes_a.data()+sub*nx*nx,prefix_a.data(),nx*nx);
+           mju_copy(prefixes_b.data()+sub*nx*nu,prefix_b.data(),nx*nu);
+           // C/D use the native node state and native residual evaluation.
+-          if(sub==0) mjd_transitionFD(m,d,tol,mode,nullptr,nullptr,total_c,total_d);
++          if(sub==0) {++r33_fd_counts[t];mjd_transitionFD(m,d,tol,mode,nullptr,nullptr,total_c,total_d);}
+           mj_copyData(sd,sm,d);
+           // MuJoCo performs soft(perturbed)-soft(base), including quaternion
+           // tangent differences. No native baseline enters this FD numerator.
+-          mjd_transitionFD(sm,sd,tol,mode,next_a.data(),next_b.data(),nullptr,nullptr);
++          ++r33_fd_counts[t];mjd_transitionFD(sm,sd,tol,mode,next_a.data(),next_b.data(),nullptr,nullptr);
+           double* record=r31_substeps.data()+(t*substeps+sub)*width;
+           record[0]=d->time;
+           GetState(m,d,record+1);
+@@ -171,7 +172,7 @@
+           if (selected.empty())continue;
+           SetState(m,d,states.data()+sub*dim_state);d->time=h[t]+sub*m->opt.timestep;
+           std::vector<double> jac(selected.size()*nx);
+-          R26RiskJacobian(m,d,tol,mode,risk_rows,selected,nx,jac.data());
++          ++r33_risk_counts[t];R26RiskJacobian(m,d,tol,mode,risk_rows,selected,nx,jac.data());
+           for (int r=0;r<selected.size();++r) {
+             const int sensor=risk_rows[selected[r]].sensor;
+             mju_mulMatMat(total_c+sensor*nx,jac.data()+r*nx,
+@@ -182,14 +183,14 @@
+         }
+       } else if (t == T - 1) {
+         // Jacobians
+-        mjd_transitionFD(m, d, tol, mode, nullptr, nullptr,
++        ++r33_fd_counts[t];mjd_transitionFD(m, d, tol, mode, nullptr, nullptr,
+                          DataAt(C, t * (dim_sensor * dim_state_derivative)),
+                          nullptr);
+         if (!risk_rows.empty()) {
+           std::vector<int> selected;
+           for (int r=0;r<risk_rows.size();++r)selected.push_back(r);
+           std::vector<double> jac(risk_rows.size()*dim_state_derivative);
+-          R26RiskJacobian(m,d,tol,mode,risk_rows,selected,dim_state_derivative,jac.data());
++          ++r33_risk_counts[t];R26RiskJacobian(m,d,tol,mode,risk_rows,selected,dim_state_derivative,jac.data());
+           for (int r=0;r<risk_rows.size();++r) {
+             mju_copy(DataAt(C,(t*dim_sensor+risk_rows[r].sensor)*dim_state_derivative),
+                      jac.data()+r*dim_state_derivative,dim_state_derivative);
+@@ -198,7 +199,7 @@
+         }
+       } else {
+         // Node-start C/D and the first 1ms state transition.
+-        mjd_transitionFD(
++        ++r33_fd_counts[t];mjd_transitionFD(
+             m, d, tol, mode,
+             DataAt(A, t * (dim_state_derivative * dim_state_derivative)),
+             DataAt(B, t * (dim_state_derivative * dim_action)),
+@@ -213,7 +214,7 @@
+           for (int substep=1;substep<control_substeps;++substep) {
+             mju_copy(old_a.data(),total_a,nx*nx);mju_copy(old_b.data(),total_b,nx*nu);
+             mj_step(m,d);
+-            mjd_transitionFD(m,d,tol,mode,next_a.data(),next_b.data(),nullptr,nullptr);
++            ++r33_fd_counts[t];mjd_transitionFD(m,d,tol,mode,next_a.data(),next_b.data(),nullptr,nullptr);
+             mju_mulMatMat(total_a,next_a.data(),old_a.data(),nx,nx,nx);
+             mju_mulMatMat(total_b,next_a.data(),old_b.data(),nx,nx,nu);
+             mju_addTo(total_b,next_b.data(),nx*nu);
+@@ -224,6 +225,7 @@
+   }
+   pool.WaitCount(count_before + evaluate_.size());
+   pool.ResetCount();
++  for(int t=0;t<T;++t){r33_transition_fd_calls+=r33_fd_counts[t];r33_risk_fd_calls+=r33_risk_counts[t];}
+   r31_warnings.assign(2*mjNWARNING,0.);
+   for(int i=0;i<pool.NumThreads();++i) for(int w=0;w<mjNWARNING;++w) {
+     r31_warnings[w]+=data[i]->warning[w].number;
 --- a/mjpc/planners/ilqg/policy.cc
 +++ b/mjpc/planners/ilqg/policy.cc
 @@ -285,6 +285,7 @@
@@ -62,14 +137,15 @@
    metric_valid=policy.metric_valid;metric_regularization=policy.metric_regularization;
 --- a/mjpc/planners/ilqg/planner.h
 +++ b/mjpc/planners/ilqg/planner.h
-@@ -92,6 +92,19 @@
+@@ -92,6 +92,20 @@
    void UpdateNumTrajectoriesFromGUI();
  
  
 +  std::string r33_mechanism="S";
 +  bool r33_imported=false, r33_archive_valid=false;
-+  iLQGPolicy r33_archive_policy, r33_nominal_policy;
-+  Trajectory r33_archive_trajectory, r33_nominal_trajectory;
++  iLQGPolicy r33_archive_policy, r33_nominal_policy, r33_incumbent_policy;
++  Trajectory r33_archive_trajectory, r33_nominal_trajectory, r33_incumbent_trajectory;
++  bool r33_has_incumbent=false;
 +  std::string r33_source="none";
 +  std::vector<double> r33_D;
 +  double r33_scale_mean=0, r33_scale_floor=0;
@@ -84,7 +160,7 @@
    void R32RecordAttempt(const char* status, int horizon, int failed_node,
 --- a/mjpc/planners/ilqg/planner.cc
 +++ b/mjpc/planners/ilqg/planner.cc
-@@ -279,15 +279,119 @@
+@@ -279,15 +279,124 @@
    }
  }
  
@@ -147,7 +223,10 @@
 +  if(!r33_archive_valid) {R32ReuseIncumbent("no_scored_structured_base");return;}
 +  const iLQGPolicy base=r33_nominal_policy;
 +  const Trajectory base_tr=r33_nominal_trajectory;
-+  r33_cache_hits+=2; // incumbent and best nominal were scored in the nominal stage.
++  r33_cache_hits+=r33_has_incumbent?2:1;
++  if(r33_has_incumbent)R33Consider(r33_incumbent_policy,r33_incumbent_trajectory,horizon,2,0,
++      r33_incumbent_policy.feedback_scaling,"incumbent");
++  R33Consider(base,base_tr,horizon,2,1,base.feedback_scaling,"best_nominal_cached");
 +  const int previous_count=num_trajectory_;num_trajectory_=30;
 +  for(int j=0;j<30;++j) {
 +    auto& p=candidate_policy[j];p=base;
@@ -189,6 +268,8 @@
 +  R33Import(horizon);
 +  r33_archive_valid=false;r33_source="none";r33_rollouts=r33_slots=r33_cache_hits=r33_derivative_passes=0;
 +  r33_D.clear();r33_scale_mean=r33_scale_floor=0;
++  expected=improvement=surprise=0;
++  model_derivative.r33_transition_fd_calls=model_derivative.r33_risk_fd_calls=0;
 +  if(const char* f=std::getenv("MJPC_R29_SNAPSHOT"))
 +    std::ofstream(std::string(f)+".r33-candidates",std::ios::binary|std::ios::trunc);
    unsigned long old_plan=policy.record_plan_id;
@@ -204,7 +285,7 @@
  
    R32BeginProblem(horizon);
    // Every call scores the incumbent at the actual current state/reference.
-@@ -297,9 +401,23 @@
+@@ -297,9 +406,40 @@
      R32ReuseIncumbent(r32.stop_reason);
    } else if(r32.stopped) {
      R32ReuseIncumbent(r32.stop_reason);
@@ -216,19 +297,36 @@
 +  if(r33_archive_valid) {
 +    const bool same=r33_source=="incumbent";
 +    if(!same) {
-+      previous_policy=policy;policy=r33_archive_policy;policy.record_plan_id=old_plan+1;
++      if(policy.record_plan_id==old_plan)previous_policy=policy;
++      policy=r33_archive_policy;policy.record_plan_id=old_plan+1;
 +      r32.generation_epoch=r32.epoch;r32.generation_call=r29_call_id;r32.generation_time=time;
 +    }
 +    r32.deployable=true;r32.deployment="best_current_scored_complete_policy";
 +    r29_return_reason=same?"incumbent_retained":"policy_installed";
-+    r32.incumbent_cost=r33_archive_trajectory.total_return;
-+    r32.incumbent_violation=r33_archive_trajectory.trunk_violation;
 +    R33WriteSnapshot(horizon);
++    if(!same && r33_source.rfind("alpha_",0)!=0) {
++      if(const char* f=std::getenv("MJPC_R27_PLAN_RECORD")) {
++        std::ofstream out(f,std::ios::app);out.precision(17);
++        out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
++           <<",\"controller_artifact\":\"S5-r33\",\"problem_epoch\":"<<r32.epoch
++           <<",\"source_call_id\":"<<r29_call_id<<",\"candidate_source\":\""<<r33_source<<"\""
++           <<",\"selected_mechanism\":\""<<r33_mechanism<<"\",\"accepted_cost\":"<<r33_archive_trajectory.total_return
++           <<",\"accepted_trunk_violation\":"<<r33_archive_trajectory.trunk_violation
++           <<",\"metric_valid\":"<<(policy.metric_valid?"true":"false")
++           <<",\"regularization_used\":"<<policy.metric_regularization
++           <<",\"nominal_feedback_scale\":"<<policy.nominal_feedback_scale
++           <<",\"installed_feedback_scaling\":"<<policy.feedback_scaling
++           <<",\"action_step_alpha\":"<<policy.action_step_alpha
++           <<",\"proxy_expected_decrease\":null,\"cost_surprise\":null"
++           <<",\"native_decrease_vs_best_nominal\":"<<r33_nominal_trajectory.total_return-r33_archive_trajectory.total_return
++           <<",\"source_identity_complete\":true}\n";
++      }
++    }
 +  } else {r32.deployable=false;r32.deployment="no_deployable_candidate";}
    if(const char* file=std::getenv("MJPC_R29_CALL_RECORD")) {
      std::ofstream out(file,std::ios::app);out.precision(17);
      bool updated=old_plan!=policy.record_plan_id;
-@@ -340,10 +458,24 @@
+@@ -340,10 +480,32 @@
      out<<",\"deployed_scored_epoch\":"<<(r32.deployable?r32.epoch:0)
         <<",\"deployed_scored_policy_id\":"<<(r32.deployable?policy.record_plan_id:0)
         <<",\"deployed_current_cost\":";
@@ -242,9 +340,17 @@
 +       <<",\"native_new_rollouts\":"<<r33_rollouts<<",\"candidate_records\":"<<r33_slots
 +       <<",\"cache_hits\":"<<r33_cache_hits<<",\"derivative_passes\":"<<r33_derivative_passes
 +       <<",\"D_mean_source\":"<<r33_scale_mean<<",\"D_floor\":"<<r33_scale_floor
-+       <<",\"chosen_alpha\":"<<policy.action_step_alpha<<",\"chosen_expected\":"<<expected
-+       <<",\"chosen_actual\":"<<improvement<<",\"chosen_ratio_unclipped\":"<<(expected>0?improvement/expected:0)
-+       <<",\"task_weights\":[";
++       <<",\"transition_fd_calls\":"<<model_derivative.r33_transition_fd_calls
++       <<",\"risk_geometry_fd_calls\":"<<model_derivative.r33_risk_fd_calls
++       <<",\"P_candidate_slots\":"<<(r33_mechanism=="P"?32:0)
++       <<",\"chosen_alpha\":"<<policy.action_step_alpha<<",\"chosen_expected\":";
++    const bool alpha_source=r33_source.rfind("alpha_",0)==0;
++    if(alpha_source)out<<expected;else out<<"null";
++    out<<",\"chosen_actual\":";
++    if(r33_archive_valid && nominal_winner>=0)out<<r33_nominal_trajectory.total_return-r33_archive_trajectory.total_return;else out<<"null";
++    out<<",\"chosen_ratio_unclipped\":";
++    if(alpha_source && expected>0)out<<(r33_nominal_trajectory.total_return-r33_archive_trajectory.total_return)/expected;else out<<"null";
++    out<<",\"task_weights\":[";
 +    for(int i=0;i<task->weight.size();++i){if(i)out<<",";out<<task->weight[i];}
 +    out<<"],\"task_parameters\":[";
 +    for(int i=0;i<task->parameters.size();++i){if(i)out<<",";out<<task->parameters[i];}
@@ -256,18 +362,22 @@
      for(int i=0;i<r32.attempts.size();++i){if(i)out<<",";out<<r32.attempts[i];}
      out<<"]}\n";
    }
-@@ -407,6 +539,10 @@
+@@ -407,6 +569,14 @@
      if (!trajectory[i].failure && trajectory[i].trunk_violation == 0)
        ++nominal_feasible_candidates;
  
++  r33_has_incumbent=incumbent>=0;
++  if(r33_has_incumbent) {r33_incumbent_policy=candidate_policy[incumbent];r33_incumbent_trajectory=trajectory[incumbent];}
 +  r33_rollouts+=num_trajectory_;
-+  for(int i=0;i<num_trajectory_;++i)R33Consider(candidate_policy[i],trajectory[i],horizon,0,i,
-+      candidate_policy[i].feedback_scaling,i==incumbent?"incumbent":"nominal_"+std::to_string(i));
++  if(incumbent>=0)R33Consider(candidate_policy[incumbent],trajectory[incumbent],horizon,0,incumbent,
++      candidate_policy[incumbent].feedback_scaling,"incumbent");
++  for(int i=0;i<num_trajectory_;++i)if(i!=incumbent)R33Consider(candidate_policy[i],trajectory[i],horizon,0,i,
++      candidate_policy[i].feedback_scaling,"nominal_"+std::to_string(i));
 +  if(best_nominal>=0) {r33_nominal_policy=candidate_policy[best_nominal];r33_nominal_trajectory=trajectory[best_nominal];}
    // check for all rollout failures
    if (best_nominal == -1) {
      feedback_scaling=0.;
-@@ -610,6 +746,7 @@
+@@ -610,6 +780,7 @@
    auto model_derivative_start = std::chrono::steady_clock::now();
  
    // compute model and sensor Jacobians
@@ -275,7 +385,7 @@
    model_derivative.Compute(
        model, data_, candidate_policy[0].trajectory.states.data(),
        candidate_policy[0].trajectory.actions.data(),
-@@ -633,6 +770,44 @@
+@@ -633,6 +804,44 @@
        task->norm_parameter.data(), task->num_norm_parameter.data(), task->risk,
        horizon, pool);
  
@@ -320,7 +430,7 @@
    // end timer
    double cost_derivative_time = GetDuration(cost_derivative_start);
  
-@@ -699,7 +874,8 @@
+@@ -699,7 +908,8 @@
            model->actuator_ctrlrange, settings.regularization_type,
            settings.action_limits,
            candidate_policy[0].metric.data()+t*dim_action*dim_action,
@@ -330,7 +440,7 @@
  
        // failure
        if (!status) {
-@@ -776,6 +952,10 @@
+@@ -776,6 +986,10 @@
        candidate_policy[j].representation=candidate_policy[0].representation;
      }
      this->ActionRollouts(horizon,pool);
@@ -341,16 +451,17 @@
      const int best=this->BestRollout();
      rollouts_time+=GetDuration(ro_start);
      const bool descent=best>=0 &&
-@@ -902,7 +1082,7 @@
+@@ -902,7 +1116,8 @@
      std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
      out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
  
 -       <<",\"controller_artifact\":\"S5-r32\""
 +       <<",\"controller_artifact\":\"S5-r33\""
++       <<",\"candidate_source\":\""<<r33_source<<"\",\"selected_mechanism\":\""<<r33_mechanism<<"\""
         <<",\"problem_epoch\":"<<r32.epoch<<",\"source_call_id\":"<<r29_call_id
         <<",\"policy_generation_epoch\":"<<r32.generation_epoch
         <<",\"dV_unscaled\":["<<backward_pass.dV[0]<<","<<backward_pass.dV[1]<<"]"
-@@ -979,41 +1159,6 @@
+@@ -979,41 +1194,6 @@
      out<<"]}\n";
    }
  
@@ -392,7 +503,7 @@
    // stop timer
    double policy_update_time = GetDuration(policy_update_start);
  
-@@ -1037,6 +1182,8 @@
+@@ -1037,6 +1217,8 @@
                     &task = this->task, &state = this->state, &time = this->time,
                     &mocap = this->mocap, horizon, &userdata = this->userdata,
                     i]() {
@@ -401,7 +512,7 @@
        // scale improvement
        mju_addScl(candidate_policy[i].trajectory.actions.data(),
                   candidate_policy[i].trajectory.actions.data(),
-@@ -1124,4 +1271,42 @@
+@@ -1124,4 +1306,42 @@
    return best_rollout;
  }
  

@@ -203,6 +203,10 @@ def main():
                 evaluation_status="pending_training",publication_status="compact_git_after_training_and_evaluation",
                 delivery_mode="compact_first_local_bulk",bulk_upload_enabled=False,automatic_cleanup_enabled=False,
                 result_summary=f'{contract["outputs"]["compact_root"]}/jobs/{name}.json')
+            if job['controller_build'] == 'S5-r33':
+                job.update(selected_mechanism=contract['reuse']['selected_mechanism'],
+                    mechanism_evidence=contract['reuse']['mechanism_evidence'],
+                    controller_binary_sha256=contract['reuse']['controller_binary_sha256'])
             environment=dict(python=sys.version,executable=sys.executable,platform=platform.platform(),
                 runtime_root=str(ROOT),pythonpath=os.environ.get("PYTHONPATH"),
                 controller_build=job["controller_build"],mpc_workers=workers,

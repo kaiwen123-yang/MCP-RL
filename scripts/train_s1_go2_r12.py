@@ -101,6 +101,7 @@ def main():
     os.environ["MJPC_TASKS_DIR"]=str(binary.parent/"runtime-tasks")
     dump(output/"stream-identity.json",dict(group=a.group,seed=a.seed,engineering_candidate=build,controller_artifact=artifact,
         stream_id=stream.stream_id,fork_identity=stream.fork_identity,phase_lineage=stream.phase_lineage,
+        selected_mechanism=contract['reuse'].get('selected_mechanism'),
         training_deadline_path=str(deadline_path.relative_to(ROOT)),
         formal_qualification=False,normalization=stream.normalization,ppo=stream.backend.provenance(),
         workers=workers,pann_weights_path=str(pann_weights),
@@ -132,10 +133,12 @@ def main():
         # The retained AgentService permits one Init. A natural new physical
         # session owns a new Agent; ordinary PPO updates keep the live Agent.
         diagnostic_env=dict(os.environ)
+        if build == 'S5-r33':
+            diagnostic_env['MJPC_R33_MECHANISM'] = contract['reuse']['selected_mechanism']
         episode_output=large/name
         diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(episode_output/"planner-records.jsonl"),
                               MJPC_R27_ACTION_RECORD=str(episode_output/"feedback-actions.jsonl"))
-        if build in ('S5-r29','S5-r30','S5-r31','S5-r32'):
+        if build in ('S5-r29','S5-r30','S5-r31','S5-r32','S5-r33'):
             diagnostic_env.update(MJPC_R29_SNAPSHOT=str(episode_output/"r29-current-plan.bin"),
                                   MJPC_R29_CALL_RECORD=str(episode_output/"planner-calls.jsonl"))
         with (output/f"agent-server-ep{stream.episode:05d}.log").open("w") as log, Agent(task_id="Quadruped Flat",

@@ -352,7 +352,7 @@ def run(args, c, joint=None):
             'packet_period_s':.02,'actor_to_reference':'Recorded at next normal/phase replan',
             'reference_to_optimized_action':'Separate logical and wall times; synchronous optimization'}
     diagnostic_env=dict(os.environ)
-    if c.get('controller_build') in ('S5-r27', 'S5-r28', 'S5-r29', 'S5-r30','S5-r31','S5-r32'):
+    if c.get('controller_build') in ('S5-r27', 'S5-r28', 'S5-r29', 'S5-r30','S5-r31','S5-r32','S5-r33'):
         diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(out/'planner-records.jsonl'),
                               MJPC_R27_ACTION_RECORD=str(out/'feedback-actions.jsonl'))
         resolved['planner_recording']=dict(
@@ -361,15 +361,19 @@ def run(args, c, joint=None):
             node_slices='0 and +20ms at base-x approach windows [.4,1.2] or [1.8,2.6]',
             raw_feedback='raw_K_delta_x before feedback scaling and actuator clipping',
             bulk_retained_local=True)
-    if c.get('controller_build') in ('S5-r31','S5-r32'):
+    if c.get('controller_build') in ('S5-r31','S5-r32','S5-r33'):
         resolved['r31_model_roles']=c['r31_contact_forward']
-        if c.get('controller_build')=='S5-r32':resolved['r32_optimizer_lifecycle']=c['r32_optimizer_lifecycle']
+        if c.get('controller_build') in ('S5-r32','S5-r33'):resolved['r32_optimizer_lifecycle']=c['r32_optimizer_lifecycle']
         resolved['author_prediction_approximation']=dict(
             contact_forward='original geom/pair solimp',joint_limits='existing smoothing',
             derivatives='independent smooth model at every native nominal substep',
             remaining='Original planner integrator, coldstart and causal material proxy retained')
+    if c.get('controller_build') == 'S5-r33':
+        mechanism = c['r12_contract']['reuse']['selected_mechanism']
+        diagnostic_env['MJPC_R33_MECHANISM'] = mechanism
+        resolved['r33_optimizer_mechanism'] = dict(c['r33_optimizer_mechanism'], selected_mechanism=mechanism)
     r29_records=None
-    if c.get('controller_build') in ('S5-r29','S5-r30','S5-r31','S5-r32'):
+    if c.get('controller_build') in ('S5-r29','S5-r30','S5-r31','S5-r32','S5-r33'):
         from s1_go2_r29_records import R29Records
         r29_records=R29Records(out,model)
         r29_records.controller=c["controller_build"]

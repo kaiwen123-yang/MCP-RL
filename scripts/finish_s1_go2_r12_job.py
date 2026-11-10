@@ -528,7 +528,7 @@ def main():
             staged.update(destination.rglob("*.json"))
             staged.update(destination.rglob("*.jsonl"))
     evidence["event_windows"]=event_evidence
-    if job["controller_build"] in ("S5-r29","S5-r30","S5-r31","S5-r32"):
+    if job["controller_build"] in ("S5-r29","S5-r30","S5-r31","S5-r32","S5-r33"):
         from export_s1_go2_r29_exposure import export_episode as export_exposure
         selected=list(episodes)+[large/x["attempt"] for x in evaluation.get("stages",[]) if x.get("attempt")]
         exposure_paths=[]

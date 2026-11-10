@@ -322,7 +322,7 @@ def prepare(ctx, args):
             add(path, name)
         for filename in ("startup.npz", "prediction-model.xml"):
             add(folder / filename, name)
-        for pattern in ("r32-search-*.npz", "*accepted*.npz", "*reference*.npz", "*feedback*.npz", "*gain*.npz", "*linearization*.npz",
+        for pattern in ("r32-search-*.npz", "r33-candidates-*.npz", "r33-scale-*.npz", "*accepted*.npz", "*reference*.npz", "*feedback*.npz", "*gain*.npz", "*linearization*.npz",
                         "*accepted*.jsonl", "*reference*.jsonl", "*linearization*.jsonl"):
             for path in sorted(folder.glob(pattern)):
                 add(path, name, role="additional_recorded_planning_diagnostic")

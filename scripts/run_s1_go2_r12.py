@@ -260,6 +260,8 @@ def evaluate_job(jobdir, contract):
             and last['reward_version']==job['reward_version']
             and last.get('stream_id')==job.get('stream_id')
             and last.get('phase_lineage')==job.get('phase_lineage') and last['updates']>job['initial_updates'] and last['samples']>job['initial_transitions'])
+        if settings.get('require_declared_target_update'):
+            eligible = eligible and last['updates'] == job['target_updates'] and last['samples'] == job['target_transitions']
         if not eligible:
             record.update(status='unavailable',reason='new_update_unavailable',
                 finished_unix_s=time.time(),stages=[dict(level=level,stage_status='not_run',

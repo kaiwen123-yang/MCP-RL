@@ -89,6 +89,15 @@ def main():
         build_command=command, original_runtime_library_reused=True,
         mujoco_dependency_commit=subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=mujoco_source, text=True).strip())
+    if BUILD == 'S5-r33':
+        identity.update(
+            specification_path=str((ROOT / f'experiments/terrain_memory/s1-go2-r11-{BUILD}.json').relative_to(ROOT)),
+            specification_sha256=hashlib.file_digest((ROOT / f'experiments/terrain_memory/s1-go2-r11-{BUILD}.json').open('rb'), 'sha256').hexdigest(),
+            patch_path=str(patch_path.relative_to(ROOT)),
+            patch_sha256=hashlib.file_digest(patch_path.open('rb'), 'sha256').hexdigest(),
+            build_source_root=str(source.resolve()), build_directory=str(builddir.resolve()),
+            based_on_identity=str((prior / 'identity.json').relative_to(ROOT)),
+            source_provenance='source_commit identifies the repository base; exact implementation is the retained parent plus this patch SHA256 and source_files_sha256.')
     for relative in changed_sources:
         identity["source_files_sha256"][str(relative)] = hashlib.file_digest(
             (frozen / relative).open("rb"), "sha256").hexdigest()
