@@ -1,0 +1,4018 @@
+{
+  "reviewed_commit": "6a94c94c8e21e3b50fcca40ab4363165dee2987e",
+  "scope": "All 10 W43 training compact/resolved files, 2 final update55 E30 compact/resolved files, all 12 downloaded trajectory and planner-call originals, 1024 Git transition and PANN records and 4 downloaded complete rollout arrays. No new physics, server access or checkpoint tensor inspection.",
+  "streams": {
+    "a": {
+      "job": "job-20261110T035658Z-w43-a",
+      "initial_samples": 13713,
+      "initial_updates": 53,
+      "final_samples": 14225,
+      "final_updates": 55,
+      "tail": 0,
+      "excluded": 145,
+      "last_episode": 410,
+      "resume_file": "resume-state-ep00410.pt",
+      "invocation_wall_s": 21501.35123515129,
+      "training_exit_code": 0,
+      "training_stop_reason": "target_reached",
+      "deadline_unix_s": null,
+      "wall_deadline_enabled": false,
+      "transition_rows": 512,
+      "unique_transition_ids": 512,
+      "transition_range": [
+        13714,
+        14225
+      ],
+      "contiguous_exact_phase_range": true,
+      "pann_ids_match": true,
+      "behavior_updates_counts": {
+        "53": 256,
+        "54": 256
+      },
+      "terminated_rows": 0,
+      "truncated_rows": 5,
+      "failure_rows": 0,
+      "reward_sum": -5.34447116575051,
+      "cap_m_s": {
+        "n": 512,
+        "min": 0.18624640256166458,
+        "median": 0.22350369486957788,
+        "p95": 0.23863927738368512,
+        "max": 0.24530738174915315
+      },
+      "pann_current_max_abs": 0.0,
+      "pann_next_max_abs": 0.0,
+      "saved_array_match_all": true,
+      "updates": [
+        {
+          "update_count": 54,
+          "cumulative_samples": 13969,
+          "samples": 256,
+          "optimizer_steps": 16,
+          "loss": 0.0065705454762792215,
+          "loss/clip": -0.002756292116828263,
+          "loss/vf": 0.01865367533173412,
+          "loss/ent": 0.3829268366098404,
+          "behavior_logprob_max_error": 9.5367431640625e-07,
+          "approx_kl": 0.009087644517421722,
+          "clip_fraction": 0.15625
+        },
+        {
+          "update_count": 55,
+          "cumulative_samples": 14225,
+          "samples": 256,
+          "optimizer_steps": 16,
+          "loss": 0.00570674377377145,
+          "loss/clip": -0.0003321281401440501,
+          "loss/vf": 0.012077743944246322,
+          "loss/ent": 0.3822641298174858,
+          "behavior_logprob_max_error": 1.9073486328125e-06,
+          "approx_kl": 0.0010384141933172941,
+          "clip_fraction": 0.00390625
+        }
+      ],
+      "rollout_verification": [
+        {
+          "file": "a-training-rollout-013714-013969.npz",
+          "start": 13714,
+          "count": 256,
+          "arrays": {
+            "obs": [
+              256,
+              1,
+              658
+            ],
+            "next_obs": [
+              256,
+              1,
+              658
+            ],
+            "raw_action": [
+              256,
+              1,
+              1
+            ],
+            "reward": [
+              256,
+              1
+            ],
+            "terminated": [
+              256,
+              1
+            ],
+            "truncated": [
+              256,
+              1
+            ],
+            "log_prob": [
+              256,
+              1
+            ],
+            "value": [
+              256,
+              1
+            ],
+            "next_value": [
+              256,
+              1
+            ]
+          },
+          "all_finite": true,
+          "comparison_max_abs_error": {
+            "raw_action": 0.0,
+            "reward": 8.883532867653976e-10,
+            "terminated": 0.0,
+            "truncated": 0.0,
+            "log_prob": 0.0,
+            "value": 0.0,
+            "next_value": 0.0,
+            "pann_obs_vs_export_max": 0.0,
+            "pann_next_obs_vs_export_max": 0.0
+          }
+        },
+        {
+          "file": "a-training-rollout-013970-014225.npz",
+          "start": 13970,
+          "count": 256,
+          "arrays": {
+            "obs": [
+              256,
+              1,
+              658
+            ],
+            "next_obs": [
+              256,
+              1,
+              658
+            ],
+            "raw_action": [
+              256,
+              1,
+              1
+            ],
+            "reward": [
+              256,
+              1
+            ],
+            "terminated": [
+              256,
+              1
+            ],
+            "truncated": [
+              256,
+              1
+            ],
+            "log_prob": [
+              256,
+              1
+            ],
+            "value": [
+              256,
+              1
+            ],
+            "next_value": [
+              256,
+              1
+            ]
+          },
+          "all_finite": true,
+          "comparison_max_abs_error": {
+            "raw_action": 0.0,
+            "reward": 8.893871264459285e-10,
+            "terminated": 0.0,
+            "truncated": 0.0,
+            "log_prob": 0.0,
+            "value": 0.0,
+            "next_value": 0.0,
+            "pann_obs_vs_export_max": 0.0,
+            "pann_next_obs_vs_export_max": 0.0
+          }
+        }
+      ],
+      "evaluation": {
+        "status": "completed",
+        "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w43-a/PANN_PPO_S5-seed1/checkpoint-014225.pt",
+        "checkpoint_transitions": 14225,
+        "checkpoint_updates": 55,
+        "deterministic_policy_mean": true,
+        "frozen_normalization": true,
+        "ppo_updates": false,
+        "training_end": {
+          "process_exit_code": 0,
+          "reason": "target_reached",
+          "last_stage_status": "budget_truncated",
+          "last_episode_reason": "training_checkpoint_complete",
+          "last_error": null
+        }
+      },
+      "evaluation_stages": [
+        {
+          "level": "E30",
+          "stage_status": "task_criteria_unmet",
+          "reason": "material_traversal_not_completed",
+          "success": false,
+          "error": null,
+          "exit_code": 0,
+          "simulation_s": 29.99999999995676,
+          "wall_s": 2651.6063101813197
+        },
+        {
+          "level": "E60",
+          "stage_status": "blocked_by_predecessor",
+          "reason": "E30: task_criteria_unmet: material_traversal_not_completed"
+        }
+      ],
+      "cap_by_behavior_update": {
+        "53": {
+          "n": 256,
+          "min": 0.1914183896780014,
+          "median": 0.22416626453399657,
+          "p95": 0.23858894839882852,
+          "max": 0.24494345277547835,
+          "mean": 0.22269382481480077
+        },
+        "54": {
+          "n": 256,
+          "min": 0.18624640256166458,
+          "median": 0.22318118195980788,
+          "p95": 0.23863226443529129,
+          "max": 0.24530738174915315,
+          "mean": 0.22283765574566758
+        }
+      }
+    },
+    "b": {
+      "job": "job-20261110T035700Z-w43-b",
+      "initial_samples": 13713,
+      "initial_updates": 53,
+      "final_samples": 14225,
+      "final_updates": 55,
+      "tail": 0,
+      "excluded": 145,
+      "last_episode": 398,
+      "resume_file": "resume-state-ep00398.pt",
+      "invocation_wall_s": 21748.640477657318,
+      "training_exit_code": 0,
+      "training_stop_reason": "target_reached",
+      "deadline_unix_s": null,
+      "wall_deadline_enabled": false,
+      "transition_rows": 512,
+      "unique_transition_ids": 512,
+      "transition_range": [
+        13714,
+        14225
+      ],
+      "contiguous_exact_phase_range": true,
+      "pann_ids_match": true,
+      "behavior_updates_counts": {
+        "53": 256,
+        "54": 256
+      },
+      "terminated_rows": 0,
+      "truncated_rows": 5,
+      "failure_rows": 0,
+      "reward_sum": -5.447197804221583,
+      "cap_m_s": {
+        "n": 512,
+        "min": 0.18686946421861647,
+        "median": 0.2096956443041563,
+        "p95": 0.23009390802681445,
+        "max": 0.2437111356854439
+      },
+      "pann_current_max_abs": 0.0,
+      "pann_next_max_abs": 0.0,
+      "saved_array_match_all": true,
+      "updates": [
+        {
+          "update_count": 54,
+          "cumulative_samples": 13969,
+          "samples": 256,
+          "optimizer_steps": 16,
+          "loss": 0.007447999261785299,
+          "loss/clip": -0.001385665382258594,
+          "loss/vf": 0.017667329462710768,
+          "loss/ent": 0.356393963098526,
+          "behavior_logprob_max_error": 4.76837158203125e-07,
+          "approx_kl": 0.0027047900948673487,
+          "clip_fraction": 0.03125
+        },
+        {
+          "update_count": 55,
+          "cumulative_samples": 14225,
+          "samples": 256,
+          "optimizer_steps": 16,
+          "loss": 0.001693308528047055,
+          "loss/clip": -0.0030412435298785567,
+          "loss/vf": 0.009469104072195478,
+          "loss/ent": 0.35264772921800613,
+          "behavior_logprob_max_error": 4.76837158203125e-07,
+          "approx_kl": 0.006605661474168301,
+          "clip_fraction": 0.08984375
+        }
+      ],
+      "rollout_verification": [
+        {
+          "file": "b-training-rollout-013714-013969.npz",
+          "start": 13714,
+          "count": 256,
+          "arrays": {
+            "obs": [
+              256,
+              1,
+              658
+            ],
+            "next_obs": [
+              256,
+              1,
+              658
+            ],
+            "raw_action": [
+              256,
+              1,
+              1
+            ],
+            "reward": [
+              256,
+              1
+            ],
+            "terminated": [
+              256,
+              1
+            ],
+            "truncated": [
+              256,
+              1
+            ],
+            "log_prob": [
+              256,
+              1
+            ],
+            "value": [
+              256,
+              1
+            ],
+            "next_value": [
+              256,
+              1
+            ]
+          },
+          "all_finite": true,
+          "comparison_max_abs_error": {
+            "raw_action": 0.0,
+            "reward": 9.095224781652256e-10,
+            "terminated": 0.0,
+            "truncated": 0.0,
+            "log_prob": 0.0,
+            "value": 0.0,
+            "next_value": 0.0,
+            "pann_obs_vs_export_max": 0.0,
+            "pann_next_obs_vs_export_max": 0.0
+          }
+        },
+        {
+          "file": "b-training-rollout-013970-014225.npz",
+          "start": 13970,
+          "count": 256,
+          "arrays": {
+            "obs": [
+              256,
+              1,
+              658
+            ],
+            "next_obs": [
+              256,
+              1,
+              658
+            ],
+            "raw_action": [
+              256,
+              1,
+              1
+            ],
+            "reward": [
+              256,
+              1
+            ],
+            "terminated": [
+              256,
+              1
+            ],
+            "truncated": [
+              256,
+              1
+            ],
+            "log_prob": [
+              256,
+              1
+            ],
+            "value": [
+              256,
+              1
+            ],
+            "next_value": [
+              256,
+              1
+            ]
+          },
+          "all_finite": true,
+          "comparison_max_abs_error": {
+            "raw_action": 0.0,
+            "reward": 1.620287320980296e-09,
+            "terminated": 0.0,
+            "truncated": 0.0,
+            "log_prob": 0.0,
+            "value": 0.0,
+            "next_value": 0.0,
+            "pann_obs_vs_export_max": 0.0,
+            "pann_next_obs_vs_export_max": 0.0
+          }
+        }
+      ],
+      "evaluation": {
+        "status": "completed",
+        "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w43-b/PANN_PPO_S5-seed2/checkpoint-014225.pt",
+        "checkpoint_transitions": 14225,
+        "checkpoint_updates": 55,
+        "deterministic_policy_mean": true,
+        "frozen_normalization": true,
+        "ppo_updates": false,
+        "training_end": {
+          "process_exit_code": 0,
+          "reason": "target_reached",
+          "last_stage_status": "budget_truncated",
+          "last_episode_reason": "training_checkpoint_complete",
+          "last_error": null
+        }
+      },
+      "evaluation_stages": [
+        {
+          "level": "E30",
+          "stage_status": "task_criteria_unmet",
+          "reason": "material_traversal_not_completed",
+          "success": false,
+          "error": null,
+          "exit_code": 0,
+          "simulation_s": 29.99999999995676,
+          "wall_s": 2691.8120048083365
+        },
+        {
+          "level": "E60",
+          "stage_status": "blocked_by_predecessor",
+          "reason": "E30: task_criteria_unmet: material_traversal_not_completed"
+        }
+      ],
+      "cap_by_behavior_update": {
+        "53": {
+          "n": 256,
+          "min": 0.19022568881511687,
+          "median": 0.20957697607576847,
+          "p95": 0.23051344152539968,
+          "max": 0.2437111356854439,
+          "mean": 0.21112704429407753
+        },
+        "54": {
+          "n": 256,
+          "min": 0.18686946421861647,
+          "median": 0.20971098359674215,
+          "p95": 0.22862224780023097,
+          "max": 0.24182497560977936,
+          "mean": 0.21040023414067832
+        }
+      }
+    }
+  },
+  "episodes": [
+    {
+      "stream": "a",
+      "name": "train-job-20261110T035658Z-w43-a-PANN_PPO_S5-s1-ep00406",
+      "kind": "training",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T035658Z-w43-a-PANN_PPO_S5-s1-ep00406.json",
+      "source_commit": "865af7a91fb773219d45903d74a544308e2ebdb9",
+      "reason": "external_session_truncation",
+      "error": null,
+      "success": null,
+      "stage_status": "acquisition_boundary",
+      "wall_s": 4894.486335925758,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 30001,
+        "physics_s": 59.999999999886846,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.02875914928958169,
+          -0.00041816576450562506,
+          0.27031571179991964
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.027983358286423926,
+        "outbound_dz_m": -0.020054620304645943,
+        "outbound_mean_vx_m_s": -0.0004824688108887697,
+        "outbound_mean_command_vx_m_s": 0.22314498650582568,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.11414754390716553,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          28.243113651546178,
+          27.86202936861201,
+          36.88229805943736,
+          33.46665428954375
+        ],
+        "maximum_foot_normal_force_N": [
+          39.4161627256416,
+          37.69995876622071,
+          48.898233604644986,
+          43.90244879994058
+        ],
+        "foot_z_range_m": [
+          [
+            0.021996073960926288,
+            0.021996319070133108,
+            0.021995543075829266,
+            0.021995688089448268
+          ],
+          [
+            0.021996924521672123,
+            0.02199711105606833,
+            0.021996323395121253,
+            0.021996264971640672
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 7.740504992372554,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.026898719492701756
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 29000,
+          "min": 0.1914183896780014,
+          "median": 0.22627381026744842,
+          "p95": 0.23642800629138946,
+          "max": 0.2405920347571373,
+          "mean": 0.22397557015193892
+        }
+      },
+      "optimizer": {
+        "calls": 3021,
+        "deployment": {
+          "accepted_native_descent": 2886,
+          "reused_current_native_scored_incumbent": 135
+        },
+        "return_reasons": {
+          "policy_installed": 2886,
+          "native_search_stagnation": 135
+        },
+        "epoch_resets": 3002,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 3002
+        },
+        "attempt_lambda_used_counts": {
+          "1": 3002,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 126,
+          "8": 126,
+          "64": 126,
+          "1024": 126
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 2875,
+          "reused_current_native_scored_incumbent": 26
+        },
+        "outbound_k_unscaled": {
+          "n": 3005,
+          "min": 1.3354177808011514e-07,
+          "median": 0.0027737114679970976,
+          "p95": 0.006668130686841376,
+          "max": 0.011983509983969423
+        },
+        "outbound_Qu_unregularized": {
+          "n": 3005,
+          "min": 0.00011788875039406098,
+          "median": 0.002777900055529289,
+          "p95": 0.00667902759530048,
+          "max": 0.012018384761144082
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 2875,
+          "min": 5.191530191850369e-11,
+          "median": 0.00037348286930029284,
+          "p95": 0.0028883262374600842,
+          "max": 0.003522556078372846
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 2875,
+          "min": 3.263597050210535e-06,
+          "median": 0.001245959113357967,
+          "p95": 0.0056548344859169136,
+          "max": 0.006731476778447265
+        },
+        "online_wall_s": {
+          "n": 3001,
+          "min": 1.012049,
+          "median": 1.348217,
+          "p95": 1.6813339999999999,
+          "max": 7.506383
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.170233252416374
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.004663893047737288,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 13833
+    },
+    {
+      "stream": "a",
+      "name": "train-job-20261110T035658Z-w43-a-PANN_PPO_S5-s1-ep00407",
+      "kind": "training",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T035658Z-w43-a-PANN_PPO_S5-s1-ep00407.json",
+      "source_commit": "0e7cab191dd7c93752755a28b89f7d6c7ed85e3d",
+      "reason": "external_session_truncation",
+      "error": null,
+      "success": null,
+      "stage_status": "acquisition_boundary",
+      "wall_s": 5046.708789257333,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 30001,
+        "physics_s": 59.999999999886846,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.028742446036482832,
+          -0.0004346964669709824,
+          0.2703403321137112
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.02796665503332507,
+        "outbound_dz_m": -0.020029999990854364,
+        "outbound_mean_vx_m_s": -0.0004821792380039128,
+        "outbound_mean_command_vx_m_s": 0.22155178314500212,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.11415338516235352,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          27.348204423789102,
+          28.108760076625984,
+          36.88228018589723,
+          33.433406180012575
+        ],
+        "maximum_foot_normal_force_N": [
+          39.451219751940954,
+          38.08716256236774,
+          49.316951198534746,
+          44.37023608094911
+        ],
+        "foot_z_range_m": [
+          [
+            0.021996073958540086,
+            0.021996319075501952,
+            0.021995485299146175,
+            0.021995677033129032
+          ],
+          [
+            0.02199701166740789,
+            0.021997074117671822,
+            0.021996323396563405,
+            0.02199626496699819
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 7.754559992963751,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.02687320900502463
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 29000,
+          "min": 0.1959482830762863,
+          "median": 0.22333261128515003,
+          "p95": 0.24162229657173157,
+          "max": 0.24494345277547835,
+          "mean": 0.2223286200108315
+        }
+      },
+      "optimizer": {
+        "calls": 3021,
+        "deployment": {
+          "accepted_native_descent": 2884,
+          "reused_current_native_scored_incumbent": 137
+        },
+        "return_reasons": {
+          "policy_installed": 2884,
+          "native_search_stagnation": 137
+        },
+        "epoch_resets": 3002,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 3002
+        },
+        "attempt_lambda_used_counts": {
+          "1": 3002,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 128,
+          "8": 128,
+          "64": 128,
+          "1024": 128
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 2873,
+          "reused_current_native_scored_incumbent": 28
+        },
+        "outbound_k_unscaled": {
+          "n": 3013,
+          "min": 1.3334835946565704e-07,
+          "median": 0.002760190460766365,
+          "p95": 0.006649596257328439,
+          "max": 0.012281782784995664
+        },
+        "outbound_Qu_unregularized": {
+          "n": 3013,
+          "min": 0.00011788691123062285,
+          "median": 0.002764363455757217,
+          "p95": 0.006659446943219702,
+          "max": 0.012318450288894691
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 2873,
+          "min": 5.115984684500585e-10,
+          "median": 0.0003725598718053169,
+          "p95": 0.002880812389243098,
+          "max": 0.003545054003464859
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 2873,
+          "min": 3.2635971273933886e-06,
+          "median": 0.0012435225157805645,
+          "p95": 0.0056541194752310455,
+          "max": 0.006660141509066837
+        },
+        "online_wall_s": {
+          "n": 3001,
+          "min": 1.13025,
+          "median": 1.404147,
+          "p95": 1.737341,
+          "max": 5.9982869999999995
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.16967167272441672
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.00466110917222082,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 13953
+    },
+    {
+      "stream": "a",
+      "name": "train-job-20261110T035658Z-w43-a-PANN_PPO_S5-s1-ep00408",
+      "kind": "training",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T035658Z-w43-a-PANN_PPO_S5-s1-ep00408.json",
+      "source_commit": "0e7cab191dd7c93752755a28b89f7d6c7ed85e3d",
+      "reason": "external_session_truncation",
+      "error": null,
+      "success": null,
+      "stage_status": "acquisition_boundary",
+      "wall_s": 4905.349543074146,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 30001,
+        "physics_s": 59.999999999886846,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.028753844159890518,
+          -0.00038515554436839426,
+          0.270319300132409
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.027978053156732755,
+        "outbound_dz_m": -0.020051031972156574,
+        "outbound_mean_vx_m_s": -0.0004823741657100811,
+        "outbound_mean_command_vx_m_s": 0.22043784296372232,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.11424434185028076,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          27.53269176863026,
+          28.035634211596523,
+          36.88238203567032,
+          34.57509843423093
+        ],
+        "maximum_foot_normal_force_N": [
+          39.46604248207527,
+          38.048538975949135,
+          48.48988559789903,
+          43.74783328728682
+        ],
+        "foot_z_range_m": [
+          [
+            0.02199607396421363,
+            0.02199631908177871,
+            0.021995536598636012,
+            0.02199571519948365
+          ],
+          [
+            0.02199697393935883,
+            0.02199708055103304,
+            0.02199632338782395,
+            0.02199626496139362
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 7.739192579305214,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.026894843170658045
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 29000,
+          "min": 0.18624640256166458,
+          "median": 0.22138093970716,
+          "p95": 0.23766669034957885,
+          "max": 0.24530738174915315,
+          "mean": 0.22118566968865155
+        }
+      },
+      "optimizer": {
+        "calls": 3021,
+        "deployment": {
+          "accepted_native_descent": 2885,
+          "reused_current_native_scored_incumbent": 136
+        },
+        "return_reasons": {
+          "policy_installed": 2885,
+          "native_search_stagnation": 136
+        },
+        "epoch_resets": 3002,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 3002
+        },
+        "attempt_lambda_used_counts": {
+          "1": 3002,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 127,
+          "8": 127,
+          "64": 127,
+          "1024": 127
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 2874,
+          "reused_current_native_scored_incumbent": 27
+        },
+        "outbound_k_unscaled": {
+          "n": 3009,
+          "min": 1.3323318470703782e-07,
+          "median": 0.002772175107181196,
+          "p95": 0.006681662153485623,
+          "max": 0.012305607825845714
+        },
+        "outbound_Qu_unregularized": {
+          "n": 3009,
+          "min": 0.00011787827202966755,
+          "median": 0.002776417378684192,
+          "p95": 0.006692435465394671,
+          "max": 0.012342662396709341
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 2874,
+          "min": 3.956302256288846e-09,
+          "median": 0.0003733417865407207,
+          "p95": 0.0028754646666190806,
+          "max": 0.0034917617548921587
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 2874,
+          "min": 3.2636065244128395e-06,
+          "median": 0.0012459854098103807,
+          "p95": 0.0056628300117249186,
+          "max": 0.006853125783157985
+        },
+        "online_wall_s": {
+          "n": 3001,
+          "min": 1.0503259999999999,
+          "median": 1.3537919999999999,
+          "p95": 1.6695019999999998,
+          "max": 8.313841
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.17002072105628516
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.004663008859455466,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 14073
+    },
+    {
+      "stream": "a",
+      "name": "train-job-20261110T035658Z-w43-a-PANN_PPO_S5-s1-ep00409",
+      "kind": "training",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T035658Z-w43-a-PANN_PPO_S5-s1-ep00409.json",
+      "source_commit": "1334f76a47a7bdf273a8cf678d0cf0ca0af86ee4",
+      "reason": "external_session_truncation",
+      "error": null,
+      "success": null,
+      "stage_status": "acquisition_boundary",
+      "wall_s": 5011.946883903816,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 30001,
+        "physics_s": 59.999999999886846,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.028776307297215444,
+          -0.00039169842346909877,
+          0.27031429148679065
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.02800051629405768,
+        "outbound_dz_m": -0.02005604061777494,
+        "outbound_mean_vx_m_s": -0.00048276367253357195,
+        "outbound_mean_command_vx_m_s": 0.2226516660922107,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.11409175395965576,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          27.31409554935339,
+          27.794457776525714,
+          36.8815329220028,
+          32.784851386636625
+        ],
+        "maximum_foot_normal_force_N": [
+          39.841883513699166,
+          38.114181428765455,
+          51.89816399684242,
+          44.3195476193402
+        ],
+        "foot_z_range_m": [
+          [
+            0.021996073902971813,
+            0.021996319060987646,
+            0.021995471786575613,
+            0.02199568905409581
+          ],
+          [
+            0.021997018754930098,
+            0.021997116007485287,
+            0.0219963234644103,
+            0.021996264979389918
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 7.743307842050023,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.02689923399817759
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 29000,
+          "min": 0.20101858749985693,
+          "median": 0.2233196064084768,
+          "p95": 0.2387061271071434,
+          "max": 0.24127727031707763,
+          "mean": 0.22361966098172098
+        }
+      },
+      "optimizer": {
+        "calls": 3021,
+        "deployment": {
+          "accepted_native_descent": 2888,
+          "reused_current_native_scored_incumbent": 133
+        },
+        "return_reasons": {
+          "policy_installed": 2888,
+          "native_search_stagnation": 133
+        },
+        "epoch_resets": 3002,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 3002
+        },
+        "attempt_lambda_used_counts": {
+          "1": 3002,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 124,
+          "8": 124,
+          "64": 124,
+          "1024": 124
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 2877,
+          "reused_current_native_scored_incumbent": 24
+        },
+        "outbound_k_unscaled": {
+          "n": 2997,
+          "min": 1.3367488205240363e-07,
+          "median": 0.0027860087663402755,
+          "p95": 0.0066918165974517016,
+          "max": 0.012001224545232433
+        },
+        "outbound_Qu_unregularized": {
+          "n": 2997,
+          "min": 0.00011788890696479921,
+          "median": 0.002790208272227431,
+          "p95": 0.006706038049120222,
+          "max": 0.012035732324791855
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 2877,
+          "min": 4.3307042674189944e-10,
+          "median": 0.00037344668704421963,
+          "p95": 0.002885496762854771,
+          "max": 0.0036067833676308725
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 2877,
+          "min": 3.263597050210535e-06,
+          "median": 0.0012502558451869073,
+          "p95": 0.005671699272525375,
+          "max": 0.006729104316466075
+        },
+        "online_wall_s": {
+          "n": 3001,
+          "min": 1.088811,
+          "median": 1.408363,
+          "p95": 1.681845,
+          "max": 5.4657599999999995
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.17080342807892276
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.0046667527156763235,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 14193
+    },
+    {
+      "stream": "a",
+      "name": "train-job-20261110T035658Z-w43-a-PANN_PPO_S5-s1-ep00410",
+      "kind": "training",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T035658Z-w43-a-PANN_PPO_S5-s1-ep00410.json",
+      "source_commit": "1334f76a47a7bdf273a8cf678d0cf0ca0af86ee4",
+      "reason": "training_checkpoint_complete",
+      "error": null,
+      "success": null,
+      "stage_status": "budget_truncated",
+      "wall_s": 1609.5703712087125,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 8001,
+        "physics_s": 15.999999999989388,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.006993297356932576,
+          -5.140514902355486e-05,
+          0.2860151418392678
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.006217506353774812,
+        "outbound_dz_m": -0.0043551902652977925,
+        "outbound_mean_vx_m_s": -0.00044413617891790087,
+        "outbound_mean_command_vx_m_s": 0.22154350634284314,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.029015660285949707,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          35.37216042364836,
+          35.76792301336089,
+          36.88244166013358,
+          36.87504440470358
+        ],
+        "maximum_foot_normal_force_N": [
+          37.68054328790808,
+          37.699874075419544,
+          39.25937293115203,
+          38.887060399145554
+        ],
+        "foot_z_range_m": [
+          [
+            0.021996073970511593,
+            0.02199631907886343,
+            0.02199609119765189,
+            0.021996065059141978
+          ],
+          [
+            0.021996313337511814,
+            0.021996506994794274,
+            0.02199632338193455,
+            0.021996264964672496
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 6.300020627649657,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.011321266986603407
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 7000,
+          "min": 0.20782533176243304,
+          "median": 0.22667087323963642,
+          "p95": 0.24149843901395798,
+          "max": 0.24217743694782257,
+          "mean": 0.22464943509846924
+        }
+      },
+      "optimizer": {
+        "calls": 820,
+        "deployment": {
+          "accepted_native_descent": 685,
+          "reused_current_native_scored_incumbent": 135
+        },
+        "return_reasons": {
+          "policy_installed": 685,
+          "native_search_stagnation": 135
+        },
+        "epoch_resets": 801,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 801
+        },
+        "attempt_lambda_used_counts": {
+          "1": 801,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 126,
+          "8": 126,
+          "64": 126,
+          "1024": 126
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 674,
+          "reused_current_native_scored_incumbent": 26
+        },
+        "outbound_k_unscaled": {
+          "n": 804,
+          "min": 1.333379473500429e-07,
+          "median": 0.0005413575589084951,
+          "p95": 0.0012166538492911273,
+          "max": 0.0013283240308592514
+        },
+        "outbound_Qu_unregularized": {
+          "n": 804,
+          "min": 0.00011788388900595534,
+          "median": 0.0005420844614414941,
+          "p95": 0.0012182614501543658,
+          "max": 0.0013302214207619766
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 674,
+          "min": 6.316308951564986e-10,
+          "median": 1.1010513624474215e-05,
+          "p95": 5.277116571785809e-05,
+          "max": 6.0543028880064714e-05
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 674,
+          "min": 3.2635990012702463e-06,
+          "median": 6.250573256440996e-05,
+          "p95": 0.00022663559439532806,
+          "max": 0.00026541762259973083
+        },
+        "online_wall_s": {
+          "n": 800,
+          "min": 1.238929,
+          "median": 1.59188,
+          "p95": 3.21948125,
+          "max": 7.919251
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.018325179687125652
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.0010362510589624677,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 14225
+    },
+    {
+      "stream": "a",
+      "name": "job-20261110T035658Z-w43-a-eval-PANN_PPO_S5-s1-E30",
+      "kind": "evaluation",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T035658Z-w43-a-eval-PANN_PPO_S5-s1-E30.json",
+      "source_commit": "1334f76a47a7bdf273a8cf678d0cf0ca0af86ee4",
+      "reason": "material_traversal_not_completed",
+      "error": null,
+      "success": false,
+      "stage_status": "task_criteria_unmet",
+      "wall_s": 2651.6063101813197,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 15001,
+        "physics_s": 29.99999999995676,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.014017320085649,
+          -0.00013438694977141065,
+          0.28103988405370045
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.013241529082491234,
+        "outbound_dz_m": -0.009330448050865137,
+        "outbound_mean_vx_m_s": -0.00047292266992998857,
+        "outbound_mean_command_vx_m_s": 0.2217785225640297,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.0568089485168457,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          33.976954374411825,
+          34.83708530995446,
+          36.88213271572271,
+          36.87497238635379
+        ],
+        "maximum_foot_normal_force_N": [
+          37.68077744277456,
+          37.69997640314653,
+          40.701073258581715,
+          39.931048027776214
+        ],
+        "foot_z_range_m": [
+          [
+            0.02199607394730191,
+            0.021996319068581405,
+            0.021995952501662877,
+            0.02199596349568461
+          ],
+          [
+            0.021996458244430153,
+            0.021996597945910717,
+            0.02199632341048613,
+            0.021996264972793195
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 6.744540817345539,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.016263661609804136
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 14000,
+          "min": 0.22339054375886916,
+          "median": 0.22350969675928353,
+          "p95": 0.2236919540911913,
+          "max": 0.22553475797176362,
+          "mean": 0.22354926131311803
+        }
+      },
+      "optimizer": {
+        "calls": 1521,
+        "deployment": {
+          "accepted_native_descent": 1385,
+          "reused_current_native_scored_incumbent": 136
+        },
+        "return_reasons": {
+          "policy_installed": 1385,
+          "native_search_stagnation": 136
+        },
+        "epoch_resets": 1502,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 1502
+        },
+        "attempt_lambda_used_counts": {
+          "1": 1502,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 127,
+          "8": 127,
+          "64": 127,
+          "1024": 127
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 1374,
+          "reused_current_native_scored_incumbent": 27
+        },
+        "outbound_k_unscaled": {
+          "n": 1509,
+          "min": 1.3321347513972626e-07,
+          "median": 0.0011885492703918032,
+          "p95": 0.00260413395047272,
+          "max": 0.0028411195518485144
+        },
+        "outbound_Qu_unregularized": {
+          "n": 1509,
+          "min": 0.00011788889426667768,
+          "median": 0.0011902744821908676,
+          "p95": 0.0026080411751766993,
+          "max": 0.002845409249475172
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 1374,
+          "min": 4.4031657660259516e-09,
+          "median": 6.215922688009544e-05,
+          "p95": 0.00027651671310399174,
+          "max": 0.00032525512217810443
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 1374,
+          "min": 3.263597050210535e-06,
+          "median": 0.0002635925698187141,
+          "p95": 0.0010107489284278408,
+          "max": 0.0011565052077085974
+        },
+        "online_wall_s": {
+          "n": 1501,
+          "min": 1.111217,
+          "median": 1.413508,
+          "p95": 3.076495,
+          "max": 7.399162
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.04336337710694973
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.002206921513748536,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 14225
+    },
+    {
+      "stream": "b",
+      "name": "train-job-20261110T035700Z-w43-b-PANN_PPO_S5-s2-ep00394",
+      "kind": "training",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T035700Z-w43-b-PANN_PPO_S5-s2-ep00394.json",
+      "source_commit": "865af7a91fb773219d45903d74a544308e2ebdb9",
+      "reason": "external_session_truncation",
+      "error": null,
+      "success": null,
+      "stage_status": "acquisition_boundary",
+      "wall_s": 5052.800121275708,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 30001,
+        "physics_s": 59.999999999886846,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.028720893208241356,
+          -0.00039277673742681683,
+          0.270345004899282
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.027945102205083592,
+        "outbound_dz_m": -0.020025327205283605,
+        "outbound_mean_vx_m_s": -0.0004818091547530661,
+        "outbound_mean_command_vx_m_s": 0.21072638860454998,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.11396801471710205,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          27.850973390629065,
+          27.963628811833967,
+          36.88204847557577,
+          34.814910355397906
+        ],
+        "maximum_foot_normal_force_N": [
+          39.49330052471017,
+          37.704536104507504,
+          48.354591117307656,
+          43.8220893965906
+        ],
+        "foot_z_range_m": [
+          [
+            0.021996073939438338,
+            0.0219963190744511,
+            0.021995523961091,
+            0.02199569995875303
+          ],
+          [
+            0.021996946155495786,
+            0.021997080777669098,
+            0.02199632341743296,
+            0.02199626496862686
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 7.727748415437557,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.026869338696635964
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 29000,
+          "min": 0.19104540467262268,
+          "median": 0.21077736627310514,
+          "p95": 0.22793692722916603,
+          "max": 0.23623252868652345,
+          "mean": 0.2114750275966512
+        }
+      },
+      "optimizer": {
+        "calls": 3021,
+        "deployment": {
+          "accepted_native_descent": 2881,
+          "reused_current_native_scored_incumbent": 140
+        },
+        "return_reasons": {
+          "policy_installed": 2881,
+          "native_search_stagnation": 140
+        },
+        "epoch_resets": 3002,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 3002
+        },
+        "attempt_lambda_used_counts": {
+          "1": 3002,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 131,
+          "8": 131,
+          "64": 131,
+          "1024": 131
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 2870,
+          "reused_current_native_scored_incumbent": 31
+        },
+        "outbound_k_unscaled": {
+          "n": 3025,
+          "min": 1.3330707604453096e-07,
+          "median": 0.0027409293423159564,
+          "p95": 0.00664716074089928,
+          "max": 0.011568642029613538
+        },
+        "outbound_Qu_unregularized": {
+          "n": 3025,
+          "min": 0.00011788737949383544,
+          "median": 0.0027447579451730284,
+          "p95": 0.006658053830838786,
+          "max": 0.01160219788018278
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 2870,
+          "min": 5.100247486497511e-09,
+          "median": 0.0003709756717226731,
+          "p95": 0.0028646143284123144,
+          "max": 0.003485124203715856
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 2870,
+          "min": 3.2635970633654503e-06,
+          "median": 0.0012395337158647279,
+          "p95": 0.005631310542573748,
+          "max": 0.0067873916802663106
+        },
+        "online_wall_s": {
+          "n": 3001,
+          "min": 1.028878,
+          "median": 1.414852,
+          "p95": 1.756012,
+          "max": 8.610331
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.16841841219788495
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.004657517034180603,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 13833
+    },
+    {
+      "stream": "b",
+      "name": "train-job-20261110T035700Z-w43-b-PANN_PPO_S5-s2-ep00395",
+      "kind": "training",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T035700Z-w43-b-PANN_PPO_S5-s2-ep00395.json",
+      "source_commit": "0e7cab191dd7c93752755a28b89f7d6c7ed85e3d",
+      "reason": "external_session_truncation",
+      "error": null,
+      "success": null,
+      "stage_status": "acquisition_boundary",
+      "wall_s": 4933.13053522259,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 30001,
+        "physics_s": 59.999999999886846,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.02875445613845834,
+          -0.00040069582097526657,
+          0.2703316564860314
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.027978665135300576,
+        "outbound_dz_m": -0.020038675618534174,
+        "outbound_mean_vx_m_s": -0.0004823862980069724,
+        "outbound_mean_command_vx_m_s": 0.21002567440856773,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.11407721042633057,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          26.888631385130463,
+          27.86973145835559,
+          36.88178646603648,
+          33.89845084930211
+        ],
+        "maximum_foot_normal_force_N": [
+          39.35410025625954,
+          37.99967805993839,
+          48.85150626299809,
+          43.91495741397711
+        ],
+        "foot_z_range_m": [
+          [
+            0.02199607391890271,
+            0.021996319073550347,
+            0.02199542531880974,
+            0.021995697390539956
+          ],
+          [
+            0.02199699732508502,
+            0.02199709522493762,
+            0.021996323441211635,
+            0.021996264969054102
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 7.742056416863208,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.02688178590266671
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 29000,
+          "min": 0.19022568881511687,
+          "median": 0.20965329494327306,
+          "p95": 0.23070293053984642,
+          "max": 0.2437111356854439,
+          "mean": 0.2107847399361997
+        }
+      },
+      "optimizer": {
+        "calls": 3021,
+        "deployment": {
+          "accepted_native_descent": 2885,
+          "reused_current_native_scored_incumbent": 136
+        },
+        "return_reasons": {
+          "policy_installed": 2885,
+          "native_search_stagnation": 136
+        },
+        "epoch_resets": 3002,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 3002
+        },
+        "attempt_lambda_used_counts": {
+          "1": 3002,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 127,
+          "8": 127,
+          "64": 127,
+          "1024": 127
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 2874,
+          "reused_current_native_scored_incumbent": 27
+        },
+        "outbound_k_unscaled": {
+          "n": 3009,
+          "min": 1.332189372149628e-07,
+          "median": 0.0027686729641929197,
+          "p95": 0.006671031505899094,
+          "max": 0.012150710750320107
+        },
+        "outbound_Qu_unregularized": {
+          "n": 3009,
+          "min": 0.00011788766650535361,
+          "median": 0.00277289969012379,
+          "p95": 0.0066817625551203064,
+          "max": 0.01218724496976174
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 2874,
+          "min": 1.4179725206509008e-09,
+          "median": 0.0003727589270341482,
+          "p95": 0.0028768342428016538,
+          "max": 0.00357020648891318
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 2874,
+          "min": 3.2635970502950246e-06,
+          "median": 0.0012446215581546664,
+          "p95": 0.005669730971678414,
+          "max": 0.006704433882576094
+        },
+        "online_wall_s": {
+          "n": 3001,
+          "min": 1.110893,
+          "median": 1.352349,
+          "p95": 1.671463,
+          "max": 8.2852
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.169434476496652
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.004663110855883416,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 13953
+    },
+    {
+      "stream": "b",
+      "name": "train-job-20261110T035700Z-w43-b-PANN_PPO_S5-s2-ep00396",
+      "kind": "training",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T035700Z-w43-b-PANN_PPO_S5-s2-ep00396.json",
+      "source_commit": "0e7cab191dd7c93752755a28b89f7d6c7ed85e3d",
+      "reason": "external_session_truncation",
+      "error": null,
+      "success": null,
+      "stage_status": "acquisition_boundary",
+      "wall_s": 5086.4421697910875,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 30001,
+        "physics_s": 59.999999999886846,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.028729561552433145,
+          -0.0003895979708287319,
+          0.2703461453004443
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.02795377054927538,
+        "outbound_dz_m": -0.02002418680412127,
+        "outbound_mean_vx_m_s": -0.0004819568908507619,
+        "outbound_mean_command_vx_m_s": 0.20983438971798105,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.11400914192199707,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          27.813426817895703,
+          27.99689984626829,
+          36.881916079448416,
+          34.783623752796316
+        ],
+        "maximum_foot_normal_force_N": [
+          39.55561701815321,
+          37.699776410604215,
+          48.69268764957581,
+          43.8685244020692
+        ],
+        "foot_z_range_m": [
+          [
+            0.021996073926143972,
+            0.021996319088275512,
+            0.021995513574367354,
+            0.021995716417404623
+          ],
+          [
+            0.02199693200400442,
+            0.02199710220443206,
+            0.021996323428740416,
+            0.021996264956333472
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 7.744470318176559,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.026867752056385308
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 29000,
+          "min": 0.1891333532333374,
+          "median": 0.20878984712064266,
+          "p95": 0.23096998021006585,
+          "max": 0.23675711929798127,
+          "mean": 0.21054885245371013
+        }
+      },
+      "optimizer": {
+        "calls": 3021,
+        "deployment": {
+          "accepted_native_descent": 2884,
+          "reused_current_native_scored_incumbent": 137
+        },
+        "return_reasons": {
+          "policy_installed": 2884,
+          "native_search_stagnation": 137
+        },
+        "epoch_resets": 3002,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 3002
+        },
+        "attempt_lambda_used_counts": {
+          "1": 3002,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 128,
+          "8": 128,
+          "64": 128,
+          "1024": 128
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 2873,
+          "reused_current_native_scored_incumbent": 28
+        },
+        "outbound_k_unscaled": {
+          "n": 3013,
+          "min": 1.3327902026460947e-07,
+          "median": 0.002756147026314437,
+          "p95": 0.006724729622235382,
+          "max": 0.01199094829895652
+        },
+        "outbound_Qu_unregularized": {
+          "n": 3013,
+          "min": 0.00011786426095262626,
+          "median": 0.0027603136026802077,
+          "p95": 0.006737338594749046,
+          "max": 0.012026305689440624
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 2873,
+          "min": 1.1314239475868071e-10,
+          "median": 0.0003704644705471369,
+          "p95": 0.0028734447867342864,
+          "max": 0.003531265497975028
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 2873,
+          "min": 3.2636349377000774e-06,
+          "median": 0.0012402482451531365,
+          "p95": 0.005609602513041661,
+          "max": 0.006782387032085695
+        },
+        "online_wall_s": {
+          "n": 3001,
+          "min": 1.122412,
+          "median": 1.416401,
+          "p95": 1.733096,
+          "max": 7.98466
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.17010805496358836
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.004658961758212537,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 14073
+    },
+    {
+      "stream": "b",
+      "name": "train-job-20261110T035700Z-w43-b-PANN_PPO_S5-s2-ep00397",
+      "kind": "training",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T035700Z-w43-b-PANN_PPO_S5-s2-ep00397.json",
+      "source_commit": "1334f76a47a7bdf273a8cf678d0cf0ca0af86ee4",
+      "reason": "external_session_truncation",
+      "error": null,
+      "success": null,
+      "stage_status": "acquisition_boundary",
+      "wall_s": 5041.76530200243,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 30001,
+        "physics_s": 59.999999999886846,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.02874118981133149,
+          -0.0004431695600870757,
+          0.27034005159135743
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.027965398808173725,
+        "outbound_dz_m": -0.020030280513208154,
+        "outbound_mean_vx_m_s": -0.0004821575665413023,
+        "outbound_mean_command_vx_m_s": 0.2090518675978317,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.11444532871246338,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          27.29692217139996,
+          28.135424288623742,
+          36.88159615965355,
+          34.24296392351547
+        ],
+        "maximum_foot_normal_force_N": [
+          39.45357209771515,
+          37.81426604745536,
+          49.30061789437119,
+          44.24714942285647
+        ],
+        "foot_z_range_m": [
+          [
+            0.021996073901945717,
+            0.02199631907692362,
+            0.021995469752083358,
+            0.02199566232494106
+          ],
+          [
+            0.021997043542678604,
+            0.02199708792659333,
+            0.021996323458334494,
+            0.02199626496512555
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 7.740281203565788,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.026873679341690687
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 29000,
+          "min": 0.18686946421861647,
+          "median": 0.20981581039726735,
+          "p95": 0.23042796701192855,
+          "max": 0.24182497560977936,
+          "mean": 0.20983234019309108
+        }
+      },
+      "optimizer": {
+        "calls": 3021,
+        "deployment": {
+          "accepted_native_descent": 2884,
+          "reused_current_native_scored_incumbent": 137
+        },
+        "return_reasons": {
+          "policy_installed": 2884,
+          "native_search_stagnation": 137
+        },
+        "epoch_resets": 3002,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 3002
+        },
+        "attempt_lambda_used_counts": {
+          "1": 3002,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 128,
+          "8": 128,
+          "64": 128,
+          "1024": 128
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 2873,
+          "reused_current_native_scored_incumbent": 28
+        },
+        "outbound_k_unscaled": {
+          "n": 3013,
+          "min": 1.3324511405343742e-07,
+          "median": 0.002757080359963471,
+          "p95": 0.006667112334190442,
+          "max": 0.011731098714942358
+        },
+        "outbound_Qu_unregularized": {
+          "n": 3013,
+          "min": 0.00011788546617585062,
+          "median": 0.002761248918828216,
+          "p95": 0.006679096312206053,
+          "max": 0.01176518949859929
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 2873,
+          "min": 1.7086991370429683e-10,
+          "median": 0.0003711235083570588,
+          "p95": 0.0028733854682186978,
+          "max": 0.003524441132035566
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 2873,
+          "min": 3.263597741648359e-06,
+          "median": 0.0012410215677189417,
+          "p95": 0.005633564887863306,
+          "max": 0.006713880525327437
+        },
+        "online_wall_s": {
+          "n": 3001,
+          "min": 1.094704,
+          "median": 1.393761,
+          "p95": 1.7300879999999998,
+          "max": 7.255398
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.1682523573646869
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.004660899801362269,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 14193
+    },
+    {
+      "stream": "b",
+      "name": "train-job-20261110T035700Z-w43-b-PANN_PPO_S5-s2-ep00398",
+      "kind": "training",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T035700Z-w43-b-PANN_PPO_S5-s2-ep00398.json",
+      "source_commit": "1334f76a47a7bdf273a8cf678d0cf0ca0af86ee4",
+      "reason": "training_checkpoint_complete",
+      "error": null,
+      "success": null,
+      "stage_status": "budget_truncated",
+      "wall_s": 1601.1991667225957,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 8001,
+        "physics_s": 15.999999999989388,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.0069750436110517814,
+          -5.132519733903695e-05,
+          0.28602858960609684
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.006199252607894017,
+        "outbound_dz_m": -0.004341742498468748,
+        "outbound_mean_vx_m_s": -0.00044283213525453765,
+        "outbound_mean_command_vx_m_s": 0.20833563400921784,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.028934836387634277,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          35.37534057194079,
+          35.77063779255921,
+          36.8821085888645,
+          36.87504715769015
+        ],
+        "maximum_foot_normal_force_N": [
+          37.68080898336533,
+          37.69987885722076,
+          39.255851136743786,
+          38.88440713927447
+        ],
+        "foot_z_range_m": [
+          [
+            0.02199607394471889,
+            0.021996319079259585,
+            0.02199609153740678,
+            0.02199606531839693
+          ],
+          [
+            0.021996312961191727,
+            0.021996506817195866,
+            0.02199632341120039,
+            0.021996264963876494
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 6.299353784875272,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.011307868647868369
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 7000,
+          "min": 0.1929194837808609,
+          "median": 0.20971295110881327,
+          "p95": 0.2255940133333206,
+          "max": 0.22618883460760117,
+          "mean": 0.21142596227833826
+        }
+      },
+      "optimizer": {
+        "calls": 820,
+        "deployment": {
+          "accepted_native_descent": 683,
+          "reused_current_native_scored_incumbent": 137
+        },
+        "return_reasons": {
+          "policy_installed": 683,
+          "native_search_stagnation": 137
+        },
+        "epoch_resets": 801,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 801
+        },
+        "attempt_lambda_used_counts": {
+          "1": 801,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 128,
+          "8": 128,
+          "64": 128,
+          "1024": 128
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 672,
+          "reused_current_native_scored_incumbent": 28
+        },
+        "outbound_k_unscaled": {
+          "n": 812,
+          "min": 1.33291757853371e-07,
+          "median": 0.0005240650560323079,
+          "p95": 0.001211107716141535,
+          "max": 0.0013252226385227495
+        },
+        "outbound_Qu_unregularized": {
+          "n": 812,
+          "min": 0.00011788275404806422,
+          "median": 0.0005248064843951206,
+          "p95": 0.0012127932141985569,
+          "max": 0.001327115205718018
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 672,
+          "min": 1.1884594454392161e-09,
+          "median": 1.0894523255298473e-05,
+          "p95": 5.2020484031104606e-05,
+          "max": 6.0228633966846745e-05
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 672,
+          "min": 3.263600216511521e-06,
+          "median": 6.17613829566055e-05,
+          "p95": 0.00022491245635900198,
+          "max": 0.00026405897505881766
+        },
+        "online_wall_s": {
+          "n": 800,
+          "min": 1.258616,
+          "median": 1.5178145,
+          "p95": 3.21901125,
+          "max": 7.221444
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.018724137764917964
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.001033208767982335,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 14225
+    },
+    {
+      "stream": "b",
+      "name": "job-20261110T035700Z-w43-b-eval-PANN_PPO_S5-s2-E30",
+      "kind": "evaluation",
+      "source_file": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T035700Z-w43-b-eval-PANN_PPO_S5-s2-E30.json",
+      "source_commit": "1334f76a47a7bdf273a8cf678d0cf0ca0af86ee4",
+      "reason": "material_traversal_not_completed",
+      "error": null,
+      "success": false,
+      "stage_status": "task_criteria_unmet",
+      "wall_s": 2691.8120048083365,
+      "compact_fields_match_raw": {
+        "final_qpos": true,
+        "max_x_m": true,
+        "physics_s": true
+      },
+      "motion": {
+        "trajectory_samples": 15001,
+        "physics_s": 29.99999999995676,
+        "max_base_x_m": 2.4545827467454612e-05,
+        "final_base_xyz_m": [
+          -0.013993592781141534,
+          -0.00013428988122817697,
+          0.2810584524975101
+        ],
+        "outbound_start_s": 2.0019999999998124,
+        "outbound_dx_m": -0.013217801777983769,
+        "outbound_dz_m": -0.009311879607055484,
+        "outbound_mean_vx_m_s": -0.0004720752795539824,
+        "outbound_mean_command_vx_m_s": 0.20627054808040496,
+        "outbound_four_feet_contact_fraction": 1.0,
+        "outbound_contact_liftoffs": 0,
+        "outbound_contact_touchdowns": 0,
+        "outbound_joint_target_change_max_rad": 0.0567011833190918,
+        "max_foot_x_m": 0.19215678006345865,
+        "minimum_foot_normal_force_N": [
+          33.98178694166387,
+          34.84024960311547,
+          36.88190985401151,
+          36.87504581010663
+        ],
+        "maximum_foot_normal_force_N": [
+          37.68097040701643,
+          37.69988788873245,
+          40.695879461433904,
+          39.92745760536415
+        ],
+        "foot_z_range_m": [
+          [
+            0.021996073928098436,
+            0.021996319077578597,
+            0.021995952993303036,
+            0.021995963837364477
+          ],
+          [
+            0.021996457743677048,
+            0.021996597637461673,
+            0.021996323429851,
+            0.02199626496496232
+          ]
+        ],
+        "outbound_support_active_samples": 0,
+        "outbound_raw_pd_max_abs_Nm": 6.7428684164728825,
+        "outbound_raw_pd_minus_applied_torque_max_abs_Nm": 1.4210854715202004e-14,
+        "nonfoot_ground_contact_max": 0,
+        "relative_height_residual_outbound_first_last": [
+          -0.006992995482274222,
+          -0.0162451611667509
+        ],
+        "sampling_limit": "trajectory is 500Hz endpoint telemetry; does not by itself prove no saturation/contact changes inside each ten 0.2ms physics substeps.",
+        "outbound_requested_cap_m_s": {
+          "n": 14000,
+          "min": 0.2074342915415764,
+          "median": 0.20773903112858533,
+          "p95": 0.2078633249551058,
+          "max": 0.21096521269530058,
+          "mean": 0.20783781391125172
+        }
+      },
+      "optimizer": {
+        "calls": 1521,
+        "deployment": {
+          "accepted_native_descent": 1383,
+          "reused_current_native_scored_incumbent": 138
+        },
+        "return_reasons": {
+          "policy_installed": 1383,
+          "native_search_stagnation": 138
+        },
+        "epoch_resets": 1502,
+        "bad_epoch_first_attempts": [],
+        "new_epochs_without_attempts": [],
+        "first_attempt_lambda_rate_counts": {
+          "(1, 1)": 1502
+        },
+        "attempt_lambda_used_counts": {
+          "1": 1502,
+          "0.5": 1,
+          "0.125": 1,
+          "0.015625": 1,
+          "0.0009765625": 1,
+          "3.0517578125e-05": 1,
+          "1e-06": 6,
+          "2e-06": 1,
+          "8e-06": 1,
+          "6.4e-05": 1,
+          "0.001024": 1,
+          "2": 129,
+          "8": 129,
+          "64": 129,
+          "1024": 129
+        },
+        "outbound_deployment": {
+          "accepted_native_descent": 1372,
+          "reused_current_native_scored_incumbent": 29
+        },
+        "outbound_k_unscaled": {
+          "n": 1517,
+          "min": 1.3328819936653247e-07,
+          "median": 0.0011715170400885544,
+          "p95": 0.0025948706966276713,
+          "max": 0.0028334002959011784
+        },
+        "outbound_Qu_unregularized": {
+          "n": 1517,
+          "min": 0.00011788498161565725,
+          "median": 0.0011731773926935056,
+          "p95": 0.002598764707865157,
+          "max": 0.002837677719250805
+        },
+        "outbound_native_accepted_decrease": {
+          "n": 1372,
+          "min": 7.371075971818186e-11,
+          "median": 6.160378585923047e-05,
+          "p95": 0.0002747725338204565,
+          "max": 0.0003229576046806862
+        },
+        "outbound_proxy_decrease_on_accepted": {
+          "n": 1372,
+          "min": 3.2635980725426277e-06,
+          "median": 0.0002613670469493614,
+          "p95": 0.0010057200839210037,
+          "max": 0.0011508912769790922
+        },
+        "online_wall_s": {
+          "n": 1501,
+          "min": 1.1217059999999999,
+          "median": 1.435163,
+          "p95": 3.097429,
+          "max": 6.000738999999999
+        },
+        "startup_stop_calls": [
+          {
+            "call": 12,
+            "stopped": true,
+            "attempts": 5,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 13,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 14,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 15,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 16,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 17,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 18,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 19,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          },
+          {
+            "call": 20,
+            "stopped": true,
+            "attempts": 0,
+            "lambda_after": 0.001024,
+            "rate_after": 16
+          }
+        ],
+        "outbound_nominal_cost_first_last": [
+          0.004023920910376812,
+          0.04232196695783331
+        ]
+      },
+      "material": {
+        "world_cells": 0,
+        "loaded_ever_cells": 0,
+        "events": 0,
+        "max_abs_principal_strain": 0.0,
+        "max_stress_original_MPa": 0.0,
+        "domain_exit": null,
+        "event_log_uncompressed_bytes": 0,
+        "failure_log_uncompressed_bytes": 0
+      },
+      "warnings": {
+        "plant": {
+          "mjtWarning.mjWARN_INERTIA": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CONTACTFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_CNSTRFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_VGEOMFULL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQPOS": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQVEL": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADQACC": {
+            "number": 0,
+            "lastinfo": 0
+          },
+          "mjtWarning.mjWARN_BADCTRL": {
+            "number": 0,
+            "lastinfo": 0
+          }
+        },
+        "service_warning_lines": [
+          "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR"
+        ]
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.002202966962997289,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "policy_total_transitions": 14225
+    }
+  ],
+  "aggregate": {
+    "training_episodes": 10,
+    "evaluation_episodes": 2,
+    "training_end_reasons": {
+      "external_session_truncation": 8,
+      "training_checkpoint_complete": 2
+    },
+    "result_level_errors": 0,
+    "all_calls": 28850,
+    "training_calls": 25808,
+    "all_bad_reset_calls": 0,
+    "all_liftoffs": 0,
+    "all_touchdowns": 0,
+    "all_material_events": 0,
+    "distinct_new_transitions": 1024
+  }
+}
