@@ -4,6 +4,8 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/gpu/w41-gpu'
 def run_selected_alternative(report,publish):
+    # A G4 summary is not completion of the G5 invocation now starting.
+    report.pop('completion',None)
     invocation=report.get('continuation',{}).get('invocation')
     stage_dir=OUT/'continuations'/invocation if invocation else OUT
     stage_dir.mkdir(parents=True,exist_ok=True)
