@@ -1,4 +1,8 @@
-# Codex：W44 双 CPU 运行中，保持现有 GPU 作业
+# Codex：W44继续原样本目标，保留已结束GPU结果
+
+2026-11-11现场更新：W44-B在301/512条、update56、tail45时因遗留learning.known_r25_startup_regression.enabled_for_planned_phase=true提前结束。W44声明早已规定自然物理失败继续采样，现已修正声明及B的执行开关，按原job/clock从ep00409普通续接剩余211条；保留原停止结果、45条tail和旧原件上传，不另开phase、不改控制器。A持续自己的任务，不热换活动进程。最新样本/回合数据见唯一索引w44_live_observation。
+
+现有GPU G5已自然结束E30：满30s、约19.37h墙钟，material_traversal_not_completed，实际材料加载与合法往返均0；保留结果，不重启G5。
 
 ## W44 当前执行位置（2026-11-10）
 

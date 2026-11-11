@@ -192,11 +192,11 @@
   "target_transitions": 14737,
   "target_updates": 57,
   "initial_attempts": [],
-  "status": "computation_ended",
+  "status": "launched",
   "network_mode": "direct",
   "postprocess_hours": null,
   "evaluation_hours": null,
-  "evaluation_status": "skipped_due_to_startup_regression",
+  "evaluation_status": "pending_training",
   "publication_status": "compact_git_after_training_and_evaluation",
   "delivery_mode": "compact_first_local_bulk",
   "bulk_upload_enabled": false,
@@ -219,7 +219,7 @@
     "--seed",
     "2",
     "--resume",
-    "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00398.pt",
+    "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt",
     "--contract",
     "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/execution-contract.json",
     "--background-job",
@@ -233,7 +233,7 @@
     "--job-dir",
     "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b"
   ],
-  "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/train-resume-1794321833.log",
+  "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/train-resume-1794365507.log",
   "phase_stop": {
     "reason": "known_r25_startup_regression",
     "evidence": {
@@ -276,22 +276,29 @@
     "tail": 0
   },
   "last_resume": {
-    "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00398.pt",
-    "at_unix_s": 1794321833.6982687,
-    "source_commit": "653d343c67a28a90d1804ab9fbf8753ec80a24b9",
-    "evidence_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/resume-history/1794321833698277607",
-    "samples": 14225,
-    "updates": 55,
-    "preserved_tail": 0,
+    "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt",
+    "at_unix_s": 1794365507.7563558,
+    "source_commit": "f67abe554a4a93cae53cb0eb6947d2c071f592cb",
+    "evidence_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/resume-history/1794365507756364469",
+    "samples": 14526,
+    "updates": 56,
+    "preserved_tail": 45,
     "previous_controller_artifact": "S5-r33",
     "controller_artifact": "S5-r33",
     "unstarted_evaluation_archive": {
-      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/resume-history/1794321833698277607/evaluation.json",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/resume-history/1794365507756364469/evaluation.json",
       "reason": "Prior administrative result had no evaluation attempt; retained before explicit same-job resume.",
-      "previous_reason": "new_update_unavailable",
-      "previous_administrative_started_unix_s": 1794321251.0,
+      "previous_reason": "known_r25_startup_regression",
+      "previous_administrative_started_unix_s": 1794350314.0,
       "previous_administrative_deadline_unix_s": null,
       "actual_evaluation_attempts": 0
     }
-  }
+  },
+  "phase_policy_corrections": [
+    {
+      "record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b/phase-stop-correction.json",
+      "reason": "W44 explicitly ends at its sample/update goal, technical interruption or user stop; inherited r25 phase predicate was left enabled despite the W44 declaration. Preserve original physical failures and full tail.",
+      "tail_preserved": 45
+    }
+  ]
 }

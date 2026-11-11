@@ -1,5 +1,9 @@
 # 地面材料记忆主计划：W44 原生导数联合验证运行中
 
+2026-11-11现场更新：W44-B在301/512条、update56、tail45时因遗留learning.known_r25_startup_regression.enabled_for_planned_phase=true提前结束。W44声明早已规定自然物理失败继续采样，现已修正声明及B的执行开关，按原job/clock从ep00409普通续接剩余211条；保留原停止结果、45条tail和旧原件上传，不另开phase、不改控制器。A持续自己的任务，不热换活动进程。最新样本/回合数据见唯一索引w44_live_observation。
+
+现有GPU G5已自然结束E30：满30s、约19.37h墙钟，material_traversal_not_completed，实际材料加载与合法往返均0；保留结果，不重启G5。
+
 ## W44 当前执行位置（2026-11-10）
 
 S5-r33 已实施、正常构建并完成四问题有限比较，已冻结主机制 **N**：与 S 使用同一曲率度量 D，改用原生接触 FD 方向，完整重算约束 Riccati并由native评分决定安装。**W44双流已在原job/clock下普通续接运行，已观察真实transition持续增长。不要再次使用--new-phase。**
@@ -85,6 +89,6 @@ W42 曾在 t=0 重复 startup 中将 λ/rate 累积到 λ=1e6，并让全部后�
 ## 历史证据入口
 
 - 当前任务：W44_MOTION_OPTIMIZATION_JOINT / S5-r33；后台按各自样本/更新目标结束，无固定墙钟完成期限；原物理时长与技术失败停止保留。
-- w44-a：job-20261110T143358Z-w44-a，launched；新增333/1，累计14558/56，tail=77、excluded=145；评价=pending_training，紧凑Git=pending_computation。
-- w44-b：job-20261110T143400Z-w44-b，training_ended；新增301/1，累计14526/56，tail=45、excluded=145；评价=skipped_due_to_startup_regression，紧凑Git=published。
-- 任务能力：w44-a尚无最终任务汇总；w44-b合规去程/返程/整圈=0/0/0，材料加载回合=4。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
+- w44-a：job-20261110T143358Z-w44-a，launched；新增501/1，累计14726/56，tail=245、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- w44-b：job-20261110T143400Z-w44-b，launched；新增301/1，累计14526/56，tail=45、excluded=145；评价=pending_training，紧凑Git=pending_computation。
+- 任务能力：w44-a尚无最终任务汇总；w44-b尚无最终任务汇总。每流仅本phase最后实际新update评价E30，同case合格才E60；训练更新不等于合规任务能力。
