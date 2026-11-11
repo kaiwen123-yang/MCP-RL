@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""One final W44-B publication handoff after its active evaluation and old upload.
+"""One final W44 publication handoff after the current workflow and upload.
 
-The first raw queue covers only the earlier301-sample stop. This invokes the
-existing finisher once when both current operations have exited; it never
+B first queued only its earlier301-sample stop; A has known failed network
+uploads. Invoke the existing finisher once after current operations exit; never
 starts training, modifies a clock, kills a process, or retries publication.
 """
 import argparse
@@ -42,22 +42,30 @@ def wait_for_original_process(pid, expected_start):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--compute-pid", type=int, required=True)
-    parser.add_argument("--compute-start", type=int, required=True)
+    parser.add_argument("--stream", choices=("a","b"), default="b")
+    parser.add_argument("--compute-pid", type=int)
+    parser.add_argument("--compute-start", type=int)
     parser.add_argument("--upload-pid", type=int, required=True)
     parser.add_argument("--upload-start", type=int, required=True)
     a = parser.parse_args()
-    record("waiting_for_current_B_workflow", computation_pid=a.compute_pid,
+    global JOB, KEY
+    stamp, seed = ("143358", 1) if a.stream == "a" else ("143400", 2)
+    JOB = ROOT / REL / f"job-20261110T{stamp}Z-w44-{a.stream}"
+    KEY = f"w44_{a.stream}_final_delivery_handoff"
+    if (a.compute_pid is None) != (a.compute_start is None):
+        parser.error("Supply both computation PID and start time, or neither after computation has ended.")
+    record("waiting_for_current_workflow" if a.compute_pid else "waiting_for_previous_raw_upload", computation_pid=a.compute_pid,
            computation_start_ticks=a.compute_start, old_upload_pid=a.upload_pid,
            old_upload_start_ticks=a.upload_start, deadline_unix_s=None,
            job=str(JOB.relative_to(ROOT)), publication_attempts=0,
-           purpose="After final B evaluation and the earlier301-sample upload, run the existing finisher once for the full14737/57 result.",
+           purpose=f"After W44-{a.stream} computation and current upload, run the existing finisher once for full14737/57 data; reuse uploaded assets and retry actual failed assets.",
            source_commit=subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip(),
            training_restarted=False, existing_processes_signalled=False)
-    wait_for_original_process(a.compute_pid, a.compute_start)
+    if a.compute_pid:
+        wait_for_original_process(a.compute_pid, a.compute_start)
     record("waiting_for_previous_raw_upload")
     wait_for_original_process(a.upload_pid, a.upload_start)
-    collection = json.loads((ROOT / REL / "training/w44-b/PANN_PPO_S5-seed2/collection.json").read_text())
+    collection = json.loads((ROOT / REL / f"training/w44-{a.stream}/PANN_PPO_S5-seed{seed}/collection.json").read_text())
     evaluation = json.loads((JOB / "evaluation.json").read_text())
     if (collection["collected_transitions"] != 14737 or collection["updates"] != 57
             or evaluation["status"] == "running" or not (JOB / "evaluation-finished-at.txt").is_file()):
