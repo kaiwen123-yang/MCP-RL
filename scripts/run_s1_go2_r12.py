@@ -31,11 +31,18 @@ def archive_unstarted_evaluation(jobdir, contract, destination):
     if not source.is_file():
         return None
     record = json.loads(source.read_text())
-    if not (record.get('status') == 'unavailable'
-            and record.get('reason') in ('new_update_unavailable', 'training_not_normally_completed')
-            and record.get('attempts') == []
-            and all(row.get('stage_status') == 'not_run' and not row.get('attempt')
-                    for row in record.get('stages', []))):
+    unavailable = (record.get('status') == 'unavailable'
+        and record.get('reason') in ('new_update_unavailable', 'training_not_normally_completed')
+        and all(row.get('stage_status') == 'not_run' and not row.get('attempt')
+                for row in record.get('stages', [])))
+    retired_w44_stop = (contract['current_task'] == 'W44_MOTION_OPTIMIZATION_JOINT'
+        and not contract['learning']['known_r25_startup_regression']['enabled_for_planned_phase']
+        and record.get('status') == 'skipped_due_to_startup_regression'
+        and record.get('reason') == 'known_r25_startup_regression'
+        and all(row.get('stage_status') == 'skipped_due_to_startup_regression'
+                and row.get('reason') == 'known_r25_startup_regression' and not row.get('attempt')
+                for row in record.get('stages', [])))
+    if record.get('attempts') != [] or not (unavailable or retired_w44_stop):
         return None
     prefix = jobdir.name + '-eval-'
     large = ROOT / contract['outputs']['large_root']

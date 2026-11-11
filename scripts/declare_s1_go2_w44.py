@@ -86,6 +86,10 @@ def main():
         same_controller_continuation=dict(enabled=True,scope='Ordinary W44 resume preserves own frozen job, clock, RNG and tail.',
             ancestor_fork_identity_unchanged=True,current_identity_source='phase_lineage plus current job/stream/phase'),
         next_runtime_work=['Push implementation, evidence and this exact-parent declaration, then launch W44 streams.'])
+    c['learning']['known_r25_startup_regression'].update(
+        enabled_for_planned_phase=False,first_matching_natural_episode_stops_phase=False,
+        status='historical_r25_predicate_disabled_for_W44',
+        scope='W44 ends at its declared sample/update goal, technical interruption or user stop; natural physical failures remain data and continue the declared phase.')
     c['resources'].update(mpc_workers=10,project_root_recommendation=str(ROOT),
         cpu_budget_rule='Two 10-worker CPU streams, Torch/BLAS1; preserve all existing GPU jobs. Native build6 before training.',
         workers='New W44 defaults10, explicitly allowed10/11/12; ordinary resume retains frozen workers.',
