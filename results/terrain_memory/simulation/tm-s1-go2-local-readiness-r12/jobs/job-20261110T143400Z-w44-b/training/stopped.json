@@ -1,5 +1,5 @@
 {
-  "actual_transitions": 14526,
+  "actual_transitions": 14551,
   "updates": 56,
   "stream_id": "w44-b",
   "fork_identity": {
@@ -172,8 +172,8 @@
       "historical_counts"
     ]
   },
-  "unupdated_fragment": 45,
-  "physics_s": 7174.094599994464,
+  "unupdated_fragment": 70,
+  "physics_s": 7186.252599994472,
   "session_records": [
     {
       "episode": 1,
@@ -18157,12 +18157,101 @@
         "return_start_s": null,
         "status": "matched"
       }
+    },
+    {
+      "episode": 409,
+      "status": "new_physical_session_on_checkpoint_restore",
+      "continuous_environment_restored": false,
+      "checkpoint": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt"
+    },
+    {
+      "episode": 410,
+      "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410",
+      "controller_build": "S5-r33",
+      "controller_artifact": "S5-r33",
+      "condition": "nominal",
+      "stage": 0,
+      "stream_id": "w44-b",
+      "phase_id": "job-20261110T143400Z-w44-b",
+      "session_limit_s": 60,
+      "transitions": 16,
+      "reason": "body_fall",
+      "stage_status": "physical_material_failure",
+      "simulation_s": 7.658000000007312,
+      "wall_s": 1211.713708575815,
+      "completed_round_trips": 0,
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": 0.0,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false,
+            "terminal_closed_s": 7.658000000007312
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "complete_session": false,
+      "promoted": false,
+      "curriculum_enabled": false
+    },
+    {
+      "episode": 411,
+      "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411",
+      "controller_build": "S5-r33",
+      "controller_artifact": "S5-r33",
+      "condition": "nominal",
+      "stage": 0,
+      "stream_id": "w44-b",
+      "phase_id": "job-20261110T143400Z-w44-b",
+      "session_limit_s": 60,
+      "transitions": 9,
+      "reason": "training_budget_truncated",
+      "stage_status": "budget_truncated",
+      "simulation_s": 4.5000000000006475,
+      "wall_s": 1072.8355868365616,
+      "completed_round_trips": 0,
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": -0.007038127850248667,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "complete_session": false,
+      "promoted": false,
+      "curriculum_enabled": false
     }
   ],
   "target": 14737,
   "continuous_environment_snapshot": false,
-  "invocation_started_unix_s": 1794321835.3616366,
-  "invocation_wall_s": 28477.828382253647,
+  "invocation_started_unix_s": 1794365509.7185688,
+  "invocation_wall_s": 2297.108793258667,
   "controller_build": "S5-r33",
   "controller_artifact": "S5-r33",
   "execution_mode": "background_job",
@@ -18352,40 +18441,20 @@
     "controller_artifact": "S5-r33",
     "reward_version": "W38_legal_route_terminal_settlement"
   },
-  "phase_stop": {
-    "reason": "known_r25_startup_regression",
-    "evidence": {
-      "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409",
-      "goal_position_radius_m": 0.15,
-      "threshold_source": "Resolved original task.goal_position_radius_m",
-      "original_physical_reason": "body_fall",
-      "initial_x_m": 3.4227784781322575e-23,
-      "max_x_m": 0.05305070133543264,
-      "final_x_m": -0.2902430998021511,
-      "loaded_ever_cells": 0,
-      "actual_material_loaded": false,
-      "observed_phases": [
-        "initial_stand",
-        "outbound"
-      ],
-      "far_arrival_s": null,
-      "return_start_s": null,
-      "status": "matched"
-    }
-  },
-  "last_stage_status": "physical_material_failure",
-  "last_episode_reason": "body_fall",
+  "phase_stop": null,
+  "last_stage_status": "budget_truncated",
+  "last_episode_reason": "training_budget_truncated",
   "last_error": null,
   "last_r29_failure": null,
   "phase_initial_transitions": 14225,
-  "phase_new_transitions": 301,
+  "phase_new_transitions": 326,
   "phase_initial_updates": 55,
   "phase_new_updates": 1,
-  "initial_transitions": 14225,
-  "new_transitions": 301,
-  "initial_updates": 55,
-  "new_updates": 1,
-  "reason": "known_r25_startup_regression",
+  "initial_transitions": 14526,
+  "new_transitions": 25,
+  "initial_updates": 56,
+  "new_updates": 0,
+  "reason": "training_budget_truncated",
   "deadline_unix_s": null,
-  "stopped_unix_s": 1794350313.1900342
+  "stopped_unix_s": 1794367806.8273716
 }

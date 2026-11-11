@@ -5,7 +5,7 @@ source scripts/autodl_d57_env.sh
 source scripts/autodl_network.sh direct
 unset GH_TOKEN GITHUB_TOKEN
 set +e
-bash scripts/run_s1_go2_r12_training.sh --group PANN_PPO_S5 --seed 2 --resume /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00398.pt --contract /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/execution-contract.json --background-job --job-start-unix 1794321240.3192358 > /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/train-resume-1794321833.log 2>&1
+bash scripts/run_s1_go2_r12_training.sh --group PANN_PPO_S5 --seed 2 --resume /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt --contract /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/execution-contract.json --background-job --job-start-unix 1794321240.3192358 > /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/train-resume-1794365507.log 2>&1
 training_exit=$?
 echo "$training_exit" > /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/training-exit-code.txt
 date -u '+%Y-%m-%dT%H:%M:%SZ' > /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/training-finished-at.txt

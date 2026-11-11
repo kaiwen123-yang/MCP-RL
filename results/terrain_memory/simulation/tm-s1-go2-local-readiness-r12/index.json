@@ -37230,7 +37230,7 @@
       "arm": "S",
       "mission": "long",
       "cohort": "W44_r33_motion_optimization_v21",
-      "status": "running",
+      "status": "completed",
       "physical_started": true,
       "command": [
         "scripts/train_s1_go2_r12.py",
@@ -37260,7 +37260,21 @@
         "final_hold_s": null
       },
       "execution_fingerprint": "8a15e9c73cc472dde82cd15e70a2c72f4e68732927f62004b4b5373e08a09352",
-      "source_commit": "56c8197cb8b8a85142330ecfcbbff92a58145297"
+      "source_commit": "56c8197cb8b8a85142330ecfcbbff92a58145297",
+      "success": null,
+      "reason": "training_checkpoint_complete",
+      "simulation_s": 41.9999999999288,
+      "wall_s": 8399.149097301066,
+      "stage_status": "budget_truncated",
+      "case_identity": null,
+      "qualification": {
+        "predecessor_attempt": null,
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "858dd664e6425cb7ef50e0da96095c3e225e73f788776d5fe1b27fcc3cdb95fe",
+        "solver_workers": null,
+        "worker_setting_checked_against_predecessor": false
+      },
+      "result": "train-job-20261110T143358Z-w44-a-PANN_PPO_S5-s1-ep00428.json"
     },
     {
       "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410",
@@ -37270,7 +37284,7 @@
       "arm": "S",
       "mission": "long",
       "cohort": "W44_r33_motion_optimization_v21",
-      "status": "running",
+      "status": "completed",
       "physical_started": true,
       "command": [
         "scripts/train_s1_go2_r12.py",
@@ -37300,7 +37314,193 @@
         "final_hold_s": null
       },
       "execution_fingerprint": "2f5c5e3ced954f0111388b0ac1c60d1f8d91d9839fd829c6ccddf1deb21139fc",
-      "source_commit": "f67abe554a4a93cae53cb0eb6947d2c071f592cb"
+      "source_commit": "f67abe554a4a93cae53cb0eb6947d2c071f592cb",
+      "success": null,
+      "reason": "body_fall",
+      "simulation_s": 7.658000000007312,
+      "wall_s": 1211.713708575815,
+      "stage_status": "physical_material_failure",
+      "case_identity": null,
+      "qualification": {
+        "predecessor_attempt": null,
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "858dd664e6425cb7ef50e0da96095c3e225e73f788776d5fe1b27fcc3cdb95fe",
+        "solver_workers": null,
+        "worker_setting_checked_against_predecessor": false
+      },
+      "result": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410.json"
+    },
+    {
+      "attempt": "job-20261110T143358Z-w44-a-eval-PANN_PPO_S5-s1-E30",
+      "stage": "G1",
+      "purpose": "formal",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "single",
+      "cohort": "W44_r33_motion_optimization_v21",
+      "status": "running",
+      "physical_started": true,
+      "command": [
+        "scripts/run_s1_go2_r12.py",
+        "--attempt",
+        "job-20261110T143358Z-w44-a-eval-PANN_PPO_S5-s1-E30",
+        "--build",
+        "S5-r33",
+        "--group",
+        "PANN_PPO_S5",
+        "--seed",
+        "1",
+        "--checkpoint",
+        "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+        "--level",
+        "E30",
+        "--condition",
+        "nominal",
+        "--workers",
+        "10",
+        "--evaluation-start-unix",
+        "1794366378.0",
+        "--policy-output",
+        "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a/evaluation-policy/job-20261110T143358Z-w44-a-eval-PANN_PPO_S5-s1-E30",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a/execution-contract.json"
+      ],
+      "started_utc": "2026-11-11T03:06:24Z",
+      "case_key": "90aea37d21eb9da71e1077360edbb895ce42e62f3caade1d7b14e6ba9b36be76",
+      "case": {
+        "protocol_revision": "staged_evaluation_30_60_300_600_v3_bidirectional_material_route",
+        "group": "PANN_PPO_S5",
+        "seed": 1,
+        "condition": "nominal",
+        "initial_state": {
+          "id": "nominal",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        "initial_material": "virgin ReferenceColumns, independent session",
+        "common_configuration_sha256": "ebada9ae73302ff534689cb6d664c74040de9b43ce9ec36bbd5a74506c0cfd71",
+        "execution_sources": {
+          "s1_go2_r11_runtime.py": "f3d4d1cd823b1f1543aca15dfe5ac2f43ba6458c32cddc757c6a5bb2e63559d6",
+          "s1_go2_r11_model.py": "f0a2c70c76989f8db331faf81952a5bfdba2ab260105185c5f03e5224545e440",
+          "s1_go2_joint_material.py": "7bbbac1919a1bdfb39df20be74dd48a09a713869f430352485b842b91ddd28e6",
+          "s1_go2_wb_equilibrium.py": "56ce578557138cd1072a1036252a18785eeadca3b9268562c5ed008fe46bcfa0",
+          "s1_go2_support_reference.py": "6d1e5c0eb9fdb85a7335e8ea4f19e31d4e7b5f310b3d79fdb6225d28d8105060",
+          "s1_go2_legal_route.py": "439d092ce5f4628499b9c06cf4ea262099927d642784f9155cfce686d5e239e8",
+          "s1_go2_r11_policy.py": "bc9ab2a6e94f1b7baff5fd7b50c9fa45c1d5e9b28b54e1208a127a8fc99b5c8d",
+          "s1_go2_r10_observer.py": "fb3651518fa8d30eab51ecdefdad75211c31237787584f18422523434b34260a"
+        },
+        "material_sources": {
+          "src/tm02/__init__.py": "a2b8ef472a11d0c86b5ced29b83989a30571d77c9197f7beefcb986676e9d38c",
+          "src/tm02/evaluate.py": "b0dd0693bf6d5a9874f2666fddcc17421150d8fd5205498fbcd3759e34b7bebc",
+          "src/tm02/figures.py": "6e7dfc0547bfd9f79fd4a795d5e361a17e8edab78b3f3fc1979bffc892d7e362",
+          "src/tm02/material.py": "745e52257c2dcd73d7588a82f74556946e6c51565e41dbee5b2ac41b8dece14c",
+          "src/tm02/memory_data.py": "02cf5f14511a2a42c3d0cd11a56648d4b38f62d2fb1c7139b520416f20f0d6a7",
+          "src/tm02/memory_evaluate.py": "171ec6c3ebe61f4fdf7e1ba0e77c35f7d4948b5bb99d42c4061973d3dfec0a68",
+          "src/tm02/memory_figures.py": "174b3026214a3fbeeda58b846b8f67be98a60dc65689bc912ec1cc37c5b5e9de",
+          "src/tm02/memory_training.py": "8c26be254f5421c9cb0653fcfb3f857f9a813c7f38b05d66e42f39309b48c301",
+          "src/tm02/multihistory.py": "3a4340318f66bd2765f85574e013e4d2c5dd0eab2a1b6fd4c5ed3a54e92066e3",
+          "src/tm02/multihistory_evaluate.py": "c6c88bde32e10ea5c8efb991dafffa8cc2ba626aa2c99fa95593ce11279f29d5",
+          "src/tm02/multihistory_figures.py": "d49397a43831dadb9cdef13fd8292b0b231100345de8fd60baae0a700c649444",
+          "src/tm02/multihistory_revisit.py": "56706712ecd668711b3991001bbe09bd3d2ed24dbdb5bef8a56e65bfb3d4e259",
+          "src/tm02/reference.py": "3102068a86e4e75c3831a297fb8ba5c7c3df355c5b62e64beec400a0a07179ce",
+          "src/tm02/s0.py": "9d561ff7c357ef5db34940915ac9fb428dffb7e027c5ff6889d22b5a8fce92fc",
+          "src/tm02/s0_figures.py": "2a76afd09c4eadeb4533cfdf9e0874e21d841eb056ebfce321f1010ea72d05a9",
+          "src/tm02/s0_results.py": "d8773fca6736ad540288777a766440fb7b58b8442b023f48eb8859a3300db03a",
+          "src/tm02/s1_contact.py": "c62e97d0f079fa9d7f960797731fb4a364af3220ba951af9f0cfe57f93affdc5",
+          "src/tm02/s1_force.py": "af5dcddfe4412a65dd6bedfef9b78bd350389e910a701323f2ff8ff37d706de2",
+          "src/tm02/s1_material.py": "6a6f0dfb28a1249210ee076e0703ac7f834a42c54f50793d88302d408c60fc52",
+          "src/tm02/s1_planner.py": "8142626017ccda5735e5d8a8a1bfc038e353040191887adc62614f247f18155f",
+          "src/tm02/s1_prediction.py": "0abd3335c59d6f0d8ee3de2b82b2fde9c75c3a47a84a76c776955686772a3692",
+          "src/tm02/s1_robot.py": "414e89f33414c610cde367ee93bc2bdda83685734ae4d4f671e346c23c13351a",
+          "src/tm02/s1_stance.py": "6adad847dbd3135516c2399b5b176de301f7ae0e88467f13f1cc20ac13e529d9",
+          "src/tm02/s1_transition.py": "4f43ef5622bdee597f8cf37bf686e4758966cf64d641c1fc914d02f696a25e36"
+        },
+        "binary_sha256": "2d2f74813c235f70f165be706625b67a5fd279827a0a13c5ee4f95b1c1341466",
+        "fixed_cap_m_s": null,
+        "checkpoint_sha256": "aa6cf72950e0f15160a15009813b2a6d976e4f4d31c3ebd198436273dd647c15",
+        "normalizer_sha256": "2180314d860dd936b4775c8e325713466f5dd06ce913f917b88d04f93521ff55",
+        "terrain": "tm02_anchor",
+        "job": "job-20261110T143358Z-w44-a",
+        "stream_id": "w44-a",
+        "controller_build": "S5-r33",
+        "controller_artifact": "S5-r33",
+        "reward_version": "W38_legal_route_terminal_settlement"
+      },
+      "evaluation_stage": {
+        "level": "E30",
+        "task_kind": "original_route_short_stage",
+        "duration_s": 30,
+        "target_circuits": null,
+        "route_deadline_s": null,
+        "far_hold_s": 0,
+        "home_hold_s": 2,
+        "final_hold_s": null
+      },
+      "execution_fingerprint": "8a15e9c73cc472dde82cd15e70a2c72f4e68732927f62004b4b5373e08a09352",
+      "source_commit": "18161ffec9a2f6a874072aa34bba2ea5651e8810"
+    },
+    {
+      "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411",
+      "stage": "G1",
+      "purpose": "training",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "long",
+      "cohort": "W44_r33_motion_optimization_v21",
+      "status": "completed",
+      "physical_started": true,
+      "command": [
+        "scripts/train_s1_go2_r12.py",
+        "--group",
+        "PANN_PPO_S5",
+        "--seed",
+        "2",
+        "--resume",
+        "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/execution-contract.json",
+        "--background-job",
+        "--job-start-unix",
+        "1794321240.3192358"
+      ],
+      "started_utc": "2026-11-11T03:12:10Z",
+      "case_key": null,
+      "case": null,
+      "evaluation_stage": {
+        "level": "train60",
+        "task_kind": "continuing_acquisition",
+        "duration_s": 60,
+        "target_circuits": null,
+        "route_deadline_s": null,
+        "far_hold_s": 2,
+        "home_hold_s": 2,
+        "final_hold_s": null
+      },
+      "execution_fingerprint": "2f5c5e3ced954f0111388b0ac1c60d1f8d91d9839fd829c6ccddf1deb21139fc",
+      "source_commit": "18161ffec9a2f6a874072aa34bba2ea5651e8810",
+      "success": null,
+      "reason": "training_budget_truncated",
+      "simulation_s": 4.5000000000006475,
+      "wall_s": 1072.8355868365616,
+      "stage_status": "budget_truncated",
+      "case_identity": null,
+      "qualification": {
+        "predecessor_attempt": null,
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "858dd664e6425cb7ef50e0da96095c3e225e73f788776d5fe1b27fcc3cdb95fe",
+        "solver_workers": null,
+        "worker_setting_checked_against_predecessor": false
+      },
+      "result": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411.json"
     }
   ],
   "stages": {},
@@ -37372,7 +37572,7 @@
   },
   "protocol_revision": "W44_r33_motion_optimization_v21",
   "current_task": "W44_MOTION_OPTIMIZATION_JOINT",
-  "training_transitions": 22890,
+  "training_transitions": 22999,
   "next_task": "W41_STABILITY_AFTER_W40_A_RECOVERY",
   "pre_runner_initialization_failures": [
     {
@@ -317956,7 +318156,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001355-g1__r33-candidates-call000553.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001356-g1__r33-candidates-call000554.npz",
@@ -317966,7 +318167,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001356-g1__r33-candidates-call000554.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001357-g1__r33-candidates-call000555.npz",
@@ -317976,7 +318178,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001357-g1__r33-candidates-call000555.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 7.280305862426758,
+        "uploaded_unix_s": 1794365903.9430473,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001358-g1__r33-candidates-call000556.npz",
@@ -317986,7 +318191,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001358-g1__r33-candidates-call000556.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 7.817346096038818,
+        "uploaded_unix_s": 1794365912.0368483,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001359-g1__r33-candidates-call000557.npz",
@@ -317996,7 +318204,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001359-g1__r33-candidates-call000557.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: td.size,td.date {\n    border-bottom: groove;\n}\n#dirlisting td.size {\n    width: 50px;\n    text-align: right;\n    padding-right: 5px;\n}\n\n/* horizontal lines */\nhr {\n\tmargin: 0;\n}\n\n/* page displayed footer area */\n#footer {\n\tfont-size: 9px;\n\tpadding-left: 10px;\n}\n\n\nbody\n:lang(fa) { direction: rtl; font-size: 100%; font-family: Tahoma, Roya, sans-serif; float: right; }\n:lang(he) { direction: rtl; }\n --></style>\n</head><body id=ERR_SECURE_CONNECT_FAIL>\n<div id=\"titles\">\n<h1>ERROR</h1>\n<h2>The requested URL could not be retrieved</h2>\n</div>\n<hr>\n\n<div id=\"content\">\n<p>The following error was encountered while trying to retrieve the URL: <a href=\"https://uploads.github.com/*\">https://uploads.github.com/*</a></p>\n\n<blockquote id=\"error\">\n<p><b>Failed to establish a secure connection to [unknown]</b></p>\n</blockquote>\n\n<div id=\"sysmsg\">\n<p>The system returned:</p>\n<blockquote id=\"data\">\n<pre>[No Error] (TLS code: SQUID_TLS_ERR_CONNECT+TLS_IO_ERR=5)</pre>\n<p>Handshake with SSL server failed: [No Error]</p>\n</blockquote>\n</div>\n\n<p>This proxy and the remote host failed to negotiate a mutually acceptable security settings for handling your request. It is possible that the remote host does not support secure connections, or the proxy is not satisfied with the host security credentials.</p>\n\n<p>Your cache administrator is <a href=\"mailto:webmaster?subject=CacheErrorInfo%20-%20ERR_SECURE_CONNECT_FAIL&amp;body=CacheHost%3A%20cache.autodl.com%0D%0AErrPage%3A%20ERR_SECURE_CONNECT_FAIL%0D%0AErr%3A%20%5Bnone%5D%0D%0ATimeStamp%3A%20Wed,%2011%20Nov%202026%2002%3A58%3A36%20GMT%0D%0A%0D%0AClientIP%3A%20172.51.0.17%0D%0A%0D%0AHTTP%20Request%3A%0D%0ACONNECT%20%20HTTP%2F1.1%0AUser-Agent%3A%20curl%2F7.81.0%0D%0AProxy-Connection%3A%20Keep-Alive%0D%0AHost%3A%20uploads.github.com%3A443%0D%0A%0D%0A%0D%0A\">webmaster</a>.</p>\n<br>\n</div>\n\n<hr>\n<div id=\"footer\">\n<p>Generated Wed, 11 Nov 2026 02:58:36 GMT by cache.autodl.com (squid/5.2)</p>\n<!-- ERR_SECURE_CONNECT_FAIL -->\n</div>\n</body></html>\n\n503"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001360-g1__r33-candidates-call000558.npz",
@@ -318006,7 +318215,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001360-g1__r33-candidates-call000558.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001361-g1__r33-candidates-call000559.npz",
@@ -318016,7 +318226,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001361-g1__r33-candidates-call000559.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 13.721259117126465,
+        "uploaded_unix_s": 1794365965.0836802,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001362-g1__r33-candidates-call000560.npz",
@@ -318026,7 +318239,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001362-g1__r33-candidates-call000560.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001363-g1__r33-candidates-call000561.npz",
@@ -318036,7 +318250,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001363-g1__r33-candidates-call000561.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001364-g1__r33-candidates-call000562.npz",
@@ -318046,7 +318261,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001364-g1__r33-candidates-call000562.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 7.052560567855835,
+        "uploaded_unix_s": 1794366053.5532706,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001365-g1__r33-candidates-call000563.npz",
@@ -318056,7 +318274,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001365-g1__r33-candidates-call000563.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001366-g1__r33-candidates-call000564.npz",
@@ -318066,7 +318285,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001366-g1__r33-candidates-call000564.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001367-g1__r33-candidates-call000565.npz",
@@ -318076,7 +318296,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001367-g1__r33-candidates-call000565.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 6.61806845664978,
+        "uploaded_unix_s": 1794366151.4650166,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001368-g1__r33-candidates-call000566.npz",
@@ -318086,7 +318309,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001368-g1__r33-candidates-call000566.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001369-g1__r33-candidates-call000618.npz",
@@ -318096,7 +318320,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001369-g1__r33-candidates-call000618.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 6.741397380828857,
+        "uploaded_unix_s": 1794366278.9649074,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001370-g1__r33-candidates-call000619.npz",
@@ -318106,7 +318333,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001370-g1__r33-candidates-call000619.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001371-g1__r33-candidates-call000620.npz",
@@ -318116,7 +318344,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001371-g1__r33-candidates-call000620.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 17.796984434127808,
+        "uploaded_unix_s": 1794366437.595966,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001372-g1__r33-candidates-call000621.npz",
@@ -318126,7 +318357,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001372-g1__r33-candidates-call000621.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001373-g1__r33-candidates-call000622.npz",
@@ -318136,7 +318368,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001373-g1__r33-candidates-call000622.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 8.958284378051758,
+        "uploaded_unix_s": 1794366483.3215847,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001374-g1__r33-scale-call000152.npz",
@@ -318146,7 +318381,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001374-g1__r33-scale-call000152.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 9.181272268295288,
+        "uploaded_unix_s": 1794366492.789269,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001375-g1__r33-scale-call000153.npz",
@@ -318156,7 +318394,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001375-g1__r33-scale-call000153.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 6.462777137756348,
+        "uploaded_unix_s": 1794366499.5616026,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001376-g1__r33-scale-call000154.npz",
@@ -318166,7 +318407,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001376-g1__r33-scale-call000154.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.933828115463257,
+        "uploaded_unix_s": 1794366502.7869852,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001377-g1__r33-scale-call000155.npz",
@@ -318176,7 +318420,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001377-g1__r33-scale-call000155.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 8.821165800094604,
+        "uploaded_unix_s": 1794366511.9356644,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001378-g1__r33-scale-call000156.npz",
@@ -318186,7 +318433,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001378-g1__r33-scale-call000156.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.454967021942139,
+        "uploaded_unix_s": 1794366516.6589873,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001379-g1__r33-scale-call000157.npz",
@@ -318196,7 +318446,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001379-g1__r33-scale-call000157.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 17.963287830352783,
+        "uploaded_unix_s": 1794366534.87996,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001380-g1__r33-scale-call000158.npz",
@@ -318206,7 +318459,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001380-g1__r33-scale-call000158.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.296459197998047,
+        "uploaded_unix_s": 1794366538.4992476,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001381-g1__r33-scale-call000159.npz",
@@ -318216,7 +318472,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001381-g1__r33-scale-call000159.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 6.211256265640259,
+        "uploaded_unix_s": 1794366544.9663947,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001382-g1__r33-scale-call000160.npz",
@@ -318226,7 +318485,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001382-g1__r33-scale-call000160.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.5716428756713867,
+        "uploaded_unix_s": 1794366547.7922792,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001383-g1__r33-scale-call000161.npz",
@@ -318236,7 +318498,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001383-g1__r33-scale-call000161.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.073151588439941,
+        "uploaded_unix_s": 1794366552.1214154,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001384-g1__r33-scale-call000162.npz",
@@ -318246,7 +318511,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001384-g1__r33-scale-call000162.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 8.610440731048584,
+        "uploaded_unix_s": 1794366561.008476,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001385-g1__r33-scale-call000163.npz",
@@ -318256,7 +318524,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001385-g1__r33-scale-call000163.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 7.459635972976685,
+        "uploaded_unix_s": 1794366568.7272065,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001386-g1__r33-scale-call000164.npz",
@@ -318266,7 +318537,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001386-g1__r33-scale-call000164.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.805352449417114,
+        "uploaded_unix_s": 1794366573.8004327,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001387-g1__r33-scale-call000165.npz",
@@ -318276,7 +318550,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001387-g1__r33-scale-call000165.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 9.554981231689453,
+        "uploaded_unix_s": 1794366583.6161194,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001388-g1__r33-scale-call000166.npz",
@@ -318286,7 +318563,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001388-g1__r33-scale-call000166.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.822951555252075,
+        "uploaded_unix_s": 1794366586.745092,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001389-g1__r33-scale-call000219.npz",
@@ -318296,7 +318576,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001389-g1__r33-scale-call000219.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.9179635047912598,
+        "uploaded_unix_s": 1794366589.9325776,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001390-g1__r33-scale-call000220.npz",
@@ -318306,7 +318589,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001390-g1__r33-scale-call000220.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.1576826572418213,
+        "uploaded_unix_s": 1794366592.36346,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001391-g1__r33-scale-call000221.npz",
@@ -318316,7 +318602,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001391-g1__r33-scale-call000221.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.1969070434570312,
+        "uploaded_unix_s": 1794366594.828469,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001392-g1__r33-scale-call000222.npz",
@@ -318326,7 +318615,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001392-g1__r33-scale-call000222.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.487600326538086,
+        "uploaded_unix_s": 1794366597.5816007,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001393-g1__r33-scale-call000223.npz",
@@ -318336,7 +318628,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001393-g1__r33-scale-call000223.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 7.454922914505005,
+        "uploaded_unix_s": 1794366605.335904,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001394-g1__r33-scale-call000224.npz",
@@ -318346,7 +318641,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001394-g1__r33-scale-call000224.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 8.016388416290283,
+        "uploaded_unix_s": 1794366613.6375098,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001395-g1__r33-scale-call000225.npz",
@@ -318356,7 +318654,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001395-g1__r33-scale-call000225.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.662675380706787,
+        "uploaded_unix_s": 1794366618.5670903,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001396-g1__r33-scale-call000226.npz",
@@ -318366,7 +318667,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001396-g1__r33-scale-call000226.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 17.49405789375305,
+        "uploaded_unix_s": 1794366636.3276963,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001397-g1__r33-scale-call000227.npz",
@@ -318376,7 +318680,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001397-g1__r33-scale-call000227.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 5.723812818527222,
+        "uploaded_unix_s": 1794366642.3166592,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001398-g1__r33-scale-call000228.npz",
@@ -318386,7 +318693,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001398-g1__r33-scale-call000228.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.0658352375030518,
+        "uploaded_unix_s": 1794366644.6475916,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001399-g1__r33-scale-call000229.npz",
@@ -318396,7 +318706,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001399-g1__r33-scale-call000229.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.02254319190979,
+        "uploaded_unix_s": 1794366646.946691,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001400-g1__r33-scale-call000230.npz",
@@ -318406,7 +318719,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001400-g1__r33-scale-call000230.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 1.9541361331939697,
+        "uploaded_unix_s": 1794366649.1741285,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001401-g1__r33-scale-call000231.npz",
@@ -318416,7 +318732,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001401-g1__r33-scale-call000231.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 7.541385173797607,
+        "uploaded_unix_s": 1794366656.9749947,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001402-g1__r33-scale-call000232.npz",
@@ -318426,7 +318745,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001402-g1__r33-scale-call000232.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 5.790031909942627,
+        "uploaded_unix_s": 1794366663.0351048,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001403-g1__r33-scale-call000233.npz",
@@ -318436,7 +318758,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001403-g1__r33-scale-call000233.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.74930739402771,
+        "uploaded_unix_s": 1794366666.046801,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001404-g1__r33-scale-call000243.npz",
@@ -318446,7 +318771,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001404-g1__r33-scale-call000243.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.298501968383789,
+        "uploaded_unix_s": 1794366669.6085088,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001405-g1__r33-scale-call000244.npz",
@@ -318456,7 +318784,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001405-g1__r33-scale-call000244.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 12.25597620010376,
+        "uploaded_unix_s": 1794366682.129281,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001406-g1__r33-scale-call000245.npz",
@@ -318466,7 +318797,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001406-g1__r33-scale-call000245.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 18.318503618240356,
+        "uploaded_unix_s": 1794366700.7195914,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001407-g1__r33-scale-call000246.npz",
@@ -318476,7 +318810,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001407-g1__r33-scale-call000246.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.0143187046051025,
+        "uploaded_unix_s": 1794366702.9987953,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001408-g1__r33-scale-call000247.npz",
@@ -318486,7 +318823,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001408-g1__r33-scale-call000247.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.2574880123138428,
+        "uploaded_unix_s": 1794366705.5229363,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001409-g1__r33-scale-call000248.npz",
@@ -318496,7 +318836,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001409-g1__r33-scale-call000248.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 7.511676549911499,
+        "uploaded_unix_s": 1794366713.3054183,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001410-g1__r33-scale-call000249.npz",
@@ -318506,7 +318849,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001410-g1__r33-scale-call000249.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.073390007019043,
+        "uploaded_unix_s": 1794366715.6543856,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001411-g1__r33-scale-call000250.npz",
@@ -318516,7 +318862,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001411-g1__r33-scale-call000250.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.435655117034912,
+        "uploaded_unix_s": 1794366718.3630126,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001412-g1__r33-scale-call000251.npz",
@@ -318526,7 +318875,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001412-g1__r33-scale-call000251.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.196429967880249,
+        "uploaded_unix_s": 1794366720.8294055,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001413-g1__r33-scale-call000252.npz",
@@ -318536,7 +318888,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001413-g1__r33-scale-call000252.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 5.4973304271698,
+        "uploaded_unix_s": 1794366726.6040967,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001414-g1__r33-scale-call000253.npz",
@@ -318546,7 +318901,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001414-g1__r33-scale-call000253.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.2668967247009277,
+        "uploaded_unix_s": 1794366729.165815,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001415-g1__r33-scale-call000254.npz",
@@ -318556,7 +318914,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001415-g1__r33-scale-call000254.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.0873067378997803,
+        "uploaded_unix_s": 1794366731.518588,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001416-g1__r33-scale-call000255.npz",
@@ -318566,7 +318927,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001416-g1__r33-scale-call000255.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.256169319152832,
+        "uploaded_unix_s": 1794366734.04207,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001417-g1__r33-scale-call000256.npz",
@@ -318576,7 +318940,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001417-g1__r33-scale-call000256.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.085700511932373,
+        "uploaded_unix_s": 1794366736.4017794,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001418-g1__r33-scale-call000552.npz",
@@ -318586,7 +318953,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001418-g1__r33-scale-call000552.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 1.9983606338500977,
+        "uploaded_unix_s": 1794366738.668777,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001419-g1__r33-scale-call000553.npz",
@@ -318596,7 +318966,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001419-g1__r33-scale-call000553.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 1.922238826751709,
+        "uploaded_unix_s": 1794366740.855852,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001420-g1__r33-scale-call000554.npz",
@@ -318606,7 +318979,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001420-g1__r33-scale-call000554.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.7732996940612793,
+        "uploaded_unix_s": 1794366743.8932793,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001421-g1__r33-scale-call000555.npz",
@@ -318616,7 +318992,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001421-g1__r33-scale-call000555.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 5.957494735717773,
+        "uploaded_unix_s": 1794366750.1279655,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001422-g1__r33-scale-call000556.npz",
@@ -318626,7 +319005,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001422-g1__r33-scale-call000556.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.0901362895965576,
+        "uploaded_unix_s": 1794366753.4802194,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001423-g1__r33-scale-call000557.npz",
@@ -318636,7 +319018,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001423-g1__r33-scale-call000557.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 5.110864162445068,
+        "uploaded_unix_s": 1794366758.8586469,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001424-g1__r33-scale-call000558.npz",
@@ -318646,7 +319031,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001424-g1__r33-scale-call000558.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.057727575302124,
+        "uploaded_unix_s": 1794366762.2037108,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001425-g1__r33-scale-call000559.npz",
@@ -318656,7 +319044,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001425-g1__r33-scale-call000559.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.0925915241241455,
+        "uploaded_unix_s": 1794366764.569669,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001426-g1__r33-scale-call000560.npz",
@@ -318666,7 +319057,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001426-g1__r33-scale-call000560.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.0228774547576904,
+        "uploaded_unix_s": 1794366766.8539603,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001427-g1__r33-scale-call000561.npz",
@@ -318676,7 +319070,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001427-g1__r33-scale-call000561.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 7.191980600357056,
+        "uploaded_unix_s": 1794366774.3154793,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001428-g1__r33-scale-call000562.npz",
@@ -318686,7 +319083,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001428-g1__r33-scale-call000562.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.0641417503356934,
+        "uploaded_unix_s": 1794366777.6421342,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001429-g1__r33-scale-call000563.npz",
@@ -318696,7 +319096,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001429-g1__r33-scale-call000563.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.0044913291931152,
+        "uploaded_unix_s": 1794366779.9169457,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001430-g1__r33-scale-call000564.npz",
@@ -318706,7 +319109,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001430-g1__r33-scale-call000564.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.031395673751831,
+        "uploaded_unix_s": 1794366782.2119572,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001431-g1__r33-scale-call000565.npz",
@@ -318716,7 +319122,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001431-g1__r33-scale-call000565.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 1.9801239967346191,
+        "uploaded_unix_s": 1794366784.456837,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001432-g1__r33-scale-call000566.npz",
@@ -318726,7 +319135,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001432-g1__r33-scale-call000566.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.6860485076904297,
+        "uploaded_unix_s": 1794366787.405254,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001433-g1__r33-scale-call000618.npz",
@@ -318736,7 +319148,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001433-g1__r33-scale-call000618.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.0022194385528564,
+        "uploaded_unix_s": 1794366789.6676633,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001434-g1__r33-scale-call000619.npz",
@@ -318746,7 +319161,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001434-g1__r33-scale-call000619.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 1.9636547565460205,
+        "uploaded_unix_s": 1794366791.8917553,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001435-g1__r33-scale-call000620.npz",
@@ -318756,7 +319174,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001435-g1__r33-scale-call000620.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.1938633918762207,
+        "uploaded_unix_s": 1794366795.3598583,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001436-g1__r33-scale-call000621.npz",
@@ -318766,7 +319187,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001436-g1__r33-scale-call000621.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 1.9613652229309082,
+        "uploaded_unix_s": 1794366797.602351,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001437-g1__r33-scale-call000622.npz",
@@ -318776,7 +319200,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001437-g1__r33-scale-call000622.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.899703025817871,
+        "uploaded_unix_s": 1794366800.7796984,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001438-g1__accepted-reference-gain-H-plan000144.npz",
@@ -318786,7 +319213,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001438-g1__accepted-reference-gain-H-plan000144.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 41.081268072128296,
+        "uploaded_unix_s": 1794366842.1343012,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001439-g1__accepted-reference-gain-H-plan000145.npz",
@@ -318796,7 +319226,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001439-g1__accepted-reference-gain-H-plan000145.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 9.858330488204956,
+        "uploaded_unix_s": 1794366852.2661166,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001440-g1__accepted-reference-gain-H-plan000146.npz",
@@ -318806,7 +319239,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001440-g1__accepted-reference-gain-H-plan000146.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 8.264983415603638,
+        "uploaded_unix_s": 1794366860.7899845,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001441-g1__accepted-reference-gain-H-plan000147.npz",
@@ -318816,7 +319252,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001441-g1__accepted-reference-gain-H-plan000147.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001442-g1__accepted-reference-gain-H-plan000148.npz",
@@ -318826,7 +319263,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001442-g1__accepted-reference-gain-H-plan000148.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.605897903442383,
+        "uploaded_unix_s": 1794366895.1717815,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001443-g1__accepted-reference-gain-H-plan000149.npz",
@@ -318836,7 +319276,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001443-g1__accepted-reference-gain-H-plan000149.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001444-g1__accepted-reference-gain-H-plan000150.npz",
@@ -318846,7 +319287,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001444-g1__accepted-reference-gain-H-plan000150.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.927685499191284,
+        "uploaded_unix_s": 1794366919.8735962,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001445-g1__accepted-reference-gain-H-plan000151.npz",
@@ -318856,7 +319300,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001445-g1__accepted-reference-gain-H-plan000151.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.8206193447113037,
+        "uploaded_unix_s": 1794366923.9612567,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001446-g1__accepted-reference-gain-H-plan000152.npz",
@@ -318866,7 +319313,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001446-g1__accepted-reference-gain-H-plan000152.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.9917445182800293,
+        "uploaded_unix_s": 1794366928.2115805,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001447-g1__accepted-reference-gain-H-plan000153.npz",
@@ -318876,7 +319326,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001447-g1__accepted-reference-gain-H-plan000153.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.5258922576904297,
+        "uploaded_unix_s": 1794366931.9986267,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001448-g1__accepted-reference-gain-H-plan000154.npz",
@@ -318886,7 +319339,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001448-g1__accepted-reference-gain-H-plan000154.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.8888416290283203,
+        "uploaded_unix_s": 1794366936.150571,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001449-g1__accepted-reference-gain-H-plan000155.npz",
@@ -318896,7 +319352,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001449-g1__accepted-reference-gain-H-plan000155.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.8278088569641113,
+        "uploaded_unix_s": 1794366940.2428327,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001450-g1__accepted-reference-gain-H-plan000156.npz",
@@ -318906,7 +319365,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001450-g1__accepted-reference-gain-H-plan000156.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 6.953948736190796,
+        "uploaded_unix_s": 1794366947.4790907,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001451-g1__accepted-reference-gain-H-plan000157.npz",
@@ -318916,7 +319378,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001451-g1__accepted-reference-gain-H-plan000157.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001452-g1__accepted-reference-gain-H-plan000158.npz",
@@ -318926,7 +319389,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001452-g1__accepted-reference-gain-H-plan000158.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.6519529819488525,
+        "uploaded_unix_s": 1794366991.9670196,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001453-g1__accepted-reference-gain-H-plan000159.npz",
@@ -318936,7 +319402,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001453-g1__accepted-reference-gain-H-plan000159.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.610330820083618,
+        "uploaded_unix_s": 1794366995.842638,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001454-g1__accepted-reference-gain-H-plan000209.npz",
@@ -318946,7 +319415,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001454-g1__accepted-reference-gain-H-plan000209.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001455-g1__accepted-reference-gain-H-plan000210.npz",
@@ -318956,7 +319426,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001455-g1__accepted-reference-gain-H-plan000210.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.174329042434692,
+        "uploaded_unix_s": 1794367021.8586106,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001456-g1__accepted-reference-gain-H-plan000211.npz",
@@ -318966,7 +319439,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001456-g1__accepted-reference-gain-H-plan000211.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 6.943048715591431,
+        "uploaded_unix_s": 1794367029.0679317,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001457-g1__accepted-reference-gain-H-plan000212.npz",
@@ -318976,7 +319452,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001457-g1__accepted-reference-gain-H-plan000212.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.6036128997802734,
+        "uploaded_unix_s": 1794367032.9418657,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001458-g1__accepted-reference-gain-H-plan000213.npz",
@@ -318986,7 +319465,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001458-g1__accepted-reference-gain-H-plan000213.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.6470136642456055,
+        "uploaded_unix_s": 1794367036.8769023,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001459-g1__accepted-reference-gain-H-plan000214.npz",
@@ -318996,7 +319478,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001459-g1__accepted-reference-gain-H-plan000214.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.6205034255981445,
+        "uploaded_unix_s": 1794367040.7673903,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001460-g1__accepted-reference-gain-H-plan000215.npz",
@@ -319006,7 +319491,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001460-g1__accepted-reference-gain-H-plan000215.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001461-g1__accepted-reference-gain-H-plan000216.npz",
@@ -319016,7 +319502,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001461-g1__accepted-reference-gain-H-plan000216.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.026647567749023,
+        "uploaded_unix_s": 1794367065.6081755,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001462-g1__accepted-reference-gain-H-plan000217.npz",
@@ -319026,7 +319515,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001462-g1__accepted-reference-gain-H-plan000217.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.7164199352264404,
+        "uploaded_unix_s": 1794367069.5987582,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001463-g1__accepted-reference-gain-H-plan000218.npz",
@@ -319036,7 +319528,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001463-g1__accepted-reference-gain-H-plan000218.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 9.814546346664429,
+        "uploaded_unix_s": 1794367079.6805816,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001464-g1__accepted-reference-gain-H-plan000219.npz",
@@ -319046,7 +319541,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001464-g1__accepted-reference-gain-H-plan000219.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.338631629943848,
+        "uploaded_unix_s": 1794367084.3461387,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001465-g1__accepted-reference-gain-H-plan000220.npz",
@@ -319056,7 +319554,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001465-g1__accepted-reference-gain-H-plan000220.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 6.624233961105347,
+        "uploaded_unix_s": 1794367091.2310066,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001466-g1__accepted-reference-gain-H-plan000221.npz",
@@ -319066,7 +319567,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001466-g1__accepted-reference-gain-H-plan000221.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.8429737091064453,
+        "uploaded_unix_s": 1794367095.3339975,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001467-g1__accepted-reference-gain-H-plan000222.npz",
@@ -319076,7 +319580,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001467-g1__accepted-reference-gain-H-plan000222.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.441388130187988,
+        "uploaded_unix_s": 1794367100.042335,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001468-g1__accepted-reference-gain-H-plan000223.npz",
@@ -319086,7 +319593,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001468-g1__accepted-reference-gain-H-plan000223.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 9.750646591186523,
+        "uploaded_unix_s": 1794367110.0579205,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001469-g1__accepted-reference-gain-H-plan000224.npz",
@@ -319096,7 +319606,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001469-g1__accepted-reference-gain-H-plan000224.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: \n    padding-right: 5px;\n}\n\n/* horizontal lines */\nhr {\n\tmargin: 0;\n}\n\n/* page displayed footer area */\n#footer {\n\tfont-size: 9px;\n\tpadding-left: 10px;\n}\n\n\nbody\n:lang(fa) { direction: rtl; font-size: 100%; font-family: Tahoma, Roya, sans-serif; float: right; }\n:lang(he) { direction: rtl; }\n --></style>\n</head><body id=ERR_READ_ERROR>\n<div id=\"titles\">\n<h1>ERROR</h1>\n<h2>The requested URL could not be retrieved</h2>\n</div>\n<hr>\n\n<div id=\"content\">\n<p>The following error was encountered while trying to retrieve the URL: <a href=\"https://uploads.github.com/repos/kaiwen123-yang/MCP-RL/releases/441016854/assets?\">https://uploads.github.com/repos/kaiwen123-yang/MCP-RL/releases/441016854/assets?</a></p>\n\n<blockquote id=\"error\">\n<p><b>Read Error</b></p>\n</blockquote>\n\n<p id=\"sysmsg\">The system returned: <i>(104) Connection reset by peer</i></p>\n\n<p>An error condition occurred while reading data from the network. Please retry your request.</p>\n\n<p>Your cache administrator is <a href=\"mailto:webmaster?subject=CacheErrorInfo%20-%20ERR_READ_ERROR&amp;body=CacheHost%3A%20cache.autodl.com%0D%0AErrPage%3A%20ERR_READ_ERROR%0D%0AErr%3A%20(104)%20Connection%20reset%20by%20peer%0D%0ATimeStamp%3A%20Wed,%2011%20Nov%202026%2003%3A18%3A51%20GMT%0D%0A%0D%0AClientIP%3A%20172.51.0.17%0D%0AServerIP%3A%20127.0.0.1%0D%0A%0D%0AHTTP%20Request%3A%0D%0APOST%20%2Frepos%2Fkaiwen123-yang%2FMCP-RL%2Freleases%2F441016854%2Fassets%3Fname%3Ddiag__job-20261110T143400Z-w44-b__f001469-g1__accepted-reference-gain-H-plan000224.npz%20HTTP%2F1.1%0AUser-Agent%3A%20curl%2F7.81.0%0D%0AAuthorization%3A%20Bearer%20[credential]%0D%0AAccept%3A%20application%2Fvnd.github+json%0D%0AContent-Type%3A%20application%2Foctet-stream%0D%0AContent-Length%3A%204662350%0D%0AExpect%3A%20100-continue%0D%0AHost%3A%20uploads.github.com%0D%0A%0D%0A%0D%0A\">webmaster</a>.</p>\n<br>\n</div>\n\n<hr>\n<div id=\"footer\">\n<p>Generated Wed, 11 Nov 2026 03:18:51 GMT by cache.autodl.com (squid/5.2)</p>\n<!-- ERR_READ_ERROR -->\n</div>\n</body></html>\n\n502"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001470-g1__accepted-reference-gain-H-plan000233.npz",
@@ -319106,7 +319617,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001470-g1__accepted-reference-gain-H-plan000233.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 6.7849931716918945,
+        "uploaded_unix_s": 1794367138.2647693,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001471-g1__accepted-reference-gain-H-plan000234.npz",
@@ -319116,7 +319630,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001471-g1__accepted-reference-gain-H-plan000234.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 5.935810804367065,
+        "uploaded_unix_s": 1794367144.5030766,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001472-g1__accepted-reference-gain-H-plan000235.npz",
@@ -319126,7 +319643,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001472-g1__accepted-reference-gain-H-plan000235.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001473-g1__accepted-reference-gain-H-plan000236.npz",
@@ -319136,7 +319654,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001473-g1__accepted-reference-gain-H-plan000236.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.540551662445068,
+        "uploaded_unix_s": 1794367169.8089225,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001474-g1__accepted-reference-gain-H-plan000237.npz",
@@ -319146,7 +319667,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001474-g1__accepted-reference-gain-H-plan000237.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 9.313714504241943,
+        "uploaded_unix_s": 1794367179.3892338,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001475-g1__accepted-reference-gain-H-plan000238.npz",
@@ -319156,7 +319680,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001475-g1__accepted-reference-gain-H-plan000238.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 9.517136812210083,
+        "uploaded_unix_s": 1794367189.178111,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001476-g1__accepted-reference-gain-H-plan000239.npz",
@@ -319166,7 +319693,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001476-g1__accepted-reference-gain-H-plan000239.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 11.548235893249512,
+        "uploaded_unix_s": 1794367201.0055692,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001477-g1__accepted-reference-gain-H-plan000240.npz",
@@ -319176,7 +319706,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001477-g1__accepted-reference-gain-H-plan000240.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001478-g1__accepted-reference-gain-H-plan000241.npz",
@@ -319186,7 +319717,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001478-g1__accepted-reference-gain-H-plan000241.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 6.816896677017212,
+        "uploaded_unix_s": 1794367248.602742,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001479-g1__accepted-reference-gain-H-plan000242.npz",
@@ -319196,7 +319730,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001479-g1__accepted-reference-gain-H-plan000242.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 27.83174753189087,
+        "uploaded_unix_s": 1794367276.702375,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001480-g1__accepted-reference-gain-H-plan000243.npz",
@@ -319206,7 +319743,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001480-g1__accepted-reference-gain-H-plan000243.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.837721824645996,
+        "uploaded_unix_s": 1794367280.8048608,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001481-g1__accepted-reference-gain-H-plan000244.npz",
@@ -319216,7 +319756,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001481-g1__accepted-reference-gain-H-plan000244.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.577342987060547,
+        "uploaded_unix_s": 1794367284.6416378,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001482-g1__accepted-reference-gain-H-plan000245.npz",
@@ -319226,7 +319769,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001482-g1__accepted-reference-gain-H-plan000245.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.5744967460632324,
+        "uploaded_unix_s": 1794367288.4756358,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001483-g1__accepted-reference-gain-H-plan000516.npz",
@@ -319236,7 +319782,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001483-g1__accepted-reference-gain-H-plan000516.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001484-g1__accepted-reference-gain-H-plan000517.npz",
@@ -319246,7 +319793,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001484-g1__accepted-reference-gain-H-plan000517.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 10.665443897247314,
+        "uploaded_unix_s": 1794367339.8815908,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001485-g1__accepted-reference-gain-H-plan000518.npz",
@@ -319256,7 +319806,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001485-g1__accepted-reference-gain-H-plan000518.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.892301321029663,
+        "uploaded_unix_s": 1794367344.0349412,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001486-g1__accepted-reference-gain-H-plan000519.npz",
@@ -319266,7 +319819,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001486-g1__accepted-reference-gain-H-plan000519.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001487-g1__accepted-reference-gain-H-plan000520.npz",
@@ -319276,7 +319830,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001487-g1__accepted-reference-gain-H-plan000520.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: \n    padding-right: 5px;\n}\n\n/* horizontal lines */\nhr {\n\tmargin: 0;\n}\n\n/* page displayed footer area */\n#footer {\n\tfont-size: 9px;\n\tpadding-left: 10px;\n}\n\n\nbody\n:lang(fa) { direction: rtl; font-size: 100%; font-family: Tahoma, Roya, sans-serif; float: right; }\n:lang(he) { direction: rtl; }\n --></style>\n</head><body id=ERR_READ_ERROR>\n<div id=\"titles\">\n<h1>ERROR</h1>\n<h2>The requested URL could not be retrieved</h2>\n</div>\n<hr>\n\n<div id=\"content\">\n<p>The following error was encountered while trying to retrieve the URL: <a href=\"https://uploads.github.com/repos/kaiwen123-yang/MCP-RL/releases/441016854/assets?\">https://uploads.github.com/repos/kaiwen123-yang/MCP-RL/releases/441016854/assets?</a></p>\n\n<blockquote id=\"error\">\n<p><b>Read Error</b></p>\n</blockquote>\n\n<p id=\"sysmsg\">The system returned: <i>(104) Connection reset by peer</i></p>\n\n<p>An error condition occurred while reading data from the network. Please retry your request.</p>\n\n<p>Your cache administrator is <a href=\"mailto:webmaster?subject=CacheErrorInfo%20-%20ERR_READ_ERROR&amp;body=CacheHost%3A%20cache.autodl.com%0D%0AErrPage%3A%20ERR_READ_ERROR%0D%0AErr%3A%20(104)%20Connection%20reset%20by%20peer%0D%0ATimeStamp%3A%20Wed,%2011%20Nov%202026%2003%3A23%3A04%20GMT%0D%0A%0D%0AClientIP%3A%20172.51.0.17%0D%0AServerIP%3A%20127.0.0.1%0D%0A%0D%0AHTTP%20Request%3A%0D%0APOST%20%2Frepos%2Fkaiwen123-yang%2FMCP-RL%2Freleases%2F441016854%2Fassets%3Fname%3Ddiag__job-20261110T143400Z-w44-b__f001487-g1__accepted-reference-gain-H-plan000520.npz%20HTTP%2F1.1%0AUser-Agent%3A%20curl%2F7.81.0%0D%0AAuthorization%3A%20Bearer%20[credential]%0D%0AAccept%3A%20application%2Fvnd.github+json%0D%0AContent-Type%3A%20application%2Foctet-stream%0D%0AContent-Length%3A%204548557%0D%0AExpect%3A%20100-continue%0D%0AHost%3A%20uploads.github.com%0D%0A%0D%0A%0D%0A\">webmaster</a>.</p>\n<br>\n</div>\n\n<hr>\n<div id=\"footer\">\n<p>Generated Wed, 11 Nov 2026 03:23:04 GMT by cache.autodl.com (squid/5.2)</p>\n<!-- ERR_READ_ERROR -->\n</div>\n</body></html>\n\n502"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001488-g1__accepted-reference-gain-H-plan000521.npz",
@@ -319286,7 +319841,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001488-g1__accepted-reference-gain-H-plan000521.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.6661884784698486,
+        "uploaded_unix_s": 1794367388.946248,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001489-g1__accepted-reference-gain-H-plan000522.npz",
@@ -319296,7 +319854,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001489-g1__accepted-reference-gain-H-plan000522.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.62577748298645,
+        "uploaded_unix_s": 1794367392.8400788,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001490-g1__accepted-reference-gain-H-plan000523.npz",
@@ -319306,7 +319867,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001490-g1__accepted-reference-gain-H-plan000523.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.6313693523406982,
+        "uploaded_unix_s": 1794367396.737734,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001491-g1__accepted-reference-gain-H-plan000524.npz",
@@ -319316,7 +319880,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001491-g1__accepted-reference-gain-H-plan000524.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001492-g1__accepted-reference-gain-H-plan000525.npz",
@@ -319326,7 +319891,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001492-g1__accepted-reference-gain-H-plan000525.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.780858039855957,
+        "uploaded_unix_s": 1794367431.3359628,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001493-g1__accepted-reference-gain-H-plan000526.npz",
@@ -319336,7 +319904,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001493-g1__accepted-reference-gain-H-plan000526.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.399320125579834,
+        "uploaded_unix_s": 1794367435.9938354,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001494-g1__accepted-reference-gain-H-plan000527.npz",
@@ -319346,7 +319917,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001494-g1__accepted-reference-gain-H-plan000527.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.7173376083374023,
+        "uploaded_unix_s": 1794367439.9698553,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001495-g1__accepted-reference-gain-H-plan000528.npz",
@@ -319356,7 +319930,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001495-g1__accepted-reference-gain-H-plan000528.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001496-g1__accepted-reference-gain-H-plan000529.npz",
@@ -319366,7 +319941,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001496-g1__accepted-reference-gain-H-plan000529.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: \n    padding-right: 5px;\n}\n\n/* horizontal lines */\nhr {\n\tmargin: 0;\n}\n\n/* page displayed footer area */\n#footer {\n\tfont-size: 9px;\n\tpadding-left: 10px;\n}\n\n\nbody\n:lang(fa) { direction: rtl; font-size: 100%; font-family: Tahoma, Roya, sans-serif; float: right; }\n:lang(he) { direction: rtl; }\n --></style>\n</head><body id=ERR_READ_ERROR>\n<div id=\"titles\">\n<h1>ERROR</h1>\n<h2>The requested URL could not be retrieved</h2>\n</div>\n<hr>\n\n<div id=\"content\">\n<p>The following error was encountered while trying to retrieve the URL: <a href=\"https://uploads.github.com/repos/kaiwen123-yang/MCP-RL/releases/441016854/assets?\">https://uploads.github.com/repos/kaiwen123-yang/MCP-RL/releases/441016854/assets?</a></p>\n\n<blockquote id=\"error\">\n<p><b>Read Error</b></p>\n</blockquote>\n\n<p id=\"sysmsg\">The system returned: <i>(104) Connection reset by peer</i></p>\n\n<p>An error condition occurred while reading data from the network. Please retry your request.</p>\n\n<p>Your cache administrator is <a href=\"mailto:webmaster?subject=CacheErrorInfo%20-%20ERR_READ_ERROR&amp;body=CacheHost%3A%20cache.autodl.com%0D%0AErrPage%3A%20ERR_READ_ERROR%0D%0AErr%3A%20(104)%20Connection%20reset%20by%20peer%0D%0ATimeStamp%3A%20Wed,%2011%20Nov%202026%2003%3A24%3A50%20GMT%0D%0A%0D%0AClientIP%3A%20172.51.0.17%0D%0AServerIP%3A%20127.0.0.1%0D%0A%0D%0AHTTP%20Request%3A%0D%0APOST%20%2Frepos%2Fkaiwen123-yang%2FMCP-RL%2Freleases%2F441016854%2Fassets%3Fname%3Ddiag__job-20261110T143400Z-w44-b__f001496-g1__accepted-reference-gain-H-plan000529.npz%20HTTP%2F1.1%0AUser-Agent%3A%20curl%2F7.81.0%0D%0AAuthorization%3A%20Bearer%20[credential]%0D%0AAccept%3A%20application%2Fvnd.github+json%0D%0AContent-Type%3A%20application%2Foctet-stream%0D%0AContent-Length%3A%204191032%0D%0AExpect%3A%20100-continue%0D%0AHost%3A%20uploads.github.com%0D%0A%0D%0A%0D%0A\">webmaster</a>.</p>\n<br>\n</div>\n\n<hr>\n<div id=\"footer\">\n<p>Generated Wed, 11 Nov 2026 03:24:50 GMT by cache.autodl.com (squid/5.2)</p>\n<!-- ERR_READ_ERROR -->\n</div>\n</body></html>\n\n502"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001497-g1__accepted-reference-gain-H-plan000530.npz",
@@ -319376,7 +319952,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001497-g1__accepted-reference-gain-H-plan000530.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 10.066778659820557,
+        "uploaded_unix_s": 1794367501.237665,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001498-g1__accepted-reference-gain-H-plan000531.npz",
@@ -319386,7 +319965,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001498-g1__accepted-reference-gain-H-plan000531.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 18.906469106674194,
+        "uploaded_unix_s": 1794367520.4061706,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001499-g1__accepted-reference-gain-H-plan000582.npz",
@@ -319396,7 +319978,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001499-g1__accepted-reference-gain-H-plan000582.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 9.0747709274292,
+        "uploaded_unix_s": 1794367529.7398593,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001500-g1__accepted-reference-gain-H-plan000583.npz",
@@ -319406,7 +319991,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001500-g1__accepted-reference-gain-H-plan000583.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.4858953952789307,
+        "uploaded_unix_s": 1794367533.4983704,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001501-g1__accepted-reference-gain-H-plan000584.npz",
@@ -319416,7 +320004,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001501-g1__accepted-reference-gain-H-plan000584.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.5249435901641846,
+        "uploaded_unix_s": 1794367537.2850006,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001502-g1__accepted-reference-gain-H-plan000585.npz",
@@ -319426,7 +320017,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001502-g1__accepted-reference-gain-H-plan000585.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.3325934410095215,
+        "uploaded_unix_s": 1794367541.8778472,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001503-g1__accepted-reference-gain-H-plan000586.npz",
@@ -319436,7 +320030,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001503-g1__accepted-reference-gain-H-plan000586.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 7.54211950302124,
+        "uploaded_unix_s": 1794367549.6865008,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001504-g1__accepted-reference-gain-H-plan000587.npz",
@@ -319446,7 +320043,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001504-g1__accepted-reference-gain-H-plan000587.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 5.638735771179199,
+        "uploaded_unix_s": 1794367555.5908363,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001505-g1__train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00403.json.gz",
@@ -319456,7 +320056,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001505-g1__train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00403.json.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.0981881618499756,
+        "uploaded_unix_s": 1794367557.9535646,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001506-g1__train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00403-resolved.json.gz",
@@ -319466,7 +320069,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001506-g1__train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00403-resolved.json.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.4816112518310547,
+        "uploaded_unix_s": 1794367560.6983552,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001507-g1__physical-000.npz",
@@ -319476,7 +320082,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001507-g1__physical-000.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.071128606796265,
+        "uploaded_unix_s": 1794367565.0416322,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001508-g1__material-0000.npz",
@@ -319486,7 +320095,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001508-g1__material-0000.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.2397961616516113,
+        "uploaded_unix_s": 1794367568.534026,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001509-g1__material-0001.npz",
@@ -319496,7 +320108,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001509-g1__material-0001.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.6701841354370117,
+        "uploaded_unix_s": 1794367572.4714737,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001510-g1__material-0002.npz",
@@ -319506,7 +320121,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001510-g1__material-0002.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 9.914958000183105,
+        "uploaded_unix_s": 1794367582.6497128,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001511-g1__material-0003.npz",
@@ -319516,7 +320134,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001511-g1__material-0003.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.1912612915039062,
+        "uploaded_unix_s": 1794367586.117685,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001512-g1__material-0004.npz",
@@ -319526,7 +320147,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001512-g1__material-0004.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.2055411338806152,
+        "uploaded_unix_s": 1794367589.5924509,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001513-g1__material-0005.npz",
@@ -319536,7 +320160,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001513-g1__material-0005.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.0798749923706055,
+        "uploaded_unix_s": 1794367592.931916,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001514-g1__material-0006.npz",
@@ -319546,7 +320173,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001514-g1__material-0006.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.245945453643799,
+        "uploaded_unix_s": 1794367596.44428,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001515-g1__material-0007.npz",
@@ -319556,7 +320186,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001515-g1__material-0007.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.43930983543396,
+        "uploaded_unix_s": 1794367600.1579518,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001516-g1__material-0008.npz",
@@ -319566,7 +320199,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001516-g1__material-0008.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.0235936641693115,
+        "uploaded_unix_s": 1794367603.4350023,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001517-g1__material-0009.npz",
@@ -319576,7 +320212,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001517-g1__material-0009.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 8.690156698226929,
+        "uploaded_unix_s": 1794367612.3770602,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001518-g1__material-0010.npz",
@@ -319586,7 +320225,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001518-g1__material-0010.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.2938547134399414,
+        "uploaded_unix_s": 1794367615.929814,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001519-g1__material-0011.npz",
@@ -319596,7 +320238,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001519-g1__material-0011.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.3984172344207764,
+        "uploaded_unix_s": 1794367619.5975955,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001520-g1__material-0012.npz",
@@ -319606,7 +320251,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001520-g1__material-0012.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.329411268234253,
+        "uploaded_unix_s": 1794367622.1927648,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001521-g1__material-final.npz",
@@ -319616,7 +320264,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001521-g1__material-final.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.2325358390808105,
+        "uploaded_unix_s": 1794367624.692482,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001522-g1__feedback-actions.jsonl.gz",
@@ -319626,7 +320277,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001522-g1__feedback-actions.jsonl.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.88802170753479,
+        "uploaded_unix_s": 1794367629.8434556,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001523-g1__planner-records.jsonl.gz",
@@ -319636,7 +320290,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001523-g1__planner-records.jsonl.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.8180646896362305,
+        "uploaded_unix_s": 1794367634.9346087,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001524-g1__reference-packets.json.gz",
@@ -319646,7 +320303,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001524-g1__reference-packets.json.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.685511350631714,
+        "uploaded_unix_s": 1794367639.8752701,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001525-g1__trajectory.npz",
@@ -319656,7 +320316,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001525-g1__trajectory.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 6.70100736618042,
+        "uploaded_unix_s": 1794367646.8469076,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001526-g1__material-events.jsonl.gz",
@@ -319666,7 +320329,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001526-g1__material-events.jsonl.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 1.9387791156768799,
+        "uploaded_unix_s": 1794367649.0553517,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001527-g1__material-failures.jsonl.gz",
@@ -319676,7 +320342,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001527-g1__material-failures.jsonl.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 1.944995641708374,
+        "uploaded_unix_s": 1794367651.2627869,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001528-g1__model.mjb",
@@ -319686,7 +320355,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001528-g1__model.mjb",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001529-g1__G1-project-go2.xml",
@@ -319696,7 +320366,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001529-g1__G1-project-go2.xml",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.0678436756134033,
+        "uploaded_unix_s": 1794367705.0867522,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001530-g1__planner-calls.jsonl.gz",
@@ -319706,7 +320379,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001530-g1__planner-calls.jsonl.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.854260206222534,
+        "uploaded_unix_s": 1794367708.2037225,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001531-g1__action-execution.jsonl.gz",
@@ -319716,7 +320392,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001531-g1__action-execution.jsonl.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.077932834625244,
+        "uploaded_unix_s": 1794367712.5457656,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001532-g1__r29-event-manifest.json.gz",
@@ -319726,7 +320405,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001532-g1__r29-event-manifest.json.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.0750732421875,
+        "uploaded_unix_s": 1794367714.8826542,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001533-g1__query-exposure.jsonl.gz",
@@ -319736,7 +320418,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001533-g1__query-exposure.jsonl.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.039438247680664,
+        "uploaded_unix_s": 1794367717.1898646,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001534-g1__prediction-000.npz",
@@ -319746,7 +320431,8 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001534-g1__prediction-000.npz",
-        "status": "publication_pending"
+        "status": "publication_pending",
+        "upload_error": "curl upload failed: HTTP/1.1 200 Connection established\n\nHTTP/1.1 100 Continue\nConnection: keep-alive\n\ncurl: (52) Empty reply from server\n \n100"
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001535-g1__cap-decisions.json.gz",
@@ -319756,7 +320442,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001535-g1__cap-decisions.json.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 1.9187681674957275,
+        "uploaded_unix_s": 1794367759.9115248,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001536-g1__mujoco-warnings.json.gz",
@@ -319766,7 +320455,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001536-g1__mujoco-warnings.json.gz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 2.629733085632324,
+        "uploaded_unix_s": 1794367762.8082342,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001537-g1__startup.npz",
@@ -319776,7 +320468,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001537-g1__startup.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.389516830444336,
+        "uploaded_unix_s": 1794367766.463302,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001538-g1__r32-search-call000141.npz",
@@ -319786,7 +320481,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001538-g1__r32-search-call000141.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.3919966220855713,
+        "uploaded_unix_s": 1794367770.1215441,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001539-g1__r32-search-call000142.npz",
@@ -319796,7 +320494,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001539-g1__r32-search-call000142.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.8153793811798096,
+        "uploaded_unix_s": 1794367774.1956568,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001540-g1__r32-search-call000143.npz",
@@ -319806,7 +320507,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001540-g1__r32-search-call000143.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.2985997200012207,
+        "uploaded_unix_s": 1794367777.7874727,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001541-g1__r32-search-call000144.npz",
@@ -319816,7 +320520,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001541-g1__r32-search-call000144.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.856818675994873,
+        "uploaded_unix_s": 1794367781.8980446,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001542-g1__r32-search-call000145.npz",
@@ -319826,7 +320533,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001542-g1__r32-search-call000145.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.626466989517212,
+        "uploaded_unix_s": 1794367785.8043768,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001543-g1__r32-search-call000146.npz",
@@ -319836,7 +320546,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001543-g1__r32-search-call000146.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 5.570638179779053,
+        "uploaded_unix_s": 1794367791.6646733,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001544-g1__r32-search-call000147.npz",
@@ -319846,7 +320559,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001544-g1__r32-search-call000147.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 5.032486438751221,
+        "uploaded_unix_s": 1794367796.9897525,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001545-g1__r32-search-call000148.npz",
@@ -319856,7 +320572,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001545-g1__r32-search-call000148.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.870112895965576,
+        "uploaded_unix_s": 1794367802.1373968,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001546-g1__r32-search-call000149.npz",
@@ -319866,7 +320585,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001546-g1__r32-search-call000149.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 4.457837820053101,
+        "uploaded_unix_s": 1794367806.8717942,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001547-g1__r32-search-call000150.npz",
@@ -319876,7 +320598,10 @@
         "category": "selected_diagnostic",
         "release_tag": "tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02",
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-job-20261110T143400Z-w44-b-diagnostics-part02/diag__job-20261110T143400Z-w44-b__f001547-g1__r32-search-call000150.npz",
-        "status": "publication_pending"
+        "status": "uploaded",
+        "upload_wall_s": 3.5489656925201416,
+        "uploaded_unix_s": 1794367810.6928759,
+        "upload_workers": 1
       },
       {
         "name": "diag__job-20261110T143400Z-w44-b__f001548-g1__r32-search-call000151.npz",
@@ -351250,7 +351975,7 @@
     "w44-b": {
       "group": "PANN_PPO_S5",
       "seed": 2,
-      "actual_transitions": 14526,
+      "actual_transitions": 14551,
       "stream_id": "w44-b",
       "fork_identity": {
         "stream_id": "w38-b",
@@ -351423,11 +352148,11 @@
         ]
       },
       "phase_initial_transitions": 14225,
-      "phase_new_transitions": 301,
+      "phase_new_transitions": 326,
       "phase_new_updates": 1,
       "updates": 56,
-      "tail_buffer": 45,
-      "episodes": 409,
+      "tail_buffer": 70,
+      "episodes": 411,
       "excluded_old_version_transitions": 145,
       "phase_id": "job-20261110T143400Z-w44-b",
       "controller_migration": {
@@ -351452,36 +352177,16 @@
         "new_buffer_size": 0,
         "isolated_tail_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/excluded-r25-004353-004497.pt"
       },
-      "phase_stop": {
-        "reason": "known_r25_startup_regression",
-        "evidence": {
-          "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409",
-          "goal_position_radius_m": 0.15,
-          "threshold_source": "Resolved original task.goal_position_radius_m",
-          "original_physical_reason": "body_fall",
-          "initial_x_m": 3.4227784781322575e-23,
-          "max_x_m": 0.05305070133543264,
-          "final_x_m": -0.2902430998021511,
-          "loaded_ever_cells": 0,
-          "actual_material_loaded": false,
-          "observed_phases": [
-            "initial_stand",
-            "outbound"
-          ],
-          "far_arrival_s": null,
-          "return_start_s": null,
-          "status": "matched"
-        }
-      },
-      "physics_s": 7174.094599994464,
+      "phase_stop": null,
+      "physics_s": 7186.252599994472,
       "controller_build": "S5-r33",
       "output": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2",
-      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt"
+      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00411.pt"
     },
     "w44-a": {
       "group": "PANN_PPO_S5",
       "seed": 1,
-      "actual_transitions": 14653,
+      "actual_transitions": 14737,
       "stream_id": "w44-a",
       "fork_identity": {
         "stream_id": "w38-a",
@@ -351654,11 +352359,11 @@
         ]
       },
       "phase_initial_transitions": 14225,
-      "phase_new_transitions": 428,
-      "phase_new_updates": 1,
-      "updates": 56,
-      "tail_buffer": 172,
-      "episodes": 427,
+      "phase_new_transitions": 512,
+      "phase_new_updates": 2,
+      "updates": 57,
+      "tail_buffer": 0,
+      "episodes": 428,
       "excluded_old_version_transitions": 145,
       "phase_id": "job-20261110T143358Z-w44-a",
       "controller_migration": {
@@ -351684,10 +352389,10 @@
         "isolated_tail_path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/excluded-r25-004353-004497.pt"
       },
       "phase_stop": null,
-      "physics_s": 7234.080799994781,
+      "physics_s": 7276.0807999947265,
       "controller_build": "S5-r33",
       "output": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1",
-      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/resume-state-ep00427.pt"
+      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/resume-state-ep00428.pt"
     }
   },
   "training_updates": null,
@@ -361739,13 +362444,13 @@
     "job-20261110T143358Z-w44-a": {
       "stream_id": "w44-a",
       "phase_id": "job-20261110T143358Z-w44-a",
-      "live_status": "launched",
+      "live_status": "training_ended",
       "latest_counts": {
-        "transitions": 14726,
-        "updates": 56,
-        "new_transitions": 501,
-        "new_updates": 1,
-        "tail": 245
+        "transitions": 14737,
+        "updates": 57,
+        "new_transitions": 512,
+        "new_updates": 2,
+        "tail": 0
       },
       "phase_lineage": {
         "status": "explicit_new_phase_continuation",
@@ -361901,7 +362606,7 @@
       "controller_build": "S5-r33",
       "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a",
       "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1",
-      "latest_resume": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/resume-state-ep00427.pt",
+      "latest_resume": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/resume-state-ep00428.pt",
       "deadline_unix_s": null,
       "completion_policy": "sample_update_goal_no_wall_deadline"
     },
@@ -361910,22 +362615,22 @@
       "phase_id": "job-20261110T143400Z-w44-b",
       "summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b.json",
       "training": {
-        "actual_transitions": 14526,
+        "actual_transitions": 14551,
         "updates": 56,
         "target_transitions": 14737,
         "target_updates": 57,
         "target_reached": false,
         "stream_id": "w44-b",
-        "invocation_started_unix_s": 1794321835.3616366,
-        "invocation_wall_s": 28477.828382253647,
-        "invocation_new_transitions": 301,
+        "invocation_started_unix_s": 1794365509.7185688,
+        "invocation_wall_s": 2297.108793258667,
+        "invocation_new_transitions": 25,
         "initial_transitions": 14225,
-        "new_transitions": 301,
+        "new_transitions": 326,
         "initial_updates": 55,
         "new_updates": 1,
-        "unupdated_fragment": 45,
-        "reason": "known_r25_startup_regression",
-        "last_stage_status": "physical_material_failure",
+        "unupdated_fragment": 70,
+        "reason": "training_budget_truncated",
+        "last_stage_status": "budget_truncated",
         "phase_id": "job-20261110T143400Z-w44-b",
         "phase_lineage": {
           "status": "explicit_new_phase_continuation",
@@ -362081,27 +362786,7 @@
         "controller_build": "S5-r33",
         "controller_artifact": "S5-r33",
         "reward_version": "W38_legal_route_terminal_settlement",
-        "phase_stop": {
-          "reason": "known_r25_startup_regression",
-          "evidence": {
-            "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409",
-            "goal_position_radius_m": 0.15,
-            "threshold_source": "Resolved original task.goal_position_radius_m",
-            "original_physical_reason": "body_fall",
-            "initial_x_m": 3.4227784781322575e-23,
-            "max_x_m": 0.05305070133543264,
-            "final_x_m": -0.2902430998021511,
-            "loaded_ever_cells": 0,
-            "actual_material_loaded": false,
-            "observed_phases": [
-              "initial_stand",
-              "outbound"
-            ],
-            "far_arrival_s": null,
-            "return_start_s": null,
-            "status": "matched"
-          }
-        },
+        "phase_stop": null,
         "excluded_old_version_transitions": 145,
         "controller_migration": {
           "parent_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/PANN_PPO_S5-seed0/resume-state-ep00144.pt",
@@ -362286,12 +362971,12 @@
           "controller_artifact": "S5-r33",
           "reward_version": "W38_legal_route_terminal_settlement"
         },
-        "last_episode_reason": "body_fall",
+        "last_episode_reason": "training_budget_truncated",
         "last_error": null,
         "last_update_is_own_current_phase_new_update": true,
         "outcomes": {
-          "physical_episodes": 10,
-          "results_available": 10,
+          "physical_episodes": 12,
+          "results_available": 12,
           "results_unavailable": [
             "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00399"
           ],
@@ -362304,17 +362989,17 @@
           "legal_return_traversals": 0,
           "legal_all_outbound_traversals": 0,
           "all_passage_side_exits": 3,
-          "legality_records": 10,
+          "legality_records": 12,
           "physical_failures_by_phase": {
             "body_fall": {
-              "outbound": 10
+              "outbound": 11
             }
           },
-          "saved_observations": 301,
+          "saved_observations": 326,
           "nonzero_pann_observations": 3,
           "return_observations": 0,
           "return_nonzero_pann_observations": 0,
-          "material_loaded_episodes": 4,
+          "material_loaded_episodes": 5,
           "max_forward_displacement_m": 0.9911926375959828,
           "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
           "observation_sources_unavailable": []
@@ -362322,8 +363007,8 @@
       },
       "evaluation": {
         "job": "job-20261110T143400Z-w44-b",
-        "status": "skipped_due_to_startup_regression",
-        "started_unix_s": 1794350314.0,
+        "status": "unavailable",
+        "started_unix_s": 1794367808.0,
         "deadline_unix_s": null,
         "controller_build": "S5-r33",
         "controller_artifact": "S5-r33",
@@ -362500,63 +363185,42 @@
         "stages": [
           {
             "level": "E30",
-            "stage_status": "skipped_due_to_startup_regression",
-            "reason": "known_r25_startup_regression"
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
           },
           {
             "level": "E60",
-            "stage_status": "skipped_due_to_startup_regression",
-            "reason": "known_r25_startup_regression"
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
           },
           {
             "level": "E300",
-            "stage_status": "skipped_due_to_startup_regression",
-            "reason": "known_r25_startup_regression"
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
           },
           {
             "level": "E600",
-            "stage_status": "skipped_due_to_startup_regression",
-            "reason": "known_r25_startup_regression"
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
           }
         ],
         "training_end": {
           "process_exit_code": 0,
-          "reason": "known_r25_startup_regression",
-          "last_stage_status": "physical_material_failure",
-          "last_episode_reason": "body_fall",
+          "reason": "training_budget_truncated",
+          "last_stage_status": "budget_truncated",
+          "last_episode_reason": "training_budget_truncated",
           "last_error": null
         },
         "prior_unstarted_evaluation": {
-          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/resume-history/1794321833698277607/evaluation.json",
+          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/resume-history/1794365507756364469/evaluation.json",
           "reason": "Prior administrative result had no evaluation attempt; retained before explicit same-job resume.",
-          "previous_reason": "new_update_unavailable",
-          "previous_administrative_started_unix_s": 1794321251.0,
+          "previous_reason": "known_r25_startup_regression",
+          "previous_administrative_started_unix_s": 1794350314.0,
           "previous_administrative_deadline_unix_s": null,
           "actual_evaluation_attempts": 0
         },
-        "reason": "known_r25_startup_regression",
-        "phase_stop": {
-          "reason": "known_r25_startup_regression",
-          "evidence": {
-            "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409",
-            "goal_position_radius_m": 0.15,
-            "threshold_source": "Resolved original task.goal_position_radius_m",
-            "original_physical_reason": "body_fall",
-            "initial_x_m": 3.4227784781322575e-23,
-            "max_x_m": 0.05305070133543264,
-            "final_x_m": -0.2902430998021511,
-            "loaded_ever_cells": 0,
-            "actual_material_loaded": false,
-            "observed_phases": [
-              "initial_stand",
-              "outbound"
-            ],
-            "far_arrival_s": null,
-            "return_start_s": null,
-            "status": "matched"
-          }
-        },
-        "finished_unix_s": 1794350315.588411
+        "reason": "new_update_unavailable",
+        "finished_unix_s": 1794367809.189711
       },
       "publication_scope": "compact_git",
       "publication_status": "published",
@@ -362580,7 +363244,9 @@
           "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00406",
           "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00407",
           "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00408",
-          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409"
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411"
         ],
         "training_binary_paths": [
           "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/checkpoint-014481.pt",
@@ -362595,13 +363261,16 @@
           "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00406.pt",
           "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00407.pt",
           "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00408.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409-restart-1794365512267530401.pt",
           "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00410.pt",
+          "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00411.pt",
           "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/rollout-014226-014481.npz"
         ],
         "parent_resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w43-b/PANN_PPO_S5-seed2/resume-state-ep00398.pt",
         "latest_resume": {
-          "path": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt",
-          "samples": 14526,
+          "path": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00411.pt",
+          "samples": 14551,
           "updates": 56,
           "phase_id": "job-20261110T143400Z-w44-b",
           "identity_source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/stream-records/progress.json"
@@ -362775,13 +363444,13 @@
         "status": "manual_after_user_backup",
         "deleted_files": 0
       },
-      "live_status": "launched",
+      "live_status": "training_ended",
       "latest_counts": {
-        "transitions": 14526,
+        "transitions": 14551,
         "updates": 56,
-        "new_transitions": 301,
+        "new_transitions": 326,
         "new_updates": 1,
-        "tail": 45
+        "tail": 70
       },
       "phase_lineage": {
         "status": "explicit_new_phase_continuation",
@@ -362937,7 +363606,7 @@
       "controller_build": "S5-r33",
       "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b",
       "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2",
-      "latest_resume": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt",
+      "latest_resume": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00411.pt",
       "deadline_unix_s": null,
       "completion_policy": "sample_update_goal_no_wall_deadline"
     }
@@ -363502,7 +364171,7 @@
     "w43-a": 55,
     "w43-b": 55,
     "w44-b": 56,
-    "w44-a": 56
+    "w44-a": 57
   },
   "training_count_semantics": "All-group total includes RAW; per-group totals count shared parent history once and each phase's new data once. Branch updates remain separate policies.",
   "W38_compact_numeric_backfill": {
@@ -364069,7 +364738,7 @@
   },
   "training_transitions_by_group": {
     "PPO_RAW_S5": 256,
-    "PANN_PPO_S5": 22634
+    "PANN_PPO_S5": 22743
   },
   "w39_diagnostic_transfer_acceleration": {
     "at_unix_s": 1793956008.0723596,
@@ -368986,14 +369655,14 @@
     "release_bytes": 3726327552,
     "phase_stop_correction_commit": "f67abe554a4a93cae53cb0eb6947d2c071f592cb"
   },
-  "w44_distinct_new_transitions": 802,
+  "w44_distinct_new_transitions": 838,
   "w44_policy_counts": {
     "w44-a": {
-      "transitions": 14726,
-      "updates": 56
+      "transitions": 14737,
+      "updates": 57
     },
     "w44-b": {
-      "transitions": 14526,
+      "transitions": 14551,
       "updates": 56
     }
   },
@@ -369159,21 +369828,21 @@
             "historical_counts"
           ]
         },
-        "status": "launched",
-        "transitions": 14726,
-        "updates": 56,
-        "new_transitions": 501,
-        "new_updates": 1,
-        "tail": 245,
-        "invocation_new_transitions": 501,
-        "invocation_wall_s": 43625.461575984955,
-        "collection_updated_unix_s": 1794365458.6813796,
+        "status": "training_ended",
+        "transitions": 14737,
+        "updates": 57,
+        "new_transitions": 512,
+        "new_updates": 2,
+        "tail": 0,
+        "invocation_new_transitions": 512,
+        "invocation_wall_s": 44543.56311869621,
+        "collection_updated_unix_s": 1794366376.7829218,
         "excluded": 145,
-        "resume": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/resume-state-ep00427.pt",
+        "resume": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/resume-state-ep00428.pt",
         "last_completed_update": {
-          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014481.pt",
-          "samples": 14481,
-          "updates": 56,
+          "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+          "samples": 14737,
+          "updates": 57,
           "phase_id": "job-20261110T143358Z-w44-a",
           "stream_id": "w44-a",
           "phase_lineage": {
@@ -369331,8 +370000,42 @@
           "controller_artifact": "S5-r33",
           "reward_version": "W38_legal_route_terminal_settlement"
         },
-        "evaluation": "pending_training",
-        "evaluation_stages": [],
+        "evaluation": "running",
+        "evaluation_stages": [
+          {
+            "level": "E30",
+            "attempt": "job-20261110T143358Z-w44-a-eval-PANN_PPO_S5-s1-E30",
+            "stage_status": "running",
+            "started_unix_s": 1794366379.3842902,
+            "command": [
+              "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+              "-u",
+              "scripts/run_s1_go2_r12.py",
+              "--attempt",
+              "job-20261110T143358Z-w44-a-eval-PANN_PPO_S5-s1-E30",
+              "--build",
+              "S5-r33",
+              "--group",
+              "PANN_PPO_S5",
+              "--seed",
+              "1",
+              "--checkpoint",
+              "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+              "--level",
+              "E30",
+              "--condition",
+              "nominal",
+              "--workers",
+              "10",
+              "--evaluation-start-unix",
+              "1794366378.0",
+              "--policy-output",
+              "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a/evaluation-policy/job-20261110T143358Z-w44-a-eval-PANN_PPO_S5-s1-E30",
+              "--contract",
+              "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a/execution-contract.json"
+            ]
+          }
+        ],
         "publication": "pending_computation",
         "outcomes": null,
         "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a",
@@ -369498,17 +370201,17 @@
             "historical_counts"
           ]
         },
-        "status": "launched",
-        "transitions": 14526,
+        "status": "training_ended",
+        "transitions": 14551,
         "updates": 56,
-        "new_transitions": 301,
+        "new_transitions": 326,
         "new_updates": 1,
-        "tail": 45,
-        "invocation_new_transitions": 301,
-        "invocation_wall_s": 28477.80825138092,
-        "collection_updated_unix_s": 1794350313.1777296,
+        "tail": 70,
+        "invocation_new_transitions": 25,
+        "invocation_wall_s": 2297.090040206909,
+        "collection_updated_unix_s": 1794367806.8158684,
         "excluded": 145,
-        "resume": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt",
+        "resume": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00411.pt",
         "last_completed_update": {
           "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/checkpoint-014481.pt",
           "samples": 14481,
@@ -369670,10 +370373,60 @@
           "controller_artifact": "S5-r33",
           "reward_version": "W38_legal_route_terminal_settlement"
         },
-        "evaluation": "pending_training",
-        "evaluation_stages": [],
-        "publication": "pending_computation",
-        "outcomes": null,
+        "evaluation": "unavailable",
+        "evaluation_stages": [
+          {
+            "level": "E30",
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
+          },
+          {
+            "level": "E60",
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
+          },
+          {
+            "level": "E300",
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
+          },
+          {
+            "level": "E600",
+            "stage_status": "not_run",
+            "reason": "new_update_unavailable"
+          }
+        ],
+        "publication": "published",
+        "outcomes": {
+          "physical_episodes": 12,
+          "results_available": 12,
+          "results_unavailable": [
+            "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00399"
+          ],
+          "legal_outbound_traversals": 0,
+          "side_exits": 3,
+          "far_arrivals": 0,
+          "return_episodes": 0,
+          "completed_roundtrips": 0,
+          "legal_roundtrips": 0,
+          "legal_return_traversals": 0,
+          "legal_all_outbound_traversals": 0,
+          "all_passage_side_exits": 3,
+          "legality_records": 12,
+          "physical_failures_by_phase": {
+            "body_fall": {
+              "outbound": 11
+            }
+          },
+          "saved_observations": 326,
+          "nonzero_pann_observations": 3,
+          "return_observations": 0,
+          "return_nonzero_pann_observations": 0,
+          "material_loaded_episodes": 5,
+          "max_forward_displacement_m": 0.9911926375959828,
+          "observation_source": "New saved rollouts plus final valid resume tail; no inferred missing observations.",
+          "observation_sources_unavailable": []
+        },
         "job_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b",
         "training_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2"
       }
@@ -369681,8 +370434,8 @@
     "clock": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w44-training-clock.json",
     "shared_training_started_unix_s": 1794321238.209218,
     "shared_training_deadline_unix_s": null,
-    "measured_training_wall_s": 44220.47216153145,
-    "distinct_new_transitions_per_training_hour": 65.29102605357642,
+    "measured_training_wall_s": 46568.60665035248,
+    "distinct_new_transitions_per_training_hour": 64.78183946216836,
     "throughput_scope": "Ends at latest actual collection update; excludes later evaluation/finish.",
     "no_fused_optimizer_or_policy": true,
     "bulk_retained_local": true,

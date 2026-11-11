@@ -3,8 +3,8 @@
   "training_exit_code": 0,
   "evaluation": {
     "job": "job-20261110T143400Z-w44-b",
-    "status": "skipped_due_to_startup_regression",
-    "started_unix_s": 1794350314.0,
+    "status": "unavailable",
+    "started_unix_s": 1794367808.0,
     "deadline_unix_s": null,
     "controller_build": "S5-r33",
     "controller_artifact": "S5-r33",
@@ -181,63 +181,42 @@
     "stages": [
       {
         "level": "E30",
-        "stage_status": "skipped_due_to_startup_regression",
-        "reason": "known_r25_startup_regression"
+        "stage_status": "not_run",
+        "reason": "new_update_unavailable"
       },
       {
         "level": "E60",
-        "stage_status": "skipped_due_to_startup_regression",
-        "reason": "known_r25_startup_regression"
+        "stage_status": "not_run",
+        "reason": "new_update_unavailable"
       },
       {
         "level": "E300",
-        "stage_status": "skipped_due_to_startup_regression",
-        "reason": "known_r25_startup_regression"
+        "stage_status": "not_run",
+        "reason": "new_update_unavailable"
       },
       {
         "level": "E600",
-        "stage_status": "skipped_due_to_startup_regression",
-        "reason": "known_r25_startup_regression"
+        "stage_status": "not_run",
+        "reason": "new_update_unavailable"
       }
     ],
     "training_end": {
       "process_exit_code": 0,
-      "reason": "known_r25_startup_regression",
-      "last_stage_status": "physical_material_failure",
-      "last_episode_reason": "body_fall",
+      "reason": "training_budget_truncated",
+      "last_stage_status": "budget_truncated",
+      "last_episode_reason": "training_budget_truncated",
       "last_error": null
     },
     "prior_unstarted_evaluation": {
-      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/resume-history/1794321833698277607/evaluation.json",
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/resume-history/1794365507756364469/evaluation.json",
       "reason": "Prior administrative result had no evaluation attempt; retained before explicit same-job resume.",
-      "previous_reason": "new_update_unavailable",
-      "previous_administrative_started_unix_s": 1794321251.0,
+      "previous_reason": "known_r25_startup_regression",
+      "previous_administrative_started_unix_s": 1794350314.0,
       "previous_administrative_deadline_unix_s": null,
       "actual_evaluation_attempts": 0
     },
-    "reason": "known_r25_startup_regression",
-    "phase_stop": {
-      "reason": "known_r25_startup_regression",
-      "evidence": {
-        "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409",
-        "goal_position_radius_m": 0.15,
-        "threshold_source": "Resolved original task.goal_position_radius_m",
-        "original_physical_reason": "body_fall",
-        "initial_x_m": 3.4227784781322575e-23,
-        "max_x_m": 0.05305070133543264,
-        "final_x_m": -0.2902430998021511,
-        "loaded_ever_cells": 0,
-        "actual_material_loaded": false,
-        "observed_phases": [
-          "initial_stand",
-          "outbound"
-        ],
-        "far_arrival_s": null,
-        "return_start_s": null,
-        "status": "matched"
-      }
-    },
-    "finished_unix_s": 1794350315.588411
+    "reason": "new_update_unavailable",
+    "finished_unix_s": 1794367809.189711
   },
   "attempts": [
     {
@@ -1043,6 +1022,152 @@
       "error": null,
       "simulation_s": 6.526000000004923,
       "stage_status": "physical_material_failure"
+    },
+    {
+      "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410",
+      "local_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410",
+      "result_available": true,
+      "index_entry": {
+        "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410",
+        "stage": "G1",
+        "purpose": "training",
+        "condition": "nominal",
+        "arm": "S",
+        "mission": "long",
+        "cohort": "W44_r33_motion_optimization_v21",
+        "status": "completed",
+        "physical_started": true,
+        "command": [
+          "scripts/train_s1_go2_r12.py",
+          "--group",
+          "PANN_PPO_S5",
+          "--seed",
+          "2",
+          "--resume",
+          "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt",
+          "--contract",
+          "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/execution-contract.json",
+          "--background-job",
+          "--job-start-unix",
+          "1794321240.3192358"
+        ],
+        "started_utc": "2026-11-11T02:51:53Z",
+        "case_key": null,
+        "case": null,
+        "evaluation_stage": {
+          "level": "train60",
+          "task_kind": "continuing_acquisition",
+          "duration_s": 60,
+          "target_circuits": null,
+          "route_deadline_s": null,
+          "far_hold_s": 2,
+          "home_hold_s": 2,
+          "final_hold_s": null
+        },
+        "execution_fingerprint": "2f5c5e3ced954f0111388b0ac1c60d1f8d91d9839fd829c6ccddf1deb21139fc",
+        "source_commit": "f67abe554a4a93cae53cb0eb6947d2c071f592cb",
+        "success": null,
+        "reason": "body_fall",
+        "simulation_s": 7.658000000007312,
+        "wall_s": 1211.713708575815,
+        "stage_status": "physical_material_failure",
+        "case_identity": null,
+        "qualification": {
+          "predecessor_attempt": null,
+          "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+          "evaluator_sha256": "858dd664e6425cb7ef50e0da96095c3e225e73f788776d5fe1b27fcc3cdb95fe",
+          "solver_workers": null,
+          "worker_setting_checked_against_predecessor": false
+        },
+        "result": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410.json"
+      },
+      "initialization_failures": [],
+      "compact_files": [
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410-resolved.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b/episodes/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410/cap-decisions.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b/episodes/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410/mujoco-warnings.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b/episodes/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410/r29-event-manifest.json"
+      ],
+      "status": "completed",
+      "success": null,
+      "reason": "body_fall",
+      "error": null,
+      "simulation_s": 7.658000000007312,
+      "stage_status": "physical_material_failure"
+    },
+    {
+      "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411",
+      "local_directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411",
+      "result_available": true,
+      "index_entry": {
+        "attempt": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411",
+        "stage": "G1",
+        "purpose": "training",
+        "condition": "nominal",
+        "arm": "S",
+        "mission": "long",
+        "cohort": "W44_r33_motion_optimization_v21",
+        "status": "completed",
+        "physical_started": true,
+        "command": [
+          "scripts/train_s1_go2_r12.py",
+          "--group",
+          "PANN_PPO_S5",
+          "--seed",
+          "2",
+          "--resume",
+          "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt",
+          "--contract",
+          "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/execution-contract.json",
+          "--background-job",
+          "--job-start-unix",
+          "1794321240.3192358"
+        ],
+        "started_utc": "2026-11-11T03:12:10Z",
+        "case_key": null,
+        "case": null,
+        "evaluation_stage": {
+          "level": "train60",
+          "task_kind": "continuing_acquisition",
+          "duration_s": 60,
+          "target_circuits": null,
+          "route_deadline_s": null,
+          "far_hold_s": 2,
+          "home_hold_s": 2,
+          "final_hold_s": null
+        },
+        "execution_fingerprint": "2f5c5e3ced954f0111388b0ac1c60d1f8d91d9839fd829c6ccddf1deb21139fc",
+        "source_commit": "18161ffec9a2f6a874072aa34bba2ea5651e8810",
+        "success": null,
+        "reason": "training_budget_truncated",
+        "simulation_s": 4.5000000000006475,
+        "wall_s": 1072.8355868365616,
+        "stage_status": "budget_truncated",
+        "case_identity": null,
+        "qualification": {
+          "predecessor_attempt": null,
+          "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+          "evaluator_sha256": "858dd664e6425cb7ef50e0da96095c3e225e73f788776d5fe1b27fcc3cdb95fe",
+          "solver_workers": null,
+          "worker_setting_checked_against_predecessor": false
+        },
+        "result": "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411.json"
+      },
+      "initialization_failures": [],
+      "compact_files": [
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411-resolved.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b/episodes/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411/cap-decisions.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b/episodes/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411/mujoco-warnings.json",
+        "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b/episodes/train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411/r29-event-manifest.json"
+      ],
+      "status": "completed",
+      "success": null,
+      "reason": "training_budget_truncated",
+      "error": null,
+      "simulation_s": 4.5000000000006475,
+      "stage_status": "budget_truncated"
     }
   ],
   "bounded_log_tails": [
@@ -1061,11 +1186,11 @@
       "text": ""
     },
     {
-      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/train-resume-1794321833.log",
-      "original_bytes": 57904,
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/train-resume-1794365507.log",
+      "original_bytes": 9820,
       "tail_bytes": 8192,
       "truncated": true,
-      "text": "s\": 0.0, \"planner_s\": 2.5878218673169613}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00408\", \"startup_iteration\": 19, \"plant_time_s\": 0.0, \"planner_s\": 2.593912346288562}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00408\", \"startup_iteration\": 20, \"plant_time_s\": 0.0, \"planner_s\": 2.638428721576929}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00408\", \"time_s\": 0.0, \"phase\": \"initial_stand\", \"xyz\": [8.509754665064327e-07, 1.1079560836997052e-07, 0.290193121701858], \"wall_s\": 59.780090756714344}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00408\", \"time_s\": 5.000000000001703, \"phase\": \"outbound\", \"xyz\": [0.2708985912708798, 0.04271827794628092, 0.2944386236757828], \"wall_s\": 852.4323183484375}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00408\", \"stage_status\": \"physical_material_failure\", \"success\": null, \"reason\": \"body_fall\", \"simulation_s\": 8.478000000006919, \"wall_s\": 1358.3649354204535, \"case_key\": null}\n{\"episode\": 408, \"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00408\", \"controller_build\": \"S5-r33\", \"controller_artifact\": \"S5-r33\", \"condition\": \"nominal\", \"stage\": 0, \"stream_id\": \"w44-b\", \"phase_id\": \"job-20261110T143400Z-w44-b\", \"session_limit_s\": 60, \"transitions\": 17, \"reason\": \"body_fall\", \"stage_status\": \"physical_material_failure\", \"simulation_s\": 8.478000000006919, \"wall_s\": 1358.3649354204535, \"completed_round_trips\": 0, \"legal_route\": {\"reward_version\": \"W38_legal_route_terminal_settlement\", \"progress\": 0.0, \"completed_roundtrips\": 0, \"legal_outbound_traversals\": 0, \"legal_return_traversals\": 0, \"side_exits\": 1, \"raw_roundtrips\": 0, \"passages\": [{\"lap\": 1, \"direction\": \"outbound\", \"entry_s\": 8.438000000007012, \"exit_s\": null, \"lateral_exit_s\": 8.438000000007012, \"material_loaded\": false, \"completed\": false, \"terminal_closed_s\": 8.478000000006919}], \"criterion\": \"Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips.\"}, \"complete_session\": false, \"promoted\": false, \"curriculum_enabled\": false, \"startup_regression_check\": {\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00408\", \"goal_position_radius_m\": 0.15, \"threshold_source\": \"Resolved original task.goal_position_radius_m\", \"original_physical_reason\": \"body_fall\", \"initial_x_m\": 3.4227784781322575e-23, \"max_x_m\": 0.8338915459947683, \"final_x_m\": 0.8338915459947683, \"loaded_ever_cells\": 0, \"actual_material_loaded\": false, \"observed_phases\": [\"initial_stand\", \"outbound\"], \"far_arrival_s\": null, \"return_start_s\": null, \"status\": \"not_matched\"}}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 1, \"plant_time_s\": 0.0, \"planner_s\": 2.666886480525136}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 2, \"plant_time_s\": 0.0, \"planner_s\": 2.4571285881102085}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 3, \"plant_time_s\": 0.0, \"planner_s\": 2.575231796130538}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 4, \"plant_time_s\": 0.0, \"planner_s\": 2.5196194536983967}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 5, \"plant_time_s\": 0.0, \"planner_s\": 2.617808662354946}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 6, \"plant_time_s\": 0.0, \"planner_s\": 2.827338768169284}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 7, \"plant_time_s\": 0.0, \"planner_s\": 2.679009420797229}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 8, \"plant_time_s\": 0.0, \"planner_s\": 3.4855984579771757}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 9, \"plant_time_s\": 0.0, \"planner_s\": 2.7589923162013292}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 10, \"plant_time_s\": 0.0, \"planner_s\": 3.6107319556176662}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 11, \"plant_time_s\": 0.0, \"planner_s\": 2.796993739902973}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 12, \"plant_time_s\": 0.0, \"planner_s\": 2.735930411145091}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 13, \"plant_time_s\": 0.0, \"planner_s\": 2.5900479070842266}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 14, \"plant_time_s\": 0.0, \"planner_s\": 2.776267532259226}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 15, \"plant_time_s\": 0.0, \"planner_s\": 2.7896164059638977}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 16, \"plant_time_s\": 0.0, \"planner_s\": 2.7410421073436737}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 17, \"plant_time_s\": 0.0, \"planner_s\": 2.605808787047863}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 18, \"plant_time_s\": 0.0, \"planner_s\": 2.647536516189575}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 19, \"plant_time_s\": 0.0, \"planner_s\": 2.571132520213723}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"startup_iteration\": 20, \"plant_time_s\": 0.0, \"planner_s\": 2.663656758144498}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"time_s\": 0.0, \"phase\": \"initial_stand\", \"xyz\": [8.509754665064327e-07, 1.1079560836997052e-07, 0.290193121701858], \"wall_s\": 59.85336695984006}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"time_s\": 5.000000000001703, \"phase\": \"outbound\", \"xyz\": [-0.2156434574748535, -0.09465532362540799, 0.2564728602994424], \"wall_s\": 1200.1412590835243}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"stage_status\": \"physical_material_failure\", \"success\": null, \"reason\": \"body_fall\", \"simulation_s\": 6.526000000004923, \"wall_s\": 1522.3729719091207, \"case_key\": null}\n{\"episode\": 409, \"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"controller_build\": \"S5-r33\", \"controller_artifact\": \"S5-r33\", \"condition\": \"nominal\", \"stage\": 0, \"stream_id\": \"w44-b\", \"phase_id\": \"job-20261110T143400Z-w44-b\", \"session_limit_s\": 60, \"transitions\": 14, \"reason\": \"body_fall\", \"stage_status\": \"physical_material_failure\", \"simulation_s\": 6.526000000004923, \"wall_s\": 1522.3729719091207, \"completed_round_trips\": 0, \"legal_route\": {\"reward_version\": \"W38_legal_route_terminal_settlement\", \"progress\": -0.04824587599008247, \"completed_roundtrips\": 0, \"legal_outbound_traversals\": 0, \"legal_return_traversals\": 0, \"side_exits\": 0, \"raw_roundtrips\": 0, \"passages\": [{\"lap\": 1, \"direction\": \"outbound\", \"entry_s\": null, \"exit_s\": null, \"lateral_exit_s\": null, \"material_loaded\": false, \"completed\": false, \"terminal_closed_s\": 6.526000000004923}], \"criterion\": \"Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips.\"}, \"complete_session\": false, \"promoted\": false, \"curriculum_enabled\": false, \"startup_regression_check\": {\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00409\", \"goal_position_radius_m\": 0.15, \"threshold_source\": \"Resolved original task.goal_position_radius_m\", \"original_physical_reason\": \"body_fall\", \"initial_x_m\": 3.4227784781322575e-23, \"max_x_m\": 0.05305070133543264, \"final_x_m\": -0.2902430998021511, \"loaded_ever_cells\": 0, \"actual_material_loaded\": false, \"observed_phases\": [\"initial_stand\", \"outbound\"], \"far_arrival_s\": null, \"return_start_s\": null, \"status\": \"matched\"}}\n"
+      "text": "2.8440854270011187}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 10, \"plant_time_s\": 0.0, \"planner_s\": 3.542037006467581}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 11, \"plant_time_s\": 0.0, \"planner_s\": 2.651489779353142}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 12, \"plant_time_s\": 0.0, \"planner_s\": 2.593943253159523}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 13, \"plant_time_s\": 0.0, \"planner_s\": 2.72473157197237}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 14, \"plant_time_s\": 0.0, \"planner_s\": 2.603392234072089}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 15, \"plant_time_s\": 0.0, \"planner_s\": 2.7197934333235025}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 16, \"plant_time_s\": 0.0, \"planner_s\": 2.9197687972337008}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 17, \"plant_time_s\": 0.0, \"planner_s\": 2.7873737309128046}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 18, \"plant_time_s\": 0.0, \"planner_s\": 2.598674163222313}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 19, \"plant_time_s\": 0.0, \"planner_s\": 2.625660253688693}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"startup_iteration\": 20, \"plant_time_s\": 0.0, \"planner_s\": 2.5805154275149107}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"time_s\": 0.0, \"phase\": \"initial_stand\", \"xyz\": [8.509754665064327e-07, 1.1079560836997052e-07, 0.290193121701858], \"wall_s\": 62.687724692747}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"time_s\": 5.000000000001703, \"phase\": \"outbound\", \"xyz\": [0.34716115926595303, 0.02037680137423952, 0.30003524751945265], \"wall_s\": 814.1564848031849}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"stage_status\": \"physical_material_failure\", \"success\": null, \"reason\": \"body_fall\", \"simulation_s\": 7.658000000007312, \"wall_s\": 1211.713708575815, \"case_key\": null}\n{\"episode\": 410, \"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00410\", \"controller_build\": \"S5-r33\", \"controller_artifact\": \"S5-r33\", \"condition\": \"nominal\", \"stage\": 0, \"stream_id\": \"w44-b\", \"phase_id\": \"job-20261110T143400Z-w44-b\", \"session_limit_s\": 60, \"transitions\": 16, \"reason\": \"body_fall\", \"stage_status\": \"physical_material_failure\", \"simulation_s\": 7.658000000007312, \"wall_s\": 1211.713708575815, \"completed_round_trips\": 0, \"legal_route\": {\"reward_version\": \"W38_legal_route_terminal_settlement\", \"progress\": 0.0, \"completed_roundtrips\": 0, \"legal_outbound_traversals\": 0, \"legal_return_traversals\": 0, \"side_exits\": 0, \"raw_roundtrips\": 0, \"passages\": [{\"lap\": 1, \"direction\": \"outbound\", \"entry_s\": null, \"exit_s\": null, \"lateral_exit_s\": null, \"material_loaded\": false, \"completed\": false, \"terminal_closed_s\": 7.658000000007312}], \"criterion\": \"Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips.\"}, \"complete_session\": false, \"promoted\": false, \"curriculum_enabled\": false}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 1, \"plant_time_s\": 0.0, \"planner_s\": 2.6667092833667994}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 2, \"plant_time_s\": 0.0, \"planner_s\": 2.400624729692936}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 3, \"plant_time_s\": 0.0, \"planner_s\": 2.5922355968505144}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 4, \"plant_time_s\": 0.0, \"planner_s\": 2.5014661494642496}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 5, \"plant_time_s\": 0.0, \"planner_s\": 2.6923364866524935}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 6, \"plant_time_s\": 0.0, \"planner_s\": 2.707553394138813}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 7, \"plant_time_s\": 0.0, \"planner_s\": 2.746681911870837}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 8, \"plant_time_s\": 0.0, \"planner_s\": 3.781550880521536}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 9, \"plant_time_s\": 0.0, \"planner_s\": 2.7346418518573046}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 10, \"plant_time_s\": 0.0, \"planner_s\": 3.681822258979082}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 11, \"plant_time_s\": 0.0, \"planner_s\": 2.76212115958333}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 12, \"plant_time_s\": 0.0, \"planner_s\": 2.599263923242688}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 13, \"plant_time_s\": 0.0, \"planner_s\": 2.6208958085626364}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 14, \"plant_time_s\": 0.0, \"planner_s\": 2.7763169202953577}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 15, \"plant_time_s\": 0.0, \"planner_s\": 2.789426811039448}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 16, \"plant_time_s\": 0.0, \"planner_s\": 2.6285597179085016}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 17, \"plant_time_s\": 0.0, \"planner_s\": 2.643952203914523}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 18, \"plant_time_s\": 0.0, \"planner_s\": 2.668097658082843}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 19, \"plant_time_s\": 0.0, \"planner_s\": 2.649426119402051}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"startup_iteration\": 20, \"plant_time_s\": 0.0, \"planner_s\": 2.6051083095371723}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"time_s\": 0.0, \"phase\": \"initial_stand\", \"xyz\": [8.509754665064327e-07, 1.1079560836997052e-07, 0.290193121701858], \"wall_s\": 60.87972711957991}\n{\"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"stage_status\": \"budget_truncated\", \"success\": null, \"reason\": \"training_budget_truncated\", \"simulation_s\": 4.5000000000006475, \"wall_s\": 1072.8355868365616, \"case_key\": null}\n{\"episode\": 411, \"attempt\": \"train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00411\", \"controller_build\": \"S5-r33\", \"controller_artifact\": \"S5-r33\", \"condition\": \"nominal\", \"stage\": 0, \"stream_id\": \"w44-b\", \"phase_id\": \"job-20261110T143400Z-w44-b\", \"session_limit_s\": 60, \"transitions\": 9, \"reason\": \"training_budget_truncated\", \"stage_status\": \"budget_truncated\", \"simulation_s\": 4.5000000000006475, \"wall_s\": 1072.8355868365616, \"completed_round_trips\": 0, \"legal_route\": {\"reward_version\": \"W38_legal_route_terminal_settlement\", \"progress\": -0.007038127850248667, \"completed_roundtrips\": 0, \"legal_outbound_traversals\": 0, \"legal_return_traversals\": 0, \"side_exits\": 0, \"raw_roundtrips\": 0, \"passages\": [{\"lap\": 1, \"direction\": \"outbound\", \"entry_s\": null, \"exit_s\": null, \"lateral_exit_s\": null, \"material_loaded\": false, \"completed\": false}], \"criterion\": \"Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips.\"}, \"complete_session\": false, \"promoted\": false, \"curriculum_enabled\": false}\n"
     }
   ]
 }
