@@ -1,5 +1,5 @@
 {
-  "status": "paused_by_user_uploads_continue",
+  "status": "resumed_by_explicit_user_instruction",
   "pause_requested_beijing": "2026-11-11, user message: pause training for data cleanup; keep uploads running",
   "completed_unix_s": 1794367953.9814298,
   "completed_beijing": "2026-11-11T11:32:33.981430+08:00",
@@ -19,7 +19,7 @@
       "remaining_samples": 0,
       "checkpoint_sha256": "67926f9800416d6733427e965bdc4ed898a03c4bc1068d6a5cd466ec59b50160",
       "complete_learning_state_fields_present": true,
-      "status": "training_complete_evaluation_suspended",
+      "status": "training_complete_original_E30_resumed_in_place",
       "resume": "SIGCONT existing evaluation process group796687 after checking recorded PID/starttime; no new training"
     },
     "w44-b": {
@@ -37,7 +37,7 @@
       "remaining_samples": 186,
       "checkpoint_sha256": "4088c66ac7dfc6dc009dae7f69373a8ed14e748909a64219d5c9a02d8fccba2e",
       "complete_learning_state_fields_present": true,
-      "status": "training_paused_checkpoint_saved",
+      "status": "training_resumed_same_job_from_saved_tail70",
       "resume": "Ordinary same-job resume with this checkpoint and --no-wall-deadline after user asks to resume; no --new-phase"
     }
   },
@@ -73,7 +73,7 @@
   "upload_control_unchanged": true,
   "original_shared_clock_retained": true,
   "original_goal_deadline_unix_s": null,
-  "restart_authorization": "Wait for explicit user resume; do not auto-resume W44 from old task instructions.",
+  "restart_authorization": "User explicitly requested resume on2026-11-11: continue A evaluation, B training, same jobs/clocks/checkpoints, and ongoing uploads.",
   "keep_for_resume": [
     "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a",
     "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b",
@@ -192,5 +192,25 @@
     "B_pause_requested_unix_s": 1794367746.959152,
     "B_status": "saving_at_next_actor_boundary",
     "A_status": "E30 process group796687 suspended; training already14737/57/tail0"
-  }
+  },
+  "resume_authorization": "User: continue A evaluation and B training on original job/clock/checkpoints; uploads continue alongside data cleanup.",
+  "A_resumed_unix_s": 1794368835.53757,
+  "A_resumed_beijing": "2026-11-11T11:47:15.537570+08:00",
+  "A_resume_method": "SIGCONT same evaluation process group; same physical attempt and fixed update57 policy.",
+  "A_pause_observed_since_unix_s": 1794367454.213474,
+  "A_observed_pause_wall_lower_bound_s": 1381.3240959644318,
+  "timing_note": "Raw wall timers include the explicit pause. Observation timestamp bounds pause duration; no fabricated active-compute time or reset evaluation clock.",
+  "resume_completed_unix_s": 1794369053.4861379,
+  "resume_completed_beijing": "2026-11-11T11:50:53.486138+08:00",
+  "B_resumed_unix_s": 1794368836.8280962,
+  "B_resume_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00411.pt",
+  "B_restored_samples": 14551,
+  "B_restored_updates": 56,
+  "B_restored_tail": 70,
+  "B_original_job_clock_retained": true,
+  "B_new_phase": false,
+  "B_training_pid": 800739,
+  "B_controller_pid": 800876,
+  "A_evaluation_pid": 796687,
+  "A_controller_pid": 797392
 }
