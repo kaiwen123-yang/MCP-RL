@@ -474281,19 +474281,28 @@
       "raw_delivery_status": "Use this job diagnostics/evidence.json; this handoff is not a claim that all uploads completed."
     },
     "w44_a_final_delivery_handoff": {
-      "status": "waiting_for_previous_raw_upload",
-      "updated_unix_s": 1794391296.5245392,
+      "status": "running_one_final_postprocess",
+      "updated_unix_s": 1794436267.7841084,
       "computation_pid": null,
       "computation_start_ticks": null,
       "old_upload_pid": 805292,
       "old_upload_start_ticks": 1042708307,
       "deadline_unix_s": null,
       "job": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a",
-      "publication_attempts": 0,
+      "publication_attempts": 1,
       "purpose": "After W44-a computation and current upload, run the existing finisher once for full14737/57 data; reuse uploaded assets and retry actual failed assets.",
       "source_commit": "ecf499fbdf43e2125eeec1983e673d48841cba6f",
       "training_restarted": false,
-      "existing_processes_signalled": false
+      "existing_processes_signalled": false,
+      "command": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "scripts/finish_s1_go2_r12_job.py",
+        "--job-dir",
+        "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a",
+        "--training-exit-code",
+        "0"
+      ]
     },
     "w44_b_delivery_handoff_history": [
       {
