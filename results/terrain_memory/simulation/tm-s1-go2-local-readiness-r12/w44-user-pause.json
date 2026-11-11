@@ -1,0 +1,196 @@
+{
+  "status": "paused_by_user_uploads_continue",
+  "pause_requested_beijing": "2026-11-11, user message: pause training for data cleanup; keep uploads running",
+  "completed_unix_s": 1794367953.9814298,
+  "completed_beijing": "2026-11-11T11:32:33.981430+08:00",
+  "streams": {
+    "w44-a": {
+      "job": "job-20261110T143358Z-w44-a",
+      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/resume-state-ep00428.pt",
+      "samples": 14737,
+      "updates": 57,
+      "tail": 0,
+      "excluded": 145,
+      "phase_id": "job-20261110T143358Z-w44-a",
+      "stream_id": "w44-a",
+      "controller_build": "S5-r33",
+      "target_samples": 14737,
+      "target_updates": 57,
+      "remaining_samples": 0,
+      "checkpoint_sha256": "67926f9800416d6733427e965bdc4ed898a03c4bc1068d6a5cd466ec59b50160",
+      "complete_learning_state_fields_present": true,
+      "status": "training_complete_evaluation_suspended",
+      "resume": "SIGCONT existing evaluation process group796687 after checking recorded PID/starttime; no new training"
+    },
+    "w44-b": {
+      "job": "job-20261110T143400Z-w44-b",
+      "checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00411.pt",
+      "samples": 14551,
+      "updates": 56,
+      "tail": 70,
+      "excluded": 145,
+      "phase_id": "job-20261110T143400Z-w44-b",
+      "stream_id": "w44-b",
+      "controller_build": "S5-r33",
+      "target_samples": 14737,
+      "target_updates": 57,
+      "remaining_samples": 186,
+      "checkpoint_sha256": "4088c66ac7dfc6dc009dae7f69373a8ed14e748909a64219d5c9a02d8fccba2e",
+      "complete_learning_state_fields_present": true,
+      "status": "training_paused_checkpoint_saved",
+      "resume": "Ordinary same-job resume with this checkpoint and --no-wall-deadline after user asks to resume; no --new-phase"
+    }
+  },
+  "A_evaluation_process_group": 796687,
+  "A_suspended_processes": [
+    {
+      "pid": 796687,
+      "state": "T",
+      "starttime_ticks": 1042374668,
+      "process_group": 796687
+    },
+    {
+      "pid": 797392,
+      "state": "T",
+      "starttime_ticks": 1042375266,
+      "process_group": 796687
+    }
+  ],
+  "B_graceful_exit": "Existing live external-boundary channel ended at4.5simulation seconds; raw reason training_budget_truncated means this explicit user pause, not failure or an automatic completion deadline.",
+  "B_training_process_exited": true,
+  "uploads": [
+    {
+      "pid": 785561,
+      "state": "S",
+      "starttime_ticks": 1040770272
+    },
+    {
+      "pid": 785689,
+      "state": "S",
+      "starttime_ticks": 1040772297
+    }
+  ],
+  "upload_control_unchanged": true,
+  "original_shared_clock_retained": true,
+  "original_goal_deadline_unix_s": null,
+  "restart_authorization": "Wait for explicit user resume; do not auto-resume W44 from old task instructions.",
+  "keep_for_resume": [
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a",
+    "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b",
+    "work/r11-frozen/S5-r33",
+    "work/envs/d57"
+  ],
+  "keep_for_upload": "All unverified W44 episode originals and job diagnostics-transfer files; use per-asset manifest/evidence, not mere filename existence.",
+  "A_live_evaluation_requires_server_processes_preserved": true,
+  "deleted_files": 0,
+  "initial_pause_signal_record": {
+    "status": "pause_pending_noninterruptible_operation",
+    "paused_unix_s": 1794367454.213474,
+    "paused_beijing": "2026-11-11T11:24:14.213474+08:00",
+    "method": "SIGSTOP exact W44 compute process trees including job shells; SIGCONT recorded PID/starttime pairs resumes the same live tasks.",
+    "reason": "User requested pause training while cleaning data and explicitly keep uploads running.",
+    "compute_trees": {
+      "s1-w44-a": {
+        "pane_pid": 767471,
+        "members": [
+          767471,
+          767473,
+          796686,
+          796687,
+          797392
+        ],
+        "processes": [
+          {
+            "pid": 767471,
+            "ppid": 1635,
+            "state": "S",
+            "starttime_ticks": 1037919877,
+            "command": "bash /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w44-run-1794321831.sh"
+          },
+          {
+            "pid": 767473,
+            "ppid": 767471,
+            "state": "S",
+            "starttime_ticks": 1037919878,
+            "command": "bash /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a/run-job.sh"
+          },
+          {
+            "pid": 796686,
+            "ppid": 767473,
+            "state": "S",
+            "starttime_ticks": 1042374552,
+            "command": "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python -u scripts/run_s1_go2_r12.py --job-dir /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a"
+          },
+          {
+            "pid": 796687,
+            "ppid": 796686,
+            "state": "T",
+            "starttime_ticks": 1042374668,
+            "command": "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python -u scripts/run_s1_go2_r12.py --attempt job-20261110T143358Z-w44-a-eval-PANN_PPO_S5-s1-E30 --build S5-r33 --group PANN_PPO_S5 --seed 1 --checkpoint /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt --level E30 --condition nominal --workers 10 --evaluation-start-unix 1794366378.0 --policy-output /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a/evaluation-policy/job-20261110T143358Z-w44-a-eval-PANN_PPO_S5-s1-E30 --contract /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143358Z-w44-a/execution-contract.json"
+          },
+          {
+            "pid": 797392,
+            "ppid": 796687,
+            "state": "T",
+            "starttime_ticks": 1042375266,
+            "command": "/root/autodl-tmp/MCP-RL-w42/work/r11-frozen/S5-r33/agent_server --mjpc_port=42641 --mjpc_workers=10"
+          }
+        ]
+      },
+      "s1-w44-b": {
+        "pane_pid": 795286,
+        "members": [
+          795286,
+          795288,
+          795291,
+          797961
+        ],
+        "processes": [
+          {
+            "pid": 795286,
+            "ppid": 1635,
+            "state": "S",
+            "starttime_ticks": 1042287507,
+            "command": "bash /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w44-run-1794365507.sh"
+          },
+          {
+            "pid": 795288,
+            "ppid": 795286,
+            "state": "S",
+            "starttime_ticks": 1042287507,
+            "command": "bash /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/run-job.sh"
+          },
+          {
+            "pid": 795291,
+            "ppid": 795288,
+            "state": "S",
+            "starttime_ticks": 1042287508,
+            "command": "python -u scripts/train_s1_go2_r12.py --group PANN_PPO_S5 --seed 2 --resume /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00409.pt --contract /root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/execution-contract.json --background-job --job-start-unix 1794321240.3192358"
+          },
+          {
+            "pid": 797961,
+            "ppid": 795291,
+            "state": "T",
+            "starttime_ticks": 1042409706,
+            "command": "/root/autodl-tmp/MCP-RL-w42/work/r11-frozen/S5-r33/agent_server --mjpc_port=43971 --mjpc_workers=10"
+          }
+        ]
+      }
+    },
+    "unaffected_upload_pids": [
+      785561,
+      785689
+    ],
+    "paused_process_locks": [],
+    "original_clock_retained": true,
+    "deadline_unix_s": null,
+    "no_process_terminated": true,
+    "resume_requires_preserving_live_processes_and_open_source_files": true,
+    "disk_checkpoint_does_not_include_unsaved_live_tail": true,
+    "B_pause_method": "Existing external2Hz boundary channel requests graceful checkpoint+stop; goal/shared clock deadline stays null.",
+    "B_before_pause_control": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261110T143400Z-w44-b/resume-history/user-pause-1794367746958770810/training-deadline.json",
+    "B_pause_requested_unix_s": 1794367746.959152,
+    "B_status": "saving_at_next_actor_boundary",
+    "A_status": "E30 process group796687 suspended; training already14737/57/tail0"
+  }
+}

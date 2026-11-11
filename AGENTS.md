@@ -1,4 +1,6 @@
-# Codex：W44继续原样本目标，保留已结束GPU结果
+# Codex：W44已按用户要求暂停，上传继续
+
+**2026-11-11用户明确暂停：W44训练和计算保持暂停，现有原件上传继续。未经用户明确要求恢复，不得依据下方旧计划自动重启或续训。** A已完成14737/57、tail0，当前E30进程组796687挂起，保留同一评价内存状态；B已在原job的采集边界正常保存14551/56、tail70并退出，续接点ep00411。原目标、phase与共享clock保留。准确PID/starttime、断点和上传保留范围见results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w44-user-pause.json。
 
 2026-11-11现场更新：W44-B在301/512条、update56、tail45时因遗留learning.known_r25_startup_regression.enabled_for_planned_phase=true提前结束。W44声明早已规定自然物理失败继续采样，现已修正声明及B的执行开关，按原job/clock从ep00409普通续接剩余211条；保留原停止结果、45条tail和旧原件上传，不另开phase、不改控制器。A持续自己的任务，不热换活动进程。最新样本/回合数据见唯一索引w44_live_observation。
 
