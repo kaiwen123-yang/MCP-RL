@@ -1,5 +1,7 @@
 # 地面材料记忆主计划：W44 原生导数联合验证运行中
 
+2026-11-11 17:18现场：W44-A/B训练均已完成各+512/+2，到14737/57、tail0。A的update57固定E30在11.934s因body_fall结束，最大base x约0.846m、实际材料受载0、合法去返/往返0，E60/E300/E600全部阻断；B的update57固定E30正在运行。A原件队列已覆盖全部训练和该评价；B当前原件队列仍只覆盖早先301样本，已安排一次最终发布衔接，等待原B工作流及旧上传进程退出后调用现有finisher，追加后续211样本与最终评价，复用已上传资产，不启动训练、不修改clock、不重复W43。衔接会话diag-w44-b-final-handoff，真实状态见唯一索引publication.w44_b_final_delivery_handoff。
+
 **2026-11-11 11:47用户明确恢复：继续A的原E30评价、B的训练和既有上传，数据清理由用户同步进行。** A保留原评价进程组796687、原attempt及update57策略；B从自身ep00411（14551/56、tail70）普通续接，沿用原job/clock，目标仍14737/57，不新建phase。此前暂停已结束，时钟未重置；暂停及恢复记录见results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w44-user-pause.json。
 
 2026-11-11现场更新：W44-B在301/512条、update56、tail45时因遗留learning.known_r25_startup_regression.enabled_for_planned_phase=true提前结束。W44声明早已规定自然物理失败继续采样，现已修正声明及B的执行开关，按原job/clock从ep00409普通续接剩余211条；保留原停止结果、45条tail和旧原件上传，不另开phase、不改控制器。A持续自己的任务，不热换活动进程。最新样本/回合数据见唯一索引w44_live_observation。
