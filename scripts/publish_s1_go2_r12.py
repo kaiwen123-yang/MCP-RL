@@ -4,7 +4,8 @@
 No physics, downloads, hashes or Git mutations. Use --server-auth for the
 server gh login, or the existing credential JSON on stdin for manual publication.
 """
-import argparse, fcntl, json, os, shutil, subprocess, sys, time
+import argparse, fcntl, json, os, shutil, subprocess, sys, time, threading
+import requests
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from s1_go2_job_limits import expired, request_timeout
@@ -48,33 +49,41 @@ def server_credentials(deadline, release_tags, manifest=None, manifest_path=None
             text=True,stderr=subprocess.PIPE,timeout=30).strip()
     env=dict(os.environ,GH_TOKEN=token,GODEBUG='http2client=0')
     def api(endpoint,*flags,missing_ok=False):
-        # The academic proxy repeatedly times out on gh's TLS handshake.
-        # Use the same authenticated HTTP/1 + TLS1.2 transport as asset uploads
-        # for metadata GETs. Only explicit GitHub quota responses are retried.
+        # Keep the user-required academic proxy. A single authenticated gh
+        # pagination process reuses its connection, instead of starting a new
+        # TLS connection for every assets page. Transfer POSTs stay unchanged.
         if '--method' not in flags:
-            paginate='--paginate' in flags
-            pages=[];page=1
-            while True:
-                if expired(deadline):raise TimeoutError('Publication deadline reached')
-                path=endpoint+('&' if '?' in endpoint else '?')+'page='+str(page) if paginate else endpoint
-                config='header = "Authorization: Bearer '+token+'"\nheader = "Accept: application/vnd.github+json"\n'
-                while True:
-                    if expired(deadline):raise TimeoutError('Publication deadline reached')
-                    result=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2',
-                        '--silent','--show-error','--dump-header','/dev/stderr','--connect-timeout','20',
-                        '--max-time',str(request_timeout(deadline,120)),'-w','\n%{http_code}',
-                        'https://api.github.com/'+path],input=config,env=env,text=True,
-                        stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-                    body,code=result.stdout.rsplit('\n',1)
-                    if not github_rate_wait(result.stderr,code,deadline):break
-                if code=='404' and missing_ok:return None
-                if result.returncode or code!='200':
-                    raise RuntimeError('GitHub metadata GET failed: HTTP '+code+' '+result.stderr.replace(token,'[credential]')[-300:])
-                value=json.loads(body)
-                if not paginate:return value
-                pages.append(value)
-                if len(value)<100:return pages
-                page+=1
+            metadata_env=dict(env)
+            metadata_env.pop('GODEBUG',None)  # use the working gh metadata transport defaults
+            for metadata_attempt in range(1,4):
+                try:
+                    result=subprocess.run(['gh','api',endpoint,*flags,'--header','Cache-Control: no-cache'],
+                        env=metadata_env,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                        timeout=request_timeout(deadline,120))
+                except subprocess.TimeoutExpired:
+                    if metadata_attempt==3:
+                        raise
+                    print(json.dumps(dict(event='academic_metadata_timeout',
+                        endpoint=endpoint,attempt=metadata_attempt,maximum_attempts=3)),flush=True)
+                    time.sleep(2*metadata_attempt)
+                    continue
+                if result.returncode==0:
+                    return json.loads(result.stdout)
+                if missing_ok and 'HTTP 404' in result.stderr:
+                    return None
+                detail=result.stderr.replace(token,'[credential]')
+                for key in ('https_proxy','HTTPS_PROXY','http_proxy','HTTP_PROXY'):
+                    if env.get(key):
+                        detail=detail.replace(env[key],'[configured proxy]')
+                transient=any(text in detail.lower() for text in
+                    ('tls handshake','unexpected eof','connection reset','http 502',
+                     'http 503','http 504','context deadline'))
+                if not transient or metadata_attempt==3:
+                    raise RuntimeError('GitHub metadata GET failed: '+detail[-700:])
+                print(json.dumps(dict(event='academic_metadata_transient_error',
+                    endpoint=endpoint,attempt=metadata_attempt,maximum_attempts=3,
+                    detail=detail[-500:])),flush=True)
+                time.sleep(2*metadata_attempt)
         while True:
             if expired(deadline):raise TimeoutError('Publication deadline reached')
             result=subprocess.run(['gh','api',endpoint,'--include',*flags],
@@ -100,6 +109,7 @@ def server_credentials(deadline, release_tags, manifest=None, manifest_path=None
         pages=api(f'repos/{REPO}/releases/{release["id"]}/assets?per_page=100','--paginate','--slurp')
         releases[tag]=release
         remote_assets[tag]=[row for page in pages for row in page]
+        print(json.dumps(dict(event='release_metadata_read',tag=tag,assets=len(remote_assets[tag]))),flush=True)
     for tag in sorted(release_tags):load_release(tag)
     if manifest is not None and job_name:
         # Saved destinations are immutable on retry. Reserve both remote assets
@@ -167,6 +177,7 @@ def main():
     destinations={row['name']:row.get('release_tag',RUN) for row in destination_rows}
     env=dict(os.environ,GODEBUG='http2client=0',GH_TOKEN=credentials['token'],PATH=str(ENV)+os.pathsep+os.environ['PATH'])
     proxy=env.get('https_proxy',env.get('HTTPS_PROXY',''))
+    upload_sessions=threading.local()
     def update(change):
         with (SMALL/'index.lock').open('a') as lock:
             fcntl.flock(lock,fcntl.LOCK_EX)
@@ -201,7 +212,10 @@ def main():
                 if row.get('status')=='git_recorded':continue
                 okay=actual and actual['state']=='uploaded' and actual['size']==row['size']
                 row['status']='uploaded' if okay else 'publication_pending'
-                if okay:row['url']=actual['browser_download_url']
+                if okay:
+                    row.update(url=actual['browser_download_url'],remote_asset_id=actual['id'],
+                               remote_digest=actual.get('digest'),remote_state=actual['state'],
+                               remote_verified_unix_s=time.time())
                 else:missing.append(row['path'])
             missing=sorted(set(missing+[row['path'] for row in q.get('assets',[]) if row['status'] not in ('uploaded','git_recorded')]))
             q.update(status='published' if not missing and not q.get('pending_jobs') else 'publication_pending',pending_paths=missing,
@@ -254,30 +268,44 @@ def main():
                         item['status']='git_recorded';item['git_path']=str(target.relative_to(ROOT));item['url']=f'https://github.com/{REPO}/blob/main/{target.relative_to(ROOT)}'
             update(empty);return
         begin=time.time()
-        # Actual gh and requests uploads failed with 408/TLS EOF on this proxy.
-        # Native curl pins HTTP/1 and TLS1.2; credential header is stdin only.
-        config='header = "Authorization: Bearer '+env['GH_TOKEN']+'"\nheader = "Accept: application/vnd.github+json"\nheader = "Content-Type: application/octet-stream"\n'
+        # Reuse an authenticated connection per worker through the configured
+        # proxy. W44 recovery observed repeated cold-TLS/100-continue failures;
+        # a real101.9MB upload on this transport passed local/remote SHA256.
+        session=getattr(upload_sessions,'client',None)
+        if session is None:
+            session=requests.Session()
+            session.headers.update(Authorization='Bearer '+env['GH_TOKEN'],
+                                   Accept='application/vnd.github+json')
+            upload_sessions.client=session
         destination=releases[row['release_tag']]
-        url=destination['upload_url'].split('{')[0]+'?name='+row['name']
+        url=destination['upload_url'].split('{')[0]
         while True:
-            response=subprocess.run(['curl','--config','-','--http1.1','--tls-max','1.2','--silent','--show-error','--fail-with-body',
-                '--dump-header','/dev/stderr','--write-out','\n%{http_code}',
-                '--connect-timeout','30','--max-time',str(request_timeout(args.deadline_unix,args.asset_timeout_s)),
-                '--request','POST','--upload-file',str(path),url],input=config,cwd=ROOT,env=env,text=True,
-                stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-            body,code=response.stdout.rsplit('\n',1)
-            if not github_rate_wait(response.stderr,code,args.deadline_unix):break
-        if response.returncode:
-            detail=(response.stderr+' '+response.stdout).replace(credentials['token'],'[credential]')
-            if proxy:detail=detail.replace(proxy,'[existing proxy]')
-            raise RuntimeError('curl upload failed: '+detail[-2000:])
-        actual=json.loads(body)
+            try:
+                with path.open('rb') as source:
+                    response=session.post(url,params={'name':row['name']},data=source,
+                        headers={'Content-Type':'application/octet-stream'},
+                        timeout=(20,request_timeout(args.deadline_unix,args.asset_timeout_s)),
+                        allow_redirects=False)
+            except requests.RequestException as error:
+                detail=str(error).replace(credentials['token'],'[credential]')
+                if proxy:detail=detail.replace(proxy,'[configured proxy]')
+                raise RuntimeError('Persistent upload request failed: '+detail[-700:]) from error
+            headers='\n'.join(k+': '+v for k,v in response.headers.items())
+            if not github_rate_wait(headers,str(response.status_code),args.deadline_unix):break
+        if response.status_code!=201:
+            raise RuntimeError('Persistent upload returned HTTP '+str(response.status_code)+' '+response.reason)
+        actual=response.json()
+        if actual.get('state')!='uploaded':
+            raise RuntimeError('GitHub did not finalize the asset: '+str(actual.get('state')))
         if actual['size']!=row['size']:raise RuntimeError('Uploaded size differs: '+row['name'])
         def uploaded(j):
             for item in j['publication']['assets']:
                 if item['name']==row['name']:
                     item.update(status='uploaded',upload_wall_s=time.time()-begin,
-                                uploaded_unix_s=time.time(),upload_workers=args.upload_workers)
+                                uploaded_unix_s=time.time(),upload_workers=args.upload_workers,
+                                remote_asset_id=actual['id'],remote_digest=actual.get('digest'),
+                                upload_transport='authenticated_persistent_session',
+                                configured_proxy_used=bool(proxy))
         update(uploaded)
         print(json.dumps(dict(name=row['name'],size=row['size'],status='uploaded',wall_s=round(time.time()-begin,2))),flush=True)
     def upload_one(row):
