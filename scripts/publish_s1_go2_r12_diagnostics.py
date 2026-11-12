@@ -272,6 +272,39 @@ def published_bundle_sources(job, clock):
         original_individual_assets_retained=True)
 
 
+def classify_w44_preplant_unavailable(evidence, destination):
+    """Keep the two recorded zero-plant failures distinct from missing uploads."""
+    confirmed_attempts = {
+        "train-job-20261110T143358Z-w44-a-PANN_PPO_S5-s1-ep00411",
+        "train-job-20261110T143400Z-w44-b-PANN_PPO_S5-s2-ep00399",
+    }
+    unavailable, blocking = [], []
+    for item in evidence["missing"]:
+        attempt = item.get("attempt")
+        if attempt in confirmed_attempts:
+            proof_path = destination.parent / "numeric-evidence/exposure" / attempt / "query-exposure-offline.json"
+            proof = read(proof_path)
+            failure = proof.get("first_initialization_error", {})
+            if (proof.get("status") == "unavailable_no_plant_start"
+                    and failure.get("attempt") == attempt
+                    and failure.get("physical_steps") == 0 and failure.get("error")):
+                unavailable.append(dict(item,
+                    availability="not_generated_before_plant_start",
+                    evidence=relative(proof_path),physical_steps=0,
+                    data_substituted=False))
+                continue
+        blocking.append(item)
+    # Retain the original missing list for provenance; only the independently
+    # recorded no-plant cases are classified unavailable. Other missing data
+    # remain a blocking delivery gap.
+    evidence["unavailable_before_plant_start"] = unavailable
+    evidence["blocking_missing_sources"] = blocking
+    evidence["source_coverage"] = dict(
+        generated_source_files=len(evidence["files"]),
+        unavailable_requested_records=len(unavailable),
+        unresolved_missing_records=len(blocking),
+        scope="Publication covers generated requested originals. Explicitly listed zero-plant records were never generated and are not claimed uploaded.")
+
 def prepare(ctx, args):
     directory, job, transfer, destination, clock = ctx
     old = read(destination / "evidence.json")
@@ -429,6 +462,7 @@ def prepare(ctx, args):
             manifest=relative(destination / "manifest.json"), old_archives_reuploaded=False)
     evidence["upload_workers"] = args.upload_workers
     evidence["http_proxy"] = args.http_proxy
+    classify_w44_preplant_unavailable(evidence, destination)
     write(destination / "manifest.json", manifest)
     write(destination / "evidence.json", evidence)
     return evidence
@@ -470,7 +504,8 @@ def finalize(ctx, verified):
         if actual.get("git_path"):
             extra.append(actual["git_path"])
     complete = verified and bool(manifest) and all(x["status"] in ("uploaded", "git_recorded") for x in selected)
-    complete &= not evidence["missing"] and all(x.get("status") == "prepared" for x in evidence["files"])
+    classify_w44_preplant_unavailable(evidence, destination)
+    complete &= not evidence["blocking_missing_sources"] and all(x.get("status") == "prepared" for x in evidence["files"])
     complete &= evidence.get("transition_selection", {}).get("complete", False)
     if evidence.get("bundle_delivery"):
         _, latest_bundle = published_bundle_sources(directory.name, clock)
@@ -486,7 +521,10 @@ def finalize(ctx, verified):
                 complete &= (stamp.st_size, stamp.st_mtime_ns) == (entry["source_size"], entry["source_mtime_ns"])
     evidence.update(status="published" if complete else "publication_pending", assets=selected,
                     this_invocation_finish_verified=verified,
-                    checked_unix_s=time.time(), completion_scope="This manifest only; no claim about unrelated global pending assets or unsaved accepted trajectories")
+                    checked_unix_s=time.time(),
+                    generated_requested_sources_published=bool(complete),
+                    all_requested_source_records_generated=not evidence["missing"],
+                    completion_scope="Generated requested sources in this manifest only. Known zero-plant unavailable records remain explicitly listed and are not claimed uploaded; no claim about unrelated global assets or unsaved trajectories.")
     if evidence.get("supplemental_delivery"):
         evidence["supplemental_delivery"].update(status="published" if complete else "publication_pending",
             uploaded_assets=sum(x["status"] in ("uploaded", "git_recorded") for x in selected))

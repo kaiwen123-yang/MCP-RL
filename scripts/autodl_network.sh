@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Source with academic, pc, clash, or direct. Policy: academic first; after
-# three network failures of the same operation, start the PC tunnel and use pc.
+# Network selectors retained for historical jobs. W44 delivery2026-11-12
+# uses academic only: user explicitly prohibits the PC VPN SSH tunnel.
+# Do not apply the earlier automatic PC-tunnel fallback policy.
 unset http_proxy https_proxy all_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY
 case "${1:-academic}" in
     academic)
