@@ -2,9 +2,11 @@
 
 日期：2026-11-12（北京时间）。依据：W44 完成交付 `69d5a6ff2aa9803fddc8ac3a78a906008ea526c6`，以及 [W44 最终原件审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W44-final-review/README.md)。
 
+**W45已完成（2026-11-12）：两条固定update57的原E30均body_fall，A13.072s、B5.582s；E60/E300/E600全部blocked。A真实加载材料但未贯穿，B未加载，合法去程/返程/往返均0。全程674/300次planner调用，新alpha0安装均0；有意义正alpha与nominal反馈下的大修正仍存在，控制稳定性未成立。新增PPO0/0，各仍14737/57。GPU有限支线完成但筛选不可靠。CPU原件A26项/B15项、视频、机制及GPU原件均已发布并核验size/digest；W45全部进程自然结束，勿重启已失败配置。**
+
 **实施更新（2026-11-12）：r34已正常构建，四保存问题有限比较与同输入重评分已完成；W45两条evaluation-only job已于北京时间18:39:47启动；分别为job-20261112T103825Z-w45-a/b。双流真实物理时间/记录已持续增长，各保持14737/update57，新PPO0/0。** 实现提交20f7071；[构建](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/build.json)、[机制证据](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/mechanism-evidence.json)、[phase](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/phase.json)。严格规则保留A163/B173共同上下文的完整incumbent，A158仍接受正alpha=1；B153 scale0保留。保存的是输出策略，不能把保留既有scale1误称为重建历史输入并消除历史反馈。历史archive重判另示两alpha0应保留nominal。
 
-八次同输入完整策略评分差异均为0，单策略FP64预算1.9199e-11至2.8625e-11；不作为物理容差。最终有效348次native rollout，另保留两次旧规则诊断分支修正前的60次，共408次；无真实plant回合、无PPO样本。两次重算仅纠正legacy分支surprise语义，strict执行路径未改变，未扩参数网格。GPU四问题×32槽已完成224000次timed world-step（另1280次编译预热），127次native完整评分、1次重复身份缓存。top4召回为.5/0/.5/0；A163/B173漏掉native最优，成本regret为.0174612/.00937590。含CPU确认的端到端为13.767/7.164/8.920/6.429秒；native32基准10.396/9.705/11.729/9.726秒。GPU仅做FP32无K/H的近似proposal及归一化reference-tracking代理分数，CPU仍按完整原(v,J)裁决；未移植原成本的全部项，不能称等价加速。128槽无native正违反，因此0约束漏报不支持正例敏感性结论。支线已自然结束，不进入G5。GPU原件Release已核size/digest，机制原件9个资产也已按同一学术代理上传并核验size/digest，所有服务器原件保留。
+八次同输入完整策略评分差异均为0，单策略FP64预算1.9199e-11至2.8625e-11；不作为物理容差。最终有效348次native rollout，另保留两次旧规则诊断分支修正前的60次，共408次；这些有限问题比较不含plant回合或PPO样本，随后两次原E30结果见本页顶部。两次重算仅纠正legacy分支surprise语义，strict执行路径未改变，未扩参数网格。GPU四问题×32槽已完成224000次timed world-step（另1280次编译预热），127次native完整评分、1次重复身份缓存。top4召回为.5/0/.5/0；A163/B173漏掉native最优，成本regret为.0174612/.00937590。含CPU确认的端到端为13.767/7.164/8.920/6.429秒；native32基准10.396/9.705/11.729/9.726秒。GPU仅做FP32无K/H的近似proposal及归一化reference-tracking代理分数，CPU仍按完整原(v,J)裁决；未移植原成本的全部项，不能称等价加速。128槽无native正违反，因此0约束漏报不支持正例敏感性结论。支线已自然结束，不进入G5。GPU原件Release已核size/digest，机制原件9个资产也已按同一学术代理上传并核验size/digest，所有服务器原件保留。
 
 ## 1. 本轮要回答什么
 
