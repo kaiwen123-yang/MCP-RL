@@ -552553,6 +552553,118 @@
       "publisher_session": "s1-w46-evidence-upload",
       "publisher_pid": 946730,
       "verification": "First three remote sizes and digests matched existing server archives; no asset re-download."
+    },
+    "stream_results": {
+      "w46-b": {
+        "status": "completed_with_failed_qualification",
+        "stages": [
+          {
+            "level": "E30",
+            "attempt": "job-20261112T133729Z-w46-b-eval-PANN_PPO_S5-s2-E30-attempt01",
+            "status": "physical_material_failure",
+            "command": [
+              "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+              "-u",
+              "scripts/run_s1_go2_r12.py",
+              "--contract",
+              "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261112T133729Z-w46-b/execution-contract.json",
+              "--attempt",
+              "job-20261112T133729Z-w46-b-eval-PANN_PPO_S5-s2-E30-attempt01",
+              "--evaluation-start-unix",
+              "1794490649.0793903",
+              "--checkpoint",
+              "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/checkpoint-014737.pt",
+              "--level",
+              "E30",
+              "--seed",
+              "2",
+              "--workers",
+              "10",
+              "--build",
+              "S5-r35",
+              "--condition",
+              "nominal"
+            ],
+            "started_unix_s": 1794490908.3303473,
+            "pid": 946317,
+            "exit_code": 0,
+            "ended_unix_s": 1794493346.6906936,
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261112T133729Z-w46-b-eval-PANN_PPO_S5-s2-E30-attempt01.json",
+            "success": false,
+            "reason": "body_fall",
+            "simulation_s": 11.637999999999554,
+            "wall_s": 2425.399292631075,
+            "qualification": {
+              "predecessor_attempt": null,
+              "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+              "evaluator_sha256": "858dd664e6425cb7ef50e0da96095c3e225e73f788776d5fe1b27fcc3cdb95fe",
+              "solver_workers": 10,
+              "worker_setting_checked_against_predecessor": false
+            },
+            "legal_route": {
+              "reward_version": "W38_legal_route_terminal_settlement",
+              "progress": 0.0,
+              "completed_roundtrips": 0,
+              "legal_outbound_traversals": 0,
+              "legal_return_traversals": 0,
+              "side_exits": 0,
+              "raw_roundtrips": 0,
+              "passages": [
+                {
+                  "lap": 1,
+                  "direction": "outbound",
+                  "entry_s": null,
+                  "exit_s": null,
+                  "lateral_exit_s": null,
+                  "material_loaded": false,
+                  "completed": false,
+                  "terminal_closed_s": 11.637999999999554
+                }
+              ],
+              "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+            },
+            "material_progress": {
+              "far_arrival_s": null,
+              "return_start_s": null,
+              "actual_route_fraction": 0.06618862705627464,
+              "full_observation": false,
+              "actual_material_loaded": true,
+              "material_traversal": {
+                "completed": false,
+                "west_entry_s": null,
+                "east_exit_s": null,
+                "lateral_exit_s": null,
+                "max_abs_base_y_during_crossing_m": null,
+                "material_loaded_during_crossing": false,
+                "original_strip_x_m": [
+                  0.8,
+                  2.2
+                ],
+                "original_strip_y_m": [
+                  -0.6,
+                  0.6
+                ],
+                "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+              }
+            }
+          },
+          {
+            "level": "E60",
+            "status": "blocked",
+            "blocked_by": "E30"
+          },
+          {
+            "level": "E300",
+            "status": "blocked",
+            "blocked_by": "E30"
+          },
+          {
+            "level": "E600",
+            "status": "blocked",
+            "blocked_by": "E30"
+          }
+        ]
+      }
     }
   }
 }
