@@ -46,6 +46,9 @@ def deliver(name,roots):
   manifest.append(dict(path=str(target.relative_to(ROOT)),name=asset,category='W45_requested_originals'))
  write(destination/'sources.json',catalog);write(destination/'manifest.json',manifest)
  compact([destination],f'Record W45 {name} generated original manifest')
+ return resume_delivery(name)
+def resume_delivery(name):
+ transfer=LARGE/'w45-delivery'/name;destination=SMALL/'w45'/'delivery'/name
  commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
  result=dict(status='publication_pending',deadline_unix_s=None,server_originals_retained=True,source_commit=commit)
  write(destination/'delivery.json',result)
@@ -62,6 +65,8 @@ def deliver(name,roots):
  compact([destination],f'Record W45 {name} original delivery outcome')
  return result
 def main():
- p=argparse.ArgumentParser();p.add_argument('--name',required=True);p.add_argument('--source',action='append',type=Path,required=True);a=p.parse_args()
- deliver(a.name,a.source)
+ p=argparse.ArgumentParser();p.add_argument('--name',required=True);p.add_argument('--source',action='append',type=Path);p.add_argument('--resume',action='store_true');a=p.parse_args()
+ if a.resume:resume_delivery(a.name)
+ elif a.source:deliver(a.name,a.source)
+ else:p.error('--source or --resume is required')
 if __name__=='__main__':main()
