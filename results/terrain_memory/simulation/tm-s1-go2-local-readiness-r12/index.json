@@ -548373,7 +548373,7 @@
     }
   },
   "w44_implementation": {
-    "status": "both_training_and_final_fixed_evaluations_completed_raw_delivery_ongoing",
+    "status": "completed",
     "declared_unix_s": 1794320869.658348,
     "selected_mechanism": "N",
     "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w44-mechanisms/summary.json",
@@ -548428,7 +548428,11 @@
     "mechanism_release": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-w44-r33-mechanisms-20261110",
     "release_assets": 5,
     "release_bytes": 3726327552,
-    "phase_stop_correction_commit": "f67abe554a4a93cae53cb0eb6947d2c071f592cb"
+    "phase_stop_correction_commit": "f67abe554a4a93cae53cb0eb6947d2c071f592cb",
+    "raw_delivery": "published_generated_sources",
+    "fixed_E30_qualified": false,
+    "completion_record": "w44_completion",
+    "unavailable_preplant_records": 18
   },
   "w44_distinct_new_transitions": 1024,
   "w44_policy_counts": {
@@ -549420,45 +549424,87 @@
     "deleted_files": 0
   },
   "w44_live_observation": {
-    "observed_beijing": "2026-11-11T23:38:00.273187+08:00",
-    "observed_unix_s": 1794411480.273187,
-    "status": "training_and_evaluation_complete_raw_uploads_active",
-    "completed_training_per_stream": {
-      "samples": 14737,
-      "updates": 57,
-      "tail": 0
-    },
-    "fixed_E30": {
-      "A": "body_fall at11.934s",
-      "B": "body_fall at12.742s",
-      "later_levels": "blocked_by_predecessor"
-    },
-    "uploads": {
+    "status": "completed",
+    "completed_beijing": "2026-11-12T13:27:34.667991+08:00",
+    "completed_unix_s": 1794461254.6679914,
+    "scientific_result": "Both final update57 E30s failed by body_fall; legal material traversal and memory benefit not established.",
+    "streams": {
       "a": {
-        "uploaded_files": 3852,
-        "manifest_files": 6802,
-        "uploaded_GiB": 43.138610269874334,
-        "pending_GiB": 36.269221810624,
-        "last_hour_success_GiB": 3.010695724748075,
-        "failed_pending_assets": 319,
-        "followup_status": "waiting_for_previous_raw_upload"
+        "job": "job-20261110T143358Z-w44-a",
+        "samples": 14737,
+        "updates": 57,
+        "tail": 0,
+        "new_samples": 512,
+        "new_updates": 2,
+        "resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/resume-state-ep00428.pt",
+        "final_policy": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+        "training_physical_episodes": 17,
+        "training_material_loaded_episodes": 9,
+        "E30": {
+          "stage_status": "physical_material_failure",
+          "reason": "body_fall",
+          "simulation_s": 11.933999999998864,
+          "success": false
+        },
+        "later_evaluations": "blocked_by_predecessor",
+        "legal_outbound": 0,
+        "legal_return": 0,
+        "legal_roundtrips": 0,
+        "generated_raw_assets": 6802,
+        "raw_delivery": "published",
+        "unavailable_preplant_records": 9,
+        "recovery_sha256_matches": 292,
+        "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143358Z-w44-a/diagnostics/evidence.json"
       },
       "b": {
-        "uploaded_files": 5133,
-        "manifest_files": 6325,
-        "uploaded_GiB": 62.12289327848703,
-        "pending_GiB": 14.833732745610178,
-        "last_hour_success_GiB": 3.52174736559391,
-        "failed_pending_assets": 73,
-        "followup_status": "waiting_for_previous_raw_upload"
+        "job": "job-20261110T143400Z-w44-b",
+        "samples": 14737,
+        "updates": 57,
+        "tail": 0,
+        "new_samples": 512,
+        "new_updates": 2,
+        "resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00417.pt",
+        "final_policy": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/checkpoint-014737.pt",
+        "training_physical_episodes": 18,
+        "training_material_loaded_episodes": 6,
+        "E30": {
+          "stage_status": "physical_material_failure",
+          "reason": "body_fall",
+          "simulation_s": 12.741999999996981,
+          "success": false
+        },
+        "later_evaluations": "blocked_by_predecessor",
+        "legal_outbound": 0,
+        "legal_return": 0,
+        "legal_roundtrips": 0,
+        "generated_raw_assets": 6325,
+        "raw_delivery": "published",
+        "unavailable_preplant_records": 9,
+        "recovery_sha256_matches": 120,
+        "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b/diagnostics/evidence.json"
       }
     },
-    "remaining_delivery_estimate_hours": [
-      9,
-      14
-    ],
-    "estimate_basis": "A has most remaining bytes; last-hour success throughput dropped to3-4GiB/h. Includes finite recovery and verification, no wall deadline.",
-    "disk_free_GiB": 409.6819534301758
+    "generated_raw_asset_count": 13127,
+    "generated_raw_bytes": 167895058454,
+    "remote_metadata_verified_assets": 13127,
+    "remote_digest_available_assets": 13127,
+    "recovery_local_sha256_comparisons": 412,
+    "recovery_local_sha256_matches": 412,
+    "unavailable_preplant_records": 18,
+    "unresolved_missing_generated_sources": 0,
+    "mechanism_release": {
+      "status": "verified_again_2026-11-12",
+      "assets": 5,
+      "bytes": 3726327552,
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-w44-r33-mechanisms-20261110"
+    },
+    "recovery_network": "D57 academic proxy only; no user-computer VPN SSH tunnel",
+    "failed_remote_starter_placeholders_cleared": 307,
+    "completed_remote_assets_deleted": 0,
+    "server_original_files_deleted": 0,
+    "remote_originals_downloaded": 0,
+    "verification_scope": "All13127 manifest names/states/sizes and provided remote digests checked. Independent local SHA comparison covers the412 originally pending recovery assets; no full remote download or new physics/semantic replay.",
+    "checkpoint_and_unselected_bulk_scope": "Checkpoint/resume and unselected whole videos remain on D57; this completion concerns the explicitly requested generated originals."
   },
   "w44_user_pause": {
     "status": "resumed_by_explicit_user_instruction",
@@ -549468,5 +549514,88 @@
     "B_restored_tail": 70,
     "uploads_continue": true,
     "explicit_resume_required": false
+  },
+  "w44_completion": {
+    "status": "completed",
+    "completed_beijing": "2026-11-12T13:27:34.667991+08:00",
+    "completed_unix_s": 1794461254.6679914,
+    "scientific_result": "Both final update57 E30s failed by body_fall; legal material traversal and memory benefit not established.",
+    "streams": {
+      "a": {
+        "job": "job-20261110T143358Z-w44-a",
+        "samples": 14737,
+        "updates": 57,
+        "tail": 0,
+        "new_samples": 512,
+        "new_updates": 2,
+        "resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/resume-state-ep00428.pt",
+        "final_policy": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+        "training_physical_episodes": 17,
+        "training_material_loaded_episodes": 9,
+        "E30": {
+          "stage_status": "physical_material_failure",
+          "reason": "body_fall",
+          "simulation_s": 11.933999999998864,
+          "success": false
+        },
+        "later_evaluations": "blocked_by_predecessor",
+        "legal_outbound": 0,
+        "legal_return": 0,
+        "legal_roundtrips": 0,
+        "generated_raw_assets": 6802,
+        "raw_delivery": "published",
+        "unavailable_preplant_records": 9,
+        "recovery_sha256_matches": 292,
+        "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143358Z-w44-a/diagnostics/evidence.json"
+      },
+      "b": {
+        "job": "job-20261110T143400Z-w44-b",
+        "samples": 14737,
+        "updates": 57,
+        "tail": 0,
+        "new_samples": 512,
+        "new_updates": 2,
+        "resume": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/resume-state-ep00417.pt",
+        "final_policy": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/checkpoint-014737.pt",
+        "training_physical_episodes": 18,
+        "training_material_loaded_episodes": 6,
+        "E30": {
+          "stage_status": "physical_material_failure",
+          "reason": "body_fall",
+          "simulation_s": 12.741999999996981,
+          "success": false
+        },
+        "later_evaluations": "blocked_by_predecessor",
+        "legal_outbound": 0,
+        "legal_return": 0,
+        "legal_roundtrips": 0,
+        "generated_raw_assets": 6325,
+        "raw_delivery": "published",
+        "unavailable_preplant_records": 9,
+        "recovery_sha256_matches": 120,
+        "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261110T143400Z-w44-b/diagnostics/evidence.json"
+      }
+    },
+    "generated_raw_asset_count": 13127,
+    "generated_raw_bytes": 167895058454,
+    "remote_metadata_verified_assets": 13127,
+    "remote_digest_available_assets": 13127,
+    "recovery_local_sha256_comparisons": 412,
+    "recovery_local_sha256_matches": 412,
+    "unavailable_preplant_records": 18,
+    "unresolved_missing_generated_sources": 0,
+    "mechanism_release": {
+      "status": "verified_again_2026-11-12",
+      "assets": 5,
+      "bytes": 3726327552,
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-w44-r33-mechanisms-20261110"
+    },
+    "recovery_network": "D57 academic proxy only; no user-computer VPN SSH tunnel",
+    "failed_remote_starter_placeholders_cleared": 307,
+    "completed_remote_assets_deleted": 0,
+    "server_original_files_deleted": 0,
+    "remote_originals_downloaded": 0,
+    "verification_scope": "All13127 manifest names/states/sizes and provided remote digests checked. Independent local SHA comparison covers the412 originally pending recovery assets; no full remote download or new physics/semantic replay.",
+    "checkpoint_and_unselected_bulk_scope": "Checkpoint/resume and unselected whole videos remain on D57; this completion concerns the explicitly requested generated originals."
   }
 }
