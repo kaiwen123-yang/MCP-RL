@@ -1,0 +1,254 @@
+--- a/mjpc/r35_input_reference.h
++++ b/mjpc/r35_input_reference.h
+@@ -0,0 +1,34 @@
++#ifndef MJPC_R35_INPUT_REFERENCE_H_
++#define MJPC_R35_INPUT_REFERENCE_H_
++#include <algorithm>
++#include <cmath>
++#include <cstdint>
++#include <string>
++#include <vector>
++namespace mjpc {
++// Written before worker scheduling; immutable until every worker joins.
++struct R35Reference {
++  bool enabled=false;
++  int horizon=0,nu=0;
++  double origin=0,dt=.002;
++  unsigned long epoch=0,source_policy=0;
++  std::string branch="none",content_id="none";
++  std::vector<double> u,force,R;
++  int Node(double t) const {return int(std::llround((t-origin)/dt));}
++  double Residual(double t,int a,double held_u) const {
++    int k=Node(t);
++    if(!enabled || k<0 || k>=horizon-1)return 0.;
++    int i=k*nu+a;return std::sqrt(R[i])*(held_u-u[i]);
++  }
++  void Identify() {
++    uint64_t h=14695981039346656037ull;
++    auto bytes=[&](const void* p,size_t n){const auto* b=static_cast<const unsigned char*>(p);
++      for(size_t i=0;i<n;++i){h^=b[i];h*=1099511628211ull;}};
++    bytes(&origin,sizeof(origin));bytes(&dt,sizeof(dt));bytes(&source_policy,sizeof(source_policy));
++    for(const auto* v:{&u,&force,&R})bytes(v->data(),v->size()*sizeof(double));
++    bytes(branch.data(),branch.size());content_id=std::to_string(h);
++  }
++};
++inline R35Reference r35_reference;
++}
++#endif
+--- a/mjpc/tasks/quadruped/quadruped.h
++++ b/mjpc/tasks/quadruped/quadruped.h
+@@ -264,6 +264,8 @@
+     r.save_weight_.assign(v.begin()+i,v.end());
+     r.Update();
+   }
++  bool R35Moving() const {return residual_.current_mode_==ResidualFn::kModeQuadruped &&
++      residual_.GetGait()!=ResidualFn::kGaitStand;}
+   QuadrupedFlat() : residual_(this) {}
+   void TransitionLocked(mjModel* model, mjData* data) override;
+ 
+--- a/mjpc/tasks/quadruped/quadruped.cc
++++ b/mjpc/tasks/quadruped/quadruped.cc
+@@ -19,6 +19,7 @@
+ #include <mujoco/mujoco.h>
+ #include "mjpc/task.h"
+ #include "mjpc/utilities.h"
++#include "mjpc/r35_input_reference.h"
+ #include "mjpc/tasks/quadruped/r10_contact.h"
+ #include "mjpc/r26_risk.h"
+ #include "mjpc/r26_reference.h"
+@@ -396,6 +397,10 @@
+   if (GetCustomNumericData(model,"r26_impact_margin"))
+     for (A1Foot foot:kFootAll)
+       residual[counter++]=R26ImpactValue(model,data,foot_geom_id_[foot]);
++
++  if (GetCustomNumericData(model,"r35_input_reference"))
++    for(int a=0;a<model->nu;++a)
++      residual[counter++]=r35_reference.Residual(data->time,a,data->ctrl[a]);
+ 
+   // sensor dim sanity check
+   CheckSensorDim(model, counter);
+--- a/mjpc/planners/ilqg/planner.h
++++ b/mjpc/planners/ilqg/planner.h
+@@ -89,6 +89,9 @@
+   // return index of trajectory with best rollout
+   int BestRollout(int preferred=-1, bool action_search=false);
+   bool r34_enabled=true;
++  unsigned long r35_epoch=0;
++  void R35Freeze(int horizon,ThreadPool& pool);
++  void R35DerivativeEvidence(int horizon,const char* role);
+   double R34Budget(const Trajectory& tr) const;
+   bool R34Better(const Trajectory& candidate,const Trajectory& baseline) const;
+   void R34ScoreOnly(int horizon,ThreadPool& pool);
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -14,6 +14,7 @@
+ 
+ #include "mjpc/planners/ilqg/planner.h"
+ #include <limits>
++#include "mjpc/r35_input_reference.h"
+ #include "mjpc/planners/ilqg/r29_projection.h"
+ 
+ #include <algorithm>
+@@ -139,7 +140,7 @@
+   }
+ 
+   r29_call_id=0;r29_policy_origin=0;
+-  r32 = R32Problem{};
++  r32 = R32Problem{};r35_epoch=0;r35_reference=R35Reference{};
+   // values
+   action_step = 0.0;
+   feedback_scaling = 0.0;
+@@ -177,6 +178,8 @@
+     double(settings.nominal_feedback_scaling),double(derivative_skip_),
+     double(policy.representation)};
+   auto append=[&goal](const std::vector<double>& v){goal.insert(goal.end(),v.begin(),v.end());};
++  const std::string r35_branch=std::getenv("MJPC_R35_BRANCH")?std::getenv("MJPC_R35_BRANCH"):"none";
++  for(char c:r35_branch)goal.push_back(double(c));
+   append(mocap);append(userdata);append(task->parameters);append(task->weight);append(task->norm_parameter);
+   for(auto n:task->norm)goal.push_back(double(n));
+   if(const auto* quadruped=dynamic_cast<const QuadrupedFlat*>(task)) {
+@@ -436,6 +439,80 @@
+   num_trajectory_=previous_count;
+ }
+ 
++
++// Shared actual-input anchor per physical/reference epoch, never per candidate.
++void iLQGPlanner::R35Freeze(int horizon,ThreadPool& pool) {
++  auto& ref=r35_reference;
++  const char* branch=std::getenv("MJPC_R35_BRANCH");
++  const std::string selected=branch?branch:"none";
++  if(selected!="none" && selected!="constant" && selected!="load")mju_error("r35 unknown branch");
++  if(r35_epoch==r32.epoch && ref.branch==selected)return;
++  r35_epoch=r32.epoch;ref=R35Reference{};ref.branch=selected;
++  ref.epoch=r32.epoch;ref.origin=time;ref.horizon=horizon;ref.nu=dim_action;
++  ref.dt=model->opt.timestep*GetNumberOrDefault(1,model,"s1_control_hold_substeps");
++  ref.source_policy=policy.record_plan_id;
++  ref.u.assign((horizon-1)*dim_action,0.);ref.R=ref.u;ref.force.assign(horizon*4,0.);
++  const auto* q=dynamic_cast<const QuadrupedFlat*>(task);
++  const bool moving=q && q->R35Moving();
++  if(const char* file=std::getenv("MJPC_R35_REFERENCE")) {
++    std::ifstream in(file,std::ios::binary);double h[8];in.read(reinterpret_cast<char*>(h),sizeof(h));
++    if(int(h[3])!=horizon || int(h[4])!=dim_action || h[2]!=time)mju_error("r35 offline reference context mismatch");
++    ref.source_policy=h[5];ref.enabled=h[6];ref.dt=h[7];
++    for(auto* v:{&ref.u,&ref.force,&ref.R})in.read(reinterpret_cast<char*>(v->data()),v->size()*sizeof(double));
++    if(!in)mju_error("r35 offline reference truncated");
++  } else if(moving) {
++    ResizeMjData(model,pool.NumThreads());
++    int failed_count=0;
++    auto f=[&](double* u,const double* x,double t){bool changed,failed,restored;
++      policy.ActionImpl(u,x,t,false,&changed,&failed,&restored);failed_count+=failed;};
++    trajectory[0].Rollout(f,task,model,data_[0].get(),state.data(),time,mocap.data(),userdata.data(),horizon);
++    ++r33_rollouts;
++    if(failed_count || trajectory[0].failure)mju_error("r35 input incumbent rollout failed");
++    ref.u.assign(trajectory[0].actions.begin(),trajectory[0].actions.begin()+(horizon-1)*dim_action);
++    for(int k=0;k<horizon;++k) {
++      double total=0;
++      for(int j=0;j<4;++j) {
++        const int i=k*29+1+7*j;
++        ref.force[4*k+j]=std::max(0.,trajectory[0].r33_foot_rows[i+4]+trajectory[0].r33_foot_rows[i+5]);
++        total+=ref.force[4*k+j];
++      }
++      if(k==horizon-1)continue;
++      double r[4],mean=0;
++      for(int j=0;j<4;++j){r[j]=.1152*(1.-(total>0?ref.force[4*k+j]/total:0.));mean+=r[j]/4.;}
++      for(int a=0;a<dim_action;++a) {
++        const char* name=mj_id2name(model,mjOBJ_ACTUATOR,a);
++        int leg=std::string(name).rfind("FL",0)==0?0:std::string(name).rfind("FR",0)==0?1:
++          std::string(name).rfind("RL",0)==0?2:std::string(name).rfind("RR",0)==0?3:-1;
++        if(leg<0)mju_error("r35 actuator name has no declared foot mapping");
++        ref.R[k*dim_action+a]=selected=="constant"?mean:(selected=="load"?r[leg]:0.);
++      }
++    }
++    ref.enabled=selected!="none";
++  }
++  ref.Identify();
++  if(const char* path=std::getenv("MJPC_R29_SNAPSHOT")) {
++    std::string name=std::string(path)+".r35-reference-"+std::to_string(r32.epoch)+".bin";
++    std::ofstream out(name,std::ios::binary);
++    double h[]={35.,double(ref.epoch),ref.origin,double(horizon),double(dim_action),double(ref.source_policy),double(ref.enabled),ref.dt};
++    out.write(reinterpret_cast<char*>(h),sizeof(h));
++    for(const auto* v:{&ref.u,&ref.force,&ref.R})out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(double));
++  }
++}
++void iLQGPlanner::R35DerivativeEvidence(int horizon,const char* role) {
++  int id=mj_name2id(model,mjOBJ_SENSOR,"InputReference");if(id<0)return;
++  int offset=model->sensor_adr[id];double cmax=0,dmax=0;
++  for(int k=0;k<horizon;++k)for(int a=0;a<dim_action;++a) {
++    double expected=r35_reference.enabled && k<horizon-1?std::sqrt(r35_reference.R[k*dim_action+a]):0.;
++    for(int x=0;x<dim_state_derivative;++x)cmax=std::max(cmax,std::abs(model_derivative.C[k*dim_sensor*dim_state_derivative+(offset+a)*dim_state_derivative+x]));
++    for(int b=0;b<dim_action;++b)dmax=std::max(dmax,std::abs(model_derivative.D[k*dim_sensor*dim_action+(offset+a)*dim_action+b]-(a==b?expected:0.)));
++  }
++  if(const char* path=std::getenv("MJPC_R29_SNAPSHOT")) {
++    std::ofstream out(std::string(path)+".r35-derivatives.jsonl",std::ios::app);out.precision(17);
++    out<<"{\"call\":"<<r29_call_id<<",\"epoch\":"<<r32.epoch<<",\"role\":\""<<role
++       <<"\",\"held_u_residual_D_max_error\":"<<dmax<<",\"direct_state_C_max_error\":"<<cmax<<"}\n";
++  }
++}
++
+ // optimize nominal policy using iLQG
+ void iLQGPlanner::OptimizePolicy(int horizon, ThreadPool& pool) {
+   auto call_start=std::chrono::steady_clock::now();
+@@ -471,6 +548,7 @@
+     mju_error("r33 declared metric requires control regularization");
+ 
+   R32BeginProblem(horizon);
++  R35Freeze(horizon,pool);
+   if(std::getenv("MJPC_R34_SCORE_ONLY")) {R34ScoreOnly(horizon,pool);return;}
+   // Every call scores the incumbent at the actual current state/reference.
+   this->NominalTrajectory(horizon, pool);
+@@ -498,7 +576,7 @@
+       if(const char* f=std::getenv("MJPC_R27_PLAN_RECORD")) {
+         std::ofstream out(f,std::ios::app);out.precision(17);
+         out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+-           <<",\"controller_artifact\":\"S5-r34\",\"problem_epoch\":"<<r32.epoch
++           <<",\"controller_artifact\":\"S5-r35\",\"problem_epoch\":"<<r32.epoch
+            <<",\"source_call_id\":"<<r29_call_id<<",\"candidate_source\":\""<<r33_source<<"\""
+            <<",\"selected_mechanism\":\""<<r33_mechanism<<"\",\"accepted_cost\":"<<r33_archive_trajectory.total_return
+            <<",\"accepted_trunk_violation\":"<<r33_archive_trajectory.trunk_violation
+@@ -581,7 +659,9 @@
+     out<<"],\"r34_enabled\":"<<(r34_enabled?"true":"false")
+        <<",\"r34_decisions\":[";
+     for(int i=0;i<r34_decisions.size();++i){if(i)out<<",";out<<r34_decisions[i];}
+-    out<<"],\"search_attempts\":[";
++    out<<"],\"r35_branch\":\""<<r35_reference.branch<<"\",\"r35_reference_id\":\""<<r35_reference.content_id
++       <<"\",\"r35_reference_epoch\":"<<r35_reference.epoch<<",\"r35_source_policy\":"<<r35_reference.source_policy
++       <<",\"r35_enabled\":"<<(r35_reference.enabled?"true":"false")<<",\"search_attempts\":[";
+     for(int i=0;i<r32.attempts.size();++i){if(i)out<<",";out<<r32.attempts[i];}
+     out<<"]}\n";
+   }
+@@ -880,6 +960,7 @@
+       task->norm_parameter.data(), task->num_norm_parameter.data(), task->risk,
+       horizon, pool);
+ 
++  R35DerivativeEvidence(horizon,"soft");
+   // Freeze the metric from the SAME soft residual GN curvature for S and N.
+   if(r33_mechanism!="R32") {
+     r33_D.resize(horizon*dim_action);
+@@ -921,6 +1002,7 @@
+   // end timer
+   double cost_derivative_time = GetDuration(cost_derivative_start);
+ 
++  R35DerivativeEvidence(horizon,"native");
+   // ----- backward pass ----- //
+   // start timer
+ 
+@@ -1192,7 +1274,7 @@
+     std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
+     out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+ 
+-       <<",\"controller_artifact\":\"S5-r34\""
++       <<",\"controller_artifact\":\"S5-r35\""
+        <<",\"candidate_source\":\""<<r33_source<<"\",\"selected_mechanism\":\""<<r33_mechanism<<"\""
+        <<",\"problem_epoch\":"<<r32.epoch<<",\"source_call_id\":"<<r29_call_id
+        <<",\"policy_generation_epoch\":"<<r32.generation_epoch
+--- a/mjpc/trajectory.cc
++++ b/mjpc/trajectory.cc
+@@ -346,7 +346,7 @@
+ // Flattened variable-contact rows, sampled from the actual candidate rollout.
+ void Trajectory::R29RecordedStep(const mjModel* m,mjData* d,int node,int substep) {
+   const double observation_time=d->time;
+-  if(node>=10) {
++  if(node>=10 && !std::getenv("MJPC_R35_DIAGNOSTIC")) {
+     mj_step(m,d);
+     if(substep==0) R33RecordFeet(m,d,observation_time);
+     return;

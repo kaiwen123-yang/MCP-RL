@@ -285,6 +285,11 @@ def write_equilibrium_settings(xml_path, config, arm):
             index=next(i for i,sensor in enumerate(sensors) if sensor.tag!='user')
             sensors.insert(index,ET.Element('user',name='ImpactMargin',dim='4',
                 user=f"0 {margin['weight']} 0 {margin['weight']}"))
+        if config.get('r35_input_reference'):
+            ET.SubElement(custom,'numeric',name='r35_input_reference',data='1')
+            index=next(i for i,sensor in enumerate(sensors) if sensor.tag!='user')
+            sensors.insert(index,ET.Element('user',name='InputReference',dim='12',user='0 1 0 1'))
+            values['r35_input_reference']=1
         if config.get('r26_reference'):
             ref=config['r26_reference']
             values['r26_reference']=[ref['horizon_s'],ref['maximum_lead_m'],

@@ -1,0 +1,185 @@
+{
+  "build": "S5-r35",
+  "based_on": "S5-r34",
+  "status": "implementation_prepared_not_built",
+  "task": "W46_FIXED_INPUT_REFERENCE",
+  "reuse_populated_dependency_sources": true,
+  "configuration_overrides": {
+    "r26_reference": {
+      "horizon_s": 0.35,
+      "maximum_lead_m": 0.15,
+      "maximum_speed_m_s": 0.25,
+      "acceleration_m_s2": 0.5,
+      "userdata_offset": 84,
+      "packet_size": 12,
+      "head_offset_m": 0.3
+    },
+    "r26_impact_margin": {
+      "onset_m": 0.0008,
+      "scale_m": 0.0002,
+      "weight": 176
+    },
+    "r12_substep_path": {
+      "enabled": true,
+      "rows": [
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "ImpactMargin"
+      ],
+      "residual": "Earliest componentwise maximum over ten pre-integration states; terminal separately.",
+      "derivatives": "Ten A/B transitions; one full node-start C/D; shared geometry FD only at final active states, composed with saved P/Q prefixes. Direct risk D is zero.",
+      "limits": "Active-branch derivative; nonsmooth peak switches and proxy-model soft risks do not guarantee true material feasibility."
+    },
+    "r27_approach_activation": {
+      "status": "implemented_shared_cost_and_FD",
+      "foot_half_width_m": 0.015811388300841896,
+      "band_m": 0.07525,
+      "full_foot_center_bounds": {
+        "xmin": 0.8158113883008419,
+        "xmax": 2.1841886116991582,
+        "abs_y_max": 0.5841886116991581
+      },
+      "smoothstep": "S(u)=v^3*(10-15*v+6*v^2), v=clip(u,0,1)",
+      "gate": "g=S((x-xmin+b)/b)*S((xmax+b-x)/b)*S((ymax+b-abs(y))/b)",
+      "applies_to": [
+        "LandingVelocity",
+        "ImpactMargin"
+      ],
+      "semantics": "Replace only their spatial boolean with the same C2gate multiplying the original residual; retain existing vertical gates,targets,weights,onset/scale.",
+      "derivatives": "Candidate cost and FD both use the complete g*r. Impact takes earliest componentwise maximum of g*r over ten pre-integration states then applies the original active-state P/Q derivative chain; terminal same formula. Landing stays node-start full C/D.",
+      "physical_boundary_unchanged": true,
+      "does_not_modify": [
+        "Ground",
+        "R10MaterialFoot or real material-force switch",
+        "material strain domain0.02",
+        "MaterialDomainMargin",
+        "TrunkClearance",
+        "original termination criteria"
+      ],
+      "limitations": "Only this artificial spatial gate becomes C2; contact/max/other branch nonsmoothness and proxy-model limitations remain. No true-TM02 feasibility guarantee."
+    },
+    "r28_candidate_feasibility": {
+      "enabled": true,
+      "violation": "max positive original trunk XML margin-gap across same ten pre-integration substeps and terminal",
+      "implementation": "Invert the existing monotone smoothed TrunkClearance residual at its retained componentwise maxima: y=r*scale; positive violation is y-1e-12/(4*y) only if y>5e-7. No extra weight/margin or integration.",
+      "selection": "Both nominal feedback search and action line search minimize (v,J); feasible v=0 dominates. No feasible candidate is recorded as prediction_infeasible/restoration, never as safe.",
+      "policy": "Publish the exact candidate reference/feedback that generated the selected rollout, including winner0; accepted remains separately identified.",
+      "regularization": "For feasible-to-feasible compare actual cost decrease and the existing .5/.1 ratio thresholds; step size alone cannot reduce regularization. For restoration/feasibility transition use actual decrease in v, no fabricated cost surprise. Existing factors/bounds retained.",
+      "derivatives": "Original cost and active-peak geometry derivatives unchanged; finite candidate selection is not a constrained DDP or a plant-safety guarantee."
+    },
+    "r29_policy_projection": {
+      "enabled": true,
+      "center": "legacy_target_clip",
+      "metric": "actual_successful_Quu_reg",
+      "recording": "bounded_event_ring",
+      "KKT_relative_tolerance": 1e-07,
+      "primal_tolerance_rad": 1e-10,
+      "no_fallback": true
+    },
+    "r30_constrained_riccati": {
+      "name": "matched_instantaneous_bound_riccati",
+      "evidence": "w41-dynamics: saturated actuator mapping and local native FD agree; finite-difference composition error contracts with eps. No deterministic missing-clamp/wiring error established.",
+      "optimization": "At each nominal node solve min .5 k^T H k + Qu^T k over original target and current PD bounds, with H=Quu_reg and the retained qp2 solver.",
+      "active_feedback": "Moving PD active row has K_A=e_q+(5/60)e_v; target/restoration active row K_A=0. Free rows solve H_FF K_F=-Qux_reg_F-H_FA K_A.",
+      "value": "Full existing Vx/Vxx/dV substitution with this same k,K and unregularized Q cost model; all cross terms retained.",
+      "forward": "Retain pure instantaneous H projection of u_nom+alpha*k+s*K*dx, shared by candidate/nominal/deployed map. Alpha enters feedforward once. Nonlinear active-set changes evaluated by actual rollouts.",
+      "scope": "Local constrained iLQG for instantaneous moving bounds, not full-hold unsaturated constraints or globally constrained DDP. Real ten-substep saturated dynamics and original path risks retained.",
+      "feasibility": "Retain original minimum PD violation restoration for empty current interval, explicit status; later held substeps may saturate.",
+      "derivative": "Existing fixed-target FP64 one-sided1e-6 ten-substep composed A/B and active risk chain retained; finite-eps discrepancies are documented, not relabeled as wiring bugs.",
+      "regularization": "Original r28 (v,J) ordering; keep invalid-cost-ratio handling when projected line search differs. No fabricated model decrease.",
+      "limits": "No claim of stability, material-memory benefit or hardware capability; own final fixed-policy E30/E60 determines qualification."
+    },
+    "r31_contact_forward": {
+      "name": "native_contact_forward_anchored_smooth_derivative",
+      "forward": "Original geom/pair solimp restored after MakeDifferentiable; joint-limit smoothing retained. All nominal, warm-start, candidates, accepted, reference, costs and risks use this native-contact predictor.",
+      "derivative": "Separate frozen mjModel and private worker mjData. FP64 one-sided 1e-6 soft-minus-soft MuJoCo tangent FD at each native 0.2ms substep; ten fixed-target substeps.",
+      "anchor": "dx_next=A_s*dx+B_s*du around the native successor; P_next=A_s*P, Q_next=A_s*Q+B_s. P0=I,Q0=0; next linearization state is native.",
+      "residual": "Native node-start C/D and native componentwise earliest risk peaks; active geometry Jacobians composed with proxy P/Q.",
+      "callbacks": "Same planning snapshot, task callback, mocap/control/time/userdata; derivative-model pointer registered before worker scheduling and cleared after join.",
+      "riccati": "Retain r30 full k/K/Vx/Vxx/dV and qp2 tolerances, moving instantaneous PD bounds; no K clip or feedback rescale.",
+      "acceptance": "Original native trunk(v,J) ordering; actual cost decrease separate from approximate surrogate expected decrease and ratio.",
+      "limitations": "Original proxy material, integrator and coldstart remain; not full TM02 truth or exact plant Jacobians, no stability guarantee. Old r17 failure retained.",
+      "recording": "Existing bounded event ring plus native/soft substep states, native peak locations, first-hold A_s/B_s and full held proxy A/B."
+    },
+    "r32_optimizer_lifecycle": {
+      "name": "native_problem_epoch_damping_and_stop_lifecycle",
+      "identity": "Exact native state/time, mocap/userdata causal reference, task parameters/weights/norm/risk/mode, actual private Quadruped gait snapshot, horizon and solver settings. No userdata protocol change.",
+      "reset": "New problem restores lambda=1 and regularization_rate=1 together; Reset clears identity. Warm trajectory and reference time shift retained.",
+      "budget": "One nominal improvement iteration uses at most the existing five Riccati/native-line-search attempts in total. Successful calls may refine the same epoch; an exhausted nominal attempt locks the epoch until real problem change. Repeated stopped startup has zero attempts.",
+      "acceptance": "Finite native trunk(v,J) ranking and strict lexicographic decrease versus the current native nominal. Original r28 restoration semantics retained.",
+      "incumbent": "Exact deployed scale-1 policy rescored native at each current problem; reuse requires finite score, same policy id/epoch and existing valid projection metric. No stale-cost installation. No valid candidate gives service FAILED_PRECONDITION through existing task termination.",
+      "records": "Each call records epoch, cause, numeric states, all attempts, unscaled dV/Qu and projected gradient magnitude, k/K, native/proxy descent, generation/scoring identities. Separate bounded selected search snapshots retain unscaled k/K/H/Qu/Qxu/Vx/Vxx and projected gradient at the nominal.",
+      "stationarity": "u-clip(u-Qu, original instantaneous target/PD interval), independent of H and lambda; nominal bound violation separately reported. This is a surrogate first-order residual, not a native/global convergence certificate.",
+      "limitations": "Reset may discard useful damping; native forward and approximate smooth derivative roles unchanged. No stability or task-qualification claim."
+    },
+    "r33_optimizer_mechanism": {
+      "name": "curvature_matched_native_scored_motion_optimizer",
+      "selected_mechanism": "N",
+      "status": "frozen_for_W44_after_common_context_four_problem_comparison",
+      "metric": "For S and N, compute soft-model native-anchored residual GN direct control curvature c_uu before Riccati. g[t,a]=max(c_uu[t,a,a],0). gbar=mean over nonterminal nodes/actions. D[t,a]=gbar*max(g[t,a]/gbar,1e-6), equivalently max(g[t,a],1e-6*gbar); no unit-mean replacement of the Hessian scale. D is objective/rad^2, mu is dimensionless. Terminal repeats last D.",
+      "zero_curvature": "If gbar=0, characteristic=sum(nonnegative original cost weights)/(horizon*sum(original actuator target span^2)); floor=1e-6*characteristic. No absolute floor 1. If entire objective has no positive curvature scale, explicit error.",
+      "regularization": "H=Q_uu+mu*diag(D); Q_ux is unchanged. mu starts 1, rate1 each actual new r32 epoch. Existing min/max 1e-6/1e6 now dimensionless multiples of D; native .5/.1 ratio rules and factors unchanged. All r30 constrained k,K,active sets,Vx,Vxx,dV and deployed H recomputed.",
+      "N": "First compute exactly the S soft D in the same nominal snapshot, freeze it, then recompute dynamics finite differences with an unsmoothed native-contact model copy. Residual derivatives and value recursion are recomputed for native direction. No N-based metric adaptation.",
+      "P": "No S or N solve before P. One 32-slot batch: two cached nominal-stage baseline identities (incumbent and best nominal), plus 15 signed pairs. Base is exact best scored nominal complete policy, all reference/K/H/scaling unchanged; only action target time structure changes. 5 groups (FL,FR,RL,RR,FL+RR) x onsets 0/.08/.16s; duration .16s; within z in (0,1): hip +=sign*.04 sin(2pi z), thigh +=sign*.04 sin(pi z), calf -=sign*.08 sin(pi z), radians. Native rollout and installation share same policy object.",
+      "acceptance": "Every method including reconstructed R32 shares exact scored complete-policy archive contract. Finite (trunk violation,J) ordering retained, no threshold relaxation, no surrogate acceptance. All scored nominal and alpha/P candidates retained; same score ties keep first incumbent-compatible ordering. No valid candidate returns FAILED_PRECONDITION.",
+      "budget": "S/N/R32 at most 5 total regularization attempts and 10 alpha rollouts per successful backward. One successful nominal improvement per call. Nominal feedback screening 10 is separate. N performs two derivative passes (soft metric plus native direction); FD subcalls reported separately. P has 32 slots, 2 cached baseline identities, 30 native new proposal rollouts, in addition to nominal screen. P32 is not equal compute budget or worker count.",
+      "context": "Saved four problems loaded through one binary exact policy import and shared state/time/userdata/task reconstruction. Historical private task context remains explicitly unavailable; reconstructed R32 provides the causal baseline.",
+      "recording": "r32 full Riccati/search fields retained. Separate r33-scale file stores mean/floor/D. Per-call r33-candidates transport records every scored candidate full native states/actions/times/residual, exact reference/K/H/Q/active/scaling and actual native-foot rows; Python retains bounded event windows. Native feet per-node stride29 includes time plus four (xyz,bottom_z,nativeFz,materialFz,count). Task parameters/weights/gait private reconstruction, native computation counts, source identity, chosen-alpha unclipped actual/expected recorded.",
+      "startup_acceptance": "Every alpha candidate must strictly improve the current best nominal in the original native (trunk violation,J) ordering before eligibility for deployment archive, including initial startup with no valid metric. All alpha candidates remain recorded. No descent and no valid scored baseline produces explicit no-deployable failure; building a metric alone is not acceptance.",
+      "online": "Only N: compute shared soft-GN D then native-contact FD, full constrained Riccati and native acceptance. No P proposals online."
+    },
+    "r34_policy_acceptance": {
+      "name": "complete_policy_resolved_descent_and_tie_retention",
+      "cost_accumulation": "FP64 sequential weighted norm terms per node, sequential sum over T nodes, divide by T; original risk=0.",
+      "cost_budget": "u=epsilon64/2; n=T*(8*num_residual+4*num_terms+2)+1; gamma=n*u/(1-n*u). B=gamma*(mean(sum(abs(weighted_terms))) + 2*sum(abs(weight*p)*(norm6?dimension:1)) for smooth norms2/6). tau=B(candidate)+B(baseline). No universal absolute1e-6; cancellation envelope provides scale-dependent absolute part.",
+      "roundoff_scope": "Conservative all-operations envelope including squares, smooth sqrt/subtraction, weights and sums, with sqrt rounded to FP64. Does not bound contact/dynamics divergence; same-input native repeat measured in four-problem evidence.",
+      "ordering": "Exact original trunk(v) comparison; only equal-v cost descent must exceed tau. No change to physical admissibility.",
+      "alpha0": "Always no-step in action search; record full scored candidate but retain scored complete baseline. Pure feedback replacement is not enabled by nominal score.",
+      "baseline": "Current epoch native score. Incumbent-first identical traversal in BestRollout/archive; complete actions/times/reference/K/H/scaling retained on ties.",
+      "lifecycle": "Shared comparator in nominal/archive/descent; reject zero alpha in archive and Iteration. Existing at most5 attempts, stop and epoch reset preserved. No fake1e-16 expected; unresolved expected or projected ratio leaves both lambda/rate unchanged.",
+      "positive_alpha": "Unchanged complete native scoring and TV/H projection; resolved descent remains eligible. No K cap.",
+      "offline": "Same executable legacy acceptance path only for four saved-problem comparisons; online strict by default. Saved gait context restored only under explicit offline file. SCORE_ONLY is offline native full-policy confirmation, no derivatives.",
+      "recording": "Candidate binary schema33 and plan schema32 retained; r34 high-precision decision list in planner-calls, with baseline source, slot, alpha, scales, tolerance and reason. Full objects saved through existing event ring.",
+      "same_input_native_repeat": {
+        "problems": 4,
+        "rollouts": 8,
+        "maximum_cost_difference": 0.0,
+        "maximum_state_difference": 0.0,
+        "scope": "Identical complete policy/state/restored recorded context, same native binary; does not bound changing policy or contact sensitivity."
+      },
+      "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/mechanism-evidence.json"
+    },
+    "r35_input_reference": {
+      "name": "shared_frozen_executed_input_reference",
+      "branches": [
+        "none",
+        "constant",
+        "load"
+      ],
+      "Rmin": 0,
+      "Rmax": 0.1152,
+      "terminal_new_cost": 0,
+      "control_nodes": 175,
+      "reduction_nodes": 176,
+      "reference": "Current state incumbent full native rollout once per R32 epoch; identical frozen ubar/F across branches",
+      "derivatives": "sqrt(R)*(held data.ctrl-ubar) residual; native engine once/176; direct C=0 D=diag(sqrt(R)); r30 moving bounds unchanged",
+      "selection_status": "finite_evidence_pending"
+    }
+  },
+  "mechanism": {
+    "name": "shared_frozen_executed_input_reference",
+    "branches": [
+      "none",
+      "constant",
+      "load"
+    ],
+    "Rmin": 0,
+    "Rmax": 0.1152,
+    "terminal_new_cost": 0,
+    "control_nodes": 175,
+    "reduction_nodes": 176,
+    "reference": "Current state incumbent full native rollout once per R32 epoch; identical frozen ubar/F across branches",
+    "derivatives": "sqrt(R)*(held data.ctrl-ubar) residual; native engine once/176; direct C=0 D=diag(sqrt(R)); r30 moving bounds unchanged",
+    "selection_status": "finite_evidence_pending"
+  }
+}

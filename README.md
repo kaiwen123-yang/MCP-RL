@@ -1,5 +1,18 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
+## W46 actual implementation and finite evidence — 2026-11-12
+
+S5-r35 is now built from reviewed main a34bc45393da1e552df135f856df6f98c762c51f. The 12 declared finite solves and 36 fixed-policy 350ms native diagnostics are complete; no PPO or original-task physics was added by that comparison. The selected original-task branch is **constant**, with mechanism N and r34 strict acceptance retained. Load and constant selected identical complete policies in all four contexts, so no load-information benefit is supported.
+
+A153 provides limited useful evidence: nominal target jump 1.08418→0.56936 rad and torque jump 65.3074→34.2848 Nm, similarly under both recorded perturbations. Minimum height decreases 1.152mm and J0 rises .0002356; terminal vertical recovery remains positive and small forward displacement increases. The other three contexts are unchanged; B158 still has a bad high-jump incumbent. This supports one original A/B evaluation, not a stability claim.
+
+The common-reference residual reconstruction error is zero; all four disabled-penalty native state/action/residual comparisons are exactly equal to r34. Candidate cost recomputation error is at most 4.45e-16, held-u residual FD error at most 7.96e-11, direct state C zero. Actual evidence, frozen binary/spec identity and the new phase are under [w46](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46/). Two original evaluation-only ladders are declared, not yet started at this implementation publication; each keeps its own W44 checkpoint014737/update57, new PPO0/0, no wall deadline.
+
+The independent GPU study has completed 24 old-policy scenarios and 42000 world-steps including the 20ms prefix, plus 48 warmup steps. It uses GPU FP64 feedback algebra and the exact old native H-QP on host, then an explicit cast to MJWarp FP32 dynamics. Same-state held-action error is 2.49e-16rad, but 20ms cross-engine command differences reach 1.501rad; no equivalent ranking or online acceleration is established. Original plant Euler is not re-simulated; the paired dynamics are native implicitfast and MJWarp.
+
+Implementation: [spec](experiments/terrain_memory/s1-go2-r11-S5-r35.json), [finite selection](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46/mechanism-evidence.json), [phase](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46/phase.json), [GPU evidence](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46/gpu.json). The W45 facts and original bounded protocol below remain historical provenance and operating constraints.
+
+
 长期目标：同一世界地块被前足、后足和返程重复加载时，利用可恢复材料的持久状态，让未来支撑需求影响当前加载、落点和重访，建立原Go2/TM02合法完整往返、因果记忆收益、泛化与实机证据。
 
 ## 当前：W45完成审查，W46先检验移动控制稳定性
