@@ -1,0 +1,3060 @@
+{
+  "source_commit": "3e3f69c440d6a33c14131563e5f485d88da3a803",
+  "verified_input_files": 20,
+  "method": "Read-only JSON/NPZ array arithmetic; no simulator, solver, learned policy execution or new experiment.",
+  "interpretation_limits": [
+    "Large K-delta-x depends on the internal affine reference; it is not alone a task-failure or acceptance criterion. Inspect post-projection adjacent target/torque changes and actual-minus-accepted differences.",
+    "Native accepted rollout is not policy reference. prediction-000.npz stores the feedback reference, not the accepted rollout; this audit uses complete accepted arrays.",
+    "Short no-foot intervals are allowed by the original gait. They are reported as contact timing, never a new hard failure.",
+    "A148 is a comparatively mild first-20ms contrast, not a demonstrated stable full-350ms nominal.",
+    "Recorded qpos/qvel are insufficient for exact historical physics replay; warmstart/private/material state is not fully serialized.",
+    "The early events do not establish that one event is a sufficient cause of the eventual body fall."
+  ],
+  "whole_runs": {
+    "w45-a": {
+      "calls": 674,
+      "all_r34_strict": true,
+      "source_counts": {
+        "alpha": 583,
+        "nominal": 46,
+        "incumbent": 45
+      },
+      "return_reason_counts": {
+        "policy_installed": 629,
+        "incumbent_retained": 45
+      },
+      "stop_reason_counts": {
+        "none": 583,
+        "native_search_stagnation": 90,
+        "backward_failed": 1
+      },
+      "backward_attempt_counts": {
+        "1": 531,
+        "3": 13,
+        "5": 96,
+        "2": 28,
+        "4": 6
+      },
+      "native_scored_rollouts": 18010,
+      "new_alpha0_installs": 0,
+      "alpha0_rejected_records": 1127,
+      "applied_holds": 6536,
+      "effective_feedback_gt_point5": 144,
+      "effective_feedback_gt_point5_sources": {
+        "alpha": 141,
+        "nominal": 3
+      },
+      "projection_gt_point5": 78,
+      "first_effective_feedback_gt_point1": {
+        "time_s": 2.641999999999742,
+        "query_id": 1342,
+        "plan_id": 140,
+        "call_id": 153,
+        "source": "alpha_0_8",
+        "effective_feedback_rad": 0.19640561533774448,
+        "projection_rad": 0.0,
+        "scale": 1,
+        "alpha": 1,
+        "target_match_error_rad": 0.0,
+        "qp_converged": true,
+        "restoration": false,
+        "primal_residual_rad": 0,
+        "kkt_scaled": 0
+      },
+      "first_effective_feedback_gt_point5": {
+        "time_s": 2.649999999999741,
+        "query_id": 1346,
+        "plan_id": 140,
+        "call_id": 153,
+        "source": "alpha_0_8",
+        "effective_feedback_rad": 3.123021725213553,
+        "projection_rad": 0.6699960487474954,
+        "scale": 1,
+        "alpha": 1,
+        "target_match_error_rad": 0.0,
+        "qp_converged": true,
+        "restoration": false,
+        "primal_residual_rad": 0,
+        "kkt_scaled": 6.166399856011306e-19
+      },
+      "qp_failed": 0,
+      "restoration_count": 0,
+      "max_primal": 0,
+      "max_kkt_scaled": 6.409974944686858e-09,
+      "max_query_target_match_error_rad": 0.0,
+      "physical_samples": 65360,
+      "first_held_raw_PD_saturation_s": 2.896199999999714,
+      "held_raw_PD_saturation_fraction": 0.022429620563035494,
+      "held_raw_PD_peak_excess_Nm": 36.9639296155854,
+      "physical_clamp_max_error_Nm": 7.14111331134859e-06,
+      "first_moving_nofoot_interval": {
+        "first_sample_s": 2.6463999999997414,
+        "last_sample_s": 2.648999999999741,
+        "samples": 14,
+        "post_last_integration_s": 2.649199999999741,
+        "duration_s": 0.0027999999999996916
+      },
+      "first_moving_nofoot_gt_20ms_interval": {
+        "first_sample_s": 2.760599999999729,
+        "last_sample_s": 2.811999999999723,
+        "samples": 258,
+        "post_last_integration_s": 2.812199999999723,
+        "duration_s": 0.05159999999999432
+      }
+    },
+    "w45-b": {
+      "calls": 300,
+      "all_r34_strict": true,
+      "source_counts": {
+        "alpha": 235,
+        "nominal": 32,
+        "incumbent": 33
+      },
+      "return_reason_counts": {
+        "policy_installed": 267,
+        "incumbent_retained": 33
+      },
+      "stop_reason_counts": {
+        "none": 235,
+        "native_search_stagnation": 65
+      },
+      "backward_attempt_counts": {
+        "1": 217,
+        "3": 5,
+        "5": 67,
+        "2": 11
+      },
+      "native_scored_rollouts": 8890,
+      "new_alpha0_installs": 0,
+      "alpha0_rejected_records": 589,
+      "applied_holds": 2791,
+      "effective_feedback_gt_point5": 82,
+      "effective_feedback_gt_point5_sources": {
+        "nominal": 9,
+        "alpha": 73
+      },
+      "projection_gt_point5": 39,
+      "first_effective_feedback_gt_point1": {
+        "time_s": 2.687999999999737,
+        "query_id": 1365,
+        "plan_id": 141,
+        "call_id": 155,
+        "source": "nominal_0",
+        "effective_feedback_rad": 0.10059955738005882,
+        "projection_rad": 0.0,
+        "scale": 0.0010000000000000002,
+        "alpha": 1,
+        "target_match_error_rad": 0.0,
+        "qp_converged": true,
+        "restoration": false,
+        "primal_residual_rad": 0,
+        "kkt_scaled": 0
+      },
+      "first_effective_feedback_gt_point5": {
+        "time_s": 2.7619999999997287,
+        "query_id": 1402,
+        "plan_id": 144,
+        "call_id": 158,
+        "source": "nominal_3",
+        "effective_feedback_rad": 0.7404436779552449,
+        "projection_rad": 0.39586175001074997,
+        "scale": 0.013335214321633242,
+        "alpha": 1,
+        "target_match_error_rad": 0.0,
+        "qp_converged": true,
+        "restoration": false,
+        "primal_residual_rad": 0,
+        "kkt_scaled": 2.1730519129440003e-16
+      },
+      "qp_failed": 0,
+      "restoration_count": 0,
+      "max_primal": 0,
+      "max_kkt_scaled": 5.295397941475041e-09,
+      "max_query_target_match_error_rad": 0.0,
+      "physical_samples": 27910,
+      "first_held_raw_PD_saturation_s": 2.8343999999997207,
+      "held_raw_PD_saturation_fraction": 0.018058043711931208,
+      "held_raw_PD_peak_excess_Nm": 61.598084432926655,
+      "physical_clamp_max_error_Nm": 7.14111331134859e-06,
+      "first_moving_nofoot_interval": {
+        "first_sample_s": 2.6913999999997364,
+        "last_sample_s": 2.6913999999997364,
+        "samples": 1,
+        "post_last_integration_s": 2.6915999999997364,
+        "duration_s": 0.00019999999999997797
+      },
+      "first_moving_nofoot_gt_20ms_interval": {
+        "first_sample_s": 2.768799999999728,
+        "last_sample_s": 2.8179999999997225,
+        "samples": 247,
+        "post_last_integration_s": 2.8181999999997225,
+        "duration_s": 0.04939999999999456
+      }
+    }
+  },
+  "fixtures": [
+    {
+      "case": "w45-a",
+      "call_id": 148,
+      "plan_id": 136,
+      "origin_s": 2.539999999999753,
+      "source": "alpha_1_8",
+      "comparison_tolerance": 3.7288956164104374e-11,
+      "incumbent_candidate": "candidate000",
+      "incumbent_current_cost": 0.05079261270017168,
+      "incumbent_cost_terms": {
+        "Upright": 0.009284091333744839,
+        "Height": 0.0013773638348333983,
+        "Position": 0.010153614958843812,
+        "Gait": 0.004338328915566303,
+        "Balance": 0.0008905817168271928,
+        "Effort": 0.005276567939943788,
+        "Posture": 0.00025530883940907934,
+        "Orientation": 4.751635577905295e-05,
+        "Angmom": 0.0,
+        "StandLinearVelocity": 0.0,
+        "StandAngularVelocity": 0.0,
+        "StandAbsoluteHeight": 0.0,
+        "StandFootPosition": 0.0,
+        "StandFootVelocity": 0.0,
+        "StandSupportForce": 0.0,
+        "LandingVelocity": 0.0,
+        "LandingIndentation": 0.0,
+        "MaterialSupportHeight": 0.019169238805223608,
+        "MaterialDomainMargin": 0.0,
+        "TrunkClearance": 6.298716096203465e-16,
+        "ImpactMargin": 0.0
+      },
+      "best_nominal": {
+        "candidate": "candidate000",
+        "kind": 0,
+        "slot": 0,
+        "alpha": 0.0010000000000000002,
+        "feedback_scale": 0.0010000000000000002,
+        "native_cost": 0.05079261270017168,
+        "trunk_violation": 0.0,
+        "cost_terms": {
+          "Upright": 0.009284091333744839,
+          "Height": 0.0013773638348333983,
+          "Position": 0.010153614958843812,
+          "Gait": 0.004338328915566303,
+          "Balance": 0.0008905817168271928,
+          "Effort": 0.005276567939943788,
+          "Posture": 0.00025530883940907934,
+          "Orientation": 4.751635577905295e-05,
+          "Angmom": 0.0,
+          "StandLinearVelocity": 0.0,
+          "StandAngularVelocity": 0.0,
+          "StandAbsoluteHeight": 0.0,
+          "StandFootPosition": 0.0,
+          "StandFootVelocity": 0.0,
+          "StandSupportForce": 0.0,
+          "LandingVelocity": 0.0,
+          "LandingIndentation": 0.0,
+          "MaterialSupportHeight": 0.019169238805223608,
+          "MaterialDomainMargin": 0.0,
+          "TrunkClearance": 6.298716096203465e-16,
+          "ImpactMargin": 0.0
+        },
+        "cost_recompute_error": 2.7755575615628914e-17,
+        "predicted_dx_m": -0.03242819499171785,
+        "predicted_dy_m": -0.01554580134957757,
+        "base_z_min_max_m": [
+          0.2657340898645323,
+          0.30486849479032163
+        ],
+        "base_vz_min_max_m_s": [
+          -0.6233006873639445,
+          0.329901784688643
+        ],
+        "terminal_z_vz": [
+          0.2657340898645323,
+          -0.5035756183587637
+        ],
+        "nofoot_zero_native_and_proxy_force_nodes": 33,
+        "nofoot_intervals_at_2ms_nodes": [
+          {
+            "first_sample_s": 2.6639999999997395,
+            "last_sample_s": 2.6639999999997395,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.769999999999728,
+            "last_sample_s": 2.831999999999721,
+            "samples": 32
+          }
+        ],
+        "native_K_max": 75434.64190772302,
+        "reference_origin_s": 2.439999999999764
+      },
+      "selected": {
+        "candidate": "candidate028",
+        "kind": 1,
+        "slot": 18,
+        "alpha": 1.0,
+        "feedback_scale": 1.0,
+        "native_cost": 0.043810064000855846,
+        "trunk_violation": 0.0,
+        "cost_terms": {
+          "Upright": 0.002783912213244455,
+          "Height": 0.0007352204346979823,
+          "Position": 0.00906968247229742,
+          "Gait": 0.001948006018513486,
+          "Balance": 0.00019030839697218652,
+          "Effort": 0.013620637594944068,
+          "Posture": 0.0002081751050999917,
+          "Orientation": 7.206563847744364e-05,
+          "Angmom": 0.0,
+          "StandLinearVelocity": 0.0,
+          "StandAngularVelocity": 0.0,
+          "StandAbsoluteHeight": 0.0,
+          "StandFootPosition": 0.0,
+          "StandFootVelocity": 0.0,
+          "StandSupportForce": 0.0,
+          "LandingVelocity": 0.0,
+          "LandingIndentation": 0.0,
+          "MaterialSupportHeight": 0.015182056126608175,
+          "MaterialDomainMargin": 0.0,
+          "TrunkClearance": 6.296778603247247e-16,
+          "ImpactMargin": 0.0
+        },
+        "cost_recompute_error": 6.938893903907228e-18,
+        "predicted_dx_m": -0.013379636021222479,
+        "predicted_dy_m": -0.01910563859047609,
+        "base_z_min_max_m": [
+          0.2761287552642523,
+          0.30547405895565916
+        ],
+        "base_vz_min_max_m_s": [
+          -0.48255810191102383,
+          0.3561492449765991
+        ],
+        "terminal_z_vz": [
+          0.2761287552642523,
+          -0.4368197637724093
+        ],
+        "nofoot_zero_native_and_proxy_force_nodes": 46,
+        "nofoot_intervals_at_2ms_nodes": [
+          {
+            "first_sample_s": 2.649999999999741,
+            "last_sample_s": 2.675999999999738,
+            "samples": 14
+          },
+          {
+            "first_sample_s": 2.685999999999737,
+            "last_sample_s": 2.685999999999737,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.7619999999997287,
+            "last_sample_s": 2.821999999999722,
+            "samples": 31
+          }
+        ],
+        "native_K_max": 14014.369559909048,
+        "reference_origin_s": 2.539999999999753
+      },
+      "selected_installed_max_errors": {
+        "accepted_states": 0.0,
+        "accepted_actions": 0.0,
+        "accepted_times": 0.0,
+        "accepted_residual": 0.0,
+        "reference_states": 0.0,
+        "reference_actions": 0.0,
+        "reference_times": 0.0,
+        "reference_residual": 0.0,
+        "K": 0.0,
+        "H": 0.0,
+        "base_Qu": 0.0,
+        "base_Qxu": 0.0,
+        "base_active": 0.0
+      },
+      "first_2ms_held_prefix": [
+        {
+          "substep": 0,
+          "time_s": 2.539999999999753,
+          "raw_PD_difference_Nm": 2.566808300130674e-06,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 1,
+          "time_s": 2.540199999999753,
+          "raw_PD_difference_Nm": 0.015340368351379752,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 2,
+          "time_s": 2.540399999999753,
+          "raw_PD_difference_Nm": 0.027831602820841184,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 3,
+          "time_s": 2.540599999999753,
+          "raw_PD_difference_Nm": 0.03795845388928765,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 4,
+          "time_s": 2.540799999999753,
+          "raw_PD_difference_Nm": 0.04611946064187489,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 5,
+          "time_s": 2.540999999999753,
+          "raw_PD_difference_Nm": 0.05264288538437878,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 6,
+          "time_s": 2.541199999999753,
+          "raw_PD_difference_Nm": 0.05779960795663319,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 7,
+          "time_s": 2.541399999999753,
+          "raw_PD_difference_Nm": 0.06181361207283276,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 8,
+          "time_s": 2.541599999999753,
+          "raw_PD_difference_Nm": 0.06487051566265256,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 9,
+          "time_s": 2.541799999999753,
+          "raw_PD_difference_Nm": 0.06712451233889682,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ],
+      "native_hold_target_max_variation_rad": 4.440892098500626e-16,
+      "native_prefix_clamp_max_error_Nm": 1.9539925233402755e-14,
+      "nodes": [
+        {
+          "node": 0,
+          "time_s": 2.539999999999753,
+          "same_installed_policy": true,
+          "actual_plan_id": 136,
+          "position_difference_max": 0.0,
+          "velocity_difference_max": 0.0,
+          "joint_position_difference_rad": 0.0,
+          "joint_velocity_difference_rad_s": 0.0,
+          "native_actual_target_difference_rad": 4.278013832070826e-08,
+          "native_effective_feedback_rad": 1.502688157866915e-18,
+          "actual_effective_feedback_rad": 1.0610355077682313e-18,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0,
+          "actual_held_vs_feedforward_rad": 4.278013832070826e-08,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "actual_adjacent_target_jump_rad": 0.12348520755767822,
+          "actual_adjacent_actuator_torque_jump_Nm": 7.5992680580480965,
+          "native_actual_feedback_difference_rad": 0.0,
+          "state_delta_reconstruction_error": 1.734723475976807e-18,
+          "feedback_reconstruction_error": 1.3539697477276022e-18,
+          "interpolated_K_max": 30.475440109777363
+        },
+        {
+          "node": 1,
+          "time_s": 2.541999999999753,
+          "same_installed_policy": true,
+          "actual_plan_id": 136,
+          "position_difference_max": 1.9791116446447876e-05,
+          "velocity_difference_max": 0.01350329585166865,
+          "joint_position_difference_rad": 1.9791116446447876e-05,
+          "joint_velocity_difference_rad_s": 0.01350329585166865,
+          "native_actual_target_difference_rad": 0.00021088469607192378,
+          "native_effective_feedback_rad": 0.002084084304809877,
+          "actual_effective_feedback_rad": 0.0021887185879600865,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0020840843048098787,
+          "actual_held_vs_feedforward_rad": 0.002187200093310998,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.006318158068648216,
+          "native_adjacent_PD_torque_jump_Nm": 1.552708398251295,
+          "actual_adjacent_target_jump_rad": 0.006351947784423828,
+          "actual_adjacent_actuator_torque_jump_Nm": 1.5964033907942694,
+          "native_actual_feedback_difference_rad": 0.00021239725209092064,
+          "state_delta_reconstruction_error": 1.7381116077658243e-18,
+          "feedback_reconstruction_error": 1.734723475976807e-18,
+          "interpolated_K_max": 35.56192157998332
+        },
+        {
+          "node": 2,
+          "time_s": 2.5439999999997527,
+          "same_installed_policy": true,
+          "actual_plan_id": 136,
+          "position_difference_max": 4.5183398072766445e-05,
+          "velocity_difference_max": 0.011714269486369555,
+          "joint_position_difference_rad": 4.5183398072766445e-05,
+          "joint_velocity_difference_rad_s": 0.011714269486369555,
+          "native_actual_target_difference_rad": 0.00011971850446589917,
+          "native_effective_feedback_rad": 0.001988659526743158,
+          "actual_effective_feedback_rad": 0.0020377384044834982,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0019886595267431563,
+          "actual_held_vs_feedforward_rad": 0.0020402006553681407,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.057275941150988885,
+          "native_adjacent_PD_torque_jump_Nm": 3.9077411035985206,
+          "actual_adjacent_target_jump_rad": 0.05734241008758545,
+          "actual_adjacent_actuator_torque_jump_Nm": 3.9106513874529374,
+          "native_actual_feedback_difference_rad": 0.00011726792842285411,
+          "state_delta_reconstruction_error": 1.951563910473908e-18,
+          "feedback_reconstruction_error": 1.0842021724855044e-17,
+          "interpolated_K_max": 41.720435873502794
+        },
+        {
+          "node": 3,
+          "time_s": 2.5459999999997525,
+          "same_installed_policy": true,
+          "actual_plan_id": 136,
+          "position_difference_max": 4.9242519193262724e-05,
+          "velocity_difference_max": 0.0031689294831409587,
+          "joint_position_difference_rad": 4.9242519193262724e-05,
+          "joint_velocity_difference_rad_s": 0.0031689294831409587,
+          "native_actual_target_difference_rad": 0.00016342267729755472,
+          "native_effective_feedback_rad": 0.0036694663889871707,
+          "actual_effective_feedback_rad": 0.0036446729536995827,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0036694663889871304,
+          "actual_held_vs_feedforward_rad": 0.0036446015416231603,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.10592595274685612,
+          "native_adjacent_PD_torque_jump_Nm": 6.669580667651406,
+          "actual_adjacent_target_jump_rad": 0.10593771934509277,
+          "actual_adjacent_actuator_torque_jump_Nm": 6.676930263569417,
+          "native_actual_feedback_difference_rad": 0.00016345359829129588,
+          "state_delta_reconstruction_error": 2.168404344971009e-19,
+          "feedback_reconstruction_error": 2.6020852139652106e-18,
+          "interpolated_K_max": 24.219718310777466
+        },
+        {
+          "node": 4,
+          "time_s": 2.5479999999997522,
+          "same_installed_policy": true,
+          "actual_plan_id": 136,
+          "position_difference_max": 5.546807054634256e-05,
+          "velocity_difference_max": 0.0052546153616064295,
+          "joint_position_difference_rad": 5.546807054634256e-05,
+          "joint_velocity_difference_rad_s": 0.0052546153616064295,
+          "native_actual_target_difference_rad": 0.00025330932115408267,
+          "native_effective_feedback_rad": 0.0035390673713550183,
+          "actual_effective_feedback_rad": 0.00350249610845561,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.003539067371355023,
+          "actual_held_vs_feedforward_rad": 0.0035022268112229193,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.1273214709291306,
+          "native_adjacent_PD_torque_jump_Nm": 7.9894221581488996,
+          "actual_adjacent_target_jump_rad": 0.12717664241790771,
+          "actual_adjacent_actuator_torque_jump_Nm": 7.9882838771300015,
+          "native_actual_feedback_difference_rad": 0.00025300381840802355,
+          "state_delta_reconstruction_error": 1.3552527156068805e-20,
+          "feedback_reconstruction_error": 3.469446951953614e-18,
+          "interpolated_K_max": 40.03105572111772
+        },
+        {
+          "node": 5,
+          "time_s": 2.549999999999752,
+          "same_installed_policy": true,
+          "actual_plan_id": 136,
+          "position_difference_max": 6.265171360175792e-05,
+          "velocity_difference_max": 0.00262566498558936,
+          "joint_position_difference_rad": 6.265171360175792e-05,
+          "joint_velocity_difference_rad_s": 0.00262566498558936,
+          "native_actual_target_difference_rad": 0.00027301156967740603,
+          "native_effective_feedback_rad": 0.005092744581348441,
+          "actual_effective_feedback_rad": 0.005365836486504313,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.005092744581348452,
+          "actual_held_vs_feedforward_rad": 0.005365756151025858,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.03351919861025099,
+          "native_adjacent_PD_torque_jump_Nm": 2.1771217664093316,
+          "actual_adjacent_target_jump_rad": 0.03344154357910156,
+          "actual_adjacent_actuator_torque_jump_Nm": 2.180600600233973,
+          "native_actual_feedback_difference_rad": 0.0002730919051558726,
+          "state_delta_reconstruction_error": 8.673617379884035e-19,
+          "feedback_reconstruction_error": 3.469446951953614e-18,
+          "interpolated_K_max": 67.94213715002795
+        },
+        {
+          "node": 7,
+          "time_s": 2.5539999999997516,
+          "same_installed_policy": true,
+          "actual_plan_id": 136,
+          "position_difference_max": 5.8809167930544415e-05,
+          "velocity_difference_max": 0.001645976184252329,
+          "joint_position_difference_rad": 5.8809167930544415e-05,
+          "joint_velocity_difference_rad_s": 0.001645976184252329,
+          "native_actual_target_difference_rad": 0.000387848247423106,
+          "native_effective_feedback_rad": 0.010156141096345156,
+          "actual_effective_feedback_rad": 0.010247562282976477,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.010156141096345158,
+          "actual_held_vs_feedforward_rad": 0.01024774556555276,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.013571474793676042,
+          "native_adjacent_PD_torque_jump_Nm": 0.9358611298965285,
+          "actual_adjacent_target_jump_rad": 0.013528645038604736,
+          "actual_adjacent_actuator_torque_jump_Nm": 0.9367991438525181,
+          "native_actual_feedback_difference_rad": 0.0003879048507230542,
+          "state_delta_reconstruction_error": 2.710505431213761e-20,
+          "feedback_reconstruction_error": 1.734723475976807e-18,
+          "interpolated_K_max": 101.48424854912882
+        },
+        {
+          "node": 9,
+          "time_s": 2.557999999999751,
+          "same_installed_policy": true,
+          "actual_plan_id": 136,
+          "position_difference_max": 5.183675415804806e-05,
+          "velocity_difference_max": 0.0019353162710003535,
+          "joint_position_difference_rad": 5.183675415804806e-05,
+          "joint_velocity_difference_rad_s": 0.0019353162710003535,
+          "native_actual_target_difference_rad": 0.00043580696810963104,
+          "native_effective_feedback_rad": 0.018858553119831173,
+          "actual_effective_feedback_rad": 0.01894377830018191,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.018858553119831162,
+          "actual_held_vs_feedforward_rad": 0.01894466885879162,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.03212195141177088,
+          "native_adjacent_PD_torque_jump_Nm": 1.8363718513185292,
+          "actual_adjacent_target_jump_rad": 0.032187819480895996,
+          "actual_adjacent_actuator_torque_jump_Nm": 1.8371047999019439,
+          "native_actual_feedback_difference_rad": 0.0004351749852942871,
+          "state_delta_reconstruction_error": 3.3881317890172014e-21,
+          "feedback_reconstruction_error": 1.3877787807814457e-17,
+          "interpolated_K_max": 195.6058593194968
+        },
+        {
+          "node": 10,
+          "time_s": 2.559999999999751,
+          "same_installed_policy": false,
+          "actual_plan_id": 137,
+          "position_difference_max": 4.6689827561161024e-05,
+          "velocity_difference_max": 0.0037096555889399863,
+          "joint_position_difference_rad": 4.6689827561161024e-05,
+          "joint_velocity_difference_rad_s": 0.0037096555889399863,
+          "native_actual_target_difference_rad": 0.01136762366791011,
+          "native_effective_feedback_rad": 0.011433645116557395,
+          "actual_effective_feedback_rad": 6.642034188898998e-05,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.011433645116557312,
+          "actual_held_vs_feedforward_rad": 6.602144864720216e-05,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.027956382223546017,
+          "native_adjacent_PD_torque_jump_Nm": 1.9547529684650993,
+          "actual_adjacent_target_jump_rad": 0.021212100982666016,
+          "actual_adjacent_actuator_torque_jump_Nm": 1.551177073217687
+        },
+        {
+          "node": 11,
+          "time_s": 2.5619999999997507,
+          "same_installed_policy": false,
+          "actual_plan_id": 137,
+          "position_difference_max": 6.970456712273101e-05,
+          "velocity_difference_max": 0.025653055645941503,
+          "joint_position_difference_rad": 6.970456712273101e-05,
+          "joint_velocity_difference_rad_s": 0.025653055645941503,
+          "native_actual_target_difference_rad": 0.017235405312242325,
+          "native_effective_feedback_rad": 0.01735769080249075,
+          "actual_effective_feedback_rad": 0.00012271596720226993,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.017357690802490833,
+          "actual_held_vs_feedforward_rad": 0.0001222854902485082,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.024933031520826043,
+          "native_adjacent_PD_torque_jump_Nm": 1.3351945594683734,
+          "actual_adjacent_target_jump_rad": 0.032256245613098145,
+          "actual_adjacent_actuator_torque_jump_Nm": 1.7622910142828943
+        },
+        {
+          "node": 12,
+          "time_s": 2.5639999999997505,
+          "same_installed_policy": false,
+          "actual_plan_id": 137,
+          "position_difference_max": 0.00012634731071577837,
+          "velocity_difference_max": 0.032983554162451134,
+          "joint_position_difference_rad": 0.00012634731071577837,
+          "joint_velocity_difference_rad_s": 0.032983554162451134,
+          "native_actual_target_difference_rad": 0.05749742365530208,
+          "native_effective_feedback_rad": 0.05791996568475308,
+          "actual_effective_feedback_rad": 0.0004211226419564501,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.057919965684753105,
+          "actual_held_vs_feedforward_rad": 0.0004225420294510229,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.02139569671091901,
+          "native_adjacent_PD_torque_jump_Nm": 1.5198442088213913,
+          "actual_adjacent_target_jump_rad": 0.03102986514568329,
+          "actual_adjacent_actuator_torque_jump_Nm": 2.047617338593658
+        },
+        {
+          "node": 14,
+          "time_s": 2.56799999999975,
+          "same_installed_policy": false,
+          "actual_plan_id": 137,
+          "position_difference_max": 0.0006723889928870221,
+          "velocity_difference_max": 0.24223345497691148,
+          "joint_position_difference_rad": 0.0006723889928870221,
+          "joint_velocity_difference_rad_s": 0.24223345497691148,
+          "native_actual_target_difference_rad": 0.08515018684899323,
+          "native_effective_feedback_rad": 0.08615543522868799,
+          "actual_effective_feedback_rad": 0.0010035836750690553,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.08615543522868796,
+          "actual_held_vs_feedforward_rad": 0.0010052483796947342,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.058147105973685546,
+          "native_adjacent_PD_torque_jump_Nm": 4.721582597224857,
+          "actual_adjacent_target_jump_rad": 0.08301889896392822,
+          "actual_adjacent_actuator_torque_jump_Nm": 5.520831061460527
+        }
+      ],
+      "interpretation_note": "Node10 at +20ms may use a newly replanned physical policy. Compare target/feedback causally only where same_installed_policy=true. Short flight is legal, not a task failure criterion."
+    },
+    {
+      "case": "w45-a",
+      "call_id": 153,
+      "plan_id": 140,
+      "origin_s": 2.639999999999742,
+      "source": "alpha_0_8",
+      "comparison_tolerance": 3.9084249685134404e-11,
+      "incumbent_candidate": "candidate000",
+      "incumbent_current_cost": 0.1168344804536258,
+      "incumbent_cost_terms": {
+        "Upright": 0.010390932258964425,
+        "Height": 0.004248583204749213,
+        "Position": 0.008386503726470661,
+        "Gait": 0.0013133847703326595,
+        "Balance": 0.0012452967774869805,
+        "Effort": 0.00484758900362187,
+        "Posture": 0.000576959148690455,
+        "Orientation": 0.00025843283388728584,
+        "Angmom": 0.0,
+        "StandLinearVelocity": 0.0,
+        "StandAngularVelocity": 0.0,
+        "StandAbsoluteHeight": 0.0,
+        "StandFootPosition": 0.0,
+        "StandFootVelocity": 0.0,
+        "StandSupportForce": 0.0,
+        "LandingVelocity": 0.0,
+        "LandingIndentation": 0.0,
+        "MaterialSupportHeight": 0.08556679872942155,
+        "MaterialDomainMargin": 0.0,
+        "TrunkClearance": 7.23337190133388e-16,
+        "ImpactMargin": 0.0
+      },
+      "best_nominal": {
+        "candidate": "candidate000",
+        "kind": 0,
+        "slot": 0,
+        "alpha": 0.0010000000000000002,
+        "feedback_scale": 0.0010000000000000002,
+        "native_cost": 0.1168344804536258,
+        "trunk_violation": 0.0,
+        "cost_terms": {
+          "Upright": 0.010390932258964425,
+          "Height": 0.004248583204749213,
+          "Position": 0.008386503726470661,
+          "Gait": 0.0013133847703326595,
+          "Balance": 0.0012452967774869805,
+          "Effort": 0.00484758900362187,
+          "Posture": 0.000576959148690455,
+          "Orientation": 0.00025843283388728584,
+          "Angmom": 0.0,
+          "StandLinearVelocity": 0.0,
+          "StandAngularVelocity": 0.0,
+          "StandAbsoluteHeight": 0.0,
+          "StandFootPosition": 0.0,
+          "StandFootVelocity": 0.0,
+          "StandSupportForce": 0.0,
+          "LandingVelocity": 0.0,
+          "LandingIndentation": 0.0,
+          "MaterialSupportHeight": 0.08556679872942155,
+          "MaterialDomainMargin": 0.0,
+          "TrunkClearance": 7.23337190133388e-16,
+          "ImpactMargin": 0.0
+        },
+        "cost_recompute_error": 2.7755575615628914e-17,
+        "predicted_dx_m": -0.01997067407452769,
+        "predicted_dy_m": -0.011385307347029376,
+        "base_z_min_max_m": [
+          0.24845645411929732,
+          0.3059105397387794
+        ],
+        "base_vz_min_max_m_s": [
+          -0.3892913610875577,
+          0.3197127074641514
+        ],
+        "terminal_z_vz": [
+          0.24845645411929732,
+          -0.2472334508226938
+        ],
+        "nofoot_zero_native_and_proxy_force_nodes": 30,
+        "nofoot_intervals_at_2ms_nodes": [
+          {
+            "first_sample_s": 2.7639999999997285,
+            "last_sample_s": 2.821999999999722,
+            "samples": 30
+          }
+        ],
+        "native_K_max": 14014.369559909048,
+        "reference_origin_s": 2.539999999999753
+      },
+      "selected": {
+        "candidate": "candidate018",
+        "kind": 1,
+        "slot": 8,
+        "alpha": 1.0,
+        "feedback_scale": 1.0,
+        "native_cost": 0.08909507075494873,
+        "trunk_violation": 0.0,
+        "cost_terms": {
+          "Upright": 0.013111772835177704,
+          "Height": 0.002403628932131932,
+          "Position": 0.0067951189286012586,
+          "Gait": 0.0035795200177561426,
+          "Balance": 0.0011184959221838915,
+          "Effort": 0.03537458864772402,
+          "Posture": 0.000596544911083831,
+          "Orientation": 0.00013824591307839542,
+          "Angmom": 0.0,
+          "StandLinearVelocity": 0.0,
+          "StandAngularVelocity": 0.0,
+          "StandAbsoluteHeight": 0.0,
+          "StandFootPosition": 0.0,
+          "StandFootVelocity": 0.0,
+          "StandSupportForce": 0.0,
+          "LandingVelocity": 0.0,
+          "LandingIndentation": 0.0,
+          "MaterialSupportHeight": 0.0259771546472109,
+          "MaterialDomainMargin": 0.0,
+          "TrunkClearance": 6.771686133552789e-16,
+          "ImpactMargin": 0.0
+        },
+        "cost_recompute_error": 2.7755575615628914e-17,
+        "predicted_dx_m": 0.01522244254403428,
+        "predicted_dy_m": -0.005687758513921847,
+        "base_z_min_max_m": [
+          0.27204397703358546,
+          0.30461695803300476
+        ],
+        "base_vz_min_max_m_s": [
+          -0.47244791779536677,
+          0.48362518142795763
+        ],
+        "terminal_z_vz": [
+          0.29228495885278233,
+          0.2595916549462821
+        ],
+        "nofoot_zero_native_and_proxy_force_nodes": 68,
+        "nofoot_intervals_at_2ms_nodes": [
+          {
+            "first_sample_s": 2.6479999999997412,
+            "last_sample_s": 2.6479999999997412,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.651999999999741,
+            "last_sample_s": 2.6559999999997403,
+            "samples": 3
+          },
+          {
+            "first_sample_s": 2.6619999999997397,
+            "last_sample_s": 2.6639999999997395,
+            "samples": 2
+          },
+          {
+            "first_sample_s": 2.667999999999739,
+            "last_sample_s": 2.667999999999739,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.7619999999997287,
+            "last_sample_s": 2.7619999999997287,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.7659999999997282,
+            "last_sample_s": 2.8179999999997225,
+            "samples": 27
+          },
+          {
+            "first_sample_s": 2.857999999999718,
+            "last_sample_s": 2.859999999999718,
+            "samples": 2
+          },
+          {
+            "first_sample_s": 2.8739999999997163,
+            "last_sample_s": 2.9079999999997126,
+            "samples": 18
+          },
+          {
+            "first_sample_s": 2.965999999999706,
+            "last_sample_s": 2.9899999999997036,
+            "samples": 13
+          }
+        ],
+        "native_K_max": 31081.509632404573,
+        "reference_origin_s": 2.639999999999742
+      },
+      "selected_installed_max_errors": {
+        "accepted_states": 0.0,
+        "accepted_actions": 0.0,
+        "accepted_times": 0.0,
+        "accepted_residual": 0.0,
+        "reference_states": 0.0,
+        "reference_actions": 0.0,
+        "reference_times": 0.0,
+        "reference_residual": 0.0,
+        "K": 0.0,
+        "H": 0.0,
+        "base_Qu": 0.0,
+        "base_Qxu": 0.0,
+        "base_active": 0.0
+      },
+      "first_2ms_held_prefix": [
+        {
+          "substep": 0,
+          "time_s": 2.639999999999742,
+          "raw_PD_difference_Nm": 0.0007805198106909939,
+          "native_ncontact": 3,
+          "physical_foot_contacts": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 1,
+          "time_s": 2.640199999999742,
+          "raw_PD_difference_Nm": 0.0034857210370042857,
+          "native_ncontact": 2,
+          "physical_foot_contacts": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 2,
+          "time_s": 2.640399999999742,
+          "raw_PD_difference_Nm": 0.004106042403872356,
+          "native_ncontact": 2,
+          "physical_foot_contacts": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 3,
+          "time_s": 2.640599999999742,
+          "raw_PD_difference_Nm": 0.004692949826079484,
+          "native_ncontact": 2,
+          "physical_foot_contacts": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 4,
+          "time_s": 2.640799999999742,
+          "raw_PD_difference_Nm": 0.005247720704286696,
+          "native_ncontact": 2,
+          "physical_foot_contacts": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 5,
+          "time_s": 2.640999999999742,
+          "raw_PD_difference_Nm": 0.005771586364333725,
+          "native_ncontact": 2,
+          "physical_foot_contacts": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 6,
+          "time_s": 2.641199999999742,
+          "raw_PD_difference_Nm": 0.006265733630334225,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 7,
+          "time_s": 2.641399999999742,
+          "raw_PD_difference_Nm": 0.00846177629418543,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 8,
+          "time_s": 2.641599999999742,
+          "raw_PD_difference_Nm": 0.009977434657496342,
+          "native_ncontact": 3,
+          "physical_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 9,
+          "time_s": 2.641799999999742,
+          "raw_PD_difference_Nm": 0.010241811659685851,
+          "native_ncontact": 3,
+          "physical_foot_contacts": [
+            0,
+            0,
+            1,
+            1
+          ]
+        }
+      ],
+      "native_hold_target_max_variation_rad": 4.440892098500626e-16,
+      "native_prefix_clamp_max_error_Nm": 2.1316282072803006e-14,
+      "nodes": [
+        {
+          "node": 0,
+          "time_s": 2.639999999999742,
+          "same_installed_policy": true,
+          "actual_plan_id": 140,
+          "position_difference_max": 0.0,
+          "velocity_difference_max": 0.0,
+          "joint_position_difference_rad": 0.0,
+          "joint_velocity_difference_rad_s": 0.0,
+          "native_actual_target_difference_rad": 1.3008663511516897e-05,
+          "native_effective_feedback_rad": 4.995143960839484e-16,
+          "actual_effective_feedback_rad": 1.3510349092984938e-05,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 9.75781955236954e-18,
+          "actual_held_vs_feedforward_rad": 1.3008663511507139e-05,
+          "actual_foot_contacts": [
+            0,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "actual_adjacent_target_jump_rad": 0.07087969779968262,
+          "actual_adjacent_actuator_torque_jump_Nm": 3.9484043704578653,
+          "native_actual_feedback_difference_rad": 1.3510349092485421e-05,
+          "state_delta_reconstruction_error": 3.308722450212111e-24,
+          "feedback_reconstruction_error": 3.3881317890172014e-21,
+          "interpolated_K_max": 3611.5064120678157
+        },
+        {
+          "node": 1,
+          "time_s": 2.641999999999742,
+          "same_installed_policy": true,
+          "actual_plan_id": 140,
+          "position_difference_max": 2.6217626221125556e-06,
+          "velocity_difference_max": 0.010024461095258163,
+          "joint_position_difference_rad": 2.6217626221125556e-06,
+          "joint_velocity_difference_rad_s": 0.010024461095258163,
+          "native_actual_target_difference_rad": 0.010857125715444393,
+          "native_effective_feedback_rad": 0.1855487254043599,
+          "actual_effective_feedback_rad": 0.19640561533774448,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.18554872540435985,
+          "actual_held_vs_feedforward_rad": 0.19640585111980424,
+          "actual_foot_contacts": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.1737073391898647,
+          "native_adjacent_PD_torque_jump_Nm": 10.67762360878941,
+          "actual_adjacent_target_jump_rad": 0.1845719814300537,
+          "actual_adjacent_actuator_torque_jump_Nm": 11.293440965986463,
+          "native_actual_feedback_difference_rad": 0.010856889933384573,
+          "state_delta_reconstruction_error": 0.0,
+          "feedback_reconstruction_error": 6.938893903907228e-18,
+          "interpolated_K_max": 14550.497268683184
+        },
+        {
+          "node": 2,
+          "time_s": 2.6439999999997417,
+          "same_installed_policy": true,
+          "actual_plan_id": 140,
+          "position_difference_max": 6.899778781943589e-05,
+          "velocity_difference_max": 0.05311656722365704,
+          "joint_position_difference_rad": 6.899778781943589e-05,
+          "joint_velocity_difference_rad_s": 0.05311656722365704,
+          "native_actual_target_difference_rad": 0.03666463839734352,
+          "native_effective_feedback_rad": 0.32495644033724275,
+          "actual_effective_feedback_rad": 0.28829501860191586,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.3249564403372429,
+          "actual_held_vs_feedforward_rad": 0.2882918019398994,
+          "actual_foot_contacts": [
+            0,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.33631063002852835,
+          "native_adjacent_PD_torque_jump_Nm": 20.969054993735767,
+          "actual_adjacent_target_jump_rad": 0.315173864364624,
+          "actual_adjacent_actuator_torque_jump_Nm": 19.900887736553624,
+          "native_actual_feedback_difference_rad": 0.036661421735326605,
+          "state_delta_reconstruction_error": 2.1006417091906648e-19,
+          "feedback_reconstruction_error": 3.5735303605122226e-16,
+          "interpolated_K_max": 20288.527498401094
+        },
+        {
+          "node": 3,
+          "time_s": 2.6459999999997414,
+          "same_installed_policy": true,
+          "actual_plan_id": 140,
+          "position_difference_max": 0.0002109474134645437,
+          "velocity_difference_max": 0.11393004363643588,
+          "joint_position_difference_rad": 0.0002109474134645437,
+          "joint_velocity_difference_rad_s": 0.11393004363643588,
+          "native_actual_target_difference_rad": 0.04138066510119165,
+          "native_effective_feedback_rad": 0.4655531880161672,
+          "actual_effective_feedback_rad": 0.42803574939655636,
+          "actual_projection_rad": 0.20293600536709483,
+          "native_held_vs_feedforward_rad": 0.31592262533048876,
+          "actual_held_vs_feedforward_rad": 0.3158920560940137,
+          "actual_foot_contacts": [
+            0,
+            0,
+            1,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.6645682042496837,
+          "native_adjacent_PD_torque_jump_Nm": 46.34758820757646,
+          "actual_adjacent_target_jump_rad": 0.633487343788147,
+          "actual_adjacent_actuator_torque_jump_Nm": 44.09095268994753,
+          "native_actual_feedback_difference_rad": 0.03751743861961099,
+          "state_delta_reconstruction_error": 0.0,
+          "feedback_reconstruction_error": 1.6653345369377348e-16,
+          "interpolated_K_max": 8069.689052870028
+        },
+        {
+          "node": 4,
+          "time_s": 2.6479999999997412,
+          "same_installed_policy": true,
+          "actual_plan_id": 140,
+          "position_difference_max": 0.0004389043932413435,
+          "velocity_difference_max": 0.12510522810393154,
+          "joint_position_difference_rad": 0.0004389043932413435,
+          "joint_velocity_difference_rad_s": 0.12510522810393154,
+          "native_actual_target_difference_rad": 0.27099354784752183,
+          "native_effective_feedback_rad": 0.5884259137543876,
+          "actual_effective_feedback_rad": 0.4625646324986395,
+          "actual_projection_rad": 0.1556216227958096,
+          "native_held_vs_feedforward_rad": 0.829163314860458,
+          "actual_held_vs_feedforward_rad": 0.5581697670129362,
+          "actual_foot_contacts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.8021328578898757,
+          "native_adjacent_PD_torque_jump_Nm": 49.55513838904195,
+          "actual_adjacent_target_jump_rad": 0.5361332297325134,
+          "actual_adjacent_actuator_torque_jump_Nm": 35.74243433735373,
+          "native_actual_feedback_difference_rad": 0.12586128125574808,
+          "state_delta_reconstruction_error": 1.0842021724855044e-19,
+          "feedback_reconstruction_error": 1.1102230246251565e-16,
+          "interpolated_K_max": 2648.032163531528
+        },
+        {
+          "node": 5,
+          "time_s": 2.649999999999741,
+          "same_installed_policy": true,
+          "actual_plan_id": 140,
+          "position_difference_max": 0.0005215053442416554,
+          "velocity_difference_max": 0.6089780542717737,
+          "joint_position_difference_rad": 0.0005215053442416554,
+          "joint_velocity_difference_rad_s": 0.6089780542717737,
+          "native_actual_target_difference_rad": 0.051023081577675655,
+          "native_effective_feedback_rad": 2.2874578750129615,
+          "actual_effective_feedback_rad": 3.123021725213553,
+          "actual_projection_rad": 0.6699960487474954,
+          "native_held_vs_feedforward_rad": 0.6647244967191377,
+          "actual_held_vs_feedforward_rad": 0.6770623145644039,
+          "actual_foot_contacts": [
+            0,
+            0,
+            1,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 1.4187960152513623,
+          "native_adjacent_PD_torque_jump_Nm": 90.43771103573656,
+          "actual_adjacent_target_jump_rad": 1.1640287637710571,
+          "actual_adjacent_actuator_torque_jump_Nm": 74.01081513123513,
+          "native_actual_feedback_difference_rad": 0.8355638502005909,
+          "state_delta_reconstruction_error": 1.0842021724855044e-19,
+          "feedback_reconstruction_error": 4.440892098500626e-16,
+          "interpolated_K_max": 2824.925083820132
+        },
+        {
+          "node": 7,
+          "time_s": 2.6539999999997406,
+          "same_installed_policy": true,
+          "actual_plan_id": 140,
+          "position_difference_max": 0.0026000889628628645,
+          "velocity_difference_max": 0.5806913217600207,
+          "joint_position_difference_rad": 0.0026000889628628645,
+          "joint_velocity_difference_rad_s": 0.5806913217600207,
+          "native_actual_target_difference_rad": 0.31803149536698283,
+          "native_effective_feedback_rad": 0.2817860152127749,
+          "actual_effective_feedback_rad": 0.7983934148798963,
+          "actual_projection_rad": 0.47293956047702423,
+          "native_held_vs_feedforward_rad": 0.2817860152127748,
+          "actual_held_vs_feedforward_rad": 0.4281828439124531,
+          "actual_foot_contacts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.6113018718476646,
+          "native_adjacent_PD_torque_jump_Nm": 46.377862627379635,
+          "actual_adjacent_target_jump_rad": 0.4838351011276245,
+          "actual_adjacent_actuator_torque_jump_Nm": 40.164394201753446,
+          "native_actual_feedback_difference_rad": 0.5166073996671215,
+          "state_delta_reconstruction_error": 1.0842021724855044e-19,
+          "feedback_reconstruction_error": 1.1102230246251565e-16,
+          "interpolated_K_max": 382.92170890286343
+        },
+        {
+          "node": 9,
+          "time_s": 2.65799999999974,
+          "same_installed_policy": true,
+          "actual_plan_id": 140,
+          "position_difference_max": 0.00382922431092525,
+          "velocity_difference_max": 0.712411692154286,
+          "joint_position_difference_rad": 0.00382922431092525,
+          "joint_velocity_difference_rad_s": 0.712411692154286,
+          "native_actual_target_difference_rad": 0.13438160398278015,
+          "native_effective_feedback_rad": 0.18745596986206764,
+          "actual_effective_feedback_rad": 0.24050572882421373,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.1874559698620677,
+          "actual_held_vs_feedforward_rad": 0.24050567235082698,
+          "actual_foot_contacts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.07252415088011882,
+          "native_adjacent_PD_torque_jump_Nm": 5.038722463726627,
+          "actual_adjacent_target_jump_rad": 0.08402704447507858,
+          "actual_adjacent_actuator_torque_jump_Nm": 11.061659430126124,
+          "native_actual_feedback_difference_rad": 0.1343815185038242,
+          "state_delta_reconstruction_error": 1.3010426069826053e-18,
+          "feedback_reconstruction_error": 5.551115123125783e-17,
+          "interpolated_K_max": 1642.8661654238597
+        },
+        {
+          "node": 10,
+          "time_s": 2.65999999999974,
+          "same_installed_policy": false,
+          "actual_plan_id": 141,
+          "position_difference_max": 0.0048440949473590456,
+          "velocity_difference_max": 0.5647084115842228,
+          "joint_position_difference_rad": 0.0048440949473590456,
+          "joint_velocity_difference_rad_s": 0.5647084115842228,
+          "native_actual_target_difference_rad": 0.17834641645471105,
+          "native_effective_feedback_rad": 0.1783452492902074,
+          "actual_effective_feedback_rad": 0.0,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.17834524929020745,
+          "actual_held_vs_feedforward_rad": 8.595348019245497e-06,
+          "actual_foot_contacts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.12317256640144635,
+          "native_adjacent_PD_torque_jump_Nm": 10.321022249389879,
+          "actual_adjacent_target_jump_rad": 0.2695413827896118,
+          "actual_adjacent_actuator_torque_jump_Nm": 20.090274090047416
+        },
+        {
+          "node": 11,
+          "time_s": 2.6619999999997397,
+          "same_installed_policy": false,
+          "actual_plan_id": 141,
+          "position_difference_max": 0.0058865199111536315,
+          "velocity_difference_max": 1.0619369361208915,
+          "joint_position_difference_rad": 0.0058865199111536315,
+          "joint_velocity_difference_rad_s": 1.0619369361208915,
+          "native_actual_target_difference_rad": 0.2552837098127554,
+          "native_effective_feedback_rad": 0.2552845142974791,
+          "actual_effective_feedback_rad": 0.0,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.255284514297479,
+          "actual_held_vs_feedforward_rad": 5.9230882170080434e-06,
+          "actual_foot_contacts": [
+            1,
+            1,
+            0,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.2516630251584283,
+          "native_adjacent_PD_torque_jump_Nm": 16.407423353466495,
+          "actual_adjacent_target_jump_rad": 0.20027396082878113,
+          "actual_adjacent_actuator_torque_jump_Nm": 11.232021215806427
+        },
+        {
+          "node": 12,
+          "time_s": 2.6639999999997395,
+          "same_installed_policy": false,
+          "actual_plan_id": 141,
+          "position_difference_max": 0.006987870064002921,
+          "velocity_difference_max": 1.3859335374371458,
+          "joint_position_difference_rad": 0.006987870064002921,
+          "joint_velocity_difference_rad_s": 1.3859335374371458,
+          "native_actual_target_difference_rad": 0.8754636549197046,
+          "native_effective_feedback_rad": 2.085762072371162,
+          "actual_effective_feedback_rad": 0.0,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.8754638305480926,
+          "actual_held_vs_feedforward_rad": 1.586853380322606e-06,
+          "actual_foot_contacts": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 1.0278784641182768,
+          "native_adjacent_PD_torque_jump_Nm": 65.74417351669194,
+          "actual_adjacent_target_jump_rad": 0.09393608570098877,
+          "actual_adjacent_actuator_torque_jump_Nm": 8.96399533193566
+        },
+        {
+          "node": 14,
+          "time_s": 2.667999999999739,
+          "same_installed_policy": false,
+          "actual_plan_id": 141,
+          "position_difference_max": 0.010812873192345474,
+          "velocity_difference_max": 0.5958595377604404,
+          "joint_position_difference_rad": 0.010812873192345474,
+          "joint_velocity_difference_rad_s": 0.5958595377604404,
+          "native_actual_target_difference_rad": 0.29779088852564617,
+          "native_effective_feedback_rad": 0.2977905998642349,
+          "actual_effective_feedback_rad": 0.0,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.29779059986423495,
+          "actual_held_vs_feedforward_rad": 3.6175402834404125e-07,
+          "actual_foot_contacts": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.17614487736762796,
+          "native_adjacent_PD_torque_jump_Nm": 15.999215630680272,
+          "actual_adjacent_target_jump_rad": 0.04213213920593262,
+          "actual_adjacent_actuator_torque_jump_Nm": 2.947856574551369
+        }
+      ],
+      "interpretation_note": "Node10 at +20ms may use a newly replanned physical policy. Compare target/feedback causally only where same_installed_policy=true. Short flight is legal, not a task failure criterion."
+    },
+    {
+      "case": "w45-b",
+      "call_id": 155,
+      "plan_id": 141,
+      "origin_s": 2.6799999999997377,
+      "source": "nominal_0",
+      "comparison_tolerance": 4.446892452351855e-11,
+      "incumbent_candidate": "candidate000",
+      "incumbent_current_cost": 0.2528406368933982,
+      "incumbent_cost_terms": {
+        "Upright": 0.024209232766679023,
+        "Height": 0.009535284098778928,
+        "Position": 0.00725453157592471,
+        "Gait": 0.0015767063991066143,
+        "Balance": 0.0006505721963991763,
+        "Effort": 0.007335435077752449,
+        "Posture": 0.0014692653875478232,
+        "Orientation": 0.0002082618786000423,
+        "Angmom": 0.0,
+        "StandLinearVelocity": 0.0,
+        "StandAngularVelocity": 0.0,
+        "StandAbsoluteHeight": 0.0,
+        "StandFootPosition": 0.0,
+        "StandFootVelocity": 0.0,
+        "StandSupportForce": 0.0,
+        "LandingVelocity": 0.0,
+        "LandingIndentation": 0.0,
+        "MaterialSupportHeight": 0.2006013475126087,
+        "MaterialDomainMargin": 0.0,
+        "TrunkClearance": 8.610536698298423e-16,
+        "ImpactMargin": 0.0
+      },
+      "best_nominal": {
+        "candidate": "candidate001",
+        "kind": 0,
+        "slot": 0,
+        "alpha": 0.0010000000000000002,
+        "feedback_scale": 0.0010000000000000002,
+        "native_cost": 0.2527786317225274,
+        "trunk_violation": 0.0,
+        "cost_terms": {
+          "Upright": 0.024227389500775045,
+          "Height": 0.00953612058128938,
+          "Position": 0.007263899218004907,
+          "Gait": 0.0015780702910256647,
+          "Balance": 0.0006543402461317633,
+          "Effort": 0.007343164767337698,
+          "Posture": 0.0014695148940954445,
+          "Orientation": 0.00021872421989345238,
+          "Angmom": 0.0,
+          "StandLinearVelocity": 0.0,
+          "StandAngularVelocity": 0.0,
+          "StandAbsoluteHeight": 0.0,
+          "StandFootPosition": 0.0,
+          "StandFootVelocity": 0.0,
+          "StandSupportForce": 0.0,
+          "LandingVelocity": 0.0,
+          "LandingIndentation": 0.0,
+          "MaterialSupportHeight": 0.20048740800397322,
+          "MaterialDomainMargin": 0.0,
+          "TrunkClearance": 8.610687782664623e-16,
+          "ImpactMargin": 0.0
+        },
+        "cost_recompute_error": 5.551115123125783e-17,
+        "predicted_dx_m": 0.001080518573760101,
+        "predicted_dy_m": -0.011376838858920945,
+        "base_z_min_max_m": [
+          0.22742897276510401,
+          0.29483678373000266
+        ],
+        "base_vz_min_max_m_s": [
+          -0.5624946662891542,
+          0.27672928655486
+        ],
+        "terminal_z_vz": [
+          0.22742897276510401,
+          -0.23955540371856976
+        ],
+        "nofoot_zero_native_and_proxy_force_nodes": 56,
+        "nofoot_intervals_at_2ms_nodes": [
+          {
+            "first_sample_s": 2.693999999999736,
+            "last_sample_s": 2.695999999999736,
+            "samples": 2
+          },
+          {
+            "first_sample_s": 2.7739999999997274,
+            "last_sample_s": 2.821999999999722,
+            "samples": 25
+          },
+          {
+            "first_sample_s": 2.859999999999718,
+            "last_sample_s": 2.859999999999718,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.8699999999997168,
+            "last_sample_s": 2.8699999999997168,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.8839999999997152,
+            "last_sample_s": 2.9159999999997117,
+            "samples": 17
+          },
+          {
+            "first_sample_s": 2.921999999999711,
+            "last_sample_s": 2.921999999999711,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.92999999999971,
+            "last_sample_s": 2.93199999999971,
+            "samples": 2
+          },
+          {
+            "first_sample_s": 2.941999999999709,
+            "last_sample_s": 2.941999999999709,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.9459999999997084,
+            "last_sample_s": 2.9459999999997084,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.949999999999708,
+            "last_sample_s": 2.949999999999708,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.957999999999707,
+            "last_sample_s": 2.9639999999997064,
+            "samples": 4
+          }
+        ],
+        "native_K_max": 28393.28897115101,
+        "reference_origin_s": 2.539999999999753
+      },
+      "selected": {
+        "candidate": "candidate001",
+        "kind": 0,
+        "slot": 0,
+        "alpha": 0.0010000000000000002,
+        "feedback_scale": 0.0010000000000000002,
+        "native_cost": 0.2527786317225274,
+        "trunk_violation": 0.0,
+        "cost_terms": {
+          "Upright": 0.024227389500775045,
+          "Height": 0.00953612058128938,
+          "Position": 0.007263899218004907,
+          "Gait": 0.0015780702910256647,
+          "Balance": 0.0006543402461317633,
+          "Effort": 0.007343164767337698,
+          "Posture": 0.0014695148940954445,
+          "Orientation": 0.00021872421989345238,
+          "Angmom": 0.0,
+          "StandLinearVelocity": 0.0,
+          "StandAngularVelocity": 0.0,
+          "StandAbsoluteHeight": 0.0,
+          "StandFootPosition": 0.0,
+          "StandFootVelocity": 0.0,
+          "StandSupportForce": 0.0,
+          "LandingVelocity": 0.0,
+          "LandingIndentation": 0.0,
+          "MaterialSupportHeight": 0.20048740800397322,
+          "MaterialDomainMargin": 0.0,
+          "TrunkClearance": 8.610687782664623e-16,
+          "ImpactMargin": 0.0
+        },
+        "cost_recompute_error": 5.551115123125783e-17,
+        "predicted_dx_m": 0.001080518573760101,
+        "predicted_dy_m": -0.011376838858920945,
+        "base_z_min_max_m": [
+          0.22742897276510401,
+          0.29483678373000266
+        ],
+        "base_vz_min_max_m_s": [
+          -0.5624946662891542,
+          0.27672928655486
+        ],
+        "terminal_z_vz": [
+          0.22742897276510401,
+          -0.23955540371856976
+        ],
+        "nofoot_zero_native_and_proxy_force_nodes": 56,
+        "nofoot_intervals_at_2ms_nodes": [
+          {
+            "first_sample_s": 2.693999999999736,
+            "last_sample_s": 2.695999999999736,
+            "samples": 2
+          },
+          {
+            "first_sample_s": 2.7739999999997274,
+            "last_sample_s": 2.821999999999722,
+            "samples": 25
+          },
+          {
+            "first_sample_s": 2.859999999999718,
+            "last_sample_s": 2.859999999999718,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.8699999999997168,
+            "last_sample_s": 2.8699999999997168,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.8839999999997152,
+            "last_sample_s": 2.9159999999997117,
+            "samples": 17
+          },
+          {
+            "first_sample_s": 2.921999999999711,
+            "last_sample_s": 2.921999999999711,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.92999999999971,
+            "last_sample_s": 2.93199999999971,
+            "samples": 2
+          },
+          {
+            "first_sample_s": 2.941999999999709,
+            "last_sample_s": 2.941999999999709,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.9459999999997084,
+            "last_sample_s": 2.9459999999997084,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.949999999999708,
+            "last_sample_s": 2.949999999999708,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.957999999999707,
+            "last_sample_s": 2.9639999999997064,
+            "samples": 4
+          }
+        ],
+        "native_K_max": 28393.28897115101,
+        "reference_origin_s": 2.539999999999753
+      },
+      "selected_installed_max_errors": {
+        "accepted_states": 0.0,
+        "accepted_actions": 0.0,
+        "accepted_times": 0.0,
+        "accepted_residual": 0.0,
+        "reference_states": 0.0,
+        "reference_actions": 0.0,
+        "reference_times": 0.0,
+        "reference_residual": 0.0,
+        "K": 0.0,
+        "H": 0.0,
+        "base_Qu": 0.0,
+        "base_Qxu": 0.0,
+        "base_active": 0.0
+      },
+      "first_2ms_held_prefix": [
+        {
+          "substep": 0,
+          "time_s": 2.6799999999997377,
+          "raw_PD_difference_Nm": 9.557644374602603e-05,
+          "native_ncontact": 3,
+          "physical_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 1,
+          "time_s": 2.6801999999997377,
+          "raw_PD_difference_Nm": 0.007528640723685753,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 2,
+          "time_s": 2.6803999999997377,
+          "raw_PD_difference_Nm": 0.011910811444003633,
+          "native_ncontact": 3,
+          "physical_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 3,
+          "time_s": 2.6805999999997376,
+          "raw_PD_difference_Nm": 0.017131382370240145,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 4,
+          "time_s": 2.6807999999997376,
+          "raw_PD_difference_Nm": 0.019706522092869716,
+          "native_ncontact": 3,
+          "physical_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 5,
+          "time_s": 2.6809999999997376,
+          "raw_PD_difference_Nm": 0.023381245719315435,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 6,
+          "time_s": 2.6811999999997376,
+          "raw_PD_difference_Nm": 0.09570504919010825,
+          "native_ncontact": 3,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 7,
+          "time_s": 2.6813999999997375,
+          "raw_PD_difference_Nm": 0.025231256124295998,
+          "native_ncontact": 3,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 8,
+          "time_s": 2.6815999999997375,
+          "raw_PD_difference_Nm": 0.11898423650667189,
+          "native_ncontact": 3,
+          "physical_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 9,
+          "time_s": 2.6817999999997375,
+          "raw_PD_difference_Nm": 0.11694925380805576,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ]
+        }
+      ],
+      "native_hold_target_max_variation_rad": 4.440892098500626e-16,
+      "native_prefix_clamp_max_error_Nm": 1.865174681370263e-14,
+      "nodes": [
+        {
+          "node": 0,
+          "time_s": 2.6799999999997377,
+          "same_installed_policy": true,
+          "actual_plan_id": 141,
+          "position_difference_max": 0.0,
+          "velocity_difference_max": 0.0,
+          "joint_position_difference_rad": 0.0,
+          "joint_velocity_difference_rad_s": 0.0,
+          "native_actual_target_difference_rad": 1.5929407291004338e-06,
+          "native_effective_feedback_rad": 0.002774548493298024,
+          "actual_effective_feedback_rad": 0.0027745587685877996,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.002774548493297946,
+          "actual_held_vs_feedforward_rad": 0.0027753903037763816,
+          "actual_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "actual_adjacent_target_jump_rad": 0.03459727019071579,
+          "actual_adjacent_actuator_torque_jump_Nm": 2.3770971026307723,
+          "native_actual_feedback_difference_rad": 9.37424262623278e-08,
+          "state_delta_reconstruction_error": 1.734723475976807e-18,
+          "feedback_reconstruction_error": 4.336808689942018e-19,
+          "interpolated_K_max": 270.59658199834195
+        },
+        {
+          "node": 1,
+          "time_s": 2.6819999999997375,
+          "same_installed_policy": true,
+          "actual_plan_id": 141,
+          "position_difference_max": 7.909490307326378e-06,
+          "velocity_difference_max": 0.0064211533689451025,
+          "joint_position_difference_rad": 7.909490307326378e-06,
+          "joint_velocity_difference_rad_s": 0.0064211533689451025,
+          "native_actual_target_difference_rad": 2.1467766287974754e-06,
+          "native_effective_feedback_rad": 0.0035289636174347704,
+          "actual_effective_feedback_rad": 0.003529294081264921,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0035289636174347105,
+          "actual_held_vs_feedforward_rad": 0.00352998501782964,
+          "actual_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.046933838766651026,
+          "native_adjacent_PD_torque_jump_Nm": 3.035918523645446,
+          "actual_adjacent_target_jump_rad": 0.04693043231964111,
+          "actual_adjacent_actuator_torque_jump_Nm": 3.0683562045168955,
+          "native_actual_feedback_difference_rad": 1.695601469378985e-06,
+          "state_delta_reconstruction_error": 3.469446951953614e-18,
+          "feedback_reconstruction_error": 1.734723475976807e-18,
+          "interpolated_K_max": 420.54786733888415
+        },
+        {
+          "node": 2,
+          "time_s": 2.6839999999997373,
+          "same_installed_policy": true,
+          "actual_plan_id": 141,
+          "position_difference_max": 1.2427851637575316e-05,
+          "velocity_difference_max": 0.006319082598645956,
+          "joint_position_difference_rad": 1.2427851637575316e-05,
+          "joint_velocity_difference_rad_s": 0.006319082598645956,
+          "native_actual_target_difference_rad": 3.239423413958775e-06,
+          "native_effective_feedback_rad": 0.008558677544757766,
+          "actual_effective_feedback_rad": 0.008562236831852602,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.008558677544757698,
+          "actual_held_vs_feedforward_rad": 0.008561916968171657,
+          "actual_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.0525411974240742,
+          "native_adjacent_PD_torque_jump_Nm": 3.4706520152693527,
+          "actual_adjacent_target_jump_rad": 0.05253947526216507,
+          "actual_adjacent_actuator_torque_jump_Nm": 3.5154332809051043,
+          "native_actual_feedback_difference_rad": 3.5592870948376876e-06,
+          "state_delta_reconstruction_error": 1.734723475976807e-18,
+          "feedback_reconstruction_error": 1.734723475976807e-18,
+          "interpolated_K_max": 795.2463396135829
+        },
+        {
+          "node": 3,
+          "time_s": 2.685999999999737,
+          "same_installed_policy": true,
+          "actual_plan_id": 141,
+          "position_difference_max": 2.288491869117948e-05,
+          "velocity_difference_max": 0.02438093098002886,
+          "joint_position_difference_rad": 2.288491869117948e-05,
+          "joint_velocity_difference_rad_s": 0.02438093098002886,
+          "native_actual_target_difference_rad": 6.505266929357489e-06,
+          "native_effective_feedback_rad": 0.00970357800047718,
+          "actual_effective_feedback_rad": 0.009706646627589731,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.009703578000477178,
+          "actual_held_vs_feedforward_rad": 0.00970705825319744,
+          "actual_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.05877055049820756,
+          "native_adjacent_PD_torque_jump_Nm": 3.4513230211745594,
+          "actual_adjacent_target_jump_rad": 0.058768630027770996,
+          "actual_adjacent_actuator_torque_jump_Nm": 3.4547411695848638,
+          "native_actual_feedback_difference_rad": 6.396803718850653e-06,
+          "state_delta_reconstruction_error": 6.938893903907228e-18,
+          "feedback_reconstruction_error": 1.734723475976807e-18,
+          "interpolated_K_max": 2396.7221302584385
+        },
+        {
+          "node": 4,
+          "time_s": 2.687999999999737,
+          "same_installed_policy": true,
+          "actual_plan_id": 141,
+          "position_difference_max": 3.4612692273783274e-05,
+          "velocity_difference_max": 0.007617652807380471,
+          "joint_position_difference_rad": 3.4612692273783274e-05,
+          "joint_velocity_difference_rad_s": 0.007617652807380471,
+          "native_actual_target_difference_rad": 6.209163753956304e-05,
+          "native_effective_feedback_rad": 0.10053741748640481,
+          "actual_effective_feedback_rad": 0.10059955738005882,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.10053741748640488,
+          "actual_held_vs_feedforward_rad": 0.10059950912394444,
+          "actual_foot_contacts": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.1026912579210768,
+          "native_adjacent_PD_torque_jump_Nm": 6.845391575607968,
+          "actual_adjacent_target_jump_rad": 0.10274684429168701,
+          "actual_adjacent_actuator_torque_jump_Nm": 6.855953450586583,
+          "native_actual_feedback_difference_rad": 6.213989365401462e-05,
+          "state_delta_reconstruction_error": 2.168404344971009e-19,
+          "feedback_reconstruction_error": 1.734723475976807e-18,
+          "interpolated_K_max": 4472.508716111046
+        },
+        {
+          "node": 5,
+          "time_s": 2.6899999999997366,
+          "same_installed_policy": true,
+          "actual_plan_id": 141,
+          "position_difference_max": 4.862648880921139e-05,
+          "velocity_difference_max": 0.017889253816635087,
+          "joint_position_difference_rad": 4.862648880921139e-05,
+          "joint_velocity_difference_rad_s": 0.017889253816635087,
+          "native_actual_target_difference_rad": 1.0511946380686865e-05,
+          "native_effective_feedback_rad": 0.03857334942550958,
+          "actual_effective_feedback_rad": 0.03856323011774103,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.03857334942550961,
+          "actual_held_vs_feedforward_rad": 0.038562861999336784,
+          "actual_foot_contacts": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.18645963782726405,
+          "native_adjacent_PD_torque_jump_Nm": 10.967728385993958,
+          "actual_adjacent_target_jump_rad": 0.18651556968688965,
+          "actual_adjacent_actuator_torque_jump_Nm": 10.907095463191538,
+          "native_actual_feedback_difference_rad": 1.0553400599709606e-05,
+          "state_delta_reconstruction_error": 6.938893903907228e-18,
+          "feedback_reconstruction_error": 6.938893903907228e-18,
+          "interpolated_K_max": 1984.4156361910764
+        },
+        {
+          "node": 7,
+          "time_s": 2.693999999999736,
+          "same_installed_policy": true,
+          "actual_plan_id": 141,
+          "position_difference_max": 0.00014114839375745092,
+          "velocity_difference_max": 0.02874252999354343,
+          "joint_position_difference_rad": 0.00014114839375745092,
+          "joint_velocity_difference_rad_s": 0.02874252999354343,
+          "native_actual_target_difference_rad": 7.549097656767145e-06,
+          "native_effective_feedback_rad": 0.0031903869110333958,
+          "actual_effective_feedback_rad": 0.00319750842906641,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0031903869110333494,
+          "actual_held_vs_feedforward_rad": 0.003197712774128836,
+          "actual_foot_contacts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.045763791877061255,
+          "native_adjacent_PD_torque_jump_Nm": 2.9572318440363468,
+          "actual_adjacent_target_jump_rad": 0.04576075077056885,
+          "actual_adjacent_actuator_torque_jump_Nm": 2.931676309218446,
+          "native_actual_feedback_difference_rad": 7.64894538359982e-06,
+          "state_delta_reconstruction_error": 1.734723475976807e-18,
+          "feedback_reconstruction_error": 4.336808689942018e-19,
+          "interpolated_K_max": 774.261832085917
+        },
+        {
+          "node": 9,
+          "time_s": 2.6979999999997357,
+          "same_installed_policy": true,
+          "actual_plan_id": 141,
+          "position_difference_max": 0.0001504392131252974,
+          "velocity_difference_max": 0.021478473675924148,
+          "joint_position_difference_rad": 0.0001504392131252974,
+          "joint_velocity_difference_rad_s": 0.021478473675924148,
+          "native_actual_target_difference_rad": 8.29244449215144e-06,
+          "native_effective_feedback_rad": 0.0013887082628225155,
+          "actual_effective_feedback_rad": 0.0013981390651881473,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0013887082628225578,
+          "actual_held_vs_feedforward_rad": 0.0013969994951565923,
+          "actual_foot_contacts": [
+            1,
+            0,
+            1,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.05867951397390514,
+          "native_adjacent_PD_torque_jump_Nm": 3.26475078825048,
+          "actual_adjacent_target_jump_rad": 0.05868065357208252,
+          "actual_adjacent_actuator_torque_jump_Nm": 3.2988262700262823,
+          "native_actual_feedback_difference_rad": 9.479527383248897e-06,
+          "state_delta_reconstruction_error": 1.734723475976807e-18,
+          "feedback_reconstruction_error": 9.215718466126788e-19,
+          "interpolated_K_max": 3214.2964538559872
+        },
+        {
+          "node": 10,
+          "time_s": 2.6999999999997355,
+          "same_installed_policy": false,
+          "actual_plan_id": 142,
+          "position_difference_max": 0.00017921509885021614,
+          "velocity_difference_max": 0.02335595969112364,
+          "joint_position_difference_rad": 0.00017921509885021614,
+          "joint_velocity_difference_rad_s": 0.02335595969112364,
+          "native_actual_target_difference_rad": 0.035788812324442976,
+          "native_effective_feedback_rad": 0.007745013965804642,
+          "actual_effective_feedback_rad": 0.04353377306761633,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.007745013965804626,
+          "actual_held_vs_feedforward_rad": 0.0435338262902476,
+          "actual_foot_contacts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.04221643036124485,
+          "native_adjacent_PD_torque_jump_Nm": 3.749891963333411,
+          "actual_adjacent_target_jump_rad": 0.05324959754943848,
+          "actual_adjacent_actuator_torque_jump_Nm": 4.311204489757925
+        },
+        {
+          "node": 11,
+          "time_s": 2.7019999999997353,
+          "same_installed_policy": false,
+          "actual_plan_id": 142,
+          "position_difference_max": 0.0002165015821766758,
+          "velocity_difference_max": 0.05666288154129007,
+          "joint_position_difference_rad": 0.0002165015821766758,
+          "joint_velocity_difference_rad_s": 0.05666288154129007,
+          "native_actual_target_difference_rad": 0.3467300176012844,
+          "native_effective_feedback_rad": 0.07551150508762286,
+          "actual_effective_feedback_rad": 0.422241673388469,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.07551150508762294,
+          "actual_held_vs_feedforward_rad": 0.42224152268890736,
+          "actual_foot_contacts": [
+            1,
+            0,
+            1,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.07050873254359313,
+          "native_adjacent_PD_torque_jump_Nm": 4.646933413248652,
+          "actual_adjacent_target_jump_rad": 0.38144993782043457,
+          "actual_adjacent_actuator_torque_jump_Nm": 23.015058056727952
+        },
+        {
+          "node": 12,
+          "time_s": 2.703999999999735,
+          "same_installed_policy": false,
+          "actual_plan_id": 142,
+          "position_difference_max": 0.0003388854434016597,
+          "velocity_difference_max": 0.22726131682374373,
+          "joint_position_difference_rad": 0.0003388854434016597,
+          "joint_velocity_difference_rad_s": 0.22726131682374373,
+          "native_actual_target_difference_rad": 0.027566634479355256,
+          "native_effective_feedback_rad": 0.005667811595532039,
+          "actual_effective_feedback_rad": 0.033234487689566855,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.00566781159553198,
+          "actual_held_vs_feedforward_rad": 0.033234446074887236,
+          "actual_foot_contacts": [
+            1,
+            0,
+            1,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.07498265623845213,
+          "native_adjacent_PD_torque_jump_Nm": 4.500494879198777,
+          "actual_adjacent_target_jump_rad": 0.4492793083190918,
+          "actual_adjacent_actuator_torque_jump_Nm": 27.828276351346602
+        },
+        {
+          "node": 14,
+          "time_s": 2.7079999999997346,
+          "same_installed_policy": false,
+          "actual_plan_id": 142,
+          "position_difference_max": 0.001057772485172137,
+          "velocity_difference_max": 0.18259118646135641,
+          "joint_position_difference_rad": 0.001057772485172137,
+          "joint_velocity_difference_rad_s": 0.18259118646135641,
+          "native_actual_target_difference_rad": 0.06440933029108198,
+          "native_effective_feedback_rad": 0.015286732505697773,
+          "actual_effective_feedback_rad": 0.07969549513141598,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.015286732505697787,
+          "actual_held_vs_feedforward_rad": 0.07969606279677977,
+          "actual_foot_contacts": [
+            0,
+            0,
+            1,
+            0
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.04028946069724407,
+          "native_adjacent_PD_torque_jump_Nm": 2.8974102675429423,
+          "actual_adjacent_target_jump_rad": 0.0737568736076355,
+          "actual_adjacent_actuator_torque_jump_Nm": 5.417323502964934
+        }
+      ],
+      "interpretation_note": "Node10 at +20ms may use a newly replanned physical policy. Compare target/feedback causally only where same_installed_policy=true. Short flight is legal, not a task failure criterion."
+    },
+    {
+      "case": "w45-b",
+      "call_id": 158,
+      "plan_id": 144,
+      "origin_s": 2.739999999999731,
+      "source": "nominal_3",
+      "comparison_tolerance": 3.998682554548153e-11,
+      "incumbent_candidate": "candidate000",
+      "incumbent_current_cost": 0.31972310614899246,
+      "incumbent_cost_terms": {
+        "Upright": 0.05268527960788279,
+        "Height": 0.00838424605877791,
+        "Position": 0.00924587598139182,
+        "Gait": 0.016503281603700563,
+        "Balance": 0.00042062165735532266,
+        "Effort": 0.06411793302537294,
+        "Posture": 0.0032066019834820158,
+        "Orientation": 0.003954174710552835,
+        "Angmom": 0.0,
+        "StandLinearVelocity": 0.0,
+        "StandAngularVelocity": 0.0,
+        "StandAbsoluteHeight": 0.0,
+        "StandFootPosition": 0.0,
+        "StandFootVelocity": 0.0,
+        "StandSupportForce": 0.0,
+        "LandingVelocity": 0.0,
+        "LandingIndentation": 0.0,
+        "MaterialSupportHeight": 0.16120509152047557,
+        "MaterialDomainMargin": 0.0,
+        "TrunkClearance": 7.197897116959364e-16,
+        "ImpactMargin": 0.0
+      },
+      "best_nominal": {
+        "candidate": "candidate004",
+        "kind": 0,
+        "slot": 3,
+        "alpha": 0.013335214321633242,
+        "feedback_scale": 0.013335214321633242,
+        "native_cost": 0.12416392144917256,
+        "trunk_violation": 0.0,
+        "cost_terms": {
+          "Upright": 0.01246398584400522,
+          "Height": 0.005259134686664373,
+          "Position": 0.007008158877645259,
+          "Gait": 0.0027587185798412348,
+          "Balance": 0.00040123275453214413,
+          "Effort": 0.02158688599859896,
+          "Posture": 0.0007103486723222896,
+          "Orientation": 0.00010404529906947818,
+          "Angmom": 0.0,
+          "StandLinearVelocity": 0.0,
+          "StandAngularVelocity": 0.0,
+          "StandAbsoluteHeight": 0.0,
+          "StandFootPosition": 0.0,
+          "StandFootVelocity": 0.0,
+          "StandSupportForce": 0.0,
+          "LandingVelocity": 0.0,
+          "LandingIndentation": 0.0,
+          "MaterialSupportHeight": 0.07387141073649289,
+          "MaterialDomainMargin": 0.0,
+          "TrunkClearance": 7.465380675284246e-16,
+          "ImpactMargin": 0.0
+        },
+        "cost_recompute_error": 4.163336342344337e-17,
+        "predicted_dx_m": 0.00035414207364459216,
+        "predicted_dy_m": -0.014786682270346328,
+        "base_z_min_max_m": [
+          0.2591852641672452,
+          0.2966968468441281
+        ],
+        "base_vz_min_max_m_s": [
+          -0.4587390026726805,
+          0.4213835553323116
+        ],
+        "terminal_z_vz": [
+          0.2962636151066844,
+          -0.09166078778020494
+        ],
+        "nofoot_zero_native_and_proxy_force_nodes": 74,
+        "nofoot_intervals_at_2ms_nodes": [
+          {
+            "first_sample_s": 2.769999999999728,
+            "last_sample_s": 2.8159999999997227,
+            "samples": 24
+          },
+          {
+            "first_sample_s": 2.8199999999997223,
+            "last_sample_s": 2.831999999999721,
+            "samples": 7
+          },
+          {
+            "first_sample_s": 2.847999999999719,
+            "last_sample_s": 2.867999999999717,
+            "samples": 11
+          },
+          {
+            "first_sample_s": 2.875999999999716,
+            "last_sample_s": 2.875999999999716,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.887999999999715,
+            "last_sample_s": 2.887999999999715,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.895999999999714,
+            "last_sample_s": 2.895999999999714,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.9079999999997126,
+            "last_sample_s": 2.9079999999997126,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.9199999999997113,
+            "last_sample_s": 2.9199999999997113,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.9279999999997104,
+            "last_sample_s": 2.9279999999997104,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.9339999999997097,
+            "last_sample_s": 2.939999999999709,
+            "samples": 4
+          },
+          {
+            "first_sample_s": 2.947999999999708,
+            "last_sample_s": 2.947999999999708,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 3.003999999999702,
+            "last_sample_s": 3.003999999999702,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 3.0519999999996967,
+            "last_sample_s": 3.0899999999996925,
+            "samples": 20
+          }
+        ],
+        "native_K_max": 86331.88202328248,
+        "reference_origin_s": 2.7199999999997333
+      },
+      "selected": {
+        "candidate": "candidate004",
+        "kind": 0,
+        "slot": 3,
+        "alpha": 0.013335214321633242,
+        "feedback_scale": 0.013335214321633242,
+        "native_cost": 0.12416392144917256,
+        "trunk_violation": 0.0,
+        "cost_terms": {
+          "Upright": 0.01246398584400522,
+          "Height": 0.005259134686664373,
+          "Position": 0.007008158877645259,
+          "Gait": 0.0027587185798412348,
+          "Balance": 0.00040123275453214413,
+          "Effort": 0.02158688599859896,
+          "Posture": 0.0007103486723222896,
+          "Orientation": 0.00010404529906947818,
+          "Angmom": 0.0,
+          "StandLinearVelocity": 0.0,
+          "StandAngularVelocity": 0.0,
+          "StandAbsoluteHeight": 0.0,
+          "StandFootPosition": 0.0,
+          "StandFootVelocity": 0.0,
+          "StandSupportForce": 0.0,
+          "LandingVelocity": 0.0,
+          "LandingIndentation": 0.0,
+          "MaterialSupportHeight": 0.07387141073649289,
+          "MaterialDomainMargin": 0.0,
+          "TrunkClearance": 7.465380675284246e-16,
+          "ImpactMargin": 0.0
+        },
+        "cost_recompute_error": 4.163336342344337e-17,
+        "predicted_dx_m": 0.00035414207364459216,
+        "predicted_dy_m": -0.014786682270346328,
+        "base_z_min_max_m": [
+          0.2591852641672452,
+          0.2966968468441281
+        ],
+        "base_vz_min_max_m_s": [
+          -0.4587390026726805,
+          0.4213835553323116
+        ],
+        "terminal_z_vz": [
+          0.2962636151066844,
+          -0.09166078778020494
+        ],
+        "nofoot_zero_native_and_proxy_force_nodes": 74,
+        "nofoot_intervals_at_2ms_nodes": [
+          {
+            "first_sample_s": 2.769999999999728,
+            "last_sample_s": 2.8159999999997227,
+            "samples": 24
+          },
+          {
+            "first_sample_s": 2.8199999999997223,
+            "last_sample_s": 2.831999999999721,
+            "samples": 7
+          },
+          {
+            "first_sample_s": 2.847999999999719,
+            "last_sample_s": 2.867999999999717,
+            "samples": 11
+          },
+          {
+            "first_sample_s": 2.875999999999716,
+            "last_sample_s": 2.875999999999716,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.887999999999715,
+            "last_sample_s": 2.887999999999715,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.895999999999714,
+            "last_sample_s": 2.895999999999714,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.9079999999997126,
+            "last_sample_s": 2.9079999999997126,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.9199999999997113,
+            "last_sample_s": 2.9199999999997113,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.9279999999997104,
+            "last_sample_s": 2.9279999999997104,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 2.9339999999997097,
+            "last_sample_s": 2.939999999999709,
+            "samples": 4
+          },
+          {
+            "first_sample_s": 2.947999999999708,
+            "last_sample_s": 2.947999999999708,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 3.003999999999702,
+            "last_sample_s": 3.003999999999702,
+            "samples": 1
+          },
+          {
+            "first_sample_s": 3.0519999999996967,
+            "last_sample_s": 3.0899999999996925,
+            "samples": 20
+          }
+        ],
+        "native_K_max": 86331.88202328248,
+        "reference_origin_s": 2.7199999999997333
+      },
+      "selected_installed_max_errors": {
+        "accepted_states": 0.0,
+        "accepted_actions": 0.0,
+        "accepted_times": 0.0,
+        "accepted_residual": 0.0,
+        "reference_states": 0.0,
+        "reference_actions": 0.0,
+        "reference_times": 0.0,
+        "reference_residual": 0.0,
+        "K": 0.0,
+        "H": 0.0,
+        "base_Qu": 0.0,
+        "base_Qxu": 0.0,
+        "base_active": 0.0
+      },
+      "first_2ms_held_prefix": [
+        {
+          "substep": 0,
+          "time_s": 2.739999999999731,
+          "raw_PD_difference_Nm": 2.3735515148892716e-06,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 1,
+          "time_s": 2.740199999999731,
+          "raw_PD_difference_Nm": 0.015907461881738083,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 2,
+          "time_s": 2.740399999999731,
+          "raw_PD_difference_Nm": 0.028911338211654147,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 3,
+          "time_s": 2.740599999999731,
+          "raw_PD_difference_Nm": 0.03950352384514089,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 4,
+          "time_s": 2.740799999999731,
+          "raw_PD_difference_Nm": 0.04808832733826396,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 5,
+          "time_s": 2.740999999999731,
+          "raw_PD_difference_Nm": 0.0549990466836201,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 6,
+          "time_s": 2.741199999999731,
+          "raw_PD_difference_Nm": 0.06051095086852332,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 7,
+          "time_s": 2.741399999999731,
+          "raw_PD_difference_Nm": 0.06485184469202343,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 8,
+          "time_s": 2.741599999999731,
+          "raw_PD_difference_Nm": 0.0682106692573008,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "substep": 9,
+          "time_s": 2.741799999999731,
+          "raw_PD_difference_Nm": 0.07074450582932235,
+          "native_ncontact": 4,
+          "physical_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ],
+      "native_hold_target_max_variation_rad": 4.440892098500626e-16,
+      "native_prefix_clamp_max_error_Nm": 2.1316282072803006e-14,
+      "nodes": [
+        {
+          "node": 0,
+          "time_s": 2.739999999999731,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 0.0,
+          "velocity_difference_max": 0.0,
+          "joint_position_difference_rad": 0.0,
+          "joint_velocity_difference_rad_s": 0.0,
+          "native_actual_target_difference_rad": 3.955919191528379e-08,
+          "native_effective_feedback_rad": 0.0014028706853086294,
+          "actual_effective_feedback_rad": 0.0014028701082521992,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0014028706853086437,
+          "actual_held_vs_feedforward_rad": 0.0014028438391777698,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "actual_adjacent_target_jump_rad": 0.10497713088989258,
+          "actual_adjacent_actuator_torque_jump_Nm": 5.820494441374052,
+          "native_actual_feedback_difference_rad": 2.2980830720375003e-09,
+          "state_delta_reconstruction_error": 4.336808689942018e-19,
+          "feedback_reconstruction_error": 4.336808689942018e-19,
+          "interpolated_K_max": 50.248235010148974
+        },
+        {
+          "node": 1,
+          "time_s": 2.741999999999731,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 2.0745415076848725e-05,
+          "velocity_difference_max": 0.014267787233855383,
+          "joint_position_difference_rad": 2.0745415076848725e-05,
+          "joint_velocity_difference_rad_s": 0.014267787233855383,
+          "native_actual_target_difference_rad": 2.40227882897584e-06,
+          "native_effective_feedback_rad": 0.0016329456254197757,
+          "actual_effective_feedback_rad": 0.0016349754995740539,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0016329456254198238,
+          "actual_held_vs_feedforward_rad": 0.0016350775998228428,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.011695294689157532,
+          "native_adjacent_PD_torque_jump_Nm": 1.273312475394115,
+          "actual_adjacent_target_jump_rad": 0.011693239212036133,
+          "actual_adjacent_actuator_torque_jump_Nm": 1.3431936692125435,
+          "native_actual_feedback_difference_rad": 3.89761275474139e-06,
+          "state_delta_reconstruction_error": 8.673617379884035e-19,
+          "feedback_reconstruction_error": 1.0842021724855044e-19,
+          "interpolated_K_max": 59.69472161570878
+        },
+        {
+          "node": 2,
+          "time_s": 2.7439999999997307,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 5.062195110740707e-05,
+          "velocity_difference_max": 0.014376697022412122,
+          "joint_position_difference_rad": 5.062195110740707e-05,
+          "joint_velocity_difference_rad_s": 0.014376697022412122,
+          "native_actual_target_difference_rad": 6.328893452201001e-06,
+          "native_effective_feedback_rad": 0.0019172535133360157,
+          "actual_effective_feedback_rad": 0.0019223653291136362,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.001917253513336048,
+          "actual_held_vs_feedforward_rad": 0.001922349984977867,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.029123530440985843,
+          "native_adjacent_PD_torque_jump_Nm": 2.5308644022534623,
+          "actual_adjacent_target_jump_rad": 0.029122237116098404,
+          "actual_adjacent_actuator_torque_jump_Nm": 2.5370150628514287,
+          "native_actual_feedback_difference_rad": 6.1993263423517145e-06,
+          "state_delta_reconstruction_error": 4.336808689942018e-19,
+          "feedback_reconstruction_error": 2.168404344971009e-19,
+          "interpolated_K_max": 72.10677906051754
+        },
+        {
+          "node": 3,
+          "time_s": 2.7459999999997304,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 6.64701556234732e-05,
+          "velocity_difference_max": 0.005675684015588711,
+          "joint_position_difference_rad": 6.64701556234732e-05,
+          "joint_velocity_difference_rad_s": 0.005675684015588711,
+          "native_actual_target_difference_rad": 1.052957511604724e-05,
+          "native_effective_feedback_rad": 0.0022895884150158263,
+          "actual_effective_feedback_rad": 0.0022981247478597007,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0022895884150158086,
+          "actual_held_vs_feedforward_rad": 0.0022980552449174407,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.015141805756018109,
+          "native_adjacent_PD_torque_jump_Nm": 0.8280009932589617,
+          "actual_adjacent_target_jump_rad": 0.015144488774240017,
+          "actual_adjacent_actuator_torque_jump_Nm": 0.8180107846086386,
+          "native_actual_feedback_difference_rad": 1.1003365446341472e-05,
+          "state_delta_reconstruction_error": 8.673617379884035e-19,
+          "feedback_reconstruction_error": 6.505213034913027e-19,
+          "interpolated_K_max": 88.82092159495951
+        },
+        {
+          "node": 4,
+          "time_s": 2.74799999999973,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 7.121355096061446e-05,
+          "velocity_difference_max": 0.0056055214679060494,
+          "joint_position_difference_rad": 7.121355096061446e-05,
+          "joint_velocity_difference_rad_s": 0.0056055214679060494,
+          "native_actual_target_difference_rad": 1.8369555007335947e-05,
+          "native_effective_feedback_rad": 0.0027977036093464005,
+          "actual_effective_feedback_rad": 0.0028106616199346343,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0027977036093465024,
+          "actual_held_vs_feedforward_rad": 0.002810775162537471,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.01665255624270867,
+          "native_adjacent_PD_torque_jump_Nm": 0.7697469028187784,
+          "actual_adjacent_target_jump_rad": 0.016644716262817383,
+          "actual_adjacent_actuator_torque_jump_Nm": 0.7549780698422701,
+          "native_actual_feedback_difference_rad": 1.7589938909822e-05,
+          "state_delta_reconstruction_error": 8.673617379884035e-19,
+          "feedback_reconstruction_error": 4.336808689942018e-19,
+          "interpolated_K_max": 112.0305328950869
+        },
+        {
+          "node": 5,
+          "time_s": 2.74999999999973,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 6.902979267336615e-05,
+          "velocity_difference_max": 0.005503974184087879,
+          "joint_position_difference_rad": 6.902979267336615e-05,
+          "joint_velocity_difference_rad_s": 0.005503974184087879,
+          "native_actual_target_difference_rad": 2.6659284226182578e-05,
+          "native_effective_feedback_rad": 0.003782045307537268,
+          "actual_effective_feedback_rad": 0.0038032595288041053,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.0037820453075372296,
+          "actual_held_vs_feedforward_rad": 0.003803254346546936,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.019967020898983723,
+          "native_adjacent_PD_torque_jump_Nm": 0.6780061848067911,
+          "actual_adjacent_target_jump_rad": 0.0199587345123291,
+          "actual_adjacent_actuator_torque_jump_Nm": 0.6726983624301397,
+          "native_actual_feedback_difference_rad": 2.670112755261394e-05,
+          "state_delta_reconstruction_error": 8.673617379884035e-19,
+          "feedback_reconstruction_error": 4.336808689942018e-19,
+          "interpolated_K_max": 145.57418855520177
+        },
+        {
+          "node": 7,
+          "time_s": 2.7539999999997296,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 7.204330348331567e-05,
+          "velocity_difference_max": 0.006538376593534956,
+          "joint_position_difference_rad": 7.204330348331567e-05,
+          "joint_velocity_difference_rad_s": 0.006538376593534956,
+          "native_actual_target_difference_rad": 6.815844773333524e-05,
+          "native_effective_feedback_rad": 0.008383218891190156,
+          "actual_effective_feedback_rad": 0.008440409992959788,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.008383218891190092,
+          "actual_held_vs_feedforward_rad": 0.008440844694374228,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.02942353410236276,
+          "native_adjacent_PD_torque_jump_Nm": 0.9108989530998244,
+          "actual_adjacent_target_jump_rad": 0.02940058708190918,
+          "actual_adjacent_actuator_torque_jump_Nm": 0.9057021141450434,
+          "native_actual_feedback_difference_rad": 6.790625885192726e-05,
+          "state_delta_reconstruction_error": 1.734723475976807e-18,
+          "feedback_reconstruction_error": 1.3010426069826053e-18,
+          "interpolated_K_max": 280.4483727667555
+        },
+        {
+          "node": 9,
+          "time_s": 2.757999999999729,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 9.403303432242716e-05,
+          "velocity_difference_max": 0.009674439473461069,
+          "joint_position_difference_rad": 9.403303432242716e-05,
+          "joint_velocity_difference_rad_s": 0.009674439473461069,
+          "native_actual_target_difference_rad": 0.0001939967769708506,
+          "native_effective_feedback_rad": 0.027508933322000873,
+          "actual_effective_feedback_rad": 0.027696161685828075,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.027508933322000884,
+          "actual_held_vs_feedforward_rad": 0.027697652034058606,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.036251215613753135,
+          "native_adjacent_PD_torque_jump_Nm": 3.0267447287383815,
+          "actual_adjacent_target_jump_rad": 0.0362183153629303,
+          "actual_adjacent_actuator_torque_jump_Nm": 3.07550506578003,
+          "native_actual_feedback_difference_rad": 0.00019392411467269825,
+          "state_delta_reconstruction_error": 1.734723475976807e-18,
+          "feedback_reconstruction_error": 3.469446951953614e-18,
+          "interpolated_K_max": 789.643507507037
+        },
+        {
+          "node": 10,
+          "time_s": 2.759999999999729,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 0.00010576978039944507,
+          "velocity_difference_max": 0.00859731092685867,
+          "joint_position_difference_rad": 0.00010576978039944507,
+          "joint_velocity_difference_rad_s": 0.00859731092685867,
+          "native_actual_target_difference_rad": 0.00047985741414358074,
+          "native_effective_feedback_rad": 0.06759018607500852,
+          "actual_effective_feedback_rad": 0.06806998887794317,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.06759018607500855,
+          "actual_held_vs_feedforward_rad": 0.06807004348915213,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.057050727326290684,
+          "native_adjacent_PD_torque_jump_Nm": 3.3611404482977605,
+          "actual_adjacent_target_jump_rad": 0.057105422019958496,
+          "actual_adjacent_actuator_torque_jump_Nm": 3.3583459066251677,
+          "native_actual_feedback_difference_rad": 0.00047980280293462296,
+          "state_delta_reconstruction_error": 3.469446951953614e-18,
+          "feedback_reconstruction_error": 2.7755575615628914e-17,
+          "interpolated_K_max": 1909.0695910875531
+        },
+        {
+          "node": 11,
+          "time_s": 2.7619999999997287,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 0.0001125558073971078,
+          "velocity_difference_max": 0.009464358198400191,
+          "joint_position_difference_rad": 0.0001125558073971078,
+          "joint_velocity_difference_rad_s": 0.009464358198400191,
+          "native_actual_target_difference_rad": 0.006874128735644192,
+          "native_effective_feedback_rad": 0.7361502473370757,
+          "actual_effective_feedback_rad": 0.7404436779552449,
+          "actual_projection_rad": 0.39586175001074997,
+          "native_held_vs_feedforward_rad": 0.8654931099965806,
+          "actual_held_vs_feedforward_rad": 0.8723672387322248,
+          "actual_foot_contacts": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.8640292840526449,
+          "native_adjacent_PD_torque_jump_Nm": 52.13089127371309,
+          "actual_adjacent_target_jump_rad": 0.8704235553741455,
+          "actual_adjacent_actuator_torque_jump_Nm": 52.50302413291489,
+          "native_actual_feedback_difference_rad": 0.004293430618169336,
+          "state_delta_reconstruction_error": 3.469446951953614e-18,
+          "feedback_reconstruction_error": 1.1102230246251565e-16,
+          "interpolated_K_max": 7592.715519683829
+        },
+        {
+          "node": 12,
+          "time_s": 2.7639999999997285,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 0.000253503940828681,
+          "velocity_difference_max": 0.10477420728792142,
+          "joint_position_difference_rad": 0.000253503940828681,
+          "joint_velocity_difference_rad_s": 0.10477420728792142,
+          "native_actual_target_difference_rad": 0.03002100097826199,
+          "native_effective_feedback_rad": 0.7442466575378123,
+          "actual_effective_feedback_rad": 0.7523127467916254,
+          "actual_projection_rad": 0.7299898099474948,
+          "native_held_vs_feedforward_rad": 0.6812025138218167,
+          "actual_held_vs_feedforward_rad": 0.7112235148000787,
+          "actual_foot_contacts": [
+            1,
+            1,
+            0,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 1.2362887437472905,
+          "native_adjacent_PD_torque_jump_Nm": 85.17338893320306,
+          "actual_adjacent_target_jump_rad": 1.23586905002594,
+          "actual_adjacent_actuator_torque_jump_Nm": 85.60561039685541,
+          "native_actual_feedback_difference_rad": 0.008066089253813247,
+          "state_delta_reconstruction_error": 1.734723475976807e-18,
+          "feedback_reconstruction_error": 1.1102230246251565e-16,
+          "interpolated_K_max": 37201.36480277078
+        },
+        {
+          "node": 14,
+          "time_s": 2.767999999999728,
+          "same_installed_policy": true,
+          "actual_plan_id": 144,
+          "position_difference_max": 0.0007367181475242766,
+          "velocity_difference_max": 0.08544439423494454,
+          "joint_position_difference_rad": 0.0007367181475242766,
+          "joint_velocity_difference_rad_s": 0.08544439423494454,
+          "native_actual_target_difference_rad": 0.001022933922656094,
+          "native_effective_feedback_rad": 0.11116120957520519,
+          "actual_effective_feedback_rad": 0.1121753159438489,
+          "actual_projection_rad": 0.0,
+          "native_held_vs_feedforward_rad": 0.11116120957520519,
+          "actual_held_vs_feedforward_rad": 0.11218414349786128,
+          "actual_foot_contacts": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "nominal_PD_same_actual_state_excess_Nm": 0.0,
+          "native_adjacent_target_jump_rad": 0.696921727774422,
+          "native_adjacent_PD_torque_jump_Nm": 49.49433889615306,
+          "actual_adjacent_target_jump_rad": 0.6985089778900146,
+          "actual_adjacent_actuator_torque_jump_Nm": 49.86299524783357,
+          "native_actual_feedback_difference_rad": 0.0010141063686437135,
+          "state_delta_reconstruction_error": 3.469446951953614e-18,
+          "feedback_reconstruction_error": 1.214306433183765e-17,
+          "interpolated_K_max": 3553.613257571404
+        }
+      ],
+      "interpretation_note": "Node10 at +20ms may use a newly replanned physical policy. Compare target/feedback causally only where same_installed_policy=true. Short flight is legal, not a task failure criterion."
+    }
+  ]
+}
