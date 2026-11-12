@@ -28,8 +28,7 @@ def deliver(name,roots):
  catalog=[];manifest=[];paths=[]
  for root in roots:
   paths.extend([root] if root.is_file() else sorted(p for p in root.rglob('*') if p.is_file()))
- # Current transport buffers are retained at source; historical snapshots carry complete event objects.
- paths=[p for p in paths if not p.name.startswith('r29-current-plan.bin') and p.name not in ('MUJOCO_LOG.TXT',)]
+ # Preserve generated originals, including the explicitly current transport buffers.
  groups=[];group=[];size=0
  for p in paths:
   if group and size+p.stat().st_size>256*1024**2:groups.append(group);group=[];size=0
