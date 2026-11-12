@@ -4,7 +4,7 @@
 
 先读 [当前主计划](docs/TERRAIN_MEMORY_PLAN.md)、[W44最终原件审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W44-final-review/README.md)、[W45稳定性计划](docs/S1_W45_STABILITY_PLAN.md)、[完整启动提示词](docs/S1_W45_START_PROMPT.md)。当前用户要求先解决稳定运行，尽可能双CPU/GPU并行、无后台固定墙钟完成时间、GitHub发布后不再电脑归档。本文件及用户最新要求覆盖历史启动/归档/自动清理规则。
 
-**W44已完成；W45/r34已实现、正常构建并完成四保存问题有限比较，新evaluation-only phase已声明，尚待本次发布后启动。** 实现提交20f7071，构建与机制证据见results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/；新入口scripts/run_s1_go2_w45.py。根r12/W44配置及旧r33保留；新增PPO样本/更新0。实时状态以w45/phase.json、w45-a.json、w45-b.json、gpu.json为准，不重启旧W44/G5。
+**W44已完成；W45/r34已实现、正常构建并完成四保存问题有限比较，新evaluation-only phase已声明并于北京时间18:39:47启动，两条真实物理时间/记录持续增长。GPU四问题已自然完成，平均top4召回0.25，漏掉2/4 native最优，暂不支持在线替换。** 实现提交20f7071，构建与机制证据见results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/；新入口scripts/run_s1_go2_w45.py。根r12/W44配置及旧r33保留；新增PPO样本/更新0。实时状态以w45/phase.json、w45-a.json、w45-b.json、gpu.json为准，不重启旧W44/G5。
 
 - 结果基点 `69d5a6ff2aa9803fddc8ac3a78a906008ea526c6`。W44-A `job-20261110T143358Z-w44-a` / ep00428；B `job-20261110T143400Z-w44-b` / ep00417。各+512/2到14737/57、tail0、excluded145。
 - 35个实际训练回合：32物理失败、3有效截断；另2次零物理步初始化失败。18条unavailable是两次attempt各9类未生成记录，不是18次实验失败。材料加载9/6回合，合法去返/往返0。

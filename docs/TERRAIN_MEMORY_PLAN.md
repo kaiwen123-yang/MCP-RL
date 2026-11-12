@@ -1,6 +1,6 @@
 # 地面材料记忆主计划：W44完成，W45先建立控制稳定性
 
-更新：2026-11-12（北京时间）。结果基点 `69d5a6ff2aa9803fddc8ac3a78a906008ea526c6`。r34已在D57正常构建，四问题有限比较完成，W45新evaluation-only phase已声明。具体运行状态以w45/phase.json和逐流结果为准；旧r33/W44冻结结果和根运行配置保留。
+更新：2026-11-12（北京时间）。结果基点 `69d5a6ff2aa9803fddc8ac3a78a906008ea526c6`。r34已在D57正常构建，四问题有限比较完成，W45新evaluation-only phase已启动并有双流物理时间/记录增长；GPU四问题自然完成，top4召回平均0.25，2/4最优漏选。具体运行状态以w45/phase.json和逐流结果为准；旧r33/W44冻结结果和根运行配置保留。
 
 [W44原件审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W44-final-review/README.md) · [W45实施计划](S1_W45_STABILITY_PLAN.md) · [完整启动提示词](S1_W45_START_PROMPT.md) · [执行规则](../AGENTS.md)
 

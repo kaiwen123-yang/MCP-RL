@@ -35,7 +35,7 @@ A/B固定各自update57 Actor与归一化，直接并行运行原E30→E60→E30
 
 默认CPU10+10 workers、GPU host2、约3核余量；25核/96GB是历史总容量，实际以现场为准。PANN/Actor也共用GPU，不以显存占满衡量有效工作。
 
-**W45实施已完成：r34正常构建、四保存问题旧/新比较与同输入重评分完成，新evaluation-only phase已声明，首次发布后启动。** [实际构建与机制证据](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/phase.json)；实现20f7071。A/B固定自身14737/update57，新增PPO0/0。旧r33/W44根配置不改；逐流原任务结果与GPU价值以新实际记录为准。
+**W45实施已完成：r34正常构建、四保存问题旧/新比较与同输入重评分完成，新evaluation-only phase已启动，双流真实物理时间和记录已持续增长。GPU四问题已完成，平均top4召回0.25、2/4最优漏选，作为有限负结果交付。** [实际构建与机制证据](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/phase.json)；实现20f7071。A/B固定自身14737/update57，新增PPO0/0。旧r33/W44根配置不改；逐流原任务结果与GPU价值以新实际记录为准。
 
 ### 后台与交付约定
 
