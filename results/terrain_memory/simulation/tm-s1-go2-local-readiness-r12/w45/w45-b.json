@@ -15,7 +15,7 @@
     {
       "level": "E30",
       "attempt": "job-20261112T103825Z-w45-b-eval-PANN_PPO_S5-s2-E30-attempt01",
-      "status": "running",
+      "status": "physical_material_failure",
       "command": [
         "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
         "-u",
@@ -40,7 +40,67 @@
         "nominal"
       ],
       "started_unix_s": 1794479987.8716097,
-      "pid": 929019
+      "pid": 929019,
+      "exit_code": 0,
+      "ended_unix_s": 1794481019.0210986,
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261112T103825Z-w45-b-eval-PANN_PPO_S5-s2-E30-attempt01.json",
+      "success": false,
+      "reason": "body_fall",
+      "simulation_s": 5.582000000002931,
+      "wall_s": 1020.1660144627094,
+      "qualification": {
+        "predecessor_attempt": null,
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "858dd664e6425cb7ef50e0da96095c3e225e73f788776d5fe1b27fcc3cdb95fe",
+        "solver_workers": 10,
+        "worker_setting_checked_against_predecessor": false
+      },
+      "legal_route": {
+        "reward_version": "W38_legal_route_terminal_settlement",
+        "progress": 0.0,
+        "completed_roundtrips": 0,
+        "legal_outbound_traversals": 0,
+        "legal_return_traversals": 0,
+        "side_exits": 0,
+        "raw_roundtrips": 0,
+        "passages": [
+          {
+            "lap": 1,
+            "direction": "outbound",
+            "entry_s": null,
+            "exit_s": null,
+            "lateral_exit_s": null,
+            "material_loaded": false,
+            "completed": false,
+            "terminal_closed_s": 5.582000000002931
+          }
+        ],
+        "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+      },
+      "material_progress": {
+        "far_arrival_s": null,
+        "return_start_s": null,
+        "actual_route_fraction": 0.047373886536599755,
+        "full_observation": false,
+        "actual_material_loaded": false,
+        "material_traversal": {
+          "completed": false,
+          "west_entry_s": null,
+          "east_exit_s": null,
+          "lateral_exit_s": null,
+          "max_abs_base_y_during_crossing_m": null,
+          "material_loaded_during_crossing": false,
+          "original_strip_x_m": [
+            0.8,
+            2.2
+          ],
+          "original_strip_y_m": [
+            -0.6,
+            0.6
+          ],
+          "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+        }
+      }
     }
   ]
 }
