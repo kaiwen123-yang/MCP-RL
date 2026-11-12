@@ -1,6 +1,6 @@
 # W45 完整 Codex 启动提示词
 
-日期：2026-11-12。配套 [W45稳定性计划](S1_W45_STABILITY_PLAN.md) 与 [W44原件审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W44-final-review/README.md)。当前仅交付分析和计划，r34/W45 尚未实施或运行。
+日期：2026-11-12。配套 [W45稳定性计划](S1_W45_STABILITY_PLAN.md) 与 [W44原件审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W44-final-review/README.md)。本启动提示词原文保留；2026-11-12执行端已完成r34实现/构建/有限证据和新phase声明。续接先读w45/phase.json及逐流状态，勿重复--declare或重启已运行进程。
 
 以下全文可交给能够连接 D57 的 Codex，执行本轮控制修正、双 CPU 原任务评价和 GPU 独立支线。
 

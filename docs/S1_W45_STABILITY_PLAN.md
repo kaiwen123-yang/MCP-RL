@@ -2,7 +2,9 @@
 
 日期：2026-11-12（北京时间）。依据：W44 完成交付 `69d5a6ff2aa9803fddc8ac3a78a906008ea526c6`，以及 [W44 最终原件审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W44-final-review/README.md)。
 
-**状态：本文件是下一轮待实施计划。S5-r34 尚未实现、构建或运行；W45 尚未声明或启动。本次审查没有连接 D57、启动实验或修改冻结 r33 运行配置。** 用户已要求把下一步方案与启动提示词推送到 GitHub；执行端 Codex 按 [启动提示词](S1_W45_START_PROMPT.md) 完成实施和实际运行。
+**实施更新（2026-11-12）：r34已正常构建，四保存问题有限比较与同输入重评分已完成；W45两条evaluation-only job已声明，首次发布后启动。** 实现提交20f7071；[构建](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/build.json)、[机制证据](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/mechanism-evidence.json)、[phase](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w45/phase.json)。严格规则保留A163/B173共同上下文的完整incumbent，A158仍接受正alpha=1；B153 scale0保留。保存的是输出策略，不能把保留既有scale1误称为重建历史输入并消除历史反馈。历史archive重判另示两alpha0应保留nominal。
+
+八次同输入完整策略评分差异均为0，单策略FP64预算1.9199e-11至2.8625e-11；不作为物理容差。最终有效348次native rollout，另保留两次旧规则诊断分支修正前的60次，共408次；无真实plant回合、无PPO样本。两次重算仅纠正legacy分支surprise语义，strict执行路径未改变，未扩参数网格。GPU完整32候选推进及CPU最终确认代码已接通，实际价值仍待独立运行。
 
 ## 1. 本轮要回答什么
 
