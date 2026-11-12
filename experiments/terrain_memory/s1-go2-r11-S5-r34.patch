@@ -1,0 +1,294 @@
+--- a/mjpc/planners/ilqg/planner.h
++++ b/mjpc/planners/ilqg/planner.h
+@@ -87,7 +87,12 @@
+   void FeedbackRollouts(int horizon, ThreadPool& pool);
+ 
+   // return index of trajectory with best rollout
+-  int BestRollout();
++  int BestRollout(int preferred=-1, bool action_search=false);
++  bool r34_enabled=true;
++  double R34Budget(const Trajectory& tr) const;
++  bool R34Better(const Trajectory& candidate,const Trajectory& baseline) const;
++  void R34ScoreOnly(int horizon,ThreadPool& pool);
++  std::vector<std::string> r34_decisions;
+ 
+   void UpdateNumTrajectoriesFromGUI();
+ 
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -13,6 +13,7 @@
+ // limitations under the License.
+ 
+ #include "mjpc/planners/ilqg/planner.h"
++#include <limits>
+ #include "mjpc/planners/ilqg/r29_projection.h"
+ 
+ #include <algorithm>
+@@ -280,6 +281,51 @@
+ }
+ 
+ 
++// FP64 budget for the existing sequential norm/term/time summations.
++// The smooth-norm subtraction envelope is retained even when J is tiny.
++// This is cost arithmetic resolution, never a tolerance on trunk violation.
++double iLQGPlanner::R34Budget(const Trajectory& tr) const {
++  const double unit=std::numeric_limits<double>::epsilon()/2.;
++  const double n=tr.horizon*(8.*task->num_residual+4.*task->num_term+2.)+1.;
++  const double gamma=n*unit/(1.-n*unit);
++  double magnitude=0,terms[kMaxCostTerms];
++  for(int t=0;t<tr.horizon;++t) {
++    task->CostTerms(terms,tr.residual.data()+t*task->num_residual);
++    for(int k=0;k<task->num_term;++k)magnitude+=std::abs(terms[k])/tr.horizon;
++  }
++  int offset=0;
++  for(int k=0;k<task->num_term;++k) {
++    if(task->norm[k]==2 || task->norm[k]==6)
++      magnitude+=2.*std::abs(task->weight[k]*task->norm_parameter[offset])*
++        (task->norm[k]==6?task->dim_norm_residual[k]:1);
++    offset+=task->num_norm_parameter[k];
++  }
++  return gamma*magnitude;
++}
++bool iLQGPlanner::R34Better(const Trajectory& a,const Trajectory& b) const {
++  if(a.failure || !std::isfinite(a.total_return) || !std::isfinite(a.trunk_violation))return false;
++  if(b.failure || !std::isfinite(b.total_return) || !std::isfinite(b.trunk_violation))return true;
++  return a.trunk_violation<b.trunk_violation ||
++    (a.trunk_violation==b.trunk_violation &&
++     b.total_return-a.total_return>(r34_enabled?R34Budget(a)+R34Budget(b):0.));
++}
++// Offline only: score the imported complete policy, with no optimization.
++// Repeated calls re-import the requested file into the same native process.
++void iLQGPlanner::R34ScoreOnly(int horizon,ThreadPool& pool) {
++  ResizeMjData(model,pool.NumThreads());
++  auto action=[&](double* u,const double* x,double t) {
++    bool changed,failed,restored;
++    policy.ActionImpl(u,x,t,false,&changed,&failed,&restored);
++    r29_failed[0]+=failed;
++  };
++  r29_failed[0]=0;
++  trajectory[0].Rollout(action,task,model,data_[0].get(),state.data(),time,mocap.data(),userdata.data(),horizon);
++  if(r29_failed[0])trajectory[0].failure=true;
++  R33Consider(policy,trajectory[0],horizon,3,0,policy.action_step_alpha,"offline_score_only");
++  r32.deployable=r33_archive_valid;
++  if(r33_archive_valid)R33WriteSnapshot(horizon);
++}
++
+ void iLQGPlanner::R33Import(int horizon) {
+   if(r33_imported)return;
+   r33_imported=true;
+@@ -310,13 +356,23 @@
+                    std::isfinite(tr.trunk_violation);
+   // Alpha search retains the original strict native acceptance even when
+   // startup has no deployable metric. All candidates are still recorded.
+-  const bool eligible=kind!=1 ||
+-    tr.trunk_violation<r33_nominal_trajectory.trunk_violation ||
+-    (tr.trunk_violation==r33_nominal_trajectory.trunk_violation &&
+-     tr.total_return<r33_nominal_trajectory.total_return);
+-  if(valid && eligible && (!r33_archive_valid || tr.trunk_violation<r33_archive_trajectory.trunk_violation ||
+-     (tr.trunk_violation==r33_archive_trajectory.trunk_violation &&
+-      tr.total_return<r33_archive_trajectory.total_return))) {
++  const bool eligible=kind!=1 || ((!r34_enabled || alpha>0) &&
++      R34Better(tr,r33_nominal_trajectory));
++  const bool replace=valid && eligible && (!r33_archive_valid || R34Better(tr,r33_archive_trajectory));
++  if(r34_enabled) {
++    std::ostringstream d;d.precision(17);
++    d<<"{\"kind\":"<<kind<<",\"slot\":"<<slot<<",\"alpha\":"<<alpha
++     <<",\"source\":\""<<source<<"\",\"baseline_source\":\""<<r33_source
++     <<"\",\"eligible\":"<<(eligible?"true":"false")<<",\"replaced\":"<<(replace?"true":"false")
++     <<",\"reason\":\""<<(kind==1 && alpha==0?"alpha0_no_step":
++       (!valid?"invalid":(replace?"resolved_improvement_or_first_baseline":"tie_or_no_improvement")))
++     <<"\",\"comparison_tolerance\":";
++    if(valid && r33_archive_valid)d<<R34Budget(tr)+R34Budget(r33_archive_trajectory);else d<<"null";
++    d<<",\"feedback_scale\":"<<p.feedback_scaling<<",\"baseline_scale\":";
++    if(r33_archive_valid)d<<r33_archive_policy.feedback_scaling;else d<<"null";
++    d<<"}";r34_decisions.push_back(d.str());
++  }
++  if(replace) {
+     r33_archive_policy=p;r33_archive_trajectory=tr;r33_archive_valid=true;r33_source=source;
+   }
+   if(const char* path=std::getenv("MJPC_R29_SNAPSHOT")) {
+@@ -386,7 +442,17 @@
+   if(const char* mode=std::getenv("MJPC_R33_MECHANISM"))r33_mechanism=mode;
+   if(r33_mechanism!="S" && r33_mechanism!="N" && r33_mechanism!="P" && r33_mechanism!="R32")
+     mju_error("r33 unknown declared mechanism");
++  r34_enabled=!(std::getenv("MJPC_R34_ACCEPTANCE") &&
++      std::string(std::getenv("MJPC_R34_ACCEPTANCE"))=="legacy");
++  if(const char* f=std::getenv("MJPC_R34_CONTEXT")) {
++    std::ifstream in(f,std::ios::binary);std::vector<double> v;
++    double x;while(in.read(reinterpret_cast<char*>(&x),sizeof(x)))v.push_back(x);
++    if(auto* q=const_cast<QuadrupedFlat*>(dynamic_cast<const QuadrupedFlat*>(task)))
++      q->R34RestorePlanningState(v);
++  }
++  if(std::getenv("MJPC_R34_SCORE_ONLY"))r33_imported=false;
+   R33Import(horizon);
++  r34_decisions.clear();
+   r33_archive_valid=false;r33_source="none";r33_rollouts=r33_slots=r33_cache_hits=r33_derivative_passes=0;
+   r33_D.clear();r33_scale_mean=r33_scale_floor=0;
+   expected=improvement=surprise=0;
+@@ -405,6 +471,7 @@
+     mju_error("r33 declared metric requires control regularization");
+ 
+   R32BeginProblem(horizon);
++  if(std::getenv("MJPC_R34_SCORE_ONLY")) {R34ScoreOnly(horizon,pool);return;}
+   // Every call scores the incumbent at the actual current state/reference.
+   this->NominalTrajectory(horizon, pool);
+   if(nominal_winner<0) {
+@@ -431,7 +498,7 @@
+       if(const char* f=std::getenv("MJPC_R27_PLAN_RECORD")) {
+         std::ofstream out(f,std::ios::app);out.precision(17);
+         out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+-           <<",\"controller_artifact\":\"S5-r33\",\"problem_epoch\":"<<r32.epoch
++           <<",\"controller_artifact\":\"S5-r34\",\"problem_epoch\":"<<r32.epoch
+            <<",\"source_call_id\":"<<r29_call_id<<",\"candidate_source\":\""<<r33_source<<"\""
+            <<",\"selected_mechanism\":\""<<r33_mechanism<<"\",\"accepted_cost\":"<<r33_archive_trajectory.total_return
+            <<",\"accepted_trunk_violation\":"<<r33_archive_trajectory.trunk_violation
+@@ -511,6 +578,9 @@
+     if(const auto* q=dynamic_cast<const QuadrupedFlat*>(task)) {
+       auto v=q->R32PlanningState();for(int i=0;i<v.size();++i){if(i)out<<",";out<<v[i];}
+     }
++    out<<"],\"r34_enabled\":"<<(r34_enabled?"true":"false")
++       <<",\"r34_decisions\":[";
++    for(int i=0;i<r34_decisions.size();++i){if(i)out<<",";out<<r34_decisions[i];}
+     out<<"],\"search_attempts\":[";
+     for(int i=0;i<r32.attempts.size();++i){if(i)out<<",";out<<r32.attempts[i];}
+     out<<"]}\n";
+@@ -568,7 +638,7 @@
+     r32.incumbent_violation=trajectory[incumbent].trunk_violation;
+   }
+   // evaluate rollouts
+-  int best_nominal = this->BestRollout();
++  int best_nominal = this->BestRollout(r34_enabled?incumbent:-1);
+   nominal_winner = best_nominal;
+   nominal_feasible_candidates = 0;
+   for (int i = 0; i < num_trajectory_; ++i)
+@@ -591,7 +661,7 @@
+     candidate_policy[0].trajectory = trajectory[best_nominal];
+ 
+     // set feedback scaling
+-    feedback_scaling = linesearch_steps[best_nominal];
++    feedback_scaling = r34_enabled?r33_nominal_policy.feedback_scaling:linesearch_steps[best_nominal];
+   }
+ 
+   // end timer
+@@ -996,12 +1066,10 @@
+     for(int i=0;i<num_trajectory_;++i)R33Consider(candidate_policy[i],trajectory[i],horizon,1,
+       regularization_iteration*num_trajectory_+i,linesearch_steps[i],
+       "alpha_"+std::to_string(regularization_iteration)+"_"+std::to_string(i));
+-    const int best=this->BestRollout();
++    const int best=this->BestRollout(-1,r34_enabled);
+     rollouts_time+=GetDuration(ro_start);
+-    const bool descent=best>=0 &&
+-      (trajectory[best].trunk_violation<previous_violation ||
+-       (trajectory[best].trunk_violation==previous_violation &&
+-        trajectory[best].total_return<previous_return));
++    const bool descent=best>=0 && (!r34_enabled || linesearch_steps[best]>0) &&
++      R34Better(trajectory[best],r32_nominal);
+     if(descent) {winner=best;accepted=true;break;}
+     last_failure=best<0 ? "all_action_rollouts_failed" : "native_search_stagnation";
+     if(retry)backward_pass.ScaleRegularization(backward_pass.regularization_factor,
+@@ -1035,17 +1103,19 @@
+   action_step = linesearch_steps[winner];
+   expected = -1.0 * action_step *
+                  (backward_pass.dV[0] + action_step * backward_pass.dV[1]) +
+-             1.0e-16;
++             (r34_enabled?0.:1.0e-16);
+   const bool feasible_comparison = previous_violation == 0 && accepted_violation == 0;
+   const bool projection_changed=r29_projected[winner]>0 || r29_restored[winner]>0;
+-  const bool cost_ratio_valid = feasible_comparison && expected > 0 && !projection_changed;
++  const double comparison_tolerance=r34_enabled?R34Budget(trajectory[winner])+R34Budget(r32_nominal):0.;
++  const bool cost_ratio_valid = feasible_comparison && (!r34_enabled || action_step>0) &&
++      expected > comparison_tolerance && cost_improvement>comparison_tolerance && !projection_changed;
+   if (feasible_comparison) {
+     improvement = cost_improvement;
+     surprise = cost_ratio_valid ? mju_min(mju_max(0, improvement / expected), 2) : 0;
+     // A large action step alone cannot count as accepted improvement. Reuse
+     // the existing ratio thresholds and regularization factor only after
+     // comparing the selected feasible rollout to the feasible nominal.
+-    if(projection_changed && improvement>0) {
++    if((projection_changed || (r34_enabled && !cost_ratio_valid)) && improvement>0) {
+       // Ratio unavailable: keep BOTH mu and its rate exactly unchanged.
+     } else if (improvement > 0 && surprise > 0.5)
+       backward_pass.ScaleRegularization(1.0 / backward_pass.regularization_factor,
+@@ -1108,7 +1178,7 @@
+     policy.CopyFrom(candidate_policy[winner], horizon);
+ 
+     // feedback scaling
+-    policy.feedback_scaling = 1.0;
++    policy.feedback_scaling = candidate_policy[winner].feedback_scaling;
+     policy.record_plan_id=previous_policy.record_plan_id+1;
+     policy.action_step_alpha=action_step;
+ 
+@@ -1122,7 +1192,7 @@
+     std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
+     out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+ 
+-       <<",\"controller_artifact\":\"S5-r33\""
++       <<",\"controller_artifact\":\"S5-r34\""
+        <<",\"candidate_source\":\""<<r33_source<<"\",\"selected_mechanism\":\""<<r33_mechanism<<"\""
+        <<",\"problem_epoch\":"<<r32.epoch<<",\"source_call_id\":"<<r29_call_id
+        <<",\"policy_generation_epoch\":"<<r32.generation_epoch
+@@ -1289,27 +1359,19 @@
+ }
+ 
+ // return index of trajectory with best rollout
+-int iLQGPlanner::BestRollout() {
+-  double best_return = 0;
+-  double best_violation = 0;
+-  int best_rollout = -1;
+-
+-  for (int j = num_trajectory_ - 1; j >= 0; j--) {
+-    if (trajectory[j].failure || !std::isfinite(trajectory[j].total_return) ||
+-        !std::isfinite(trajectory[j].trunk_violation)) continue;
+-    double rollout_return = trajectory[j].total_return;
+-    const double violation = trajectory[j].trunk_violation;
+-    // Feasible candidates (v=0) dominate every infeasible candidate. If none
+-    // is feasible, this is explicit finite-candidate restoration by (v,J).
+-    // Exact ties retain the existing reverse-order zero-step preference.
+-    if (best_rollout == -1 || violation < best_violation ||
+-        (violation == best_violation && rollout_return < best_return)) {
+-      best_violation = violation;
+-      best_return = rollout_return;
+-      best_rollout = j;
+-    }
+-  }
+-  return best_rollout;
++int iLQGPlanner::BestRollout(int preferred, bool action_search) {
++  int best=-1;
++  auto consider=[&](int j) {
++    if(j<0 || (action_search && linesearch_steps[j]<=0) || trajectory[j].failure ||
++       !std::isfinite(trajectory[j].total_return) || !std::isfinite(trajectory[j].trunk_violation))return;
++    if(best<0 || R34Better(trajectory[j],trajectory[best]))best=j;
++  };
++  if(r34_enabled) {
++    consider(preferred);
++    // Match archive traversal exactly; numerical ties retain the incumbent.
++    for(int j=0;j<num_trajectory_;++j)if(j!=preferred)consider(j);
++  } else for(int j=num_trajectory_-1;j>=0;--j)consider(j);
++  return best;
+ }
+ 
+ void iLQGPlanner::R33WriteSnapshot(int horizon) {
+--- a/mjpc/tasks/quadruped/quadruped.h
++++ b/mjpc/tasks/quadruped/quadruped.h
+@@ -249,6 +249,21 @@
+     v.insert(v.end(),r.save_weight_.begin(),r.save_weight_.end());
+     return v;
+   }
++  // Offline saved-problem context, absent from every online environment.
++  void R34RestorePlanningState(const std::vector<double>& v) {
++    const std::lock_guard<std::mutex> lock(mutex_);
++    auto& r=residual_;int i=0;
++    r.current_mode_=static_cast<decltype(r.current_mode_)>(int(v[i++]));
++    r.last_transition_time_=v[i++];r.mode_start_time_=v[i++];
++    r.speed_=v[i++];r.angvel_=v[i++];r.ground_=v[i++];r.save_gait_switch_=v[i++];
++    r.current_gait_=v[i++];r.phase_start_=v[i++];r.phase_start_time_=v[i++];
++    r.phase_velocity_=v[i++];r.gait_switch_time_=v[i++];
++    for(auto [p,n]:{std::pair{r.position_,3},std::pair{r.heading_,2},
++                    std::pair{r.orientation_,4},std::pair{r.com_vel_,2}})
++      for(int j=0;j<n;++j)p[j]=v[i++];
++    r.save_weight_.assign(v.begin()+i,v.end());
++    r.Update();
++  }
+   QuadrupedFlat() : residual_(this) {}
+   void TransitionLocked(mjModel* model, mjData* data) override;
+ 
