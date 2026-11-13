@@ -1,71 +1,44 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
-## W46 completed original results — verified 2026-11-13
+长期目标：同一世界地块被前足、后足和返程重复加载时，利用材料持久状态，让未来支撑需求影响当前加载、落点和重访，建立原Go2/TM02合法完整往返、因果记忆收益、泛化与实机证据。
 
-**Final original-task result, verified 2026-11-13:** W46 has naturally ended; no W46 process remains. A E30 ended at 26.432s on floor–trunk contact (wall65.59min); B ended at 11.638s on body_fall (wall40.42min). Both retain their own update57, new PPO0/0. E30 passes0/2, legal outbound/return/roundtrips0, E60/300/600 blocked. A max x=.626506m and no actual material load; B max x=.396364m, actual material load and max strain=.00649112<.02. Compared with W45, both lasted longer but A made less forward progress. Actual target jumps still reach1.53536/1.46864rad and adjacent500Hz actuator force changes90.86Nm; the short-window improvement did not establish original-task stability or memory benefit. All1944 calls used N/r34 strict, new alpha0 installs0. Both videos were rendered. All96 requested assets are present in the three W46 Releases; one response-lost upload receipt was reconciled against the existing server/remote size and SHA256 without re-upload. The final phase/index is authoritative; launch snapshots below are historical. This bounded round is complete; no W45/G5 restart, parameter sweep, extra PPO or next architecture has been launched.
+## 当前：W46原任务未通过；W47检验搜索一致性与移动候选
 
+**2026-11-13，结果基点15ee620：W46/r35 constant已自然结束并交付，W47/r36仍为待实施计划。** 本次完成源码、已有证据、离线复算和文献审查，没有启动新服务器任务、原plant实验、MPC求解或PPO。
 
+[当前主计划](docs/TERRAIN_MEMORY_PLAN.md) · [W46完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W46-final-review/README.md) · [W47详细计划](docs/S1_W47_STABILITY_PLAN.md) · [Codex启动提示词](docs/S1_W47_START_PROMPT.md) · [机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W46-final-review/handoff.json)
 
-S5-r35 is now built from reviewed main a34bc45393da1e552df135f856df6f98c762c51f. The 12 declared finite solves and 36 fixed-policy 350ms native diagnostics are complete; no PPO or original-task physics was added by that comparison. The selected original-task branch is **constant**, with mechanism N and r34 strict acceptance retained. Load and constant selected identical complete policies in all four contexts, so no load-information benefit is supported.
+| W46原E30 | A | B |
+|---|---:|---:|
+| 物理时长/结束原因 |26.432s，floor–trunk contact|11.638s，body_fall|
+| 最大body x |.626506m|.396364m|
+| 实际材料加载 |无|有，最大应变.006491<.02|
+| 合法去/返/往返 |0/0/0|0/0/0|
+| 新PPO |0/0，保持14737/update57|0/0，保持14737/update57|
 
-A153 provides limited useful evidence: nominal target jump 1.08418→0.56936 rad and torque jump 65.3074→34.2848 Nm, similarly under both recorded perturbations. Minimum height decreases 1.152mm and J0 rises .0002356; terminal vertical recovery remains positive and small forward displacement increases. The other three contexts are unchanged; B158 still has a bad high-jump incumbent. This supports one original A/B evaluation, not a stability claim.
+E30通过0/2；E60/300/600六项blocked。两流比W45活得更久，但A走得更少、反复退步，不能称稳定。96个Release资产共19,983,994,745B已交付；文件交付不代替任务资格。
 
-The common-reference residual reconstruction error is zero; all four disabled-penalty native state/action/residual comparisons are exactly equal to r34. Candidate cost recomputation error is at most 4.45e-16, held-u residual FD error at most 7.96e-11, direct state C zero. Actual evidence, frozen binary/spec identity and the new phase are under [w46](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46/). At the 2026-11-12 launch, both original evaluation-only E30 ladders were observed running in tmux s1-w46-a/s1-w46-b with advancing physical clocks (phase.json is the live authority); each keeps its own W44 checkpoint014737/update57, new PPO0/0, no wall deadline.
+### 本轮最关键的新发现
 
-The independent GPU study has completed 24 old-policy scenarios and 42000 world-steps including the 20ms prefix, plus 48 warmup steps. It uses GPU FP64 feedback algebra and the exact old native H-QP on host, then an explicit cast to MJWarp FP32 dynamics. Same-state held-action error is 2.49e-16rad, but 20ms cross-engine command differences reach 1.501rad; no equivalent ranking or online acceleration is established. Original plant Euler is not re-simulated; the paired dynamics are native implicitfast and MJWarp.
+12个保存问题的60次backward全部完成，540个正alpha候选无rollout/QP失败、无trunk violation，却全部真实J增加；增幅远超r34数值容差。A153的局部改善只来自旧nominal scale重选，constant/load四处同完整策略。B155/B158的alpha0也未再生nominal，下一步应找首分叉并检验可执行移动种子，不能靠放宽接纳、继续扫R或更多PPO遮住原因。
 
-Implementation: [spec](experiments/terrain_memory/s1-go2-r11-S5-r35.json), [finite selection](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46/mechanism-evidence.json), [phase](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46/phase.json), [GPU evidence](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46/gpu.json). The W45 facts and original bounded protocol below remain historical provenance and operating constraints.
+A完整轨迹未实际加载材料；B明显下沉/侧倾在500Hz首完整足受载之前。相邻2ms目标最大变化仍达1.53536/1.46864rad，控制稳定性优先于记忆收益验证。R8/S3刚地9/9及300s 3/3、W34/W35历史合法去程仍有效，但不等于r35材料任务已过。
 
+GPU支线已执行W45旧完整策略的K/scale和host H-QP，仍无完整native等价排序或加速证据。新增发现raw投影别名、动作/末状态时标混用、扩窗准入不足和warmup/capture计数问题。24名义scenario仅18种不同完整策略×初态；该有限任务在A/B启动前已结束，未验证持续三负载。
 
-长期目标：同一世界地块被前足、后足和返程重复加载时，利用可恢复材料的持久状态，让未来支撑需求影响当前加载、落点和重访，建立原Go2/TM02合法完整往返、因果记忆收益、泛化与实机证据。
+### 下一轮与工作流
 
-## 当前：W45完成审查，W46先检验移动控制稳定性
+A先在服务器已有candidate数组查零端点/方向并修有证据的错误；B固定一个R8输入种子，在当前真实x0、原H-QP、同一参考和同J下做有限对照；C原位聚合1944真实calls并修GPU诊断。两CPU任务各10额度，第三host总2，约3给系统/发布；实际GPU余量/峰值决定准入，不为填满显存重复不等价实验。
 
-**2026-11-12：W45/r34的接纳修复有效，原任务仍未通过。** 两条固定update57的原E30分别13.072s/5.582s侧翻；合法去程/返程/往返均0，E60/300/600均blocked。A仅末段极少量实际材料受力，B没有。974次planner call中新的alpha0安装为0；新的关键证据是完整native策略本身也规划了剧烈目标与力矩变化。
+只有两个流代表context出现有用移动/恢复与扰动证据，才冻结至多一个新控制版本进入一次原A/B E30，再按同case原阶梯推进。否则完成明确有限负结果，不重开已知失败配置，不新增PPO。具体预算与分叉见W47计划。
 
-**W46/r35目前为待实施计划，不是已经运行的新实验。** 本次完成源码、历史结果、原件SHA与数组复算；服务器任务、physics与PPO新增均0。当前联合链路和真实学习已存在，稳定材料往返及材料记忆因果收益尚未建立。
+**全部新后台无固定墙钟完成时刻、无到点kill；GitHub核验后不在用户电脑额外下载、打包、镜像或归档。** 保留原物理时长、有限工作量和明确技术结束；服务器原件/checkpoint/resume/视频不自动删除，Git写串行合并，不强推。
 
-[W45完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W45-final-review/README.md) · [控制原件诊断](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W45-final-review/solver-report.md) · [GPU与G5最终结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W45-final-review/gpu-report.md) · [论文与R8对照](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W45-final-review/literature-and-baseline.md)
-
-[W46详细实施计划](docs/S1_W46_STABILITY_PLAN.md) · [完整Codex启动提示词](docs/S1_W46_START_PROMPT.md) · [长期主计划](docs/TERRAIN_MEMORY_PLAN.md) · [执行规则](AGENTS.md) · [机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W45-final-review/handoff.json)
-
-| 层面 | 当前证据与边界 |
-|---|---|
-| 原硬Go2基线 | R8/S3刚地9/9、连续300s 3/3；不能转移为当前r34材料资格 |
-| 联合系统 | PANN→PPO cap→MPC→TV→PD真实运行，两流各14737/update57，有共享祖先 |
-| W45控制 | 全量r34 strict，新alpha0安装0；四上下文完整policy绑定与J复算一致 |
-| 原任务 | A13.072s、B5.582s body_fall；不是墙钟到点kill；合法路线全0 |
-| 材料记忆 | 39份置零PANN的cap对照差全0，候选未完整传播未来材料历史 |
-| GPU | W45 proxy平均top4召回.25、2/4漏最优；G5最终包已找到，满30s但几乎驻留 |
-| 下一步 | 共同输入参考代价的有限对照→选定同版双流原任务；第三GPU做完整策略执行一致性 |
-
-### 为什么还不能稳定完成
-
-A2.650s的native投影后目标相邻2ms变化1.41880rad，实际1.16403；B2.764s为1.23629/1.23587rad。A某膝力矩在正负45.43Nm之间反转。QP可行、原native成本下降并没有阻止这种执行行为。A的选中正alpha同时改善最低高度与前移，所以不能简单删高度项、关反馈或选回驻留。raw Kδ有表示依赖，也不是独立的任务成功标准。
-
-这将问题推进到了完整移动策略的控制权衡与接触恢复能力；并未证明某个早期动作单独导致十秒后的跌倒。当前应先检验控制机制，保留原物理任务要求，再增加有用的材料历史曝光与学习。详细因果边界、已排除解释和所有数据入口见审查。
-
-![W45实际轨迹与侧翻](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W45-final-review/w45-final-trajectories.png)
-
-### W46具体安排
-
-四个已保存W45问题比较r34原版、constant与load输入参考代价，共12次有限求解、36次固定policy native诊断。所有候选使用同一epoch冻结的实际输入参考和承载权重，完整成本、导数、Riccati与接纳一致；constant匹配平均强度。明确检查坏incumbent被锁住、退回驻留及只是反馈分解变小的反例。不扩参数网格，不同时改高度、步态、PPO和solver架构。
-
-若有限结果支持一个分支，再冻结实际r35后让A/B各自固定update57直接原E30，通过才同case E60→E300→E600；新增PPO0/0。若没有有用改变，交付有限负结果，不反复启动已知更差配置。第三任务最多24个旧完整策略scenario，先动作代数、再20ms，满足语义条件才一次350ms；不重跑reference-proxy筛选或G5。
-
-默认CPU10+10workers、GPU host总2、约3核余量，线程库各1，可写build隔离，实际资源在D57开场核对。PANN/Actor共卡，显存满不作为成果。有限比较结束后再双E30，构建在重负载前完成。
-
-### 后台与交付约定
-
-所有新后台deadline=null、wall_deadline_enabled=false，无固定墙钟完成时刻、无到点kill；原物理30/60/300/600秒、有限数值预算和网络单次timeout保留。自然完成的失败保留原结果，技术中断与物理失败分开；仅Actor不能恢复完整plant中途状态，不拼接任务资格。
-
-GitHub/Release核验后不在用户电脑额外下载、打包、镜像或归档，不自动删除服务器原件、视频、checkpoint/resume。D57上传仅已授权学术代理，禁止电脑VPN SSH转发。源码/紧凑结果与请求原件增量发布，短写合并最新main，不强推或覆盖并发结果。
-
-本次审查基点为3e3f69c，库存读取8,548 tracked文件、约1.016GB；字节/结构覆盖不等于声称语义读懂每个byte或下载全部历史Release。关键控制、trajectory、W45 GPU与G5原件有独立SHA及数值复算。G5已发布最终包的入口已补齐，不再把它列作服务器待收集任务。
+本次读全部8,611个tracked文件共1,021,007,506B、完整解析变化结构，并独立复算A/B轨迹及部分GPU输入；控制/GPU其余原件批量读取受自动审批限制，范围详见审查。字节覆盖不等于声称理解每个byte或重放全部历史Release。
 
 ## 历史说明
 
-以下记录保留形成时的结论和协议；其中“当前”、旧启动预算和归档方式仅属于历史语境。最新执行统一见顶部、[W46计划](docs/S1_W46_STABILITY_PLAN.md)及[启动提示词](docs/S1_W46_START_PROMPT.md)。W45已完成且任务失败，W46尚待实施，不按旧文字重启W43/W44/W45/G5。完整提交历史与原结果保留。
+以下记录保留形成时的结论和协议；其中“当前”、旧启动预算和归档方式仅属于历史语境。最新执行统一见顶部、[W47计划](docs/S1_W47_STABILITY_PLAN.md)及[启动提示词](docs/S1_W47_START_PROMPT.md)。W45/W46已完成且原任务未通过，W47尚待实施；不按旧文字重启W43/W44/W45/W46/G5。完整提交历史与原结果保留。
 
 ## 历史 R12/W35：同r24续训及末端评价
 
@@ -104,7 +77,7 @@ R11已按用户2026-10-29的要求暂停，发布现有成果供审查。累计2
 
 ## 历史结果原文
 
-以下保留旧结果与协议叙述；旧“当前”“本轮”、额度和阶段门槛仅属于对应历史run。当前执行以顶部W45审查、W46计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。R10原协议的完整版本见[02595603历史主计划](https://github.com/kaiwen123-yang/MCP-RL/blob/025956032e2a3aa1e0c9881f2eda307301c77522/docs/TERRAIN_MEMORY_PLAN.md)。
+以下保留旧结果与协议叙述；旧“当前”“本轮”、额度和阶段门槛仅属于对应历史run。当前执行以顶部W46审查、W47计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。R10原协议的完整版本见[02595603历史主计划](https://github.com/kaiwen123-yang/MCP-RL/blob/025956032e2a3aa1e0c9881f2eda307301c77522/docs/TERRAIN_MEMORY_PLAN.md)。
 
 
 **R10 实际结果（2026-10-28）：开发额度12/12已结束，材料完整任务0/9，联合PPO未启动。** 12次启动包括3次零物理步初始化失败和9次真实Go2材料任务；累计107.9750秒、539875个0.2ms物理步。G、G＋N与G＋N＋C均保留完整记录，C的局部力参考和支撑高度修正逐版保存。最终0.215m/s版本通过去程和远端转向，在返程32.5672秒触发原材料域；仍未完成原任务。
@@ -123,7 +96,7 @@ R11已按用户2026-10-29的要求暂停，发布现有成果供审查。累计2
 
 同一空间地块的材料状态跨腿、跨步、跨返程持续演化；后续支撑需求反过来约束当前踩踏。第一版从具有可测恢复过程的黏弹性材料开始。
 
-## R9历史冻结协议（当前执行以顶部与W46计划为准）
+## R9历史冻结协议（当前执行以顶部与W47计划为准）
 
 **第八轮已完成项目Go2同版9/9原任务＋3/3连续300秒，S3继续冻结。R9实际完成8次材料适配尝试，0/8整程成功；训练前置条件未通过且适配额度已用尽。** 以下保留原定联合协议，其中PANN观察器、PPO训练及正式21+3评价均未执行，不能作为已完成成果。最新实际状态见本页顶部与[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)。
 
@@ -219,7 +192,7 @@ G1保留15.206408kg、0.0002s真实物理步、原接触及23.7/45.43Nm逐关节
 
 ## S1第六轮历史结果（已冻结）：完成路径往返，终点连续稳定未通过
 
-以下保留第六轮当时的执行范围和停止决定；其中“本轮结束”等只适用于已关闭的旧run，当前执行以顶部W45审查、W46计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。原第五轮及更早结果继续保留。
+以下保留第六轮当时的执行范围和停止决定；其中“本轮结束”等只适用于已关闭的旧run，当前执行以顶部W46审查、W47计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。原第五轮及更早结果继续保留。
 
 **第六轮已完成固定范围执行：1次G0完整任务启动，0次完整成功；G1开发与正式均未执行。** 本轮 `tm-s1-go2-wb-startup-r6` 使用实现 `ce3e03255e6e229fd61cac458b514fb6ea162314`，保留第五轮和所有历史结果。没有训练PANN/PPO、接入TM02或启用硬件。
 

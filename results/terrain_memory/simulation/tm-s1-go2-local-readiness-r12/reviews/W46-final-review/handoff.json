@@ -1,0 +1,137 @@
+{
+  "schema": "s1_w46_review_to_w47_v1",
+  "review_date": "2026-11-13",
+  "report_timezone": "Asia/Shanghai",
+  "repository": "kaiwen123-yang/MCP-RL",
+  "reviewed_commit": "15ee620b8a909246a12baf999c136c2be299655b",
+  "previous_review_commit": "a34bc45393da1e552df135f856df6f98c762c51f",
+  "current": {
+    "phase": "W46",
+    "build": "S5-r35",
+    "branch": "constant",
+    "status": "completed_original_qualification_failed_and_delivered",
+    "binary_sha256": "a32287b0821d9a77687575250dcb2379e370dbc84264fae80a4091027db7345e",
+    "E30_passes": 0,
+    "E30_actual_attempts": 2,
+    "blocked_levels_per_case": [
+      "E60",
+      "E300",
+      "E600"
+    ],
+    "legal_outbound_return_roundtrips": [
+      0,
+      0,
+      0
+    ],
+    "new_PPO_samples": 0,
+    "new_PPO_updates": 0,
+    "per_stream_samples": 14737,
+    "per_stream_update": 57
+  },
+  "review_new_work": {
+    "server_jobs": 0,
+    "original_plant_experiments": 0,
+    "native_solves": 0,
+    "PPO_samples": 0,
+    "PPO_updates": 0
+  },
+  "next": {
+    "phase": "W47",
+    "candidate_build": "S5-r36",
+    "status": "planned_not_implemented",
+    "plan": "docs/S1_W47_STABILITY_PLAN.md",
+    "prompt": "docs/S1_W47_START_PROMPT.md",
+    "task_A": {
+      "existing_arrays_first": true,
+      "missing_field_fixed_rollout_cap": 16,
+      "post_repair_paired_rollout_cap": 8
+    },
+    "task_B": {
+      "donor_sources": 1,
+      "fixtures": 4,
+      "input_families": 2,
+      "solve_cap": 8,
+      "fixed_policy_diagnostics_cap": 24,
+      "reference_frozen_from_current_incumbent": true,
+      "donor_one_step_held_transition_cap": 700,
+      "donor_one_step_native_substep_cap": 7000,
+      "online_trigger": "Only outbound/return moving epoch with current N native_search_stagnation and valid fixed-source same-elapsed/mission/gait/horizon mapping.",
+      "max_family_solves_per_epoch": 2,
+      "offline_online_same_entry": true,
+      "latest_W46_A_B_context_and_matched_perturbation_required_for_E30": true,
+      "fallback_historical_only": true
+    },
+    "task_C": {
+      "read_existing_actual_calls": 1944,
+      "primary_new_physics": 0,
+      "optional_single_hold_total_physics_substep_cap_including_warmup": 30,
+      "repeat_24world_350ms": false
+    },
+    "original_evaluation": "Conditional one common selected controller, A/B E30 then each case own original ladder; no same-configuration retry-to-success.",
+    "new_PPO_samples": 0,
+    "new_PPO_updates": 0
+  },
+  "server": {
+    "ssh_alias": "autodl-d57",
+    "cpu_tree": "/root/autodl-tmp/MCP-RL-w42",
+    "gpu_tree": "/root/autodl-tmp/MCP-RL",
+    "cpu_environment": "work/envs/d57",
+    "gpu_environment": "work/envs/w41-mjwarp",
+    "live_resources_must_be_checked": true,
+    "CPU_allocation": {
+      "A": 10,
+      "B": 10,
+      "C_total_host": 2,
+      "system_publication_margin": 3
+    },
+    "GPU_memory": "Admit from live free memory and observed A/B peaks; no assumed96GB exclusive availability."
+  },
+  "frozen_learning": {
+    "A_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+    "B_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/checkpoint-014737.pt",
+    "A_resume_episode": 428,
+    "B_resume_episode": 417,
+    "tail": 0,
+    "excluded": 145
+  },
+  "background": {
+    "deadline_unix_s": null,
+    "wall_deadline_enabled": false,
+    "fixed_completion_time": false,
+    "physical_stage_durations_s": [
+      30,
+      60,
+      300,
+      600
+    ],
+    "infinite_retries": false
+  },
+  "publication": {
+    "after_verified_GitHub_extra_PC_download_archive": false,
+    "auto_delete_server_originals": false,
+    "force_push": false,
+    "raw_originals_added_by_this_review": 0,
+    "verified_remote_asset_count": 96,
+    "verified_remote_asset_bytes": 19983994745,
+    "remote_metadata_not_all_payload_rehash": true
+  },
+  "evidence_limits": {
+    "control_candidates": "Independent aggregation of all540 positive-alpha compact records; original arrays not independently reread this review.",
+    "actual_trajectory": "A/B complete trajectory members SHA/CRC checked and recomputed in RAM; only compact derivatives retained.",
+    "GPU": "19 already-present policy/input originals size/SHA verified and20 initial-state algebra recomputed; paired arrays not obtained.",
+    "R8": "Manifest/schema checked, no original payload recomputation this review.",
+    "approval": "Bulk control/GPU original reads, includingRAM alternatives, rejected by automatic review as extra computer download/archive; no rerouting/retry after final refusals. Next work reads server existing originals in place.",
+    "all_actual_calls_stagnate": "NOT ESTABLISHED:12 finite solves cannot be extrapolated to1944 actual planner calls."
+  },
+  "files": {
+    "control": "control-compact-aggregation.json",
+    "GPU": "gpu-offline-summary.json",
+    "trajectories": [
+      "trajectory-a-summary.json",
+      "trajectory-b-summary.json"
+    ],
+    "inventory": "repository-inventory.json",
+    "source_reconstruction": "source-reconstruction.json",
+    "release_inventory": "release-inventory.json"
+  }
+}
