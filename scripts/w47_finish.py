@@ -61,6 +61,9 @@ def finish(code):
  phase['task_A'].update(status=pairs['status'] if pairs else 'technical_failure_without_paired_summary',paired_evidence=str(path.relative_to(ROOT)) if pairs else None,paired_runner_exit_code=code)
  if pairs:
   phase['task_A']['paired_summary']=pairs
+  phase['task_A']['new_rollouts_so_far']=pairs['actual_rollouts']
+  phase['task_A']['new_physics_substeps']=pairs['physics_substeps']
+  phase['task_A']['new_optimizer_solves']=0
  phase['task_B']=json.loads((W/'task-b.json').read_text())
  c=json.loads((W/'task-c/planner-summary.json').read_text())['combined']
  phase['task_C']={'status':'completed','call_count':c['calls'],'positive_step_installs':c['final_positive_step_installs'],'stop_reason':c['stop_reason'],'nominal_installs':c['nominal_installs'],'incumbent_retained':c['incumbent_retained'],'new_physics_substeps':0,'new_GPU_allocations':0,'result_directory':str((W/'task-c').relative_to(ROOT))}
