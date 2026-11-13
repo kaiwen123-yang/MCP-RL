@@ -1,6 +1,10 @@
-# 地面材料记忆主计划：W45完成审查，W46先检验移动控制稳定性
+# 地面材料记忆主计划：W46原任务已结束，稳定合法往返尚未建立
 
-## W46 actual implementation and finite evidence — 2026-11-12
+## W46 completed original results — verified 2026-11-13
+
+**Final original-task result, verified 2026-11-13:** W46 has naturally ended; no W46 process remains. A E30 ended at 26.432s on floor–trunk contact (wall65.59min); B ended at 11.638s on body_fall (wall40.42min). Both retain their own update57, new PPO0/0. E30 passes0/2, legal outbound/return/roundtrips0, E60/300/600 blocked. A max x=.626506m and no actual material load; B max x=.396364m, actual material load and max strain=.00649112<.02. Compared with W45, both lasted longer but A made less forward progress. Actual target jumps still reach1.53536/1.46864rad and adjacent500Hz actuator force changes90.86Nm; the short-window improvement did not establish original-task stability or memory benefit. All1944 calls used N/r34 strict, new alpha0 installs0. Both videos were rendered. All96 requested assets are present in the three W46 Releases; one response-lost upload receipt was reconciled against the existing server/remote size and SHA256 without re-upload. The final phase/index is authoritative; launch snapshots below are historical. This bounded round is complete; no W45/G5 restart, parameter sweep, extra PPO or next architecture has been launched.
+
+
 
 S5-r35 is now built from reviewed main a34bc45393da1e552df135f856df6f98c762c51f. The 12 declared finite solves and 36 fixed-policy 350ms native diagnostics are complete; no PPO or original-task physics was added by that comparison. The selected original-task branch is **constant**, with mechanism N and r34 strict acceptance retained. Load and constant selected identical complete policies in all four contexts, so no load-information benefit is supported.
 
