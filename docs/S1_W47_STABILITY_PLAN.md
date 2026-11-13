@@ -1,7 +1,7 @@
 # W47稳定性计划：搜索路径一致性与可执行移动候选
 
 <!-- W47_EXECUTION_BEGIN -->
-> 执行更新（2026-11-13）：W47 有限计算已结束；配对验证、首分叉和工作量见运行索引。 唯一 R8 原件在 D57 不可用，最新 W46 A/B 所需完整策略与同时间预测缺失；B 未启动 donor solve，未把历史 fallback 当最新双流覆盖。1944 次原调用中有 1601 次正步安装（1598 次 J 下降、3 次风险优先恢复）与 343 次内部停滞。N/r34 strict 保留，新 PPO 与新原 plant 回合均为 0；本轮诊断构建不冒称已部署 S5-r36。以下冻结计划和 W46 审查按其形成时点阅读，当前执行状态以索引为准。 [W47 实际运行索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w47/phase.json)。
+> 执行更新（2026-11-13）：W47 有限工作与新增原件交付已完成，未获得原任务准入。 唯一 R8 原件在 D57 不可用，最新 W46 A/B 所需完整策略与同时间预测缺失；B 未启动 donor solve，未把历史 fallback 当最新双流覆盖。1944 次原调用中有 1601 次正步安装（1598 次 J 下降、3 次风险优先恢复）与 343 次内部停滞。N/r34 strict 保留，新 PPO 与新原 plant 回合均为 0；本轮诊断构建不冒称已部署 S5-r36。以下冻结计划和 W46 审查按其形成时点阅读，当前执行状态以索引为准。 [W47 实际运行索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w47/phase.json)。
 <!-- W47_EXECUTION_END -->
 
 更新：2026-11-13。审查结果基点：`15ee620b8a909246a12baf999c136c2be299655b`。本计划为 **planned_not_implemented**；r36尚未实现、构建或启动。本次审查新增服务器任务、原plant实验、MPC求解和PPO均0。将本文件交给有D57访问能力的Codex后，可自主完成以下有限工作及满足条件后的原任务，不需再次询问已授权的构建、实验和GitHub发布。

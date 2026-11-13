@@ -1,7 +1,7 @@
 # Codex执行入口：W46已结束，W47检验搜索一致性与移动候选
 
 <!-- W47_EXECUTION_BEGIN -->
-> 执行更新（2026-11-13）：W47 有限计算已结束；配对验证、首分叉和工作量见运行索引。 唯一 R8 原件在 D57 不可用，最新 W46 A/B 所需完整策略与同时间预测缺失；B 未启动 donor solve，未把历史 fallback 当最新双流覆盖。1944 次原调用中有 1601 次正步安装（1598 次 J 下降、3 次风险优先恢复）与 343 次内部停滞。N/r34 strict 保留，新 PPO 与新原 plant 回合均为 0；本轮诊断构建不冒称已部署 S5-r36。以下冻结计划和 W46 审查按其形成时点阅读，当前执行状态以索引为准。 [W47 实际运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w47/phase.json)。
+> 执行更新（2026-11-13）：W47 有限工作与新增原件交付已完成，未获得原任务准入。 唯一 R8 原件在 D57 不可用，最新 W46 A/B 所需完整策略与同时间预测缺失；B 未启动 donor solve，未把历史 fallback 当最新双流覆盖。1944 次原调用中有 1601 次正步安装（1598 次 J 下降、3 次风险优先恢复）与 343 次内部停滞。N/r34 strict 保留，新 PPO 与新原 plant 回合均为 0；本轮诊断构建不冒称已部署 S5-r36。以下冻结计划和 W46 审查按其形成时点阅读，当前执行状态以索引为准。 [W47 实际运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w47/phase.json)。
 <!-- W47_EXECUTION_END -->
 
 更新2026-11-13。先读[主计划](docs/TERRAIN_MEMORY_PLAN.md)、[W46最终审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W46-final-review/README.md)、[W47详细计划](docs/S1_W47_STABILITY_PLAN.md)、[完整启动提示词](docs/S1_W47_START_PROMPT.md)和[机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W46-final-review/handoff.json)。用户最新要求覆盖历史后台截止和电脑归档规定。

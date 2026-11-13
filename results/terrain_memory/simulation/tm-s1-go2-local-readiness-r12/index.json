@@ -521630,6 +521630,25 @@
         "configured_proxy_used": true,
         "remote_state": "uploaded",
         "remote_verified_unix_s": 1794496753.847803
+      },
+      {
+        "name": "w47-identity-pairs-originals-0001.zip",
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w47/delivery/w47-identity-pairs-originals-0001.zip",
+        "size": 96738357,
+        "local_mtime_ns": 1794544729656172112,
+        "category": "W47_identity_pair_originals",
+        "release_tag": "tm-s1-go2-local-readiness-r12-w47-identity-part01",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-w47-identity-part01/w47-identity-pairs-originals-0001.zip",
+        "status": "uploaded",
+        "upload_wall_s": 16.203312397003174,
+        "uploaded_unix_s": 1794544783.4649212,
+        "upload_workers": 1,
+        "remote_asset_id": 742285077,
+        "remote_digest": "sha256:62da36f5fd3df6a61a2ce9266d055e0dee24a0a6ae9772a7ec9c46ab35e915cb",
+        "upload_transport": "authenticated_persistent_session",
+        "configured_proxy_used": true,
+        "remote_state": "uploaded",
+        "remote_verified_unix_s": 1794544805.3663123
       }
     ],
     "release_id": 427848131,
@@ -531122,10 +531141,10 @@
       "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-a/PANN_PPO_S5-seed1/rollout-011154-011409.npz",
       "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w41-a/PANN_PPO_S5-seed1/rollout-011410-011665.npz"
     ],
-    "asset_count": 28612,
-    "asset_bytes": 313390692910,
+    "asset_count": 28614,
+    "asset_bytes": 313746554276,
     "verification": "One normal name/size/upload-state comparison; no full hash pass or downloads",
-    "checked_unix_s": 1794496753.855745,
+    "checked_unix_s": 1794544805.3747456,
     "pending_jobs": {},
     "release_destinations": {
       "tm-s1-go2-local-readiness-r12": {
@@ -531363,6 +531382,10 @@
       "tm-s1-go2-local-readiness-r12-w46-w46-a-part01": {
         "id": 443093319,
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w46-w46-a-part01"
+      },
+      "tm-s1-go2-local-readiness-r12-w47-identity-part01": {
+        "id": 443821747,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w47-identity-part01"
       }
     },
     "delivery_windows": {
@@ -554554,7 +554577,7 @@
   },
   "w47": {
     "phase": "W47",
-    "status": "finite_work_completed_delivery_pending",
+    "status": "completed_finite_work_and_delivery",
     "started_unix_s": 1794544181.659409,
     "plan_commit": "8f254aee8401ffca821cb360e7c33a01038b9a74",
     "base_result_commit": "15ee620b8a909246a12baf999c136c2be299655b",
@@ -555944,13 +555967,26 @@
       "reason": "Both latest W46 representative full policies and time-matched perturbations unavailable; no demonstrated useful motion/recovery candidate. Historical fixture zero-endpoint repair is insufficient."
     },
     "publication": {
-      "status": "upload_pending",
-      "server_originals_retained": true,
-      "extra_PC_download_archive": false,
-      "source_commit": "b9bf1bdf29486d4debb37fba661e86dde60a982b",
-      "manifest": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w47/delivery/manifest.json",
-      "asset_count": 1,
-      "asset_bytes": 96738357
+      "source_commit": "07de08ce2b742acf4fe1fdc935907fcd129b3392",
+      "deadline_unix_s": null,
+      "wall_deadline_enabled": false,
+      "status": "published_size_digest_verified",
+      "started_unix_s": 1794544743.3983712,
+      "upload_exit_code": 0,
+      "finish_exit_code": 0,
+      "assets": [
+        {
+          "name": "w47-identity-pairs-originals-0001.zip",
+          "size": 96738357,
+          "sha256": "62da36f5fd3df6a61a2ce9266d055e0dee24a0a6ae9772a7ec9c46ab35e915cb",
+          "remote_digest": "sha256:62da36f5fd3df6a61a2ce9266d055e0dee24a0a6ae9772a7ec9c46ab35e915cb",
+          "verified": true,
+          "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-w47-identity-part01/w47-identity-pairs-originals-0001.zip",
+          "release_tag": "tm-s1-go2-local-readiness-r12-w47-identity-part01"
+        }
+      ],
+      "ended_unix_s": 1794544806.1030862,
+      "payload_downloaded": false
     },
     "diagnostic_build": {
       "status": "built_diagnostic_only",
@@ -556331,19 +556367,22 @@
     "background": {
       "session": "s1-w47-finite",
       "command": "taskset -c 0-9 python -u scripts/w47_finish.py",
-      "status": "publishing_finite_results",
+      "status": "finished",
       "deadline_unix_s": null,
       "wall_deadline_enabled": false,
       "finite_work": "eight paired fixed 350ms native rollouts, reduce, compact Git, incremental Release, size/digest verify, stop",
       "log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w47/runner.log",
       "pid": 988276,
       "launched_unix_s": 1794544672.27119,
-      "computation_exit_code": 0
+      "computation_exit_code": 0,
+      "ended_unix_s": 1794544806.1033392
     },
     "implementation_commit": "dea142cb4da1ce0b5eb573a17387d17aaa3b5d09",
     "runner_pid": 988276,
     "launched_unix_s": 1794544672.27119,
     "computation_ended_unix_s": 1794544708.5866632,
-    "material_memory_benefit": "not_established"
+    "material_memory_benefit": "not_established",
+    "finished_unix_s": 1794544806.1033392,
+    "active_compute_processes": 0
   }
 }
