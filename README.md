@@ -1,6 +1,6 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
-W49执行更新：S5-r37/K有限机制、四条20ms真实RPC部署与60 GPU world-step已完成；原A/B评价待启动。当前状态见[W49实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/phase.json)。
+W49执行更新：S5-r37/K有限机制、四条20ms真实RPC部署与60 GPU world-step已完成；原A/B评价已在tmux运行，资格尚未产生。当前状态见[W49实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/phase.json)。
 
 长期目标：同一世界地块被前足、后足和返程重复加载时，利用材料持久状态，让未来支撑需求影响当前加载、落点和重访，建立原Go2/TM02合法完整往返、因果记忆收益、泛化及实机证据。
 
