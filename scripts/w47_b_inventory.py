@@ -223,7 +223,11 @@ def complete():
     fixtures = json.loads(fixtures_path.read_text())
     if source['status'] != 'donor_unavailable':
         raise RuntimeError('Available donor requires actual semantic implementation and bounded solves; inventory cannot declare a mechanism outcome')
+    freeze_commit = subprocess.check_output(
+        ['git', 'log', '-1', '--format=%H', '--', str(source_path.relative_to(ROOT)),
+         str(fixtures_path.relative_to(ROOT))], cwd=ROOT, text=True).strip()
     result = {'schema': 's1_w47_b_result_v1', 'status': 'completed_bounded_availability_negative',
+              'source_fixture_freeze_commit': freeze_commit,
               'source_manifest': file_identity(source_path), 'fixture_manifest': file_identity(fixtures_path),
               'donor_status': source['status'], 'donor_reason': source['reason'],
               'mechanism_verdict': 'unidentified: no original donor input; no candidate-missing, rollout-defect or objective-conflict claim',

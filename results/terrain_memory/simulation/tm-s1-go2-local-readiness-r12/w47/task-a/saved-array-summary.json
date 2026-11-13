@@ -1,0 +1,659 @@
+{
+  "schema": "w47_task_a_saved_array_inspection_v1",
+  "status": "completed_existing_array_analysis",
+  "started_unix_s": 1794544276.3732362,
+  "ended_unix_s": 1794544280.673955,
+  "new_rollouts": 0,
+  "new_physics_substeps": 0,
+  "new_solves": 0,
+  "new_PPO_samples": 0,
+  "new_PPO_updates": 0,
+  "runtime_mujoco": "3.2.3",
+  "hypotheses": [
+    "Wrong node/time or feedback center",
+    "Quaternion self-difference and floating-point feedback amplification",
+    "H-QP projection or contact-mode change",
+    "Different initial dynamics state"
+  ],
+  "conclusion": "Exact same-policy repeats have zero observed discrepancy. All alpha0 centers and time grids equal their actual nominal. First action differences occur while state equals center and are reconstructed by nonzero quaternion self-difference times new K; H-QP does not change those first differing actions. This identifies the first perturbation source; later nonlinear amplification and positive-step failure remain separate.",
+  "fixtures": [
+    {
+      "label": "A148",
+      "nominal_J": 0.0393783369112597,
+      "noise_envelope": {
+        "states": 0.0,
+        "actions": 0.0,
+        "times": 0.0,
+        "residual": 0.0
+      },
+      "first_alpha0_action_node": 0,
+      "first_alpha0_state_node": 2,
+      "first_alpha0_action_delta_rad": 8.673617379884035e-19,
+      "first_state_is_exact_center": true,
+      "quaternion_self_tangent": [
+        2.9815559743351377e-19,
+        0.0,
+        0.0
+      ],
+      "first_projection_delta": 0.0,
+      "first_reconstruction_error": 0.0,
+      "alpha0_delta_J_range": [
+        -9.605367889964356e-10,
+        1.6717920402892217e-07
+      ],
+      "best_positive_delta_J": 0.03376776665702364
+    },
+    {
+      "label": "A153",
+      "nominal_J": 0.0806344306243317,
+      "noise_envelope": {
+        "states": 0.0,
+        "actions": 0.0,
+        "times": 0.0,
+        "residual": 0.0
+      },
+      "first_alpha0_action_node": 0,
+      "first_alpha0_state_node": 1,
+      "first_alpha0_action_delta_rad": 1.0408340855860843e-17,
+      "first_state_is_exact_center": true,
+      "quaternion_self_tangent": [
+        1.6940658945085995e-20,
+        0.0,
+        0.0
+      ],
+      "first_projection_delta": 0.0,
+      "first_reconstruction_error": 0.0,
+      "alpha0_delta_J_range": [
+        -6.034511743219229e-07,
+        5.321028574700737e-08
+      ],
+      "best_positive_delta_J": 0.045025840439258835
+    },
+    {
+      "label": "B155",
+      "nominal_J": 0.2527786317225274,
+      "noise_envelope": {
+        "states": 0.0,
+        "actions": 0.0,
+        "times": 0.0,
+        "residual": 0.0
+      },
+      "first_alpha0_action_node": 0,
+      "first_alpha0_state_node": 1,
+      "first_alpha0_action_delta_rad": 1.4311468676808659e-15,
+      "first_state_is_exact_center": true,
+      "quaternion_self_tangent": [
+        2.43945488809239e-19,
+        0.0,
+        0.0
+      ],
+      "first_projection_delta": 0.0,
+      "first_reconstruction_error": 0.0,
+      "alpha0_delta_J_range": [
+        0.021854523331805042,
+        0.050194827972726896
+      ],
+      "best_positive_delta_J": 0.07747496085368955
+    },
+    {
+      "label": "B158",
+      "nominal_J": 0.12416392144917256,
+      "noise_envelope": {
+        "states": 0.0,
+        "actions": 0.0,
+        "times": 0.0,
+        "residual": 0.0
+      },
+      "first_alpha0_action_node": 2,
+      "first_alpha0_state_node": 12,
+      "first_alpha0_action_delta_rad": 2.168404344971009e-19,
+      "first_state_is_exact_center": true,
+      "quaternion_self_tangent": [
+        2.5410988417628998e-20,
+        0.0,
+        0.0
+      ],
+      "first_projection_delta": 0.0,
+      "first_reconstruction_error": 0.0,
+      "alpha0_delta_J_range": [
+        0.017957126400895293,
+        0.02970403925771574
+      ],
+      "best_positive_delta_J": 0.10599591827594311
+    }
+  ],
+  "sources": [
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/input.json",
+      "size": 7631,
+      "sha256": "14c15184c7a2786d27deea955b5fff5d9b4d172ea33a9118cbdd794c03a93443",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0001.zip",
+      "member": "00035/input.json"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/input-state.npz",
+      "size": 2294,
+      "sha256": "ac3f981942b3812cd3baa3c03b8a33db0d0099e8b1ca6307ee1fac303c8dd95e",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0001.zip",
+      "member": "00034/input-state.npz"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/input-policy.bin",
+      "size": 1682592,
+      "sha256": "c315dee9913ce2f16a4ad6e2c72a64b79734a1eec525d9e1e39d047bbd5078f3",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0001.zip",
+      "member": "00033/input-policy.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/original-policy.bin",
+      "size": 1665696,
+      "sha256": "83f24ce55e1b570382bd8ffd5e520f95d69e48c1d383cf566b1ab4bee4af76f8",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0003.zip",
+      "member": "00014/original-policy.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/context.bin",
+      "size": 192,
+      "sha256": "d2bc7c5b8d9978a294410c68f6cb5043195d777f949812527b34b6775ef71b4e",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0001.zip",
+      "member": "00032/context.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/model.xml",
+      "size": 25157,
+      "sha256": "ccc0e65018dcd22dd7ec21ac9f492be2616c09b6ae93b71c9fb0bf318e15c99f",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0002.zip",
+      "member": "00008/model.xml"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/none/r29-current-plan.bin.r33-candidates",
+      "size": 129940320,
+      "sha256": "f56a9f64bd27b762119740b2fa2646a75d697603f7f06cf9c22293a6748fc3be",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0003.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/none/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "9853a3858a5078701000203bea860d4e5e4544a1770e621004574713e164e79c",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0003.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/none/planner-calls.jsonl",
+      "size": 30571,
+      "sha256": "4bc7be90a46220bd7b96f53391cdc7fad840ad0d11cb659853ed3ba64a3ce262",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0002.zip",
+      "member": "00022/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/constant/r29-current-plan.bin.r33-candidates",
+      "size": 129940320,
+      "sha256": "6e356bb07515ba4c97c8c51c2863e96cc05e852f6d8b3d726498b8e1054be8b3",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0001.zip",
+      "member": "00023/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/constant/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "7f5aaa8885b5be720188bcfed9a83b4d10c5129ad4062b3f5838788018bb6caa",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0001.zip",
+      "member": "00026/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/constant/planner-calls.jsonl",
+      "size": 30534,
+      "sha256": "c6f54737baab628da7ee9bd26418fc9df639d783041f0f13ce3021e5518bce5f",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0001.zip",
+      "member": "00014/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/constant/nominal/selected.npz",
+      "size": 3310251,
+      "sha256": "515fa9fdd74d42ebe48b189dbdeb6bdf2fdf760a9351d2f272603a1691510892",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0001.zip",
+      "member": "00013/selected.npz"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/load/r29-current-plan.bin.r33-candidates",
+      "size": 129940320,
+      "sha256": "14ee938e794d247945d21916cac5085f9f5bf53c88383854cccbe38ce185de60",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0002.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/load/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "58ec32606aac18f4f86fdf8c31c7d22a9d354a200d815a33c1377150d1ba5f12",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0002.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A148/load/planner-calls.jsonl",
+      "size": 30542,
+      "sha256": "6bd17633837f07f45d231ae578077ade162fd909c8372bdda81a8ef15d7b0fa9",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0001.zip",
+      "member": "00049/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/input.json",
+      "size": 7631,
+      "sha256": "4a4810fc8c000f528f25b9eb6350e3212ae14a5dfcbf3e53a3f463990721f1fb",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0004.zip",
+      "member": "00012/input.json"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/input-state.npz",
+      "size": 2292,
+      "sha256": "4e4a562483847877bd5da335ab2abfdcaa625b9e2c6faa47bd00fd8f35a59d6d",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0004.zip",
+      "member": "00011/input-state.npz"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/input-policy.bin",
+      "size": 1682592,
+      "sha256": "7c365ae0c4aae36c799f1a6d802f19798a8cdee58dd838ce1f96be3486cb9248",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0004.zip",
+      "member": "00010/input-policy.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/original-policy.bin",
+      "size": 1665696,
+      "sha256": "d444664e92d99b34460c549d28a45de60a15d9e778d4bf85b863f6ae802203ff",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0006.zip",
+      "member": "00014/original-policy.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/context.bin",
+      "size": 192,
+      "sha256": "3c6240659196458c6d6624bf25b5600f06f917bbf55ef7f94be165249d93afb8",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0004.zip",
+      "member": "00009/context.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/model.xml",
+      "size": 25157,
+      "sha256": "ccc0e65018dcd22dd7ec21ac9f492be2616c09b6ae93b71c9fb0bf318e15c99f",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0005.zip",
+      "member": "00008/model.xml"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/none/r29-current-plan.bin.r33-candidates",
+      "size": 128909088,
+      "sha256": "8db2b8bfe34275bbc57ba583666ab97cd9fd7ce4c2c1afaa1cfdd9b20bc555a0",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0006.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/none/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "195bd10358bb0767d6a7deb766f0be969fea0b073ec68a701abaa1ff54d9a417",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0006.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/none/planner-calls.jsonl",
+      "size": 30556,
+      "sha256": "23dc78b0ef1c8893c1f67d98e2eb39f7fec474904b6d6a8939bf57e654b6fb0b",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0005.zip",
+      "member": "00022/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/constant/r29-current-plan.bin.r33-candidates",
+      "size": 128893152,
+      "sha256": "dcfa80b65699c6f70732891dc3392ede0c1aae43ae7f2b92245820f05471a826",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0004.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/constant/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "dc17cb1249e3ccded37284bc5a8a61ac44bf49928d05994f4689f347050e26ca",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0004.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/constant/planner-calls.jsonl",
+      "size": 29522,
+      "sha256": "75604c0c0cd15454634154758555305052b3ea8e4eb7e1f3b71615481c235b0f",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0003.zip",
+      "member": "00036/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/constant/nominal/selected.npz",
+      "size": 3286016,
+      "sha256": "da4cff12bf49f5640e3483656e8aecb5fea3b7e15b5ea5feae50616b6c717968",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0003.zip",
+      "member": "00035/selected.npz"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/load/r29-current-plan.bin.r33-candidates",
+      "size": 128895904,
+      "sha256": "500ea354352780739002dae8d8de2061b513543a1dd9b3c4a5b1daff0d8376fe",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0005.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/load/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "3c8cb94e78b8334040042fd2eab3db039b712dcaca6c9258ee0103dc7eb69ac5",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0005.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/A153/load/planner-calls.jsonl",
+      "size": 29532,
+      "sha256": "3f464a4d356ce37e3fd632c2c31a837a3e0f6407164027914d03d9882e1b8500",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0004.zip",
+      "member": "00026/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/input.json",
+      "size": 7631,
+      "sha256": "3c9c1e1d1b73c0a8748197defe9f54949f63076cee50f5e9f6a4a014f52fed11",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0007.zip",
+      "member": "00012/input.json"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/input-state.npz",
+      "size": 2291,
+      "sha256": "7910acd2c7b7770bc32faad247bbe0471057afc01661eec26facc7d255bf54be",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0007.zip",
+      "member": "00011/input-state.npz"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/input-policy.bin",
+      "size": 1682592,
+      "sha256": "c73a9a21e64b18c904fcfe4eb48e06b8f241c5e2fd44eafef8d4da830feaa4cc",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0007.zip",
+      "member": "00010/input-policy.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/original-policy.bin",
+      "size": 1665696,
+      "sha256": "5234e5fb2fa00eae191769926879804fc4387a056db0f9bb208ca2ed8f3f6ef8",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0009.zip",
+      "member": "00014/original-policy.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/context.bin",
+      "size": 192,
+      "sha256": "87e814323523df3d5ca751a46def76d36ff27afe8840f0bb5030267bb08f7a77",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0007.zip",
+      "member": "00009/context.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/model.xml",
+      "size": 25157,
+      "sha256": "ccc0e65018dcd22dd7ec21ac9f492be2616c09b6ae93b71c9fb0bf318e15c99f",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0008.zip",
+      "member": "00008/model.xml"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/none/r29-current-plan.bin.r33-candidates",
+      "size": 129119648,
+      "sha256": "2f6ed251f20fd8f813b32b364934dbf09fa6425f43af278e5bf41219b5d88c31",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0009.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/none/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "a4b339a771ca25c2868583e7b458f0ae9142ff0bc65d1f698af1cbbca7055643",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0009.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/none/planner-calls.jsonl",
+      "size": 30537,
+      "sha256": "e3e46509fd2378c7f3144a63a5940d3603bcb7ead1225ff3f53649108b985c59",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0008.zip",
+      "member": "00022/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/constant/r29-current-plan.bin.r33-candidates",
+      "size": 129128096,
+      "sha256": "e2aef551f9f1fb4c0e42432463e30d3d8c5685e6fe1f79bfa10c78d50df960d0",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0007.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/constant/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "754a483b47b4e377e9060a5bb1047c68a128e544db033fc241db6f51989d27a7",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0007.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/constant/planner-calls.jsonl",
+      "size": 30521,
+      "sha256": "ea9f00449d3c3553b10ce4bed6f46c171c2c60b11df25025ee9897c2e48054eb",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0006.zip",
+      "member": "00036/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/constant/nominal/selected.npz",
+      "size": 3238865,
+      "sha256": "896ff4e2caa1faccc5727e9701bfd6d4969d84ef42badc4703be01a4f350b07f",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0006.zip",
+      "member": "00035/selected.npz"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/load/r29-current-plan.bin.r33-candidates",
+      "size": 129126624,
+      "sha256": "c1c0c1e84ad5783380683c8721e144f1222a635bf6001f056189393b5f5a393e",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0008.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/load/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "8f146a466e0eed785024c6a4d020ed9eee68b270c361b88aebac470a297e4f74",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0008.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B155/load/planner-calls.jsonl",
+      "size": 30522,
+      "sha256": "8a02e784aa56150c5d1b94ad0719f7115834931fc5eb94f31504ad58aa33119d",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0007.zip",
+      "member": "00026/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/input.json",
+      "size": 7632,
+      "sha256": "d4a45e98091b6b299eac067dacfc806016d67949a7defce9d6444420061fe6f7",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0010.zip",
+      "member": "00012/input.json"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/input-state.npz",
+      "size": 2294,
+      "sha256": "60181fdd0e73cfa729f047eea884ac3979ba2aaf1e77af485e42b4f523d1969d",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0010.zip",
+      "member": "00011/input-state.npz"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/input-policy.bin",
+      "size": 1682592,
+      "sha256": "634517d899e91e2a6b8e0a5d4423b9ab0dd8172af282ff6355b3f71a36eb0d4a",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0010.zip",
+      "member": "00010/input-policy.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/original-policy.bin",
+      "size": 1665696,
+      "sha256": "c2aa6c9dd234aba2ee04d63b5de6056ca2096bb5130e2331961a78c61e0a09b5",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0012.zip",
+      "member": "00014/original-policy.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/context.bin",
+      "size": 192,
+      "sha256": "be4c97e9670dfbba614551a3de54dba8a4b65ce8cdef1f03008ac3e89fef5523",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0010.zip",
+      "member": "00009/context.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/model.xml",
+      "size": 25157,
+      "sha256": "ccc0e65018dcd22dd7ec21ac9f492be2616c09b6ae93b71c9fb0bf318e15c99f",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0011.zip",
+      "member": "00008/model.xml"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/none/r29-current-plan.bin.r33-candidates",
+      "size": 129936736,
+      "sha256": "19e064da4104b91b3644abf14b1897651dc38c3db38a4c19bc5238f09fed7021",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0012.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/none/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "6e828dba02b06b2405e5c8fcffba50b940d90c7133fafb220a40d2c9bcc67cff",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0012.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/none/planner-calls.jsonl",
+      "size": 30467,
+      "sha256": "8794354c61a71b0dc6e6fa7284b59cb32fccce192dcc4c4001b914b1e643bc58",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0011.zip",
+      "member": "00022/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/constant/r29-current-plan.bin.r33-candidates",
+      "size": 129937888,
+      "sha256": "29d42ea922213bf3a161b06fcfed2b1184039b471ae3f245786a712f226dae5d",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0010.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/constant/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "3f4ef203f2e7933d78895323e5337ff34c3010534c537360a1f3b8b52382c8ea",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0010.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/constant/planner-calls.jsonl",
+      "size": 30482,
+      "sha256": "d06a22e07bb001123a9584aaec5ffa1d54741829ee42917f51c532269dca9de8",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0009.zip",
+      "member": "00036/planner-calls.jsonl"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/constant/nominal/selected.npz",
+      "size": 3162192,
+      "sha256": "738ef011fc8f68dba0080cd2da5de818f6b83ee72a3734a55b5e9973d81f8e03",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0009.zip",
+      "member": "00035/selected.npz"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/load/r29-current-plan.bin.r33-candidates",
+      "size": 129937952,
+      "sha256": "c7d0c3e6d2975f1eaef001d583238d2fc2f12216b3aa78948d592eef02b4a2dd",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0011.zip",
+      "member": "00000/r29-current-plan.bin.r33-candidates"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/load/r29-current-plan.bin.r35-reference-1.bin",
+      "size": 39296,
+      "sha256": "001054b8fd582e604e2ccb72437589cc2d086a03a91ece04b3bbe5cb2e7db63b",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0011.zip",
+      "member": "00003/r29-current-plan.bin.r35-reference-1.bin"
+    },
+    {
+      "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w46-mechanisms/B158/load/planner-calls.jsonl",
+      "size": 30459,
+      "sha256": "3bb03f9f443bbe6cfe04691123d12a2d4509114345be909fdf8e7018acb77f09",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0010.zip",
+      "member": "00026/planner-calls.jsonl"
+    },
+    {
+      "path": "work/r11-frozen/S5-r35/agent_server",
+      "size": 14084792,
+      "sha256": "a32287b0821d9a77687575250dcb2379e370dbc84264fae80a4091027db7345e",
+      "published_manifest_match": true,
+      "archive": "w46-mechanism-originals-0012.zip",
+      "member": "00022/agent_server"
+    },
+    {
+      "path": "work/r11-frozen/S5-r35/mjpc/utilities.cc",
+      "size": 49536,
+      "sha256": "52d900800dc5beec397b332d3ba43e1317fa8d695b146cc95091cc11757ee416",
+      "published_manifest_match": null
+    }
+  ],
+  "positive_candidates": 540,
+  "unavailable_fields": [
+    "Full350ms .2ms prefix contacts and actuator forces are not saved for search candidates; only first20ms.",
+    "No new corrected rollout has been run by this script."
+  ],
+  "publication": "Existing originals retained in place; only compact JSON added."
+}

@@ -14,7 +14,7 @@ def write(p,d):p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dump
 def ma(a):return float(np.max(abs(a)))
 @wp.kernel
 def feedback(x:wp.array2d[wp.float64],r:wp.array2d[wp.float64],ff:wp.array2d[wp.float64],K:wp.array3d[wp.float64],
- scale:wp.array[wp.float64],bounds:wp.array2d[wp.float64],out:wp.array2d[wp.float64]):
+ scale:wp.array[wp.float64],out:wp.array2d[wp.float64]):
  w,a=wp.tid()
  qw=r[w,3]*x[w,3]+r[w,4]*x[w,4]+r[w,5]*x[w,5]+r[w,6]*x[w,6]
  qx=r[w,3]*x[w,4]-r[w,4]*x[w,3]-r[w,5]*x[w,6]+r[w,6]*x[w,5]
@@ -35,7 +35,7 @@ def feedback(x:wp.array2d[wp.float64],r:wp.array2d[wp.float64],ff:wp.array2d[wp.
   elif j<18:dx=x[w,j+1]-r[w,j+1]
   else:dx=x[w,j+1]-r[w,j+1]
   val=val+K[w,a,j]*dx
- out[w,a]=wp.clamp(ff[w,a]+scale[w]*val,bounds[a,0],bounds[a,1])
+ out[w,a]=ff[w,a]+scale[w]*val
 @wp.kernel
 def risks(x:wp.array2d[wp.vec3],mat:wp.array2d[wp.mat33],sizes:wp.array2d[wp.vec3],kinds:wp.array[int],
  trunk:wp.array[int],margins:wp.array[float],floor:float,risk:wp.array[float]):
@@ -59,7 +59,7 @@ class Bridge:
   if not p:raise ValueError(e.value)
   return p
  def project(self,p,state,H,u):
-  u=np.ascontiguousarray(u);info=np.empty(16)
+  u=np.array(u,dtype=np.float64,order="C",copy=True);info=np.empty(16)
   self.lib.w46_project(p,np.ascontiguousarray(state),np.ascontiguousarray(H),u,info)
   return u,info
 def read_policy(path):
@@ -73,7 +73,9 @@ def main():
   host_affinity=sorted(os.sched_getaffinity(0)),scenario_count=24,new_PPO_samples=0,new_PPO_updates=0,
   action_execution='GPU FP64 interpolation inputs/quaternion tangent/K product; exact frozen native r29-qp2 H projection on host. Complete mixed execution, not all-device H-QP.',
   precision='FP64 actions explicitly cast when writing FP32 MJWarp ctrl; GPU dynamics FP32 versus native3.2.3 FP64.',
-  full_native_cost_implemented_on_gpu=False,equivalent_native_ranking=False,world_steps=0,native_world_steps=0,warmup_world_steps=0)
+  full_native_cost_implemented_on_gpu=False,equivalent_native_ranking=False,world_steps=0,native_world_steps=0,warmup_world_steps=0,
+  capture_recorded_world_steps=0,capture_launch_count=0,
+  expansion_policy='No automatic extension from zero trunk flags; this archived driver stops after its short diagnostic.')
  write(SMALL/'gpu.json',report)
  try:
   bridge=Bridge(ROOT/'work/w46-implementation/native-bridge.so')
@@ -96,28 +98,30 @@ def main():
    for key in ['geom_solimp','pair_solimp','jnt_solimp','actuator_gainprm','actuator_biasprm','actuator_forcerange','body_mass','geom_friction']:
     if not np.array_equal(getattr(models[0],key),getattr(m2,key)):raise ValueError('Fixture physical models differ: '+key)
   m=models[0];states=np.asarray(states);initial=states.copy();times=np.asarray(times);userdatas=np.asarray(userdatas)
-  bounds=wp.array(m.actuator_ctrlrange,dtype=wp.float64);scale=wp.array(np.asarray([p['scale'] for p in policies]),dtype=wp.float64)
+  scale=wp.array(np.asarray([p['scale'] for p in policies]),dtype=wp.float64)
   def action(current,ts):
    ff=[];ref=[];gain=[];metrics=[];cpu=[]
    for x,t,p in zip(current,ts,policies):
     u,fb,dx,k=raw_policy(t,x,p['times'],p['states'],p['actions'],p['K'],p['scale'])
     r=interp(t,p['times'],p['states']);r[3:7]/=np.linalg.norm(r[3:7])
     ff.append(u);ref.append(r);gain.append(k);metrics.append(interp(t,p['times'],p['H'][:-1]))
-    cpu.append(np.clip(u+fb,m.actuator_ctrlrange[:,0],m.actuator_ctrlrange[:,1]))
+    cpu.append((u+fb).copy())
    dev=wp.zeros((24,12),dtype=wp.float64)
    wp.launch(feedback,dim=(24,12),inputs=[wp.array(current,dtype=wp.float64),wp.array(np.asarray(ref),dtype=wp.float64),
-    wp.array(np.asarray(ff),dtype=wp.float64),wp.array(np.asarray(gain),dtype=wp.float64),scale,bounds,dev])
-   raw=dev.numpy();ug=[];un=[];ig=[];inn=[]
+    wp.array(np.asarray(ff),dtype=wp.float64),wp.array(np.asarray(gain),dtype=wp.float64),scale,dev])
+   raw=dev.numpy().copy();cpu=np.asarray(cpu).copy()
+   clipped=np.clip(raw,m.actuator_ctrlrange[:,0],m.actuator_ctrlrange[:,1]);cpu_clipped=np.clip(cpu,m.actuator_ctrlrange[:,0],m.actuator_ctrlrange[:,1])
+   ug=[];un=[];ig=[];inn=[]
    for i in range(24):
-    u,q=bridge.project(worlds[i],current[i],metrics[i],raw[i]);v,r=bridge.project(worlds[i],current[i],metrics[i],cpu[i])
+    u,q=bridge.project(worlds[i],current[i],metrics[i],clipped[i]);v,r=bridge.project(worlds[i],current[i],metrics[i],cpu_clipped[i])
     ug.append(u);un.append(v);ig.append(q);inn.append(r)
-   return np.asarray(ug),np.asarray(un),np.asarray(ig),np.asarray(inn),ma(raw-np.asarray(cpu))
-  a,b,ai,bi,rawerr=action(states,times);wp.synchronize()
-  algebra=dict(raw_center_max_error_rad=rawerr,held_action_max_error_rad=ma(a-b),
+   return np.asarray(ug),np.asarray(un),np.asarray(ig),np.asarray(inn),dict(raw_center_max_error_rad=ma(raw-cpu),gpu_raw=raw,cpu_raw=cpu,gpu_clipped=clipped,cpu_clipped=cpu_clipped)
+  a,b,ai,bi,stages=action(states,times);wp.synchronize()
+  algebra=dict(raw_center_max_error_rad=stages['raw_center_max_error_rad'],held_action_max_error_rad=ma(a-b),
     pd_equivalent_error_Nm=60*ma(a-b),active_equal=bool(np.array_equal(ai[:,4:],bi[:,4:])),
     all_QP_converged=bool(np.all(ai[:,0]==1)&np.all(bi[:,0]==1)),max_kkt_scaled=float(max(ai[:,2].max(),bi[:,2].max())))
   report['same_state_action']=algebra
-  np.savez_compressed(OUT/'action-algebra.npz',states=states,gpu_action=a,native_action=b,gpu_info=ai,native_info=bi)
+  np.savez_compressed(OUT/'action-algebra.npz',states=states,gpu_action=a,native_action=b,gpu_info=ai,native_info=bi,gpu_raw=stages['gpu_raw'],native_raw=stages['cpu_raw'],gpu_clipped=stages['gpu_clipped'],native_clipped=stages['cpu_clipped'],decision_time=times,hold_start_time=times,hold_end_time=times+.002)
   # Exact Euclidean joint-reference recentering counterexample: raw feedback changes, held action does not.
   recenter=[]
   for i,(x,t,p) in enumerate(zip(states,times,policies)):
@@ -153,19 +157,20 @@ def main():
    mjw.step(wm,d);wp.launch(risks,dim=24,inputs=[d.geom_xpos,d.geom_xmat,wm.geom_size,kind,trunkdev,margins,floor,risk])
   t=time.perf_counter();load();step();wp.synchronize()
   with wp.ScopedCapture() as cap:step()
-  wp.synchronize();report['compile_capture_s']=time.perf_counter()-t;report['warmup_world_steps']=48
+  wp.synchronize();report['compile_capture_s']=time.perf_counter()-t;report['warmup_world_steps']=24;report['capture_recorded_world_steps']=24
   load();wp.synchronize();native=initial.copy();gpu=initial.copy()
-  alln=[native.copy()];allg=[gpu.copy()];allun=[];allug=[];nrisk=np.zeros(24)
+  alln=[native.copy()];allg=[gpu.copy()];allun=[];allug=[];allrawg=[];allrawn=[];allclipg=[];allclipn=[];nrisk=np.zeros(24)
   disagree=[];maptime=0.;devtime=0.;native_time=0.;download_time=0.
   for k in range(175):
-   t=time.perf_counter();ug,_,ig,_,_=action(gpu,times+.002*k)
-   _,un,_,inn,_=action(native,times+.002*k);maptime+=time.perf_counter()-t
+   t=time.perf_counter();ug,_,ig,_,gs=action(gpu,times+.002*k)
+   _,un,_,inn,ns=action(native,times+.002*k);maptime+=time.perf_counter()-t
    if not np.all(ig[:,0]) or not np.all(inn[:,0]):
     disagree.append(dict(node=k,reason='QP_failure'));report['stop_reason']='same_complete_policy_projection_failure';break
-   allun.append(un.copy());allug.append(ug.copy())
+   allun.append(un.copy());allug.append(ug.copy());allrawg.append(gs['gpu_raw'].copy());allrawn.append(ns['cpu_raw'].copy());allclipg.append(gs['gpu_clipped'].copy());allclipn.append(ns['cpu_clipped'].copy())
    wp.copy(d.ctrl,wp.array(ug.astype(np.float32),dtype=float))
    t=time.perf_counter()
-   for j in range(10):wp.capture_launch(cap.graph)
+   for j in range(10):
+    wp.capture_launch(cap.graph);report['capture_launch_count']+=1
    wp.synchronize();devtime+=time.perf_counter()-t
    t=time.perf_counter();gpu=np.c_[d.qpos.numpy(),d.qvel.numpy()].astype(np.float64);grisk=risk.numpy().astype(float);download_time+=time.perf_counter()-t
    t=time.perf_counter()
@@ -182,14 +187,20 @@ def main():
     report['short20ms']=short;write(SMALL/'gpu.json',report)
     if np.any(mismatch):
      report.update(status='finite_constraint_disagreement',full_350ms='not_started');break
-    report['full_350ms']='same_running_batch_continuation_no_restart'
+    report.update(status='short_diagnostic_complete_no_expansion_authorized',full_350ms='not_started',
+     expansion_note='Zero trunk disagreement does not establish explained dynamics or full original hard-condition equivalence. Historical W46 350ms arrays remain a finite negative diagnostic.');break
   else:report.update(status='completed_finite_full_policy_execution',full_350ms='completed')
   report.update(timing=dict(action_mapping_and_host_projection_s=maptime,device_advance_wall_s=devtime,
     native_confirmation_s=native_time,download_s=download_time),constraint_disagreements=disagree,
     final_state_component_max_error=ma(gpu-native),final_native_trunk=nrisk.tolist(),final_gpu_trunk=grisk.tolist(),
     throughput_scope='Host coupled complete policy diagnostic with exact native H projection, not resident all-device MPC or fair optimized speed benchmark.')
   np.savez_compressed(OUT/'paired-states-actions.npz',native_states=np.asarray(alln),gpu_states=np.asarray(allg),
-    native_actions=np.asarray(allun),gpu_actions=np.asarray(allug),native_trunk=nrisk,gpu_trunk=grisk)
+    native_actions=np.asarray(allun),gpu_actions=np.asarray(allug),native_trunk=nrisk,gpu_trunk=grisk,
+    native_raw=np.asarray(allrawn),gpu_raw=np.asarray(allrawg),native_clipped=np.asarray(allclipn),gpu_clipped=np.asarray(allclipg),
+    decision_time=times[None,:]+.002*np.arange(len(allun))[:,None],
+    hold_start_time=times[None,:]+.002*np.arange(len(allun))[:,None],
+    hold_end_time=times[None,:]+.002*np.arange(1,len(allun)+1)[:,None],
+    post_state_time=times[None,:]+.002*np.arange(len(alln))[:,None])
   write(OUT/'scenarios.json',tags)
  except Exception as e:report.update(status='technical_failure',first_error=repr(e),traceback=traceback.format_exc())
  finally:

@@ -34,7 +34,10 @@ for key in ['native_states','gpu_states']:
 rep['native_bridge_identity_check']=validation;rep['short20ms']['body_hard_condition_readback']=short_hard
 rep['first_divergence']={}
 for k in range(1,11):
- diff=abs(z['native_states'][k]-z['gpu_states'][k]);rep['first_divergence'][str(k)]=dict(time_after_origin_s=.002*k,position_max=float(diff[:,:19].max()),velocity_max=float(diff[:,19:].max()),action_difference_rad=float(abs(z['native_actions'][k-1]-z['gpu_actions'][k-1]).max()))
+ diff=abs(z['native_states'][k]-z['gpu_states'][k]);rep['first_divergence'][str(k)]=dict(decision_time_after_origin_s=.002*(k-1),hold_start_after_origin_s=.002*(k-1),hold_end_after_origin_s=.002*k,post_state_time_after_origin_s=.002*k,position_max=float(diff[:,:19].max()),velocity_max=float(diff[:,19:].max()),action_difference_rad=float(abs(z['native_actions'][k-1]-z['gpu_actions'][k-1]).max()))
+rep['warmup_correction']=dict(original_recorded_warmup_world_steps=rep['warmup_world_steps'],executed_warmup_world_steps=24,capture_recorded_world_steps=24,main_capture_launch_count=1750,main_world_steps=42000,basis='Source and Warp capture API semantics; no new execution')
+rep['expansion_correction']='Historical 350ms is a finite negative diagnostic; zero short-window trunk flags did not establish the declared full gate.'
 rep['interpretation']='Same FP64 state/action algebra agrees; engine-generated state differences are then amplified by the unchanged complete feedback and H projection. Native3.2.3 versus MuJoCo4/MJWarp FP32 contact/engine effects are not separately identified. No native-equivalent ranking or online acceleration claim.'
-(small/'gpu.json').write_text(json.dumps(rep,indent=2)+'\n');(g/'result.json').write_text(json.dumps(rep,indent=2)+'\n')
+correction=small.parent/'w47/task-c/historical-gpu-record-correction.json';correction.parent.mkdir(parents=True,exist_ok=True)
+correction.write_text(json.dumps(rep,indent=2)+'\n')
 print(json.dumps({'residual_max':max(x['native_residual_reconstruction_max'] for x in checks),'cost_error':max(x['native_cost_recompute_max'] for x in checks),'derivative_error':max(x['central_cost_Cu_max_error'] for x in checks),'native_bridge':validation,'short_hard':short_hard},indent=2))

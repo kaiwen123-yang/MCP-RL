@@ -1,0 +1,24 @@
+--- a/mjpc/utilities.cc
++++ b/mjpc/utilities.cc
+@@ -548,6 +548,21 @@
+     Diff(ds, s1, s2, h, nq + nv + na);
+   } else {
+     mj_differentiatePos(m, ds, h, s1, s2);
++    // A rotation compared with itself (or its exact quaternion antipode) is
++    // exactly zero. Do not amplify quaternion-product roundoff through K.
++    // There is no neighbourhood tolerance: distinct rotations are unchanged.
++    for (int j=0; j<m->njnt; ++j) {
++      const int type=m->jnt_type[j];
++      if (type!=mjJNT_FREE && type!=mjJNT_BALL) continue;
++      const int q=m->jnt_qposadr[j]+(type==mjJNT_FREE?3:0);
++      const int v=m->jnt_dofadr[j]+(type==mjJNT_FREE?3:0);
++      bool identical=true,antipodal=true;
++      for (int k=0;k<4;++k) {
++        identical=identical && s1[q+k]==s2[q+k];
++        antipodal=antipodal && s1[q+k]==-s2[q+k];
++      }
++      if (identical || antipodal) mju_zero(ds+v,3);
++    }
+     Diff(ds + nv, s1 + nq, s2 + nq, h, nv + na);
+   }
+ }

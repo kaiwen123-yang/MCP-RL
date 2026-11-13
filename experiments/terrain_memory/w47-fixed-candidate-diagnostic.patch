@@ -1,0 +1,22 @@
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -322,7 +322,18 @@
+     r29_failed[0]+=failed;
+   };
+   r29_failed[0]=0;
+-  trajectory[0].Rollout(action,task,model,data_[0].get(),state.data(),time,mocap.data(),userdata.data(),horizon);
++  // W47 offline-only, fixed saved candidate. Alpha is already in u_ff.
++  if (std::getenv("MJPC_W47_INDEXED_SCORE")) {
++    auto indexed=[&](double* u,const double* x,int k) {
++      bool changed,failed,restored;
++      policy.ActionIndex(u,x,k,&changed,&failed,&restored);
++      r29_failed[0]+=failed;
++    };
++    trajectory[0].RolloutDiscrete(indexed,task,model,data_[0].get(),state.data(),time,mocap.data(),userdata.data(),horizon);
++  } else {
++    trajectory[0].Rollout(action,task,model,data_[0].get(),state.data(),time,mocap.data(),userdata.data(),horizon);
++  }
++  ++r33_rollouts;
+   if(r29_failed[0])trajectory[0].failure=true;
+   R33Consider(policy,trajectory[0],horizon,3,0,policy.action_step_alpha,"offline_score_only");
+   r32.deployable=r33_archive_valid;
