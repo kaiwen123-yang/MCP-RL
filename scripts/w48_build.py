@@ -54,7 +54,7 @@ def main():
   build_started_unix_s=start,build_wall_s=time.time()-start,build_concurrency_cap=6,
   compile_commands=jobs,link_command=link,cached_inputs_read_only=True,original_runtime_library_reused=True,
   mujoco_library_sha256=sha(DEST/'lib/libmujoco.so.3.2.3'),cached_binary_after_sha256=sha(CACHE/'bin/agent_server'),
-  configuration_overrides=spec['configuration_overrides'],
+  configuration_overrides=dict(old['configuration_overrides'],**spec['configuration_overrides']),
   control_patch_sha256=sha(ROOT/spec['control_patch']),recording_patch_sha256=sha(ROOT/spec['recording_patch']),
   deployment_scope='Formal N/r34-strict/constant r36; finite and original-task qualification reported separately',
   deadline_unix_s=None,wall_deadline_enabled=False)

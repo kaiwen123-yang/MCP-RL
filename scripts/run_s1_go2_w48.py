@@ -39,7 +39,7 @@ def run(jobdir):
   from w48_run_summary import summarize_attempt
   summary_path=summarize_attempt(attempt)
   compact([summary_path,path,resultpath,SMALL/(attempt+'-resolved.json')] if result else [summary_path,path],f'Record W48 {job["stream_id"]} {level} actual outcome')
- state['status']='completed_with_failed_qualification' if failed else 'completed_all_qualified'
+ state['status']=('technical_interruption' if any(x.get('status') in ('interrupted','technical_interruption') for x in state['stages']) else 'completed_with_failed_qualification') if failed else 'completed_all_qualified'
  state['ended_unix_s']=time.time();write(path,state);write(jobdir/'runtime.json',state)
  with (SMALL/'index.lock').open('a') as lock:
   fcntl.flock(lock,fcntl.LOCK_EX)
@@ -58,7 +58,7 @@ def run(jobdir):
       cwd=ROOT,stdout=log,stderr=subprocess.STDOUT).returncode
    state.setdefault('render',[]).append(dict(attempt=attempt,exit_code=code))
  write(path,state)
- delivery=deliver(job['stream_id'],[LARGE/name for name in state['attempts'] if (LARGE/name).exists()]+[jobdir])
+ delivery=deliver(job['job_id'],[LARGE/name for name in state['attempts'] if (LARGE/name).exists()]+[jobdir])
  state['publication']=delivery;write(path,state);compact([path],f'Record W48 {job["stream_id"]} final delivery state')
 def declare():
  import torch

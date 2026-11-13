@@ -1,6 +1,6 @@
 {
   "phase": "W48",
-  "status": "all_original_ladders_naturally_ended",
+  "status": "original_evaluations_declared_not_started",
   "plan_commit": "068d8388feba972dd0e8cbd5bbbb1a7fd3ee71bf",
   "result_base": "6e9075f48718509d48f51d08d0a8f62a34edfb41",
   "started_unix_s": 1794559620.7678993,
@@ -194,9 +194,10 @@
     "donor_solves": 0,
     "optional_action_batch": "not_run"
   },
-  "original_evaluation_declared_unix_s": 1794560200.2561758,
+  "original_evaluation_declared_unix_s": 1794560792.869432,
   "binary_sha256": "b05c8da8ca74551dc73ea0272329234217d7160731e5cea8e33101bba3241338",
-  "jobs": [
+  "launched_unix_s": 1794560316.7475998,
+  "prior_technical_jobs": [
     {
       "job_id": "job-20261113T085640Z-w48-a",
       "stream_id": "w48-a",
@@ -214,8 +215,7 @@
       "checkpoint_sha256": "6b1fcab99f849aaaabc4925dc13391f6ced8e75c419d0f821661417cba6349f7"
     }
   ],
-  "launched_unix_s": 1794560316.7475998,
-  "stream_results": {
+  "prior_technical_stream_results": {
     "w48-a": {
       "status": "completed_with_failed_qualification",
       "stages": [
@@ -326,5 +326,67 @@
         }
       ]
     }
-  }
+  },
+  "startup_technical": {
+    "status": "root_cause_fixed_before_independent_restarts",
+    "restored_configuration_keys": [
+      "normal_landing",
+      "r11_combination",
+      "r11_combined_repair",
+      "r11_contact_completion",
+      "r11_contact_timing",
+      "r11_derivative_schedule",
+      "r11_domain_margin",
+      "r11_landing_approach_band",
+      "r11_landing_band_scalar_fix",
+      "r11_material_upright",
+      "r11_moving_body_support",
+      "r11_moving_stance_height",
+      "r11_parameter_application",
+      "r11_prediction_coldstart",
+      "r11_slow_approach",
+      "r12_trunk_clearance",
+      "task"
+    ],
+    "native_binary_sha256": "b05c8da8ca74551dc73ea0272329234217d7160731e5cea8e33101bba3241338",
+    "native_control_source_unchanged": true,
+    "finite_results_reused_without_extra_solves": true,
+    "cause": "w48_build.py replaced rather than merged the retained r35 configuration_overrides; generated formal model lacked r12_trunk_clearance while r12_substep_path was enabled.",
+    "stack": "Trajectory::UpdateTrunkViolation -> Trajectory::NoisyRollout -> Trajectory::Rollout -> iLQGPlanner::FeedbackRollouts",
+    "technical_attempts": [
+      "job-20261113T085640Z-w48-a-eval-PANN_PPO_S5-s1-E30-attempt01",
+      "job-20261113T085640Z-w48-b-eval-PANN_PPO_S5-s2-E30-attempt01",
+      "job-20261113T085640Z-w48-a-eval-PANN_PPO_S5-s1-E30-attempt02",
+      "job-20261113T085640Z-w48-a-eval-PANN_PPO_S5-s1-E30-attempt03"
+    ],
+    "original_plant_physics_substeps": 0,
+    "new_PPO_samples": 0,
+    "new_PPO_updates": 0,
+    "incomplete_original_startup_calls": 4,
+    "transition_FD_calls": 0,
+    "native_startup_rollout_integrations": "Partial/unavailable exact count: failure before nominal pool returns and native counter write; these are not zero physics work.",
+    "native_startup_rollout_max_slots": 40,
+    "native_startup_rollout_substeps_upper_bound": 70000,
+    "debugger": "One attempted sibling attach denied by Yama; explicit per-child ptracer permission then actual original-attempt crash stack captured. Temporary stop/ptracer code removed.",
+    "retained_crash_core_server_path": "/root/autodl-tmp/MCP-RL-w42/work/w48-native-crash.core",
+    "backtrace_file": "startup-backtrace.txt"
+  },
+  "jobs": [
+    {
+      "job_id": "job-20261113T090632Z-w48-a",
+      "stream_id": "w48-a",
+      "directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261113T090632Z-w48-a",
+      "session": "s1-w48-a",
+      "affinity": "0-9",
+      "checkpoint_sha256": "aa6cf72950e0f15160a15009813b2a6d976e4f4d31c3ebd198436273dd647c15"
+    },
+    {
+      "job_id": "job-20261113T090632Z-w48-b",
+      "stream_id": "w48-b",
+      "directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261113T090632Z-w48-b",
+      "session": "s1-w48-b",
+      "affinity": "10-19",
+      "checkpoint_sha256": "6b1fcab99f849aaaabc4925dc13391f6ced8e75c419d0f821661417cba6349f7"
+    }
+  ]
 }

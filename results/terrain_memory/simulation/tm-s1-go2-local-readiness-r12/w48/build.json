@@ -200,6 +200,252 @@
   },
   "source_commit": "068d8388feba972dd0e8cbd5bbbb1a7fd3ee71bf",
   "configuration_overrides": {
+    "r11_material_upright": {
+      "residual": "Body world z-axis minus world up: [R02,R12,R22-1]",
+      "norm": "Existing Upright smooth norm6, parameter.05; applied weight1 unchanged",
+      "activation": "At least one candidate footprint inside original material strip; absent for rigid regression",
+      "baseline": "Original dev11 GNC-r3 body reference and landing objective, no S5-r1 or S5-r2 stacking",
+      "evidence": "S5-r1 ends at pitch.61447rad with trunk contact. Original moving Upright uses R22-1, zeroing two available residual channels, and has vanishing first-order tilt sensitivity near upright. Yaw residual is heading-only. S5-r2 separately loses height, not the same mechanism."
+    },
+    "task": {
+      "initial_xy_m": [
+        0,
+        0
+      ],
+      "nominal_initial_yaw_rad": 0,
+      "initial_stand_s": 2,
+      "turnaround_xy_m": [
+        3,
+        0
+      ],
+      "turn_angle_rad": 3.141592653589793,
+      "return_xy_m": [
+        0,
+        0
+      ],
+      "command_speed_m_s": 0.215,
+      "turn_yaw_rate_rad_s": 0.5,
+      "extra_turnaround_hold_s": 0,
+      "terminal_stand_s": 2,
+      "maximum_episode_s": 60,
+      "goal_position_radius_m": 0.15,
+      "turn_heading_tolerance_rad": 0.15,
+      "terminal_speed_max_m_s": 0.05,
+      "task_mode": "Quadruped",
+      "gait_switch": "Manual",
+      "native_head_offset_in_trunk_m": [
+        0.3,
+        0,
+        0
+      ],
+      "orientation_cost_weight": 0.03,
+      "stand_settings": {
+        "Gait": "Stand",
+        "Duty ratio": 1,
+        "Cadence": 1,
+        "Amplitude": 0,
+        "Balance": 0,
+        "Upright": 1,
+        "Height": 1
+      },
+      "move_and_turn_settings": {
+        "Gait": "Trot",
+        "Duty ratio": 0.45,
+        "Cadence": 2.0,
+        "Amplitude": 0.005,
+        "Balance": 0.2,
+        "Upright": 1,
+        "Height": 1
+      }
+    },
+    "r11_contact_timing": {
+      "cadence_Hz": 2.0,
+      "duty_ratio": 0.45,
+      "swing_duration_s": 0.275,
+      "nominal_diagonal_flight_gap_s": 0.025,
+      "nominal_diagonal_event_interval_s": 0.25,
+      "prediction_horizon_s": 0.35,
+      "swing_height_m": 0.005,
+      "fixed_cap_m_s": 0.215,
+      "basis": "Original dev11 GNC cadence/duty. The next nominal diagonal event is within.25s, unlike the.5s interval at1Hz that can lie beyond the fixed.35s horizon."
+    },
+    "r11_combination": {
+      "components": [
+        "S5-r3 material Upright vector",
+        "S5-r4 1Hz/.65 support timing"
+      ],
+      "evidence": "S5-r3 loses height at7.194s; S5-r4 retains minimum base height.26367m but reaches pitch.64213rad and trunk contact at8.2316s. Test complementary support and attitude requirements without another weight or cap change."
+    },
+    "r11_domain_margin": {
+      "onset_m": 0.0008,
+      "scale_m": 0.0002,
+      "weight": 176.0,
+      "smoothing_m": 1e-06,
+      "derivation": "1mm true domain minus2*.002s*.05m_s target approach displacement; ordinary equilibrium indentation objective unchanged.",
+      "evidence": "S5-r5 optimized RL plans descend beyond1.2m_s and penetrate1.18-1.63mm; true task terminates at1.09113mm. Add the approach cost inside the same iLQG objective, no action/force/state clipping.",
+      "scope": "Prediction objective only; original true TM02 strain limit.02, footprint and constitutive integration unchanged.",
+      "time_normalization": "Trajectory::UpdateReturn averages176 node costs. Weight176 makes a single node at the1mm limit contribute approximately.5 to the horizon-mean objective; this was declared before first S5-r6 physics, not selected from its outcome."
+    },
+    "r11_slow_approach": {
+      "profile": "Two C2 quintic segments with zero velocity/acceleration at both ends and the crest",
+      "swing_duration_s": 0.275,
+      "rising_duration_s": 0.075,
+      "descent_duration_s": 0.2,
+      "amplitude_m": 0.005,
+      "maximum_rising_speed_m_s": 0.125,
+      "maximum_descent_speed_m_s": 0.046875,
+      "maximum_rising_acceleration_m_s2": 5.132002392796674,
+      "basis": "Use the existing5mm material-approach height as the clearance for this flat original strip; descend over.20s to stay below the original.05m/s reference. No true terrain/domain change."
+    },
+    "normal_landing": {
+      "height_profile": "S5-r20:5mm up over.075s and down over.20s, two C2 quintic segments at original2Hz/.45 cadence",
+      "approach_band_m": 0.005,
+      "gate_width_m": 0.002,
+      "velocity_scale_m_s": 0.05,
+      "velocity_target": "During ascent/stance0; during descent max(min(phase_height_derivative,0),-.05*tanh(max(bottom_z,0)/.001))",
+      "velocity_weight": 0.02,
+      "indentation_target_m": 0.00019889981664,
+      "indentation_scale_m": 0.001,
+      "indentation_weight": 0.1,
+      "positive_part_smoothing_m": 1e-06,
+      "force": "Candidate stateless normal stiffness and regularized Coulomb friction",
+      "material_support_height": {
+        "target_m": 0.29020336039643685,
+        "scale_m": 0.04,
+        "weight": 1.0,
+        "norm": "quadratic",
+        "activation": "Any candidate footprint wholly in the material strip",
+        "evidence": "Completed GNC r1/r2 trajectories show the optimized horizons themselves accepting progressive base-height loss. At r1 t7, predicted final height .18665m agrees with actual .18869m, so an intercept correction alone does not supply the missing body-support objective.",
+        "scope": "Complete N objective with predicted body support; original rigid Stand references, plant and failure threshold unchanged. No weight sweep."
+      }
+    },
+    "r11_derivative_schedule": {
+      "correction": "Schedule each derivative time node exactly once.",
+      "actual_grid_nodes": 176,
+      "derivative_skip": 0,
+      "previous_jobs": 177,
+      "corrected_jobs": 176,
+      "duplicated_node": 174,
+      "evidence": "Identical S5-r7 E30/E60 compiled model, initial state, source digests, weights and initial support userdata; initial nominal state rollout identical, but first optimized action differs3.7464e-8 before any physical step. The derivative index loop already includesT-2, then appendsT-2 again. Parallel jobs write and repeatedly compose the same A/B output block.",
+      "retained": "Same10*.2ms transition,2ms input hold,node-start C/D,.35s horizon,8 workers and all S5-r7 objectives/references. No true plant change.",
+      "scope": "Concrete duplicate-write defect removed; successful task or all numerical variability removal must be established by actual staged tasks."
+    },
+    "r11_prediction_coldstart": {
+      "enabled": true,
+      "disabled_prediction_bit": "mjDSBL_WARMSTART",
+      "scope": "Private Agent planning model only, before both rollouts and finite differences; client/true MuJoCo model unchanged.",
+      "reason": "After duplicate derivative ownership was fixed, matched S5-r9 E30 runs failed at12.9474s and8.2652s and startup optimized actions still differed. SetState copies qpos/qvel/act but leaves worker-dependent qacc_warmstart; prediction options had warmstart enabled.",
+      "unchanged": "All objective/gait/reference settings from dev11,100 solver iterations,1e-8 solver tolerance,.2ms steps,2ms holds,.35s horizon and8 workers.",
+      "claim": "A declared numerical-model hypothesis; no task or repeatability success claimed before staged execution."
+    },
+    "r11_combined_repair": {
+      "build": "S5-r11",
+      "based_on": "S5-r8 with S5-r10 prediction solver setting",
+      "combination": [
+        "S5-r7 compatible soft approach and support objectives",
+        "unique derivative output ownership",
+        "prediction warmstart disabled"
+      ],
+      "evidence": "S5-r10 original objective with both numerical-state repairs reached10.44s and failed material domain, with base height near.29m. Reapply the mechanical reference package that previously completed an independent E30, now with both declared numerical repairs. No old qualification transfers."
+    },
+    "r11_parameter_application": {
+      "order": "Select gait -> synchronize same actual state -> set declared numeric settings and costs -> synchronize same state -> record readback -> optimize",
+      "physical_state_advances_during_application": 0,
+      "evidence": "Actual S5-r4/r5/r7/r8 records read back2Hz/.45 despite declared1Hz/.65; native TransitionLocked assigns defaults on a selection change.",
+      "requirement": "Gait, cadence, duty and amplitude must equal the declaration before the next actual hold; no silent native defaults."
+    },
+    "r11_moving_stance_height": {
+      "enabled": true,
+      "reference": "Same world ground plane and foot radius as the existing Gait residual, including nominal stance feet while moving.",
+      "norm": "Existing Gait SmoothAbs norm6, p=.03 and weight2, unchanged; no new residual dimension.",
+      "evidence": "Correctly applied S5-r12 1Hz/.65 E30 body fall at10.192s. At9.9s its own optimized plan predicts FR nominal stance bottom45.426mm at10.0s, versus actual43.727mm. All four actual normal forces then vanish. Original Gait residual is identically0 when step[foot]==0.",
+      "scope": "Prediction objective only, moving Trot; Stand support formulation unchanged. Original Go2/TM02/contact/physics/domain/limits and full route unchanged.",
+      "hypothesis": "Penalizing airborne nominal stance feet supplies a missing support reference; actual E30/E60 determine whether it prevents the recorded mechanism."
+    },
+    "r11_moving_body_support": {
+      "enabled": true,
+      "change": "Keep the existing absolute body-height and first-order Upright objectives active throughout moving Quadruped gait, independently of candidate footprint membership in the material strip.",
+      "preserved": "Same height target .29020336039643685m, scale .04m, quadratic weight1; same Upright norm6/.05 weight1. No extra cost term or weight change. Stand S3 support remains unchanged.",
+      "evidence": "S5-r13 moving stance tracking alone ended10.5304s with trunk contact and maxstrain.008374. Its9.7s optimized plan leaves all candidate feet outside the strip by9.9s, disabling absolute height and first-order Upright; the same plan predicts base .175499m at10.0s. S5-r12 shows the same gating mechanism.",
+      "rigid_regression": "The same moving-body objectives also remain active in the one rigid regression; material-only landing/domain costs still switch off with the physical material.",
+      "hypothesis": "Removing the support-objective spatial discontinuity prevents the optimizer from accepting collapse after retracting candidate footprints across the strip boundary."
+    },
+    "r11_landing_approach_band": {
+      "width_m": 0.07525,
+      "derivation": "Fixed body-reference cap .215m/s times unchanged .35s prediction horizon. This is a declared reference activation width, not a bound on actual foot reach.",
+      "change": "Activate the existing downward landing-velocity objective on a spatial approach band around the original footprint-interior material region. Keep normal force, native contact switching, indentation and material-domain residual activation on the exact original strip.",
+      "evidence": "S5-r14 retained body height but failed RL at9.448s: actual bottom-1.0144mm/vz-.62295m/s. Its9.4s C plan already predicted RL-1.03865mm/vz-.87028 at9.448s with x.815931m, only.120mm inside the .815811m footprint threshold. The prior9.38s plan has x.814946m at that time: braking is absent until the footprint crosses the sharp material boundary.",
+      "objective": "Same phase-compatible desired vz, .05m/s scale and .02 weight. No physical region, constitutive parameter, strain limit, cap, route or timing change.",
+      "hypothesis": "Begin braking before the planned foot crosses the strip boundary rather than activating the normal-velocity cost at already-deep entry."
+    },
+    "r11_landing_band_scalar_fix": {
+      "correction": "GetNumberOrDefault(0., model, \"r11_landing_approach_band\") uses double rather than deducing integer from0.",
+      "declared_width_m": 0.07525,
+      "prior_effective_width_m": 0.0,
+      "evidence": "utilities.h GetNumber<T> returns static_cast<T>(data[0]); the previous integer default narrowed .07525 to0. Complete dev16/dev17 physical times, qpos and q_target arrays are bit-identical despite8 versus20 workers. Thus dev17 is not evidence against a nonzero approach band.",
+      "preserved": "Same S5-r15 declaration,20 workers and all controller/plant settings; only scalar retrieval type is corrected. Independent E30 qualification required."
+    },
+    "r11_contact_completion": {
+      "enabled": true,
+      "normal_force_target": "Original two-foot support share: subtree_mass*abs(gravity_z)/2",
+      "loaded_reference": "z_target = same C causal rest offset - (mass*abs(g_z)/2)/K0",
+      "scope": "Only normal-velocity reference and causal C observation anchors. Keep original Kinf-based indentation penalty, its scale/weight, real material law/domain and all other S5-r20 settings.",
+      "velocity": "Swing ascent remains unpenalized; descending swing retains the phase-compatible braking limit. During nominal material stance, preserve the downward braking reference until the loaded C reference is reached instead of clipping it to0 solely because nominal step height is0.",
+      "gate": "Use height relative to the same estimated C unloaded surface for the existing5mm gate, without changing true geometry or domain.",
+      "anchor_observations": "Retain original >1N loaded anchors. Also retain below-original-plane observations with force<=1N: atzero force these tighten an upper bound on the contact surface; atsmall positive force they match the observed weak force. No true q/e or future truth is read.",
+      "anchor_kind": {
+        "inactive": 0,
+        "original_loaded_over1N": 1,
+        "below_plane_subthreshold_observation": 2
+      },
+      "evidence": "dev22 has a93ms unsupported interval and1745N total-force peak before trunk contact, while its RL stays unloaded through the final.5s. The existing phase clip makes desired downward velocity0 for airborne nominal stance feet. In retained dev18 at9.04s, ignoring a negative-height zero-force observation makes C predict18.89N at a true zero-force node.",
+      "qualification": "New independent E30 then same-version E60; no retrospective qualification."
+    },
+    "r12_trunk_clearance": {
+      "enabled": true,
+      "scale_m": 0.001,
+      "weight": 176,
+      "residual_dimension": 7,
+      "residual": "For each original trunk collision geom: smooth_positive(max(floor_margin,geom_margin)-signed_geom_distance)/0.001; quadratic norm, 1 micrometre hinge smoothing.",
+      "geometry": "Original floor and seven trunk collision geoms (7..13 in retained ep10), selected from trunk body and original collision masks. Actual runner permits all leg-body contacts and terminates on trunk-floor contact.",
+      "activation": "Every predicted state, including the original terminal knot. No true material q/e, new sensor, geometry, margin or plant terminal change.",
+      "scale_basis": "The original trunk margin is 1 mm. Retain MaterialDomainMargin's 176-node weight so a one-scale forbidden-contact deficit at a single prediction knot contributes 0.5 to the horizon-mean cost. This is a soft optimization penalty, not a hard feasibility guarantee.",
+      "evidence": {
+        "attempt": "train-PANN_PPO_S5-s0-ep00010",
+        "physical_terminal_s": 6.561,
+        "analysis": "Kinematic evaluation of saved prediction states only; no physical rerun or optimization. Listed existing components are Upright, MaterialSupportHeight and MaterialDomainMargin, not a complete cost replay.",
+        "plans": [
+          {
+            "origin_s": 6.2,
+            "min_trunk_distance_m": -0.00747585324275335,
+            "margin_nodes": 19,
+            "mean_existing_upright": 0.09809100817078051,
+            "mean_existing_material_support_height": 1.0002124618828836,
+            "mean_existing_material_domain_margin": 1.5508668464994655e-10,
+            "mean_new_clearance_cost": 326.04971044077064
+          },
+          {
+            "origin_s": 6.3,
+            "min_trunk_distance_m": -0.00861997186200543,
+            "margin_nodes": 64,
+            "mean_existing_upright": 0.22149410509709846,
+            "mean_existing_material_support_height": 1.7478425392450054,
+            "mean_existing_material_domain_margin": 5.717635510159174e-11,
+            "mean_new_clearance_cost": 457.04837094559747
+          },
+          {
+            "origin_s": 6.54,
+            "min_trunk_distance_m": -0.007465493219757105,
+            "margin_nodes": 14,
+            "mean_existing_upright": 0.24676057764484857,
+            "mean_existing_material_support_height": 0.1949366047702901,
+            "mean_existing_material_domain_margin": 1.3437691516389316e-10,
+            "mean_new_clearance_cost": 274.8735659762887
+          }
+        ]
+      },
+      "qualification": "Engineering correction followed directly by the authorized W34 PANN training; no E30/E60 qualification or controller benefit claimed."
+    },
     "r26_reference": {
       "horizon_s": 0.35,
       "maximum_lead_m": 0.15,
@@ -416,10 +662,8 @@
   "selection_evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w44-mechanisms/summary.json",
   "selection_changes_binary": false,
   "configuration_inheritance_repair": {
-    "kind": "restore_complete_r32_configuration_inheritance",
-    "time_unix_s": 1794321770.1589384,
-    "cause": "Manual artifact identity finalization replaced complete inherited overrides with the r33 incremental override map. Normal prepare already uses prior overrides.update(spec overrides).",
-    "missing_parent_keys": [
+    "reason": "Merge inherited r35 overrides before applying r36 increments; build code had replaced them.",
+    "restored_keys": [
       "normal_landing",
       "r11_combination",
       "r11_combined_repair",
@@ -438,23 +682,8 @@
       "r12_trunk_clearance",
       "task"
     ],
-    "prior_override_count": 10,
-    "restored_override_count": 27,
-    "merge_rule": "configuration_overrides = {**frozen_S5_r32.configuration_overrides, **r33_spec.configuration_overrides}",
-    "binary_unchanged": true,
-    "binary_sha256": "2d2f74813c235f70f165be706625b67a5fd279827a0a13c5ee4f95b1c1341466",
-    "old_identity_sha256": "5c3e994fcf833dd1674708f5cde97815ad9e979967734500af91f4ee9de34e0f",
-    "affected_jobs": [
-      "job-20261110T143358Z-w44-a",
-      "job-20261110T143400Z-w44-b"
-    ],
-    "failed_physical_steps": 0,
-    "new_samples_before_repair": 0,
-    "new_updates_before_repair": 0,
-    "saved_problem_comparison": "Unaffected: all four compared model XMLs are the original complete W43 native models; same compiled binary retained.",
-    "diagnosis": "One gdb replay of the actual failed initial PlannerStep, no plant stepping: SIGSEGV in Trajectory::UpdateTrunkViolation; r12_substep_path exists but omitted r12_trunk_clearance numeric/sensor dereferenced.",
-    "continuation": "Ordinary resume own W44 resume/phase/clock, next unoccupied episodes412/400; preserve failed411/399.",
-    "gdb_log": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/train-job-20261110T143358Z-w44-a-PANN_PPO_S5-s1-ep00411/startup-crash-replay/gdb.log"
+    "binary_rebuilt": false,
+    "control_source_changed": false
   },
   "build_input_specification_sha256": "3defb90597ffaa1615ca6fcb3937379d72d80a6dc7a389061ad51bf5977e11a5",
   "original_build_specification_sha256": "31bde539e5d419e13f03523edff77000a441e118b06f899a78cbb3c6336dfac0",
