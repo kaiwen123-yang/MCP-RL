@@ -1,0 +1,363 @@
+--- a/mjpc/planners/ilqg/policy.h
++++ b/mjpc/planners/ilqg/policy.h
+@@ -16,6 +16,8 @@
+ #define MJPC_PLANNERS_ILQG_POLICY_H_
+ 
+ #include <vector>
++#include <iosfwd>
++#include <string>
+ 
+ #include <mujoco/mujoco.h>
+ #include "mjpc/planners/policy.h"
+@@ -57,6 +59,18 @@
+                    bool* changed, bool* failed, bool* restored) const;
+ 
+ 
++  // W49 accumulated, already-scaled feedforward curve on its own absolute clock.
++  // delta_alpha is provenance only; DeltaAction never multiplies it again.
++  std::vector<double> delta_times, delta_values;
++  double delta_alpha=0, delta_begin=0, delta_end=0;
++  void ClearDelta();
++  void DeltaAction(double* u,double time) const;
++  void AddDelta(const std::vector<double>& times,const std::vector<double>& values,
++                int count,double alpha);
++  void WriteDelta(std::ostream& out) const;
++  void ReadDelta(std::istream& in);
++  void Save(const std::string& path) const;
++
+   // copy policy
+   void CopyFrom(const iLQGPolicy& policy, int horizon);
+ 
+--- a/mjpc/planners/ilqg/policy.cc
++++ b/mjpc/planners/ilqg/policy.cc
+@@ -66,6 +66,7 @@
+ // reset memory to zeros
+ void iLQGPolicy::Reset(int horizon, const double* initial_repeated_action) {
+   trajectory.Reset(horizon, initial_repeated_action);
++  ClearDelta();
+   metric_valid=false;record_plan_id=0;metric_regularization=0;
+   nominal_feedback_scale=1;action_step_alpha=0;
+   std::fill(metric.begin(),metric.end(),0.);
+@@ -180,6 +181,9 @@
+     mju_addToScl(action, action_scratch.data(), feedback_scaling, dim_action);
+   }
+ 
++  std::vector<double> feedforward_delta(dim_action,0.);
++  DeltaAction(feedforward_delta.data(),time);
++  mju_addTo(action,feedforward_delta.data(),dim_action);
+   std::vector<double> before_clip;
+   before_clip.assign(action,action+dim_action);
+   // clamp controls: unchanged action path.
+@@ -261,6 +265,7 @@
+     array("PD_u_held_same_state",pdheld.data(),dim_action);
+     out<<",\"serialization_boundary_crossing\":"<<(crossing?"true":"false");
+     array("nominal_unclipped",nominal.data(),dim_action);
++    array("feedforward_delta",feedforward_delta.data(),dim_action);
+     array("state_delta",state_scratch.data(),dim_state_derivative);
+     array("raw_K_delta_x",action_scratch.data(),dim_action);
+     array("action_before_clip",before_clip.data(),dim_action);
+@@ -272,6 +277,7 @@
+ // Discrete candidates explicitly use s=1; alpha is already in u_ff.
+ void iLQGPolicy::ActionIndex(double* action,const double* state,int index,
+                             bool* changed,bool* failed,bool* restored) const {
++  if(!delta_times.empty())mju_error("W49 delta policy requires absolute query time; ActionIndex is invalid");
+   int nu=model->nu,nx=2*model->nv+model->na,ns=model->nq+model->nv+model->na;
+   std::vector<double> dx(nx),feedback(nu);
+   StateDiff(model,dx.data(),trajectory.states.data()+index*ns,state,1.);
+@@ -287,6 +293,8 @@
+   // reference
+   representation=policy.representation;feedback_scaling=policy.feedback_scaling;
+   trajectory = policy.trajectory;
++  delta_times=policy.delta_times;delta_values=policy.delta_values;
++  delta_alpha=policy.delta_alpha;delta_begin=policy.delta_begin;delta_end=policy.delta_end;
+   record_plan_id = policy.record_plan_id;
+   metric_valid=policy.metric_valid;metric_regularization=policy.metric_regularization;
+   metric_regularization_type=policy.metric_regularization_type;
+@@ -305,4 +313,61 @@
+            horizon * model->nu);
+ }
+ 
++
++void iLQGPolicy::ClearDelta() {
++  delta_times.clear();delta_values.clear();delta_alpha=delta_begin=delta_end=0;
++}
++void iLQGPolicy::DeltaAction(double* out,double t) const {
++  mju_zero(out,model->nu);
++  if(!delta_times.empty())
++    LinearInterpolation(out,t,delta_times,delta_values.data(),model->nu,delta_times.size());
++}
++void iLQGPolicy::AddDelta(const std::vector<double>& times,const std::vector<double>& values,
++                          int count,double alpha) {
++  if(alpha==0)return;  // Keep the exact baseline identity without regridding.
++  if(representation!=1)mju_error("W49 k-guided family is declared for linear action interpolation");
++  const double begin=times[0],end=times[count-1];
++  std::vector<double> knots(times.begin(),times.begin()+count);
++  for(double t:delta_times)if(t>begin && t<end)knots.push_back(t);
++  std::sort(knots.begin(),knots.end());
++  knots.erase(std::unique(knots.begin(),knots.end()),knots.end());
++  std::vector<double> merged(knots.size()*model->nu),old(model->nu),increment(model->nu);
++  for(size_t i=0;i<knots.size();++i) {
++    DeltaAction(old.data(),knots[i]);
++    LinearInterpolation(increment.data(),knots[i],times,values.data(),model->nu,count);
++    mju_addScl(merged.data()+i*model->nu,old.data(),increment.data(),alpha,model->nu);
++  }
++  delta_times=std::move(knots);delta_values=std::move(merged);
++  delta_alpha=alpha;delta_begin=begin;delta_end=end;
++}
++void iLQGPolicy::WriteDelta(std::ostream& out) const {
++  double h[]={49.,double(metric_valid),double(delta_times.size()),delta_alpha,delta_begin,delta_end};
++  out.write(reinterpret_cast<const char*>(h),sizeof(h));
++  for(const auto* v:{&delta_times,&delta_values})
++    out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(double));
++}
++void iLQGPolicy::ReadDelta(std::istream& in) {
++  ClearDelta();double h[6];in.read(reinterpret_cast<char*>(h),sizeof(h));
++  if(!in || h[0]!=49. || h[2]<0)mju_error("W49 complete-policy extension missing");
++  metric_valid=bool(h[1]);int count=int(h[2]);
++  delta_alpha=h[3];delta_begin=h[4];delta_end=h[5];
++  delta_times.resize(count);delta_values.resize(count*model->nu);
++  for(auto* v:{&delta_times,&delta_values})
++    in.read(reinterpret_cast<char*>(v->data()),v->size()*sizeof(double));
++  if(!in)mju_error("W49 complete-policy extension truncated");
++}
++void iLQGPolicy::Save(const std::string& path) const {
++  int T=trajectory.horizon,ns=model->nq+model->nv+model->na,nu=model->nu,nx=2*model->nv+model->na;
++  std::ofstream out(path,std::ios::binary|std::ios::trunc);
++  double h[]={49.,double(record_plan_id),trajectory.times[0],double(T),double(ns),double(nu),double(nx),
++    double(trajectory.dim_residual),metric_regularization,double(metric_regularization_type),
++    nominal_feedback_scale,action_step_alpha,feedback_scaling,double(representation),
++    double(model->nuserdata),trajectory.total_return};
++  out.write(reinterpret_cast<const char*>(h),sizeof(h));
++  auto w=[&](const std::vector<double>& v,int n){out.write(reinterpret_cast<const char*>(v.data()),n*sizeof(double));};
++  w(trajectory.states,T*ns);w(trajectory.actions,(T-1)*nu);w(trajectory.times,T);w(trajectory.residual,T*trajectory.dim_residual);
++  w(feedback_gain,T*nu*nx);w(metric,T*nu*nu);w(base_Qu,T*nu);w(base_Qxu,T*nx*nu);w(base_active,T*nu);
++  WriteDelta(out);
++}
++
+ }  // namespace mjpc
+--- a/mjpc/planners/ilqg/planner.h
++++ b/mjpc/planners/ilqg/planner.h
+@@ -113,6 +113,11 @@
+   void R33Consider(const iLQGPolicy& p,const Trajectory& tr,int horizon,
+                    int kind,int slot,double alpha,const std::string& source);
+   void R33Structured(int horizon,ThreadPool& pool);
++  bool w49_first_valid=false;
++  std::vector<double> w49_k,w49_times;
++  iLQGPolicy w49_base;
++  void W49Capture(int horizon);
++  void W49Guided(int horizon,ThreadPool& pool);
+   void R33WriteSnapshot(int horizon);
+   void R32BeginProblem(int horizon);
+   void R32ReuseIncumbent(const char* reason);
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -339,7 +339,7 @@
+      int(h[6])!=dim_state_derivative || int(h[7])!=task->num_residual)
+     mju_error("r33 saved policy dimensions/header mismatch");
+   auto read=[&](std::vector<double>& v,int n){in.read(reinterpret_cast<char*>(v.data()),n*sizeof(double));};
+-  auto& tr=policy.trajectory;tr.horizon=horizon;
++  auto& tr=policy.trajectory;tr.horizon=horizon;tr.total_return=h[15];
+   read(tr.states,horizon*dim_state);read(tr.actions,(horizon-1)*dim_action);
+   std::copy_n(tr.actions.data()+(horizon-2)*dim_action,dim_action,tr.actions.data()+(horizon-1)*dim_action);
+   read(tr.times,horizon);read(tr.residual,horizon*task->num_residual);
+@@ -347,14 +347,20 @@
+   read(policy.metric,horizon*dim_action*dim_action);read(policy.base_Qu,horizon*dim_action);
+   read(policy.base_Qxu,horizon*dim_action*dim_state_derivative);read(policy.base_active,horizon*dim_action);
+   if(!in)mju_error("r33 saved policy truncated");
+-  policy.record_plan_id=h[1];policy.metric_valid=true;policy.metric_regularization=h[8];
++  policy.ClearDelta();
++  policy.record_plan_id=h[1];policy.metric_valid=false;policy.metric_regularization=h[8];
+   policy.metric_regularization_type=h[9];policy.nominal_feedback_scale=h[10];
+   policy.action_step_alpha=h[11];policy.feedback_scaling=h[12];policy.representation=h[13];
++  if(int(h[0])==49)policy.ReadDelta(in);
++  // Legacy schema did not carry metric validity. Its absence is not evidence of a valid metric.
++
+ }
+ 
+ void iLQGPlanner::R33Consider(const iLQGPolicy& p,const Trajectory& tr,int horizon,
+     int kind,int slot,double alpha,const std::string& source) {
+   ++r33_slots;
++  if(const char* path=std::getenv("MJPC_W49_COMPLETE_POLICIES"))
++    p.Save(std::string(path)+"-candidate-"+std::to_string(r33_slots)+".bin");
+   const bool valid=p.metric_valid && !tr.failure && std::isfinite(tr.total_return) &&
+                    std::isfinite(tr.trunk_violation);
+   // Alpha search retains the original strict native acceptance even when
+@@ -517,7 +523,7 @@
+ void iLQGPlanner::OptimizePolicy(int horizon, ThreadPool& pool) {
+   auto call_start=std::chrono::steady_clock::now();
+   if(const char* mode=std::getenv("MJPC_R33_MECHANISM"))r33_mechanism=mode;
+-  if(r33_mechanism!="S" && r33_mechanism!="N" && r33_mechanism!="P" && r33_mechanism!="R32")
++  if(r33_mechanism!="S" && r33_mechanism!="N" && r33_mechanism!="P" && r33_mechanism!="K" && r33_mechanism!="R32")
+     mju_error("r33 unknown declared mechanism");
+   r34_enabled=!(std::getenv("MJPC_R34_ACCEPTANCE") &&
+       std::string(std::getenv("MJPC_R34_ACCEPTANCE"))=="legacy");
+@@ -529,6 +535,11 @@
+   }
+   if(std::getenv("MJPC_R34_SCORE_ONLY"))r33_imported=false;
+   R33Import(horizon);
++  if(std::getenv("MJPC_W49_QUERY_ONLY")) {
++    if(const char* dest=std::getenv("MJPC_W49_EXPORT"))policy.Save(dest);
++    r32.deployable=policy.metric_valid;r29_return_reason="w49_imported_query_only";
++    return;  // Explicit diagnostic: no R35 rollout, derivatives, solve, or physics.
++  }
+   // W48 observation only, before any search/epoch/trajectory mutation.
+   if(const char* file=std::getenv("MJPC_W48_PRECALL")) {
+     std::ofstream out(file,std::ios::binary|std::ios::trunc);
+@@ -559,7 +570,9 @@
+     part(policy.metric,horizon*dim_action*dim_action);part(policy.base_Qu,horizon*dim_action);
+     part(policy.base_Qxu,horizon*dim_action*dim_state_derivative);
+     part(policy.base_active,horizon*dim_action);
+-  }
++    policy.WriteDelta(out);
++  }
++  w49_first_valid=false;w49_k.clear();w49_times.clear();
+   r34_decisions.clear();
+   r33_archive_valid=false;r33_source="none";r33_rollouts=r33_slots=r33_cache_hits=r33_derivative_passes=0;
+   r33_D.clear();r33_scale_mean=r33_scale_floor=0;
+@@ -592,6 +605,7 @@
+     R33Structured(horizon,pool);
+   } else {
+     this->Iteration(horizon, pool);
++    if(std::getenv("MJPC_W49_FINITE_GUIDED") && w49_first_valid)W49Guided(horizon,pool);
+   }
+   if(r33_archive_valid) {
+     const bool same=r33_source=="incumbent";
+@@ -607,7 +621,7 @@
+       if(const char* f=std::getenv("MJPC_R27_PLAN_RECORD")) {
+         std::ofstream out(f,std::ios::app);out.precision(17);
+         out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+-           <<",\"controller_artifact\":\"S5-r36\",\"problem_epoch\":"<<r32.epoch
++           <<",\"controller_artifact\":\"S5-r37\",\"problem_epoch\":"<<r32.epoch
+            <<",\"source_call_id\":"<<r29_call_id<<",\"candidate_source\":\""<<r33_source<<"\""
+            <<",\"selected_mechanism\":\""<<r33_mechanism<<"\",\"accepted_cost\":"<<r33_archive_trajectory.total_return
+            <<",\"accepted_trunk_violation\":"<<r33_archive_trajectory.trunk_violation
+@@ -770,6 +784,7 @@
+   } else {
+     // update nominal with winner
+     candidate_policy[0].trajectory = trajectory[best_nominal];
++    candidate_policy[0].ClearDelta();  // Actual nominal actions already include the old curve; B above retains it.
+ 
+     // set feedback scaling
+     feedback_scaling = r34_enabled?r33_nominal_policy.feedback_scaling:linesearch_steps[best_nominal];
+@@ -1019,7 +1034,7 @@
+       out.write(reinterpret_cast<char*>(r33_D.data()),r33_D.size()*sizeof(double));
+     }
+   }
+-  if(r33_mechanism=="N") {
++  if(r33_mechanism=="N" || r33_mechanism=="K") {
+     model_derivative.r33_native_direction=true;++r33_derivative_passes;
+     model_derivative.Compute(model,data_,candidate_policy[0].trajectory.states.data(),
+       candidate_policy[0].trajectory.actions.data(),candidate_policy[0].trajectory.times.data(),
+@@ -1047,6 +1062,7 @@
+     int backward_pass_status=0,t=-1;
+     ++r29_backward_attempts;++r32.iterations;
+     candidate_policy[0].trajectory=r32_nominal;
++    candidate_policy[0].ClearDelta();
+     candidate_policy[0].metric_valid=false;
+     regularization_used=backward_pass.regularization;
+     rate_used=backward_pass.regularization_rate;
+@@ -1169,6 +1185,15 @@
+       R32RecordAttempt(last_failure,horizon,t,r32_nominal,regularization_used,rate_used,0.);
+       continue;
+     }
++    if(!w49_first_valid)W49Capture(horizon);
++    if(r33_mechanism=="K" && w49_base.metric_valid) {
++      W49Guided(horizon,pool);
++      r32.stopped=true;r32.stop_reason="w49_single_first_direction_finished";
++      model_derivative_compute_time=model_derivative_time;
++      cost_derivative_compute_time=cost_derivative_time;
++      backward_pass_compute_time=backward_pass_time;
++      return;
++    }
+     auto ro_start=std::chrono::steady_clock::now();
+     for(int j=1;j<num_trajectory_;++j) {
+       candidate_policy[j].CopyFrom(candidate_policy[0],horizon);
+@@ -1305,7 +1330,7 @@
+     std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
+     out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+ 
+-       <<",\"controller_artifact\":\"S5-r36\""
++       <<",\"controller_artifact\":\"S5-r37\""
+        <<",\"candidate_source\":\""<<r33_source<<"\",\"selected_mechanism\":\""<<r33_mechanism<<"\""
+        <<",\"problem_epoch\":"<<r32.epoch<<",\"source_call_id\":"<<r29_call_id
+        <<",\"policy_generation_epoch\":"<<r32.generation_epoch
+@@ -1510,6 +1535,7 @@
+     write(policy.base_Qu,horizon*dim_action);
+     write(policy.base_Qxu,horizon*dim_action*dim_state_derivative);
+     write(policy.base_active,horizon*dim_action);
++    policy.WriteDelta(out);
+     write(userdata,model->nuserdata);
+     double count=r33_archive_trajectory.r29_prefix.size();
+     out.write(reinterpret_cast<char*>(&count),sizeof(double));
+@@ -1525,4 +1551,71 @@
+   }
+ }
+ 
++
++void iLQGPlanner::W49Capture(int horizon) {
++  w49_first_valid=true;
++  w49_base=r33_nominal_policy;
++  w49_times.assign(candidate_policy[0].trajectory.times.begin(),candidate_policy[0].trajectory.times.begin()+horizon-1);
++  w49_k.assign(candidate_policy[0].action_improvement.begin(),candidate_policy[0].action_improvement.begin()+(horizon-1)*dim_action);
++  if(const char* prefix=std::getenv("MJPC_W49_DIRECTION")) {
++    w49_base.Save(std::string(prefix)+"-baseline.bin");
++    std::ofstream out(std::string(prefix)+"-direction.bin",std::ios::binary|std::ios::trunc);
++    double h[]={49.,double(r29_call_id),time,double(horizon-1),double(dim_action),
++      double(r29_backward_attempts),backward_pass.regularization,backward_pass.regularization_rate,
++      r33_nominal_trajectory.total_return,r33_nominal_trajectory.trunk_violation,R34Budget(r33_nominal_trajectory)};
++    out.write(reinterpret_cast<const char*>(h),sizeof(h));
++    for(const auto* v:{&w49_times,&w49_k})out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(double));
++  }
++}
++void iLQGPlanner::W49Guided(int horizon,ThreadPool& pool) {
++  if(!w49_first_valid || !w49_base.metric_valid)return;
++  const double mu=backward_pass.regularization,rate=backward_pass.regularization_rate;
++  int count=num_trajectory_-1,before=pool.GetCount();
++  for(int i=0;i<count;++i) {
++    candidate_policy[i]=w49_base;
++    candidate_policy[i].AddDelta(w49_times,w49_k,horizon-1,linesearch_steps[i]);
++    candidate_policy[i].action_step_alpha=linesearch_steps[i];
++    r29_projected[i]=r29_failed[i]=r29_restored[i]=0;
++    pool.Schedule([&,i](){
++      auto f=[&,i](double* u,const double* x,double t) {
++        bool changed,failed,restored;
++        candidate_policy[i].ActionImpl(u,x,t,false,&changed,&failed,&restored);
++        r29_projected[i]+=changed;r29_failed[i]+=failed;r29_restored[i]+=restored;
++      };
++      trajectory[i].Rollout(f,task,model,data_[ThreadPool::WorkerId()].get(),state.data(),time,mocap.data(),userdata.data(),horizon);
++      if(r29_failed[i])trajectory[i].failure=true;
++    });
++  }
++  pool.WaitCount(before+count);pool.ResetCount();r33_rollouts+=count;
++  for(int i=0;i<count;++i)
++    R33Consider(candidate_policy[i],trajectory[i],horizon,1,i,linesearch_steps[i],"k_guided_"+std::to_string(i));
++  // This family has no applicable N dV/ratio. Preserve damping and its rate;
++  // retain the original, separately defined violation-progress update online.
++  backward_pass.regularization=mu;backward_pass.regularization_rate=rate;
++  if(r33_mechanism=="K" && r33_source.rfind("k_guided_",0)==0 &&
++      (r33_nominal_trajectory.trunk_violation>0 || r33_archive_trajectory.trunk_violation>0))
++    backward_pass.ScaleRegularization(
++      r33_nominal_trajectory.trunk_violation>r33_archive_trajectory.trunk_violation?
++        1./backward_pass.regularization_factor:backward_pass.regularization_factor,
++      settings.min_regularization,settings.max_regularization);
++  if(const char* prefix=std::getenv("MJPC_W49_DIRECTION")) {
++    std::ofstream out(std::string(prefix)+"-guided.json",std::ios::trunc);out.precision(17);
++    out<<"{\"first_valid_backward\":true,\"baseline_metric_valid\":true,\"extra_candidates\":"<<count
++       <<",\"baseline_J\":"<<r33_nominal_trajectory.total_return
++       <<",\"baseline_risk\":"<<r33_nominal_trajectory.trunk_violation
++       <<",\"baseline_budget\":"<<R34Budget(r33_nominal_trajectory)
++       <<",\"expected\":null,\"ratio\":null,\"mu_before\":"<<mu<<",\"rate_before\":"<<rate
++       <<",\"mu_after\":"<<backward_pass.regularization<<",\"rate_after\":"<<backward_pass.regularization_rate
++       <<",\"candidates\":[";
++    for(int i=0;i<count;++i) {
++      if(i)out<<",";
++      out<<"{\"alpha\":"<<linesearch_steps[i]<<",\"J\":"<<trajectory[i].total_return
++         <<",\"risk\":"<<trajectory[i].trunk_violation<<",\"budget\":"<<R34Budget(trajectory[i])
++         <<",\"failure\":"<<(trajectory[i].failure?"true":"false")
++         <<",\"strict_better_than_B\":"<<(R34Better(trajectory[i],r33_nominal_trajectory)?"true":"false")<<"}";
++    }
++    out<<"]}\n";
++  }
++}
++
+ }  // namespace mjpc

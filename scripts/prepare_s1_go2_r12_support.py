@@ -17,6 +17,9 @@ def main():
     args=parser.parse_args()
     global BUILD
     BUILD=args.build
+    if BUILD=='S5-r37':
+        from w49_build import main as build_w49
+        return build_w49()
     if BUILD=='S5-r36':
         from w48_build import main as build_w48
         return build_w48()
