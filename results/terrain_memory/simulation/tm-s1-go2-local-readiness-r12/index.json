@@ -557648,7 +557648,7 @@
   },
   "w48": {
     "phase": "W48",
-    "status": "all_original_ladders_naturally_ended",
+    "status": "completed_original_evaluations_and_verified_delivery",
     "plan_commit": "068d8388feba972dd0e8cbd5bbbb1a7fd3ee71bf",
     "result_base": "6e9075f48718509d48f51d08d0a8f62a34edfb41",
     "started_unix_s": 1794559620.7678993,
@@ -558047,14 +558047,20 @@
         "runner_pid": 3561,
         "evaluation_pid": 3574,
         "native_pid": 3848,
-        "confirmed_physical_clock_s": 3.3379999999996652,
-        "completed_planner_calls": 187,
+        "confirmed_physical_clock_s": 26.431999999965075,
+        "completed_planner_calls": 1342,
         "stages": {
-          "E30": "running",
-          "E60": "not_started_requires_E30_pass",
-          "E300": "not_started_requires_E60_pass",
-          "E600": "not_started_requires_E300_pass"
-        }
+          "E30": "physical_material_failure",
+          "E60": "blocked",
+          "E300": "blocked",
+          "E600": "blocked"
+        },
+        "status": "completed_with_failed_qualification",
+        "process_alive": false,
+        "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T090632Z-w48-a-eval-PANN_PPO_S5-s1-E30-attempt01.json",
+        "ended_unix_s": 1794564164.5020978,
+        "success": false,
+        "reason": "invalid_contact:[[0, 13, 0, 1]]"
       },
       "B": {
         "job": "job-20261113T090632Z-w48-b",
@@ -558063,14 +558069,20 @@
         "runner_pid": 3567,
         "evaluation_pid": 3575,
         "native_pid": 3740,
-        "confirmed_physical_clock_s": 3.277999999999672,
-        "completed_planner_calls": 184,
+        "confirmed_physical_clock_s": 11.637999999999554,
+        "completed_planner_calls": 602,
         "stages": {
-          "E30": "running",
-          "E60": "not_started_requires_E30_pass",
-          "E300": "not_started_requires_E60_pass",
-          "E600": "not_started_requires_E300_pass"
-        }
+          "E30": "physical_material_failure",
+          "E60": "blocked",
+          "E300": "blocked",
+          "E600": "blocked"
+        },
+        "status": "completed_with_failed_qualification",
+        "process_alive": false,
+        "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T090632Z-w48-b-eval-PANN_PPO_S5-s2-E30-attempt01.json",
+        "ended_unix_s": 1794562912.6238062,
+        "success": false,
+        "reason": "body_fall"
       }
     },
     "publication": {
@@ -558078,8 +558090,24 @@
       "finite_asset_count": 8,
       "finite_bytes": 1011453914,
       "finite_release": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w48-finite-part01",
-      "original_episodes": "running; natural completion triggers summaries, compact Git, render and direct incremental Release",
-      "extra_PC_download_archive": false
+      "original_episodes": {
+        "A": {
+          "status": "published_size_digest_verified",
+          "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w48-job-20261113T090632Z-w48-a-part01",
+          "asset_count": 3,
+          "total_bytes": 460356335,
+          "verified_unix_s": 1794574171.2478776
+        },
+        "B": {
+          "status": "published_size_digest_verified",
+          "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w48-job-20261113T090632Z-w48-b-part01",
+          "asset_count": 2,
+          "total_bytes": 303435066,
+          "verified_unix_s": 1794574171.2495651
+        }
+      },
+      "extra_PC_download_archive": false,
+      "server_originals_retained": true
     },
     "actual_work_observation": {
       "at": "2026-11-13T17:17:23+08:00",
@@ -558342,6 +558370,45 @@
           }
         ]
       }
+    },
+    "active_compute_processes": 0,
+    "finished_verification_unix_s": 1794574171.2518947,
+    "original_evaluation_passed": 0,
+    "original_evaluation_attempted": 2,
+    "higher_stages_blocked": 6,
+    "live_observation_role": "Historical running snapshot at its recorded timestamp; current terminal results below.",
+    "original_comparison": "original-comparison.json",
+    "conclusion": "Exact quaternion identity repair did not alter recorded physical trajectories, selected candidate sources or alphas in either original A/B evaluation. Both original E30 failed; no stable material traversal or memory benefit established.",
+    "actual_work_final": {
+      "original_completed_native_calls": 1944,
+      "original_work": {
+        "native_new_rollouts": 57104,
+        "candidate_records": 55400,
+        "derivative_passes": 3888,
+        "transition_fd_calls": 7488288,
+        "risk_geometry_fd_calls": 1442978,
+        "backward_attempts": 3596
+      },
+      "original_plant_physics_substeps": 190350,
+      "original_positive_installs": 1601,
+      "original_same_problem_J_descent_installs": 1598,
+      "original_risk_priority_J_increase_installs": 3,
+      "original_prediction_pairs": 1904,
+      "original_prediction_unavailable_startup": 40,
+      "finite_work": {
+        "native_new_rollouts": 484,
+        "transition_fd_calls": 30816,
+        "risk_geometry_fd_calls": 5012,
+        "derivative_passes": 16,
+        "backward_attempts": 40,
+        "candidate_records": 480
+      },
+      "finite_explicit_rollout_physics_substeps": 847000,
+      "interrupted_startup_native_work": "Exact count unavailable for four zero-plant technical attempts; retained separately in startup-technical.json, not included as zero.",
+      "new_PPO_samples": 0,
+      "new_PPO_updates": 0,
+      "new_GPU_physics_steps": 0,
+      "donor_solves": 0
     }
   }
 }

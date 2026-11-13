@@ -1,7 +1,7 @@
 # W48 稳定性计划：部署已证数值修复，验证真实闭环并补齐关键记录
 
 <!-- W48_EXECUTION_BEGIN -->
-> 2026-11-13 执行更新：正式 S5-r36 已隔离构建并完成无积分 StateDiff 核验；8 次 old/corrected N solve 与 4 条实际 scale 的 350 ms 部署核对完成。四个困难 fixture 正方向仍无接纳，四条部署与评分轨迹完全一致；不外推全程不会下降。新 PPO 0/0。配置继承技术错误已修复，原 A/B E30 已正常启动并核首个 held 前记录；现有 E30 尚未通过。实际状态和物理 clock 以 [W48 索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/phase.json) 为准；下方 planned 描述保留为已发布计划基线。
+> 2026-11-13 完成核验：W48 正式 S5-r36 已完成有限实验及原 A/B E30。A 26.432 s 躯干触地，B 11.638 s body_fall，E30 0/2，后六级 blocked，当前无活动计算。与 W46 对照，A/B 的时间、qpos/qvel、实际目标、力矩、GRF、接触、cap 和 phase 逐元素相同，选中候选与 alpha 逐调用相同；最小数值修复未改善这两条原任务。1904 条非启动规划边界均有上一实际部署 accepted 预测配对，首次大 held 跳变与膝限幅反转完整事件已保存。有限 8 solve/4 部署核对、原件和两段原任务视频已核 Release size/digest；A 上传曾 TLS 失败，本次仅续传既有清单完成。新 PPO 0/0、新 GPU physics 0、donor solve 0。不自动重开任务。[W48 最终索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/phase.json)。下方已发布计划和旧 running 观察按其形成时点阅读。
 <!-- W48_EXECUTION_END -->
 
 更新：2026-11-13（Asia/Shanghai）。审查结果基点：`6e9075f48718509d48f51d08d0a8f62a34edfb41`。状态：**planned_not_implemented**。本次发布是审查与下一计划，新增服务器任务、native solve、plant、PPO、GPU physics 均为0；正式S5-r36尚未构建或部署。
