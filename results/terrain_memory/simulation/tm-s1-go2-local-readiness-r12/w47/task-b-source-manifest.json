@@ -1,0 +1,87 @@
+{
+  "schema": "s1_w47_fixed_donor_source_v1",
+  "declared_source": "project-s3-formal-v1-single-yaw_plus5-trajectory.npz",
+  "expected_size": 28100505,
+  "expected_sha256": "079f57e1ebad260c9cdac842dc089012e29cb46992ab64d2c31cd9d380b61625",
+  "historical_manifest": {
+    "path": "results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/index.json",
+    "status": "present",
+    "size": 548335,
+    "sha256": "18e7a0f45ed477f1e957146ed4253b951f3f59e54471d9a8fd7330114c497605"
+  },
+  "historical_original_path": "/home/fanyuan/projects/kaiwen-learning/terrain-memory-s1-go2-wb/outputs/terrain_memory/simulation/tm-s1-go2-wb-support-r8/project-s3-formal-v1-single-yaw_plus5/trajectory.npz",
+  "historical_original_path_exists": false,
+  "historical_release_metadata": {
+    "name": "project-s3-formal-v1-single-yaw_plus5-trajectory.npz",
+    "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-wb-support-r8/project-s3-formal-v1-single-yaw_plus5-trajectory.npz",
+    "size": 28100505,
+    "digest": "sha256:079f57e1ebad260c9cdac842dc089012e29cb46992ab64d2c31cd9d380b61625",
+    "verified": true
+  },
+  "resolved": {
+    "path": "results/terrain_memory/simulation/tm-s1-go2-wb-support-r8/project-s3-formal-v1-single-yaw_plus5-resolved.json",
+    "status": "present",
+    "size": 42175,
+    "sha256": "8ecfdb48b7c0a1d19f015aeec1a3d8816acc9b3f7d0b8676165c7c7e427d9e4f"
+  },
+  "source_project_commit": "73ffdbd91ade6fb1fdc8f832771c58bb9e888d2e",
+  "source_author_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+  "search": {
+    "command": [
+      "find",
+      "/root/autodl-tmp",
+      "-type",
+      "f",
+      "(",
+      "-name",
+      "project-s3-formal-v1-single-yaw_plus5-trajectory.npz",
+      "-o",
+      "-path",
+      "*/project-s3-formal-v1-single-yaw_plus5/trajectory.npz",
+      ")",
+      "-print"
+    ],
+    "matched_paths": [],
+    "roots_are_execution_server_only": true
+  },
+  "candidate_files": [],
+  "verified_files": [],
+  "status": "donor_unavailable",
+  "reason": "prescribed_R8_trajectory_original_absent_on_execution_server",
+  "payload_schema_and_time_phase_verification": "not_performed_no_original",
+  "saved_cadence_settings": [
+    {
+      "time_s": 0.0,
+      "gait": "Stand",
+      "cadence_hz": 1.0,
+      "amplitude_m": 0.0
+    },
+    {
+      "time_s": 2.0019999999998124,
+      "gait": "Trot",
+      "cadence_hz": 2.0,
+      "amplitude_m": 0.03
+    },
+    {
+      "time_s": 35.38599999994421,
+      "gait": "Stand",
+      "cadence_hz": 1.0,
+      "amplitude_m": 0.0
+    }
+  ],
+  "mapping_rule": {
+    "elapsed_origin": "original episode physical start, not mission-phase start",
+    "source_node": "nearest original 2ms node at same episode elapsed; ties earlier",
+    "required_span_s": 0.35,
+    "mission": "same moving mission phase; trajectory.phase is mission enum, never gait phase",
+    "gait": "source resolved cadence/GetPhase reset reconstruction; phase difference bounded by rounding and FP64 arithmetic only",
+    "no_time_shift_stretch_phase_or_seed_search": true,
+    "robot_transform": "xy translation and yaw quaternion composition only; velocity follows free-joint coordinates",
+    "world_material_goal_observer": "current context unchanged",
+    "source_x_role": "initial mismatch and held-transition defect diagnosis, not an independently optimized state",
+    "input": "actual R8 q_target; K=0; H from frozen current incumbent; original Clamp/H-QP",
+    "source_payload_absent_means_mapping_not_claimed": true
+  },
+  "downloaded_bytes": 0,
+  "substitute_sources": 0
+}
