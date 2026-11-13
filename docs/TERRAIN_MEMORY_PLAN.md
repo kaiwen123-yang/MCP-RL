@@ -1,126 +1,101 @@
-# 地面材料记忆主计划：W47定位数值缺陷，W48进入修复版原闭环
+# 地面材料记忆主计划：W48结论冻结，W49检验执行与恢复
 
-<!-- W48_EXECUTION_BEGIN -->
-> 2026-11-13 完成核验：W48 正式 S5-r36 已完成有限实验及原 A/B E30。A 26.432 s 躯干触地，B 11.638 s body_fall，E30 0/2，后六级 blocked，当前无活动计算。与 W46 对照，A/B 的时间、qpos/qvel、实际目标、力矩、GRF、接触、cap 和 phase 逐元素相同，选中候选与 alpha 逐调用相同；最小数值修复未改善这两条原任务。1904 条非启动规划边界均有上一实际部署 accepted 预测配对，首次大 held 跳变与膝限幅反转完整事件已保存。有限 8 solve/4 部署核对、原件和两段原任务视频已核 Release size/digest；A 上传曾 TLS 失败，本次仅续传既有清单完成。新 PPO 0/0、新 GPU physics 0、donor solve 0。不自动重开任务。[W48 最终索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/phase.json)。下方已发布计划和旧 running 观察按其形成时点阅读。
-<!-- W48_EXECUTION_END -->
+更新2026-11-13（Asia/Shanghai）。结果基点`61e16975fa6b38dc8e2d31779c2bd82f1aaeb8b6`。**W48正式r36与原评价已完成；W49 planned_not_implemented。** 本次是仓库审查与计划发布，无新服务器任务、native solve、plant、PPO或GPU物理。
 
-更新2026-11-13（Asia/Shanghai）。结果基点`6e9075f48718509d48f51d08d0a8f62a34edfb41`。**W47有限工作与交付完成；W48 planned_not_implemented；正式S5-r36未构建、未部署。** 本次是仓库审查与计划发布，没有新服务器任务、native求解、plant、PPO或GPU物理。
+[W48最终审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W48-final-review/README.md) · [W49详细计划](S1_W49_STABILITY_PLAN.md) · [启动提示词](S1_W49_START_PROMPT.md) · [执行规则](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W48-final-review/handoff.json)
 
-[W47最终审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W47-final-review/README.md) · [W48详细计划](S1_W48_STABILITY_PLAN.md) · [启动提示词](S1_W48_START_PROMPT.md) · [执行规则](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W47-final-review/handoff.json)
+## 1. 长期目标与真实成熟度
 
-## 1. 长期目标和真实成熟度
+研究同一世界地块经过前足、后足和返程重复加载后的持久材料状态，使未来支撑需求影响当前加载、落点与重访。最终在原Go2/TM02完整合法往返中建立因果记忆收益，再研究条件泛化、轻量化、Go2/NX实机。
 
-研究同一世界地块经过前足、后足、返程重复加载后的持久材料状态，使未来支撑需求影响当前加载、落点与重访。最终建立原Go2/TM02完整合法往返中的因果记忆收益，再研究条件泛化、轻量化及Go2/NX实机。
+实际链：因果PANN→658D PPO观察→2Hz scalar cap（.18–.25m/s）→逻辑50Hz全身MPC→500Hz时变关节目标→PD60/5→5000Hz原物理。逻辑频率不是墙钟实时。PPO曾真实更新，当前评价权重冻结而observer/材料历史继续因果更新。
 
-实际链为冻结因果PANN→658D PPO观察→2Hz标量cap（.18–.25m/s）→逻辑50Hz全身MPC→500Hz时变目标→PD60/5→5000Hz原物理。PPO曾真实更新，评价中权重冻结、observer/history继续因果更新；逻辑频率不是墙钟实时。当前候选尚未沿各自未来动作完整传播世界材料内态，cap不能直接控制足时/落点/卸载；稳定控制、有效历史曝光、候选内记忆、因果对照与泛化是相依但不同的任务。
+当前候选尚未沿每条未来动作完整传播世界材料内态，cap不能直接控制足点、支撑时长或快速关节恢复。稳定原控制、有效跨足/返程曝光、候选内材料历史、因果对照、泛化是相依但不同的研究任务。首先稳定有必要；只站住更久或减少前进不替代原合法任务。
 
-| 阶段 | 保留的实际结果 | 不应外推 |
+| 阶段 | 保留事实 | 不应外推 |
 |---|---|---|
-| 早期R1/R2/S0 | 材料辨识/学习正负实验均保留 | 不能把所有早期方向写成成功 |
-| R8/S3刚地 | 项目9/9原任务、300s 3/3 | 不是当前r35/TM02资格 |
-| R9/R10材料 | R9完整任务0/8；R10物理0/9，曾到返程 | 原材料整程未成立 |
-| R11 | 23次物理启动，有效E30/E60均0 | 过期协议或无效资格不能复活 |
-| W34/W35 | W34合法去程3，W35 1，有返程进展 | 稳定合法完整往返仍0 |
-| W44联合学习 | A/B各14737/update57，有完整恢复链 | 不把同祖先样本重复当独立数据 |
-| W45/r34 | A13.072s/B5.582s跌倒，严格接纳明确 | 搜索合法不等于任务稳定 |
-| W46/r35 constant | A26.432s躯干触地、B11.638s跌倒 | 更长存活不等于更好移动 |
-| W47 | alpha0四对精确复现修复、全程调用/GPU纠错 | 新优化/原plant/PPO/GPU物理0 |
-| 当前研究资格 | 联合系统能运行，数值问题更清楚 | 稳定材料完整任务、记忆因果收益、NX实时尚未建立 |
+| 早期R1/R2/S0 | 材料辨识、学习正负结果保留 | 不能把早期方向全部写成成功 |
+| R8/S3刚地 | 原任务9/9、连续300s 3/3 | 不是当前r36/TM02资格 |
+| R9/R10材料 | 完整任务0/8、0/9，R10曾进返程 | 完整材料任务未成立 |
+| R11 | 23真实启动，有效E30/E60均0 | 过期或无效资格不复活 |
+| W34/W35 | 合法去程分别3与1，有返程进展 | 稳定合法完整往返仍0 |
+| W44学习 | A/B各14737/update57、完整resume | 同祖先数据不能重复算独立样本 |
+| W45/r34 | A13.072s/B5.582s跌倒 | strict接纳不等于稳定 |
+| W46/r35 constant | A26.432s触地、B11.638s跌倒 | 存活更长不等于路线改善 |
+| W47 | 定位四元数自差，修复四fixture零端点 | 无新优化或原任务 |
+| W48/r36 | 正式修复部署，8solve/4部署及原A/B完成 | 实际轨迹与W46相同，资格无改善 |
+| 当前科学资格 | 联合系统运行、数值与事件证据更清楚 | 完整稳定材料任务、记忆因果收益、NX实时未建立 |
 
-A/B共有祖先6545/update25；PANN唯一转移22929，另RAW256，R12 distinct23185。A/B各自W44 checkpoint-014737.pt、resume ep00428/ep00417、tail0/excluded145；W45/W46/W47新增PPO0/0。未来15249/59不是W48自动预算。
+A/B共享祖先6545/update25；PANN唯一转移22929，另RAW256，R12 distinct23185。各自W44 checkpoint-014737、resume ep00428/ep00417、tail0/excluded145保留。W45–W48新增PPO0/0，未来15249/59不是W49自动训练预算。
 
-## 2. 最近原任务仍是W46，W47没有新原失败
+## 2. 最新W48原任务与负结果
 
-| W46原E30 | A | B |
+| 原E30 | A | B |
 |---|---:|---:|
+| 正式控制器 | S5-r36 | S5-r36 |
 | 结束 |26.432s floor–trunk contact|11.638s body_fall|
-| 墙钟 |65.59min|40.42min|
+| 墙钟 |54.43min|33.63min|
 | 最大body x |.626506m|.396364m|
-| 实际材料加载 |无，足最远x .795019<.8|有；首次完整足受载9.122s|
-| 最大材料主应变 |无实际受载|.00649112<.02|
+| 实际材料加载 |无|有，主应变最大.00649112＜.02|
 | 合法去/返/往返 |0/0/0|0/0/0|
-| 相邻2ms held最大跳变 |1.535358rad|1.468642rad|
-| 膝±45.43Nm完整反转次数 |37|5|
+| E30及后级 |失败，后三级blocked|失败，后三级blocked|
 
-E30通过0/2；后六项blocked，不是六次新增失败。A反复退步；B在8.464s已z<.2m、8.572s已|roll|>.5rad，均先于首实际材料受载。这两个数是诊断描述阈值，不新增硬失败门。90.86Nm是相邻极限反转差，不是实际越界力矩。
+A反复退步；B在8.464s已z＜.2m、8.572s已绝对roll＞.5rad，早于首完整足材料加载9.122s。这些为诊断描述，不新增硬门。相邻2ms held最大跳变仍1.535358/1.468642rad，膝极限反转37/5次；90.86Nm是±45.43Nm相邻差，不是越界力矩。
 
-W46原件96资产/19,983,994,745B已交付。W47没有重启原任务，全八个原评价记录blocked。交付、数值诊断、原任务资格分别报告。
+[原位比较](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/original-comparison.json)报告两轮time/qpos/qvel/held/torque/GRF/contact/cap/phase逐元素相同，1944calls的选择/alpha/plan相同；chosen_actual A123/B38次不同。报告全数组相同来源是执行端比较，本次未重下载原NPZ；独立核验277事件call相同选择/alpha/plan，支持内部评分改变而实际行为未变。
 
-## 3. W47最重要的两个新增事实
+正式binary SHA `b05c8da8ca74551dc73ea0272329234217d7160731e5cea8e33101bba3241338`与实际进程一致，N/r34 strict/constant正确。不是未部署修复，也不是deadline造成自然物理失败。
 
-### 3.1 找到明确的数值首扰动
+## 3. W48真正解决了什么
 
-四fixture×五backward的20个constant alpha0在首分叉时，actual state与reference逐元素相同、u/time一致、H-QP为内点；原四元数自差仍有约1.69e−20～2.98e−19旋转切空间舍入量，K放大后引入首个命令差。
+20组alpha0精确恢复nominal；self/antipode为0，真实微小旋转保留。修复数学上成立，但alpha0本已不安装。四fixture240个old/corrected候选policy数组配对相同，20backward关键数值相同，四个赢家相同；每侧180正候选均预测下降/真实J上升。98个正候选J变化，最大4.6861e−8，远未扭转选择。
 
-old/corrected各四条350ms配对：old精确复现历史alpha0；corrected states/actions/times/residual/J均与nominal精确相同。B155/B158旧全窗命令差1.026335/1.108094rad，旧ΔJ +.0234713/+.0181906，修复后0。修复nominal前移仍−2.742/+1.494/+1.081/+.354mm，不能称稳定行走。
+四部署核对为nominal/incumbent实际scale的native ActionImpl→ActionImpl，全部精确。没有接受的正步跨ActionIndex→ActionImpl，也没有RPC返回动作参与积分。不能据此排除真实客户端到plant路径问题。
 
-补丁只在MJPC StateDiff原差函数后，对free/ball quaternion严格self或精确antipode置零。无epsilon/K裁剪，不改真实旋转差；不改引擎mjd_transitionFD。W47 indexed诊断与实际ActionImpl插值/归一化/真实scale的边界尚需正式核对。冻结r35 binary SHA a32287b0821d9a77687575250dcb2379e370dbc84264fae80a4091027db7345e未变，两个诊断binary不是正式r36。
+原1944calls中1601正步安装（1598J下降、3风险优先），343停滞。B下沉/侧倾前一秒各50/50正步下降。因此必须区分当前问题的代价下降、策略真实执行、支撑恢复和完整路线，旧困难fixture不能代表全程。
 
-旧四fixture三分支540正候选仍全部预测下降/实际增加；W47没有重算正方向，不能把修复效果预先扩大或否定。
+四次零plant启动失败因build替换继承overrides丢17键，r12_substep_path启用却缺r12_trunk_clearance，引起native空指针。当前合并配置已修，binary不变；不重复有限实验。崩溃前部分native积分未知，不能写所有计算0。
 
-### 3.2 全程大部分调用有下降，失稳仍继续
+## 4. 新记录与尚未闭合的问题
 
-W47新增全1944行CSV，独立复算：
+1904非启动边界匹配上一实际部署accepted预测，startup40 unavailable合理。本次独立核237可用事件配对、277事件call与995对象的算术/身份/交付SHA；233条20ms、另2条2ms/2条18ms，不全部叫20ms。完整全调用JSONL仍在D57/Release。
 
-| 范围 | 调用 | 正步安装 | 正步J下降 | 风险优先J上升 | 停滞 |
-|---|---:|---:|---:|---:|---:|
-| 全部 |1944|1601|1598|3|343|
-| A moving |1222|1066|1063|3|156|
-| B moving |482|317|317|0|165|
-| 两流moving |1704|1383|1380|3|321|
+新关键事件A3.846/B3.106首held大跳、A6.860/B6.150首膝反转均有完整policy/accepted/P0/context/reference。首大跳均晚于规划边界6ms。现有数据足以进入机制研究，不再将旧缺快照作为重新跑同配置整轮的理由。
 
-全部含40启动调用；正步安装82.36%，moving81.16%。343内部停滞中137安装nominal、206留incumbent。B下沉前一秒50/50、侧倾前一秒50/50全部正步J下降；首膝反转前48/50。A早期首大held跳变前41/50停滞也仍成立。旧困难fixture不代表全部在线分布。
+两流0.02s站立已出现小非零预测误差；全程最大关节位置差A/B .0492763/.0164553rad，速度差7.15560/4.30498rad/s。这是闭环预测—执行差，不能直接当纯模型残差。需要分清计划本身已不利于恢复，还是执行偏离后反馈使状态恶化。
 
-因此研究重心从“全程没有下降”修正为“正确的搜索与真实执行/支撑恢复是否一致”。跨epoch参考与问题改变，不能把J下降简单累计成闭环收益。三次晚期风险优先J大幅上升单列，不能用均值掩盖机制。
+显式GetAction请求time为float，SetState time为double，响应action为float。r36工具源码核SHA一致；省略time可用刚同步的native double时钟。**W39已量化时间舍入，W40已有动作FP32；不是新发现，也不是已证唯一根因。** W49先量化新事件作用，作用小就结束该假说，继续恢复线。
 
-## 4. W47实际工作和推进障碍
+W48Records.plan缺父类trunk_restoration触发，下一版补回；已有关键事件不因此失效。完整策略/当前context不等于全部历史MjData、外部callback与optimizer缓存，有限重建必须准确标范围。
 
-W47状态completed_finite_work_and_delivery，后台自然结束、exit0，无墙钟deadline。8固定rollout、1400held、14000个.2ms子步，独立诊断合计2.8s；新optimizer/transitionFD/donor/plant/PPO/GPU physics均0。构建63.294s、paired35.256s；Task C在D57原位复算43文件122,624,900B约2.49s，未分配GPU。A/B/C目录与affinity不等于三项重负载持续并行。
+## 5. W49冻结工作包
 
-上一计划将最小数值修复评价与donor、最新W46完整context/同origin预测及预先移动收益耦合过紧。执行后发现缺件，产生新证据的实验也无法启动。W48取消这组不必要的前置关系，保留原资格；真实失败仍是可接受的实验结果。
+全部详细判据与身份见[W49计划](S1_W49_STABILITY_PLAN.md)。
 
-- R8不是全局丢失：D57本地未找到且下载0；GitHub asset681937433仍uploaded，yaw_plus5 trajectory 28,100,505B，SHA079f57e1ebad260c9cdac842dc089012e29cb46992ab64d2c31cd9d380b61625。只允许D57恢复这个科学输入并核schema/time/phase，不重跑R8、不批量下载，本轮donor solve0。
-- 最新W46 A6.86s plan305/B6.15s plan267及上一预测未生成。事件环.12s/前.1后.2s缺首实际held跳变/力矩反转触发，检查全部已交付ZIP成员也没有。不是用户漏上传，不能从标量补造policy/context。
-- 已有A3.846s plan178/B3.106s plan161完整policy不是完整pre-call context。新记录应随新原回合生成，不再用缺失旧数据阻塞最小修复评价。
+- CPU A：利用现有实际held链，0积分同态time/action分解；必要四事件×三条20ms，≤1200子步、0solve/FD。相同输入模型对照与同策略执行对照分开，缺hidden/外部全态不伪造，不重开W48。
+- CPU B：既有accepted/J分项/接触分析后，≤4新问题N solve，首有效k方向各9正alpha＝≤36候选，必要baseline≤4条。用r33 P既有冻结反馈架构替换手工方向为新问题k，明确双时间网格与完整策略表示，保持原strict；dV/ratio不可用为null，不调mu/rate。不是重新命名旧P或none/load/constant。
+- 合并：只选一个有证据的机制；≤4条20ms真实接口部署核对。至少一个代表问题真实可接纳且行为不同，或修正实际影响动作的已证错误，正常入口/约束正确后，自主A/B各一次E30，过则原阶梯。不能要求先整程成功才能实验；也不因极小旧精度变化重复原轨迹。
+- C：B158同held双world F1完整初始化、L一步后旧部分reset、F2完整恢复，核心60 GPU world-step，必要预热≤2；条件触发≤8唯一身份native动作对照0physics。不重跑24×350ms，不授予native排序等价。
+- 旧零plant技术A/B各一ZIP按原manifest在D57续传；R8已知单科学输入可独立恢复，本轮donor0，均不阻塞主线。
 
-## 5. W48冻结工作包
+## 6. 并行与最新工作流
 
-执行预算、路径、身份与判据以[W48详细计划](S1_W48_STABILITY_PLAN.md)为准。
+W48两原进程实际重叠2030.4135s，约33.84min，双任务已发生；C只有约1.935秒旧数据分析，无新增GPU分配，不能称96GB充分利用。
 
-1. 正式r36只加入exact-identity控制补丁及不改动作的记录，接入spec/build/源码/库、prepare/runtime/policy/records/contract及实际进程读回，保留N/r34 strict/constant和原物理/步态。一次无积分self/antipode/真实微旋转核验，不重复旧八条零点配对。
-2. 四个现有完整fixture每个corrected N solve；old身份可核复用，否则每个最多补一个，≤8solve；每fixture最终完整policy真实ActionImpl一次350ms，≤4条/7000子步。用实际scale与实际评分来源，不强改indexed，不二次加alpha，不扫网格。
-3. 每call在覆盖旧计划前记actual/P0/上一实际部署accepted rollout同origin预测，切空间/速度误差分单位；accepted与reference分开。完整事件包新增首held>1rad/首膝±45.43反转及阶段/terminal，前.1后.2s合并/hash去重，关键context/策略/同epoch参考齐全。缺预测标unavailable，不填零。
-4. 构建/有限结果/原约束/正常入口/schema路径正确且无技术错误，先推Git，再自主A/B各一次修复版原E30。donor、缺历史context、旧fixture正步仍停滞不自动阻塞。实际记录在该attempt自身正常首次规划后、首个held物理推进前核，不要求launch前已有runtime记录、不另开plant。
-5. 各14737/update57、W44 seed1/2原checkpoint/resume、tail0/excluded145，新PPO0/0；原W46作历史对照。E30各case通过才E60→E300→E600，失败后级blocked，不换seed追成功，不混成本/步态/新算法。
+W49现场核25CPU/96GB实际余量：两CPU线各10，C总host2，约3系统/主控/发布；线程库1、全进程树隔离、可写build隔离，build-j6先完成。原A/B之外不再挂第三重native solve。GPU按实际余量/峰值准入，关闭XLA预占、JAXx64保留，不为占卡新增无效PPO。
 
-原E30满30s合法实际材料去程及原3m目标容差/转向；E60满60s合法往返和回家连续稳定2s；E300/600按270/540s内5/10合法往返并完整观察。短腾空合法，材料主应变.02、PD/力矩、非足接触/跌倒、合法路线和原高度项不放宽。仅Actor不能恢复中途完整plant，技术中断独立保留。
+**所有新后台deadline=null、wall_deadline_enabled=false，无固定墙钟完成时刻、无到点kill。** 保留有限工作量、原物理阶段、技术失败/用户停止和单次网络timeout；工具等待不是任务期限，无无限重试。对话结束不杀后台、不把running改completed。
 
-## 6. GPU第三线与资源
+紧凑Git先推，必要已生成原件/视频D57增量Release直传核commit/URL/size/digest；回执丢失先查远端，Git短写串行合并最新main、不强推覆盖。**GitHub核验后不在用户电脑额外下载、打包、镜像或归档；服务器原件/checkpoint/resume/视频不自动删除。** 必要服务器单输入恢复不改变该规则。只用已授权服务器网络，不自动借电脑VPN/Clash/SSH转发或未授权直连。
 
-W47纠正raw别名、时标、扩窗解释和capture计数，来源仍W45旧策略，24名义场景18有效组合/6完整policy。初态held差约2.49e−16rad，首2ms关节差1.46e−5rad，+10ms命令差1.50136rad；350ms最大held差1.75833rad、关节差.130953rad。离线raw差784.29rad不是实际动作。
+## 7. 文献、交付、覆盖和历史入口
 
-六组声明同执行identity重复场景native极值一致，GPU略异；隐藏初始化/接触workspace未全核，不能直接归FP32或不确定性。C原位分析现有逐时数组，0新physics；可选一次名义≤24同状态FP64动作批次，0积分，明确policy生成与动作计算build、原/修复映射差别。旧GPU driver硬写W46，不直接重启，所有新输出独立W48。接口不足不凑新长窗、不阻塞A/B。
+本轮新增Grandia T-RO2023实际触地响应、Elobaid RA-L2025稳定性/角动量约束、Nguyen RA-L2025数据/预测/执行时序、RLOC T-RO2022动作权限；原文/官方代码与适用边界见[文献核对](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W48-final-review/literature.md)。不把外部论文成功率、理论或另一机器人接口直接等同本项目。
 
-默认D57两CPU流各10，第三host总2，约3给系统/主控/发布；线程库各1，全进程树隔离，可写build隔离，build-j6先完成。有限组结束后转原A/B，不额外挂重型solve。W47历史预检25CPU/120GiB RAM/97887MiB GPU，其他SuperMimic占34318MiB，不是当前余量。现场核实，不动无关进程；XLA预分配false、JAXx64保留，按实测显存峰值/余量准入，不为占卡新增PPO。
+本次实时核科学13资产、1,775,245,315B；旧技术两tag404、尚待续传，按hash后续已覆盖坏模型MJB，不能说全部技术原件丢失。R8下载EOF/0bytes是输入可用性问题。全部审查文件不重复保存到用户电脑。
 
-## 7. 文献与稳定之后的研究
+结果基点8750tracked文件、1,044,013,899B完整读流/哈希库存；88变化文件56,762,626B结构检查无错误。两个离线审查脚本实际复算，关键代码/事件/候选/清单已读；字节库存不等于每byte语义理解或全部Release重放。本次没有下载Release payload、登录服务器或新执行物理。
 
-新审查包含MuJoCo全身MPC2025、ICRA2025线性反馈与接触恢复、IJRR2026 Contact Trust Region、RA-L2024优化精度/模型误差、T-RO2024 contact-implicit MPC、IEEE Access2024 reference-free四足控制。书目信息、原文与适配限制见[一手文献](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W47-final-review/literature.md)。
+[W43审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W43-final-review/README.md) · [W44审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W44-final-review/README.md) · [W45审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W45-final-review/README.md) · [W46审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W46-final-review/README.md) · [W47审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W47-final-review/README.md) · [W48历史计划](S1_W48_STABILITY_PLAN.md) · [W48实际phase](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/phase.json)
 
-核心启示是将nominal下降、真实预测—执行误差、接触恢复和路线资格分开。接触可信区域、参考自由度或多重射击只能由新机制证据决定，不同时混入identity-only W48。同步墙钟慢主要是吞吐问题，不直接归因物理实时延迟。
-
-稳定原任务后另立学习phase：获得跨足/返程有效历史曝光；匹配控制器/信息/计算预算下RAW/PANN与冻结/打乱历史因果对照；研究候选内材料历史传播与必要动作权限；再扩条件泛化、轻量化、Go2/NX。控制修复与文件交付本身不是材料记忆创新。
-
-## 8. 用户最新工作流与审查覆盖
-
-**全部新后台deadline=null、wall_deadline_enabled=false，省略deadline-unix，无固定墙钟完成时刻/到点kill。** 保留物理阶段、有限工作量、技术失败/用户停止、单次网络timeout，无无限重试；工具等待不是后台期限。运行未完推真实running/clock/PID，不因对话结束杀后台或改completed。
-
-紧凑Git先推，已生成要求原件由D57增量Release直传核commit/URL/size/digest；回执丢失先查已有资产，Git短写串行合并最新main，不强推覆盖。**GitHub核验后不在用户电脑额外下载、打包、镜像或归档；服务器原件/checkpoint/resume/视频不自动删除。** 必要单文件服务器科学输入恢复单列；D57只用授权学术代理，不自动借电脑VPN/SSH转发/Clash/直连。
-
-本次对结果基点8,657 tracked文件、1,025,161,586B完成字节/哈希库存，34变化文件41,749,875B解析无错误。关键源码、四fixture提交证据、全1944调用CSV与GPU纠错独立核验，Release只复核实时元数据；未下载原payload、未重放服务器实验。字节覆盖不等于声称逐byte语义理解或全部历史Release重放。
-
-## 历史入口
-
-[W43审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W43-final-review/README.md) · [W44审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W44-final-review/README.md) · [W45审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W45-final-review/README.md) · [W46审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W46-final-review/README.md) · [W47历史计划](S1_W47_STABILITY_PLAN.md) · [W47实际phase](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w47/phase.json)
-
-历史“当前/待实施/继续运行”、固定截止和电脑归档只属于形成时点；当前执行统一本页、W48计划与AGENTS，不重启已结束轮次。
+历史“当前/待实施/继续运行”、固定截止和归档规则只属于形成时点。当前执行统一本页、W49详细计划和AGENTS，不重启已结束轮次。

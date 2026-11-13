@@ -1,0 +1,94 @@
+{
+  "schema": "s1_w49_handoff_v1",
+  "review_date": "2026-11-13",
+  "timezone": "Asia/Shanghai",
+  "reviewed_result_commit": "61e16975fa6b38dc8e2d31779c2bd82f1aaeb8b6",
+  "previous_plan_commit": "068d8388feba972dd0e8cbd5bbbb1a7fd3ee71bf",
+  "completed_phase": "W48",
+  "next_phase": "W49",
+  "next_phase_status": "planned_not_implemented",
+  "review_actions": {
+    "server_login": false,
+    "release_payload_download": false,
+    "new_native_solve": 0,
+    "new_plant_substeps": 0,
+    "new_ppo_transitions": 0,
+    "new_gpu_physics_steps": 0
+  },
+  "baseline": {
+    "build": "S5-r36",
+    "binary_sha256": "b05c8da8ca74551dc73ea0272329234217d7160731e5cea8e33101bba3241338",
+    "mechanism": "N",
+    "acceptance": "r34 strict",
+    "input_reference_branch": "constant",
+    "original_A_s": 26.432,
+    "original_B_s": 11.638,
+    "E30_passes": 0,
+    "E30_attempts": 2,
+    "higher_levels_blocked": 6,
+    "legal_roundtrips": 0,
+    "physical_trajectory_equal_to_W46": "Submitted D57 full-array comparison; this review independently checked committed event/selection subset."
+  },
+  "evidence": {
+    "tracked_files": 8750,
+    "tracked_bytes": 1044013899,
+    "delta_files": 88,
+    "delta_bytes": 56762626,
+    "parse_errors": 0,
+    "all_call_prediction_pairs": 1904,
+    "independently_checked_event_calls": 277,
+    "independently_checked_available_event_pairs": 237,
+    "event_objects": 995,
+    "scientific_release_assets": 13,
+    "scientific_release_bytes": 1775245315,
+    "old_technical_releases_pending": 2
+  },
+  "budget": {
+    "cpu_A_max_20ms_replays": 12,
+    "cpu_A_max_explicit_substeps": 1200,
+    "cpu_B_max_new_event_native_solves": 4,
+    "cpu_B_max_additional_positive_rollouts": 36,
+    "cpu_B_max_additional_baseline_rollouts": 4,
+    "normal_solve_internal_rollouts_and_FD": "Count separately at actual observed values; not included in 36 additional candidates.",
+    "deployment_max_20ms_replays": 4,
+    "deployment_max_explicit_substeps": 400,
+    "gpu_core_world_steps": 60,
+    "gpu_optional_warmup_world_steps": 2,
+    "gpu_optional_unique_action_queries": 8,
+    "new_PPO": 0,
+    "donor_solves": 0,
+    "formal_versions": 1,
+    "initial_original_E30_per_case": 1
+  },
+  "scheduling": {
+    "cpu_A": 10,
+    "cpu_B": 10,
+    "cpu_C_total_host": 2,
+    "system_controller_publication_approx": 3,
+    "thread_libraries": 1,
+    "build_jobs": 6,
+    "check_actual_resources": true
+  },
+  "workflow": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "post_GitHub_user_PC_archive": false,
+    "automatic_server_original_deletion": false,
+    "force_push": false
+  },
+  "entrypoints": {
+    "plan": "docs/S1_W49_STABILITY_PLAN.md",
+    "prompt": "docs/S1_W49_START_PROMPT.md",
+    "memory": "docs/TERRAIN_MEMORY_PLAN.md",
+    "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W48-final-review/README.md"
+  },
+  "scientific_decisions": [
+    "Stop unchanged r36 or identity-only original repetitions.",
+    "Separate input/query mismatch, model/coldstart mismatch and planned recovery using existing W48 events.",
+    "W39/W40 time/action precision is known; quantify current event effect, do not presume root cause.",
+    "r33 P already froze baseline feedback; test only new current-problem k-guided proposal, with complete two-time-grid policy representation.",
+    "Keep r34 strict, null invalid expected/ratio, preserve damping; one formal mechanism.",
+    "Original E30 allowed with a meaningful implemented intervention; no full-task-success prerequisite, no donor/GPU dependency.",
+    "GPU initialization experiment does not grant native ranking equivalence."
+  ]
+}
