@@ -1,5 +1,9 @@
 # 地面材料记忆主计划：W47定位数值缺陷，W48进入修复版原闭环
 
+<!-- W48_EXECUTION_BEGIN -->
+> 2026-11-13 执行更新：正式 S5-r36 已隔离构建并完成无积分 StateDiff 核验；8 次 old/corrected N solve 与 4 条实际 scale 的 350 ms 部署核对完成。四个困难 fixture 正方向仍无接纳，四条部署与评分轨迹完全一致；不外推全程不会下降。新 PPO 0/0，原 A/B 正在按计划准备/推进，实际状态和物理 clock 以 [W48 索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/phase.json) 为准；下方 planned 描述保留为已发布计划基线。
+<!-- W48_EXECUTION_END -->
+
 更新2026-11-13（Asia/Shanghai）。结果基点`6e9075f48718509d48f51d08d0a8f62a34edfb41`。**W47有限工作与交付完成；W48 planned_not_implemented；正式S5-r36未构建、未部署。** 本次是仓库审查与计划发布，没有新服务器任务、native求解、plant、PPO或GPU物理。
 
 [W47最终审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W47-final-review/README.md) · [W48详细计划](S1_W48_STABILITY_PLAN.md) · [启动提示词](S1_W48_START_PROMPT.md) · [执行规则](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W47-final-review/handoff.json)

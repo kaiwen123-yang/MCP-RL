@@ -13,7 +13,7 @@ class R29Records:
         self.actions=(out/'action-execution.jsonl').open('w')
         self.nonprogress=deque()
     def r33_plan(self,t):
-        if getattr(self,'controller',None) not in ('S5-r33','S5-r34','S5-r35'):return
+        if getattr(self,'controller',None) not in ('S5-r33','S5-r34','S5-r35','S5-r36'):return
         path=self.out/'r29-current-plan.bin.r33-candidates'
         if not path.exists():return
         with path.open('rb') as source:
@@ -42,7 +42,7 @@ class R29Records:
                 count=int(raw[cursor]);cursor+=1
                 take(key,(count,))
             candidate+=1
-        if getattr(self,'controller',None)=='S5-r35':
+        if getattr(self,'controller',None) in ('S5-r35','S5-r36'):
             with (self.out/'r35-cost-components.jsonl').open('a') as log:
                 for c in range(candidate):
                     prefix=f'candidate{c:03d}_';h=data[prefix+'header']
@@ -126,7 +126,7 @@ class R29Records:
                 rows=[json.loads(line) for line in f]
                 self.plan_offset=f.tell()
             for row in rows:
-                if row.get('controller_artifact') in ('S5-r33','S5-r34','S5-r35') and 'acceptance_mode' not in row:
+                if row.get('controller_artifact') in ('S5-r33','S5-r34','S5-r35','S5-r36') and 'acceptance_mode' not in row:
                     # A scored nominal/structured archive winner has no alpha
                     # model ratio. Its recorded native violation defines this event.
                     if row['accepted_trunk_violation'] > 0:
@@ -236,7 +236,7 @@ class R29Records:
                     plan_coverage='Only listed plans have full accepted/reference/K/H; no old reconstruction.',
                     raw_binary='r29-current-plan.bin is a current transport buffer, not a history.',
                     substep_clock='Each encoded row: node,substep,before,after,ncontact; pre-state,post-state,rawPD,actuator_force,qfrc_passive,residual; then ncontact*(geom1,geom2,6 contact-frame forces).')
-        if getattr(self,'controller',None) in ('S5-r31','S5-r32','S5-r33','S5-r34','S5-r35'):
+        if getattr(self,'controller',None) in ('S5-r31','S5-r32','S5-r33','S5-r34','S5-r35','S5-r36'):
             result['r31_schema']=dict(
                 model_roles='native geom/pair forward; independent smooth derivatives at native substeps',
                 native_soft_substeps='(T-1,10,1+3*ns+nu): time,native_pre,held_u,native_post,soft_post',
@@ -244,14 +244,14 @@ class R29Records:
                 first_soft_AB='(10,nx*nx+nx*nu): row-major one-step A_s then B_s at native states',
                 held_proxy_A='(T-1,nx,nx)',held_proxy_B='(T-1,nx,nu)',
                 scope='Approximate local model, no plant Jacobian or stability claim')
-        if getattr(self,'controller',None) in ('S5-r32','S5-r33','S5-r34','S5-r35'):
+        if getattr(self,'controller',None) in ('S5-r32','S5-r33','S5-r34','S5-r35','S5-r36'):
             result['r32_search']=dict(plans=list(self.search_saved.values()),
                 header_fields=['schema','call_id','problem_epoch','origin','horizon','ns','nu','nx',
                   'lambda_used','rate_used','backward_complete','failed_node','incumbent_plan_id',
                   'attempt','dV0_unscaled','dV1_unscaled'],
                 scope='Last actual numerical attempt for each selected call; partial failed-backward arrays are not valid full Riccati results. Stops with no new attempt retain the prior search identity.',
                 gradient='u-clip(u-Qu, original instantaneous target/PD bounds); independent of H/lambda, surrogate only')
-        if getattr(self,'controller',None)in ('S5-r33','S5-r34','S5-r35'):
+        if getattr(self,'controller',None)in ('S5-r33','S5-r34','S5-r35','S5-r36'):
             result['r33_candidates']=dict(calls=list(self.r33_saved.values()),
                 header_fields=['schema','call_id','kind','slot','alpha','horizon','ns','nu','nx','nr',
                     'feedback_scale','native_J','trunk_violation','failure','metric_valid','origin','mu',

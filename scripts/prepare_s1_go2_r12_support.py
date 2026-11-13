@@ -17,6 +17,9 @@ def main():
     args=parser.parse_args()
     global BUILD
     BUILD=args.build
+    if BUILD=='S5-r36':
+        from w48_build import main as build_w48
+        return build_w48()
     specification=json.loads((ROOT/f'experiments/terrain_memory/s1-go2-r11-{BUILD}.json').read_text())
     prior = ROOT / "work/r11-frozen" / specification['based_on']
     frozen = ROOT / "work/r11-frozen" / BUILD
@@ -89,7 +92,7 @@ def main():
         build_command=command, original_runtime_library_reused=True,
         mujoco_dependency_commit=subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=mujoco_source, text=True).strip())
-    if BUILD in ('S5-r33','S5-r34','S5-r35'):
+    if BUILD in ('S5-r33','S5-r34','S5-r35','S5-r36'):
         identity.update(
             specification_path=str((ROOT / f'experiments/terrain_memory/s1-go2-r11-{BUILD}.json').relative_to(ROOT)),
             specification_sha256=hashlib.file_digest((ROOT / f'experiments/terrain_memory/s1-go2-r11-{BUILD}.json').open('rb'), 'sha256').hexdigest(),

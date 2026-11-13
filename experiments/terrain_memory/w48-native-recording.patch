@@ -1,0 +1,58 @@
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -529,6 +529,37 @@
+   }
+   if(std::getenv("MJPC_R34_SCORE_ONLY"))r33_imported=false;
+   R33Import(horizon);
++  // W48 observation only, before any search/epoch/trajectory mutation.
++  if(const char* file=std::getenv("MJPC_W48_PRECALL")) {
++    std::ofstream out(file,std::ios::binary|std::ios::trunc);
++    double h[]={48.,double(r29_call_id+1),time,double(horizon),double(dim_state),
++      double(dim_action),double(dim_state_derivative),double(task->num_residual),
++      double(model->nuserdata),double(policy.record_plan_id),double(policy.metric_valid),
++      policy.metric_regularization,double(policy.metric_regularization_type),
++      policy.nominal_feedback_scale,policy.action_step_alpha,policy.feedback_scaling,
++      double(policy.representation),double(r32.generation_epoch),
++      double(r32.generation_call),r32.generation_time};
++    out.write(reinterpret_cast<const char*>(h),sizeof(h));
++    auto vec=[&](const std::vector<double>& v) {
++      double n=v.size();out.write(reinterpret_cast<const char*>(&n),sizeof(n));
++      out.write(reinterpret_cast<const char*>(v.data()),v.size()*sizeof(double));
++    };
++    vec(state);vec(mocap);vec(userdata);
++    if(const auto* q=dynamic_cast<const QuadrupedFlat*>(task))vec(q->R32PlanningState());
++    else vec(std::vector<double>{});
++    vec(task->parameters);vec(task->weight);vec(task->norm_parameter);
++    std::vector<double> norms;for(auto n:task->norm)norms.push_back(double(n));vec(norms);
++    auto part=[&](const std::vector<double>& v,int n) {
++      out.write(reinterpret_cast<const char*>(v.data()),n*sizeof(double));
++    };
++    const auto& tr=policy.trajectory;
++    part(tr.states,horizon*dim_state);part(tr.actions,(horizon-1)*dim_action);
++    part(tr.times,horizon);part(tr.residual,horizon*task->num_residual);
++    part(policy.feedback_gain,horizon*dim_action*dim_state_derivative);
++    part(policy.metric,horizon*dim_action*dim_action);part(policy.base_Qu,horizon*dim_action);
++    part(policy.base_Qxu,horizon*dim_action*dim_state_derivative);
++    part(policy.base_active,horizon*dim_action);
++  }
+   r34_decisions.clear();
+   r33_archive_valid=false;r33_source="none";r33_rollouts=r33_slots=r33_cache_hits=r33_derivative_passes=0;
+   r33_D.clear();r33_scale_mean=r33_scale_floor=0;
+@@ -576,7 +607,7 @@
+       if(const char* f=std::getenv("MJPC_R27_PLAN_RECORD")) {
+         std::ofstream out(f,std::ios::app);out.precision(17);
+         out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+-           <<",\"controller_artifact\":\"S5-r35\",\"problem_epoch\":"<<r32.epoch
++           <<",\"controller_artifact\":\"S5-r36\",\"problem_epoch\":"<<r32.epoch
+            <<",\"source_call_id\":"<<r29_call_id<<",\"candidate_source\":\""<<r33_source<<"\""
+            <<",\"selected_mechanism\":\""<<r33_mechanism<<"\",\"accepted_cost\":"<<r33_archive_trajectory.total_return
+            <<",\"accepted_trunk_violation\":"<<r33_archive_trajectory.trunk_violation
+@@ -1274,7 +1305,7 @@
+     std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
+     out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+ 
+-       <<",\"controller_artifact\":\"S5-r35\""
++       <<",\"controller_artifact\":\"S5-r36\""
+        <<",\"candidate_source\":\""<<r33_source<<"\",\"selected_mechanism\":\""<<r33_mechanism<<"\""
+        <<",\"problem_epoch\":"<<r32.epoch<<",\"source_call_id\":"<<r29_call_id
+        <<",\"policy_generation_epoch\":"<<r32.generation_epoch
