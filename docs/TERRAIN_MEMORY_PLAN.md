@@ -1,7 +1,7 @@
 # 地面材料记忆主计划：W46未通过，W47先恢复有用的移动搜索
 
 <!-- W47_EXECUTION_BEGIN -->
-> 执行更新（2026-11-13）：W47 原位分析、B 来源核验与 C 全量复算已完成；隔离诊断构建已完成，A 的 8 条恒等修复配对验证待启动。 唯一 R8 原件在 D57 不可用，最新 W46 A/B 所需完整策略与同时间预测缺失；B 未启动 donor solve，未把历史 fallback 当最新双流覆盖。1944 次原调用中有 1601 次正步安装（1598 次 J 下降、3 次风险优先恢复）与 343 次内部停滞。N/r34 strict 保留，新 PPO 与新原 plant 回合均为 0；本轮诊断构建不冒称已部署 S5-r36。以下冻结计划和 W46 审查按其形成时点阅读，当前执行状态以索引为准。 [W47 实际运行索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w47/phase.json)。
+> 执行更新（2026-11-13）：W47 有限计算已结束；配对验证、首分叉和工作量见运行索引。 唯一 R8 原件在 D57 不可用，最新 W46 A/B 所需完整策略与同时间预测缺失；B 未启动 donor solve，未把历史 fallback 当最新双流覆盖。1944 次原调用中有 1601 次正步安装（1598 次 J 下降、3 次风险优先恢复）与 343 次内部停滞。N/r34 strict 保留，新 PPO 与新原 plant 回合均为 0；本轮诊断构建不冒称已部署 S5-r36。以下冻结计划和 W46 审查按其形成时点阅读，当前执行状态以索引为准。 [W47 实际运行索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w47/phase.json)。
 <!-- W47_EXECUTION_END -->
 
 更新2026-11-13。结果基点`15ee620b8a909246a12baf999c136c2be299655b`。**W46/r35 constant已自然结束并交付；W47/r36仍为planned_not_implemented。** 本次是审查和下一计划发布，未启动服务器任务、原plant实验、MPC求解或PPO。
