@@ -1,7 +1,7 @@
 # Codex执行入口：W47已完成；W48部署最小修复并验证原闭环
 
 <!-- W48_EXECUTION_BEGIN -->
-> 2026-11-13 执行更新：正式 S5-r36 已隔离构建并完成无积分 StateDiff 核验；8 次 old/corrected N solve 与 4 条实际 scale 的 350 ms 部署核对完成。四个困难 fixture 正方向仍无接纳，四条部署与评分轨迹完全一致；不外推全程不会下降。新 PPO 0/0，原 A/B 正在按计划准备/推进，实际状态和物理 clock 以 [W48 索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/phase.json) 为准；下方 planned 描述保留为已发布计划基线。
+> 2026-11-13 执行更新：正式 S5-r36 已隔离构建并完成无积分 StateDiff 核验；8 次 old/corrected N solve 与 4 条实际 scale 的 350 ms 部署核对完成。四个困难 fixture 正方向仍无接纳，四条部署与评分轨迹完全一致；不外推全程不会下降。新 PPO 0/0。配置继承技术错误已修复，原 A/B E30 已正常启动并核首个 held 前记录；现有 E30 尚未通过。实际状态和物理 clock 以 [W48 索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/phase.json) 为准；下方 planned 描述保留为已发布计划基线。
 <!-- W48_EXECUTION_END -->
 
 更新2026-11-13（Asia/Shanghai）。结果基点`6e9075f48718509d48f51d08d0a8f62a34edfb41`。**W47有限工作与交付已完成；W48为planned_not_implemented，正式S5-r36尚未构建/部署。** 本次审查没有启动新服务器任务、native求解、plant、PPO或GPU物理。用户最新要求覆盖历史固定墙钟截止和电脑归档规定。

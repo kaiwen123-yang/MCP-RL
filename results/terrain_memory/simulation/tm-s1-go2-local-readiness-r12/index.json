@@ -557383,7 +557383,7 @@
   },
   "w48": {
     "phase": "W48",
-    "status": "original_evaluations_declared_not_started",
+    "status": "original_evaluations_running",
     "plan_commit": "068d8388feba972dd0e8cbd5bbbb1a7fd3ee71bf",
     "result_base": "6e9075f48718509d48f51d08d0a8f62a34edfb41",
     "started_unix_s": 1794559620.7678993,
@@ -557392,7 +557392,7 @@
     "build": "S5-r36",
     "new_PPO_samples": 0,
     "new_PPO_updates": 0,
-    "original_plant_starts": 0,
+    "original_plant_starts": 2,
     "donor_solves": 0,
     "GPU_physics_steps": 0,
     "budget": {
@@ -557579,7 +557579,7 @@
     },
     "original_evaluation_declared_unix_s": 1794560792.869432,
     "binary_sha256": "b05c8da8ca74551dc73ea0272329234217d7160731e5cea8e33101bba3241338",
-    "launched_unix_s": 1794560316.7475998,
+    "launched_unix_s": 1794560882.1474998,
     "prior_technical_jobs": [
       {
         "job_id": "job-20261113T085640Z-w48-a",
@@ -557771,6 +557771,90 @@
         "affinity": "10-19",
         "checkpoint_sha256": "6b1fcab99f849aaaabc4925dc13391f6ced8e75c419d0f821661417cba6349f7"
       }
-    ]
+    ],
+    "live_observation": "live-observation.json",
+    "last_verified_local": "2026-11-13T17:17:23+08:00",
+    "original_evaluation": {
+      "A": {
+        "job": "job-20261113T090632Z-w48-a",
+        "attempt": "job-20261113T090632Z-w48-a-eval-PANN_PPO_S5-s1-E30-attempt01",
+        "tmux": "s1-w48-a",
+        "runner_pid": 3561,
+        "evaluation_pid": 3574,
+        "native_pid": 3848,
+        "confirmed_physical_clock_s": 3.3379999999996652,
+        "completed_planner_calls": 187,
+        "stages": {
+          "E30": "running",
+          "E60": "not_started_requires_E30_pass",
+          "E300": "not_started_requires_E60_pass",
+          "E600": "not_started_requires_E300_pass"
+        }
+      },
+      "B": {
+        "job": "job-20261113T090632Z-w48-b",
+        "attempt": "job-20261113T090632Z-w48-b-eval-PANN_PPO_S5-s2-E30-attempt01",
+        "tmux": "s1-w48-b",
+        "runner_pid": 3567,
+        "evaluation_pid": 3575,
+        "native_pid": 3740,
+        "confirmed_physical_clock_s": 3.277999999999672,
+        "completed_planner_calls": 184,
+        "stages": {
+          "E30": "running",
+          "E60": "not_started_requires_E30_pass",
+          "E300": "not_started_requires_E60_pass",
+          "E600": "not_started_requires_E300_pass"
+        }
+      }
+    },
+    "publication": {
+      "finite_status": "published_size_digest_verified",
+      "finite_asset_count": 8,
+      "finite_bytes": 1011453914,
+      "finite_release": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w48-finite-part01",
+      "original_episodes": "running; natural completion triggers summaries, compact Git, render and direct incremental Release",
+      "extra_PC_download_archive": false
+    },
+    "actual_work_observation": {
+      "at": "2026-11-13T17:17:23+08:00",
+      "finite": {
+        "native_new_rollouts": 484,
+        "transition_fd_calls": 30816,
+        "risk_geometry_fd_calls": 5012,
+        "derivative_passes": 16,
+        "backward_attempts": 40,
+        "candidate_records": 480
+      },
+      "original_completed_call_work": {
+        "A": {
+          "native_new_rollouts": 5127,
+          "candidate_records": 5060,
+          "derivative_passes": 374,
+          "transition_fd_calls": 720324,
+          "risk_geometry_fd_calls": 149916,
+          "backward_attempts": 319
+        },
+        "B": {
+          "native_new_rollouts": 5054,
+          "candidate_records": 4990,
+          "derivative_passes": 368,
+          "transition_fd_calls": 708768,
+          "risk_geometry_fd_calls": 148252,
+          "backward_attempts": 315
+        }
+      },
+      "original_confirmed_plant_substeps": {
+        "A": 16690,
+        "B": 16390
+      },
+      "excludes_inflight_work": true,
+      "startup_native_work_unavailable": "Four zero-plant technical startup calls; exact incomplete rollout work not recorded. See startup-technical.json.",
+      "new_PPO_samples": 0,
+      "new_PPO_updates": 0,
+      "new_GPU_physics_steps": 0,
+      "donor_solves": 0
+    },
+    "resume_rule": "Inspect these exact tmux/PIDs and current physical clock first; attach to live job, never launch duplicate. Each case alone must pass its own preceding original stage."
   }
 }

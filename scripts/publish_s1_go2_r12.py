@@ -157,6 +157,19 @@ def main():
     if args.job_name and not (args.server_auth and args.manifest and args.source_commit):
         p.error('--job-name requires --server-auth,--manifest and --source-commit')
     manifest=json.loads(args.manifest.read_text()) if args.manifest else None
+    # W48 requested explicit content-digest verification for each new manifest.
+    # Hash each new archive once on D57, then compare Release metadata on finish.
+    if manifest is not None and args.job_name and args.job_name.startswith('w48-'):
+        if args.action=='upload':
+            import hashlib
+            for row in manifest:
+                if 'sha256' not in row:
+                    with (ROOT/row['path']).open('rb') as source:
+                        row['sha256']=hashlib.file_digest(source,'sha256').hexdigest()
+                    row['size']=(ROOT/row['path']).stat().st_size
+            args.manifest.write_text(json.dumps(manifest,indent=2)+'\n')
+    requested_digests={row['name']:row['sha256'] for row in (manifest or []) if 'sha256' in row}
+
     registered=json.loads((SMALL/'index.json').read_text()).get('publication',{}).get('assets',[])
     if manifest is not None:
         retained={row['name']:row.get('release_tag',RUN) for row in registered}
@@ -211,6 +224,8 @@ def main():
                 actual=remotes[row.get('release_tag',RUN)].get(row['name'])
                 if row.get('status')=='git_recorded':continue
                 okay=actual and actual['state']=='uploaded' and actual['size']==row['size']
+                if row['name'] in requested_digests:
+                    okay=okay and actual.get('digest')=='sha256:'+requested_digests[row['name']]
                 row['status']='uploaded' if okay else 'publication_pending'
                 if okay:
                     row.update(url=actual['browser_download_url'],remote_asset_id=actual['id'],
@@ -225,7 +240,13 @@ def main():
                 asset_bytes=sum(x['size'] for x in q['assets'] if x['status']=='uploaded'),
                 verification='One normal name/size/upload-state comparison; no full hash pass or downloads',checked_unix_s=time.time())
             print(json.dumps(dict(status=q['status'],asset_count=q['asset_count'],asset_bytes=q['asset_bytes'],pending_paths=missing)),flush=True)
-        update(finish);return
+        update(finish)
+        if requested_digests:
+            current=json.loads((SMALL/'index.json').read_text())['publication']['assets']
+            actual={row['name']:row for row in current}
+            if any(name not in actual or actual[name].get('remote_digest')!='sha256:'+digest or actual[name].get('status')!='uploaded' for name,digest in requested_digests.items()):
+                raise RuntimeError('Requested W48 manifest has an unverified size/digest; originals retained.')
+        return
     inputs=[]
     for attempt in args.attempt:
         folder=LARGE/attempt
