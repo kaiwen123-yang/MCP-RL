@@ -1,0 +1,52 @@
+{
+  "schema": "s1_w47_review_validation_v1",
+  "reviewed_commit": "6e9075f48718509d48f51d08d0a8f62a34edfb41",
+  "date": "2026-11-13",
+  "status": "passed",
+  "scope": "Offline arithmetic, patch/source checks and publication-document integrity; no native optimizer, physics, server or GPU execution.",
+  "offline_control_recomputation": {
+    "script": "audit_w47_control.py",
+    "exit_code": 0,
+    "exact_json_match": true,
+    "records": {
+      "positive_candidates": 540,
+      "zero_first_divergences": 20,
+      "paired_fixed_rollouts": 8
+    },
+    "interior_nodes": 195,
+    "max_cost_arithmetic_error": 4.440892098500626e-16,
+    "max_action_reconstruction_error": 2.220446049250313e-16,
+    "patch_source_sha_matches": 2
+  },
+  "offline_calls_gpu_recomputation": {
+    "script": "audit_w47_calls_gpu.py",
+    "exit_code": 0,
+    "exact_json_match": true,
+    "all_call_rows": 1944,
+    "positive_installs": 1601,
+    "positive_J_descent": 1598,
+    "risk_priority_J_increase": 3,
+    "stagnation": 343,
+    "GPU_unique_scenarios": 18,
+    "duplicate_groups": 6
+  },
+  "document_validation": {
+    "python_syntax": "passed, AST only",
+    "json_parse": "passed",
+    "local_markdown_links_checked": 156,
+    "missing_links": [],
+    "git_diff_check_exit_code": 0,
+    "handoff_budget_and_workflow_assertions": "passed"
+  },
+  "peer_review": {
+    "reviewers": 3,
+    "scope": "W48 control path/budgets, data/GPU/resources, literature/causal design",
+    "material_findings_resolved": [
+      "Runtime records must be verified inside first normal E30 planning call, not required before launching it.",
+      "Separate GPU policy-generation build from action-evaluation build; exact self/antipode reference after native-consistent interpolation/normalization."
+    ]
+  },
+  "review_new_experiments": 0,
+  "historical_Release_payload_downloads": 0,
+  "publication_verification": "Git ref/commit and remote file identity to be checked after upload, separately from these offline checks."
+}

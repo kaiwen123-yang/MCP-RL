@@ -1,0 +1,231 @@
+{
+  "schema": "s1_w47_review_w48_handoff_v1",
+  "updated_date": "2026-11-13",
+  "timezone": "Asia/Shanghai",
+  "repository": "kaiwen123-yang/MCP-RL",
+  "reviewed_result_commit": "6e9075f48718509d48f51d08d0a8f62a34edfb41",
+  "previous_plan_commit": "8f254aee8401ffca821cb360e7c33a01038b9a74",
+  "last_original_plant_result_commit": "15ee620b8a909246a12baf999c136c2be299655b",
+  "review_status": "completed_offline_review_plan_prepared_for_publication",
+  "next_phase": "W48",
+  "next_phase_status": "planned_not_implemented",
+  "publication_note": "The commit containing this document publishes the plan; it does not imply r36 build, deployment or W48 experiment launch. Final Git ref/commit verification is reported by the publishing assistant.",
+  "entrypoints": {
+    "plan": "docs/S1_W48_STABILITY_PLAN.md",
+    "prompt": "docs/S1_W48_START_PROMPT.md",
+    "memory": "docs/TERRAIN_MEMORY_PLAN.md",
+    "rules": "AGENTS.md"
+  },
+  "this_review_new_work": {
+    "server_tasks": 0,
+    "native_optimizer_solves": 0,
+    "plant_episodes": 0,
+    "PPO_samples": 0,
+    "PPO_updates": 0,
+    "GPU_physics_steps": 0,
+    "Release_payload_downloads": 0
+  },
+  "W47_actual_work": {
+    "status": "completed_finite_work_and_delivery",
+    "fixed_policy_rollouts": 8,
+    "held_intervals": 1400,
+    "physics_substeps": 14000,
+    "independent_duration_sum_s": 2.8,
+    "native_optimizer_solves": 0,
+    "transition_FD_evaluations": 0,
+    "donor_held_evaluations": 0,
+    "plant_episodes": 0,
+    "PPO_samples": 0,
+    "PPO_updates": 0,
+    "GPU_physics_steps": 0,
+    "build_wall_s": 63.29431486129761,
+    "paired_wall_s": 35.255768060684204
+  },
+  "W46_original_E30": {
+    "A": {
+      "duration_s": 26.432,
+      "termination": "floor_trunk_contact",
+      "max_body_x_m": 0.6265063,
+      "actual_material_loading": false,
+      "legal_outbound": 0,
+      "legal_return": 0,
+      "legal_round_trips": 0
+    },
+    "B": {
+      "duration_s": 11.638,
+      "termination": "body_fall",
+      "max_body_x_m": 0.3963639,
+      "actual_material_loading": true,
+      "max_principal_strain": 0.00649112,
+      "legal_outbound": 0,
+      "legal_return": 0,
+      "legal_round_trips": 0
+    },
+    "passed": 0,
+    "attempted": 2,
+    "higher_records_blocked": 6
+  },
+  "full_W46_call_counts_from_W47_csv": {
+    "includes_startup_calls": 40,
+    "all": 1944,
+    "positive_installed": 1601,
+    "positive_cost_descent": 1598,
+    "risk_priority_cost_increase": 3,
+    "internal_stagnation": 343,
+    "stagnant_nominal_installed": 137,
+    "stagnant_incumbent_retained": 206,
+    "moving": 1704,
+    "moving_positive_installed": 1383,
+    "moving_stagnation": 321,
+    "B_pre_low_height_one_second": {
+      "calls": 50,
+      "positive_cost_descent": 50
+    },
+    "B_pre_roll_one_second": {
+      "calls": 50,
+      "positive_cost_descent": 50
+    }
+  },
+  "control_change": {
+    "base_build": "S5-r35",
+    "planned_build": "S5-r36",
+    "base_binary_sha256": "a32287b0821d9a77687575250dcb2379e370dbc84264fae80a4091027db7345e",
+    "mechanism": "N",
+    "acceptance": "r34_strict",
+    "input_reference_branch": "constant",
+    "patch": "experiments/terrain_memory/w47-state-difference-identity.patch",
+    "exact_self_or_antipode_only": true,
+    "epsilon_neighborhood": false,
+    "modifies_mjd_transitionFD": false,
+    "production_diagnostic_env_forbidden": [
+      "MJPC_R34_SCORE_ONLY",
+      "MJPC_W47_INDEXED_SCORE",
+      "offline INPUT_POLICY/CONTEXT/REFERENCE"
+    ],
+    "implementation_in_this_review": false
+  },
+  "task_A": {
+    "fixture_labels": [
+      "A148",
+      "A153",
+      "B155",
+      "B158"
+    ],
+    "source_round": "W45 with W46 common context reconstruction",
+    "exact_historical_replay": false,
+    "max_corrected_solves": 4,
+    "max_additional_old_solves_if_identity_not_reusable": 4,
+    "max_total_solves": 8,
+    "branches": [
+      "constant"
+    ],
+    "max_corrected_ActionImpl_rollouts": 4,
+    "fixed_rollout_duration_s": 0.35,
+    "max_deployment_check_substeps": 7000,
+    "algebra_check_no_integration": true,
+    "reuse_actual_scale_and_scoring_path": true
+  },
+  "task_B": {
+    "A_seed": 1,
+    "B_seed": 2,
+    "checkpoint": "checkpoint-014737.pt",
+    "resume_episode_A": 428,
+    "resume_episode_B": 417,
+    "per_case_samples": 14737,
+    "per_case_updates": 57,
+    "tail": 0,
+    "excluded": 145,
+    "new_PPO_samples": 0,
+    "new_PPO_updates": 0,
+    "first_level": "E30",
+    "max_initial_original_cases": 2,
+    "level_sequence": [
+      "E30",
+      "E60",
+      "E300",
+      "E600"
+    ],
+    "per_case_prior_level_pass_required": true,
+    "failure_blocks_later_levels_for_that_case": true,
+    "donor_required": false,
+    "missing_historical_latest_context_blocks": false,
+    "old_fixture_movement_or_descent_required": false,
+    "unresolved_technical_errors_block": true,
+    "recording_check_timing": "Launch after build/finite result/schema/path checks; verify written runtime fields in the same original attempt after its first normal planner call and before first held physical advance. No separate plant test and no pre-launch runtime data requirement. Initial previous prediction may be unavailable."
+  },
+  "recording": {
+    "all_calls_compact_actual_previous_accepted_prediction": true,
+    "previous_prediction_from_actually_deployed_policy": true,
+    "accepted_states_distinct_from_reference_states": true,
+    "capture_P0_before_planner_overwrite": true,
+    "missing_prediction": "unavailable, never zero or substituted historical delta",
+    "first_held_jump_trigger_rad": 1.0,
+    "first_knee_limit_reversal_Nm": [
+      -45.43,
+      45.43
+    ],
+    "diagnostic_triggers_change_task_termination": false,
+    "event_pre_s": 0.1,
+    "event_post_s": 0.2,
+    "overlap_merge_and_immutable_hash_dedup": true,
+    "all_call_all_candidate_full_tensor_copy": false
+  },
+  "task_C": {
+    "blocks_AB": false,
+    "existing_GPU_duplicate_groups": 6,
+    "new_physics_steps": 0,
+    "optional_action_only_batches": 1,
+    "optional_nominal_action_scenarios_max": 24,
+    "missing_perturbations_not_padded": true,
+    "separate_policy_generation_and_action_evaluation_builds": true,
+    "historical_gpu_driver_not_to_run": "scripts/s1_go2_w46_gpu.py (hardcoded W46 output)",
+    "R8_recovery": "one known scientific input on D57 only, existing authorized server route, size/SHA/schema/time/phase",
+    "R8_asset_id": 681937433,
+    "R8_bytes": 28100505,
+    "R8_sha256": "079f57e1ebad260c9cdac842dc089012e29cb46992ab64d2c31cd9d380b61625",
+    "R8_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-wb-support-r8/project-s3-formal-v1-single-yaw_plus5-trajectory.npz",
+    "donor_solves": 0
+  },
+  "resources": {
+    "ssh_alias": "autodl-d57",
+    "cpu_tree": "/root/autodl-tmp/MCP-RL-w42",
+    "gpu_tree": "/root/autodl-tmp/MCP-RL",
+    "case_A_cpu": 10,
+    "case_B_cpu": 10,
+    "task_C_total_host_cpu": 2,
+    "system_control_publication_cpu_reserve": 3,
+    "library_threads": 1,
+    "build_jobs_before_dual_compute": 6,
+    "live_resource_readback_required": true,
+    "XLA_preallocate": false,
+    "JAX_x64": true,
+    "unrelated_jobs_untouched": true
+  },
+  "background": {
+    "deadline_unix_s": null,
+    "wall_deadline_enabled": false,
+    "fixed_wall_completion_time": false,
+    "kill_on_conversation_end": false,
+    "physical_stage_durations_preserved": true,
+    "finite_numerical_work_limits_preserved": true,
+    "unbounded_retries": false
+  },
+  "delivery": {
+    "git_before_original_launch": true,
+    "new_required_originals": "D57 incremental direct Release upload; verify URL/size/digest",
+    "user_PC_extra_download_archive_mirror": false,
+    "automatic_server_original_checkpoint_video_deletion": false,
+    "force_push_or_overwrite_concurrent_work": false
+  },
+  "evidence_scope": {
+    "all_tracked_files_byte_inventory": 8657,
+    "all_tracked_bytes": 1025161586,
+    "delta_files_since_previous_plan": 34,
+    "delta_bytes": 41749875,
+    "all_call_csv_rows_independently_recomputed": 1944,
+    "committed_control_numeric_records_independently_recomputed": true,
+    "Release_metadata_live_verified": true,
+    "Release_payload_independently_replayed_here": false,
+    "all_bytes_semantically_understood_claim": false
+  }
+}
