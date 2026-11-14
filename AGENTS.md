@@ -1,6 +1,6 @@
 # Codex执行入口：W48已完成；W49分离真实执行与恢复机制
 
-更新2026-11-13（Asia/Shanghai）。审查基点`61e16975fa6b38dc8e2d31779c2bd82f1aaeb8b6`。**W48正式r36及原评价已完成；W49有限机制与短部署已执行，S5-r37/K原评价已在tmux运行，资格尚未产生。** 最新实际身份见 results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/phase.json；以下预算继续生效。用户最新要求覆盖历史固定墙钟截止和电脑归档规定。
+更新2026-11-13（Asia/Shanghai）。审查基点`61e16975fa6b38dc8e2d31779c2bd82f1aaeb8b6`。**W48正式r36及原评价已完成；W49有限机制与短部署已执行，S5-r37/K原A/B均完成30s，但材料穿越未完成，E30 0/2，后六级blocked。** 最新实际身份见 results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/phase.json；以下预算继续生效。用户最新要求覆盖历史固定墙钟截止和电脑归档规定。
 
 先读[项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[W48审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W48-final-review/README.md)、[W49详细计划](docs/S1_W49_STABILITY_PLAN.md)、[启动提示词](docs/S1_W49_START_PROMPT.md)、[机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W48-final-review/handoff.json)。预算、具体身份和判据以W49详细计划为准；历史“当前”只按形成时点阅读。
 

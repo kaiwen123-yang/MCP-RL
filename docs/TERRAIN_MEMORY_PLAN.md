@@ -1,6 +1,6 @@
 # 地面材料记忆主计划：W48结论冻结，W49检验执行与恢复
 
-执行更新（2026-11-13）：D57已实施S5-r37，四个新事件完成4次N solve及36个k引导既有P候选；四事件均有原strict可接纳且动作不同的策略，4×20ms真实RPC部署完成400子步。C完成60 world-step、预热0。原A/B E30已在tmux运行，资格尚未产生，后续状态以[W49实际索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/phase.json)为准。计划首段“planned”仅为发布时状态。
+执行更新（2026-11-13）：D57已实施S5-r37，四个新事件完成4次N solve及36个k引导既有P候选；四事件均有原strict可接纳且动作不同的策略，4×20ms真实RPC部署完成400子步。C完成60 world-step、预热0。原A/B E30均完成30s但材料穿越未完成，E30 0/2，后六级blocked，后续状态以[W49实际索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/phase.json)为准。计划首段“planned”仅为发布时状态。
 
 更新2026-11-13（Asia/Shanghai）。结果基点`61e16975fa6b38dc8e2d31779c2bd82f1aaeb8b6`。**W48正式r36与原评价已完成；W49 planned_not_implemented。** 本次是仓库审查与计划发布，无新服务器任务、native solve、plant、PPO或GPU物理。
 
