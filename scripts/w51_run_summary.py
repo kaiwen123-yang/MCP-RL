@@ -105,7 +105,13 @@ def windows(out,boundaries):
     feet_bottom_z_range_m=np.stack([bottom[k].min(axis=0),bottom[k].max(axis=0)]).tolist(),
     feet_z_semantics='recorded geom centers minus original compiled foot radii; relative to original z=0 plane, not unobserved deformed terrain',
     diagnostic_threshold_N=1,qualification_threshold_changed=False)
+   pattern=loads.astype(np.int64)@np.array([1,2,4,8])
+   row['actual_support_pattern_fractions']={str(mask):float((pattern==mask).mean()) for mask in np.unique(pattern)}
+   row['support_pattern_bits']='FL=1, FR=2, RL=4, RR=8; load threshold is descriptive 1N'
+   row['load_transitions_per_foot']=np.count_nonzero(np.diff(loads.astype(int),axis=0),axis=0).tolist()
    if swing is not None:
+    row['loaded_stance_world_tangent_speed_mean_m_s']=[float(np.linalg.norm(fv[k,i,:2],axis=1)[(~swing[:,i])&loads[:,i]].mean()) if ((~swing[:,i])&loads[:,i]).any() else None for i in range(4)]
+    row['target_swing_bottom_z_range_m']=[[float(bottom[k,i][swing[:,i]].min()),float(bottom[k,i][swing[:,i]].max())] if swing[:,i].any() else None for i in range(4)]
     row['target_swing_loaded_fraction']=[float(loads[:,i][swing[:,i]].mean()) if swing[:,i].any() else None for i in range(4)]
     row['target_stance_Fz_mean_N']=[float(fz[k,i][~swing[:,i]].mean()) if (~swing[:,i]).any() else None for i in range(4)]
    else:row['target_swing_loaded_fraction']=None

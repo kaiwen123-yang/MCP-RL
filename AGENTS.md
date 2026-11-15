@@ -2,6 +2,8 @@
 
 命令传递定向修正（提交 `463e91b`）：首个 D1 在真实入口发现 userdata[78:84] 未填充，原运动候选使用了零世界速度；已于实际 3.120s 停止其独立 server，并保留 execution_error/技术无效记录及全部已保存工作量。D0 原进程连续保留。修正仅使 W51 将原 mission.v/mission.w 写入既有命令槽，不启用额外 twist 成本；修正后 D1 从原 t=0 作一次有效配对尝试，详见 phase.json 的当前 jobs 和 technical_attempts。当前 tmux 为 `s1-w51-pair-command-repair`。此技术重启不作为新的物理失败或成功样本，也没有重跑 D0。
 
+D0 实际终止结果已到达：原 body_fall 于 5.814s 触发，末 z=0.1189336264m，最大 x=0.0957089087m；实际计数为 29,070 plant 子步、311 完成 planner 调用、5,929 full rollout。2.002–4.3s 前进量为 -0.020903054m、目标 swing 仍受载约 71.18–80.19%，未形成稳定支撑推进。修正后的 D1 仍 running；截至已核验的 2.408s，原 mission 命令与 native userdata 命令一致，S 已真实作为 Q（包括 J(S)>J(B) 的搜索），未据此提前选择版本或启动原 E30。
+
 ## W51 实际执行（2026-11-15）
 D8 与 r39 已实施并构建，源码提交 `df68de8`。D57 `s1-w51-pair` 正在运行 D0/r38、D1/r39，两臂均为 W44 A seed1/checkpoint-014737、原 evaluation t=0 初态。运行索引：`results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json`。没有新增 PPO/donor 或原 E30 资格。
 用户允许 tmux 稳定后结束对话。后台会完成实际 D8、逐窗统计、全时段视频与 D57 直传发布；版本选择待完整承重/推进证据，不另造数值阈值。续接先读 phase、D0/D1、paired-results 与 task-c；不得重开已启动的 D8。后文计划约束继续有效。

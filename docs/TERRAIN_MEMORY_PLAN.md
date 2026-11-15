@@ -2,6 +2,8 @@
 
 命令传递定向修正（提交 `463e91b`）：首个 D1 在真实入口发现 userdata[78:84] 未填充，原运动候选使用了零世界速度；已于实际 3.120s 停止其独立 server，并保留 execution_error/技术无效记录及全部已保存工作量。D0 原进程连续保留。修正仅使 W51 将原 mission.v/mission.w 写入既有命令槽，不启用额外 twist 成本；修正后 D1 从原 t=0 作一次有效配对尝试，详见 phase.json 的当前 jobs 和 technical_attempts。当前 tmux 为 `s1-w51-pair-command-repair`。此技术重启不作为新的物理失败或成功样本，也没有重跑 D0。
 
+D0 实际终止结果已到达：原 body_fall 于 5.814s 触发，末 z=0.1189336264m，最大 x=0.0957089087m；实际计数为 29,070 plant 子步、311 完成 planner 调用、5,929 full rollout。2.002–4.3s 前进量为 -0.020903054m、目标 swing 仍受载约 71.18–80.19%，未形成稳定支撑推进。修正后的 D1 仍 running；截至已核验的 2.408s，原 mission 命令与 native userdata 命令一致，S 已真实作为 Q（包括 J(S)>J(B) 的搜索），未据此提前选择版本或启动原 E30。
+
 ## W51 实际状态（2026-11-15）
 真实 D8 与 r39 已实施并完成 native/service/server 构建；源码提交 `df68de8`。D0、D1 已在 `s1-w51-pair` 并行运行，每臂一次原 evaluation t=0→8s，保持原物理提前终止；两臂同 W44 A seed1、checkpoint-014737、归一化和完整初态。当前没有原 E30 新资格，新增 PPO/donor 为 0。见 [运行索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json)。
 C 的 114 候选/22 项 FP64 GPU 归约已完成并直传 Release，最大 J 误差 5.82077e-11，六组内部比较一致，新 GPU 物理 0。部分 state 代数项仍有真实残差误差（MaterialSupportHeight 最大 9.00991e-6），完整成本移植未成立。
