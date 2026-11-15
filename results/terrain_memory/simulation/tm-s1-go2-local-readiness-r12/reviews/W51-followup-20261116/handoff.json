@@ -1,0 +1,99 @@
+{
+  "schema": "s1_w51_followup_w52_handoff_v1",
+  "updated_local_date": "2026-11-16",
+  "timezone": "Asia/Shanghai",
+  "repository": "kaiwen123-yang/MCP-RL",
+  "source_result_commit": "a621d7d35e6016634b388a3aef0d39d8d008aab0",
+  "review_base_commit": "28b865477d35a1ef04dc04e0da3521c6c9dc4c2b",
+  "observed_remote_at_review_start": {
+    "main": "28b865477d35a1ef04dc04e0da3521c6c9dc4c2b",
+    "all_branches_checked": true,
+    "latest_releases_checked": true,
+    "w52_results_found": false
+  },
+  "status": {
+    "latest_experiment": "W51",
+    "w51": "completed_reviewed",
+    "w52": "planned_not_implemented",
+    "selected_normal_walking_revision": null,
+    "original_e30_starts_in_w51": 0
+  },
+  "new_work": {
+    "physical_steps": 0,
+    "native_solves": 0,
+    "finite_difference_calls": 0,
+    "ppo_samples": 0,
+    "ppo_updates": 0,
+    "gpu_physics": 0,
+    "kind": "Existing-data analysis, paper review, implementation planning and plotting only"
+  },
+  "evidence": {
+    "command_support": "command-support.json",
+    "figure": "command-support.png",
+    "foot_order": [
+      "FL",
+      "FR",
+      "RL",
+      "RR"
+    ],
+    "ik_foot_order": [
+      "FL",
+      "RL",
+      "FR",
+      "RR"
+    ],
+    "permutation": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "material_chunk_count": 18,
+    "all_material_chunks_empty": true,
+    "material_final_count": 3,
+    "all_material_final_empty": true,
+    "video_review": "Coverage of full duration by sampled frames and closeups; not every encoded frame"
+  },
+  "implementation_requirements": [
+    "Wire new r40/r41 build and contract identities into prepare/runtime/native/strict comparator/recording/before_call/held.",
+    "Inherit mission world command write to userdata[78:84]; do not silently lose w51_fixed_policy-gated repair.",
+    "Preserve phase/anchor/touchdown; use original event times, actual initial p/v, continuous extrema, material boundary semantics and future anchor height.",
+    "Isolate full B/S direction state; merge once and commit only selected legal regularization state.",
+    "Persist same-call accepted rollout/full policy after candidate ring is available; no extra rollout for recording."
+  ],
+  "execution": {
+    "main": "D2 geometry-only original D8 once",
+    "secondary": "D3 same geometry plus independent B/S directions, original D8 once if resources permit",
+    "auxiliary": "C existing-data MaterialSupportHeight residual correction only",
+    "cpu_allocation": [
+      10,
+      10,
+      2,
+      3
+    ],
+    "max_heavy_native_jobs": 2,
+    "ppo_or_donor": 0,
+    "selection": "Prefer D2 only after its natural complete D8 and full evidence supports sustained normal support/progress; otherwise consider actual D3 improvement; no success guaranteed",
+    "qualification": "Independent original A seed1 / B seed2 E30 then per-case E60/E300/E600; D8 is not qualification"
+  },
+  "background": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "deadline_unix_flag": "omit",
+    "conversation_end_kills_background": false,
+    "physical_duration_and_original_stops_preserved": true
+  },
+  "delivery": {
+    "code_and_compact_results": "GitHub",
+    "large_originals_and_full_videos": "D57 direct incremental Release upload",
+    "user_computer_extra_archive": false,
+    "delete_referenced_server_originals": false,
+    "force_push": false
+  },
+  "entrypoints": {
+    "plan": "docs/S1_W52_STABILITY_PLAN.md",
+    "prompt": "docs/S1_W52_START_PROMPT.md",
+    "memory": "docs/TERRAIN_MEMORY_PLAN.md",
+    "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/README.md"
+  }
+}

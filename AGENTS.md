@@ -1,10 +1,13 @@
 # Codex 执行入口：W51 已审查，W52 修复摆动参考
 
-更新：2026-11-15（Asia/Shanghai）。结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**W51 已结束；W52 planned_not_implemented。** 本次审查没有启动新物理、native solve、FD、GPU 或 PPO。
+更新：2026-11-16（Asia/Shanghai）。结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**W51 已结束；W52 planned_not_implemented。** 补充审查开始时实时 main 仍为 `28b8654`，未见 W52 新结果。本次审查没有启动新物理、native solve、FD、GPU 或 PPO。
 
-先读 [项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[W51 完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md)、[W52 详细计划](docs/S1_W52_STABILITY_PLAN.md)、[启动提示词](docs/S1_W52_START_PROMPT.md)、[机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/handoff.json)。实际实现与判定以 W52 计划为准；历史“running/当前/待实施”不覆盖新结果，不重开已完成 W51。
+先读 [项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[最新补充复核](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/README.md)、[W51 完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md)、[W52 详细计划](docs/S1_W52_STABILITY_PLAN.md)、[启动提示词](docs/S1_W52_START_PROMPT.md)、[最新机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/handoff.json)。实际实现与判定以 W52 计划为准；历史“running/当前/待实施”不覆盖新结果，不重开已完成 W51。
 
 ## 必须带入的新事实
+
+- 补充复算：修正D1在3/6/8s仍收到约.22m/s正向命令，实际速度近零；18份材料chunk及三份material-final全部空。W51当前障碍是起步/接触实现，不能归为任务命令为零或已加载材料失败。
+- 新版本接线不能只改名字：runtime运动开关仅匹配r39，多处strict/记录/native身份/before_call/held使用显式旧版本集合；userdata[78:84]修复和W51 recorder依赖w51_fixed_policy合同字段。r40/r41与新合同需同步继承，避免重新丢掉原修复。D3隔离完整单分支工作区，统一提交；候选ring就绪后保存同次实际所选rollout/policy，不补跑记录。
 
 - D0/r38 在 5.814s 原 body_fall，末 z=.118934m；它全部2907次held查询没有真正尾部过期，持续刷新仍会失稳。3.016s首目标硬clip，3.17s首次z<.28；明显PD超界始3.4614s；37.867rad最大Kδx是4.05s的后段极值，不是已证明的最初原因。
 - 命令修正后的D1/r39完成8s，但最大x=.005452m、末x=-.012449m、末z=.288505m。4.3–8s四足承重100%、载荷切换0、策略更新0，是静站/微后退，不是正常步态。

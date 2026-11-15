@@ -4,9 +4,11 @@
 
 ## 当前：W51 已结束；D0 失稳、D1 静站，W52 先修摆动参考
 
-更新2026-11-15（Asia/Shanghai），结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**本轮结果已读完并完成科学审查；W52 planned_not_implemented。** 没有仍在运行的W51，也没有已选的正常行走新版本。本次审查未启动新物理、native solve、FD、GPU或PPO。
+更新2026-11-16（Asia/Shanghai），结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**W51结果已审查；W52 planned_not_implemented。** 补充复核开始时远端仍为 `28b8654`，没有W52新结果。没有已选的正常行走新版本，本次审查未启动新物理、native solve、FD、GPU或PPO。
 
 [项目记忆](docs/TERRAIN_MEMORY_PLAN.md) · [W51完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md) · [W52详细计划](docs/S1_W52_STABILITY_PLAN.md) · [Codex启动提示词](docs/S1_W52_START_PROMPT.md) · [机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/handoff.json)
+
+**最新补充复核：** [现状、命令/足力/视频证据、失败分流及实施风险](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/README.md) · [六项原始论文对照](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/literature.md) · [最新机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/handoff.json)。修正D1在3/6/8s收到约.22m/s前进命令却基本不动，18份材料chunk均为空；新版本需完整继承命令修复与runtime开关，D3隔离分支状态，记录器保存同次实际所选候选。这些已合入W52计划，没有增加新的科学变量或实验矩阵。
 
 | W51有效诊断 | 结束 | 最大x | 最终x / z | 判断 |
 |---|---|---:|---:|---|

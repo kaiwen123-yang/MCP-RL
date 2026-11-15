@@ -1,10 +1,12 @@
 # W52：修复摆动参考，再用实际支撑交换决定是否进入原任务
 
-更新：2026-11-15（Asia/Shanghai）。依据结果提交 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**状态：planned_not_implemented；本次只完成审查与计划，不存在 W52 新实验结果。**
+更新：2026-11-16（Asia/Shanghai）。依据结果提交 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**状态：planned_not_implemented；本次只完成审查与计划，不存在 W52 新实验结果。** 补充审查开始时远端 main 仍为 `28b8654`，没有新 W52 分支/Release 结果；不重开 W51，不跳号为 W53。
 
 [W51 完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md) · [控制原件审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/control/review.md) · [结果与资源复算](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/results/review.md) · [视频](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/video-review.md) · [启动提示词](S1_W52_START_PROMPT.md)
 
 ## 1. 决策与目的
+
+新增依据见 [2026-11-16 补充复核](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/README.md)、[命令/足力复算图](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/command-support.png)与[六项补充原始文献](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/literature.md)。D1 在 3/6/8 s 仍收到约 .22 m/s 前进命令，实际速度接近零；18 份材料 chunk 全为空。这进一步定位到命令到接触运动的实现，不把本轮静站归为零任务命令或材料记忆失败。
 
 W51 已结束。D0 在 5.814 s 跌倒；修正命令后的 D1 完成 8 s、身体高度约 .289 m，但最终后退 12.449 mm，后 3.7 s 四足持续受载且没有支撑切换。两臂均未接触材料，原 E30 启动 0。**不提升 r38/r39 为正式已选版本，不重复运行已完成的 W51 D0/D1。**
 
@@ -33,6 +35,12 @@ D2、D3 均从原 evaluation t=0 完整初态开始，使用同 W44 A/seed1、ch
 
 W44 A/B 各 14737 transitions / update57、checkpoint-014737、resume ep00428/ep00417、全 actor/critic/optimizer/norm/RNG/祖先继续保留，tail0/excluded145。W52 新 PPO、donor 均为 0。训练 resume 不冒充 plant checkpoint。
 
+### 3.1 新身份必须完整继承真实入口
+
+现有代码不是按版本大小自动继承。实施 r40/r41 时同步接通 `prepare_s1_go2_r11.py` 的 build 分派与 `s1_go2_r11_runtime.py` 中显式截至 r39 的版本集合，包括 R33/R34 strict/R35、实际 native 身份、recorder、before_call、held 和 forbidden diagnostic environment 的原检查语义。`MJPC_W51_MOTION/MJPC_W51_RECORD` 当前仅由 S5-r39 开启，不能只给新 spec 改名。
+
+**尤其保留原命令修复：** 当前 userdata[78:84] 写入和 W51 recorder 选择都受 `w51_fixed_policy` 合同字段影响。若创建 `w52_fixed_policy`，必须同步延续其语义，避免再次把非零 mission 命令变成零 seed 命令包；不因此启用关闭的 twist cost。native 可执行文件预期身份的合同读取也要支持新身份。用首次正常规划的同次 readback、实际进程与编译来源记录核验即可，不另加微物理准入。
+
 ## 4. D2 的唯一主变更：固定相位关键时刻的直接几何接续
 
 建议控制器版本 r40（实现时记录真实名称，不占用已存在版本）。修改对象主要为 `w51_motion.h`、`w51_seed.inc` 及相应 patch/spec/prepare/recorder 链。可保留 W51 文件的历史含义并添加 W52 文件，但实际 compiled source 与运行版本必须一致。
@@ -56,6 +64,8 @@ W44 A/B 各 14737 transitions / update57、checkpoint-014737、resume ep00428/ep
 高度基准必须明确：当前 segment 的 `z_touchdown` 沿用已冻结的世界落点高度，来自原 `s1_flat_ground_height + R10ContactRest(原冻结context, touchdown_xy) + 原足半径`；以它为固定标量基准令 `h=z_world-z_touchdown`，apex 世界高度为 `z_touchdown+.005`，`v` 为真实世界竖直足速。不得把每个未来时刻重查的地表高度叠加到 `h(t)` 后仍声称世界轨迹是同一 C2 五次曲线。未来完整段的 touchdown 仍由原 W51 几何规则确定。
 
 不能仅因“五次”就假定曲线不下穿。对所生成多项式检查端点和区间内导数实根处的真实极值；凸包可作快速充分判定，但不能用固定时间采样漏掉极值。除相对固定 touchdown 基准的幅度/单调性外，足底间隙还要按当前 epoch 原生局部接触表面沿实际目标 xy 解释，不能把不同位置的地表高度混作相同零点。原 R10ContactRest 是冻结世界 patch 的分段函数；若轨迹跨其分段，极值处理必须包括原分段边界，不能只算世界 z 的驻点。没有足够上下文证明可行时明确 S 不可用；不更换地形模型，不把 W51 平地 z=0 的诊断假设延伸成整个材料区的新地形模型。
+
+实施含义：原 `r10_contact.h` 的 patch 是双线性 tent 乘积，五次 x/y 下分段表面最高十次、间隙驻点最高九次；需包含 x/y 到 patch 中心/边缘的穿越时刻以及原 R10MaterialFoot 启用矩形边界，检查端点、单侧值和区间内真实根，或使用等价可靠的实根隔离。世界 z 的四次导数根只解决固定高度基准的极值。原 touchdown 冻结规则保持不变；W51 旧快照均在材料前平地，数学复核可按该事实简化。未来完整 swing 若 anchor 与 touchdown 不同高，起点相对高度应保留真实差值，不能默认为 0 造成接缝跳变。
 
 初始真实接触可能有微小压入，真实速度也可能略向下。“精确保留负速度”与“绝不比初始更深”在数学上可能冲突。保留实际初值，在既有 IK 几何误差尺度解释微量不可避免部分，明确记录；不新增 `v>=0` 的浮点硬门，不能把毫厘级主动下穿合理化，也不能暗中归零速度、夹断高度后仍称原连续曲线。不可行时记录 S 不可用，不递归改 apex/加高/换端点追可行。
 
@@ -85,6 +95,8 @@ B 方向的计算不能依赖 S 方向先安装后的新状态，S 方向也不�
 
 每条 job 的总 native worker 仍为 10；两方向可在独立工作区顺序计算，方向内部的原 rollout/FD 可并行。不得为“并行两个方向”额外开两个不受配额控制的 10 线程 server。
 
+现有 `W50Capture/W50Transfer` 会改 candidate 数组、archive、μ/rate 与 stopped 状态，不能原样执行两次来冒充独立分支。工作区还应包含各自完整 Q、native nominal trajectory、raw-center/Jacobian 缓冲和 first-valid 状态；最后才统一归并原 comparator 与提交。原每个新 epoch 的 μ/rate 重置保持，不把分支状态记录伪造成跨 epoch 累积。
+
 D3 比 D2 多了计算，并非等预算因果对照。它回答“额外 B 搜索通道是否在真实支撑/推进上有用”，不能仅凭 J 降幅归因于双起点本身，也不能把 B 通道称为稳定保险。D0 已经说明该通道可能重新带入失稳。
 
 ## 6. 有限工作量与记录
@@ -104,6 +116,10 @@ D3 比 D2 多了计算，并非等预算因果对照。它回答“额外 B 搜�
 记录原有三窗 0–2、2.002–4.3、4.3–8 s；提前结束只报告实际片段。覆盖实际 body x/z/vz/姿态、足/非足力、足间隙/速度、计划与实际支撑、raw center、反馈项、原目标 clip、QP 改写、物理 PD、policy generation 与 reference/K/H 来源。
 
 对 S 另保存几何曲线有效性、原 apex/落点/相位、原初值与 a_seed、极值、不可用原因、IK 与 native rollout 的足轨迹/力/成本差；D3 记录两分支独立工作量和最终来源。沿既有内容寻址记录保留事件 B/S/Q/IK、完整候选轨迹和所选对象；特别避免 W51 call216 只有元数据而缺候选 rollout 的解释空洞。不是要求保存每个 FD 中间数组。
+
+记录器必须在本次 r33/search ring 已读入后，保留实际选中的 direct S/正候选及关键分支来源变化的完整 candidate、accepted rollout 与完整 policy。原 W51 direct S 不是事件触发，仅在父类 plan 内过早触发可能仍漏掉同次 ring；不得为补记录再跑 rollout。几何首次可用/不可用、失稳窗沿原有界事件机制保留上下文。
+
+保持 `previous_prediction` 的原语义：取上一个实际应用完整 policy 的 accepted trajectory 与下一实际状态的精确匹配节点；没有节点或超出 horizon 明确 unavailable，不拿旧 feedback reference 末端夹持冒充预测。动作分别记录 before_clip→ctrlrange 后 center_before_projection→QP 后 u_star→float32 u_held，物理 PD 请求与实际 actuator force 按各自原积分时钟判断。`trajectory.npz` 的逐足字段与 native `r33_foot_rows` 为 FL/FR/RL/RR；native gait 枚举及 IK/motion 为 FL/RL/FR/RR，两种逐足字段用 [0,2,1,3] 显式对应。
 
 ## 7. 如何推进到原任务，何时停止叠加方法
 

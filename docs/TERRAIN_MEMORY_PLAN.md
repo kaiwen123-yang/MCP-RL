@@ -1,8 +1,10 @@
 # 地面材料记忆项目：W51 已审查，W52 修复摆动参考
 
-更新：2026-11-15（Asia/Shanghai）。本轮结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**W51 已全部结束并发布；W52 planned_not_implemented。** 当前没有已选的正常行走新版本，本次审查不启动实验。
+更新：2026-11-16（Asia/Shanghai）。本轮结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**W51 已全部结束并发布；W52 planned_not_implemented。** 补充审查开始时远端仍为 `28b8654`，未见 W52 新结果。当前没有已选的正常行走新版本，本次审查不启动实验。
 
 [W51 完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md) · [W52 详细执行计划](S1_W52_STABILITY_PLAN.md) · [Codex 启动提示词](S1_W52_START_PROMPT.md) · [根 AGENTS](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/handoff.json)
+
+**2026-11-16 补充：** [最新复核](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/README.md)、[新交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/handoff.json)及[六项原始文献](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/literature.md)。修正D1在3/6/8s仍有约.22m/s前进命令却没有实现运动；18份材料chunk均空。新版本需要显式继承runtime的r39开关、strict/记录路径及w51_fixed_policy条件下的命令写入。D3隔离会被旧单分支过程改写的缓冲与regularization，候选ring就绪后保留实际所选轨迹，避免再次出现call216解释缺口。主D2/次D3/独立C的科学范围与无墙钟deadline、GitHub终点交付偏好保持。
 
 ## 1. 长期目标、真实控制链与当前阶段
 
