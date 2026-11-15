@@ -1,0 +1,807 @@
+{
+  "attempt": "job-20261115T112019Z-w51-d1-eval-PANN_PPO_S5-s1-D8-attempt01",
+  "status": "technical_interruption",
+  "original_result": {
+    "success": null,
+    "reason": "execution_error",
+    "error": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL-w42/scripts/s1_go2_r11_runtime.py\", line 603, in run\n    action = agent.get_action(time=t, nominal_action=False, averaging_duration=0)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w42/work/upstreams/mujoco_mpc/python/mujoco_mpc/agent.py\", line 248, in get_action\n    get_action_response = self.stub.GetAction(get_action_request)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/work/envs/d57/lib/python3.12/site-packages/grpc/_channel.py\", line 1168, in __call__\n    return _end_unary_response_blocking(state, call, False, None)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL/work/envs/d57/lib/python3.12/site-packages/grpc/_channel.py\", line 999, in _end_unary_response_blocking\n    raise _InactiveRpcError(state)  # pytype: disable=not-instantiable\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ngrpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:\n\tstatus = StatusCode.UNAVAILABLE\n\tdetails = \"failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:42067: Failed to connect to remote host: Connection refused\"\n\tdebug_error_string = \"UNAVAILABLE:failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:42067: Failed to connect to remote host: Connection refused\"\n>\n",
+    "simulation_s": 3.1199999999996892,
+    "wall_s": 526.0604429785162,
+    "physical_samples": 15600,
+    "legal_route": {
+      "reward_version": "W38_legal_route_terminal_settlement",
+      "progress": -2.4045661496097923e-05,
+      "completed_roundtrips": 0,
+      "legal_outbound_traversals": 0,
+      "legal_return_traversals": 0,
+      "side_exits": 0,
+      "raw_roundtrips": 0,
+      "passages": [
+        {
+          "lap": 1,
+          "direction": "outbound",
+          "entry_s": null,
+          "exit_s": null,
+          "lateral_exit_s": null,
+          "material_loaded": false,
+          "completed": false
+        }
+      ],
+      "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+    },
+    "stage_progress": {
+      "far_arrival_s": null,
+      "return_start_s": null,
+      "actual_route_fraction": -2.4045661496096558e-05,
+      "full_observation": false,
+      "actual_material_loaded": false,
+      "material_traversal": {
+        "completed": false,
+        "west_entry_s": null,
+        "east_exit_s": null,
+        "lateral_exit_s": null,
+        "max_abs_base_y_during_crossing_m": null,
+        "material_loaded_during_crossing": false,
+        "original_strip_x_m": [
+          0.8,
+          2.2
+        ],
+        "original_strip_y_m": [
+          -0.6,
+          0.6
+        ],
+        "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+      }
+    },
+    "qualification": {
+      "predecessor_attempt": null,
+      "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+      "evaluator_sha256": "1089704bbf76f6ef31d33c0f361cacdba21de57dcbb71ab488fc2f558a603be9",
+      "solver_workers": 10,
+      "worker_setting_checked_against_predecessor": false,
+      "usable": false,
+      "diagnostic_only": true
+    },
+    "max_x_m": 0.014975305892590836,
+    "min_body_height_m": 0.287285586026504,
+    "completed_round_trips": 0
+  },
+  "planner_calls": 177,
+  "positive_installs": 107,
+  "positive_same_problem_cost_descent": 107,
+  "positive_risk_priority_cost_increase": 0,
+  "internal_stagnation": 0,
+  "work_completed_calls": {
+    "native_new_rollouts": 3306,
+    "candidate_records": 3249,
+    "derivative_passes": 316,
+    "transition_fd_calls": 608616,
+    "risk_geometry_fd_calls": 127888,
+    "backward_attempts": 158
+  },
+  "work_scope": "Only completed native call records; interrupted calls with no record have unknown unrecorded native rollout work, never inferred zero.",
+  "new_PPO_samples": 0,
+  "new_PPO_updates": 0,
+  "plant_physics_substeps": 15600,
+  "prediction_pairs": 157,
+  "prediction_unavailable": 20,
+  "first_nonzero_same_time_prediction_error": {
+    "schema": "w50_pre_call_prediction_events_v1",
+    "call_id": 21,
+    "origin_s": 0.01999999999999999,
+    "actual_state": [
+      -2.7252725216309778e-05,
+      1.9795307329970395e-05,
+      0.28870691775116586,
+      0.9999999872013642,
+      -0.00015840072782446446,
+      2.1685565729893856e-05,
+      -6.0180790822543294e-06,
+      -0.0019228506416323994,
+      0.9011501041675566,
+      -1.798858303012919,
+      0.002066024355029143,
+      0.9012979529699775,
+      -1.7984833098326458,
+      -0.0017227851073012821,
+      0.9009850381581962,
+      -1.7986498483116091,
+      0.0019567012176165527,
+      0.9010435391902282,
+      -1.7982740681558746,
+      -0.014169814266985584,
+      0.002546186464521236,
+      -0.07637417708031197,
+      -0.030164700361207115,
+      0.054133433264300604,
+      -0.003174261416019026,
+      0.02127409030534312,
+      0.27044535957980453,
+      -0.6851011370011156,
+      0.024610934318442843,
+      0.24524052799424265,
+      -0.6447157619264103,
+      0.017221856618049505,
+      0.20357804465918794,
+      -0.5618586138025314,
+      0.020257825583816728,
+      0.18345973080786024,
+      -0.5306775347390903
+    ],
+    "actual_context_sha256": "61c473a2a426d4048d1f64fffa2c31254f2ed435b417bfe7624b995505299bee",
+    "P0": {
+      "plan_id": 2,
+      "generation_epoch": 1,
+      "generation_call": 2,
+      "generation_time_s": 0.0,
+      "policy_sha256": "1f4ad3920cf59079bdf6c0b3883ddcfec64a75dffeee6d887c614c903ceb083b",
+      "metric_valid": true,
+      "feedback_lifecycle": {
+        "schema": 50.0,
+        "mode": 1.0,
+        "reference_epoch": 1.0,
+        "reference_call": 1.0,
+        "reference_generation_time": 0.0,
+        "reference_start": 0.0,
+        "reference_end": 0.3499999999999941,
+        "K_epoch": 1.0,
+        "K_call": 1.0,
+        "K_generation_time": 0.0,
+        "H_epoch": 1.0,
+        "H_call": 1.0,
+        "H_generation_time": 0.0,
+        "alpha": 1.0,
+        "baseline_install_id": 0.0,
+        "baseline_reference_generation_time": -1.0,
+        "baseline_K_epoch": -1.0,
+        "baseline_K_call": -1.0,
+        "baseline_K_generation_time": -1.0,
+        "baseline_H_epoch": -1.0,
+        "baseline_H_call": -1.0,
+        "baseline_H_generation_time": -1.0,
+        "baseline_mu": 0.0,
+        "baseline_H_mode": 0.0,
+        "new_backward_mu": 1.0,
+        "new_backward_rate": 1.0,
+        "new_backward_attempt": 1.0,
+        "derivative_epoch": 1.0,
+        "derivative_call": 1.0,
+        "derivative_time": 0.0,
+        "baseline_scale_absorbed": 1.0,
+        "raw_center_evaluations": 0.0,
+        "mode_name": "native_bootstrap",
+        "unknown_source_sentinel": -1,
+        "reference_covers_query": true,
+        "reference_expired_by_s": 0.0,
+        "metric_single_mu": 1.0,
+        "derivative_fields_role": "captured_backward_not_mixed_derivatives"
+      }
+    },
+    "previous_prediction": {
+      "status": "available",
+      "reason": null,
+      "source_call": 20,
+      "source_plan": 2,
+      "source_epoch": 1,
+      "policy_sha256": "1f4ad3920cf59079bdf6c0b3883ddcfec64a75dffeee6d887c614c903ceb083b",
+      "accepted_sha256": "5123ea56d5206084f5d2110aa99fbcd1205ef55c15d6a3933dfd5b705d4459bc",
+      "node": 10,
+      "node_time_s": 0.01999999999999999,
+      "predicted_state": [
+        -2.6951076577638423e-05,
+        1.8833556203387263e-05,
+        0.28870505523617535,
+        0.9999999885668448,
+        -0.00014822694615748306,
+        2.9131397181098106e-05,
+        -6.814990382960975e-06,
+        -0.0018896494398078089,
+        0.9011252340156012,
+        -1.7988488318919542,
+        0.002060952911087329,
+        0.9012736707421188,
+        -1.7984240807123253,
+        -0.0017170636181416364,
+        0.9009565330983056,
+        -1.7986299079518695,
+        0.0019244424206589232,
+        0.9010174324122893,
+        -1.7982689406066314,
+        -0.014239932560458987,
+        0.0026311067825529515,
+        -0.07545840951244039,
+        -0.0334727091665978,
+        0.05240262683869532,
+        -0.0027529796660177327,
+        0.02421451967305079,
+        0.2681901005442734,
+        -0.6778588729056587,
+        0.027905578068225304,
+        0.25989158370894627,
+        -0.6674812494645687,
+        0.020549480317222774,
+        0.2021433876628516,
+        -0.5560708230850966,
+        0.023979689684693474,
+        0.18278458290039576,
+        -0.5252311257971906
+      ],
+      "position_tangent": [
+        -3.016486386713552e-07,
+        9.61751126583132e-07,
+        1.8625149905138194e-06,
+        -2.0347508450408926e-05,
+        -1.4892037568894533e-05,
+        1.5910224659573316e-06,
+        -3.3201201824590524e-05,
+        2.4870151955402875e-05,
+        -9.47112096483238e-06,
+        5.071443941814021e-06,
+        2.4282227858662964e-05,
+        -5.92291203205253e-05,
+        -5.721489159645713e-06,
+        2.850505989060448e-05,
+        -1.9940359739623048e-05,
+        3.225879695762952e-05,
+        2.61067779389057e-05,
+        -5.127549243200136e-06
+      ],
+      "velocity_difference": [
+        7.011829347340279e-05,
+        -8.49203180317156e-05,
+        -0.000915767567871581,
+        0.003308008805390686,
+        0.0017308064256052816,
+        -0.0004212817500012932,
+        -0.0029404293677076677,
+        0.002255259035531143,
+        -0.007242264095456918,
+        -0.0032946437497824617,
+        -0.014651055714703626,
+        0.022765487538158324,
+        -0.0033276236991732697,
+        0.0014346569963363531,
+        -0.005787790717434849,
+        -0.0037218641008767463,
+        0.0006751479074644795,
+        -0.0054464089418997386
+      ],
+      "base_position_m": [
+        -3.016486386713552e-07,
+        9.61751126583132e-07,
+        1.8625149905138194e-06
+      ],
+      "base_orientation_rad": [
+        -2.0347508450408926e-05,
+        -1.4892037568894533e-05,
+        1.5910224659573316e-06
+      ],
+      "joint_position_rad": [
+        -3.3201201824590524e-05,
+        2.4870151955402875e-05,
+        -9.47112096483238e-06,
+        5.071443941814021e-06,
+        2.4282227858662964e-05,
+        -5.92291203205253e-05,
+        -5.721489159645713e-06,
+        2.850505989060448e-05,
+        -1.9940359739623048e-05,
+        3.225879695762952e-05,
+        2.61067779389057e-05,
+        -5.127549243200136e-06
+      ],
+      "base_linear_velocity_m_s": [
+        7.011829347340279e-05,
+        -8.49203180317156e-05,
+        -0.000915767567871581
+      ],
+      "base_angular_velocity_rad_s": [
+        0.003308008805390686,
+        0.0017308064256052816,
+        -0.0004212817500012932
+      ],
+      "joint_velocity_rad_s": [
+        -0.0029404293677076677,
+        0.002255259035531143,
+        -0.007242264095456918,
+        -0.0032946437497824617,
+        -0.014651055714703626,
+        0.022765487538158324,
+        -0.0033276236991732697,
+        0.0014346569963363531,
+        -0.005787790717434849,
+        -0.0037218641008767463,
+        0.0006751479074644795,
+        -0.0054464089418997386
+      ]
+    },
+    "installed_policy_sha256": "8d0c65321566bddc1b6b1dd60800b0c41c9347eae45279ed16abb9a0acb7a221",
+    "accepted_rollout_sha256": "808f33f3c336d5c453f826271325d0336c932d48f4c8af23adc43fbfcb6a055f",
+    "installed_plan_id": 3,
+    "problem_epoch": 2,
+    "r35_reference_sha256": "7de3c8f8705e1a39891c9c414cafa6ee2d34aa906d6ac95a943bdd16abda2202",
+    "r35_reference_id": "472765376589465740",
+    "reference_file": "r29-current-plan.bin.r35-reference-2.bin",
+    "mission_actor": {
+      "time_s": 0.01999999999999999,
+      "mission_phase": "initial_stand",
+      "command_velocity": [
+        2.1802180173047823e-05,
+        -1.5836245863976316e-05,
+        0.0
+      ],
+      "command_omega": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "body_target": [
+        0.0,
+        0.0,
+        0.27
+      ],
+      "heading": 0.0,
+      "cap": 0.2314917638897896,
+      "execution_fingerprint": "d9ec1350476a3eb1ae1142ffe5c421737cc6c585eb718c778d5091c1bba439c5",
+      "case_key": "eb581c514829686c169dbce1f9d36853402eeb0e6dfd8f991dbf8c4bc9d33d9c",
+      "task_configuration_sha256": "1c9ab113c741ab4715c1bc2940b49661dff88e84fc4392f0ea9638356b3d7949",
+      "task_mode": "Quadruped",
+      "risk": 0.0,
+      "solver_budget": {
+        "mechanism": "H",
+        "strict": true,
+        "constant": true,
+        "max_backward_attempts": 5,
+        "positive_rollouts": 9,
+        "alpha_zero": "cached_complete_B"
+      },
+      "actor_tick": 0,
+      "actor_observation_sha256": "c9980cec0ccc2516c3de9262102efc7b16c5436d27891e9278bb8232d5fef1a6",
+      "observer_time_s": 0.01999999999999999,
+      "actor_checkpoint": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+      "actor_checkpoint_sha256": "aa6cf72950e0f15160a15009813b2a6d976e4f4d31c3ebd198436273dd647c15",
+      "external_snapshot_scope": {
+        "integration_enum": 8191,
+        "integration_size": 303,
+        "numeric_arrays_captured": true,
+        "external_unserialized_fields": [
+          "material__history",
+          "material__legal_route",
+          "material__fk_data",
+          "material__mission",
+          "observer__ground"
+        ],
+        "limitations": "Native optimizer caches, actor tensors/RNG and arbitrary Python objects are not an automatic mid-episode resume; fixed checkpoint/resume remain separate."
+      }
+    },
+    "current_solve": {
+      "J": 0.4420017973609853,
+      "chosen_expected": null,
+      "chosen_actual": 1.0100959298370924,
+      "risk": 0,
+      "candidate_source": "homotopy_8",
+      "stop_reason": "w50_single_first_direction_finished",
+      "return_reason": "policy_installed",
+      "Jref": 0.0,
+      "J0": 0.4420017973609853,
+      "cost_components": {
+        "Upright": 1.0805380146510325e-11,
+        "Height": 0.00016945520842318916,
+        "Position": 1.1490855409023461e-05,
+        "Gait": 0.0,
+        "Balance": 0.0,
+        "Effort": 0.4409366135140934,
+        "Posture": 2.2986007501273582e-05,
+        "Orientation": 1.2214964570930395e-09,
+        "Angmom": 0.0,
+        "StandLinearVelocity": 0.0,
+        "StandAngularVelocity": 0.0,
+        "StandAbsoluteHeight": 0.00016986846566907545,
+        "StandFootPosition": 0.0005481764286797192,
+        "StandFootVelocity": 0.0001432056489072248,
+        "StandSupportForce": 0.0,
+        "LandingVelocity": 0.0,
+        "LandingIndentation": 0.0,
+        "MaterialSupportHeight": 0.0,
+        "MaterialDomainMargin": 0.0,
+        "TrunkClearance": 6.647940732851391e-16,
+        "ImpactMargin": 0.0,
+        "InputReference": 0.0
+      },
+      "cost_recompute_error": 1.1102230246251565e-16
+    },
+    "feedback_lifecycle": {
+      "schema": 50.0,
+      "mode": 2.0,
+      "reference_epoch": 2.0,
+      "reference_call": 21.0,
+      "reference_generation_time": 0.01999999999999999,
+      "reference_start": 0.01999999999999999,
+      "reference_end": 0.3699999999999919,
+      "K_epoch": 2.0,
+      "K_call": 21.0,
+      "K_generation_time": 0.01999999999999999,
+      "H_epoch": 2.0,
+      "H_call": 21.0,
+      "H_generation_time": 0.01999999999999999,
+      "alpha": 1.0,
+      "baseline_install_id": 2.0,
+      "baseline_reference_generation_time": 0.0,
+      "baseline_K_epoch": 1.0,
+      "baseline_K_call": 1.0,
+      "baseline_K_generation_time": 0.0,
+      "baseline_H_epoch": 1.0,
+      "baseline_H_call": 1.0,
+      "baseline_H_generation_time": 0.0,
+      "baseline_mu": 1.0,
+      "baseline_H_mode": 1.0,
+      "new_backward_mu": 1.0,
+      "new_backward_rate": 1.0,
+      "new_backward_attempt": 1.0,
+      "derivative_epoch": 2.0,
+      "derivative_call": 21.0,
+      "derivative_time": 0.01999999999999999,
+      "baseline_scale_absorbed": 0.0,
+      "raw_center_evaluations": 12775.0,
+      "mode_name": "homotopy",
+      "unknown_source_sentinel": -1,
+      "reference_covers_query": true,
+      "reference_expired_by_s": 0.0,
+      "metric_single_mu": null,
+      "derivative_fields_role": "captured_backward_not_mixed_derivatives"
+    }
+  },
+  "diagnostic_events": [
+    {
+      "time_s": 0.0,
+      "kind": "phase_transition",
+      "start_s": 0.0,
+      "end_requested_s": 0.2,
+      "previous_phase": null,
+      "next_phase": "initial_stand",
+      "end_available_s": 0.2
+    },
+    {
+      "time_s": 0.0,
+      "kind": "first_normal_plan_before_first_held_physics",
+      "start_s": 0.0,
+      "end_requested_s": 0.2,
+      "end_available_s": 0.2
+    },
+    {
+      "time_s": 2.0019999999998124,
+      "kind": "phase_transition",
+      "start_s": 1.9019999999998123,
+      "end_requested_s": 2.2019999999998126,
+      "previous_phase": "initial_stand",
+      "next_phase": "outbound",
+      "end_available_s": 2.2019999999998126
+    },
+    {
+      "time_s": 3.1199999999996892,
+      "kind": "terminal",
+      "start_s": 3.019999999999689,
+      "end_requested_s": 3.3199999999996894,
+      "reason": "execution_error",
+      "end_available_s": 3.1199999999996892
+    }
+  ],
+  "object_bytes": 163217837,
+  "same_attempt_record_readback": {
+    "status": "verified_before_first_held_physics",
+    "physical_time_s": 0.0,
+    "call_id": 20,
+    "first_boundary_call": 1,
+    "deadline_unix_s": null,
+    "wall_deadline_enabled": false,
+    "physics_advanced_by_recorder": 0,
+    "schema": "w50_pre_call_prediction_events_v1",
+    "controller": "S5-r39",
+    "artifact": "0678053e89c29e7afb6763af43b155d5795a311a67cf6fe856ae10eb16800d8f",
+    "initial_prediction_status": "unavailable",
+    "checked_unix_s": 1794741657.0724657,
+    "event_manifest": "w50-event-manifest.json",
+    "objects": 26
+  },
+  "causal_conclusion": "Original task status above; nonzero prediction error and diagnostic thresholds do not by themselves identify the cause of failure.",
+  "prediction_error_extrema": {
+    "base_position_m": 6.887973196867403e-06,
+    "base_orientation_rad": 3.422087473515116e-05,
+    "joint_position_rad": 6.568048455402042e-05,
+    "base_linear_velocity_m_s": 0.000915767567871581,
+    "base_angular_velocity_rad_s": 0.006640356190676107,
+    "joint_velocity_rad_s": 0.026048050841874143
+  },
+  "stop_reason_counts": {
+    "w50_single_first_direction_finished": 177
+  },
+  "return_reason_counts": {
+    "incumbent_retained": 51,
+    "policy_installed": 126
+  },
+  "incumbent_retained_calls": 51,
+  "no_improving_candidate_calls": 51,
+  "backward_failed_calls": 0,
+  "support_scope": "Descriptive gait/support evidence, not altered original task qualification. Survival is not stable locomotion.",
+  "gait_and_support": {
+    "physical_duration_s": 3.1199999999996892,
+    "xyz_initial_m": [
+      3.4227784781322575e-23,
+      -6.362046133517818e-23,
+      0.29020935793281377
+    ],
+    "xyz_final_m": [
+      -0.0008030390902721078,
+      0.0005919870483492788,
+      0.29046327642585
+    ],
+    "max_x_m": 0.014975305892590836,
+    "body_z_min_m": 0.287285586026504,
+    "body_z_final_m": 0.29046327642585,
+    "vertical_velocity_range_m_s": [
+      -0.13019014914535615,
+      0.04799101297856611
+    ],
+    "foot_order": [
+      "FL",
+      "FR",
+      "RL",
+      "RR"
+    ],
+    "per_foot_Fz_quantiles_N": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        34.29647928842551,
+        35.636541396431504,
+        35.70318678067898,
+        32.48359718753907
+      ],
+      [
+        36.948631339385216,
+        37.114888935608185,
+        37.6671599709886,
+        37.44723241465368
+      ],
+      [
+        38.99667379132669,
+        43.409721197447425,
+        42.367638766324106,
+        39.85477915891935
+      ],
+      [
+        197.57667397061877,
+        136.0734528775491,
+        149.80884397473002,
+        138.62861163472
+      ]
+    ],
+    "total_foot_Fz_quantiles_N": [
+      0.0,
+      147.3242689443393,
+      149.1554321214794,
+      155.68117952846043,
+      622.0875824576178
+    ],
+    "nonfoot_Fz_quantiles_N": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "first_nonfoot_over_1N_s": null,
+    "first_sampled_nonfoot_over_1N_s": null,
+    "force_sample_clock": "trajectory 500Hz same-time mj_forward force; first_nonfoot_load event retains 5000Hz detection time",
+    "foot_load_over_1N_fraction": [
+      0.9897501601537476,
+      0.9916720051249199,
+      0.9948750800768738,
+      0.9852658552210122
+    ],
+    "nonfoot_load_over_1N_fraction": 0.0,
+    "diagnostic_load_threshold_N": 1,
+    "contact_transitions_per_foot": [
+      9,
+      6,
+      1,
+      9
+    ],
+    "contact_fraction_per_foot": [
+      0.9897501601537476,
+      0.9916720051249199,
+      0.9948750800768738,
+      0.9852658552210122
+    ],
+    "full_record_observed": false,
+    "full_record_observed_source": "original evaluator stage_progress.full_observation; early-ended result is not automatically full observation",
+    "stable_locomotion_claim": false,
+    "qualification_only_from_original_result": true
+  },
+  "windows": [
+    {
+      "requested_s": [
+        0,
+        2
+      ],
+      "observed_s": [
+        0.0,
+        1.9999999999998124
+      ],
+      "status": "complete_window",
+      "body_dx_m": -0.0006592187837582802,
+      "body_x_last_m": -0.0006592187837582802,
+      "z_min_m": 0.287285586026504,
+      "z_median_m": 0.2895881109760616,
+      "z_last_m": 0.2901986726155052,
+      "vz_range_m_s": [
+        -0.13019014914535615,
+        0.00405658016153154
+      ],
+      "roll_pitch_max_abs_rad": [
+        0.00107864086871117,
+        0.0017693443654429597
+      ],
+      "nonfoot_mean_Fz_N": 0.0,
+      "nonfoot_over_1N_fraction": 0.0,
+      "four_feet_over_1N_fraction": 0.9920079920079921,
+      "feet_Fz_mean_N": [
+        36.843139233597576,
+        37.10133207659697,
+        37.81632941677368,
+        37.33696062348707
+      ],
+      "feet_world_tangent_speed_mean_m_s": [
+        0.000677541810962877,
+        0.000667497994530977,
+        0.0006241621443222841,
+        0.0006179460755715081
+      ],
+      "feet_bottom_z_range_m": [
+        [
+          -0.00013855442746139174,
+          -0.00013378034392075994,
+          -0.00013813331612936436,
+          -0.00013920077755789212
+        ],
+        [
+          0.0018368576302557824,
+          0.0018368576302557824,
+          0.0018368576302557824,
+          0.0018368576302557824
+        ]
+      ],
+      "feet_z_semantics": "recorded geom centers minus original compiled foot radii; relative to original z=0 plane, not unobserved deformed terrain",
+      "diagnostic_threshold_N": 1,
+      "qualification_threshold_changed": false,
+      "target_swing_loaded_fraction": null,
+      "installed_native_cost_mean": {
+        "Upright": 1.3718229918698978e-11,
+        "Height": 0.00010037330444678977,
+        "Position": 8.646205605098432e-06,
+        "Gait": 0.0,
+        "Balance": 0.0,
+        "Effort": 0.24766648696908386,
+        "Posture": 1.3207884378015987e-05,
+        "Orientation": 3.811013101847606e-08,
+        "Angmom": 0.0,
+        "StandLinearVelocity": 0.0,
+        "StandAngularVelocity": 0.0,
+        "StandAbsoluteHeight": 9.988924270336837e-05,
+        "StandFootPosition": 0.0004226262434736502,
+        "StandFootVelocity": 0.002481092232447301,
+        "StandSupportForce": 0.0,
+        "LandingVelocity": 0.0,
+        "LandingIndentation": 0.0,
+        "MaterialSupportHeight": 0.0,
+        "MaterialDomainMargin": 0.0,
+        "TrunkClearance": 6.534012842810675e-16,
+        "ImpactMargin": 0.0,
+        "InputReference": 0.0
+      }
+    },
+    {
+      "requested_s": [
+        2.002,
+        4.3
+      ],
+      "observed_s": [
+        2.0019999999998124,
+        3.1199999999996892
+      ],
+      "status": "partial_physical_window",
+      "body_dx_m": -0.0001442739689765947,
+      "body_x_last_m": -0.0008030390902721078,
+      "z_min_m": 0.28766010708933615,
+      "z_median_m": 0.28972173228429154,
+      "z_last_m": 0.29046327642585,
+      "vz_range_m_s": [
+        -0.05573586951350867,
+        0.04799101297856611
+      ],
+      "roll_pitch_max_abs_rad": [
+        0.002972858675516922,
+        0.0033996906211508637
+      ],
+      "nonfoot_mean_Fz_N": 0.0,
+      "nonfoot_over_1N_fraction": 0.0,
+      "four_feet_over_1N_fraction": 0.9589285714285715,
+      "feet_Fz_mean_N": [
+        36.35098575183138,
+        39.63947876966575,
+        38.716853481256734,
+        34.992291139631085
+      ],
+      "feet_world_tangent_speed_mean_m_s": [
+        0.005090298652222401,
+        0.00393320586860246,
+        0.003008152089031605,
+        0.005276967537659958
+      ],
+      "feet_bottom_z_range_m": [
+        [
+          -5.4532753407735e-06,
+          -5.896024259384458e-06,
+          -5.2116220396261626e-06,
+          -5.0601707641054205e-06
+        ],
+        [
+          2.1386107166773693e-06,
+          6.729700430460617e-07,
+          -2.191603177666146e-06,
+          1.0003798630968397e-05
+        ]
+      ],
+      "feet_z_semantics": "recorded geom centers minus original compiled foot radii; relative to original z=0 plane, not unobserved deformed terrain",
+      "diagnostic_threshold_N": 1,
+      "qualification_threshold_changed": false,
+      "target_swing_loaded_fraction": [
+        0.9761904761904762,
+        0.9892857142857143,
+        1.0,
+        0.9553571428571429
+      ],
+      "target_stance_Fz_mean_N": [
+        40.0999690897155,
+        40.18117023255302,
+        42.517288544137465,
+        35.505770078893335
+      ],
+      "installed_native_cost_mean": {
+        "Upright": 0.0001593644014980203,
+        "Height": 0.000907065990599466,
+        "Position": 0.00639270696398474,
+        "Gait": 0.0007040181679000367,
+        "Balance": 0.0001337348840345637,
+        "Effort": 0.0021968839380017637,
+        "Posture": 2.7701629670393406e-05,
+        "Orientation": 3.348916450834575e-05,
+        "Angmom": 0.0,
+        "StandLinearVelocity": 0.0,
+        "StandAngularVelocity": 0.0,
+        "StandAbsoluteHeight": 0.0,
+        "StandFootPosition": 0.0,
+        "StandFootVelocity": 0.0,
+        "StandSupportForce": 0.0,
+        "LandingVelocity": 0.0,
+        "LandingIndentation": 0.0,
+        "MaterialSupportHeight": 0.0012810013846923,
+        "MaterialDomainMargin": 0.0,
+        "TrunkClearance": 6.527522154797285e-16,
+        "ImpactMargin": 0.0,
+        "InputReference": 4.7087300083093755e-05
+      }
+    },
+    {
+      "requested_s": [
+        4.3,
+        8
+      ],
+      "status": "not_reached"
+    }
+  ]
+}

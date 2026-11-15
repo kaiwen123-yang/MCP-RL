@@ -19,10 +19,10 @@
     },
     {
       "arm": "D1",
-      "job_id": "job-20261115T112019Z-w51-d1",
-      "directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261115T112019Z-w51-d1",
+      "job_id": "job-20261115T113036Z-w51-d1-command-repair",
+      "directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261115T113036Z-w51-d1-command-repair",
       "affinity": "10-19",
-      "runner_pid": 111804
+      "runner_pid": 113367
     }
   ],
   "selection": null,
@@ -35,10 +35,91 @@
     "math_threads": 1,
     "build_max_jobs": 6
   },
-  "pid": 111797,
+  "pid": 113360,
   "launched_unix_s": 1794741619.6098087,
-  "tmux": "s1-w51-pair",
-  "live_verification": {
+  "tmux": "s1-w51-pair-command-repair",
+  "technical_attempts": [
+    {
+      "arm": "D1",
+      "job_id": "job-20261115T112019Z-w51-d1",
+      "directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261115T112019Z-w51-d1",
+      "affinity": "10-19",
+      "runner_pid": 111804,
+      "attempt": "job-20261115T112019Z-w51-d1-eval-PANN_PPO_S5-s1-D8-attempt01",
+      "reason": "S consumed zero userdata78:84 because r11_body_twist_reference was absent; actual mission command was nonzero",
+      "control_evidence_usable": false,
+      "stopped_server_pid": 111973,
+      "stopped_master_pid": 111797,
+      "stopped_unix_s": 1794742144.0431452,
+      "stop_scope": "exact W51 master and D1 native server only; detached D0 runner and other projects retained",
+      "repair": "populate original mission world velocity and omega into existing userdata78:84 for W51 before normal SetState",
+      "result": {
+        "status": "technical_interruption",
+        "job": "job-20261115T112019Z-w51-d1",
+        "arm": "D1",
+        "pid": 111804,
+        "started_unix_s": 1794741619.6729293,
+        "deadline": null,
+        "wall_deadline_enabled": false,
+        "stages": [
+          {
+            "attempt": "job-20261115T112019Z-w51-d1-eval-PANN_PPO_S5-s1-D8-attempt01",
+            "level": "D8",
+            "status": "technical_interruption",
+            "command": [
+              "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+              "-u",
+              "scripts/run_s1_go2_r12.py",
+              "--contract",
+              "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261115T112019Z-w51-d1/execution-contract.json",
+              "--attempt",
+              "job-20261115T112019Z-w51-d1-eval-PANN_PPO_S5-s1-D8-attempt01",
+              "--evaluation-start-unix",
+              "1794741619.251289",
+              "--checkpoint",
+              "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+              "--level",
+              "D8",
+              "--seed",
+              "1",
+              "--workers",
+              "10",
+              "--build",
+              "S5-r39",
+              "--condition",
+              "nominal"
+            ],
+            "started_unix_s": 1794741619.673161,
+            "qualification_usable": false,
+            "pid": 111805,
+            "exit_code": 0,
+            "ended_unix_s": 1794742156.1819305,
+            "reason": "execution_error",
+            "success": null,
+            "simulation_s": 3.1199999999996892,
+            "wall_s": 526.0604429785162,
+            "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261115T112019Z-w51-d1-eval-PANN_PPO_S5-s1-D8-attempt01.json"
+          }
+        ],
+        "new_PPO_samples": 0,
+        "new_PPO_updates": 0,
+        "ended_unix_s": 1794742156.183217
+      },
+      "actual_work": {
+        "native_new_rollouts": 3306,
+        "candidate_records": 3249,
+        "derivative_passes": 316,
+        "transition_fd_calls": 608616,
+        "risk_geometry_fd_calls": 127888,
+        "backward_attempts": 158,
+        "planner_calls": 177,
+        "plant_substeps": 15600,
+        "scope": "Only completed native call records; interrupted calls with no record have unknown unrecorded native rollout work, never inferred zero."
+      }
+    }
+  ],
+  "continuation_unix_s": 1794742236.416726,
+  "live_verification_before_repair": {
     "observed_unix_s": 1794741862.850945,
     "arms": [
       {

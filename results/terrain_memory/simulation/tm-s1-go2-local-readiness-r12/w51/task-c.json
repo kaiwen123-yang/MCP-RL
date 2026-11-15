@@ -118,7 +118,13 @@
       "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
       "dependency": "base quaternion, moving-material-upright mode",
       "max_residual_error": 2.220446049250313e-15,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "qpos[3:7]",
+        "mode",
+        "gait",
+        "r11_material_upright flags"
+      ]
     },
     {
       "name": "Height",
@@ -131,7 +137,13 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "torso inertial COM position, all foot geom centers, original height target",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "xipos[trunk]",
+        "geom_xpos[FL,RL,FR,RR]",
+        "userdata[1]",
+        "mode"
+      ]
     },
     {
       "name": "Position",
@@ -144,7 +156,14 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "head site FK, R26 immutable packet, mocap and time",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "site_xpos[head]",
+        "userdata[84:96]",
+        "mocap_pos[goal]",
+        "time",
+        "r26_reference"
+      ]
     },
     {
       "name": "Gait",
@@ -157,7 +176,14 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "foot geom FK, geom radii, ground/material reference, private absolute phase and C2 parameters",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[FL,RL,FR,RR]",
+        "geom_size[foot]",
+        "phase_start/phase_start_time/phase_velocity",
+        "amplitude/duty/gait",
+        "flat_ground_height"
+      ]
     },
     {
       "name": "Balance",
@@ -170,7 +196,13 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "subtree COM/velocity, support hull and foot positions",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "sensordata[torso_subtreecom]",
+        "sensordata[torso_subtreelinvel]",
+        "geom_xpos[feet]",
+        "mode/gait"
+      ]
     },
     {
       "name": "Effort",
@@ -183,7 +215,11 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "actuator_force and original actuator force range; node action alone is insufficient",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "actuator_force[12] at each residual node",
+        "actuator_forcerange"
+      ]
     },
     {
       "name": "Posture",
@@ -196,7 +232,13 @@
       "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
       "dependency": "qpos joints, home keyframe, stand/support gating",
       "max_residual_error": 5.421010862427522e-20,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "qpos[7:19]",
+        "key_qpos[home]",
+        "userdata[22:34]",
+        "mode/gait"
+      ]
     },
     {
       "name": "Orientation",
@@ -209,7 +251,12 @@
       "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
       "dependency": "base quaternion, original heading parameter",
       "max_residual_error": 2.220446049250313e-16,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "qpos[3:7]",
+        "Heading parameter",
+        "mode"
+      ]
     },
     {
       "name": "Angmom",
@@ -222,7 +269,10 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "torso angular-momentum sensor; full model inertias and velocities for reconstruction",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "sensordata[torso_angmom] or full model inertia/FK/qvel"
+      ]
     },
     {
       "name": "StandLinearVelocity",
@@ -235,7 +285,11 @@
       "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
       "dependency": "qvel and mode; inactive in these Trot records",
       "max_residual_error": 0.0,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "qvel[0:3]",
+        "stand_equilibrium gate"
+      ]
     },
     {
       "name": "StandAngularVelocity",
@@ -248,7 +302,11 @@
       "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
       "dependency": "qvel and mode; inactive in these Trot records",
       "max_residual_error": 0.0,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "qvel[3:6]",
+        "stand_equilibrium gate"
+      ]
     },
     {
       "name": "StandAbsoluteHeight",
@@ -261,7 +319,13 @@
       "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
       "dependency": "base height and support target; inactive in these Trot records",
       "max_residual_error": 0.0,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "xpos[trunk,2]",
+        "userdata[2]",
+        "s1_stand_absolute_height",
+        "stand/support gates"
+      ]
     },
     {
       "name": "StandFootPosition",
@@ -274,7 +338,12 @@
       "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
       "dependency": "foot FK and support userdata; inactive in these Trot records",
       "max_residual_error": 0.0,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[feet]",
+        "userdata[10:22]",
+        "support gate"
+      ]
     },
     {
       "name": "StandFootVelocity",
@@ -287,7 +356,11 @@
       "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
       "dependency": "foot Jacobian/qvel and support mode; inactive in these Trot records",
       "max_residual_error": 0.0,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom spatial velocity (mj_objectVelocity)",
+        "support gate"
+      ]
     },
     {
       "name": "StandSupportForce",
@@ -300,7 +373,16 @@
       "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
       "dependency": "contact frame, geom ids and solver contact force; inactive here, active-mode solver data absent",
       "max_residual_error": 0.0,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "ncon",
+        "contact.geom1/geom2",
+        "contact.frame",
+        "contact.efc_address",
+        "efc_force",
+        "userdata[58:62]",
+        "track_load gate"
+      ]
     },
     {
       "name": "LandingVelocity",
@@ -313,7 +395,14 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "foot FK/Jacobian, phase derivative, material patch rest and gating",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[feet]",
+        "geom spatial velocity",
+        "userdata[62:78]",
+        "C2 FootStep derivative",
+        "r10/r11 settings"
+      ]
     },
     {
       "name": "LandingIndentation",
@@ -326,7 +415,15 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "foot FK, radius, material patch rest, stiffness and load scale",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[feet]",
+        "geom_size[feet]",
+        "userdata[62:78]",
+        "body_subtreemass[trunk]",
+        "stiffness/gravity",
+        "material gate"
+      ]
     },
     {
       "name": "MaterialSupportHeight",
@@ -336,10 +433,15 @@
       "norm_parameter": null,
       "weight": 1.0,
       "cost_reduction": "FP64_GPU_from_saved_native_residual",
-      "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
+      "residual_reconstruction": "partial_state_algebra_nonzero_error_exact_native_xpos_required",
       "dependency": "base z, original support target, moving/support-region gate",
       "max_residual_error": 9.009910922230802e-06,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "xpos[trunk,2] (exact derived native position)",
+        "r10_material_support_height",
+        "moving/material support gate"
+      ]
     },
     {
       "name": "MaterialDomainMargin",
@@ -352,7 +454,13 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "foot FK, material strip and exact native domain function/context",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[feet]",
+        "geom_size[feet]",
+        "userdata[62:78]",
+        "r11_domain_margin and strip bounds"
+      ]
     },
     {
       "name": "TrunkClearance",
@@ -365,7 +473,12 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "collision geom transforms/shapes and original clearance function",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "xpos/xmat",
+        "collision geom types/sizes/transforms",
+        "r12_trunk_clearance"
+      ]
     },
     {
       "name": "ImpactMargin",
@@ -378,7 +491,13 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "foot FK/Jacobian plus original approach/contact proxy state and bounds",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[feet]",
+        "geom spatial velocity",
+        "userdata[62:78]",
+        "r26_impact_margin"
+      ]
     },
     {
       "name": "InputReference",
@@ -391,7 +510,12 @@
       "residual_reconstruction": "not_implemented_from_saved_state",
       "dependency": "held control, current epoch R35 u/R/time grid; terminal node is zero by original definition",
       "max_residual_error": null,
-      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements."
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "current-epoch r35 origin/dt/u/R",
+        "actual held control at residual node",
+        "terminal node identity"
+      ]
     }
   ],
   "candidates_metadata": [
@@ -2598,5 +2722,6 @@
       }
     ],
     "finished_unix_s": 1794741796.2780974
-  }
+  },
+  "coverage_annotation": "Added exact collection/reconstruction fields from original ResidualFn source; no repeated GPU batch or physics."
 }

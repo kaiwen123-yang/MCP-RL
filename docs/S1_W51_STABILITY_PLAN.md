@@ -1,5 +1,7 @@
 # S1 W51：从起步辨识反馈刷新与步态初始轨迹的作用
 
+命令传递定向修正（提交 `463e91b`）：首个 D1 在真实入口发现 userdata[78:84] 未填充，原运动候选使用了零世界速度；已于实际 3.120s 停止其独立 server，并保留 execution_error/技术无效记录及全部已保存工作量。D0 原进程连续保留。修正仅使 W51 将原 mission.v/mission.w 写入既有命令槽，不启用额外 twist 成本；修正后 D1 从原 t=0 作一次有效配对尝试，详见 phase.json 的当前 jobs 和 technical_attempts。当前 tmux 为 `s1-w51-pair-command-repair`。此技术重启不作为新的物理失败或成功样本，也没有重跑 D0。
+
 ## 本计划的实际实施状态（2026-11-15）
 实现提交 `df68de8`；r39 完整重编 62 个相关单元及 service/server。首次编译因一行 if 的 misleading-indentation 警告被 -Werror 拒绝，修正后通过；未在该失败构建中执行物理。D0/r38 与 D1/r39 的 job 为 `job-20261115T112019Z-w51-d0`、`job-20261115T112019Z-w51-d1`，在 D57 `s1-w51-pair` 持续运行，无墙钟 deadline。实际状态以 [phase.json](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json) 为准。
 运动状态由正常 Agent SetState/Transition 每 2ms 观察更新，stance 世界锚点及本次 swing touchdown 跨 replan 保存；IK 使用原 home 几何、原关节限位和上一节点连续分支。剩余相位采用唯一五次位置/速度端点连接，保留原 C2/5mm 意图。IK 数值迭代最多 40 次、单次关节更新最大 .2rad、末端容差 1e-5m；这些是求逆数值设置，不增加物理/落点/步高网格。

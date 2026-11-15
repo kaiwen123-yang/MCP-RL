@@ -1,5 +1,7 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
+命令传递定向修正（提交 `463e91b`）：首个 D1 在真实入口发现 userdata[78:84] 未填充，原运动候选使用了零世界速度；已于实际 3.120s 停止其独立 server，并保留 execution_error/技术无效记录及全部已保存工作量。D0 原进程连续保留。修正仅使 W51 将原 mission.v/mission.w 写入既有命令槽，不启用额外 twist 成本；修正后 D1 从原 t=0 作一次有效配对尝试，详见 phase.json 的当前 jobs 和 technical_attempts。当前 tmux 为 `s1-w51-pair-command-repair`。此技术重启不作为新的物理失败或成功样本，也没有重跑 D0。
+
 ## W51 正在执行（2026-11-15）
 真实 D8 与相位感知运动候选已实施，D57 的 D0/r38、D1/r39 已从同一原始初态并行运行。源码提交 `df68de8`；[实际运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json)记录真实物理时钟和 PID。原任务资格及版本选择仍待两臂结果。
 C 已完成一次 FP64 CUDA 归约：114 条原候选、113 维残差、22 个成本项；最大总 J 绝对误差 5.82077e-11，六组各自内部的 risk/roundoff 比较全部一致。新增 GPU 物理与 PPO 均为 0。[C 结果与覆盖范围](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/task-c.json) · [已核验原件 Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w51-C-costs-part01)。这仍是残差到 J 的归约和部分代数项，不是完整 native cost 迁移。
