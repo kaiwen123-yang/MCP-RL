@@ -1,0 +1,521 @@
+{
+  "reviewed_head": "de6606dc8363e8ab1c816fa682cace752a06318a",
+  "previous_review_plan_commit": "b142001624cfea5877c57e63f45e0f29c9dc4735",
+  "new_commits": 19,
+  "tracked_files_at_head": 8817,
+  "tracked_blob_bytes_at_head": 1055255013,
+  "changed_files": 64,
+  "changed_bytes": 49031786,
+  "coverage_counts": {
+    "text_read": 23,
+    "json_parsed": 41
+  },
+  "method": "Reuse prior full-repository inventory and historical reviews; full byte-read of all changed files and full JSON parse; semantic review focused on current control, execution, results, objective/reference, recovery, GPU and delivery paths by three independent reviewers and root. No repeat whole-tree hash sweep.",
+  "limits": [
+    "A byte inventory or JSON parse is not a claim of understanding every byte.",
+    "Large original binary NPZ/JSONL/video payloads remain on D57/Release; no fresh payload download, numerical replay or server login in this review.",
+    "Embedded W49 event calls are A116+B115; full 3042 boundary records were not independently read here.",
+    "Published run totals are attributed to committed execution summaries; independent arithmetic is stated separately."
+  ],
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 8093,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "README.md",
+      "bytes": 67775,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "docs/S1_W49_STABILITY_PLAN.md",
+      "bytes": 24547,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "docs/TERRAIN_MEMORY_PLAN.md",
+      "bytes": 12109,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "experiments/terrain_memory/s1-go2-r11-S5-r37.json",
+      "bytes": 35964,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "experiments/terrain_memory/s1-go2-r11-S5-r37.patch",
+      "bytes": 19098,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json",
+      "bytes": 38086273,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T145020Z-w49-a-eval-PANN_PPO_S5-s1-E30-attempt01-resolved.json",
+      "bytes": 3542517,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T145020Z-w49-a-eval-PANN_PPO_S5-s1-E30-attempt01.json",
+      "bytes": 21917,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T145020Z-w49-b-eval-PANN_PPO_S5-s2-E30-attempt01-resolved.json",
+      "bytes": 3549858,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T145020Z-w49-b-eval-PANN_PPO_S5-s2-E30-attempt01.json",
+      "bytes": 26970,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/delivery/w48-a/delivery.json",
+      "bytes": 699,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/delivery/w48-a/manifest.json",
+      "bytes": 398,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "list"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/delivery/w48-b/delivery.json",
+      "bytes": 699,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w48/delivery/w48-b/manifest.json",
+      "bytes": 398,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "list"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/build.json",
+      "bytes": 190109,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/delivery/finite/delivery.json",
+      "bytes": 245,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/delivery/finite/manifest.json",
+      "bytes": 1183,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "list"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/delivery/finite/sources.json",
+      "bytes": 128457,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "list"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/delivery/job-20261113T145020Z-w49-a/delivery.json",
+      "bytes": 246,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/delivery/job-20261113T145020Z-w49-a/manifest.json",
+      "bytes": 1128,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "list"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/delivery/job-20261113T145020Z-w49-a/sources.json",
+      "bytes": 928427,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "list"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/delivery/job-20261113T145020Z-w49-b/delivery.json",
+      "bytes": 246,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/delivery/job-20261113T145020Z-w49-b/manifest.json",
+      "bytes": 1128,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "list"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/delivery/job-20261113T145020Z-w49-b/sources.json",
+      "bytes": 933572,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "list"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/deployment-attempt01.json",
+      "bytes": 887,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/deployment.json",
+      "bytes": 10458,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/jobs/job-20261113T145020Z-w49-a/execution-contract.json",
+      "bytes": 239661,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/jobs/job-20261113T145020Z-w49-a/job.json",
+      "bytes": 1977,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/jobs/job-20261113T145020Z-w49-b/execution-contract.json",
+      "bytes": 239663,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/jobs/job-20261113T145020Z-w49-b/job.json",
+      "bytes": 1979,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/original-evidence/job-20261113T145020Z-w49-a-eval-PANN_PPO_S5-s1-E30-attempt01.json",
+      "bytes": 15887,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/original-evidence/job-20261113T145020Z-w49-b-eval-PANN_PPO_S5-s2-E30-attempt01.json",
+      "bytes": 16161,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/phase.json",
+      "bytes": 14665,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/publication.json",
+      "bytes": 1196,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/task-a-attempt01.json",
+      "bytes": 1801,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/task-a-attempt02-gdb.json",
+      "bytes": 1801,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/task-a-model.json",
+      "bytes": 4271,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/task-a.json",
+      "bytes": 7154,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/task-b.json",
+      "bytes": 275549,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/task-c.json",
+      "bytes": 378283,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/videos/catalog.json",
+      "bytes": 4339,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "list"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/videos/manifest.json",
+      "bytes": 1415,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "list"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/videos/remote-verification.json",
+      "bytes": 1862,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/w49-a.json",
+      "bytes": 4849,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/w49-b.json",
+      "bytes": 4721,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "json_parsed",
+      "top_level_type": "dict"
+    },
+    {
+      "path": "scripts/prepare_s1_go2_r12_support.py",
+      "bytes": 6926,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/publish_s1_go2_w49.py",
+      "bytes": 4462,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/run_s1_go2_w49.py",
+      "bytes": 10485,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/s1_go2_r11_policy.py",
+      "bytes": 37068,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/s1_go2_r11_runtime.py",
+      "bytes": 61320,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/s1_go2_r29_records.py",
+      "bytes": 17125,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/s1_go2_w49_records.py",
+      "bytes": 19553,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_build.py",
+      "bytes": 6148,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_common.py",
+      "bytes": 5050,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_deployment.py",
+      "bytes": 5719,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_native_bridge.cc",
+      "bytes": 565,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_native_source.py",
+      "bytes": 14095,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_publish_tail.py",
+      "bytes": 1533,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_replay.py",
+      "bytes": 4764,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_run_summary.py",
+      "bytes": 3155,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_task_a.py",
+      "bytes": 6144,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_task_b.py",
+      "bytes": 5603,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    },
+    {
+      "path": "scripts/w49_task_c.py",
+      "bytes": 11436,
+      "coverage": "full_byte_read_for_inventory",
+      "utf8": true,
+      "structure": "text_read"
+    }
+  ],
+  "user_attachment_review": {
+    "name": "W49-B-E30-full.mp4",
+    "bytes": 8068416,
+    "duration_s": 30.033333,
+    "source": "User-provided attachment during this review; no new Release payload download.",
+    "inspection": "Whole-duration sparse overview plus dense early/late phase sampling and independent review; not every frame.",
+    "evidence": "video-review.md",
+    "derived_figure": "video-keyframes.jpg",
+    "full_video_copied_into_repository": false
+  }
+}

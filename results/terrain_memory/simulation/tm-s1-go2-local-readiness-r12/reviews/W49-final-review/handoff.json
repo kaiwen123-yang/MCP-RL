@@ -1,0 +1,200 @@
+{
+  "schema": "s1_w50_review_handoff_v1",
+  "reviewed_result_commit": "de6606dc8363e8ab1c816fa682cace752a06318a",
+  "previous_plan_commit": "b142001624cfea5877c57e63f45e0f29c9dc4735",
+  "date": "2026-11-15",
+  "timezone": "Asia/Shanghai",
+  "review_scope": {
+    "server_access": false,
+    "new_native_solves": 0,
+    "new_plant_steps": 0,
+    "new_gpu_steps": 0,
+    "new_ppo_updates": 0,
+    "external_release_payload_downloaded": false,
+    "user_provided_B_video_reviewed": true
+  },
+  "completed_round": "W49",
+  "completed_controller": "S5-r37",
+  "completed_mechanism": "K",
+  "next_round": "W50",
+  "next_status": "planned_not_implemented",
+  "proposed_controller": "S5-r38",
+  "next_binary_sha256": null,
+  "status_source_precedence": [
+    "final original result and actual runtime identity",
+    "final phase/stream and verified remote delivery",
+    "timestamped build or intermediate fields as historical evidence"
+  ],
+  "original_outcomes": {
+    "a": {
+      "simulation_s": 29.99999999995676,
+      "qualified": false,
+      "reason": "material_traversal_not_completed",
+      "max_x_m": 0.34966652228658296,
+      "min_z_m": 0.12329839347873416,
+      "final_z_m": 0.13871773767336498,
+      "actual_material_loaded": false
+    },
+    "b": {
+      "simulation_s": 29.99999999995676,
+      "qualified": false,
+      "reason": "material_traversal_not_completed",
+      "max_x_m": 1.0205296755400994,
+      "min_z_m": 0.13066568907652462,
+      "final_z_m": 0.14281755501832752,
+      "actual_material_loaded": true,
+      "first_foot_material_load_s": 12.186599999998275,
+      "base_west_entry_s": 20.063999999979917
+    }
+  },
+  "original_qualifications": {
+    "E30_passed": 0,
+    "E30_attempted": 2,
+    "later_stages_blocked": 6,
+    "legal_round_trips": 0
+  },
+  "principal_findings": [
+    "W49 changed control behavior and removed early termination in two E30 runs; it did not establish normal stable locomotion.",
+    "User-provided B video corroborates squat/rise oscillations then prolonged low posture with folded/outstretched legs and shuffling.",
+    "K updates delta while inherited reference/K/H can remain frozen across epochs; exact array age requires existing D57 NPZ, not a new original run.",
+    "Installation plan ID/generation time/metric_source_plan_id is not feedback or metric origin.",
+    "802/1393 positive installations reduce same-problem cost but do not ensure support or route progress.",
+    "Current r26 Position target is local; mission endpoint is not the directly used native Position residual."
+  ],
+  "next_priority": "Prevent initial loss of effective foot support and gait progression; low-posture recovery is secondary.",
+  "fixed_problems": [
+    {
+      "stream": "a",
+      "call_id": 237,
+      "origin_s": 4.32,
+      "role": "early_support_loss"
+    },
+    {
+      "stream": "b",
+      "call_id": 236,
+      "origin_s": 4.3,
+      "role": "early_support_loss"
+    },
+    {
+      "stream": "a",
+      "call_id": 328,
+      "origin_s": 6.14,
+      "role": "low_posture_recovery"
+    },
+    {
+      "stream": "b",
+      "call_id": 625,
+      "origin_s": 12.08,
+      "role": "pre_material_low_posture_recovery"
+    }
+  ],
+  "mechanism": {
+    "name": "current_horizon_reference_refresh_with_single_alpha_feedback_and_metric_transfer",
+    "status": "hypothesis_not_implemented_or_validated",
+    "alpha_zero": "deep copy B; no rebase, rollout or new installation",
+    "positive_alpha": "u_ff=c_B+alpha*k_N; K=(1-alpha)*L_B+alpha*K_N; H=(1-alpha)*H_B+alpha*H_N",
+    "raw_center": "pre-clamp/pre-QP, includes old delta and installed feedback scale",
+    "coordinate_mapping": "native MuJoCo tangent derivative of old raw center about current rollout",
+    "candidate_scale": 1,
+    "new_delta": "cleared after absorption into center",
+    "capture": "simultaneous first valid k/K/H/mu/active before any alpha write",
+    "expected_decrease": null,
+    "ratio": null,
+    "acceptance": "unchanged original native risk/J/roundoff/strict; winner object installed"
+  },
+  "budgets": {
+    "saved_problem_solves_max": 4,
+    "positive_candidates_max": 36,
+    "saved_problem_full_rollouts_max": 80,
+    "rollout_per_fixture_formula": "19 + I_fresh_freeze + I_extra_baseline <= 20",
+    "rpc_deployments_max": 2,
+    "rpc_deployment_duration_s": 0.04,
+    "rpc_midpoint_replanning_s": 0.02,
+    "rpc_substeps_max": 400,
+    "rpc_extra_solves_max": 2,
+    "rpc_extra_full_rollouts_max": 40,
+    "total_finite_solves_max": 6,
+    "total_finite_full_rollouts_max": 120,
+    "FD": "separate actual counts; not included in rollout or plant totals",
+    "raw_center_jacobian_evaluations": "zero physics, separately count",
+    "gpu_default_new_steps": 0,
+    "gpu_conditional_probe_world_steps_max_including_warmup": 20,
+    "new_PPO_samples": 0,
+    "new_PPO_updates": 0,
+    "donor_runs": 0
+  },
+  "parallel": {
+    "A_cpus": [
+      0,
+      9
+    ],
+    "B_cpus": [
+      10,
+      19
+    ],
+    "C_cpus": [
+      20,
+      21
+    ],
+    "system_cpus": [
+      22,
+      24
+    ],
+    "binding_note": "inclusive proposed ranges, adapt to actual permitted CPU quota and unrelated jobs",
+    "build_jobs_max": 6,
+    "blas_omp_threads": 1,
+    "gpu_memory_gb_available_to_verify": 96,
+    "gpu_blocks_cpu": false
+  },
+  "advance_rule": "Use early A237/B236 evidence or a proven early-gait execution correction; at least one strict, behavior-changing and meaningful support/progress improvement plus correct runtime. Late prone shuffling alone is insufficient. Then one frozen version, original A/B once each, advance ladder only on original qualification.",
+  "frozen_learning": {
+    "A": {
+      "seed": 1,
+      "checkpoint": "checkpoint-014737",
+      "resume_episode": "ep00428"
+    },
+    "B": {
+      "seed": 2,
+      "checkpoint": "checkpoint-014737",
+      "resume_episode": "ep00417"
+    },
+    "per_stream_transitions": 14737,
+    "per_stream_updates": 57,
+    "tail": 0,
+    "excluded": 145,
+    "full_state_preserved": [
+      "actor",
+      "critic",
+      "optimizer",
+      "normalization",
+      "RNG",
+      "lineage"
+    ],
+    "observer_history": "causal updates during fixed-weight evaluation"
+  },
+  "deadline": null,
+  "deadline_unix_s": null,
+  "wall_deadline_enabled": false,
+  "deadline_arguments": "omit --deadline-unix",
+  "fixed_wall_clock_kill": false,
+  "finite_work_and_original_physical_stage_limits_retained": true,
+  "user_pc_archive": false,
+  "server_originals_auto_delete": false,
+  "delivery": "Git first, necessary originals/video directly from D57 to GitHub Releases; verify remote before retry; serialize short Git writes; no force push",
+  "completed_delivery": {
+    "W49_zip_assets": 10,
+    "review_video_assets": 4,
+    "W48_technical_zip_assets": 2,
+    "all_present_uploaded": true,
+    "A_delivery_recovery_finished": true,
+    "need_repeat_upload_or_physics": false,
+    "metadata_evidence": "remote-verification.json"
+  },
+  "entrypoints": {
+    "plan": "docs/S1_W50_STABILITY_PLAN.md",
+    "prompt": "docs/S1_W50_START_PROMPT.md",
+    "memory": "docs/TERRAIN_MEMORY_PLAN.md",
+    "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/README.md",
+    "video": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/video-review.md"
+  }
+}
