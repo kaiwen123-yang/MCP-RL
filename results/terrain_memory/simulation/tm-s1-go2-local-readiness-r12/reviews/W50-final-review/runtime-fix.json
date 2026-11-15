@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "review": "W50-final-review",
+  "result_base_commit": "09bd55e0cb70244938ad82db7dd202a31ac70f77",
+  "file": "scripts/s1_go2_r11_runtime.py",
+  "status": "fixed_in_this_review",
+  "before": {
+    "failure": "IndentationError",
+    "first_reported_line": 499,
+    "message": "unexpected indent",
+    "cause": "Two dump(...resolved) statements at lines 498 and 541 were dedented out of their existing conditional blocks while the next statements remained indented."
+  },
+  "change": {
+    "lines": [
+      498,
+      541
+    ],
+    "old_indent_spaces": 16,
+    "new_indent_spaces": 20,
+    "changed_statements": 2,
+    "algorithm_or_threshold_change": false
+  },
+  "validation": {
+    "method": "ast.parse of the corrected source",
+    "result": "passed",
+    "module_imported": false,
+    "native_server_started": false,
+    "simulator_started": false,
+    "new_physics_steps": 0
+  },
+  "scope": [
+    "The public runtime could not be parsed at the result base; a future normal evaluation would stop before execution.",
+    "The completed W50 finite scripts did not import this public runtime, so this syntax issue does not invalidate their original native results.",
+    "Successful AST parsing establishes syntax recovery only, not correctness or readiness of an unrun W51 controller, D8 entry or server build."
+  ]
+}

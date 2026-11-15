@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "review": "W50-final-review",
+  "updated_on_utc": "2026-11-15",
+  "result_base_commit": "09bd55e0cb70244938ad82db7dd202a31ac70f77",
+  "previous_plan_commit": "9ba97283c13119ec197429b75fce6b139a506a33",
+  "current_result": {
+    "round": "W50",
+    "controller": "S5-r38",
+    "mechanism": "H",
+    "status": "completed_finite_negative_published",
+    "saved_problem_solves": 4,
+    "saved_problem_full_rollouts": 76,
+    "positive_candidates": 36,
+    "strict_improvements": 10,
+    "midpoint_replans": 2,
+    "midpoint_full_rollouts": 40,
+    "all_full_rollouts": 116,
+    "candidate_records": 114,
+    "transition_fd": 23112,
+    "risk_geometry_fd": 4746,
+    "derivative_passes": 12,
+    "backward_attempts": 6,
+    "zero_physics_raw_center_evaluations": 76650,
+    "bridge_steps_consumed": 400,
+    "bridge_steps_valid_as_native_equivalence": 0,
+    "new_original_task_attempts": 0,
+    "original_stage_records_blocked_unrun": 8,
+    "new_full_task_videos": 0,
+    "new_gpu_physics_steps": 0,
+    "new_ppo_samples": 0,
+    "new_ppo_updates": 0
+  },
+  "latest_original_tasks": {
+    "round": "W49",
+    "controller": "S5-r37",
+    "A": {
+      "seed": 1,
+      "duration_s": 30,
+      "E30_passed": false,
+      "max_body_x_m": 0.3496665,
+      "final_body_z_m": 0.1387177,
+      "legal_circuits": 0
+    },
+    "B": {
+      "seed": 2,
+      "duration_s": 30,
+      "E30_passed": false,
+      "max_body_x_m": 1.0205297,
+      "final_body_z_m": 0.1428176,
+      "legal_circuits": 0
+    },
+    "later_stage_records_blocked_unrun": 6,
+    "video_source": "user-provided W49-B-E30-full.mp4"
+  },
+  "established_findings": {
+    "old_reference_source": "initial t=0 Stand",
+    "reference_time_range_s": [
+      0,
+      0.35
+    ],
+    "retained_policy_events_checked_by_task_a": 231,
+    "held_queries_per_stream": 15001,
+    "past_reference_queries_per_stream": 14825,
+    "last_reference_age_s": 29.65,
+    "trot_transition_s": 2.002,
+    "phase_hz": 2,
+    "early_swing_still_loaded_fraction_range": [
+      0.8781094527,
+      0.9411289018
+    ],
+    "early_all_four_loaded_fraction": {
+      "A": 0.857180156658,
+      "B": 0.867362924282
+    },
+    "early_pd_saturation_fraction": {
+      "A": 0,
+      "B": 0
+    },
+    "early_window_s": [
+      2.002,
+      4.3
+    ],
+    "r38_from_normal_t0_continuous_prevention_tested": false,
+    "normal_feasible_gait_rejected_by_objective_established": false,
+    "reference_freeze_unique_cause_established": false
+  },
+  "technical_issues": {
+    "bridge_abi": {
+      "status": "old_physics_evidence_invalid_loader_repaired_mapping_only",
+      "next_action": "use normal plant plus independent native server and RPC; no repeated 40 ms bridge admission"
+    },
+    "public_runtime_syntax": {
+      "status": "two_indentation_lines_fixed_in_this_review",
+      "validation": "AST_parse_only",
+      "record": "runtime-fix.json"
+    }
+  },
+  "next_round": {
+    "round": "W51",
+    "status": "planned_not_implemented",
+    "authoritative_plan": "../../../../../../docs/S1_W51_STABILITY_PLAN.md",
+    "start_prompt": "../../../../../../docs/S1_W51_START_PROMPT.md",
+    "goal": "Distinguish early r38 refresh prevention from one phase-aware motion-seed increment, then choose one controller for original task qualification.",
+    "diagnostics": [
+      {
+        "id": "D0",
+        "mechanism": "S5-r38/H refresh-only",
+        "seed": 1,
+        "checkpoint": "W44 A checkpoint-014737",
+        "initialization": "normal evaluation t=0 full initialization",
+        "physical_duration_s": 8,
+        "attempts": 1,
+        "qualification_usable": false
+      },
+      {
+        "id": "D1",
+        "mechanism": "r38 plus one complete phase-aware S as the alternative linearization start; proposed S5-r39",
+        "seed": 1,
+        "checkpoint": "same W44 A checkpoint-014737",
+        "initialization": "same normal evaluation t=0 full initialization",
+        "physical_duration_s": 8,
+        "attempts": 1,
+        "qualification_usable": false
+      }
+    ],
+    "entry_requirements": [
+      "true D8 configuration and CLI pathway",
+      "normal runtime and PolicyStream(training=False)",
+      "explicit evaluate_stage diagnostic early return",
+      "retain original physical termination and actual-duration video",
+      "no training_duration=8, no wall timeout, no partial historic plant restore",
+      "normal plant + standalone native Agent + RPC; no ctypes bridge"
+    ],
+    "candidate_contract": {
+      "baseline": "original complete B from original same-epoch R35Freeze and 10 nominal screening",
+      "seed": "one complete copy S of B with raw center c_B + (q_IK - q_B_joint)",
+      "phase": "original 2 Hz, duty .45, C2, amplitude .005 m, absolute phase",
+      "anchors": "stance-start actual world xy persists across replans; current swing touchdown fixed at swing start/first entry",
+      "continuity": "remaining swing deterministic connection from actual foot position/velocity; unchanged original Gait cost reference",
+      "linearization": "Q=S if S native rollout is valid even when J(S)>J(B), otherwise Q=B",
+      "directions": "one first-valid backward family and original nine positive alpha values only",
+      "acceptance": "S and all candidates compared with original B/global best using original risk/J/roundoff/strict",
+      "alpha_zero": "deep-copy original B; positive-to-zero near Q is not claimed to equal B when Q=S",
+      "expected_ratio": null,
+      "force_inferior_installation": false,
+      "extra_weight_height_horizon_or_beta_grid": false
+    },
+    "work_scale": {
+      "D0_full_rollouts_per_normal_epoch_usually_max": 20,
+      "D1_full_rollouts_per_normal_epoch_usually_max": 21,
+      "planner_calls_estimate_total": 842,
+      "plant_steps_max_total": 80000,
+      "full_rollouts_conservative_scale": 17261,
+      "fd_counted_separately": true,
+      "equal_total_compute_claim": false
+    },
+    "decision": [
+      "prefer D0 if it restores useful support and progress without a material D1 increment",
+      "select D1 if it materially improves support exchange, body stability and forward progress under original constraints",
+      "both insufficient: publish paired negative result; no automatic stack of new costs/gaits/horizons/PPO/solvers"
+    ],
+    "formal_evaluation": {
+      "controller": "one selected frozen mechanism for both A and B",
+      "A_seed": 1,
+      "B_seed": 2,
+      "E30_attempts_per_case": 1,
+      "ladder": [
+        "E30",
+        "E60",
+        "E300",
+        "E600"
+      ],
+      "per_case_predecessor_required": true,
+      "D8_reusable_as_qualification": false,
+      "initialization": "normal full evaluation initial state, distinct attempt from D8",
+      "E30": "legal material outbound to original 3 m far-end tolerance and full 30 s observation",
+      "E60": "legal complete round trip, home stable 2 s, full 60 s observation",
+      "E300": "5 legal circuits by original 270 s route limit and observation through 300 s",
+      "E600": "10 legal circuits by original 540 s route limit and observation through 600 s"
+    },
+    "gpu_C": {
+      "default_new_gpu_physics_steps": 0,
+      "candidate_records": 114,
+      "valid_saved_problem_candidates": 76,
+      "wrong_bridge_midpoint_candidates_algebra_only": 38,
+      "residual_dim": 113,
+      "cost_terms": 22,
+      "goal": "FP64 GPU cost reduction and per-term ResidualFn dependency/coverage",
+      "risk_requires_original_metadata": true,
+      "compare_within_same_problem_epoch_only": true,
+      "full_native_cost_claim_from_residual_reduction_only": false,
+      "formal_policy_ranking": false,
+      "blocks_cpu": false
+    },
+    "new_ppo_samples": 0,
+    "new_ppo_updates": 0,
+    "donor": 0
+  },
+  "preserved_learning_state": {
+    "per_stream_transitions": 14737,
+    "per_stream_updates": 57,
+    "A_resume": "ep00428",
+    "B_resume": "ep00417",
+    "tail": 0,
+    "excluded": 145,
+    "preserve": [
+      "actor",
+      "critic",
+      "optimizer",
+      "normalization",
+      "RNG",
+      "ancestry"
+    ],
+    "learning_resume_is_full_plant_checkpoint": false
+  },
+  "resource_plan": {
+    "check_actual_cpu_quota_and_existing_jobs": true,
+    "cpu_total_requested": 25,
+    "D0": 10,
+    "D1": 10,
+    "C": 2,
+    "system_control_publish": 3,
+    "gpu_vram_user_stated_GB": 96,
+    "math_library_threads": 1,
+    "build_jobs_max": 6,
+    "build_before_two_heavy_solves": true,
+    "third_heavy_native_solve": false,
+    "claim_continuous_full_utilization": false
+  },
+  "background": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "deadline_unix_argument": "omit",
+    "kill_at_fixed_completion_time": false,
+    "kill_on_conversation_end": false,
+    "physical_task_durations_retained": true,
+    "finite_work_and_original_failures_retained": true,
+    "infinite_retry": false
+  },
+  "delivery": {
+    "code_and_compact_evidence": "GitHub",
+    "large_originals_and_videos": "direct server to incremental GitHub Release",
+    "serial_short_git_writes": true,
+    "force_push": false,
+    "verify_remote_before_finish": true,
+    "additional_user_pc_archive": false,
+    "automatic_execution_server_scientific_input_deletion": false
+  },
+  "review_artifacts": {
+    "summary": "README.md",
+    "control": "control/review.md",
+    "results": "results/review.md",
+    "video": "video-review.md",
+    "literature": "literature.md",
+    "read_coverage": "read-coverage.json",
+    "remote_verification": "remote-verification.json",
+    "runtime_fix": "runtime-fix.json"
+  }
+}

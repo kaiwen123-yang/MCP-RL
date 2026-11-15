@@ -2,55 +2,52 @@
 
 长期目标：同一世界地块被前足、后足和返程重复加载时，利用材料持久状态，让未来支撑需求影响当前加载、落点和重访，建立原Go2/TM02合法完整往返、因果记忆收益、泛化及实机证据。
 
-## 当前：W49完成30秒观察；W50检查并刷新滚动参考与反馈
+## 当前：W50完成有限负结果；W51从正常起步比较反馈刷新与运动初始轨迹
 
-**2026-11-15，结果基点de6606d：W49/S5-r37/K已结束，两原E30均观察满30s，但资格0/2、合法往返0；W50 planned_not_implemented。** 本次仓库/文献/交付审查没有启动新服务器任务、native solve、物理、PPO或GPU积分。
+**2026-11-15，结果基点09bd55e：W50/S5-r38/H已实现并发布，原A/B E30未运行；W51 planned_not_implemented。** 最新完整原任务仍是W49：两E30观察满30s但资格0/2、合法往返0，视频所见低伏/非足支撑不是正常稳定行走。本次审查未启动新native solve、物理/GPU积分或PPO，实际修复了公共runtime两处缩进错误。
 
-[项目记忆](docs/TERRAIN_MEMORY_PLAN.md) · [W49完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/README.md) · [W50详细计划](docs/S1_W50_STABILITY_PLAN.md) · [Codex启动提示词](docs/S1_W50_START_PROMPT.md) · [机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/handoff.json) · [W49实际phase](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/phase.json)
+[项目记忆](docs/TERRAIN_MEMORY_PLAN.md) · [W50完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/README.md) · [W51详细计划](docs/S1_W51_STABILITY_PLAN.md) · [Codex启动提示词](docs/S1_W51_START_PROMPT.md) · [机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/handoff.json) · [W50实际phase](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/phase.json)
 
-### 当前进展与问题
+### W50推进了什么，还没解决什么
 
-W49的36个k引导冻结反馈候选中25个原strict改善，4×20ms真实RPC部署有效，两原轨迹也真正改变。A/B没有重复W48的提前触地/跌倒结局，但已经出现低姿态、非足支撑与前进不足，不能称稳定行走。
+W50已完成当前时域重参考、同alpha前馈/反馈/K/H转移，四个保存问题76full rollout、36正候选中10个strict改善。独立读取原完整候选并重算支持这些结果，但仍无正常承重/前进恢复。
 
-| W49原E30 | A | B |
-|---|---:|---:|
-| 物理时长/资格 |30s / 未通过|30s / 未通过|
-| 最大body x |.349667m|1.020530m|
-| 最低/最终z |.123298/.138718m|.130666/.142818m|
-| 首次非足载荷 |4.6232s|5.0216s|
-| 首次足端材料加载 |无|12.1866s|
-| 机体west entry |无|20.064s|
-| 合法去/返/往返 |0/0/0|0/0/0|
-| 后级 |E60/300/600 blocked|E60/300/600 blocked|
-| 新PPO |0/0|0/0|
+| W50保存问题 | 原J降幅 | 预测最低z增加 | 预测.35s位移：baseline → winner |
+|---|---:|---:|---:|
+| A237，4.32s |1.3351%|.1486mm|−4.297 → −18.141mm|
+| B236，4.30s |.01144%|.01635mm|−18.833 → −19.024mm|
+| A328，6.14s |2.1061%|3.628mm|−.248 → −23.343mm|
+| B625，12.08s |0，保留nominal|0|保留−1.585mm|
 
-两原任务自然观察满30s后原因均为material_traversal_not_completed。两次query-only失败与一次部署Init中断都在物理前，修复后完成；这三次技术尝试与原资格不合格分开计数。六个blocked级别没有运行。
+这些是native候选预测，不是新plant任务。另有向前但同时坍低的被拒候选，不能说所有候选倒退或原J已错拒正常步态。加两次midpoint replan后共116full rollout；两条40ms bridge消耗400子步，但同SONAME库ABI失配，物理等价证据无效。四个独立native保存问题评分不因此作废；原八阶段blocked/unrun，不计八次失败。[原始结果与错误审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/results/review.md)
 
-源码发现一个优先级更高的机制限制：r37有效bootstrap之后，K只更新delta，reference/K/H一直从旧完整策略继承。新plan ID或policy_age=0并不证明反馈参考刷新。实际过期时长需读取D57现有NPZ；目前不能把约29.65s的源码推断当作数组实测或唯一根因。
+更关键的新证据来自W49原件：private Trot在2.002s正常启动，相位按2Hz推进；但2.002–4.3s的目标swing仍约88–94%实际受载、四足共载约86%，PD饱和0。231个保留policy的reference/K/H均来自t=0 Stand [.0,.35]；每流14825/15001条held查询过期，最终29.65s。参考冻结已实测，不能再只写源码假说。更新安装ID不代表更新反馈来源。
 
-A/B原调用中802/1393次正步确实降低同问题J，末MaterialSupportHeight仍占约97%。目标没有恢复承重和前进，不能只统计下降次数。r26追踪当前位置附近的局部head reference，mission target3m不是其直接残差；不据Position小就盲目加权。
+用户B视频约4.4–5.2s下蹲/顶起，5.2–7s曾暂时抬高，7–8s后长期低伏挪动；7–30s非足平均承重45.08N，约体重30.2%。W50没有新完整视频。[视频与同步日志](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/video-review.md)
 
-用户补充的B视频也已复核：4.4–5s下蹲/顶起，7–8s后长期低伏、腿折叠外伸，后半贴地挪动，确实没有正常稳定步态。[视频审查及关键帧](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/video-review.md)
+### W51如何推进
 
-### W50如何推进
+4.3s保存点已晚于Trot切换约2.3s；晚态一次更新失败，尚未回答从起步刷新能否预防。两CPU主线从同W44 A/seed1、同原evaluation t=0开始，各一次8s真实闭环：D0使用现有r38/H；D1只增加一个相位感知完整运动候选S作为替代线性化起点。使用正常plant/独立native/RPC入口，不重复错误bridge的40ms准入。
 
-两CPU线并行读取W49新早期/恢复状态、实现“当前horizon重参考，并随同一个alpha更新前馈/反馈/H”。保留旧B作alpha0完整基线，正候选实际native严格评分；不叠加成本/步态/horizon/PPO变化。四指定W49问题≤4solve/36候选，连nominal与必要baseline≤80full rollout；≤2条40msRPC诊断在20ms真实再规划，追加≤2solve/40rollout/400子步，FD另计。
+S复制原全局B，保留raw PD承重中心与反馈，只追加原相位/速度/足几何生成的运动学差；只多一次native rollout、一个first-valid方向族和原9alpha。S可用于搜索，所有安装仍须严格优于原B；不把较差S重命名baseline制造改善。不改成本、步高、horizon或PPO。D0通常≤20、D1≤21full rollout/epoch，工作量不完全相同。
 
-优先要求早期A237/B236有维持/改善足部承重推进的实质信号，或修复已证早期步态接入错误；不能只用晚期低伏挪动更快作为推进理由。原strict接纳及实际入口正确后，冻结同一个版本，原A/B各一次E30并行，过才原阶梯。不要求先证明全程成功，也不为纯metadata/roundoff变化重跑。
+实现独立D8入口及明确诊断判定，qualification_usable=false；8s为物理观察窗，不是后台截止或E30资格。先比较真实卸载/支撑交换、身体稳定、非足承重与前进，再选一个版本原A/B各一次E30，逐case过才E60→E300→E600。若两臂都无实质进展，交成对负结果，不追成功重复或临时叠加方法。
 
-第三线先读W49已有GPU全暴露子步，沿约束求解首差做零新积分定位。微小非逐位相同不是自动不可用，但当前缺完整native成本，GPU不正式排序。具体修复后至多一次20world-step区分探针；C不阻塞CPU。新增[四篇一手文献与边界](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/literature.md)支持滚动时域/可行参考方向，不替本项目保证成功。
+第三线默认零新GPU物理：用已有114候选做FP64成本归约与22项native ResidualFn覆盖。38条错bridge midpoint仅代数对照；GPU不正式排序、不阻塞CPU。参考[四篇一手文献及适用边界](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/literature.md)，不把外部GPU吞吐和成功转作本项目资格。
 
-### 资源与交付
+### 资源、代码与交付
 
-W49原A/B实际重叠79.412min，双任务已实现；C只运行3.51s/60world-step，没有持续三重满载。继续25CPU按10+10+2+3分配、线程库1、build隔离；96GB显存用于有信息增量的工作，不为占卡增加PPO。
+继续实测25CPU/96GB余量，10+10+2+3分配、线程库1、先-j6构建，尊重其他任务。W50有限求解仅重叠11.516s，C只是.884s CPU分析，不能声称已持续三重满载；GPU工作以信息增量为目标。
 
-**新后台无固定墙钟完成时刻、无到点kill；GitHub核验后不在用户电脑额外下载、复制、打包、镜像或归档。** 原物理资格和有限工作量保留，服务器原件/checkpoint/resume/视频不自动删除。
+公共runtime在W50修改后存在两处缩进错误，原line499即无法解析；本次已修正并确认AST可解析。有限脚本未经过该公共入口，有限结果仍成立；没有把语法修复写成服务器闭环已验证。[修复记录](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/runtime-fix.json)
 
-本次live核W49十ZIP/四视频及W48两技术ZIP共16资产1,658,430,730B均存在，A交付恢复已经完成。[核验范围](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/remote-verification.json)区分API与payload复算。阅读继承旧库存，本轮64变化文件49,031,786B完整读取与结构解析；没有重下载全部原NPZ/视频；用户直接提供的B视频已分段查看，未假称每个字节或全部帧语义均已理解。
+**新后台无固定墙钟完成时刻、无到点kill；GitHub核验后不在用户电脑额外下载、复制、打包、镜像或归档。** 原物理任务定义与有限工作量保留，服务器科研原件/checkpoint/resume/视频不自动删除。
+
+本次全读取40变更文件40,087,699B、解析16JSON；实际下载W50三ZIP464,340,186B，提取254成员并读取关键原数组，复看用户W49 B视频。没有把逐字节读取等同于每个数字都语义理解。[阅读范围](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/read-coverage.json) · [原件核验](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/remote-verification.json)
 
 ## 历史说明
 
-下文保留形成时的结果与协议。旧“当前”、预算、截止和归档方式属于当时；最新执行统一见顶部、[W50计划](docs/S1_W50_STABILITY_PLAN.md)及[启动提示词](docs/S1_W50_START_PROMPT.md)。W49已结束，不按历史文字重启旧轮。
+下文保留形成时的结果与协议。旧“当前”、预算、截止和归档方式属于当时；最新执行统一见顶部、[W51计划](docs/S1_W51_STABILITY_PLAN.md)及[启动提示词](docs/S1_W51_START_PROMPT.md)。W50已结束，不按历史文字重启旧轮。
 
 ## 历史 R12/W35：同r24续训及末端评价
 
@@ -89,7 +86,7 @@ R11已按用户2026-10-29的要求暂停，发布现有成果供审查。累计2
 
 ## 历史结果原文
 
-以下保留旧结果与协议叙述；旧“当前”“本轮”、额度和阶段门槛仅属于对应历史run。当前执行以顶部W49审查、W50计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。R10原协议的完整版本见[02595603历史主计划](https://github.com/kaiwen123-yang/MCP-RL/blob/025956032e2a3aa1e0c9881f2eda307301c77522/docs/TERRAIN_MEMORY_PLAN.md)。
+以下保留旧结果与协议叙述；旧“当前”“本轮”、额度和阶段门槛仅属于对应历史run。当前执行以顶部W50审查、W51计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。R10原协议的完整版本见[02595603历史主计划](https://github.com/kaiwen123-yang/MCP-RL/blob/025956032e2a3aa1e0c9881f2eda307301c77522/docs/TERRAIN_MEMORY_PLAN.md)。
 
 
 **R10 实际结果（2026-10-28）：开发额度12/12已结束，材料完整任务0/9，联合PPO未启动。** 12次启动包括3次零物理步初始化失败和9次真实Go2材料任务；累计107.9750秒、539875个0.2ms物理步。G、G＋N与G＋N＋C均保留完整记录，C的局部力参考和支撑高度修正逐版保存。最终0.215m/s版本通过去程和远端转向，在返程32.5672秒触发原材料域；仍未完成原任务。
@@ -108,7 +105,7 @@ R11已按用户2026-10-29的要求暂停，发布现有成果供审查。累计2
 
 同一空间地块的材料状态跨腿、跨步、跨返程持续演化；后续支撑需求反过来约束当前踩踏。第一版从具有可测恢复过程的黏弹性材料开始。
 
-## R9历史冻结协议（当前执行以顶部与W50计划为准）
+## R9历史冻结协议（当前执行以顶部与W51计划为准）
 
 **第八轮已完成项目Go2同版9/9原任务＋3/3连续300秒，S3继续冻结。R9实际完成8次材料适配尝试，0/8整程成功；训练前置条件未通过且适配额度已用尽。** 以下保留原定联合协议，其中PANN观察器、PPO训练及正式21+3评价均未执行，不能作为已完成成果。最新实际状态见本页顶部与[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)。
 
@@ -148,7 +145,7 @@ R8实际19次物理启动，形成项目九原任务和三长任务完整覆盖�
 
 复用现有SSH/tmux。交真实训练曲线、模型权重、完整任务视频、高率物理/材料/预测记录及同版对照。源码与紧凑结果推GitHub，大数组和视频由执行端直接发布Release；核对最终commit、资产URL/size/digest后结束，**不在用户电脑再次下载、复制、镜像、压缩或归档。**
 
-以下R8及更早内容保留历史身份；旧“当前/本轮”、停止要求及预算只适用于对应已关闭run，当前执行以顶部W49最终审查和[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。
+以下R8及更早内容保留历史身份；旧“当前/本轮”、停止要求及预算只适用于对应已关闭run，当前执行以顶部W50审查、W51计划和[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。
 
 ## S1第八轮历史结果（已冻结）：项目Go2指定9＋3覆盖全部通过
 
@@ -204,7 +201,7 @@ G1保留15.206408kg、0.0002s真实物理步、原接触及23.7/45.43Nm逐关节
 
 ## S1第六轮历史结果（已冻结）：完成路径往返，终点连续稳定未通过
 
-以下保留第六轮当时的执行范围和停止决定；其中“本轮结束”等只适用于已关闭的旧run，当前执行以顶部W49审查、W50计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。原第五轮及更早结果继续保留。
+以下保留第六轮当时的执行范围和停止决定；其中“本轮结束”等只适用于已关闭的旧run，当前执行以顶部W50审查、W51计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。原第五轮及更早结果继续保留。
 
 **第六轮已完成固定范围执行：1次G0完整任务启动，0次完整成功；G1开发与正式均未执行。** 本轮 `tm-s1-go2-wb-startup-r6` 使用实现 `ce3e03255e6e229fd61cac458b514fb6ea162314`，保留第五轮和所有历史结果。没有训练PANN/PPO、接入TM02或启用硬件。
 

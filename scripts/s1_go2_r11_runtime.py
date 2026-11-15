@@ -495,7 +495,7 @@ def run(args, c, joint=None):
                     reference['wall_s']=time.perf_counter()-tr
                     resolved.setdefault('stand_references',[]).append(reference)
                     if c.get('controller_build')=='S5-r38':resolved['w50_native_process']=resolved['w48_native_process']
-                dump(small/f'{args.attempt}-resolved.json',resolved)
+                    dump(small/f'{args.attempt}-resolved.json',resolved)
                     if not reference['feasible']:
                         raise ValueError('Native static support reference infeasible; see retained reference and entry state')
                     data.userdata[:62]=reference_userdata(reference)
@@ -538,7 +538,7 @@ def run(args, c, joint=None):
                         declared_parameters={k:table[k] for k in ('Gait','Cadence','Duty ratio','Amplitude')},
                         task_parameters=actual_parameters,cost_weights=agent.get_cost_weights()))
                     if c.get('controller_build')=='S5-r38':resolved['w50_native_process']=resolved['w48_native_process']
-                dump(small/f'{args.attempt}-resolved.json',resolved)
+                    dump(small/f'{args.attempt}-resolved.json',resolved)
                     if any(actual_parameters[k]!=table[k] for k in ('Gait','Cadence','Duty ratio','Amplitude')):
                         raise RuntimeError('Declared gait settings were overwritten during native transition; see actual readback')
                 sync_s = time.perf_counter()-ts
