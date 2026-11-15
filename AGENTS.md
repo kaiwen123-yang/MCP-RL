@@ -1,8 +1,12 @@
-# Codex执行入口：W49已结束；W50刷新滚动参考与反馈
+# Codex执行入口：W50有限负结果已完成，原评价未启动
 
-更新2026-11-15（Asia/Shanghai）。结果基点`de6606dc8363e8ab1c816fa682cace752a06318a`。**W49/S5-r37/K原A/B均观察满30s，但低姿态/非足支撑/前进不足，E30 0/2、合法往返0，后六级blocked。W50 planned_not_implemented。** 最新用户要求覆盖历史固定墙钟截止和电脑归档规定。
+更新2026-11-15（Asia/Shanghai）。W50/S5-r38/H 已实现并完成有限工作：四个W49问题76次full rollout，36个正候选中10个strict改善；两个早期赢家仍下沉/后退，未达到原E30推进依据。另两条40ms消耗400子步和2次再规划40rollout，但bridge同SONAME库复用造成ABI失配，修复loader后未重跑。原A/B E30均未运行，后级blocked；新增PPO0/0，新增GPU积分0。
 
 先读[项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[W49最终审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/README.md)、[W50详细计划](docs/S1_W50_STABILITY_PLAN.md)、[启动提示词](docs/S1_W50_START_PROMPT.md)、[机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/handoff.json)。公式/问题/预算/判据以W50计划为准，历史“当前”只按形成时点阅读。
+
+## W50实际执行状态
+
+实际结果与预算以[W50运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/phase.json)为准。当前仅完成紧凑结果和必要原件的GitHub发布/核验；原E30没有资格入口，不启动或重跑。两条短部署预算已消耗，不因loader修复刷新预算。以下W50约定保留为本轮协议与历史依据，不再把已完成四例重新启动。
 
 ## 已确认事实
 

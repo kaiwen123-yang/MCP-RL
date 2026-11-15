@@ -2,9 +2,15 @@
 
 更新：2026-11-15（Asia/Shanghai）。审查结果基点：`de6606dc8363e8ab1c816fa682cace752a06318a`；上轮计划：`b142001624cfea5877c57e63f45e0f29c9dc4735`。
 
-**状态：planned_not_implemented。W49/S5-r37 已结束，原 A/B 都观察满 30 s，但 E30 0/2、合法往返 0；W50 尚未构建或运行。** 本次只做仓库、论文和远端交付审查，无新服务器作业、native solve、plant/GPU 积分或 PPO。拟用 S5-r38；最终身份以实际实现、构建及进程为准，不能提前宣称成功。
+**状态：implemented_finite_negative；原A/B未运行。** W50/S5-r38/H 已实现并完成有限工作：四个W49问题76次full rollout，36个正候选中10个strict改善；两个早期赢家仍下沉/后退，未达到原E30推进依据。另两条40ms消耗400子步和2次再规划40rollout，但bridge同SONAME库复用造成ABI失配，修复loader后未重跑。原A/B E30均未运行，后级blocked；新增PPO0/0，新增GPU积分0。
 
 入口：[W49 最终审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/README.md) · [启动提示词](S1_W50_START_PROMPT.md) · [项目记忆](TERRAIN_MEMORY_PLAN.md) · [执行规则](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/handoff.json)。
+
+## 实际执行与结束
+
+[W50实际索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/phase.json)、[四例结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/task-b.json)、[完整策略构造](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/policy-construction.json)、[短部署技术限制](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/deployment.json)是本轮实际证据。总计6次solve、116full rollout、23112 transition FD、4746 risk FD、76650次零物理raw-center求值；400部署子步与FD另列。正式控制器build已完成62个native/service编译单元。36个四例正候选中10个strict改善，早期赢家未形成有用承重/前进改善，原任务各级blocked。没有额外变体或重跑。
+
+以下为本轮冻结设计及解释，状态不得覆盖上述实际结果。发布完成后只保留服务器原件，任何新科学执行需要新指令。
 
 ## 1. 要解决的实际问题
 

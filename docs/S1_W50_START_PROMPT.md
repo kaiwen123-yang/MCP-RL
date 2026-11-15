@@ -1,4 +1,6 @@
-# W50 Codex启动提示词
+# W50 Codex启动提示词（历史冻结协议）
+
+本轮已完成有限负结果；[实际索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/phase.json)优先。不要再次按下文重开四例或原任务。若发布pending，只接续已生成原件的发布。
 
 在MCP-RL仓库按最新main自主实施W50，完成后推送GitHub并给出真实状态。先读AGENTS.md、docs/TERRAIN_MEMORY_PLAN.md、results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/README.md、handoff.json、docs/S1_W50_STABILITY_PLAN.md。详细公式、固定问题、预算和资格以W50计划为准；不要重复把本轮变成只做计划或状态报告。
 

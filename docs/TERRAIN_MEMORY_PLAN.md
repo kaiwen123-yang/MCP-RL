@@ -1,8 +1,12 @@
-# 地面材料记忆主计划：W49已结束，W50刷新滚动反馈参考
+# 地面材料记忆主计划：W50有限负结果，原评价未启动
 
-更新2026-11-15（Asia/Shanghai）。结果基点`de6606dc8363e8ab1c816fa682cace752a06318a`。**W49/S5-r37/K原A/B都观察满30s，但E30 0/2、合法往返0；低姿态/非足支撑与前进失败仍在。W50 planned_not_implemented。** 本次为仓库/文献/交付审查，无新服务器任务、native solve、plant/GPU积分或PPO。
+更新2026-11-15（Asia/Shanghai）。W50/S5-r38/H 已实现并完成有限工作：四个W49问题76次full rollout，36个正候选中10个strict改善；两个早期赢家仍下沉/后退，未达到原E30推进依据。另两条40ms消耗400子步和2次再规划40rollout，但bridge同SONAME库复用造成ABI失配，修复loader后未重跑。原A/B E30均未运行，后级blocked；新增PPO0/0，新增GPU积分0。
 
 [W49最终审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/README.md) · [W50详细计划](S1_W50_STABILITY_PLAN.md) · [启动提示词](S1_W50_START_PROMPT.md) · [AGENTS](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/handoff.json) · [W49实际phase](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/phase.json)
+
+## W50实际结果
+
+[实际索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/phase.json)记录真实版本、预算和发布状态。A237同问题J下降1.335%，最低z仅提高0.149mm，.35s位移−4.297→−18.141mm；B236的J下降0.01144%，最低z提高0.016mm，位移−18.833→−19.024mm。承重未见实质改善，因此不运行原A/B、不新增样本。A原件证实private Trot相位正常演进，反馈reference/K/H却仍来自t=0的Stand。C将旧GPU首个可观察差异缩小到约束求解输出，但未锁定唯一kernel。
 
 ## 1. 长期目标与真实研究阶段
 

@@ -1,0 +1,2522 @@
+{
+  "schema": "s1_w50_gpu_saved_active_constraint_analysis_v1",
+  "status": "completed_zero_physics_analysis",
+  "plan_commit": "9ba97283c13119ec197429b75fce6b139a506a33",
+  "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 taskset -c 20-21 work/envs/d57/bin/python scripts/w50_gpu_analysis.py",
+  "pid": 103236,
+  "affinity": [
+    20,
+    21
+  ],
+  "started_unix_s": 1794734097.2545612,
+  "ended_unix_s": 1794734098.1386662,
+  "wall_s": 0.8841052055358887,
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "work": {
+    "saved_conditions": 3,
+    "saved_state_boundaries": 33,
+    "saved_step_pairs": 30,
+    "new_native_solves": 0,
+    "new_native_full_rollouts": 0,
+    "new_native_substeps": 0,
+    "new_gpu_world_steps": 0,
+    "warmup_world_steps": 0,
+    "FD": 0,
+    "new_PPO_samples": 0,
+    "new_PPO_updates": 0,
+    "GPU_context_created": false
+  },
+  "source": {
+    "path": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w49/task-c/all-exposed-substeps.npz",
+    "bytes": 1873543,
+    "sha256": "d2f96950007a3e43fe783bdce48a9d91f63e10a6a840bbd96a3b8191c94cd85a",
+    "matches_W49_recorded_sha256": true,
+    "all_saved_array_fields_per_boundary": 200,
+    "versions_recorded_W49": {
+      "mujoco": "4.0.0",
+      "mujoco-warp": "4.0.0",
+      "warp-lang": "1.19.0"
+    },
+    "versions_installed_now": {
+      "warp-lang": "1.19.0",
+      "mujoco": "4.0.0",
+      "mujoco-warp": "4.0.0"
+    },
+    "W49_options": {
+      "timestep": 0.0002,
+      "integrator": 3,
+      "solver": 2,
+      "cone": 1,
+      "jacobian": 2,
+      "iterations": 100,
+      "ls_iterations": 50,
+      "tolerance": 1e-08,
+      "disableflags": 512,
+      "enableflags": 0
+    },
+    "current_source_matches_recorded_files": {
+      "/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/io.py": {
+        "saved_sha256": "5460526346bfe910b7d5cc858bba93097ad07f38f71dee54aa8c0e7534403491",
+        "current_sha256": "5460526346bfe910b7d5cc858bba93097ad07f38f71dee54aa8c0e7534403491",
+        "matches_W49": true
+      },
+      "/root/autodl-tmp/MCP-RL-w42/scripts/s1_go2_w41_warp_backend.py": {
+        "saved_sha256": "3c62cfe695500d3815e25d8140a70fe93f9f1d19ad9e136a228ccef81a2e9ccf",
+        "current_sha256": "3c62cfe695500d3815e25d8140a70fe93f9f1d19ad9e136a228ccef81a2e9ccf",
+        "matches_W49": true
+      }
+    },
+    "identity_limit": "W49 recorded io.py and callback hashes; exact historical solver.py/constraint.py hashes were not recorded, so their historical byte identity is not independently established."
+  },
+  "normalization": {
+    "constraint_rows": "Only 0:nefc per world; friction identity=(type,dof), elliptic identity=(type,geom_pair,cone_component).",
+    "jacobian": "Only 18 physical DOF columns of 20-column dense storage.",
+    "contacts": "Only 0:nacon, split by worldid and ordered by unique geom pair. Compare all nonempty numeric contact arrays except allocation/address fields.",
+    "not_physical_differences": [
+      "unused constraint rows",
+      "unused J columns",
+      "unused contact slots",
+      "raw global contact ids",
+      "contact worldid labels",
+      "global geomcollisionid",
+      "raw efc row addresses"
+    ],
+    "no_first_kernel_claim": "Snapshots are post-step Data boundaries, not solver iteration/kernel trace."
+  },
+  "first_step_layouts": {
+    "F1": {
+      "friction_dof_row_ids": [
+        [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ],
+        [
+          14,
+          15,
+          16,
+          17,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      ],
+      "dof_frictionadr": [
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "contact_pool_worldids": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "contact_pool_geom_pairs": [
+        [
+          0,
+          26
+        ],
+        [
+          0,
+          26
+        ],
+        [
+          0,
+          39
+        ],
+        [
+          0,
+          52
+        ],
+        [
+          0,
+          65
+        ],
+        [
+          0,
+          39
+        ],
+        [
+          0,
+          52
+        ],
+        [
+          0,
+          65
+        ]
+      ],
+      "contact_row_pool_ids": [
+        [
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          4,
+          4,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          5,
+          5,
+          5,
+          6,
+          6,
+          6,
+          7,
+          7,
+          7
+        ]
+      ],
+      "canonical_constraint_keys": [
+        [
+          1,
+          6,
+          -1,
+          0
+        ],
+        [
+          1,
+          7,
+          -1,
+          0
+        ],
+        [
+          1,
+          8,
+          -1,
+          0
+        ],
+        [
+          1,
+          9,
+          -1,
+          0
+        ],
+        [
+          1,
+          10,
+          -1,
+          0
+        ],
+        [
+          1,
+          11,
+          -1,
+          0
+        ],
+        [
+          1,
+          12,
+          -1,
+          0
+        ],
+        [
+          1,
+          13,
+          -1,
+          0
+        ],
+        [
+          1,
+          14,
+          -1,
+          0
+        ],
+        [
+          1,
+          15,
+          -1,
+          0
+        ],
+        [
+          1,
+          16,
+          -1,
+          0
+        ],
+        [
+          1,
+          17,
+          -1,
+          0
+        ],
+        [
+          7,
+          0,
+          26,
+          0
+        ],
+        [
+          7,
+          0,
+          26,
+          1
+        ],
+        [
+          7,
+          0,
+          26,
+          2
+        ],
+        [
+          7,
+          0,
+          39,
+          0
+        ],
+        [
+          7,
+          0,
+          39,
+          1
+        ],
+        [
+          7,
+          0,
+          39,
+          2
+        ],
+        [
+          7,
+          0,
+          52,
+          0
+        ],
+        [
+          7,
+          0,
+          52,
+          1
+        ],
+        [
+          7,
+          0,
+          52,
+          2
+        ],
+        [
+          7,
+          0,
+          65,
+          0
+        ],
+        [
+          7,
+          0,
+          65,
+          1
+        ],
+        [
+          7,
+          0,
+          65,
+          2
+        ]
+      ],
+      "unused_constraint_rows_per_world": [
+        744,
+        744
+      ],
+      "unused_J_columns": 2,
+      "unused_global_contact_slots": 248
+    },
+    "L": {
+      "friction_dof_row_ids": [
+        [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ],
+        [
+          14,
+          15,
+          16,
+          17,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      ],
+      "dof_frictionadr": [
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "contact_pool_worldids": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "contact_pool_geom_pairs": [
+        [
+          0,
+          26
+        ],
+        [
+          0,
+          26
+        ],
+        [
+          0,
+          39
+        ],
+        [
+          0,
+          52
+        ],
+        [
+          0,
+          65
+        ],
+        [
+          0,
+          39
+        ],
+        [
+          0,
+          52
+        ],
+        [
+          0,
+          65
+        ]
+      ],
+      "contact_row_pool_ids": [
+        [
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          4,
+          4,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          5,
+          5,
+          5,
+          6,
+          6,
+          6,
+          7,
+          7,
+          7
+        ]
+      ],
+      "canonical_constraint_keys": [
+        [
+          1,
+          6,
+          -1,
+          0
+        ],
+        [
+          1,
+          7,
+          -1,
+          0
+        ],
+        [
+          1,
+          8,
+          -1,
+          0
+        ],
+        [
+          1,
+          9,
+          -1,
+          0
+        ],
+        [
+          1,
+          10,
+          -1,
+          0
+        ],
+        [
+          1,
+          11,
+          -1,
+          0
+        ],
+        [
+          1,
+          12,
+          -1,
+          0
+        ],
+        [
+          1,
+          13,
+          -1,
+          0
+        ],
+        [
+          1,
+          14,
+          -1,
+          0
+        ],
+        [
+          1,
+          15,
+          -1,
+          0
+        ],
+        [
+          1,
+          16,
+          -1,
+          0
+        ],
+        [
+          1,
+          17,
+          -1,
+          0
+        ],
+        [
+          7,
+          0,
+          26,
+          0
+        ],
+        [
+          7,
+          0,
+          26,
+          1
+        ],
+        [
+          7,
+          0,
+          26,
+          2
+        ],
+        [
+          7,
+          0,
+          39,
+          0
+        ],
+        [
+          7,
+          0,
+          39,
+          1
+        ],
+        [
+          7,
+          0,
+          39,
+          2
+        ],
+        [
+          7,
+          0,
+          52,
+          0
+        ],
+        [
+          7,
+          0,
+          52,
+          1
+        ],
+        [
+          7,
+          0,
+          52,
+          2
+        ],
+        [
+          7,
+          0,
+          65,
+          0
+        ],
+        [
+          7,
+          0,
+          65,
+          1
+        ],
+        [
+          7,
+          0,
+          65,
+          2
+        ]
+      ],
+      "unused_constraint_rows_per_world": [
+        744,
+        744
+      ],
+      "unused_J_columns": 2,
+      "unused_global_contact_slots": 248
+    },
+    "F2": {
+      "friction_dof_row_ids": [
+        [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ],
+        [
+          14,
+          15,
+          16,
+          17,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      ],
+      "dof_frictionadr": [
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "contact_pool_worldids": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "contact_pool_geom_pairs": [
+        [
+          0,
+          26
+        ],
+        [
+          0,
+          39
+        ],
+        [
+          0,
+          52
+        ],
+        [
+          0,
+          65
+        ],
+        [
+          0,
+          26
+        ],
+        [
+          0,
+          39
+        ],
+        [
+          0,
+          52
+        ],
+        [
+          0,
+          65
+        ]
+      ],
+      "contact_row_pool_ids": [
+        [
+          4,
+          4,
+          4,
+          5,
+          5,
+          5,
+          6,
+          6,
+          6,
+          7,
+          7,
+          7
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3
+        ]
+      ],
+      "canonical_constraint_keys": [
+        [
+          1,
+          6,
+          -1,
+          0
+        ],
+        [
+          1,
+          7,
+          -1,
+          0
+        ],
+        [
+          1,
+          8,
+          -1,
+          0
+        ],
+        [
+          1,
+          9,
+          -1,
+          0
+        ],
+        [
+          1,
+          10,
+          -1,
+          0
+        ],
+        [
+          1,
+          11,
+          -1,
+          0
+        ],
+        [
+          1,
+          12,
+          -1,
+          0
+        ],
+        [
+          1,
+          13,
+          -1,
+          0
+        ],
+        [
+          1,
+          14,
+          -1,
+          0
+        ],
+        [
+          1,
+          15,
+          -1,
+          0
+        ],
+        [
+          1,
+          16,
+          -1,
+          0
+        ],
+        [
+          1,
+          17,
+          -1,
+          0
+        ],
+        [
+          7,
+          0,
+          26,
+          0
+        ],
+        [
+          7,
+          0,
+          26,
+          1
+        ],
+        [
+          7,
+          0,
+          26,
+          2
+        ],
+        [
+          7,
+          0,
+          39,
+          0
+        ],
+        [
+          7,
+          0,
+          39,
+          1
+        ],
+        [
+          7,
+          0,
+          39,
+          2
+        ],
+        [
+          7,
+          0,
+          52,
+          0
+        ],
+        [
+          7,
+          0,
+          52,
+          1
+        ],
+        [
+          7,
+          0,
+          52,
+          2
+        ],
+        [
+          7,
+          0,
+          65,
+          0
+        ],
+        [
+          7,
+          0,
+          65,
+          1
+        ],
+        [
+          7,
+          0,
+          65,
+          2
+        ]
+      ],
+      "unused_constraint_rows_per_world": [
+        744,
+        744
+      ],
+      "unused_J_columns": 2,
+      "unused_global_contact_slots": 248
+    }
+  },
+  "first_step_canonical_comparisons": {
+    "F1": {
+      "canonical_constraint_keys_equal": true,
+      "constraints": {
+        "J": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "pos": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "margin": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "D": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "vel": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "aref": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "frictionloss": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "state": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "force": {
+          "equal": false,
+          "different_elements": 12,
+          "max_abs": 0.00066375732421875
+        }
+      },
+      "contact_values_equal": true,
+      "contact_differences": {},
+      "smooth_inputs": {
+        "ctrl": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "actuator_force": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_actuator": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_passive": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_applied": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "xfrc_applied": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_bias": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_smooth": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qacc_smooth": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "M": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qLD": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qLDiagInv": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        }
+      },
+      "outputs": {
+        "qfrc_constraint": {
+          "equal": false,
+          "different_elements": 18,
+          "max_abs": 0.0002880096435546875
+        },
+        "qacc": {
+          "equal": false,
+          "different_elements": 18,
+          "max_abs": 0.0010986328125
+        },
+        "qpos": {
+          "equal": false,
+          "different_elements": 1,
+          "max_abs": 1.1641532182693481e-10
+        },
+        "qvel": {
+          "equal": false,
+          "different_elements": 16,
+          "max_abs": 2.384185791015625e-07
+        },
+        "efc_Ma": {
+          "equal": false,
+          "different_elements": 17,
+          "max_abs": 0.00079345703125
+        },
+        "solver_niter": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        }
+      },
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ]
+    },
+    "L": {
+      "canonical_constraint_keys_equal": true,
+      "constraints": {
+        "J": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "pos": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "margin": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "D": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "vel": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "aref": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "frictionloss": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "state": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "force": {
+          "equal": false,
+          "different_elements": 11,
+          "max_abs": 1.52587890625e-05
+        }
+      },
+      "contact_values_equal": true,
+      "contact_differences": {},
+      "smooth_inputs": {
+        "ctrl": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "actuator_force": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_actuator": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_passive": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_applied": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "xfrc_applied": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_bias": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_smooth": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qacc_smooth": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "M": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qLD": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qLDiagInv": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        }
+      },
+      "outputs": {
+        "qfrc_constraint": {
+          "equal": false,
+          "different_elements": 17,
+          "max_abs": 3.0517578125e-05
+        },
+        "qacc": {
+          "equal": false,
+          "different_elements": 17,
+          "max_abs": 7.62939453125e-05
+        },
+        "qpos": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qvel": {
+          "equal": false,
+          "different_elements": 3,
+          "max_abs": 2.9802322387695312e-08
+        },
+        "efc_Ma": {
+          "equal": false,
+          "different_elements": 18,
+          "max_abs": 1.52587890625e-05
+        },
+        "solver_niter": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        }
+      },
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ]
+    },
+    "F2": {
+      "canonical_constraint_keys_equal": true,
+      "constraints": {
+        "J": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "pos": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "margin": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "D": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "vel": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "aref": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "frictionloss": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "state": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "force": {
+          "equal": false,
+          "different_elements": 11,
+          "max_abs": 1.52587890625e-05
+        }
+      },
+      "contact_values_equal": true,
+      "contact_differences": {},
+      "smooth_inputs": {
+        "ctrl": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "actuator_force": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_actuator": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_passive": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_applied": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "xfrc_applied": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_bias": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_smooth": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qacc_smooth": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "M": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qLD": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qLDiagInv": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        }
+      },
+      "outputs": {
+        "qfrc_constraint": {
+          "equal": false,
+          "different_elements": 18,
+          "max_abs": 3.0517578125e-05
+        },
+        "qacc": {
+          "equal": false,
+          "different_elements": 17,
+          "max_abs": 0.0001220703125
+        },
+        "qpos": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qvel": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "efc_Ma": {
+          "equal": false,
+          "different_elements": 17,
+          "max_abs": 2.0265579223632812e-06
+        },
+        "solver_niter": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        }
+      },
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ]
+    }
+  },
+  "F1_vs_F2_first_step_same_world": {
+    "0": {
+      "canonical_constraint_keys_equal": true,
+      "constraints": {
+        "J": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "pos": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "margin": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "D": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "vel": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "aref": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "frictionloss": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "state": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "force": {
+          "equal": false,
+          "different_elements": 12,
+          "max_abs": 0.0006580352783203125
+        }
+      },
+      "contact_values_equal": true,
+      "contact_differences": {},
+      "smooth_inputs": {
+        "ctrl": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "actuator_force": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_actuator": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_passive": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_applied": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "xfrc_applied": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_bias": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_smooth": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qacc_smooth": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "M": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qLD": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qLDiagInv": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        }
+      },
+      "outputs": {
+        "qfrc_constraint": {
+          "equal": false,
+          "different_elements": 18,
+          "max_abs": 0.0002803802490234375
+        },
+        "qacc": {
+          "equal": false,
+          "different_elements": 18,
+          "max_abs": 0.00115966796875
+        },
+        "qpos": {
+          "equal": false,
+          "different_elements": 1,
+          "max_abs": 1.1641532182693481e-10
+        },
+        "qvel": {
+          "equal": false,
+          "different_elements": 16,
+          "max_abs": 2.384185791015625e-07
+        },
+        "efc_Ma": {
+          "equal": false,
+          "different_elements": 18,
+          "max_abs": 0.00079345703125
+        },
+        "solver_niter": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        }
+      },
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ]
+    },
+    "1": {
+      "canonical_constraint_keys_equal": true,
+      "constraints": {
+        "J": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "pos": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "margin": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "D": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "vel": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "aref": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "frictionloss": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "state": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "force": {
+          "equal": false,
+          "different_elements": 10,
+          "max_abs": 7.62939453125e-06
+        }
+      },
+      "contact_values_equal": true,
+      "contact_differences": {},
+      "smooth_inputs": {
+        "ctrl": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "actuator_force": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_actuator": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_passive": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_applied": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "xfrc_applied": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_bias": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qfrc_smooth": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qacc_smooth": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "M": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qLD": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qLDiagInv": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        }
+      },
+      "outputs": {
+        "qfrc_constraint": {
+          "equal": false,
+          "different_elements": 16,
+          "max_abs": 3.0517578125e-05
+        },
+        "qacc": {
+          "equal": false,
+          "different_elements": 16,
+          "max_abs": 7.62939453125e-05
+        },
+        "qpos": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        },
+        "qvel": {
+          "equal": false,
+          "different_elements": 1,
+          "max_abs": 1.4901161193847656e-08
+        },
+        "efc_Ma": {
+          "equal": false,
+          "different_elements": 14,
+          "max_abs": 9.5367431640625e-06
+        },
+        "solver_niter": {
+          "equal": true,
+          "different_elements": 0,
+          "max_abs": 0.0
+        }
+      },
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ]
+    }
+  },
+  "ten_step_summary": [
+    {
+      "condition": "F1",
+      "substep": 1,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [],
+      "constraint_force_max_abs": 0.00066375732421875,
+      "qacc_max_abs": 0.0010986328125,
+      "qpos_max_abs": 1.1641532182693481e-10,
+      "qvel_max_abs": 2.384185791015625e-07
+    },
+    {
+      "condition": "F1",
+      "substep": 2,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 3.814697265625e-05,
+      "qacc_max_abs": 0.0001373291015625,
+      "qpos_max_abs": 1.1641532182693481e-10,
+      "qvel_max_abs": 2.384185791015625e-07
+    },
+    {
+      "condition": "F1",
+      "substep": 3,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 2.288818359375e-05,
+      "qacc_max_abs": 7.62939453125e-05,
+      "qpos_max_abs": 1.1641532182693481e-10,
+      "qvel_max_abs": 2.086162567138672e-07
+    },
+    {
+      "condition": "F1",
+      "substep": 4,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 4.57763671875e-05,
+      "qacc_max_abs": 0.0001239776611328125,
+      "qpos_max_abs": 1.1641532182693481e-10,
+      "qvel_max_abs": 2.086162567138672e-07
+    },
+    {
+      "condition": "F1",
+      "substep": 5,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 3.814697265625e-05,
+      "qacc_max_abs": 0.000148773193359375,
+      "qpos_max_abs": 1.1641532182693481e-10,
+      "qvel_max_abs": 2.086162567138672e-07
+    },
+    {
+      "condition": "F1",
+      "substep": 6,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.0008068084716796875,
+      "qacc_max_abs": 7.62939453125e-05,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 2.086162567138672e-07
+    },
+    {
+      "condition": "F1",
+      "substep": 7,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 1.52587890625e-05,
+      "qacc_max_abs": 9.918212890625e-05,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 2.086162567138672e-07
+    },
+    {
+      "condition": "F1",
+      "substep": 8,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 3.0517578125e-05,
+      "qacc_max_abs": 0.00012969970703125,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 2.086162567138672e-07
+    },
+    {
+      "condition": "F1",
+      "substep": 9,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.000316619873046875,
+      "qacc_max_abs": 0.001110076904296875,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 2.682209014892578e-07
+    },
+    {
+      "condition": "F1",
+      "substep": 10,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": false,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.0004558563232421875,
+      "qacc_max_abs": 0.0009365081787109375,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 1.1920928955078125e-07
+    },
+    {
+      "condition": "L",
+      "substep": 1,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [],
+      "constraint_force_max_abs": 1.52587890625e-05,
+      "qacc_max_abs": 7.62939453125e-05,
+      "qpos_max_abs": 0.0,
+      "qvel_max_abs": 2.9802322387695312e-08
+    },
+    {
+      "condition": "L",
+      "substep": 2,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.001155853271484375,
+      "qacc_max_abs": 0.0001068115234375,
+      "qpos_max_abs": 0.0,
+      "qvel_max_abs": 5.960464477539063e-08
+    },
+    {
+      "condition": "L",
+      "substep": 3,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.0002117156982421875,
+      "qacc_max_abs": 0.000823974609375,
+      "qpos_max_abs": 1.1641532182693481e-10,
+      "qvel_max_abs": 1.7881393432617188e-07
+    },
+    {
+      "condition": "L",
+      "substep": 4,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.00139617919921875,
+      "qacc_max_abs": 0.002227783203125,
+      "qpos_max_abs": 1.1641532182693481e-10,
+      "qvel_max_abs": 3.5762786865234375e-07
+    },
+    {
+      "condition": "L",
+      "substep": 5,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.000396728515625,
+      "qacc_max_abs": 0.001708984375,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 5.550682544708252e-07
+    },
+    {
+      "condition": "L",
+      "substep": 6,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.0017414093017578125,
+      "qacc_max_abs": 0.00018310546875,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 5.550682544708252e-07
+    },
+    {
+      "condition": "L",
+      "substep": 7,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.0003604888916015625,
+      "qacc_max_abs": 0.00124359130859375,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 7.487833499908447e-07
+    },
+    {
+      "condition": "L",
+      "substep": 8,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.00274658203125,
+      "qacc_max_abs": 0.00440216064453125,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 4.172325134277344e-07
+    },
+    {
+      "condition": "L",
+      "substep": 9,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 1.52587890625e-05,
+      "qacc_max_abs": 0.000156402587890625,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 4.172325134277344e-07
+    },
+    {
+      "condition": "L",
+      "substep": 10,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": false,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.00032714009284973145,
+      "qacc_max_abs": 0.0007305145263671875,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 5.960464477539062e-07
+    },
+    {
+      "condition": "F2",
+      "substep": 1,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [],
+      "constraint_force_max_abs": 1.52587890625e-05,
+      "qacc_max_abs": 0.0001220703125,
+      "qpos_max_abs": 0.0,
+      "qvel_max_abs": 0.0
+    },
+    {
+      "condition": "F2",
+      "substep": 2,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [],
+      "constraint_force_max_abs": 0.0009012222290039062,
+      "qacc_max_abs": 0.0034332275390625,
+      "qpos_max_abs": 1.1641532182693481e-10,
+      "qvel_max_abs": 6.556510925292969e-07
+    },
+    {
+      "condition": "F2",
+      "substep": 3,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.0020122528076171875,
+      "qacc_max_abs": 0.006561279296875,
+      "qpos_max_abs": 0.0,
+      "qvel_max_abs": 6.258487701416016e-07
+    },
+    {
+      "condition": "F2",
+      "substep": 4,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.000743865966796875,
+      "qacc_max_abs": 0.00099945068359375,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 5.960464477539062e-07
+    },
+    {
+      "condition": "F2",
+      "substep": 5,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 3.0517578125e-05,
+      "qacc_max_abs": 0.00019073486328125,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 5.736947059631348e-07
+    },
+    {
+      "condition": "F2",
+      "substep": 6,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.000743865966796875,
+      "qacc_max_abs": 0.00019073486328125,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 5.476176738739014e-07
+    },
+    {
+      "condition": "F2",
+      "substep": 7,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.0001220703125,
+      "qacc_max_abs": 0.00043487548828125,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 6.09084963798523e-07
+    },
+    {
+      "condition": "F2",
+      "substep": 8,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": false,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.002716064453125,
+      "qacc_max_abs": 0.0041046142578125,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 1.3720709830522537e-06
+    },
+    {
+      "condition": "F2",
+      "substep": 9,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 5.340576171875e-05,
+      "qacc_max_abs": 0.0003662109375,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 1.298263669013977e-06
+    },
+    {
+      "condition": "F2",
+      "substep": 10,
+      "active_rows": [
+        24,
+        24
+      ],
+      "active_contacts": [
+        4,
+        4
+      ],
+      "contact_values_equal": true,
+      "constraint_input_differences": [
+        "J",
+        "vel",
+        "aref"
+      ],
+      "constraint_force_max_abs": 0.0004572868347167969,
+      "qacc_max_abs": 0.00090789794921875,
+      "qpos_max_abs": 1.862645149230957e-09,
+      "qvel_max_abs": 1.426786184310913e-06
+    }
+  ],
+  "source_paths": [
+    {
+      "path": "/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/constraint.py",
+      "sha256": "aa2e774fc4662125eb911b4557a16c722e8ed953a13ce55707ca5fa6ccd234b3",
+      "line_spans": [
+        [
+          1953,
+          2053
+        ],
+        [
+          5092,
+          5095
+        ],
+        [
+          6113,
+          6114
+        ]
+      ],
+      "interpretation": "DOF friction rows use atomic allocation. CONSTRAINT option calls _sort_constraints, which is TODO/pass in this installed source; toggling that flag alone is not a repair."
+    },
+    {
+      "path": "/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/solver.py",
+      "sha256": "2c0c526b07cdd287f40c41e959728a032a99b7d89d079991d51ee3120ca0d761",
+      "line_spans": [
+        [
+          71,
+          164
+        ],
+        [
+          1158,
+          1210
+        ],
+        [
+          2376,
+          2407
+        ],
+        [
+          2908,
+          3013
+        ],
+        [
+          4540,
+          4627
+        ]
+      ],
+      "interpretation": "Row-indexed tile line-search reductions, Newton grad_dot atomic sum and elliptic contact Hessian atomic sum are candidate rounding paths. A separate SolverContext is allocated per solve and is absent from Data snapshots; these saved boundaries do not identify the first differing kernel."
+    },
+    {
+      "path": "/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/forward.py",
+      "sha256": "e2d5ec770a426521954fb6f2e6b2b3f9c95228c74775857cfda39526b2e69b93",
+      "line_spans": [
+        [
+          3502,
+          3560
+        ]
+      ],
+      "interpretation": "Constraint assembly and smooth acceleration precede solver.solve, which precedes implicit integration."
+    },
+    {
+      "path": "/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/types.py",
+      "sha256": "4d838ef79cc122fbdee0b12a2803b8b5a08e0331e9f9801f7154d75bbc359cf5",
+      "line_spans": [
+        [
+          308,
+          324
+        ]
+      ],
+      "interpretation": "Determinism flags describe separate contact ordering, constraint ordering and atomic reduction features."
+    },
+    {
+      "path": "/root/autodl-tmp/MCP-RL/work/envs/w41-mjwarp/lib/python3.12/site-packages/mujoco_warp/_src/io.py",
+      "sha256": "5460526346bfe910b7d5cc858bba93097ad07f38f71dee54aa8c0e7534403491",
+      "line_spans": [
+        [
+          572,
+          572
+        ]
+      ],
+      "interpretation": "put_model initializes determinism to NONE; W49 script does not change it."
+    }
+  ],
+  "callback": {
+    "path": "/root/autodl-tmp/MCP-RL-w42/scripts/s1_go2_w41_warp_backend.py",
+    "sha256": "3c62cfe695500d3815e25d8140a70fe93f9f1d19ad9e136a228ccef81a2e9ccf",
+    "line_spans": [
+      [
+        17,
+        23
+      ],
+      [
+        25,
+        44
+      ]
+    ],
+    "write_sets": "filter_contact writes dist[i] per active pooled contact; material_force writes out[world,dof] per distinct launch index. Initial passive/external forces are equal; no direct cross-world shared write found in this callback."
+  },
+  "conclusions": [
+    "All three first-step comparisons have identical canonical active constraint inputs and identical smooth dynamics inputs. Physical contact fields are equal. Raw efc_J/D/aref differences are row-layout artifacts, not different physical constraint assembly.",
+    "After normalization, contact efc_force already differs at the first stored step, while friction forces and constraint states match. The first observable physical divergence lies in the constraint solve before integration.",
+    "DOF friction row permutation and global contact allocation expose different reduction ordering. This is a concrete plausible floating-point mechanism, not proof of a unique kernel or a race.",
+    "F1 versus F2 same-world canonical inputs also match at step 1, but force/qacc differ. Therefore friction-row permutation alone is not established as sufficient explanation; solver reduction order and unrecorded local workspace remain unresolved.",
+    "The installed canonical-constraint-sort function is a stub. No source/config repair was applied and no new probe was justified from these boundary-only data.",
+    "Small FP32 differences do not by themselves invalidate engineering use. Full native J is still absent on GPU, and this analysis provides no equivalent-native-ranking or speedup qualification."
+  ],
+  "probe": {
+    "status": "not_run",
+    "reason": "No isolated repair with a uniquely discriminating probe established; preserve conditional <=20-world-step budget and unrelated GPU training."
+  },
+  "qualification": {
+    "full_native_cost_implemented_on_gpu": false,
+    "equivalent_native_ranking": false,
+    "original_task_result": null,
+    "blocks_CPU_W50": false
+  },
+  "server_originals_retained": true,
+  "user_pc_download": false
+}
