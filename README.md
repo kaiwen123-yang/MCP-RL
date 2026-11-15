@@ -1,10 +1,16 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
+## W51 正在执行（2026-11-15）
+真实 D8 与相位感知运动候选已实施，D57 的 D0/r38、D1/r39 已从同一原始初态并行运行。源码提交 `df68de8`；[实际运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json)记录真实物理时钟和 PID。原任务资格及版本选择仍待两臂结果。
+C 已完成一次 FP64 CUDA 归约：114 条原候选、113 维残差、22 个成本项；最大总 J 绝对误差 5.82077e-11，六组各自内部的 risk/roundoff 比较全部一致。新增 GPU 物理与 PPO 均为 0。[C 结果与覆盖范围](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/task-c.json) · [已核验原件 Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w51-C-costs-part01)。这仍是残差到 J 的归约和部分代数项，不是完整 native cost 迁移。
+
+
+
 长期目标：同一世界地块被前足、后足和返程重复加载时，利用材料持久状态，让未来支撑需求影响当前加载、落点和重访，建立原Go2/TM02合法完整往返、因果记忆收益、泛化及实机证据。
 
 ## 当前：W50完成有限负结果；W51从正常起步比较反馈刷新与运动初始轨迹
 
-**2026-11-15，结果基点09bd55e：W50/S5-r38/H已实现并发布，原A/B E30未运行；W51 planned_not_implemented。** 最新完整原任务仍是W49：两E30观察满30s但资格0/2、合法往返0，视频所见低伏/非足支撑不是正常稳定行走。本次审查未启动新native solve、物理/GPU积分或PPO，实际修复了公共runtime两处缩进错误。
+**2026-11-15，结果基点09bd55e：W50/S5-r38/H已实现并发布，原A/B E30未运行；W51 计划形成时为 planned_not_implemented。** 最新完整原任务仍是W49：两E30观察满30s但资格0/2、合法往返0，视频所见低伏/非足支撑不是正常稳定行走。本次审查未启动新native solve、物理/GPU积分或PPO，实际修复了公共runtime两处缩进错误。
 
 [项目记忆](docs/TERRAIN_MEMORY_PLAN.md) · [W50完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/README.md) · [W51详细计划](docs/S1_W51_STABILITY_PLAN.md) · [Codex启动提示词](docs/S1_W51_START_PROMPT.md) · [机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/handoff.json) · [W50实际phase](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/phase.json)
 

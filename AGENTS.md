@@ -1,6 +1,12 @@
 # Codex执行入口：W50有限负结果已发布；W51从正常起步成对验证
 
-更新2026-11-15（Asia/Shanghai）。结果基点`09bd55e0cb70244938ad82db7dd202a31ac70f77`。**W50/S5-r38/H已实现并完成有限负结果；W51 planned_not_implemented。** 本次审查实际修复了公共runtime两处缩进错误，未启动新物理、native solve、FD、GPU积分或PPO。
+## W51 实际执行（2026-11-15）
+D8 与 r39 已实施并构建，源码提交 `df68de8`。D57 `s1-w51-pair` 正在运行 D0/r38、D1/r39，两臂均为 W44 A seed1/checkpoint-014737、原 evaluation t=0 初态。运行索引：`results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json`。没有新增 PPO/donor 或原 E30 资格。
+用户允许 tmux 稳定后结束对话。后台会完成实际 D8、逐窗统计、全时段视频与 D57 直传发布；版本选择待完整承重/推进证据，不另造数值阈值。续接先读 phase、D0/D1、paired-results 与 task-c；不得重开已启动的 D8。后文计划约束继续有效。
+
+
+
+更新2026-11-15（Asia/Shanghai）。结果基点`09bd55e0cb70244938ad82db7dd202a31ac70f77`。**W50/S5-r38/H已实现并完成有限负结果；W51 计划形成时为 planned_not_implemented。** 本次审查实际修复了公共runtime两处缩进错误，未启动新物理、native solve、FD、GPU积分或PPO。
 
 先读[项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[W50最终审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/README.md)、[W51详细计划](docs/S1_W51_STABILITY_PLAN.md)、[启动提示词](docs/S1_W51_START_PROMPT.md)、[机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/handoff.json)。算法、实际入口、工作量与判定以W51计划为准；旧计划/旧“当前”只按形成时点阅读，不重开W50预算。
 

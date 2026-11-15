@@ -1,6 +1,13 @@
 # 地面材料记忆主计划：W50有限负结果已审查，W51从起步成对辨识
 
-更新2026-11-15（Asia/Shanghai）。结果基点`09bd55e0cb70244938ad82db7dd202a31ac70f77`。W50/S5-r38/H已实现并发布，原A/B E30未启动。**W51 planned_not_implemented**；本次审查已修复公共runtime两处缩进错误，没有新native solve、物理/GPU积分或PPO。
+## W51 实际状态（2026-11-15）
+真实 D8 与 r39 已实施并完成 native/service/server 构建；源码提交 `df68de8`。D0、D1 已在 `s1-w51-pair` 并行运行，每臂一次原 evaluation t=0→8s，保持原物理提前终止；两臂同 W44 A seed1、checkpoint-014737、归一化和完整初态。当前没有原 E30 新资格，新增 PPO/donor 为 0。见 [运行索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json)。
+C 的 114 候选/22 项 FP64 GPU 归约已完成并直传 Release，最大 J 误差 5.82077e-11，六组内部比较一致，新 GPU 物理 0。部分 state 代数项仍有真实残差误差（MaterialSupportHeight 最大 9.00991e-6），完整成本移植未成立。
+用户允许 tmux 稳定后结束对话。后台完成双 D8 的统计、实际时段视频及发布；续接读取完整结果后按本计划选择版本，或交成对负结果。不能把正在运行、8s 诊断或未启动的原阶梯记成成功。
+
+
+
+更新2026-11-15（Asia/Shanghai）。结果基点`09bd55e0cb70244938ad82db7dd202a31ac70f77`。W50/S5-r38/H已实现并发布，原A/B E30未启动。**W51 计划形成时为 planned_not_implemented**；本次审查已修复公共runtime两处缩进错误，没有新native solve、物理/GPU积分或PPO。
 
 [W50最终审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/README.md) · [W51详细计划](S1_W51_STABILITY_PLAN.md) · [启动提示词](S1_W51_START_PROMPT.md) · [AGENTS](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/handoff.json) · [W50实际phase](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/phase.json)
 

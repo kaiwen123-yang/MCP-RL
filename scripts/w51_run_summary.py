@@ -77,6 +77,10 @@ def windows(out,boundaries):
  with np.load(out/'trajectory.npz') as z:
   t=z['time'];fz=z['actual_grf'][:,:,2];nf=z['nonfoot_ground_force'][:,2]
   q=z['qpos'];v=z['qvel'];feet=z['feet'];fv=z['feet_velocity'];rpy=z['rpy']
+  import mujoco
+  model=mujoco.MjModel.from_binary_path(str(out/'model.mjb'))
+  radii=np.array([model.geom_size[mujoco.mj_name2id(model,mujoco.mjtObj.mjOBJ_GEOM,name),0] for name in ('FL','FR','RL','RR')])
+  bottom=feet[:,:,2]-radii[None,:]
   for lo,hi in [(0,2),(2.002,4.3),(4.3,8)]:
    ids=np.flatnonzero((t>=lo-1e-9)&(t<=hi+1e-9))
    if not len(ids):result.append(dict(requested_s=[lo,hi],status='not_reached'));continue
@@ -98,8 +102,8 @@ def windows(out,boundaries):
     nonfoot_mean_Fz_N=float(nf[k].mean()),nonfoot_over_1N_fraction=float((nf[k]>1).mean()),
     four_feet_over_1N_fraction=float(loads.all(axis=1).mean()),feet_Fz_mean_N=fz[k].mean(axis=0).tolist(),
     feet_world_tangent_speed_mean_m_s=np.linalg.norm(fv[k,:,:2],axis=2).mean(axis=0).tolist(),
-    feet_bottom_z_range_m=np.stack([feet[k,:,2].min(axis=0),feet[k,:,2].max(axis=0)]).tolist(),
-    feet_z_semantics='trajectory feet are recorded sole points (runtime data.geom_xpos minus radii)',
+    feet_bottom_z_range_m=np.stack([bottom[k].min(axis=0),bottom[k].max(axis=0)]).tolist(),
+    feet_z_semantics='recorded geom centers minus original compiled foot radii; relative to original z=0 plane, not unobserved deformed terrain',
     diagnostic_threshold_N=1,qualification_threshold_changed=False)
    if swing is not None:
     row['target_swing_loaded_fraction']=[float(loads[:,i][swing[:,i]].mean()) if swing[:,i].any() else None for i in range(4)]

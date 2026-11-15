@@ -1,8 +1,16 @@
 # S1 W51：从起步辨识反馈刷新与步态初始轨迹的作用
 
+## 本计划的实际实施状态（2026-11-15）
+实现提交 `df68de8`；r39 完整重编 62 个相关单元及 service/server。首次编译因一行 if 的 misleading-indentation 警告被 -Werror 拒绝，修正后通过；未在该失败构建中执行物理。D0/r38 与 D1/r39 的 job 为 `job-20261115T112019Z-w51-d0`、`job-20261115T112019Z-w51-d1`，在 D57 `s1-w51-pair` 持续运行，无墙钟 deadline。实际状态以 [phase.json](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json) 为准。
+运动状态由正常 Agent SetState/Transition 每 2ms 观察更新，stance 世界锚点及本次 swing touchdown 跨 replan 保存；IK 使用原 home 几何、原关节限位和上一节点连续分支。剩余相位采用唯一五次位置/速度端点连接，保留原 C2/5mm 意图。IK 数值迭代最多 40 次、单次关节更新最大 .2rad、末端容差 1e-5m；这些是求逆数值设置，不增加物理/落点/步高网格。
+用户允许 tmux 稳定后结束本次对话。后台自动等两臂实际结束，生成逐窗统计、完整实际时段视频并从 D57 发布原件。后台状态随后为 `paired_D8_ended_pending_scientific_selection`，科学选择须读取实际承重和视频证据；不新增任意自动步态阈值。若有推进依据，使用 `python scripts/run_s1_go2_w51.py --select D0` 或 `--select D1` 启动该冻结版本原 A/B 各一次阶梯；两臂都差则记录成对负结果，不启动 E30。不得重复启动既有 D8。
+C 已完成一次 114×176×113 的 FP64 CUDA 归约和 22 项覆盖记录：最大总 J 误差 5.820766091346741e-11，六组同问题内原 risk/roundoff 比较差异 0。76 条保存问题与 38 条错误 bridge 中点严格区分，新增物理/PPO 为 0。纯 state 代数及 Stand 非激活分支另记真实误差，MaterialSupportHeight 最大 9.009910922230802e-6；没有声称完整 residual/native cost 移植。见 [task-c.json](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/task-c.json) 及其已核验 Release。
+
+
+
 更新：2026-11-15（Asia/Shanghai）。结果基点：`09bd55e0cb70244938ad82db7dd202a31ac70f77`；W50计划提交：`9ba97283c13119ec197429b75fce6b139a506a33`。
 
-**状态：planned_not_implemented。本次审查修复了公共runtime两处缩进错误；W51诊断入口、运动候选、服务器构建与实验尚未执行。** 没有新native solve、物理/GPU积分或PPO。W50的四例/两条短部署已经结束，不重开其预算。
+**计划形成时状态：planned_not_implemented。本次审查修复了公共runtime两处缩进错误；W51诊断入口、运动候选、服务器构建与实验尚未执行。** 没有新native solve、物理/GPU积分或PPO。W50的四例/两条短部署已经结束，不重开其预算。
 
 [W50最终审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/README.md) · [视频与日志](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/video-review.md) · [启动提示词](S1_W51_START_PROMPT.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/handoff.json) · [项目记忆](TERRAIN_MEMORY_PLAN.md)。
 

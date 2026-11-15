@@ -43,7 +43,7 @@ def render(name):
             if '-w51-' in name:
                 fz=a['actual_grf'][i,:,2];nf=a['nonfoot_ground_force'][i,2]
                 draw.text((18,76),f"z={d.qpos[2]:.3f}m vz={d.qvel[2]:+.3f}m/s | foot Fz FL FR RL RR="+','.join(f'{f:.1f}' for f in fz)+f" N | nonfoot Fz={nf:.1f} N",fill='white')
-                draw.text((18,98),'W51 recorded actual state | '+resolved['r11_configuration']['controller_build'] if 'r11_configuration' in resolved else 'W51 recorded actual state; no new physics',fill='white')
+                draw.text((18,98),'W51 recorded actual state | '+resolved['r12_configuration']['controller_build'] if 'r12_configuration' in resolved else 'W51 recorded actual state; no new physics',fill='white')
             if mismatch:
                 draw.text((18,76),'DECLARED PARAMETER MISMATCH: retained observation; unusable as declared-version qualification',fill='yellow')
             writer.append_data(np.asarray(frame))
