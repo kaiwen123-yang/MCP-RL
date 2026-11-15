@@ -36,10 +36,14 @@ def render(name):
                     np.array([1.5,0,.0002]),np.eye(3).ravel(),np.array([.15,.45,.8,.22],np.float32))
                 renderer.scene.ngeom+=1
             frame=Image.fromarray(renderer.render());draw=ImageDraw.Draw(frame)
-            draw.rectangle((0,0,1280,98 if mismatch else 76),fill=(15,20,30))
+            draw.rectangle((0,0,1280,124 if '-w51-' in name else 98 if mismatch else 76),fill=(15,20,30))
             draw.text((18,9),f"{name} | {result.get('evaluation_stage',{}).get('level','training')} | t={d.time:.4f}s | {PHASES[int(a['phase'][i])]}",fill='white')
             draw.text((18,31),f"Base x={d.qpos[0]:.3f}m y={d.qpos[1]:.3f}m | full recorded task | {'TM02 strip: x[0.8,2.2], y[-0.6,0.6]m' if terrain!='rigid' else 'Rigid regression'}",fill='white')
             draw.text((18,53),result['reason'] if i==sample[-1] else 'Recorded-state replay; original physics and material limits',fill='yellow' if i==sample[-1] else 'white')
+            if '-w51-' in name:
+                fz=a['actual_grf'][i,:,2];nf=a['nonfoot_ground_force'][i,2]
+                draw.text((18,76),f"z={d.qpos[2]:.3f}m vz={d.qvel[2]:+.3f}m/s | foot Fz FL FR RL RR="+','.join(f'{f:.1f}' for f in fz)+f" N | nonfoot Fz={nf:.1f} N",fill='white')
+                draw.text((18,98),'W51 recorded actual state | '+resolved['r11_configuration']['controller_build'] if 'r11_configuration' in resolved else 'W51 recorded actual state; no new physics',fill='white')
             if mismatch:
                 draw.text((18,76),'DECLARED PARAMETER MISMATCH: retained observation; unusable as declared-version qualification',fill='yellow')
             writer.append_data(np.asarray(frame))

@@ -1,0 +1,370 @@
+--- a/mjpc/planners/ilqg/planner.h
++++ b/mjpc/planners/ilqg/planner.h
+@@ -122,6 +122,12 @@
+   std::vector<double> w50_centers,w50_jacobian,w50_metric;
+   long w50_raw_center_evaluations=0;
+   double w50_mu=0,w50_rate=0;
++  iLQGPolicy w51_Q;
++  Trajectory w51_Qtr;
++  bool w51_seed_valid=false;
++  int w51_seed_rollouts=0;
++  std::string w51_status="not_entered";
++  void W51Seed(int horizon,ThreadPool& pool);
+   void W50Capture(int horizon);
+   void W50Transfer(int horizon,ThreadPool& pool);
+ 
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -368,7 +368,7 @@
+                    std::isfinite(tr.trunk_violation);
+   // Alpha search retains the original strict native acceptance even when
+   // startup has no deployable metric. All candidates are still recorded.
+-  const bool eligible=kind!=1 || ((!r34_enabled || alpha>0) &&
++  const bool eligible=(kind!=1 && kind!=4) || ((!r34_enabled || alpha>0) &&
+       R34Better(tr,r33_nominal_trajectory));
+   const bool replace=valid && eligible && (!r33_archive_valid || R34Better(tr,r33_archive_trajectory));
+   if(r34_enabled) {
+@@ -585,6 +585,7 @@
+     policy.WriteDelta(out);policy.WriteProvenance(out);
+   }
+   w49_first_valid=false;w49_k.clear();w49_times.clear();w50_raw_center_evaluations=0;
++  w51_seed_valid=false;w51_seed_rollouts=0;w51_status="no_search_same_epoch_or_invalid_nominal";
+   r34_decisions.clear();
+   r33_archive_valid=false;r33_source="none";r33_rollouts=r33_slots=r33_cache_hits=r33_derivative_passes=0;
+   r33_D.clear();r33_scale_mean=r33_scale_floor=0;
+@@ -616,6 +617,7 @@
+   } else if(r33_mechanism=="P") {
+     R33Structured(horizon,pool);
+   } else {
++    W51Seed(horizon,pool);
+     this->Iteration(horizon, pool);
+     if(r33_mechanism!="H" && std::getenv("MJPC_W49_FINITE_GUIDED") && w49_first_valid)W49Guided(horizon,pool);
+   }
+@@ -633,7 +635,7 @@
+       if(const char* f=std::getenv("MJPC_R27_PLAN_RECORD")) {
+         std::ofstream out(f,std::ios::app);out.precision(17);
+         out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+-           <<",\"controller_artifact\":\"S5-r38\",\"problem_epoch\":"<<r32.epoch
++           <<",\"controller_artifact\":\"S5-r39\",\"problem_epoch\":"<<r32.epoch
+            <<",\"source_call_id\":"<<r29_call_id<<",\"candidate_source\":\""<<r33_source<<"\""
+            <<",\"selected_mechanism\":\""<<r33_mechanism<<"\",\"accepted_cost\":"<<r33_archive_trajectory.total_return
+            <<",\"accepted_trunk_violation\":"<<r33_archive_trajectory.trunk_violation
+@@ -692,6 +694,9 @@
+     out<<",\"deployed_current_trunk_violation\":";
+     if(r32.deployable)out<<r33_archive_trajectory.trunk_violation;else out<<"null";
+     out<<",\"r33_mechanism\":\""<<r33_mechanism<<"\",\"candidate_source\":\""<<r33_source<<"\""
++       <<",\"w51_seed_status\":\""<<w51_status<<"\""
++       <<",\"w51_seed_rollouts\":"<<w51_seed_rollouts
++       <<",\"w51_Q_is_S\":"<<(w51_seed_valid?"true":"false")
+        <<",\"raw_center_evaluations\":"<<w50_raw_center_evaluations
+        <<",\"native_new_rollouts\":"<<r33_rollouts<<",\"candidate_records\":"<<r33_slots
+        <<",\"cache_hits\":"<<r33_cache_hits<<",\"derivative_passes\":"<<r33_derivative_passes
+@@ -1358,7 +1363,7 @@
+     std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
+     out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+ 
+-       <<",\"controller_artifact\":\"S5-r38\""
++       <<",\"controller_artifact\":\"S5-r39\""
+        <<",\"candidate_source\":\""<<r33_source<<"\",\"selected_mechanism\":\""<<r33_mechanism<<"\""
+        <<",\"problem_epoch\":"<<r32.epoch<<",\"source_call_id\":"<<r29_call_id
+        <<",\"policy_generation_epoch\":"<<r32.generation_epoch
+@@ -1649,7 +1654,7 @@
+ 
+ void iLQGPlanner::W50Capture(int horizon) {
+   // One immutable capture before any alpha modifies any candidate array.
+-  w49_first_valid=true;w49_base=r33_nominal_policy;w50_backward=candidate_policy[0];
++  w49_first_valid=true;w49_base=w51_Q;w50_backward=candidate_policy[0];
+   w50_backward.feedback_scaling=1.;
+   w50_mu=backward_pass.regularization;w50_rate=backward_pass.regularization_rate;
+   w49_times.assign(w50_backward.trajectory.times.begin(),w50_backward.trajectory.times.begin()+horizon-1);
+@@ -1670,8 +1675,8 @@
+     std::vector<double> plus(dim_state),minus(dim_state),up(dim_action),um(dim_action),dq(model->nv);
+     const double eps=settings.fd_tolerance;
+     for(int k=0;k<horizon-1;++k) {
+-      const double* x=r33_nominal_trajectory.states.data()+k*dim_state;
+-      const double t=r33_nominal_trajectory.times[k];
++      const double* x=w51_Qtr.states.data()+k*dim_state;
++      const double t=w51_Qtr.times[k];
+       w49_base.RawCenter(w50_centers.data()+k*dim_action,x,t);++w50_raw_center_evaluations;
+       LinearInterpolation(w50_metric.data()+k*dim_action*dim_action,t,
+         w49_base.trajectory.times,w49_base.metric.data(),dim_action*dim_action,w49_base.trajectory.horizon-1);
+@@ -1698,7 +1703,7 @@
+     std::ofstream out(std::string(prefix)+"-direction.bin",std::ios::binary|std::ios::trunc);
+     double h[]={50.,double(r29_call_id),time,double(horizon-1),double(dim_action),
+       double(r29_backward_attempts),w50_mu,w50_rate,
+-      r33_nominal_trajectory.total_return,r33_nominal_trajectory.trunk_violation,R34Budget(r33_nominal_trajectory)};
++      w51_Qtr.total_return,w51_Qtr.trunk_violation,R34Budget(w51_Qtr)};
+     out.write(reinterpret_cast<const char*>(h),sizeof(h));
+     for(const auto* v:{&w49_times,&w49_k})out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(double));
+     std::ofstream center(std::string(prefix)+"-centers.bin",std::ios::binary|std::ios::trunc);
+@@ -1717,7 +1722,7 @@
+   for(int i=0;i<count;++i) {
+     const double alpha=linesearch_steps[i];
+     auto& p=candidate_policy[i];p=w50_backward;
+-    p.trajectory=r33_nominal_trajectory;p.ClearDelta();
++    p.trajectory=w51_Qtr;p.ClearDelta();
+     p.feedback_scaling=1.;p.nominal_feedback_scale=1.;p.action_step_alpha=alpha;
+     p.provenance[13]=alpha;p.provenance[14]=w49_base.record_plan_id;
+     p.provenance[15]=w49_base.provenance[4];
+@@ -1798,4 +1803,146 @@
+   }
+ }
+ 
++void iLQGPlanner::W51Seed(int horizon,ThreadPool& pool) {
++  w51_Q=r33_nominal_policy;w51_Qtr=r33_nominal_trajectory;
++  w51_status="stand_or_terminal";w51_seed_valid=false;w51_seed_rollouts=0;
++  const auto* q=dynamic_cast<const QuadrupedFlat*>(task);
++  if(!q || !q->w51_motion.active || !r33_nominal_policy.metric_valid)return;
++  const auto& motion=q->w51_motion;
++  mjData* actual=mj_makeData(model);mjData* ik=mj_makeData(model);
++  mju_copy(actual->qpos,state.data(),model->nq);
++  mju_copy(actual->qvel,state.data()+model->nq,model->nv);
++  mju_copy(actual->userdata,userdata.data(),model->nuserdata);actual->time=time;
++  mj_kinematics(model,actual);mj_comPos(model,actual);
++  mju_copy(ik->qpos,actual->qpos,model->nq);
++  std::vector<double> knots(horizon-1),delta((horizon-1)*dim_action),jac(3*model->nv);
++  std::array<std::vector<int>,4> actuators;
++  for(int i=0;i<4;++i)for(int a=0;a<dim_action;++a) {
++    int body=model->geom_bodyid[motion.geoms[i]],joint=model->actuator_trnid[2*a];
++    while(body>0 && body!=model->jnt_bodyid[joint])body=model->body_parentid[body];
++    if(body==model->jnt_bodyid[joint])actuators[i].push_back(a);
++  }
++  std::array<std::array<double,3>,4> start,velocity,endpos;
++  std::array<double,4> begin,end,step0,dstep0;
++  std::array<bool,4> swing;
++  double first_step[4],first_velocity[4];q->W51Step(time,first_step,first_velocity);
++  auto local=motion.feet;
++  for(int i=0;i<4;++i) {
++    if(actuators[i].size()!=3)mju_error("W51 requires original three-joint Go2 legs");
++    mj_jacGeom(model,actual,jac.data(),nullptr,motion.geoms[i]);
++    for(int j=0;j<3;++j) {
++      start[i][j]=actual->geom_xpos[3*motion.geoms[i]+j];
++      velocity[i][j]=mju_dot(jac.data()+j*model->nv,actual->qvel,model->nv);
++    }
++    begin[i]=time;end[i]=local[i].end;swing[i]=local[i].swing;
++    endpos[i]=swing[i]?local[i].touchdown:local[i].anchor;
++    step0[i]=first_step[i];dstep0[i]=first_velocity[i];
++  }
++  bool valid=true;int failed_node=-1;double max_error=0;
++  std::vector<double> targets((horizon-1)*12),ik_path((horizon-1)*12);
++  for(int k=0;k<horizon-1 && valid;++k) {
++    const double t=r33_nominal_trajectory.times[k],tau=t-time;
++    knots[k]=t;
++    for(int j=0;j<2;++j)ik->qpos[j]=actual->qpos[j]+actual->userdata[78+j]*tau;
++    const double* height=GetCustomNumericData(model,"r10_material_support_height");
++    const double ztarget=height?height[0]:actual->userdata[95];
++    ik->qpos[2]=actual->qpos[2]+W51Motion::Smooth(tau/.35)*(ztarget-actual->qpos[2]);
++    double yawq[4]={std::cos(actual->userdata[83]*tau/2),0,0,std::sin(actual->userdata[83]*tau/2)};
++    mju_mulQuat(ik->qpos+3,yawq,actual->qpos+3);
++    double step[4],stepvel[4];q->W51Step(t,step,stepvel);
++    for(int i=0;i<4;++i) {
++      while(t>end[i]+1e-10) {
++        start[i]=endpos[i];velocity[i]={0,0,0};begin[i]=end[i];
++        swing[i]=!swing[i];end[i]+= (swing[i]?1-motion.duty:motion.duty)/motion.frequency;
++        endpos[i]=swing[i]?motion.Touchdown(model,actual,i,end[i]):start[i];
++        step0[i]=dstep0[i]=0;
++      }
++      const double duration=end[i]-begin[i],u=std::clamp((t-begin[i])/duration,0.,1.);
++      std::array<double,3> target;
++      for(int j=0;j<3;++j)target[j]=endpos[i][j]+W51Motion::H0(u)*(start[i][j]-endpos[i][j])+
++          duration*W51Motion::H1(u)*velocity[i][j];
++      // Original absolute-phase C2 height plus a unique endpoint correction.
++      // At the current node both actual foot position and velocity are exact.
++      target[2]+=step[i]-W51Motion::H0(u)*step0[i]-duration*W51Motion::H1(u)*dstep0[i];
++      for(int j=0;j<3;++j)targets[k*12+3*i+j]=target[j];
++      double error=0;
++      for(int it=0;it<40;++it) {
++        mj_kinematics(model,ik);mj_comPos(model,ik);
++        double e[3];mju_sub3(e,target.data(),ik->geom_xpos+3*motion.geoms[i]);
++        error=mju_norm3(e);
++        if(error<1e-7)break;
++        mj_jacGeom(model,ik,jac.data(),nullptr,motion.geoms[i]);
++        double J[9],A[9],b[3],dq[3];
++        for(int a=0;a<3;++a) {
++          const int joint=model->actuator_trnid[2*actuators[i][a]],dof=model->jnt_dofadr[joint];
++          for(int j=0;j<3;++j)J[3*j+a]=jac[j*model->nv+dof];
++        }
++        mju_mulMatTMat(A,J,J,3,3,3);mju_mulMatTVec(b,J,e,3,3);
++        for(int a=0;a<3;++a)A[4*a]+=1e-10;
++        mju_cholFactor(A,3,1e-14);mju_cholSolve(dq,A,b,3);
++        const double scale=std::min(1.,.2/std::max(1e-15,std::max({std::abs(dq[0]),std::abs(dq[1]),std::abs(dq[2])})));
++        for(int a=0;a<3;++a) {
++          const int joint=model->actuator_trnid[2*actuators[i][a]],adr=model->jnt_qposadr[joint];
++          ik->qpos[adr]=std::clamp(ik->qpos[adr]+scale*dq[a],model->jnt_range[2*joint],model->jnt_range[2*joint+1]);
++        }
++      }
++      mj_kinematics(model,ik);
++      double e[3];mju_sub3(e,target.data(),ik->geom_xpos+3*motion.geoms[i]);error=mju_norm3(e);
++      max_error=std::max(max_error,error);
++      if(error>1e-5 || !std::isfinite(error)) {valid=false;failed_node=k;break;}
++    }
++    for(int a=0;a<dim_action;++a) {
++      const int adr=model->jnt_qposadr[model->actuator_trnid[2*a]];
++      ik_path[k*dim_action+a]=ik->qpos[adr];
++      delta[k*dim_action+a]=ik->qpos[adr]-r33_nominal_trajectory.states[k*dim_state+adr];
++    }
++  }
++  w51_status=valid?"native_rollout":"ik_unavailable";
++  iLQGPolicy seed=r33_nominal_policy;
++  if(valid) {
++    seed.AddDelta(knots,delta,horizon-1,1.);
++    Trajectory tr=r33_nominal_trajectory;bool projection_failed=false;
++    auto f=[&](double* u,const double* x,double t) {
++      bool changed,failed,restored;seed.ActionImpl(u,x,t,false,&changed,&failed,&restored);
++      projection_failed|=failed;
++    };
++    tr.Rollout(f,task,model,data_[0].get(),state.data(),time,mocap.data(),userdata.data(),horizon);
++    if(projection_failed)tr.failure=true;
++    ++r33_rollouts;w51_seed_rollouts=1;
++    R33Consider(seed,tr,horizon,4,0,1.,"motion_seed_S");
++    w51_seed_valid=seed.metric_valid && !tr.failure && std::isfinite(tr.total_return) && std::isfinite(tr.trunk_violation);
++    if(w51_seed_valid) {
++      w51_Q=seed;w51_Qtr=tr;candidate_policy[0]=seed;
++      candidate_policy[0].trajectory=tr;candidate_policy[0].ClearDelta();
++      feedback_scaling=seed.feedback_scaling;w51_status="Q_is_S";
++    } else w51_status="native_seed_invalid_Q_is_B";
++    if(const char* p=std::getenv("MJPC_W51_RECORD"))seed.Save(std::string(p)+"-S.bin");
++  }
++  if(const char* path=std::getenv("MJPC_W51_RECORD")) {
++    r33_nominal_policy.Save(std::string(path)+"-B.bin");w51_Q.Save(std::string(path)+"-Q.bin");
++    std::ofstream out(std::string(path)+".json",std::ios::trunc);out.precision(17);
++    out<<"{\"call_id\":"<<r29_call_id<<",\"epoch\":"<<r32.epoch<<",\"time_s\":"<<time
++       <<",\"status\":\""<<w51_status<<"\",\"S_valid\":"<<(w51_seed_valid?"true":"false")
++       <<",\"native_seed_rollouts\":"<<w51_seed_rollouts<<",\"B_J\":"<<r33_nominal_trajectory.total_return
++       <<",\"Q_J\":"<<w51_Qtr.total_return<<",\"Q_is_S\":"<<(w51_seed_valid?"true":"false")
++       <<",\"IK_max_error_m\":"<<max_error<<",\"IK_failed_node\":"<<failed_node
++       <<",\"foot_order\":[\"FL\",\"RL\",\"FR\",\"RR\"],\"phase\":"<<motion.phase
++       <<",\"expected\":null,\"ratio\":null,\"foot_context\":[";
++    for(int i=0;i<4;++i) {
++      if(i) {out<<",";}
++      const auto& f=motion.feet[i];
++      out<<"{\"segment\":"<<f.segment<<",\"swing\":"<<(f.swing?"true":"false")
++         <<",\"observed_start\":"<<f.begin<<",\"end\":"<<f.end<<",\"anchor\":[";
++      for(int j=0;j<3;++j){if(j)out<<",";out<<f.anchor[j];}
++      out<<"],\"touchdown\":[";for(int j=0;j<3;++j){if(j)out<<",";out<<f.touchdown[j];}out<<"]}";
++    }
++    out<<"]}\n";
++    std::ofstream raw(std::string(path)+"-kinematics.bin",std::ios::binary|std::ios::trunc);
++    double h[]={51.,double(r29_call_id),time,double(horizon-1),double(valid)};
++    raw.write(reinterpret_cast<char*>(h),sizeof(h));
++    for(const auto* v:{&knots,&targets,&ik_path,&delta})raw.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(double));
++  }
++  mj_deleteData(actual);mj_deleteData(ik);
++}
++
+ }  // namespace mjpc
+--- a/mjpc/tasks/quadruped/quadruped.h
++++ b/mjpc/tasks/quadruped/quadruped.h
+@@ -18,6 +18,7 @@
+ #include <string>
+ #include <mujoco/mujoco.h>
+ #include "mjpc/task.h"
++#include "mjpc/w51_motion.h"
+ 
+ namespace mjpc {
+ 
+@@ -264,6 +265,10 @@
+     r.save_weight_.assign(v.begin()+i,v.end());
+     r.Update();
+   }
++  W51Motion w51_motion;
++  void W51Step(double t,double* height,double* velocity) const {
++    residual_.FootStep(height,residual_.GetPhase(t),residual_.GetGait(),velocity);
++  }
+   bool R35Moving() const {return residual_.current_mode_==ResidualFn::kModeQuadruped &&
+       residual_.GetGait()!=ResidualFn::kGaitStand;}
+   QuadrupedFlat() : residual_(this) {}
+--- a/mjpc/tasks/quadruped/quadruped.cc
++++ b/mjpc/tasks/quadruped/quadruped.cc
+@@ -573,6 +573,10 @@
+   // save mode
+   residual_.current_mode_ = static_cast<ResidualFn::A1Mode>(mode);
+   residual_.last_transition_time_ = data->time;
++  if(std::getenv("MJPC_W51_MOTION"))
++    w51_motion.Observe(model,data,residual_.foot_geom_id_,residual_.GetPhase(data->time),
++      parameters[residual_.cadence_param_id_],parameters[residual_.duty_param_id_],
++      R35Moving(),parameters[residual_.amplitude_param_id_]);
+ }
+ 
+ // colors of visualisation elements drawn in ModifyScene()
+--- a/mjpc/w51_motion.h
++++ b/mjpc/w51_motion.h
+@@ -0,0 +1,78 @@
++#ifndef MJPC_W51_MOTION_H_
++#define MJPC_W51_MOTION_H_
++#include <array>
++#include <algorithm>
++#include <cstdlib>
++#include <cmath>
++#include <vector>
++#include <mujoco/mujoco.h>
++#include "mjpc/tasks/quadruped/r10_contact.h"
++#include "mjpc/utilities.h"
++namespace mjpc {
++// Updated only by the real Agent SetState/Transition, never by candidate rollouts.
++struct W51Foot {
++  long segment=0;
++  bool ready=false,swing=false;
++  double begin=0,end=0;
++  std::array<double,3> anchor{},touchdown{},nominal{};
++};
++struct W51Motion {
++  std::array<W51Foot,4> feet;
++  std::array<int,4> geoms{};
++  bool geometry_ready=false,active=false;
++  double last_time=-1,phase=0,frequency=2,duty=.45,heading=0;
++  static constexpr double shifts[4]={0,.5,.5,0}; // native FL,RL,FR,RR
++  static double Smooth(double u) {return u*u*u*(10+u*(-15+6*u));}
++  static double H0(double u) {return 1-Smooth(u);}
++  static double H1(double u) {return u-6*u*u*u+8*u*u*u*u-3*u*u*u*u*u;}
++  void Segment(int i,double t,bool& swing,long& id,double& end) const {
++    const double x=phase/(2*mjPI)+(t-last_time)*frequency-shifts[i];
++    const long cycle=std::floor(x+.5);
++    const double w=x-cycle,half=(1-duty)*.5;
++    swing=w>-half && w<half;
++    id=2*cycle+(swing?0:(w>=half?1:-1));
++    end=t+(swing?half-w:(w>=half?1-half-w:-half-w))/frequency;
++  }
++  std::array<double,3> Touchdown(const mjModel* m,const mjData* d,int i,double t) const {
++    const double tau=t-d->time,psi=heading+d->userdata[83]*tau;
++    const double co=std::cos(psi),si=std::sin(psi),ts=duty/frequency;
++    const auto& r=feet[i].nominal;
++    std::array<double,3> p={d->qpos[0]+d->userdata[78]*(tau+.5*ts)+co*r[0]-si*r[1],
++      d->qpos[1]+d->userdata[79]*(tau+.5*ts)+si*r[0]+co*r[1],0};
++    const double* flat=GetCustomNumericData(m,"s1_flat_ground_height");
++    p[2]=(flat?flat[0]:0)+R10ContactRest(m,d,p.data())+m->geom_size[3*geoms[i]];
++    return p;
++  }
++  void Observe(const mjModel* m,const mjData* d,const int* ids,double phase_now,
++               double hz,double duty_now,bool moving,double amplitude) {
++    if(d->time<last_time) {for(auto& f:feet)f.ready=false;}
++    if(!geometry_ready) {
++      mjData* home=mj_makeData(m);
++      const int key=mj_name2id(m,mjOBJ_KEY,"home");
++      if(key<0)mju_error("W51 original home geometry missing");
++      mj_resetDataKeyframe(m,home,key);mj_kinematics(m,home);
++      for(int i=0;i<4;++i) {
++        geoms[i]=ids[i];
++        for(int j=0;j<3;++j)feet[i].nominal[j]=home->geom_xpos[3*ids[i]+j]-home->qpos[j];
++      }
++      mj_deleteData(home);geometry_ready=true;
++    }
++    // The native gait switch briefly applies its defaults; capture after the
++    // original explicit 2Hz/.45/.005 settings are applied at the same timestamp.
++    active=moving && hz==2. && duty_now==.45 && amplitude==.005;
++    phase=phase_now;frequency=hz;duty=duty_now;last_time=d->time;
++    heading=d->userdata[91];
++    if(!active) {if(!moving)for(auto& f:feet)f.ready=false;return;}
++    for(int i=0;i<4;++i) {
++      bool sw;long id;double end;Segment(i,d->time,sw,id,end);
++      auto& f=feet[i];
++      if(!f.ready || f.segment!=id) {
++        f.ready=true;f.segment=id;f.swing=sw;f.begin=d->time;f.end=end;
++        for(int j=0;j<3;++j)f.anchor[j]=d->geom_xpos[3*geoms[i]+j];
++        if(sw)f.touchdown=Touchdown(m,d,i,end);
++      }
++    }
++  }
++};
++} // namespace mjpc
++#endif

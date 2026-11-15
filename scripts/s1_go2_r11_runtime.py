@@ -176,6 +176,7 @@ def run(args, c, joint=None):
             idx['attempts'].append(dict(attempt=args.attempt, stage=args.stage, purpose=args.purpose,
                 condition=args.condition, arm=args.arm, mission=args.mission, cohort=args.cohort,
                 status='initializing', physical_started=False, command=sys.argv,
+                qualification_usable=c['r11_stage'].get('qualification_usable',True),
                 started_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
                 case_key=c.get('case_key'), case=c.get('case_identity'), evaluation_stage=c['r11_stage']))
     upstream = Path(args.author_source).resolve()
@@ -352,7 +353,7 @@ def run(args, c, joint=None):
             'packet_period_s':.02,'actor_to_reference':'Recorded at next normal/phase replan',
             'reference_to_optimized_action':'Separate logical and wall times; synchronous optimization'}
     diagnostic_env=dict(os.environ)
-    if c.get('controller_build') in ('S5-r27', 'S5-r28', 'S5-r29', 'S5-r30','S5-r31','S5-r32','S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38'):
+    if c.get('controller_build') in ('S5-r27', 'S5-r28', 'S5-r29', 'S5-r30','S5-r31','S5-r32','S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38','S5-r39'):
         diagnostic_env.update(MJPC_R27_PLAN_RECORD=str(out/'planner-records.jsonl'),
                               MJPC_R27_ACTION_RECORD=str(out/'feedback-actions.jsonl'))
         resolved['planner_recording']=dict(
@@ -361,14 +362,14 @@ def run(args, c, joint=None):
             node_slices='0 and +20ms at base-x approach windows [.4,1.2] or [1.8,2.6]',
             raw_feedback='raw_K_delta_x before feedback scaling and actuator clipping',
             bulk_retained_local=True)
-    if c.get('controller_build') in ('S5-r31','S5-r32','S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38'):
+    if c.get('controller_build') in ('S5-r31','S5-r32','S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38','S5-r39'):
         resolved['r31_model_roles']=c['r31_contact_forward']
-        if c.get('controller_build') in ('S5-r32','S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38'):resolved['r32_optimizer_lifecycle']=c['r32_optimizer_lifecycle']
+        if c.get('controller_build') in ('S5-r32','S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38','S5-r39'):resolved['r32_optimizer_lifecycle']=c['r32_optimizer_lifecycle']
         resolved['author_prediction_approximation']=dict(
             contact_forward='original geom/pair solimp',joint_limits='existing smoothing',
             derivatives='independent smooth model at every native nominal substep',
             remaining='Original planner integrator, coldstart and causal material proxy retained')
-    if c.get('controller_build') in ('S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38'):
+    if c.get('controller_build') in ('S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38','S5-r39'):
         mechanism = c['r12_contract']['reuse']['selected_mechanism']
         diagnostic_env['MJPC_R33_MECHANISM'] = mechanism
         resolved['r33_optimizer_mechanism'] = dict(c['r33_optimizer_mechanism'], selected_mechanism=mechanism)
@@ -376,23 +377,26 @@ def run(args, c, joint=None):
         if mechanism in ('N','K','H'):
             resolved['author_prediction_approximation']['derivatives'] = (
                 'Same soft Gauss-Newton metric pass as S, followed by native-contact finite differences for the local direction; native forward acceptance.')
-    if c.get('controller_build') in ('S5-r34','S5-r35','S5-r36','S5-r37','S5-r38'):
+    if c.get('controller_build') in ('S5-r34','S5-r35','S5-r36','S5-r37','S5-r38','S5-r39'):
         diagnostic_env['MJPC_R34_ACCEPTANCE']='strict'
         resolved['r34_policy_acceptance']=c['r34_policy_acceptance']
-    if c.get('controller_build') in ('S5-r35','S5-r36','S5-r37','S5-r38'):
+    if c.get('controller_build') in ('S5-r35','S5-r36','S5-r37','S5-r38','S5-r39'):
         diagnostic_env['MJPC_R35_BRANCH']=c['r12_contract']['reuse']['input_reference_branch']
         resolved['r35_input_reference']=c['r35_input_reference']
         resolved['r35_input_reference_branch']=diagnostic_env['MJPC_R35_BRANCH']
     r29_records=None
-    if c.get('controller_build') in ('S5-r29','S5-r30','S5-r31','S5-r32','S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38'):
+    if c.get('controller_build') in ('S5-r29','S5-r30','S5-r31','S5-r32','S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38','S5-r39'):
         from s1_go2_r29_records import R29Records
-        if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38'):
+        if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39'):
             from s1_go2_w48_records import W48Records
             from s1_go2_w49_records import W49Records
             from s1_go2_w50_records import W50Records
-            recorder={'S5-r36':W48Records,'S5-r37':W49Records,'S5-r38':W50Records}[c['controller_build']]
+            recorder={'S5-r36':W48Records,'S5-r37':W49Records,'S5-r38':W50Records,'S5-r39':W50Records}[c['controller_build']]
+            if 'w51_fixed_policy' in c.get('r12_contract',{}):
+                from s1_go2_w51_records import W51Records
+                recorder=W51Records
             r29_records=recorder(out,model,c,fingerprint)
-            record_prefix={'S5-r36':'w48','S5-r37':'w49','S5-r38':'w50'}[c['controller_build']]
+            record_prefix={'S5-r36':'w48','S5-r37':'w49','S5-r38':'w50','S5-r39':'w50'}[c['controller_build']]
             diagnostic_env['MJPC_W48_PRECALL']=str(out/(record_prefix+'-precall.bin'))
         else:
             r29_records=R29Records(out,model)
@@ -402,7 +406,9 @@ def run(args, c, joint=None):
         resolved['planner_recording'].update(node_slices='0 and +20ms without spatial gate',
             complete_plans='r29-event-manifest.json',calls='planner-calls.jsonl',
             execution_links='action-execution.jsonl')
-    if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38'):
+    if c.get('controller_build')=='S5-r39':
+        diagnostic_env.update(MJPC_W51_MOTION='1',MJPC_W51_RECORD=str(out/'w51-motion'))
+    if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39'):
         forbidden=['MJPC_R34_SCORE_ONLY','MJPC_W47_INDEXED_SCORE','MJPC_R33_INPUT_POLICY','MJPC_R34_CONTEXT','MJPC_R35_REFERENCE','MJPC_R35_DIAGNOSTIC','MJPC_W49_QUERY_ONLY','MJPC_W49_FINITE_GUIDED','MJPC_W49_DIRECTION','MJPC_W49_COMPLETE_POLICIES','MJPC_W49_EXPORT','MJPC_W50_INSTALL_ONCE']
         if any(k in diagnostic_env for k in forbidden):raise RuntimeError('Offline diagnostic environment is forbidden in original fixed-policy evaluation')
     with (contextlib.nullcontext(None) if training else (out/'agent-server.log').open('w')) as server_log, (contextlib.nullcontext(joint.agent) if training else Agent(task_id='Quadruped Flat', model=prediction_model,
@@ -413,7 +419,7 @@ def run(args, c, joint=None):
             agent.init(task_id='Quadruped Flat', model=prediction_model, send_as='xml')
             agent.set_mode('Quadruped')
             agent.set_task_parameters({'Gait switch': 'Manual'})
-            if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38'):
+            if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39'):
                 native_pid=agent.server_process.pid
                 native_proc=Path('/proc')/str(native_pid)
                 native_env=dict(x.split('=',1) for x in (native_proc/'environ').read_bytes().decode().split('\0') if '=' in x)
@@ -421,9 +427,9 @@ def run(args, c, joint=None):
                     cmdline=(native_proc/'cmdline').read_bytes().replace(b'\0',b' ').decode(),affinity=sorted(os.sched_getaffinity(native_pid)),
                     environment={k:v for k,v in native_env.items() if k.startswith('MJPC_') or k in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','JAX_ENABLE_X64','XLA_PYTHON_CLIENT_PREALLOCATE')},
                     loaded_mujoco=sorted(set(line.split()[-1] for line in (native_proc/'maps').read_text().splitlines() if 'libmujoco' in line)))
-                expected=c['r12_contract'][{'S5-r36':'w48_fixed_policy','S5-r37':'w49_fixed_policy','S5-r38':'w50_fixed_policy'}[c['controller_build']]]['controller_binary_sha256']
+                expected=(c['r12_contract'].get('w51_fixed_policy') or c['r12_contract'][{'S5-r36':'w48_fixed_policy','S5-r37':'w49_fixed_policy','S5-r38':'w50_fixed_policy'}[c['controller_build']]])['controller_binary_sha256']
                 if resolved['w48_native_process']['exe_sha256']!=expected:raise RuntimeError('W48 native executable does not match frozen build')
-                if c.get('controller_build')=='S5-r38':resolved['w50_native_process']=resolved['w48_native_process']
+                if c.get('controller_build') in ('S5-r38','S5-r39'):resolved['w50_native_process']=resolved['w48_native_process']
                 dump(small/f'{args.attempt}-resolved.json',resolved)
             for step in range(round(duration/dt)+1):
                 t = float(data.time)
@@ -459,7 +465,7 @@ def run(args, c, joint=None):
                     reason = 'development_budget_truncated' if args.purpose=='development' else 'campaign_budget_truncated'
                     break
                 mission_changed = mission.phase != previous_phase
-                if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38') and mission_changed:
+                if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39') and mission_changed:
                     r29_records.event(t,'phase_transition',previous_phase=previous_phase,next_phase=mission.phase)
                 previous_phase = mission.phase
                 if mission.phase == 'complete' and first_completion is None:
@@ -494,7 +500,7 @@ def run(args, c, joint=None):
                     reference=stand_reference(ref_model,ref_data,heading,c['support_reference']['H_realized']['absolute_base_height_m'])
                     reference['wall_s']=time.perf_counter()-tr
                     resolved.setdefault('stand_references',[]).append(reference)
-                    if c.get('controller_build')=='S5-r38':resolved['w50_native_process']=resolved['w48_native_process']
+                    if c.get('controller_build') in ('S5-r38','S5-r39'):resolved['w50_native_process']=resolved['w48_native_process']
                     dump(small/f'{args.attempt}-resolved.json',resolved)
                     if not reference['feasible']:
                         raise ValueError('Native static support reference infeasible; see retained reference and entry state')
@@ -537,7 +543,7 @@ def run(args, c, joint=None):
                     resolved.setdefault('applied_settings', []).append(dict(time_s=t,
                         declared_parameters={k:table[k] for k in ('Gait','Cadence','Duty ratio','Amplitude')},
                         task_parameters=actual_parameters,cost_weights=agent.get_cost_weights()))
-                    if c.get('controller_build')=='S5-r38':resolved['w50_native_process']=resolved['w48_native_process']
+                    if c.get('controller_build') in ('S5-r38','S5-r39'):resolved['w50_native_process']=resolved['w48_native_process']
                     dump(small/f'{args.attempt}-resolved.json',resolved)
                     if any(actual_parameters[k]!=table[k] for k in ('Gait','Cadence','Duty ratio','Amplitude')):
                         raise RuntimeError('Declared gait settings were overwritten during native transition; see actual readback')
@@ -553,7 +559,7 @@ def run(args, c, joint=None):
                     dump(small/f'{args.attempt}-resolved.json', resolved)
                     for iteration in range(1, c['startup']['planner_steps']+1):
                         tp = time.perf_counter()
-                        if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38'):r29_records.before_call(t,data,mission,joint)
+                        if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39'):r29_records.before_call(t,data,mission,joint)
                         agent.planner_step()
                         elapsed = time.perf_counter()-tp
                         startup_times.append(elapsed)
@@ -580,7 +586,7 @@ def run(args, c, joint=None):
                     if policy_hook:joint.latest_plan=plan
                 elif replan_now:
                     tp = time.perf_counter()
-                    if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38'):r29_records.before_call(t,data,mission,joint)
+                    if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39'):r29_records.before_call(t,data,mission,joint)
                     agent.planner_step()
                     plan_s = time.perf_counter()-tp
                     planning_times.append(plan_s)
@@ -617,7 +623,7 @@ def run(args, c, joint=None):
                     r29_records.progress(t,data.qpos,mission.v,contact)
                 data.ctrl[:] = action
                 mujoco.mj_forward(model, data)
-                if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38'):r29_records.held(t,action,data.actuator_force,mission.phase,data)
+                if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39'):r29_records.held(t,action,data.actuator_force,mission.phase,data)
                 contact, grf, _, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
                 if compact and step>0 and (step-1)%25:hist.pop()
                 hist.append(dict(time=t, diagnostic_time=t, qpos=data.qpos.copy(), qvel=data.qvel.copy(), rpy=ori,

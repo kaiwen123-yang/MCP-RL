@@ -82,7 +82,7 @@ def evaluate(a, contract):
                          run_deadline_unix_s=a.deadline_unix,
                          hard_deadline_unix_s=a.deadline_unix))
     c['outputs']['root'] = contract['outputs']['compact_root']
-    args = arguments(a.attempt, build, a.condition, 'formal',
+    args = arguments(a.attempt, build, a.condition, 'diagnostic' if a.level=='D8' else 'formal',
                      c['r11_stage']['task_kind'], workers=workers, controller_artifact=artifact)
     args.config = a.contract
     args.cohort = contract['protocol_revision']
@@ -380,7 +380,7 @@ def main():
     p.add_argument('--group', choices=['FIXED_S5', 'PPO_RAW_S5', 'PANN_PPO_S5'], default='PANN_PPO_S5')
     p.add_argument('--seed', type=int, default=0)
     p.add_argument('--checkpoint')
-    p.add_argument('--level', choices=['E30', 'E60', 'E300', 'E600'], default='E30')
+    p.add_argument('--level', choices=['D8', 'E30', 'E60', 'E300', 'E600'], default='E30')
     p.add_argument('--condition', choices=['nominal', 'yaw_plus5', 'yaw_minus5'], default='nominal')
     p.add_argument('--workers', type=int)
     p.add_argument('--window-start-unix', '--evaluation-start-unix', dest='window_start_unix', type=float)

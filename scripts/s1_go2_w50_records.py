@@ -24,7 +24,8 @@ def policy_fields(T,ns,nu,nx,nr):
 class W50Records(R29Records):
  def __init__(self,out,model,config,fingerprint):
   super().__init__(out,model)
-  self.controller='S5-r38';self.config=config;self.fingerprint=fingerprint
+  self.controller=config['controller_build'];self.config=config;self.fingerprint=fingerprint
+  self.fixed_policy=config['r12_contract'].get('w51_fixed_policy') or config['r12_contract'].get('w50_fixed_policy')
   self.cost_sensors=ET.parse(out/'model/G1-project-go2.xml').findall('.//sensor/user')
   self.call_offset=0;self.call_ring={};self.current=None;self.deployed=None;self.previous_action=None;self.previous_torque=None
   self.windows=[];self.event_calls={};self.object_manifest={};self.pending=None;self.prepared=False;self.calls=0
@@ -41,7 +42,7 @@ class W50Records(R29Records):
    object_hash='SHA256 over sorted array name,shape,dtype,bytes; immutable NPZ separately hashed',
    pre_window_s=.1,post_window_s=.2,thresholds_are_diagnostic_only=True,
    native_transport='w50-precall.bin and r29-current-plan.bin are overwritten transport, event objects retained',
-   controller_build='S5-r38',original_config=config['r36_state_difference'],homotopy=config['w50_homotopy'],feedback_provenance_fields=PROVENANCE_FIELDS)
+   controller_build=self.controller,original_config=config['r36_state_difference'],homotopy=config['w50_homotopy'],feedback_provenance_fields=PROVENANCE_FIELDS)
   write(out/'w50-recording-schema.json',self.schema)
  def before_call(self,t,data,mission,joint):
   actual=np.r_[data.qpos,data.qvel,data.act].copy()
@@ -57,8 +58,8 @@ class W50Records(R29Records):
    arrays['actor_observation']=joint.pending['obs'].detach().cpu().numpy().copy()
    meta.update(actor_tick=int(joint.last_actor_tick),actor_observation_sha256=digest_arrays({'observation':arrays['actor_observation']}),
     observer_time_s=float(joint.observer.time) if joint.observer is not None else None,
-    actor_checkpoint=self.config['r12_contract']['w50_fixed_policy']['checkpoint'],
-    actor_checkpoint_sha256=self.config['r12_contract']['w50_fixed_policy']['checkpoint_sha256'])
+    actor_checkpoint=self.fixed_policy['checkpoint'],
+    actor_checkpoint_sha256=self.fixed_policy['checkpoint_sha256'])
   prev=dict(status='unavailable',reason='no_previously_applied_policy')
   if self.deployed is not None:
    d=self.deployed;times=d['accepted']['accepted_times'];node=int(np.argmin(abs(times-t)))
@@ -253,7 +254,7 @@ class W50Records(R29Records):
    write(self.out/'w50-first-record-readback.json',dict(status='verified_before_first_held_physics',
     physical_time_s=float(data.time),call_id=self.current['call']['call_id'],first_boundary_call=first['call_id'],
     deadline_unix_s=None,wall_deadline_enabled=False,physics_advanced_by_recorder=0,
-    schema=self.schema['schema'],controller='S5-r38',artifact=self.config['r12_contract']['w50_fixed_policy']['controller_binary_sha256'],
+    schema=self.schema['schema'],controller=self.controller,artifact=self.fixed_policy['controller_binary_sha256'],
     initial_prediction_status=first['previous_prediction']['status'],checked_unix_s=time.time(),
     event_manifest='w50-event-manifest.json',objects=len(self.object_manifest)))
    self.prepared=True

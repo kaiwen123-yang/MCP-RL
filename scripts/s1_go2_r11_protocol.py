@@ -10,6 +10,7 @@ EVALUATION_SOURCE_SHA256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 LEVELS=['E30','E60','E300','E600']
 CONDITIONS=['nominal','yaw_plus5','yaw_minus5']
 STAGES={
+ 'D8':dict(level='D8',task_kind='paired_diagnostic',duration_s=8,target_circuits=None,route_deadline_s=None,far_hold_s=0,home_hold_s=2,final_hold_s=None,qualification_usable=False),
  'E30':dict(level='E30',task_kind='original_route_short_stage',duration_s=30,target_circuits=None,route_deadline_s=None,far_hold_s=0,home_hold_s=2,final_hold_s=None),
  'E60':dict(level='E60',task_kind='original_single_mission',duration_s=60,target_circuits=1,route_deadline_s=60,far_hold_s=0,home_hold_s=2,final_hold_s=None),
  'E300':dict(level='E300',task_kind='continuous_finite',duration_s=300,target_circuits=5,route_deadline_s=270,far_hold_s=2,home_hold_s=2,final_hold_s=2),
@@ -49,6 +50,7 @@ def prerequisite(c,index,purpose,terrain):
         if any((a.get('case_identity') or {}).get('terrain')=='rigid' for a in index.get('attempts',[])):
             raise ValueError('The one declared rigid regression already launched')
         return None
+    if level=='D8':return None
     j=LEVELS.index(level)
     if j==0:return None
     prior=LEVELS[j-1]
@@ -123,6 +125,14 @@ def evaluate_stage(result,c,joint,arrays):
         result.update(success=None,stage_status='physical_material_failure' if failure else
             'technical_interruption' if technical else 'budget_truncated' if budget else
             'acquisition_boundary' if full else 'technical_interruption')
+        return result
+    if level=='D8':
+        result.update(success=None,qualification_usable=False,sustained_execution_success=None,
+            original_mission_success=None,stage_status='physical_material_failure' if failure else
+            'technical_interruption' if technical or not full else 'diagnostic_window_completed')
+        result['qualification']['usable']=False
+        result['qualification']['diagnostic_only']=True
+        if full and not failure and not technical:result['reason']='diagnostic_window_completed'
         return result
     if level=='E30':
         achieved=bool(full and far and result['stage_progress']['material_traversal']['completed'])
