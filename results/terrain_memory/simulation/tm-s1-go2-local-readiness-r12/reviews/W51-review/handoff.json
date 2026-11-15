@@ -1,0 +1,128 @@
+{
+  "schema": "s1_w52_review_handoff_v1",
+  "reviewed_at_asia_shanghai": "2026-11-15T23:20:12.095671+08:00",
+  "source_commit": "a621d7d35e6016634b388a3aef0d39d8d008aab0",
+  "previous_plan_commit": "354b14bf5313332ae167f02c84ce6b68ef6bae90",
+  "current_completed_round": "W51",
+  "next_round": "W52",
+  "next_round_status": "planned_not_implemented",
+  "W51_recorded_status": "paired_D8_ended_pending_scientific_selection",
+  "review_decision": "no_W51_locomotion_controller_promoted",
+  "decision_basis": [
+    "D0 fresh references but original body_fall at 5.814s",
+    "Corrected D1 completes D8 but no sustained locomotion or material loading",
+    "All 301 D1 IK records read; negative target nodes independently reconstructed"
+  ],
+  "server_session_queried_this_review": false,
+  "new_experiments_this_review": {
+    "plant_physics": 0,
+    "native_solves": 0,
+    "transition_FD": 0,
+    "GPU_physics": 0,
+    "GPU_compute": 0,
+    "PPO_samples": 0,
+    "PPO_updates": 0
+  },
+  "W51_attempt_accounting": {
+    "actual_D8_starts": 3,
+    "valid_D8_arms": 2,
+    "physical_failure": 1,
+    "diagnostic_completed_without_locomotion": 1,
+    "technical_invalid_command": 1,
+    "original_E30_starts": 0,
+    "original_stage_chain": "unrun",
+    "qualified_original_task_runs": 0
+  },
+  "geometric_evidence": {
+    "IK_calls": 301,
+    "current_swing_leg_replan_snapshots": 650,
+    "all_saved_remaining_target_nodes_at_or_below_ground_snapshots": 360,
+    "saved_target_min_below_minus_1mm_snapshots": 96,
+    "minimum_saved_target_bottom_m": -0.0035705163920281245,
+    "formula_reconstruction_max_error_m": 2.3592239273284576e-16,
+    "scope": "Saved target nodes, not all continuous extrema or unique physical swings."
+  },
+  "primary_next_change": "Fixed original-phase apex/touchdown piecewise quintic geometry, direct actual position/velocity continuation; no phase-reset, height clipping or zeroed actual velocity.",
+  "primary_job": {
+    "name": "D2",
+    "candidate_version": "r40",
+    "seed": 1,
+    "initialization": "original evaluation t=0",
+    "stage": "D8",
+    "attempts": 1,
+    "normal_full_rollouts_per_epoch_upper_typical": 21
+  },
+  "secondary_job": {
+    "name": "D3",
+    "candidate_version": "r41",
+    "enabled_when": "independent second 10 CPU allocation available",
+    "change": "same D2 geometry plus independent B and S first-valid direction families",
+    "seed": 1,
+    "initialization": "original evaluation t=0",
+    "stage": "D8",
+    "attempts": 1,
+    "normal_full_rollouts_per_epoch_upper_typical": 30,
+    "not_equal_compute_budget": true,
+    "not_additional_qualification_gate": true
+  },
+  "selection": "Read full completed D2 D8 result before selection; prefer D2 when actual sustained support progression is present. D3 need not pass. Never infer from survival or J alone.",
+  "formal_followup": "After mechanism frozen, A seed1 and B seed2 independent E30; each original case E30->E60->E300->E600 only on predecessor pass; at most two heavy native jobs.",
+  "task_C": "Use existing artifacts to correct MaterialSupportHeight state residual discrepancy; no repeated GPU physics probes or occupancy benchmarks, no installation.",
+  "resource_envelope": {
+    "available_CPU_assumption": 25,
+    "heavy_job_each_CPU": 10,
+    "C_CPU": 2,
+    "system_other_CPU": 3,
+    "max_heavy_native_jobs": 2,
+    "math_threads": 1,
+    "build_max_jobs": 6,
+    "GPU_nominal_GB": 96,
+    "actual_capacity_and_other_jobs_must_be_checked": true
+  },
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "deadline_unix_argument": "omitted",
+  "user_PC_archive": false,
+  "delivery": "Compact Git and necessary original data/videos directly from D57 to GitHub; verify remote, retain referenced server originals, no extra user-PC archive.",
+  "entry_files": [
+    "AGENTS.md",
+    "docs/TERRAIN_MEMORY_PLAN.md",
+    "docs/S1_W52_STABILITY_PLAN.md",
+    "docs/S1_W52_START_PROMPT.md",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/control/review.md",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/results/review.md",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/video-review.md"
+  ],
+  "do_not_repeat": [
+    "W51 D0/D1",
+    "W49/W50 saved-problem experiments",
+    "wrong bridge or 40ms admission",
+    "GPU F1/L/F2",
+    "already demonstrated 114 residual reduction merely for load",
+    "new PPO or donor training"
+  ],
+  "open_uncertainties": [
+    "Whether corrected geometry yields actual native foot unloading",
+    "Whether B/S extra search gives useful closed-loop progress at greater compute",
+    "Earliest causal mechanism of D0 feedback/nominal/contact mismatch",
+    "Precise role of retained support bias; not isolated by this audit",
+    "Sustained CPU/GPU utilization and real-time acceleration remain unproved"
+  ],
+  "review_validation": {
+    "independent_control_review": true,
+    "independent_results_review": true,
+    "primary_literature_review": true,
+    "cross_review_completed": true,
+    "corrections": [
+      "Saved IK target-node statistics do not claim continuous extrema",
+      "Unclipped PD request overflow distinguished from actual actuator torque saturation",
+      "D2 completes and full actual D8 result is read before selection",
+      "D3 isolated regularization, alpha0 semantics, unavailable/native-invalid work counts specified"
+    ],
+    "local_markdown_links_checked": true,
+    "review_JSON_parsed": true,
+    "plot_inspected": true,
+    "runtime_behavior_tested_this_review": false
+  }
+}

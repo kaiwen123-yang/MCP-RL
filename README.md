@@ -1,63 +1,57 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
-命令传递定向修正（提交 `463e91b`）：首个 D1 在真实入口发现 userdata[78:84] 未填充，原运动候选使用了零世界速度；已于实际 3.120s 停止其独立 server，并保留 execution_error/技术无效记录及全部已保存工作量。D0 原进程连续保留。修正仅使 W51 将原 mission.v/mission.w 写入既有命令槽，不启用额外 twist 成本；修正后 D1 从原 t=0 作一次有效配对尝试，详见 phase.json 的当前 jobs 和 technical_attempts。当前 tmux 为 `s1-w51-pair-command-repair`。此技术重启不作为新的物理失败或成功样本，也没有重跑 D0。
-
-D0 实际终止结果已到达：原 body_fall 于 5.814s 触发，末 z=0.1189336264m，最大 x=0.0957089087m；实际计数为 29,070 plant 子步、311 完成 planner 调用、5,929 full rollout。2.002–4.3s 前进量为 -0.020903054m、目标 swing 仍受载约 71.18–80.19%，未形成稳定支撑推进。修正后的 D1 仍 running；截至已核验的 2.408s，原 mission 命令与 native userdata 命令一致，S 已真实作为 Q（包括 J(S)>J(B) 的搜索），未据此提前选择版本或启动原 E30。
-
-## W51 正在执行（2026-11-15）
-真实 D8 与相位感知运动候选已实施，D57 的 D0/r38、D1/r39 已从同一原始初态并行运行。源码提交 `df68de8`；[实际运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json)记录真实物理时钟和 PID。原任务资格及版本选择仍待两臂结果。
-C 已完成一次 FP64 CUDA 归约：114 条原候选、113 维残差、22 个成本项；最大总 J 绝对误差 5.82077e-11，六组各自内部的 risk/roundoff 比较全部一致。新增 GPU 物理与 PPO 均为 0。[C 结果与覆盖范围](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/task-c.json) · [已核验原件 Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w51-C-costs-part01)。这仍是残差到 J 的归约和部分代数项，不是完整 native cost 迁移。
-
-
-
 长期目标：同一世界地块被前足、后足和返程重复加载时，利用材料持久状态，让未来支撑需求影响当前加载、落点和重访，建立原Go2/TM02合法完整往返、因果记忆收益、泛化及实机证据。
 
-## 当前：W50完成有限负结果；W51从正常起步比较反馈刷新与运动初始轨迹
+## 当前：W51 已结束；D0 失稳、D1 静站，W52 先修摆动参考
 
-**2026-11-15，结果基点09bd55e：W50/S5-r38/H已实现并发布，原A/B E30未运行；W51 计划形成时为 planned_not_implemented。** 最新完整原任务仍是W49：两E30观察满30s但资格0/2、合法往返0，视频所见低伏/非足支撑不是正常稳定行走。本次审查未启动新native solve、物理/GPU积分或PPO，实际修复了公共runtime两处缩进错误。
+更新2026-11-15（Asia/Shanghai），结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**本轮结果已读完并完成科学审查；W52 planned_not_implemented。** 没有仍在运行的W51，也没有已选的正常行走新版本。本次审查未启动新物理、native solve、FD、GPU或PPO。
 
-[项目记忆](docs/TERRAIN_MEMORY_PLAN.md) · [W50完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/README.md) · [W51详细计划](docs/S1_W51_STABILITY_PLAN.md) · [Codex启动提示词](docs/S1_W51_START_PROMPT.md) · [机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/handoff.json) · [W50实际phase](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/phase.json)
+[项目记忆](docs/TERRAIN_MEMORY_PLAN.md) · [W51完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md) · [W52详细计划](docs/S1_W52_STABILITY_PLAN.md) · [Codex启动提示词](docs/S1_W52_START_PROMPT.md) · [机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/handoff.json)
 
-### W50推进了什么，还没解决什么
+| W51有效诊断 | 结束 | 最大x | 最终x / z | 判断 |
+|---|---|---:|---:|---|
+| D0：r38/H，仅刷新 | 5.814s body_fall | .095709m | .095709 / .118934m | 参考持续刷新，后段仍失稳 |
+| D1：r39，命令修正后 | 8s diagnostic_window_completed | .005452m | -.012449 / .288505m | 保持高度却静站/微后退，没有正常步态 |
 
-W50已完成当前时域重参考、同alpha前馈/反馈/K/H转移，四个保存问题76full rollout、36正候选中10个strict改善。独立读取原完整候选并重算支持这些结果，但仍无正常承重/前进恢复。
+D1后4.3–8s四足持续承重100%、载荷切换0、policy更新0；两个有效臂均未加载材料、未完成合法去程/往返。原E30启动0，D8资格不可用。另有首个D1因userdata命令未写入而技术无效，实际3.120s后被定向停止；不能与有效D1混算，不是已证随机断网或墙钟deadline问题。[结果与失败分账](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/results/review.md)
 
-| W50保存问题 | 原J降幅 | 预测最低z增加 | 预测.35s位移：baseline → winner |
-|---|---:|---:|---:|
-| A237，4.32s |1.3351%|.1486mm|−4.297 → −18.141mm|
-| B236，4.30s |.01144%|.01635mm|−18.833 → −19.024mm|
-| A328，6.14s |2.1061%|3.628mm|−.248 → −23.343mm|
-| B625，12.08s |0，保留nominal|0|保留−1.585mm|
+### 这次真正定位到的错误
 
-这些是native候选预测，不是新plant任务。另有向前但同时坍低的被拒候选，不能说所有候选倒退或原J已错拒正常步态。加两次midpoint replan后共116full rollout；两条40ms bridge消耗400子步，但同SONAME库ABI失配，物理等价证据无效。四个独立native保存问题评分不因此作废；原八阶段blocked/unrun，不计八次失败。[原始结果与错误审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/results/review.md)
+301份IK原件的650个当前swing足×replan快照中，360个快照的已保存剩余目标节点全部不高于地面，96个最低低于-1mm，已保存节点最深-3.570516mm。旧连续接续式减掉当前名义高度/速度，会在真实足仍落地时抵消抬脚。独立原公式复算误差2.36e-16m；这里全是材料前的平地，不是材料地表基准误读。快照数不是独立失败次数。
 
-更关键的新证据来自W49原件：private Trot在2.002s正常启动，相位按2Hz推进；但2.002–4.3s的目标swing仍约88–94%实际受载、四足共载约86%，PD饱和0。231个保留policy的reference/K/H均来自t=0 Stand [.0,.35]；每流14825/15001条held查询过期，最终29.65s。参考冻结已实测，不能再只写源码假说。更新安装ID不代表更新反馈来源。
+S虽数值有效并作Q，却没有形成可靠卸载；301次里299次J高于B。94次homotopy安装有92次发生于Stand，运动阶段只有2次。D1最后reference/K/H来自2.14s，参考结束2.49s，8s时过期5.51s。原件也存在向前但姿态/支撑较差的候选，尚无J错拒正常步态的证据，不先加权或强制接受差S。[控制/候选审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/control/review.md)
 
-用户B视频约4.4–5.2s下蹲/顶起，5.2–7s曾暂时抬高，7–8s后长期低伏挪动；7–30s非足平均承重45.08N，约体重30.2%。W50没有新完整视频。[视频与同步日志](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/video-review.md)
+D0是另一种异常：全2907条held查询参考真正过期0，持续刷新确实发生；3.016s首目标硬裁剪，随后身体降低与明显PD饱和，4.05s才出现37.867rad极端反馈，5.814s跌倒。时间先后已证，极值不是已隔离的最初原因。目标硬clip648、QP改写627、含两者总改写708不能混算。
 
-### W51如何推进
+### 视频中的“不正常步态”已有日志依据
 
-4.3s保存点已晚于Trot切换约2.3s；晚态一次更新失败，尚未回答从起步刷新能否预防。两CPU主线从同W44 A/seed1、同原evaluation t=0开始，各一次8s真实闭环：D0使用现有r38/H；D1只增加一个相位感知完整运动候选S作为替代线性化起点。使用正常plant/独立native/RPC入口，不重复错误bridge的40ms准入。
+本次查看三段原视频89个等间隔/末帧及12个放大关键姿态，并核对全部足力、动作和物理时序。D0下沉/折腿、短时顶起后倒下；D1原地站立。8s不倒与持续正常行走是两件事。
 
-S复制原全局B，保留raw PD承重中心与反馈，只追加原相位/速度/足几何生成的运动学差；只多一次native rollout、一个first-valid方向族和原9alpha。S可用于搜索，所有安装仍须严格优于原B；不把较差S重命名baseline制造改善。不改成本、步高、horizon或PPO。D0通常≤20、D1≤21full rollout/epoch，工作量不完全相同。
+![W51两臂物理与反馈时序](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/figures/w51-physical-feedback.png)
 
-实现独立D8入口及明确诊断判定，qualification_usable=false；8s为物理观察窗，不是后台截止或E30资格。先比较真实卸载/支撑交换、身体稳定、非足承重与前进，再选一个版本原A/B各一次E30，逐case过才E60→E300→E600。若两臂都无实质进展，交成对负结果，不追成功重复或临时叠加方法。
+[三段视频与关键帧审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/video-review.md) · [原视频和原件Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w51-paired-D8-part01)
 
-第三线默认零新GPU物理：用已有114候选做FP64成本归约与22项native ResidualFn覆盖。38条错bridge midpoint仅代数对照；GPU不正式排序、不阻塞CPU。参考[四篇一手文献及适用边界](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/literature.md)，不把外部GPU吞吐和成功转作本项目资格。
+### W52 下一步及并行
 
-### 资源、代码与交付
+主D2（拟r40）只修这一处几何错误：从真实足位置/速度直接接固定原apex/touchdown，保留2Hz/.45/5mm/绝对相位与锚点，不每20ms推迟抬脚峰值，不clip高度伪造C2。不可行S明确回正常B搜索，暂不改PD/支撑偏置/成本/步高/horizon/PPO。复用旧301快照只做必要的无物理数学核验。
 
-继续实测25CPU/96GB余量，10+10+2+3分配、线程库1、先-j6构建，尊重其他任务。W50有限求解仅重叠11.516s，C只是.884s CPU分析，不能声称已持续三重满载；GPU工作以信息增量为目标。
+第二组10核可用时并行次级D3（拟r41）：相同几何修复，B/S各自独立first-valid方向族和9alpha，按同一原risk/J比较；其计算预算增加必须单列，D0已说明B方向不是稳定保险。两臂各一次同seed1原t0→D8，不重跑W51 D0/D1。D2自然结束并完整读结果后若确有持续正常支撑推进，优先冻结简单D2进入原A/B E30，不要求D3也成功；最多两个重native job。均不走则交真实负结果，不临时叠加方法追成功。
 
-公共runtime在W50修改后存在两处缩进错误，原line499即无法解析；本次已修正并确认AST可解析。有限脚本未经过该公共入口，有限结果仍成立；没有把语法修复写成服务器闭环已验证。[修复记录](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/runtime-fix.json)
+选定后原A seed1/B seed2各一次E30，逐case原E30→E60→E300→E600，D8不拼接资格。稳定原任务之后，才研究材料历史的因果收益与泛化。[五篇一手文献的具体适用分析](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/literature.md)
 
-**新后台无固定墙钟完成时刻、无到点kill；GitHub核验后不在用户电脑额外下载、复制、打包、镜像或归档。** 原物理任务定义与有限工作量保留，服务器科研原件/checkpoint/resume/视频不自动删除。
+### GPU、资源与交付
 
-本次全读取40变更文件40,087,699B、解析16JSON；实际下载W50三ZIP464,340,186B，提取254成员并读取关键原数组，复看用户W49 B视频。没有把逐字节读取等同于每个数字都语义理解。[阅读范围](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/read-coverage.json) · [原件核验](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/remote-verification.json)
+W51有效pair消耗14341 native full rollout、2673288 transition FD、598194 risk FD、69070 plant子步；含技术尝试17647/3281904/726082/84670。新PPO/donor/GPU物理0。CPU双任务实际重叠14.49min，其中有效pair5.54min；没有连续CPU/整卡GPU利用率，不能用10+10的affinity冒充满载。
+
+C完成114×176×113残差→22项J的FP64 CUDA归约，最大误差5.82077e-11、同问题比较一致；tensor峰43.45MiB、归约.104s，不是完整GPU MPC。MaterialSupportHeight state重建仍差9.00991e-6。W52第三线仅补此已有原件缺口、活动分支与必要比较，0新GPU物理，不重复归约/F1/L/F2凑显存。现场25核余量按10+10+2+3、线程库1、构建先-j6；使用真实job记录可得核时/占用，不额外做满载benchmark。
+
+**新后台deadline=null、wall_deadline_enabled=false，无固定墙钟完成时间、无到点kill、对话结束不杀后台。GitHub核验后，不在用户电脑额外下载、复制、打包、镜像或归档。** 原物理任务时长/失败条件和有限科学工作量保留，服务器仍被引用的checkpoint/resume/原件保留，不自动删除。
+
+阅读范围：本轮52变化文件51178658B完整读流、30JSON全解析；实际下载15必要资产2532967906B、解包2653成员2769219396B，含三臂全时序/301IK/所需候选/三视频。GitHub两个Release共38资产8470903356B，live状态/size/digest匹配；没有声称下载所有历史原件或逐字理解全部数字。[阅读清单](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/read-coverage.json) · [远端核验](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/remote-verification.json)
 
 ## 历史说明
 
-下文保留形成时的结果与协议。旧“当前”、预算、截止和归档方式属于当时；最新执行统一见顶部、[W51计划](docs/S1_W51_STABILITY_PLAN.md)及[启动提示词](docs/S1_W51_START_PROMPT.md)。W50已结束，不按历史文字重启旧轮。
+下文保留形成时的结果与协议。旧“当前”、预算、截止和归档方式属于当时；最新执行统一见顶部、[W52计划](docs/S1_W52_STABILITY_PLAN.md)和[启动提示词](docs/S1_W52_START_PROMPT.md)。W51已结束，不按历史文字重启；此前W49/W50审查保留全部正负证据。
 
 ## 历史 R12/W35：同r24续训及末端评价
 
@@ -96,7 +90,7 @@ R11已按用户2026-10-29的要求暂停，发布现有成果供审查。累计2
 
 ## 历史结果原文
 
-以下保留旧结果与协议叙述；旧“当前”“本轮”、额度和阶段门槛仅属于对应历史run。当前执行以顶部W50审查、W51计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。R10原协议的完整版本见[02595603历史主计划](https://github.com/kaiwen123-yang/MCP-RL/blob/025956032e2a3aa1e0c9881f2eda307301c77522/docs/TERRAIN_MEMORY_PLAN.md)。
+以下保留旧结果与协议叙述；旧“当前”“本轮”、额度和阶段门槛仅属于对应历史run。当前执行以顶部W51审查、W52计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。R10原协议的完整版本见[02595603历史主计划](https://github.com/kaiwen123-yang/MCP-RL/blob/025956032e2a3aa1e0c9881f2eda307301c77522/docs/TERRAIN_MEMORY_PLAN.md)。
 
 
 **R10 实际结果（2026-10-28）：开发额度12/12已结束，材料完整任务0/9，联合PPO未启动。** 12次启动包括3次零物理步初始化失败和9次真实Go2材料任务；累计107.9750秒、539875个0.2ms物理步。G、G＋N与G＋N＋C均保留完整记录，C的局部力参考和支撑高度修正逐版保存。最终0.215m/s版本通过去程和远端转向，在返程32.5672秒触发原材料域；仍未完成原任务。
@@ -211,7 +205,7 @@ G1保留15.206408kg、0.0002s真实物理步、原接触及23.7/45.43Nm逐关节
 
 ## S1第六轮历史结果（已冻结）：完成路径往返，终点连续稳定未通过
 
-以下保留第六轮当时的执行范围和停止决定；其中“本轮结束”等只适用于已关闭的旧run，当前执行以顶部W50审查、W51计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。原第五轮及更早结果继续保留。
+以下保留第六轮当时的执行范围和停止决定；其中“本轮结束”等只适用于已关闭的旧run，当前执行以顶部W51审查、W52计划及[当前主计划](docs/TERRAIN_MEMORY_PLAN.md)为准。原第五轮及更早结果继续保留。
 
 **第六轮已完成固定范围执行：1次G0完整任务启动，0次完整成功；G1开发与正式均未执行。** 本轮 `tm-s1-go2-wb-startup-r6` 使用实现 `ce3e03255e6e229fd61cac458b514fb6ea162314`，保留第五轮和所有历史结果。没有训练PANN/PPO、接入TM02或启用硬件。
 

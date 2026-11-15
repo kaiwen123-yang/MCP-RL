@@ -1,140 +1,120 @@
-# 地面材料记忆主计划：W50有限负结果已审查，W51从起步成对辨识
+# 地面材料记忆项目：W51 已审查，W52 修复摆动参考
 
-命令传递定向修正（提交 `463e91b`）：首个 D1 在真实入口发现 userdata[78:84] 未填充，原运动候选使用了零世界速度；已于实际 3.120s 停止其独立 server，并保留 execution_error/技术无效记录及全部已保存工作量。D0 原进程连续保留。修正仅使 W51 将原 mission.v/mission.w 写入既有命令槽，不启用额外 twist 成本；修正后 D1 从原 t=0 作一次有效配对尝试，详见 phase.json 的当前 jobs 和 technical_attempts。当前 tmux 为 `s1-w51-pair-command-repair`。此技术重启不作为新的物理失败或成功样本，也没有重跑 D0。
+更新：2026-11-15（Asia/Shanghai）。本轮结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**W51 已全部结束并发布；W52 planned_not_implemented。** 当前没有已选的正常行走新版本，本次审查不启动实验。
 
-D0 实际终止结果已到达：原 body_fall 于 5.814s 触发，末 z=0.1189336264m，最大 x=0.0957089087m；实际计数为 29,070 plant 子步、311 完成 planner 调用、5,929 full rollout。2.002–4.3s 前进量为 -0.020903054m、目标 swing 仍受载约 71.18–80.19%，未形成稳定支撑推进。修正后的 D1 仍 running；截至已核验的 2.408s，原 mission 命令与 native userdata 命令一致，S 已真实作为 Q（包括 J(S)>J(B) 的搜索），未据此提前选择版本或启动原 E30。
+[W51 完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md) · [W52 详细执行计划](S1_W52_STABILITY_PLAN.md) · [Codex 启动提示词](S1_W52_START_PROMPT.md) · [根 AGENTS](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/handoff.json)
 
-## W51 实际状态（2026-11-15）
-真实 D8 与 r39 已实施并完成 native/service/server 构建；源码提交 `df68de8`。D0、D1 已在 `s1-w51-pair` 并行运行，每臂一次原 evaluation t=0→8s，保持原物理提前终止；两臂同 W44 A seed1、checkpoint-014737、归一化和完整初态。当前没有原 E30 新资格，新增 PPO/donor 为 0。见 [运行索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json)。
-C 的 114 候选/22 项 FP64 GPU 归约已完成并直传 Release，最大 J 误差 5.82077e-11，六组内部比较一致，新 GPU 物理 0。部分 state 代数项仍有真实残差误差（MaterialSupportHeight 最大 9.00991e-6），完整成本移植未成立。
-用户允许 tmux 稳定后结束对话。后台完成双 D8 的统计、实际时段视频及发布；续接读取完整结果后按本计划选择版本，或交成对负结果。不能把正在运行、8s 诊断或未启动的原阶梯记成成功。
+## 1. 长期目标、真实控制链与当前阶段
 
+主线是**面向重复踩踏的四足机器人地面记忆辨识与跨步协同控制**：同一世界地块被前足、后足和返程重复加载，利用材料持久状态，让未来支撑需求影响当前加载、落点和重访。首先建立原 Go2/TM02 合法稳定完整往返，再研究材料历史的因果决策收益、泛化、轻量化以及 Go2/NX 实机。
 
+现有执行链：因果 PANN → 658D PPO 观察 → 2 Hz scalar cap（.18–.25 m/s）→ 逻辑50 Hz全身MPC → 500 Hz时变关节目标 → PD60/5 → 5000 Hz原物理。PPO确实曾学习，当前评价固定权重；observer和材料历史继续因果更新。逻辑频率不是墙钟实时。
 
-更新2026-11-15（Asia/Shanghai）。结果基点`09bd55e0cb70244938ad82db7dd202a31ac70f77`。W50/S5-r38/H已实现并发布，原A/B E30未启动。**W51 计划形成时为 planned_not_implemented**；本次审查已修复公共runtime两处缩进错误，没有新native solve、物理/GPU积分或PPO。
+候选仍未沿每条未来动作完整传播世界材料内态；scalar cap没有直接控制卸载、支撑力分配、落脚或快速关节反射的权限。因此稳定原控制、有效跨足/返程曝光、候选内材料历史、RAW/PANN/冻结或打乱历史对照、泛化和实时，是相关但不同的工作。现在尚未建立稳定材料往返，更没有可宣称的记忆因果收益。
 
-[W50最终审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/README.md) · [W51详细计划](S1_W51_STABILITY_PLAN.md) · [启动提示词](S1_W51_START_PROMPT.md) · [AGENTS](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/handoff.json) · [W50实际phase](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w50/phase.json)
-
-## W50实际结果及新结论
-
-四个保存问题76full rollout、36正候选10strict改善；加两次midpoint replan共116full rollout、114candidate records、23112transition FD、4746risk FD。另400bridge子步已消耗，same-SONAME错误库造成ABI失配，native物理等价有效数0；loader改dlmopen后没有新物理验证。四例独立native评分仍有效，两个midpoint输入只可作已记录代数对照。原八阶段blocked/unrun，不是八次失败；新增PPO0/0、GPU物理0。
-
-A237原J下降1.335%，最低z仅提高.149mm、.35s位移−4.297→−18.141mm；B236下降.01144%，最低z仅提高.016mm、位移−18.833→−19.024mm。A328有所抬高仍倒退，B625有9个正alpha候选但均未strict改善。原件存在向前但仍塌低且成本更高的被拒候选，不能说J已错拒正常可行步态。
-
-W50 Task A把旧参考冻结从源码假说变为实测：231个留存policy均继承initial Stand的reference/K/H，参考末端.35s；两流各14825/15001条held查询过期，最终29.65s。private Trot在2.002s正常切换且2Hz相位推进，但早期目标swing仍88–94%受载，四足共载约86%、PD饱和0。W50四例均从4.3s以后取点，尚未检验r38从正常起步连续刷新能否预防。
-
-## 1. 长期目标与真实研究阶段
-
-核心问题：同一世界地块被前足、后足和返程重复加载时，利用材料持久状态，使未来支撑需求影响当前加载、落点和重访。首先建立原Go2/TM02稳定合法完整往返，再建立材料历史的因果决策收益，随后研究泛化、轻量化和Go2/NX实机。
-
-实际链：因果PANN→658D PPO观察→2Hz scalar cap（.18–.25m/s）→逻辑50Hz全身MPC→500Hz时变关节目标→PD60/5→5000Hz原物理。PPO确实曾学习，当前评价固定权重而observer/材料历史继续因果更新。逻辑频率不是墙钟实时。
-
-当前候选仍未沿每条未来动作完整传播世界材料内态；cap不能直接改变足点、支撑时长或快速关节恢复。因此稳定原控制、有效跨足/返程曝光、候选内材料历史、RAW/PANN/冻结或打乱历史因果对照、泛化是相关但不同的研究任务。只生存或原地驻留不能替代合法完整路线；也不能因训练过PPO就宣称记忆收益成立。
-
-| 阶段 | 应保留的事实 | 资格边界 |
+| 历史阶段 | 保留的事实 | 不能据此声称 |
 |---|---|---|
-| 早期R1/R2/S0 | 材料辨识、学习正负结果均保留 | 不把早期方向全部写成成功 |
-| R8/S3刚地 | 原任务9/9、连续300s 3/3 | 不转移为当前r38或拟r39材料资格 |
-| R9/R10材料 | 完整任务0/8、0/9，R10曾进入返程 | 完整材料任务未成立 |
-| R11 |23真实启动，有效E30/E60均0|失效/旧资格不复活|
-| W34/W35 |合法去程分别3与1，有返程进展|稳定合法完整往返仍0|
-| W44学习 |A/B各14737/update57、完整resume|同祖先数据不重复算独立样本|
-| W45/r34 |A13.072s/B5.582s跌倒|strict接纳不等于稳定|
-| W46/r35 constant |A26.432s触地、B11.638s跌倒|仍无原E30资格|
-| W47/W48/r36 |修复self/antipode与alpha0；原A/B轨迹与W46相同|数学修复成立，行为/资格未改善|
-| W49/r37 K |4困难问题均有改善；两原E30均30s自然结束|低位/非足支撑/前进失败，E30 0/2|
-| W50/r38 H |4保存问题10/36strict改善；原任务未运行|有限预测仍坍低/后退，bridge物理证据无效|
-| 当前总体 |联合系统、接口与事件证据更完整|完整稳定材料任务、因果记忆收益、NX实时未建立|
+| 早期R1/R2/S0 | 材料辨识与学习的正负结果均留存 | 早期方向全部成功 |
+| R8/S3刚地 | 原任务9/9，连续300s 3/3 | 当前材料/r39资格继承 |
+| R9/R10材料 | 完整任务0/8、0/9；R10曾到返程 | 已完成稳定材料往返 |
+| R11 | 23次真实启动，有效E30/E60均0 | 恢复旧失效资格 |
+| W34/W35 | 合法去程分别3、1，有返程进展 | 合法完整往返已成立 |
+| W44学习 | A/B各14737/update57、完整resume | 同祖先数据可重复算独立样本 |
+| W45/r34 | A13.072s、B5.582s跌倒 | strict接纳等于稳定 |
+| W46/r35 | A26.432s触地、B11.638s跌倒 | 原E30合格 |
+| W47/W48/r36 | self/antipode与alpha0修正；原轨迹同W46 | 数学修正已改善任务行为 |
+| W49/r37 K | 4困难问题均有改进；原A/B各30s自然结束 | 低位/非足支撑算正常行走；E30实际0/2 |
+| W50/r38 H | 4保存问题10/36 strict改进；原任务未跑 | bridge错误物理有效，或已恢复正常推进 |
+| W51/r38-r39 | 两有效D8：D0跌倒，D1静站；定位参考下穿 | 8s观察完成等于正常步态或原资格 |
 
-A/B共享祖先6545/update25；PANN唯一转移22929，另RAW256，R12 distinct23185。各自W44 checkpoint-014737、resume ep00428/ep00417、tail0/excluded145保留。W45–W49新增PPO0/0，W50也0/0；15249/59不是本轮自动训练预算。
+学习状态：A/B共享祖先6545/update25；PANN唯一转移22929，另RAW256，R12 distinct23185。W44 A/B checkpoint-014737、resume ep00428/ep00417、全actor/critic/optimizer/norm/RNG、tail0/excluded145保留。W45–W51新增PPO均0/0；15249/59不是自动续训预算。
 
-## 2. 最新W49原任务应怎样理解
+## 2. W51 最新实际结果
 
-| E30 | A | B |
+原始 [phase](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json) 状态为 paired_D8_ended_pending_scientific_selection；这是形成时待审查记录。现在科学审查结论为**没有可提升的正常行走版本**，详见W51 review/handoff。旧“D1仍running、截至2.408s”已经失效。
+
+| 指标 | D0：r38/H | D1：r39，命令修正后 |
 |---|---:|---:|
-| 结束 |30s material_traversal_not_completed|30s material_traversal_not_completed|
-| 墙钟 |101.68min|79.22min|
-| 最大body x |.349667m|1.020530m|
-| 合法路线比例 |5.81745%|17.01414%|
-| 最低/最终z |.123298/.138718m|.130666/.142818m|
-| 首非足载荷 |4.6232s|5.0216s|
-| 足端首材料载荷 |无|12.1866s|
-| 机体west entry |无|20.064s|
-| 合法去/返/往返 |0/0/0|0/0/0|
-| 后级 |E60/300/600未运行|E60/300/600未运行|
+| 结束 | 5.814s，body_fall | 8s，diagnostic_window_completed |
+| 最大x | .095709m | .005452m |
+| 末x / z | .095709 / .118934m | -.012449 / .288505m |
+| 最低z | .118934m | .285769m |
+| 2.002–4.3s Δx | -20.903mm | -6.091mm |
+| 2.002–4.3s目标swing仍受载 | 71.18–80.19% | 94.89–100% |
+| 后窗四足承重 | 4.3–5.814s仅2.90%，同时失稳 | 4.3–8s为100%、载荷切换0 |
+| 材料实际加载/合法去程/往返 | 均0 | 均0 |
+| 原E30启动 | 0 | 0 |
 
-原body_fall为z<.12m或|roll/pitch|>1.2rad；模型允许腿部部分几何接地。A最低仅高出高度终止线3.30mm，所以没有提前终止并不等于正常承重。A6.238s命令不前进2s事件已有四足contact=true，真实位移不足1cm；B4.760s已trunk_restoration。A没到材料就出问题，B异常也早于首材料加载，不能把根因全部归给材料/PANN。
+有效D0/D1的0–2s状态、力、动作、接触数组相同。首个技术D1另运行3.120s，原mission非零但userdata[78:84]未填，S错误使用零世界速度。执行端定向停其独立server，产生Connection refused；提交463e91b补原命令写入，保留D0不重跑，修正D1从t=0一次重启。该技术尝试不作第三个控制样本，也不是已证随机网络故障或deadline问题。
 
-A末vx约.0000198m/s、命令.2128；B末vx.000544m/s、命令.2179。A最大前进量较W48反而下降，B增加。两个固定seed不提供泛化稳定性结论。两次独立30s不可拼接成一个60s成功。
+本轮3次启动分别为1个有效物理跌倒、1个诊断完成但不走、1个技术无效。原E30/E60/E300/E600整链unrun，没有W51原阶段blocked执行行，不把W50八行重复记为本轮失败。D8 qualification_usable=false，success=null，不冒充原资格。
 
-[结果审查与独立聚合](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/results/review.md)列出真实事件切片及未嵌入Git的整秒边界，不对缺失时间点插值。
+[结果独立复算](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/results/review.md)保存全时段口径、工作量、时钟和资源缺口。
 
-用户随后提供的B视频已查看：[分段审查/关键帧](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/video-review.md)。4.4–5s反复下蹲/顶起，7–8s后持续低伏、腿折叠/外伸；后半贴地挪动，不能称正常步态。W51主目标前移预防起步足部承重/步态失效，低位恢复次级；W50新分析还确认B在5.2–7s曾暂时恢复较高身体且无非足载荷，不能把5s后写成持续趴地。
+## 3. 视频判断与新机制证据
 
-## 3. W49解决了什么，哪些判断应停止重复
+[三段视频审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/video-review.md)实际查看89个等间隔/末帧和12个放大关键姿态。D0先折腿降低、短暂顶起、后倒下；不是一直正常走到末尾才偶然跌倒。D1基本原地站立，身体高度保持却没有持续迈步。足端快速行为由500Hz轨迹和5000Hz物理记录核对。
 
-- Task B：4次完整N solve后36个新K候选，25个strict改善，四事件各有赢家；最优J下降3.1761/18.6728/1.9388/33.5849%。108个原N正候选仅3eligible，工作量不等，不能直接当算法成功率统计。
-- 4×20ms真实RPC部署400predictor子步；metric/QP与单次FP32 response一致，只证明短窗接口和对象正确，不等于恢复或原任务资格。
-- Task A：41实际状态节点、82query，native/历史和RPC/actual-held一致；时间量化最大动作差约.003407rad，限幅后PD差约.2044Nm。W39/W40精度旧线索已量化，不再用极小改动重复旧原轨迹。
-- 8×20ms诊断800子步为共同冷启动predictor，缺历史外部全态的A3明确不可用。不能据此将全部误差归某单一物理参数。
-- 有限native rollouts196、transitionFD15408、riskFD3618；原A/B合计native rollouts59666、transitionFD11579112、riskFD3048862、plant子步300000；这些全量计数来自执行端提交汇总。W49最终审查当时只独立读了有限数据和231事件call；本轮另实际读取W50发布的完整输入/候选原件。
-- 两次query-only失败涉及service ABI/导入ready，一次deployment Init涉及先载sensor-free模型影响XML序列化；均physics0，已修复。两原E30自然满30s后未过，后六级blocked。不要混成八次跌倒或当作deadline问题。
-- 正式binary8637e3d118c686831a2acb54ef48271de6092c6095f56c9456f7289607d734e5；有限binary另有身份和修复说明。build的旧N/not_started字段不能覆盖最终runtime/原结果。
+有效D1的301份IK已全部解析，650个当前swing足×replan快照中，360个的已保存剩余目标节点全部不高于地面，362个比真实初始压入继续下移>1μm，96个低于-1mm，已保存节点最深-3.570516mm。所有相关目标位于材料x=.8之前，平地z=0、原足半径.022；不是材料形变高程误读。使用真实足位置/速度和原公式独立重建的最大误差2.36e-16m。
 
-## 4. 根因层次：已有证据和仍需辨识的部分
+确定错误在旧接续式：原绝对C2高度减去H0乘当前名义高度、再减去T H1乘当前名义速度。实际足未按相位抬起时，这个连续性修正会抵消抬脚，甚至主动下穿。IK最大误差<1e-7、68个原件事件native命令逐值一致、同段锚点/落点漂移0，均不能纠正一个目标本身错误的曲线。650是重规划快照数，不是650次独立物理失败。
 
-**已证生命周期问题。** r37有效bootstrap后复制旧B、叠加delta/调整scale，reference/K/H一直旧。W50 Task A全量原查询和231事件数组确认reference=[0,.35]，每流98.8267%查询夹在末动作节点174；安装ID/generation_time不能反映反馈实际来源。本次直接读到的四个W50输入完整对象也保留该旧参考。
+301次S均数值有效并作Q，其中299次J高于B。94次homotopy安装有92次属于Stand，运动阶段只有call121@2.002与call128@2.14；直接S只在call216@3.9安装一次。D1已读26call/520候选；早期S native仍四足承重，末call421 S后退29.476mm、足最大间隙22.46μm。也有向前但身体降低/足运动过大的被拒候选，不能说全部候选倒退，也未证明J错拒正常步态。
 
-**实际接触没有跟上目标步态。** 2.002–4.3s A/B四足同时>1N占85.718%/86.736%，目标swing承重约87.811%–94.113%；这早于首非足载荷及材料加载，不能全归材料记忆或PD饱和。B7–30s非足平均45.084N，约体重30.2%，非足>1N占88.447%，视频后期低伏有力日志支持。1N用于描述，不新增任务终止规则。
+保留B作最终接受底线，不等于B附近仍有独立搜索。S即使较差也占据唯一线性化方向，会限制搜索覆盖；恢复B方向是可以比较的次级机制，但D0已证明它不是稳定保险。[控制审查与原件](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/control/review.md)还分解了raw动作：支撑偏置确实保留，若干S没有被QP修改；这不足以单独证明“去掉支撑偏置就会走”。
 
-**r38构造基本接通，但接触模式探索未证解决。** 原bin独立复算raw center≤4.44e−16rad、切空间Jacobian≤2.22e−10、K/H混合逐数组吻合、安装对象吻合。末控制持值与状态插值有很小非严格等价，不足以解释厘米级倒退。新K大不自动代表错误；B625大alpha的总J约152万由ImpactMargin主导，不是NaN。原strict下降是真实局部改善，但不保证正常步态或长任务进展。
+## 4. 参考刷新与D0失稳：不能继续沿用单一旧解释
 
-**两类技术错误单独处理。** bridge同SONAME不同mjData布局导致actuator字段垃圾，不能用正确FP32 RPC cast掩盖错误物理；下一轮正常plant/独立server入口绕开该bridge，不重开40ms。公共runtime两处dump缩进错误会使整个模块无法解析，本次已修、仅确认AST语法；W50有限脚本不经过它，四例评分不因此作废。
+D0共311calls、272次安装、256次正homotopy同问题J下降。2907个held查询真正尾部过期为0，最后reference=[5.8,6.15]，因此W51 D0不是旧Stand参考冻结。及时刷新并未保证正常支撑。
 
-原r26的head reference仍是actual附近局部目标，mission x=3不是其直接残差。没有证据因Position项小就应盲目加权，也不能把W49 25/36和W50 10/36不同问题的候选比例当连续稳定性曲线。接下来区分：从起步刷新效果、运动候选缺失、目标排序及同对象预测—执行偏差。
+D1最后policy generation在4.2s，reference/K/H仍来自2.14s、截止2.49s；末policy age3.8s，reference expiry5.51s。2.492s首真正尾部查询，2755/4001；末查询未积分，实际积分口径2754/4000。float32的covers=false含起点舍入误差：D0有134条false而真实过期0，不能把标志直接当过期。
 
-## 5. W51：一个成对闭环实验，再决定原阶梯
+D0时序：2.976s首QP投影；3.016s首原目标硬裁剪、Kδx约1.968rad；3.17s首z<.28；3.4614s首执行PD明显越界>.01Nm；3.564/3.588s首z<.27/.25；4.05s最大Kδx=37.867rad；5.2304s首非足承重；5.814s跌倒。最初2.976s执行越界仅8.39e-7Nm，不能作明显饱和。raw目标硬clip648、QP改写627、包含QP的总改写708分开；原PD超界1557子步，其中>.01Nm为996、>1Nm为619。
 
-详细实现与执行边界以[W51计划](S1_W51_STABILITY_PLAN.md)为准。D0/D1均使用W44 A/seed1 checkpoint-014737、同归一化/确定性actor、原evaluation t=0完整初始化，各一次连续8s；前2s Stand、随后原outbound。D0=r38/H refresh-only，D1=r38+唯一相位感知完整运动候选S作替代线性化起点（拟r39），不改变物理/成本/步态/horizon/PPO。
+这些证明时间先后与异常存在，未隔离D0最初失稳的唯一因果。不能把后段37.867rad反推为最初错误，也不因为D1反馈小、没倒就宣布稳定运动。用户感觉步态越来越不正常有现象依据，但不同版本/任务窗不构成统计意义的单调退化曲线。
 
-需要真实D8入口及evaluate_stage诊断提前返回，沿用正常plant/独立native Agent/RPC/hold与PolicyStream(training=False)。qualification_usable=false；不能用training_duration=8、外部contract覆盖或wall timeout代替，不从不完整历史plant快照拼装。保留原提前物理终止，完整视频覆盖实际运行时段，不补齐或为满8s重跑。
+## 5. W52 下一步：主几何修复，次级并行搜索对照
 
-D1每epoch保留原R35Freeze和十nominal得完整全局B。一个S复制B并追加delta_q=q_IK−q_B_joint，raw center保持PD承重偏置/旧feedback/delta。足路径沿原绝对相位、2Hz/.45/C2/.005和速度命令：stance开始世界锚点跨replan保持，当前swing touchdown固定，剩余段从实际足位置/速度连续接续；身体/触地点/原关节限位和原support几何按计划，不加新步高或候选网格。
+[W52计划](S1_W52_STABILITY_PLAN.md)是实施依据。D2（拟r40）删除错误接续式，从真实足位置/速度直接接原固定apex/touchdown，分段五次曲线，保留2Hz/.45/5mm/绝对相位与锚点/落点。原swing=.275s、rise=.075s；关键时刻从原phase推，不从observed_start重计。不每20ms推迟apex、不clip高度冒充C2、不归零真实速度、不加v>=0浮点硬门；解析检查极值，真正不可行明确S不可用，回正常B搜索。
 
-S仅一native rollout；有效时即使J(S)>J(B)也可作Q，但最终安装必须原strict优于全局B。仅围绕Q一个first-valid backward、原9alpha，沿Q做r38当前时域及K/H转移；不先B9再S9。alpha0保留B，positive趋零不声称等于B，expected/ratio=null。S无效回B，无有用候选仍保留B，不强制刷新年龄。
+首次Trot的FL/RR已过原apex，不通过重置phase伪造起步；下一正常窗口仍保留。已有301份原件只做一次必要的纯数学修后验证，不新开微物理准入。暂不硬改PD支撑偏置/反馈/K限制/成本/步高/horizon/PPO，S仍走完整原native链和原risk/J严格比较。
 
-D0正常epoch通常≤20full rollout、D1≤21，双8s约842calls、最多80000plant子步、约17261full rollout量级，FD另计，实际提前结束更少。它不是W50的120rollout微测试，也非严格同计算预算。比较0–2、2.002–4.3、4.3–8s真实卸载/支撑交换、足滑移/间隙、z/vz/姿态、非足承重与前进，而非只看J或没触发body_fall。
+两组资源可用时，D3（拟r41）在相同修复上为B/S各保留独立first-valid+9alpha，统一原comparator选择，分支状态和工作量独立。D2通常≤21、D3≤30full rollout/epoch，不冒充等预算比较。D2是主线，D3不是新资格门槛；资源不足优先D2，不等待D3。
 
-D0已有效且D1无增量时优先简单r38；D1有实质改善时选同一冻结D1；两臂都差或只有贴地挪动则交对照负结果，按候选/排序/执行分辨下一项改变，不现场叠加新成本、步态、horizon、PPO和新求解器。
+D2/D3各一次同W44 A seed1/完整原初态t0→D8，正常物理提前终止，完整实际时段视频与足载/参考/动作记录。D2按原规则自然结束D8并完整读取实际轨迹后，若确有持续正常支撑推进，才优先冻结简单D2并进入原A/B E30，不要求D3也成功；最多两个重native job，资源逐个释放即可启动正式两臂。只有D3有实质效果才选择它。都差则交真实负结果，分清剩余问题，不临时叠加方法追成功。
 
-选定一个正式机制后原A seed1/B seed2各一次E30并行，从原完整evaluation初态开始，明确独立attempt。D8不作为资格或拼接E30。每case原E30过才E60→E300→E600：30s合法材料去程/3m远端原容差/完整观察，60s合法往返和回家稳定2s，300/600为270/540s内5/10合法往返并完整观察。失败只blocked本case后级，不换seed追成功。W44各14737/update57、tail0/excluded145全学习状态保留，新PPO0/0、donor0。
+原A seed1/B seed2各一次独立E30；逐case原E30→E60→E300→E600，原材料路线/远端3m/全观察/回家稳定2s/270与540s内5与10往返不变。D8不拼接资格，失败只blocked本case后级。固定新控制器后不随D3后来的分数更低更换版本。
 
-## 6. GPU与并行的实际边界
+## 6. 算力与GPU：能并行，但不能把容量当成工作成果
 
-W50零新GPU物理；用旧F1/L/F2全暴露记录规范化活动DOF/约束/contact后，首步smooth dynamics与约束输入一致，首个可观察差异为contact efc_force→qacc；完整contact字段27/30边界相同，第10步也有分歧。仍未锁定唯一kernel，canonical sort stub不是修复，不重复相同探针或以逐位相同作总门。
+W51两个有效臂：732calls、14341native full rollout、2673288transition FD、598194risk FD、69070plant子步。含技术D1：909calls、17647rollout、3281904transition FD、726082risk FD、84670plant子步；只算已写完调用，中断在途未知。新PPO/donor/GPU物理0。
 
-W51 C默认零新GPU积分，用已有114候选/113维残差/22项定义实现FP64 GPU成本归约，并逐项列ResidualFn的state/kinematics/context/接触/solver依赖。76条保存问题与38条错误bridge midpoint分开，后者仅代数对照；risk另需trunk_violation/failure元数据，只同问题/同epoch比较。残差→J不等于完整native成本移植，可实现有数据支持的纯运动学/代数部分，缺字段明确列出，不填零或新开原episode补历史档。GPU不正式安装、不阻塞CPU，不为占显存重复batch/PPO/吞吐轮。
+双CPU任务实际重叠合计869.19s（14.49min），其中D0与有效D1重叠332.68s。C与最初两臂只重叠.924s，没有与修正D1重叠；不能称持续三重满载。CPU核时/连续利用率/整卡GPU峰值本轮缺记录。D0/D1每1s仿真约需161.29/155.94s墙钟，未达实时。
 
-W50有限A/B仅重叠11.5159s，C为.8841s CPU分析，无持续利用率证据；W49原A/B79.412min重叠是上一轮事实。实测25CPU/96GB余量按10+10+2+3，线程库1，先-j6构建，隔离进程树/可写build，尊重其他项目。不外挂第三重native求解；C完成自然结束，硬件容量不是无效任务的理由。
+C在RTX PRO 6000 Blackwell Server Edition上做114×176×113原残差、22项FP64归约，最大J误差5.82077e-11，六组各361内部比较一致；tensor峰45561344B≈43.45MiB，归约.104s、脚本.924s。state重建仅3个实际活动纯项；6个Stand项在Trot下为零不算活动覆盖，MaterialSupportHeight有9.00991e-6误差，12项未重建。不是完整native成本、接触求解、FD或GPU MPC迁移。
 
-W49 integration303维及部分外部状态仍不等于通用完整plant恢复；W44学习resume也不是历史plant checkpoint。当前从原evaluation初态开始，保留引用原件，不增加无用恢复框架或重跑旧档采集。
+W52 C只用已有原件定位修正MaterialSupportHeight缺口，必要FP64比较、活动分支覆盖与缺字段明确记录；默认0新GPU物理，不重复归约/F1/L/F2、不填零、不新开episode补档、不正式安装。两重CPU各10核、C2核、其余约3核用于系统/主控/其他项目，线程库1，先-j6构建并隔离可写build。随真实job记录可得核时/CPU/GPU用量，不另做benchmark；完成的C自然结束，不为96GB空闲重复训练或批量。
 
-## 7. 工作流、交付与阅读边界
+## 7. 历史结果和排除项继续有效
 
-**新后台deadline=null、wall_deadline_enabled=false，省略deadline-unix，无固定墙钟完成时刻/到点kill。** 8s诊断与30/60/300/600s是物理任务定义；原物理终止/技术错误/用户停止、有限工作量与单次网络timeout保留，无无限重试。对话结束不杀后台，running不写completed。
+W49仍是最新完整原任务：A/B各30s自然结束，E30 0/2，合法往返0；最大x .349667/1.020530m、末z .138718/.142818m。A未到材料已异常，B首材料足载12.1866s、机体west entry20.064s，异常早于材料；不能全部归材料/PANN。用户B视频4.4–5s下蹲/顶起，5.2–7s暂时抬高，7–8s后低伏挪动，不能写5s后一直趴地。
 
-紧凑Git先推，必要原件和视频D57直传增量Release，核commit/URL/size/digest；回执丢失先查远端。Git短写串行合并最新main、不强推。**GitHub核验后不在用户电脑额外下载、复制、打包、镜像或归档。** 服务器仍被引用的科研输入/checkpoint/resume/视频保留，不自动删除。只用已授权服务器网络，不自动借电脑VPN/Clash/SSH转发。
+W50四保存问题76rollout、36正候选10strict，预测改善仍坍低/后退；加两midpoint共116rollout、114candidate、23112transition FD、4746risk FD。400bridge子步因same-SONAME错误库ABI失配，物理等价有效0；独立native保存问题评分仍有效，dlmopen修复无修后物理结果。原八阶段blocked/unrun不是八次失败。
 
-本次继承历史审查/库存，完整读流40个变化文件40,087,699B并解析16JSON；三并行审查线核控制、实际结果/GPU和论文。W50三个已上传ZIP共464,340,186B，API size/digest与Git manifest匹配，本次实际下载、提取254成员569,226,459B并解码关键完整输入/候选原数组；没有把大型原件复制进Git或另在用户电脑归档。没有额外全量SHA重扫，字节读流/解压不等于每数字已语义理解。
+W50另从231份旧policy与完整held确认W49 reference/K/H都来自initial Stand[0,.35]，每流14825/15001过期、末29.65s。raw-center/切空间/K/H混合/所选对象基本吻合，不能重复把极小FP32差当主要厘米级失效；公共runtime两处缩进当时已修。W51后来正常D8已经走过真实入口，不再停留在“仅AST通过”的旧状态。
 
-231policy与W49全量物理的结论明确归属执行端Task A；本次直接核四个W50输入完整对象、六组114candidate records、所选policy与接口原NPZ，并复看已有用户B视频分段/关键帧。没有新W50完整视频，没有下载所有历史Release或声称逐帧看完所有历史视频。[阅读清单](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/read-coverage.json) · [本轮远端核验](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/remote-verification.json)
+历史GPU contact动力学差异尚未解决；canonical sort stub不当修复，不重复相同探针，不以bitexact作总门。没有权限自动借用户电脑网络、删除被引用科研原件或复活旧资格。
 
-只做有信息量的分析和必要验证，不新增全仓hash/mock/shape/import/smoke或防御性测试轮。本次实质代码修复只有两处runtime缩进，r39/D8/GPU成本迁移尚待W51实施。
+[W49审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/README.md) · [W50审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/README.md) · [W51原计划](S1_W51_STABILITY_PLAN.md)；更早W43–W48审查仍在同一reviews目录，按形成时点阅读。
 
-## 8. 文献和历史入口
+## 8. 文献、阅读范围与交付
 
-[本轮文献](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W50-final-review/literature.md)读取MuJoCo全身MPC、HOUND接触隐式MPC、HiLQR和DIAL-MPC的一手原文及可核实作者入口。借鉴接触探索、初始轨迹和实际模式对齐；不把论文成功或GPU吞吐套作本项目资格。原动力学FD已是单边，raw-center零物理Jacobian不是同一问题；.35s曾有相关成功，不能仅因小于一步态周期就盲目延长。
+[W51文献对照](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/literature.md)核对ROM-guided CI-MPC、Perceptive NMPC、Reference-Free MPC、全局采样/局部接触优化、RL-augmented MPC五篇一手来源。共同启发是把几何意图落实为受力与执行，保留有用搜索覆盖；不直接移植人形/机械臂的假设，不把外文成功套作本项目资格。此前MuJoCo/HOUND/HiLQR/DIAL等结论仍保留。
 
-[W43审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W43-final-review/README.md) · [W44审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W44-final-review/README.md) · [W45审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W45-final-review/README.md) · [W46审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W46-final-review/README.md) · [W47审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W47-final-review/README.md) · [W48审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W48-final-review/README.md) · [W49审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W49-final-review/README.md) · [W50历史计划](S1_W50_STABILITY_PLAN.md)
+本次相对354b14b完整读流52变化文件51178658B、全解析30JSON。实际下载必要原件15资产2532967906B，解包2653成员2769219396B，读取三臂全时序/301份IK/所需候选事件并查看三视频。未下载所有历史Release，不把逐字节读流等同所有数字语义理解。
 
-历史“当前/待实施/继续运行”、旧固定截止和归档规则仅属于形成时点；最新执行以本页、W51计划和AGENTS为准。W50已完成，不按旧文字重启。
+W51 live GitHub两Release共38资产8470903356B，状态/size/digest与manifest匹配。[阅读清单](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/read-coverage.json) · [核验](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/remote-verification.json)。本次生成审查/图表/计划，没有新控制实验。
+
+**新后台deadline=null、wall_deadline_enabled=false，省略deadline-unix，无固定墙钟完成时刻、无到点kill、对话结束不杀后台。** 物理任务定义、原失败条件、明确技术/数值/资源错误、用户停止、单次网络timeout与有限工作量保持，running不伪写completed，无无限重试。
+
+紧凑Git先推，必要原件/视频D57增量Release直传，短写串行合并最新main、不强推，回执不明先查远端。核commit/URL/size/digest后结束，**不在用户电脑额外下载、复制、打包、镜像或归档**。服务器仍被引用的科研输入/checkpoint/resume/视频保留，不自动删除；只用已授权服务器网络，不自动借电脑VPN/Clash/SSH转发。旧固定截止/归档/历史当前规则均不覆盖本页和W52计划。
