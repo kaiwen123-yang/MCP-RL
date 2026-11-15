@@ -106,6 +106,8 @@ def finalize(phase):
  paths.append(W/'paired-results.json')
  phase.update(status='paired_D8_ended_pending_scientific_selection',ended_unix_s=time.time())
  write(W/'phase.json',phase);compact(paths,'Record W51 paired D8 actual outcomes and support windows')
+ for technical in phase.get('technical_attempts',[]):
+  roots.extend([LARGE/technical['attempt'],ROOT/technical['directory']])
  delivery=deliver('paired-D8',roots);phase['delivery']=delivery;write(W/'phase.json',phase)
  compact([W/'phase.json'],'Record W51 paired D8 direct server delivery')
 def pair():
@@ -122,6 +124,49 @@ def pair():
  for child,log in children:child.wait();log.close()
  os.sched_setaffinity(0,{22,23,24})
  finalize(phase)
+def continue_pair():
+ phase=json.loads((W/'phase.json').read_text())
+ d0=next(j for j in phase['jobs'] if j['arm']=='D0')
+ old=next(j for j in phase['jobs'] if j['arm']=='D1')
+ olddir=ROOT/old['directory']
+ previous=json.loads((olddir/'runtime.json').read_text())
+ if previous['status']=='running':raise ValueError('Wait for the stopped D1 server exception to finish saving actual arrays')
+ write(W/'D1-technical-attempt01.json',previous)
+ phase['technical_attempts'][0]['result']=previous
+ stamp=time.strftime('%Y%m%dT%H%M%SZ',time.gmtime())
+ name='job-'+stamp+'-w51-d1-command-repair';directory=LARGE/'jobs'/name
+ directory.mkdir(parents=True,exist_ok=False)
+ job=json.loads((olddir/'job.json').read_text())
+ job.update(job_id=name,stream_id='w51-d1-command-repair',started_unix_s=time.time(),
+  controller_source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+  technical_predecessor=old['job_id'],repair='original mission command populated in existing userdata78:84',
+  retry_scope='one directed implementation repair; original D0 continues, old D1 retained as invalid technical attempt')
+ contract=json.loads((olddir/'execution-contract.json').read_text())
+ contract['learning'].update(phase_id=name,stream_id=job['stream_id']);contract['w51_fixed_policy']=job
+ for dest in (directory,W/'jobs'/name):
+  write(dest/'job.json',job);write(dest/'execution-contract.json',contract)
+ new=dict(arm='D1',job_id=name,directory=str(directory.relative_to(ROOT)),affinity='10-19')
+ phase['jobs']=[d0,new];phase.update(status='running',pid=os.getpid(),tmux='s1-w51-pair-command-repair',
+  continuation_unix_s=time.time(),live_verification_before_repair=phase.pop('live_verification',None))
+ log=(directory/'runner.log').open('a')
+ child=subprocess.Popen(['taskset','-c','10-19',sys.executable,'-u',__file__,'--job-dir',str(directory)],
+  cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+ new['runner_pid']=child.pid;write(W/'phase.json',phase)
+ # Reattach to the original detached D0 without restarting or signalling it.
+ while json.loads((W/'D0.json').read_text())['status']=='running':time.sleep(5)
+ child.wait();log.close()
+ # The invalid technical trajectory is delivered with its original reason and
+ # complete actually saved interval; it never enters the paired comparison.
+ for record in phase['technical_attempts']:
+  attempt=record['attempt'];out=LARGE/attempt
+  if (SMALL/(attempt+'.json')).exists():
+   from w51_run_summary import summarize_attempt
+   summarize_attempt(attempt)
+   with (ROOT/record['directory']/'render.log').open('a') as stream:
+    record['render_exit_code']=subprocess.run([sys.executable,'scripts/render_s1_go2_r12.py','--attempt',attempt],
+      cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT).returncode
+ finalize(phase)
+
 def select(arm):
  # Invoke only after applying the plan's qualitative scientific selection to the
  # complete paired evidence. No invented automatic gait threshold.
@@ -153,11 +198,12 @@ def select(arm):
  phase.update(status='original_E30_running',original_evaluations_started=2);write(W/'phase.json',phase)
  compact([W/'phase.json',W/'jobs'],'Start W51 selected frozen mechanism original A B ladders')
 def main():
- p=argparse.ArgumentParser();p.add_argument('--declare',action='store_true');p.add_argument('--pair',action='store_true')
+ p=argparse.ArgumentParser();p.add_argument('--declare',action='store_true');p.add_argument('--pair',action='store_true');p.add_argument('--continue-pair',action='store_true')
  p.add_argument('--job-dir',type=Path);p.add_argument('--formal',action='store_true');p.add_argument('--select',choices=['D0','D1'])
  a=p.parse_args()
  if a.declare:declare()
  elif a.pair:pair()
+ elif a.continue_pair:continue_pair()
  elif a.select:select(a.select)
  else:
   result=run_job(a.job_dir,['E30','E60','E300','E600'] if a.formal else ['D8'])

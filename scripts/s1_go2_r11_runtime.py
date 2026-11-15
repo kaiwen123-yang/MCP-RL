@@ -518,7 +518,10 @@ def run(args, c, joint=None):
                         anchor_kind=np.where(loaded_anchor,1,np.where(below_plane,2,0)).astype(np.int8)
                     patches[:,1:3]=bottom[:,:2]
                     patches[:,3]=bottom[:,2]+joint.force[:,2]/c['local_contact_model']['instantaneous_stiffness_N_m']
-                if c.get('r11_body_twist_reference'):
+                # W51's seed consumes the original world command even though
+                # the optional old twist COST is disabled. This packet does not
+                # enable that cost or change the plant/RPC action path.
+                if c.get('r11_body_twist_reference') or 'w51_fixed_policy' in c.get('r12_contract',{}):
                     data.userdata[78:81]=mission.v
                     data.userdata[81:84]=mission.w
                 agent.set_task_parameter('Heading', float(heading))
