@@ -5,6 +5,20 @@ from pathlib import Path
 import mujoco,numpy as np,torch
 from compare_s1_go2_w44_saved import parse_candidates
 from publish_s1_go2_w52 import ROOT,SMALL,LARGE,write
+def compare_rankings(groups,delta,metadata):
+ previous=np.load(LARGE/'w51-C/fp64-costs.npz')
+ native=previous['native_J'];budget=previous['original_roundoff_budget'];corrected=native+delta
+ def better(i,j,J):
+  a,b=metadata[i],metadata[j]
+  if a['failure'] or not np.isfinite([J[i],a['trunk_violation']]).all():return False
+  if b['failure'] or not np.isfinite([J[j],b['trunk_violation']]).all():return True
+  return a['trunk_violation']<b['trunk_violation'] or (a['trunk_violation']==b['trunk_violation'] and J[j]-J[i]>budget[i]+budget[j])
+ mismatches=[]
+ for group in groups:
+  ids=range(group['start'],group['start']+group['count'])
+  pairs=[(i,j) for i in ids for j in ids if better(i,j,native)!=better(i,j,corrected)]
+  mismatches.append(dict(group=group['family']+'/'+group['label'],comparisons=len(ids)**2,mismatches=pairs))
+ return mismatches
 def main():
  started=time.time();torch.set_num_threads(1);torch.set_num_interop_threads(1)
  out=LARGE/'w52-C';out.mkdir(exist_ok=False)
@@ -57,7 +71,8 @@ def main():
   code_path='mujoco_mpc/agent.py Agent.init: mj_saveLastXML -> native init XML',
   old_max_residual_error=old['residual_reconstruction_max_errors']['MaterialSupportHeight'],
   corrected_max_residual_error=float(error.max()),max_targeted_J_change_vs_native=float(np.max(abs(corrected_delta))),
-  original_rankings_unchanged=bool(np.all(corrected_delta==0)),candidates=114,saved_problem_candidates=76,wrong_bridge_algebra_only_candidates=38,
+  original_rankings_unchanged=all(not x['mismatches'] for x in compare_rankings(groups,corrected_delta,rows)),
+  ranking_comparison=compare_rankings(groups,corrected_delta,rows),candidates=114,saved_problem_candidates=76,wrong_bridge_algebra_only_candidates=38,
   active_state_terms=4,inactive_Stand_terms=6,remaining_unreconstructed_terms=12,coverage=coverage,groups=groups,
   device=torch.cuda.get_device_name(),peak_allocated_bytes=torch.cuda.max_memory_allocated(),
   physics_steps=0,native_rollouts=0,FD=0,PPO_samples=0,PPO_updates=0,

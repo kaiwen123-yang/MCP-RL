@@ -1,5 +1,6 @@
 # W52：修复摆动参考，再用实际支撑交换决定是否进入原任务
 
+**W52 执行更新（2026-11-16）：r40/r41 已实现并完成原 native/service 重编；D2/D3 各一次原 t=0→D8 已在 D57 tmux `s1-w52-pair` 运行，仍无原 E30 资格。状态与命令见 results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json。旧 301 原件纯数学核对完成；C 支撑高度重建误差来自实际 Agent XML 序列化精度，修后 8.88e-16，原比较器排序不变。下方审查时的 planned_not_implemented 属于历史状态。**
 更新：2026-11-16（Asia/Shanghai）。依据结果提交 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**状态：planned_not_implemented；本次只完成审查与计划，不存在 W52 新实验结果。** 补充审查开始时远端 main 仍为 `28b8654`，没有新 W52 分支/Release 结果；不重开 W51，不跳号为 W53。
 
 [W51 完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md) · [控制原件审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/control/review.md) · [结果与资源复算](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/results/review.md) · [视频](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/video-review.md) · [启动提示词](S1_W52_START_PROMPT.md)

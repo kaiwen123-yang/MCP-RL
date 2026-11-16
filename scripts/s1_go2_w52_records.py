@@ -48,7 +48,7 @@ class W52Records(W51Records):
   ctx=row['context'];mission=row['compact']['mission_actor']
   expected=np.r_[mission['command_velocity'],mission['command_omega']]
   actual=ctx['native_userdata'][78:84]
-  if cid==1 or (np.any(expected) and 'moving_command_readback' not in self.seen):
+  if cid==1 or (mission['mission_phase'] in ('outbound','return') and 'moving_command_readback' not in self.seen):
    name='first_normal_command_readback' if cid==1 else 'moving_command_readback'
    self.seen.add(name)
    write(self.out/(name+'.json'),dict(call_id=cid,time_s=float(t),controller=self.controller,

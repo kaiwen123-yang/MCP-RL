@@ -1,5 +1,6 @@
 # 地面材料记忆项目：W51 已审查，W52 修复摆动参考
 
+**W52 执行更新（2026-11-16）：r40/r41 已实现并完成原 native/service 重编；D2/D3 各一次原 t=0→D8 已在 D57 tmux `s1-w52-pair` 运行，仍无原 E30 资格。状态与命令见 results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json。旧 301 原件纯数学核对完成；C 支撑高度重建误差来自实际 Agent XML 序列化精度，修后 8.88e-16，原比较器排序不变。下方审查时的 planned_not_implemented 属于历史状态。**
 更新：2026-11-16（Asia/Shanghai）。本轮结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**W51 已全部结束并发布；W52 planned_not_implemented。** 补充审查开始时远端仍为 `28b8654`，未见 W52 新结果。当前没有已选的正常行走新版本，本次审查不启动实验。
 
 [W51 完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md) · [W52 详细执行计划](S1_W52_STABILITY_PLAN.md) · [Codex 启动提示词](S1_W52_START_PROMPT.md) · [根 AGENTS](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/handoff.json)

@@ -60,6 +60,32 @@ def summarize_attempt(attempt):
     stable_locomotion_claim=False,
     qualification_only_from_original_result=True)
  summary["windows"]=windows(out,boundaries)
+ seeds=[json.loads(x) for x in (out/'w51-seeds.jsonl').read_text().splitlines()] if (out/'w51-seeds.jsonl').exists() else []
+ moving=[s for s in seeds if 'motion' in s]
+ summary['geometry']=dict(active_calls=len(moving),
+  valid_calls=sum(s['motion'].get('geometry_valid',False) for s in moving),
+  S_native_valid_calls=sum(s['motion']['S_valid'] for s in moving),
+  unavailable_reasons={reason:sum(s['motion'].get('geometry_reason')==reason for s in moving)
+   for reason in sorted({s['motion'].get('geometry_reason','not_recorded') for s in moving})},
+  current_swing_snapshots='replanning snapshots, not independent physical swings')
+ branch_path=out/'w52-branches.jsonl'
+ if branch_path.exists():
+  branch=[json.loads(x) for x in branch_path.read_text().splitlines()]
+  summary['independent_branch_work']={name:{key:sum(b[key] for r in branch for b in r['branches'] if b['source']==name)
+    for key in ('positive_rollouts','transition_fd','risk_fd','backward_attempts')} for name in ('B','S')}
+ # Recompute readback labels from recorded normal calls, excluding Stand roundoff commands.
+ checks=[]
+ for row in events.get('event_calls',[]):
+  mission=row['boundary']['mission_actor']
+  if mission['mission_phase'] not in ('outbound','return'):continue
+  with np.load(out/row['objects']['context']['file']) as a:
+   expected=np.r_[mission['command_velocity'],mission['command_omega']]
+   actual=a['native_userdata'][78:84]
+  checks.append(dict(call_id=row['call_record']['call_id'],time_s=row['boundary']['origin_s'],
+    expected=expected.tolist(),actual=actual.tolist(),max_abs_difference=float(np.max(abs(actual-expected)))))
+ summary['moving_command_same_call_readback']=dict(checked_saved_calls=len(checks),first=checks[0] if checks else None,
+   maximum_error=max(x['max_abs_difference'] for x in checks) if checks else None,
+   no_added_physics=True)
  write(dest,summary);return dest
 
 def windows(out,boundaries):

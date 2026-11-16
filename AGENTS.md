@@ -1,5 +1,6 @@
 # Codex 执行入口：W51 已审查，W52 修复摆动参考
 
+**W52 执行更新（2026-11-16）：r40/r41 已实现并完成原 native/service 重编；D2/D3 各一次原 t=0→D8 已在 D57 tmux `s1-w52-pair` 运行，仍无原 E30 资格。状态与命令见 results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json。旧 301 原件纯数学核对完成；C 支撑高度重建误差来自实际 Agent XML 序列化精度，修后 8.88e-16，原比较器排序不变。下方审查时的 planned_not_implemented 属于历史状态。**
 更新：2026-11-16（Asia/Shanghai）。结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**W51 已结束；W52 planned_not_implemented。** 补充审查开始时实时 main 仍为 `28b8654`，未见 W52 新结果。本次审查没有启动新物理、native solve、FD、GPU 或 PPO。
 
 先读 [项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[最新补充复核](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/README.md)、[W51 完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md)、[W52 详细计划](docs/S1_W52_STABILITY_PLAN.md)、[启动提示词](docs/S1_W52_START_PROMPT.md)、[最新机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/handoff.json)。实际实现与判定以 W52 计划为准；历史“running/当前/待实施”不覆盖新结果，不重开已完成 W51。
