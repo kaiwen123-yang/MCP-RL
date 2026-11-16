@@ -196,7 +196,7 @@
    iLQGPolicy seed=r33_nominal_policy;
    if(valid) {
      seed.AddDelta(knots,delta,horizon-1,1.);
-@@ -1936,6 +1958,23 @@
+@@ -1936,6 +1958,24 @@
        for(int j=0;j<3;++j){if(j)out<<",";out<<f.anchor[j];}
        out<<"],\"touchdown\":[";for(int j=0;j<3;++j){if(j)out<<",";out<<f.touchdown[j];}out<<"]}";
      }
@@ -205,7 +205,8 @@
 +       <<",\"geometry_tolerance_m\":1e-5,\"continuous_extrema\":true,\"segments\":[";
 +    bool comma=false;
 +    for(int i=0;i<4;++i)for(const auto& s:segments[i]) {
-+      if(comma)out<<",";comma=true;
++      if(comma){out<<",";}
++      comma=true;
 +      out<<"{\"foot\":"<<i<<",\"begin\":"<<s.begin<<",\"end\":"<<s.end<<",\"apex\":"<<s.apex
 +         <<",\"swing\":"<<(s.swing?"true":"false")<<",\"valid\":"<<(s.valid?"true":"false")
 +         <<",\"reason\":\""<<s.reason<<"\",\"min_clearance_m\":"<<s.min_clearance
@@ -220,7 +221,7 @@
      out<<"]}\n";
      std::ofstream raw(std::string(path)+"-kinematics.bin",std::ios::binary|std::ios::trunc);
      double h[]={51.,double(r29_call_id),time,double(horizon-1),double(valid)};
-@@ -1945,4 +1984,116 @@
+@@ -1945,4 +1985,117 @@
    mj_deleteData(actual);mj_deleteData(ik);
  }
  
@@ -324,7 +325,8 @@
 +       <<",\"final_risk_adjustment_count\":"<<(positive && (r33_nominal_trajectory.trunk_violation>0 || r33_archive_trajectory.trunk_violation>0)?1:0)
 +       <<",\"expected\":null,\"ratio\":null,\"branches\":[";
 +    for(int n=0;n<count;++n) {
-+      if(n)out<<",";const auto& b=*w52_workspaces[n];
++      if(n){out<<",";}
++      const auto& b=*w52_workspaces[n];
 +      out<<"{\"source\":\""<<(n?"S":"B")<<"\",\"first_valid\":"<<(result[n].valid?"true":"false")
 +         <<",\"mu\":"<<(result[n].valid?result[n].mu:entry_mu)
 +         <<",\"rate\":"<<(result[n].valid?result[n].rate:entry_rate)
@@ -339,7 +341,7 @@
  }  // namespace mjpc
 --- a/mjpc/w52_geometry.h
 +++ b/mjpc/w52_geometry.h
-@@ -0,0 +1,169 @@
+@@ -0,0 +1,171 @@
 +#ifndef MJPC_W52_GEOMETRY_H_
 +#define MJPC_W52_GEOMETRY_H_
 +#include <algorithm>
@@ -358,11 +360,13 @@
 +}
 +inline Poly Add(Poly p,const Poly& q,long double scale=1) {
 +  p.resize(std::max(p.size(),q.size()),0);
-+  for(size_t i=0;i<q.size();++i)p[i]+=scale*q[i];return p;
++  for(size_t i=0;i<q.size();++i){p[i]+=scale*q[i];}
++  return p;
 +}
 +inline Poly Multiply(const Poly& p,const Poly& q) {
 +  Poly r(p.size()+q.size()-1,0);
-+  for(size_t i=0;i<p.size();++i)for(size_t j=0;j<q.size();++j)r[i+j]+=p[i]*q[j];return r;
++  for(size_t i=0;i<p.size();++i)for(size_t j=0;j<q.size();++j){r[i+j]+=p[i]*q[j];}
++  return r;
 +}
 +inline Poly Compose(const Poly& p,long double offset,long double scale) {
 +  Poly q{0};for(auto i=p.rbegin();i!=p.rend();++i){q=Multiply(q,{offset,scale});q[0]+=*i;}return q;

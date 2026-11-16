@@ -98,7 +98,8 @@ void iLQGPlanner::W52Search(int horizon,ThreadPool& pool) {
        <<",\"final_risk_adjustment_count\":"<<(positive && (r33_nominal_trajectory.trunk_violation>0 || r33_archive_trajectory.trunk_violation>0)?1:0)
        <<",\"expected\":null,\"ratio\":null,\"branches\":[";
     for(int n=0;n<count;++n) {
-      if(n)out<<",";const auto& b=*w52_workspaces[n];
+      if(n){out<<",";}
+      const auto& b=*w52_workspaces[n];
       out<<"{\"source\":\""<<(n?"S":"B")<<"\",\"first_valid\":"<<(result[n].valid?"true":"false")
          <<",\"mu\":"<<(result[n].valid?result[n].mu:entry_mu)
          <<",\"rate\":"<<(result[n].valid?result[n].rate:entry_rate)

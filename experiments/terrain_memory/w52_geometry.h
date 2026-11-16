@@ -16,11 +16,13 @@ inline Poly Derivative(const Poly& p) {
 }
 inline Poly Add(Poly p,const Poly& q,long double scale=1) {
   p.resize(std::max(p.size(),q.size()),0);
-  for(size_t i=0;i<q.size();++i)p[i]+=scale*q[i];return p;
+  for(size_t i=0;i<q.size();++i){p[i]+=scale*q[i];}
+  return p;
 }
 inline Poly Multiply(const Poly& p,const Poly& q) {
   Poly r(p.size()+q.size()-1,0);
-  for(size_t i=0;i<p.size();++i)for(size_t j=0;j<q.size();++j)r[i+j]+=p[i]*q[j];return r;
+  for(size_t i=0;i<p.size();++i)for(size_t j=0;j<q.size();++j){r[i+j]+=p[i]*q[j];}
+  return r;
 }
 inline Poly Compose(const Poly& p,long double offset,long double scale) {
   Poly q{0};for(auto i=p.rbegin();i!=p.rend();++i){q=Multiply(q,{offset,scale});q[0]+=*i;}return q;

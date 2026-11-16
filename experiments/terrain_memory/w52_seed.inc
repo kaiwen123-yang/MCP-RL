@@ -149,7 +149,8 @@ void iLQGPlanner::W51Seed(int horizon,ThreadPool& pool) {
        <<",\"geometry_tolerance_m\":1e-5,\"continuous_extrema\":true,\"segments\":[";
     bool comma=false;
     for(int i=0;i<4;++i)for(const auto& s:segments[i]) {
-      if(comma)out<<",";comma=true;
+      if(comma){out<<",";}
+      comma=true;
       out<<"{\"foot\":"<<i<<",\"begin\":"<<s.begin<<",\"end\":"<<s.end<<",\"apex\":"<<s.apex
          <<",\"swing\":"<<(s.swing?"true":"false")<<",\"valid\":"<<(s.valid?"true":"false")
          <<",\"reason\":\""<<s.reason<<"\",\"min_clearance_m\":"<<s.min_clearance
