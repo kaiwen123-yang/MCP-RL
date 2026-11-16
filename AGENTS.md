@@ -1,6 +1,6 @@
 # Codex 执行入口：W51 已审查，W52 修复摆动参考
 
-更新：2026-11-16（Asia/Shanghai）。**W52已完成科学判定：D2/r40于5.6716s、D3/r41于6.6278s触发原floor–trunk非法接触；两臂均无持续正常支撑推进，不选版本，不启动原A/B E30。** 原物理进程已结束，不重开D2/D3。原件/视频直传的完成状态读取现有phase和delivery回执。
+更新：2026-11-16（Asia/Shanghai）。**W52已完成科学判定：D2/r40于5.6716s、D3/r41于6.6278s触发原floor–trunk非法接触；两臂均无持续正常支撑推进，不选版本，不启动原A/B E30。** 原物理进程已结束，不重开D2/D3。原件/视频已由D57直传并核验，见现有phase和delivery回执。
 
 先读[W52实际结论与冻结协议](docs/S1_W52_STABILITY_PLAN.md)、[完整结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/paired-results.json)、[运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json)和[项目记忆](docs/TERRAIN_MEMORY_PLAN.md)。C高度重建已修正（实际XML传输精度，误差8.88e−16），不是完整GPU MPC。新PPO/donor/GPU物理0。不得因为D3多活.9562s而开启原阶梯，不换seed或调参追成功。
 
