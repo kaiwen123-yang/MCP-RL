@@ -106,6 +106,13 @@ def analyze(arm,summary):
       min_z_m=float(st[:,2].min()),four_foot_fraction=float(ld.all(axis=1).mean()),
       max_clearance_mm=(ft[:,:,3].max(axis=0)*1000).tolist()))
   native.append(record)
+ manifest=json.loads((out/'w50-event-manifest.json').read_text())['event_calls']
+ retained={x['call_record']['call_id'] for x in manifest}
+ installed={c['call_id'] for c in calls if c['policy_updated']}
+ selected_coverage=dict(installed_calls=len(installed),retained_complete_calls=len(retained),
+  missing_complete_selected_calls=sorted(installed-retained),
+  missing_selected_candidate_rings=sorted(c for c in installed if not (out/f'r33-candidates-call{c:06d}.npz').exists()),
+  directly_installed_S=[c['call_id'] for c in calls if c['candidate_source']=='motion_seed_S' and c['policy_updated']])
  resource=jsonl(ROOT/'outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs'/('job-20261116T110800Z-w52-'+arm.lower())/'resources.jsonl')
  job=json.loads((W/(arm+'.json')).read_text())
  resource_stats=dict(**job['stages'][0]['resource_usage'],samples=len(resource),
@@ -119,7 +126,7 @@ def analyze(arm,summary):
   original_invalid_contact=dict(pair=[0,13],geom0=mujoco.mj_id2name(model,mujoco.mjtObj.mjOBJ_GEOM,0),
    geom13=mujoco.mj_id2name(model,mujoco.mjtObj.mjOBJ_GEOM,13),body13=mujoco.mj_id2name(model,mujoco.mjtObj.mjOBJ_BODY,int(model.geom_bodyid[13]))),
   final_rpy_rad=tr['rpy'][-1].tolist(),material_chunks=material,material_final_shapes=final_material,
-  installed_sources=dict(source_count),all_valid_S_native=native,resources=resource_stats,
+  installed_sources=dict(source_count),selected_object_coverage=selected_coverage,all_valid_S_native=native,resources=resource_stats,
   video=dict(decoded_frames=172 if arm=='D2' else 200,all_frames_viewed=True,
    scope='Every encoded frame viewed chronologically in 30-frame close-up sheets; timing/force conclusions use original physical logs, not container duration'),
   selection='not_selected_no_sustained_normal_support_progression')
