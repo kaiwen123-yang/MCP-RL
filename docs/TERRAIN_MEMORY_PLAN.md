@@ -1,11 +1,12 @@
 # 地面材料记忆项目：W51 已审查，W52 修复摆动参考
 
-**W52 执行更新（2026-11-16）：r40/r41 已实现并完成原 native/service 重编；D2/D3 各一次原 t=0→D8 已在 D57 tmux `s1-w52-pair` 运行，仍无原 E30 资格。状态与命令见 results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json。旧 301 原件纯数学核对完成；C 支撑高度重建误差来自实际 Agent XML 序列化精度，修后 8.88e-16，原比较器排序不变。下方审查时的 planned_not_implemented 属于历史状态。**
-更新：2026-11-16（Asia/Shanghai）。本轮结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**W51 已全部结束并发布；W52 planned_not_implemented。** 补充审查开始时远端仍为 `28b8654`，未见 W52 新结果。当前没有已选的正常行走新版本，本次审查不启动实验。
+更新：2026-11-16（Asia/Shanghai）。**W52 D2/D3已经结束并完成完整轨迹/视频判定，两臂均未达到持续正常支撑推进，原A/B E30不启动。** D2/r40在5.6716s、D3/r41在6.6278s发生floor–trunk非法接触；末x分别−78.349/−44.903mm，实际材料加载0。不是两次技术中断，D8不提供原任务资格。
 
-[W51 完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md) · [W52 详细执行计划](S1_W52_STABILITY_PLAN.md) · [Codex 启动提示词](S1_W52_START_PROMPT.md) · [根 AGENTS](../AGENTS.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/handoff.json)
+[W52实际结论与冻结协议](S1_W52_STABILITY_PLAN.md) · [完整结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/paired-results.json) · [全时程图](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/full-trajectory.png) · [运行与发布状态](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json)
 
-**2026-11-16 补充：** [最新复核](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/README.md)、[新交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/handoff.json)及[六项原始文献](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/literature.md)。修正D1在3/6/8s仍有约.22m/s前进命令却没有实现运动；18份材料chunk均空。新版本需要显式继承runtime的r39开关、strict/记录路径及w51_fixed_policy条件下的命令写入。D3隔离会被旧单分支过程改写的缓冲与regularization，候选ring就绪后保留实际所选轨迹，避免再次出现call216解释缺口。主D2/次D3/独立C的科学范围与无墙钟deadline、GitHub终点交付偏好保持。
+几何修复已生成原5mm目标，但首个有效S的native预测仍全程四足承重。D3确实实施24次独立B/S搜索、安装7次S方向候选，仍未形成持续推进。两臂held参考真正过期0；后续存在反馈尖峰、clip/QP与PD请求超界，最初下降早于这些明显执行改写，不能用晚段极值替代根因分离。剩余问题是几何、承载力与控制输出协调及接触切换闭环稳定性；本轮不继续叠加控制改动。
+
+本轮两启动、零技术物理重启、12801 full rollout、2472984 transition FD、538266 risk FD、61497物理子步、3.640 CPU核时；新增PPO/donor/GPU物理0。C的MaterialSupportHeight误差已定位为Agent XML目标高度序列化精度，修后8.88e−16，原排序不变。原件与两个全时段视频由原发布进程D57直传；读取phase/delivery确认完成，不重复启动。下文W51及“W52下一步”均保留为形成时历史。
 
 ## 1. 长期目标、真实控制链与当前阶段
 

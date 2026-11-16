@@ -1,11 +1,12 @@
 # Codex 执行入口：W51 已审查，W52 修复摆动参考
 
-**W52 执行更新（2026-11-16）：r40/r41 已实现并完成原 native/service 重编；D2/D3 各一次原 t=0→D8 已在 D57 tmux `s1-w52-pair` 运行，仍无原 E30 资格。状态与命令见 results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json。旧 301 原件纯数学核对完成；C 支撑高度重建误差来自实际 Agent XML 序列化精度，修后 8.88e-16，原比较器排序不变。下方审查时的 planned_not_implemented 属于历史状态。**
-更新：2026-11-16（Asia/Shanghai）。结果基点 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**W51 已结束；W52 planned_not_implemented。** 补充审查开始时实时 main 仍为 `28b8654`，未见 W52 新结果。本次审查没有启动新物理、native solve、FD、GPU 或 PPO。
+更新：2026-11-16（Asia/Shanghai）。**W52已完成科学判定：D2/r40于5.6716s、D3/r41于6.6278s触发原floor–trunk非法接触；两臂均无持续正常支撑推进，不选版本，不启动原A/B E30。** 原物理进程已结束，不重开D2/D3。原件/视频直传的完成状态读取现有phase和delivery回执。
 
-先读 [项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[最新补充复核](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/README.md)、[W51 完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md)、[W52 详细计划](docs/S1_W52_STABILITY_PLAN.md)、[启动提示词](docs/S1_W52_START_PROMPT.md)、[最新机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-followup-20261116/handoff.json)。实际实现与判定以 W52 计划为准；历史“running/当前/待实施”不覆盖新结果，不重开已完成 W51。
+先读[W52实际结论与冻结协议](docs/S1_W52_STABILITY_PLAN.md)、[完整结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/paired-results.json)、[运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json)和[项目记忆](docs/TERRAIN_MEMORY_PLAN.md)。C高度重建已修正（实际XML传输精度，误差8.88e−16），不是完整GPU MPC。新PPO/donor/GPU物理0。不得因为D3多活.9562s而开启原阶梯，不换seed或调参追成功。
 
-## 必须带入的新事实
+原W51审查与本页下方执行要点是历史依据与冻结协议，不覆盖W52实际负结果。下一控制机制需新的明确范围；仅剩本轮发布时续接原发布进程，避免重复上传或重跑。
+
+## W51背景事实（历史，保留）
 
 - 补充复算：修正D1在3/6/8s仍收到约.22m/s正向命令，实际速度近零；18份材料chunk及三份material-final全部空。W51当前障碍是起步/接触实现，不能归为任务命令为零或已加载材料失败。
 - 新版本接线不能只改名字：runtime运动开关仅匹配r39，多处strict/记录/native身份/before_call/held使用显式旧版本集合；userdata[78:84]修复和W51 recorder依赖w51_fixed_policy合同字段。r40/r41与新合同需同步继承，避免重新丢掉原修复。D3隔离完整单分支工作区，统一提交；候选ring就绪后保存同次实际所选rollout/policy，不补跑记录。
@@ -19,7 +20,7 @@
 - 有效pair 14341 full rollout、2673288 transition FD、598194 risk FD、69070 plant子步；含技术尝试17647/3281904/726082/84670。新增PPO/donor/GPU物理0。
 - C的114×176×113 FP64残差→22项J已完成，误差5.82077e-11、同问题比较全同；tensor峰43.45MiB、归约.104s，不是完整GPU MPC。MaterialSupportHeight state重建仍有9.00991e-6误差，活动分支覆盖有限。
 
-## W52 执行要点
+## W52 冻结执行协议（已执行，勿重跑）
 
 1. 核最新main、本地改动、D57具体job/tmux/PID/物理时钟与配额；已有同身份有效工作就续接，不重复启动、不宽前缀kill、不动其他项目。默认CPU树 `/root/autodl-tmp/MCP-RL-w42`、GPU树 `/root/autodl-tmp/MCP-RL`、环境 `work/envs/d57` / `work/envs/w41-mjwarp`，以现场为准。
 2. 主D2（拟r40）仅修几何接续：从真实足位置/速度直接接固定原apex/touchdown，分段五次曲线，保留2Hz/.45/5mm/绝对相位、原锚点/落点。原swing=.275s、rise=.075s。apex从原phase求，不从observed_start重新计；不每20ms推迟apex，不clip高度伪造C2，不归零真实速度。

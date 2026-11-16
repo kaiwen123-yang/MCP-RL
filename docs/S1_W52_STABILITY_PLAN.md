@@ -1,9 +1,45 @@
 # W52：修复摆动参考，再用实际支撑交换决定是否进入原任务
 
-**W52 执行更新（2026-11-16）：r40/r41 已实现并完成原 native/service 重编；D2/D3 各一次原 t=0→D8 已在 D57 tmux `s1-w52-pair` 运行，仍无原 E30 资格。状态与命令见 results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json。旧 301 原件纯数学核对完成；C 支撑高度重建误差来自实际 Agent XML 序列化精度，修后 8.88e-16，原比较器排序不变。下方审查时的 planned_not_implemented 属于历史状态。**
-更新：2026-11-16（Asia/Shanghai）。依据结果提交 `a621d7d35e6016634b388a3aef0d39d8d008aab0`。**状态：planned_not_implemented；本次只完成审查与计划，不存在 W52 新实验结果。** 补充审查开始时远端 main 仍为 `28b8654`，没有新 W52 分支/Release 结果；不重开 W51，不跳号为 W53。
+更新：2026-11-16（Asia/Shanghai）。**D2/r40 与 D3/r41 均已按原物理规则提前结束；科学选择完成，无版本进入原 A/B E30。** 原授权实现与运行范围见下方冻结协议；不得将该协议的计划语气解释为重新启动许可。
 
-[W51 完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/README.md) · [控制原件审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/control/review.md) · [结果与资源复算](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/results/review.md) · [视频](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W51-review/video-review.md) · [启动提示词](S1_W52_START_PROMPT.md)
+实际结果见 [paired-results.json](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/paired-results.json)、[phase.json](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json) 和 [全时程图](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/full-trajectory.png)。本次续接只读取原件、解析全部实际轨迹和两个视频的全部372帧，并发布结论，没有新增物理或优化调用。
+
+### 实际结果与决定
+
+| 项目 | D2 / r40 | D3 / r41 |
+|---|---:|---:|
+| 原物理结束 | 5.6716 s | 6.6278 s |
+| 原因 | floor 与 trunk 的 geom13 非法接触 | 同左 |
+| 最大 x / 末 x | +7.332 / −78.349 mm | +29.941 / −44.903 mm |
+| 末身体 z | .227781 m | .226264 m |
+| 2.002–4.3s 净位移 | −15.757 mm | −39.063 mm |
+| 同窗四足>1N受载比例（时间加权） | 81.897% | 60.052% |
+| 同窗计划swing仍受载范围（原500Hz行口径） | 86.84–94.69% | 73.91–85.14% |
+| moving调用 / 几何及native有效S | 184 / 23 | 232 / 24 |
+| full native rollout | 5812 | 6989 |
+| transition FD / risk FD | 1097820 / 246096 | 1375164 / 292170 |
+| 原物理子步 | 28358 | 33139 |
+
+两臂的0–2s保持原Stand。进入运动后虽有卸载、落脚和载荷切换，2.002–4.3s各足卸载段中位数仅2–5ms，夹有较长离地段；不能把数百次接触开关当成正常交替步态。后窗D2无足>1N占39.63%，D3占19.07%，同时身体后退、姿态波动和末段非足承重。视频中D2在约4.3s后后退/起伏、5.6s明显倾斜；D3短时向前后明显后退，约6.2–6.63s侧倾并接触躯干。两者都没有持续正常支撑推进，也未加载材料（13份chunk和两个material-final均空）。
+
+**决定：不提升r40/r41，不启动原A/B E30。** D3多存活0.9562s、最大x较大，不构成原资格或持续步态改善；D8均非完整观察。E30/E60/E300/E600保持未运行，不记成八次失败，不换seed、不追加训练或调权追成功。
+
+### 此次修复回答了什么，剩余问题是什么
+
+- 301份旧IK只做了一次数学核验。当前段四足同时可用60/301，168/650当前swing足快照可用；不可行明确回B。新D8各自产生23/24个几何及native有效S，原绝对相位/5mm未改。
+- 两臂call128@2.14s的S确实具有约5mm几何目标，原native rollout却全时域四足>1N，足底仍在平地下约2–3微米，竖直目标差约5mm。这直接说明几何可行尚未转成相应卸载；后续S也存在抬足但后退或过大运动的情况，不能概括为全部从不抬足。全部47条有效S及其同epoch候选已从原件读取。
+- D3实际完成24次独立B/S双方向：B/S正候选分别2997/216，最终S方向安装7次。增加搜索预算没有使该次原D8达到选择条件；不是等预算可靠性对照。
+- 两臂所有实际held查询的真正参考尾部过期均为0。D2首z<.28为4.230s，随后QP4.262s、硬clip4.268s、明显PD请求超界4.2778s；D3对应3.494/3.582/3.594/3.6204s。raw Kδx最大值5.36/180.96rad均在更晚时刻，不能倒推为已证明的最初原因。实际actuator force仍受原限幅。
+- 上一实际应用policy到下一匹配节点的body位置误差最大约.090/.555mm；这是短时对齐记录，不能替代整个.35s预测验证。当前没有证据据此把失败归为命令丢失、旧参考尾部、材料记忆，或直接宣布某个PD偏置/成本项是唯一根因。
+- 剩余机制集中在几何意图、承载力、native控制输出的协调，以及局部反馈与接触切换的闭环稳定性。保持为下一次有明确范围的机制问题，本轮不叠加新控制改动。
+
+### 交付与资源
+
+两次真实启动、零技术物理重启、两次原非法接触终止；原E30启动0。累计12801 full rollout、2472984 transition FD、538266 risk FD、61497物理子步。D2/D3仿真墙钟1229.11/1561.32s，进程树user+system合计13104.216 CPU秒（3.640核时）；采样整卡峰显存1466MiB、利用率最高2%，不冒称满载或NX实时。PPO/donor/新GPU物理均0。
+
+C已完成：实际Agent XML传输将目标高度从.29020336039643685序列化为.290203，修正后MaterialSupportHeight误差8.88e−16，原比较器排序不变。覆盖仍为4活动项、6非活动Stand项、12未重建项，不是完整GPU MPC。
+
+全时程图：蓝色足载带为Fz>1N，白色为≤1N，灰色为未执行时段；身体/姿态/足载取完整500Hz轨迹，非足力取全部5000Hz原物理记录，故保留D2末端极短接触峰。两臂各一次同seed诊断，无统计误差带。直接视频和原件由原发布进程从D57继续上传，发布完成以phase和delivery回执为准。服务器被引用原件保留，电脑无额外下载归档。
 
 ## 1. 决策与目的
 
