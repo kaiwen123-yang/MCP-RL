@@ -8,16 +8,19 @@ def main():
  W=SMALL/'w52'
  identity=Path('/proc')/str(a.parent_pid)
  if identity.exists():
-  args=(identity/'cmdline').read_bytes()
-  if b'run_s1_go2_w52.py' not in args or b'--pair' not in args:
-   raise RuntimeError('The supplied PID is not the original W52 paired publisher')
-  start=(identity/'stat').read_text().rsplit(') ',1)[1].split()[19]
-  print('Waiting for the existing W52 original publisher; no new physical task.',flush=True)
-  while identity.exists():
-   try:
-    if (identity/'stat').read_text().rsplit(') ',1)[1].split()[19]!=start:break
-   except FileNotFoundError:break
-   time.sleep(15)
+  fields=(identity/'stat').read_text().rsplit(') ',1)[1].split()
+  if fields[0]!='Z':
+   args=(identity/'cmdline').read_bytes()
+   if b'run_s1_go2_w52.py' not in args or b'--pair' not in args:
+    raise RuntimeError('The supplied PID is not the original W52 paired publisher')
+   start=fields[19]
+   print('Waiting for the existing W52 original publisher; no new physical task.',flush=True)
+   while identity.exists():
+    try:
+     fields=(identity/'stat').read_text().rsplit(') ',1)[1].split()
+     if fields[0]=='Z' or fields[19]!=start:break
+    except FileNotFoundError:break
+    time.sleep(15)
  receipt=json.loads((W/'delivery/paired-D8/delivery.json').read_text())
  if receipt['status']!='published':
   raise RuntimeError('Original publication remains pending; inspect existing receipts before resuming uploads')
