@@ -1,0 +1,120 @@
+{
+  "schema": "s1_w52_review_w53_handoff_v1",
+  "review_date": "2026-11-16",
+  "review_timezone": "Asia/Shanghai",
+  "reviewed_main": "5e036c6918ae72bb795c4b1b5be08c1e109ade32",
+  "w52_status": "completed_negative_published",
+  "w53_status": "planned_not_implemented_or_run",
+  "this_review_new_work": {
+    "physical_starts": 0,
+    "native_rollouts": 0,
+    "finite_differences": 0,
+    "PPO_samples": 0,
+    "PPO_updates": 0
+  },
+  "w52": {
+    "D2": {
+      "controller": "S5-r40",
+      "end_s": 5.67160000000312,
+      "reason": "invalid_contact:floor-trunk-geom13",
+      "max_x_m": 0.007332,
+      "final_x_m": -0.078349,
+      "qualification_usable": false
+    },
+    "D3": {
+      "controller": "S5-r41",
+      "end_s": 6.627800000005138,
+      "reason": "invalid_contact:floor-trunk-geom13",
+      "max_x_m": 0.029941188824762436,
+      "final_x_m": -0.04490277739778538,
+      "qualification_usable": false
+    },
+    "selected": null,
+    "material_loaded": false,
+    "formal_E30_starts": 0,
+    "physical_starts": 2,
+    "technical_physical_restarts": 0,
+    "total_native_rollouts": 12801,
+    "total_transition_FD": 2472984,
+    "total_risk_FD": 538266,
+    "total_physical_substeps": 61497
+  },
+  "decision": "Stop iterating geometry-only increments on the old support closed loop; implement two complete controller alternatives.",
+  "plan": "docs/S1_W53_STABILITY_PLAN.md",
+  "prompt": "docs/S1_W53_START_PROMPT.md",
+  "routes": {
+    "N": {
+      "scope": "Restore complete R8/S3 motion semantics as a new material-unaware baseline on current original plant/task.",
+      "historical_qualification_inherited": false,
+      "gait_hz": 2,
+      "duty": 0.45,
+      "amplitude_m": 0.03,
+      "gait_semantics": "historical soft gait residual"
+    },
+    "F": {
+      "scope": "Independent contact-force MPC and whole-body execution through unchanged PD60/5.",
+      "gait_hz": 2,
+      "duty": 0.6,
+      "amplitude_m": 0.03,
+      "gait_semantics": "declared contact schedule, .20s swing and .05s overlap per half cycle"
+    },
+    "C": {
+      "scope": "FP64 GPU batch model and actual MPC/WBC matrix assembly from existing W52 states, same-model CPU comparison, no online installation.",
+      "new_plant_steps": 0,
+      "new_native_rollouts": 0,
+      "new_FD": 0
+    }
+  },
+  "experiment_budget": {
+    "initial_declared": "N-seed1 E30 and F-seed1 E30 once each, when technically ready",
+    "no_new_D8": true,
+    "selection": "Prefer N if N passes original E30 and sustained normal progression. Select F when F meets the same conditions and N has failed original E30 or has a declared technical block/terminated implementation with no usable result. Normal ongoing N build/run is not failure. Keep technical unrun separate from physical failure.",
+    "selected_seed1_reuses_its_E30": true,
+    "selected_seed2_starts_new_E30": true,
+    "per_case_ladder": [
+      "E30",
+      "E60",
+      "E300",
+      "E600"
+    ],
+    "maximum_declared_stages_if_all_prerequisites_pass": 9,
+    "both_initial_fail": "Deliver actual classified negatives; no third physical controller family.",
+    "new_PPO": 0,
+    "new_donor": 0
+  },
+  "resources": {
+    "total_CPU_available_assumption": 25,
+    "N_max": 10,
+    "F_max": 10,
+    "C_and_recording": 2,
+    "system_and_other_projects": 3,
+    "build_jobs_initial_max": 6,
+    "math_threads": 1,
+    "max_heavy_physical_jobs": 2,
+    "GPU_memory_GB_available_assumption": 96
+  },
+  "background": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_at_conversation_end": false,
+    "physical_task_horizons_and_original_failures_preserved": true
+  },
+  "delivery": {
+    "target": "GitHub repository plus incremental direct D57 Releases",
+    "extra_archive_on_user_computer": false,
+    "retain_referenced_server_originals_and_learning_state": true,
+    "force_push": false
+  },
+  "evidence_files": [
+    "README.md",
+    "evidence.md",
+    "evidence.json",
+    "control.md",
+    "control-algebra.json",
+    "control_algebra.py",
+    "baseline-and-literature.md",
+    "literature.md",
+    "read-coverage.json",
+    "first-seed-mismatch.png"
+  ]
+}

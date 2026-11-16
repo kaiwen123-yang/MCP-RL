@@ -1,10 +1,27 @@
-# Codex 执行入口：W51 已审查，W52 修复摆动参考
+# Codex 执行入口：W52 已审查；W53 恢复完整运动与接触力控制
 
-更新：2026-11-16（Asia/Shanghai）。**W52已完成科学判定：D2/r40于5.6716s、D3/r41于6.6278s触发原floor–trunk非法接触；两臂均无持续正常支撑推进，不选版本，不启动原A/B E30。** 原物理进程已结束，不重开D2/D3。原件/视频已由D57直传并核验，见现有phase和delivery回执。
+更新：2026-11-16（Asia/Shanghai）。审查基点 `5e036c6918ae72bb795c4b1b5be08c1e109ade32`。**W52 已完成负结果和发布；W53 仅已规划，尚未实现或运行。** 本次提交没有新增物理、native rollout、FD 或 PPO；下一轮按启动提示词执行明确的 W53 范围。
 
-先读[W52实际结论与冻结协议](docs/S1_W52_STABILITY_PLAN.md)、[完整结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/paired-results.json)、[运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json)和[项目记忆](docs/TERRAIN_MEMORY_PLAN.md)。C高度重建已修正（实际XML传输精度，误差8.88e−16），不是完整GPU MPC。新PPO/donor/GPU物理0。不得因为D3多活.9562s而开启原阶梯，不换seed或调参追成功。
+先读 [W53 计划](docs/S1_W53_STABILITY_PLAN.md)、[启动提示词](docs/S1_W53_START_PROMPT.md)、[项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[W52 本次审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W52-review/README.md) 和 [机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W52-review/handoff.json)。本页下方 W51/W52 执行协议保留为历史，不能覆盖 W53 或重复启动旧任务。
 
-原W51审查与本页下方执行要点是历史依据与冻结协议，不覆盖W52实际负结果。下一控制机制需新的明确范围；仅剩本轮发布时续接原发布进程，避免重复上传或重跑。
+## 当前必须继承的事实
+
+W52 D2/r40 于 5.6716 s、D3/r41 于 6.6278 s 发生 floor–trunk 非法接触，材料加载均 0，原 E30 未启动。两次有效物理启动、零技术物理重启；后级未运行不是八次失败。真正参考尾部过期 0，命令读回正确，后台没有墙钟截止。首有效 S 约 5 mm 目标仍对应 native FR/RL 28.20/33.75 N：保存政策精确证实旧 B 的 reference/K/H 和支撑中心被保留，只加 qIK 差。不要把后期 K 尖峰、clip 或材料解释成已隔离的最初原因，也不要删偏置冒充已证修复。
+
+C 的高度重建已经按实际 Agent XML 序列化精度修正至 8.88e−16，原排序不变；不是完整 GPU MPC，不再重做。W44 A/B checkpoint-014737 和完整学习 resume 保留，W45–W52 新 PPO 均为 0。
+
+## W53 执行要点
+
+1. 核最新 main、本地改动和具体 job/tmux/PID/物理时钟/配额，已有同身份有效工作则续接；隔离可写 build、输出和进程树，不重复启动、不宽前缀 kill、不动其他项目。
+2. N 从冻结源码/pin/三补丁完整恢复 R8/S3 运动语义，接当前原 TM02 plant/任务和冻结 cap；原 2 Hz/.45/3 cm，支撑参考只在 Stand，保留明确的执行正确性适配。不能只改步高而保留整套当前 moving 控制包；历史刚地成功不继承新材料资格。
+3. F 是独立接触力 MPC+WBC，统一身体、接触、足 p/v/a 和力矩；固定 2 Hz/.60/3 cm、.20 s swing，首任务前冻结起步和接触转换。原 PD60/5 接口必须表达完整命令，约束映射后输入及总力矩；不用旧 B 的 J/K/H 接管，不改原物理接触或材料判据。
+4. N/F 同 W44 A seed1 各预声明一次原 E30，就绪者先跑，不新增 D8 或旧 9+3 矩阵。按计划选一个完整内核；所选同身份 seed1 E30 可直接作 E60 前序，另槽开所选 W44 B seed2 E30。各 case 原 E30→E60→E300→E600，不能借资格；两首轮都失败则交真实分阶段负结果，不临时加第三物理控制族。新 PPO/donor=0。
+5. C 仅用已有 W52 状态一次有限遍历，做服务 F 的 FP64 Go2 模型/约束装配和同模型 CPU 对照，明确活动覆盖与含传输的收益；新 plant/native rollout/FD/PPO=0，不在线替换，不阻塞 N/F。
+6. 25 核余量按 N≤10、F≤10、C/记录2、系统/其他3，最多两个重物理任务；数学线程库1，构建总上限先-j6。随正常 job 分段记 CPU/wall，不能以 affinity 冒充利用率，不另跑满载 benchmark。
+7. 保留全程 500 Hz 轨迹、5000 Hz 实际接触/力矩/双时钟、材料和全视频，每次实际安装的完整 policy/参考/获选轨迹可追溯；按计划精简普通非赢家全 ring 重复写入，说明缺失边界，不补跑、不删历史原件。
+8. 只做真实接线、构建及本改动必要验证，不新增全仓 hash/mock/shape/import/smoke 或重复旧保存问题。真实 spec/build/runtime/backend/命令/actor/hold/终止/记录/协议身份全部接通，不能只新增版本名。
+9. 所有新后台 deadline=null、wall_deadline_enabled=false，省略 deadline-unix，无固定墙钟结束时间，无到点 kill，对话结束不杀后台。原物理长度、失败条件、明确技术/资源错误和用户停止仍有效；持续推进已授权阶段，running 如实记录。
+10. GitHub 为交付处，紧凑代码/结论先推，必要原件和全视频 D57 直接增量上传 Release。短写串行整合最新 main、不强推，核 commit/URL/size/digest 后结束；不在用户电脑额外下载、复制、镜像、打包或归档。保留服务器被引用 checkpoint/resume/原件，不自动借电脑 VPN/Clash/SSH 转发。
 
 ## W51背景事实（历史，保留）
 

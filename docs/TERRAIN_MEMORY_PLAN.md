@@ -1,12 +1,24 @@
-# 地面材料记忆项目：W51 已审查，W52 修复摆动参考
+# 地面材料记忆项目：W52 已审查，W53 并行恢复完整运动控制
 
-更新：2026-11-16（Asia/Shanghai）。**W52 D2/D3已经结束并完成完整轨迹/视频判定，两臂均未达到持续正常支撑推进，原A/B E30不启动。** D2/r40在5.6716s、D3/r41在6.6278s发生floor–trunk非法接触；末x分别−78.349/−44.903mm，实际材料加载0。不是两次技术中断，D8不提供原任务资格。
+更新：2026-11-16（Asia/Shanghai）。本次审查基点 `5e036c6918ae72bb795c4b1b5be08c1e109ade32`。**W52 已结束且完成交付；W53 为已明确范围的下一实施计划，尚未实现或运行。** 当前原 Go2/TM02 稳定完整往返仍未建立。本次新增物理、native rollout、FD、PPO=0。
 
-[W52实际结论与冻结协议](S1_W52_STABILITY_PLAN.md) · [完整结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/paired-results.json) · [全时程图](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/full-trajectory.png) · [运行与发布状态](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/phase.json)
+[W52 独立审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W52-review/README.md) · [W53 实施计划](S1_W53_STABILITY_PLAN.md) · [Codex 启动提示词](S1_W53_START_PROMPT.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W52-review/handoff.json) · [W52 原始结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/paired-results.json)
 
-几何修复已生成原5mm目标，但首个有效S的native预测仍全程四足承重。D3确实实施24次独立B/S搜索、安装7次S方向候选，仍未形成持续推进。两臂held参考真正过期0；后续存在反馈尖峰、clip/QP与PD请求超界，最初下降早于这些明显执行改写，不能用晚段极值替代根因分离。剩余问题是几何、承载力与控制输出协调及接触切换闭环稳定性；本轮不继续叠加控制改动。
+## 最新结论与下一轮范围
 
-本轮两启动、零技术物理重启、12801 full rollout、2472984 transition FD、538266 risk FD、61497物理子步、3.640 CPU核时；新增PPO/donor/GPU物理0。C的MaterialSupportHeight误差已定位为Agent XML目标高度序列化精度，修后8.88e−16，原排序不变。原件与两个全时段视频已由D57直传并核验；见phase/delivery，不重复启动。下文W51及“W52下一步”均保留为形成时历史。
+D2/r40 在 5.6716 s、D3/r41 在 6.6278 s floor–trunk 非法接触，最大 x 仅 7.332/29.941 mm，末 x −78.349/−44.903 mm；两臂实际材料加载均 0。2.002–4.3 s 实际后退 15.757/39.063 mm，四足同时承重 81.897%/60.052%。两次有效物理启动、零技术物理重启，E30/E60/E300/E600 未运行。原视频全部 372 个发布帧与完整物理日志相符，没有正常持续推进。命令 readback 正确、真正 held 尾部过期为零、后台没有固定墙钟截止。
+
+W52 几何修复生效，但最早有效 S 在原生预测中仍全程四足承重：目标 apex 约 5 mm，FR/RL 载荷 28.20/33.75 N。保存政策动作的精确重构误差 1.11e−16 rad，旧 B 的 reference/K/H 与支撑输入偏置保留，只追加 qIK 差；不能靠几何正确推出卸载，也不能直接删偏置或单独限制 K 当作已证修复。D3 真正增加独立 B 搜索而没有扭转运动。主问题已收敛到完整运动目标、支撑/摆动受力及执行一致性。
+
+W53 改为两套完整控制器并行：N 从明确源码/pin/三补丁恢复 R8/S3 全身 iLQG 运动语义（2 Hz/.45/3 cm，Stand 支撑参考只在 Stand），接当前真实材料任务；F 独立接触力 MPC+WBC（2 Hz/.60/3 cm、.20 s 摆动），统一身体/足 p/v/a/支撑力，通过原 PD60/5 执行完整命令并约束总力矩。N 的旧刚地资格不继承；F 的显式接触表与 N 的软 gait 不构成单变量消融，材料支撑允许真实压入/回弹。
+
+两线就绪后同 seed1 各一次原 E30，不加 D8、旧 9+3 或调参矩阵。依据原结果选定一个完整内核，复用其同身份 seed1 E30 资格，另开 seed2 E30，各 case 按原 E30→E60→E300→E600 推进。两首轮都失败交真实分阶段结果，不再临时生第三控制族。第三线 C 仅用已有 W52 状态做服务 F 的 FP64 模型/矩阵批量路径，不新增物理/rollout/FD/PPO，不在线更换后端。
+
+本轮 W52 消耗 12,801 full rollout、2,472,984 transition FD、538,266 risk FD、61,497 物理子步、3.640 CPU 核时；新增 PPO/donor/GPU 物理 0。C 高度重建误差已修至 8.88e−16、排序不变。两 CPU job 全阶段平均 4.737/4.596 核，648 个候选 NPZ 共 20.918 GB，约 41–43% eval 墙钟尚未由已有命名计时覆盖。W53 在真实任务内分段计时、精简普通非赢家重复数组，保留全程实际物理、已安装完整政策/参考、材料与视频；不把未计时全归 IO，不把 10 核 affinity 冒充满载。
+
+现场 25 核余量按 10+10+2+3、最多两个重物理任务。后台持续 deadline=null、wall_deadline_enabled=false，无固定墙钟结束时刻或到点 kill；原物理时长/失败条件保留。GitHub 直传并核验后结束，不在用户电脑额外下载、复制、镜像、打包或归档；被引用服务器原件/学习状态保留。
+
+以下第 1 节保留长期目标与现有链路；第 2–8 节保留 W51 形成时分析与 W52 已执行方案。其“下一步”“当前”只属于历史，不覆盖本页顶部和 W53 计划。
 
 ## 1. 长期目标、真实控制链与当前阶段
 
@@ -19,7 +31,7 @@
 | 历史阶段 | 保留的事实 | 不能据此声称 |
 |---|---|---|
 | 早期R1/R2/S0 | 材料辨识与学习的正负结果均留存 | 早期方向全部成功 |
-| R8/S3刚地 | 原任务9/9，连续300s 3/3 | 当前材料/r39资格继承 |
+| R8/S3刚地 | 原任务9/9，连续300s 3/3 | 当前材料/r40–r43资格继承 |
 | R9/R10材料 | 完整任务0/8、0/9；R10曾到返程 | 已完成稳定材料往返 |
 | R11 | 23次真实启动，有效E30/E60均0 | 恢复旧失效资格 |
 | W34/W35 | 合法去程分别3、1，有返程进展 | 合法完整往返已成立 |
@@ -30,10 +42,11 @@
 | W49/r37 K | 4困难问题均有改进；原A/B各30s自然结束 | 低位/非足支撑算正常行走；E30实际0/2 |
 | W50/r38 H | 4保存问题10/36 strict改进；原任务未跑 | bridge错误物理有效，或已恢复正常推进 |
 | W51/r38-r39 | 两有效D8：D0跌倒，D1静站；定位参考下穿 | 8s观察完成等于正常步态或原资格 |
+| W52/r40-r41 | 几何修复和独立B/S真实执行；两臂均在材料前触地 | 已恢复正常运动或获得E30资格 |
 
-学习状态：A/B共享祖先6545/update25；PANN唯一转移22929，另RAW256，R12 distinct23185。W44 A/B checkpoint-014737、resume ep00428/ep00417、全actor/critic/optimizer/norm/RNG、tail0/excluded145保留。W45–W51新增PPO均0/0；15249/59不是自动续训预算。
+学习状态：A/B共享祖先6545/update25；PANN唯一转移22929，另RAW256，R12 distinct23185。W44 A/B checkpoint-014737、resume ep00428/ep00417、全actor/critic/optimizer/norm/RNG、tail0/excluded145保留。W45–W52新增PPO均0/0；15249/59不是自动续训预算。
 
-## 2. W51 最新实际结果
+## 2. 历史 W51 实际结果
 
 原始 [phase](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w51/phase.json) 状态为 paired_D8_ended_pending_scientific_selection；这是形成时待审查记录。现在科学审查结论为**没有可提升的正常行走版本**，详见W51 review/handoff。旧“D1仍running、截至2.408s”已经失效。
 
@@ -77,7 +90,7 @@ D0时序：2.976s首QP投影；3.016s首原目标硬裁剪、Kδx约1.968rad；3
 
 这些证明时间先后与异常存在，未隔离D0最初失稳的唯一因果。不能把后段37.867rad反推为最初错误，也不因为D1反馈小、没倒就宣布稳定运动。用户感觉步态越来越不正常有现象依据，但不同版本/任务窗不构成统计意义的单调退化曲线。
 
-## 5. W52 下一步：主几何修复，次级并行搜索对照
+## 5. 历史 W52 执行方案：已执行，不再重跑
 
 [W52计划](S1_W52_STABILITY_PLAN.md)是实施依据。D2（拟r40）删除错误接续式，从真实足位置/速度直接接原固定apex/touchdown，分段五次曲线，保留2Hz/.45/5mm/绝对相位与锚点/落点。原swing=.275s、rise=.075s；关键时刻从原phase推，不从observed_start重计。不每20ms推迟apex、不clip高度冒充C2、不归零真实速度、不加v>=0浮点硬门；解析检查极值，真正不可行明确S不可用，回正常B搜索。
 
@@ -121,4 +134,4 @@ W51 live GitHub两Release共38资产8470903356B，状态/size/digest与manifest�
 
 **新后台deadline=null、wall_deadline_enabled=false，省略deadline-unix，无固定墙钟完成时刻、无到点kill、对话结束不杀后台。** 物理任务定义、原失败条件、明确技术/数值/资源错误、用户停止、单次网络timeout与有限工作量保持，running不伪写completed，无无限重试。
 
-紧凑Git先推，必要原件/视频D57增量Release直传，短写串行合并最新main、不强推，回执不明先查远端。核commit/URL/size/digest后结束，**不在用户电脑额外下载、复制、打包、镜像或归档**。服务器仍被引用的科研输入/checkpoint/resume/视频保留，不自动删除；只用已授权服务器网络，不自动借电脑VPN/Clash/SSH转发。旧固定截止/归档/历史当前规则均不覆盖本页和W52计划。
+紧凑Git先推，必要原件/视频D57增量Release直传，短写串行合并最新main、不强推，回执不明先查远端。核commit/URL/size/digest后结束，**不在用户电脑额外下载、复制、打包、镜像或归档**。服务器仍被引用的科研输入/checkpoint/resume/视频保留，不自动删除；只用已授权服务器网络，不自动借电脑VPN/Clash/SSH转发。旧固定截止/归档/历史当前规则均不覆盖本页顶部和W53计划。
