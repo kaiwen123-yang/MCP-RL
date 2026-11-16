@@ -1,0 +1,540 @@
+{
+  "status": "completed",
+  "started_unix_s": 1794827276.6097944,
+  "ended_unix_s": 1794827278.7211523,
+  "root_cause": "W51 reconstruction read high-precision source XML target .29020336039643685; actual Agent XML transport saves .290203. Constant target offset, not inferred physical xpos error.",
+  "code_path": "mujoco_mpc/agent.py Agent.init: mj_saveLastXML -> native init XML",
+  "old_max_residual_error": 9.009910922230802e-06,
+  "corrected_max_residual_error": 8.881784197001252e-16,
+  "max_targeted_J_change_vs_native": 3.885780586188048e-16,
+  "original_rankings_unchanged": false,
+  "candidates": 114,
+  "saved_problem_candidates": 76,
+  "wrong_bridge_algebra_only_candidates": 38,
+  "active_state_terms": 4,
+  "inactive_Stand_terms": 6,
+  "remaining_unreconstructed_terms": 12,
+  "coverage": [
+    {
+      "name": "Upright",
+      "start": 0,
+      "end": 3,
+      "norm": 6,
+      "norm_parameter": 0.05,
+      "weight": 1.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
+      "dependency": "base quaternion, moving-material-upright mode",
+      "max_residual_error": 2.220446049250313e-15,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "qpos[3:7]",
+        "mode",
+        "gait",
+        "r11_material_upright flags"
+      ]
+    },
+    {
+      "name": "Height",
+      "start": 3,
+      "end": 4,
+      "norm": 6,
+      "norm_parameter": 0.04,
+      "weight": 1.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "torso inertial COM position, all foot geom centers, original height target",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "xipos[trunk]",
+        "geom_xpos[FL,RL,FR,RR]",
+        "userdata[1]",
+        "mode"
+      ]
+    },
+    {
+      "name": "Position",
+      "start": 4,
+      "end": 7,
+      "norm": 2,
+      "norm_parameter": 0.1,
+      "weight": 0.2,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "head site FK, R26 immutable packet, mocap and time",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "site_xpos[head]",
+        "userdata[84:96]",
+        "mocap_pos[goal]",
+        "time",
+        "r26_reference"
+      ]
+    },
+    {
+      "name": "Gait",
+      "start": 7,
+      "end": 11,
+      "norm": 6,
+      "norm_parameter": 0.03,
+      "weight": 2.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "foot geom FK, geom radii, ground/material reference, private absolute phase and C2 parameters",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[FL,RL,FR,RR]",
+        "geom_size[foot]",
+        "phase_start/phase_start_time/phase_velocity",
+        "amplitude/duty/gait",
+        "flat_ground_height"
+      ]
+    },
+    {
+      "name": "Balance",
+      "start": 11,
+      "end": 13,
+      "norm": 2,
+      "norm_parameter": 0.1,
+      "weight": 0.2,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "subtree COM/velocity, support hull and foot positions",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "sensordata[torso_subtreecom]",
+        "sensordata[torso_subtreelinvel]",
+        "geom_xpos[feet]",
+        "mode/gait"
+      ]
+    },
+    {
+      "name": "Effort",
+      "start": 13,
+      "end": 25,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 0.08,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "actuator_force and original actuator force range; node action alone is insufficient",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "actuator_force[12] at each residual node",
+        "actuator_forcerange"
+      ]
+    },
+    {
+      "name": "Posture",
+      "start": 25,
+      "end": 37,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 0.02,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
+      "dependency": "qpos joints, home keyframe, stand/support gating",
+      "max_residual_error": 5.421010862427522e-20,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "qpos[7:19]",
+        "key_qpos[home]",
+        "userdata[22:34]",
+        "mode/gait"
+      ]
+    },
+    {
+      "name": "Orientation",
+      "start": 37,
+      "end": 39,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 1.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
+      "dependency": "base quaternion, original heading parameter",
+      "max_residual_error": 2.220446049250313e-16,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "qpos[3:7]",
+        "Heading parameter",
+        "mode"
+      ]
+    },
+    {
+      "name": "Angmom",
+      "start": 39,
+      "end": 42,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 0.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "torso angular-momentum sensor; full model inertias and velocities for reconstruction",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "sensordata[torso_angmom] or full model inertia/FK/qvel"
+      ]
+    },
+    {
+      "name": "StandLinearVelocity",
+      "start": 42,
+      "end": 45,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 1.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
+      "dependency": "qvel and mode; inactive in these Trot records",
+      "max_residual_error": 0.0,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "qvel[0:3]",
+        "stand_equilibrium gate"
+      ]
+    },
+    {
+      "name": "StandAngularVelocity",
+      "start": 45,
+      "end": 48,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 1.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
+      "dependency": "qvel and mode; inactive in these Trot records",
+      "max_residual_error": 0.0,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "qvel[3:6]",
+        "stand_equilibrium gate"
+      ]
+    },
+    {
+      "name": "StandAbsoluteHeight",
+      "start": 48,
+      "end": 49,
+      "norm": 6,
+      "norm_parameter": 0.04,
+      "weight": 1.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
+      "dependency": "base height and support target; inactive in these Trot records",
+      "max_residual_error": 0.0,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "xpos[trunk,2]",
+        "userdata[2]",
+        "s1_stand_absolute_height",
+        "stand/support gates"
+      ]
+    },
+    {
+      "name": "StandFootPosition",
+      "start": 49,
+      "end": 61,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 0.1,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
+      "dependency": "foot FK and support userdata; inactive in these Trot records",
+      "max_residual_error": 0.0,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[feet]",
+        "userdata[10:22]",
+        "support gate"
+      ]
+    },
+    {
+      "name": "StandFootVelocity",
+      "start": 61,
+      "end": 73,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 0.02,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
+      "dependency": "foot Jacobian/qvel and support mode; inactive in these Trot records",
+      "max_residual_error": 0.0,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom spatial velocity (mj_objectVelocity)",
+        "support gate"
+      ]
+    },
+    {
+      "name": "StandSupportForce",
+      "start": 73,
+      "end": 77,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 0.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "implemented_state_algebra_or_recorded_inactive_branch",
+      "dependency": "contact frame, geom ids and solver contact force; inactive here, active-mode solver data absent",
+      "max_residual_error": 0.0,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "ncon",
+        "contact.geom1/geom2",
+        "contact.frame",
+        "contact.efc_address",
+        "efc_force",
+        "userdata[58:62]",
+        "track_load gate"
+      ]
+    },
+    {
+      "name": "LandingVelocity",
+      "start": 77,
+      "end": 81,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 0.02,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "foot FK/Jacobian, phase derivative, material patch rest and gating",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[feet]",
+        "geom spatial velocity",
+        "userdata[62:78]",
+        "C2 FootStep derivative",
+        "r10/r11 settings"
+      ]
+    },
+    {
+      "name": "LandingIndentation",
+      "start": 81,
+      "end": 85,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 0.1,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "foot FK, radius, material patch rest, stiffness and load scale",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[feet]",
+        "geom_size[feet]",
+        "userdata[62:78]",
+        "body_subtreemass[trunk]",
+        "stiffness/gravity",
+        "material gate"
+      ]
+    },
+    {
+      "name": "MaterialSupportHeight",
+      "start": 85,
+      "end": 86,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 1.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "exact_from_saved_state_and_actual_serialized_model_in_recorded_active_Trot_gate",
+      "dependency": "base z, original support target, moving/support-region gate",
+      "max_residual_error": 8.881784197001252e-16,
+      "active_mode_scope": "Original moving body support gate only; no new active Stand/material-only branch evidence",
+      "exact_reconstruction_fields": [
+        "xpos[trunk,2] (exact derived native position)",
+        "r10_material_support_height",
+        "moving/material support gate"
+      ]
+    },
+    {
+      "name": "MaterialDomainMargin",
+      "start": 86,
+      "end": 90,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 176.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "foot FK, material strip and exact native domain function/context",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[feet]",
+        "geom_size[feet]",
+        "userdata[62:78]",
+        "r11_domain_margin and strip bounds"
+      ]
+    },
+    {
+      "name": "TrunkClearance",
+      "start": 90,
+      "end": 97,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 176.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "collision geom transforms/shapes and original clearance function",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "xpos/xmat",
+        "collision geom types/sizes/transforms",
+        "r12_trunk_clearance"
+      ]
+    },
+    {
+      "name": "ImpactMargin",
+      "start": 97,
+      "end": 101,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 176.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "foot FK/Jacobian plus original approach/contact proxy state and bounds",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "geom_xpos[feet]",
+        "geom spatial velocity",
+        "userdata[62:78]",
+        "r26_impact_margin"
+      ]
+    },
+    {
+      "name": "InputReference",
+      "start": 101,
+      "end": 113,
+      "norm": 0,
+      "norm_parameter": null,
+      "weight": 1.0,
+      "cost_reduction": "FP64_GPU_from_saved_native_residual",
+      "residual_reconstruction": "not_implemented_from_saved_state",
+      "dependency": "held control, current epoch R35 u/R/time grid; terminal node is zero by original definition",
+      "max_residual_error": null,
+      "active_mode_scope": "All six recorded groups are original Quadruped/Trot; inactive Stand zeros are analytical gates, not filling missing measurements.",
+      "exact_reconstruction_fields": [
+        "current-epoch r35 origin/dt/u/R",
+        "actual held control at residual node",
+        "terminal node identity"
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "family": "task-b",
+      "label": "A237",
+      "start": 0,
+      "count": 19,
+      "source_height": 0.29020336039643685,
+      "transported_height": 0.290203,
+      "expected_old_residual_offset": -9.009910921509157e-06,
+      "source_model": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T145020Z-w49-a-eval-PANN_PPO_S5-s1-E30-attempt01/model/G1-project-go2.xml",
+      "serialized_context": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52-C/A237-agent-transport.xml",
+      "physical_evidence_usable": true,
+      "native_gate": "r11_moving_body_support=1, original Quadruped Trot",
+      "native_geometry": "trunk is free root body, translation qpos[0:3] is xpos[trunk]",
+      "max_residual_error": 4.440892098500626e-16,
+      "max_abs_J_change_vs_native": 1.4130111222501992e-16
+    },
+    {
+      "family": "task-b",
+      "label": "B236",
+      "start": 19,
+      "count": 19,
+      "source_height": 0.29020336039643685,
+      "transported_height": 0.290203,
+      "expected_old_residual_offset": -9.009910921509157e-06,
+      "source_model": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T145020Z-w49-b-eval-PANN_PPO_S5-s2-E30-attempt01/model/G1-project-go2.xml",
+      "serialized_context": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52-C/B236-agent-transport.xml",
+      "physical_evidence_usable": true,
+      "native_gate": "r11_moving_body_support=1, original Quadruped Trot",
+      "native_geometry": "trunk is free root body, translation qpos[0:3] is xpos[trunk]",
+      "max_residual_error": 4.440892098500626e-16,
+      "max_abs_J_change_vs_native": 1.651141344861561e-16
+    },
+    {
+      "family": "task-b",
+      "label": "A328",
+      "start": 38,
+      "count": 19,
+      "source_height": 0.29020336039643685,
+      "transported_height": 0.290203,
+      "expected_old_residual_offset": -9.009910921509157e-06,
+      "source_model": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T145020Z-w49-a-eval-PANN_PPO_S5-s1-E30-attempt01/model/G1-project-go2.xml",
+      "serialized_context": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52-C/A328-agent-transport.xml",
+      "physical_evidence_usable": true,
+      "native_gate": "r11_moving_body_support=1, original Quadruped Trot",
+      "native_geometry": "trunk is free root body, translation qpos[0:3] is xpos[trunk]",
+      "max_residual_error": 4.440892098500626e-16,
+      "max_abs_J_change_vs_native": 3.5829924885630055e-16
+    },
+    {
+      "family": "task-b",
+      "label": "B625",
+      "start": 57,
+      "count": 19,
+      "source_height": 0.29020336039643685,
+      "transported_height": 0.290203,
+      "expected_old_residual_offset": -9.009910921509157e-06,
+      "source_model": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T145020Z-w49-b-eval-PANN_PPO_S5-s2-E30-attempt01/model/G1-project-go2.xml",
+      "serialized_context": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52-C/B625-agent-transport.xml",
+      "physical_evidence_usable": true,
+      "native_gate": "r11_moving_body_support=1, original Quadruped Trot",
+      "native_geometry": "trunk is free root body, translation qpos[0:3] is xpos[trunk]",
+      "max_residual_error": 8.881784197001252e-16,
+      "max_abs_J_change_vs_native": 3.885780586188048e-16
+    },
+    {
+      "family": "deployment",
+      "label": "A237",
+      "start": 76,
+      "count": 19,
+      "source_height": 0.29020336039643685,
+      "transported_height": 0.290203,
+      "expected_old_residual_offset": -9.009910921509157e-06,
+      "source_model": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T145020Z-w49-a-eval-PANN_PPO_S5-s1-E30-attempt01/model/G1-project-go2.xml",
+      "serialized_context": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52-C/A237-agent-transport.xml",
+      "physical_evidence_usable": false,
+      "native_gate": "r11_moving_body_support=1, original Quadruped Trot",
+      "native_geometry": "trunk is free root body, translation qpos[0:3] is xpos[trunk]",
+      "max_residual_error": 4.440892098500626e-16,
+      "max_abs_J_change_vs_native": 1.3625464393126921e-16
+    },
+    {
+      "family": "deployment",
+      "label": "B236",
+      "start": 95,
+      "count": 19,
+      "source_height": 0.29020336039643685,
+      "transported_height": 0.290203,
+      "expected_old_residual_offset": -9.009910921509157e-06,
+      "source_model": "/root/autodl-tmp/MCP-RL-w42/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261113T145020Z-w49-b-eval-PANN_PPO_S5-s2-E30-attempt01/model/G1-project-go2.xml",
+      "serialized_context": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52-C/B236-agent-transport.xml",
+      "physical_evidence_usable": false,
+      "native_gate": "r11_moving_body_support=1, original Quadruped Trot",
+      "native_geometry": "trunk is free root body, translation qpos[0:3] is xpos[trunk]",
+      "max_residual_error": 4.440892098500626e-16,
+      "max_abs_J_change_vs_native": 1.7094911345080536e-16
+    }
+  ],
+  "device": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "peak_allocated_bytes": 1126400,
+  "physics_steps": 0,
+  "native_rollouts": 0,
+  "FD": 0,
+  "PPO_samples": 0,
+  "PPO_updates": 0,
+  "previous_full_reduction_repeated": false,
+  "formal_installation_allowed": false,
+  "complete_native_cost_port": false,
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "wall_s": 2.1117806434631348
+}
