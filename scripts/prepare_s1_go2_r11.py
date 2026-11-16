@@ -7,6 +7,12 @@ OLD=Path('/root/autodl-tmp/MCP-RL')
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--build',default='S5-r1');a=p.parse_args()
+    if a.build in ('S5-r40','S5-r41'):
+        if (ROOT/'work/r11-frozen'/a.build/'identity.json').exists():
+            raise ValueError('Preserve existing frozen W52 build')
+        from w52_native_source import main as generate
+        from w52_build import main as build
+        generate(a.build);build(a.build);return
     if a.build=='S5-r39':
         if (ROOT/'work/r11-frozen/S5-r39/identity.json').exists():
             raise ValueError('Preserve existing frozen r39')

@@ -1,0 +1,511 @@
+--- a/mjpc/planners/ilqg/planner.h
++++ b/mjpc/planners/ilqg/planner.h
+@@ -16,6 +16,7 @@
+ #define MJPC_PLANNERS_ILQG_PLANNER_H_
+ 
+ #include <shared_mutex>
++#include <memory>
+ #include <string>
+ #include <vector>
+ 
+@@ -128,6 +129,12 @@
+   int w51_seed_rollouts=0;
+   std::string w51_status="not_entered";
+   void W51Seed(int horizon,ThreadPool& pool);
++  struct W52Candidate {iLQGPolicy policy;Trajectory trajectory;int kind,slot;double alpha;std::string source;};
++  bool w52_collect=false;
++  std::string w52_branch;
++  std::vector<W52Candidate> w52_pending;
++  std::unique_ptr<iLQGPlanner> w52_workspaces[2];
++  void W52Search(int horizon,ThreadPool& pool);
+   void W50Capture(int horizon);
+   void W50Transfer(int horizon,ThreadPool& pool);
+ 
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -24,6 +24,7 @@
+ #include <iostream>
+ #include <cstdlib>
+ #include <fstream>
++#include "mjpc/w52_geometry.h"
+ #include <sstream>
+ #include <cmath>
+ #include "mjpc/tasks/quadruped/quadruped.h"
+@@ -263,7 +264,7 @@
+   }
+   out<<"}";r32.attempts.push_back(out.str());
+   if(const char* file=std::getenv("MJPC_R29_SNAPSHOT")) {
+-    std::ofstream bin(std::string(file)+".search",std::ios::binary|std::ios::trunc);
++    std::ofstream bin(std::string(file)+".search"+(w52_collect?"-"+w52_branch:""),std::ios::binary|std::ios::trunc);
+     double header[]={32.,double(r29_call_id),double(r32.epoch),time,double(horizon),
+       double(dim_state),double(dim_action),double(dim_state_derivative),lambda_used,rate_used,
+       double(valid),double(failed_node),double(policy.record_plan_id),double(r29_backward_attempts),
+@@ -361,6 +362,9 @@
+ 
+ void iLQGPlanner::R33Consider(const iLQGPolicy& p,const Trajectory& tr,int horizon,
+     int kind,int slot,double alpha,const std::string& source) {
++  if(w52_collect) {
++    w52_pending.push_back({p,tr,kind,slot,alpha,source});return;
++  }
+   ++r33_slots;
+   if(const char* path=std::getenv("MJPC_W49_COMPLETE_POLICIES"))
+     p.Save(std::string(path)+"-candidate-"+std::to_string(r33_slots)+".bin");
+@@ -617,8 +621,11 @@
+   } else if(r33_mechanism=="P") {
+     R33Structured(horizon,pool);
+   } else {
++    const bool dual=std::getenv("MJPC_W52_DUAL");
++    w52_pending.clear();w52_collect=dual;
+     W51Seed(horizon,pool);
+-    this->Iteration(horizon, pool);
++    w52_collect=false;
++    if(dual)W52Search(horizon,pool);else this->Iteration(horizon,pool);
+     if(r33_mechanism!="H" && std::getenv("MJPC_W49_FINITE_GUIDED") && w49_first_valid)W49Guided(horizon,pool);
+   }
+   if(r33_archive_valid) {
+@@ -635,7 +642,7 @@
+       if(const char* f=std::getenv("MJPC_R27_PLAN_RECORD")) {
+         std::ofstream out(f,std::ios::app);out.precision(17);
+         out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+-           <<",\"controller_artifact\":\"S5-r39\",\"problem_epoch\":"<<r32.epoch
++           <<",\"controller_artifact\":\"S5-r40\",\"problem_epoch\":"<<r32.epoch
+            <<",\"source_call_id\":"<<r29_call_id<<",\"candidate_source\":\""<<r33_source<<"\""
+            <<",\"selected_mechanism\":\""<<r33_mechanism<<"\",\"accepted_cost\":"<<r33_archive_trajectory.total_return
+            <<",\"accepted_trunk_violation\":"<<r33_archive_trajectory.trunk_violation
+@@ -1363,7 +1370,7 @@
+     std::ofstream out(diagnostic_file,std::ios::app);out.precision(17);
+     out<<"{\"origin\":"<<time<<",\"plan_id\":"<<policy.record_plan_id
+ 
+-       <<",\"controller_artifact\":\"S5-r39\""
++       <<",\"controller_artifact\":\"S5-r40\""
+        <<",\"candidate_source\":\""<<r33_source<<"\",\"selected_mechanism\":\""<<r33_mechanism<<"\""
+        <<",\"problem_epoch\":"<<r32.epoch<<",\"source_call_id\":"<<r29_call_id
+        <<",\"policy_generation_epoch\":"<<r32.generation_epoch
+@@ -1771,6 +1778,7 @@
+   for(int i=0;i<count;++i)
+     R33Consider(candidate_policy[i],trajectory[i],horizon,1,i,linesearch_steps[i],
+       std::string(transfer?"homotopy_":"bootstrap_")+std::to_string(i));
++  if(!w52_collect) {
+   backward_pass.regularization=w50_mu;backward_pass.regularization_rate=w50_rate;
+   if(r33_source.rfind(transfer?"homotopy_":"bootstrap_",0)==0 &&
+      (r33_nominal_trajectory.trunk_violation>0 || r33_archive_trajectory.trunk_violation>0))
+@@ -1778,6 +1786,7 @@
+       r33_nominal_trajectory.trunk_violation>r33_archive_trajectory.trunk_violation?
+         1./backward_pass.regularization_factor:backward_pass.regularization_factor,
+       settings.min_regularization,settings.max_regularization);
++  }
+   if(const char* prefix=std::getenv("MJPC_W49_DIRECTION")) {
+     std::ofstream out(std::string(prefix)+"-homotopy.json",std::ios::trunc);out.precision(17);
+     out<<"{\"first_valid_backward\":true,\"baseline_metric_valid\":"<<(transfer?"true":"false")
+@@ -1822,24 +1831,50 @@
+     while(body>0 && body!=model->jnt_bodyid[joint])body=model->body_parentid[body];
+     if(body==model->jnt_bodyid[joint])actuators[i].push_back(a);
+   }
+-  std::array<std::array<double,3>,4> start,velocity,endpos;
+-  std::array<double,4> begin,end,step0,dstep0;
+-  std::array<bool,4> swing;
+-  double first_step[4],first_velocity[4];q->W51Step(time,first_step,first_velocity);
+-  auto local=motion.feet;
++  std::array<std::vector<w52::Segment>,4> segments;
++  bool valid=true;int failed_node=-1;double max_error=0;
++  std::string geometry_reason="available";
++  std::vector<double> targets((horizon-1)*12),ik_path((horizon-1)*12,std::numeric_limits<double>::quiet_NaN());
++  const double finish=r33_nominal_trajectory.times[horizon-2];
++  for(int k=0;k<horizon-1;++k)knots[k]=r33_nominal_trajectory.times[k];
+   for(int i=0;i<4;++i) {
+-    if(actuators[i].size()!=3)mju_error("W51 requires original three-joint Go2 legs");
++    if(actuators[i].size()!=3)mju_error("W52 requires original three-joint Go2 legs");
+     mj_jacGeom(model,actual,jac.data(),nullptr,motion.geoms[i]);
++    std::array<double,3> start,velocity;
+     for(int j=0;j<3;++j) {
+-      start[i][j]=actual->geom_xpos[3*motion.geoms[i]+j];
+-      velocity[i][j]=mju_dot(jac.data()+j*model->nv,actual->qvel,model->nv);
+-    }
+-    begin[i]=time;end[i]=local[i].end;swing[i]=local[i].swing;
+-    endpos[i]=swing[i]?local[i].touchdown:local[i].anchor;
+-    step0[i]=first_step[i];dstep0[i]=first_velocity[i];
+-  }
+-  bool valid=true;int failed_node=-1;double max_error=0;
+-  std::vector<double> targets((horizon-1)*12),ik_path((horizon-1)*12);
++      start[j]=actual->geom_xpos[3*motion.geoms[i]+j];
++      velocity[j]=mju_dot(jac.data()+j*model->nv,actual->qvel,model->nv);
++    }
++    double begin=time,end=motion.feet[i].end;bool swing=motion.feet[i].swing;
++    auto endpoint=swing?motion.feet[i].touchdown:motion.feet[i].anchor;
++    w52::Surface surface;
++    const double* flat=GetCustomNumericData(model,"s1_flat_ground_height");
++    surface.flat=flat?flat[0]:0;surface.radius=model->geom_size[3*motion.geoms[i]];
++    surface.material=GetCustomNumericData(model,"r10_local_contact");
++    surface.anchored=GetCustomNumericData(model,"r10_contact_anchor");
++    std::copy_n(actual->userdata+62,16,surface.patches.begin());
++    while(begin<=finish+1e-12) {
++      if(end-begin<=1e-12) {
++        // Consume the original zero-length event, preserving actual p/v.
++        swing=!swing;end+=(swing?1-motion.duty:motion.duty)/motion.frequency;
++        endpoint=swing?motion.Touchdown(model,actual,i,end):endpoint;
++        continue;
++      }
++      auto seg=w52::Make(begin,end,swing,start,velocity,endpoint,surface);
++      if(!seg.valid && valid){valid=false;geometry_reason=seg.reason;}
++      segments[i].push_back(seg);
++      begin=end;start=endpoint;velocity={0,0,0};
++      swing=!swing;end+=(swing?1-motion.duty:motion.duty)/motion.frequency;
++      endpoint=swing?motion.Touchdown(model,actual,i,end):start;
++    }
++    for(int k=0;k<horizon-1;++k) {
++      const w52::Segment* seg=&segments[i].back();
++      for(const auto& s:segments[i])if(knots[k]<=s.end+1e-12){seg=&s;break;}
++      auto target=w52::Position(*seg,knots[k]);
++      for(int j=0;j<3;++j)targets[k*12+3*i+j]=target[j];
++    }
++  }
++  const bool geometry_valid=valid;
+   for(int k=0;k<horizon-1 && valid;++k) {
+     const double t=r33_nominal_trajectory.times[k],tau=t-time;
+     knots[k]=t;
+@@ -1849,22 +1884,9 @@
+     ik->qpos[2]=actual->qpos[2]+W51Motion::Smooth(tau/.35)*(ztarget-actual->qpos[2]);
+     double yawq[4]={std::cos(actual->userdata[83]*tau/2),0,0,std::sin(actual->userdata[83]*tau/2)};
+     mju_mulQuat(ik->qpos+3,yawq,actual->qpos+3);
+-    double step[4],stepvel[4];q->W51Step(t,step,stepvel);
+     for(int i=0;i<4;++i) {
+-      while(t>end[i]+1e-10) {
+-        start[i]=endpos[i];velocity[i]={0,0,0};begin[i]=end[i];
+-        swing[i]=!swing[i];end[i]+= (swing[i]?1-motion.duty:motion.duty)/motion.frequency;
+-        endpos[i]=swing[i]?motion.Touchdown(model,actual,i,end[i]):start[i];
+-        step0[i]=dstep0[i]=0;
+-      }
+-      const double duration=end[i]-begin[i],u=std::clamp((t-begin[i])/duration,0.,1.);
+       std::array<double,3> target;
+-      for(int j=0;j<3;++j)target[j]=endpos[i][j]+W51Motion::H0(u)*(start[i][j]-endpos[i][j])+
+-          duration*W51Motion::H1(u)*velocity[i][j];
+-      // Original absolute-phase C2 height plus a unique endpoint correction.
+-      // At the current node both actual foot position and velocity are exact.
+-      target[2]+=step[i]-W51Motion::H0(u)*step0[i]-duration*W51Motion::H1(u)*dstep0[i];
+-      for(int j=0;j<3;++j)targets[k*12+3*i+j]=target[j];
++      for(int j=0;j<3;++j)target[j]=targets[k*12+3*i+j];
+       double error=0;
+       for(int it=0;it<40;++it) {
+         mj_kinematics(model,ik);mj_comPos(model,ik);
+@@ -1897,7 +1919,7 @@
+       delta[k*dim_action+a]=ik->qpos[adr]-r33_nominal_trajectory.states[k*dim_state+adr];
+     }
+   }
+-  w51_status=valid?"native_rollout":"ik_unavailable";
++  w51_status=valid?"native_rollout":(geometry_valid?"ik_unavailable":geometry_reason);
+   iLQGPolicy seed=r33_nominal_policy;
+   if(valid) {
+     seed.AddDelta(knots,delta,horizon-1,1.);
+@@ -1936,6 +1958,23 @@
+       for(int j=0;j<3;++j){if(j)out<<",";out<<f.anchor[j];}
+       out<<"],\"touchdown\":[";for(int j=0;j<3;++j){if(j)out<<",";out<<f.touchdown[j];}out<<"]}";
+     }
++    out<<"],\"geometry_valid\":"<<(geometry_valid?"true":"false")
++       <<",\"geometry_reason\":\""<<geometry_reason<<"\",\"seed_initial_acceleration\":0"
++       <<",\"geometry_tolerance_m\":1e-5,\"continuous_extrema\":true,\"segments\":[";
++    bool comma=false;
++    for(int i=0;i<4;++i)for(const auto& s:segments[i]) {
++      if(comma)out<<",";comma=true;
++      out<<"{\"foot\":"<<i<<",\"begin\":"<<s.begin<<",\"end\":"<<s.end<<",\"apex\":"<<s.apex
++         <<",\"swing\":"<<(s.swing?"true":"false")<<",\"valid\":"<<(s.valid?"true":"false")
++         <<",\"reason\":\""<<s.reason<<"\",\"min_clearance_m\":"<<s.min_clearance
++         <<",\"max_clearance_m\":"<<s.max_clearance<<",\"min_world_z_m\":"<<s.min_world_z
++         <<",\"max_world_z_m\":"<<s.max_world_z<<",\"max_descent_velocity_m_s\":"<<s.max_descent_velocity;
++      for(const auto& pair:{std::pair{"start",&s.start},std::pair{"velocity",&s.velocity},std::pair{"touchdown",&s.touchdown}}) {
++        out<<",\""<<pair.first<<"\":[";
++        for(int j=0;j<3;++j){if(j)out<<",";out<<(*pair.second)[j];}out<<"]";
++      }
++      out<<"}";
++    }
+     out<<"]}\n";
+     std::ofstream raw(std::string(path)+"-kinematics.bin",std::ios::binary|std::ios::trunc);
+     double h[]={51.,double(r29_call_id),time,double(horizon-1),double(valid)};
+@@ -1945,4 +1984,116 @@
+   mj_deleteData(actual);mj_deleteData(ik);
+ }
+ 
++void iLQGPlanner::W52Search(int horizon,ThreadPool& pool) {
++  const double entry_mu=backward_pass.regularization,entry_rate=backward_pass.regularization_rate;
++  const auto S=w51_Q;const auto Str=w51_Qtr;
++  const int count=w51_seed_valid?2:1;
++  struct Result {bool valid=false;double mu=0,rate=0;int attempts=0;};
++  Result result[2];std::vector<W52Candidate> candidates[2];
++  if(const char* f=std::getenv("MJPC_W51_RECORD")) {
++    std::ofstream out(std::string(f)+"-branches.json",std::ios::trunc);
++    out<<"{\"call_id\":"<<r29_call_id<<",\"status\":\"computing\"}\n";
++  }
++  for(int n=0;n<count;++n) {
++    if(!w52_workspaces[n]) {
++      auto b=std::make_unique<iLQGPlanner>();b->Initialize(model,*task);
++      b->num_trajectory_=num_trajectory_;b->derivative_skip_=derivative_skip_;
++      // Independent complete branch storage, sized only for this actual horizon.
++      b->model_derivative.Allocate(dim_state_derivative,dim_action,dim_sensor,horizon);
++      b->cost_derivative.Allocate(dim_state_derivative,dim_action,task->num_residual,horizon,dim_max);
++      b->backward_pass.Allocate(dim_state_derivative,dim_action,horizon);
++      b->boxqp.Allocate(dim_action);
++      for(int i=0;i<num_trajectory_;++i) {
++        b->trajectory[i].Initialize(dim_state,dim_action,task->num_residual,task->num_trace,horizon);
++        b->trajectory[i].Allocate(horizon);b->candidate_policy[i].Allocate(model,*task,horizon);
++      }
++      w52_workspaces[n]=std::move(b);
++    }
++    auto& b=*w52_workspaces[n];
++    b.state=state;b.time=time;b.mocap=mocap;b.userdata=userdata;b.settings=settings;
++    b.policy=policy;b.previous_policy=previous_policy;b.r32=r32;b.r32.attempts.clear();
++    b.r32.stopped=false;b.r32.stop_reason="none";b.r32.iterations=0;
++    b.r33_mechanism=r33_mechanism;b.r34_enabled=r34_enabled;b.r35_epoch=r35_epoch;
++    b.r33_nominal_policy=r33_nominal_policy;b.r33_nominal_trajectory=r33_nominal_trajectory;
++    b.r33_archive_valid=false;b.r33_source="none";b.r33_rollouts=b.r33_derivative_passes=0;
++    b.r33_D.clear();b.r33_scale_mean=b.r33_scale_floor=0;
++    b.r29_call_id=r29_call_id;b.r29_backward_attempts=0;b.r29_return_reason="entered";
++    b.model_derivative.Reset(dim_state_derivative,dim_action,dim_sensor,horizon);
++    b.model_derivative.r33_transition_fd_calls=b.model_derivative.r33_risk_fd_calls=0;
++    b.cost_derivative.Reset(dim_state_derivative,dim_action,task->num_residual,horizon);
++    b.backward_pass.Reset(dim_state_derivative,dim_action,horizon);
++    b.backward_pass.regularization=entry_mu;b.backward_pass.regularization_rate=entry_rate;
++    b.backward_pass.regularization_factor=backward_pass.regularization_factor;
++    b.w49_first_valid=false;b.w49_k.clear();b.w49_times.clear();b.w50_raw_center_evaluations=0;
++    b.w52_collect=true;b.w52_branch=n?"S":"B";b.w52_pending.clear();
++    b.w51_Q=n?S:r33_nominal_policy;b.w51_Qtr=n?Str:r33_nominal_trajectory;
++    b.candidate_policy[0]=b.w51_Q;b.candidate_policy[0].trajectory=b.w51_Qtr;
++    b.candidate_policy[0].ClearDelta();b.feedback_scaling=b.w51_Q.feedback_scaling;
++    b.expected=b.improvement=b.surprise=0;
++    b.Iteration(horizon,pool); // Only this branch's storage and the shared bounded pool.
++    candidates[n]=std::move(b.w52_pending);
++    result[n]={b.w49_first_valid,b.w50_mu,b.w50_rate,b.r29_backward_attempts};
++    r33_rollouts+=b.r33_rollouts;r33_derivative_passes+=b.r33_derivative_passes;
++    r29_backward_attempts+=b.r29_backward_attempts;w50_raw_center_evaluations+=b.w50_raw_center_evaluations;
++    model_derivative.r33_transition_fd_calls+=b.model_derivative.r33_transition_fd_calls;
++    model_derivative.r33_risk_fd_calls+=b.model_derivative.r33_risk_fd_calls;
++    model_derivative_compute_time+=b.model_derivative_compute_time;
++    cost_derivative_compute_time+=b.cost_derivative_compute_time;
++    backward_pass_compute_time+=b.backward_pass_compute_time;rollouts_compute_time+=b.rollouts_compute_time;
++    for(const auto& attempt:b.r32.attempts)r32.attempts.push_back(
++      "{\"branch\":\""+b.w52_branch+"\","+attempt.substr(1));
++    r32.iterations+=b.r32.iterations;
++    if(const char* f=std::getenv("MJPC_W51_RECORD")) {
++      if(b.w49_first_valid) {
++        b.w50_backward.Save(std::string(f)+"-backward-"+b.w52_branch+".bin");
++        std::ofstream out(std::string(f)+"-centers-"+b.w52_branch+".bin",std::ios::binary|std::ios::trunc);
++        double h[]={52.,double(r29_call_id),double(horizon-1),double(dim_action),double(dim_state_derivative)};
++        out.write(reinterpret_cast<char*>(h),sizeof(h));
++        for(const auto* v:{&b.w49_times,&b.w49_k,&b.w50_centers,&b.w50_jacobian,&b.w50_metric})
++          out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(double));
++      }
++    }
++  }
++  // One deterministic global merge: retained B/nominal, B positives, direct S,
++  // S positives. Completion order never affects ties.
++  for(const auto& c:candidates[0])R33Consider(c.policy,c.trajectory,horizon,c.kind,c.slot,c.alpha,"B_"+c.source);
++  for(const auto& c:w52_pending)R33Consider(c.policy,c.trajectory,horizon,c.kind,c.slot,c.alpha,c.source);
++  w52_pending.clear();
++  if(count==2)for(const auto& c:candidates[1])
++    R33Consider(c.policy,c.trajectory,horizon,c.kind,c.slot,c.alpha,"S_"+c.source);
++  const int selected=(r33_source=="motion_seed_S" || r33_source.rfind("S_",0)==0)?1:0;
++  backward_pass.regularization=result[selected].valid?result[selected].mu:entry_mu;
++  backward_pass.regularization_rate=result[selected].valid?result[selected].rate:entry_rate;
++  const double committed_mu=backward_pass.regularization,committed_rate=backward_pass.regularization_rate;
++  const bool positive=r33_source.rfind("B_",0)==0 || r33_source.rfind("S_",0)==0;
++  if(positive && (r33_nominal_trajectory.trunk_violation>0 || r33_archive_trajectory.trunk_violation>0))
++    backward_pass.ScaleRegularization(
++      r33_nominal_trajectory.trunk_violation>r33_archive_trajectory.trunk_violation?
++      1./backward_pass.regularization_factor:backward_pass.regularization_factor,
++      settings.min_regularization,settings.max_regularization);
++  r32.stopped=true;r32.stop_reason="w52_independent_directions_finished";
++  w49_first_valid=result[0].valid || result[1].valid;expected=surprise=0;
++  if(const char* f=std::getenv("MJPC_W51_RECORD")) {
++    std::ofstream out(std::string(f)+"-branches.json",std::ios::trunc);out.precision(17);
++    out<<"{\"call_id\":"<<r29_call_id<<",\"epoch\":"<<r32.epoch<<",\"time_s\":"<<time
++       <<",\"entry_mu\":"<<entry_mu<<",\"entry_rate\":"<<entry_rate
++       <<",\"selected_source\":\""<<r33_source<<"\",\"committed_branch\":\""<<(selected?"S":"B")
++       <<"\",\"committed_valid\":"<<(result[selected].valid?"true":"false")
++       <<",\"committed_mu\":"<<committed_mu<<",\"committed_rate\":"<<committed_rate
++       <<",\"final_mu\":"<<backward_pass.regularization<<",\"final_rate\":"<<backward_pass.regularization_rate
++       <<",\"final_risk_adjustment_count\":"<<(positive && (r33_nominal_trajectory.trunk_violation>0 || r33_archive_trajectory.trunk_violation>0)?1:0)
++       <<",\"expected\":null,\"ratio\":null,\"branches\":[";
++    for(int n=0;n<count;++n) {
++      if(n)out<<",";const auto& b=*w52_workspaces[n];
++      out<<"{\"source\":\""<<(n?"S":"B")<<"\",\"first_valid\":"<<(result[n].valid?"true":"false")
++         <<",\"mu\":"<<(result[n].valid?result[n].mu:entry_mu)
++         <<",\"rate\":"<<(result[n].valid?result[n].rate:entry_rate)
++         <<",\"backward_attempts\":"<<result[n].attempts<<",\"positive_rollouts\":"<<b.r33_rollouts
++         <<",\"transition_fd\":"<<b.model_derivative.r33_transition_fd_calls
++         <<",\"risk_fd\":"<<b.model_derivative.r33_risk_fd_calls<<"}";
++    }
++    out<<"]}\n";
++  }
++}
++
+ }  // namespace mjpc
+--- a/mjpc/w52_geometry.h
++++ b/mjpc/w52_geometry.h
+@@ -0,0 +1,169 @@
++#ifndef MJPC_W52_GEOMETRY_H_
++#define MJPC_W52_GEOMETRY_H_
++#include <algorithm>
++#include <array>
++#include <cmath>
++#include <limits>
++#include <string>
++#include <vector>
++namespace w52 {
++using Poly=std::vector<long double>;
++inline long double Eval(const Poly& p,long double u) {
++  long double y=0;for(auto i=p.rbegin();i!=p.rend();++i)y=y*u+*i;return y;
++}
++inline Poly Derivative(const Poly& p) {
++  Poly q;for(size_t i=1;i<p.size();++i)q.push_back(i*p[i]);return q;
++}
++inline Poly Add(Poly p,const Poly& q,long double scale=1) {
++  p.resize(std::max(p.size(),q.size()),0);
++  for(size_t i=0;i<q.size();++i)p[i]+=scale*q[i];return p;
++}
++inline Poly Multiply(const Poly& p,const Poly& q) {
++  Poly r(p.size()+q.size()-1,0);
++  for(size_t i=0;i<p.size();++i)for(size_t j=0;j<q.size();++j)r[i+j]+=p[i]*q[j];return r;
++}
++inline Poly Compose(const Poly& p,long double offset,long double scale) {
++  Poly q{0};for(auto i=p.rbegin();i!=p.rend();++i){q=Multiply(q,{offset,scale});q[0]+=*i;}return q;
++}
++// Derivative-root partitioning isolates every real root on this finite interval.
++// Each open partition is monotone; repeated roots occur at partition endpoints.
++inline std::vector<long double> Roots(Poly p,long double lo=0,long double hi=1) {
++  long double scale=0;for(auto x:p)scale+=std::abs(x);
++  const long double eps=std::max(1e-24L,scale*1e-17L);
++  while(p.size()>1 && std::abs(p.back())<eps)p.pop_back();
++  if(p.size()<2)return {};
++  if(p.size()==2) {
++    long double x=-p[0]/p[1];return x>=lo && x<=hi?std::vector<long double>{x}:std::vector<long double>{};
++  }
++  auto cuts=Roots(Derivative(p),lo,hi);cuts.insert(cuts.begin(),lo);cuts.push_back(hi);
++  std::vector<long double> roots;
++  for(auto x:cuts)if(std::abs(Eval(p,x))<=eps)roots.push_back(x);
++  for(size_t i=1;i<cuts.size();++i) {
++    long double a=cuts[i-1],b=cuts[i],fa=Eval(p,a),fb=Eval(p,b);
++    if(fa*fb>=0 || std::abs(fa)<=eps || std::abs(fb)<=eps)continue;
++    for(int k=0;k<80;++k) {
++      long double m=(a+b)/2,fm=Eval(p,m);
++      if(fa*fm>0){a=m;fa=fm;}else b=m;
++    }
++    roots.push_back((a+b)/2);
++  }
++  std::sort(roots.begin(),roots.end());
++  roots.erase(std::unique(roots.begin(),roots.end(),[](auto a,auto b){return std::abs(a-b)<1e-14L;}),roots.end());
++  return roots;
++}
++inline std::array<double,2> Range(const Poly& p,long double lo=0,long double hi=1) {
++  auto pts=Roots(Derivative(p),lo,hi);pts.push_back(lo);pts.push_back(hi);
++  long double mn=std::numeric_limits<long double>::infinity(),mx=-mn;
++  for(auto u:pts){auto v=Eval(p,u);mn=std::min(mn,v);mx=std::max(mx,v);}
++  return {double(mn),double(mx)};
++}
++inline Poly Quintic(double start,double velocity,double duration,double finish) {
++  const long double d=finish-start,v=duration*velocity;
++  return {start,v,0,10*d-6*v,-15*d+8*v,6*d-3*v};
++}
++struct Surface {
++  double flat=0,radius=.022;
++  bool material=false,anchored=false;
++  std::array<double,16> patches{};
++};
++struct Piece {
++  double begin=0,end=0;
++  std::array<Poly,3> xyz;
++};
++struct Segment {
++  double begin=0,end=0,apex=0;
++  bool swing=false;
++  std::array<double,3> start{},velocity{},touchdown{};
++  std::vector<Piece> pieces;
++  bool valid=true;
++  std::string reason="available";
++  double min_clearance=0,max_clearance=0,min_world_z=0,max_world_z=0,max_descent_velocity=0;
++};
++inline bool InMaterial(double x,double y) {
++  constexpr double half=.015811388300841896;
++  return x>=.8+half && x<=2.2-half && std::abs(y)<=.6-half;
++}
++inline Poly Ground(const Piece& p,const Surface& s,long double u) {
++  Poly ground{s.flat+s.radius};
++  const double x=Eval(p.xyz[0],u),y=Eval(p.xyz[1],u);
++  if(!s.material || !s.anchored || !InMaterial(x,y))return ground;
++  constexpr long double w=.03162277660168379L;
++  for(int i=0;i<4;++i) {
++    const double* a=s.patches.data()+4*i;
++    if(std::abs(x-a[1])>=w || std::abs(y-a[2])>=w)continue;
++    const long double sx=x>=a[1]?1:-1,sy=y>=a[2]?1:-1;
++    Poly px=Add({1+sx*a[1]/w},p.xyz[0],-sx/w);
++    Poly py=Add({1+sy*a[2]/w},p.xyz[1],-sy/w);
++    ground=Add(ground,Multiply(px,py),a[0]*a[3]);
++  }
++  return ground;
++}
++inline std::array<double,2> Clearance(const Piece& p,const Surface& s) {
++  std::vector<long double> cuts{0,1};
++  auto crossing=[&](int axis,double boundary) {
++    Poly v=p.xyz[axis];v[0]-=boundary;
++    auto r=Roots(v);cuts.insert(cuts.end(),r.begin(),r.end());
++  };
++  if(s.material) {
++    constexpr double half=.015811388300841896,w=.03162277660168379;
++    for(double x:{.8+half,2.2-half})crossing(0,x);
++    for(double y:{-.6+half,.6-half})crossing(1,y);
++    if(s.anchored)for(int i=0;i<4;++i)for(int axis=0;axis<2;++axis)
++      for(double shift:{-w,0.,w})crossing(axis,s.patches[4*i+axis+1]+shift);
++  }
++  std::sort(cuts.begin(),cuts.end());
++  cuts.erase(std::unique(cuts.begin(),cuts.end(),[](auto a,auto b){return std::abs(a-b)<1e-14L;}),cuts.end());
++  double mn=INFINITY,mx=-INFINITY;
++  for(size_t i=1;i<cuts.size();++i) {
++    auto c=Add(p.xyz[2],Ground(p,s,(cuts[i-1]+cuts[i])/2),-1);
++    auto r=Range(c,cuts[i-1],cuts[i]);mn=std::min(mn,r[0]);mx=std::max(mx,r[1]);
++  }
++  // Include exact boundary semantics as well as both one-sided interval values.
++  for(auto u:cuts){double c=Eval(p.xyz[2],u)-Eval(Ground(p,s,u),u);mn=std::min(mn,c);mx=std::max(mx,c);}
++  return {mn,mx};
++}
++inline Segment Make(double begin,double end,bool swing,const std::array<double,3>& start,
++  const std::array<double,3>& velocity,const std::array<double,3>& touchdown,const Surface& surface) {
++  Segment s;s.begin=begin;s.end=end;s.swing=swing;s.start=start;s.velocity=velocity;s.touchdown=touchdown;
++  s.apex=end-.20;const double T=end-begin,tol=1e-5;
++  // A zero-duration old event is consumed by the caller using the original phase.
++  if(T<=1e-12){s.valid=false;s.reason="zero_duration_event";return s;}
++  std::array<Poly,3> xyz;
++  for(int j=0;j<3;++j)xyz[j]=Quintic(start[j],velocity[j],T,touchdown[j]);
++  auto add=[&](double a,double b,const Poly& z) {
++    Piece p;p.begin=a;p.end=b;
++    for(int j=0;j<2;++j)p.xyz[j]=Compose(xyz[j],(a-begin)/T,(b-a)/T);
++    p.xyz[2]=z;s.pieces.push_back(p);
++  };
++  if(swing && begin<s.apex-1e-12) {
++    add(begin,s.apex,Quintic(start[2],velocity[2],s.apex-begin,touchdown[2]+.005));
++    add(s.apex,end,Quintic(touchdown[2]+.005,0,end-s.apex,touchdown[2]));
++  } else add(begin,end,xyz[2]);
++  s.min_clearance=s.min_world_z=INFINITY;s.max_clearance=s.max_world_z=-INFINITY;
++  for(const auto& p:s.pieces) {
++    auto c=Clearance(p,surface),z=Range(p.xyz[2]);
++    s.min_clearance=std::min(s.min_clearance,c[0]);s.max_clearance=std::max(s.max_clearance,c[1]);
++    s.min_world_z=std::min(s.min_world_z,z[0]);s.max_world_z=std::max(s.max_world_z,z[1]);
++  }
++  auto ground0=Ground(s.pieces.front(),surface,0);
++  const double initial=start[2]-Eval(ground0,0);
++  if(s.min_clearance<std::min(0.,initial)-tol || initial< -tol) {
++    s.valid=false;s.reason="continuous_surface_clearance";
++  } else if(swing && s.max_world_z>touchdown[2]+.005+tol) {
++    s.valid=false;s.reason="original_apex_amplitude";
++  } else if(swing && begin>=s.apex-1e-12) {
++    const auto v=Range(Derivative(s.pieces[0].xyz[2]));
++    s.max_descent_velocity=v[1]/T;
++    if(initial<=tol){s.valid=false;s.reason="late_swing_still_grounded";}
++    else if(v[1]>tol){s.valid=false;s.reason="late_swing_not_descending";}
++  }
++  return s;
++}
++inline std::array<double,3> Position(const Segment& s,double t) {
++  const Piece* p=&s.pieces.back();
++  for(const auto& v:s.pieces)if(t<=v.end+1e-12){p=&v;break;}
++  double u=std::clamp((t-p->begin)/(p->end-p->begin),0.,1.);
++  return {double(Eval(p->xyz[0],u)),double(Eval(p->xyz[1],u)),double(Eval(p->xyz[2],u))};
++}
++} // namespace w52
++#endif
