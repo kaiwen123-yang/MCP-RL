@@ -1,7 +1,7 @@
 {
   "schema": "W54_actual_execution_index_v1",
   "run_id": "tm-s1-go2-local-readiness-r12",
-  "status": "actual_stages_ended",
+  "status": "running",
   "implementation_base": "df07c4bb690f831745879af3a86800c2c3ec427d",
   "workspace": "/root/autodl-tmp/MCP-RL-w54",
   "branch": "codex/w54-stability",
@@ -1227,6 +1227,127 @@
         "worker_setting_checked_against_predecessor": false
       },
       "result": "job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01.json"
+    },
+    {
+      "attempt": "job-20261117T052531Z-w54-n-a-r48-eval-PANN_PPO_S5-s1-E30-attempt01",
+      "stage": "G1",
+      "purpose": "formal",
+      "condition": "nominal",
+      "arm": "S",
+      "mission": "single",
+      "cohort": "W54_original_frozen_ladder",
+      "status": "running",
+      "physical_started": true,
+      "command": [
+        "scripts/run_s1_go2_r12.py",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261117T052531Z-w54-n-a-r48/execution-contract.json",
+        "--attempt",
+        "job-20261117T052531Z-w54-n-a-r48-eval-PANN_PPO_S5-s1-E30-attempt01",
+        "--evaluation-start-unix",
+        "1794893131.3267007",
+        "--checkpoint",
+        "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+        "--level",
+        "E30",
+        "--seed",
+        "1",
+        "--workers",
+        "10",
+        "--build",
+        "S5-r48",
+        "--condition",
+        "nominal"
+      ],
+      "qualification_usable": true,
+      "started_utc": "2026-11-17T05:25:57Z",
+      "case_key": "7b757adaa4d0141577996380499b5e9c77c43de48850485193c0dfc86a75c30f",
+      "case": {
+        "protocol_revision": "staged_evaluation_30_60_300_600_v3_bidirectional_material_route",
+        "group": "PANN_PPO_S5",
+        "seed": 1,
+        "condition": "nominal",
+        "initial_state": {
+          "id": "nominal",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        "initial_material": "virgin ReferenceColumns, independent session",
+        "common_configuration_sha256": "0aba3d42dce9ccb5808b15d7c8b2f92bad05983e213e61f2f6d8b34a7cc8e9bb",
+        "execution_sources": {
+          "s1_go2_r11_runtime.py": "22474d2e72f43255c2254f080bed27766f4fa3b81487898292a802cfca3baf9d",
+          "s1_go2_r11_model.py": "c6cc50f9f7e1e0ac315fbdcf257a86e69f97a4c8266cae169c488a4fc8bb8b7b",
+          "s1_go2_joint_material.py": "7bbbac1919a1bdfb39df20be74dd48a09a713869f430352485b842b91ddd28e6",
+          "s1_go2_wb_equilibrium.py": "56ce578557138cd1072a1036252a18785eeadca3b9268562c5ed008fe46bcfa0",
+          "s1_go2_support_reference.py": "6d1e5c0eb9fdb85a7335e8ea4f19e31d4e7b5f310b3d79fdb6225d28d8105060",
+          "s1_go2_legal_route.py": "439d092ce5f4628499b9c06cf4ea262099927d642784f9155cfce686d5e239e8",
+          "s1_go2_w54_n_model_r48.py": "f5203461ad963ba6f683ec0f971c2dcfeb951e38173f3fdabebb4db9aba5029d",
+          "s1_go2_w54_n_records_r48.py": "1c18e032b70f7400145d4092a4fef7d4bab6ea55fd9e0eb008852da4f9a7a709",
+          "s1_go2_w54_n_execution_r48.py": "ea95a0661f24a82791695d054614127cc4dcb53cac43d27b00df0c5034f9411f",
+          "s1_go2_w54_config.py": "c38ddda433488e7fcf87fe9a9bcff49a23588356f8f1522ed1b879cbe291e5b4",
+          "run_s1_go2_r12.py": "743b11ea8d73be56d80295117f85ab5e60fff4a0f7c8579a557f97772cf126e6",
+          "s1_go2_r11_policy.py": "598b0ff20a8c86ba39b92e59faf4f8e514d1e0eaae7257607129a8e5821d6f24",
+          "s1_go2_r10_observer.py": "fb3651518fa8d30eab51ecdefdad75211c31237787584f18422523434b34260a"
+        },
+        "material_sources": {
+          "src/tm02/__init__.py": "a2b8ef472a11d0c86b5ced29b83989a30571d77c9197f7beefcb986676e9d38c",
+          "src/tm02/evaluate.py": "b0dd0693bf6d5a9874f2666fddcc17421150d8fd5205498fbcd3759e34b7bebc",
+          "src/tm02/figures.py": "6e7dfc0547bfd9f79fd4a795d5e361a17e8edab78b3f3fc1979bffc892d7e362",
+          "src/tm02/material.py": "745e52257c2dcd73d7588a82f74556946e6c51565e41dbee5b2ac41b8dece14c",
+          "src/tm02/memory_data.py": "02cf5f14511a2a42c3d0cd11a56648d4b38f62d2fb1c7139b520416f20f0d6a7",
+          "src/tm02/memory_evaluate.py": "171ec6c3ebe61f4fdf7e1ba0e77c35f7d4948b5bb99d42c4061973d3dfec0a68",
+          "src/tm02/memory_figures.py": "174b3026214a3fbeeda58b846b8f67be98a60dc65689bc912ec1cc37c5b5e9de",
+          "src/tm02/memory_training.py": "8c26be254f5421c9cb0653fcfb3f857f9a813c7f38b05d66e42f39309b48c301",
+          "src/tm02/multihistory.py": "3a4340318f66bd2765f85574e013e4d2c5dd0eab2a1b6fd4c5ed3a54e92066e3",
+          "src/tm02/multihistory_evaluate.py": "c6c88bde32e10ea5c8efb991dafffa8cc2ba626aa2c99fa95593ce11279f29d5",
+          "src/tm02/multihistory_figures.py": "d49397a43831dadb9cdef13fd8292b0b231100345de8fd60baae0a700c649444",
+          "src/tm02/multihistory_revisit.py": "56706712ecd668711b3991001bbe09bd3d2ed24dbdb5bef8a56e65bfb3d4e259",
+          "src/tm02/reference.py": "3102068a86e4e75c3831a297fb8ba5c7c3df355c5b62e64beec400a0a07179ce",
+          "src/tm02/s0.py": "9d561ff7c357ef5db34940915ac9fb428dffb7e027c5ff6889d22b5a8fce92fc",
+          "src/tm02/s0_figures.py": "2a76afd09c4eadeb4533cfdf9e0874e21d841eb056ebfce321f1010ea72d05a9",
+          "src/tm02/s0_results.py": "d8773fca6736ad540288777a766440fb7b58b8442b023f48eb8859a3300db03a",
+          "src/tm02/s1_contact.py": "c62e97d0f079fa9d7f960797731fb4a364af3220ba951af9f0cfe57f93affdc5",
+          "src/tm02/s1_force.py": "af5dcddfe4412a65dd6bedfef9b78bd350389e910a701323f2ff8ff37d706de2",
+          "src/tm02/s1_material.py": "6a6f0dfb28a1249210ee076e0703ac7f834a42c54f50793d88302d408c60fc52",
+          "src/tm02/s1_planner.py": "8142626017ccda5735e5d8a8a1bfc038e353040191887adc62614f247f18155f",
+          "src/tm02/s1_prediction.py": "0abd3335c59d6f0d8ee3de2b82b2fde9c75c3a47a84a76c776955686772a3692",
+          "src/tm02/s1_robot.py": "414e89f33414c610cde367ee93bc2bdda83685734ae4d4f671e346c23c13351a",
+          "src/tm02/s1_stance.py": "6adad847dbd3135516c2399b5b176de301f7ae0e88467f13f1cc20ac13e529d9",
+          "src/tm02/s1_transition.py": "4f43ef5622bdee597f8cf37bf686e4758966cf64d641c1fc914d02f696a25e36"
+        },
+        "binary_sha256": "f24e436cd5bbfdc583d57cb01254859694a45890ec6542133ddff51b2b542c0a",
+        "fixed_cap_m_s": null,
+        "checkpoint_sha256": "aa6cf72950e0f15160a15009813b2a6d976e4f4d31c3ebd198436273dd647c15",
+        "normalizer_sha256": "2180314d860dd936b4775c8e325713466f5dd06ce913f917b88d04f93521ff55",
+        "terrain": "tm02_anchor",
+        "job": "job-20261117T052531Z-w54-n-a-r48",
+        "stream_id": "w54-n-a-r48",
+        "controller_build": "S5-r48",
+        "controller_artifact": "S5-r48",
+        "reward_version": "W38_legal_route_terminal_settlement"
+      },
+      "evaluation_stage": {
+        "level": "E30",
+        "task_kind": "original_route_short_stage",
+        "duration_s": 30,
+        "target_circuits": null,
+        "route_deadline_s": null,
+        "far_hold_s": 0,
+        "home_hold_s": 2,
+        "final_hold_s": null
+      },
+      "physical_started_unix_s": 1794893173.139436,
+      "execution_fingerprint": "be5a9ba696371bd707e337ceb54652b797f578375bdbe974032f2d1714465785",
+      "source_commit": "e2b81dd4169733b8989b5e2416aec90a3ae6dd96"
     }
   ],
   "stages": {},
@@ -1565,6 +1686,44 @@
         "configured_proxy_used": false,
         "remote_state": "uploaded",
         "remote_verified_unix_s": 1794892759.6937094
+      },
+      {
+        "name": "w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-originals-0001.zip",
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-delivery/job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01/w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-originals-0001.zip",
+        "size": 221472527,
+        "local_mtime_ns": 1794893110219257776,
+        "category": "W54_requested_originals",
+        "release_tag": "tm-s1-go2-local-readiness-r12-w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-part01",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-part01/w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-originals-0001.zip",
+        "status": "uploaded",
+        "upload_wall_s": 23.771232843399048,
+        "uploaded_unix_s": 1794893200.1753519,
+        "upload_workers": 1,
+        "remote_asset_id": 757769691,
+        "remote_digest": "sha256:db0652a5157d8b493e60807803987f9a2f3ece60969841af4dc6df73a8527f34",
+        "upload_transport": "authenticated_persistent_session",
+        "configured_proxy_used": false,
+        "remote_state": "uploaded",
+        "remote_verified_unix_s": 1794893233.8087873
+      },
+      {
+        "name": "w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-full-mission-material-overlay.mp4",
+        "path": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01/full-mission-material-overlay.mp4",
+        "size": 4152811,
+        "local_mtime_ns": 1794893103275552648,
+        "category": "W54_full_recorded_video",
+        "release_tag": "tm-s1-go2-local-readiness-r12-w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-part01",
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/download/tm-s1-go2-local-readiness-r12-w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-part01/w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-full-mission-material-overlay.mp4",
+        "status": "uploaded",
+        "upload_wall_s": 2.5454821586608887,
+        "uploaded_unix_s": 1794893202.7245402,
+        "upload_workers": 1,
+        "remote_asset_id": 757770441,
+        "remote_digest": "sha256:34f61923666f23933d0d3af69f3ad795951d31be1de28fe96f2e223e6fbde237",
+        "upload_transport": "authenticated_persistent_session",
+        "configured_proxy_used": false,
+        "remote_state": "uploaded",
+        "remote_verified_unix_s": 1794893233.8088048
       }
     ],
     "status": "published",
@@ -1615,21 +1774,25 @@
       "tm-s1-go2-local-readiness-r12-w54-c-r49-final-part01": {
         "id": 448177045,
         "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w54-c-r49-final-part01"
+      },
+      "tm-s1-go2-local-readiness-r12-w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-part01": {
+        "id": 448182810,
+        "url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w54-job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01-part01"
       }
     },
     "pending_paths": [],
     "pending_categories": [],
     "scope": "Registered R12 assets; current job checked against its explicit manifest",
-    "asset_count": 16,
-    "asset_bytes": 593149324,
+    "asset_count": 18,
+    "asset_bytes": 818774662,
     "verification": "One normal name/size/upload-state comparison; no full hash pass or downloads",
-    "checked_unix_s": 1794892759.6937494
+    "checked_unix_s": 1794893233.808841
   },
   "first_physical_start_unix_s": 1794890658.8092697,
   "window": {
     "task": "W54_COMPLETE_CONTROLLER_ORIGINAL_TASK_FINAL_EVAL",
     "execution_mode": "frozen_policy_evaluation",
-    "started_unix_s": 1794892782.9198735,
+    "started_unix_s": 1794893131.3267007,
     "run_deadline_unix_s": null,
     "hard_deadline_unix_s": null
   },
@@ -1654,11 +1817,11 @@
       "F-A-r47": 37.025455,
       "F-A-r49": 43.739613000000006,
       "F-A-r50": 264.99505800000003,
-      "N-A-r48": 0
+      "N-A-r48": 0.0
     },
     "completed_case_CPU_hours": 0.5795588908333333,
     "effective_completed_task_overlap_s": 41.1324143409729,
-    "active_work_excluded_from_completed_counters": false,
+    "active_work_excluded_from_completed_counters": true,
     "new_PPO_samples": 0,
     "new_PPO_updates": 0,
     "donor": 0
