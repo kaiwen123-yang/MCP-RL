@@ -63,7 +63,9 @@ def archive_unstarted_evaluation(jobdir, contract, destination):
 
 def evaluate(a, contract):
     from run_s1_go2_r11 import configuration, arguments
-    if contract.get('w53_fixed_policy'):
+    if contract.get('w54_fixed_policy'):
+        from s1_go2_w54_config import configuration, arguments
+    elif contract.get('w53_fixed_policy'):
         from s1_go2_w53_config import configuration, arguments
     from s1_go2_r11_protocol import case_identity, stable_digest, prerequisite
     from s1_go2_r11_runtime import run, index_file

@@ -2,7 +2,7 @@
 
 更新：2026-11-17（Asia/Shanghai）。长期目标继续是同一地块的跨足/跨步/返程材料记忆辨识与协同控制；先完成原Go2/TM02合法稳定往返，再证明历史进入决策并产生因果收益，随后泛化与Go2/NX实机。此前“仓库整体梳理”的最终方向已核对，旧墙钟预算不能覆盖最新无deadline约定。
 
-**W53已完成并审查，W54本次仅计划发布，尚未实现或运行。** 新增物理、native rollout、FD、QP重解、PPO均为0。读 [W53审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md)、[W54计划](S1_W54_STABILITY_PLAN.md)、[启动提示词](S1_W54_START_PROMPT.md)、[机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/handoff.json) 和 [当前入口](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。
+**W53已完成并审查；W54现已开始 F/N/C 实施，尚无新增原任务结果。实际执行写入独立 w54/index.json 和 current.json。** 新增物理、native rollout、FD、QP重解、PPO均为0。读 [W53审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md)、[W54计划](S1_W54_STABILITY_PLAN.md)、[启动提示词](S1_W54_START_PROMPT.md)、[机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/handoff.json) 和 [当前入口](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。
 
 ## 最新事实和决策
 

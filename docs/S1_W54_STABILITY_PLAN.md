@@ -2,7 +2,7 @@
 
 更新：2026-11-17（Asia/Shanghai）。审查基点：`c01ed82d241b559e4d6c798f06bb0483c622b422`。
 
-**W53 已结束，W54 在本提交中仅完成审查和实施计划，尚未实现、构建或运行。** 本次审查新增物理、native rollout、FD、QP 重解、PPO 均为 0。下一次 Codex 按本文件与 [启动提示词](S1_W54_START_PROMPT.md)完成实际工作，不重启原样 W53。
+**W53 已结束；W54 已从 df07c4b 在独立 D57 工作区开始实施 F/N/C。后续实际运行与资格以独立 w54/index.json、phase.json 和 current.json 为准。** 本次审查新增物理、native rollout、FD、QP 重解、PPO 均为 0。下一次 Codex 按本文件与 [启动提示词](S1_W54_START_PROMPT.md)完成实际工作，不重启原样 W53。
 
 [W53 完整审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md) · [原件复算](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/evidence.md) · [F 源码与矩阵证据](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/control.md) · [论文与官方代码](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/literature.md)
 

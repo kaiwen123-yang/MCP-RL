@@ -1,6 +1,6 @@
 # Codex 当前入口：W53 已审查，执行 W54 完整稳定性修复
 
-更新：2026-11-17（Asia/Shanghai）。结果基点 `c01ed82d241b559e4d6c798f06bb0483c622b422`。**本次仅发布 W53 审查与 W54 计划；W54 尚未实现/构建/运行。** 后续执行按本节和 W54 文件推进。下方 W53/W52/W51 原入口只保留历史，不能覆盖当前范围。
+更新：2026-11-17（Asia/Shanghai）。结果基点 `c01ed82d241b559e4d6c798f06bb0483c622b422`。**W54 已在独立 D57 工作区开始实施；实际启动、构建与任务结果见独立 w54/index.json 和 current.json。当前尚无新增任务资格。** 后续执行按本节和 W54 文件推进。下方 W53/W52/W51 原入口只保留历史，不能覆盖当前范围。
 
 先读 [W54 计划](docs/S1_W54_STABILITY_PLAN.md)、[完整启动提示词](docs/S1_W54_START_PROMPT.md)、[项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[W53 审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md)、[机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/handoff.json) 和 [当前机器入口](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。原大 index.json 的嵌套训练/next_task 是历史账本，不直接作新任务入口。
 

@@ -4,7 +4,7 @@
 
 ## 当前：W53 审查完成，W54 成组修复稳定运行
 
-更新：2026-11-17（Asia/Shanghai）。**W54 目前仅已规划，未实施/运行。** 本次审查基点 `c01ed82d241b559e4d6c798f06bb0483c622b422`，新增物理/rollout/FD/PPO=0。
+更新：2026-11-17（Asia/Shanghai）。**W54 正在独立 D57 工作区实施 F/N/C；原任务尚未启动，实际运行以 w54/index.json 和 current.json 为准。** 本次审查基点 `c01ed82d241b559e4d6c798f06bb0483c622b422`，新增物理/rollout/FD/PPO=0。
 
 [W53 完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md) · [W54 下一步计划](docs/S1_W54_STABILITY_PLAN.md) · [启动提示词](docs/S1_W54_START_PROMPT.md) · [项目记忆](docs/TERRAIN_MEMORY_PLAN.md) · [当前机器入口](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)
 

@@ -31,7 +31,7 @@ def case_identity(c,group,seed,condition,checkpoint=None,normalization=None):
     common['task'].pop('maximum_episode_s',None)
     sources=['s1_go2_r11_runtime.py','s1_go2_r11_model.py','s1_go2_joint_material.py',
              's1_go2_wb_equilibrium.py','s1_go2_support_reference.py','s1_go2_legal_route.py']
-    sources+=c.get('w53_execution_source_names',[])
+    sources+=c.get('w54_execution_source_names',c.get('w53_execution_source_names',[]))
     if checkpoint:sources+=['s1_go2_r11_policy.py','s1_go2_r10_observer.py']
     identity=dict(protocol_revision=CONTRACT['protocol_revision'],group=group,seed=seed,
         condition=condition,initial_state=next(x for x in c['single_mission_protocol']['formal_conditions'] if x['id']==condition),
@@ -39,7 +39,7 @@ def case_identity(c,group,seed,condition,checkpoint=None,normalization=None):
         common_configuration_sha256=stable_digest(common),
         execution_sources={n:digest(ROOT/'scripts'/n) for n in sources},
         material_sources={str(p.relative_to(ROOT)):digest(p) for p in sorted((ROOT/'src/tm02').glob('*.py'))},
-        binary_sha256=(digest(ROOT/c['w53_backend_source']) if c.get('w53_route')=='F' else
+        binary_sha256=(digest(ROOT/c.get('w54_backend_source',c.get('w53_backend_source'))) if c.get('w54_route',c.get('w53_route'))=='F' else
             digest(ROOT/'work/r11-frozen'/c.get('controller_artifact',c['controller_build'])/'agent_server')),
         fixed_cap_m_s=c['fixed_cap_m_s'] if checkpoint is None else None,
         checkpoint_sha256=digest(checkpoint) if checkpoint else None,

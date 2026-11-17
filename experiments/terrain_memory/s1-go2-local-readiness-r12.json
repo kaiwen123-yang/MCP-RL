@@ -1,7 +1,7 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "W53_reviewed_W54_planned_not_implemented",
+  "status": "W54_implementation_in_progress",
   "protocol_revision": "W44_r33_motion_optimization_v21",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v3_bidirectional_material_route",
   "revision_date": "2026-11-17",
@@ -2583,7 +2583,7 @@
       "preserve_limits": "Original Go2/PD/torque limits, real contact/nonfoot/fall rules, geometry and strip, material parameters and principal-strain domain.02, mission times, 2Hz/.45 gait and current swing segment definitions. Do not soften material or widen thresholds to obtain success.",
       "historical_cautions": "R8 S2 force targets and R11r18/r19 moving-twist tracking already failed; do not repeat those branches or a weight grid. Any future gait change must reparameterize segment durations/derivatives coherently.",
       "action_scope": "Keep frozen causal PANN, existing658D observation and PPO actor/critic, cap[.18,.25] at.5s; no new action dimensions or algorithm rewrite in this phase.",
-      "moving_reference_restore": "Restore moving loaded-height and soft-landing definitions to their explicit r24 forms; retain the compatible r24 whole-body, moving\u59ff\u6001/height/stance and Stand support references.",
+      "moving_reference_restore": "Restore moving loaded-height and soft-landing definitions to their explicit r24 forms; retain the compatible r24 whole-body, moving姿态/height/stance and Stand support references.",
       "impact_margin": {
         "retain": true,
         "decouple_from": "r12_stable_support bundled enable condition",
@@ -3998,7 +3998,7 @@
     "entrypoint": "docs/S1_W54_STABILITY_PLAN.md",
     "prompt": "docs/S1_W54_START_PROMPT.md",
     "handoff": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/handoff.json",
-    "status": "planned_not_implemented_not_run",
+    "status": "implementation_in_progress",
     "workstreams": [
       "F_complete_contact_execution_repair",
       "N_predictor_consistent_pre_touchdown_shaping",
@@ -4020,7 +4020,10 @@
     "no_kill_on_conversation_end": true,
     "no_PC_archive": true,
     "server_referenced_outputs_preserved": true,
-    "current_machine_entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json"
+    "current_machine_entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json",
+    "execution_runner": "scripts/run_s1_go2_w54.py",
+    "actual_index": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/index.json",
+    "current_execution_identity": "Per-job w54 execution-contract.json; historical nested reuse is not a launch command"
   },
   "historical_nested_records_note": "Historical nested execution, prelaunch, planned implementation and budget/deadline records retain their original identities. Current AGENTS/W54 plan/current.json/next_authorized_plan supersede them. Do not relaunch old training or impose an old wall deadline on new work.",
   "formal_evaluation_revision_note": "New R12 E60/E300/E600 retain previous physical/time/endpoint criteria and additionally require recorded legal outbound, return and completed roundtrips (1/5/10); original saved results and frozen contracts remain unchanged. Evaluator source hash and legacy_stage_criteria_met distinguish scoring versions."
