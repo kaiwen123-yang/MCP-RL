@@ -1,3 +1,19 @@
+# Codex 当前入口：W55 已规划，先修已确认运动学缺项
+
+更新：2026-11-17（Asia/Shanghai）。实际 W54 结果基点 1ae25272c86f551f8c6b3a65073bc05b24e3d8f6；W54 已完成 9 次不同版本原 E30、0 次通过。W55 此次仅完成审查与计划，没有新机器人物理、native rollout、控制器 FD、QP 重解或 PPO。离线材料本构回放属于审查，不是新机器人成功。
+
+先读 docs/S1_W55_STABILITY_PLAN.md、docs/S1_W55_START_PROMPT.md、轻量 current.json 和 reviews/W54-review/{README,control,evidence,pann,literature}.md、handoff.json、pann-replay-summary.json；这些结果文件均位于 results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/。原大 index 只作历史。续接现场仍先核 /root/autodl-tmp/MCP-RL-w54 的具体 job/tmux/PID 和修改，已有同身份有效工作就续接。
+
+新确认：F 的 MuJoCo 3.2.3 平移 mj_jacDot 缺运动点项，官方 de48f417 在 3.3.1 修复。两份独立保存数组核验：r52 中心差分运动学残差 2.5950→.009986 m/s²，r51 2.5658→.009796；不是修后闭环结果。优先在控制侧修足心和逐 body COM（再质量平均），rolling 继承修后足心；angular 不加，N 的运动学方向差分不加。保留冻结 plant 和 r52 既有正确修订，不先全面改物理或调 gain。
+
+W55 三线：F 修完整公式后直接原 E30；N 用当前支撑约束下的联合投影替代自由体制动响应，同时做全身候选可行性和同源恢复候选；C 用实载历史区分 PANN 本构、2 ms 观测采样和桥接误差，有明确误差才定向 GPU 训练材料候选。PANN 真 plant 为解析 ReferenceColumns，当前选 B ideal，权重冻结但 e/q 更新；不能套用 noisy 模型偏差或盲目解冻。新 PPO samples/updates/donor=0，完整 W44 resume 保留。
+
+两条物理线就绪即真并行，F 不等 N/PANN/上传。初期 25 核按 N≤10、F≤4、C/数据≤8、系统其他≥3；已运行身份 workers 不变。C/r52 已完成 16 horizon、224 个力区间的完整 GPU 优化，不重复凑显存。首套原 E30 合格且正常运动即可冻结推进各 case E60/E300/E600；没有合格内核前不借资格。失败按新增首因在同轮继续修，不固定两次就停、不原样重跑或网格试参。
+
+所有后台 deadline=null、wall_deadline_enabled=false，省略 deadline-unix；不到点 kill、不对话结束 kill。原物理时长/失败条件、明确数值资源错误和用户停止有效。GitHub 直交并核验后结束，不在用户电脑额外下载、复制、镜像、打包或归档；保留被引用服务器原件，不自动借电脑网络转发。
+
+## 以下 W54 入口及执行约定属于历史
+
 # Codex当前入口：W54已执行并交付，尚无原E30资格
 
 更新：2026-11-17（Asia/Shanghai）。W54从df07c4b实际实施F/N/C，完成9次不同版本原E30、0次通过。全部物理任务按原条件自然结束，当前无活动物理任务；没有合格内核，seed2及E60/E300/E600未运行。新PPO samples/updates/donor=0。
@@ -6,7 +22,7 @@
 
 F/r52包含本轮成组修复及有证据的接触点、2ms held-input、载荷建立和真实摩擦可行集修订，但5.600s body_fall；4.920s已降高，先于5.325s材料加载。N/r48在8.3568s躯干触地；E/nominal接线已核对，候选仍可满足足域代理却预测低机身。记录尚未把剩余问题唯一归结为另一项明确接线错误，不能盲改权重、阈值或原样重跑负版本。12次跨腿地块重访不等于材料记忆收益评价。
 
-C完成修后r52自然16状态/224节点的完整GPU力序列优化和CPU独立复算；物理μ=.5，CPU/GPU共同内接轴斜率μ/√2，16/16通过。没有GPU WBC/材料/在线收益资格，历史外包方锥结果已明确纠正并保留。
+C完成修后r52自然16个输入状态/224个力区间的完整GPU力序列优化和CPU独立复算；物理μ=.5，CPU/GPU共同内接轴斜率μ/√2，16/16通过。没有GPU WBC/材料/在线收益资格，历史外包方锥结果已明确纠正并保留。
 
 共383713物理子步，9任务进程合计4263.539333 CPU-s（1.184316核时），有效双物理重叠41.1324s。29个Release资产含9全视频，size/digest已核实。全路径、命令、版本、失败与发布回执在独立w54索引；原大index只作历史。
 

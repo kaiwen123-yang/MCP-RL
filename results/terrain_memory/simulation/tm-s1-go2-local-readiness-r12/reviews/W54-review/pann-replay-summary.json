@@ -1,0 +1,991 @@
+{
+  "scope": "Offline autonomous constitutive integration on saved measured foot kinematics; never robot physics, control counterfactual, training, or reference-q injection.",
+  "repo_commit": "1ae25272c86f551f8c6b3a65073bc05b24e3d8f6",
+  "weights_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
+  "jax_version": "0.6.2",
+  "device": "CPU float64; same LearnedColumns source except gpu device selection; independent columns dispatched batch=1 to avoid saved heterogeneous CPU-vmap stall; exact virgin free solution cached per dt",
+  "sample_selection": "Preselected by original reference physical extrema/first-load/cross-leg-revisit; not by model error.",
+  "cases": {
+    "r52": {
+      "job": "job-20261117T054859Z-w54-f-a-r52-eval-PANN_PPO_S5-s1-E30-attempt01",
+      "keys": [
+        [
+          41,
+          4
+        ],
+        [
+          42,
+          4
+        ],
+        [
+          43,
+          3
+        ]
+      ],
+      "first_replay_boundary_s": 4.846000000001378,
+      "last_replay_material_s": 5.600000000002969,
+      "n_fine_steps": 3770,
+      "initial_state": "virgin e=q=0 for every selected independent world cell before its first footprint overlap",
+      "selected_original_cells_saved": 784,
+      "observer2ms": {
+        "steps": 377,
+        "dt_s": 0.002,
+        "pann_wall_s_including_compile": 7.103657007217407,
+        "reference_residual_max_MPa": 9.057767424991425e-09,
+        "pann_residual_max_MPa": 9.802779477041668e-09,
+        "pann_vs_reference_same_boundary_and_dt": [
+          {
+            "key": [
+              41,
+              4
+            ],
+            "strain_rmse": 1.0273786031667174e-06,
+            "q_rmse": 4.7121663621074335e-06,
+            "stress11_rmse_MPa": 0.019140106583649372,
+            "stress11_abs_max_MPa": 0.08765627700352141,
+            "stress11_peak_reference_MPa": 8.564632729586148,
+            "normal_force_rmse_N": 0.12196095821840075,
+            "normal_force_abs_max_N": 0.5066083415620426,
+            "normal_force_peak_reference_N": 49.499186271045225,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 0.48690057029236855,
+            "stress11_rmse_over_reference_peak": 0.002234784279485881,
+            "loaded_union_samples": 131,
+            "stress11_loaded_rmse_MPa": 0.032469782472889244,
+            "normal_force_loaded_rmse_N": 0.20689779162042468,
+            "unloaded_reference_peak_compression_um": 18.37847755018884,
+            "stress11_peak_error_over_reference_peak": 0.01023468019833666
+          },
+          {
+            "key": [
+              42,
+              4
+            ],
+            "strain_rmse": 1.0273786031667174e-06,
+            "q_rmse": 4.7121663621074335e-06,
+            "stress11_rmse_MPa": 0.019140106583649372,
+            "stress11_abs_max_MPa": 0.08765627700352141,
+            "stress11_peak_reference_MPa": 8.564632729586148,
+            "normal_force_rmse_N": 0.17524710553417344,
+            "normal_force_abs_max_N": 0.876562770035207,
+            "normal_force_peak_reference_N": 85.64632729586157,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 0.48690057029236855,
+            "stress11_rmse_over_reference_peak": 0.002234784279485881,
+            "loaded_union_samples": 131,
+            "stress11_loaded_rmse_MPa": 0.032469782472889244,
+            "normal_force_loaded_rmse_N": 0.2972938196989466,
+            "unloaded_reference_peak_compression_um": 18.37847755018884,
+            "stress11_peak_error_over_reference_peak": 0.01023468019833666
+          },
+          {
+            "key": [
+              43,
+              3
+            ],
+            "strain_rmse": 1.0118292569436156e-07,
+            "q_rmse": 8.267380578306464e-07,
+            "stress11_rmse_MPa": 0.008779856066566123,
+            "stress11_abs_max_MPa": 0.0693079345595855,
+            "stress11_peak_reference_MPa": 9.403794307022256,
+            "normal_force_rmse_N": 0.003636540211523731,
+            "normal_force_abs_max_N": 0.02138302908267642,
+            "normal_force_peak_reference_N": 2.2383714268591497,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 0.002252360100583241,
+            "stress11_rmse_over_reference_peak": 0.0009336503734465769,
+            "loaded_union_samples": 31,
+            "stress11_loaded_rmse_MPa": 0.030618028608082427,
+            "normal_force_loaded_rmse_N": 0.01268172181715767,
+            "unloaded_reference_peak_compression_um": 1.4341358221479719,
+            "stress11_peak_error_over_reference_peak": 0.007370209544867438
+          }
+        ],
+        "first_output_time_s": 4.846000000001378,
+        "last_output_time_s": 5.598000000002965
+      },
+      "plant02ms": {
+        "steps": 3770,
+        "dt_s": 0.0002,
+        "pann_wall_s_including_compile": 4.94942831993103,
+        "reference_residual_max_MPa": 9.961986013884427e-09,
+        "pann_residual_max_MPa": 9.983965515436566e-09,
+        "pann_vs_reference_same_boundary_and_dt": [
+          {
+            "key": [
+              41,
+              4
+            ],
+            "strain_rmse": 1.0489440528084637e-06,
+            "q_rmse": 4.73923629663452e-06,
+            "stress11_rmse_MPa": 0.019178103949434127,
+            "stress11_abs_max_MPa": 0.09109555152732796,
+            "stress11_peak_reference_MPa": 9.02150544605296,
+            "normal_force_rmse_N": 0.12188460852657707,
+            "normal_force_abs_max_N": 0.527844762058713,
+            "normal_force_peak_reference_N": 52.27428031054403,
+            "loaded_state_mismatches": 4,
+            "unloaded_recovery_abs_max_um": 0.49518127846069265,
+            "stress11_rmse_over_reference_peak": 0.002125820802760234,
+            "loaded_union_samples": 1314,
+            "stress11_loaded_rmse_MPa": 0.032484685070067,
+            "normal_force_loaded_rmse_N": 0.2064533143273053,
+            "unloaded_reference_peak_compression_um": 18.480516963914106,
+            "stress11_peak_error_over_reference_peak": 0.010097599793300972
+          },
+          {
+            "key": [
+              42,
+              4
+            ],
+            "strain_rmse": 1.0489440528084637e-06,
+            "q_rmse": 4.73923629663452e-06,
+            "stress11_rmse_MPa": 0.019178103949434127,
+            "stress11_abs_max_MPa": 0.09109555152732796,
+            "stress11_peak_reference_MPa": 9.02150544605296,
+            "normal_force_rmse_N": 0.1757264242222498,
+            "normal_force_abs_max_N": 0.9109555152732867,
+            "normal_force_peak_reference_N": 90.2150544605297,
+            "loaded_state_mismatches": 4,
+            "unloaded_recovery_abs_max_um": 0.49518127846069265,
+            "stress11_rmse_over_reference_peak": 0.002125820802760234,
+            "loaded_union_samples": 1314,
+            "stress11_loaded_rmse_MPa": 0.032484685070067,
+            "normal_force_loaded_rmse_N": 0.29765286309845096,
+            "unloaded_reference_peak_compression_um": 18.480516963914106,
+            "stress11_peak_error_over_reference_peak": 0.010097599793300972
+          },
+          {
+            "key": [
+              43,
+              3
+            ],
+            "strain_rmse": 1.0453116818426409e-07,
+            "q_rmse": 8.425498311714582e-07,
+            "stress11_rmse_MPa": 0.008837405615223807,
+            "stress11_abs_max_MPa": 0.07252818828471064,
+            "stress11_peak_reference_MPa": 9.870137122171446,
+            "normal_force_rmse_N": 0.003669566215250104,
+            "normal_force_abs_max_N": 0.021677463877652237,
+            "normal_force_peak_reference_N": 2.294810377034993,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 0.00021783585436606955,
+            "stress11_rmse_over_reference_peak": 0.0008953680689371785,
+            "loaded_union_samples": 318,
+            "stress11_loaded_rmse_MPa": 0.030428595263622626,
+            "normal_force_loaded_rmse_N": 0.012634901012640816,
+            "unloaded_reference_peak_compression_um": 1.4582545200029493,
+            "stress11_peak_error_over_reference_peak": 0.00734824525606533
+          }
+        ],
+        "first_output_time_s": 4.846200000001378,
+        "last_output_time_s": 5.600000000002969
+      },
+      "reference_fine_vs_published_cells": [
+        {
+          "key": [
+            41,
+            4
+          ],
+          "saved_rows": 377,
+          "max_abs_error_by_e11_e22_q11_q22_sigma11_sigma22_loaded_normalN": [
+            1.0842021724855044e-19,
+            5.421010862427522e-20,
+            1.0842021724855044e-19,
+            2.710505431213761e-20,
+            8.881784197001252e-16,
+            2.706168622523819e-16,
+            0.0,
+            1.0658141036401503e-14
+          ]
+        },
+        {
+          "key": [
+            42,
+            4
+          ],
+          "saved_rows": 374,
+          "max_abs_error_by_e11_e22_q11_q22_sigma11_sigma22_loaded_normalN": [
+            1.0842021724855044e-19,
+            5.421010862427522e-20,
+            1.0842021724855044e-19,
+            2.710505431213761e-20,
+            8.881784197001252e-16,
+            2.706168622523819e-16,
+            0.0,
+            1.0658141036401503e-14
+          ]
+        },
+        {
+          "key": [
+            43,
+            3
+          ],
+          "saved_rows": 33,
+          "max_abs_error_by_e11_e22_q11_q22_sigma11_sigma22_loaded_normalN": [
+            0.0,
+            5.421010862427522e-20,
+            5.421010862427522e-20,
+            8.470329472543003e-22,
+            8.881784197001252e-16,
+            1.97758476261356e-16,
+            0.0,
+            4.440892098500626e-16
+          ]
+        }
+      ],
+      "reference_observer2ms_vs_actual_fine_at_same_clock": [
+        {
+          "key": [
+            41,
+            4
+          ],
+          "strain_rmse": 2.098430922508733e-05,
+          "q_rmse": 1.2433076995627987e-06,
+          "stress11_rmse_MPa": 0.07039214819142797,
+          "stress11_abs_max_MPa": 0.7471652042214609,
+          "stress11_peak_reference_MPa": 8.816590952945873,
+          "normal_force_rmse_N": 0.3984794453336375,
+          "normal_force_abs_max_N": 4.285188840328455,
+          "normal_force_peak_reference_N": 50.99459200855919,
+          "loaded_state_mismatches": 0,
+          "unloaded_recovery_abs_max_um": 0.07562612212255358,
+          "stress11_rmse_over_reference_peak": 0.007984055125967704
+        },
+        {
+          "key": [
+            42,
+            4
+          ],
+          "strain_rmse": 2.098430922508733e-05,
+          "q_rmse": 1.2433076995627987e-06,
+          "stress11_rmse_MPa": 0.07039214819142797,
+          "stress11_abs_max_MPa": 0.7471652042214609,
+          "stress11_peak_reference_MPa": 8.816590952945873,
+          "normal_force_rmse_N": 0.6926429979423938,
+          "normal_force_abs_max_N": 7.471652042214616,
+          "normal_force_peak_reference_N": 88.16590952945883,
+          "loaded_state_mismatches": 0,
+          "unloaded_recovery_abs_max_um": 0.07562612212255358,
+          "stress11_rmse_over_reference_peak": 0.007984055125967704
+        },
+        {
+          "key": [
+            43,
+            3
+          ],
+          "strain_rmse": 1.6768318133916352e-05,
+          "q_rmse": 1.0311548842797657e-06,
+          "stress11_rmse_MPa": 0.05685048356770865,
+          "stress11_abs_max_MPa": 0.7508400458156259,
+          "stress11_peak_reference_MPa": 9.66255204296344,
+          "normal_force_rmse_N": 0.014844996899877831,
+          "normal_force_abs_max_N": 0.13751099572141334,
+          "normal_force_peak_reference_N": 2.2683280297114283,
+          "loaded_state_mismatches": 0,
+          "unloaded_recovery_abs_max_um": 0.022629959297234565,
+          "stress11_rmse_over_reference_peak": 0.005883588860885761
+        }
+      ],
+      "pann_observer2ms_vs_actual_fine_at_same_clock": [
+        {
+          "key": [
+            41,
+            4
+          ],
+          "strain_rmse": 2.1013269656366216e-05,
+          "q_rmse": 5.547976346281879e-06,
+          "stress11_rmse_MPa": 0.07270943415325241,
+          "stress11_abs_max_MPa": 0.7768703639693245,
+          "stress11_peak_reference_MPa": 8.816590952945873,
+          "normal_force_rmse_N": 0.41762835442284396,
+          "normal_force_abs_max_N": 4.4551599587453925,
+          "normal_force_peak_reference_N": 50.99459200855919,
+          "loaded_state_mismatches": 0,
+          "unloaded_recovery_abs_max_um": 0.43265558427742323,
+          "stress11_rmse_over_reference_peak": 0.00824688754886129
+        },
+        {
+          "key": [
+            42,
+            4
+          ],
+          "strain_rmse": 2.1013269656366216e-05,
+          "q_rmse": 5.547976346281879e-06,
+          "stress11_rmse_MPa": 0.07270943415325241,
+          "stress11_abs_max_MPa": 0.7768703639693245,
+          "stress11_peak_reference_MPa": 8.816590952945873,
+          "normal_force_rmse_N": 0.7110424209355022,
+          "normal_force_abs_max_N": 7.768703639693252,
+          "normal_force_peak_reference_N": 88.16590952945883,
+          "loaded_state_mismatches": 0,
+          "unloaded_recovery_abs_max_um": 0.43265558427742323,
+          "stress11_rmse_over_reference_peak": 0.00824688754886129
+        },
+        {
+          "key": [
+            43,
+            3
+          ],
+          "strain_rmse": 1.6767378363475127e-05,
+          "q_rmse": 1.6551896218529738e-06,
+          "stress11_rmse_MPa": 0.058533042344313106,
+          "stress11_abs_max_MPa": 0.7626508717938163,
+          "stress11_peak_reference_MPa": 9.66255204296344,
+          "normal_force_rmse_N": 0.015052957581089198,
+          "normal_force_abs_max_N": 0.1269969699313589,
+          "normal_force_peak_reference_N": 2.2683280297114283,
+          "loaded_state_mismatches": 0,
+          "unloaded_recovery_abs_max_um": 0.024882319397817803,
+          "stress11_rmse_over_reference_peak": 0.006057720784742228
+        }
+      ],
+      "clock_note": "plant02ms uses original pre-integration foot boundary and material output t+0.2ms; observer2ms uses measured endpoint foot at t for preceding 2ms interval, exactly the online observer sampling rule. Thus coarse-vs-fine includes endpoint sampling/within-window boundary loss and integrator dt, not a pure dt-only convergence test.",
+      "wall_s": 13.215978622436523,
+      "cpu_dispatch": "batched 8 columns with unchanged CPU kernel",
+      "terminal_scope": "Fine plant replay includes all published 0.2ms foot-force steps through actual terminal time. Coarse replay uses only regular 2ms boundaries present in foot-force data; the finish-only final observer update is excluded (r52: 5.600; r48: 8.3568), so this is not an exact dump of the final live observer."
+    },
+    "r48": {
+      "job": "job-20261117T052531Z-w54-n-a-r48-eval-PANN_PPO_S5-s1-E30-attempt01",
+      "keys": [
+        [
+          42,
+          -9
+        ],
+        [
+          60,
+          7
+        ],
+        [
+          61,
+          8
+        ],
+        [
+          57,
+          7
+        ],
+        [
+          51,
+          6
+        ],
+        [
+          67,
+          10
+        ]
+      ],
+      "first_replay_boundary_s": 5.756000000003298,
+      "last_replay_material_s": 8.356800000007201,
+      "n_fine_steps": 13004,
+      "initial_state": "virgin e=q=0 for every selected independent world cell before its first footprint overlap",
+      "selected_original_cells_saved": 4365,
+      "observer2ms": {
+        "steps": 1301,
+        "dt_s": 0.002,
+        "pann_wall_s_including_compile": 13.272427797317505,
+        "reference_residual_max_MPa": 9.891173213816273e-09,
+        "pann_residual_max_MPa": 9.981905191303042e-09,
+        "pann_vs_reference_same_boundary_and_dt": [
+          {
+            "key": [
+              42,
+              -9
+            ],
+            "strain_rmse": 2.2109185218668853e-06,
+            "q_rmse": 3.4523799946273675e-06,
+            "stress11_rmse_MPa": 0.007332445905751072,
+            "stress11_abs_max_MPa": 0.10768456193201459,
+            "stress11_peak_reference_MPa": 16.776834437634452,
+            "normal_force_rmse_N": 0.008919244715577708,
+            "normal_force_abs_max_N": 0.1420016029947071,
+            "normal_force_peak_reference_N": 18.171652551938298,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 0.39147354193444717,
+            "stress11_rmse_over_reference_peak": 0.00043705777350360223,
+            "loaded_union_samples": 43,
+            "stress11_loaded_rmse_MPa": 0.0403323277953843,
+            "normal_force_loaded_rmse_N": 0.04906055989772505,
+            "unloaded_reference_peak_compression_um": 15.444374473607965,
+            "stress11_peak_error_over_reference_peak": 0.006418646040307363
+          },
+          {
+            "key": [
+              60,
+              7
+            ],
+            "strain_rmse": 3.93066500675508e-05,
+            "q_rmse": 5.759154790780602e-05,
+            "stress11_rmse_MPa": 0.008724943252214398,
+            "stress11_abs_max_MPa": 0.31288315088290375,
+            "stress11_peak_reference_MPa": 28.649251320577378,
+            "normal_force_rmse_N": 0.014462496922250644,
+            "normal_force_abs_max_N": 0.5133107879419754,
+            "normal_force_peak_reference_N": 47.00147555985516,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 7.231514899684201,
+            "stress11_rmse_over_reference_peak": 0.00030454349939496294,
+            "loaded_union_samples": 2,
+            "stress11_loaded_rmse_MPa": 0.22252881815107045,
+            "normal_force_loaded_rmse_N": 0.3688645592972902,
+            "unloaded_reference_peak_compression_um": 22.347779962433524,
+            "stress11_peak_error_over_reference_peak": 0.01092116325770003
+          },
+          {
+            "key": [
+              61,
+              8
+            ],
+            "strain_rmse": 4.4376188548448064e-05,
+            "q_rmse": 6.619444829798545e-05,
+            "stress11_rmse_MPa": 0.0315689860371187,
+            "stress11_abs_max_MPa": 0.5010238361751398,
+            "stress11_peak_reference_MPa": 28.649251320577378,
+            "normal_force_rmse_N": 0.17421726930014356,
+            "normal_force_abs_max_N": 4.621735219361341,
+            "normal_force_peak_reference_N": 286.4925132057739,
+            "loaded_state_mismatches": 2,
+            "unloaded_recovery_abs_max_um": 8.603750133769994,
+            "stress11_rmse_over_reference_peak": 0.0011019131244956553,
+            "loaded_union_samples": 10,
+            "stress11_loaded_rmse_MPa": 0.3600802332973507,
+            "normal_force_loaded_rmse_N": 1.9871463372394287,
+            "unloaded_reference_peak_compression_um": 32.242222693220654,
+            "stress11_peak_error_over_reference_peak": 0.017488199973144797
+          },
+          {
+            "key": [
+              57,
+              7
+            ],
+            "strain_rmse": 8.601441032934378e-07,
+            "q_rmse": 1.163774367487516e-06,
+            "stress11_rmse_MPa": 0.008689917323001539,
+            "stress11_abs_max_MPa": 0.09200239679929467,
+            "stress11_peak_reference_MPa": 12.640138375644574,
+            "normal_force_rmse_N": 0.05993384575305572,
+            "normal_force_abs_max_N": 0.6412984239996149,
+            "normal_force_peak_reference_N": 94.90372391791138,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 0.25519597030050506,
+            "stress11_rmse_over_reference_peak": 0.0006874859328870602,
+            "loaded_union_samples": 37,
+            "stress11_loaded_rmse_MPa": 0.05152920365056281,
+            "normal_force_loaded_rmse_N": 0.3553938695361372,
+            "unloaded_reference_peak_compression_um": 24.72726390648162,
+            "stress11_peak_error_over_reference_peak": 0.007278590950916159
+          },
+          {
+            "key": [
+              51,
+              6
+            ],
+            "strain_rmse": 6.879699485886007e-07,
+            "q_rmse": 9.575917672535983e-07,
+            "stress11_rmse_MPa": 0.003261406218551196,
+            "stress11_abs_max_MPa": 0.08181131213017778,
+            "stress11_peak_reference_MPa": 12.093641833930844,
+            "normal_force_rmse_N": 0.0005251016895263713,
+            "normal_force_abs_max_N": 0.013669322453250032,
+            "normal_force_peak_reference_N": 2.0520428107017885,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 0.08466940485389624,
+            "stress11_rmse_over_reference_peak": 0.0002696794119866148,
+            "loaded_union_samples": 3,
+            "stress11_loaded_rmse_MPa": 0.06791769148424717,
+            "normal_force_loaded_rmse_N": 0.010935066703512878,
+            "unloaded_reference_peak_compression_um": 3.261019931512126,
+            "stress11_peak_error_over_reference_peak": 0.006764820163653411
+          },
+          {
+            "key": [
+              67,
+              10
+            ],
+            "strain_rmse": 5.782898747938043e-06,
+            "q_rmse": 8.85237323953153e-06,
+            "stress11_rmse_MPa": 0.009962937925421304,
+            "stress11_abs_max_MPa": 0.1558430317076276,
+            "stress11_peak_reference_MPa": 19.84857789360933,
+            "normal_force_rmse_N": 0.02493889950322227,
+            "normal_force_abs_max_N": 0.48268674214369867,
+            "normal_force_peak_reference_N": 63.91141201711549,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 1.3676569061073054,
+            "stress11_rmse_over_reference_peak": 0.0005019471913214036,
+            "loaded_union_samples": 15,
+            "stress11_loaded_rmse_MPa": 0.09278557067045982,
+            "normal_force_loaded_rmse_N": 0.23225779781237307,
+            "unloaded_reference_peak_compression_um": 17.35284396689919,
+            "stress11_peak_error_over_reference_peak": 0.007851596852074956
+          }
+        ],
+        "first_output_time_s": 5.756000000003298,
+        "last_output_time_s": 8.356000000007203
+      },
+      "plant02ms": {
+        "steps": 13004,
+        "dt_s": 0.0002,
+        "pann_wall_s_including_compile": 55.00970149040222,
+        "reference_residual_max_MPa": 9.999774897018199e-09,
+        "pann_residual_max_MPa": 9.999225003554102e-09,
+        "pann_vs_reference_same_boundary_and_dt": [
+          {
+            "key": [
+              42,
+              -9
+            ],
+            "strain_rmse": 2.328354844223802e-06,
+            "q_rmse": 3.720949628177638e-06,
+            "stress11_rmse_MPa": 0.007849879478740359,
+            "stress11_abs_max_MPa": 0.11205046129961005,
+            "stress11_peak_reference_MPa": 18.657437571535503,
+            "normal_force_rmse_N": 0.009336988100823194,
+            "normal_force_abs_max_N": 0.17511726667914118,
+            "normal_force_peak_reference_N": 22.421573469120183,
+            "loaded_state_mismatches": 3,
+            "unloaded_recovery_abs_max_um": 0.4551302357982176,
+            "stress11_rmse_over_reference_peak": 0.00042073727695149485,
+            "loaded_union_samples": 431,
+            "stress11_loaded_rmse_MPa": 0.04311841958217672,
+            "normal_force_loaded_rmse_N": 0.0512869237872285,
+            "unloaded_reference_peak_compression_um": 15.612567957522337,
+            "stress11_peak_error_over_reference_peak": 0.006005672583386182
+          },
+          {
+            "key": [
+              60,
+              7
+            ],
+            "strain_rmse": 2.7727523662634245e-05,
+            "q_rmse": 4.0932417384720055e-05,
+            "stress11_rmse_MPa": 0.0066327402777004935,
+            "stress11_abs_max_MPa": 0.3481271666560879,
+            "stress11_peak_reference_MPa": 33.08980702527103,
+            "normal_force_rmse_N": 0.009733415139358997,
+            "normal_force_abs_max_N": 0.482446973496959,
+            "normal_force_peak_reference_N": 66.14530002788193,
+            "loaded_state_mismatches": 1,
+            "unloaded_recovery_abs_max_um": 5.122462988661297,
+            "stress11_rmse_over_reference_peak": 0.00020044662915788542,
+            "loaded_union_samples": 17,
+            "stress11_loaded_rmse_MPa": 0.18344547830237176,
+            "normal_force_loaded_rmse_N": 0.2692026102331103,
+            "unloaded_reference_peak_compression_um": 23.001716622125866,
+            "stress11_peak_error_over_reference_peak": 0.010520676847411639
+          },
+          {
+            "key": [
+              61,
+              8
+            ],
+            "strain_rmse": 3.0071178448030563e-05,
+            "q_rmse": 4.51519795806353e-05,
+            "stress11_rmse_MPa": 0.023861131190273256,
+            "stress11_abs_max_MPa": 0.38621509386876696,
+            "stress11_peak_reference_MPa": 33.08980702527103,
+            "normal_force_rmse_N": 0.1473530273702664,
+            "normal_force_abs_max_N": 3.481271666560872,
+            "normal_force_peak_reference_N": 330.89807025271045,
+            "loaded_state_mismatches": 3,
+            "unloaded_recovery_abs_max_um": 5.863907427244581,
+            "stress11_rmse_over_reference_peak": 0.000721102156082393,
+            "loaded_union_samples": 89,
+            "stress11_loaded_rmse_MPa": 0.28842606546174915,
+            "normal_force_loaded_rmse_N": 1.7811583859699092,
+            "unloaded_reference_peak_compression_um": 31.0861007047684,
+            "stress11_peak_error_over_reference_peak": 0.011671723971487972
+          },
+          {
+            "key": [
+              57,
+              7
+            ],
+            "strain_rmse": 7.428548862272328e-07,
+            "q_rmse": 1.1095917521927678e-06,
+            "stress11_rmse_MPa": 0.008629929252578385,
+            "stress11_abs_max_MPa": 0.09457962310864687,
+            "stress11_peak_reference_MPa": 14.413240635784007,
+            "normal_force_rmse_N": 0.05899027699558719,
+            "normal_force_abs_max_N": 0.683136941865726,
+            "normal_force_peak_reference_N": 108.41819834379096,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 0.20787243750362208,
+            "stress11_rmse_over_reference_peak": 0.000598750098652534,
+            "loaded_union_samples": 376,
+            "stress11_loaded_rmse_MPa": 0.05075184014256998,
+            "normal_force_loaded_rmse_N": 0.34691652972143194,
+            "unloaded_reference_peak_compression_um": 23.80275652010355,
+            "stress11_peak_error_over_reference_peak": 0.006561995702328897
+          },
+          {
+            "key": [
+              51,
+              6
+            ],
+            "strain_rmse": 2.3189092330781803e-07,
+            "q_rmse": 3.129146345806676e-07,
+            "stress11_rmse_MPa": 0.0023254510480368923,
+            "stress11_abs_max_MPa": 0.08488907424539782,
+            "stress11_peak_reference_MPa": 12.1861829931871,
+            "normal_force_rmse_N": 0.0006480935835411624,
+            "normal_force_abs_max_N": 0.02691483270175743,
+            "normal_force_peak_reference_N": 3.6731660547469795,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 0.036149183774896156,
+            "stress11_rmse_over_reference_peak": 0.00019082686098977644,
+            "loaded_union_samples": 26,
+            "stress11_loaded_rmse_MPa": 0.05200666539711473,
+            "normal_force_loaded_rmse_N": 0.014494042424025922,
+            "unloaded_reference_peak_compression_um": 1.8712299854391046,
+            "stress11_peak_error_over_reference_peak": 0.006966010135647607
+          },
+          {
+            "key": [
+              67,
+              10
+            ],
+            "strain_rmse": 6.8184626948152595e-06,
+            "q_rmse": 1.044953736609465e-05,
+            "stress11_rmse_MPa": 0.01206155825776575,
+            "stress11_abs_max_MPa": 0.17159179669581448,
+            "stress11_peak_reference_MPa": 22.979520906450954,
+            "normal_force_rmse_N": 0.03117928088898845,
+            "normal_force_abs_max_N": 0.544080786589987,
+            "normal_force_peak_reference_N": 66.08464455108754,
+            "loaded_state_mismatches": 0,
+            "unloaded_recovery_abs_max_um": 1.581309612361213,
+            "stress11_rmse_over_reference_peak": 0.0005248829297559356,
+            "loaded_union_samples": 143,
+            "stress11_loaded_rmse_MPa": 0.11502013699104142,
+            "normal_force_loaded_rmse_N": 0.29732851116684134,
+            "unloaded_reference_peak_compression_um": 18.75454488164777,
+            "stress11_peak_error_over_reference_peak": 0.007467161625969503
+          }
+        ],
+        "first_output_time_s": 5.7562000000032985,
+        "last_output_time_s": 8.356800000007201
+      },
+      "reference_fine_vs_published_cells": [
+        {
+          "key": [
+            42,
+            -9
+          ],
+          "saved_rows": 1300,
+          "max_abs_error_by_e11_e22_q11_q22_sigma11_sigma22_loaded_normalN": [
+            2.6468068866193975e-12,
+            7.996997127815344e-13,
+            3.806178598209434e-12,
+            1.1176374021680709e-12,
+            1.326805332269032e-11,
+            7.91033905045424e-16,
+            0.0,
+            8.596012790462737e-12
+          ]
+        },
+        {
+          "key": [
+            60,
+            7
+          ],
+          "saved_rows": 677,
+          "max_abs_error_by_e11_e22_q11_q22_sigma11_sigma22_loaded_normalN": [
+            1.0842021724855044e-19,
+            1.3552527156068805e-20,
+            1.0842021724855044e-19,
+            0.0,
+            1.1102230246251565e-16,
+            6.591949208711867e-17,
+            0.0,
+            1.4210854715202004e-14
+          ]
+        },
+        {
+          "key": [
+            61,
+            8
+          ],
+          "saved_rows": 531,
+          "max_abs_error_by_e11_e22_q11_q22_sigma11_sigma22_loaded_normalN": [
+            2.796157402840116e-16,
+            1.2771901591879242e-16,
+            4.137315490204685e-16,
+            1.0104764247564901e-16,
+            6.945555242054979e-13,
+            2.463307335887066e-16,
+            0.0,
+            4.218847493575595e-13
+          ]
+        },
+        {
+          "key": [
+            57,
+            7
+          ],
+          "saved_rows": 630,
+          "max_abs_error_by_e11_e22_q11_q22_sigma11_sigma22_loaded_normalN": [
+            7.056367209296033e-15,
+            1.9404779432602437e-15,
+            1.2025103135471227e-14,
+            3.483948156010608e-15,
+            2.052347181091818e-11,
+            8.049116928532385e-16,
+            0.0,
+            1.4270273851479942e-10
+          ]
+        },
+        {
+          "key": [
+            51,
+            6
+          ],
+          "saved_rows": 870,
+          "max_abs_error_by_e11_e22_q11_q22_sigma11_sigma22_loaded_normalN": [
+            8.273025005941376e-15,
+            2.5007309455626556e-15,
+            1.189650320528729e-14,
+            3.4945767254327548e-15,
+            1.0661693750080303e-11,
+            2.220446049250313e-16,
+            0.0,
+            2.162270362759955e-12
+          ]
+        },
+        {
+          "key": [
+            67,
+            10
+          ],
+          "saved_rows": 357,
+          "max_abs_error_by_e11_e22_q11_q22_sigma11_sigma22_loaded_normalN": [
+            7.953923977788158e-15,
+            2.1040840510883063e-15,
+            1.1475195793586579e-14,
+            2.9235511581071627e-15,
+            1.956346196152481e-11,
+            4.579669976578771e-16,
+            0.0,
+            4.8751225278920174e-11
+          ]
+        }
+      ],
+      "reference_observer2ms_vs_actual_fine_at_same_clock": [
+        {
+          "key": [
+            42,
+            -9
+          ],
+          "strain_rmse": 6.690711369971945e-05,
+          "q_rmse": 2.9803629936203904e-06,
+          "stress11_rmse_MPa": 0.22433400247099772,
+          "stress11_abs_max_MPa": 5.928929910254494,
+          "stress11_peak_reference_MPa": 14.540974942953898,
+          "normal_force_rmse_N": 0.20140189769630087,
+          "normal_force_abs_max_N": 3.7372042163290757,
+          "normal_force_peak_reference_N": 15.690197076014565,
+          "loaded_state_mismatches": 4,
+          "unloaded_recovery_abs_max_um": 0.1710033459498717,
+          "stress11_rmse_over_reference_peak": 0.01542771398417841
+        },
+        {
+          "key": [
+            60,
+            7
+          ],
+          "strain_rmse": 4.232105777028389e-05,
+          "q_rmse": 6.165856392044198e-06,
+          "stress11_rmse_MPa": 0.1452718961576527,
+          "stress11_abs_max_MPa": 4.526916302323855,
+          "stress11_peak_reference_MPa": 31.284043484860227,
+          "normal_force_rmse_N": 0.40130643453376486,
+          "normal_force_abs_max_N": 12.445878289077399,
+          "normal_force_peak_reference_N": 54.381246852458716,
+          "loaded_state_mismatches": 1,
+          "unloaded_recovery_abs_max_um": 0.6445317489699973,
+          "stress11_rmse_over_reference_peak": 0.004643641932922014
+        },
+        {
+          "key": [
+            61,
+            8
+          ],
+          "strain_rmse": 5.022856161823169e-05,
+          "q_rmse": 1.2081530282418476e-05,
+          "stress11_rmse_MPa": 0.16883756499967617,
+          "stress11_abs_max_MPa": 4.526916302323855,
+          "stress11_peak_reference_MPa": 31.284043484860227,
+          "normal_force_rmse_N": 1.4989397886283304,
+          "normal_force_abs_max_N": 45.26916302323857,
+          "normal_force_peak_reference_N": 312.8404348486024,
+          "loaded_state_mismatches": 3,
+          "unloaded_recovery_abs_max_um": 1.8229823642872147,
+          "stress11_rmse_over_reference_peak": 0.005396922718170506
+        },
+        {
+          "key": [
+            57,
+            7
+          ],
+          "strain_rmse": 4.590699132495055e-05,
+          "q_rmse": 8.179107715549427e-06,
+          "stress11_rmse_MPa": 0.15122819552417985,
+          "stress11_abs_max_MPa": 3.0837396662480483,
+          "stress11_peak_reference_MPa": 11.55852425665202,
+          "normal_force_rmse_N": 0.7406020654923667,
+          "normal_force_abs_max_N": 18.344768772159213,
+          "normal_force_peak_reference_N": 80.34166591322483,
+          "loaded_state_mismatches": 3,
+          "unloaded_recovery_abs_max_um": 0.9858616704689798,
+          "stress11_rmse_over_reference_peak": 0.013083694091583262
+        },
+        {
+          "key": [
+            51,
+            6
+          ],
+          "strain_rmse": 2.1079505297770893e-05,
+          "q_rmse": 1.5906823287130347e-05,
+          "stress11_rmse_MPa": 0.05828520370059782,
+          "stress11_abs_max_MPa": 1.4132298189285581,
+          "stress11_peak_reference_MPa": 10.976333053769064,
+          "normal_force_rmse_N": 0.030719957932442078,
+          "normal_force_abs_max_N": 0.8581460158066601,
+          "normal_force_peak_reference_N": 2.9101888265084486,
+          "loaded_state_mismatches": 0,
+          "unloaded_recovery_abs_max_um": 1.391699200878277,
+          "stress11_rmse_over_reference_peak": 0.005310079733830944
+        },
+        {
+          "key": [
+            67,
+            10
+          ],
+          "strain_rmse": 6.222562216528133e-05,
+          "q_rmse": 1.2676347990674153e-05,
+          "stress11_rmse_MPa": 0.20497006488712757,
+          "stress11_abs_max_MPa": 3.948688000845392,
+          "stress11_peak_reference_MPa": 18.44890801611325,
+          "normal_force_rmse_N": 0.5443360030733498,
+          "normal_force_abs_max_N": 8.775523768949354,
+          "normal_force_peak_reference_N": 59.609495893567875,
+          "loaded_state_mismatches": 2,
+          "unloaded_recovery_abs_max_um": 2.753004240011659,
+          "stress11_rmse_over_reference_peak": 0.011110146178196943
+        }
+      ],
+      "pann_observer2ms_vs_actual_fine_at_same_clock": [
+        {
+          "key": [
+            42,
+            -9
+          ],
+          "strain_rmse": 6.67785632181378e-05,
+          "q_rmse": 4.7705518186063045e-06,
+          "stress11_rmse_MPa": 0.2233086609984426,
+          "stress11_abs_max_MPa": 5.928929910254499,
+          "stress11_peak_reference_MPa": 14.540974942953898,
+          "normal_force_rmse_N": 0.19980659488605987,
+          "normal_force_abs_max_N": 3.7967111999517265,
+          "normal_force_peak_reference_N": 15.690197076014565,
+          "loaded_state_mismatches": 4,
+          "unloaded_recovery_abs_max_um": 0.5213659981928462,
+          "stress11_rmse_over_reference_peak": 0.015357200041572934
+        },
+        {
+          "key": [
+            60,
+            7
+          ],
+          "strain_rmse": 5.534255632899966e-05,
+          "q_rmse": 5.273692935783053e-05,
+          "stress11_rmse_MPa": 0.14904027500775568,
+          "stress11_abs_max_MPa": 4.49311861439982,
+          "stress11_peak_reference_MPa": 31.284043484860227,
+          "normal_force_rmse_N": 0.40657700434083666,
+          "normal_force_abs_max_N": 12.352958101854403,
+          "normal_force_peak_reference_N": 54.381246852458716,
+          "loaded_state_mismatches": 1,
+          "unloaded_recovery_abs_max_um": 6.586983150714204,
+          "stress11_rmse_over_reference_peak": 0.0047640988314021195
+        },
+        {
+          "key": [
+            61,
+            8
+          ],
+          "strain_rmse": 7.08014076060699e-05,
+          "q_rmse": 7.72346357986789e-05,
+          "stress11_rmse_MPa": 0.1700927952394112,
+          "stress11_abs_max_MPa": 4.49311861439982,
+          "stress11_peak_reference_MPa": 31.284043484860227,
+          "normal_force_rmse_N": 1.523936035154413,
+          "normal_force_abs_max_N": 44.93118614399822,
+          "normal_force_peak_reference_N": 312.8404348486024,
+          "loaded_state_mismatches": 5,
+          "unloaded_recovery_abs_max_um": 10.42673249805721,
+          "stress11_rmse_over_reference_peak": 0.005437046375470193
+        },
+        {
+          "key": [
+            57,
+            7
+          ],
+          "strain_rmse": 4.586057577152967e-05,
+          "q_rmse": 8.068081902349931e-06,
+          "stress11_rmse_MPa": 0.14861148365567237,
+          "stress11_abs_max_MPa": 3.020612125672592,
+          "stress11_peak_reference_MPa": 11.55852425665202,
+          "normal_force_rmse_N": 0.7219777335594112,
+          "normal_force_abs_max_N": 17.7034703481596,
+          "normal_force_peak_reference_N": 80.34166591322483,
+          "loaded_state_mismatches": 3,
+          "unloaded_recovery_abs_max_um": 1.1018278908455124,
+          "stress11_rmse_over_reference_peak": 0.01285730603283073
+        },
+        {
+          "key": [
+            51,
+            6
+          ],
+          "strain_rmse": 2.0767552012448684e-05,
+          "q_rmse": 1.5091076948229472e-05,
+          "stress11_rmse_MPa": 0.05592423478547589,
+          "stress11_abs_max_MPa": 1.3317540462776805,
+          "stress11_peak_reference_MPa": 10.976333053769064,
+          "normal_force_rmse_N": 0.031148684922083125,
+          "normal_force_abs_max_N": 0.8718153382599101,
+          "normal_force_peak_reference_N": 2.9101888265084486,
+          "loaded_state_mismatches": 0,
+          "unloaded_recovery_abs_max_um": 1.3331637537437653,
+          "stress11_rmse_over_reference_peak": 0.0050949834076210515
+        },
+        {
+          "key": [
+            67,
+            10
+          ],
+          "strain_rmse": 6.164036844690614e-05,
+          "q_rmse": 7.0574807017952055e-06,
+          "stress11_rmse_MPa": 0.20382010108986373,
+          "stress11_abs_max_MPa": 4.0097447359843095,
+          "stress11_peak_reference_MPa": 18.44890801611325,
+          "normal_force_rmse_N": 0.5389310810011034,
+          "normal_force_abs_max_N": 8.712676667728964,
+          "normal_force_peak_reference_N": 59.609495893567875,
+          "loaded_state_mismatches": 2,
+          "unloaded_recovery_abs_max_um": 2.7309001009290386,
+          "stress11_rmse_over_reference_peak": 0.011047813827888758
+        }
+      ],
+      "clock_note": "plant02ms uses original pre-integration foot boundary and material output t+0.2ms; observer2ms uses measured endpoint foot at t for preceding 2ms interval, exactly the online observer sampling rule. Thus coarse-vs-fine includes endpoint sampling/within-window boundary loss and integrator dt, not a pure dt-only convergence test.",
+      "wall_s": 73.11234974861145,
+      "cpu_dispatch": "independent batch=1 columns with unchanged CPU kernel; exact virgin free solution cached per dt",
+      "terminal_scope": "Fine plant replay includes all published 0.2ms foot-force steps through actual terminal time. Coarse replay uses only regular 2ms boundaries present in foot-force data; the finish-only final observer update is excluded (r52: 5.600; r48: 8.3568), so this is not an exact dump of the final live observer."
+    }
+  },
+  "robot_physics_steps": 0,
+  "training_updates": 0,
+  "valid_world_columns": 9,
+  "completed_path_increments_across_two_cases_two_clocks": 18452,
+  "effective_column_increments_excluding_dummy_padding": 98271,
+  "cpu_reproduction_note": "An initial whole-scan CPU attempt and heterogeneous batched CPU N48 attempts were interrupted without any material failure verdict. N48 batch8 stalled at observer increment 778 candidate; frozen same-step batch1 checks converged at unchanged tolerances, then complete per-column replay finished. No wall completion deadline was installed. The final script uses per-column dispatch for both cases."
+}

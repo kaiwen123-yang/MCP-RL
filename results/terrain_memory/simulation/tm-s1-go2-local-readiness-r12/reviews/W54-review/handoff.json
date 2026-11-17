@@ -1,0 +1,124 @@
+{
+  "schema": "s1_W55_review_handoff_v1",
+  "date": "2026-11-17 Asia/Shanghai",
+  "source_results_commit": "1ae25272c86f551f8c6b3a65073bc05b24e3d8f6",
+  "last_executed_window": "W54",
+  "next_window": "W55",
+  "status": "reviewed_and_planned_not_robot_implemented",
+  "plan": "docs/S1_W55_STABILITY_PLAN.md",
+  "start_prompt": "docs/S1_W55_START_PROMPT.md",
+  "current_entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json",
+  "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/README.md",
+  "actual_results": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/index.json",
+  "new_robot_physical_steps": 0,
+  "new_native_rollouts": 0,
+  "new_controller_FD": 0,
+  "new_QP_solves": 0,
+  "new_PPO_samples": 0,
+  "new_PPO_updates": 0,
+  "donor": 0,
+  "offline_material_replay": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/pann-replay-summary.json",
+  "W54": {
+    "attempts": 9,
+    "E30_passes": 0,
+    "failure_classes": {
+      "body_fall": 3,
+      "material_domain_exit": 2,
+      "invalid_contact": 1,
+      "controller_interruption": 2,
+      "full_duration_goal_failure": 1
+    },
+    "physical_steps": 383713,
+    "simulation_s": 76.7426,
+    "material_memory_benefit_evaluated": false,
+    "latest_F": "S5-r52",
+    "latest_N": "S5-r48",
+    "seed2_started": false,
+    "E60_E300_E600_started": false,
+    "effective_two_physical_overlap_s": 41.1324143409729,
+    "full_videos": 9
+  },
+  "confirmed_new_F_defect": {
+    "engine": "MuJoCo 3.2.3",
+    "upstream_fix": "de48f4178f971d945fc135afb42699b8ca6bec8e",
+    "first_fixed_release": "3.3.1",
+    "missing_contracted_term": "omega_body_world cross v_same_point_world",
+    "repair_scope": [
+      "foot_center_translational_drift",
+      "each_body_COM_then_mass_average",
+      "rolling_downstream_uses_corrected_foot_center"
+    ],
+    "excluded": [
+      "angular_Jdot",
+      "N_directional_difference_Jdot",
+      "global_plant_upgrade"
+    ],
+    "r52_central_RMS_m_s2": [
+      2.594998811098957,
+      0.00998631739579326
+    ],
+    "r51_central_RMS_m_s2": [
+      2.5657976410629884,
+      0.009796456828507749
+    ],
+    "new_closed_loop_tested": false
+  },
+  "N_repair": [
+    "support_conditioned_floating_base_joint_projection",
+    "same_explicit_causal_state_in_real_native_FD",
+    "whole_body_candidate_viability",
+    "explicit_same_horizon_recovery_candidate",
+    "no_unsafe_old_nominal_fallback"
+  ],
+  "PANN": {
+    "true_plant": "analytic ReferenceColumns, not learned PANN",
+    "selected_weights": "B_random1000--ideal seed0",
+    "weights_sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7",
+    "weight_freeze_does_not_freeze_cell_state": true,
+    "conditional_offline_retraining": "Confirm measured high-rate recovery error on additional independent histories, then target one offline candidate; report decision sensitivity separately. No online replacement or PPO update.",
+    "completed_replay": {
+      "world_cells": 9,
+      "cases": [
+        "F_r52",
+        "N_r48"
+      ],
+      "dt_s": [
+        0.0002,
+        0.002
+      ],
+      "PANN_truth_q_injection": false,
+      "N48_two_fast_cells_recovery_error_over_reference_peak_pct": [
+        22.3,
+        18.9
+      ],
+      "not_all_material_paths_covered": true
+    },
+    "holdout_rule": "Group by episode, foot-loading event family and similar complete histories; adjacent world-cell IDs alone are not independent. Keep the nine audited cells as known diagnostic set."
+  },
+  "parallel": {
+    "max_heavy_robot_jobs": 2,
+    "initial_CPU_allocation": {
+      "N": 10,
+      "F": 4,
+      "C_and_data": 8,
+      "system_and_other": 3
+    },
+    "third_line": "offline_material_replay_and_conditional_GPU_material_training",
+    "start_ready_line_without_waiting": true,
+    "freeze_worker_count_with_each_qualification_identity": true
+  },
+  "qualification": "Each exact case E30 then E60 then E300 then E600; no cross-version/seed/worker qualification borrowing. First qualified moving kernel may advance immediately.",
+  "continuation_workspace": "/root/autodl-tmp/MCP-RL-w54",
+  "preflight": "Inspect concrete jobs, PID, local changes and available allocation. Resume existing exact identity; never broad-prefix kill.",
+  "background": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_on_conversation_end": false
+  },
+  "delivery": {
+    "destination": "GitHub",
+    "PC_archive": false,
+    "preserve_referenced_server_artifacts": true,
+    "force_push": false
+  }
+}
