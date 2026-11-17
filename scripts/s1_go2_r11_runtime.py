@@ -162,6 +162,7 @@ def run(args, c, joint=None):
     out.mkdir(parents=True, exist_ok=False)
     campaign = 'campaign_budget' in c
     support = True
+    w53_route = c.get('w53_route')
     training = bool(c.get('r11_training'))
     policy_hook = bool(c.get('r11_policy'))
     compact = training and not joint.full_recording
@@ -207,22 +208,33 @@ def run(args, c, joint=None):
         model_path = prepared_xml
         base_name, foot_names = 'trunk', LEGS
     else:
-        from s1_go2_r11_model import build_project_model
+        if w53_route == 'N':
+            from s1_go2_w53_n_model import build_project_model
+        else:
+            from s1_go2_r11_model import build_project_model
         model_path, model_meta = build_project_model(upstream, Path(args.original_robot_dir),
             Path(args.original_scene), Path(args.original_resolved), out/'model')
         model = mujoco.MjModel.from_xml_path(str(model_path))
         base_name = model_meta['base_body_name']
         foot_names = model_meta['foot_geom_names']
     if 'startup' in c:
-        from s1_go2_r11_model import write_flat_ground_height
+        if w53_route == 'N':
+            from s1_go2_w53_n_model import write_flat_ground_height
+        else:
+            from s1_go2_r11_model import write_flat_ground_height
         model_meta['flat_ground'] = write_flat_ground_height(model, model_path)
         if args.stage == 'G0' and not np.isclose(model_meta['flat_ground']['world_height_m'], c['startup']['G0_ground_height_m']):
             raise ValueError('G0 actual plane height differs from the fixed protocol')
         model = mujoco.MjModel.from_xml_path(str(model_path))
         model_meta['prepared_xml_sha256'] = sha(model_path)
     if campaign:
-        from s1_go2_r11_model import write_equilibrium_settings
-        model_meta['controller_settings'] = write_equilibrium_settings(model_path, c, args.arm)
+        if w53_route == 'N':
+            from s1_go2_w53_n_model import write_equilibrium_settings
+        else:
+            from s1_go2_r11_model import write_equilibrium_settings
+        model_meta['controller_settings'] = (dict(prediction_smoothing_width_m=None,
+            cost_weights={}, backend='independent_force_MPC_WBC', native_residuals_used=False)
+            if w53_route == 'F' else write_equilibrium_settings(model_path, c, args.arm))
         model = mujoco.MjModel.from_xml_path(str(model_path))
         model_meta['prepared_xml_sha256'] = sha(model_path)
     prediction_model = mujoco.MjModel.from_xml_path(str(model_path)) if joint is not None else model
@@ -255,6 +267,7 @@ def run(args, c, joint=None):
     if not np.isclose(substeps*physical_dt, dt):
         raise ValueError('Native physics timestep does not divide the specified 500Hz feedback interval')
     source = {p: sha(ROOT/p) for p in ['scripts/s1_go2_r11_runtime.py', 'scripts/s1_go2_r11_model.py', 'scripts/s1_go2_wb_equilibrium.py', *(['scripts/s1_go2_support_reference.py'] if args.arm=='S' else []), args.config, *[v for k,v in c['upstream'].items() if 'patch' in k and isinstance(v,str) and v.endswith('.patch')]] if (ROOT/p).exists()}
+    source.update({p:sha(ROOT/p) for p in c.get('w53_execution_sources',[])})
     resolved = dict(stage=args.stage, condition=args.condition, source_commit=git(ROOT), source_sha256=source,
         author_commit=(upstream/'SOURCE_COMMIT').read_text().strip(), author_source=str(upstream), model=model_meta,
         model_path=str(model_path), mass_kg=float(model.body_subtreemass[base]),
@@ -274,7 +287,9 @@ def run(args, c, joint=None):
             max_regularization_iterations=5, planner_step_iterations=1),
         author_prediction_approximation='Agent MakeDifferentiable temporarily sets solimp[0]=0 for gradient-planner rollouts; original plant contact settings stay unchanged. Prediction dt=.01s.',
         mujoco_version=mujoco.__version__, python=sys.version, command=sys.argv,
-        agent_server=dict(path=str(Path(args.agent_server).resolve()),sha256=sha(args.agent_server),size=Path(args.agent_server).stat().st_size),
+        agent_server=(dict(path=None,sha256=sha(ROOT/c['w53_backend_source']),size=None,
+            backend='independent_python_force_MPC_WBC',binary_executed=False) if w53_route=='F' else
+            dict(path=str(Path(args.agent_server).resolve()),sha256=sha(args.agent_server),size=Path(args.agent_server).stat().st_size)),
         host=subprocess.check_output(['hostname'], text=True).strip())
     if joint is not None:
         joint.attach(model,data,feet,allowed,out,prediction_model)
@@ -307,8 +322,10 @@ def run(args, c, joint=None):
             ['mjpc/agent.cc','mjpc/trajectory.cc','mjpc/planners/model_derivatives.cc']}
     mission, hist, physics, plans = Mission(c['task']), [], [], []
     chunks=[];physical_count=0;plan_count=0;peak_torque=np.zeros(12);prediction_grid=None
+    record_timing={'stream_compress_write_wall_s':0.,'stream_compress_write_cpu_s':0.,'trajectory_compress_write_wall_s':0.,'trajectory_compress_write_cpu_s':0.}
     def save_streams():
         nonlocal physical_count,plan_count,peak_torque,prediction_grid
+        record_wall=time.perf_counter();record_cpu=time.process_time()
         if physics:
             values=np.asarray(physics);physical_count+=len(values)
             peak_torque=np.maximum(peak_torque,np.max(np.abs(values[:,2:14]),axis=0))
@@ -329,6 +346,8 @@ def run(args, c, joint=None):
                 span_min_s=float(np.min(times[:,-1]-times[:,0])),span_max_s=float(np.max(times[:,-1]-times[:,0])),
                 timestep_s=float(np.median(np.diff(times,axis=1))))
             plans.clear()
+        record_timing['stream_compress_write_wall_s']+=time.perf_counter()-record_wall
+        record_timing['stream_compress_write_cpu_s']+=time.process_time()-record_cpu
     if campaign and args.mission == 'long':
         from s1_go2_wb_equilibrium import ContinuousMission
         mission = ContinuousMission(c['task'], c['long_mission_protocol'])
@@ -416,26 +435,40 @@ def run(args, c, joint=None):
         if any(k in diagnostic_env for k in forbidden):raise RuntimeError('Offline diagnostic environment is forbidden in original fixed-policy evaluation')
     if c.get('controller_build')=='S5-r41':
         diagnostic_env['MJPC_W52_DUAL']='1'
-    with (contextlib.nullcontext(None) if training else (out/'agent-server.log').open('w')) as server_log, (contextlib.nullcontext(joint.agent) if training else Agent(task_id='Quadruped Flat', model=prediction_model,
-            server_binary_path=args.agent_server, extra_flags=[f'--mjpc_workers={args.workers}'],
-            subprocess_kwargs=dict(stdout=server_log, stderr=subprocess.STDOUT,env=diagnostic_env), run_init=False)) as agent:
+    if w53_route == 'N':
+        from s1_go2_w53_n_records import W53NRecords
+        r29_records=W53NRecords(out,model,c,fingerprint)
+        diagnostic_env['MJPC_W53_N_RECORD_DIR']=str(out/'w53-n-native')
+    if w53_route == 'F':
+        from s1_w53_f_backend import FController
+        external_controller=FController(model,data,feet,base,out,c['w53_f'])
+        controller_context=contextlib.nullcontext(external_controller)
+    else:
+        server_log=(contextlib.nullcontext(None) if training else (out/'agent-server.log').open('w'))
+        controller_context=(contextlib.nullcontext(joint.agent) if training else Agent(
+            task_id='Quadruped Flat',model=prediction_model,server_binary_path=args.agent_server,
+            extra_flags=[f'--mjpc_workers={args.workers}'],
+            subprocess_kwargs=dict(stdout=server_log,stderr=subprocess.STDOUT,env=diagnostic_env),run_init=False))
+    with controller_context as agent:
         try:
-            agent.model = prediction_model
-            agent.init(task_id='Quadruped Flat', model=prediction_model, send_as='xml')
-            agent.set_mode('Quadruped')
-            agent.set_task_parameters({'Gait switch': 'Manual'})
-            if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41'):
-                native_pid=agent.server_process.pid
-                native_proc=Path('/proc')/str(native_pid)
-                native_env=dict(x.split('=',1) for x in (native_proc/'environ').read_bytes().decode().split('\0') if '=' in x)
-                resolved['w48_native_process']=dict(pid=native_pid,exe=str((native_proc/'exe').resolve()),exe_sha256=sha(native_proc/'exe'),
-                    cmdline=(native_proc/'cmdline').read_bytes().replace(b'\0',b' ').decode(),affinity=sorted(os.sched_getaffinity(native_pid)),
-                    environment={k:v for k,v in native_env.items() if k.startswith('MJPC_') or k in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','JAX_ENABLE_X64','XLA_PYTHON_CLIENT_PREALLOCATE')},
-                    loaded_mujoco=sorted(set(line.split()[-1] for line in (native_proc/'maps').read_text().splitlines() if 'libmujoco' in line)))
-                expected=(c['r12_contract'].get('w51_fixed_policy') or c['r12_contract'][{'S5-r36':'w48_fixed_policy','S5-r37':'w49_fixed_policy','S5-r38':'w50_fixed_policy'}[c['controller_build']]])['controller_binary_sha256']
-                if resolved['w48_native_process']['exe_sha256']!=expected:raise RuntimeError('W48 native executable does not match frozen build')
-                if c.get('controller_build') in ('S5-r38','S5-r39','S5-r40','S5-r41'):resolved['w50_native_process']=resolved['w48_native_process']
-                dump(small/f'{args.attempt}-resolved.json',resolved)
+            if w53_route != 'F':
+                agent.model = prediction_model
+                agent.init(task_id='Quadruped Flat', model=prediction_model, send_as='xml')
+                agent.set_mode('Quadruped')
+                agent.set_task_parameters({'Gait switch': 'Manual'})
+                if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41','S5-r42'):
+                    native_pid=agent.server_process.pid
+                    native_proc=Path('/proc')/str(native_pid)
+                    native_env=dict(x.split('=',1) for x in (native_proc/'environ').read_bytes().decode().split('\0') if '=' in x)
+                    resolved['w48_native_process']=dict(pid=native_pid,exe=str((native_proc/'exe').resolve()),exe_sha256=sha(native_proc/'exe'),
+                        cmdline=(native_proc/'cmdline').read_bytes().replace(b'\0',b' ').decode(),affinity=sorted(os.sched_getaffinity(native_pid)),
+                        environment={k:v for k,v in native_env.items() if k.startswith('MJPC_') or k in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','JAX_ENABLE_X64','XLA_PYTHON_CLIENT_PREALLOCATE')},
+                        loaded_mujoco=sorted(set(line.split()[-1] for line in (native_proc/'maps').read_text().splitlines() if 'libmujoco' in line)))
+                    expected=(c['r12_contract'].get('w53_fixed_policy') or c['r12_contract'].get('w51_fixed_policy') or c['r12_contract'][{'S5-r36':'w48_fixed_policy','S5-r37':'w49_fixed_policy','S5-r38':'w50_fixed_policy'}[c['controller_build']]])['controller_binary_sha256']
+                    if resolved['w48_native_process']['exe_sha256']!=expected:raise RuntimeError('W48 native executable does not match frozen build')
+                    if c.get('controller_build') in ('S5-r38','S5-r39','S5-r40','S5-r41'):resolved['w50_native_process']=resolved['w48_native_process']
+                    if w53_route == 'N':resolved['w53_native_process']=resolved['w48_native_process']
+                    dump(small/f'{args.attempt}-resolved.json',resolved)
             for step in range(round(duration/dt)+1):
                 t = float(data.time)
                 mujoco.mj_forward(model, data)
@@ -470,7 +503,7 @@ def run(args, c, joint=None):
                     reason = 'development_budget_truncated' if args.purpose=='development' else 'campaign_budget_truncated'
                     break
                 mission_changed = mission.phase != previous_phase
-                if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41') and mission_changed:
+                if (w53_route=='N' or c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41')) and mission_changed:
                     r29_records.event(t,'phase_transition',previous_phase=previous_phase,next_phase=mission.phase)
                 previous_phase = mission.phase
                 if mission.phase == 'complete' and first_completion is None:
@@ -478,140 +511,159 @@ def run(args, c, joint=None):
                 standing = mission.phase in ('initial_stand', 'terminal_stand', 'complete', 'far_hold', 'home_hold')
                 settings = 'stand_settings' if standing else 'move_and_turn_settings'
                 ts = time.perf_counter()
-                settings_changed = settings != phase_settings
-                replan_now=step%10==0 or (support and args.stage=='G1' and (settings_changed or mission_changed))
-                if reference_settings:
+                if w53_route == 'F':
+                    replan_now=step%10==0 or mission_changed
+                    data.mocap_pos[goal]=body_goal+Rotation.from_euler('z',heading).as_matrix()@offset
+                    data.mocap_quat[goal]=[np.cos(heading/2),0.,0.,np.sin(heading/2)]
+                    material_info={'force_boundary_bottom':joint.force_boundary_bottom.copy(),
+                        'force_N':grf.copy(),'velocity_m_s':joint.velocity.copy(),
+                        'instantaneous_stiffness_N_m':c['w53_f']['material_stiffness_N_m']}
+                    tf=time.perf_counter()
+                    action=agent.update(t,data,mission,contact,grf,joint.soft.copy(),
+                        material_info=material_info,replan=replan_now)
+                    feedback_s=time.perf_counter()-tf
+                    feedback_times.append(feedback_s)
+                    nominal_action=None
+                    sync_s=0.;plan_s=0.
                     if replan_now:
-                        data.userdata[84:96]=reference_packet(mission,t,float(data.qpos[0]),
-                            float(joint.cap) if joint is not None else c['task']['command_speed_m_s'],offset,reference_settings)
-                        reference_wall_start=time.perf_counter()
-                    packet=data.userdata[84:96]
-                    if packet[0]==1:
-                        body_goal=base_reference(packet,t,reference_settings)
-                        heading=float(packet[7])
-                    elif mission.phase in ('turn','turn_home'):
-                        # Original endpoint/turn gait, with longitudinal packet inactive.
-                        body_goal[:2]=mission.task['turnaround_xy_m' if mission.phase=='turn' else 'return_xy_m']
-                if settings_changed:
-                    table = c['task'][settings]
-                    # Native gait selection applies its own numeric defaults on Transition.
-                    # Select first; apply the declared numeric values after that transition.
-                    agent.set_task_parameter('Gait',table['Gait'])
-                    phase_settings = settings
-                if support and args.arm=='S' and standing and settings_changed:
-                    from s1_go2_support_reference import stand_reference,reference_userdata
-                    tr=time.perf_counter()
-                    ref_model,ref_data=joint.native_reference_state() if joint is not None else (model,data)
-                    reference=stand_reference(ref_model,ref_data,heading,c['support_reference']['H_realized']['absolute_base_height_m'])
-                    reference['wall_s']=time.perf_counter()-tr
-                    resolved.setdefault('stand_references',[]).append(reference)
-                    if c.get('controller_build') in ('S5-r38','S5-r39','S5-r40','S5-r41'):resolved['w50_native_process']=resolved['w48_native_process']
-                    dump(small/f'{args.attempt}-resolved.json',resolved)
-                    if not reference['feasible']:
-                        raise ValueError('Native static support reference infeasible; see retained reference and entry state')
-                    data.userdata[:62]=reference_userdata(reference)
-                if c.get('r11_contact_completion'):
-                    anchor_kind=np.zeros(4,dtype=np.int8)
-                if c.get('local_contact_model',{}).get('causal_force_anchor'):
-                    bottom=joint.force_boundary_bottom
-                    patches=data.userdata[62:78].reshape(4,4)
-                    loaded_anchor=(joint.force[:,2]>1)&joint.soft
-                    patches[:,0]=loaded_anchor
+                        joint.latest_plan=agent.latest_plan
+                        plan_count+=1
+                    phase_settings=settings
+                else:
+                    settings_changed = settings != phase_settings
+                    replan_now=step%10==0 or (support and args.stage=='G1' and (settings_changed or mission_changed))
+                    if reference_settings:
+                        if replan_now:
+                            data.userdata[84:96]=reference_packet(mission,t,float(data.qpos[0]),
+                                float(joint.cap) if joint is not None else c['task']['command_speed_m_s'],offset,reference_settings)
+                            reference_wall_start=time.perf_counter()
+                        packet=data.userdata[84:96]
+                        if packet[0]==1:
+                            body_goal=base_reference(packet,t,reference_settings)
+                            heading=float(packet[7])
+                        elif mission.phase in ('turn','turn_home'):
+                            # Original endpoint/turn gait, with longitudinal packet inactive.
+                            body_goal[:2]=mission.task['turnaround_xy_m' if mission.phase=='turn' else 'return_xy_m']
+                    if settings_changed:
+                        table = c['task'][settings]
+                        # Native gait selection applies its own numeric defaults on Transition.
+                        # Select first; apply the declared numeric values after that transition.
+                        agent.set_task_parameter('Gait',table['Gait'])
+                        phase_settings = settings
+                    if support and args.arm=='S' and standing and settings_changed:
+                        from s1_go2_support_reference import stand_reference,reference_userdata
+                        tr=time.perf_counter()
+                        ref_model,ref_data=joint.native_reference_state() if joint is not None else (model,data)
+                        reference=stand_reference(ref_model,ref_data,heading,c['support_reference']['H_realized']['absolute_base_height_m'])
+                        reference['wall_s']=time.perf_counter()-tr
+                        resolved.setdefault('stand_references',[]).append(reference)
+                        if c.get('controller_build') in ('S5-r38','S5-r39','S5-r40','S5-r41'):resolved['w50_native_process']=resolved['w48_native_process']
+                        dump(small/f'{args.attempt}-resolved.json',resolved)
+                        if not reference['feasible']:
+                            raise ValueError('Native static support reference infeasible; see retained reference and entry state')
+                        data.userdata[:62]=reference_userdata(reference)
                     if c.get('r11_contact_completion'):
-                        below_plane=joint.soft&(bottom[:,2]<0)&~loaded_anchor
-                        patches[:,0]=loaded_anchor|below_plane
-                        anchor_kind=np.where(loaded_anchor,1,np.where(below_plane,2,0)).astype(np.int8)
-                    patches[:,1:3]=bottom[:,:2]
-                    patches[:,3]=bottom[:,2]+joint.force[:,2]/c['local_contact_model']['instantaneous_stiffness_N_m']
-                # W51's seed consumes the original world command even though
-                # the optional old twist COST is disabled. This packet does not
-                # enable that cost or change the plant/RPC action path.
-                if c.get('r11_body_twist_reference') or 'w51_fixed_policy' in c.get('r12_contract',{}):
-                    data.userdata[78:81]=mission.v
-                    data.userdata[81:84]=mission.w
-                agent.set_task_parameter('Heading', float(heading))
-                rotation = Rotation.from_euler('z', heading).as_matrix()
-                data.mocap_pos[goal] = body_goal+rotation@offset
-                data.mocap_quat[goal] = [np.cos(heading/2), 0, 0, np.sin(heading/2)]
-                agent.set_state(time=t, qpos=data.qpos, qvel=data.qvel, act=data.act,
-                    mocap_pos=data.mocap_pos, mocap_quat=data.mocap_quat, userdata=data.userdata)
-                if settings_changed:
-                    agent.set_task_parameters({k:v for k,v in table.items()
-                        if k not in ('Gait','Balance','Upright','Height')})
-                    agent.set_cost_weights({k:table[k] for k in ('Balance','Upright','Height')} |
-                        {'Orientation':c['task']['orientation_cost_weight']})
-                    if campaign:
-                        agent.set_cost_weights(c['stationary_objective'].get('cost_weights',{}) |
-                            {'Angmom':0.} | model_meta['controller_settings']['cost_weights'])
-                    # The same-time transition activates the requested cadence without
-                    # advancing the plant or re-entering the gait-default branch.
-                    agent.set_state(time=t,qpos=data.qpos,qvel=data.qvel,act=data.act,
-                        mocap_pos=data.mocap_pos,mocap_quat=data.mocap_quat,userdata=data.userdata)
-                    actual_parameters=agent.get_task_parameters()
-                    resolved.setdefault('applied_settings', []).append(dict(time_s=t,
-                        declared_parameters={k:table[k] for k in ('Gait','Cadence','Duty ratio','Amplitude')},
-                        task_parameters=actual_parameters,cost_weights=agent.get_cost_weights()))
-                    if c.get('controller_build') in ('S5-r38','S5-r39','S5-r40','S5-r41'):resolved['w50_native_process']=resolved['w48_native_process']
-                    dump(small/f'{args.attempt}-resolved.json',resolved)
-                    if any(actual_parameters[k]!=table[k] for k in ('Gait','Cadence','Duty ratio','Amplitude')):
-                        raise RuntimeError('Declared gait settings were overwritten during native transition; see actual readback')
-                sync_s = time.perf_counter()-ts
-                sync_times.append(sync_s)
-                plan_s = 0.
-                if step == 0 and 'startup' in c:
-                    startup['pre_optimization_nominal_action'] = agent.get_action(time=t, nominal_action=True, averaging_duration=0)
-                    startup['body_target'] = body_goal.copy()
-                    startup['heading_target'] = float(heading)
-                    startup['mocap_pos'] = data.mocap_pos.copy()
-                    startup['mocap_quat'] = data.mocap_quat.copy()
-                    dump(small/f'{args.attempt}-resolved.json', resolved)
-                    for iteration in range(1, c['startup']['planner_steps']+1):
+                        anchor_kind=np.zeros(4,dtype=np.int8)
+                    if c.get('local_contact_model',{}).get('causal_force_anchor'):
+                        bottom=joint.force_boundary_bottom
+                        patches=data.userdata[62:78].reshape(4,4)
+                        loaded_anchor=(joint.force[:,2]>1)&joint.soft
+                        patches[:,0]=loaded_anchor
+                        if c.get('r11_contact_completion'):
+                            below_plane=joint.soft&(bottom[:,2]<0)&~loaded_anchor
+                            patches[:,0]=loaded_anchor|below_plane
+                            anchor_kind=np.where(loaded_anchor,1,np.where(below_plane,2,0)).astype(np.int8)
+                        patches[:,1:3]=bottom[:,:2]
+                        patches[:,3]=bottom[:,2]+joint.force[:,2]/c['local_contact_model']['instantaneous_stiffness_N_m']
+                    # W51's seed consumes the original world command even though
+                    # the optional old twist COST is disabled. This packet does not
+                    # enable that cost or change the plant/RPC action path.
+                    if c.get('r11_body_twist_reference') or 'w51_fixed_policy' in c.get('r12_contract',{}):
+                        data.userdata[78:81]=mission.v
+                        data.userdata[81:84]=mission.w
+                    agent.set_task_parameter('Heading', float(heading))
+                    rotation = Rotation.from_euler('z', heading).as_matrix()
+                    data.mocap_pos[goal] = body_goal+rotation@offset
+                    data.mocap_quat[goal] = [np.cos(heading/2), 0, 0, np.sin(heading/2)]
+                    agent.set_state(time=t, qpos=data.qpos, qvel=data.qvel, act=data.act,
+                        mocap_pos=data.mocap_pos, mocap_quat=data.mocap_quat, userdata=data.userdata)
+                    if settings_changed:
+                        agent.set_task_parameters({k:v for k,v in table.items()
+                            if k not in ('Gait','Balance','Upright','Height')})
+                        agent.set_cost_weights({k:table[k] for k in ('Balance','Upright','Height')} |
+                            {'Orientation':c['task']['orientation_cost_weight']})
+                        if campaign:
+                            agent.set_cost_weights(c['stationary_objective'].get('cost_weights',{}) |
+                                {'Angmom':0.} | model_meta['controller_settings']['cost_weights'])
+                        # The same-time transition activates the requested cadence without
+                        # advancing the plant or re-entering the gait-default branch.
+                        agent.set_state(time=t,qpos=data.qpos,qvel=data.qvel,act=data.act,
+                            mocap_pos=data.mocap_pos,mocap_quat=data.mocap_quat,userdata=data.userdata)
+                        actual_parameters=agent.get_task_parameters()
+                        resolved.setdefault('applied_settings', []).append(dict(time_s=t,
+                            declared_parameters={k:table[k] for k in ('Gait','Cadence','Duty ratio','Amplitude')},
+                            task_parameters=actual_parameters,cost_weights=agent.get_cost_weights()))
+                        if c.get('controller_build') in ('S5-r38','S5-r39','S5-r40','S5-r41'):resolved['w50_native_process']=resolved['w48_native_process']
+                        dump(small/f'{args.attempt}-resolved.json',resolved)
+                        if any(actual_parameters[k]!=table[k] for k in ('Gait','Cadence','Duty ratio','Amplitude')):
+                            raise RuntimeError('Declared gait settings were overwritten during native transition; see actual readback')
+                    sync_s = time.perf_counter()-ts
+                    sync_times.append(sync_s)
+                    plan_s = 0.
+                    if step == 0 and 'startup' in c:
+                        startup['pre_optimization_nominal_action'] = agent.get_action(time=t, nominal_action=True, averaging_duration=0)
+                        startup['body_target'] = body_goal.copy()
+                        startup['heading_target'] = float(heading)
+                        startup['mocap_pos'] = data.mocap_pos.copy()
+                        startup['mocap_quat'] = data.mocap_quat.copy()
+                        dump(small/f'{args.attempt}-resolved.json', resolved)
+                        for iteration in range(1, c['startup']['planner_steps']+1):
+                            tp = time.perf_counter()
+                            if w53_route=='N' or c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41'):r29_records.before_call(t,data,mission,joint)
+                            agent.planner_step()
+                            elapsed = time.perf_counter()-tp
+                            startup_times.append(elapsed)
+                            plan = agent.best_trajectory()
+                            startup_plans.append(plan)
+                            if r29_records:r29_records.plan(t)
+                            target = agent.get_action(time=t, nominal_action=False, averaging_duration=0)
+                            startup_actions.append(target)
+                            if r29_records:r29_records.query(t,'startup_probe')
+                            startup['completed_iterations'] = iteration
+                            np.savez_compressed(out/'startup.npz',
+                                iteration=np.arange(1, iteration+1), time_s=np.zeros(iteration),
+                                home_ctrl=startup['home_ctrl'],
+                                seed_action=startup['pre_optimization_nominal_action'],
+                                states=np.asarray([p['states'] for p in startup_plans]),
+                                actions=np.asarray([p['actions'] for p in startup_plans]),
+                                times=np.asarray([p['times'] for p in startup_plans]),
+                                feedback_target=np.asarray(startup_actions), planner_s=np.asarray(startup_times))
+                            print(json.dumps(dict(attempt=args.attempt, startup_iteration=iteration,
+                                plant_time_s=t, planner_s=elapsed)), flush=True)
+                        plan_s = sum(startup_times)
+                        startup['planning_total_s'] = plan_s
+                        if not compact:plans.append([t, plan])
+                        if policy_hook:joint.latest_plan=plan
+                    elif replan_now:
                         tp = time.perf_counter()
-                        if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41'):r29_records.before_call(t,data,mission,joint)
+                        if w53_route=='N' or c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41'):r29_records.before_call(t,data,mission,joint)
                         agent.planner_step()
-                        elapsed = time.perf_counter()-tp
-                        startup_times.append(elapsed)
+                        plan_s = time.perf_counter()-tp
+                        planning_times.append(plan_s)
                         plan = agent.best_trajectory()
-                        startup_plans.append(plan)
                         if r29_records:r29_records.plan(t)
-                        target = agent.get_action(time=t, nominal_action=False, averaging_duration=0)
-                        startup_actions.append(target)
-                        if r29_records:r29_records.query(t,'startup_probe')
-                        startup['completed_iterations'] = iteration
-                        np.savez_compressed(out/'startup.npz',
-                            iteration=np.arange(1, iteration+1), time_s=np.zeros(iteration),
-                            home_ctrl=startup['home_ctrl'],
-                            seed_action=startup['pre_optimization_nominal_action'],
-                            states=np.asarray([p['states'] for p in startup_plans]),
-                            actions=np.asarray([p['actions'] for p in startup_plans]),
-                            times=np.asarray([p['times'] for p in startup_plans]),
-                            feedback_target=np.asarray(startup_actions), planner_s=np.asarray(startup_times))
-                        print(json.dumps(dict(attempt=args.attempt, startup_iteration=iteration,
-                            plant_time_s=t, planner_s=elapsed)), flush=True)
-                    plan_s = sum(startup_times)
-                    startup['planning_total_s'] = plan_s
-                    if not compact:plans.append([t, plan])
-                    if policy_hook:joint.latest_plan=plan
-                elif replan_now:
-                    tp = time.perf_counter()
-                    if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41'):r29_records.before_call(t,data,mission,joint)
-                    agent.planner_step()
-                    plan_s = time.perf_counter()-tp
-                    planning_times.append(plan_s)
-                    plan = agent.best_trajectory()
-                    if r29_records:r29_records.plan(t)
-                    if not compact:plans.append([t, plan])
-                    if policy_hook:joint.latest_plan=plan
-                if compact and plan_s:
-                    plan_count+=1
-                    prediction_grid=dict(nodes=len(plan['times']),transitions=len(plan['times'])-1,
-                        span_min_s=float(plan['times'][-1]-plan['times'][0]),
-                        span_max_s=float(plan['times'][-1]-plan['times'][0]),timestep_s=.002)
-                tf = time.perf_counter()
-                action = agent.get_action(time=t, nominal_action=False, averaging_duration=0)
-                nominal_action = agent.get_action(time=t, nominal_action=True, averaging_duration=0) if support else None
-                feedback_s = time.perf_counter()-tf
-                feedback_times.append(feedback_s)
+                        if not compact:plans.append([t, plan])
+                        if policy_hook:joint.latest_plan=plan
+                    if compact and plan_s:
+                        plan_count+=1
+                        prediction_grid=dict(nodes=len(plan['times']),transitions=len(plan['times'])-1,
+                            span_min_s=float(plan['times'][-1]-plan['times'][0]),
+                            span_max_s=float(plan['times'][-1]-plan['times'][0]),timestep_s=.002)
+                    tf = time.perf_counter()
+                    action = agent.get_action(time=t, nominal_action=False, averaging_duration=0)
+                    nominal_action = agent.get_action(time=t, nominal_action=True, averaging_duration=0) if support else None
+                    feedback_s = time.perf_counter()-tf
+                    feedback_times.append(feedback_s)
                 if reference_settings and replan_now:
                     decision=(joint.cap_decisions[-1]['time_s'] if joint is not None and joint.cap_decisions else None)
                     reference_packets.append(dict(packet=data.userdata[84:96].tolist(),phase=mission.phase,
@@ -631,7 +683,7 @@ def run(args, c, joint=None):
                     r29_records.progress(t,data.qpos,mission.v,contact)
                 data.ctrl[:] = action
                 mujoco.mj_forward(model, data)
-                if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41'):r29_records.held(t,action,data.actuator_force,mission.phase,data)
+                if w53_route=='N' or c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41'):r29_records.held(t,action,data.actuator_force,mission.phase,data)
                 contact, grf, _, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
                 if compact and step>0 and (step-1)%25:hist.pop()
                 hist.append(dict(time=t, diagnostic_time=t, qpos=data.qpos.copy(), qvel=data.qvel.copy(), rpy=ori,
@@ -647,11 +699,11 @@ def run(args, c, joint=None):
                     for foot in feet:
                         spatial=np.zeros(6);mujoco.mj_objectVelocity(model,data,mujoco.mjtObj.mjOBJ_GEOM,int(foot),spatial,0)
                         feet_velocity.append(spatial[3:])
-                    hist[-1].update(nominal_q_target=nominal_action,
-                        unclipped_pd_request=60*(action-data.qpos[qadr])-5*data.qvel[vadr],
+                    hist[-1].update(                        unclipped_pd_request=60*(action-data.qpos[qadr])-5*data.qvel[vadr],
                         base_absolute_height=float(data.xpos[base,2]),trunk_com_absolute_height=float(data.xipos[base,2]),
                         relative_height_residual=float(data.xipos[base,2]-data.geom_xpos[feet,2].mean()-.27),
                         feet_velocity=np.asarray(feet_velocity),phase_replan=bool(mission_changed and step>0 and args.stage=='G1'))
+                    if nominal_action is not None:hist[-1]['nominal_q_target']=nominal_action
                     if args.arm=='S':
                         hist[-1].update(support_reference_userdata=data.userdata.copy(),support_active=standing,
                             active_relative_height_target=float(data.userdata[1]) if standing else .27)
@@ -727,6 +779,10 @@ def run(args, c, joint=None):
                     row = dict(hist[-1]); row.update(time=float(data.time), qpos=data.qpos.copy(), qvel=data.qvel.copy(), rpy=now_ori)
                     hist.append(row)
                     break
+                if w53_route and step%250==0:
+                    dump(out/'live.json',dict(pid=os.getpid(),physical_time_s=float(data.time),
+                        phase=mission.phase,position_m=data.qpos[:3],unix_s=time.time(),
+                        deadline=None,wall_deadline_enabled=False))
                 if step % 2500 == 0:
                     print(json.dumps(dict(attempt=args.attempt, time_s=t, phase=mission.phase,
                         xyz=data.qpos[:3].tolist(), wall_s=time.perf_counter()-begin)), flush=True)
@@ -735,6 +791,7 @@ def run(args, c, joint=None):
             reason = 'execution_error'
             print(error, flush=True)
         finally:
+            if w53_route=='F':resolved['w53_f_recording']=agent.finish(float(data.time),reason)
             if r29_records:
                 resolved['r29_recording']=r29_records.finish(float(data.time),reason)
                 if r29_records.failure is not None:resolved['r29_failure']=r29_records.failure
@@ -757,7 +814,10 @@ def run(args, c, joint=None):
     arrays = {k: np.asarray([r[k] for r in hist]) for k in hist[0]}
     if support:
         save_streams()
+        record_wall=time.perf_counter();record_cpu=time.process_time()
         np.savez_compressed(out/'trajectory.npz',**arrays)
+        record_timing['trajectory_compress_write_wall_s']=time.perf_counter()-record_wall
+        record_timing['trajectory_compress_write_cpu_s']=time.process_time()-record_cpu
     else:
         np.savez_compressed(out/'trajectory.npz', **arrays, physical=np.asarray(physics),
             plan_origin=np.asarray([x[0] for x in plans]), plan_states=np.asarray([x[1]['states'] for x in plans]),
@@ -789,6 +849,10 @@ def run(args, c, joint=None):
         physical_columns=['force_evaluation_time_s','post_integration_time_s']+[f'torque_{i}' for i in range(12)]+[f'actuator_force_{i}' for i in range(12)]+[f'contact_{l}' for l in LEGS]+[f'grf_{l}_{a}' for l in LEGS for a in 'xyz']+[f'total_grf_{a}' for a in 'xyz']+[f'nonfoot_grf_{a}' for a in 'xyz']+['nonfoot_ground_contacts'],
         physical_time_note='MuJoCo mj_step forces/contact correspond to the integration evaluation, preceding its returned qpos. Force evaluation and post-integration clocks are both stored.',
         terminal_row_note='Actual final qpos/qvel are appended for physical failure and external truncation; held command and last diagnostic values retain their preceding control timestamp.')
+    if w53_route:
+        result['w53_route']=w53_route
+        result['record_timing']=record_timing
+        if w53_route=='F':result['w53_f_recording']=resolved['w53_f_recording']
     if r29_records and r29_records.failure is not None:result['r29_failure']=r29_records.failure
     if campaign:
         from s1_go2_wb_equilibrium import hold_metrics
@@ -798,7 +862,9 @@ def run(args, c, joint=None):
             if reason=='stage_horizon_reached' and first_completion is not None and not result['success']:
                 result['reason'] = ('route_deadline_missed' if first_completion > c['long_mission_protocol']['route_completion_deadline_s'] else 'left_terminal_endpoint' if result['hold']['endpoint_position_violation_samples'] else 'terminal_stability_failed')
         if support:
-            result['realized_prediction']=dict(**prediction_grid,planning_origins=plan_count)
+            result['realized_prediction']=(dict(**prediction_grid,planning_origins=plan_count) if prediction_grid else
+                dict(backend='force_MPC',native_state_rollout=False,planning_origins=plan_count,
+                     references='w53-f records: actual centroidal/contact/foot references'))
             result['chunks']=chunks
             result['physical_columns'] += [f'unclipped_pd_request_{i}' for i in range(12)]
             result['sustained_execution_success']=bool(result['success'] and reason=='stage_horizon_reached' and result['hold']['full_observation'])

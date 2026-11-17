@@ -1,0 +1,261 @@
+--- a/mjpc/agent.cc
++++ b/mjpc/agent.cc
+@@ -311,6 +311,10 @@
+     }
+     MakeDifferentiable(model_);
+   }
++
++  // W53: no worker-dependent solver warm start in the private predictor.
++  if (GetNumberOrDefault(0, model_, "r11_prediction_coldstart") == 1)
++    model_->opt.disableflags |= mjDSBL_WARMSTART;
+ 
+   // plan
+   if (!allocate_enabled) {
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -19,6 +19,13 @@
+ #include <cstddef>
+ #include <cstdio>
+ #include <iostream>
++#include <fstream>
++#include <iomanip>
++#include <filesystem>
++#include <ctime>
++#include <cmath>
++#include <cstdint>
++#include <stdexcept>
+ #include <shared_mutex>
+ 
+ #include <mujoco/mujoco.h>
+@@ -154,6 +161,8 @@
+ 
+ // optimize nominal policy using iLQG
+ void iLQGPlanner::OptimizePolicy(int horizon, ThreadPool& pool) {
++  w53_installed=false;w53_rollouts=0;
++  std::fill(w53_cpu,w53_cpu+6,0.);
+   // freeze the GUI value once per optimization step.
+   UpdateNumTrajectoriesFromGUI();
+   // get nominal trajectory
+@@ -161,6 +170,7 @@
+ 
+   // iteration
+   this->Iteration(horizon, pool);
++  W53Record(horizon);
+ }
+ 
+ // compute trajectory using nominal policy
+@@ -186,6 +196,7 @@
+   // ----- nominal rollout ----- //
+   // start timer
+   auto nominal_start = std::chrono::steady_clock::now();
++  const auto w53_cpu_0=std::clock();
+ 
+   // no one else should be writing, but we lock just in case:
+   {
+@@ -224,6 +235,7 @@
+ 
+   // end timer
+   nominal_compute_time = GetDuration(nominal_start);
++  w53_cpu[0]=double(std::clock()-w53_cpu_0)/CLOCKS_PER_SEC;
+ }
+ 
+ // set action from policy
+@@ -398,6 +410,7 @@
+   // ----- model derivatives ----- //
+   // start timer
+   auto model_derivative_start = std::chrono::steady_clock::now();
++  const auto w53_cpu_1=std::clock();
+ 
+   // compute model and sensor Jacobians
+   model_derivative.Compute(
+@@ -409,10 +422,12 @@
+ 
+   // stop timer
+   double model_derivative_time = GetDuration(model_derivative_start);
++  w53_cpu[1]=double(std::clock()-w53_cpu_1)/CLOCKS_PER_SEC;
+ 
+   // ----- cost derivatives ----- //
+   // start timer
+   auto cost_derivative_start = std::chrono::steady_clock::now();
++  const auto w53_cpu_2=std::clock();
+ 
+   // cost derivatives
+   cost_derivative.Compute(
+@@ -425,10 +440,12 @@
+ 
+   // end timer
+   double cost_derivative_time = GetDuration(cost_derivative_start);
++  w53_cpu[2]=double(std::clock()-w53_cpu_2)/CLOCKS_PER_SEC;
+ 
+   // ----- backward pass ----- //
+   // start timer
+   auto backward_pass_start = std::chrono::steady_clock::now();
++  const auto w53_cpu_3=std::clock();
+ 
+   // initialize backward pass
+   int regularization_iteration = 0;
+@@ -529,6 +546,7 @@
+ 
+   // end timer
+   double backward_pass_time = GetDuration(backward_pass_start);
++  w53_cpu[3]=double(std::clock()-w53_cpu_3)/CLOCKS_PER_SEC;
+ 
+   // terminate early if backward pass failure
+   if (backward_pass_status == 0) {
+@@ -543,6 +561,7 @@
+ 
+   // ----- rollout policy ----- //
+   auto rollouts_start = std::chrono::steady_clock::now();
++  const auto w53_cpu_4=std::clock();
+ 
+   // copy policy
+   for (int j = 1; j < num_trajectory_; j++) {
+@@ -609,15 +628,18 @@
+ 
+   // stop timer
+   double rollouts_time = GetDuration(rollouts_start);
++  w53_cpu[4]=double(std::clock()-w53_cpu_4)/CLOCKS_PER_SEC;
+ 
+   // ----- policy update ----- //
+   // start timer
+   auto policy_update_start = std::chrono::steady_clock::now();
++  const auto w53_cpu_5=std::clock();
+   {
+     const std::shared_lock<std::shared_mutex> lock(mtx_);
+     // improvement
+     previous_policy = policy;
+     policy.CopyFrom(candidate_policy[winner], horizon);
++    w53_installed=true;
+ 
+     // feedback scaling
+     policy.feedback_scaling = 1.0;
+@@ -625,6 +647,7 @@
+ 
+   // stop timer
+   double policy_update_time = GetDuration(policy_update_start);
++  w53_cpu[5]=double(std::clock()-w53_cpu_5)/CLOCKS_PER_SEC;
+ 
+   // set timers
+   model_derivative_compute_time = model_derivative_time;
+@@ -636,6 +659,7 @@
+ 
+ // compute candidate trajectories
+ void iLQGPlanner::ActionRollouts(int horizon, ThreadPool& pool) {
++  w53_rollouts+=num_trajectory_;
+   int count_before = pool.GetCount();
+   for (int i = 0; i < num_trajectory_; i++) {
+     pool.Schedule([&data = data_, &trajectory = trajectory,
+@@ -701,6 +725,7 @@
+ 
+ // compute candidate trajectories searching over feedback scaling
+ void iLQGPlanner::FeedbackRollouts(int horizon, ThreadPool& pool) {
++  w53_rollouts+=num_trajectory_;
+   int count_before = pool.GetCount();
+   for (int i = 0; i < num_trajectory_; i++) {
+     pool.Schedule([&data = data_, &trajectory = trajectory,
+@@ -747,4 +772,56 @@
+   return best_rollout;
+ }
+ 
++// W53 recording only. Called after the ordinary restored iLQG iteration.
++// No extra optimization, rollout or finite difference is performed here.
++void iLQGPlanner::W53Record(int horizon) {
++  const char* directory=std::getenv("MJPC_W53_N_RECORD_DIR");
++  if(!directory)return;
++  const auto begin=std::chrono::steady_clock::now();const auto cpu=std::clock();
++  ++w53_call;
++  bool requested=std::filesystem::exists(std::string(directory)+"/full-ring.request");
++  bool first_move=time>=2.0&&!w53_moving_recorded;
++  bool full=w53_call==1||first_move||requested;
++  if(first_move)w53_moving_recorded=true;
++  if(requested)std::filesystem::remove(std::string(directory)+"/full-ring.request");
++  auto write=[&](const std::string& path,const iLQGPolicy& p,const Trajectory& tr) {
++    std::ofstream f(path,std::ios::binary);
++    if(!f)throw std::runtime_error("W53 N installed-policy file open failed");
++    int64_t hdr[10]={53,1,(int64_t)w53_call,horizon,dim_state,dim_state_derivative,dim_action,task->num_residual,task->num_trace,p.representation};
++    f.write((const char*)hdr,sizeof(hdr));
++    double info[4]={time,p.feedback_scaling,p.trajectory.total_return,tr.total_return};f.write((const char*)info,sizeof(info));
++    auto a=[&](const std::vector<double>& x,size_t count){f.write((const char*)x.data(),count*sizeof(double));};
++    a(p.trajectory.times,horizon);a(p.trajectory.states,horizon*dim_state);a(p.trajectory.actions,horizon*dim_action);
++    a(p.feedback_gain,horizon*dim_action*dim_state_derivative);a(p.action_improvement,horizon*dim_action);
++    a(tr.times,horizon);a(tr.states,horizon*dim_state);a(tr.actions,horizon*dim_action);
++    a(tr.residual,horizon*task->num_residual);a(tr.costs,horizon);a(tr.trace,horizon*3*task->num_trace);
++    f.close();if(!f)throw std::runtime_error("W53 N installed-policy write failed");
++  };
++  char name[80];
++  if(w53_installed||w53_call==1) {
++    w53_policy_call=w53_call;
++    std::snprintf(name,sizeof(name),"/policy-%06lu.bin",w53_call);
++    write(std::string(directory)+name,policy,w53_installed?trajectory[winner]:policy.trajectory);
++  }
++  if(full)for(int i=0;i<num_trajectory_;++i) {
++    std::snprintf(name,sizeof(name),"/call-%06lu-candidate-%02d.bin",w53_call,i);
++    write(std::string(directory)+name,candidate_policy[i],trajectory[i]);
++  }
++  std::ofstream out(std::string(directory)+"/calls.jsonl",std::ios::app);out<<std::setprecision(17);
++  out<<"{\"call_id\":"<<w53_call<<",\"time_s\":"<<time<<",\"policy_call_id\":"<<w53_policy_call
++     <<",\"installed\":"<<(w53_installed?"true":"false")<<",\"winner\":"<<(w53_installed?winner:-1)<<",\"full_candidates\":"<<(full?"true":"false")
++     <<",\"num_candidates\":"<<num_trajectory_<<",\"full_rollouts\":"<<w53_rollouts<<",\"transition_fd_calls\":"<<(2*(horizon-1)+1)
++     <<",\"wall_s\":{\"nominal\":"<<nominal_compute_time*1e-6<<",\"derivative\":"<<model_derivative_compute_time*1e-6
++     <<",\"cost\":"<<cost_derivative_compute_time*1e-6<<",\"backward\":"<<backward_pass_compute_time*1e-6
++     <<",\"rollouts\":"<<rollouts_compute_time*1e-6<<",\"policy_update\":"<<policy_update_compute_time*1e-6<<"},\"cpu_s\":[";
++  for(int i=0;i<6;++i){if(i)out<<",";out<<w53_cpu[i];}out<<"],\"candidates\":[";
++  for(int i=0;i<num_trajectory_;++i){if(i)out<<",";auto& tr=trajectory[i];
++    out<<"{\"slot\":"<<i<<",\"J\":"<<(std::isfinite(tr.total_return)?tr.total_return:0)
++       <<",\"J_finite\":"<<(std::isfinite(tr.total_return)?"true":"false")<<",\"failure\":"<<(tr.failure?"true":"false")
++       <<",\"dx_m\":"<<tr.states[(horizon-1)*dim_state]-tr.states[0]<<",\"final_z_m\":"<<tr.states[(horizon-1)*dim_state+2]<<"}";
++  }
++  out<<"],\"record_wall_s\":"<<GetDuration(begin)*1e-6<<",\"record_cpu_s\":"<<double(std::clock()-cpu)/CLOCKS_PER_SEC<<"}\n";
++  out.close();if(!out)throw std::runtime_error("W53 N call record write failed");
++}
++
+ }  // namespace mjpc
+--- a/mjpc/planners/ilqg/planner.h
++++ b/mjpc/planners/ilqg/planner.h
+@@ -154,6 +154,11 @@
+   // mutex
+   mutable std::shared_mutex mtx_;
+ 
++ public:
++  void W53Record(int horizon);
++  unsigned long w53_call=0,w53_policy_call=0,w53_rollouts=0;
++  bool w53_installed=false,w53_moving_recorded=false;
++  double w53_cpu[6]={};
+  private:
+   int num_trajectory_ = 1;
+   int num_rollouts_gui_ = 1;
+--- a/mjpc/planners/model_derivatives.cc
++++ b/mjpc/planners/model_derivatives.cc
+@@ -59,7 +59,7 @@
+   for (int t = s; t < T - s; t += s) {
+     evaluate_.push_back(t);
+   }
+-  evaluate_.push_back(T - 2);
++  if (evaluate_.back() != T - 2) evaluate_.push_back(T - 2);
+   evaluate_.push_back(T - 1);
+ 
+   // interpolate indices
+--- a/mjpc/utilities.cc
++++ b/mjpc/utilities.cc
+@@ -548,6 +548,21 @@
+     Diff(ds, s1, s2, h, nq + nv + na);
+   } else {
+     mj_differentiatePos(m, ds, h, s1, s2);
++    // A rotation compared with itself (or its exact quaternion antipode) is
++    // exactly zero. Do not amplify quaternion-product roundoff through K.
++    // There is no neighbourhood tolerance: distinct rotations are unchanged.
++    for (int j=0; j<m->njnt; ++j) {
++      const int type=m->jnt_type[j];
++      if (type!=mjJNT_FREE && type!=mjJNT_BALL) continue;
++      const int q=m->jnt_qposadr[j]+(type==mjJNT_FREE?3:0);
++      const int v=m->jnt_dofadr[j]+(type==mjJNT_FREE?3:0);
++      bool identical=true,antipodal=true;
++      for (int k=0;k<4;++k) {
++        identical=identical && s1[q+k]==s2[q+k];
++        antipodal=antipodal && s1[q+k]==-s2[q+k];
++      }
++      if (identical || antipodal) mju_zero(ds+v,3);
++    }
+     Diff(ds + nv, s1 + nq, s2 + nq, h, nv + na);
+   }
+ }

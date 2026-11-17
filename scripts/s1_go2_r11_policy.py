@@ -144,7 +144,7 @@ class PolicyStream:
                     elif (self.fork_identity['stream_id']!=self.stream_id or
                           saved['seed']!=seed or saved['phase_id']!=self.phase_id):
                         raise ValueError('Resume must retain this branch stream and phase identity.')
-                if self.controller_build in ('S5-r28','S5-r29','S5-r30','S5-r31','S5-r32','S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41'):
+                if self.controller_build in ('S5-r28','S5-r29','S5-r30','S5-r31','S5-r32','S5-r33','S5-r34','S5-r35','S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41','S5-r42','S5-r43'):
                     parent=contract['learning']['parent_map'][self.stream_id]
                     lineage=contract['learning']['phase_lineage']
                     source=Path(checkpoint)
@@ -365,9 +365,12 @@ class PolicyMaterial(JointMaterial):
         query=np.zeros((4,2));mask=np.zeros(4,bool);feature=np.zeros((4,3));age=0.
         if self.latest_plan is not None:
             plan=self.latest_plan;j=int(np.argmin(abs(plan['times']-(t+.2))))
-            state=plan['states'][j];self.fk_data.qpos[:]=state[:self.native_model.nq]
-            mujoco.mj_kinematics(self.native_model,self.fk_data)
-            query=self.fk_data.geom_xpos[self.feet,:2].copy()
+            if 'query_feet' in plan:
+                query=np.asarray(plan['query_feet'][j])[:,:2].copy()
+            else:
+                state=plan['states'][j];self.fk_data.qpos[:]=state[:self.native_model.nq]
+                mujoco.mj_kinematics(self.native_model,self.fk_data)
+                query=self.fk_data.geom_xpos[self.feet,:2].copy()
             mask=np.array([self.ground.interior(p) for p in query])
             age=t-float(plan['times'][0])
             if self.observer is not None:feature,_=self.observer.recovery(query)

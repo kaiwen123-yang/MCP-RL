@@ -1,0 +1,109 @@
+{
+  "schema": "w53_f_complete_controller_v1",
+  "identity": "S5-r43",
+  "controller": "centroidal_contact_force_MPC_and_exact_articulated_inverse_dynamics_WBC",
+  "online_backend": "CPU_MuJoCo_3.2.3_OSQP_1.0.5_FP64",
+  "friction_coefficient": 0.5,
+  "gait": {
+    "frequency_hz": 2.0,
+    "duty": 0.6,
+    "swing_s": 0.2,
+    "apex_s": 0.1,
+    "height_m": 0.03,
+    "legs": [
+      "FL",
+      "FR",
+      "RL",
+      "RR"
+    ],
+    "diagonal_offsets_s": [
+      0.0,
+      0.25,
+      0.25,
+      0.0
+    ],
+    "startup": "original_2s_Stand_then_absolute_gait_origin_once_first_50ms_all_stance",
+    "stop": "finish_committed_swing_to_fixed_touchdown_then_stand",
+    "curve": "two_C2_quintics_observed_liftoff_position_velocity_zero_acceleration_fixed_midpoint_apex_and_touchdown",
+    "touchdown": "current_root_plus_rotated_home_foot_plus_0.35_command_velocity_plus_0.04_velocity_error"
+  },
+  "mpc": {
+    "horizon_s": 0.35,
+    "intervals": 14,
+    "dt_s": 0.025,
+    "replan_s": 0.02,
+    "state_weights": [
+      30,
+      30,
+      10,
+      1,
+      1,
+      100,
+      1,
+      1,
+      1,
+      10,
+      10,
+      20
+    ],
+    "force_regularization": 1e-05,
+    "force_difference_weight": 0.0001,
+    "model": "frozen_measured_composite_inertia_centroidal_rigid_body_world_rates_with_gyroscopic_affine_term",
+    "force_feasibility": "mu0.5_pyramid_swing_zero_force_stance_nonnegative_normal_and_current_J_h_static_total_torque_mapped_input_intersection",
+    "approximation": "future_joint_inertia_and_bias_are_frozen_not_full_articulated_prediction; exact_dynamics_and_total_torque_constraints_are_enforced_by_500Hz_WBC"
+  },
+  "wbc": {
+    "dt_s": 0.002,
+    "body_position_kp": 100.0,
+    "body_velocity_kd": 20.0,
+    "orientation_kp": 100.0,
+    "angular_velocity_kd": 20.0,
+    "swing_kp": 400.0,
+    "swing_kd": 40.0,
+    "stance_kp": 400.0,
+    "stance_kd": 40.0,
+    "material_normal_kp": 100.0,
+    "posture_kp": 20.0,
+    "posture_kd": 5.0,
+    "body_weight": 10.0,
+    "orientation_weight": 10.0,
+    "swing_weight": 50.0,
+    "stance_weight": 100.0,
+    "posture_weight": 0.02,
+    "force_weight": 0.01,
+    "command": "all_feedback_in_tau_total; u=q+(tau_total+5*v)/60",
+    "hard_constraints": [
+      "floating_dynamics",
+      "unilateral_friction_pyramid",
+      "zero_force_non_active_feet",
+      "original_total_torque_bounds",
+      "original_mapped_control_bounds",
+      "one_hold_joint_position_reachability"
+    ],
+    "task_constraints": "body_and_foot_acceleration_tasks_weighted_not_hard; residuals_retained",
+    "contact_feedback": "actual_contact_and_measured_Fz_gt_1N_for_WBC_support; planned_swing_remains_zero_force_even_if_still_loaded; planned_stance_without_observed_support_downward_velocity_search_minus0.03m_s_until_real_touchdown",
+    "material": "causal_rest_anchor=p_now+F_now/k; pz_des=rest-F_des/k; normal_velocity_target=observed_vz; no_world_fixed_normal_stance_constraint_no_future_material_state"
+  },
+  "qp": {
+    "eps_abs": 1e-06,
+    "eps_rel": 1e-06,
+    "max_iter": 4000,
+    "polishing": true,
+    "adaptive_rho_interval": 50,
+    "failure": "explicit_controller_numerical_failure_no_silent_fallback_or_automatic_rerun"
+  },
+  "recording": {
+    "full_mpc_reference_force_state_every_replan": true,
+    "full_WBC_command_reference_force_every_500Hz": true,
+    "unchanged_parent_physics_Hz": 5000,
+    "new_native_rollout_or_FD": false,
+    "stage_CPU_wall_IO_timing": true
+  },
+  "new_PPO_samples": 0,
+  "new_PPO_updates": 0,
+  "donor": 0,
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "freeze": "one_parameter_set_before_first_original_E30_no_physical_parameter_search",
+  "material_stiffness_N_m": 1227272.7272727273
+}
