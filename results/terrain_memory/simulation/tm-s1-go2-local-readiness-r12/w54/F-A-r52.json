@@ -1,5 +1,5 @@
 {
-  "status": "declared_not_started",
+  "status": "running",
   "job": {
     "job_id": "job-20261117T054859Z-w54-f-a-r52",
     "label": "F-A-r52",
@@ -48,9 +48,54 @@
     "source_commit": "5d46635305c7c90b9217d1e6d44e03b2ee529cc3",
     "plan_commit": "df07c4bb690f831745879af3a86800c2c3ec427d"
   },
-  "stages": [],
+  "stages": [
+    {
+      "attempt": "job-20261117T054859Z-w54-f-a-r52-eval-PANN_PPO_S5-s1-E30-attempt01",
+      "level": "E30",
+      "status": "physical_material_failure",
+      "command": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "scripts/run_s1_go2_r12.py",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261117T054859Z-w54-f-a-r52/execution-contract.json",
+        "--attempt",
+        "job-20261117T054859Z-w54-f-a-r52-eval-PANN_PPO_S5-s1-E30-attempt01",
+        "--evaluation-start-unix",
+        "1794894539.848657",
+        "--checkpoint",
+        "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+        "--level",
+        "E30",
+        "--seed",
+        "1",
+        "--workers",
+        "1",
+        "--build",
+        "S5-r52",
+        "--condition",
+        "nominal"
+      ],
+      "started_unix_s": 1794894547.5452545,
+      "pid": 245893,
+      "exit_code": 0,
+      "ended_unix_s": 1794894615.2570016,
+      "resource_usage": {
+        "user_cpu_s": 66.069082,
+        "system_cpu_s": 2.8355279999999996,
+        "children_maxrss_KiB": 2496072
+      },
+      "reason": "body_fall",
+      "success": false,
+      "simulation_s": 5.600000000002969,
+      "wall_s": 57.344541953876615,
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/job-20261117T054859Z-w54-f-a-r52-eval-PANN_PPO_S5-s1-E30-attempt01.json"
+    }
+  ],
   "deadline": null,
   "wall_deadline_enabled": false,
   "directory": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261117T054859Z-w54-f-a-r52",
-  "tmux": "s1-w54-f-a-r52"
+  "tmux": "s1-w54-f-a-r52",
+  "runner_pid": 245888,
+  "launched_unix_s": 1794894547.5309935
 }
