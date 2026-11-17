@@ -1,0 +1,142 @@
+{
+  "schema": "w54_task_c_complete_horizon_summary_v1",
+  "status": "completed_finite_work_released_resources",
+  "updated_unix_s": 1794890792.0481293,
+  "method": "fixed JAX FP64 4096-iteration accelerated projected-gradient optimization; exact Euclidean friction-pyramid projection",
+  "full_force_parameterization": "14 nodes x 4 feet x 3 force coordinates; same CPU and GPU feasible set",
+  "finite_input_policy": "157 W53 successful plans + one failed matrix are inventoried. 98 causally reconstructed initial-Stand states solved; 60 insufficient-history records retained. One increment is first 160 natural W54 F/r45 plans, without rerun or extra physics.",
+  "passes": [
+    {
+      "pass_id": "legacy-stand",
+      "status": "completed",
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/task-c-legacy-stand.json",
+      "input_manifest": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/legacy-stand-inputs/manifest.json",
+      "completed_horizons": 98,
+      "force_knots": 1372,
+      "SRB_feasible_horizons": 98,
+      "missing_records": 60,
+      "max_relative_objective_gap": 1.421097386011786e-06,
+      "max_first_force_difference_N": 0.010156488136409791,
+      "max_dynamics_error": 6.430619925446024e-15,
+      "max_objective_error": 7.327471962526033e-15,
+      "active_contact_patterns": {
+        "[True, True, True, True]": 1372
+      },
+      "horizon_contact_switches": 0,
+      "started_unix_s": 1794890554.259003,
+      "ended_unix_s": 1794890561.2564938,
+      "CPU_QP_timing": {
+        "assembly_wall_s": 2.894580313935876,
+        "setup_and_solve_wall_s": 0.9365262296050787
+      },
+      "timing": {
+        "input_read_s": 0.07383210957050323,
+        "GPU_runtime_initialization_s": 0.9405046124011278,
+        "host_to_device_s": 0.012055514380335808,
+        "JIT_compile_s": 1.2928607016801834,
+        "warm_full_horizon_solve_and_synchronize_s": 0.4297390151768923,
+        "device_to_host_s": 0.07644849270582199,
+        "CPU_independent_recompute_and_QP_s": 3.9116875883191824,
+        "artifact_serialization_s": 0.1482731644064188,
+        "total_process_wall_s": 6.9960930328816175,
+        "user_cpu_s": 5.57849,
+        "system_cpu_s": 0.87338,
+        "GPU_path_including_initialization_compile_transfer_s": 2.7516083363443613,
+        "GPU_path_without_initialization_compile_s": 0.5182430222630501
+      },
+      "input_preparation_timing": null,
+      "peak_JAX_bytes": 138524160,
+      "GPU_warm_transfer_vs_CPU_assembly_solve_ratio": 7.392490354836576,
+      "original_output_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/legacy-stand",
+      "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/legacy-stand/executed-source"
+    },
+    {
+      "pass_id": "natural-r45",
+      "status": "completed",
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/task-c-natural-r45.json",
+      "input_manifest": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/natural-r45-inputs/manifest.json",
+      "completed_horizons": 160,
+      "force_knots": 2240,
+      "SRB_feasible_horizons": 160,
+      "missing_records": 0,
+      "max_relative_objective_gap": 0.0007914958599808257,
+      "max_first_force_difference_N": 0.26804269011656245,
+      "max_dynamics_error": 2.3592239273284576e-15,
+      "max_objective_error": 3.019806626980426e-14,
+      "active_contact_patterns": {
+        "[False, False, False, False]": 5,
+        "[False, False, True, False]": 1,
+        "[False, True, True, False]": 328,
+        "[False, True, True, True]": 38,
+        "[True, False, False, False]": 1,
+        "[True, False, False, True]": 306,
+        "[True, True, False, True]": 23,
+        "[True, True, True, False]": 7,
+        "[True, True, True, True]": 1531
+      },
+      "horizon_contact_switches": 382,
+      "started_unix_s": 1794890715.9904938,
+      "ended_unix_s": 1794890735.1964557,
+      "CPU_QP_timing": {
+        "assembly_wall_s": 4.578609019517899,
+        "setup_and_solve_wall_s": 2.494718646630645
+      },
+      "timing": {
+        "input_read_s": 0.12642960622906685,
+        "GPU_runtime_initialization_s": 0.7183818388730288,
+        "host_to_device_s": 0.01685594953596592,
+        "JIT_compile_s": 1.248046401888132,
+        "warm_full_horizon_solve_and_synchronize_s": 9.463162748143077,
+        "device_to_host_s": 0.0796202328056097,
+        "CPU_independent_recompute_and_QP_s": 7.198653673753142,
+        "artifact_serialization_s": 0.24020838178694248,
+        "total_process_wall_s": 19.205236753448844,
+        "user_cpu_s": 13.152011,
+        "system_cpu_s": 5.595591,
+        "GPU_path_including_initialization_compile_transfer_s": 11.526067171245813,
+        "GPU_path_without_initialization_compile_s": 9.559638930484653
+      },
+      "input_preparation_timing": {
+        "wall_s": 0.29678237065672874,
+        "user_cpu_s": 0.277404,
+        "system_cpu_s": 0.018909999999999996
+      },
+      "peak_JAX_bytes": 277846784,
+      "GPU_warm_transfer_vs_CPU_assembly_solve_ratio": 0.7399157769016221,
+      "original_output_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/natural-r45",
+      "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/natural-r45/executed-source"
+    }
+  ],
+  "total_complete_horizons": 258,
+  "total_force_knots": 3612,
+  "total_SRB_feasible_horizons": 258,
+  "CPU_reference": "independent NumPy state recurrence/cost/force inequalities and identical full-horizon OSQP",
+  "implemented_GPU_coverage": [
+    "full-horizon condensing",
+    "full 168-variable objective gradient",
+    "force variation cost",
+    "all optimization iterations",
+    "contact/normal/friction projection",
+    "full force and state outputs",
+    "first action",
+    "objective and projected-gradient residual"
+  ],
+  "actual_limits": [
+    "SRB only, no GPU articulated WBC or future joint trajectory",
+    "no GPU material dynamics or real physics, no online controller installed",
+    "legacy first-pass input reconstruction time was not instrumented and is missing, not zero",
+    "CPU/GPU optimization budgets differ; ratios compare observed offline batch timing and quality, not equal-budget algorithm speedup",
+    "natural batch GPU path including transfers (9.5596s) was slower than CPU model assembly plus QP (7.0733s); online benefit is unestablished"
+  ],
+  "new_physics_steps": 0,
+  "new_native_rollout": 0,
+  "new_FD": 0,
+  "new_PPO_samples": 0,
+  "new_PPO_updates": 0,
+  "donor": 0,
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false,
+  "resource_status": "both finite tmux jobs exit0; no more C task queued",
+  "source_copy_note": "Exact executed solver/F source bytes retained on D57 with each result hash; no PC copy"
+}
