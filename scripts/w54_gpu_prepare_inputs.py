@@ -140,6 +140,43 @@ def natural(out, record_dir, limit, target_times=None):
                         selection="first completed plan at or after each predeclared time, deduplicated" if target_times is not None else "first completed plan records in causal order, one pass; no new physics to fill missing records")
 
 
+
+def verify_sphere_force_points(records, backend_name, cfg):
+    from importlib import import_module
+    builder=import_module(backend_name).assemble_centroidal
+    checks=[]
+    for record in records:
+        if record["status"]!="ready":continue
+        with np.load(record["source"],allow_pickle=False) as z:
+            feet=z["feet"];centers=z["foot_center_plan"]
+            A=z["stage_A"];B=z["stage_B"];c=z["stage_c"]
+            ref=z["reference"];x0=z["x0"];mass=float(z["mass"]);inertia=z["inertia"]
+            point_error=0.;center_difference=0.;affine_error=0.
+            for k in range(len(B)):
+                point=builder(mass,inertia,ref[k,3:6],feet[k],x0[:3],x0[6:9],
+                              cfg["mpc"]["dt_s"],cfg["friction_coefficient"])
+                center=builder(mass,inertia,ref[k,3:6],centers[k],x0[:3],x0[6:9],
+                               cfg["mpc"]["dt_s"],cfg["friction_coefficient"])
+                point_error=max(point_error,float(np.max(np.abs(B[k]-point["B"]))))
+                center_difference=max(center_difference,float(np.max(np.abs(B[k]-center["B"]))))
+                affine_error=max(affine_error,float(np.max(np.abs(A[k]-point["A"]))),
+                                 float(np.max(np.abs(c[k]-point["c"]))))
+            vertical=centers[1:,:,2]-feet[1:,:,2]
+            checks.append(dict(source=record["source"],source_call=record["source_call"],
+                physical_time_s=record["physical_time_s"],force_point_B_max_abs_error=point_error,
+                sphere_center_B_max_abs_difference=center_difference,
+                A_and_c_max_abs_error=affine_error,
+                future_center_minus_forcepoint_z_min_m=float(vertical.min()),
+                future_center_minus_forcepoint_z_max_m=float(vertical.max()),
+                future_center_minus_forcepoint_xy_max_m=float(np.max(np.abs(centers[1:,:,:2]-feet[1:,:,:2]))),
+                current_contact_point_source=z["contact_point_source"].tolist()))
+    return dict(schema="w54_saved_sphere_forcepoint_contract_v1",
+        procedure="rebuild every stored A/B/c node from saved force points and separately from foot centers; no optimization or physics",
+        all_B_use_saved_force_points=all(x["force_point_B_max_abs_error"]<1e-12 and x["sphere_center_B_max_abs_difference"]>1e-8 for x in checks),
+        max_force_point_B_error=max(x["force_point_B_max_abs_error"] for x in checks),
+        min_center_B_difference=min(x["sphere_center_B_max_abs_difference"] for x in checks),
+        state_count=len(checks),node_count=sum(14 for x in checks),checks=checks)
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--pass-id",required=True)
@@ -148,6 +185,7 @@ def main():
     parser.add_argument("--limit",type=int,default=160)
     parser.add_argument("--target-times")
     parser.add_argument("--backend",default="s1_w54_f_backend")
+    parser.add_argument("--verify-sphere-points",action="store_true")
     args=parser.parse_args()
     target_times=[float(x) for x in args.target_times.split(",")] if args.target_times else None
     wall0=time.perf_counter();usage0=resource.getrusage(resource.RUSAGE_SELF)
@@ -158,11 +196,12 @@ def main():
     frozen_config=out/"configuration.json";write(frozen_config,cfg)
     records,details=legacy(out,cfg) if args.legacy else natural(out,args.record_dir,args.limit,target_times)
     configuration=frozen_config
+    point_check=verify_sphere_force_points(records,args.backend,cfg) if args.verify_sphere_points else None
     manifest=dict(schema="w54_c_finite_causal_inputs_v1",created_unix_s=time.time(),
                   pass_id=args.pass_id,backend_module=args.backend,configuration=str(configuration),
                   configuration_sha256=sha(configuration),
                   source_stage_builder_sha256=sha(ROOT/"scripts"/(args.backend+".py")),
-                  records=records,details=details,
+                  records=records,details=details,input_model_verification=point_check,
                   eligible=sum(r["status"]=="ready" for r in records),
                   not_reconstructible=sum(r["status"]!="ready" for r in records),
                   new_physics_steps=0,new_native_rollout=0,new_FD=0,new_PPO_samples=0,

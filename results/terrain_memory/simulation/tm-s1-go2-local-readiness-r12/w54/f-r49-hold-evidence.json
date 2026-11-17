@@ -1,0 +1,80 @@
+{
+  "source_attempt": "job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01",
+  "scope": "whole saved5kHz force and velocity stream, finite hold windows; no solver/model/physics call",
+  "windows": [
+    {
+      "start": 2.052,
+      "end": 2.254,
+      "holds": 102,
+      "actual_tau_drift": {
+        "rms": 0.1607345706068352,
+        "max_abs": 0.9726726864979396
+      },
+      "constant_acceleration_hold_prediction_error": {
+        "rms": 0.020631578409164318,
+        "max_abs": 0.2463409148629409
+      },
+      "swing_acceleration_error": {
+        "rms": 1.1523509759842054,
+        "max_abs": 4.7824650012527865
+      },
+      "mean_tau_bias_rms_Nm": 0.13697540262273353
+    },
+    {
+      "start": 2.6,
+      "end": 3,
+      "holds": 201,
+      "actual_tau_drift": {
+        "rms": 0.15964456154655807,
+        "max_abs": 1.2074945860897586
+      },
+      "constant_acceleration_hold_prediction_error": {
+        "rms": 0.02447324581600442,
+        "max_abs": 0.7934290805158669
+      },
+      "swing_acceleration_error": {
+        "rms": 2.2688449899941685,
+        "max_abs": 6.899414408916618
+      },
+      "mean_tau_bias_rms_Nm": 0.13594898836815184
+    },
+    {
+      "start": 3.3,
+      "end": 3.7,
+      "holds": 201,
+      "actual_tau_drift": {
+        "rms": 0.2098965191535549,
+        "max_abs": 1.9432108913352337
+      },
+      "constant_acceleration_hold_prediction_error": {
+        "rms": 0.02837904512358504,
+        "max_abs": 0.6759067786498552
+      },
+      "swing_acceleration_error": {
+        "rms": 4.404296569408071,
+        "max_abs": 10.954325481156971
+      },
+      "mean_tau_bias_rms_Nm": 0.17882147018581093
+    },
+    {
+      "start": 5.13,
+      "end": 5.33,
+      "holds": 101,
+      "actual_tau_drift": {
+        "rms": 0.5057248655731399,
+        "max_abs": 3.805879102000869
+      },
+      "constant_acceleration_hold_prediction_error": {
+        "rms": 0.06796383072420498,
+        "max_abs": 0.8000500929021399
+      },
+      "swing_acceleration_error": {
+        "rms": 9.8657502445977,
+        "max_abs": 26.612633266585977
+      },
+      "mean_tau_bias_rms_Nm": 0.4306310932485707
+    }
+  ],
+  "hold_model": "tau(t)=tau0-(60*v0+5*a)*t-30*a*t^2 under unchanged position hold and frozen local acceleration",
+  "candidate_fix": "Solve full WBC for hold-average dynamic torque and impose original torque/input bounds on all10plant-sample affine torque predictions; do not change hold/PD or add post-QP torque."
+}

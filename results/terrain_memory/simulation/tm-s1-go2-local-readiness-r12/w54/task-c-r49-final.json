@@ -1,0 +1,1907 @@
+{
+  "schema": "w54_complete_gpu_force_horizon_v1",
+  "pass_id": "r49-final",
+  "status": "completed",
+  "started_unix_s": 1794892403.7302685,
+  "pid": 234385,
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false,
+  "input_manifest": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/manifest.json",
+  "input_manifest_sha256": "896f0fd3c99bc696fb6e88fd0598d720c83baab30c269f7ef212f9c2603788af",
+  "source_sha256": {
+    "scripts/s1_w54_gpu_force.py": "05fd3ee28695fbc0b4bfac6ccba11f6ee14becd5614d8037626d139aec02293f",
+    "scripts/w54_gpu_force_horizon.py": "046cfacc6cdc81f8fb22466f1fa629a1559db671e49388abeed2c7ebade3ba23",
+    "scripts/s1_w54_f_r49_backend.py": "28ef908c8d0c14e04cae396931feab56bea5537499da74f186bfa68d814c55bc"
+  },
+  "configuration_sha256": "3341bd14e4f250f38b431f7ea8e9de9ee6941f89093d4ccbc2471e5a51a20761",
+  "method": "JAX FP64 4096 fixed accelerated projected-gradient steps; exact Euclidean force-pyramid projection",
+  "force_parameterization": "every knot x FL/FR/RL/RR xyz; 14x12 independent force variables",
+  "CPU_reference": "same F full-state/per-knot-force convex QP, OSQP FP64, eps_abs/rel 1e-7",
+  "equal_optimization_budget": false,
+  "contact_candidate": "one corrected causal nominal continuation per saved state",
+  "missing_records": [],
+  "new_physics_steps": 0,
+  "new_native_rollout": 0,
+  "new_FD": 0,
+  "new_PPO_samples": 0,
+  "new_PPO_updates": 0,
+  "donor": 0,
+  "input_preparation_timing": {
+    "wall_s": 0.10345563292503357,
+    "user_cpu_s": 0.10338199999999997,
+    "system_cpu_s": 0.0
+  },
+  "input_backend": "s1_w54_f_r49_backend",
+  "input_model_verification": {
+    "schema": "w54_saved_sphere_forcepoint_contract_v1",
+    "procedure": "rebuild every stored A/B/c node from saved force points and separately from foot centers; no optimization or physics",
+    "all_B_use_saved_force_points": true,
+    "max_force_point_B_error": 0.0,
+    "min_center_B_difference": 0.0032550893745108833,
+    "state_count": 16,
+    "node_count": 224,
+    "checks": [
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000004.npz",
+        "source_call": 4,
+        "physical_time_s": 0.05999999999999975,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0032693396636032795,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000026.npz",
+        "source_call": 26,
+        "physical_time_s": 0.4999999999999776,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.003274454678770522,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000051.npz",
+        "source_call": 51,
+        "physical_time_s": 0.9999999999999225,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0032676927073217177,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000076.npz",
+        "source_call": 76,
+        "physical_time_s": 1.4999999999998674,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.003261946232661357,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000101.npz",
+        "source_call": 101,
+        "physical_time_s": 1.9999999999998124,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0032569591473100012,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000105.npz",
+        "source_call": 105,
+        "physical_time_s": 2.059999999999806,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0032679631803234077,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000107.npz",
+        "source_call": 107,
+        "physical_time_s": 2.0999999999998016,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.003551146276485055,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000110.npz",
+        "source_call": 110,
+        "physical_time_s": 2.159999999999795,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0034383742646400955,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000112.npz",
+        "source_call": 112,
+        "physical_time_s": 2.1999999999997906,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0033113698862779,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000115.npz",
+        "source_call": 115,
+        "physical_time_s": 2.259999999999784,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0032589029368070496,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000117.npz",
+        "source_call": 117,
+        "physical_time_s": 2.2999999999997796,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0032550893745108833,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000122.npz",
+        "source_call": 122,
+        "physical_time_s": 2.3999999999997685,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0034822079536759518,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          0,
+          1,
+          1,
+          0
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000127.npz",
+        "source_call": 127,
+        "physical_time_s": 2.4999999999997575,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.003294841722534844,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          0,
+          1,
+          1,
+          0
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000152.npz",
+        "source_call": 152,
+        "physical_time_s": 2.9999999999997025,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0032819355200850095,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          1,
+          0,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000177.npz",
+        "source_call": 177,
+        "physical_time_s": 3.4999999999996474,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0033601652710881155,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000202.npz",
+        "source_call": 202,
+        "physical_time_s": 3.9999999999995923,
+        "force_point_B_max_abs_error": 0.0,
+        "sphere_center_B_max_abs_difference": 0.0033844709881376903,
+        "A_and_c_max_abs_error": 0.0,
+        "future_center_minus_forcepoint_z_min_m": 0.022,
+        "future_center_minus_forcepoint_z_max_m": 0.022,
+        "future_center_minus_forcepoint_xy_max_m": 0.0,
+        "current_contact_point_source": [
+          1,
+          1,
+          0,
+          1
+        ]
+      }
+    ]
+  },
+  "online_installed": false,
+  "full_articulated_WBC_coverage": false,
+  "material_dynamics_coverage": false,
+  "cases": [
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000004.npz",
+        "source_sha256": "378f4a04b6532d2ecc547f7a08f6fa77f9dff26e157923f9c6b65ac627493aed",
+        "source_call": 4,
+        "physical_time_s": 0.05999999999999975,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0000.npz",
+        "input_sha256": "6fed3e5f6e928ad46695f18d0928324255e185baa3d22043229c1af3d2d30b61",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          0.06
+        ]
+      },
+      "GPU": {
+        "objective": 0.9289601103554964,
+        "terms": {
+          "state": 0.1144378496840152,
+          "force": 0.8029326900249947,
+          "force_difference": 0.011589570646486502
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 4.6629367034256575e-15,
+          "independent_trajectory": 2.6645352591003757e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 1.1102230246251565e-15
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 475,
+        "setup_and_solve_wall_s": 0.016782822087407112,
+        "assembly_wall_s": 0.05519998073577881,
+        "primal_residual": 9.578230574933744e-13,
+        "dual_residual": 1.3262776581412927e-08,
+        "objective": 0.9289594075945674,
+        "terms": {
+          "state": 0.11442305949814822,
+          "force": 0.8029257438979064,
+          "force_difference": 0.011610604198512786
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 9.57823230451904e-13,
+          "independent_trajectory": 9.636796569068018e-13
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 9.658415860967939e-06,
+      "GPU_objective": 0.9289601103554953,
+      "first_force_N": [
+        [
+          0.3802209663971671,
+          -0.030202348431681004,
+          43.68941375907735
+        ],
+        [
+          0.37984995759958523,
+          -0.030202442563769027,
+          43.500986108978196
+        ],
+        [
+          0.3802209188468692,
+          -0.02969648352624718,
+          44.996961467458455
+        ],
+        [
+          0.3798494106932868,
+          -0.029696469889952188,
+          44.80853322786853
+        ]
+      ],
+      "GPU_minus_CPU_objective": 7.027609290055636e-07,
+      "relative_objective_gap": 7.027609290055636e-07,
+      "first_force_max_abs_difference_N": 0.008593237174331136,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0000.npz",
+        "bytes": 12277,
+        "sha256": "7d1017e6e66d650fdeced73a3ad045acfdfd6795cbcdcb35133730408eb421cd"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000026.npz",
+        "source_sha256": "5ee648783fbe8f6f94b17fc03d99aada26458bc433cc90150ad0346104bdc846",
+        "source_call": 26,
+        "physical_time_s": 0.4999999999999776,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0001.npz",
+        "input_sha256": "49744354b1ed3ffeb82ed22c6f72e964c7b4b48416b06255f8a641cb7d6bc262",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          0.5
+        ]
+      },
+      "GPU": {
+        "objective": 0.8247696178110477,
+        "terms": {
+          "state": 0.048840262789924024,
+          "force": 0.7756835273199881,
+          "force_difference": 0.00024582770113560834
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 3.108556706314658e-15,
+          "independent_trajectory": 1.998618284759779e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 1.887379141862766e-15
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 475,
+        "setup_and_solve_wall_s": 0.009194079786539078,
+        "assembly_wall_s": 0.061858342960476875,
+        "primal_residual": 9.568481092581847e-13,
+        "dual_residual": 1.3623292946962337e-08,
+        "objective": 0.8247695738783662,
+        "terms": {
+          "state": 0.04884058201167431,
+          "force": 0.7756833560720823,
+          "force_difference": 0.000245635794609694
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 9.568248970914794e-13,
+          "independent_trajectory": 9.320114124911072e-13
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 2.5033968994595182e-06,
+      "GPU_objective": 0.8247696178110459,
+      "first_force_N": [
+        [
+          -0.17022497440938447,
+          0.06524152351385247,
+          37.9935263031844
+        ],
+        [
+          -0.16701108761148828,
+          0.06524141487850295,
+          38.60553026689749
+        ],
+        [
+          -0.17022502165648218,
+          0.060864559156538295,
+          37.304755202617976
+        ],
+        [
+          -0.167011071191575,
+          0.06086435762728739,
+          37.91675971507568
+        ]
+      ],
+      "GPU_minus_CPU_objective": 4.3932681492719894e-08,
+      "relative_objective_gap": 4.3932681492719894e-08,
+      "first_force_max_abs_difference_N": 0.002225458181335682,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0001.npz",
+        "bytes": 12301,
+        "sha256": "3beadae087111f3679ab5473438b0cfbd03be36529a637e0b86d82daf21f8abe"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000051.npz",
+        "source_sha256": "f38980a83bab55ab7dc2cff0604124e2c044b3e31cc629c2e35475d0d55f9a88",
+        "source_call": 51,
+        "physical_time_s": 0.9999999999999225,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0002.npz",
+        "input_sha256": "dadbc1b5d9fd0b8456afa8ebd4a4d8998fa03972528adfb04200d383febc4348",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          1.0
+        ]
+      },
+      "GPU": {
+        "objective": 0.8116092145660775,
+        "terms": {
+          "state": 0.03550273119245676,
+          "force": 0.775839846801197,
+          "force_difference": 0.0002666365724237537
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 7.993605777301127e-15,
+          "independent_trajectory": 4.6629367034256575e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 1.9984014443252818e-15
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 475,
+        "setup_and_solve_wall_s": 0.009094903245568275,
+        "assembly_wall_s": 0.02820393443107605,
+        "primal_residual": 9.578230574933744e-13,
+        "dual_residual": 1.4133395026495904e-08,
+        "objective": 0.8116091584762146,
+        "terms": {
+          "state": 0.035503201027850706,
+          "force": 0.7758395401593998,
+          "force_difference": 0.00026641728896409226
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 9.578110873875723e-13,
+          "independent_trajectory": 9.32470246850503e-13
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 2.861757397184865e-06,
+      "GPU_objective": 0.8116092145660755,
+      "first_force_N": [
+        [
+          -0.16141878813413363,
+          0.031474390361005446,
+          37.90241539575909
+        ],
+        [
+          -0.14695985995374597,
+          0.03147188313313154,
+          38.75438777433736
+        ],
+        [
+          -0.16141905742822524,
+          0.011783805151071742,
+          36.89769246885948
+        ],
+        [
+          -0.14695997934015312,
+          0.011781170315748175,
+          37.74966869766236
+        ]
+      ],
+      "GPU_minus_CPU_objective": 5.6089862865427165e-08,
+      "relative_objective_gap": 5.6089862865427165e-08,
+      "first_force_max_abs_difference_N": 0.0023119271823830445,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0002.npz",
+        "bytes": 12316,
+        "sha256": "27dc3912bd34642c7bcf59f3f36ad43a2caf66e7ff807f8b5e45861e06e7384b"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000076.npz",
+        "source_sha256": "0a0dd68def825c06e8458c19b9b7204fe6596c9afb2d9c1ae5b1d285e9bb1b9e",
+        "source_call": 76,
+        "physical_time_s": 1.4999999999998674,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0003.npz",
+        "input_sha256": "cbf5992ea5e6e457b31d2a0d3ed2b2f93a997ecb80c1a9eb53d4515d0c522c67",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          1.5
+        ]
+      },
+      "GPU": {
+        "objective": 0.8035503889297376,
+        "terms": {
+          "state": 0.027284709633567612,
+          "force": 0.775967081993933,
+          "force_difference": 0.00029859730223694137
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 7.327905643395027e-15,
+          "independent_trajectory": 4.6564314903907444e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 5.551115123125783e-16
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 475,
+        "setup_and_solve_wall_s": 0.009052541106939316,
+        "assembly_wall_s": 0.028306124731898308,
+        "primal_residual": 9.586284495137485e-13,
+        "dual_residual": 1.4512873439450991e-08,
+        "objective": 0.8035503238084472,
+        "terms": {
+          "state": 0.02728517271899102,
+          "force": 0.7759667904515667,
+          "force_difference": 0.0002983606378894781
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 9.586281421447573e-13,
+          "independent_trajectory": 9.330930125783787e-13
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 3.0190587310601435e-06,
+      "GPU_objective": 0.8035503889297371,
+      "first_force_N": [
+        [
+          -0.15335735104187523,
+          0.004941151003880145,
+          37.812098031106075
+        ],
+        [
+          -0.13671689267316384,
+          0.004936656067961781,
+          38.84532124455664
+        ],
+        [
+          -0.15335804567898784,
+          -0.01771995320174563,
+          36.58425730654559
+        ],
+        [
+          -0.13671736807453277,
+          -0.017724479547199294,
+          37.617494389777846
+        ]
+      ],
+      "GPU_minus_CPU_objective": 6.512129047120396e-08,
+      "relative_objective_gap": 6.512129047120396e-08,
+      "first_force_max_abs_difference_N": 0.002236685228574231,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0003.npz",
+        "bytes": 12336,
+        "sha256": "adec620e761c4abb7e9865171ad222b36c495a901dbb15d98f752ce28d78e624"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000101.npz",
+        "source_sha256": "4c0700b1b3d071c25103005ab8f76988db52deeda55e2915ca39ae119583abc8",
+        "source_call": 101,
+        "physical_time_s": 1.9999999999998124,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0004.npz",
+        "input_sha256": "78d3c980baa7652ca8b343369f03ab85301b57b5631921202ab90cc8d24dc018",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          2.0
+        ]
+      },
+      "GPU": {
+        "objective": 0.7985478846905276,
+        "terms": {
+          "state": 0.02214186355025228,
+          "force": 0.7760739693716538,
+          "force_difference": 0.00033205176862148746
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 2.6645352591003757e-15,
+          "independent_trajectory": 1.7716947700585628e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 9.992007221626409e-16
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 425,
+        "setup_and_solve_wall_s": 0.00830058567225933,
+        "assembly_wall_s": 0.028469523414969444,
+        "primal_residual": 9.59306674373011e-13,
+        "dual_residual": 1.4804970881732283e-08,
+        "objective": 0.7985478134949837,
+        "terms": {
+          "state": 0.022142239383101635,
+          "force": 0.7760737653600123,
+          "force_difference": 0.00033180875186983956
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 9.592699898308688e-13,
+          "independent_trajectory": 9.335683268107964e-13
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 3.0509654526905226e-06,
+      "GPU_objective": 0.7985478846905266,
+      "first_force_N": [
+        [
+          -0.14684721068855464,
+          -0.015491082572284086,
+          37.72801399322634
+        ],
+        [
+          -0.13009872578551013,
+          -0.015496852943900762,
+          38.89816683786726
+        ],
+        [
+          -0.1468482619522254,
+          -0.0382991359727778,
+          36.34025234097357
+        ],
+        [
+          -0.13009950163309392,
+          -0.03830485722369247,
+          37.51042992723107
+        ]
+      ],
+      "GPU_minus_CPU_objective": 7.119554390477845e-08,
+      "relative_objective_gap": 7.119554390477845e-08,
+      "first_force_max_abs_difference_N": 0.0022077517770142663,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0004.npz",
+        "bytes": 12334,
+        "sha256": "5b070e7900e8a4ec02ff1255a24466787c9cf1d20e7213ed2367681f5dc8c7ae"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000105.npz",
+        "source_sha256": "2cddf683cc45a4c3a682ad7b05da0898bd17a4525c8a90868144a987f2fe0374",
+        "source_call": 105,
+        "physical_time_s": 2.059999999999806,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0005.npz",
+        "input_sha256": "b16cacbed5ee2f763d0064ed0beff7c9bd7e63711cfcdcc20a81db8e0918154b",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          2.06
+        ]
+      },
+      "GPU": {
+        "objective": 2.152389186278714,
+        "terms": {
+          "state": 0.052217747549276536,
+          "force": 1.4280911859020593,
+          "force_difference": 0.6720802528273782
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 2.4424906541753444e-15,
+          "independent_trajectory": 2.444225377651321e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 1.3322676295501878e-15
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 525,
+        "setup_and_solve_wall_s": 0.009915351867675781,
+        "assembly_wall_s": 0.030086539685726166,
+        "primal_residual": 1.1662222354532407e-07,
+        "dual_residual": 4.958289127828415e-07,
+        "objective": 2.152106601303319,
+        "terms": {
+          "state": 0.05191530621197881,
+          "force": 1.4285524535224536,
+          "force_difference": 0.6716388415688868
+        },
+        "violations": {
+          "unilateral_N": 4.4042658298942165e-10,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 4.6371321847792286e-10,
+          "inactive_force_N": 8.642071738725998e-10,
+          "dynamics": 1.1662222365593777e-07,
+          "independent_trajectory": 1.24665775291799e-06
+        },
+        "SRB_feasible": false,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 0.00018070398015704482,
+      "GPU_objective": 2.152389186278713,
+      "first_force_N": [
+        [
+          1.6570858419530705,
+          -0.10608464491926037,
+          75.04708744205205
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.5370628368386445,
+          0.09863993504187551,
+          77.26727990991289
+        ]
+      ],
+      "GPU_minus_CPU_objective": 0.00028258497539512817,
+      "relative_objective_gap": 0.0001313062165340668,
+      "first_force_max_abs_difference_N": 0.10844827572138627,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0005.npz",
+        "bytes": 19086,
+        "sha256": "83c42b5ed2597eb13d3ec5e9856e3023fe031d816c6ad9dc7eea5e56c0cb8434"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000107.npz",
+        "source_sha256": "b5f6e8a2516f73de6e88c1f5fb80c8a494b19832bc7684fecdee78493d7d4a91",
+        "source_call": 107,
+        "physical_time_s": 2.0999999999998016,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0006.npz",
+        "input_sha256": "4bbe2856c951e214bd918bec55c6b424012301d573a90086082170660f511633",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          2.1
+        ]
+      },
+      "GPU": {
+        "objective": 2.243368516334504,
+        "terms": {
+          "state": 0.17604866039496986,
+          "force": 1.3732346576586745,
+          "force_difference": 0.6940851982808596
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 3.552713678800501e-15,
+          "independent_trajectory": 2.8935187579293142e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 4.440892098500626e-16
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 525,
+        "setup_and_solve_wall_s": 0.009966105222702026,
+        "assembly_wall_s": 0.028595881536602974,
+        "primal_residual": 1.9106944562532994e-07,
+        "dual_residual": 3.796005769375508e-07,
+        "objective": 2.2431107896563445,
+        "terms": {
+          "state": 0.1756827976389508,
+          "force": 1.3741041592906929,
+          "force_difference": 0.6933238327267008
+        },
+        "violations": {
+          "unilateral_N": 4.501902374183396e-10,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 2.828682662100545e-10,
+          "inactive_force_N": 5.378110973336354e-10,
+          "dynamics": 1.9106944570967954e-07,
+          "independent_trajectory": 1.978251736922676e-06
+        },
+        "SRB_feasible": false,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 0.00013929659650319194,
+      "GPU_objective": 2.2433685163345043,
+      "first_force_N": [
+        [
+          2.4606845027826547,
+          0.5936702311062165,
+          61.10432452707626
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2.3687645344166484,
+          0.7205794474380188,
+          66.10351065692598
+        ]
+      ],
+      "GPU_minus_CPU_objective": 0.00025772667815937567,
+      "relative_objective_gap": 0.00011489699008530053,
+      "first_force_max_abs_difference_N": 0.12321264260208409,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0006.npz",
+        "bytes": 19111,
+        "sha256": "0295ad46b22759c4ac73cb9fce413f853535f50b155a1a5bb2dd95f94b846a4e"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000110.npz",
+        "source_sha256": "d944a486510589fae163b210cd8c1bb8f24fe51aad0a42dd97adb99c65417a6d",
+        "source_call": 110,
+        "physical_time_s": 2.159999999999795,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0007.npz",
+        "input_sha256": "29fe861b16572983b9d7672f99375d14f1b72c04d5916d149753cc15111bbffe",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          2.16
+        ]
+      },
+      "GPU": {
+        "objective": 2.2276591646867976,
+        "terms": {
+          "state": 0.06830151759229001,
+          "force": 1.454221493099472,
+          "force_difference": 0.7051361539950356
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 4.219714855313583e-15,
+          "independent_trajectory": 5.321264262558856e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 8.881784197001252e-16
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 550,
+        "setup_and_solve_wall_s": 0.01024358905851841,
+        "assembly_wall_s": 0.028129594400525093,
+        "primal_residual": 2.5194544841914423e-07,
+        "dual_residual": 2.0714402736595729e-07,
+        "objective": 2.2275060273824447,
+        "terms": {
+          "state": 0.06905855235143232,
+          "force": 1.4533112440606972,
+          "force_difference": 0.7051362309703151
+        },
+        "violations": {
+          "unilateral_N": 3.195574421085824e-10,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 1.827292126948848e-10,
+          "inactive_force_N": 3.195574421085824e-10,
+          "dynamics": 2.51945448559443e-07,
+          "independent_trajectory": 2.5336807681353157e-06
+        },
+        "SRB_feasible": false,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 0.00014052137304871356,
+      "GPU_objective": 2.2276591646867967,
+      "first_force_N": [
+        [
+          2.550782712709125,
+          1.6274440026661043,
+          73.02928920976628
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3.083158058822013,
+          0.902293421623047,
+          78.97053418026346
+        ]
+      ],
+      "GPU_minus_CPU_objective": 0.00015313730435284612,
+      "relative_objective_gap": 6.874832322352844e-05,
+      "first_force_max_abs_difference_N": 0.06646264421318904,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0007.npz",
+        "bytes": 19184,
+        "sha256": "a1163e4b8c9f23539cca9be560c60171ea6f2a33409028d348c8a79b6e28ba94"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000112.npz",
+        "source_sha256": "3e20896c1277120a6495c53a305f8ec1ed1131ab1066411b09e429b832365cee",
+        "source_call": 112,
+        "physical_time_s": 2.1999999999997906,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0008.npz",
+        "input_sha256": "0f783dff8fac70e53561826d59e55199c63e9bf2f3c1c3c56177e2cbfc65ec2b",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          2.2
+        ]
+      },
+      "GPU": {
+        "objective": 2.4674923984754304,
+        "terms": {
+          "state": 0.2171887092521604,
+          "force": 1.4924400335219155,
+          "force_difference": 0.7578636557013546
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 4.885848670088677e-15,
+          "independent_trajectory": 2.8935187579293142e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 1.3322676295501878e-15
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 700,
+        "setup_and_solve_wall_s": 0.012404315173625946,
+        "assembly_wall_s": 0.028190696612000465,
+        "primal_residual": 4.357870072456676e-08,
+        "dual_residual": 1.4003672237202973e-07,
+        "objective": 2.467190019590097,
+        "terms": {
+          "state": 0.21803160923485226,
+          "force": 1.4930985785046798,
+          "force_difference": 0.7560598318505649
+        },
+        "violations": {
+          "unilateral_N": 2.556207914443792e-10,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 2.519763869779368e-08,
+          "inactive_force_N": 2.556207914443792e-10,
+          "dynamics": 4.357870081461712e-08,
+          "independent_trajectory": 4.4618945049812453e-07
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 0.00021038072616482361,
+      "GPU_objective": 2.467492398475429,
+      "first_force_N": [
+        [
+          1.3499695370169633,
+          0.6033757402824567,
+          86.9081817049955
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.5242886523573718,
+          0.3662034976587778,
+          88.41142266564131
+        ]
+      ],
+      "GPU_minus_CPU_objective": 0.0003023788853333542,
+      "relative_objective_gap": 0.00012256003102006384,
+      "first_force_max_abs_difference_N": 0.1720101953156501,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0008.npz",
+        "bytes": 19179,
+        "sha256": "857671ce0aa2fc12916807e586f4cbc078ef4f2c684bc8773debef0fb0f58a2f"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000115.npz",
+        "source_sha256": "f9b2f4f61bd52d3936d040c0f321d8ff95e9d118afe01f8448849981fb2725cb",
+        "source_call": 115,
+        "physical_time_s": 2.259999999999784,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0009.npz",
+        "input_sha256": "24289fb96357dccf5f4062db7a5627f5b420d8f8680e7c535a7044f2184bfc8a",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          2.26
+        ]
+      },
+      "GPU": {
+        "objective": 2.1799544287039216,
+        "terms": {
+          "state": 0.11011618306634136,
+          "force": 1.3776570711611027,
+          "force_difference": 0.6921811744764778
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 5.104423828061755e-15,
+          "independent_trajectory": 3.969914674772923e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 8.881784197001252e-16
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 700,
+        "setup_and_solve_wall_s": 0.012809297069907188,
+        "assembly_wall_s": 0.028538614511489868,
+        "primal_residual": 2.8030560689254065e-08,
+        "dual_residual": 2.581296225749463e-07,
+        "objective": 2.179533857181111,
+        "terms": {
+          "state": 0.10937061549236829,
+          "force": 1.3751477118842401,
+          "force_difference": 0.6950155298045028
+        },
+        "violations": {
+          "unilateral_N": 1.7465374638293023e-10,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 8.926282569058678e-11,
+          "inactive_force_N": 1.7465374638293023e-10,
+          "dynamics": 2.8030560816905137e-08,
+          "independent_trajectory": 2.894643367779004e-07
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 0.00023573456471560937,
+      "GPU_objective": 2.1799544287039208,
+      "first_force_N": [
+        [
+          1.2543926145625677,
+          -0.7421221110968578,
+          74.00722302292019
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.9163514702848465,
+          -0.28174718833118884,
+          69.95183396743289
+        ]
+      ],
+      "GPU_minus_CPU_objective": 0.0004205715228104978,
+      "relative_objective_gap": 0.00019296397779038947,
+      "first_force_max_abs_difference_N": 0.02902077861334762,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0009.npz",
+        "bytes": 19127,
+        "sha256": "3481f5b7c645e4348abbec1c371eac4e819e388bc6a8ea98edb5f02508c4ae68"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000117.npz",
+        "source_sha256": "0607a24d3f8d54221a03f862967f496b38e34cf13aa729d8e2f2570d4d4569b3",
+        "source_call": 117,
+        "physical_time_s": 2.2999999999997796,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0010.npz",
+        "input_sha256": "248bc262cf4e267f038d3d851b6cd482219659e4b8c837addafb923f133e2bc8",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          2.3
+        ]
+      },
+      "GPU": {
+        "objective": 2.1375759773283534,
+        "terms": {
+          "state": 0.09749478472369022,
+          "force": 1.280991378760148,
+          "force_difference": 0.7590898138445153
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 3.5526052585832524e-15,
+          "independent_trajectory": 4.218847493575595e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 1.3322676295501878e-15
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 625,
+        "setup_and_solve_wall_s": 0.01150812953710556,
+        "assembly_wall_s": 0.028235819190740585,
+        "primal_residual": 1.287224614581401e-07,
+        "dual_residual": 1.0969225540375819e-07,
+        "objective": 2.1375149145349353,
+        "terms": {
+          "state": 0.09808437428289321,
+          "force": 1.2815525618517083,
+          "force_difference": 0.7578779784003336
+        },
+        "violations": {
+          "unilateral_N": 8.074601797082027e-11,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 4.914807622402313e-11,
+          "inactive_force_N": 8.074601797082027e-11,
+          "dynamics": 1.2872246157868972e-07,
+          "independent_trajectory": 1.2937461296158581e-06
+        },
+        "SRB_feasible": false,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 6.971732965471128e-05,
+      "GPU_objective": 2.137575977328352,
+      "first_force_N": [
+        [
+          1.1678475631272058,
+          -0.6973018679242744,
+          30.389171236000863
+        ],
+        [
+          1.4378860715828001,
+          -0.9040321004318415,
+          40.55239776822347
+        ],
+        [
+          1.7866451103909697,
+          -0.4295657911889771,
+          45.44071124630121
+        ],
+        [
+          0.826913782777294,
+          -0.2330357295671414,
+          28.831870784790123
+        ]
+      ],
+      "GPU_minus_CPU_objective": 6.10627934181096e-05,
+      "relative_objective_gap": 2.8567189404334613e-05,
+      "first_force_max_abs_difference_N": 0.226640172118735,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0010.npz",
+        "bytes": 19249,
+        "sha256": "4b7ab4d2d45eb3e2df7dfb0bae01ccb23ee64ce57e0425c1ce87b6431613f7d6"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000122.npz",
+        "source_sha256": "65f2461dff486bdbff5082885a8334498d192a39ccbc66670ff2fb211dc4cd5f",
+        "source_call": 122,
+        "physical_time_s": 2.3999999999997685,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0011.npz",
+        "input_sha256": "c65bbdb6b16f78e0e65da6ea34b9f038251b09ff6ec2156b06455d60baa9469b",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          2.4
+        ]
+      },
+      "GPU": {
+        "objective": 2.2163343588151667,
+        "terms": {
+          "state": 0.14408712596147724,
+          "force": 1.3850002254633,
+          "force_difference": 0.6872470073903896
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 4.884981308350689e-15,
+          "independent_trajectory": 4.8845476274816946e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 1.3322676295501878e-15
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 550,
+        "setup_and_solve_wall_s": 0.010254232212901115,
+        "assembly_wall_s": 0.028364120051264763,
+        "primal_residual": 1.2190075837274878e-07,
+        "dual_residual": 5.953022879347309e-07,
+        "objective": 2.216100258263449,
+        "terms": {
+          "state": 0.14371393013099543,
+          "force": 1.385833056073378,
+          "force_difference": 0.6865532720590756
+        },
+        "violations": {
+          "unilateral_N": 5.899703313301976e-10,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 1.1745190384132497e-09,
+          "inactive_force_N": 8.848815181908066e-10,
+          "dynamics": 1.2190075848739212e-07,
+          "independent_trajectory": 1.2592174880032836e-06
+        },
+        "SRB_feasible": false,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 0.00014471681960768568,
+      "GPU_objective": 2.216334358815168,
+      "first_force_N": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2.7820647854075555,
+          -0.4503667893980611,
+          63.19656357082452
+        ],
+        [
+          2.7281824565169974,
+          -0.5357142349752126,
+          66.21182466252462
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "GPU_minus_CPU_objective": 0.00023410055171790844,
+      "relative_objective_gap": 0.00010563626390321854,
+      "first_force_max_abs_difference_N": 0.1208587344592047,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0011.npz",
+        "bytes": 19191,
+        "sha256": "827eb7393d87d985bceeba05f8fcd6d6fcf9aa0c0f0bf4a55cb30debf65446c2"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000127.npz",
+        "source_sha256": "8d598724f3bd3f6fe83f10b46a80b00acd60f5e132f1323315226912c6ac25b0",
+        "source_call": 127,
+        "physical_time_s": 2.4999999999997575,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0012.npz",
+        "input_sha256": "32f47161c32887e8188af6d8a24d31159fc0692b01fd59e4403d2da5b1cd1d55",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          2.5
+        ]
+      },
+      "GPU": {
+        "objective": 2.4268126867383657,
+        "terms": {
+          "state": 0.18089023788016503,
+          "force": 1.4996264398350774,
+          "force_difference": 0.7462960090231231
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 4.6629367034256575e-15,
+          "independent_trajectory": 3.552713678800501e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 1.7763568394002505e-15
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 700,
+        "setup_and_solve_wall_s": 0.012458600103855133,
+        "assembly_wall_s": 0.028327278792858124,
+        "primal_residual": 6.842965618405975e-08,
+        "dual_residual": 9.03217177093174e-08,
+        "objective": 2.426550149558501,
+        "terms": {
+          "state": 0.18161754197077068,
+          "force": 1.4991221353416793,
+          "force_difference": 0.7458104722460508
+        },
+        "violations": {
+          "unilateral_N": 1.6520697637684276e-10,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 1.9610502055567025e-08,
+          "inactive_force_N": 1.6520697637684276e-10,
+          "dynamics": 6.842965627473774e-08,
+          "independent_trajectory": 6.984023843692455e-07
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 0.00019749898015477296,
+      "GPU_objective": 2.426812686738364,
+      "first_force_N": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3.5636374062461176,
+          0.7748865724924956,
+          91.48438112410523
+        ],
+        [
+          3.644649957811485,
+          0.8823659038097353,
+          86.17619172167288
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "GPU_minus_CPU_objective": 0.00026253717986479685,
+      "relative_objective_gap": 0.00010819359324288609,
+      "first_force_max_abs_difference_N": 0.162895459151855,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0012.npz",
+        "bytes": 19202,
+        "sha256": "46858323672af798b0fcd76c7b86fcacf2df34c9d5776b2a1c6fa399972f0532"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000152.npz",
+        "source_sha256": "47d5dcbfe8633824ca4e332a16f674ea220a1dec2e71120eba5e044c67545e43",
+        "source_call": 152,
+        "physical_time_s": 2.9999999999997025,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0013.npz",
+        "input_sha256": "4797c9f7ef878c914315553e369501b6ca884a3e72a92c070005a4bae66bbbeb",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          3.0
+        ]
+      },
+      "GPU": {
+        "objective": 2.580011978572951,
+        "terms": {
+          "state": 0.24143145192705676,
+          "force": 1.3032552414760037,
+          "force_difference": 1.0353252851698906
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 7.1045599958630135e-15,
+          "independent_trajectory": 3.554448402276478e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 4.440892098500626e-16
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 525,
+        "setup_and_solve_wall_s": 0.01099030114710331,
+        "assembly_wall_s": 0.028074055910110474,
+        "primal_residual": 1.2714198013719353e-06,
+        "dual_residual": 2.485763300601466e-06,
+        "objective": 2.579916938995648,
+        "terms": {
+          "state": 0.2430450234848519,
+          "force": 1.30279672296683,
+          "force_difference": 1.034075192543966
+        },
+        "violations": {
+          "unilateral_N": 4.309079157112256e-09,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 2.2515042140013643e-08,
+          "inactive_force_N": 2.0616937156181565e-08,
+          "dynamics": 1.271419801440743e-06,
+          "independent_trajectory": 1.2477097532603842e-05
+        },
+        "SRB_feasible": false,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 0.0001221126797884279,
+      "GPU_objective": 2.5800119785729505,
+      "first_force_N": [
+        [
+          -4.3997007905453165,
+          3.1786843649678076,
+          58.32716804052358
+        ],
+        [
+          -4.30617132305719,
+          3.823136700671209,
+          40.17376199021969
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -3.932549091351364,
+          2.5425812180955116,
+          45.07948020211261
+        ]
+      ],
+      "GPU_minus_CPU_objective": 9.50395773031687e-05,
+      "relative_objective_gap": 3.683823144328331e-05,
+      "first_force_max_abs_difference_N": 0.17682425224245346,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0013.npz",
+        "bytes": 19481,
+        "sha256": "06fdc977863b9ab6423d46dc862078107c975150449862bb1b12f946ab19f054"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000177.npz",
+        "source_sha256": "2bee698ef12bff61b7b9908df5eac438f09ca49a46b63d235736f6437e02e239",
+        "source_call": 177,
+        "physical_time_s": 3.4999999999996474,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0014.npz",
+        "input_sha256": "76c992f4cdc919ec5b18503ac29576c1a14f0711807388dbd87ca6e11e11f915",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          3.5
+        ]
+      },
+      "GPU": {
+        "objective": 2.2632683981962467,
+        "terms": {
+          "state": 0.06254284748167288,
+          "force": 1.5090032528543644,
+          "force_difference": 0.6917222978602092
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 5.105291189799743e-15,
+          "independent_trajectory": 3.5371011675167097e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 4.440892098500626e-16
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 675,
+        "setup_and_solve_wall_s": 0.012036632746458054,
+        "assembly_wall_s": 0.028163904324173927,
+        "primal_residual": 3.6088535151287296e-07,
+        "dual_residual": 1.426748666776721e-07,
+        "objective": 2.2631506457672494,
+        "terms": {
+          "state": 0.06227569343476775,
+          "force": 1.5091367502618827,
+          "force_difference": 0.691738202070599
+        },
+        "violations": {
+          "unilateral_N": 2.151404562722484e-10,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 4.821048929197614e-10,
+          "inactive_force_N": 4.0800730482499816e-10,
+          "dynamics": 3.608853516023913e-07,
+          "independent_trajectory": 3.6632776960199287e-06
+        },
+        "SRB_feasible": false,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 0.00010286400531113049,
+      "GPU_objective": 2.2632683981962463,
+      "first_force_N": [
+        [
+          -3.2937047861494633,
+          -4.892010034265749,
+          92.15199392272747
+        ],
+        [
+          -0.14008172952769807,
+          -0.6122108539934737,
+          2.7974732617374354
+        ],
+        [
+          0.00026943840412633596,
+          -0.4629147483686941,
+          6.329064820260311
+        ],
+        [
+          -3.699257748389546,
+          -4.341106501370577,
+          52.702294105775195
+        ]
+      ],
+      "GPU_minus_CPU_objective": 0.00011775242899725313,
+      "relative_objective_gap": 5.203030970010081e-05,
+      "first_force_max_abs_difference_N": 0.050827654136540446,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0014.npz",
+        "bytes": 19620,
+        "sha256": "d5ef9046396bd2d519563322e97453672997c2e395c94aecb437fbad9ee68c37"
+      }
+    },
+    {
+      "source": {
+        "source_kind": "W54_natural_F_plan",
+        "source": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01/w54-f/mpc-000202.npz",
+        "source_sha256": "46145f723c0250fc095e3a108afe08a952fc788f88e955ace4d4ddf1746eeced",
+        "source_call": 202,
+        "physical_time_s": 3.9999999999995923,
+        "status": "ready",
+        "input_path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/input-0015.npz",
+        "input_sha256": "5be3ed01c2514da7872d9e089636fbb3cb52cdee4fc93e8c097443eb48471804",
+        "reconstruction": "none; corrected causal event/stage contract saved during original F physics",
+        "requested_times_s": [
+          4.0
+        ]
+      },
+      "GPU": {
+        "objective": 2.6629655982058176,
+        "terms": {
+          "state": 0.13634785280335632,
+          "force": 1.982643264833186,
+          "force_difference": 0.5439744805692752
+        },
+        "violations": {
+          "unilateral_N": 0.0,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 0.0,
+          "inactive_force_N": 0.0,
+          "dynamics": 1.5543122344752192e-15,
+          "independent_trajectory": 2.0383000842727483e-15
+        },
+        "SRB_feasible": true,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false,
+        "GPU_objective_abs_error": 4.440892098500626e-16
+      },
+      "CPU_QP": {
+        "status": "solved",
+        "status_value": 1,
+        "iterations": 750,
+        "setup_and_solve_wall_s": 0.013581547886133194,
+        "assembly_wall_s": 0.030769458040595055,
+        "primal_residual": 8.733401430503629e-07,
+        "dual_residual": 6.315912690985293e-07,
+        "objective": 2.6626426435182324,
+        "terms": {
+          "state": 0.13466761881510414,
+          "force": 1.9838029246598288,
+          "force_difference": 0.5441721000432995
+        },
+        "violations": {
+          "unilateral_N": 9.294002697514165e-10,
+          "normal_upper_N": 0.0,
+          "friction_pyramid_N": 7.245917034285231e-09,
+          "inactive_force_N": 6.781216899409523e-09,
+          "dynamics": 8.733401431482157e-07,
+          "independent_trajectory": 8.880105293651575e-06
+        },
+        "SRB_feasible": false,
+        "articulated_WBC_evaluated": false,
+        "material_task_evaluated": false
+      },
+      "projected_gradient_inf": 0.0002058798605603628,
+      "GPU_objective": 2.662965598205818,
+      "first_force_N": [
+        [
+          7.9782140253102005,
+          -10.963617197138877,
+          76.09884532615251
+        ],
+        [
+          -4.823954909561073,
+          6.607842075265049,
+          47.61964291506474
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2.2209204263539797,
+          -3.0647285569144547,
+          32.65014461174716
+        ]
+      ],
+      "GPU_minus_CPU_objective": 0.0003229546875851419,
+      "relative_objective_gap": 0.00012129103707225685,
+      "first_force_max_abs_difference_N": 0.25013640196404197,
+      "artifact": {
+        "path": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/case-0015.npz",
+        "bytes": 19641,
+        "sha256": "ac77d710b325b12a99a4aa3fd72fbf528dc832cb71de625cc69d4cb60280499b"
+      }
+    }
+  ],
+  "GPU_device": {
+    "id": 0,
+    "platform": "gpu",
+    "kind": "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+  },
+  "GPU_memory_stats": {
+    "num_allocs": 20,
+    "bytes_in_use": 619776,
+    "peak_bytes_in_use": 34174464,
+    "largest_alloc_size": 33554432,
+    "bytes_limit": 76481888256,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "largest_free_block_bytes": 0,
+    "pool_bytes": 35651584,
+    "peak_pool_bytes": 35651584
+  },
+  "ended_unix_s": 1794892406.7665904,
+  "timing": {
+    "input_read_s": 0.014611862599849701,
+    "GPU_runtime_initialization_s": 0.6487053502351046,
+    "host_to_device_s": 0.009651636704802513,
+    "JIT_compile_s": 1.1384753435850143,
+    "warm_full_horizon_solve_and_synchronize_s": 0.3053607698529959,
+    "device_to_host_s": 0.07449127547442913,
+    "CPU_independent_recompute_and_QP_s": 0.7102858833968639,
+    "artifact_serialization_s": 0.026584619656205177,
+    "total_process_wall_s": 3.0354982279241085,
+    "user_cpu_s": 2.072144,
+    "system_cpu_s": 0.6014559999999999,
+    "GPU_path_including_initialization_compile_transfer_s": 2.1766843758523464,
+    "GPU_path_without_initialization_compile_s": 0.3895036820322275
+  },
+  "complete_horizons": 16,
+  "force_knots": 224,
+  "SRB_feasible_horizons": 16,
+  "max_relative_objective_gap": 0.00019296397779038947,
+  "max_dynamics_recompute_error": 5.321264262558856e-15,
+  "max_objective_recompute_error": 1.9984014443252818e-15,
+  "coverage": {
+    "GPU": [
+      "full_horizon_condensing",
+      "full_objective_and_force_difference",
+      "all_per_knot_force_variables",
+      "exact_contact_friction_unilateral_projection",
+      "4096_optimization_iterations",
+      "full_state_force_output",
+      "first_action",
+      "objective"
+    ],
+    "CPU": [
+      "causal_input_reconstruction",
+      "F_model_assembly",
+      "independent_dynamics_cost_constraint_recompute",
+      "same_problem_OSQP_quality_reference"
+    ],
+    "not_covered": [
+      "articulated_WBC_GPU",
+      "material_predictor_GPU",
+      "real_plant_GPU",
+      "online_controller"
+    ]
+  },
+  "CPU_reference_timing": {
+    "assembly_wall_s": 0.517513869330287,
+    "setup_and_solve_wall_s": 0.17859303392469883
+  },
+  "exercised_contact_patterns": {
+    "[False, True, True, False]": 67,
+    "[True, False, False, True]": 47,
+    "[True, True, False, True]": 8,
+    "[True, True, True, True]": 102
+  },
+  "contact_switches_in_horizons": 56,
+  "future_joint_trajectory_available": false,
+  "speed_interpretation": "Batched offline quality/time comparison, not equal-iteration budgets or established online speedup; causal input preparation is common CPU work and reported separately.",
+  "input_identity": "S5-r49",
+  "input_contract_status": "measured_reaction_availability_sphere_contact_force_points_and_optimized_WBC_motion",
+  "scientific_role": "final bounded input-version correction on 16 declared natural snapshots; same frozen complete GPU method"
+}

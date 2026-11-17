@@ -1,11 +1,108 @@
 {
-  "schema": "w54_task_c_complete_horizon_summary_v1",
-  "status": "completed_finite_work_with_r46_input_correction",
-  "updated_unix_s": 1794891413.7751172,
+  "schema": "w54_task_c_latest_complete_horizon_summary_v2",
+  "status": "completed_finite_latest_r49_inputs_resources_released",
+  "updated_unix_s": 1794892456.0511768,
+  "current_input_identity": "S5-r49",
+  "primary_result": {
+    "pass_id": "r49-final",
+    "status": "completed",
+    "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/task-c-r49-final.json",
+    "input_identity": "S5-r49",
+    "input_contract_status": "measured_reaction_availability_sphere_contact_force_points_and_optimized_WBC_motion",
+    "input_manifest": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final-inputs/manifest.json",
+    "completed_horizons": 16,
+    "force_knots": 224,
+    "SRB_feasible_horizons": 16,
+    "missing_records": 0,
+    "max_relative_objective_gap": 0.00019296397779038947,
+    "max_first_force_difference_N": 0.25013640196404197,
+    "max_dynamics_error": 5.321264262558856e-15,
+    "max_objective_error": 1.9984014443252818e-15,
+    "active_contact_patterns": {
+      "[False, True, True, False]": 67,
+      "[True, False, False, True]": 47,
+      "[True, True, False, True]": 8,
+      "[True, True, True, True]": 102
+    },
+    "horizon_contact_switches": 56,
+    "started_unix_s": 1794892403.7302685,
+    "ended_unix_s": 1794892406.7665904,
+    "CPU_QP_timing": {
+      "assembly_wall_s": 0.517513869330287,
+      "setup_and_solve_wall_s": 0.17859303392469883
+    },
+    "timing": {
+      "input_read_s": 0.014611862599849701,
+      "GPU_runtime_initialization_s": 0.6487053502351046,
+      "host_to_device_s": 0.009651636704802513,
+      "JIT_compile_s": 1.1384753435850143,
+      "warm_full_horizon_solve_and_synchronize_s": 0.3053607698529959,
+      "device_to_host_s": 0.07449127547442913,
+      "CPU_independent_recompute_and_QP_s": 0.7102858833968639,
+      "artifact_serialization_s": 0.026584619656205177,
+      "total_process_wall_s": 3.0354982279241085,
+      "user_cpu_s": 2.072144,
+      "system_cpu_s": 0.6014559999999999,
+      "GPU_path_including_initialization_compile_transfer_s": 2.1766843758523464,
+      "GPU_path_without_initialization_compile_s": 0.3895036820322275
+    },
+    "input_preparation_timing": {
+      "wall_s": 0.10345563292503357,
+      "user_cpu_s": 0.10338199999999997,
+      "system_cpu_s": 0.0
+    },
+    "peak_JAX_bytes": 34174464,
+    "GPU_warm_transfer_vs_CPU_assembly_solve_ratio": 1.787163858434052,
+    "original_output_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final",
+    "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r49-final/executed-source",
+    "forcepoint_contract": {
+      "all_B_use_saved_force_points": true,
+      "max_force_point_B_error": 0.0,
+      "min_sphere_center_B_difference": 0.0032550893745108833,
+      "verified_state_count": 16,
+      "verified_nodes": 224
+    }
+  },
   "method": "fixed JAX FP64 4096-iteration accelerated projected-gradient optimization; exact Euclidean friction-pyramid projection",
   "full_force_parameterization": "14 nodes x 4 feet x 3 force coordinates; same CPU and GPU feasible set",
-  "finite_input_policy": "157 W53 successful plans + one failed matrix are inventoried. 98 causally reconstructed initial-Stand states solved; 60 insufficient-history records retained. One increment is first 160 natural W54 F/r45 plans, without rerun or extra physics. New explicit authorization after actual r45 failure adds exactly one 16-time r46 correction list; no old batch repeated or new physics.",
-  "passes": [
+  "latest_fixed_targets_s": [
+    0.06,
+    0.5,
+    1,
+    1.5,
+    2,
+    2.06,
+    2.1,
+    2.16,
+    2.2,
+    2.26,
+    2.3,
+    2.4,
+    2.5,
+    3,
+    3.5,
+    4
+  ],
+  "CPU_reference": "independent NumPy state recurrence/cost/force inequalities and identical full-horizon OSQP",
+  "implemented_GPU_coverage": [
+    "full-horizon condensing",
+    "full 168-variable objective gradient",
+    "force variation cost",
+    "all optimization iterations",
+    "contact/normal/friction projection",
+    "full force and state outputs",
+    "first action",
+    "objective and projected-gradient residual"
+  ],
+  "final_interpretation": "All 16 latest r49 horizons are SRB-feasible under independent CPU recomputation; actual stage_B uses sphere contact force points, not relabelled centers. Warm offline batch timing is not online speedup; GPU runtime+compile-inclusive path is slower than CPU assembly+QP in this batch. No articulated/material/physical success is claimed.",
+  "limits": [
+    "SRB only; no GPU articulated WBC or future joint trajectory",
+    "No GPU material dynamics, no new physics, no controller installed online",
+    "CPU/GPU optimization budgets differ; observed batch quality/time only",
+    "Latest coverage is 16 r49 snapshots; historical solved batches do not count as latest-input coverage",
+    "Legacy initial input preparation time was missing, not zero"
+  ],
+  "historical_passes": [
     {
       "pass_id": "legacy-stand",
       "status": "completed",
@@ -50,7 +147,8 @@
       "original_output_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/legacy-stand",
       "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/legacy-stand/executed-source",
       "input_identity": "S5-r45",
-      "scientific_role": "reconstructed four-confirmed-feet Stand input; no moving r46 coverage"
+      "scientific_role": "reconstructed four-confirmed-feet Stand input; no moving r46 coverage",
+      "latest_input_coverage": false
     },
     {
       "pass_id": "natural-r45",
@@ -109,7 +207,8 @@
       "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/natural-r45/executed-source",
       "input_identity": "S5-r45",
       "input_contract_status": "superseded_contact_availability_contract",
-      "scientific_role": "mathematical comparison only; no r46 coverage"
+      "scientific_role": "mathematical comparison only; no r46 coverage",
+      "latest_input_coverage": false
     },
     {
       "pass_id": "r46-corrective",
@@ -162,29 +261,20 @@
       "peak_JAX_bytes": 34174464,
       "GPU_warm_transfer_vs_CPU_assembly_solve_ratio": 1.8342885532353825,
       "original_output_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r46-corrective",
-      "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r46-corrective/executed-source"
+      "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r46-corrective/executed-source",
+      "latest_input_coverage": false,
+      "scientific_role": "r46 measured-force gate correction at its original sphere-center force-point contract; not latest r49 input coverage"
     }
   ],
-  "total_complete_horizons": 274,
-  "total_force_knots": 3836,
-  "total_SRB_feasible_horizons": 274,
-  "CPU_reference": "independent NumPy state recurrence/cost/force inequalities and identical full-horizon OSQP",
-  "implemented_GPU_coverage": [
-    "full-horizon condensing",
-    "full 168-variable objective gradient",
-    "force variation cost",
-    "all optimization iterations",
-    "contact/normal/friction projection",
-    "full force and state outputs",
-    "first action",
-    "objective and projected-gradient residual"
-  ],
-  "actual_limits": [
-    "SRB only, no GPU articulated WBC or future joint trajectory",
-    "no GPU material dynamics or real physics, no online controller installed",
-    "legacy first-pass input reconstruction time was not instrumented and is missing, not zero",
-    "CPU/GPU optimization budgets differ; ratios compare observed offline batch timing and quality, not equal-budget algorithm speedup",
-    "natural batch GPU path including transfers (9.5596s) was slower than CPU model assembly plus QP (7.0733s); online benefit is unestablished"
+  "cumulative_work": {
+    "role": "accounting only, not capability or repeated evidence",
+    "complete_horizons": 290,
+    "force_knots": 4060
+  },
+  "input_correction_evidence": [
+    "r45 confirmed-contact delay excluded measured reaction",
+    "r47 repaired sphere force points and rolling Jacobian semantics",
+    "r49 made WBC execute optimized MPC motion; latest natural input snapshot preserved"
   ],
   "new_physics_steps": 0,
   "new_native_rollout": 0,
@@ -195,28 +285,6 @@
   "deadline": null,
   "wall_deadline_enabled": false,
   "kill_on_conversation_end": false,
-  "resource_status": "all three finite C tmux jobs exit0; C resources released",
-  "source_copy_note": "Exact executed solver/F source bytes retained on D57 with each result hash; no PC copy",
-  "corrective_input_authorization": "new actual r45 failure identifies contact-availability gate error; one r46 causal-input correction only",
-  "corrective_target_times_s": [
-    0.06,
-    0.5,
-    1,
-    1.5,
-    2,
-    2.06,
-    2.1,
-    2.16,
-    2.2,
-    2.26,
-    2.3,
-    2.4,
-    2.5,
-    3,
-    3.5,
-    4
-  ],
-  "current_corrected_input_identity": "S5-r46",
-  "current_corrected_input_horizons": 16,
-  "final_interpretation": "r46 corrected causal inputs covered on 16 fixed saved states. r45 natural batch is superseded input-contract mathematics only. No online latency, articulated execution or material success demonstrated."
+  "resource_status": "all finite C jobs exit0; C resources released",
+  "source_copy_note": "Exact executed solver/F source bytes retained on D57 with result SHA; no PC copy"
 }

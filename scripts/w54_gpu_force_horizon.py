@@ -120,6 +120,7 @@ def main():
         new_physics_steps=0, new_native_rollout=0, new_FD=0,
         new_PPO_samples=0, new_PPO_updates=0, donor=0,
         input_preparation_timing=manifest.get("preparation_timing"),
+        input_backend=backend_module,input_model_verification=manifest["input_model_verification"],
         online_installed=False, full_articulated_WBC_coverage=False,
         material_dynamics_coverage=False, cases=[])
     write(compact, report)
