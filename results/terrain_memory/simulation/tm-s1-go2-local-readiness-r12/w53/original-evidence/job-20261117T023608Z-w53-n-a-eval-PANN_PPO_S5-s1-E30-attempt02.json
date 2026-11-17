@@ -1,0 +1,216 @@
+{
+  "attempt": "job-20261117T023608Z-w53-n-a-eval-PANN_PPO_S5-s1-E30-attempt02",
+  "route": "N",
+  "original_result": {
+    "stage_status": "physical_material_failure",
+    "reason": "material_domain_exit",
+    "success": false,
+    "error": null,
+    "simulation_s": 6.4656000000047955,
+    "wall_s": 166.91953470744193,
+    "physical_samples": 32328,
+    "max_x_m": 0.7238446659471368,
+    "min_body_height_m": 0.27255217053607783,
+    "stage_progress": {
+      "far_arrival_s": null,
+      "return_start_s": null,
+      "actual_route_fraction": 0.12079407427916838,
+      "full_observation": false,
+      "actual_material_loaded": true,
+      "material_traversal": {
+        "completed": false,
+        "west_entry_s": null,
+        "east_exit_s": null,
+        "lateral_exit_s": null,
+        "max_abs_base_y_during_crossing_m": null,
+        "material_loaded_during_crossing": false,
+        "original_strip_x_m": [
+          0.8,
+          2.2
+        ],
+        "original_strip_y_m": [
+          -0.6,
+          0.6
+        ],
+        "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+      }
+    },
+    "qualification": {
+      "predecessor_attempt": null,
+      "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+      "evaluator_sha256": "5104f9396603d535d59093a031ccf849e2a6885bb829fd2fa9c3e4ac8bc8de05",
+      "solver_workers": 10,
+      "worker_setting_checked_against_predecessor": false
+    },
+    "legal_route": {
+      "reward_version": "W38_legal_route_terminal_settlement",
+      "progress": 0.0,
+      "completed_roundtrips": 0,
+      "legal_outbound_traversals": 0,
+      "legal_return_traversals": 0,
+      "side_exits": 0,
+      "raw_roundtrips": 0,
+      "passages": [
+        {
+          "lap": 1,
+          "direction": "outbound",
+          "entry_s": null,
+          "exit_s": null,
+          "lateral_exit_s": null,
+          "material_loaded": false,
+          "completed": false,
+          "terminal_closed_s": 6.4656000000047955
+        }
+      ],
+      "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+    },
+    "completed_round_trips": 0
+  },
+  "windows": [
+    {
+      "start_s": 0.0,
+      "end_s": 2.0019999999998124,
+      "dx_m": -0.0009197797278739225,
+      "min_z_m": 0.28904435329578776,
+      "foot_loaded_fraction": [
+        0.9930069930069924,
+        0.9940059940059934,
+        0.9940059940059934,
+        0.9940059940059934
+      ],
+      "four_foot_loaded_fraction": 0.9930069930069924
+    },
+    {
+      "start_s": 2.0019999999998124,
+      "end_s": 5.000000000001703,
+      "dx_m": 0.45736195999527074,
+      "min_z_m": 0.27255217053607783,
+      "foot_loaded_fraction": [
+        0.8438959306202374,
+        0.8458972648431845,
+        0.8465643762508349,
+        0.8052034689791705
+      ],
+      "four_foot_loaded_fraction": 0.5963975983987042
+    },
+    {
+      "start_s": 5.000000000001703,
+      "end_s": 6.4656000000047955,
+      "dx_m": 0.26740248567974,
+      "min_z_m": 0.2824395860078272,
+      "foot_loaded_fraction": [
+        0.7355349344978166,
+        0.7625545851528385,
+        0.642467248908297,
+        0.642467248908297
+      ],
+      "four_foot_loaded_fraction": 0.21561135371179038
+    }
+  ],
+  "contact_transitions": [
+    74,
+    101,
+    59,
+    53
+  ],
+  "physical_failure_stage": "material_contact_or_later",
+  "new_PPO_samples": 0,
+  "new_PPO_updates": 0,
+  "donor": 0,
+  "normal_motion_review": "Use complete recorded video and these same-task trajectories; no automatic gait qualification threshold.",
+  "timing": {
+    "startup_planning": {
+      "count": 20,
+      "total_s": 7.106344344094396,
+      "p50_ms": 359.8264018073678,
+      "p95_ms": 382.8494449146092,
+      "max_ms": 389.95636254549026,
+      "logical_deadline_s": 0.02,
+      "deadline_misses": 20
+    },
+    "planning": {
+      "count": 324,
+      "total_s": 115.43062929809093,
+      "p50_ms": 354.86000776290894,
+      "p95_ms": 413.39203147217626,
+      "max_ms": 442.37056002020836,
+      "logical_deadline_s": 0.02,
+      "deadline_misses": 324
+    },
+    "feedback": {
+      "count": 3233,
+      "total_s": 1.862275917083025,
+      "p50_ms": 0.5498602986335754,
+      "p95_ms": 0.8788138628005981,
+      "max_ms": 12.918079271912575,
+      "logical_deadline_s": 0.002,
+      "deadline_misses": 1
+    },
+    "state_parameter_rpc": {
+      "count": 3233,
+      "total_s": 3.9813299272209406,
+      "p50_ms": 0.9956564754247665,
+      "p95_ms": 1.3885308057069776,
+      "max_ms": 494.425842538476,
+      "logical_deadline_s": 0.002,
+      "deadline_misses": 8
+    },
+    "physics": {
+      "count": 3233,
+      "total_s": 20.744262086227536,
+      "p50_ms": 5.710173398256302,
+      "p95_ms": 12.504282593727108,
+      "max_ms": 616.1223500967026,
+      "logical_deadline_s": 0.002,
+      "deadline_misses": 3233
+    }
+  },
+  "record_timing": {
+    "stream_compress_write_wall_s": 1.5154659412801266,
+    "stream_compress_write_cpu_s": 1.5159197939999984,
+    "trajectory_compress_write_wall_s": 0.16447985917329788,
+    "trajectory_compress_write_cpu_s": 0.164529825999999
+  },
+  "w53-n-recording.json": {
+    "controller": "S5-r42",
+    "calls": 344,
+    "installed_policies": 344,
+    "actual_held_samples": 3233,
+    "query_count": 3253,
+    "full_rollouts": 6880,
+    "transition_fd_calls": 120744,
+    "risk_fd_calls": 0,
+    "native_record_files": 374,
+    "native_record_bytes": 329161888,
+    "full_candidate_calls": [
+      1,
+      121,
+      323
+    ],
+    "native_stage_wall_s": {
+      "nominal": 30.729,
+      "derivative": 64.70139999999999,
+      "cost": 0.662146,
+      "backward": 5.801476999999999,
+      "rollouts": 19.939211999999998,
+      "policy_update": 0.15341
+    },
+    "native_stage_cpu_s": [
+      205.86645,
+      634.2953079999997,
+      2.8815639999999987,
+      5.808137000000001,
+      155.51572900000005,
+      0.15398700000000007
+    ],
+    "native_serialization_write_wall_s": 0.302351,
+    "native_serialization_write_cpu_s": 0.303099,
+    "python_record_write_wall_s": 0.475599417462945,
+    "python_record_write_cpu_s": 0.47340863299989433,
+    "final_flush_wall_s": 0.003135319799184799,
+    "final_flush_cpu_s": 0.003166751999998496,
+    "rejected_full_array_boundary": "Only key-event calls saved; cannot infer normal rejected trajectories for other calls.",
+    "installed_full_policy_and_actual_accepted_trajectory": true,
+    "failure": null
+  }
+}
