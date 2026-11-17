@@ -6,8 +6,20 @@ ROOT=Path(__file__).resolve().parents[1];UP=ROOT/'work/terrain-memory/upstreams/
 CACHE=UP/'build-autodl';OUT=ROOT/'work/w53-n';SOURCE=OUT/'source';DEST=ROOT/'work/r11-frozen/S5-r42'
 def sha(p):
  with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+def link_runtime_assets():
+ # Git stores Menagerie adaptation patches, while the prepared dependency tree
+ # owns the actual generated XML and meshes. Existing restored R8 files win.
+ base=ROOT/'work/r11-frozen/S5-r41/runtime-tasks';target=SOURCE/'mjpc/tasks';linked=[]
+ for source in sorted(base.rglob('*')):
+  rel=source.relative_to(base);dest=target/rel
+  if source.is_file() and source.suffix not in ('.h','.cc','.cpp','.patch','.py','.md') and not dest.exists():
+   dest.parent.mkdir(parents=True,exist_ok=True);dest.symlink_to(source.resolve())
+   linked.append(dict(path=str(rel),retained_source=str(source.resolve()),size=source.stat().st_size))
+ return linked
+
 def main():
  begin=time.time();usage=resource.getrusage(resource.RUSAGE_CHILDREN);DEST.mkdir(exist_ok=True)
+ runtime_assets=link_runtime_assets()
  commands=json.loads((CACHE/'compile_commands.json').read_text());jobs=[];replacements={}
  archive=shlex.split((CACHE/'mjpc/CMakeFiles/libmjpc.dir/link.txt').read_text().splitlines()[0])
  service=shlex.split((CACHE/'mjpc/grpc/CMakeFiles/mjpc_agent_service.dir/link.txt').read_text().splitlines()[0])
@@ -45,7 +57,7 @@ def main():
   specification_path=str(specpath.relative_to(ROOT)),specification_sha256=sha(specpath),build_source_root=str(SOURCE),build_directory=str(OUT),
   patch_path='experiments/terrain_memory/s1-go2-r11-S5-r42.patch',patch_sha256=sha(ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r42.patch'),
   build_started_unix_s=begin,build_wall_s=time.time()-begin,build_cpu_s=end.ru_utime+end.ru_stime-usage.ru_utime-usage.ru_stime,
-  build_concurrency_cap=6,translation_units=len(jobs),compile_commands=jobs,link_command=link,cached_dependencies_read_only=True,
+  build_concurrency_cap=6,translation_units=len(jobs),runtime_assets_adaptation=runtime_assets,compile_commands=jobs,link_command=link,cached_dependencies_read_only=True,
   mujoco_library_sha256=sha(DEST/'lib/libmujoco.so.3.2.3'),qualification='original_E30_not_yet_run',
   source_files_sha256={str(p.relative_to(SOURCE)):sha(p) for p in (SOURCE/'mjpc').rglob('*') if p.suffix in ('.h','.cc')})
  (DEST/'identity.json').write_text(json.dumps(ident,indent=2)+'\n')

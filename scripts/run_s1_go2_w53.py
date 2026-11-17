@@ -168,7 +168,7 @@ def run_job(jobdir,levels):
         if not row.get('success'):failed=level
         write(status,state);write(jobdir/'runtime.json',state)
         compact(paths,'Record W53 '+job['label']+' '+level+' actual original-task outcome')
-        row['delivery']=deliver(job['label'].lower()+'-'+level.lower(),roots)
+        row['delivery']=deliver(job['label'].lower()+'-'+level.lower()+f'-attempt{number:02d}',roots)
         write(status,state)
         compact([status],'Verify W53 '+job['label']+' '+level+' direct original delivery')
     state.update(status='completed',ended_unix_s=time.time())
