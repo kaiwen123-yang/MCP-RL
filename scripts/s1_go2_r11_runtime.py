@@ -461,7 +461,8 @@ def run(args, c, joint=None):
             diagnostic_env['MJPC_W53_N_RECORD_DIR']=str(out/'w53-n-native')
     if w53_route == 'F':
         if is_w54:
-            from s1_w54_f_backend import FController
+            import importlib
+            FController=importlib.import_module(Path(c['w54_backend_source']).stem).FController
         else:
             from s1_w53_f_backend import FController
         external_controller=FController(model,data,feet,base,out,f_config)
@@ -793,6 +794,14 @@ def run(args, c, joint=None):
                         physics.append(np.r_[sample_t, data.time, data.qfrc_actuator[vadr], data.actuator_force,
                             actual_contacts, actual_grf.ravel(), total_grf, nonfoot_grf, nonfoot_count])
                         if support:physics[-1]=np.r_[physics[-1],raw_pd]
+                        if is_w54:
+                            foot_velocity_at_force=np.empty((4,3))
+                            spatial_velocity=np.empty(6)
+                            for leg,gid in enumerate(feet):
+                                mujoco.mj_objectVelocity(model,data,mujoco.mjtObj.mjOBJ_GEOM,
+                                    int(gid),spatial_velocity,0)
+                                foot_velocity_at_force[leg]=spatial_velocity[3:]
+                            physics[-1]=np.r_[physics[-1],data.geom_xpos[feet].ravel(),foot_velocity_at_force.ravel()]
                     if r29_records and np.linalg.norm(nonfoot_grf)>1:
                         r29_records.event(sample_t,'first_nonfoot_load',first=True,physical_time_s=float(data.time))
                     if invalid:
@@ -897,6 +906,10 @@ def run(args, c, joint=None):
                      references='w53-f records: actual centroidal/contact/foot references'))
             result['chunks']=chunks
             result['physical_columns'] += [f'unclipped_pd_request_{i}' for i in range(12)]
+            if is_w54:
+                result['physical_columns'] += [f'foot_position_{leg}_{axis}_m' for leg in LEGS for axis in 'xyz']
+                result['physical_columns'] += [f'foot_velocity_{leg}_{axis}_m_s' for leg in LEGS for axis in 'xyz']
+                result['physical_foot_kinematics_clock']='mj_step evaluation geometry/cvel at force_evaluation_time_s, before returned integration state; world frame'
             result['sustained_execution_success']=bool(result['success'] and reason=='stage_horizon_reached' and result['hold']['full_observation'])
             result['recording']='500Hz control trajectory; physical and prediction streams split every30s on the same uninterrupted clock.'
             if args.mission=='long':

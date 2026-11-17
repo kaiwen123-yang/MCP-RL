@@ -1,0 +1,335 @@
+--- a/mjpc/planners/ilqg/planner.cc
++++ b/mjpc/planners/ilqg/planner.cc
+@@ -775,7 +775,7 @@
+ // W53 recording only. Called after the ordinary restored iLQG iteration.
+ // No extra optimization, rollout or finite difference is performed here.
+ void iLQGPlanner::W53Record(int horizon) {
+-  const char* directory=std::getenv("MJPC_W53_N_RECORD_DIR");
++  const char* directory=std::getenv("MJPC_W54_N_RECORD_DIR");
+   if(!directory)return;
+   const auto begin=std::chrono::steady_clock::now();const auto cpu=std::clock();
+   ++w53_call;
+@@ -787,7 +787,7 @@
+   auto write=[&](const std::string& path,const iLQGPolicy& p,const Trajectory& tr) {
+     std::ofstream f(path,std::ios::binary);
+     if(!f)throw std::runtime_error("W53 N installed-policy file open failed");
+-    int64_t hdr[10]={53,1,(int64_t)w53_call,horizon,dim_state,dim_state_derivative,dim_action,task->num_residual,task->num_trace,p.representation};
++    int64_t hdr[10]={54,2,(int64_t)w53_call,horizon,dim_state,dim_state_derivative,dim_action,task->num_residual,task->num_trace,p.representation};
+     f.write((const char*)hdr,sizeof(hdr));
+     double info[4]={time,p.feedback_scaling,p.trajectory.total_return,tr.total_return};f.write((const char*)info,sizeof(info));
+     auto a=[&](const std::vector<double>& x,size_t count){f.write((const char*)x.data(),count*sizeof(double));};
+@@ -795,7 +795,8 @@
+     a(p.feedback_gain,horizon*dim_action*dim_state_derivative);a(p.action_improvement,horizon*dim_action);
+     a(tr.times,horizon);a(tr.states,horizon*dim_state);a(tr.actions,horizon*dim_action);
+     a(tr.residual,horizon*task->num_residual);a(tr.costs,horizon);a(tr.trace,horizon*3*task->num_trace);
+-    f.close();if(!f)throw std::runtime_error("W53 N installed-policy write failed");
++    a(tr.w54_applied_actions,horizon*dim_action);a(tr.w54_execution_diagnostics,horizon*32);
++    f.close();if(!f)throw std::runtime_error("W54 N installed-policy write failed");
+   };
+   char name[80];
+   if(w53_installed||w53_call==1) {
+@@ -810,15 +811,35 @@
+   std::ofstream out(std::string(directory)+"/calls.jsonl",std::ios::app);out<<std::setprecision(17);
+   out<<"{\"call_id\":"<<w53_call<<",\"time_s\":"<<time<<",\"policy_call_id\":"<<w53_policy_call
+      <<",\"installed\":"<<(w53_installed?"true":"false")<<",\"winner\":"<<(w53_installed?winner:-1)<<",\"full_candidates\":"<<(full?"true":"false")
+-     <<",\"num_candidates\":"<<num_trajectory_<<",\"full_rollouts\":"<<w53_rollouts<<",\"transition_fd_calls\":"<<(2*(horizon-1)+1)
++     <<",\"num_candidates\":"<<num_trajectory_<<",\"full_rollouts\":"<<w53_rollouts<<",\"transition_fd_calls\":"<<((horizon-1)*(1+dim_state_derivative+dim_action)+(1+dim_state_derivative))
+      <<",\"wall_s\":{\"nominal\":"<<nominal_compute_time*1e-6<<",\"derivative\":"<<model_derivative_compute_time*1e-6
+      <<",\"cost\":"<<cost_derivative_compute_time*1e-6<<",\"backward\":"<<backward_pass_compute_time*1e-6
+      <<",\"rollouts\":"<<rollouts_compute_time*1e-6<<",\"policy_update\":"<<policy_update_compute_time*1e-6<<"},\"cpu_s\":[";
+   for(int i=0;i<6;++i){if(i)out<<",";out<<w53_cpu[i];}out<<"],\"candidates\":[";
+   for(int i=0;i<num_trajectory_;++i){if(i)out<<",";auto& tr=trajectory[i];
++    double min_gap=1.e9,incident=0,complete_tau=0,active_nodes=0;
++    for(int k=0;k<horizon-1;k++){
++      for(int foot=0;foot<4;foot++){
++        const double* e=tr.w54_execution_diagnostics.data()+k*32+foot*8;
++        if(e[7]>0){min_gap=std::min(min_gap,e[0]);if(e[0]<=.001)incident=std::max(incident,std::max(0.,-e[1]));}
++        if(e[4]>0)active_nodes+=1;
++      }
++      for(int j=0;j<dim_action;j++){
++        const int joint=model->actuator_trnid[2*j];
++        const double q=tr.states[k*dim_state+model->jnt_qposadr[joint]];
++        const double v=tr.states[k*dim_state+model->nq+model->jnt_dofadr[joint]];
++        complete_tau=std::max(complete_tau,std::abs(60*(tr.w54_applied_actions[k*dim_action+j]-q)-5*v));
++      }
++    }
+     out<<"{\"slot\":"<<i<<",\"J\":"<<(std::isfinite(tr.total_return)?tr.total_return:0)
+        <<",\"J_finite\":"<<(std::isfinite(tr.total_return)?"true":"false")<<",\"failure\":"<<(tr.failure?"true":"false")
+-       <<",\"dx_m\":"<<tr.states[(horizon-1)*dim_state]-tr.states[0]<<",\"final_z_m\":"<<tr.states[(horizon-1)*dim_state+2]<<"}";
++       <<",\"dx_m\":"<<tr.states[(horizon-1)*dim_state]-tr.states[0]<<",\"final_z_m\":"<<tr.states[(horizon-1)*dim_state+2];
++    out<<",\"E_predicted_min_material_gap_m\":"<<(min_gap<1.e9?min_gap:0)
++       <<",\"E_material_nodes_present\":"<<(min_gap<1.e9?"true":"false")
++       <<",\"E_predicted_near_surface_descent_max_m_s\":"<<incident
++       <<",\"E_predicted_complete_PD_request_max_Nm\":"<<complete_tau
++       <<",\"E_active_foot_nodes\":"<<active_nodes;
++    out<<"}";
+   }
+   out<<"],\"record_wall_s\":"<<GetDuration(begin)*1e-6<<",\"record_cpu_s\":"<<double(std::clock()-cpu)/CLOCKS_PER_SEC<<"}\n";
+   out.close();if(!out)throw std::runtime_error("W53 N call record write failed");
+--- a/mjpc/planners/model_derivatives.cc
++++ b/mjpc/planners/model_derivatives.cc
+@@ -13,6 +13,7 @@
+ // limitations under the License.
+ 
+ #include "mjpc/planners/model_derivatives.h"
++#include "mjpc/w54_e_native.h"
+ 
+ #include <algorithm>
+ 
+@@ -85,36 +86,14 @@
+       // set action
+       mju_copy(d->ctrl, u + t * dim_action, dim_action);
+ 
+-      // Jacobians
+-      if (t == T - 1) {
+-        // Jacobians
+-        mjd_transitionFD(m, d, tol, mode, nullptr, nullptr,
+-                         DataAt(C, t * (dim_sensor * dim_state_derivative)),
+-                         nullptr);
+-      } else {
+-        // Node-start C/D and the first 1ms state transition.
+-        mjd_transitionFD(
+-            m, d, tol, mode,
+-            DataAt(A, t * (dim_state_derivative * dim_state_derivative)),
+-            DataAt(B, t * (dim_state_derivative * dim_action)),
+-            DataAt(C, t * (dim_sensor * dim_state_derivative)),
+-            DataAt(D, t * (dim_sensor * dim_action)));
+-        if (GetNumberOrDefault(1, m, "s1_control_hold_substeps") == 2) {
+-          const int nx = dim_state_derivative, nu = dim_action;
+-          double* first_a = DataAt(A, t * nx * nx);
+-          double* first_b = DataAt(B, t * nx * nu);
+-          std::vector<double> a1(first_a, first_a + nx * nx);
+-          std::vector<double> b1(first_b, first_b + nx * nu);
+-          std::vector<double> a2(nx * nx), b2(nx * nu);
+-          // mjd_transitionFD restores the node state. Advance once to the
+-          // midpoint, keeping u unchanged, then differentiate the second step.
+-          mj_step(m, d);
+-          mjd_transitionFD(m, d, tol, mode, a2.data(), b2.data(), nullptr, nullptr);
+-          mju_mulMatMat(first_a, a2.data(), a1.data(), nx, nx, nx);
+-          mju_mulMatMat(first_b, a2.data(), b1.data(), nx, nx, nu);
+-          mju_addTo(first_b, b2.data(), nx * nu);
+-        }
+-      }
++      // Direct FD of the SAME E(x,u) plus 2x1ms held-input transition.
++      // Every perturbed state/action recomputes E, including shifted nominal B.
++      W54TransitionFD(m,d,tol,mode,
++          t==T-1?nullptr:DataAt(A,t*dim_state_derivative*dim_state_derivative),
++          t==T-1?nullptr:DataAt(B,t*dim_state_derivative*dim_action),
++          DataAt(C,t*dim_sensor*dim_state_derivative),
++          t==T-1?nullptr:DataAt(D,t*dim_sensor*dim_action),
++          dim_sensor,t==T-1);
+     });
+   }
+   pool.WaitCount(count_before + evaluate_.size());
+--- a/mjpc/trajectory.cc
++++ b/mjpc/trajectory.cc
+@@ -13,6 +13,7 @@
+ // limitations under the License.
+ 
+ #include "mjpc/trajectory.h"
++#include "mjpc/w54_e_native.h"
+ 
+ #include <algorithm>
+ #include <functional>
+@@ -47,6 +48,8 @@
+ 
+   // actions
+   actions.resize(dim_action * T);
++  w54_applied_actions.resize(dim_action*T);
++  w54_execution_diagnostics.resize(32*T);
+ 
+   // costs
+   costs.resize(T);
+@@ -143,6 +146,8 @@
+     // set action
+     policy(DataAt(actions, t * nu), DataAt(states, t * dim_state), data->time);
+     mju_copy(data->ctrl, DataAt(actions, t * nu), nu);
++    W54ApplyE(model,data,DataAt(w54_execution_diagnostics,t*32));
++    mju_copy(DataAt(w54_applied_actions,t*nu),data->ctrl,nu);
+ 
+     // apply perturbation
+     if (xfrc_std > 0) {
+@@ -193,6 +198,8 @@
+ 
+   // copy final action
+   if (horizon > 1) {
++    mju_copy(DataAt(w54_applied_actions,(horizon-1)*dim_action),DataAt(w54_applied_actions,(horizon-2)*dim_action),dim_action);
++    mju_copy(DataAt(w54_execution_diagnostics,(horizon-1)*32),DataAt(w54_execution_diagnostics,(horizon-2)*32),32);
+     mju_copy(DataAt(actions, (horizon - 1) * dim_action),
+              DataAt(actions, (horizon - 2) * dim_action), dim_action);
+   } else {
+@@ -258,6 +265,8 @@
+     // set action
+     policy(DataAt(actions, t * nu), DataAt(states, t * dim_state), t);
+     mju_copy(data->ctrl, DataAt(actions, t * nu), nu);
++    W54ApplyE(model,data,DataAt(w54_execution_diagnostics,t*32));
++    mju_copy(DataAt(w54_applied_actions,t*nu),data->ctrl,nu);
+ 
+     // step
+     mj_step(model, data);
+@@ -297,6 +306,8 @@
+ 
+   // copy final action
+   if (horizon > 1) {
++    mju_copy(DataAt(w54_applied_actions,(horizon-1)*dim_action),DataAt(w54_applied_actions,(horizon-2)*dim_action),dim_action);
++    mju_copy(DataAt(w54_execution_diagnostics,(horizon-1)*32),DataAt(w54_execution_diagnostics,(horizon-2)*32),32);
+     mju_copy(DataAt(actions, (horizon - 1) * dim_action),
+              DataAt(actions, (horizon - 2) * dim_action), dim_action);
+   } else {
+--- a/mjpc/trajectory.h
++++ b/mjpc/trajectory.h
+@@ -77,6 +77,7 @@
+   int dim_residual;              // residual dimension
+   int dim_trace;                 // traces dimension
+   std::vector<double> states;    // (horizon   x nq + nv + na)
++  std::vector<double> w54_applied_actions, w54_execution_diagnostics;
+   std::vector<double> actions;   // (horizon-1 x num_action)
+   std::vector<double> times;     // horizon
+   std::vector<double> residual;  // (horizon   x num_residual)
+--- a/mjpc/w54_e_core.h
++++ b/mjpc/w54_e_core.h
+@@ -0,0 +1,61 @@
++#ifndef W54_E_CORE_H_
++#define W54_E_CORE_H_
++#include <algorithm>
++#include <cmath>
++// Pure deterministic action map. No persistent state, random draws, material truth,
++// contact cache, or nominal-trajectory lookup is read here.
++inline double w54_quintic(double x) {
++  x=std::clamp(x,0.0,1.0);return x*x*x*(10.0+x*(-15.0+6.0*x));
++}
++inline bool w54_e_core(int nu,const double* q,const double* v,const double* raw,
++    const double* urange,const double* trange,const double* H,const double* gap,
++    const double* vz,const double* material,double* applied,double* diagnostic) {
++  constexpr double hold=.002, delay=.022, landing_speed=.05, reserve=.25;
++  double lower[12],upper[12],tau0[12],tau[12],request[4]={},weight[4]={};
++  bool active=false,empty=false;double lipschitz=1e-12;
++  for(int j=0;j<nu;j++){
++    lower[j]=std::max(trange[2*j],60*(urange[2*j]-q[j])-5*v[j]);
++    upper[j]=std::min(trange[2*j+1],60*(urange[2*j+1]-q[j])-5*v[j]);
++    empty=empty||(lower[j]>upper[j]);
++    tau0[j]=std::min(std::max(60*(raw[j]-q[j])-5*v[j],lower[j]),upper[j]);
++    tau[j]=tau0[j];applied[j]=raw[j];
++  }
++  for(int i=0;i<4;i++){
++    const double speed=std::max(0.0,-vz[i]);
++    double available=0;
++    for(int j=0;j<nu;j++){
++      const double h=H[i*nu+j];
++      available+=h*(h>0?upper[j]-tau0[j]:lower[j]-tau0[j]);
++    }
++    available=std::max(0.0,reserve*available);
++    const double excess=std::max(0.0,speed*speed-landing_speed*landing_speed);
++    const double lead=speed*delay+excess/(2*std::max(available,1e-6));
++    const double gate=material[i]*w54_quintic((lead-std::max(gap[i],0.0))/std::max(lead,1e-9))*
++        w54_quintic((speed-landing_speed)/landing_speed);
++    const double stopping=excess/(2*std::max(gap[i]-speed*hold,landing_speed*hold));
++    request[i]=gate*std::min(available,stopping);weight[i]=gate;
++    active=active||(request[i]>0);
++    diagnostic[8*i]=gap[i];diagnostic[8*i+1]=vz[i];diagnostic[8*i+2]=available;
++    diagnostic[8*i+3]=lead;diagnostic[8*i+4]=gate;diagnostic[8*i+5]=request[i];
++    diagnostic[8*i+6]=0;diagnostic[8*i+7]=material[i];
++    for(int j=0;j<nu;j++)lipschitz+=gate*H[i*nu+j]*H[i*nu+j];
++  }
++  if(!active)return true;
++  if(empty)return false;
++  // Frozen projected gradient map over the original complete torque/input box.
++  // Every candidate and derivative sees these same 24 iterations. This is an
++  // execution map inside native optimization, not a post-prediction filter.
++  for(int k=0;k<24;k++){
++    double grad[12]={};
++    for(int i=0;i<4;i++){
++      double achieved=0;for(int j=0;j<nu;j++)achieved+=H[i*nu+j]*(tau[j]-tau0[j]);
++      const double error=weight[i]*(achieved-request[i]);
++      for(int j=0;j<nu;j++)grad[j]+=H[i*nu+j]*error;
++    }
++    for(int j=0;j<nu;j++)tau[j]=std::clamp(tau[j]-grad[j]/lipschitz,lower[j],upper[j]);
++  }
++  for(int j=0;j<nu;j++)applied[j]=std::clamp(q[j]+(tau[j]+5*v[j])/60,urange[2*j],urange[2*j+1]);
++  for(int i=0;i<4;i++)for(int j=0;j<nu;j++)diagnostic[8*i+6]+=H[i*nu+j]*(tau[j]-tau0[j]);
++  return true;
++}
++#endif
+--- a/mjpc/w54_e_native.h
++++ b/mjpc/w54_e_native.h
+@@ -0,0 +1,80 @@
++#ifndef W54_E_NATIVE_H_
++#define W54_E_NATIVE_H_
++#include <vector>
++#include <stdexcept>
++#include <mujoco/mujoco.h>
++#include "mjpc/utilities.h"
++#include "mjpc/w54_e_core.h"
++namespace mjpc {
++inline bool W54Enabled(const mjModel* m){return GetNumberOrDefault(0,m,"w54_precontact_E")==1;}
++inline void W54ApplyE(const mjModel* m,mjData* d,double* saved=nullptr) {
++  if(!W54Enabled(m))return;
++  mj_forward(m,d);
++  const int nv=m->nv,nu=m->nu;
++  double q[12],v[12],raw[12],H[48],gap[4],vz[4],material[4],diag[32],out[12];
++  std::vector<double> J(3*nv),Jr(3*nv),sol(nv);
++  for(int j=0;j<nu;j++){
++    const int joint=m->actuator_trnid[2*j];
++    q[j]=d->qpos[m->jnt_qposadr[joint]];v[j]=d->qvel[m->jnt_dofadr[joint]];raw[j]=d->ctrl[j];
++  }
++  const double floor=GetNumberOrDefault(0,m,"s1_flat_ground_height");
++  const char* names[4]={"FL","FR","RL","RR"};
++  for(int i=0;i<4;i++){
++    const int geom=mj_name2id(m,mjOBJ_GEOM,names[i]);
++    const double* p=d->geom_xpos+3*geom;const double radius=m->geom_size[3*geom];
++    mj_jacGeom(m,d,J.data(),Jr.data(),geom);
++    mj_solveM(m,d,sol.data(),J.data()+2*nv,1);
++    gap[i]=p[2]-radius-floor;vz[i]=mju_dot(J.data()+2*nv,d->qvel,nv);
++    // Known material map and undeformed surface upper-bound prior. No evaluator
++    // strain/history or future landing/contact is queried.
++    material[i]=(p[0]>=.8-radius&&p[0]<=2.2+radius&&std::abs(p[1])<=.6+radius)?1.:0.;
++    for(int j=0;j<nu;j++)H[i*nu+j]=sol[m->jnt_dofadr[m->actuator_trnid[2*j]]]*m->actuator_gear[6*j];
++  }
++  if(!w54_e_core(nu,q,v,raw,m->actuator_ctrlrange,m->actuator_forcerange,H,gap,vz,material,out,diag))throw std::runtime_error("W54 E original torque/input intersection empty");
++  mju_copy(d->ctrl,out,nu);if(saved)mju_copy(saved,diag,32);
++}
++inline void W54Transition(const mjModel* m,mjData* d,bool terminal,double* sensors,int ns) {
++  W54ApplyE(m,d);
++  if(terminal)mj_forward(m,d);else mj_step(m,d);
++  if(sensors)mju_copy(sensors,d->sensordata,ns);
++  if(!terminal)mj_step(m,d);  // same applied position command held for exactly 2 ms
++}
++inline void W54TransitionFD(const mjModel* m,mjData* d,double eps,int centered,
++    double* A,double* B,double* C,double* D,int ns,bool terminal) {
++  const int nv=m->nv,nu=m->nu,nx=2*nv+m->na;
++  auto saved=MakeUniqueMjData(mj_makeData(m)),plus=MakeUniqueMjData(mj_makeData(m)),minus=MakeUniqueMjData(mj_makeData(m));
++  mj_copyData(saved.get(),m,d);mj_copyData(plus.get(),m,saved.get());
++  std::vector<double> baseline_s(ns),sp(ns),sm(ns),diff(nx),direction(nv,0);
++  W54Transition(m,plus.get(),terminal,baseline_s.data(),ns);
++  mj_copyData(minus.get(),m,plus.get());
++  auto baseline=MakeUniqueMjData(mj_makeData(m));mj_copyData(baseline.get(),m,plus.get());
++  for(int col=0;col<nx+nu;col++){
++    if(col>=nx&&!B&&!D)continue;
++    if(col<nx&&!A&&!C)continue;
++    const bool state=col<nx;const int j=state?col:col-nx;
++    auto perturb=[&](mjData* dst,double sign){
++      mj_copyData(dst,m,saved.get());
++      if(!state)dst->ctrl[j]+=sign*eps;
++      else if(j<nv){direction[j]=1; mj_integratePos(m,dst->qpos,direction.data(),sign*eps);direction[j]=0;}
++      else if(j<2*nv)dst->qvel[j-nv]+=sign*eps;
++      else dst->act[j-2*nv]+=sign*eps;
++    };
++    perturb(plus.get(),1);W54Transition(m,plus.get(),terminal,sp.data(),ns);
++    const mjData* left=baseline.get();const double* left_s=baseline_s.data();double den=eps;
++    if(centered){perturb(minus.get(),-1);W54Transition(m,minus.get(),terminal,sm.data(),ns);left=minus.get();left_s=sm.data();den*=2;}
++    if((state&&A)||(!state&&B)){
++      mj_differentiatePos(m,diff.data(),den,left->qpos,plus->qpos);
++      for(int k=0;k<nv;k++)diff[nv+k]=(plus->qvel[k]-left->qvel[k])/den;
++      for(int k=0;k<m->na;k++)diff[2*nv+k]=(plus->act[k]-left->act[k])/den;
++      double* dst=state?A:B;const int width=state?nx:nu;
++      for(int row=0;row<nx;row++)dst[row*width+j]=diff[row];
++    }
++    if((state&&C)||(!state&&D)){
++      double* dst=state?C:D;const int width=state?nx:nu;
++      for(int row=0;row<ns;row++)dst[row*width+j]=(sp[row]-left_s[row])/den;
++    }
++  }
++  mj_copyData(d,m,saved.get());
++}
++}  // namespace mjpc
++#endif

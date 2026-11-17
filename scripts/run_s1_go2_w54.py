@@ -57,11 +57,12 @@ def save_state(path,state):
 def sha(p):
     with Path(p).open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 def prepare_f(build='S5-r45'):
-    config=ROOT/'experiments/terrain_memory/s1-w54-f.json'
-    backend=ROOT/'scripts/s1_w54_f_backend.py'
+    suffix='' if build=='S5-r45' else '-'+build.removeprefix('S5-')
+    config=ROOT/('experiments/terrain_memory/s1-w54-f'+suffix+'.json')
+    backend=ROOT/('scripts/s1_w54_f'+suffix.replace('-','_')+'_backend.py')
     dest=ROOT/'work/r11-frozen'/build;dest.mkdir(exist_ok=True)
     identity=dict(build=build,route='F',backend='independent_CPU_force_MPC_WBC',
-        binary_executed=False,backend_source='scripts/s1_w54_f_backend.py',
+        binary_executed=False,backend_source=str(backend.relative_to(ROOT)),
         backend_sha256=sha(backend),configuration_sha256=sha(config),configuration_source=str(config.relative_to(ROOT)),
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         physical_model_source='work/r11-frozen/S5-r41',historical_qualification_inherited=False,

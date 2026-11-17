@@ -1,0 +1,436 @@
+{
+  "build": "S5-r44",
+  "route": "N",
+  "status": "implemented_not_built",
+  "based_on": "df07c4bb690f831745879af3a86800c2c3ec427d",
+  "author_commit": "e00c47a5adb9856af2e0f24231bb3a60d5be23c4",
+  "mujoco_commit": "088079eff0450e32b98ee743141780ed68307506",
+  "menagerie_commit": "d82891f8b6c576f9f6a9df308f3a1155ebedbc40",
+  "configuration_overrides": {
+    "task": {
+      "initial_xy_m": [
+        0,
+        0
+      ],
+      "nominal_initial_yaw_rad": 0,
+      "initial_stand_s": 2,
+      "turnaround_xy_m": [
+        3,
+        0
+      ],
+      "turn_angle_rad": 3.141592653589793,
+      "return_xy_m": [
+        0,
+        0
+      ],
+      "command_speed_m_s": 0.25,
+      "turn_yaw_rate_rad_s": 0.5,
+      "extra_turnaround_hold_s": 0,
+      "terminal_stand_s": 2,
+      "maximum_episode_s": 60,
+      "goal_position_radius_m": 0.15,
+      "turn_heading_tolerance_rad": 0.15,
+      "terminal_speed_max_m_s": 0.05,
+      "task_mode": "Quadruped",
+      "gait_switch": "Manual",
+      "native_head_offset_in_trunk_m": [
+        0.3,
+        0,
+        0
+      ],
+      "orientation_cost_weight": 0.03,
+      "stand_settings": {
+        "Gait": "Stand",
+        "Duty ratio": 1,
+        "Cadence": 1,
+        "Amplitude": 0,
+        "Balance": 0,
+        "Upright": 1,
+        "Height": 1
+      },
+      "move_and_turn_settings": {
+        "Gait": "Trot",
+        "Duty ratio": 0.45,
+        "Cadence": 2,
+        "Amplitude": 0.03,
+        "Balance": 0.2,
+        "Upright": 1,
+        "Height": 1
+      }
+    },
+    "stationary_objective": {
+      "legacy_switch": "s1_stand_equilibrium",
+      "legacy_switch_value": 0,
+      "legacy_velocity_terms": "Initially disabled in C/H/S. New Stand support terms use separate explicit opt-ins; do not re-enable the failed O family."
+    },
+    "prediction_settings": {
+      "AUTHOR_N": {
+        "integration_dt_s": 0.001,
+        "control_node_dt_s": 0.001,
+        "integrator": "implicitfast",
+        "differentiable": 0,
+        "R7_actual_nodes": 350,
+        "R7_actual_span_s": 0.349,
+        "scope": "Frozen author long reference."
+      },
+      "PROJECT_N_SH": {
+        "integration_dt_s": 0.001,
+        "control_node_dt_s": 0.001,
+        "integrator": "implicitfast",
+        "differentiable": 1,
+        "prediction_width_m": 0.001,
+        "orientation_weight": 1,
+        "scope": "Historical project moving reference."
+      },
+      "C": {
+        "integration_dt_s": 0.001,
+        "control_node_dt_s": 0.002,
+        "substeps": 2,
+        "control_transitions": 175,
+        "state_nodes": 176,
+        "horizon_s": 0.35,
+        "integrator": "implicitfast",
+        "differentiable": 1,
+        "prediction_width_m": 0.001,
+        "orientation_weight": 1
+      },
+      "invariant": "Keep refsafety and actual 500Hz feedback. Do not increase actual control to 1kHz or substitute a single 2ms integration step for two 1ms steps."
+    },
+    "support_reference": {
+      "activation": "Conditional H/S after C remains insufficient; successful C does not have to receive more mechanisms.",
+      "H": "Stand-only absolute base height from actual floor plus a feasible project Go2 stance; keep movement/heading unchanged.",
+      "height_semantics": "Original .27m is trunk COM minus mean foot-center height. Runner body_target_z=.27 was ignored by Quadruped Position; original project initial base z is about .290209m. Do not confuse these values.",
+      "S": "If height alone is insufficient, track a compatible stance: reachable world foot locations/zero foot velocities, body pose, joint pose and gravity-support input reference in the same MPC.",
+      "equilibrium": "Use original mass/COM, foot geometry, friction, joint and torque limits to solve a feasible static reference. Check zero-velocity balance in the original forward-contact model. Equal mg/4 is only an initial guess, not a forced distribution.",
+      "PD_reference": "At zero velocity and unit gear u_ref=q_joint_ref+tau_actuator_ref/60, with gravity/passive/contact balance included. Otherwise use actual gear mapping. This is an MPC reference, never an extra torque added after optimization.",
+      "foot_reference": "Freeze actually established world contacts. For an airborne foot define a reachable landing before fixed support; do not anchor an airborne position as loaded.",
+      "physical_continuity": "Reference construction never resets qpos/qvel/policy/contact. Update on relevant Stand entry and preserve the reference throughout each hold.",
+      "cost_contract": "New residuals are soft objectives, not hard foot constraints. Keep original moving objective; use mutually compatible Stand posture/input references and avoid double gravity compensation. Record units, scales and weights before each complete attempt; no parameter grid.",
+      "deferred": "No simultaneous terminal LQR, frequency-shaping filter state, WBC, learned dynamics or PPO. Further mechanisms require a demonstrated remaining issue and are not automatically bundled.",
+      "H_realized": {
+        "absolute_base_height_m": 0.29020336039643685,
+        "world_floor_height_m": 0.0,
+        "norm": "Original Height smooth norm6, parameter0.04m",
+        "cost_weight": 1.0,
+        "activation": "Quadruped Stand only",
+        "evidence": "C returned at34.244s but longest stability0.136s through60s; preserve all old objectives and append absolute-height residual.",
+        "reference_qacc_norm": 3.1379383892855756e-05,
+        "reference_foot_force_N": [
+          [
+            0.013496597167031641,
+            -0.001103780779720824,
+            37.113653751745375
+          ],
+          [
+            -0.008822243297508251,
+            0.004369948728670767,
+            37.135117183654316
+          ],
+          [
+            -0.009059126427699484,
+            0.0015624167718512928,
+            37.4735829174041
+          ],
+          [
+            0.00436203120033637,
+            -0.004828467074560738,
+            37.452119549988204
+          ]
+        ]
+      },
+      "S_realized": {
+        "revision": "S3",
+        "activation": "Stand entry; same native state preserved; fixed reference throughout each hold",
+        "native_solve": "Reachable floor IK then 27-variable native mj_forward equilibrium; current body xy, mission heading, H base height; established foot xy anchored; airborne feet receive feasible floor landing xy",
+        "feasibility": {
+          "qacc_norm_max": 0.01,
+          "foot_xy_error_max_m": 1e-05,
+          "each_foot_Fz_min_N": 1.0,
+          "friction_ratio_max": 0.5,
+          "pd_identity_error_max_rad": 1e-06
+        },
+        "residuals": {
+          "StandAbsoluteHeight": {
+            "unit": "m",
+            "norm": 6,
+            "scale_m": 0.04,
+            "weight": 1,
+            "target": "solved base height"
+          },
+          "Height": {
+            "target": "solved trunk COM minus average foot center; replaces .27 only in Stand"
+          },
+          "Position": {
+            "target": "solved head world xy at entry base xy"
+          },
+          "Upright": {
+            "target": "solved torso Rzz; original scalar form retained"
+          },
+          "Posture": {
+            "target": "solved joint pose",
+            "weight": 0.02,
+            "scales": "original per-joint posture gains"
+          },
+          "Effort": {
+            "target": "solved PD input q_ref+tau_ref/60",
+            "unit": "rad",
+            "scale_rad": 0.02,
+            "weight": 0.08,
+            "norm": 0
+          },
+          "StandFootPosition": {
+            "unit": "m",
+            "scale_m": 0.02,
+            "weight": 0.1,
+            "norm": 0
+          },
+          "StandFootVelocity": {
+            "unit": "m/s",
+            "scale_m_s": 0.05,
+            "weight": 0.02,
+            "norm": 0
+          },
+          "StandSupportForce": {
+            "unit": "N",
+            "scale_N": 40,
+            "weight": 0,
+            "norm": 0,
+            "activation": "disabled after S2 worsened contact and endpoint holding"
+          }
+        },
+        "weight_basis": "Restore S1 compatible targets. S1 has97.39% terminal criteria pass but micrometre unloading and feedback target steps0.097-0.177rad in retained0.35s windows. Old0.1rad input scale permits6Nm, about the entire static calf support torque. New0.02rad scale corresponds1.2Nm (~20% of native calf support torque); original Effort weight0.08 retained, quadratic input curvature25x. This is MPC input-reference regularization, with no post-MPC filtering or extra torque; S2 load objective disabled based on its full negative result.",
+        "userdata_layout": "active[0],relative_height[1],base_z[2],quat[3:7],head_xyz[7:10],feet_FL_FR_RL_RR[10:22],q_ref[22:34],u_ref[34:46],tau_ref[46:58],foot_vertical_force[58:62] (recorded; force objective disabled)",
+        "reference_timing": "Measured separately per Stand entry; no physical integration in solver; initial20 planning calls retained",
+        "evidence": "S2 task_timeout through60s, longeststable0.034s, terminal contact55.66%, position62.36%, actual target peak step0.493rad in40-60s. Native support references remain feasible."
+      },
+      "S_previous": [
+        {
+          "revision": "S1",
+          "activation": "Stand entry; same native state preserved; fixed reference throughout each hold",
+          "native_solve": "Reachable floor IK then 27-variable native mj_forward equilibrium; current body xy, mission heading, H base height; established foot xy anchored; airborne feet receive feasible floor landing xy",
+          "feasibility": {
+            "qacc_norm_max": 0.01,
+            "foot_xy_error_max_m": 1e-05,
+            "each_foot_Fz_min_N": 1.0,
+            "friction_ratio_max": 0.5,
+            "pd_identity_error_max_rad": 1e-06
+          },
+          "residuals": {
+            "StandAbsoluteHeight": {
+              "unit": "m",
+              "norm": 6,
+              "scale_m": 0.04,
+              "weight": 1,
+              "target": "solved base height"
+            },
+            "Height": {
+              "target": "solved trunk COM minus average foot center; replaces .27 only in Stand"
+            },
+            "Position": {
+              "target": "solved head world xy at entry base xy"
+            },
+            "Upright": {
+              "target": "solved torso Rzz; original scalar form retained"
+            },
+            "Posture": {
+              "target": "solved joint pose",
+              "weight": 0.02,
+              "scales": "original per-joint posture gains"
+            },
+            "Effort": {
+              "target": "solved PD input q_ref+tau_ref/60",
+              "unit": "rad",
+              "scale_rad": 0.1,
+              "weight": 0.08,
+              "norm": 0
+            },
+            "StandFootPosition": {
+              "unit": "m",
+              "scale_m": 0.02,
+              "weight": 0.1,
+              "norm": 0
+            },
+            "StandFootVelocity": {
+              "unit": "m/s",
+              "scale_m_s": 0.05,
+              "weight": 0.02,
+              "norm": 0
+            }
+          },
+          "weight_basis": "2cm foot position and 5cm/s velocity scales; modest quadratic weights relative to original height and Orientation; original posture/effort weights retained with mutually compatible targets. Fixed before the whole-task attempt; no weight grid.",
+          "userdata_layout": "active[0],relative_height[1],base_z[2],quat[3:7],head_xyz[7:10],feet_FL_FR_RL_RR[10:22],q_ref[22:34],u_ref[34:46],tau_ref[46:58]",
+          "reference_timing": "Measured separately per Stand entry; no physical integration in solver; initial20 planning calls retained"
+        },
+        {
+          "revision": "S2",
+          "activation": "Stand entry; same native state preserved; fixed reference throughout each hold",
+          "native_solve": "Reachable floor IK then 27-variable native mj_forward equilibrium; current body xy, mission heading, H base height; established foot xy anchored; airborne feet receive feasible floor landing xy",
+          "feasibility": {
+            "qacc_norm_max": 0.01,
+            "foot_xy_error_max_m": 1e-05,
+            "each_foot_Fz_min_N": 1.0,
+            "friction_ratio_max": 0.5,
+            "pd_identity_error_max_rad": 1e-06
+          },
+          "residuals": {
+            "StandAbsoluteHeight": {
+              "unit": "m",
+              "norm": 6,
+              "scale_m": 0.04,
+              "weight": 1,
+              "target": "solved base height"
+            },
+            "Height": {
+              "target": "solved trunk COM minus average foot center; replaces .27 only in Stand"
+            },
+            "Position": {
+              "target": "solved head world xy at entry base xy"
+            },
+            "Upright": {
+              "target": "solved torso Rzz; original scalar form retained"
+            },
+            "Posture": {
+              "target": "solved joint pose",
+              "weight": 0.02,
+              "scales": "original per-joint posture gains"
+            },
+            "Effort": {
+              "target": "solved PD input q_ref+tau_ref/60",
+              "unit": "rad",
+              "scale_rad": 0.1,
+              "weight": 0.08,
+              "norm": 0
+            },
+            "StandFootPosition": {
+              "unit": "m",
+              "scale_m": 0.02,
+              "weight": 0.1,
+              "norm": 0
+            },
+            "StandFootVelocity": {
+              "unit": "m/s",
+              "scale_m_s": 0.05,
+              "weight": 0.02,
+              "norm": 0
+            },
+            "StandSupportForce": {
+              "unit": "N",
+              "scale_N": 40,
+              "weight": 0.05,
+              "norm": 0,
+              "target": "Each solved native equilibrium vertical foot force; predicted contact force used inside the same MPC"
+            }
+          },
+          "weight_basis": "2cm foot position and 5cm/s velocity scales; modest quadratic weights relative to original height and Orientation; original posture/effort weights retained with mutually compatible targets. Fixed before the whole-task attempt; no weight grid. S2 adds load tracking because 40-60s all159 lost-contact samples occur at16/18ms after regular planning, with only micrometre foot lifting; position/velocity tracking alone permits unloading. A full40N load error costs0.025 per foot, with no physical or acceptance changes.",
+          "userdata_layout": "active[0],relative_height[1],base_z[2],quat[3:7],head_xyz[7:10],feet_FL_FR_RL_RR[10:22],q_ref[22:34],u_ref[34:46],tau_ref[46:58],foot_vertical_force[58:62]",
+          "reference_timing": "Measured separately per Stand entry; no physical integration in solver; initial20 planning calls retained",
+          "evidence": "S1 original60s task_timeout; terminal allcriteria97.39%, angular99.51%, contact97.88%, longestcontinuous0.938s. No force saturation near Stand. Native solved reference is feasible."
+        }
+      ]
+    },
+    "startup": {
+      "policy_seed": "home keyframe ctrl after restoring home data; preserve nullptr behavior without home.",
+      "seed_both_init_and_reset": true,
+      "ground_height_numeric": "s1_flat_ground_height",
+      "ground_height_enable_condition": "Adapter confirms the actual floor is a world-static horizontal plane; write its world height as one scalar.",
+      "G0_ground_height_m": -0.01,
+      "G1_ground_height_m": "Read the actual project floor; do not assume zero.",
+      "global_Ground_unchanged": true,
+      "time_s": 0,
+      "planner_steps": 20,
+      "replaces_original_time_zero_planner_step": true,
+      "additional_time_zero_planner_step": false,
+      "advance_plant_during_startup": false,
+      "reset_agent_between_startup_iterations": false,
+      "state_and_goal": "Hold the actual initial qpos/qvel/time, complete Stand settings and initial mission goal fixed.",
+      "retain": [
+        "home ctrl and pre-optimization nominal seed action",
+        "each of the 20 best trajectories: states, actions, times and iteration number",
+        "each initial action and the final feedback action before the first physical step",
+        "all initialization errors and subsequent physical failures"
+      ],
+      "horizon_cost": "get_total_cost() is a current-state cost, not the optimized horizon return; never label it horizon convergence.",
+      "success_meaning": "Initialization completion is not standing or mission success."
+    },
+    "controller_formulation": "R8_NATIVE",
+    "local_contact_model": {
+      "enabled": false,
+      "causal_force_anchor": false
+    },
+    "r11_contact_completion": null,
+    "r11_body_reference": null,
+    "r11_body_twist_reference": null,
+    "r26_reference": null,
+    "r11_prediction_coldstart": {
+      "enabled": true,
+      "scope": "private Agent predictor only"
+    },
+    "w54_n_execution": {
+      "state": "memoryless x/raw action; no latch/filter/anchor states",
+      "source": "experiments/terrain_memory/w54_e_core.h",
+      "call_sites": [
+        "real 500Hz",
+        "native continuous/discrete rollout",
+        "each composite transition FD perturbation"
+      ],
+      "control_hold_s": 0.002,
+      "predictor_substep_s": 0.001,
+      "predictor_substeps_per_transition": 2,
+      "plant_substep_s": 0.0002,
+      "plant_substeps_per_hold": 10,
+      "surface": "known material map and undeformed upper-surface prior; no hidden material e/q",
+      "landing_speed_m_s": 0.05,
+      "delay_s": 0.022,
+      "available_acceleration_reserve_fraction": 0.25,
+      "activation": "quintic smooth distance and descending-speed gates; stopping-distance lead with bounded torque capacity",
+      "projection_iterations": 24,
+      "dynamic_memory": false,
+      "hard_safety_claim": false,
+      "prior_model_boundary": "restored r42 rigid contact predictor; no future TM02 history propagation"
+    }
+  },
+  "adapter_differences": [
+    "unique derivative output ownership",
+    "private predictor coldstart",
+    "StateDiff exact self/antipode zero",
+    "current original mission/frozen PPO cap/causal observer shell",
+    "complete installed-policy and native stage timing records",
+    "memoryless precontact E in true 500Hz/native forward/every FD",
+    "raw and applied actions retained",
+    "direct FD of complete 2ms E-composed transition, no analytic chain approximation"
+  ],
+  "prediction_material_model": "known undeformed surface upper-bound prior in E; full TM02 only in unchanged plant",
+  "historical_qualification_inherited": false,
+  "record_policy": "every installed full policy and actual accepted rollout; all candidate scores and state progression; key-event full candidates; no ordinary rejected full rings",
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "baseline_build": "S5-r42",
+  "execution_source_names": [
+    "s1_go2_w54_n_model.py",
+    "s1_go2_w54_n_records.py",
+    "s1_go2_w54_n_execution.py"
+  ],
+  "execution_operator": {
+    "state": "memoryless x/raw action; no latch/filter/anchor states",
+    "source": "experiments/terrain_memory/w54_e_core.h",
+    "call_sites": [
+      "real 500Hz",
+      "native continuous/discrete rollout",
+      "each composite transition FD perturbation"
+    ],
+    "control_hold_s": 0.002,
+    "predictor_substep_s": 0.001,
+    "predictor_substeps_per_transition": 2,
+    "plant_substep_s": 0.0002,
+    "plant_substeps_per_hold": 10,
+    "surface": "known material map and undeformed upper-surface prior; no hidden material e/q",
+    "landing_speed_m_s": 0.05,
+    "delay_s": 0.022,
+    "available_acceleration_reserve_fraction": 0.25,
+    "activation": "quintic smooth distance and descending-speed gates; stopping-distance lead with bounded torque capacity",
+    "projection_iterations": 24,
+    "dynamic_memory": false,
+    "hard_safety_claim": false,
+    "prior_model_boundary": "restored r42 rigid contact predictor; no future TM02 history propagation"
+  }
+}
