@@ -12,9 +12,11 @@ def link_runtime_assets():
  base=ROOT/'work/r11-frozen/S5-r41/runtime-tasks';target=SOURCE/'mjpc/tasks';linked=[]
  for source in sorted(base.rglob('*')):
   rel=source.relative_to(base);dest=target/rel
-  if source.is_file() and source.suffix not in ('.h','.cc','.cpp','.patch','.py','.md') and not dest.exists():
-   dest.parent.mkdir(parents=True,exist_ok=True);dest.symlink_to(source.resolve())
-   linked.append(dict(path=str(rel),retained_source=str(source.resolve()),size=source.stat().st_size))
+  if source.is_file() and source.suffix not in ('.h','.cc','.cpp','.patch','.py','.md'):
+   if not dest.exists():
+    dest.parent.mkdir(parents=True,exist_ok=True);dest.symlink_to(source.resolve())
+   if dest.is_symlink() and dest.resolve()==source.resolve():
+    linked.append(dict(path=str(rel),retained_source=str(source.resolve()),size=source.stat().st_size))
  return linked
 
 def main():
@@ -41,6 +43,7 @@ def main():
  with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:list(pool.map(compile,jobs))
  for command,oldcwd,newname in [(archive,CACHE/'mjpc','libmjpc.a'),(service,CACHE/'mjpc/grpc','libmjpc_agent_service.a')]:
   command[2]=str(OUT/newname)
+  (OUT/newname).unlink(missing_ok=True)  # ar qc must create a fresh owned archive, not append stale objects.
   command=[replacements.get(str((oldcwd/x).resolve()),x) if x.endswith('.o') else x for x in command]
   subprocess.run(command,cwd=oldcwd,check=True);subprocess.run(['/usr/bin/gcc-ranlib-11',str(OUT/newname)],check=True)
  link=[str(OUT/'libmjpc_agent_service.a') if x=='../../lib/libmjpc_agent_service.a' else str(OUT/'libmjpc.a') if x=='../../lib/libmjpc.a' else '-flto=6' if x=='-flto' else replacements.get(str((CACHE/'mjpc/grpc'/x).resolve()),x) if x.endswith('.o') else x for x in link]

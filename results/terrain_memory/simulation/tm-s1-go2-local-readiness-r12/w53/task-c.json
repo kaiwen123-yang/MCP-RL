@@ -2010,5 +2010,29 @@
     "custom_code_generation_or_JIT": false,
     "custom_compile_s": 0.0,
     "first_use_library_initialization_included": true
+  },
+  "actual_F_runtime_context": {
+    "source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w53/f-actual-analysis.json",
+    "attempt": "job-20261117T023610Z-w53-f-a-eval-PANN_PPO_S5-s1-E30-attempt02",
+    "scope": "Context from the existing normal F E30 job only; no C computation repeated and original C output/Release artifacts unchanged.",
+    "eval_wall_s": 19.132764596492052,
+    "model_group": {
+      "wall_s": 0.7681615334004164,
+      "cpu_s": 0.7677725409999434,
+      "calls": 1561,
+      "eval_fraction": 0.040149008760671054
+    },
+    "full_MPC_matrix_assembly_group": {
+      "wall_s": 5.247819704934955,
+      "cpu_s": 5.248655308999988,
+      "calls": 158,
+      "eval_fraction": 0.2742844442824081
+    },
+    "combined_group_eval_fraction": 0.3144334530430792,
+    "actual_GPU_covered_eval_fraction": null,
+    "coverage_limitation": "These groups contain unported M/h/Jdot and full sparse Python horizon assembly. Their combined share is not the GPU-covered fraction and cannot be multiplied by the C speed ratio to claim online speedup.",
+    "no_online_speedup_inference": true,
+    "controller_outcome": "controller_model_feasibility_failure_after_real_physical_start_before_material",
+    "controller_limitation": "Exact CPU/GPU agreement of stage matrices does not validate the static h-J^T f torque approximation for moving swing legs. The existing F job encountered a saved zero-row mapped-input contradiction; no GPU arithmetic error caused that contradiction."
   }
 }

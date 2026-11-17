@@ -1,5 +1,17 @@
 # 地面材料记忆项目：W52 已审查，W53 并行恢复完整运动控制
 
+## 2026-11-17 实际执行结果
+
+更新：2026-11-17（Asia/Shanghai）。W53 已在包含 `1832ba0` 的最新 main 上实现并运行两条原 E30。N 恢复 R8/S3 完整运动内核，在材料前形成交替支撑和连续前进，最大 x=0.723845 m；6.4656 s 触发原材料主应变域限制（候选材料时钟 6.4658 s，|strain|=0.0201782>0.02），末身体高度 0.290389 m。F 真实卸载并前进，但落足晚 74–114 ms、支撑缺口和机身下降；3.120 s 的力 MPC 静态力矩约束出现明确不可行，末身体高度 0.200225 m，材料加载0。
+
+两条有效物理启动均未通过 E30。另有两次零物理初始化错误，已分别定向修正并完整保留：N 缺生成的任务注册资源，F 权重数组 dtype。无第三物理控制族、无新 D8、无 seed2、无 E60/E300/E600；新 PPO/donor=0。N 的进展限于本次材料前运动，材料未知 predictor 未完成材料记忆收益评价。F 的同次失败矩阵证实摆动零反力行要求 0≥1.70025764 Nm，不是随机求解器故障。
+
+C 对既有 W52 6,152 状态完成一次 FP64 GPU模型/阶段矩阵比较。已覆盖量误差约1e-15；CPU参考2.224 s，含CPU h与传输的GPU路径1.908 s，含初始化2.303 s；未建立在线收益，M/h/Jdot/WBC与完整horizon求解未迁移。所有新后台均无墙钟截止；实际任务按原物理/数值条件结束。原件与全视频已从D57直传Release，后续入口为现有W53 phase/结果；不要把下方形成时的计划文字当新启动授权。
+
+[W53 实际结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w53/paired-results.json) · [执行状态](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w53/phase.json) · [N 实际分析](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w53/n-actual-analysis.json) · [F 实际分析](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w53/f-actual-analysis.json) · [GPU结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w53/task-c.json)
+
+## 以下保留 2026-11-16 计划与形成时证据
+
 更新：2026-11-16（Asia/Shanghai）。本次审查基点 `5e036c6918ae72bb795c4b1b5be08c1e109ade32`。**W52 已结束且完成交付；W53 为已明确范围的下一实施计划，尚未实现或运行。** 当前原 Go2/TM02 稳定完整往返仍未建立。本次新增物理、native rollout、FD、PPO=0。
 
 [W52 独立审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W52-review/README.md) · [W53 实施计划](S1_W53_STABILITY_PLAN.md) · [Codex 启动提示词](S1_W53_START_PROMPT.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W52-review/handoff.json) · [W52 原始结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w52/paired-results.json)
