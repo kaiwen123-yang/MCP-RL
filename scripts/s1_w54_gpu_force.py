@@ -18,6 +18,10 @@ ITERATIONS = 4096
 def project_force(value, contact, upper, mu):
     """Exact projection onto |fx|,|fy|<=mu*fz, 0<=fz<=upper, or zero.
 
+    Here mu is the frozen planning pyramid slope, not the physical elliptic
+    Coulomb coefficient. For W54 r52 it is physical_mu/sqrt(2), so the square
+    cross-section is contained in the unchanged physical cone.
+
     The scalar normal optimum has three intervals according to how many
     tangential components saturate. Enumerating those intervals gives the
     Euclidean projection, unlike clipping fz before the tangential components.

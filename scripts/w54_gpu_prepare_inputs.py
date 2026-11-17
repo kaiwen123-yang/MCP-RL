@@ -154,9 +154,9 @@ def verify_sphere_force_points(records, backend_name, cfg):
             point_error=0.;center_difference=0.;affine_error=0.
             for k in range(len(B)):
                 point=builder(mass,inertia,ref[k,3:6],feet[k],x0[:3],x0[6:9],
-                              cfg["mpc"]["dt_s"],cfg["friction_coefficient"])
+                              cfg["mpc"]["dt_s"],cfg["force_pyramid_slope"])
                 center=builder(mass,inertia,ref[k,3:6],centers[k],x0[:3],x0[6:9],
-                               cfg["mpc"]["dt_s"],cfg["friction_coefficient"])
+                               cfg["mpc"]["dt_s"],cfg["force_pyramid_slope"])
                 point_error=max(point_error,float(np.max(np.abs(B[k]-point["B"]))))
                 center_difference=max(center_difference,float(np.max(np.abs(B[k]-center["B"]))))
                 affine_error=max(affine_error,float(np.max(np.abs(A[k]-point["A"]))),

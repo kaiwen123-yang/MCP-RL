@@ -1783,10 +1783,24 @@
     "verdict": "No overdue uncommitted event was reconstructed in this run; this is not its failure explanation."
   },
   "remaining_execution_gap": {
-    "observed": "The fixed original thresholds are crossed and steps resume, but late touchdown/support transfer and low body height persist. Final FR impact is faster than1.2m/s with RL still39.8mm above the surface.",
-    "boundary": "No additional isolated wiring/implementation contradiction has been established from this completed record. Changing task hardness/weights or adding a new contact-impact model would require a new scoped modeling decision, not another same-version run.",
-    "highest_original_stage": null,
-    "formal_material_traversal": false,
-    "leg_memory_causal_benefit": false
+    "verified": "Original controller force square was an outer approximation of the actual elliptic friction cone and admitted physical-infeasible force vectors.",
+    "evidence": "f-r51-friction-cone-evidence.json",
+    "scope": "Both current WBC and future SRB constraints require the same inner approximation; no task weights are changed."
+  },
+  "new_evidence_and_revision": {
+    "previous": "S5-r51",
+    "evidence_attempt": "job-20261117T053419Z-w54-f-a-r51-eval-PANN_PPO_S5-s1-E30-attempt01",
+    "evidence": [
+      "Original plant uses elliptic friction mu=.5 for floor and feet; material tangential law also has norm bound.5Fz.",
+      "MPC/WBC outer square allowed saved rigid QP tangential-normal ratio .61284555, exceeding actual .5; native forces saturate at.5."
+    ],
+    "changes": [
+      "Freeze inner-square axis slope=.5/sqrt(2) in both SRB horizon and current WBC; retain physicalmu=.5.",
+      "Use identical corrected slope in C CPU QP and GPU projection; no change to original material, actuator, hold, route or termination."
+    ],
+    "expected_observables": [
+      "Every predicted MPC/WBC force satisfies the original physical circular cone as well as the declared inner square.",
+      "Actual foot slip/force mismatch must still be evaluated in the new originalE30; no prior qualification inherited."
+    ]
   }
 }

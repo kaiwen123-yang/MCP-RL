@@ -1,8 +1,8 @@
 {
   "schema": "w54_task_c_latest_complete_horizon_summary_v2",
-  "status": "completed_finite_latest_r49_inputs_resources_released",
-  "updated_unix_s": 1794892456.0511768,
-  "current_input_identity": "S5-r49",
+  "status": "r52_inner_friction_contract_correction_pending_natural_inputs",
+  "updated_unix_s": 1794894369.3067942,
+  "current_input_identity": "pending_S5-r52",
   "primary_result": {
     "pass_id": "r49-final",
     "status": "completed",
@@ -61,7 +61,9 @@
       "min_sphere_center_B_difference": 0.0032550893745108833,
       "verified_state_count": 16,
       "verified_nodes": 224
-    }
+    },
+    "friction_contract_status": "historical_outer_approximation",
+    "plant_friction_feasibility_claim": false
   },
   "method": "fixed JAX FP64 4096-iteration accelerated projected-gradient optimization; exact Euclidean friction-pyramid projection",
   "full_force_parameterization": "14 nodes x 4 feet x 3 force coordinates; same CPU and GPU feasible set",
@@ -94,7 +96,7 @@
     "first action",
     "objective and projected-gradient residual"
   ],
-  "final_interpretation": "All 16 latest r49 horizons are SRB-feasible under independent CPU recomputation; actual stage_B uses sphere contact force points, not relabelled centers. Warm offline batch timing is not online speedup; GPU runtime+compile-inclusive path is slower than CPU assembly+QP in this batch. No articulated/material/physical success is claimed.",
+  "final_interpretation": "Prior completed batches are historical outer-pyramid mathematical comparisons, not guaranteed feasible in the original elliptic plant friction cone. A finite r52 correction is authorized and pending.",
   "limits": [
     "SRB only; no GPU articulated WBC or future joint trajectory",
     "No GPU material dynamics, no new physics, no controller installed online",
@@ -148,7 +150,9 @@
       "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/legacy-stand/executed-source",
       "input_identity": "S5-r45",
       "scientific_role": "reconstructed four-confirmed-feet Stand input; no moving r46 coverage",
-      "latest_input_coverage": false
+      "latest_input_coverage": false,
+      "friction_contract_status": "historical_outer_approximation",
+      "plant_friction_feasibility_claim": false
     },
     {
       "pass_id": "natural-r45",
@@ -208,7 +212,9 @@
       "input_identity": "S5-r45",
       "input_contract_status": "superseded_contact_availability_contract",
       "scientific_role": "mathematical comparison only; no r46 coverage",
-      "latest_input_coverage": false
+      "latest_input_coverage": false,
+      "friction_contract_status": "historical_outer_approximation",
+      "plant_friction_feasibility_claim": false
     },
     {
       "pass_id": "r46-corrective",
@@ -263,7 +269,9 @@
       "original_output_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r46-corrective",
       "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r46-corrective/executed-source",
       "latest_input_coverage": false,
-      "scientific_role": "r46 measured-force gate correction at its original sphere-center force-point contract; not latest r49 input coverage"
+      "scientific_role": "r46 measured-force gate correction at its original sphere-center force-point contract; not latest r49 input coverage",
+      "friction_contract_status": "historical_outer_approximation",
+      "plant_friction_feasibility_claim": false
     }
   ],
   "cumulative_work": {
@@ -285,6 +293,41 @@
   "deadline": null,
   "wall_deadline_enabled": false,
   "kill_on_conversation_end": false,
-  "resource_status": "all finite C jobs exit0; C resources released",
-  "source_copy_note": "Exact executed solver/F source bytes retained on D57 with result SHA; no PC copy"
+  "resource_status": "no C GPU task active; awaiting r52 original task completed snapshots",
+  "source_copy_note": "Exact executed solver/F source bytes retained on D57 with result SHA; no PC copy",
+  "posthoc_historical_friction_checks": [
+    {
+      "pass_id": "legacy-stand",
+      "physical_mu": 0.5,
+      "physics_or_optimizer_reruns": 0,
+      "GPU_horizons_with_violation_above_1e_minus_6_N": 0,
+      "max_violation_N": 0.0,
+      "completed_horizons": 98
+    },
+    {
+      "pass_id": "natural-r45",
+      "physical_mu": 0.5,
+      "physics_or_optimizer_reruns": 0,
+      "GPU_horizons_with_violation_above_1e_minus_6_N": 24,
+      "max_violation_N": 16.40707317876568,
+      "completed_horizons": 160
+    },
+    {
+      "pass_id": "r46-corrective",
+      "physical_mu": 0.5,
+      "physics_or_optimizer_reruns": 0,
+      "GPU_horizons_with_violation_above_1e_minus_6_N": 5,
+      "max_violation_N": 11.440745927918954,
+      "completed_horizons": 16
+    },
+    {
+      "pass_id": "r49-final",
+      "physical_mu": 0.5,
+      "physics_or_optimizer_reruns": 0,
+      "GPU_horizons_with_violation_above_1e_minus_6_N": 3,
+      "max_violation_N": 0.3070458870619923,
+      "completed_horizons": 16
+    }
+  ],
+  "new_friction_evidence": "Plant elliptic mu=.5; r51 QP requested tangential/normal ratio .612846. Frozen r52 MPC/WBC/GPU square uses axis slope .5/sqrt(2) within original cone."
 }

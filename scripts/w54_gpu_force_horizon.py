@@ -51,16 +51,20 @@ def cpu_recompute(p, forces, states, cfg):
                  force=float(cfg["mpc"]["force_regularization"] * np.sum(forces * forces)),
                  force_difference=float(cfg["mpc"]["force_difference_weight"] * np.sum(differences * differences)))
     fz = forces[..., 2]
-    mu = cfg["friction_coefficient"]
+    physical_mu = cfg["friction_coefficient"]
+    pyramid_slope = cfg["force_pyramid_slope"]
     violations = dict(
         unilateral_N=float(max(0., -np.min(fz))),
         normal_upper_N=float(max(0., np.max(fz - p["force_normal_upper"]))),
-        friction_pyramid_N=float(max(0., np.max(np.abs(forces[..., :2]) - mu*fz[..., None]))),
+        friction_pyramid_N=float(max(0., np.max(np.abs(forces[..., :2]) - pyramid_slope*fz[..., None]))),
+        physical_elliptic_friction_cone_N=float(max(0., np.max(np.linalg.norm(forces[..., :2],axis=-1) - physical_mu*fz))),
         inactive_force_N=float(np.max(np.abs(forces * (~p["contact"])[..., None]))),
         dynamics=float(max(np.max(np.abs(states[0]-p["x0"])), np.max(stage_residual))),
         independent_trajectory=float(np.max(np.abs(states-truth))))
     return dict(objective=sum(terms.values()), terms=terms, violations=violations,
                 SRB_feasible=all(v <= 1e-6 for v in violations.values()),
+                physical_friction_cone_checked=True,
+                physical_friction_mu=physical_mu,planning_pyramid_slope=pyramid_slope,
                 articulated_WBC_evaluated=False, material_task_evaluated=False), truth
 
 
@@ -115,6 +119,11 @@ def main():
         force_parameterization="every knot x FL/FR/RL/RR xyz; 14x12 independent force variables",
         CPU_reference="same F full-state/per-knot-force convex QP, OSQP FP64, eps_abs/rel 1e-7",
         equal_optimization_budget=False,
+        friction_contract=dict(physical_cone="elliptic",physical_mu=cfg["friction_coefficient"],
+            planning_pyramid_slope=cfg["force_pyramid_slope"],
+            feasible_set="inner four-face pyramid; axis slope physical_mu/sqrt(2)",
+            CPU_independent_check="norm(fxy)<=physical_mu*fz at every node, in addition to pyramid"),
+
         contact_candidate="one corrected causal nominal continuation per saved state",
         missing_records=[r for r in manifest["records"] if r["status"] != "ready"],
         new_physics_steps=0, new_native_rollout=0, new_FD=0,
@@ -149,7 +158,7 @@ def main():
     arguments += [jax.device_put(np.asarray(cfg["mpc"]["state_weights"], dtype=float), device),
                   jax.device_put(np.asarray(cfg["mpc"]["force_regularization"]), device),
                   jax.device_put(np.asarray(cfg["mpc"]["force_difference_weight"]), device),
-                  jax.device_put(np.asarray(cfg["friction_coefficient"]), device)]
+                  jax.device_put(np.asarray(cfg["force_pyramid_slope"]), device)]
     jax.block_until_ready(arguments)
     timing["host_to_device_s"] = time.perf_counter()-transfer0
     compile0 = time.perf_counter()
