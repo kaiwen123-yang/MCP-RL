@@ -1234,5 +1234,35 @@
       "cpu_s": 1.2851334529999718,
       "calls": 309
     }
-  }
+  },
+  "video_review": {
+    "reviewer": "w54_f agent",
+    "full_published_frames_viewed": 182,
+    "frame_rate_Hz": 30,
+    "coverage": "all182frames in4contact-sheets",
+    "observation": "Real stepping and forward movement occur, with increasingly long support intervals and height oscillation; last descent ends in strong height loss before materials.",
+    "boundary": "Video establishes motion and posture only;2ms hold mismatch quantified from complete5kHz arrays."
+  },
+  "new_evidence_and_revision": {
+    "previous": "S5-r49",
+    "evidence_attempt": "job-20261117T051119Z-w54-f-a-r49-eval-PANN_PPO_S5-s1-E30-attempt01",
+    "evidence": [
+      "Initial inverse PD mapping was exact but did not represent force over the original2ms position hold.",
+      "First swing saved hold torque drift RMS .1607Nm, peak .9727Nm; constant-acceleration original-PD hold reconstruction RMS error .02063Nm.",
+      "Last swing drift RMS .5057Nm, peak3.8059Nm; hold reconstruction RMS error .06796Nm; actual swing acceleration prediction RMS9.866m/s2."
+    ],
+    "changes": [
+      "Full articulated WBC solves torque averaged over actual10force boundaries0,.2,...,1.8ms.",
+      "Original force bounds apply to mean torque, start torque and all10predicted sample torques; original mapped-u applies to the one held command.",
+      "Keep prior joint reachability and add the same discrete hold-end joint range; original plant/PD60/5/2ms hold unchanged.",
+      "No torque correction after the constrained solve; record start/mean/predicted substep torques."
+    ],
+    "expected_observables": [
+      "Mean of predicted ten torque samples equals solved dynamic torque.",
+      "Hold-average torque and actual foot acceleration mismatch decrease without changing original actuator limits.",
+      "This local constant-acceleration model is not exact nonlinear safety; actual5kHz records determine outcome."
+    ]
+  },
+  "hold_evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/f-r49-hold-evidence.json",
+  "mechanism_boundary": "Known position-hold versus torque-hold difference is now quantified and modeled; its standalone contribution to whole-task failure has not been isolated."
 }
