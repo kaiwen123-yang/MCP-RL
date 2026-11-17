@@ -1,0 +1,1859 @@
+{
+  "attempt": "job-20261117T050522Z-w54-f-a-r47-eval-PANN_PPO_S5-s1-E30-attempt01",
+  "route": "F",
+  "original_result": {
+    "stage_status": "physical_material_failure",
+    "reason": "body_fall",
+    "success": false,
+    "error": null,
+    "simulation_s": 4.784000000001247,
+    "wall_s": 29.415938621386886,
+    "physical_samples": 23920,
+    "max_x_m": 0.5741919644056186,
+    "min_body_height_m": 0.11918949788747013,
+    "stage_progress": {
+      "far_arrival_s": null,
+      "return_start_s": null,
+      "actual_route_fraction": 0.09550186499521504,
+      "full_observation": false,
+      "actual_material_loaded": false,
+      "material_traversal": {
+        "completed": false,
+        "west_entry_s": null,
+        "east_exit_s": null,
+        "lateral_exit_s": null,
+        "max_abs_base_y_during_crossing_m": null,
+        "material_loaded_during_crossing": false,
+        "original_strip_x_m": [
+          0.8,
+          2.2
+        ],
+        "original_strip_y_m": [
+          -0.6,
+          0.6
+        ],
+        "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+      }
+    },
+    "qualification": {
+      "predecessor_attempt": null,
+      "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+      "evaluator_sha256": "d424d29f604cfc93f6a19ce9fb56ca66ef559383b6f9b602bf2fd78692a2e30e",
+      "solver_workers": 1,
+      "worker_setting_checked_against_predecessor": false
+    },
+    "legal_route": {
+      "reward_version": "W38_legal_route_terminal_settlement",
+      "progress": 0.0,
+      "completed_roundtrips": 0,
+      "legal_outbound_traversals": 0,
+      "legal_return_traversals": 0,
+      "side_exits": 0,
+      "raw_roundtrips": 0,
+      "passages": [
+        {
+          "lap": 1,
+          "direction": "outbound",
+          "entry_s": null,
+          "exit_s": null,
+          "lateral_exit_s": null,
+          "material_loaded": false,
+          "completed": false,
+          "terminal_closed_s": 4.784000000001247
+        }
+      ],
+      "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+    },
+    "completed_round_trips": 0
+  },
+  "windows": [
+    {
+      "start_s": 0.0,
+      "end_s": 2.0019999999998124,
+      "dx_m": 0.0011807744343300766,
+      "min_z_m": 0.28257400709069225,
+      "foot_loaded_fraction": [
+        0.990009990009989,
+        0.990009990009989,
+        0.990009990009989,
+        0.990009990009989
+      ],
+      "four_foot_loaded_fraction": 0.990009990009989
+    },
+    {
+      "start_s": 2.0019999999998124,
+      "end_s": 4.784000000001247,
+      "dx_m": 0.5730111899712885,
+      "min_z_m": 0.12174909727479483,
+      "foot_loaded_fraction": [
+        0.7807332854062783,
+        0.5722501797270366,
+        0.4902947519770489,
+        0.5262401150249059
+      ],
+      "four_foot_loaded_fraction": 0.0913012221423344
+    }
+  ],
+  "contact_transitions": [
+    20,
+    26,
+    40,
+    54
+  ],
+  "physical_failure_stage": "before_material",
+  "new_PPO_samples": 0,
+  "new_PPO_updates": 0,
+  "donor": 0,
+  "normal_motion_review": "Use complete recorded video and these same-task trajectories; no automatic gait qualification threshold.",
+  "timing": {
+    "startup_planning": null,
+    "planning": null,
+    "feedback": {
+      "count": 2392,
+      "total_s": 17.96091353520751,
+      "p50_ms": 2.647995948791504,
+      "p95_ms": 46.9343957491219,
+      "max_ms": 197.04489223659039,
+      "logical_deadline_s": 0.002,
+      "deadline_misses": 2392
+    },
+    "state_parameter_rpc": null,
+    "physics": {
+      "count": 2392,
+      "total_s": 9.097762405872345,
+      "p50_ms": 3.636259585618973,
+      "p95_ms": 4.008867125958204,
+      "max_ms": 71.08641043305397,
+      "logical_deadline_s": 0.002,
+      "deadline_misses": 2392
+    }
+  },
+  "record_timing": {
+    "stream_compress_write_wall_s": 0.5979030691087246,
+    "stream_compress_write_cpu_s": 0.5979203959999992,
+    "trajectory_compress_write_wall_s": 0.11331356503069401,
+    "trajectory_compress_write_cpu_s": 0.11332692899999586
+  },
+  "w54-f/manifest.json": {
+    "schema": "w54_f_records_v1",
+    "backend": "cpu_mujoco_3.2.3_osqp_1.0.5",
+    "config": {
+      "schema": "w54_f_complete_controller_v1",
+      "identity": "S5-r47",
+      "controller": "centroidal_contact_force_MPC_and_exact_articulated_inverse_dynamics_WBC",
+      "online_backend": "CPU_MuJoCo_3.2.3_OSQP_1.0.5_FP64",
+      "friction_coefficient": 0.5,
+      "gait": {
+        "frequency_hz": 2.0,
+        "duty": 0.6,
+        "swing_s": 0.2,
+        "apex_s": 0.1,
+        "height_m": 0.03,
+        "legs": [
+          "FL",
+          "FR",
+          "RL",
+          "RR"
+        ],
+        "diagonal_offsets_s": [
+          0.0,
+          0.25,
+          0.25,
+          0.0
+        ],
+        "startup": "original_2s_Stand; unsupported_initial_feet_nominal_joint_posture_until_measured_contact; then_measured_load_handover",
+        "stop": "finish_committed_swing_and_actual_touchdown_then_stand",
+        "curve": "two_C2_quintics_observed_liftoff_position_velocity_zero_acceleration_fixed_midpoint_apex_and_touchdown",
+        "touchdown": "current_root_plus_rotated_home_foot_plus_0.35_command_velocity_plus_0.04_velocity_error",
+        "actual_frequency": "nominal_2Hz_delayed_by_actual_touchdown_load_and_dynamic_task_residual"
+      },
+      "mpc": {
+        "horizon_s": 0.35,
+        "intervals": 14,
+        "dt_s": 0.025,
+        "replan_s": 0.02,
+        "state_weights": [
+          30,
+          30,
+          10,
+          1,
+          1,
+          100,
+          1,
+          1,
+          1,
+          10,
+          10,
+          20
+        ],
+        "force_regularization": 1e-05,
+        "force_difference_weight": 0.0001,
+        "model": "frozen_measured_composite_inertia_centroidal_rigid_body_world_rates_with_gyroscopic_affine_term",
+        "force_feasibility": "same_causal_contact_event_horizon_mu0.5_pyramid_swing_zero_stance_nonnegative; no_static_joint_proxy",
+        "approximation": "SRB_only; every_actual_action_passes_full_articulated_WBC_original_torque_mapped_input_joint_bounds"
+      },
+      "wbc": {
+        "dt_s": 0.002,
+        "body_position_kp": 100.0,
+        "body_velocity_kd": 20.0,
+        "orientation_kp": 100.0,
+        "angular_velocity_kd": 20.0,
+        "swing_kp": 400.0,
+        "swing_kd": 40.0,
+        "stance_kp": 400.0,
+        "stance_kd": 40.0,
+        "material_normal_kp": 100.0,
+        "posture_kp": 20.0,
+        "posture_kd": 5.0,
+        "body_weight": 10.0,
+        "orientation_weight": 10.0,
+        "swing_weight": 50.0,
+        "stance_weight": 100.0,
+        "posture_weight": 0.02,
+        "force_weight": 0.01,
+        "command": "all_feedback_in_tau_total; u=q+(tau_total+5*v)/60",
+        "hard_constraints": [
+          "floating_dynamics",
+          "unilateral_friction_pyramid",
+          "zero_force_non_active_feet",
+          "original_total_torque_bounds",
+          "original_mapped_control_bounds",
+          "one_hold_joint_position_reachability"
+        ],
+        "task_constraints": "body_and_foot_acceleration_tasks_weighted_not_hard; residuals_retained",
+        "contact_feedback": "actual_touchdown_anchor; confirmed_support_and_measured_contact; current_wrench_redistributed; no_masked_force_body_target",
+        "material": "causal_rest_anchor=p_now+F_now/k; pz_des=rest-F_des/k; normal_velocity_target=observed_vz; no_world_fixed_normal_stance_constraint_no_future_material_state",
+        "body_target": "independent_task_reference_p_v_a; SRB state retained as prediction; no masked_force_or_sacrificed_state_acceleration_target",
+        "stance_kinematics": "sphere rolling no-slip contact velocity; normal center/material task; center swing/search PVA",
+        "force_application": "native current data.contact.pos; material causal force_boundary_bottom; geometry center-minus-radius otherwise"
+      },
+      "qp": {
+        "eps_abs": 1e-06,
+        "eps_rel": 1e-06,
+        "max_iter": 4000,
+        "polishing": true,
+        "adaptive_rho_interval": 50,
+        "failure": "explicit_controller_numerical_failure_no_silent_fallback_or_automatic_rerun"
+      },
+      "recording": {
+        "full_mpc_reference_force_state_every_replan": true,
+        "full_WBC_command_reference_force_every_500Hz": true,
+        "unchanged_parent_physics_Hz": 5000,
+        "new_native_rollout_or_FD": false,
+        "stage_CPU_wall_IO_timing": true,
+        "contact_events": true,
+        "causal_horizon_inputs": true,
+        "task_acceleration_residuals": true,
+        "known_and_actual_dry_friction": true,
+        "force_application_point_and_source": true,
+        "contact_vs_center_velocity": true,
+        "contact_Jacobian": true
+      },
+      "new_PPO_samples": 0,
+      "new_PPO_updates": 0,
+      "donor": 0,
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "freeze": "one_parameter_set_before_first_original_E30_no_physical_parameter_search",
+      "material_stiffness_N_m": 1227272.7272727273,
+      "contact_events": {
+        "sample_Hz": 500,
+        "touch_on_N": 3.0,
+        "touch_off_N": 1.0,
+        "touch_confirm_s": 0.006,
+        "release_confirm_s": 0.004,
+        "load_on_bodyweight_fraction": 0.1,
+        "load_confirm_s": 0.006,
+        "load_transfer_ramp_s": 0.05,
+        "handover_measured_bodyweight_fraction": 0.65,
+        "handover_solved_bodyweight_fraction": 0.8,
+        "release_solved_bodyweight_fraction": 0.2,
+        "handover_body_accel_residual_m_s2": 1.5,
+        "handover_angular_accel_residual_rad_s2": 4.0,
+        "search_speed_m_s": 0.03,
+        "criterion": "hysteretic_touch_6ms; pair_measured_load_plus_previous_constrained_WBC_force_and_task_residual; no_fixed_time_only_liftoff",
+        "threshold_basis": "3N_contact_above_existing_1N_diagnostic; bearing_each_10percent_bodyweight; actual_pair_65percent_and_solved_80percent_weight_before_release",
+        "force_availability": "scheduled_non_swing_AND_measured_contact_Fz_gt_1N; independent_of_confirmation_debounce"
+      },
+      "friction_model": {
+        "model": "bounded_XML_frictionloss_tanh_reference_motion_direction_in_inverse_dynamics_constraints",
+        "reference_velocity_scale_rad_s": 0.05,
+        "position_direction_gain_s_inv": 10.0,
+        "actual_record": "only_mjCNSTR_FRICTION_DOF_efc_force_mapped_by_mj_mulJacTVec; no_contact_force_duplication"
+      },
+      "revision": {
+        "previous": "S5-r46",
+        "evidence_attempt": "job-20261117T045317Z-w54-f-a-r46-eval-PANN_PPO_S5-s1-E30-attempt01",
+        "evidence": [
+          "At3.3s FR sphere center moves[.03231,.01491]m/s while current contact material point moves[-.000176,.000007]m/s.",
+          "At3.7s FL sphere center moves[.01640,.00999]m/s while current contact material point moves[-.000025,.000034]m/s.",
+          "Center-anchored stance falsely penalizes native no-slip rolling and generates incompatible joint acceleration.",
+          "Reaction Jacobian at center omits actual sphere-bottom moment arms; saved-state generalized reaction difference reaches .474Nm base and .291Nm joint in checked states."
+        ],
+        "changes": [
+          "Map reaction via actual native contact point or causal material force_boundary_bottom.",
+          "Use sphere rolling Jcenter-skew(r)Jomega and matching derivative for stance tangential contact velocity; retain center PVA for swing/search.",
+          "Keep touchdown anchor immutable as event evidence; do not pull rolling sphere center back tangentially; retain normal causal material support task.",
+          "Use bottom contact locations for SRB force moments, with center references saved separately."
+        ],
+        "expected_observables": [
+          "Near-zero actual contact tangential velocity is no longer penalized as center slip.",
+          "Contact force Jacobian matches force application point.",
+          "Original WBC torque/input/joint bounds unchanged; physical success remains unproven."
+        ]
+      }
+    },
+    "legs": [
+      "FL",
+      "FR",
+      "RL",
+      "RR"
+    ],
+    "model_mass_kg": 15.206408000000001,
+    "model_body_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "command": "total feedback torque solved by WBC; u=q+(tau_total+5*v)/60; no added joint PD term",
+    "model_convention": "h=qfrc_bias-qfrc_passive+bounded_reference_direction_dry_friction; contact counted once; no qfrc_constraint copy",
+    "contact": "native current contact or causal material force bottom supplies reaction Jacobian; sphere rolling contact task; actual touchdown anchor retained; measured support and load-bearing handover separated",
+    "material": "measured force, local causal stiffness anchor and current normal velocity; no future material state propagation",
+    "prediction": "centroidal state and explicit kinematic foot references; measured current reaction independent of touchdown/load debounce; no fabricated articulated rollout",
+    "full_mpc_files": [
+      {
+        "call": 1,
+        "time_s": 0.0,
+        "path": "mpc-000001.npz",
+        "size": 12563
+      },
+      {
+        "call": 2,
+        "time_s": 0.01999999999999999,
+        "path": "mpc-000002.npz",
+        "size": 14777
+      },
+      {
+        "call": 3,
+        "time_s": 0.03999999999999987,
+        "path": "mpc-000003.npz",
+        "size": 15001
+      },
+      {
+        "call": 4,
+        "time_s": 0.05999999999999975,
+        "path": "mpc-000004.npz",
+        "size": 14978
+      },
+      {
+        "call": 5,
+        "time_s": 0.08000000000000024,
+        "path": "mpc-000005.npz",
+        "size": 14980
+      },
+      {
+        "call": 6,
+        "time_s": 0.10000000000000081,
+        "path": "mpc-000006.npz",
+        "size": 14963
+      },
+      {
+        "call": 7,
+        "time_s": 0.12000000000000138,
+        "path": "mpc-000007.npz",
+        "size": 14993
+      },
+      {
+        "call": 8,
+        "time_s": 0.14000000000000196,
+        "path": "mpc-000008.npz",
+        "size": 15015
+      },
+      {
+        "call": 9,
+        "time_s": 0.16000000000000253,
+        "path": "mpc-000009.npz",
+        "size": 14960
+      },
+      {
+        "call": 10,
+        "time_s": 0.1800000000000031,
+        "path": "mpc-000010.npz",
+        "size": 14964
+      },
+      {
+        "call": 11,
+        "time_s": 0.20000000000000367,
+        "path": "mpc-000011.npz",
+        "size": 14958
+      },
+      {
+        "call": 12,
+        "time_s": 0.22000000000000425,
+        "path": "mpc-000012.npz",
+        "size": 14956
+      },
+      {
+        "call": 13,
+        "time_s": 0.24000000000000482,
+        "path": "mpc-000013.npz",
+        "size": 14963
+      },
+      {
+        "call": 14,
+        "time_s": 0.260000000000004,
+        "path": "mpc-000014.npz",
+        "size": 14979
+      },
+      {
+        "call": 15,
+        "time_s": 0.2800000000000018,
+        "path": "mpc-000015.npz",
+        "size": 15015
+      },
+      {
+        "call": 16,
+        "time_s": 0.2999999999999996,
+        "path": "mpc-000016.npz",
+        "size": 15009
+      },
+      {
+        "call": 17,
+        "time_s": 0.3199999999999974,
+        "path": "mpc-000017.npz",
+        "size": 15021
+      },
+      {
+        "call": 18,
+        "time_s": 0.3399999999999952,
+        "path": "mpc-000018.npz",
+        "size": 14996
+      },
+      {
+        "call": 19,
+        "time_s": 0.359999999999993,
+        "path": "mpc-000019.npz",
+        "size": 15022
+      },
+      {
+        "call": 20,
+        "time_s": 0.3799999999999908,
+        "path": "mpc-000020.npz",
+        "size": 15031
+      },
+      {
+        "call": 21,
+        "time_s": 0.3999999999999886,
+        "path": "mpc-000021.npz",
+        "size": 15001
+      },
+      {
+        "call": 22,
+        "time_s": 0.4199999999999864,
+        "path": "mpc-000022.npz",
+        "size": 15028
+      },
+      {
+        "call": 23,
+        "time_s": 0.4399999999999842,
+        "path": "mpc-000023.npz",
+        "size": 14997
+      },
+      {
+        "call": 24,
+        "time_s": 0.459999999999982,
+        "path": "mpc-000024.npz",
+        "size": 15008
+      },
+      {
+        "call": 25,
+        "time_s": 0.4799999999999798,
+        "path": "mpc-000025.npz",
+        "size": 15006
+      },
+      {
+        "call": 26,
+        "time_s": 0.4999999999999776,
+        "path": "mpc-000026.npz",
+        "size": 15002
+      },
+      {
+        "call": 27,
+        "time_s": 0.5199999999999754,
+        "path": "mpc-000027.npz",
+        "size": 14972
+      },
+      {
+        "call": 28,
+        "time_s": 0.5399999999999732,
+        "path": "mpc-000028.npz",
+        "size": 14988
+      },
+      {
+        "call": 29,
+        "time_s": 0.559999999999971,
+        "path": "mpc-000029.npz",
+        "size": 14973
+      },
+      {
+        "call": 30,
+        "time_s": 0.5799999999999688,
+        "path": "mpc-000030.npz",
+        "size": 14962
+      },
+      {
+        "call": 31,
+        "time_s": 0.5999999999999666,
+        "path": "mpc-000031.npz",
+        "size": 14969
+      },
+      {
+        "call": 32,
+        "time_s": 0.6199999999999644,
+        "path": "mpc-000032.npz",
+        "size": 14963
+      },
+      {
+        "call": 33,
+        "time_s": 0.6399999999999622,
+        "path": "mpc-000033.npz",
+        "size": 14987
+      },
+      {
+        "call": 34,
+        "time_s": 0.65999999999996,
+        "path": "mpc-000034.npz",
+        "size": 14987
+      },
+      {
+        "call": 35,
+        "time_s": 0.6799999999999577,
+        "path": "mpc-000035.npz",
+        "size": 14997
+      },
+      {
+        "call": 36,
+        "time_s": 0.6999999999999555,
+        "path": "mpc-000036.npz",
+        "size": 14990
+      },
+      {
+        "call": 37,
+        "time_s": 0.7199999999999533,
+        "path": "mpc-000037.npz",
+        "size": 15008
+      },
+      {
+        "call": 38,
+        "time_s": 0.7399999999999511,
+        "path": "mpc-000038.npz",
+        "size": 15028
+      },
+      {
+        "call": 39,
+        "time_s": 0.7599999999999489,
+        "path": "mpc-000039.npz",
+        "size": 15015
+      },
+      {
+        "call": 40,
+        "time_s": 0.7799999999999467,
+        "path": "mpc-000040.npz",
+        "size": 15027
+      },
+      {
+        "call": 41,
+        "time_s": 0.7999999999999445,
+        "path": "mpc-000041.npz",
+        "size": 15002
+      },
+      {
+        "call": 42,
+        "time_s": 0.8199999999999423,
+        "path": "mpc-000042.npz",
+        "size": 15022
+      },
+      {
+        "call": 43,
+        "time_s": 0.8399999999999401,
+        "path": "mpc-000043.npz",
+        "size": 15036
+      },
+      {
+        "call": 44,
+        "time_s": 0.8599999999999379,
+        "path": "mpc-000044.npz",
+        "size": 15022
+      },
+      {
+        "call": 45,
+        "time_s": 0.8799999999999357,
+        "path": "mpc-000045.npz",
+        "size": 15030
+      },
+      {
+        "call": 46,
+        "time_s": 0.8999999999999335,
+        "path": "mpc-000046.npz",
+        "size": 15040
+      },
+      {
+        "call": 47,
+        "time_s": 0.9199999999999313,
+        "path": "mpc-000047.npz",
+        "size": 15025
+      },
+      {
+        "call": 48,
+        "time_s": 0.9399999999999291,
+        "path": "mpc-000048.npz",
+        "size": 15012
+      },
+      {
+        "call": 49,
+        "time_s": 0.9599999999999269,
+        "path": "mpc-000049.npz",
+        "size": 15048
+      },
+      {
+        "call": 50,
+        "time_s": 0.9799999999999247,
+        "path": "mpc-000050.npz",
+        "size": 15033
+      },
+      {
+        "call": 51,
+        "time_s": 0.9999999999999225,
+        "path": "mpc-000051.npz",
+        "size": 15042
+      },
+      {
+        "call": 52,
+        "time_s": 1.0199999999999203,
+        "path": "mpc-000052.npz",
+        "size": 15019
+      },
+      {
+        "call": 53,
+        "time_s": 1.039999999999918,
+        "path": "mpc-000053.npz",
+        "size": 15019
+      },
+      {
+        "call": 54,
+        "time_s": 1.059999999999916,
+        "path": "mpc-000054.npz",
+        "size": 15012
+      },
+      {
+        "call": 55,
+        "time_s": 1.0799999999999137,
+        "path": "mpc-000055.npz",
+        "size": 15024
+      },
+      {
+        "call": 56,
+        "time_s": 1.0999999999999115,
+        "path": "mpc-000056.npz",
+        "size": 15018
+      },
+      {
+        "call": 57,
+        "time_s": 1.1199999999999093,
+        "path": "mpc-000057.npz",
+        "size": 15013
+      },
+      {
+        "call": 58,
+        "time_s": 1.139999999999907,
+        "path": "mpc-000058.npz",
+        "size": 15030
+      },
+      {
+        "call": 59,
+        "time_s": 1.1599999999999049,
+        "path": "mpc-000059.npz",
+        "size": 15040
+      },
+      {
+        "call": 60,
+        "time_s": 1.1799999999999027,
+        "path": "mpc-000060.npz",
+        "size": 15047
+      },
+      {
+        "call": 61,
+        "time_s": 1.1999999999999005,
+        "path": "mpc-000061.npz",
+        "size": 15034
+      },
+      {
+        "call": 62,
+        "time_s": 1.2199999999998983,
+        "path": "mpc-000062.npz",
+        "size": 15027
+      },
+      {
+        "call": 63,
+        "time_s": 1.239999999999896,
+        "path": "mpc-000063.npz",
+        "size": 15033
+      },
+      {
+        "call": 64,
+        "time_s": 1.2599999999998939,
+        "path": "mpc-000064.npz",
+        "size": 15046
+      },
+      {
+        "call": 65,
+        "time_s": 1.2799999999998917,
+        "path": "mpc-000065.npz",
+        "size": 15045
+      },
+      {
+        "call": 66,
+        "time_s": 1.2999999999998895,
+        "path": "mpc-000066.npz",
+        "size": 15039
+      },
+      {
+        "call": 67,
+        "time_s": 1.3199999999998873,
+        "path": "mpc-000067.npz",
+        "size": 15046
+      },
+      {
+        "call": 68,
+        "time_s": 1.339999999999885,
+        "path": "mpc-000068.npz",
+        "size": 15044
+      },
+      {
+        "call": 69,
+        "time_s": 1.3599999999998829,
+        "path": "mpc-000069.npz",
+        "size": 15053
+      },
+      {
+        "call": 70,
+        "time_s": 1.3799999999998807,
+        "path": "mpc-000070.npz",
+        "size": 15034
+      },
+      {
+        "call": 71,
+        "time_s": 1.3999999999998785,
+        "path": "mpc-000071.npz",
+        "size": 15035
+      },
+      {
+        "call": 72,
+        "time_s": 1.4199999999998763,
+        "path": "mpc-000072.npz",
+        "size": 15027
+      },
+      {
+        "call": 73,
+        "time_s": 1.439999999999874,
+        "path": "mpc-000073.npz",
+        "size": 15030
+      },
+      {
+        "call": 74,
+        "time_s": 1.4599999999998718,
+        "path": "mpc-000074.npz",
+        "size": 15036
+      },
+      {
+        "call": 75,
+        "time_s": 1.4799999999998696,
+        "path": "mpc-000075.npz",
+        "size": 15043
+      },
+      {
+        "call": 76,
+        "time_s": 1.4999999999998674,
+        "path": "mpc-000076.npz",
+        "size": 15028
+      },
+      {
+        "call": 77,
+        "time_s": 1.5199999999998652,
+        "path": "mpc-000077.npz",
+        "size": 15041
+      },
+      {
+        "call": 78,
+        "time_s": 1.539999999999863,
+        "path": "mpc-000078.npz",
+        "size": 15033
+      },
+      {
+        "call": 79,
+        "time_s": 1.5599999999998608,
+        "path": "mpc-000079.npz",
+        "size": 15041
+      },
+      {
+        "call": 80,
+        "time_s": 1.5799999999998586,
+        "path": "mpc-000080.npz",
+        "size": 15032
+      },
+      {
+        "call": 81,
+        "time_s": 1.5999999999998564,
+        "path": "mpc-000081.npz",
+        "size": 15024
+      },
+      {
+        "call": 82,
+        "time_s": 1.6199999999998542,
+        "path": "mpc-000082.npz",
+        "size": 15030
+      },
+      {
+        "call": 83,
+        "time_s": 1.639999999999852,
+        "path": "mpc-000083.npz",
+        "size": 15050
+      },
+      {
+        "call": 84,
+        "time_s": 1.6599999999998498,
+        "path": "mpc-000084.npz",
+        "size": 15052
+      },
+      {
+        "call": 85,
+        "time_s": 1.6799999999998476,
+        "path": "mpc-000085.npz",
+        "size": 15043
+      },
+      {
+        "call": 86,
+        "time_s": 1.6999999999998454,
+        "path": "mpc-000086.npz",
+        "size": 15051
+      },
+      {
+        "call": 87,
+        "time_s": 1.7199999999998432,
+        "path": "mpc-000087.npz",
+        "size": 15056
+      },
+      {
+        "call": 88,
+        "time_s": 1.739999999999841,
+        "path": "mpc-000088.npz",
+        "size": 15063
+      },
+      {
+        "call": 89,
+        "time_s": 1.7599999999998388,
+        "path": "mpc-000089.npz",
+        "size": 15080
+      },
+      {
+        "call": 90,
+        "time_s": 1.7799999999998366,
+        "path": "mpc-000090.npz",
+        "size": 15058
+      },
+      {
+        "call": 91,
+        "time_s": 1.7999999999998344,
+        "path": "mpc-000091.npz",
+        "size": 15037
+      },
+      {
+        "call": 92,
+        "time_s": 1.8199999999998322,
+        "path": "mpc-000092.npz",
+        "size": 15053
+      },
+      {
+        "call": 93,
+        "time_s": 1.83999999999983,
+        "path": "mpc-000093.npz",
+        "size": 15066
+      },
+      {
+        "call": 94,
+        "time_s": 1.8599999999998278,
+        "path": "mpc-000094.npz",
+        "size": 15044
+      },
+      {
+        "call": 95,
+        "time_s": 1.8799999999998256,
+        "path": "mpc-000095.npz",
+        "size": 15076
+      },
+      {
+        "call": 96,
+        "time_s": 1.8999999999998234,
+        "path": "mpc-000096.npz",
+        "size": 15052
+      },
+      {
+        "call": 97,
+        "time_s": 1.9199999999998212,
+        "path": "mpc-000097.npz",
+        "size": 15056
+      },
+      {
+        "call": 98,
+        "time_s": 1.939999999999819,
+        "path": "mpc-000098.npz",
+        "size": 15064
+      },
+      {
+        "call": 99,
+        "time_s": 1.9599999999998168,
+        "path": "mpc-000099.npz",
+        "size": 15061
+      },
+      {
+        "call": 100,
+        "time_s": 1.9799999999998146,
+        "path": "mpc-000100.npz",
+        "size": 15044
+      },
+      {
+        "call": 101,
+        "time_s": 1.9999999999998124,
+        "path": "mpc-000101.npz",
+        "size": 15052
+      },
+      {
+        "call": 102,
+        "time_s": 2.0019999999998124,
+        "path": "mpc-000102.npz",
+        "size": 22674
+      },
+      {
+        "call": 103,
+        "time_s": 2.0199999999998104,
+        "path": "mpc-000103.npz",
+        "size": 23077
+      },
+      {
+        "call": 104,
+        "time_s": 2.039999999999808,
+        "path": "mpc-000104.npz",
+        "size": 23261
+      },
+      {
+        "call": 105,
+        "time_s": 2.059999999999806,
+        "path": "mpc-000105.npz",
+        "size": 23304
+      },
+      {
+        "call": 106,
+        "time_s": 2.079999999999804,
+        "path": "mpc-000106.npz",
+        "size": 23259
+      },
+      {
+        "call": 107,
+        "time_s": 2.0999999999998016,
+        "path": "mpc-000107.npz",
+        "size": 23373
+      },
+      {
+        "call": 108,
+        "time_s": 2.1199999999997994,
+        "path": "mpc-000108.npz",
+        "size": 23391
+      },
+      {
+        "call": 109,
+        "time_s": 2.139999999999797,
+        "path": "mpc-000109.npz",
+        "size": 23435
+      },
+      {
+        "call": 110,
+        "time_s": 2.159999999999795,
+        "path": "mpc-000110.npz",
+        "size": 23393
+      },
+      {
+        "call": 111,
+        "time_s": 2.1799999999997928,
+        "path": "mpc-000111.npz",
+        "size": 23339
+      },
+      {
+        "call": 112,
+        "time_s": 2.1999999999997906,
+        "path": "mpc-000112.npz",
+        "size": 23372
+      },
+      {
+        "call": 113,
+        "time_s": 2.2199999999997884,
+        "path": "mpc-000113.npz",
+        "size": 23449
+      },
+      {
+        "call": 114,
+        "time_s": 2.239999999999786,
+        "path": "mpc-000114.npz",
+        "size": 23491
+      },
+      {
+        "call": 115,
+        "time_s": 2.259999999999784,
+        "path": "mpc-000115.npz",
+        "size": 23470
+      },
+      {
+        "call": 116,
+        "time_s": 2.2799999999997818,
+        "path": "mpc-000116.npz",
+        "size": 23536
+      },
+      {
+        "call": 117,
+        "time_s": 2.2999999999997796,
+        "path": "mpc-000117.npz",
+        "size": 23537
+      },
+      {
+        "call": 118,
+        "time_s": 2.3199999999997774,
+        "path": "mpc-000118.npz",
+        "size": 23580
+      },
+      {
+        "call": 119,
+        "time_s": 2.339999999999775,
+        "path": "mpc-000119.npz",
+        "size": 23619
+      },
+      {
+        "call": 120,
+        "time_s": 2.359999999999773,
+        "path": "mpc-000120.npz",
+        "size": 23648
+      },
+      {
+        "call": 121,
+        "time_s": 2.3799999999997707,
+        "path": "mpc-000121.npz",
+        "size": 23629
+      },
+      {
+        "call": 122,
+        "time_s": 2.3999999999997685,
+        "path": "mpc-000122.npz",
+        "size": 23519
+      },
+      {
+        "call": 123,
+        "time_s": 2.4199999999997663,
+        "path": "mpc-000123.npz",
+        "size": 23553
+      },
+      {
+        "call": 124,
+        "time_s": 2.439999999999764,
+        "path": "mpc-000124.npz",
+        "size": 23642
+      },
+      {
+        "call": 125,
+        "time_s": 2.459999999999762,
+        "path": "mpc-000125.npz",
+        "size": 23606
+      },
+      {
+        "call": 126,
+        "time_s": 2.4799999999997597,
+        "path": "mpc-000126.npz",
+        "size": 23546
+      },
+      {
+        "call": 127,
+        "time_s": 2.4999999999997575,
+        "path": "mpc-000127.npz",
+        "size": 23320
+      },
+      {
+        "call": 128,
+        "time_s": 2.5199999999997553,
+        "path": "mpc-000128.npz",
+        "size": 23275
+      },
+      {
+        "call": 129,
+        "time_s": 2.539999999999753,
+        "path": "mpc-000129.npz",
+        "size": 23395
+      },
+      {
+        "call": 130,
+        "time_s": 2.559999999999751,
+        "path": "mpc-000130.npz",
+        "size": 23377
+      },
+      {
+        "call": 131,
+        "time_s": 2.5799999999997487,
+        "path": "mpc-000131.npz",
+        "size": 23400
+      },
+      {
+        "call": 132,
+        "time_s": 2.5999999999997465,
+        "path": "mpc-000132.npz",
+        "size": 23203
+      },
+      {
+        "call": 133,
+        "time_s": 2.6199999999997443,
+        "path": "mpc-000133.npz",
+        "size": 23364
+      },
+      {
+        "call": 134,
+        "time_s": 2.639999999999742,
+        "path": "mpc-000134.npz",
+        "size": 23476
+      },
+      {
+        "call": 135,
+        "time_s": 2.65999999999974,
+        "path": "mpc-000135.npz",
+        "size": 23524
+      },
+      {
+        "call": 136,
+        "time_s": 2.6799999999997377,
+        "path": "mpc-000136.npz",
+        "size": 23492
+      },
+      {
+        "call": 137,
+        "time_s": 2.6999999999997355,
+        "path": "mpc-000137.npz",
+        "size": 23545
+      },
+      {
+        "call": 138,
+        "time_s": 2.7199999999997333,
+        "path": "mpc-000138.npz",
+        "size": 23595
+      },
+      {
+        "call": 139,
+        "time_s": 2.739999999999731,
+        "path": "mpc-000139.npz",
+        "size": 23615
+      },
+      {
+        "call": 140,
+        "time_s": 2.759999999999729,
+        "path": "mpc-000140.npz",
+        "size": 23622
+      },
+      {
+        "call": 141,
+        "time_s": 2.7799999999997267,
+        "path": "mpc-000141.npz",
+        "size": 23543
+      },
+      {
+        "call": 142,
+        "time_s": 2.7999999999997245,
+        "path": "mpc-000142.npz",
+        "size": 23493
+      },
+      {
+        "call": 143,
+        "time_s": 2.8199999999997223,
+        "path": "mpc-000143.npz",
+        "size": 23493
+      },
+      {
+        "call": 144,
+        "time_s": 2.83999999999972,
+        "path": "mpc-000144.npz",
+        "size": 23495
+      },
+      {
+        "call": 145,
+        "time_s": 2.859999999999718,
+        "path": "mpc-000145.npz",
+        "size": 23362
+      },
+      {
+        "call": 146,
+        "time_s": 2.8799999999997157,
+        "path": "mpc-000146.npz",
+        "size": 23361
+      },
+      {
+        "call": 147,
+        "time_s": 2.8999999999997135,
+        "path": "mpc-000147.npz",
+        "size": 23307
+      },
+      {
+        "call": 148,
+        "time_s": 2.9199999999997113,
+        "path": "mpc-000148.npz",
+        "size": 23336
+      },
+      {
+        "call": 149,
+        "time_s": 2.939999999999709,
+        "path": "mpc-000149.npz",
+        "size": 23464
+      },
+      {
+        "call": 150,
+        "time_s": 2.959999999999707,
+        "path": "mpc-000150.npz",
+        "size": 23431
+      },
+      {
+        "call": 151,
+        "time_s": 2.9799999999997047,
+        "path": "mpc-000151.npz",
+        "size": 23447
+      },
+      {
+        "call": 152,
+        "time_s": 2.9999999999997025,
+        "path": "mpc-000152.npz",
+        "size": 23502
+      },
+      {
+        "call": 153,
+        "time_s": 3.0199999999997003,
+        "path": "mpc-000153.npz",
+        "size": 23543
+      },
+      {
+        "call": 154,
+        "time_s": 3.039999999999698,
+        "path": "mpc-000154.npz",
+        "size": 23538
+      },
+      {
+        "call": 155,
+        "time_s": 3.059999999999696,
+        "path": "mpc-000155.npz",
+        "size": 23531
+      },
+      {
+        "call": 156,
+        "time_s": 3.0799999999996936,
+        "path": "mpc-000156.npz",
+        "size": 23458
+      },
+      {
+        "call": 157,
+        "time_s": 3.0999999999996914,
+        "path": "mpc-000157.npz",
+        "size": 23502
+      },
+      {
+        "call": 158,
+        "time_s": 3.1199999999996892,
+        "path": "mpc-000158.npz",
+        "size": 23583
+      },
+      {
+        "call": 159,
+        "time_s": 3.139999999999687,
+        "path": "mpc-000159.npz",
+        "size": 23620
+      },
+      {
+        "call": 160,
+        "time_s": 3.159999999999685,
+        "path": "mpc-000160.npz",
+        "size": 23599
+      },
+      {
+        "call": 161,
+        "time_s": 3.1799999999996826,
+        "path": "mpc-000161.npz",
+        "size": 23430
+      },
+      {
+        "call": 162,
+        "time_s": 3.1999999999996804,
+        "path": "mpc-000162.npz",
+        "size": 23558
+      },
+      {
+        "call": 163,
+        "time_s": 3.2199999999996782,
+        "path": "mpc-000163.npz",
+        "size": 23759
+      },
+      {
+        "call": 164,
+        "time_s": 3.239999999999676,
+        "path": "mpc-000164.npz",
+        "size": 23646
+      },
+      {
+        "call": 165,
+        "time_s": 3.259999999999674,
+        "path": "mpc-000165.npz",
+        "size": 23753
+      },
+      {
+        "call": 166,
+        "time_s": 3.2799999999996716,
+        "path": "mpc-000166.npz",
+        "size": 23891
+      },
+      {
+        "call": 167,
+        "time_s": 3.2999999999996694,
+        "path": "mpc-000167.npz",
+        "size": 23967
+      },
+      {
+        "call": 168,
+        "time_s": 3.319999999999667,
+        "path": "mpc-000168.npz",
+        "size": 23931
+      },
+      {
+        "call": 169,
+        "time_s": 3.339999999999665,
+        "path": "mpc-000169.npz",
+        "size": 23955
+      },
+      {
+        "call": 170,
+        "time_s": 3.359999999999663,
+        "path": "mpc-000170.npz",
+        "size": 23937
+      },
+      {
+        "call": 171,
+        "time_s": 3.3799999999996606,
+        "path": "mpc-000171.npz",
+        "size": 23970
+      },
+      {
+        "call": 172,
+        "time_s": 3.3999999999996584,
+        "path": "mpc-000172.npz",
+        "size": 24013
+      },
+      {
+        "call": 173,
+        "time_s": 3.419999999999656,
+        "path": "mpc-000173.npz",
+        "size": 24051
+      },
+      {
+        "call": 174,
+        "time_s": 3.439999999999654,
+        "path": "mpc-000174.npz",
+        "size": 23876
+      },
+      {
+        "call": 175,
+        "time_s": 3.459999999999652,
+        "path": "mpc-000175.npz",
+        "size": 24033
+      },
+      {
+        "call": 176,
+        "time_s": 3.4799999999996496,
+        "path": "mpc-000176.npz",
+        "size": 24110
+      },
+      {
+        "call": 177,
+        "time_s": 3.4999999999996474,
+        "path": "mpc-000177.npz",
+        "size": 24141
+      },
+      {
+        "call": 178,
+        "time_s": 3.519999999999645,
+        "path": "mpc-000178.npz",
+        "size": 24017
+      },
+      {
+        "call": 179,
+        "time_s": 3.539999999999643,
+        "path": "mpc-000179.npz",
+        "size": 24061
+      },
+      {
+        "call": 180,
+        "time_s": 3.559999999999641,
+        "path": "mpc-000180.npz",
+        "size": 24073
+      },
+      {
+        "call": 181,
+        "time_s": 3.5799999999996386,
+        "path": "mpc-000181.npz",
+        "size": 24058
+      },
+      {
+        "call": 182,
+        "time_s": 3.5999999999996364,
+        "path": "mpc-000182.npz",
+        "size": 23970
+      },
+      {
+        "call": 183,
+        "time_s": 3.619999999999634,
+        "path": "mpc-000183.npz",
+        "size": 23763
+      },
+      {
+        "call": 184,
+        "time_s": 3.639999999999632,
+        "path": "mpc-000184.npz",
+        "size": 23849
+      },
+      {
+        "call": 185,
+        "time_s": 3.6599999999996298,
+        "path": "mpc-000185.npz",
+        "size": 23265
+      },
+      {
+        "call": 186,
+        "time_s": 3.6799999999996276,
+        "path": "mpc-000186.npz",
+        "size": 23261
+      },
+      {
+        "call": 187,
+        "time_s": 3.6999999999996254,
+        "path": "mpc-000187.npz",
+        "size": 23231
+      },
+      {
+        "call": 188,
+        "time_s": 3.719999999999623,
+        "path": "mpc-000188.npz",
+        "size": 23311
+      },
+      {
+        "call": 189,
+        "time_s": 3.739999999999621,
+        "path": "mpc-000189.npz",
+        "size": 23382
+      },
+      {
+        "call": 190,
+        "time_s": 3.7599999999996188,
+        "path": "mpc-000190.npz",
+        "size": 23463
+      },
+      {
+        "call": 191,
+        "time_s": 3.7799999999996166,
+        "path": "mpc-000191.npz",
+        "size": 23538
+      },
+      {
+        "call": 192,
+        "time_s": 3.7999999999996144,
+        "path": "mpc-000192.npz",
+        "size": 23593
+      },
+      {
+        "call": 193,
+        "time_s": 3.819999999999612,
+        "path": "mpc-000193.npz",
+        "size": 23634
+      },
+      {
+        "call": 194,
+        "time_s": 3.83999999999961,
+        "path": "mpc-000194.npz",
+        "size": 23638
+      },
+      {
+        "call": 195,
+        "time_s": 3.8599999999996077,
+        "path": "mpc-000195.npz",
+        "size": 23723
+      },
+      {
+        "call": 196,
+        "time_s": 3.8799999999996055,
+        "path": "mpc-000196.npz",
+        "size": 23785
+      },
+      {
+        "call": 197,
+        "time_s": 3.8999999999996033,
+        "path": "mpc-000197.npz",
+        "size": 23767
+      },
+      {
+        "call": 198,
+        "time_s": 3.919999999999601,
+        "path": "mpc-000198.npz",
+        "size": 23812
+      },
+      {
+        "call": 199,
+        "time_s": 3.939999999999599,
+        "path": "mpc-000199.npz",
+        "size": 23779
+      },
+      {
+        "call": 200,
+        "time_s": 3.9599999999995967,
+        "path": "mpc-000200.npz",
+        "size": 23835
+      },
+      {
+        "call": 201,
+        "time_s": 3.9799999999995945,
+        "path": "mpc-000201.npz",
+        "size": 23813
+      },
+      {
+        "call": 202,
+        "time_s": 3.9999999999995923,
+        "path": "mpc-000202.npz",
+        "size": 23841
+      },
+      {
+        "call": 203,
+        "time_s": 4.0199999999996345,
+        "path": "mpc-000203.npz",
+        "size": 23784
+      },
+      {
+        "call": 204,
+        "time_s": 4.039999999999677,
+        "path": "mpc-000204.npz",
+        "size": 23759
+      },
+      {
+        "call": 205,
+        "time_s": 4.059999999999719,
+        "path": "mpc-000205.npz",
+        "size": 23739
+      },
+      {
+        "call": 206,
+        "time_s": 4.079999999999761,
+        "path": "mpc-000206.npz",
+        "size": 23722
+      },
+      {
+        "call": 207,
+        "time_s": 4.099999999999803,
+        "path": "mpc-000207.npz",
+        "size": 23668
+      },
+      {
+        "call": 208,
+        "time_s": 4.119999999999846,
+        "path": "mpc-000208.npz",
+        "size": 23640
+      },
+      {
+        "call": 209,
+        "time_s": 4.139999999999888,
+        "path": "mpc-000209.npz",
+        "size": 23574
+      },
+      {
+        "call": 210,
+        "time_s": 4.15999999999993,
+        "path": "mpc-000210.npz",
+        "size": 23597
+      },
+      {
+        "call": 211,
+        "time_s": 4.179999999999972,
+        "path": "mpc-000211.npz",
+        "size": 23587
+      },
+      {
+        "call": 212,
+        "time_s": 4.200000000000014,
+        "path": "mpc-000212.npz",
+        "size": 23597
+      },
+      {
+        "call": 213,
+        "time_s": 4.220000000000057,
+        "path": "mpc-000213.npz",
+        "size": 23588
+      },
+      {
+        "call": 214,
+        "time_s": 4.240000000000099,
+        "path": "mpc-000214.npz",
+        "size": 23588
+      },
+      {
+        "call": 215,
+        "time_s": 4.260000000000141,
+        "path": "mpc-000215.npz",
+        "size": 23600
+      },
+      {
+        "call": 216,
+        "time_s": 4.280000000000183,
+        "path": "mpc-000216.npz",
+        "size": 23608
+      },
+      {
+        "call": 217,
+        "time_s": 4.300000000000225,
+        "path": "mpc-000217.npz",
+        "size": 23608
+      },
+      {
+        "call": 218,
+        "time_s": 4.320000000000268,
+        "path": "mpc-000218.npz",
+        "size": 23601
+      },
+      {
+        "call": 219,
+        "time_s": 4.34000000000031,
+        "path": "mpc-000219.npz",
+        "size": 23659
+      },
+      {
+        "call": 220,
+        "time_s": 4.360000000000352,
+        "path": "mpc-000220.npz",
+        "size": 23631
+      },
+      {
+        "call": 221,
+        "time_s": 4.380000000000394,
+        "path": "mpc-000221.npz",
+        "size": 23607
+      },
+      {
+        "call": 222,
+        "time_s": 4.4000000000004365,
+        "path": "mpc-000222.npz",
+        "size": 23588
+      },
+      {
+        "call": 223,
+        "time_s": 4.420000000000479,
+        "path": "mpc-000223.npz",
+        "size": 23636
+      },
+      {
+        "call": 224,
+        "time_s": 4.440000000000521,
+        "path": "mpc-000224.npz",
+        "size": 23685
+      },
+      {
+        "call": 225,
+        "time_s": 4.460000000000563,
+        "path": "mpc-000225.npz",
+        "size": 23725
+      },
+      {
+        "call": 226,
+        "time_s": 4.480000000000605,
+        "path": "mpc-000226.npz",
+        "size": 23701
+      },
+      {
+        "call": 227,
+        "time_s": 4.5000000000006475,
+        "path": "mpc-000227.npz",
+        "size": 23665
+      },
+      {
+        "call": 228,
+        "time_s": 4.52000000000069,
+        "path": "mpc-000228.npz",
+        "size": 23678
+      },
+      {
+        "call": 229,
+        "time_s": 4.540000000000732,
+        "path": "mpc-000229.npz",
+        "size": 23786
+      },
+      {
+        "call": 230,
+        "time_s": 4.560000000000774,
+        "path": "mpc-000230.npz",
+        "size": 23900
+      },
+      {
+        "call": 231,
+        "time_s": 4.580000000000816,
+        "path": "mpc-000231.npz",
+        "size": 24012
+      },
+      {
+        "call": 232,
+        "time_s": 4.6000000000008585,
+        "path": "mpc-000232.npz",
+        "size": 24078
+      },
+      {
+        "call": 233,
+        "time_s": 4.620000000000901,
+        "path": "mpc-000233.npz",
+        "size": 24198
+      },
+      {
+        "call": 234,
+        "time_s": 4.640000000000943,
+        "path": "mpc-000234.npz",
+        "size": 24217
+      },
+      {
+        "call": 235,
+        "time_s": 4.660000000000985,
+        "path": "mpc-000235.npz",
+        "size": 24198
+      },
+      {
+        "call": 236,
+        "time_s": 4.680000000001027,
+        "path": "mpc-000236.npz",
+        "size": 24192
+      },
+      {
+        "call": 237,
+        "time_s": 4.7000000000010695,
+        "path": "mpc-000237.npz",
+        "size": 24205
+      },
+      {
+        "call": 238,
+        "time_s": 4.720000000001112,
+        "path": "mpc-000238.npz",
+        "size": 24228
+      },
+      {
+        "call": 239,
+        "time_s": 4.740000000001154,
+        "path": "mpc-000239.npz",
+        "size": 24228
+      },
+      {
+        "call": 240,
+        "time_s": 4.760000000001196,
+        "path": "mpc-000240.npz",
+        "size": 24240
+      },
+      {
+        "call": 241,
+        "time_s": 4.780000000001238,
+        "path": "mpc-000241.npz",
+        "size": 24294
+      }
+    ],
+    "control_chunks": [
+      {
+        "path": "control-00001.npz",
+        "samples": 500,
+        "start_s": 0.0,
+        "end_s": 0.9979999999999227,
+        "size": 1841009
+      },
+      {
+        "path": "control-00002.npz",
+        "samples": 500,
+        "start_s": 0.9999999999999225,
+        "end_s": 1.9979999999998126,
+        "size": 1833850
+      },
+      {
+        "path": "control-00003.npz",
+        "samples": 500,
+        "start_s": 1.9999999999998124,
+        "end_s": 2.9979999999997027,
+        "size": 1869714
+      },
+      {
+        "path": "control-00004.npz",
+        "samples": 500,
+        "start_s": 2.9999999999997025,
+        "end_s": 3.9979999999995925,
+        "size": 1833177
+      },
+      {
+        "path": "control-00005.npz",
+        "samples": 392,
+        "start_s": 3.9999999999995923,
+        "end_s": 4.782000000001243,
+        "size": 1445475
+      }
+    ],
+    "timing": {
+      "model": {
+        "wall_s": 1.6286038532853127,
+        "cpu_s": 1.6272937790000803,
+        "calls": 2392
+      },
+      "matrix_assembly": {
+        "wall_s": 7.891336051747203,
+        "cpu_s": 7.892718862000035,
+        "calls": 241
+      },
+      "mpc_solve": {
+        "wall_s": 2.4428520891815424,
+        "cpu_s": 2.443465885000008,
+        "calls": 241
+      },
+      "wbc_assembly": {
+        "wall_s": 1.4737384300678968,
+        "cpu_s": 1.4756030309999701,
+        "calls": 2392
+      },
+      "wbc_solve": {
+        "wall_s": 2.7860549427568913,
+        "cpu_s": 2.7880576030001203,
+        "calls": 2392
+      },
+      "record_serialization_io": {
+        "wall_s": 1.0231973994523287,
+        "cpu_s": 1.0234952489999785,
+        "calls": 246
+      }
+    },
+    "mpc_calls": 241,
+    "control_calls": 2392,
+    "final_physical_time_s": 4.784000000001247,
+    "final_reason": "body_fall"
+  }
+}
