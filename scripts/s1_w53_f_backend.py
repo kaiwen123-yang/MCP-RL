@@ -321,7 +321,7 @@ class FController:
             self.model.actuator_forcerange,self.model.actuator_ctrlrange,mq['rpy'],mq['omega'],
             dt,self.cfg['friction_coefficient'])
         nx=(n+1)*12;nu=n*12;nz=nx+nu
-        weights=np.asarray(self.cfg['mpc']['state_weights'])
+        weights=np.asarray(self.cfg['mpc']['state_weights'],dtype=np.float64)
         qdiag=np.tile(weights,n+1);qdiag[-12:]*=2.
         R=self.cfg['mpc']['force_regularization'];D=self.cfg['mpc']['force_difference_weight']
         P=sparse.diags(np.r_[2*qdiag,np.full(nu,2*R)],format='lil')

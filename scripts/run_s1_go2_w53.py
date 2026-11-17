@@ -131,9 +131,11 @@ def run_job(jobdir,levels):
     for level in levels:
         if failed:
             state['stages'].append(dict(level=level,status='blocked_by_predecessor',blocked_by=failed));continue
-        if any(x.get('level')==level for x in state['stages']):
-            raise ValueError('This identity already has an attempt at '+level+'; no repeated stage')
-        attempt=job['job_id']+f'-eval-PANN_PPO_S5-s{job["seed"]}-{level}-attempt01'
+        prior=[x for x in state['stages'] if x.get('level')==level]
+        if prior and not state.pop('authorized_unstarted_technical_resume',False):
+            raise ValueError('This identity already has an attempt at '+level+'; inspect exact technical record')
+        number=len(prior)+1
+        attempt=job['job_id']+f'-eval-PANN_PPO_S5-s{job["seed"]}-{level}-attempt{number:02d}'
         command=[sys.executable,'-u','scripts/run_s1_go2_r12.py','--contract',str(jobdir/'execution-contract.json'),
             '--attempt',attempt,'--evaluation-start-unix',str(job['started_unix_s']),
             '--checkpoint',str(ROOT/job['checkpoint']),'--level',level,'--seed',str(job['seed']),
@@ -141,7 +143,7 @@ def run_job(jobdir,levels):
         row=dict(attempt=attempt,level=level,status='running',command=command,started_unix_s=time.time())
         state['stages'].append(row);write(status,state)
         usage0=resource.getrusage(resource.RUSAGE_CHILDREN)
-        with (jobdir/(level+'.log')).open('w') as log:
+        with (jobdir/(attempt+'.log')).open('w') as log:
             child=subprocess.Popen(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
             row['pid']=child.pid;write(status,state)
             while True:
@@ -157,7 +159,7 @@ def run_job(jobdir,levels):
             row.update(status=result['stage_status'],reason=result['reason'],success=result['success'],
                 simulation_s=result['simulation_s'],wall_s=result['wall_s'],result=str(rp.relative_to(ROOT)))
             paths += [rp,SMALL/(attempt+'-resolved.json'),summarize(attempt)]
-            with (jobdir/(level+'-render.log')).open('w') as log:
+            with (jobdir/(attempt+'-render.log')).open('w') as log:
                 row['render_exit_code']=subprocess.run([sys.executable,'scripts/render_s1_go2_r12.py','--attempt',attempt],
                     cwd=ROOT,stdout=log,stderr=subprocess.STDOUT).returncode
         else:
@@ -184,12 +186,33 @@ def select(route,review):
     write(W/(route+'-A.json'),chosen)
     launch(chosen,['E60','E300','E600'])
     launch(declare(route,'B'),['E30','E60','E300','E600'])
+def resume_unstarted(route):
+    status=W/(route+'-A.json');state=json.loads(status.read_text());jobdir=ROOT/state['directory']
+    previous=state['stages'][-1]
+    idx=json.loads((SMALL/'index.json').read_text())
+    record=next(x for x in idx['attempts'] if x['attempt']==previous['attempt'])
+    if previous['status']!='technical_interruption' or record['physical_started']:
+        raise ValueError('This command is only for the inspected zero-plant technical startup correction')
+    for original in ('job.json','execution-contract.json'):
+        saved=jobdir/(previous['attempt']+'-'+original)
+        if not saved.exists():saved.write_bytes((jobdir/original).read_bytes())
+    job=state['job'];artifact=json.loads((ROOT/'work/r11-frozen'/job['controller_build']/'identity.json').read_text())
+    job['controller_artifact_identity']=artifact
+    job['controller_binary_sha256']=artifact.get('binary_sha256');job['backend_sha256']=artifact.get('backend_sha256')
+    job['source_commit']=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    c=json.loads((jobdir/'execution-contract.json').read_text());c['w53_fixed_policy']=job
+    for dest in (jobdir,W/'jobs'/job['job_id']):
+        write(dest/'job.json',job);write(dest/'execution-contract.json',c)
+    state.update(authorized_unstarted_technical_resume=True,status='technical_correction_ready',
+        tmux='s1-w53-'+route.lower()+'-a-technical-correction')
+    write(status,state);launch(state,['E30'])
 def main():
     p=argparse.ArgumentParser();p.add_argument('--launch',choices=['N','F']);p.add_argument('--prepare-f',action='store_true')
     p.add_argument('--job-dir',type=Path);p.add_argument('--levels',nargs='+',choices=['E30','E60','E300','E600'])
-    p.add_argument('--select',choices=['N','F']);p.add_argument('--review',type=Path);a=p.parse_args()
+    p.add_argument('--resume-unstarted',choices=['N','F']);p.add_argument('--select',choices=['N','F']);p.add_argument('--review',type=Path);a=p.parse_args()
     if a.prepare_f:prepare_f()
     elif a.launch:launch(declare(a.launch),['E30'])
+    elif a.resume_unstarted:resume_unstarted(a.resume_unstarted)
     elif a.select:select(a.select,a.review)
     else:run_job(a.job_dir,a.levels)
 if __name__=='__main__':main()
