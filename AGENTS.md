@@ -1,8 +1,18 @@
 # Codex 当前入口：W53 已审查，执行 W54 完整稳定性修复
 
-更新：2026-11-17（Asia/Shanghai）。结果基点 `c01ed82d241b559e4d6c798f06bb0483c622b422`。**W54 已在独立 D57 工作区开始实施；实际启动、构建与任务结果见独立 w54/index.json 和 current.json。当前尚无新增任务资格。** 后续执行按本节和 W54 文件推进。下方 W53/W52/W51 原入口只保留历史，不能覆盖当前范围。
+更新：2026-11-17（Asia/Shanghai）。结果基点 `c01ed82d241b559e4d6c798f06bb0483c622b422`。**W54 已实施并运行原任务；正在按本轮新增证据继续同范围修订。实际结果与活动身份见独立 w54/index.json、phase.json 和 current.json；尚无原 E30 通过。** 后续执行按本节和 W54 文件推进。下方 W53/W52/W51 原入口只保留历史，不能覆盖当前范围。
 
 先读 [W54 计划](docs/S1_W54_STABILITY_PLAN.md)、[完整启动提示词](docs/S1_W54_START_PROMPT.md)、[项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[W53 审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md)、[机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/handoff.json) 和 [当前机器入口](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。原大 index.json 的嵌套训练/next_task 是历史账本，不直接作新任务入口。
+
+## W54 已发生结果与当前实施入口
+
+已运行 N/r44、F/r45、F/r46，均为原 W44 A/seed1 E30、完整 t=0 初态。N/r44 于7.0058s材料域退出，max x=.864826m，机身进入材料西边界但未贯穿；F/r45于4.134s WBC执行错误，F/r46于4.626s body_fall，二者材料加载0。N/r44与F/r46有效物理区间重叠41.1324s；不是仅tmux名称同时存在。
+
+F/r46消除了实测承载等待确认时被误删的631个足tick，并修复初站；后续新证据指向球形足中心与球底受力/不滑动点不一致，r47在本范围修订。N/r44的获选预测已包含E后快速落足，新的修订r48将区分总加速度与HΔτ，并统一候选/旧计划因果预测检查。禁止原样重复失败身份，不改任务真值。
+
+C已完成有限完整GPU horizon优化，当前修后接触合同以r46的16个自然状态、224节点为准；16/16经独立CPU复算SRB可行，未获得在线或材料成功证据。r45的160个自然状态保留为已被接触合同取代的数学对照，另98个旧初站输入保留。详见w54/task-c.json，不混称完整全身GPU控制。
+
+r45原高频记录只有61列，足速度仅500Hz；r46及N/r44首次执行前已补齐85列5kHz足位置/速度，原缺失不补造、不重跑。每次完整视频与原件由D57直传Release。使用 scripts/run_s1_go2_w54.py；新建身份从work/r11-frozen对应artifact读取配置。W54独立索引路径为results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/index.json。
 
 ## 已确认事实与本轮工作
 

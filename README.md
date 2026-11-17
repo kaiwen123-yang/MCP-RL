@@ -2,21 +2,17 @@
 
 长期目标：同一世界地块被前足、后足和返程重复加载时，利用材料持久状态，让未来支撑需求影响当前加载、落点和重访，建立原 Go2/TM02 合法完整往返、因果记忆收益、泛化及实机证据。
 
-## 当前：W53 审查完成，W54 成组修复稳定运行
+## 当前：W54 原任务与证据修订正在推进
 
-更新：2026-11-17（Asia/Shanghai）。**W54 正在独立 D57 工作区实施 F/N/C；原任务尚未启动，实际运行以 w54/index.json 和 current.json 为准。** 本次审查基点 `c01ed82d241b559e4d6c798f06bb0483c622b422`，新增物理/rollout/FD/PPO=0。
+更新：2026-11-17（Asia/Shanghai）。W54以df07c4b为实施起点，使用独立D57工作区。N/r44原E30在7.0058s材料域退出（max x=.864826m）；F/r45在4.134s执行错误，F/r46在4.626s body_fall，F两次均未加载材料。原E30尚未通过，材料跨足/返程记忆收益未获评价。
 
-[W53 完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md) · [W54 下一步计划](docs/S1_W54_STABILITY_PLAN.md) · [启动提示词](docs/S1_W54_START_PROMPT.md) · [项目记忆](docs/TERRAIN_MEMORY_PLAN.md) · [当前机器入口](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)
+N/r44与F/r46真实物理重叠41.1324s。F继续修球形足实际接触点语义；N继续修E的总加速度及全部候选/旧计划预测检查，均使用新身份、原seed1/路线/硬界。当前活动进度只读[执行状态](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/phase.json)和[机器入口](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)，不重复启动同身份。
 
-N已恢复短段真实行走，最大x=.723845m、末z=.290389m；6.0274s首次材料受载，6.4656s因材料域结束。末次FL以约-.9558m/s落足，1.6ms内碰到约1mm位移对应的原有效域；最后实际力1194.56N，下一1206.81N候选没有施加。F在材料前已因迟落足和交接问题反复失去支撑，3.120s静态力矩假设产生六行0>=1.70025764Nm。完整E30仍0/2，后级未运行、跨足/返程材料记忆收益未评价。
+C完成全horizon优化与CPU独立复算。当前修后r46输入覆盖16个状态/224节点，16/16 SRB可行；完整首力/力序列/状态/成本已保存，尚无在线收益或全身/材料成功资格。旧批次与接触合同被取代的r45批次分别记录在[GPU结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/task-c.json)。
 
-本轮读取完整实际流、全部157份F计划与失败矩阵，并逐页查看两视频290帧。F至少五项确定问题需一起修：错误未来静态力矩界、绝对时间交接、悬空锚、删力导致下落目标、未来落点回退。另有已知dry friction建模缺项；最初摆动未饱和，不能简单归因力矩不够。
+[W54计划](docs/S1_W54_STABILITY_PLAN.md) · [实际运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/index.json) · [F/r45分析](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/f-r45-actual-analysis.json) · [项目主计划](docs/TERRAIN_MEMORY_PLAN.md)
 
-W54把F作为主要成组稳定性修复；N保留已行走内核，将主动预触地减速接入真实/native/FD同一执行合同；C升级完整GPU力序列优化与CPU独立复算。各线就绪即推进原E30，有新增明确证据就在同轮修订，第一套合格内核冻结后直接逐case E30→E60→E300→E600。任务真值和阶段条件不放宽。
-
-W53有效N/F实际重叠0s，N求导热段约9.80核，F约1核；配额不等于并行。W54记录真实有效任务重叠，最多两重物理任务加一个完整GPU工作线，不重复离线矩阵凑显存。所有新后台无固定墙钟截止/到点kill/对话结束kill；GitHub核验后不在用户电脑另做归档，被引用服务器原件和完整学习状态保留。
-
-下面各轮“当前”“下一步”和预算均按当时身份保留。最新执行以本节、AGENTS、W54计划和current.json为准；原大index.json保留为历史账本，不按旧training/next_task字段重启。
+所有新后台deadline=null、wall_deadline_enabled=false，保留原物理长度/失败条件，新PPO samples/updates/donor=0。代码、必要原件和全视频直交GitHub，核远端size/digest；服务器原件及W44完整checkpoint/resume保留，用户电脑不另下载或归档。下方旧“当前/下一步”只属历史。
 
 ## 历史 W53 发布时状态
 

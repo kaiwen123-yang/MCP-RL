@@ -212,7 +212,8 @@ def run(args, c, joint=None):
     else:
         if w53_route == 'N':
             if is_w54:
-                from s1_go2_w54_n_model import build_project_model
+                import importlib
+                build_project_model=getattr(importlib.import_module(Path(c.get('w54_n_model_source','scripts/s1_go2_w54_n_model.py')).stem),'build_project_model')
             else:
                 from s1_go2_w53_n_model import build_project_model
         else:
@@ -225,7 +226,8 @@ def run(args, c, joint=None):
     if 'startup' in c:
         if w53_route == 'N':
             if is_w54:
-                from s1_go2_w54_n_model import write_flat_ground_height
+                import importlib
+                write_flat_ground_height=getattr(importlib.import_module(Path(c.get('w54_n_model_source','scripts/s1_go2_w54_n_model.py')).stem),'write_flat_ground_height')
             else:
                 from s1_go2_w53_n_model import write_flat_ground_height
         else:
@@ -238,7 +240,8 @@ def run(args, c, joint=None):
     if campaign:
         if w53_route == 'N':
             if is_w54:
-                from s1_go2_w54_n_model import write_equilibrium_settings
+                import importlib
+                write_equilibrium_settings=getattr(importlib.import_module(Path(c.get('w54_n_model_source','scripts/s1_go2_w54_n_model.py')).stem),'write_equilibrium_settings')
             else:
                 from s1_go2_w53_n_model import write_equilibrium_settings
         else:
@@ -450,8 +453,9 @@ def run(args, c, joint=None):
     n_execution=None
     if w53_route == 'N':
         if is_w54:
-            from s1_go2_w54_n_records import W54NRecords
-            from s1_go2_w54_n_execution import PrecontactE
+            import importlib
+            W54NRecords=importlib.import_module(Path(c.get('w54_n_records_source','scripts/s1_go2_w54_n_records.py')).stem).W54NRecords
+            PrecontactE=importlib.import_module(Path(c.get('w54_n_execution_source','scripts/s1_go2_w54_n_execution.py')).stem).PrecontactE
             r29_records=W54NRecords(out,model,c,fingerprint)
             n_execution=PrecontactE(model)
             diagnostic_env['MJPC_W54_N_RECORD_DIR']=str(out/'w54-n-native')
@@ -480,7 +484,7 @@ def run(args, c, joint=None):
                 agent.init(task_id='Quadruped Flat', model=prediction_model, send_as='xml')
                 agent.set_mode('Quadruped')
                 agent.set_task_parameters({'Gait switch': 'Manual'})
-                if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41','S5-r42','S5-r44'):
+                if (is_w54 and w53_route=='N') or c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41','S5-r42','S5-r44'):
                     native_pid=agent.server_process.pid
                     native_proc=Path('/proc')/str(native_pid)
                     native_env=dict(x.split('=',1) for x in (native_proc/'environ').read_bytes().decode().split('\0') if '=' in x)
