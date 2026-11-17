@@ -19,7 +19,14 @@ def analyze(attempt):
  events=[json.loads(line) for line in (folder/'contact-events.jsonl').read_text().splitlines()]
  planlist=sorted(folder.glob('mpc-*.npz'))
  # Read every complete horizon, preserving actual source and no re-solves.
- plans=[np.load(p) for p in planlist]
+ plans=[]
+ for source in planlist:
+  with np.load(source) as a:
+   states=a['states'];forces=a['forces'];contact=a['contact']
+   predicted=np.einsum('kij,kj->ki',a['stage_A'],states[:-1])+np.einsum('kij,kj->ki',a['stage_B'],forces.reshape(len(contact),12))+a['stage_c']
+   plans.append(dict(time_s=float(a['times'][0]),dynamics_residual=float(abs(states[1:]-predicted).max()),
+    horizon_dx_m=float(states[-1,3]-states[0,3]),
+    zero_contact_force_residual=float(abs(forces[~contact]).max()) if (~contact).any() else 0.))
  moving=c['time']>=2.002-1e-8
  missing=c['planned_contact'] & c['observed_contact'] & ~c['active_wbc_contact']
  rpy=z['rpy'];pos=z['qpos'][:,:3]
@@ -48,6 +55,8 @@ def analyze(attempt):
   status=result['stage_status'],reason=result['reason'],success=result['success'],
   physical_end_s=result['simulation_s'],physical_samples=len(physical),trajectory_samples=len(z['time']),
   all_control_samples=len(c['time']),all_horizon_samples=len(plans),eval_wall_s=result['wall_s'],
+  all_horizon_dynamics_residual_max=max(a['dynamics_residual'] for a in plans),
+  all_horizon_zero_contact_force_residual_max=max(a['zero_contact_force_residual'] for a in plans),
   solver_failure=json.loads((folder/'solver-failure.json').read_text()) if (folder/'solver-failure.json').exists() else None,
   new_analysis_physics_rollout_FD_QP=0,windows=windows,
   max_x_m=float(pos[:,0].max()),final_xyz_m=pos[-1].tolist(),
