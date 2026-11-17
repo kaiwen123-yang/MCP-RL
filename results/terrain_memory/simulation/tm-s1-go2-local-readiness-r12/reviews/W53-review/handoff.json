@@ -1,0 +1,101 @@
+{
+  "schema": "W53_review_W54_handoff_v1",
+  "date": "2026-11-17 Asia/Shanghai",
+  "reviewed_source_commit": "c01ed82d241b559e4d6c798f06bb0483c622b422",
+  "scope": "Review, saved-array calculations, figures, literature, next plan and prompt only. No new server experiment.",
+  "status": "W54_planned_not_implemented",
+  "current_entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json",
+  "plan": "docs/S1_W54_STABILITY_PLAN.md",
+  "prompt": "docs/S1_W54_START_PROMPT.md",
+  "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md",
+  "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/evidence.json",
+  "control_evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/f-control-evidence.json",
+  "read_coverage": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/read-coverage.json",
+  "originals": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/original-coverage.json",
+  "video": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/video-review.json",
+  "latest_actual": {
+    "valid_physical_starts": 2,
+    "zero_step_initialization_errors": 2,
+    "E30_passes": 0,
+    "physical_failures": {
+      "N": "material_domain_exit",
+      "F": "execution_error_after_physical_start"
+    },
+    "seed2_started": false,
+    "later_stages_started": false,
+    "valid_N_F_overlap_s": 0
+  },
+  "key_findings": {
+    "N": "Real short forward motion; last virgin-cell FL touchdown at -0.955821m/s reaches material limit inside one 2ms hold; rejected next force was not applied.",
+    "F": [
+      "static future torque constraints cause 6 zero-row contradictions",
+      "absolute schedule lifts existing support before real late touchdown",
+      "airborne feet captured as stance anchors",
+      "masked forces incorrectly define falling body acceleration target",
+      "future touchdown foot plan jumps back to old anchor",
+      "known dry friction missing from h=bias-passive; causal contribution not isolated"
+    ],
+    "C": "Partial FP64 models/matrices only; complete online MPC acceleration not established."
+  },
+  "workstreams": {
+    "F": "Complete grouped contact/execution/feasibility repair, primary stability task.",
+    "N": "Keep restored motion kernel; pre-contact deterministic shaping included consistently in native forward/FD/execution.",
+    "C": "Finite complete GPU force-horizon optimization with corrected causal inputs and same-problem CPU verification, no new physics."
+  },
+  "execution_rules": {
+    "old_W53_unchanged_relaunch": false,
+    "new_D8": false,
+    "new_rigid_9_plus_3": false,
+    "third_physical_family": false,
+    "same_version_negative_repetition": false,
+    "evidence_based_revision_within_same_round": true,
+    "arbitrary_hard_start_count_limit": null,
+    "wall_deadline": null,
+    "max_heavy_physical_jobs": 2,
+    "PPO_samples_updates_donor": [
+      0,
+      0,
+      0
+    ],
+    "qualification": "Same-case original E30->E60->E300->E600; freeze workers/execution identity; never borrow across changed configurations."
+  },
+  "resources": {
+    "available_CPU_to_verify": 25,
+    "GPU_GB_to_verify": 96,
+    "initial_max_allocation": {
+      "N": 10,
+      "F": 4,
+      "C_build_assembly": 8,
+      "system_other_reserve": 3
+    },
+    "two_N_cases": "Keep actual frozen E30 workers; if 10 each then 10+10+2+3.",
+    "math_library_threads": 1,
+    "build_initial_max_j": 6,
+    "build_counts_inside_shared_budget": true,
+    "claim_parallelism_only_from_effective_task_overlap": true
+  },
+  "delivery": {
+    "destination": "GitHub",
+    "PC_archive": false,
+    "preserve_referenced_server_artifacts": true
+  },
+  "new_work_done_by_this_review": {
+    "implemented": false,
+    "built": false,
+    "started": false,
+    "new_physics_steps": 0,
+    "new_rollouts": 0,
+    "new_FD": 0,
+    "new_QP_solves": 0,
+    "new_PPO_samples": 0,
+    "new_PPO_updates": 0,
+    "donor": 0
+  },
+  "unresolved": [
+    "Whether grouped F repairs produce reliable material walking.",
+    "Whether predictor-consistent N shaping suppresses actual impact without losing gait.",
+    "Independent contribution of F dry friction, task weighting and input hold to initial tracking errors.",
+    "Complete E30/E60 and long-task qualification.",
+    "Material-memory causal benefit and GPU online acceleration."
+  ]
+}

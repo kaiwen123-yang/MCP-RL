@@ -1,4 +1,22 @@
-# 地面材料记忆项目：W52 已审查，W53 并行恢复完整运动控制
+# 地面材料记忆项目：W54 完整稳定性修复
+
+更新：2026-11-17（Asia/Shanghai）。长期目标继续是同一地块的跨足/跨步/返程材料记忆辨识与协同控制；先完成原Go2/TM02合法稳定往返，再证明历史进入决策并产生因果收益，随后泛化与Go2/NX实机。此前“仓库整体梳理”的最终方向已核对，旧墙钟预算不能覆盖最新无deadline约定。
+
+**W53已完成并审查，W54本次仅计划发布，尚未实现或运行。** 新增物理、native rollout、FD、QP重解、PPO均为0。读 [W53审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md)、[W54计划](S1_W54_STABILITY_PLAN.md)、[启动提示词](S1_W54_START_PROMPT.md)、[机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/handoff.json) 和 [当前入口](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。
+
+## 最新事实和决策
+
+- N/r42找回真实交替支撑与前进，最大x=.723845m；6.0274s首次前足材料受载，6.4656s材料域退出，末z=.290389m、非足力0。最后新地块FL触地vz=-.9558m/s，1.6ms内到原域边界；1194.56N实际施加，1206.81N候选未施加。尚无材料贯穿、跨足/返程收益或原E30资格。
+- F/r43材料前支撑交接失败且降高，3.120s因六行0>=1.70025764Nm不可行结束。五项已证错误成组修：未来静态关节界、绝对时钟交接、悬空anchor、删力改变身体目标、未来landing回旧锚；另补已知摩擦模型与足任务跟踪。原零末速/C2与PD映射已正确，不重复认领。
+- 两有效物理启动、两零步技术初始化错误分账；E30通过0、后级/seed2未运行，PPO/donor=0。W53有效N/F重叠0s，C更早结束；N热求导约9.80核，F约1.02核。C部分模型/矩阵一致但没有完整求解或在线收益。
+- W54 F主修完整接触执行链；N引入触地前确定性执行整形并在真实/native/FD保持同一状态/hold语义，区别于R10旧softcost+局部弹簧；C完整GPU horizon力序列优化与独立CPU裁决。无第三物理族、无新D8/旧9+3、无原样追加cap-only学习。
+- 已知问题首任务前一起修；各线就绪即原E30，有新增可定位证据就在同轮修订，不以两次失败为自动结束点，不重复同版追成功。首个合格内核冻结即继续，另一槽给同内核第二case；逐case原E30→E60→E300→E600，原路线、材料和身份条件保持。
+
+最新资源、日志和发布合同见W54计划。所有新后台deadline=null、wall_deadline_enabled=false；无固定墙钟完成时刻、到点kill或对话结束kill。GitHub直交并核验后不在用户电脑下载/复制/镜像/打包/归档；保留被引用服务器原件、W44 A/B完整checkpoint/resume。当前入口统一为current.json与W54文件；下方与大index.json里的旧训练/下一步/预算均只属于历史。
+
+---
+
+# 历史主计划：W53 及之前的事实与形成时协议
 
 ## 2026-11-17 实际执行结果
 

@@ -1,13 +1,13 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "W40_reviewed_A_recovery_pending_B_completed",
+  "status": "W53_reviewed_W54_planned_not_implemented",
   "protocol_revision": "W44_r33_motion_optimization_v21",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v3_bidirectional_material_route",
-  "revision_date": "2026-11-07",
+  "revision_date": "2026-11-17",
   "supersedes_plan_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
-  "current_task": "W44_MOTION_OPTIMIZATION_JOINT",
+  "current_task": "W54_COMPLETE_CONTACT_EXECUTION_STABILITY",
   "reuse": {
     "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
     "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r28.json",
@@ -3758,9 +3758,33 @@
         },
         "requested_diagnostic_evidence_source": "outputs.requested_diagnostic_evidence"
       }
+    },
+    "top_level_handoff_before_W54": {
+      "status": "W40_reviewed_A_recovery_pending_B_completed",
+      "revision_date": "2026-11-07",
+      "reviewed_source_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
+      "current_task": "W44_MOTION_OPTIMIZATION_JOINT",
+      "current_review_scope": {
+        "source_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
+        "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/README.md",
+        "status": "repository_and_published_W40_evidence_audited; no_D57_deployment_claim"
+      },
+      "next_authorized_plan": {
+        "entrypoint": "docs/S1_W41_STABILITY_PLAN.md",
+        "prompt": "docs/S1_W41_START_PROMPT.md",
+        "immediate": "Build frozen qp2 and restore only unfinished W40 A; continue actual full joint sampling, then own E30/E60 by original qualification.",
+        "parallel": "Second task checks same-input saturated actuator/held dynamics and branch-consistent A/B before one measured r30 correction; whole-hold unsaturated-request projection is an optional design, not a predetermined causal fix. Authorized third GPU workstream executes docs/S1_W41_GPU_PLAN.md G1-G5 with actual shared resources; no main hot swap and no fixed wall deadline.",
+        "no_wall_deadline": true,
+        "do_not_replay_completed_W40_B_or_GPU": true,
+        "do_not_archive_on_user_PC": true,
+        "server_outputs_automatic_deletion": false,
+        "gpu_plan": "docs/S1_W41_GPU_PLAN.md",
+        "checkpoint_preservation": "Ordinary resumed invocations preserve existing source checkpoint files; latest progress may point to a restart-suffixed path. Preserve valid tail147 and all optimizer/RNG ancestry.",
+        "evaluation_route_criterion": "bidirectional_material_roundtrips_v1"
+      }
     }
   },
-  "reviewed_source_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
+  "reviewed_source_commit": "c01ed82d241b559e4d6c798f06bb0483c622b422",
   "literature": [
     {
       "id": "TM02",
@@ -3891,9 +3915,10 @@
     "latest_user_scope": "2026-11-05 execute W39; leave after both tmux streams show real sample/log progress, without waiting for the first completed update."
   },
   "current_review_scope": {
-    "source_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
-    "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W40-final-review/README.md",
-    "status": "repository_and_published_W40_evidence_audited; no_D57_deployment_claim"
+    "source_commit": "c01ed82d241b559e4d6c798f06bb0483c622b422",
+    "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md",
+    "status": "saved_W53_evidence_reviewed_no_new_experiments",
+    "current_entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json"
   },
   "planned_implementation": {
     "controller_build": "S5-r28",
@@ -3970,18 +3995,33 @@
     "scope": "D57 inspected and r28 built; this is the prelaunch configuration snapshot. Normal job/index records and six-line main-plan handoff report subsequent actual training/evaluation status; clock is created only by actual launch."
   },
   "next_authorized_plan": {
-    "entrypoint": "docs/S1_W41_STABILITY_PLAN.md",
-    "prompt": "docs/S1_W41_START_PROMPT.md",
-    "immediate": "Build frozen qp2 and restore only unfinished W40 A; continue actual full joint sampling, then own E30/E60 by original qualification.",
-    "parallel": "Second task checks same-input saturated actuator/held dynamics and branch-consistent A/B before one measured r30 correction; whole-hold unsaturated-request projection is an optional design, not a predetermined causal fix. Authorized third GPU workstream executes docs/S1_W41_GPU_PLAN.md G1-G5 with actual shared resources; no main hot swap and no fixed wall deadline.",
-    "no_wall_deadline": true,
-    "do_not_replay_completed_W40_B_or_GPU": true,
-    "do_not_archive_on_user_PC": true,
-    "server_outputs_automatic_deletion": false,
-    "gpu_plan": "docs/S1_W41_GPU_PLAN.md",
-    "checkpoint_preservation": "Ordinary resumed invocations preserve existing source checkpoint files; latest progress may point to a restart-suffixed path. Preserve valid tail147 and all optimizer/RNG ancestry.",
-    "evaluation_route_criterion": "bidirectional_material_roundtrips_v1"
+    "entrypoint": "docs/S1_W54_STABILITY_PLAN.md",
+    "prompt": "docs/S1_W54_START_PROMPT.md",
+    "handoff": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/handoff.json",
+    "status": "planned_not_implemented_not_run",
+    "workstreams": [
+      "F_complete_contact_execution_repair",
+      "N_predictor_consistent_pre_touchdown_shaping",
+      "C_complete_offline_GPU_force_horizon_optimization"
+    ],
+    "continue_evidence_based_repair_within_scope": true,
+    "first_qualified_controller_can_advance_without_waiting_for_other_development": true,
+    "formal_ladder": [
+      "E30",
+      "E60",
+      "E300",
+      "E600"
+    ],
+    "new_PPO_samples": 0,
+    "new_PPO_updates": 0,
+    "donor": 0,
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "no_kill_on_conversation_end": true,
+    "no_PC_archive": true,
+    "server_referenced_outputs_preserved": true,
+    "current_machine_entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json"
   },
-  "historical_nested_records_note": "Nested previous execution/prelaunch/planned-implementation records retain their original versions and budgets as history. Current handoff, next_authorized_plan and explicit job snapshots take precedence; never reactivate an old task from a historical paragraph.",
+  "historical_nested_records_note": "Historical nested execution, prelaunch, planned implementation and budget/deadline records retain their original identities. Current AGENTS/W54 plan/current.json/next_authorized_plan supersede them. Do not relaunch old training or impose an old wall deadline on new work.",
   "formal_evaluation_revision_note": "New R12 E60/E300/E600 retain previous physical/time/endpoint criteria and additionally require recorded legal outbound, return and completed roundtrips (1/5/10); original saved results and frozen contracts remain unchanged. Evaluator source hash and legacy_stage_criteria_met distinguish scoring versions."
 }
