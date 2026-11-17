@@ -1,10 +1,10 @@
 {
   "schema": "w54_task_c_complete_horizon_summary_v1",
-  "status": "completed_finite_work_released_resources",
-  "updated_unix_s": 1794890792.0481293,
+  "status": "completed_finite_work_with_r46_input_correction",
+  "updated_unix_s": 1794891413.7751172,
   "method": "fixed JAX FP64 4096-iteration accelerated projected-gradient optimization; exact Euclidean friction-pyramid projection",
   "full_force_parameterization": "14 nodes x 4 feet x 3 force coordinates; same CPU and GPU feasible set",
-  "finite_input_policy": "157 W53 successful plans + one failed matrix are inventoried. 98 causally reconstructed initial-Stand states solved; 60 insufficient-history records retained. One increment is first 160 natural W54 F/r45 plans, without rerun or extra physics.",
+  "finite_input_policy": "157 W53 successful plans + one failed matrix are inventoried. 98 causally reconstructed initial-Stand states solved; 60 insufficient-history records retained. One increment is first 160 natural W54 F/r45 plans, without rerun or extra physics. New explicit authorization after actual r45 failure adds exactly one 16-time r46 correction list; no old batch repeated or new physics.",
   "passes": [
     {
       "pass_id": "legacy-stand",
@@ -48,7 +48,9 @@
       "peak_JAX_bytes": 138524160,
       "GPU_warm_transfer_vs_CPU_assembly_solve_ratio": 7.392490354836576,
       "original_output_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/legacy-stand",
-      "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/legacy-stand/executed-source"
+      "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/legacy-stand/executed-source",
+      "input_identity": "S5-r45",
+      "scientific_role": "reconstructed four-confirmed-feet Stand input; no moving r46 coverage"
     },
     {
       "pass_id": "natural-r45",
@@ -104,12 +106,68 @@
       "peak_JAX_bytes": 277846784,
       "GPU_warm_transfer_vs_CPU_assembly_solve_ratio": 0.7399157769016221,
       "original_output_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/natural-r45",
-      "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/natural-r45/executed-source"
+      "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/natural-r45/executed-source",
+      "input_identity": "S5-r45",
+      "input_contract_status": "superseded_contact_availability_contract",
+      "scientific_role": "mathematical comparison only; no r46 coverage"
+    },
+    {
+      "pass_id": "r46-corrective",
+      "status": "completed",
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/task-c-r46-corrective.json",
+      "input_identity": "S5-r46",
+      "input_contract_status": "corrected_measured_reaction_availability",
+      "input_manifest": "outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r46-corrective-inputs/manifest.json",
+      "completed_horizons": 16,
+      "force_knots": 224,
+      "SRB_feasible_horizons": 16,
+      "missing_records": 0,
+      "max_relative_objective_gap": 0.0001620647997879104,
+      "max_first_force_difference_N": 0.16049393189549477,
+      "max_dynamics_error": 6.224187831804784e-15,
+      "max_objective_error": 3.552713678800501e-15,
+      "active_contact_patterns": {
+        "[False, True, True, False]": 73,
+        "[True, False, False, True]": 45,
+        "[True, True, True, False]": 1,
+        "[True, True, True, True]": 105
+      },
+      "horizon_contact_switches": 59,
+      "started_unix_s": 1794891377.022304,
+      "ended_unix_s": 1794891380.2478492,
+      "CPU_QP_timing": {
+        "assembly_wall_s": 0.5247370209544897,
+        "setup_and_solve_wall_s": 0.1902833878993988
+      },
+      "timing": {
+        "input_read_s": 0.01810944266617298,
+        "GPU_runtime_initialization_s": 0.8129673656076193,
+        "host_to_device_s": 0.009142791852355003,
+        "JIT_compile_s": 1.1402458045631647,
+        "warm_full_horizon_solve_and_synchronize_s": 0.3052937798202038,
+        "device_to_host_s": 0.07537145912647247,
+        "CPU_independent_recompute_and_QP_s": 0.7293824944645166,
+        "artifact_serialization_s": 0.027604857459664345,
+        "total_process_wall_s": 3.224923199042678,
+        "user_cpu_s": 2.157831,
+        "system_cpu_s": 0.5969,
+        "GPU_path_including_initialization_compile_transfer_s": 2.3430212009698153,
+        "GPU_path_without_initialization_compile_s": 0.38980803079903126
+      },
+      "input_preparation_timing": {
+        "wall_s": 0.03548968583345413,
+        "user_cpu_s": 0.027608999999999995,
+        "system_cpu_s": 0.007872999999999991
+      },
+      "peak_JAX_bytes": 34174464,
+      "GPU_warm_transfer_vs_CPU_assembly_solve_ratio": 1.8342885532353825,
+      "original_output_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r46-corrective",
+      "executed_source_directory": "/root/autodl-tmp/MCP-RL-w54/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54-C/r46-corrective/executed-source"
     }
   ],
-  "total_complete_horizons": 258,
-  "total_force_knots": 3612,
-  "total_SRB_feasible_horizons": 258,
+  "total_complete_horizons": 274,
+  "total_force_knots": 3836,
+  "total_SRB_feasible_horizons": 274,
   "CPU_reference": "independent NumPy state recurrence/cost/force inequalities and identical full-horizon OSQP",
   "implemented_GPU_coverage": [
     "full-horizon condensing",
@@ -137,6 +195,28 @@
   "deadline": null,
   "wall_deadline_enabled": false,
   "kill_on_conversation_end": false,
-  "resource_status": "both finite tmux jobs exit0; no more C task queued",
-  "source_copy_note": "Exact executed solver/F source bytes retained on D57 with each result hash; no PC copy"
+  "resource_status": "all three finite C tmux jobs exit0; C resources released",
+  "source_copy_note": "Exact executed solver/F source bytes retained on D57 with each result hash; no PC copy",
+  "corrective_input_authorization": "new actual r45 failure identifies contact-availability gate error; one r46 causal-input correction only",
+  "corrective_target_times_s": [
+    0.06,
+    0.5,
+    1,
+    1.5,
+    2,
+    2.06,
+    2.1,
+    2.16,
+    2.2,
+    2.26,
+    2.3,
+    2.4,
+    2.5,
+    3,
+    3.5,
+    4
+  ],
+  "current_corrected_input_identity": "S5-r46",
+  "current_corrected_input_horizons": 16,
+  "final_interpretation": "r46 corrected causal inputs covered on 16 fixed saved states. r45 natural batch is superseded input-contract mathematics only. No online latency, articulated execution or material success demonstrated."
 }

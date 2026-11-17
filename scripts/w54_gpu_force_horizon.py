@@ -98,6 +98,8 @@ def main():
     args = parser.parse_args()
     manifest = json.loads(args.manifest.read_text())
     cfg = json.loads(Path(manifest["configuration"]).read_text())
+    backend_module = manifest["backend_module"]
+    backend_path = ROOT/"scripts"/(backend_module+".py")
     out = ROOT/"outputs"/REL/"w54-C"/args.pass_id
     out.mkdir(parents=True, exist_ok=False)
     compact = ROOT/"results"/REL/"w54"/("task-c-"+args.pass_id+".json")
@@ -107,7 +109,7 @@ def main():
         input_manifest=str(args.manifest), input_manifest_sha256=sha(args.manifest),
         source_sha256={str(p.relative_to(ROOT)):sha(p) for p in [
             ROOT/"scripts/s1_w54_gpu_force.py",ROOT/"scripts/w54_gpu_force_horizon.py",
-            ROOT/"scripts/s1_w54_f_backend.py"]},
+            backend_path]},
         configuration_sha256=sha(manifest["configuration"]),
         method="JAX FP64 4096 fixed accelerated projected-gradient steps; exact Euclidean force-pyramid projection",
         force_parameterization="every knot x FL/FR/RL/RR xyz; 14x12 independent force variables",
@@ -130,7 +132,8 @@ def main():
         with np.load(r["input_path"], allow_pickle=False) as z:
             problems.append({k:z[k].copy() for k in KEYS})
     timing = dict(input_read_s=time.perf_counter()-load0)
-    from s1_w54_f_backend import assemble_force_horizon
+    from importlib import import_module
+    assemble_force_horizon = import_module(backend_module).assemble_force_horizon
     init0 = time.perf_counter()
     import jax
     import jax.numpy as jnp

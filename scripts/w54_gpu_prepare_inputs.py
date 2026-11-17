@@ -102,9 +102,24 @@ def legacy(out,cfg):
         prior_control_sources=[dict(path=str(source/c["path"]),sha256=sha(source/c["path"])) for c in manifest["control_chunks"]])
 
 
-def natural(out, record_dir, limit):
+def natural(out, record_dir, limit, target_times=None):
     manifest = json.loads((record_dir/"manifest.json").read_text())
-    frozen = manifest["full_mpc_files"][:limit]
+    available = manifest["full_mpc_files"]
+    targets = {}
+    missing = []
+    if target_times is None:
+        frozen = available[:limit]
+    else:
+        frozen = []
+        for target in target_times:
+            later = [entry for entry in available if entry["time_s"] >= target-1e-9]
+            if not later:
+                missing.append(dict(source_kind="W54_natural_F_plan",target_time_s=target,
+                    status="unavailable",reason="original task ended before an eligible saved plan; no physics added"))
+                continue
+            entry=later[0]
+            targets.setdefault(entry["path"],[]).append(target)
+            if not any(x["path"]==entry["path"] for x in frozen):frozen.append(entry)
     records = []
     for i,entry in enumerate(frozen):
         path=record_dir/entry["path"]
@@ -115,10 +130,14 @@ def natural(out, record_dir, limit):
         records.append(dict(source_kind="W54_natural_F_plan",source=str(path),
             source_sha256=sha(path),source_call=entry["call"],physical_time_s=entry["time_s"],
             status="ready",input_path=str(dest),input_sha256=sha(dest),
-            reconstruction="none; corrected causal event/stage contract saved during original F physics"))
-    return records,dict(record_dir=str(record_dir),available_completed_plans=len(manifest["full_mpc_files"]),
-                        finite_limit=limit,selected_completed_plans=len(frozen),
-                        selection="first completed plan records in causal order, one pass; no new physics to fill missing records")
+            reconstruction="none; corrected causal event/stage contract saved during original F physics",
+            requested_times_s=targets.get(entry["path"])))
+    records.extend(missing)
+    return records,dict(record_dir=str(record_dir),available_completed_plans=len(available),
+                        finite_limit=limit if target_times is None else len(target_times),
+                        declared_target_times_s=target_times,selected_completed_plans=len(frozen),
+                        clock_matching_tolerance_s=1e-9,
+                        selection="first completed plan at or after each predeclared time, deduplicated" if target_times is not None else "first completed plan records in causal order, one pass; no new physics to fill missing records")
 
 
 def main():
@@ -127,19 +146,22 @@ def main():
     parser.add_argument("--legacy",action="store_true")
     parser.add_argument("--record-dir",type=Path)
     parser.add_argument("--limit",type=int,default=160)
+    parser.add_argument("--target-times")
+    parser.add_argument("--backend",default="s1_w54_f_backend")
     args=parser.parse_args()
+    target_times=[float(x) for x in args.target_times.split(",")] if args.target_times else None
     wall0=time.perf_counter();usage0=resource.getrusage(resource.RUSAGE_SELF)
     out=ROOT/"outputs"/REL/"w54-C"/(args.pass_id+"-inputs")
     out.mkdir(parents=True,exist_ok=False)
     configuration=ROOT/"experiments/terrain_memory/s1-w54-f.json"
     cfg=json.loads(configuration.read_text()) if args.legacy else json.loads((args.record_dir/"manifest.json").read_text())["config"]
     frozen_config=out/"configuration.json";write(frozen_config,cfg)
-    records,details=legacy(out,cfg) if args.legacy else natural(out,args.record_dir,args.limit)
+    records,details=legacy(out,cfg) if args.legacy else natural(out,args.record_dir,args.limit,target_times)
     configuration=frozen_config
     manifest=dict(schema="w54_c_finite_causal_inputs_v1",created_unix_s=time.time(),
-                  pass_id=args.pass_id,configuration=str(configuration),
+                  pass_id=args.pass_id,backend_module=args.backend,configuration=str(configuration),
                   configuration_sha256=sha(configuration),
-                  source_stage_builder_sha256=sha(ROOT/"scripts/s1_w54_f_backend.py"),
+                  source_stage_builder_sha256=sha(ROOT/"scripts"/(args.backend+".py")),
                   records=records,details=details,
                   eligible=sum(r["status"]=="ready" for r in records),
                   not_reconstructible=sum(r["status"]!="ready" for r in records),
