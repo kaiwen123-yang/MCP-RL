@@ -1,0 +1,188 @@
+{
+  "schema": "w54_f_complete_controller_v1",
+  "identity": "S5-r51",
+  "controller": "centroidal_contact_force_MPC_and_exact_articulated_inverse_dynamics_WBC",
+  "online_backend": "CPU_MuJoCo_3.2.3_OSQP_1.0.5_FP64",
+  "friction_coefficient": 0.5,
+  "gait": {
+    "frequency_hz": 2.0,
+    "duty": 0.6,
+    "swing_s": 0.2,
+    "apex_s": 0.1,
+    "height_m": 0.03,
+    "legs": [
+      "FL",
+      "FR",
+      "RL",
+      "RR"
+    ],
+    "diagonal_offsets_s": [
+      0.0,
+      0.25,
+      0.25,
+      0.0
+    ],
+    "startup": "original_2s_Stand; unsupported_initial_feet_nominal_joint_posture_until_measured_contact; then_measured_load_handover",
+    "stop": "finish_committed_swing_and_actual_touchdown_then_stand",
+    "curve": "two_C2_quintics_observed_liftoff_position_velocity_zero_acceleration_fixed_midpoint_apex_and_touchdown",
+    "touchdown": "current_root_plus_rotated_home_foot_plus_0.35_command_velocity_plus_0.04_velocity_error",
+    "actual_frequency": "nominal_2Hz_delayed_by_actual_touchdown_load_and_dynamic_task_residual"
+  },
+  "mpc": {
+    "horizon_s": 0.35,
+    "intervals": 14,
+    "dt_s": 0.025,
+    "replan_s": 0.02,
+    "state_weights": [
+      30,
+      30,
+      10,
+      1,
+      1,
+      100,
+      1,
+      1,
+      1,
+      10,
+      10,
+      20
+    ],
+    "force_regularization": 1e-05,
+    "force_difference_weight": 0.0001,
+    "model": "frozen_measured_composite_inertia_centroidal_rigid_body_world_rates_with_gyroscopic_affine_term",
+    "force_feasibility": "same_causal_contact_event_horizon_mu0.5_pyramid_swing_zero_stance_nonnegative; no_static_joint_proxy",
+    "approximation": "SRB_only; every_actual_action_passes_full_articulated_WBC_original_torque_mapped_input_joint_bounds"
+  },
+  "wbc": {
+    "dt_s": 0.002,
+    "body_position_kp": 100.0,
+    "body_velocity_kd": 20.0,
+    "orientation_kp": 100.0,
+    "angular_velocity_kd": 20.0,
+    "swing_kp": 400.0,
+    "swing_kd": 40.0,
+    "stance_kp": 400.0,
+    "stance_kd": 40.0,
+    "material_normal_kp": 100.0,
+    "posture_kp": 20.0,
+    "posture_kd": 5.0,
+    "body_weight": 10.0,
+    "orientation_weight": 10.0,
+    "swing_weight": 50.0,
+    "stance_weight": 100.0,
+    "posture_weight": 0.02,
+    "force_weight": 0.01,
+    "command": "u=q+(tau_start+5*v)/60; tau_start comes from same QP discrete10sample average model",
+    "hard_constraints": [
+      "floating_dynamics",
+      "unilateral_friction_pyramid",
+      "zero_force_non_active_feet",
+      "original_total_torque_bounds",
+      "original_mapped_control_bounds",
+      "one_hold_joint_position_reachability",
+      "original_torque_bound_each_of_10_force_evaluation_instants",
+      "discrete_hold_end_joint_position_reachability"
+    ],
+    "task_constraints": "body_and_foot_acceleration_tasks_weighted_not_hard; residuals_retained",
+    "contact_feedback": "actual_touchdown_anchor; confirmed_support_and_measured_contact; current_wrench_redistributed; no_masked_force_body_target",
+    "material": "causal_rest_anchor=p_now+F_now/k; pz_des=rest-F_des/k; normal_velocity_target=observed_vz; no_world_fixed_normal_stance_constraint_no_future_material_state",
+    "body_target": "MPC optimized p/v/a derived from independent task objective; never masked force; task goal and solved motion separately recorded",
+    "stance_kinematics": "sphere rolling no-slip contact velocity; normal center/material task; center swing/search PVA",
+    "force_application": "native current data.contact.pos; material causal force_boundary_bottom; geometry center-minus-radius otherwise",
+    "hold_execution_model": {
+      "sample_offsets_s": [
+        0.0,
+        0.0002,
+        0.0004,
+        0.0006000000000000001,
+        0.0008,
+        0.001,
+        0.0012000000000000001,
+        0.0014,
+        0.0016,
+        0.0018000000000000002
+      ],
+      "position_update": "semiimplicit_constant_local_acceleration_qk=q0+tk*v0+.5*tk*(tk+.0002)*a",
+      "torque": "tau_k=tau0-60*tk*v0-[5*tk+30*tk*(tk+.0002)]*a",
+      "approximate": "M/h/J frozen at current state; no exact nonlinear hold guarantee",
+      "unchanged_hold_s": 0.002
+    }
+  },
+  "qp": {
+    "eps_abs": 1e-06,
+    "eps_rel": 1e-06,
+    "max_iter": 4000,
+    "polishing": true,
+    "adaptive_rho_interval": 50,
+    "failure": "explicit_controller_numerical_failure_no_silent_fallback_or_automatic_rerun"
+  },
+  "recording": {
+    "full_mpc_reference_force_state_every_replan": true,
+    "full_WBC_command_reference_force_every_500Hz": true,
+    "unchanged_parent_physics_Hz": 5000,
+    "new_native_rollout_or_FD": false,
+    "stage_CPU_wall_IO_timing": true,
+    "contact_events": true,
+    "causal_horizon_inputs": true,
+    "task_acceleration_residuals": true,
+    "known_and_actual_dry_friction": true,
+    "force_application_point_and_source": true,
+    "contact_vs_center_velocity": true,
+    "contact_Jacobian": true,
+    "tau_start_mean_and_10_predicted_samples": true,
+    "measured_touch_preload_and_confirmation_counts": true
+  },
+  "new_PPO_samples": 0,
+  "new_PPO_updates": 0,
+  "donor": 0,
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "freeze": "one_parameter_set_before_first_original_E30_no_physical_parameter_search",
+  "material_stiffness_N_m": 1227272.7272727273,
+  "contact_events": {
+    "sample_Hz": 500,
+    "touch_on_N": 3.0,
+    "touch_off_N": 1.0,
+    "touch_confirm_s": 0.006,
+    "release_confirm_s": 0.004,
+    "load_on_bodyweight_fraction": 0.1,
+    "load_confirm_s": 0.006,
+    "load_transfer_ramp_s": 0.05,
+    "handover_measured_bodyweight_fraction": 0.65,
+    "handover_solved_bodyweight_fraction": 0.8,
+    "release_solved_bodyweight_fraction": 0.2,
+    "handover_body_accel_residual_m_s2": 1.5,
+    "handover_angular_accel_residual_rad_s2": 4.0,
+    "search_speed_m_s": 0.03,
+    "criterion": "hysteretic_touch_6ms; pair_measured_load_plus_previous_constrained_WBC_force_and_task_residual; no_fixed_time_only_liftoff",
+    "threshold_basis": "3N_contact_above_existing_1N_diagnostic; bearing_each_10percent_bodyweight; actual_pair_65percent_and_solved_80percent_weight_before_release",
+    "force_availability": "scheduled_non_swing_AND_measured_contact_Fz_gt_1N; independent_of_confirmation_debounce",
+    "measured_touch_preload": "active measured next-support leg not load-bearing gets normal lower bound equal existing load_on_bodyweight_fraction*mg inside full WBC"
+  },
+  "friction_model": {
+    "model": "bounded_XML_frictionloss_tanh_reference_motion_direction_in_inverse_dynamics_constraints",
+    "reference_velocity_scale_rad_s": 0.05,
+    "position_direction_gain_s_inv": 10.0,
+    "actual_record": "only_mjCNSTR_FRICTION_DOF_efc_force_mapped_by_mj_mulJacTVec; no_contact_force_duplication"
+  },
+  "revision": {
+    "previous": "S5-r50",
+    "evidence_attempt": "job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01",
+    "evidence": [
+      "RL actual light contact remains approximately1N, not3N confirmed; load transfer requires all4confirmed.",
+      "At15s RL targetFz=-2.49075N and solvedFz=0 while actualFz=1.01095N; no positive force-establishment path exists.",
+      "Unconfirmed measured foot task only damps contact velocity; the unilateral lower bound is0 so the circular wait persists.",
+      "Full originalE30 completed30s, but no materials traversed; last liftoff4.108s and later near-static hold."
+    ],
+    "changes": [
+      "For a measured current target-support foot that is not yet load-bearing, request preload at the existing0.10bodyweight per-foot bearing level.",
+      "Apply that positive normal-force lower bound inside the same full WBC, together with every original torque/input/joint/hold constraint.",
+      "Actual contact3N confirmation and actual load-bearing gates remain untouched; no force or contact label is rewritten."
+    ],
+    "expected_observables": [
+      "Measured target-support contact gets an explicit positive load request before confirmation.",
+      "Real measured load crosses the unchanged3N confirmation threshold before any actual support handover.",
+      "If the full constrained problem is infeasible it remains an explicit failure; no silent fallback."
+    ]
+  }
+}

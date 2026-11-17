@@ -1,0 +1,66 @@
+{
+  "source_attempt": "job-20261117T051942Z-w54-f-a-r50-eval-PANN_PPO_S5-s1-E30-attempt01",
+  "scope": "entire completed500Hz contact/force stream; no new solver or physics",
+  "windows": [
+    {
+      "start_s": 4.308,
+      "end_s": 4.9,
+      "samples": 296,
+      "RL_observed_ticks": 57,
+      "RL_confirmed_ticks": 40,
+      "RL_bearing_ticks": 18,
+      "all4_confirmed_ticks": 0,
+      "transfer_nonzero_ticks": 0,
+      "RL_Fz_min_max_N": [
+        0.0,
+        54.428898322940746
+      ],
+      "RL_mean_actual_Fz_N": 3.8624136564604212,
+      "RL_nonpositive_target_ticks": 246,
+      "RL_mean_solved_Fz_N": 3.3995616998197407,
+      "RL_normal_contact_accel_target_RMS": 0.6617313265498181
+    },
+    {
+      "start_s": 4.9,
+      "end_s": 15,
+      "samples": 5050,
+      "RL_observed_ticks": 2447,
+      "RL_confirmed_ticks": 0,
+      "RL_bearing_ticks": 0,
+      "all4_confirmed_ticks": 0,
+      "transfer_nonzero_ticks": 0,
+      "RL_Fz_min_max_N": [
+        0.0,
+        19.413296518646646
+      ],
+      "RL_mean_actual_Fz_N": 1.1409903127648993,
+      "RL_nonpositive_target_ticks": 5050,
+      "RL_mean_solved_Fz_N": 3.337032783102903e-10,
+      "RL_normal_contact_accel_target_RMS": 0.8636046012152491
+    },
+    {
+      "start_s": 15,
+      "end_s": 30,
+      "samples": 7500,
+      "RL_observed_ticks": 5225,
+      "RL_confirmed_ticks": 0,
+      "RL_bearing_ticks": 0,
+      "all4_confirmed_ticks": 0,
+      "transfer_nonzero_ticks": 0,
+      "RL_Fz_min_max_N": [
+        0.0,
+        3.3432972586001304
+      ],
+      "RL_mean_actual_Fz_N": 1.1523539018941915,
+      "RL_nonpositive_target_ticks": 3148,
+      "RL_mean_solved_Fz_N": 0.625046247085987,
+      "RL_normal_contact_accel_target_RMS": 0.6619447107061437
+    }
+  ],
+  "source_paths": {
+    "transfer_trigger": "s1_w54_f_r50_backend.py::_update_schedule all_ground requires every confirmed contact",
+    "measured_unconfirmed_task": "wbc measured-but-unconfirmed foot only damps contact velocity, no force-establishment target",
+    "force_allocation": "weighted minimum-norm wrench can request negative normal; QP enforces only >=0 so valid zero load persists"
+  },
+  "conclusion": "Load establishment is missing before the confirmation-gated transfer. No explicit positive preload request exists for the measured target-support foot; the existing thresholds/labels need not be relaxed."
+}
