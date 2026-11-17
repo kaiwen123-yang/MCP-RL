@@ -30,6 +30,7 @@ def deliver(name,roots):
  destination=SMALL/'w53'/'delivery'/name;destination.mkdir(parents=True,exist_ok=True)
  catalog=[];manifest=[];paths=[]
  for root in roots:
+  root=(ROOT/root).resolve() if not root.is_absolute() else root.resolve()
   paths.extend([root] if root.is_file() else sorted(p for p in root.rglob('*') if p.is_file()))
  # Preserve generated originals, including the explicitly current transport buffers.
  groups=[];group=[];size=0
