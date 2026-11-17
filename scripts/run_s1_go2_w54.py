@@ -54,6 +54,26 @@ def save_state(path,state):
                 if any(x.get('evaluation_stage',{}).get('level')==level and x.get('success') is True for x in completed_results)),None),
             active_physics_not_in_completed_counter=phase['status']=='running')
         write(current,c)
+        with (W/'index.lock').open('a') as index_lock:
+            fcntl.flock(index_lock,fcntl.LOCK_EX)
+            index_path=W/'index.json'
+            index=json.loads(index_path.read_text())
+            index.update(status=phase['status'],latest_phase='w54/phase.json')
+            cpu={}
+            for case_file in W.glob('[FN]-[AB]-r*.json'):
+                case=json.loads(case_file.read_text())
+                cpu[case['job']['label']]=sum(sum(row.get('resource_usage',{}).get(k,0.) for k in ('user_cpu_s','system_cpu_s')) for row in case.get('stages',[]))
+            from collections import Counter
+            index['actual_execution_summary']=dict(completed_original_attempts=len(completed_results),
+                completed_physical_steps=sum(r.get('physical_samples',0) for r in completed_results),
+                completed_simulation_s=sum(r.get('simulation_s',0.) for r in completed_results),
+                completed_reasons=dict(Counter(r.get('reason') for r in completed_results)),
+                E30_passes=sum(r.get('evaluation_stage',{}).get('level')=='E30' and r.get('success') is True for r in completed_results),
+                completed_case_CPU_seconds=cpu,completed_case_CPU_hours=sum(cpu.values())/3600,
+                effective_completed_task_overlap_s=sum(x['effective_overlap_s'] for x in overlaps),
+                active_work_excluded_from_completed_counters=phase['status']=='running',
+                new_PPO_samples=0,new_PPO_updates=0,donor=0)
+            write(index_path,index)
 def sha(p):
     with Path(p).open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 def prepare_f(build='S5-r45'):
