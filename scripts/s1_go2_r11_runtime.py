@@ -162,7 +162,9 @@ def run(args, c, joint=None):
     out.mkdir(parents=True, exist_ok=False)
     campaign = 'campaign_budget' in c
     support = True
-    w53_route = c.get('w53_route')
+    w53_route = c.get('w54_route',c.get('w53_route'))
+    is_w54 = 'w54_route' in c
+    f_config = c.get('w54_f',c.get('w53_f'))
     training = bool(c.get('r11_training'))
     policy_hook = bool(c.get('r11_policy'))
     compact = training and not joint.full_recording
@@ -209,7 +211,10 @@ def run(args, c, joint=None):
         base_name, foot_names = 'trunk', LEGS
     else:
         if w53_route == 'N':
-            from s1_go2_w53_n_model import build_project_model
+            if is_w54:
+                from s1_go2_w54_n_model import build_project_model
+            else:
+                from s1_go2_w53_n_model import build_project_model
         else:
             from s1_go2_r11_model import build_project_model
         model_path, model_meta = build_project_model(upstream, Path(args.original_robot_dir),
@@ -219,7 +224,10 @@ def run(args, c, joint=None):
         foot_names = model_meta['foot_geom_names']
     if 'startup' in c:
         if w53_route == 'N':
-            from s1_go2_w53_n_model import write_flat_ground_height
+            if is_w54:
+                from s1_go2_w54_n_model import write_flat_ground_height
+            else:
+                from s1_go2_w53_n_model import write_flat_ground_height
         else:
             from s1_go2_r11_model import write_flat_ground_height
         model_meta['flat_ground'] = write_flat_ground_height(model, model_path)
@@ -229,7 +237,10 @@ def run(args, c, joint=None):
         model_meta['prepared_xml_sha256'] = sha(model_path)
     if campaign:
         if w53_route == 'N':
-            from s1_go2_w53_n_model import write_equilibrium_settings
+            if is_w54:
+                from s1_go2_w54_n_model import write_equilibrium_settings
+            else:
+                from s1_go2_w53_n_model import write_equilibrium_settings
         else:
             from s1_go2_r11_model import write_equilibrium_settings
         model_meta['controller_settings'] = (dict(prediction_smoothing_width_m=None,
@@ -267,7 +278,7 @@ def run(args, c, joint=None):
     if not np.isclose(substeps*physical_dt, dt):
         raise ValueError('Native physics timestep does not divide the specified 500Hz feedback interval')
     source = {p: sha(ROOT/p) for p in ['scripts/s1_go2_r11_runtime.py', 'scripts/s1_go2_r11_model.py', 'scripts/s1_go2_wb_equilibrium.py', *(['scripts/s1_go2_support_reference.py'] if args.arm=='S' else []), args.config, *[v for k,v in c['upstream'].items() if 'patch' in k and isinstance(v,str) and v.endswith('.patch')]] if (ROOT/p).exists()}
-    source.update({p:sha(ROOT/p) for p in c.get('w53_execution_sources',[])})
+    source.update({p:sha(ROOT/p) for p in c.get('w54_execution_sources',c.get('w53_execution_sources',[]))})
     resolved = dict(stage=args.stage, condition=args.condition, source_commit=git(ROOT), source_sha256=source,
         author_commit=(upstream/'SOURCE_COMMIT').read_text().strip(), author_source=str(upstream), model=model_meta,
         model_path=str(model_path), mass_kg=float(model.body_subtreemass[base]),
@@ -287,7 +298,7 @@ def run(args, c, joint=None):
             max_regularization_iterations=5, planner_step_iterations=1),
         author_prediction_approximation='Agent MakeDifferentiable temporarily sets solimp[0]=0 for gradient-planner rollouts; original plant contact settings stay unchanged. Prediction dt=.01s.',
         mujoco_version=mujoco.__version__, python=sys.version, command=sys.argv,
-        agent_server=(dict(path=None,sha256=sha(ROOT/c['w53_backend_source']),size=None,
+        agent_server=(dict(path=None,sha256=sha(ROOT/c.get('w54_backend_source',c.get('w53_backend_source'))),size=None,
             backend='independent_python_force_MPC_WBC',binary_executed=False) if w53_route=='F' else
             dict(path=str(Path(args.agent_server).resolve()),sha256=sha(args.agent_server),size=Path(args.agent_server).stat().st_size)),
         host=subprocess.check_output(['hostname'], text=True).strip())
@@ -360,6 +371,7 @@ def run(args, c, joint=None):
         plant_steps_during_initialization=0, reset_calls_during_initialization=0)
     resolved['startup'] = startup
     reason, error, started = '', None, False
+    first_integration_unix_s=last_integration_unix_s=None
     begin = time.perf_counter()
     phase_settings = None
     previous_phase = None
@@ -435,13 +447,24 @@ def run(args, c, joint=None):
         if any(k in diagnostic_env for k in forbidden):raise RuntimeError('Offline diagnostic environment is forbidden in original fixed-policy evaluation')
     if c.get('controller_build')=='S5-r41':
         diagnostic_env['MJPC_W52_DUAL']='1'
+    n_execution=None
     if w53_route == 'N':
-        from s1_go2_w53_n_records import W53NRecords
-        r29_records=W53NRecords(out,model,c,fingerprint)
-        diagnostic_env['MJPC_W53_N_RECORD_DIR']=str(out/'w53-n-native')
+        if is_w54:
+            from s1_go2_w54_n_records import W54NRecords
+            from s1_go2_w54_n_execution import PrecontactE
+            r29_records=W54NRecords(out,model,c,fingerprint)
+            n_execution=PrecontactE(model)
+            diagnostic_env['MJPC_W54_N_RECORD_DIR']=str(out/'w54-n-native')
+        else:
+            from s1_go2_w53_n_records import W53NRecords
+            r29_records=W53NRecords(out,model,c,fingerprint)
+            diagnostic_env['MJPC_W53_N_RECORD_DIR']=str(out/'w53-n-native')
     if w53_route == 'F':
-        from s1_w53_f_backend import FController
-        external_controller=FController(model,data,feet,base,out,c['w53_f'])
+        if is_w54:
+            from s1_w54_f_backend import FController
+        else:
+            from s1_w53_f_backend import FController
+        external_controller=FController(model,data,feet,base,out,f_config)
         controller_context=contextlib.nullcontext(external_controller)
     else:
         server_log=(contextlib.nullcontext(None) if training else (out/'agent-server.log').open('w'))
@@ -456,7 +479,7 @@ def run(args, c, joint=None):
                 agent.init(task_id='Quadruped Flat', model=prediction_model, send_as='xml')
                 agent.set_mode('Quadruped')
                 agent.set_task_parameters({'Gait switch': 'Manual'})
-                if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41','S5-r42'):
+                if c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41','S5-r42','S5-r44'):
                     native_pid=agent.server_process.pid
                     native_proc=Path('/proc')/str(native_pid)
                     native_env=dict(x.split('=',1) for x in (native_proc/'environ').read_bytes().decode().split('\0') if '=' in x)
@@ -464,7 +487,7 @@ def run(args, c, joint=None):
                         cmdline=(native_proc/'cmdline').read_bytes().replace(b'\0',b' ').decode(),affinity=sorted(os.sched_getaffinity(native_pid)),
                         environment={k:v for k,v in native_env.items() if k.startswith('MJPC_') or k in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','JAX_ENABLE_X64','XLA_PYTHON_CLIENT_PREALLOCATE')},
                         loaded_mujoco=sorted(set(line.split()[-1] for line in (native_proc/'maps').read_text().splitlines() if 'libmujoco' in line)))
-                    expected=(c['r12_contract'].get('w53_fixed_policy') or c['r12_contract'].get('w51_fixed_policy') or c['r12_contract'][{'S5-r36':'w48_fixed_policy','S5-r37':'w49_fixed_policy','S5-r38':'w50_fixed_policy'}[c['controller_build']]])['controller_binary_sha256']
+                    expected=(c['r12_contract'].get('w54_fixed_policy') or c['r12_contract'].get('w53_fixed_policy') or c['r12_contract'].get('w51_fixed_policy') or c['r12_contract'][{'S5-r36':'w48_fixed_policy','S5-r37':'w49_fixed_policy','S5-r38':'w50_fixed_policy'}[c['controller_build']]])['controller_binary_sha256']
                     if resolved['w48_native_process']['exe_sha256']!=expected:raise RuntimeError('W48 native executable does not match frozen build')
                     if c.get('controller_build') in ('S5-r38','S5-r39','S5-r40','S5-r41'):resolved['w50_native_process']=resolved['w48_native_process']
                     if w53_route == 'N':resolved['w53_native_process']=resolved['w48_native_process']
@@ -517,7 +540,7 @@ def run(args, c, joint=None):
                     data.mocap_quat[goal]=[np.cos(heading/2),0.,0.,np.sin(heading/2)]
                     material_info={'force_boundary_bottom':joint.force_boundary_bottom.copy(),
                         'force_N':grf.copy(),'velocity_m_s':joint.velocity.copy(),
-                        'instantaneous_stiffness_N_m':c['w53_f']['material_stiffness_N_m']}
+                        'instantaneous_stiffness_N_m':f_config['material_stiffness_N_m']}
                     tf=time.perf_counter()
                     action=agent.update(t,data,mission,contact,grf,joint.soft.copy(),
                         material_info=material_info,replan=replan_now)
@@ -681,6 +704,10 @@ def run(args, c, joint=None):
                 if r29_records:
                     r29_records.query(t,'applied_hold',action,data.qpos,data.qvel)
                     r29_records.progress(t,data.qpos,mission.v,contact)
+                if n_execution is not None:
+                    raw_action=action.copy()
+                    action,e_diagnostic=n_execution.apply(data,raw_action)
+                    r29_records.execution(t,raw_action,action,e_diagnostic)
                 data.ctrl[:] = action
                 mujoco.mj_forward(model, data)
                 if w53_route=='N' or c.get('controller_build') in ('S5-r36','S5-r37','S5-r38','S5-r39','S5-r40','S5-r41'):r29_records.held(t,action,data.actuator_force,mission.phase,data)
@@ -727,6 +754,7 @@ def run(args, c, joint=None):
                             material_state_time_s=sample_t+physical_dt,candidate_applied=True)
                     if not started:first_integration_unix_s=time.time()
                     mujoco.mj_step(model, data)
+                    last_integration_unix_s=time.time()
                     if not started:
                         with index_file(small, c) as idx:
                             if c.get('stage') == 'S1R12':
@@ -738,7 +766,7 @@ def run(args, c, joint=None):
                                     campaign_started_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime(first_integration_unix_s)))
                             if campaign:
                                 row=next(x for x in idx['attempts'] if x['attempt']==args.attempt)
-                                row.update(status='running', physical_started=True,
+                                row.update(status='running', physical_started=True,physical_started_unix_s=first_integration_unix_s,
                                     execution_fingerprint=fingerprint, source_commit=resolved['source_commit'])
                             else:
                                 if len(idx['attempts']) >= 8:
@@ -833,6 +861,8 @@ def run(args, c, joint=None):
         arrivals=getattr(mission,'arrivals',[]), completed_round_trips=getattr(mission,'laps',int(first_completion is not None)),
         final_stable_s=getattr(mission,'final_stable_s',None),
         simulation_s=float(data.time), wall_s=wall, final_qpos=data.qpos.copy(), final_qvel=data.qvel.copy(),
+        physical_started_unix_s=first_integration_unix_s,physical_ended_unix_s=last_integration_unix_s,
+        physical_interval_clock='time.time immediately before first and after last actual applied mj_step; 5kHz samples',
         final_origin_distance_m=float(np.linalg.norm(data.qpos[:2])),
         final_heading_error_rad=float(abs(angle(np.pi-Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz')[2]))),
         max_x_m=float(arrays['qpos'][:,0].max()), min_body_height_m=float(arrays['qpos'][:,2].min()),
@@ -850,9 +880,9 @@ def run(args, c, joint=None):
         physical_time_note='MuJoCo mj_step forces/contact correspond to the integration evaluation, preceding its returned qpos. Force evaluation and post-integration clocks are both stored.',
         terminal_row_note='Actual final qpos/qvel are appended for physical failure and external truncation; held command and last diagnostic values retain their preceding control timestamp.')
     if w53_route:
-        result['w53_route']=w53_route
+        result['w54_route' if is_w54 else 'w53_route']=w53_route
         result['record_timing']=record_timing
-        if w53_route=='F':result['w53_f_recording']=resolved['w53_f_recording']
+        if w53_route=='F':result['w54_f_recording' if is_w54 else 'w53_f_recording']=resolved['w53_f_recording']
     if r29_records and r29_records.failure is not None:result['r29_failure']=r29_records.failure
     if campaign:
         from s1_go2_wb_equilibrium import hold_metrics
