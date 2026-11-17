@@ -1,18 +1,16 @@
-# 地面材料记忆项目：W54 完整稳定性修复
+# 地面材料记忆项目：W54实际结果
 
-更新：2026-11-17（Asia/Shanghai）。长期目标继续是同一地块的跨足/跨步/返程材料记忆辨识与协同控制；先完成原Go2/TM02合法稳定往返，再证明历史进入决策并产生因果收益，随后泛化与Go2/NX实机。此前“仓库整体梳理”的最终方向已核对，旧墙钟预算不能覆盖最新无deadline约定。
+更新：2026-11-17（Asia/Shanghai）。长期主问题仍为同一世界地块的跨足、跨步、返程材料记忆辨识与协同控制，原Go2/TM02合法稳定往返尚未建立。
 
-**W54已实施并运行N/r44、F/r45和F/r46原E30，均未通过；根据新证据继续F/r47和N/r48同范围修订。实际活动身份与结果写入独立w54/index.json、phase.json和current.json。** 本轮新增物理/rollout/FD/QP以实际索引计数；新PPO samples/updates/donor仍为0。读 [W53审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md)、[W54计划](S1_W54_STABILITY_PLAN.md)、[启动提示词](S1_W54_START_PROMPT.md)、[机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/handoff.json) 和 [当前入口](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。
+W54已实际实施F/N/C并完成9次不同版本原E30、0次通过；没有合格内核，seed2/E60/E300/E600未运行，新PPO samples/updates/donor=0。所有物理任务均按原条件自然结束。详细版本表、命令和原始结果在[独立索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/index.json)，当前机器入口为[current.json](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。
 
-## 最新事实和决策
+最新F/r52修正真实接触与承载、球底任务、MPC/WBC运动对齐、2ms保持和内接真实摩擦圆锥，仍在5.600s body_fall；身体失稳早于材料加载。N/r48的E/nominal链已核对，但全部末次候选可满足足域代理而接受机身降低，最终8.3568s躯干触地。N出现12次跨腿地块重访事件，未完成材料贯穿/返程或记忆收益对照。现有记录不足以将剩余协同问题归结为另一项唯一接线错误，后续不以盲调权重或原样重跑替代明确模型变更。
 
-- N/r42找回真实交替支撑与前进，最大x=.723845m；6.0274s首次前足材料受载，6.4656s材料域退出，末z=.290389m、非足力0。最后新地块FL触地vz=-.9558m/s，1.6ms内到原域边界；1194.56N实际施加，1206.81N候选未施加。尚无材料贯穿、跨足/返程收益或原E30资格。
-- F/r43材料前支撑交接失败且降高，3.120s因六行0>=1.70025764Nm不可行结束。五项已证错误成组修：未来静态关节界、绝对时钟交接、悬空anchor、删力改变身体目标、未来landing回旧锚；另补已知摩擦模型与足任务跟踪。原零末速/C2与PD映射已正确，不重复认领。
-- 两有效物理启动、两零步技术初始化错误分账；E30通过0、后级/seed2未运行，PPO/donor=0。W53有效N/F重叠0s，C更早结束；N热求导约9.80核，F约1.02核。C部分模型/矩阵一致但没有完整求解或在线收益。
-- W54 F主修完整接触执行链；N引入触地前确定性执行整形并在真实/native/FD保持同一状态/hold语义，区别于R10旧softcost+局部弹簧；C完整GPU horizon力序列优化与独立CPU裁决。无第三物理族、无新D8/旧9+3、无原样追加cap-only学习。
-- 已知问题首任务前一起修；各线就绪即原E30，有新增可定位证据就在同轮修订，不以两次失败为自动结束点，不重复同版追成功。首个合格内核冻结即继续，另一槽给同内核第二case；逐case原E30→E60→E300→E600，原路线、材料和身份条件保持。
+C最新r52批覆盖16完整horizon/224节点，CPU独立复算16/16通过；物理μ=.5、共同内接轴斜率μ/√2。GPU包含传输.350782s、包括初始化编译2.171979s，CPU装配加QP .665930s；不同优化预算，未建立在线收益、GPU WBC或材料动力学覆盖。历史外包方锥结果保留并纠正。
 
-最新资源、日志和发布合同见W54计划。所有新后台deadline=null、wall_deadline_enabled=false；无固定墙钟完成时刻、到点kill或对话结束kill。GitHub直交并核验后不在用户电脑下载/复制/镜像/打包/归档；保留被引用服务器原件、W44 A/B完整checkpoint/resume。当前入口统一为current.json与W54文件；下方与大index.json里的旧训练/下一步/预算均只属于历史。
+9任务共383713物理子步、76.7426s仿真、4263.539333 CPU-s；有效双物理重叠41.1324s。29个Release资产含9全视频均已核size/digest。工作区/root/autodl-tmp/MCP-RL-w54，W44完整学习状态与服务器原件保留，用户电脑未额外下载或归档。
+
+以下为历史形成时的计划与结果，其“当前/下一步”不覆盖本页顶部及current.json。
 
 ---
 

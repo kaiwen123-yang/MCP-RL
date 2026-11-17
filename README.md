@@ -2,17 +2,31 @@
 
 长期目标：同一世界地块被前足、后足和返程重复加载时，利用材料持久状态，让未来支撑需求影响当前加载、落点和重访，建立原 Go2/TM02 合法完整往返、因果记忆收益、泛化及实机证据。
 
-## 当前：W54 原任务与证据修订正在推进
+## 当前：W54实际结果与剩余稳定性问题
 
-更新：2026-11-17（Asia/Shanghai）。W54以df07c4b为实施起点，使用独立D57工作区。N/r44原E30在7.0058s材料域退出（max x=.864826m）；F/r45在4.134s执行错误，F/r46在4.626s body_fall，F两次均未加载材料。原E30尚未通过，材料跨足/返程记忆收益未获评价。
+更新：2026-11-17（Asia/Shanghai）。W54从df07c4b在D57独立工作区实际实施，完成**9次不同版本原E30，0次通过**。全部物理任务已按原条件自然结束；没有仍在运行的物理任务，没有合格内核，seed2及E60/E300/E600未运行。不是按“两次失败”停止，也没有原样重复负版本或参数网格。
 
-N/r44与F/r46真实物理重叠41.1324s。F继续修球形足实际接触点语义；N继续修E的总加速度及全部候选/旧计划预测检查，均使用新身份、原seed1/路线/硬界。当前活动进度只读[执行状态](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/phase.json)和[机器入口](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)，不重复启动同身份。
+| 身份 | 实际物理终点/s | 最远x/m | 原终止结果 |
+|---|---:|---:|---|
+| F-A-r45 | 4.1340 | 0.403342 | execution_error |
+| F-A-r46 | 4.6260 | 0.561246 | body_fall |
+| F-A-r47 | 4.7840 | 0.574192 | body_fall |
+| F-A-r49 | 6.0040 | 0.699149 | execution_error |
+| F-A-r50 | 30.0000 | 0.623944 | material_traversal_not_completed |
+| F-A-r51 | 6.2320 | 0.957352 | material_domain_exit |
+| F-A-r52 | 5.6000 | 0.833806 | body_fall |
+| N-A-r44 | 7.0058 | 0.864826 | material_domain_exit |
+| N-A-r48 | 8.3568 | 1.312010 | invalid_contact:[[0, 13, 0, 1]] |
 
-C完成全horizon优化与CPU独立复算。当前修后r46输入覆盖16个状态/224节点，16/16 SRB可行；完整首力/力序列/状态/成本已保存，尚无在线收益或全身/材料成功资格。旧批次与接触合同被取代的r45批次分别记录在[GPU结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/task-c.json)。
+F/r50完整观察30s但约5s后停步；F/r52在材料前已降高，5.600s body_fall。N/r48进入材料并产生12次跨腿地块重访事件，但8.3568s躯干触地，没有完成贯穿/返程或材料记忆因果收益评价。新PPO samples/updates/donor=0；W44完整checkpoint/resume和被引用服务器原件保留。
 
-[W54计划](docs/S1_W54_STABILITY_PLAN.md) · [实际运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/index.json) · [F/r45分析](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/f-r45-actual-analysis.json) · [项目主计划](docs/TERRAIN_MEMORY_PLAN.md)
+最新F/r52保留真实接触/承载交接、实际触地锚、持续未来落点、独立MPC目标与求解运动执行、原全身硬界、球底Jacobian/滚动语义、有界dry friction、真实2ms保持平均与子步约束、测触后的载荷建立。N/r48使用同源无记忆总加速度E，真实/native/FD同合同，全部候选和同次重评nominal共享预测域检查。已证执行/可行集错误已定向修订，但最后真实任务仍存在接触与身体支撑失配，记录尚未给出另一项可以直接更改的唯一接线错误；未通过改权重、软化材料或新控制族继续追成功。
 
-所有新后台deadline=null、wall_deadline_enabled=false，保留原物理长度/失败条件，新PPO samples/updates/donor=0。代码、必要原件和全视频直交GitHub，核远端size/digest；服务器原件及W44完整checkpoint/resume保留，用户电脑不另下载或归档。下方旧“当前/下一步”只属历史。
+C最新主表为r52自然16状态/224节点，全horizon力与状态、首动作、目标和CPU独立复算完整。物理μ=.5，CPU/GPU共同内接方锥斜率μ/√2；16/16通过独立可行性检查，GPU真实圆锥越额0。GPU含传输.350782s，含初始化编译2.171979s；CPU装配加QP .665930s。不同优化预算，未建立在线收益，未覆盖GPU WBC/材料/真实plant。历史外包方锥结果保留并明确纠正，不能引用其SRB_feasible冒称真实摩擦可行。
+
+9任务合计383713物理子步、76.7426s仿真、4263.539333 CPU-s（1.184316核时，含各任务初始化/记录；构建及离线工作另计）。有效双物理重叠41.1324s，资源affinity不作实际用核。必要原件与9个全视频均D57直传；29个唯一Release资产共1426525757B，逐项远端size/digest核对通过，未回下载或在PC归档。
+
+[实际索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/index.json) · [当前入口](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json) · [F/r52分析](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/f-r52-actual-analysis.json) · [N/r48分析](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/n-r48-analysis.json) · [GPU最新结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/task-c-r52-friction.json) · [全部Release回执](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/delivery)
 
 ## 历史 W53 发布时状态
 

@@ -1,18 +1,18 @@
-# Codex 当前入口：W53 已审查，执行 W54 完整稳定性修复
+# Codex当前入口：W54已执行并交付，尚无原E30资格
 
-更新：2026-11-17（Asia/Shanghai）。结果基点 `c01ed82d241b559e4d6c798f06bb0483c622b422`。**W54 已实施并运行原任务；正在按本轮新增证据继续同范围修订。实际结果与活动身份见独立 w54/index.json、phase.json 和 current.json；尚无原 E30 通过。** 后续执行按本节和 W54 文件推进。下方 W53/W52/W51 原入口只保留历史，不能覆盖当前范围。
+更新：2026-11-17（Asia/Shanghai）。W54从df07c4b实际实施F/N/C，完成9次不同版本原E30、0次通过。全部物理任务按原条件自然结束，当前无活动物理任务；没有合格内核，seed2及E60/E300/E600未运行。新PPO samples/updates/donor=0。
 
-先读 [W54 计划](docs/S1_W54_STABILITY_PLAN.md)、[完整启动提示词](docs/S1_W54_START_PROMPT.md)、[项目记忆](docs/TERRAIN_MEMORY_PLAN.md)、[W53 审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/README.md)、[机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W53-review/handoff.json) 和 [当前机器入口](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。原大 index.json 的嵌套训练/next_task 是历史账本，不直接作新任务入口。
+先读轻量current.json及w54/index.json（均在results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/），再读w54/f-r52-actual-analysis.json、n-r48-analysis.json和task-c-r52-friction.json。续接工作区为/root/autodl-tmp/MCP-RL-w54；旧本地与服务器修改、W44完整checkpoint/resume和原件保留。
 
-## W54 已发生结果与当前实施入口
+F/r52包含本轮成组修复及有证据的接触点、2ms held-input、载荷建立和真实摩擦可行集修订，但5.600s body_fall；4.920s已降高，先于5.325s材料加载。N/r48在8.3568s躯干触地；E/nominal接线已核对，候选仍可满足足域代理却预测低机身。记录尚未把剩余问题唯一归结为另一项明确接线错误，不能盲改权重、阈值或原样重跑负版本。12次跨腿地块重访不等于材料记忆收益评价。
 
-已运行 N/r44、F/r45、F/r46，均为原 W44 A/seed1 E30、完整 t=0 初态。N/r44 于7.0058s材料域退出，max x=.864826m，机身进入材料西边界但未贯穿；F/r45于4.134s WBC执行错误，F/r46于4.626s body_fall，二者材料加载0。N/r44与F/r46有效物理区间重叠41.1324s；不是仅tmux名称同时存在。
+C完成修后r52自然16状态/224节点的完整GPU力序列优化和CPU独立复算；物理μ=.5，CPU/GPU共同内接轴斜率μ/√2，16/16通过。没有GPU WBC/材料/在线收益资格，历史外包方锥结果已明确纠正并保留。
 
-F/r46消除了实测承载等待确认时被误删的631个足tick，并修复初站；后续新证据指向球形足中心与球底受力/不滑动点不一致，r47在本范围修订。N/r44的获选预测已包含E后快速落足，新的修订r48将区分总加速度与HΔτ，并统一候选/旧计划因果预测检查。禁止原样重复失败身份，不改任务真值。
+共383713物理子步，9任务进程合计4263.539333 CPU-s（1.184316核时），有效双物理重叠41.1324s。29个Release资产含9全视频，size/digest已核实。全路径、命令、版本、失败与发布回执在独立w54索引；原大index只作历史。
 
-C已完成有限完整GPU horizon优化，当前修后接触合同以r46的16个自然状态、224节点为准；16/16经独立CPU复算SRB可行，未获得在线或材料成功证据。r45的160个自然状态保留为已被接触合同取代的数学对照，另98个旧初站输入保留。详见w54/task-c.json，不混称完整全身GPU控制。
+后续仍先核具体job/tmux/PID和修改；如有已运行同身份则续接。所有后台deadline=null、wall_deadline_enabled=false，无到点kill或对话结束kill。后续有明确的模型/执行改动再建立新身份；不复用失败资格，不直接启动E60。GitHub交付后不在用户电脑下载、复制或归档科研文件，不删除被引用服务器原件。
 
-r45原高频记录只有61列，足速度仅500Hz；r46及N/r44首次执行前已补齐85列5kHz足位置/速度，原缺失不补造、不重跑。每次完整视频与原件由D57直传Release。使用 scripts/run_s1_go2_w54.py；新建身份从work/r11-frozen对应artifact读取配置。W54独立索引路径为results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/index.json。
+## 以下为W54形成时的执行约定与历史
 
 ## 已确认事实与本轮工作
 
