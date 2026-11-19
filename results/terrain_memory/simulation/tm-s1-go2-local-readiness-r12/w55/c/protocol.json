@@ -1,0 +1,14 @@
+{
+  "source_main": "c8e0b38d8256305b9e5a14907829980c3f1b0054",
+  "mode": "Offline material histories from original applied boundaries; each integration starts virgin and carries its own e/q.",
+  "background": {"deadline": null, "wall_deadline_enabled": false},
+  "cpu_affinity": [14,15,16,17,18,19,20,21],
+  "math_threads": 1,
+  "known_diagnostics": "W54 N48 six and F52 three reused from reviews/W54-review. Remaining loaded world cells in those episodes are extended diagnostic coverage. No W54 return leg.",
+  "split": {"training_real":"Entire W54 N/r44 seed1 episode, with whole-history duplicates grouped in fit weights", "validation_real":"Entire W54 F/r51 seed1 episode", "test_real":"Entire W46 B/seed2 episode, not opened for model selection; exclude any history/event family resembling a training or validation family from held-out scores", "synthetic":"Explicit mixed compression, short release and revisit pulses of different widths/gaps, virgin per trajectory; all in training, separate from measured feet"},
+  "clocks": ["PANN vs Reference .2ms, identical measured boundaries", "PANN vs Reference 2ms, identical observer endpoint boundaries", "Reference fine vs Reference fine holding the observer endpoint fixed over each of ten substeps isolates boundary sampling", "Reference endpoint-held fine vs Reference 2ms endpoint isolates integration step on that held boundary"],
+  "training_trigger": "Confirm substantial post-fast-load relative free-recovery error independent of the N48/F52 diagnosis using complete F51 or N44 histories. Require reference free compression at least 1 micrometer and continuous recorded strain rate at least 1/s; pre-specified reference scale limits division near zero. Compare independently significant absolute and relative errors. A 15% or greater recovery-scale error (previous diagnostic 19-22%) triggers one candidate.",
+  "fit": "Warm-start B_random1000--ideal seed0. Fit two scalar corrections to the existing convex dissipation potential: positive overall output scale and positive quartic-rate input coefficients. Keep both elastic potentials, all original saved normalization, tensor conventions and equation domain. Least-squares on free-integrated normal stress and released compression. One deterministic fit with at most 16 effective objective evaluations by optimizer and validation for selection. No auxiliary LSTM, true-q injection, added network, PPO, or control installation.",
+  "hardware": "D57 RTX PRO 6000, initial cgroup 25 cores; no robot physics from C",
+  "new_PPO_samples": 0, "new_PPO_updates": 0, "donor": 0
+}
