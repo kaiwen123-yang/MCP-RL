@@ -24,6 +24,9 @@ def configuration(build,level,cap=.215,terrain='tm02_anchor',training_duration=N
         c['task']['move_and_turn_settings'].update(Cadence=2.,**{'Duty ratio':.60,'Amplitude':.03})
         c['controller_formulation']='independent_force_MPC_WBC'
         names=[str(Path(identity['backend_source']).relative_to('scripts'))]
+    if route == 'F' and identity.get('experiment_window') == 'W55':
+        c.update(implementation_status='W55_original_evaluation', w55_route=route)
+        names += identity['inherited_execution_sources'] + ['run_s1_w55_f.py']
     names=list(names)+['s1_go2_w54_config.py','run_s1_go2_r12.py']
     c['w54_execution_source_names']=names
     c['w54_execution_sources']=['scripts/'+n for n in names]
