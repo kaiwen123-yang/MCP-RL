@@ -82,7 +82,7 @@ def analyze(attempt):
     full=(counts==10)
     actual_acc=sums[full]/(10*float(resolved['mass_kg']))+[0.,0.,-9.81]
     mask=ct[full]>=2.
-    revisits=[e for e in material_events if e['type']=='load' and e.get('cross_leg') is True]
+    revisits=[e for e in material_events if e['type']=='revisit' and e.get('cross_leg') is True]
     duration=float(t[-1])
     windows=[]
     anchor=2.
