@@ -1,16 +1,12 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
-长期目标：同一世界地块被前足、后足和返程重复加载时，利用材料持久状态，让未来支撑需求影响当前加载、落点和重访，建立原 Go2/TM02 合法完整往返、因果记忆收益、泛化及实机证据。
+目标是在重复加载的同一地块上辨识材料状态，并检验其对后续步态与支撑决策的影响。
 
-## 当前：W54 已审查，W55 优先修复运动学与真实支撑
+## W55 原资格执行
 
-更新：2026-11-17（Asia/Shanghai）。W54 的 9 次不同版本原 E30 仍为 0 通过；W55 已完成计划，尚未实施新的机器人控制修复或原任务。此次审查发现 F 使用的 MuJoCo 3.2.3 平移 `mj_jacDot` 存在官方已修复缺项；独立保存数据中心差分残差 r52 为 2.5950→.009986 m/s²、r51 为 2.5658→.009796。修正了日志中的恒等式不等于修后机器人已成功。
+2026-11-19，D57 从 \`c8e0b38\` 启动 W55。F/r53 已在原 W44 A/seed1 E30 进入实际物理。N 从 r48 实施支撑投影与整身候选，C 已从四个 W54 实载回合和一个独立 seed2 回合重建加载边界。阶段资格、终止原因、材料贯穿和 Release 回执以本轮实际记录为准。
 
-下一步：F 在控制层一次修足心、逐体 COM 与 rolling 下游，保留原 plant；N 同时修支撑条件下的制动响应、全身候选检查与可恢复候选；第三线用真实加载历史核清 PANN 本构、observer 采样和接触桥接，有明确误差才定向 GPU 训练。PANN 当前权重为 B ideal，实际地面力来自解析 ReferenceColumns；冻结权重不等于冻结材料历史。
-
-F/N 就绪即并行，不等其他线；首个正常通过原 E30 的内核可继续资格链。25 核初期按 10+4+8+3 调度，GPU 做有增量的材料工作，已完成的 16 条力 horizon 不重复。所有后台无墙钟 deadline；GitHub 核验后不在用户电脑额外归档。
-
-[W54 深入审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/README.md) · [W55 计划](docs/S1_W55_STABILITY_PLAN.md) · [启动提示词](docs/S1_W55_START_PROMPT.md) · [当前入口](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json) · [PANN 专项](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/pann.md)
+[W55 结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json) · [任务进度](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json) · [计划与资格条件](docs/S1_W55_STABILITY_PLAN.md) · [本轮原件及全视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55)
 
 ## W54 已执行结果（保留）
 

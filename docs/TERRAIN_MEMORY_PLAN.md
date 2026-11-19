@@ -1,18 +1,10 @@
-# 地面材料记忆项目：W55 稳定性实施入口
+# 地面材料记忆项目 · W55 执行
 
-更新：2026-11-17（Asia/Shanghai）。长期目标仍为同一世界地块跨足、跨步、返程的材料记忆辨识与协同控制。W54 原 E30 0/9，原 Go2/TM02 稳定贯穿与完整往返仍未建立；没有材料记忆因果收益资格。W55 已完成审查与计划，尚未新运行机器人。
+2026-11-19，D57 从 \`c8e0b38\` 启动 W55。F/r53 已在原 W44 A/seed1 E30 进入实际物理。N 从 r48 实施支撑投影与整身候选，C 已从四个 W54 实载回合和一个独立 seed2 回合重建加载边界。阶段资格、终止原因、材料贯穿和 Release 回执以本轮实际记录为准。
 
-[W55 完整计划](S1_W55_STABILITY_PLAN.md) · [启动提示词](S1_W55_START_PROMPT.md) · [W54 审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/README.md) · [机器交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/handoff.json)
+F/r53 将 3.2.3 平移运动点项用于足球心和逐体质心，并由球心组合 rolling。初次闭环沿用 W44 A 的权重、归一化和 TM02 原始物理。各 case 的资格链独立，需完整日志与视频支持正常运动才冻结首个内核。C 独立评估本构、边界采样与材料恢复。新 PPO 样本、更新和 donor 均为 0。
 
-优先级由新证据更新：F 的旧版平移 mj_jacDot 缺运动点项已由官方源码与两份原数组复算确认；先局部修足心、逐体质心与 rolling 使用，保留 plant、angular 项及现有正确修订。r52 材料前中心差分运动学残差 2.5950→.009986 m/s²，尚非修后闭环结果。N 使用方向差分，无此缺项；它应修无支撑反力的自由体制动近似，并同时生成可行全身恢复候选，不能仅增高度阈值。
-
-材料线并行区分真 TM02 参数、接触桥接、PANN 权重与动态地块 e/q、PPO 权重。真实地面为解析 ReferenceColumns，当前实际 PANN 为 B ideal；不能用历史 noisy 恢复偏差代替当前部署证据。详细真实训练范围与冻结模型实载自由积分见 PANN 专项及 replay summary；有明确本构误差才训练新材料候选，先保留原正式任务权重，PPO新增样本/更新/donor=0。
-
-两条控制线就绪即原 E30，不等材料线或发布。一次修完已证同类调用点，失败后按新首因在同轮继续；原样负版本不重跑。首个正常通过的完整内核冻结后推进同身份原 E30→E60→E300→E600，另一槽运行第二 case，不能借资格。现场 25 核初期 N10/F4/C8/系统其他3；C使用 GPU 做有意义的材料工作，不重复 W54 已完成的16力horizon。
-
-所有新后台 deadline=null、wall_deadline_enabled=false，无墙钟截止或对话结束 kill；保留原物理时长/失败判据。GitHub直交核验后不在用户电脑额外归档；服务器被引用原件及 W44 完整 checkpoint/resume 保留。下方旧“当前/下一步”属于历史，不覆盖本段、current.json及W55计划。
-
----
+[W55 协议](S1_W55_STABILITY_PLAN.md) · [阶段实录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json) · [独立结果索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json)
 
 # W54 实际结果（历史入口）
 

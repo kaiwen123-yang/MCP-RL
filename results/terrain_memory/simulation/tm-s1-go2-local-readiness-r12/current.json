@@ -1,16 +1,16 @@
 {
   "schema": "s1_current_handoff_v1",
-  "date": "2026-11-17 Asia/Shanghai",
-  "result_source_commit": "1ae25272c86f551f8c6b3a65073bc05b24e3d8f6",
-  "status": "W54_reviewed_W55_planned_not_implemented",
-  "latest_executed_window": "W54",
-  "latest_results": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/index.json",
-  "latest_execution_state": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/phase.json",
+  "date": "2026-11-19 Asia/Shanghai",
+  "result_source_commit": "c8e0b38d8256305b9e5a14907829980c3f1b0054",
+  "status": "W55_executing",
+  "latest_executed_window": "W55",
+  "latest_results": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json",
+  "latest_execution_state": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json",
   "latest_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/README.md",
   "current_task": "W55_KINEMATICS_SUPPORT_AND_MATERIAL_SCOPE",
   "next_plan": "docs/S1_W55_STABILITY_PLAN.md",
   "start_prompt": "docs/S1_W55_START_PROMPT.md",
-  "handoff": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/handoff.json",
+  "handoff": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json",
   "legacy_index": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json",
   "legacy_index_role": "Historical accumulated ledger; its old training/next_task/next_action are not the current execution entrypoint. Historical outcomes remain unchanged.",
   "W53": {
@@ -40,7 +40,15 @@
     "material_memory_causal_benefit_evaluated": false,
     "new_PPO_samples": 0,
     "new_PPO_updates": 0,
-    "donor": 0
+    "donor": 0,
+    "publication": {
+      "status": "published",
+      "unique_assets": 29,
+      "asset_bytes": 1426525757,
+      "full_videos": 9,
+      "verification": "Saved execution-side SHA-256 and size matched authenticated GitHub remote digest/size/uploaded state; no asset redownload.",
+      "receipts": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/delivery"
+    }
   },
   "background": {
     "deadline": null,
@@ -53,18 +61,10 @@
     "preserve_referenced_server_artifacts": true
   },
   "path_base": "repository_root",
-  "implementation_base_commit": "df07c4bb690f831745879af3a86800c2c3ec427d",
-  "workspace": "/root/autodl-tmp/MCP-RL-w54",
-  "publication": {
-    "status": "published",
-    "unique_assets": 29,
-    "asset_bytes": 1426525757,
-    "full_videos": 9,
-    "verification": "Saved execution-side SHA-256 and size matched authenticated GitHub remote digest/size/uploaded state; no asset redownload.",
-    "receipts": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w54/delivery"
-  },
+  "implementation_base_commit": "c8e0b38d8256305b9e5a14907829980c3f1b0054",
+  "workspace": "/root/autodl-tmp/MCP-RL-w55-integration",
   "continuation": {
-    "workspace": "/root/autodl-tmp/MCP-RL-w54",
+    "workspace": "/root/autodl-tmp/MCP-RL-w55-integration",
     "entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json",
     "review_first": [
       "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/README.md",
@@ -74,24 +74,31 @@
       "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/pann-replay-summary.json",
       "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/handoff.json"
     ],
-    "rule": "Execute W55 plan from latest main; inspect concrete jobs first. Correct F control-side kinematics without upgrading plant. Support-aware N and material audit run independently. Preserve all source results and exact-case qualification."
+    "rule": "Read W55 phase, per-job contract, tmux/PID and live physical time before continuing a case. The case identity and original staged evaluator determine qualification.",
+    "lane_workspaces": {
+      "F": "/root/autodl-tmp/MCP-RL-w55-f",
+      "N": "/root/autodl-tmp/MCP-RL-w55-n",
+      "C": "/root/autodl-tmp/MCP-RL-w55-c",
+      "integration": "/root/autodl-tmp/MCP-RL-w55-integration"
+    }
   },
   "W55": {
-    "status": "planned_not_implemented",
-    "robot_control_implemented": false,
-    "robot_physics_started": false,
-    "new_robot_physical_steps": 0,
-    "new_native_rollouts": 0,
-    "new_controller_FD": 0,
-    "new_QP_solves": 0,
+    "status": "executing",
+    "plan": "docs/S1_W55_STABILITY_PLAN.md",
+    "index": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json",
+    "phase": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json",
+    "F": "S5-r53 original W44 A/seed1 E30 launched",
+    "N": "S5-r54 support-conditioned implementation in progress",
+    "C": "Independent recorded loading histories assembled for four W54 episodes and a W46-B holdout.",
+    "robot_physics_started": true,
     "new_PPO_samples": 0,
     "new_PPO_updates": 0,
-    "donor": 0,
-    "offline_constitutive_replay": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/pann-replay-summary.json",
-    "workstreams": [
-      "F_323_translational_jacdot_fix",
-      "N_support_coupled_E_and_whole_body_candidates",
-      "C_material_domain_sampling_audit_and_conditional_recalibration"
-    ]
-  }
+    "donor": 0
+  },
+  "publication": {
+    "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55",
+    "asset_receipts": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/delivery",
+    "status_source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json"
+  },
+  "result_source_commit_scope": "W55 implementation base. Per-job source commits, exact stage outcomes and Release receipts are recorded in the W55 index and phase."
 }

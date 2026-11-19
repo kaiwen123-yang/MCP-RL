@@ -1,16 +1,10 @@
-# Codex 当前入口：W55 已规划，先修已确认运动学缺项
+# Codex 当前入口 · W55 原资格执行
 
-更新：2026-11-17（Asia/Shanghai）。实际 W54 结果基点 1ae25272c86f551f8c6b3a65073bc05b24e3d8f6；W54 已完成 9 次不同版本原 E30、0 次通过。W55 此次仅完成审查与计划，没有新机器人物理、native rollout、控制器 FD、QP 重解或 PPO。离线材料本构回放属于审查，不是新机器人成功。
+2026-11-19，D57 从 \`c8e0b38\` 启动 W55。F/r53 已在原 W44 A/seed1 E30 进入实际物理。N 从 r48 实施支撑投影与整身候选，C 已从四个 W54 实载回合和一个独立 seed2 回合重建加载边界。阶段资格、终止原因、材料贯穿和 Release 回执以本轮实际记录为准。
 
-先读 docs/S1_W55_STABILITY_PLAN.md、docs/S1_W55_START_PROMPT.md、轻量 current.json 和 reviews/W54-review/{README,control,evidence,pann,literature}.md、handoff.json、pann-replay-summary.json；这些结果文件均位于 results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/。原大 index 只作历史。续接现场仍先核 /root/autodl-tmp/MCP-RL-w54 的具体 job/tmux/PID 和修改，已有同身份有效工作就续接。
+续接先查 D57 各 lane 的具体 job、tmux、PID 和物理时钟。F、N 分别在 /root/autodl-tmp/MCP-RL-w55-f、MCP-RL-w55-n。材料与串行发布分别在 MCP-RL-w55-c、MCP-RL-w55-integration。原物理、判据、W44 checkpoint 和已引用原件保留。所有任务 deadline=null、wall_deadline_enabled=false。相同 case 与版本仅续接已有任务。
 
-新确认：F 的 MuJoCo 3.2.3 平移 mj_jacDot 缺运动点项，官方 de48f417 在 3.3.1 修复。两份独立保存数组核验：r52 中心差分运动学残差 2.5950→.009986 m/s²，r51 2.5658→.009796；不是修后闭环结果。优先在控制侧修足心和逐 body COM（再质量平均），rolling 继承修后足心；angular 不加，N 的运动学方向差分不加。保留冻结 plant 和 r52 既有正确修订，不先全面改物理或调 gain。
-
-W55 三线：F 修完整公式后直接原 E30；N 用当前支撑约束下的联合投影替代自由体制动响应，同时做全身候选可行性和同源恢复候选；C 用实载历史区分 PANN 本构、2 ms 观测采样和桥接误差，有明确误差才定向 GPU 训练材料候选。PANN 真 plant 为解析 ReferenceColumns，当前选 B ideal，权重冻结但 e/q 更新；不能套用 noisy 模型偏差或盲目解冻。新 PPO samples/updates/donor=0，完整 W44 resume 保留。
-
-两条物理线就绪即真并行，F 不等 N/PANN/上传。初期 25 核按 N≤10、F≤4、C/数据≤8、系统其他≥3；已运行身份 workers 不变。C/r52 已完成 16 horizon、224 个力区间的完整 GPU 优化，不重复凑显存。首套原 E30 合格且正常运动即可冻结推进各 case E60/E300/E600；没有合格内核前不借资格。失败按新增首因在同轮继续修，不固定两次就停、不原样重跑或网格试参。
-
-所有后台 deadline=null、wall_deadline_enabled=false，省略 deadline-unix；不到点 kill、不对话结束 kill。原物理时长/失败条件、明确数值资源错误和用户停止有效。GitHub 直交并核验后结束，不在用户电脑额外下载、复制、镜像、打包或归档；保留被引用服务器原件，不自动借电脑网络转发。
+[W55 当前结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json) · [任务、进程及阶段](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json) · [完整协议](docs/S1_W55_STABILITY_PLAN.md)
 
 ## 以下 W54 入口及执行约定属于历史
 
