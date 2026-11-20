@@ -1,13 +1,13 @@
 {
   "run_id": "tm-s1-go2-local-readiness-r12",
   "stage": "S1R12",
-  "status": "W54_reviewed_W55_planned_not_implemented",
+  "status": "W55_reviewed_W56_planned_existing_E600_preserved",
   "protocol_revision": "W44_r33_motion_optimization_v21",
   "formal_evaluation_protocol": "staged_evaluation_30_60_300_600_v3_bidirectional_material_route",
-  "revision_date": "2026-11-17",
+  "revision_date": "2026-11-20 Asia/Shanghai",
   "supersedes_plan_commit": "c438f5463659ab7c8d3a7f5eced251639e14b2ef",
   "plan": "docs/TERRAIN_MEMORY_PLAN.md",
-  "current_task": "W55_KINEMATICS_SUPPORT_AND_MATERIAL_SCOPE",
+  "current_task": "W56_COMPLETE_R55_AND_MATERIAL_CAUSAL_INTERFACE",
   "reuse": {
     "runtime_physics_ppo_and_task_settings": "experiments/terrain_memory/s1-go2-material-continuation-r11.json",
     "initial_controller": "experiments/terrain_memory/s1-go2-r11-S5-r28.json",
@@ -3784,7 +3784,7 @@
       }
     }
   },
-  "reviewed_source_commit": "1ae25272c86f551f8c6b3a65073bc05b24e3d8f6",
+  "reviewed_source_commit": "0eb39b13932c18d8e52ff305a3c35477a4510ab7",
   "literature": [
     {
       "id": "TM02",
@@ -3915,9 +3915,9 @@
     "latest_user_scope": "2026-11-05 execute W39; leave after both tmux streams show real sample/log progress, without waiting for the first completed update."
   },
   "current_review_scope": {
-    "source_commit": "1ae25272c86f551f8c6b3a65073bc05b24e3d8f6",
-    "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/README.md",
-    "status": "W54_originals_reviewed_offline_constitutive_replay_only_no_new_robot_experiments",
+    "source_commit": "0eb39b13932c18d8e52ff305a3c35477a4510ab7",
+    "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/README.md",
+    "status": "W55_saved_arrays_code_videos_reviewed_no_new_robot_or_QP",
     "current_entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json"
   },
   "planned_implementation": {
@@ -3995,30 +3995,31 @@
     "scope": "D57 inspected and r28 built; this is the prelaunch configuration snapshot. Normal job/index records and six-line main-plan handoff report subsequent actual training/evaluation status; clock is created only by actual launch."
   },
   "next_authorized_plan": {
-    "entrypoint": "docs/S1_W55_STABILITY_PLAN.md",
-    "prompt": "docs/S1_W55_START_PROMPT.md",
-    "handoff": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json",
-    "status": "original_stage_results_updated",
+    "entrypoint": "docs/S1_W56_STABILITY_PLAN.md",
+    "prompt": "docs/S1_W56_START_PROMPT.md",
+    "handoff": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/handoff.json",
+    "status": "planned_not_implemented_by_review",
     "workstreams": [
-      "F_323_translational_jacdot_fix",
-      "N_support_coupled_E_and_whole_body_candidates",
-      "C_material_domain_sampling_audit_and_conditional_recalibration"
+      "F_finish_existing_E600_then_same_actor_zero_last12_E30_E60",
+      "C_causal_window_and_history_dependent_normal_reference_with_offline_candidate_state",
+      "N_numerical_feasibility_and_full_horizon_supported_progress_on_free_slot"
     ],
-    "robot_control_implemented": true,
-    "robot_physics_started": true,
+    "robot_control_implemented": false,
+    "robot_physics_started": false,
     "continue_evidence_based_repair_within_scope": true,
-    "first_qualified_controller_can_advance_without_waiting_for_other_development": true,
+    "first_action": "Inspect latest main, local changes, exact D57 jobs/PIDs/tmux/physical clocks; resume or collect existing A/B r55 E600. Do not relaunch valid jobs or repeat passed predecessors.",
     "formal_ladder": [
       "E30",
       "E60",
       "E300",
       "E600"
     ],
+    "ablation_default_final_stage": "E60",
     "new_PPO_samples": 0,
     "new_PPO_updates": 0,
     "donor": 0,
     "conditional_offline_PANN_retraining_authorized": true,
-    "PANN_retraining_scope": "Confirm measured high-rate recovery error on independent loading histories, then target one offline candidate; group full event families for holdout. Frozen true plant, no hot replacement or PPO training; online adoption separately requires decision-impact evidence.",
+    "PANN_retraining_scope": "Only decision-sensitive independent r55 constitutive error after separating sampling/bridge; retain energy/dissipation, complete-history holdout and historical transfer. W55 candidate is not adopted.",
     "deadline": null,
     "wall_deadline_enabled": false,
     "no_kill_on_conversation_end": true,
@@ -4026,16 +4027,17 @@
     "server_referenced_outputs_preserved": true,
     "current_machine_entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json",
     "last_actual_index": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json",
+    "validated_actual_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/phase-recomputed.json",
     "last_actual_F": "S5-r55",
     "last_actual_N": "S5-r56",
-    "E30_passes": 4,
-    "current_execution_identity": "S5-r55 passed its independent W44 A E30, now A E60. S5-r56 A runs its original E30. Consult live per-case records and automatic original ladder/Release continuations on D57.",
-    "planned_actual_output": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json",
-    "frozen_controller": "S5-r55",
-    "selection": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/r55-selection.json",
     "highest_passed_original_stage": "E300",
-    "earlier_qualified_kernel": "S5-r53"
+    "E30_passes": 4,
+    "E60_passes": 2,
+    "E300_passes": 2,
+    "E600_passes": 0,
+    "planned_actual_output": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/index.json",
+    "current_execution_identity": "W55 r55 A/B E600 retain original identities and run state; N/r56 E30 already ended. Read live jobs before new work."
   },
-  "historical_nested_records_note": "Historical nested execution, prelaunch, planned implementation and budget/deadline records retain their original identities. Current AGENTS/W55 plan/current.json/next_authorized_plan supersede them. Do not relaunch old training or impose an old wall deadline on new work.",
+  "historical_nested_records_note": "Historical nested execution, prelaunch, current_window_scope, planned_implementation and budget/deadline records retain their original identities. Top current_review_scope, AGENTS/W56 plan/current.json/next_authorized_plan supersede historical next-step prose. Do not relaunch old training or impose an old wall deadline. Current W55 running contracts remain immutable.",
   "formal_evaluation_revision_note": "New R12 E60/E300/E600 retain previous physical/time/endpoint criteria and additionally require recorded legal outbound, return and completed roundtrips (1/5/10); original saved results and frozen contracts remain unchanged. Evaluator source hash and legacy_stage_criteria_met distinguish scoring versions."
 }

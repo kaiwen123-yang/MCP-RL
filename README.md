@@ -2,11 +2,15 @@
 
 目标是在重复加载的同一地块上辨识材料状态，并检验其对后续步态与支撑决策的影响。
 
-## W55 原资格执行
+## 当前：W55 已建立 E300 基线，W56 计划已发布
 
-W55 的 F/r53 在 W44 A、B 各通过原 E30，两次 E60 均受载穿过材料带并沿原路穿回。A 在 40.178 s 满足回家稳定条件，随后 WBC 于 42.676 s 中断。B 在终点站立期间于 41.254 s 中断，完整往返计数为 0。F/r55 修正终点保持时的质心力矩臂，凭自身原 A/E30 的全程轨迹与视频取得资格。N/r54 跑满 30 s，最远 x=0.789 m，未贯穿材料。最新在途任务为 F/r55 A/E60 和 N/r56 A/E30，阶段进度与原件见本轮索引。
+截至2026-11-20 16:33:31（北京时间）仓库快照，F/r55 A、B各自原E30/E60/E300通过；A/E300原数组独立核实五次合法材料往返，231.942 s完成后保持到300 s。B/E300独立结果及视频/20个原件ZIP已补交；本审查核其独立JSON和视频，未独立复算B数组。两条E600仅记录为在途（153.502/113.502物理秒），不能写成已通过。N54/N56原E30均已结束但未贯穿材料，N56最远x=0.894534 m。新PPO样本/更新/donor=0。
 
-[W55 结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json) · [任务进度](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json) · [计划与资格条件](docs/S1_W55_STABILITY_PLAN.md) · [本轮原件及全视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55)
+W55已结束12次原阶段：8通过、r53终点失稳后控制中断2次、N未贯穿2次；另有两条E600在途。r55保留原硬界和评价，修复的是站立保持时的COM力矩臂。材料候选在独立保留组退步，继续用原B ideal；材料记忆的完整因果收益与实时性尚未证明。
+
+W56先续接现有E600，实际执行同actor末12维消融，并在独立身份实现因果材料法向参考；N数值与全预测域推进修复、有效CPU/GPU计算可并行。最多两重物理加一计算线，无后台墙钟截止，无用户电脑额外归档。
+
+[完整审查与原数组图](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/README.md) · [原阶段记录](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json) · [校正台账](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/phase-recomputed.json) · [W56计划](docs/S1_W56_STABILITY_PLAN.md) · [启动提示词](docs/S1_W56_START_PROMPT.md) · [W55完整视频/原件](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55)
 
 ## W54 已执行结果（保留）
 

@@ -1,10 +1,18 @@
-# 地面材料记忆项目 · W55 执行
+# 地面材料记忆项目 · W55已审查，W56计划
 
-W55 的 F/r53 在 W44 A、B 各通过原 E30，两次 E60 均受载穿过材料带并沿原路穿回。A 在 40.178 s 满足回家稳定条件，随后 WBC 于 42.676 s 中断。B 在终点站立期间于 41.254 s 中断，完整往返计数为 0。F/r55 修正终点保持时的质心力矩臂，凭自身原 A/E30 的全程轨迹与视频取得资格。N/r54 跑满 30 s，最远 x=0.789 m，未贯穿材料。最新在途任务为 F/r55 A/E60 和 N/r56 A/E30，阶段进度与原件见本轮索引。
+截至2026-11-20 16:33:31（北京时间）仓库快照，F/r55 A、B各自原E30/E60/E300通过；A/E300原数组独立核实五次合法材料往返，231.942 s完成后保持到300 s。B/E300独立结果及视频/20个原件ZIP已补交；本审查核其独立JSON和视频，未独立复算B数组。两条E600仅记录为在途（153.502/113.502物理秒），不能写成已通过。N54/N56原E30均已结束但未贯穿材料，N56最远x=0.894534 m。新PPO样本/更新/donor=0。
 
-F/r53 将 3.2.3 平移运动点项用于足球心和逐体质心，并由球心组合 rolling。初次闭环沿用 W44 A 的权重、归一化和 TM02 原始物理。各 case 的资格链独立，需完整日志与视频支持正常运动才冻结首个内核。C 独立评估本构、边界采样与材料恢复。新 PPO 样本、更新和 donor 均为 0。
+**长期目标不变：同一世界地块的跨足、跨步、返程材料历史辨识，进入可因果使用的预测/执行，再用完整闭环对照验证决策收益，随后做泛化与真实计算时延。** 当前已有两case的E300稳定基线；完整E600、记忆增量作用、候选材料耦合、扰动鲁棒和实时仍是不同的待完成项。
 
-[W55 协议](S1_W55_STABILITY_PLAN.md) · [阶段实录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json) · [独立结果索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json)
+W55两项关键控制修复：r53补MuJoCo3.2.3平移Jdotv运动点项；r55修终点保持的COM力矩臂及一阶位置耦合。A/B新旧轨迹在进入终点前分别到38.134/38.424 s逐位一致，修后A300完整五圈及68.058 s保持通过。原硬界、MPC成本及判据未放宽。N56从材料前停步改善到略入材料但仍未贯穿，有全支撑倒退候选与数值误判的不同首因。新材料候选只做两参数校准，保留组恢复退步，不进入正式任务。
+
+PANN网络权重冻结不等于地块e/q冻结。当前658D末12维恢复特征主要经2Hz cap影响动作，F/r55力MPC尚无候选材料状态转移。W56同actor末12维消融默认E30→E60，回答这个通道的增量作用；因果封包、独立候选传播和历史相关法向执行参考在新身份推进。首次在线仍保留r55力MPC，不冒称完整材料耦合规划；不能改原plant造收益。
+
+三线按计划并行，优先完成现有F A/B E600，不让N研发或发布阻塞已就绪任务。后台无墙钟截止；GitHub直交后不在用户电脑归档。所有历史预算/旧next_task以当前入口为准。
+
+[W56计划](S1_W56_STABILITY_PLAN.md) · [启动提示词](S1_W56_START_PROMPT.md) · [最新审查](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/README.md) · [current](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json) · [原任务phase](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json)
+
+以下为历史形成时的计划与结果，其“当前/下一步”不覆盖本页顶部及current.json。
 
 # W54 实际结果（历史入口）
 
