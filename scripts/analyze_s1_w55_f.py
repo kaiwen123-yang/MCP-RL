@@ -66,14 +66,19 @@ def analyze(attempt):
     contact_events=[json.loads(line) for line in (folder/'contact-events.jsonl').read_text().splitlines()]
     liftoffs=[d for d in contact_events if d['kind']=='liftoff_committed']
     touchdowns=[d for d in contact_events if d['kind']=='touchdown_search']
-    material_events=[json.loads(line) for line in (out/'material-events.jsonl').read_text().splitlines()]
+    recorded_events=[json.loads(line) for line in (out/'material-events.jsonl').read_text().splitlines()]
+    material_events=[e for e in recorded_events if e['time_s'] <= t[-1]+1e-9]
     # Average forces over each applied 2ms hold. A partial terminal hold is omitted.
     sums=np.zeros((len(ct),3))
     counts=np.zeros(len(ct),int)
     peak_nonfoot=0.
+    first_force_time=last_physical_state=None
     for path in sorted(out.glob('physical-*.npz')):
         with np.load(path) as z:
             a=z['physical']
+            if first_force_time is None:
+                first_force_time=float(a[0,0])
+            last_physical_state=float(a[-1,1])
             hold=np.rint(a[:,0]/.0002).astype(int)//10
             np.add.at(sums,hold,a[:,force_columns])
             np.add.at(counts,hold,1)
@@ -116,12 +121,20 @@ def analyze(attempt):
     analysis=dict(attempt=attempt,build=recording['config']['identity'],result=result['stage_status'],
         reason=result['reason'],passed=result['success'],simulation_s=duration,physical_samples=result['physical_samples'],
         control_solves=len(ct),MPC_replans=recording['mpc_calls'],drift_samples=sum(c['samples'] for c in recording['drift_chunks']),
+        applied_physics_coverage=dict(first_force_evaluation_s=first_force_time,last_postintegration_s=last_physical_state,
+                                      steps=int(counts.sum()),trajectory_500Hz_first_last_s=[float(t[0]),float(t[-1])]),
+        legal_traversals_in_this_original=dict(outbound=result['legal_route']['legal_outbound_traversals'],
+                   returning=result['legal_route']['legal_return_traversals'],roundtrips=result['legal_route']['completed_roundtrips'],
+                   side_exits=result['legal_route']['side_exits'],
+                   stage_initialization='This stage starts at original t=0 with its own virgin terrain. Other stages are separate histories.'),
         final_xyz_m=pos[-1].tolist(),max_x_m=float(pos[:,0].max()),min_z_m=float(pos[:,2].min()),
         windows=windows,first_z_below_028_after_stand=first_by_height,
         material=dict(first_accepted_force_above_1N_s=first_load,peak_accepted_foot_normal_N=loaded_peak,
                       max_abs_strain=result['material']['max_abs_principal_strain'],
                       domain_exit=result['material'].get('domain_exit'),loaded_cells=result['material']['loaded_ever_cells'],
                       event_field_counts=dict(Counter(e.get('kind',e.get('type','')) for e in material_events)),
+                      same_leg_reloads=sum(e['type']=='revisit' and e.get('cross_leg') is False for e in material_events),
+                      unaccepted_candidate_events=int(sum(e['time_s']>t[-1]+1e-9 for e in recorded_events)),
                       cross_leg_reloads=len(revisits),first_cross_leg_reload_s=revisits[0]['time_s'] if revisits else None,
                       distinct_cross_leg_reloaded_world_keys=len({tuple(e['world_key']) for e in revisits}),
                       legal_route=result['legal_route'],original_stage_progress=result['stage_progress']),
