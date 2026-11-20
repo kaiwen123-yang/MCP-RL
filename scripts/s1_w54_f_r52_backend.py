@@ -519,6 +519,10 @@ class FController:
         f=scale*np.linalg.lstsq(G*scale[None,:],required,rcond=None)[0]
         return f.reshape(4,3),required
 
+    def soft_reference(self, t, leg, pos_z, measured, target, material_info):
+        stiffness = material_info['stiffness_N_m']
+        return (pos_z + measured/stiffness) - target/stiffness
+
     def wbc(self,t,data,mq,mission,scheduled,observed,grf,soft,material_info):
         w,c=time.perf_counter(),time.process_time()
         m=self.model;nv=m.nv;nz=nv+12
@@ -566,7 +570,6 @@ class FController:
         pref=np.zeros((4,3));vref=np.zeros((4,3));aref=np.zeros((4,3))
         mode=np.zeros(4,dtype=np.int8)
         task_J=mq['J'].copy();task_Jdotv=mq['Jdotv'].copy()
-        k=float((material_info or {}).get('stiffness_N_m',1227272.7272727273))
         for leg in range(4):
             pos=mq['feet'][leg];vel=mq['foot_velocity'][leg]
             if not scheduled[leg]:
@@ -605,8 +608,8 @@ class FController:
                     # Local causal force anchor rest=p_now+F_now/k. The desired
                     # normal position follows planned load; matching observed
                     # normal velocity avoids a world-fixed material z constraint.
-                    rest=pos[2]+max(0.,grf[leg,2])/k
-                    pref[leg,2]=rest-max(0.,force_target[leg,2])/k
+                    pref[leg,2]=self.soft_reference(t,leg,pos[2],max(0.,grf[leg,2]),
+                                                    max(0.,force_target[leg,2]),material_info)
                     vref[leg,2]=vel[2]
                     target[2]=self.cfg['wbc']['material_normal_kp']*(pref[leg,2]-pos[2])
                     mode[leg]=3

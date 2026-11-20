@@ -343,7 +343,11 @@ class PolicyMaterial(JointMaterial):
         self.legal_route=LegalRoute() if stream.reward_version in ('W36_legal_route_progress_and_lap_alignment','W38_legal_route_terminal_settlement') else None
         if self.group=='PANN_PPO_S5':
             parameters=json.loads((root/'experiments/tm02/r2-multihistory.json').read_text())['reference_material']['parameters']
-            self.observer=MaterialObserver(parameters,root/r9['pann']['weights_path'],law=stream.observer_law)
+            observer_type = MaterialObserver
+            if stream.controller_build == 'S5-r58':
+                from s1_w56_window import WindowObserver
+                observer_type = WindowObserver
+            self.observer=observer_type(parameters,root/r9['pann']['weights_path'],law=stream.observer_law)
             stream.observer_law=self.observer.ground.law
 
     def attach(self,*args):
