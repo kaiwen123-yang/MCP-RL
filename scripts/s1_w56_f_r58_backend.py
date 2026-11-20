@@ -6,6 +6,13 @@ from tm02.s1_material_prediction import normal_reference
 
 
 class FController(R55):
+    def __init__(self, model, data, feet, base, out, config):
+        super().__init__(model, data, feet, base, out, config)
+        self.manifest.update(material=config['material_reference'],
+                             observer=config['causal_observation'],
+                             normal_execution_records='normal-execution.jsonl')
+        self._write_manifest()
+
     def soft_reference(self, t, leg, pos_z, measured, target, material_info):
         obs = material_info['material_observer']
         if abs(obs.time-t) > 1e-9:
