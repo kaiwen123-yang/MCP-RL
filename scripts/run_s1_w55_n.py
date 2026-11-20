@@ -135,6 +135,8 @@ def run(case_dir, level):
         import render_s1_go2_r12 as renderer
         renderer.SMALL = SMALL
         renderer.render(attempt)
+        from analyze_s1_w55_n import measure
+        measure(case_dir,level)
         state['video'] = json.loads((LARGE/attempt/'video-asset.json').read_text())
         write(dest,state)
         write(raw_job/(level+'-runtime.json'),state)
