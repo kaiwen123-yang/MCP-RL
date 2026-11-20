@@ -110,6 +110,9 @@ def analyze(attempt):
         if matches:
             delays.append(event['time_s']-matches[-1]['fixed_touchdown_s'])
     first_by_height=point(t,pos,(t>=2.)&(pos[:,2]<.28))
+    cap_rows=json.loads((out/'pann-action-dependence.json').read_text())
+    cap_effect=np.asarray([r['with_pann_cap']-r['zero_feature_cap'] for r in cap_rows])
+    cap_index=int(np.argmax(abs(cap_effect))) if len(cap_effect) else None
     analysis=dict(attempt=attempt,build=recording['config']['identity'],result=result['stage_status'],
         reason=result['reason'],passed=result['success'],simulation_s=duration,physical_samples=result['physical_samples'],
         control_solves=len(ct),MPC_replans=recording['mpc_calls'],drift_samples=sum(c['samples'] for c in recording['drift_chunks']),
@@ -122,6 +125,10 @@ def analyze(attempt):
                       cross_leg_reloads=len(revisits),first_cross_leg_reload_s=revisits[0]['time_s'] if revisits else None,
                       distinct_cross_leg_reloaded_world_keys=len({tuple(e['world_key']) for e in revisits}),
                       legal_route=result['legal_route'],original_stage_progress=result['stage_progress']),
+        instantaneous_PANN_cap=dict(
+            recorded_decisions=len(cap_rows),max_abs_difference_m_s=float(abs(cap_effect[cap_index])) if cap_index is not None else None,
+            at_physical_time_s=cap_rows[cap_index]['time_s'] if cap_index is not None else None,
+            comparator='Same actor and state; set the twelve material recovery features to zero for this decision.'),
         gait=dict(liftoffs=len(liftoffs),first_liftoff=liftoffs[0] if liftoffs else None,last_liftoff=last,
                   actual_touchdowns=sum(e['kind']=='actual_touchdown' for e in contact_events),
                   alternating_diagonals=all(a['legs']!=b['legs'] for a,b in zip(liftoffs,liftoffs[1:])),
