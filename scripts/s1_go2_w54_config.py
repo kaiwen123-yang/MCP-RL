@@ -27,9 +27,15 @@ def configuration(build,level,cap=.215,terrain='tm02_anchor',training_duration=N
     if route == 'F' and identity.get('experiment_window') == 'W55':
         c.update(implementation_status='W55_original_evaluation', w55_route=route)
         names += identity['inherited_execution_sources'] + ['run_s1_w55_f.py']
+    if route == 'F' and identity.get('experiment_window') == 'W56':
+        c.update(implementation_status='W56_original_evaluation', w56_route=route,
+                 material_feature_mode=c['w54_f']['material_feature_mode'])
+        names += identity['inherited_execution_sources'] + ['run_s1_w55_f.py', 'run_s1_w56_f.py']
     names=list(names)+['s1_go2_w54_config.py','run_s1_go2_r12.py']
     c['w54_execution_source_names']=names
     c['w54_execution_sources']=['scripts/'+n for n in names]
+    if route == 'F' and identity.get('experiment_window') == 'W56':
+        c['w54_execution_sources'] += c['w54_f'].get('material_execution_sources',[])
     c['task']['command_speed_m_s']=cap
     c['task']['maximum_episode_s']=c['r11_stage']['duration_s']
     if c['r11_stage']['task_kind'] in ('continuous_finite','continuing_acquisition'):

@@ -340,6 +340,7 @@ class PolicyMaterial(JointMaterial):
         self.gait_phase=0.;self.last_control_time=0.;self.cadence=1.
         self.pending=None;self.last_snapshot=None;self.effective_time=0.;self.action_change=0.
         self.action_dependence=[]
+        self.material_feature_mode=stream.contract.get('material_feature_mode','learned_history')
         self.legal_route=LegalRoute() if stream.reward_version in ('W36_legal_route_progress_and_lap_alignment','W38_legal_route_terminal_settlement') else None
         if self.group=='PANN_PPO_S5':
             parameters=json.loads((root/'experiments/tm02/r2-multihistory.json').read_text())['reference_material']['parameters']
@@ -403,6 +404,37 @@ class PolicyMaterial(JointMaterial):
         return np.array([t,progress,self.indent_integral,self.slip_integral,
             self.action_change,laps,self.effective_time])
 
+    def actor_observation(self, raw):
+        if self.material_feature_mode == 'learned_history':
+            return raw
+        if self.material_feature_mode != 'zero_recovery_features':
+            raise ValueError(f'Unknown material_feature_mode {self.material_feature_mode}')
+        selected = raw.copy()
+        selected[-12:] = 0
+        return selected
+
+    def install_cap(self, t, mission, raw, observation):
+        device = self.stream.backend.config.device
+        obs = torch.as_tensor(observation, device=device).reshape(1,-1)
+        sample = self.stream.backend.act(obs, deterministic=not self.stream.training)
+        self.cap = .215 + .035 * float(sample.action.item())
+        self.pending = dict(obs=obs, sample=sample, cap=self.cap)
+        mission.task['command_speed_m_s'] = self.cap
+        if self.observer is None or self.stream.training:
+            return
+        if self.material_feature_mode == 'learned_history':
+            alternate = obs.clone()
+            alternate[:,-12:] = 0
+        else:
+            alternate = torch.as_tensor(raw, device=device).reshape(1,-1)
+        other = self.stream.backend.act(alternate, deterministic=True)
+        other_cap = .215 + .035 * float(other.action.item())
+        learned, zero = (self.cap, other_cap) if self.material_feature_mode == 'learned_history' else (other_cap, self.cap)
+        self.action_dependence.append(dict(time_s=t, phase=mission.phase,
+            with_pann_cap=learned, zero_feature_cap=zero, material_feature_mode=self.material_feature_mode,
+            executed_cap_m_s=mission.task['command_speed_m_s'],
+            observed_recovery_m=(raw[-12:] * .001).tolist()))
+
     def collect_pending(self,t,mission,observation,terminated=False,truncated=False,failure=False,timeout=False):
         current=self.snapshot(t,mission)
         self.stream.last_observation=torch.as_tensor(observation).reshape(1,-1).detach().cpu()
@@ -443,7 +475,8 @@ class PolicyMaterial(JointMaterial):
             return
         tick=int(np.floor((t+1e-8)/.5))
         if tick!=self.last_actor_tick:
-            observation=self.observation(t,mission,measurement)
+            raw=self.observation(t,mission,measurement)
+            observation=self.actor_observation(raw)
             external_end=''
             if self.stream.training:
                 deadline=json.loads(self.training_deadline_path.read_text())['deadline_unix_s']
@@ -456,15 +489,7 @@ class PolicyMaterial(JointMaterial):
             self.collect_pending(t,mission,observation,truncated=bool(external_end))
             if external_end:
                 self.stop_requested=external_end;return
-            obs=torch.as_tensor(observation,device=self.stream.backend.config.device).reshape(1,-1)
-            sample=self.stream.backend.act(obs,deterministic=not self.stream.training)
-            self.cap=.215+.035*float(sample.action.item())
-            self.pending=dict(obs=obs,sample=sample,cap=self.cap)
-            if self.observer is not None and not self.stream.training:
-                zero=obs.clone();zero[:,-12:]=0
-                alternate=self.stream.backend.act(zero,deterministic=True)
-                self.action_dependence.append(dict(time_s=t,phase=mission.phase,
-                    with_pann_cap=self.cap,zero_feature_cap=.215+.035*float(alternate.action.item())))
+            self.install_cap(t,mission,raw,observation)
             self.cap_decisions.append(dict(time_s=t,tick=tick,requested_cap_m_s=self.cap,phase_before_update=mission.phase))
             self.last_actor_tick=tick
         mission.task['command_speed_m_s']=self.cap
@@ -490,7 +515,7 @@ class PolicyMaterial(JointMaterial):
             result['legal_route']=self.legal_route.result()
             result['legal_route']['reward_version']=self.stream.reward_version
         if self.observer is not None and t>self.observer.time:self.observer.observe(t,measurement[0],measurement[1])
-        observation=self.observation(t,self.mission,measurement)
+        observation=self.actor_observation(self.observation(t,self.mission,measurement))
         timeout=False
         success=False
         truncated=not (physical_failure or timeout or success)

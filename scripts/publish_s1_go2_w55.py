@@ -27,13 +27,13 @@ def digest(path):
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
-def manifest_row(path, category, checksum):
+def manifest_row(path, category, checksum, tag=TAG):
     return dict(path=str(path.relative_to(ROOT)), name=path.name, category=category,
-                size=path.stat().st_size, sha256=checksum, release_tag=TAG)
+                size=path.stat().st_size, sha256=checksum, release_tag=tag)
 
 
-def prepare(name, roots, directory):
-    staging = STAGING / name
+def prepare(name, roots, directory, *, prefix='w55', staging_root=STAGING, tag=TAG):
+    staging = staging_root / name
     staging.mkdir(parents=True, exist_ok=True)
     members = {}
     for root in roots:
@@ -52,13 +52,13 @@ def prepare(name, roots, directory):
     for member, path in members.items():
         if path.suffix.lower() == '.mp4':
             # Keep a playable asset without adding a second copy inside the archive.
-            target = staging / f'w55-{name}-{path.name}'
+            target = staging / f'{prefix}-{name}-{path.name}'
             if not target.exists():
                 target.symlink_to(path)
             if target.resolve() != path:
                 raise ValueError(f'Video name already refers to another original: {target}')
             checksum = digest(path)
-            assets.append(manifest_row(target, 'full_recorded_video', checksum))
+            assets.append(manifest_row(target, 'full_recorded_video', checksum, tag))
             catalog.append(dict(source_path=str(path), asset=target.name,
                                 size=path.stat().st_size, sha256=checksum))
             continue
@@ -70,7 +70,7 @@ def prepare(name, roots, directory):
     if group:
         parts.append(group)
     for number, files in enumerate(parts, 1):
-        archive = staging / f'w55-{name}-originals-{number:04d}.zip'
+        archive = staging / f'{prefix}-{name}-originals-{number:04d}.zip'
         temp = archive.with_suffix('.partial')
         with zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEFLATED, compresslevel=1) as bundle:
             for member, path in files:
@@ -83,7 +83,7 @@ def prepare(name, roots, directory):
                                     member=member, size=path.stat().st_size, sha256=h.hexdigest()))
         os.replace(temp, archive)
         if archive.stat().st_size < 2 * 1024**3:
-            assets.append(manifest_row(archive, 'execution_originals_zip', digest(archive)))
+            assets.append(manifest_row(archive, 'execution_originals_zip', digest(archive), tag))
         else:
             # GitHub caps individual assets at 2 GiB. Retain the unbroken source ZIP.
             with archive.open('rb') as stream:
@@ -100,7 +100,7 @@ def prepare(name, roots, directory):
                             target.write(block)
                             checksum.update(block)
                     assets.append(manifest_row(destination, 'concatenate_numbered_zip_parts',
-                                               checksum.hexdigest()))
+                                               checksum.hexdigest(), tag))
     write(directory / 'sources.json', catalog)
     write(directory / 'manifest.json', assets)
 
