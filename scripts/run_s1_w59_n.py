@@ -34,7 +34,15 @@ def execute():
                               deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False))
     update_queue('dispatched',job=job['job_id'],slot=int(os.environ['S1_W56_SLOT']),affinity=sorted(os.sched_getaffinity(0)))
     commit('Declare N/A r59 original E30 in its assigned physical slot', [CASE/n for n in ('job.json','execution-contract.json','E30.json')]+[QUEUE])
-    return old.run(CASE,'E30',finish_stage=False)
+    code=old.run(CASE,'E30',finish_stage=False)
+    state=read(CASE/'E30.json')
+    result=RESULTS/(state['attempt']+'.json')
+    if result.exists() and read(result).get('physical_samples',0)>0:
+        from w59_n_cost_terms import analyze
+        objective=CASE/'E30-native-objective.json'
+        analyze(ROOT,'w56/n','N-A-r59',objective)
+        commit('Recover native selector cost components from r59 original residuals',[objective])
+    return code
 
 def finish():
     state=read(CASE/'E30.json');attempt=state['attempt'];stage=RESULTS/(attempt+'.json')
