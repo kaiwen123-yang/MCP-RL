@@ -560,7 +560,9 @@ def run(args, c, joint=None):
                 else:
                     settings_changed = settings != phase_settings
                     replan_now=step%10==0 or (support and args.stage=='G1' and (settings_changed or mission_changed))
-                    if replan_now and c.get('w55_n_support_projection'):
+                    if replan_now and c.get('w56_n_progress_candidate'):
+                        n_execution.capture(data,contact,grf,joint.observer,mission)
+                    elif replan_now and c.get('w55_n_support_projection'):
                         n_execution.capture(data,contact,grf,joint.observer)
                     if reference_settings:
                         if replan_now:
