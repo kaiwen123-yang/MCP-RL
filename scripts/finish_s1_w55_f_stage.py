@@ -32,7 +32,9 @@ def navigation():
     phase = read(WINDOW/'phase.json')
     current_path = ROOT/REL/'current.json'
     current = read(current_path)
-    current.update(date=time.strftime('%Y-%m-%d Asia/Shanghai'),status='W55_'+index['status'])
+    current['date'] = time.strftime('%Y-%m-%d Asia/Shanghai')
+    if current.get('next_plan') == index['plan']:
+        current['status'] = 'W55_' + index['status']
     info = current['W55']
     info.pop('active_F_stages_at_snapshot',None)
     info.update(status=index['status'],E30_passes=index['E30_passes'],
@@ -43,15 +45,23 @@ def navigation():
                     physical_s=r.get('live',{}).get('physical_time_s')) for r in phase['cases']
                     if r['status']=='running' and r.get('pid_running_at_snapshot')],
                 snapshot_unix_s=phase['updated_unix_s'])
-    current['publication']['verified_assets'] = index.get('publication',{}).get('asset_count',0)
+    delivery = index.get('publication',{})
+    publication = current['publication']
+    if publication.get('release', publication.get('release_url')) == delivery.get('release_url'):
+        publication.update(verified_assets=delivery.get('asset_count',0),
+                           execution_index_verified_assets=delivery.get('asset_count',0),
+                           asset_count=delivery.get('asset_count',0), asset_bytes=delivery.get('asset_bytes',0))
+        if delivery.get('status') == 'published' and not delivery.get('pending_paths'):
+            publication.update(status='completed_W55_manifests_verified',pending=[])
     write(current_path,current)
     config_path = ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json'
     config=read(config_path)
-    config['next_authorized_plan'].update(status=index['status'], E30_passes=index['E30_passes'],
-        highest_passed_original_stage=index['highest_passed_original_stage'],
-        last_actual_index=str(WINDOW.relative_to(ROOT)/'index.json'))
-    # Keep the protocol's existing readable Chinese JSON.
-    config_path.write_text(json.dumps(config,ensure_ascii=False,indent=2)+'\n')
+    plan = config['next_authorized_plan']
+    if plan.get('entrypoint') == index['plan']:
+        plan.update(status=index['status'], E30_passes=index['E30_passes'],
+                    highest_passed_original_stage=index['highest_passed_original_stage'],
+                    last_actual_index=str(WINDOW.relative_to(ROOT)/'index.json'))
+        config_path.write_text(json.dumps(config,ensure_ascii=False,indent=2)+'\n')
     return [current_path,config_path,WINDOW/'index.json',WINDOW/'phase.json']
 
 

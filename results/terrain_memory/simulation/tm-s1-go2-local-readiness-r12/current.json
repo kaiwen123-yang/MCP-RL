@@ -1,16 +1,16 @@
 {
   "schema": "s1_current_handoff_v1",
   "date": "2026-11-20 Asia/Shanghai",
-  "result_source_commit": "18821bb2c33ae8987cb38f64d6c41615cbb8406e",
-  "status": "W55_r55_A_and_B_original_E600_running",
+  "result_source_commit": "0eb39b13932c18d8e52ff305a3c35477a4510ab7",
+  "status": "W55_reviewed_W56_planned_existing_E600_running_at_snapshot",
   "latest_executed_window": "W55",
   "latest_results": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json",
   "latest_execution_state": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json",
-  "latest_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/README.md",
-  "current_task": "W55_KINEMATICS_SUPPORT_AND_MATERIAL_SCOPE",
-  "next_plan": "docs/S1_W55_STABILITY_PLAN.md",
-  "start_prompt": "docs/S1_W55_START_PROMPT.md",
-  "handoff": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json",
+  "latest_review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/README.md",
+  "current_task": "W56_COMPLETE_R55_AND_MATERIAL_CAUSAL_INTERFACE",
+  "next_plan": "docs/S1_W56_STABILITY_PLAN.md",
+  "start_prompt": "docs/S1_W56_START_PROMPT.md",
+  "handoff": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/handoff.json",
   "legacy_index": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/index.json",
   "legacy_index_role": "Historical accumulated ledger; its old training/next_task/next_action are not the current execution entrypoint. Historical outcomes remain unchanged.",
   "W53": {
@@ -67,14 +67,15 @@
     "workspace": "/root/autodl-tmp/MCP-RL-w55-integration",
     "entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json",
     "review_first": [
-      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/README.md",
-      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/control.md",
-      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/evidence.md",
-      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/pann.md",
-      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/pann-replay-summary.json",
-      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W54-review/handoff.json"
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/README.md",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/handoff.json",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/control.md",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/evidence.md",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/pann.md",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/material-interface.md",
+      "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/literature.md"
     ],
-    "rule": "Read W55 phase, per-job contract, tmux/PID and live physical time before continuing a case. The case identity and original staged evaluator determine qualification.",
+    "rule": "First inspect exact live W55 r55 A/B E600 jobs. Keep frozen identity and existing predecessors; W56 begins only in isolated new builds. W55 N/r56 is already ended, not a live N task.",
     "lane_workspaces": {
       "F": "/root/autodl-tmp/MCP-RL-w55-f",
       "N": "/root/autodl-tmp/MCP-RL-w55-n",
@@ -83,8 +84,8 @@
       "N_r56": "/root/autodl-tmp/MCP-RL-w55-n-r56"
     },
     "D57_tmux": {
-      "F-A-r55-E600": "s1-w55-f-a-r55-e600",
-      "F-B-r55-E600": "s1-w55-f-b-r55-e600"
+      "f-a-r55-E600": "s1-w55-f-a-r55-e600",
+      "f-b-r55-E600": "s1-w55-f-b-r55-e600"
     }
   },
   "W55": {
@@ -92,8 +93,8 @@
     "plan": "docs/S1_W55_STABILITY_PLAN.md",
     "index": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json",
     "phase": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json",
-    "F": "Both r55 cases passed their own E30, E60 and E300. Each completed five legal round trips in E300. The phase ledger records the two original E600 cases.",
-    "N": "Both original N E30 runs lasted 30 s without a complete strip traversal. Maximum x was 0.788521 m for r54 and 0.894534 m for r56.",
+    "F": "S5-r55 A/B each passed their own E30/E60/E300. A E300 original trajectory independently recomputed; B independent result and full video checked, B arrays not independently recomputed. Both E600 running only at snapshot.",
+    "N": "r54 and r56 A each finished original E30 without material traversal. r56 max x=0.894534m; detailed independent result is under w55/n/r56. No N live task asserted.",
     "C": "One targeted GPU material candidate completed. It improved rapid-release diagnostics and increased worst recovery error on both independent held-out episode groups. Formal robot runs retain original B ideal.",
     "robot_physics_started": true,
     "new_PPO_samples": 0,
@@ -109,15 +110,15 @@
       {
         "attempt": "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01",
         "pid": 500828,
-        "physical_s": 178.00200000366198
+        "physical_s": 185.00200000389435
       },
       {
         "attempt": "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E600-attempt01",
         "pid": 502596,
-        "physical_s": 139.0020000023673
+        "physical_s": 148.00200000266608
       }
     ],
-    "snapshot_unix_s": 1795164492.209947,
+    "snapshot_unix_s": 1795164737.0974302,
     "C_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/c/summary.json",
     "N_same_input": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/n/same-input-r54.json",
     "N_slot": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/n/slot-F-B-r53-E30-to-N-A-r54.json",
@@ -138,14 +139,40 @@
     "completed_original_physical_steps": 4919650,
     "E60_passes": 2,
     "E300_passes": 2,
-    "E600_passes": 0
+    "E600_passes": 0,
+    "completed_physical_steps": 4919650,
+    "completed_simulation_s": 983.9300000147958,
+    "completed_process_cpu_s": 41304.292273,
+    "validated_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/phase-recomputed.json",
+    "material_memory_causal_benefit_evaluated": false,
+    "index_reconciliation": "The W55 execution index now includes the separate N/r56 original result; all 12 completed stages reconcile with the W55 review."
   },
   "publication": {
-    "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55",
-    "asset_receipts": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/delivery",
-    "status_source": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json",
-    "verified_initial_stage_assets": 3,
-    "verified_assets": 82
+    "status": "completed_W55_manifests_verified",
+    "asset_count": 91,
+    "asset_bytes": 16687273690,
+    "release": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55",
+    "inventory": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/release-inventory.json",
+    "pending": [],
+    "query_time_utc": "2026-11-20T08:50:25.602844+00:00",
+    "execution_index_verified_assets": 91,
+    "manifests_reconciled_commit": "0eb39b13932c18d8e52ff305a3c35477a4510ab7",
+    "verified_assets": 91,
+    "n56_original_delivery": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/delivery/n-a-r56-e30/delivery.json",
+    "inventory_scope": "The review inventory is the earlier snapshot. The execution index and individual delivery receipts include the N/r56 originals."
   },
-  "result_source_commit_scope": "Source for the first W55 original A E30 pass. Phase and per-job contracts identify later stages."
+  "result_source_commit_scope": "Latest reviewed W55 records; W56 plan/review has no new physical implementation. Snapshot is not a live server observation.",
+  "validated_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/phase-recomputed.json",
+  "W56": {
+    "status": "planned_not_implemented_by_review",
+    "plan": "docs/S1_W56_STABILITY_PLAN.md",
+    "start_prompt": "docs/S1_W56_START_PROMPT.md",
+    "review": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/README.md",
+    "robot_control_implemented": false,
+    "robot_physics_started": false,
+    "new_PPO_samples": 0,
+    "new_PPO_updates": 0,
+    "donor": 0,
+    "preserve_W55_inflight": true
+  }
 }
