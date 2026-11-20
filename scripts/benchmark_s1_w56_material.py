@@ -117,6 +117,20 @@ def comparison(model,boundary,full):
                 cpu_over_gpu_full_wall=cpu_time['wall_s']/new_gpu['full_single_launch_wall_s'])
 
 
+def r55_profile():
+    profile={}
+    small=ROOT.parent/'MCP-RL-w55-f'/'results'/R12/'w55/f'
+    for case in ('a','b'):
+        file,=small.glob(f'job-*-w55-f-{case}-r55-eval*-E300-attempt01.json')
+        run=json.loads(file.read_text())
+        manifest=json.loads((RAW/run['attempt']/'w55-f/manifest.json').read_text())
+        profile[case]=dict(attempt=run['attempt'],wall_s=run['wall_s'],physical_s=300,
+                           measured_stage_totals=manifest['timing'],runtime=run['timing'],
+                           plant_material_wall_s=run['material']['wall_s'],
+                           observer=run['policy']['observer'])
+    return profile
+
+
 def main():
     start=time.time();cs=time.process_time()
     proc=int(os.getpid());gpu_mb=[];done=threading.Event()
@@ -138,7 +152,7 @@ def main():
                  frozen_model='B_random1000--ideal-potentials',all_records=count,distinct_boundary_histories=len(rows),
                  unique_case_key_start_tick=rows,baseline='W55 central FD, four-thread CUDA blocks; fixed model FP64 with unchanged residual, Newton and backtracking thresholds',
                  new_method='Forward FD, original units; 8-lane CUDA subgroup per real history,128 threads/block; persistent device tensors over cold/hot kernels',
-                 single=single,batch=batch,device=torch.cuda.get_device_name(),cuda_context_s=context,
+                 frozen_original_E300_profile=r55_profile(),single=single,batch=batch,device=torch.cuda.get_device_name(),cuda_context_s=context,
                  cuda_process_peak_sampled_MiB=max(gpu_mb,default=None),sample_period_s=.3,
                  prep_s=prep,max_rss_KiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
                  start_unix=start,end_unix=time.time(),cpu_s=time.process_time()-cs,
