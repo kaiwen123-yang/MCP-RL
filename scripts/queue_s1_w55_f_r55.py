@@ -79,6 +79,7 @@ def main():
                  rule='r55 A takes the slot released by N-A-r54 E30. F-B-r53 retains its separate ladder slot, next reserved for N-A-r56, then eligible r55 B.',
                  second_slot_N56_release_marker=str(N56_MARKER),
                  created_unix_s=time.time())
+    prior={}
     if STATUS.is_file():
         prior=read(STATUS)
         if prior.get('source_N')==current['source_N'] and prior.get('source_B')==current['source_B']:
@@ -97,7 +98,7 @@ def main():
         time.sleep(5)
     current.update(status='launching_r55_A_original_E30',slot_source_attempt=release['attempt'],
                    released_evaluation_child_pid=release['pid'],release_stage_status=release['status'],
-                   slot_released_unix_s=time.time())
+                   slot_released_unix_s=prior.get('slot_released_unix_s',time.time()))
     write(STATUS,current)
     if (TARGET/'E30.json').is_file():
         existing=read(TARGET/'job.json')
@@ -117,7 +118,13 @@ def main():
         if stage.get('video') and (SMALL/(stage['attempt']+'-analysis.json')).is_file():
             break
         time.sleep(5)
-    evidence=review()
+    selection=SMALL/'r55-selection.json'
+    if selection.is_file():
+        evidence=read(selection)
+        if evidence.get('attempt')!=stage['attempt'] or evidence.get('build')!='S5-r55' or evidence.get('normal_sustained_motion') is not True:
+            raise ValueError('Existing scientific selection does not identify this passed original A/r55 E30')
+    else:
+        evidence=review()
     current.update(attempt=stage['attempt'],status=evidence['status'],review_unix_s=time.time())
     write(STATUS,current);commit_scientific_review(evidence)
     if not evidence['normal_sustained_motion']:
