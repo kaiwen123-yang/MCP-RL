@@ -79,6 +79,10 @@ def main():
                  rule='r55 A takes the slot released by N-A-r54 E30. F-B-r53 retains its separate ladder slot, next reserved for N-A-r56, then eligible r55 B.',
                  second_slot_N56_release_marker=str(N56_MARKER),
                  created_unix_s=time.time())
+    if STATUS.is_file():
+        prior=read(STATUS)
+        if prior.get('source_N')==current['source_N'] and prior.get('source_B')==current['source_B']:
+            current['created_unix_s']=prior['created_unix_s']
     write(STATUS,current)
     while True:
         n=read(n_stage)
@@ -95,7 +99,14 @@ def main():
                    released_evaluation_child_pid=release['pid'],release_stage_status=release['status'],
                    slot_released_unix_s=time.time())
     write(STATUS,current)
-    launch('S5-r55','A','E30')
+    if (TARGET/'E30.json').is_file():
+        existing=read(TARGET/'job.json')
+        if (existing['controller_build'],existing['case'],existing['seed'])!=('S5-r55','A',1):
+            raise ValueError('Existing A E30 has a different frozen identity')
+        current.update(status='following_existing_r55_A_original_E30',job=existing['job_id'])
+        write(STATUS,current)
+    else:
+        launch('S5-r55','A','E30')
     session('s1-w55-f-a-r55-e30-collect','13','collect_s1_w55_f.py','--case-dir',TARGET,'--levels','E30')
     while True:
         stage=read(TARGET/'E30.json')
