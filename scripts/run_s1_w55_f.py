@@ -23,20 +23,20 @@ def digest(path):
         return hashlib.file_digest(handle, 'sha256').hexdigest()
 
 
-def declaration(build, case):
+def declaration(build, case, *, window='W55', small=SMALL, plan=PLAN, results=None):
     import torch
     revision = build.removeprefix('S5-')
     label = f'F-{case}-{revision}'
-    dest = SMALL / label
+    dest = small / label
     dest.mkdir(parents=True, exist_ok=False)
     seed, episode = (1, 428) if case == 'A' else (2, 417)
-    backend = Path('scripts') / f's1_w55_f_{revision}_backend.py'
-    config = Path('experiments/terrain_memory') / f's1-w55-f-{revision}.json'
+    config = Path('experiments/terrain_memory') / f's1-{window.lower()}-f-{revision}.json'
     spec = json.loads((ROOT/config).read_text())
+    backend = Path(spec.get('backend_source', f'scripts/s1_{window.lower()}_f_{revision}_backend.py'))
     commit = subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip()
     inherited = spec.get('inherited_execution_sources', ['s1_w54_f_r52_backend.py'])
     identity = dict(build=build, route='F', backend='independent_CPU_force_MPC_WBC',
-                    experiment_window='W55', configuration_source=str(config),
+                    experiment_window=window, configuration_source=str(config),
                     configuration_sha256=digest(ROOT/config), backend_source=str(backend),
                     backend_sha256=digest(ROOT/backend), binary_executed=False,
                     inherited_execution_sources=inherited, source_commit=commit,
@@ -62,7 +62,7 @@ def declaration(build, case):
     assert saved['normalization'] == complete['normalization'] and not saved['buffer'] and not complete['buffer']
     now = time.time()
     stamp = time.strftime('%Y%m%dT%H%M%SZ',time.gmtime(now))
-    job_id = f'job-{stamp}-w55-{label.lower()}'
+    job_id = f'job-{stamp}-{window.lower()}-{label.lower()}'
     jobdir = LARGE / 'jobs' / job_id
     jobdir.mkdir(parents=True, exist_ok=False)
     job = dict(job_id=job_id, label=label, route='F', case=case, seed=seed, workers=1,
@@ -74,15 +74,20 @@ def declaration(build, case):
                normalization_sha256=hashlib.sha256(json.dumps(saved['normalization'],sort_keys=True).encode()).hexdigest(),
                samples=14737, updates=57, tail=0, excluded=145, new_PPO_samples=0,
                new_PPO_updates=0, donor=0, actor='deterministic mean and frozen exact W44 normalization',
-               initial_state='complete original evaluation t=0, virgin terrain', source_commit=commit, plan_commit=PLAN)
+               initial_state='complete original evaluation t=0, virgin terrain', source_commit=commit, plan_commit=plan)
     contract = json.loads((ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json').read_text())
-    contract.update(current_task='W55_F_ORIGINAL_TASK', protocol_revision='W55_original_frozen_ladder',
-                    next_authorized_plan='docs/S1_W55_STABILITY_PLAN.md',
-                    w54_fixed_policy=job, w55_fixed_policy=job)
+    contract.update(current_task=f'{window}_F_ORIGINAL_TASK', protocol_revision=f'{window}_original_frozen_ladder',
+                    next_authorized_plan=f'docs/S1_{window}_STABILITY_PLAN.md', w54_fixed_policy=job)
+    contract[window.lower()+'_fixed_policy'] = job
+    if window == 'W56':
+        job.update(material_feature_mode=spec['material_feature_mode'], kill_on_conversation_end=False,
+                   affinity='assigned by shared slot (four CPUs)', deadline=None)
+        contract.update(material_feature_mode=job['material_feature_mode'], kill_on_conversation_end=False)
+        contract['execution']['background_job']['kill_on_conversation_end'] = False
     contract['reuse'].update(active_controller_build=build, controller_artifact=build)
-    contract['outputs']['compact_root'] = str(SMALL.relative_to(ROOT))
+    contract['outputs']['compact_root'] = str((results or small).relative_to(ROOT))
     contract['execution']['deadline'] = None
-    contract['learning'].update(phase_id=job_id, stream_id='w55-'+label.lower(), phase_initial_transitions=14737,
+    contract['learning'].update(phase_id=job_id, stream_id=window.lower()+'-'+label.lower(), phase_initial_transitions=14737,
         phase_initial_updates=57, target_cumulative_transitions_per_stream=14737, target_cumulative_updates_per_stream=57,
         training_enabled=False, additional_transitions_from_reviewed_checkpoint=0, additional_updates_from_reviewed_checkpoint=0,
         active_streams=[], evaluation_only=True)
@@ -116,7 +121,7 @@ def launch(build, case, level):
     print(json.dumps(dict(job=job['job_id'],tmux=session,ledger=str(dest))))
 
 
-def run(case_dir, level):
+def run(case_dir, level, *, small=SMALL, render=True):
     job = json.loads((case_dir/'job.json').read_text())
     raw_job = LARGE/'jobs'/job['job_id']
     attempt = f'{job["job_id"]}-eval-PANN_PPO_S5-s{job["seed"]}-{level}-attempt01'
@@ -141,7 +146,7 @@ def run(case_dir, level):
     usage1 = resource.getrusage(resource.RUSAGE_CHILDREN)
     state.update(exit_code=process.returncode,ended_unix_s=time.time(),
                  user_cpu_s=usage1.ru_utime-usage0.ru_utime,system_cpu_s=usage1.ru_stime-usage0.ru_stime)
-    result_path = SMALL/(attempt+'.json')
+    result_path = small/(attempt+'.json')
     if result_path.exists():
         result = json.loads(result_path.read_text())
         state.update(status=result['stage_status'],success=result['success'],reason=result['reason'],
@@ -151,9 +156,9 @@ def run(case_dir, level):
         state.update(status='technical_interruption',reason='process_exited_without_completed_result')
     write(dest,state)
     write(raw_job/(level+'-runtime.json'),state)
-    if result_path.exists():
+    if render and result_path.exists():
         import render_s1_go2_r12 as renderer
-        renderer.SMALL = SMALL
+        renderer.SMALL = small
         renderer.render(attempt)
         state['video'] = json.loads((LARGE/attempt/'video-asset.json').read_text())
         write(dest,state)
