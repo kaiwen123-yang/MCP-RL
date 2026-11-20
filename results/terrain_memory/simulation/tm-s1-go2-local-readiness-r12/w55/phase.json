@@ -1,6 +1,6 @@
 {
-  "status": "r55_A_E60_and_r56_A_E30_running",
-  "updated_unix_s": 1795148249.4556942,
+  "status": "original_stage_results_updated",
+  "updated_unix_s": 1795148706.879299,
   "deadline": null,
   "wall_deadline_enabled": false,
   "kill_on_conversation_end": false,
@@ -509,14 +509,14 @@
       "pid_running_at_snapshot": true,
       "live": {
         "pid": 471640,
-        "physical_time_s": 15.001999999991714,
-        "phase": "outbound",
+        "physical_time_s": 32.50199999995093,
+        "phase": "return",
         "position_m": [
-          2.7145265219750043,
-          -0.028743321571303732,
-          0.29055178044997143
+          1.0355044723734979,
+          0.0615112764147041,
+          0.29132989726170694
         ],
-        "unix_s": 1795148244.2990189,
+        "unix_s": 1795148689.4337733,
         "deadline": null,
         "wall_deadline_enabled": false
       }
@@ -837,6 +837,56 @@
       "recorded_video": "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T032044Z-w55-f-b-r53-eval-PANN_PPO_S5-s2-E60-attempt01/full-mission-material-overlay.mp4"
     },
     {
+      "attempt": "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E30-attempt01",
+      "job": "job-20261120T042344Z-w55-f-b-r55",
+      "level": "E30",
+      "status": "running",
+      "tmux": "s1-w55-f-b-r55-e30",
+      "runner_pid": 474628,
+      "pid": 474635,
+      "started_unix_s": 1795148624.3148723,
+      "command": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "scripts/run_s1_go2_r12.py",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261120T042344Z-w55-f-b-r55/execution-contract.json",
+        "--attempt",
+        "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E30-attempt01",
+        "--evaluation-start-unix",
+        "1795148624.227442",
+        "--checkpoint",
+        "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/checkpoint-014737.pt",
+        "--level",
+        "E30",
+        "--seed",
+        "2",
+        "--workers",
+        "1",
+        "--build",
+        "S5-r55",
+        "--condition",
+        "nominal"
+      ],
+      "record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/F-B-r55/E30.json",
+      "lane": "F",
+      "physical_started_unix_s": 1795148630.1092923,
+      "pid_running_at_snapshot": true,
+      "live": {
+        "pid": 474635,
+        "physical_time_s": 6.502000000004872,
+        "phase": "outbound",
+        "position_m": [
+          0.8942446153545625,
+          -0.010429576697950088,
+          0.2893299078965
+        ],
+        "unix_s": 1795148697.3041997,
+        "deadline": null,
+        "wall_deadline_enabled": false
+      }
+    },
+    {
       "attempt": "job-20261120T033646Z-w55-n-a-r54-eval-PANN_PPO_S5-s1-E30-attempt01",
       "job": "job-20261120T033646Z-w55-n-a-r54",
       "level": "E30",
@@ -1015,11 +1065,16 @@
       "attempt": "job-20261120T040054Z-w55-n-a-r56-eval-PANN_PPO_S5-s1-E30-attempt01",
       "job": "job-20261120T040054Z-w55-n-a-r56",
       "level": "E30",
-      "status": "running",
+      "status": "task_criteria_unmet",
       "tmux": "s1-w55-n-a-r56-e30",
       "runner_pid": 467690,
       "pid": 467696,
+      "user_cpu_s": 5651.140292,
+      "system_cpu_s": 91.05414499999999,
+      "exit_code": 0,
       "started_unix_s": 1795147255.0565274,
+      "ended_unix_s": 1795148622.0618215,
+      "reason": "material_traversal_not_completed",
       "command": [
         "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
         "-u",
@@ -1044,21 +1099,7 @@
         "nominal"
       ],
       "record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/n/N-A-r56/E30.json",
-      "lane": "N",
-      "pid_running_at_snapshot": true,
-      "live": {
-        "pid": 467696,
-        "physical_time_s": 22.501999999974235,
-        "phase": "outbound",
-        "position_m": [
-          0.8861298176972607,
-          0.028164634708102328,
-          0.2894029521398327
-        ],
-        "unix_s": 1795148230.986437,
-        "deadline": null,
-        "wall_deadline_enabled": false
-      }
+      "lane": "N"
     }
   ],
   "completed_physical_overlap": [
@@ -1156,6 +1197,26 @@
           "sampled_wall_s": 145.15858507156372,
           "cpu_s": 162.87999999999988,
           "mean_cores": 1.122083133558373
+        }
+      },
+      "cpu_scope": "Within-overlap adjacent samples with the same live process tree."
+    },
+    {
+      "attempts": [
+        "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E60-attempt01",
+        "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E30-attempt01"
+      ],
+      "wall_s": 59.32448101043701,
+      "measured_cpu": {
+        "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E60-attempt01": {
+          "sampled_wall_s": 55.06750726699829,
+          "cpu_s": 62.710000000000036,
+          "mean_cores": 1.1387840690871776
+        },
+        "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E30-attempt01": {
+          "sampled_wall_s": 55.07008457183838,
+          "cpu_s": 56.690000000000005,
+          "mean_cores": 1.0294155246129768
         }
       },
       "cpu_scope": "Within-overlap adjacent samples with the same live process tree."
