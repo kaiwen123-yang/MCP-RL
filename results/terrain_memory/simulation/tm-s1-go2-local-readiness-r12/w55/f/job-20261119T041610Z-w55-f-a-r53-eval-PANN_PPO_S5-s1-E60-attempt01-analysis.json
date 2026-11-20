@@ -1,0 +1,286 @@
+{
+  "attempt": "job-20261119T041610Z-w55-f-a-r53-eval-PANN_PPO_S5-s1-E60-attempt01",
+  "build": "S5-r53",
+  "result": "technical_interruption",
+  "reason": "execution_error",
+  "passed": false,
+  "simulation_s": 42.67599999992722,
+  "physical_samples": 213380,
+  "control_solves": 21338,
+  "MPC_replans": 2139,
+  "drift_samples": 21339,
+  "final_xyz_m": [
+    0.39601390089125915,
+    0.014744183105005231,
+    0.2041220976881781
+  ],
+  "max_x_m": 2.9945385570950895,
+  "min_z_m": 0.2041220976881781,
+  "windows": [
+    {
+      "start_s": 0.0,
+      "end_s": 2.0,
+      "dx_m": 0.00317288347888897,
+      "z_range_m": [
+        0.28300733088458757,
+        0.29020935793281377
+      ],
+      "max_abs_roll_pitch_rad": [
+        0.00499111320232868,
+        0.002201939673685871
+      ]
+    },
+    {
+      "start_s": 2.0,
+      "end_s": 5.3956000000025375,
+      "dx_m": 0.634160898665833,
+      "z_range_m": [
+        0.28673558967648183,
+        0.29352809686573994
+      ],
+      "max_abs_roll_pitch_rad": [
+        0.009208855456183947,
+        0.002919329497314216
+      ]
+    },
+    {
+      "start_s": 5.3956000000025375,
+      "end_s": 42.67599999992722,
+      "dx_m": -0.2417216438042506,
+      "z_range_m": [
+        0.2041220976881781,
+        0.2954086630928985
+      ],
+      "max_abs_roll_pitch_rad": [
+        0.06345170228912833,
+        0.08029673099236101
+      ]
+    }
+  ],
+  "first_z_below_028_after_stand": {
+    "time_s": 42.29599999992811,
+    "xyz_m": [
+      0.247368322565615,
+      0.007755349849597163,
+      0.27991915259868627
+    ]
+  },
+  "material": {
+    "first_accepted_force_above_1N_s": 5.3956000000025375,
+    "peak_accepted_foot_normal_N": 165.0578502784622,
+    "max_abs_strain": 0.0033158241881932338,
+    "domain_exit": null,
+    "loaded_cells": 576,
+    "event_field_counts": {
+      "load": 576,
+      "release": 1935,
+      "revisit": 1359
+    },
+    "cross_leg_reloads": 80,
+    "first_cross_leg_reload_s": 7.8038000000076195,
+    "distinct_cross_leg_reloaded_world_keys": 80,
+    "legal_route": {
+      "reward_version": "W38_legal_route_terminal_settlement",
+      "progress": 0.9759886317641008,
+      "completed_roundtrips": 1,
+      "legal_outbound_traversals": 1,
+      "legal_return_traversals": 1,
+      "side_exits": 0,
+      "raw_roundtrips": 1,
+      "passages": [
+        {
+          "lap": 1,
+          "direction": "outbound",
+          "entry_s": 6.144000000004117,
+          "exit_s": 12.465999999997624,
+          "lateral_exit_s": null,
+          "material_loaded": true,
+          "completed": true
+        },
+        {
+          "lap": 1,
+          "direction": "return",
+          "entry_s": 27.20199999996328,
+          "exit_s": 33.6739999999482,
+          "lateral_exit_s": null,
+          "material_loaded": true,
+          "completed": true
+        }
+      ],
+      "criterion": "Original base strip x[.8,2.2],abs(y)<=.6 and actual interior-foot Fz>0 at500Hz; return uses reversed boundaries. Signed credit is provisional and retracted on illegal/incomplete passage. New R12 mission evaluation also checks these recorded legal roundtrips."
+    },
+    "original_stage_progress": {
+      "far_arrival_s": 16.56199999998808,
+      "return_start_s": 23.033999999972995,
+      "actual_route_fraction": 0.9759886317641105,
+      "full_observation": false,
+      "actual_material_loaded": true,
+      "material_traversal": {
+        "completed": true,
+        "west_entry_s": 6.144000000004117,
+        "east_exit_s": 12.465999999997624,
+        "lateral_exit_s": null,
+        "max_abs_base_y_during_crossing_m": 0.06954539064995335,
+        "material_loaded_during_crossing": true,
+        "original_strip_x_m": [
+          0.8,
+          2.2
+        ],
+        "original_strip_y_m": [
+          -0.6,
+          0.6
+        ],
+        "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+      },
+      "legal_material_roundtrips": {
+        "criterion": "bidirectional_material_roundtrips_v1",
+        "required": 1,
+        "observed": {
+          "completed_roundtrips": 1,
+          "legal_outbound_traversals": 1,
+          "legal_return_traversals": 1
+        },
+        "evidence_available": true,
+        "completed": true
+      }
+    }
+  },
+  "instantaneous_PANN_cap": {
+    "recorded_decisions": 86,
+    "max_abs_difference_m_s": 1.1953189969077238e-05,
+    "at_physical_time_s": 10.000000000003372,
+    "comparator": "Same actor and state; set the twelve material recovery features to zero for this decision."
+  },
+  "gait": {
+    "liftoffs": 129,
+    "first_liftoff": {
+      "event": 6,
+      "time_s": 2.051999999999807,
+      "kind": "liftoff_committed",
+      "legs": [
+        "FR",
+        "RL"
+      ],
+      "nominal_due_s": 2.051999999999812,
+      "handover": {
+        "ready": true,
+        "support_legs": [
+          0,
+          3
+        ],
+        "earliest_liftoff_s": 2.051999999999812,
+        "measured_support_N": 145.63529075233126,
+        "previous_solved_support_N": 148.34370353194822,
+        "previous_released_pair_N": 3.3972290364105016,
+        "previous_body_accel_residual": 0.03345921508533781,
+        "previous_angular_accel_residual": 0.023197877058287075
+      },
+      "fixed_apex_s": 2.151999999999807,
+      "fixed_touchdown_s": 2.251999999999807
+    },
+    "last_liftoff": {
+      "event": 651,
+      "time_s": 37.95799999993822,
+      "kind": "liftoff_committed",
+      "legs": [
+        "FR",
+        "RL"
+      ],
+      "nominal_due_s": 37.93999999993884,
+      "handover": {
+        "ready": true,
+        "support_legs": [
+          0,
+          3
+        ],
+        "earliest_liftoff_s": 37.93999999993884,
+        "measured_support_N": 138.7561351916582,
+        "previous_solved_support_N": 139.76779451658462,
+        "previous_released_pair_N": 7.6227851491392045,
+        "previous_body_accel_residual": 0.05715022125965297,
+        "previous_angular_accel_residual": 0.01975330717522778
+      },
+      "fixed_apex_s": 38.05799999993822,
+      "fixed_touchdown_s": 38.15799999993822
+    },
+    "actual_touchdowns": 275,
+    "alternating_diagonals": true,
+    "touchdown_searches": 254,
+    "search_gap_at_scheduled_end_max_m": 0.0011945884326369192,
+    "touchdown_minus_planned_end_ms": [
+      -2.000000000464297,
+      13.999999999501966,
+      68.29999999937537,
+      117.99999999925959
+    ],
+    "last_liftoff_to_terminal_s": 4.717999999989004,
+    "swing_center_position_error_xyz_RMS_m": [
+      0.00045190179182338827,
+      0.0003350720327565676,
+      0.0005820505320797026
+    ],
+    "swing_center_velocity_error_xyz_RMS_m_s": [
+      0.013624585524466326,
+      0.007211102159191658,
+      0.020375873490101663
+    ],
+    "predicted_minus_measured_swing_acceleration_xyz_RMS_m_s2": [
+      1.2662747159344612,
+      0.6511698650422908,
+      2.048893155716378
+    ],
+    "observed_minus_WBC_COM_accel_xyz_RMS_m_s2": [
+      0.13586159493891553,
+      0.1492808206705164,
+      0.7068308986668628
+    ],
+    "peak_nonfoot_ground_force_N": 503.9147712547438,
+    "max_PD_mapping_error_Nm": 1.5987211554602254e-14
+  },
+  "wall_s": 1356.6927790548652,
+  "timing": {
+    "model": {
+      "wall_s": 18.899440351873636,
+      "cpu_s": 18.912485551998426,
+      "calls": 21339
+    },
+    "matrix_assembly": {
+      "wall_s": 71.5669300891459,
+      "cpu_s": 70.99203390999784,
+      "calls": 2139
+    },
+    "mpc_solve": {
+      "wall_s": 17.841039452701807,
+      "cpu_s": 17.75167363500011,
+      "calls": 2139
+    },
+    "wbc_assembly": {
+      "wall_s": 21.28175587952137,
+      "cpu_s": 21.28074181797418,
+      "calls": 21339
+    },
+    "wbc_solve": {
+      "wall_s": 40.986140210181475,
+      "cpu_s": 41.038817327989655,
+      "calls": 21338
+    },
+    "record_serialization_io": {
+      "wall_s": 12.718136884272099,
+      "cpu_s": 12.545000521998503,
+      "calls": 2225
+    },
+    "model_323_point_motion": {
+      "wall_s": 4.609037414193153,
+      "cpu_s": 4.627873884010675,
+      "calls": 21339
+    }
+  },
+  "physical_interval": [
+    1795144849.3980708,
+    1795146205.5406702
+  ],
+  "new_PPO_samples": 0,
+  "new_PPO_updates": 0,
+  "donor": 0,
+  "material_memory_causal_comparison": false
+}
