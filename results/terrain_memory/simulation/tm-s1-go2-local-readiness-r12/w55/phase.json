@@ -1,6 +1,6 @@
 {
-  "status": "original_stages_and_evidence_based_revisions_running",
-  "updated_unix_s": 1795147249.8383265,
+  "status": "original_stage_results_updated",
+  "updated_unix_s": 1795147332.700692,
   "deadline": null,
   "wall_deadline_enabled": false,
   "kill_on_conversation_end": false,
@@ -358,14 +358,14 @@
       "pid_running_at_snapshot": true,
       "live": {
         "pid": 465616,
-        "physical_time_s": 9.502000000004532,
+        "physical_time_s": 12.50199999999754,
         "phase": "outbound",
         "position_m": [
-          1.5561063246608007,
-          -0.03246509933637714,
-          0.2891078216726737
+          2.208519796315714,
+          -0.055498770595468955,
+          0.2898811730151556
         ],
-        "unix_s": 1795147235.3384192,
+        "unix_s": 1795147323.1696072,
         "deadline": null,
         "wall_deadline_enabled": false
       }
@@ -525,11 +525,16 @@
       "attempt": "job-20261120T032044Z-w55-f-b-r53-eval-PANN_PPO_S5-s2-E60-attempt01",
       "job": "job-20261120T032044Z-w55-f-b-r53",
       "level": "E60",
-      "status": "running",
+      "status": "technical_interruption",
       "tmux": "s1-w55-f-b-r53-e60",
       "runner_pid": 457443,
       "pid": 457450,
+      "user_cpu_s": 992.2726620000001,
+      "system_cpu_s": 52.536775,
+      "exit_code": 0,
       "started_unix_s": 1795146257.0399928,
+      "ended_unix_s": 1795147252.3955836,
+      "reason": "execution_error",
       "command": [
         "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
         "-u",
@@ -556,20 +561,129 @@
       "record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/F-B-r53/E60.json",
       "lane": "F",
       "physical_started_unix_s": 1795146262.9660397,
-      "pid_running_at_snapshot": true,
-      "live": {
-        "pid": 457450,
-        "physical_time_s": 41.00199999993112,
-        "phase": "terminal_stand",
-        "position_m": [
-          0.29750668816975817,
-          0.011294274162218405,
-          0.2713297101881614
-        ],
-        "unix_s": 1795147241.7026458,
-        "deadline": null,
-        "wall_deadline_enabled": false
-      }
+      "success": false,
+      "stage_status": "technical_interruption",
+      "error": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL-w55-f/scripts/s1_go2_r11_runtime.py\", line 550, in run\n    action=agent.update(t,data,mission,contact,grf,joint.soft.copy(),\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w55-f/scripts/s1_w54_f_r52_backend.py\", line 745, in update\n    return self.wbc(t,data,mq,mission,scheduled,observed,np.asarray(grf),np.asarray(soft),material_info)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w55-f/scripts/s1_w54_f_r52_backend.py\", line 679, in wbc\n    z,status=self._solve(P,q,A,lo,hi,'wbc',t)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w55-f/scripts/s1_w54_f_r52_backend.py\", line 440, in _solve\n    raise ControllerNumericalFailure(f'{kind}: {sol.info.status} at physical time {t:.6f}')\ns1_w54_f_r52_backend.ControllerNumericalFailure: wbc: maximum iterations reached at physical time 41.254000\n",
+      "simulation_s": 41.253999999930535,
+      "physical_samples": 206270,
+      "physical_ended_unix_s": 1795147248.2444081,
+      "max_x_m": 2.9937612214361313,
+      "min_body_height_m": 0.20420276883339467,
+      "completed_round_trips": 0,
+      "wall_s": 985.7261339575052,
+      "stage_progress": {
+        "far_arrival_s": 16.429999999988386,
+        "return_start_s": 22.88999999997333,
+        "actual_route_fraction": 0.9756629605761105,
+        "full_observation": false,
+        "actual_material_loaded": true,
+        "material_traversal": {
+          "completed": true,
+          "west_entry_s": 6.088000000003999,
+          "east_exit_s": 12.341999999997913,
+          "lateral_exit_s": null,
+          "max_abs_base_y_during_crossing_m": 0.0854305557380884,
+          "material_loaded_during_crossing": true,
+          "original_strip_x_m": [
+            0.8,
+            2.2
+          ],
+          "original_strip_y_m": [
+            -0.6,
+            0.6
+          ],
+          "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+        },
+        "legal_material_roundtrips": {
+          "criterion": "bidirectional_material_roundtrips_v1",
+          "required": 1,
+          "observed": {
+            "completed_roundtrips": 0,
+            "legal_outbound_traversals": 1,
+            "legal_return_traversals": 1
+          },
+          "evidence_available": true,
+          "completed": false
+        }
+      },
+      "case_key": "61984e13af0bfef09bd3a826ff1609ff784641d2118bbef9e38cf21b30132565",
+      "source_commit": "0dafb95b3bfad41c7010f347651bbba9fd6408ff",
+      "qualification": {
+        "predecessor_attempt": "job-20261120T032044Z-w55-f-b-r53-eval-PANN_PPO_S5-s2-E30-attempt01",
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "d424d29f604cfc93f6a19ce9fb56ca66ef559383b6f9b602bf2fd78692a2e30e",
+        "solver_workers": 1,
+        "worker_setting_checked_against_predecessor": true,
+        "route_criterion": "bidirectional_material_roundtrips_v1",
+        "legacy_stage_criteria_met": false
+      },
+      "samples_500Hz": 20628,
+      "timing": {
+        "startup_planning": null,
+        "planning": null,
+        "feedback": {
+          "count": 20627,
+          "total_s": 185.3839072920382,
+          "p50_ms": 3.9378684014081955,
+          "p95_ms": 47.750275023281574,
+          "max_ms": 304.2008839547634,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 20627
+        },
+        "state_parameter_rpc": null,
+        "physics": {
+          "count": 20627,
+          "total_s": 345.50522901304066,
+          "p50_ms": 16.074324026703835,
+          "p95_ms": 27.690445072948933,
+          "max_ms": 806.3314203172922,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 20627
+        }
+      },
+      "record_timing": {
+        "stream_compress_write_wall_s": 4.648520108312368,
+        "stream_compress_write_cpu_s": 4.674159056999997,
+        "trajectory_compress_write_wall_s": 0.9858193658292294,
+        "trajectory_compress_write_cpu_s": 0.9934544289999394
+      },
+      "identity": {
+        "seed": 2,
+        "controller_build": "S5-r53",
+        "job": "job-20261120T032044Z-w55-f-b-r53",
+        "checkpoint_sha256": "6b1fcab99f849aaaabc4925dc13391f6ced8e75c419d0f821661417cba6349f7",
+        "normalizer_sha256": "2180314d860dd936b4775c8e325713466f5dd06ce913f917b88d04f93521ff55",
+        "stream_id": "w55-f-b-r53",
+        "initial_state": {
+          "id": "nominal",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "legal_route": {
+        "legal_outbound_traversals": 1,
+        "legal_return_traversals": 1,
+        "completed_roundtrips": 0,
+        "side_exits": 0
+      },
+      "material": {
+        "max_abs_principal_strain": 0.0032284381279813756,
+        "loaded_ever_cells": 564,
+        "events": 3730,
+        "domain_exit": null
+      },
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/job-20261120T032044Z-w55-f-b-r53-eval-PANN_PPO_S5-s2-E60-attempt01.json",
+      "server_originals": "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T032044Z-w55-f-b-r53-eval-PANN_PPO_S5-s2-E60-attempt01",
+      "recorded_video": "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T032044Z-w55-f-b-r53-eval-PANN_PPO_S5-s2-E60-attempt01/full-mission-material-overlay.mp4"
     },
     {
       "attempt": "job-20261120T033646Z-w55-n-a-r54-eval-PANN_PPO_S5-s1-E30-attempt01",
@@ -745,6 +859,55 @@
       "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/n/job-20261120T033646Z-w55-n-a-r54-eval-PANN_PPO_S5-s1-E30-attempt01.json",
       "server_originals": "/root/autodl-tmp/MCP-RL-w55-n/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T033646Z-w55-n-a-r54-eval-PANN_PPO_S5-s1-E30-attempt01",
       "recorded_video": "/root/autodl-tmp/MCP-RL-w55-n/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T033646Z-w55-n-a-r54-eval-PANN_PPO_S5-s1-E30-attempt01/full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "job-20261120T040054Z-w55-n-a-r56-eval-PANN_PPO_S5-s1-E30-attempt01",
+      "job": "job-20261120T040054Z-w55-n-a-r56",
+      "level": "E30",
+      "status": "running",
+      "tmux": "s1-w55-n-a-r56-e30",
+      "runner_pid": 467690,
+      "pid": 467696,
+      "started_unix_s": 1795147255.0565274,
+      "command": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "scripts/run_s1_go2_r12.py",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL-w55-n-r56/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261120T040054Z-w55-n-a-r56/execution-contract.json",
+        "--attempt",
+        "job-20261120T040054Z-w55-n-a-r56-eval-PANN_PPO_S5-s1-E30-attempt01",
+        "--evaluation-start-unix",
+        "1795147254.9943588",
+        "--checkpoint",
+        "/root/autodl-tmp/MCP-RL-w55-n-r56/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+        "--level",
+        "E30",
+        "--seed",
+        "1",
+        "--workers",
+        "10",
+        "--build",
+        "S5-r56",
+        "--condition",
+        "nominal"
+      ],
+      "record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/n/N-A-r56/E30.json",
+      "lane": "N",
+      "pid_running_at_snapshot": true,
+      "live": {
+        "pid": 467696,
+        "physical_time_s": 1.5019999999998672,
+        "phase": "initial_stand",
+        "position_m": [
+          -0.0009293672716806562,
+          -2.998633777933541e-05,
+          0.2902199083800672
+        ],
+        "unix_s": 1795147325.3793907,
+        "deadline": null,
+        "wall_deadline_enabled": false
+      }
     }
   ],
   "completed_physical_overlap": [
@@ -765,6 +928,15 @@
       "start": 1795145826.5464594,
       "end": 1795146205.5406702,
       "physical_overlap_wall_s": 378.99421072006226
+    },
+    {
+      "attempts": [
+        "job-20261120T032044Z-w55-f-b-r53-eval-PANN_PPO_S5-s2-E60-attempt01",
+        "job-20261120T033646Z-w55-n-a-r54-eval-PANN_PPO_S5-s1-E30-attempt01"
+      ],
+      "start": 1795146262.9660397,
+      "end": 1795147071.3004525,
+      "physical_overlap_wall_s": 808.3344128131866
     }
   ],
   "observed_physical_overlap": [
@@ -813,17 +985,17 @@
         "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E30-attempt01",
         "job-20261120T032044Z-w55-f-b-r53-eval-PANN_PPO_S5-s2-E60-attempt01"
       ],
-      "wall_s": 137.44667720794678,
+      "wall_s": 150.35266613960266,
       "measured_cpu": {
         "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E30-attempt01": {
-          "sampled_wall_s": 130.18298625946045,
-          "cpu_s": 139.33,
-          "mean_cores": 1.0702627432613134
+          "sampled_wall_s": 145.19270849227905,
+          "cpu_s": 155.05,
+          "mean_cores": 1.0678910918467035
         },
         "job-20261120T032044Z-w55-f-b-r53-eval-PANN_PPO_S5-s2-E60-attempt01": {
-          "sampled_wall_s": 130.14172792434692,
-          "cpu_s": 147.15999999999997,
-          "mean_cores": 1.1307672208374702
+          "sampled_wall_s": 145.15858507156372,
+          "cpu_s": 162.87999999999988,
+          "mean_cores": 1.122083133558373
         }
       },
       "cpu_scope": "Within-overlap adjacent samples with the same live process tree."
