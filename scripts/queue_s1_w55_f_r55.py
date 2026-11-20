@@ -13,6 +13,7 @@ from qualify_s1_w55_f_r55 import review
 
 STATUS=SMALL/'r55-dispatch.json'
 TARGET=SMALL/'F-A-r55'
+N56_MARKER=ROOT.parent/'MCP-RL-w55-n-r56/work/w55-n-r56/slot-released.json'
 
 
 def child_ended(stage):
@@ -38,24 +39,23 @@ def released_b_slot():
 
 
 def n56_released():
-    n56_case=N_CASE.parent/'N-A-r56'
-    stage=n56_case/'E30.json'
-    if stage.is_file():
-        row=child_ended(stage)
-        if not row:
-            return None
-        job=read(n56_case/'job.json')
-        expected=job['job_id']+'-eval-PANN_PPO_S5-s1-E30-attempt01'
-        if (job['route'],job['case'],job['seed'],job['controller_build'],row['attempt']) != ('N','A',1,'S5-r56',expected):
-            raise RuntimeError('Unexpected N/r56 release stage')
-        return dict(reason='N_A_r56_original_E30_naturally_ended',source_attempt=expected,source_pid=row['pid'],
-                    source_status=row['status'],ended_unix_s=row['ended_unix_s'])
-    release=N_CASE.parent/'slot-r56-release.json'
-    if release.is_file():
-        row=read(release)
-        if row.get('status')=='released_without_episode' and row.get('reason') and row.get('released_unix_s'):
-            return row
-    return None
+    if not N56_MARKER.is_file():
+        return None
+    release=read(N56_MARKER)
+    if release.get('target')!='N-A-r56/E30' or not release.get('released_unix_s'):
+        raise RuntimeError('Unexpected N/r56 release record')
+    if release['status']=='explicitly_released' and release.get('reason'):
+        return release
+    if release['status']!='naturally_ended':
+        raise RuntimeError('Unrecognized N/r56 slot disposition')
+    stage=Path(release['stage_file'])
+    row=child_ended(stage)
+    if not row:
+        return None
+    expected=release['job']+'-eval-PANN_PPO_S5-s1-E30-attempt01'
+    if (row['attempt'],row['pid'],row['exit_code'])!=(expected,release['child_pid'],release['child_exit_code']):
+        raise RuntimeError('N/r56 release does not match its original exited child')
+    return release
 
 
 def commit_scientific_review(evidence):
@@ -77,8 +77,7 @@ def main():
                  source_N=dict(attempt=n_initial['attempt'],pid=n_initial['pid']),
                  source_B=dict(attempt=b_initial['attempt'],pid=b_initial['pid']),
                  rule='r55 A takes the slot released by N-A-r54 E30. F-B-r53 retains its separate ladder slot, next reserved for N-A-r56, then eligible r55 B.',
-                 second_slot_N56_stage=str(N_CASE.parent/'N-A-r56/E30.json'),
-                 second_slot_explicit_release=str(N_CASE.parent/'slot-r56-release.json'),
+                 second_slot_N56_release_marker=str(N56_MARKER),
                  created_unix_s=time.time())
     write(STATUS,current)
     while True:
