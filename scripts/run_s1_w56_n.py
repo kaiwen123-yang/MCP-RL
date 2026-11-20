@@ -132,6 +132,11 @@ def run(case_dir, level):
         state.update(status='technical_interruption',reason='process_exited_without_completed_result')
     write(dest,state)
     write(raw_job/(level+'-runtime.json'),state)
+    if level=='E30':
+        write(ROOT/'work/w55-n-r56/slot-released.json',dict(status='naturally_ended',target='N-A-r56/E30',
+            released_unix_s=state['ended_unix_s'],job=job['job_id'],attempt=attempt,child_pid=state['pid'],
+            child_exit_code=state['exit_code'],physical_started=bool(state.get('physical_samples')),stage_file=str(dest),
+            reason=state.get('reason'),deadline=None,wall_deadline_enabled=False))
     if result_path.exists():
         import render_s1_go2_r12 as renderer
         renderer.SMALL = RESULTS

@@ -31,7 +31,7 @@ def main():
         time.sleep(3)
     # Physical release is observable before video/asset processing. The
     # coordinator can take the slot as soon as this real child exit is known.
-    if stage.get('ended_unix_s') and stage.get('exit_code') is not None:
+    if not (ROOT/'work/w55-n-r56/slot-released.json').exists() and stage.get('ended_unix_s') and stage.get('exit_code') is not None:
         write(ROOT/'work/w55-n-r56/slot-released.json',dict(status='naturally_ended',target='N-A-r56/E30',
             released_unix_s=time.time(),job=job,attempt=attempt,child_pid=stage.get('pid'),
             child_exit_code=stage['exit_code'],physical_started=bool(stage.get('physical_samples')),
