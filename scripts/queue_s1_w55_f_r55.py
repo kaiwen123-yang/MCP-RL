@@ -37,6 +37,27 @@ def released_b_slot():
             return record
 
 
+def n56_released():
+    n56_case=N_CASE.parent/'N-A-r56'
+    stage=n56_case/'E30.json'
+    if stage.is_file():
+        row=child_ended(stage)
+        if not row:
+            return None
+        job=read(n56_case/'job.json')
+        expected=job['job_id']+'-eval-PANN_PPO_S5-s1-E30-attempt01'
+        if (job['route'],job['case'],job['seed'],job['controller_build'],row['attempt']) != ('N','A',1,'S5-r56',expected):
+            raise RuntimeError('Unexpected N/r56 release stage')
+        return dict(reason='N_A_r56_original_E30_naturally_ended',source_attempt=expected,source_pid=row['pid'],
+                    source_status=row['status'],ended_unix_s=row['ended_unix_s'])
+    release=N_CASE.parent/'slot-r56-release.json'
+    if release.is_file():
+        row=read(release)
+        if row.get('status')=='released_without_episode' and row.get('reason') and row.get('released_unix_s'):
+            return row
+    return None
+
+
 def commit_scientific_review(evidence):
     comparison='r55-selection.json' if evidence['normal_sustained_motion'] else 'r55-motion-comparison.json'
     paths=[str((SMALL/name).relative_to(ROOT)) for name in (comparison,'r55-dispatch.json')]
@@ -55,7 +76,9 @@ def main():
                  deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False,
                  source_N=dict(attempt=n_initial['attempt'],pid=n_initial['pid']),
                  source_B=dict(attempt=b_initial['attempt'],pid=b_initial['pid']),
-                 rule='N-A-r54 E30 exits, or F-B-r53 exhausts its current original ladder. At most two heavy robot jobs.',
+                 rule='r55 A takes the slot released by N-A-r54 E30. F-B-r53 retains its separate ladder slot, next reserved for N-A-r56, then eligible r55 B.',
+                 second_slot_N56_stage=str(N_CASE.parent/'N-A-r56/E30.json'),
+                 second_slot_explicit_release=str(N_CASE.parent/'slot-r56-release.json'),
                  created_unix_s=time.time())
     write(STATUS,current)
     while True:
@@ -65,7 +88,7 @@ def main():
         b=read(B_CASE/'E60.json')
         if (b['attempt'],b['pid'])!=(b_initial['attempt'],b_initial['pid']):
             raise RuntimeError('Reserved first B stage changed identity')
-        release=child_ended(n_stage) or released_b_slot()
+        release=child_ended(n_stage)
         if release:
             break
         time.sleep(5)
@@ -94,8 +117,14 @@ def main():
     session('s1-w55-f-a-r55-collect','13','collect_s1_w55_f.py','--case-dir',TARGET,'--levels','E60','E300','E600')
     current.update(status='r55_A_ladder_dispatched_waiting_for_second_slot',a_ladder_unix_s=time.time())
     write(STATUS,current)
-    while not (child_ended(n_stage) and released_b_slot()):
+    while True:
+        release_b=released_b_slot()
+        release_n56=n56_released()
+        if release_b and release_n56:
+            break
         time.sleep(5)
+    current.update(second_slot_previous_F_attempt=release_b['attempt'],second_slot_N56_release=release_n56)
+    write(STATUS,current)
     bcase=SMALL/'F-B-r55'
     session('s1-w55-f-b-r55-ladder','0-3','continue_s1_w55_f.py','--case','B','--build','S5-r55','--selection',selection)
     session('s1-w55-f-b-r55-collect','3','collect_s1_w55_f.py','--case-dir',bcase,'--levels','E30','E60','E300','E600')
