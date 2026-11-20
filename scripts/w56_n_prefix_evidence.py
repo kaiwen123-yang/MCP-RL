@@ -51,5 +51,10 @@ def main():
         actual_selected=[{k:c[k] for k in ('slot','generator','J','dx_m','first_constraint_code','first_constraint_time_s')} for c in key['candidates']],
         private_candidate_comparison=outcomes,robot_physics_steps=0,offline_native_predictor_steps=4*350,
         interpretation='Sole changed condition is whether the already support-constrained candidate asks for longitudinal impulse after 20ms. The 350ms horizon, raw reference, measured packet and whole-body checks are identical. These open-loop private paths have no formal robot qualification or live score.')
+    for row in report['actual_selected']:
+        saved=read_policy(native/f"call-{call:06d}-candidate-{row['slot']:02d}.bin")
+        e=saved['execution_diagnostics'][:-1];bearing=e[:,:,10]>0.5
+        row.update(bearing_fraction_by_foot=bearing.mean(axis=0).tolist(),all_four_bearing_fraction=float(bearing.all(axis=1).mean()),
+            any_E_braking_fraction=float((e[:,:,4]>0).any(axis=1).mean()),terminal_z_m=float(saved['accepted_states'][-1,2]))
     write(SMALL/'r56-material-entry-prefix-evidence.json',report);print(json.dumps(outcomes,indent=2))
 if __name__=='__main__':main()
