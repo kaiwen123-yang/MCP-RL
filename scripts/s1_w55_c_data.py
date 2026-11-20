@@ -18,6 +18,7 @@ CASES = {
     'N48': (LEGACY, '*-w54-n-a-r48-eval*', 'known_diagnostic'),
     'F52': (LEGACY, '*-w54-f-a-r52-eval*', 'known_diagnostic'),
     'B46': (OLDER, '*-w46-b-eval*-s2-E30-*', 'held_out_seed2'),
+    'F53': (ROOT.parent/'MCP-RL-w55-f'/'outputs'/R12, '*-w55-f-a-r53-eval*-s1-E30-*', 'held_out_new_E30'),
 }
 REVIEW = ROOT/'results'/R12/'reviews/W54-review'
 WEIGHTS = ROOT/'work/assets/B_random1000--ideal-potentials.npz'
@@ -86,6 +87,10 @@ def material_events(path):
 
 
 def prepare_case(name, old_metrics):
+    import resource
+    started_unix=time.time()
+    usage=resource.getrusage(resource.RUSAGE_SELF)
+    cpu0=usage.ru_utime+usage.ru_stime
     start = time.perf_counter()
     where, pattern, role = CASES[name]
     directory, = where.glob(pattern)
@@ -93,6 +98,26 @@ def prepare_case(name, old_metrics):
     all_keys = final['keys'][final['ever_loaded'].astype(bool)]
     known = {tuple(k) for k in old_metrics.get(name,[])}
     keys = np.asarray([k for k in all_keys if tuple(k) not in known])
+    selection = {}
+    if name == 'F53':
+        job_path=ROOT.parent/'MCP-RL-w55-f'/'results'/R12/'w55/f'/(directory.name+'.json')
+        result=json.loads(job_path.read_text())
+        events=material_events(directory/'material-events.jsonl')
+        ret=next(p['entry_s'] for p in result['legal_route']['passages'] if p['direction']=='return')
+        for label,predicate in [
+            ('first_load',lambda e:e['type']=='load'),('first_release',lambda e:e['type']=='release'),
+            ('first_cross_foot_revisit',lambda e:e.get('cross_leg',False)),
+            ('first_return_load',lambda e:e['time_s']>=ret and e['type'] in ('load','reload')),
+            ('first_return_cross_foot_revisit',lambda e:e['time_s']>=ret and e.get('cross_leg',False))]:
+            matching=[e for e in events if predicate(e)]
+            if matching:
+                first_time=min(e['time_s'] for e in matching)
+                e=max((e for e in matching if e['time_s']==first_time), key=lambda e: max(e.get('area_m2',0.),e.get('area_before_m2',0.)))
+                selection[label]=dict(world_key=e['world_key'],time_s=e['time_s'],event_id=e['event_id'])
+        for label in ('continuous_loaded_strain_rate_s_inv','internal_qdot_s_inv'):
+            e=result['material']['rate_extrema'][label]
+            selection[label]=dict(world_key=final['keys'][e['patch']].tolist(),time_s=e['time_s'])
+        keys=np.array(sorted(set(tuple(x['world_key']) for x in selection.values())))
     blocks = sorted(directory.glob('material-[0-9]*.npz'))
     foot = np.concatenate([np.load(f)['foot'] for f in blocks])
     failures = material_events(directory/'material-failures.jsonl')
@@ -119,7 +144,10 @@ def prepare_case(name, old_metrics):
         if not len(cells):
             continue
         samples = np.rint(cells[:,0]/DT).astype(int)-t[0]-1
-        col = np.fromiter((key_index.get(tuple(x),-1) for x in cells[:,1:3].astype(int)),int,count=len(cells))
+        lattice=cells[:,1:3].astype(int)
+        col=np.full(len(cells),-1,dtype=int)
+        for (ix,iy),j in key_index.items():
+            col[(lattice[:,0]==ix)&(lattice[:,1]==iy)]=j
         keep = (samples>=0) & (samples<len(t)) & (col>=0)
         i,j = samples[keep],col[keep]
         if not len(i):
@@ -151,6 +179,8 @@ def prepare_case(name, old_metrics):
                max_original_e_q_stress_loaded_force_error=aligned.tolist(),unique_full_boundaries=len(set(signatures)),
                full_boundary_sha256=dict(zip([','.join(map(str,k)) for k in keys],signatures)),
                events=events,reference_and_assembly_wall_s=time.perf_counter()-start)
+    usage=resource.getrusage(resource.RUSAGE_SELF)
+    rec.update(start_unix=started_unix,end_unix=time.time(),cpu_s=usage.ru_utime+usage.ru_stime-cpu0,physical_event_selection=selection)
     write(COMPACT/f'{name}-inventory.json',rec)
     print(name, len(keys),len(set(signatures)),len(t),round(rec['reference_and_assembly_wall_s'],2),flush=True)
 
