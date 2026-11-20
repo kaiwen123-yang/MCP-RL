@@ -34,7 +34,9 @@ def build_wheel_client():
      execution_wheel_header_sha256=sha(wheel/'include/mujoco/mjmodel.h'),
      native_header_sha256=sha(CACHE/'_deps/mujoco-src/include/mujoco/mjmodel.h'),
      native_support_library_sha256=sha(library/'libw55_support.so'))
-def main():
+def main(revision='r56', round_name='w55', prep='w56_n_prepare.py'):
+ global OUT,SOURCE,DEST
+ OUT=ROOT/'work'/f'{round_name}-n-{revision}';SOURCE=OUT/'source';DEST=ROOT/'work/r11-frozen'/f'S5-{revision}'
  begin=time.time();usage=resource.getrusage(resource.RUSAGE_CHILDREN);DEST.mkdir(exist_ok=True)
  runtime_assets=link_runtime_assets()
  library=DEST/'lib';library.mkdir(exist_ok=True)
@@ -75,13 +77,13 @@ def main():
   if not path.exists():path.symlink_to(target,target_is_directory=True)
  (DEST/'lib').mkdir(exist_ok=True);shutil.copy2(CACHE/'lib/libmujoco.so.3.2.3',DEST/'lib/libmujoco.so.3.2.3')
  (DEST/'SOURCE_COMMIT').write_text('e00c47a5adb9856af2e0f24231bb3a60d5be23c4\n')
- specpath=ROOT/'experiments/terrain_memory/s1-go2-r11-S5-r56.json';spec=json.loads(specpath.read_text())
+ specpath=ROOT/'experiments/terrain_memory'/f's1-go2-r11-S5-{revision}.json';spec=json.loads(specpath.read_text())
  end=resource.getrusage(resource.RUSAGE_CHILDREN)
  ident=dict(spec,binary_sha256=sha(DEST/'agent_server'),source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
   execution_library=str((DEST/'lib/libw55_support.so').relative_to(ROOT)),execution_library_sha256=sha(DEST/'lib/libw55_support.so'),
   execution_core_sha256=sha(OUT/'support.cc'),
   specification_path=str(specpath.relative_to(ROOT)),specification_sha256=sha(specpath),build_source_root=str(SOURCE),build_directory=str(OUT),
-  source_preparation='scripts/w56_n_prepare.py',preparation_sha256=sha(ROOT/'scripts/w56_n_prepare.py'),
+  source_preparation='scripts/'+prep,preparation_sha256=sha(ROOT/'scripts'/prep),
   build_started_unix_s=begin,build_wall_s=time.time()-begin,build_cpu_s=end.ru_utime+end.ru_stime-usage.ru_utime-usage.ru_stime,
   build_concurrency_cap=6,translation_units=len(jobs),runtime_assets_adaptation=runtime_assets,compile_commands=jobs,link_command=link,cached_dependencies_read_only=True,
   mujoco_library_sha256=sha(DEST/'lib/libmujoco.so.3.2.3'),qualification='original_E30_not_yet_run',
@@ -91,7 +93,7 @@ def main():
  ident['status']='built_not_run'
  ident['transition_fd_count_semantics']='direct E-composed 2ms evaluations including one nominal per node; terminal sensor evaluations separately included; forward FD mode0'
  (DEST/'identity.json').write_text(json.dumps(ident,indent=2)+'\n')
- small=ROOT/'results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/n';small.mkdir(parents=True,exist_ok=True)
- (small/'S5-r56-build.json').write_text(json.dumps({k:v for k,v in ident.items() if k not in ('compile_commands','source_files_sha256','link_command','runtime_assets_adaptation','configuration_overrides')},indent=2)+'\n')
+ small=ROOT/'results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12'/round_name/'n';small.mkdir(parents=True,exist_ok=True)
+ (small/f'S5-{revision}-build.json').write_text(json.dumps({k:v for k,v in ident.items() if k not in ('compile_commands','source_files_sha256','link_command','runtime_assets_adaptation','configuration_overrides')},indent=2)+'\n')
  print(json.dumps({k:ident[k] for k in ['binary_sha256','translation_units','build_wall_s','build_cpu_s']}),flush=True)
 if __name__=='__main__':main()

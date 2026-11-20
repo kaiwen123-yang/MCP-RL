@@ -26,9 +26,10 @@ def write_equilibrium_settings(xml_path, config, arm):
     return result
 
 class PrecontactE:
+    library=ROOT/"work/r11-frozen/S5-r56/lib/libw55_support_python.so"
     def __init__(self,model):
         self.model=model
-        self.lib=ctypes.CDLL(str(ROOT/'work/r11-frozen/S5-r56/lib/libw55_support_python.so'))
+        self.lib=ctypes.CDLL(str(self.library))
         self.fn=self.lib.w55_project
         array=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS')
         self.fn.argtypes=[ctypes.c_void_p,ctypes.c_void_p,array,array,array]
