@@ -109,6 +109,8 @@ def main():
     target=float(row['redistributed_force_target'][leg,2]);actual=float(row['measured_grf'][leg,2])
     zero_increment=float(normal_reference(learned,bottom,leg,actual,actual,.002)[0])
     empty=Ground({'id':'tm02_anchor'},PARAMETERS);empty.law=learned.law
+    empty_observer=SimpleNamespace(ground=empty,time=t,packet_start=obs.packet_start,packet_last=obs.packet_last)
+    c_empty=solve(R58,model,data,p,row,soft,empty_observer,bottom,t)
     modes={'learned_history':learned,'zero_current_history':empty,'oracle_initial_state_diagnostic_only':oracle}
     traces={}; finals={}; requests=[]
     xy=p['foot_center_plan'][:-1,:,:2];forces=p['forces'][:,:,2].copy()
@@ -143,6 +145,8 @@ def main():
         archived_r55_vs_reconstructed_reference_m=maxdiff(a['reference'],row['feet_position_reference']),
         r58_vs_r55_mapped_input_rad=maxdiff(c['action'],a['action']),
         r58_vs_r55_soft_ref_m=maxdiff(c['reference'],a['reference']),
+        r58_history_vs_zero_mapped_input_rad=maxdiff(c['action'],c_empty['action']),
+        r58_history_vs_zero_soft_ref_m=maxdiff(c['reference'],c_empty['reference']),
         r58_vs_r55_wbc_force_N=maxdiff(c['force'],a['force']),
         numerical_residuals={label:[x['primal'],x['dual']] for label,x in zip(['r55','r58'],[a,c])},
         zero_force_difference_increment_m=zero_increment,history_comparisons=history_effects,
@@ -150,7 +154,8 @@ def main():
         candidate_after_alternate_repeat_q=maxdiff(repeated.q,learned_ref.q),
         candidate_changed_load_final_q=maxdiff(alternate.q,learned_ref.q),
         source_state_change=max(maxdiff(getattr(learned,k),v) for k,v in unchanged.items()),
-        candidate_nodes_by_history=traces,wall_s=time.time()-start)
+        candidate_nodes_by_history={k:[{n:v for n,v in node.items() if n not in ('q','e','loaded','cell_keys','cell_previously_observed')} for node in nodes] for k,nodes in traces.items()},
+        wall_s=time.time()-start)
     values['ready_for_original_E30']=bool(values['r58_vs_r55_mapped_input_rad']>max(values['r55_repeat_mapped_input_rad'],
         values['archived_r55_vs_reconstructed_mapped_input_rad']) and values['r58_vs_r55_soft_ref_m']>0 and
         zero_increment==0. and values['candidate_after_alternate_repeat_q']==0. and

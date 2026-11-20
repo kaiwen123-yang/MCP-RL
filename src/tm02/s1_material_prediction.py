@@ -40,7 +40,7 @@ def inverse(ground, columns, load, dt):
 
     def residual(delta):
         boundary = -delta / ground.h
-        ee, _, stress, _ = ground.law.step(e, q, np.full(len(ids), boundary), dt, fixed)
+        _, _, stress, _ = ground.law.step(e, q, np.full(len(ids), boundary), dt, fixed)
         pressure = np.where(boundary <= free, np.maximum(-stress[:, 0], 0), 0.)
         return float(np.dot(area, pressure) * 1e6 * ground.gamma - load)
 
@@ -91,6 +91,27 @@ def candidate_step(branch, xy, contacts, force, dt, end):
     else:
         raise StanceReferenceInfeasible(dict(reason='no_consistent_sole_ownership',
                                              detail=str(last_error), time_s=end))
+    # Tangent at the consistent solution, with ownership and history frozen.
+    # Keep the finite difference in the original displacement domain.
+    tangents = []
+    free_boundary = []
+    for i in legs:
+        ids, aa = owners[i]
+        if not len(ids):
+            tangents.append(None)
+            free_boundary.append(None)
+            continue
+        e, q = branch.e[ids], branch.q[ids]
+        fixed = np.ones(len(ids),bool)
+        free = branch.law.step(e,q,np.zeros(len(ids)),dt,~fixed)[0][:,0]
+        free_boundary.append(float(np.dot(-branch.h*free,aa)/aa.sum()))
+        delta = -feet[i,2]
+        step = 1e-9 if delta+1e-9 <= branch.h*.02 else -1e-9
+        def normal_at(d):
+            b = -d/branch.h
+            stress = branch.law.step(e,q,np.full(len(ids),b),dt,fixed)[2][:,0]
+            return float(np.dot(aa,np.where(b<=free,np.maximum(-stress,0.),0.))*1e6*branch.gamma)
+        tangents.append((normal_at(delta+step)-normal_at(delta))/step)
     actual, _, _ = branch.step(feet, np.zeros((4, 3)), dt, end, log=False)
     if branch.domain_exit:
         raise StanceReferenceInfeasible(branch.domain_exit | dict(reason='candidate_strain_domain_exit'))
@@ -100,7 +121,8 @@ def candidate_step(branch, xy, contacts, force, dt, end):
                                              residual_N=residual.tolist(), time_s=end))
     return dict(time_s=end, soft_legs=legs, displacement_m=(-feet[legs, 2]).tolist(),
                 force_residual_N=residual.tolist(), max_abs_strain=branch.max_strain,
-                area_m2=[float(owners[i][1].sum()) for i in legs])
+                area_m2=[float(owners[i][1].sum()) for i in legs],
+                normal_tangent_N_m=tangents, free_displacement_m=free_boundary)
 
 
 def rollout_candidate(ground, observed_time, times, foot_xy, contact, normal_force):
@@ -114,7 +136,13 @@ def rollout_candidate(ground, observed_time, times, foot_xy, contact, normal_for
     for feet in foot_xy:
         for xy in feet:
             branch.footprint(xy)
+    active = np.array(sorted(branch.prediction_active),int)
+    keys = [tuple(np.floor(np.array(branch.xy[i])/branch.cell).astype(int)) for i in active]
     nodes = []
     for dt, end, xy, mode, force in zip(np.diff(times),times[1:],foot_xy,contact,normal_force,strict=True):
-        nodes.append(candidate_step(branch, xy, mode, force, float(dt), float(end)))
+        node = candidate_step(branch, xy, mode, force, float(dt), float(end))
+        node.update(cell_keys=[list(map(int,k)) for k in keys],cell_previously_observed=[k in ground.ids for k in keys],
+                    e=branch.e[active].tolist(),q=branch.q[active].tolist(),
+                    loaded=branch.loaded[active].tolist())
+        nodes.append(node)
     return branch, nodes
