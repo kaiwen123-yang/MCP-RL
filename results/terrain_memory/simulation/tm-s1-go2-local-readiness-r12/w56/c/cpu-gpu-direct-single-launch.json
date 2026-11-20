@@ -1,0 +1,254 @@
+{
+  "schema": "w56_direct_host_wall_single_dispatch_v1",
+  "start_utc": "2026-11-20T09:11:19.523309+00:00",
+  "end_utc": "2026-11-20T09:11:34.115051+00:00",
+  "device": "RTX PRO 6000 Blackwell Server Edition",
+  "input": "Matches previous 811 first-contact windows, 174 distinct r55 A/B E30 histories, 600 steps each. Single uses exactly the first selected path.",
+  "calls": "A fresh process for each width/device. First call includes native library binding, CUDA context initialization as applicable, allocation, H2D, one material kernel, D2H and stream synchronization. Second call repeats the whole invocation with the process and context warm. Host input already materialized; Python imports and history assembly excluded. CPU includes native binding and allocation. Each output validated against original FP64 CPU law.",
+  "physical_jobs_before": {
+    "a": {
+      "attempt": "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01",
+      "pid": 500828,
+      "proc_ticks_user_plus_kernel": 792502,
+      "physical_s": 218.50200000500644,
+      "last_live_utc": "2026-11-20T09:11:00.252865+00:00"
+    },
+    "b": {
+      "attempt": "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E600-attempt01",
+      "pid": 502596,
+      "proc_ticks_user_plus_kernel": 644215,
+      "physical_s": 179.50200000371177,
+      "last_live_utc": "2026-11-20T09:11:14.438376+00:00"
+    }
+  },
+  "physical_jobs_after": {
+    "a": {
+      "attempt": "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01",
+      "pid": 500828,
+      "proc_ticks_user_plus_kernel": 794111,
+      "physical_s": 219.00200000502304,
+      "last_live_utc": "2026-11-20T09:11:23.499359+00:00"
+    },
+    "b": {
+      "attempt": "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E600-attempt01",
+      "pid": 502596,
+      "proc_ticks_user_plus_kernel": 645815,
+      "physical_s": 179.50200000371177,
+      "last_live_utc": "2026-11-20T09:11:14.438376+00:00"
+    }
+  },
+  "clock_ticks_per_second": 100,
+  "cold_worker_start": "POSIX fork of host-only process; CUDA not initialized in parent. No material function called before first timed invocation in child.",
+  "samples_per_temperature_and_workload": 1,
+  "previous_results": "cpu-gpu-real-histories.json",
+  "lower_library_cpu_sha256": "956b38fbac51db364cf016ef0278c592f360a3c95904a63a6d2219db807e131e",
+  "lower_library_gpu_sha256": "b5ced0b1dd12ace9da82199deeb2647d342f599107191af89d4ebe72d958550d",
+  "results": {
+    "single": {
+      "shape": [
+        600,
+        1
+      ],
+      "input_sha256": "7276122d22a6044af8c855d27c0999712cf1e0a850660f3fd1f118c33d478ee7",
+      "cpu": {
+        "pid": 526083,
+        "max_rss_KiB": 327636,
+        "cold_first_call": {
+          "start_utc": "2026-11-20T09:11:19.994237+00:00",
+          "end_utc": "2026-11-20T09:11:20.022186+00:00",
+          "start_unix_ns": 1795165879994237134,
+          "end_unix_ns": 1795165880022185560,
+          "wall_s": 0.027948034,
+          "process_cpu_s": 0.027949279,
+          "native_calls": 1,
+          "openmp_threads": "1",
+          "max_error_e11_e22_q11_q22_stress_MPa": [
+            0.0,
+            1.0597921737236227e-13,
+            1.357687833686283e-13,
+            1.280269632170962e-13,
+            2.2076163119777448e-10
+          ],
+          "max_constitutive_residual_MPa": 9.996899308362117e-09
+        },
+        "warm_second_call": {
+          "start_utc": "2026-11-20T09:11:20.022279+00:00",
+          "end_utc": "2026-11-20T09:11:20.044272+00:00",
+          "start_unix_ns": 1795165880022279129,
+          "end_unix_ns": 1795165880044271823,
+          "wall_s": 0.021992713,
+          "process_cpu_s": 0.021994806,
+          "native_calls": 1,
+          "openmp_threads": "1",
+          "max_error_e11_e22_q11_q22_stress_MPa": [
+            0.0,
+            1.0597921737236227e-13,
+            1.357687833686283e-13,
+            1.280269632170962e-13,
+            2.2076163119777448e-10
+          ],
+          "max_constitutive_residual_MPa": 9.996899308362117e-09
+        }
+      },
+      "gpu": {
+        "pid": 526086,
+        "max_rss_KiB": 451288,
+        "cold_first_call": {
+          "start_utc": "2026-11-20T09:11:20.075436+00:00",
+          "end_utc": "2026-11-20T09:11:21.217983+00:00",
+          "start_unix_ns": 1795165880075435955,
+          "end_unix_ns": 1795165881217983216,
+          "wall_s": 1.142547071,
+          "process_cpu_s": 1.076028225,
+          "cuda_initialized_before_call": false,
+          "material_kernel_launches": 1,
+          "context_and_event_creation_wall_s": 0.250338579,
+          "h2d_and_output_allocation_event_s": 0.0007037760019302368,
+          "kernel_event_s": 0.8898391723632812,
+          "d2h_result_event_s": 0.00026652801036834717,
+          "terminal_sync_wall_s": 2.7579e-05,
+          "final_tensor_live_bytes": 37888,
+          "peak_torch_bytes": 37888,
+          "max_error_e11_e22_q11_q22_stress_MPa": [
+            0.0,
+            1.0597496187883526e-13,
+            1.35765544314638e-13,
+            1.2802331419915942e-13,
+            2.2074431171859032e-10
+          ],
+          "max_constitutive_residual_MPa": 9.996038441428823e-09
+        },
+        "warm_second_call": {
+          "start_utc": "2026-11-20T09:11:21.218061+00:00",
+          "end_utc": "2026-11-20T09:11:22.045350+00:00",
+          "start_unix_ns": 1795165881218061140,
+          "end_unix_ns": 1795165882045349586,
+          "wall_s": 0.82728847,
+          "process_cpu_s": 0.832001415,
+          "cuda_initialized_before_call": true,
+          "material_kernel_launches": 1,
+          "context_and_event_creation_wall_s": 3.3444e-05,
+          "h2d_and_output_allocation_event_s": 0.0009418560266494751,
+          "kernel_event_s": 0.8256565551757813,
+          "d2h_result_event_s": 0.00014684799313545227,
+          "terminal_sync_wall_s": 1.0275e-05,
+          "final_tensor_live_bytes": 37888,
+          "peak_torch_bytes": 37888,
+          "max_error_e11_e22_q11_q22_stress_MPa": [
+            0.0,
+            1.0597496187883526e-13,
+            1.35765544314638e-13,
+            1.2802331419915942e-13,
+            2.2074431171859032e-10
+          ],
+          "max_constitutive_residual_MPa": 9.996038441428823e-09
+        }
+      },
+      "cold_first_call_cpu_over_gpu": 0.02446116637937624,
+      "warm_second_call_cpu_over_gpu": 0.026584092245356686
+    },
+    "batch": {
+      "shape": [
+        600,
+        174
+      ],
+      "input_sha256": "21c59ff3d85d467f944ba2725c7ac9e47a975f225dae7fae10b732be8cfeb3a9",
+      "cpu": {
+        "pid": 526110,
+        "max_rss_KiB": 335756,
+        "cold_first_call": {
+          "start_utc": "2026-11-20T09:11:22.150651+00:00",
+          "end_utc": "2026-11-20T09:11:24.005535+00:00",
+          "start_unix_ns": 1795165882150651397,
+          "end_unix_ns": 1795165884005535111,
+          "wall_s": 1.854883931,
+          "process_cpu_s": 1.855040231,
+          "native_calls": 1,
+          "openmp_threads": "1",
+          "max_error_e11_e22_q11_q22_stress_MPa": [
+            6.054378459129263e-13,
+            5.175573180027303e-13,
+            9.035777471906527e-13,
+            7.778156135963309e-13,
+            6.27309759693162e-10
+          ],
+          "max_constitutive_residual_MPa": 9.99912046911744e-09
+        },
+        "warm_second_call": {
+          "start_utc": "2026-11-20T09:11:24.005623+00:00",
+          "end_utc": "2026-11-20T09:11:25.877422+00:00",
+          "start_unix_ns": 1795165884005622859,
+          "end_unix_ns": 1795165885877421785,
+          "wall_s": 1.871799565,
+          "process_cpu_s": 1.871965073,
+          "native_calls": 1,
+          "openmp_threads": "1",
+          "max_error_e11_e22_q11_q22_stress_MPa": [
+            6.054378459129263e-13,
+            5.175573180027303e-13,
+            9.035777471906527e-13,
+            7.778156135963309e-13,
+            6.27309759693162e-10
+          ],
+          "max_constitutive_residual_MPa": 9.99912046911744e-09
+        }
+      },
+      "gpu": {
+        "pid": 526119,
+        "max_rss_KiB": 474368,
+        "cold_first_call": {
+          "start_utc": "2026-11-20T09:11:28.766129+00:00",
+          "end_utc": "2026-11-20T09:11:30.084074+00:00",
+          "start_unix_ns": 1795165888766129061,
+          "end_unix_ns": 1795165890084074440,
+          "wall_s": 1.317944404,
+          "process_cpu_s": 1.28581778,
+          "cuda_initialized_before_call": false,
+          "material_kernel_launches": 1,
+          "context_and_event_creation_wall_s": 0.241718855,
+          "h2d_and_output_allocation_event_s": 0.0010233919620513917,
+          "kernel_event_s": 1.070402099609375,
+          "d2h_result_event_s": 0.002775360107421875,
+          "terminal_sync_wall_s": 2.2542e-05,
+          "final_tensor_live_bytes": 5850624,
+          "peak_torch_bytes": 5850624,
+          "max_error_e11_e22_q11_q22_stress_MPa": [
+            6.054085813481151e-13,
+            5.175280481969028e-13,
+            9.035403718618551e-13,
+            7.777782309618741e-13,
+            6.272342645274875e-10
+          ],
+          "max_constitutive_residual_MPa": 9.99956752357526e-09
+        },
+        "warm_second_call": {
+          "start_utc": "2026-11-20T09:11:30.084146+00:00",
+          "end_utc": "2026-11-20T09:11:31.158947+00:00",
+          "start_unix_ns": 1795165890084146533,
+          "end_unix_ns": 1795165891158947382,
+          "wall_s": 1.074800882,
+          "process_cpu_s": 1.08516381,
+          "cuda_initialized_before_call": true,
+          "material_kernel_launches": 1,
+          "context_and_event_creation_wall_s": 3.3385e-05,
+          "h2d_and_output_allocation_event_s": 0.0004029439985752106,
+          "kernel_event_s": 1.070982666015625,
+          "d2h_result_event_s": 0.0028700160980224608,
+          "terminal_sync_wall_s": 1.6554e-05,
+          "final_tensor_live_bytes": 5850624,
+          "peak_torch_bytes": 5850624,
+          "max_error_e11_e22_q11_q22_stress_MPa": [
+            6.054085813481151e-13,
+            5.175280481969028e-13,
+            9.035403718618551e-13,
+            7.777782309618741e-13,
+            6.272342645274875e-10
+          ],
+          "max_constitutive_residual_MPa": 9.99956752357526e-09
+        }
+      },
+      "cold_first_call_cpu_over_gpu": 1.4074068112208473,
+      "warm_second_call_cpu_over_gpu": 1.7415314746643464
+    }
+  }
+}
