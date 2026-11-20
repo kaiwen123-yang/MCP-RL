@@ -1,5 +1,6 @@
 """Record original W55 stages and their wall-time overlap from D57 lane outputs."""
 import argparse
+import fcntl
 import json
 import time
 from pathlib import Path
@@ -25,6 +26,8 @@ def select(d, fields):
 def cases(worktree, lane):
     compact = worktree / REL / 'w55' / lane
     rows = {}
+    ledger = compact / 'index.json'
+    indexed = {r['attempt']: r for r in read(ledger).get('attempts', [])} if ledger.exists() else {}
     for p in sorted(compact.glob('**/E*.json')):
         d = read(p)
         if p.stem not in LEVELS or not d.get('attempt'):
@@ -34,6 +37,9 @@ def cases(worktree, lane):
                          'ended_unix_s', 'reason', 'command', 'resource_usage'))
         row['record'] = str(p.relative_to(worktree))
         row['lane'] = lane.upper()
+        case_record = indexed.get(row['attempt'], {})
+        if case_record.get('physical_started_unix_s') is not None:
+            row['physical_started_unix_s'] = case_record['physical_started_unix_s']
         pid = row.get('pid')
         if row['status'] == 'running' and pid:
             row['pid_running_at_snapshot'] = Path('/proc', str(pid)).is_dir()
@@ -84,11 +90,27 @@ def record(args):
             if last > first:
                 overlaps.append(dict(attempts=[a['attempt'], b['attempt']], start=first,
                                      end=last, physical_overlap_wall_s=last-first))
+    observed = []
+    for row in rows:
+        begin = row.get('physical_started_unix_s')
+        end = row.get('physical_ended_unix_s')
+        if end is None and row.get('pid_running_at_snapshot') and row.get('live', {}).get('physical_time_s', 0) > 0:
+            end = row['live']['unix_s']
+        if begin is not None and end is not None and end > begin:
+            observed.append((row['attempt'], begin, end))
+    observed_pairs = []
+    for i, (a, a0, a1) in enumerate(observed):
+        for b, b0, b1 in observed[i+1:]:
+            dt = min(a1, b1) - max(a0, b0)
+            if dt > 0:
+                observed_pairs.append(dict(attempts=[a,b], wall_s=dt))
     passed = [r for r in done if r['success'] and r['stage_status'] == 'passed']
     highest = next((x for x in reversed(LEVELS) if any(r['level'] == x for r in passed)), None)
     now = time.time()
     phase = dict(status=args.status, updated_unix_s=now, deadline=None, wall_deadline_enabled=False,
-                 kill_on_conversation_end=False, cases=rows, completed_physical_overlap=overlaps)
+                 kill_on_conversation_end=False, cases=rows, completed_physical_overlap=overlaps,
+                 observed_physical_overlap=observed_pairs,
+                 unfinished_interval_end='latest progressing live heartbeat on D57')
     write(WINDOW/'phase.json', phase)
     inventory = {}
     material_dir = c / REL / 'w55/c'
@@ -119,6 +141,8 @@ def record(args):
         legal_round_trips=sum(r['legal_route']['completed_roundtrips'] for r in done),
         effective_physical_overlap_wall_s=sum(r['physical_overlap_wall_s'] for r in overlaps),
         overlap_scope='Pairs of completed original runs, from first to last actual plant step.',
+        overlap_including_live_lower_bound_wall_s=sum(r['wall_s'] for r in observed_pairs),
+        completed_attempt_cpu_s=sum(r.get('user_cpu_s',0)+r.get('system_cpu_s',0) for r in done),
         material_boundary_inventory=inventory,
         known_nine_cell_replay=str(REL/'reviews/W54-review/pann-replay-summary.json'),
         causal_material_memory_benefit_evaluated=False,
@@ -135,4 +159,8 @@ if __name__ == '__main__':
     for lane in ('f', 'n', 'c'):
         parser.add_argument('--'+lane, type=Path, required=True, help=f'W55 {lane.upper()} worktree')
     parser.add_argument('--status', required=True, help='Evidence-based execution or handoff status')
-    record(parser.parse_args())
+    arguments = parser.parse_args()
+    WINDOW.mkdir(parents=True, exist_ok=True)
+    with (WINDOW/'index.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        record(arguments)

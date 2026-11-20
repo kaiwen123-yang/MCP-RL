@@ -1,6 +1,6 @@
 # Codex 当前入口 · W55 原资格执行
 
-2026-11-19，D57 从 `c8e0b38` 启动 W55。F/r53 已在原 W44 A/seed1 E30 进入实际物理。N 从 r48 实施支撑投影与整身候选，C 已从四个 W54 实载回合和一个独立 seed2 回合重建加载边界。阶段资格、终止原因、材料贯穿和 Release 回执以本轮实际记录为准。
+2026-11-20，F/r53 通过原 W44 A/seed1 E30。150,000 个物理步记录了 100 次交替对角起摆。机器人在 6.144–12.466 s 受载贯穿材料，16.562 s 到达远端，23.034 s 开始返程。30 s 截止时已再次进入材料带。全视频与原日志核验后冻结 r53，A/E60 和独立 B/E30 已在 D57 启动。N 正在核验原生支撑投影，C 已根据独立 N44 加载历史启动一套 GPU 材料拟合。
 
 续接先查 D57 各 lane 的具体 job、tmux、PID 和物理时钟。F、N 分别在 /root/autodl-tmp/MCP-RL-w55-f、MCP-RL-w55-n。材料与串行发布分别在 MCP-RL-w55-c、MCP-RL-w55-integration。原物理、判据、W44 checkpoint 和已引用原件保留。所有任务 deadline=null、wall_deadline_enabled=false。相同 case 与版本仅续接已有任务。
 
