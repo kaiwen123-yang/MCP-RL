@@ -40,6 +40,10 @@ def main():
                   own_predecessor_stage=str(b_stage),own_predecessor_attempt=b['attempt'],
                   created_unix_s=time.time(),deadline=None,wall_deadline_enabled=False,
                   kill_on_conversation_end=False,maximum_heavy_physical_jobs=2)
+    if RECORD.exists():
+        earlier=read(RECORD)
+        if earlier.get('own_predecessor_attempt')==b['attempt']:
+            record['created_unix_s']=earlier['created_unix_s']
     write(RECORD,record)
     while True:
         b = read(b_stage)
@@ -78,6 +82,19 @@ def main():
                     write(RECORD,record)
                     break
         time.sleep(5)
+    # The coordinator can release A's slot earlier while N is still running.
+    b_successor=B_CASE/'E60.json'
+    if b_successor.exists():
+        actual=read(b_successor)
+        original_A=read(SMALL/'F-A-r53/E60.json')
+        if actual.get('job')!=b['job'] or original_A.get('ended_unix_s') is None:
+            raise RuntimeError('Existing F/B successor does not match its original case and slot')
+        record.update(status='F_B_already_dispatched_from_released_F_A_slot',
+                      actual_source_attempt=original_A['attempt'],actual_source_ended_unix_s=original_A['ended_unix_s'],
+                      actual_B_successor=actual.get('attempt'),actual_B_started_unix_s=actual.get('started_unix_s'),
+                      original_N_reservation_reassigned_to='F-A-r55/E30')
+        write(RECORD,record)
+        return
     session('s1-w55-f-b-r53-ladder','0-3','continue_s1_w55_f.py','--case','B','--build','S5-r53',
             '--selection',SMALL/'r53-selection.json')
     session('s1-w55-f-b-collect','3','collect_s1_w55_f.py','--case-dir',B_CASE,'--levels','E60','E300','E600')
