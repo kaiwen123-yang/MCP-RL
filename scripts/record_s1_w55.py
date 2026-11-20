@@ -78,6 +78,12 @@ def cases(worktree, lane):
 def record(args):
     f, n, c = [p.resolve() for p in (args.f, args.n, args.c)]
     rows = cases(f, 'f') + cases(n, 'n')
+    # r56 has an independent writable native build tree. Its branch also contains
+    # the r54 history; take only the r56 execution from that tree.
+    n56 = n.parent / 'MCP-RL-w55-n-r56'
+    if n56.is_dir():
+        rows += [row for row in cases(n56, 'n') if '-w55-n-' in row['attempt']
+                 and '-r56-eval-' in row['attempt']]
     done = [r for r in rows if 'physical_samples' in r]
     physical = [r for r in done if r['physical_samples'] > 0]
     overlaps = []
@@ -148,6 +154,8 @@ def record(args):
         causal_material_memory_benefit_evaluated=False,
         PPO={'new_samples':0, 'new_updates':0, 'donor':0}, deadline=None,
         wall_deadline_enabled=False, kill_on_conversation_end=False)
+    if n56.is_dir():
+        index['workspaces']['N_r56'] = str(n56)
     material_summary = WINDOW/'c/summary.json'
     if material_summary.exists():
         summary = read(material_summary)

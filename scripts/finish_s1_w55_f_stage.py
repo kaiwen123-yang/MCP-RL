@@ -71,6 +71,7 @@ def record():
 def watch_stage(worktree, label, level):
     lane = label[0].lower()
     stage = worktree/REL/'w55'/lane/label/(level+'.json')
+    branch = subprocess.check_output(['git','-C',str(worktree),'branch','--show-current'],text=True).strip()
     # The existing F collector writes its analysis commit after the full video.
     while True:
         if stage.is_file():
@@ -80,7 +81,7 @@ def watch_stage(worktree, label, level):
                 evidence = (stage.relative_to(worktree) if finished_without_result else
                     REL/'w55/f'/(row['attempt']+'-analysis.json') if lane=='f' else
                     REL/'w55/n'/label/(level+'-actual-analysis.json'))
-                revision=git('log','-1','--format=%H','codex/w55-'+lane,'--',evidence,output=True).strip()
+                revision=git('log','-1','--format=%H',branch,'--',evidence,output=True).strip()
                 if revision:
                     saved = json.loads(git('show',revision+':'+str(stage.relative_to(worktree)),output=True))
                     if saved.get('status') == row['status']:
@@ -105,12 +106,13 @@ def watch_stage(worktree, label, level):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--workspace',type=Path,help='Separate worktree when this build uses one')
     parser.add_argument('--lane',choices=('F','N'),default='F')
     parser.add_argument('--case',required=True,choices=('A','B'))
     parser.add_argument('--build',required=True)
     parser.add_argument('--levels',nargs='+',choices=LEVELS,required=True)
     args=parser.parse_args()
-    lane=ROOT.parent/('MCP-RL-w55-'+args.lane.lower())
+    lane=args.workspace.resolve() if args.workspace else ROOT.parent/('MCP-RL-w55-'+args.lane.lower())
     label=f'{args.lane}-{args.case}-{args.build.removeprefix("S5-")}'
     for level in args.levels:
         if not watch_stage(lane,label,level):
