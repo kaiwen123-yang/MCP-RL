@@ -1,4 +1,4 @@
-"""Deliver each recorded stage of a frozen F case from D57 as it concludes."""
+"""Deliver each recorded stage of a W55 F or N case from D57 as it concludes."""
 import argparse
 import fcntl
 import json
@@ -68,19 +68,23 @@ def record():
         '--c',str(ROOT.parent/'MCP-RL-w55-c'),'--status','original_stage_results_updated'],check=True)
 
 
-def watch_stage(f, label, level):
-    stage=f/REL/'w55/f'/label/(level+'.json')
+def watch_stage(worktree, label, level):
+    lane = label[0].lower()
+    stage = worktree/REL/'w55'/lane/label/(level+'.json')
     # The existing F collector writes its analysis commit after the full video.
     while True:
         if stage.is_file():
             row=read(stage)
-            if row.get('reason')=='process_exited_without_completed_result':
-                raise RuntimeError(f'Original process stopped without a recorded result: {stage}')
-            if row.get('video'):
-                analysis=REL/'w55/f'/(row['attempt']+'-analysis.json')
-                revision=git('log','-1','--format=%H','codex/w55-f','--',analysis,output=True).strip()
+            finished_without_result = row.get('reason')=='process_exited_without_completed_result'
+            if row.get('video') or finished_without_result:
+                evidence = (stage.relative_to(worktree) if finished_without_result else
+                    REL/'w55/f'/(row['attempt']+'-analysis.json') if lane=='f' else
+                    REL/'w55/n'/label/(level+'-actual-analysis.json'))
+                revision=git('log','-1','--format=%H','codex/w55-'+lane,'--',evidence,output=True).strip()
                 if revision:
-                    break
+                    saved = json.loads(git('show',revision+':'+str(stage.relative_to(worktree)),output=True))
+                    if saved.get('status') == row['status']:
+                        break
         time.sleep(20)
     receipt=WINDOW/'delivery'/(label+'-'+level).lower()/'delivery.json'
     with (ROOT/'work/w55-integration.lock').open('a') as integration:
@@ -90,7 +94,7 @@ def watch_stage(f, label, level):
         compact(navigation(),f'Record W55 {label} {level} original outcome and qualification')
         push()
     if not receipt.is_file():
-        deliver_stage(f,label,level)
+        deliver_stage(worktree,label,level)
     with (ROOT/'work/w55-integration.lock').open('a') as integration:
         fcntl.flock(integration,fcntl.LOCK_EX)
         record()
@@ -101,12 +105,13 @@ def watch_stage(f, label, level):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--lane',choices=('F','N'),default='F')
     parser.add_argument('--case',required=True,choices=('A','B'))
     parser.add_argument('--build',required=True)
     parser.add_argument('--levels',nargs='+',choices=LEVELS,required=True)
     args=parser.parse_args()
-    lane=ROOT.parent/'MCP-RL-w55-f'
-    label=f'F-{args.case}-{args.build.removeprefix("S5-")}'
+    lane=ROOT.parent/('MCP-RL-w55-'+args.lane.lower())
+    label=f'{args.lane}-{args.case}-{args.build.removeprefix("S5-")}'
     for level in args.levels:
         if not watch_stage(lane,label,level):
             break

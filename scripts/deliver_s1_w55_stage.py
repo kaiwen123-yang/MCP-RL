@@ -17,7 +17,8 @@ def deliver_stage(worktree, label, level):
     attempt = status['attempt']
     large = worktree / 'outputs/terrain_memory/simulation' / RUN
     raw = large / attempt
-    if not (raw / 'video-asset.json').exists():
+    zero_step_error = status.get('reason') == 'process_exited_without_completed_result'
+    if not zero_step_error and not (raw / 'video-asset.json').exists():
         raise ValueError(f'{attempt} recorded video is not ready')
     job = large / 'jobs' / status['job']
     group = (label + '-' + level).lower()
@@ -30,7 +31,9 @@ def deliver_stage(worktree, label, level):
                 if json.loads(line)['root_pid'] == status['pid']:
                     selected.write(line)
     write(snapshot / 'stage.json', status)
-    roots = [snapshot, raw]
+    roots = [snapshot]
+    if raw.exists():
+        roots.append(raw)
     for filename in ('job.json', 'execution-contract.json', attempt+'.log', level+'-runner.log',
                      level+'-runtime.json'):
         path = job / filename
