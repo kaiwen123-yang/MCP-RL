@@ -75,6 +75,22 @@ def cases(worktree, lane):
     return list(rows.values())
 
 
+def sampled_cpu(worktree, row, begin, end):
+    resources = worktree / LARGE / 'jobs' / row['job'] / 'resources.jsonl'
+    if not resources.is_file():
+        return None
+    samples = [json.loads(line) for line in resources.read_text().splitlines() if line]
+    samples = [s for s in samples if s['root_pid'] == row.get('pid') and begin <= s['unix_s'] <= end]
+    core_s = wall_s = 0.
+    for a,b in zip(samples,samples[1:]):
+        if a['pids'] == b['pids']:
+            core_s += (b['user_cpu_s']+b['system_cpu_s'])-(a['user_cpu_s']+a['system_cpu_s'])
+            wall_s += b['unix_s']-a['unix_s']
+    if not wall_s:
+        return None
+    return dict(sampled_wall_s=wall_s, cpu_s=core_s, mean_cores=core_s/wall_s)
+
+
 def record(args):
     f, n, c = [p.resolve() for p in (args.f, args.n, args.c)]
     rows = cases(f, 'f') + cases(n, 'n')
@@ -109,7 +125,15 @@ def record(args):
         for b, b0, b1 in observed[i+1:]:
             dt = min(a1, b1) - max(a0, b0)
             if dt > 0:
-                observed_pairs.append(dict(attempts=[a,b], wall_s=dt))
+                cpu = {}
+                for attempt in (a,b):
+                    row = next(row for row in rows if row['attempt']==attempt)
+                    workspace = f if row['lane']=='F' else n56 if '-r56-eval-' in attempt else n
+                    if row.get('job') and row.get('pid'):
+                        cpu[attempt] = sampled_cpu(workspace, row, max(a0,b0), min(a1,b1))
+                observed_pairs.append(dict(attempts=[a,b], wall_s=dt, measured_cpu=cpu,
+                    cpu_scope='Within-overlap adjacent samples with the same live process tree.'))
+
     passed = [r for r in done if r['success'] and r['stage_status'] == 'passed']
     highest = next((x for x in reversed(LEVELS) if any(r['level'] == x for r in passed)), None)
     now = time.time()
