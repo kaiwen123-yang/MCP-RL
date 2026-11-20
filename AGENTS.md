@@ -1,17 +1,8 @@
-# Codex 当前入口 · W56 计划，保留 W55 原 E600
+# W56 执行入口
 
-截至2026-11-20 16:33:31（北京时间）仓库快照，F/r55 A、B各自原E30/E60/E300通过；A/E300原数组独立核实五次合法材料往返，231.942 s完成后保持到300 s。B/E300独立结果及视频/20个原件ZIP已补交；本审查核其独立JSON和视频，未独立复算B数组。两条E600仅记录为在途（153.502/113.502物理秒），不能写成已通过。N54/N56原E30均已结束但未贯穿材料，N56最远x=0.894534 m。新PPO样本/更新/donor=0。
+在 D57 续接 Go2/TM02 原任务。先读[当前状态](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)、[逐身份物理与队列](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/phase.json)及[W56 执行计划](docs/S1_W56_STABILITY_PLAN.md)。查询具体 job、tmux、子 PID 与物理时钟后续接。原 r55 E600 归入 W55。W56 使用独立输出，A/B 末 12 维消融各自 E30 通过后进入 E60。材料窗口及法向执行参考须通过正式 WBC 输出核验。N/r59 使用空出的槽。
 
-本提交完成W55代码/日志/视频审查及W56计划，没有启动新的物理、native rollout、QP、材料训练或PPO。续接先读[轻量current](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)、[审查与机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/README.md)、[W56计划](docs/S1_W56_STABILITY_PLAN.md)、[启动提示词](docs/S1_W56_START_PROMPT.md)。原W55 index漏计N56；有效派生台账是[results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/phase-recomputed.json](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W55-review/phase-recomputed.json)：12次已结束，8通过、4非通过；r55完成的六阶段全部通过。历史跨版本失败数不是当前r55可靠率。
-
-1. 先核最新main、本地改动和D57具体job/tmux/PID/物理时钟。已有F-A/B-r55 E600只续接或收集自然结束原件，不重复启动、不重跑已通过前序、不热换代码/observer/PANN/solver。快照tmux为s1-w55-f-a-r55-e600与s1-w55-f-b-r55-e600，workers=1；不能把快照PID当live确认。
-2. W56优先完成r55完整资格与B300/N56发布；同actor末12维真实闭环消融默认各自身原E30→E60，回答显式恢复特征增量作用，不自动展开所有模式长任务矩阵。C同轮做因果封包、离线候选地块传播及最小在线历史相关法向执行参考；正式参考/输出有实际作用且必要验证完成后直接新身份原E30。N按已证数值误拒和全350ms推进/支撑交接成组修，用释放的槽，不阻塞F。
-3. 所有新身份保留原物理/判据/硬界/资格前序，W44完整checkpoint/resume及引用原件。已失败W55两参数材料候选不采用；不软化plant造收益，不读true q，不新PPO/donor。W55的N/r56与已有s1_w56_n*不是W56轮次的新空白版本，不能覆盖。
-4. 最多两条重物理加一条有用材料/效率计算线；25核按两F的4+4+14+3或F/N的4+10+8+3上限，数学线程1、共享构建-j6计入配额。F frozen workers1保持，N新case10。配额不冒充利用率；GPU优化作用于独立新build，不改在途import文件，不复制无意义数据占96GB。
-5. 后台deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false，省略deadline-unix；无固定墙钟截止或对话结束kill。原物理长度/失败条件、数值资源错误和用户停止有效；旧历史28h预算不适用。
-6. 紧凑代码/结果串行整合最新main推GitHub，不强推；必要原件与全视频D57直接Release，核name/size/digest/状态。GitHub交付后不在用户电脑额外下载、复制、镜像、打包或归档，不自动删引用服务器原件，不借电脑VPN/Clash/SSH转发。
-
-下方W54及更早计划/结果保留为历史，不覆盖顶部、W56计划与current.json。
+最多两条重物理加一条材料计算线，保持冻结 actor、原物理时长和硬界。后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。完整原件在 D57 直传 Release，保留 checkpoint 和被引用原件。
 
 ## 以下 W54 入口及执行约定属于历史
 

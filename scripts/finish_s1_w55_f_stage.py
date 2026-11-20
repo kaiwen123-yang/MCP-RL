@@ -37,7 +37,8 @@ def navigation():
         current['status'] = 'W55_' + index['status']
     info = current['W55']
     info.pop('active_F_stages_at_snapshot',None)
-    info.update(status=index['status'],E30_passes=index['E30_passes'],
+    info.update({level+'_passes': count for level,count in index['original_stage_passes'].items()})
+    info.update(status=index['status'],
                 highest_passed_original_stage=index['highest_passed_original_stage'],
                 completed_original_attempts=index['completed_original_attempts'],
                 recorded_legal_round_trips=index['legal_round_trips'],
@@ -46,6 +47,7 @@ def navigation():
                     if r['status']=='running' and r.get('pid_running_at_snapshot')],
                 snapshot_unix_s=phase['updated_unix_s'])
     delivery = index.get('publication',{})
+    info['publication'] = {key:delivery[key] for key in ('status','release_url','asset_count','asset_bytes') if key in delivery}
     publication = current['publication']
     if publication.get('release', publication.get('release_url')) == delivery.get('release_url'):
         publication.update(verified_assets=delivery.get('asset_count',0),
@@ -54,15 +56,7 @@ def navigation():
         if delivery.get('status') == 'published' and not delivery.get('pending_paths'):
             publication.update(status='completed_W55_manifests_verified',pending=[])
     write(current_path,current)
-    config_path = ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json'
-    config=read(config_path)
-    plan = config['next_authorized_plan']
-    if plan.get('entrypoint') == index['plan']:
-        plan.update(status=index['status'], E30_passes=index['E30_passes'],
-                    highest_passed_original_stage=index['highest_passed_original_stage'],
-                    last_actual_index=str(WINDOW.relative_to(ROOT)/'index.json'))
-        config_path.write_text(json.dumps(config,ensure_ascii=False,indent=2)+'\n')
-    return [current_path,config_path,WINDOW/'index.json',WINDOW/'phase.json']
+    return [current_path,WINDOW/'index.json',WINDOW/'phase.json']
 
 
 def compact(paths, message):
