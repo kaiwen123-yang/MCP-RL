@@ -754,6 +754,51 @@
     "checked_reference_rows": 253143,
     "max_reference_saved_force_difference_N": 2.6180241308182417e-09
   },
+  "causal_2ms_publication": {
+    "required_input": "Ten time-stamped preceding 0.2ms observed foot boundaries",
+    "paired_frozen_observer_peak_force_error_N": {
+      "N44": [
+        49.925776411813224,
+        6.272678536343562
+      ],
+      "F51": [
+        6.490903159326464,
+        1.1455226219539867
+      ],
+      "N48": [
+        45.56869249495412,
+        6.675413273476494
+      ],
+      "F52": [
+        2.5427419198914807,
+        0.29566209147010625
+      ],
+      "B46": [
+        16.285511556600454,
+        0.9326612276345543
+      ],
+      "F53": [
+        3.645045335924074,
+        0.7000350598223193
+      ]
+    },
+    "deployed_packet_check": {
+      "episode": "job-20261117T045237Z-w54-n-a-r44-eval-PANN_PPO_S5-s1-E30-attempt01",
+      "start_tick": 29660,
+      "packets": 3,
+      "mixed_updates": 30,
+      "cell_state_comparisons": 156,
+      "max_e11_e22_q11_q22_errors": [
+        3.2385118892142017e-16,
+        6.407634839389331e-17,
+        4.572622662457615e-16,
+        5.598141333566157e-17
+      ],
+      "injection": "Virginal model state, prefix before first applied load. Only foot poses, velocities and observed times supplied to deployed MaterialObserver."
+    },
+    "data": "causal-observer-window.json",
+    "installed_on_robot": false
+  },
   "original_arrays_directory": "/root/autodl-tmp/MCP-RL-w55-c/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55-c",
   "original_file_count": 68,
   "original_bytes": 200258447,
@@ -765,7 +810,7 @@
     "python scripts/train_s1_w55_c.py",
     "python scripts/s1_w55_c_groups.py; python scripts/s1_w55_c_historical.py prepare",
     "bash scripts/finish_s1_w55_c.sh (candidate/frozen holdout curves, historical, original JAX and CPU\u2013GPU validation)",
-    "python scripts/s1_w55_c_known.py; python scripts/summarize_s1_w55_c.py"
+    "python scripts/s1_w55_c_known.py; python scripts/s1_w55_c_observer.py; python scripts/summarize_s1_w55_c.py"
   ],
   "workload_notes": {
     "CPU_initial_reference_assembly_wall_s": {

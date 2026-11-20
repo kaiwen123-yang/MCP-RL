@@ -21,4 +21,5 @@ taskset -c 18-19 "$py" -u scripts/check_s1_w55_c_columns.py candidate "$candidat
 taskset -c 19 "$py" -u scripts/s1_w55_c_gpu_comparison.py >work/w55-c/candidate-comparison.log 2>&1
 wait "$historical_pid"
 taskset -c 18 "$py" -u scripts/s1_w55_c_known.py
+taskset -c 18-19 "$py" -u scripts/s1_w55_c_observer.py
 taskset -c 18 "$py" -u scripts/summarize_s1_w55_c.py

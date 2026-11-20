@@ -94,6 +94,10 @@ def main():
         'ownership':'lowest overlapping eligible foot; integrate freely after release; original failed out-of-domain candidate step excluded',
         'checked_reference_rows':sum(v['reference_replay_published_rows'] for v in cases.values()),
         'max_reference_saved_force_difference_N':max(v['max_reference_published_force_N'] for v in cases.values())}
+    packet=read('causal-observer-window.json')
+    output['causal_2ms_publication']={'required_input':'Ten time-stamped preceding 0.2ms observed foot boundaries',
+        'paired_frozen_observer_peak_force_error_N':{n:[m['endpoint_observer_vs_physical']['max_force_N'],m['substep_window_observer_vs_physical']['max_force_N']] for n,m in packet['whole_histories_at_common_2ms_times'].items()},
+        'deployed_packet_check':packet['deployed_packet_check'],'data':'causal-observer-window.json','installed_on_robot':False}
     output['original_arrays_directory']=str(RAW)
     files=[f for f in RAW.rglob('*') if f.is_file()]
     output['original_file_count']=len(files)
@@ -106,7 +110,7 @@ def main():
         'python scripts/train_s1_w55_c.py',
         'python scripts/s1_w55_c_groups.py; python scripts/s1_w55_c_historical.py prepare',
         'bash scripts/finish_s1_w55_c.sh (candidate/frozen holdout curves, historical, original JAX and CPU–GPU validation)',
-        'python scripts/s1_w55_c_known.py; python scripts/summarize_s1_w55_c.py']
+        'python scripts/s1_w55_c_known.py; python scripts/s1_w55_c_observer.py; python scripts/summarize_s1_w55_c.py']
     output['workload_notes']={'CPU_initial_reference_assembly_wall_s':{n:read(n+'-inventory.json')['reference_and_assembly_wall_s'] for n in cases},
         'early_reference_assembly_CPU_s':None,'early_reference_assembly_note':'The first five assembly invocations recorded wall time only. Replay, targeted fit and final F53 assembly carry measured process CPU times.',
         'GPU_build':'6.481s wall, 5.998s user and .480s system in work/w55-c/build2.log; CPU library .627s; the preceding launcher stopped before compilation because /usr/bin/time was absent.',
