@@ -15,6 +15,7 @@ from run_s1_go2_w54 import resource_sample
 
 RUN = 'tm-s1-go2-local-readiness-r12'
 SMALL = ROOT / 'results/terrain_memory/simulation' / RUN / 'w55/n'
+RESULTS = SMALL / 'r56'
 PLAN = 'c8e0b38d8256305b9e5a14907829980c3f1b0054'
 
 
@@ -48,7 +49,7 @@ def declaration(build, case):
     job = dict(job_id=job_id, label=label, route='N', case=case, seed=seed, workers=10,
                affinity='0-9' if case=='A' else '10-19', started_unix_s=now, deadline=None,
                wall_deadline_enabled=False, controller_build=build, controller_binary_sha256=identity['binary_sha256'],
-               execution_library_sha256=identity['execution_library_sha256'], controller_artifact_identity=identity,
+               execution_library_sha256=identity['execution_library_sha256'], controller_artifact_identity={k:v for k,v in identity.items() if k not in ('source_files_sha256','compile_commands','runtime_assets_adaptation','link_command')},
                checkpoint=str(checkpoint.relative_to(ROOT)), checkpoint_sha256=digest(checkpoint),
                resume_checkpoint=str(resume.relative_to(ROOT)), resume_sha256=digest(resume),
                normalization_sha256=hashlib.sha256(json.dumps(saved['normalization'],sort_keys=True).encode()).hexdigest(),
@@ -60,7 +61,7 @@ def declaration(build, case):
                     next_authorized_plan='docs/S1_W55_STABILITY_PLAN.md',
                     w54_fixed_policy=job, w55_fixed_policy=job)
     contract['reuse'].update(active_controller_build=build, controller_artifact=build)
-    contract['outputs']['compact_root'] = str(SMALL.relative_to(ROOT))
+    contract['outputs']['compact_root'] = str(RESULTS.relative_to(ROOT))
     contract['execution']['deadline'] = None
     contract['learning'].update(phase_id=job_id, stream_id='w55-'+label.lower(), phase_initial_transitions=14737,
         phase_initial_updates=57, target_cumulative_transitions_per_stream=14737, target_cumulative_updates_per_stream=57,
@@ -121,7 +122,7 @@ def run(case_dir, level):
     usage1 = resource.getrusage(resource.RUSAGE_CHILDREN)
     state.update(exit_code=process.returncode,ended_unix_s=time.time(),
                  user_cpu_s=usage1.ru_utime-usage0.ru_utime,system_cpu_s=usage1.ru_stime-usage0.ru_stime)
-    result_path = SMALL/(attempt+'.json')
+    result_path = RESULTS/(attempt+'.json')
     if result_path.exists():
         result = json.loads(result_path.read_text())
         state.update(status=result['stage_status'],success=result['success'],reason=result['reason'],
@@ -131,12 +132,17 @@ def run(case_dir, level):
         state.update(status='technical_interruption',reason='process_exited_without_completed_result')
     write(dest,state)
     write(raw_job/(level+'-runtime.json'),state)
+    if level=='E30':
+        write(ROOT/'work/w55-n-r56/slot-released.json',dict(status='naturally_ended',target='N-A-r56/E30',
+            released_unix_s=state['ended_unix_s'],job=job['job_id'],attempt=attempt,child_pid=state['pid'],
+            child_exit_code=state['exit_code'],physical_started=bool(state.get('physical_samples')),stage_file=str(dest),
+            reason=state.get('reason'),deadline=None,wall_deadline_enabled=False))
     if result_path.exists():
         import render_s1_go2_r12 as renderer
-        renderer.SMALL = SMALL
+        renderer.SMALL = RESULTS
         renderer.render(attempt)
         from analyze_s1_w55_n import measure
-        measure(case_dir,level)
+        measure(case_dir,level,RESULTS)
         state['video'] = json.loads((LARGE/attempt/'video-asset.json').read_text())
         write(dest,state)
         write(raw_job/(level+'-runtime.json'),state)

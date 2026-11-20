@@ -44,6 +44,7 @@ def main():
         row['frozen_recorded_schedule']=summary(values[122:129]);row['supported_progress']=summary(values[129:136]);rows.append(row)
     receipt=dict(r54_attempt=case['attempt'],source_call=call,operator_identity=json.loads((lib.parent/'identity.json').read_text())['binary_sha256'],rows=rows,
         scope='Original same state and 20ms epoch. Two private native 350ms paths per record use the saved raw schedule; on the second late-horizon node the final raw sample is held past the recorded horizon. The live planner evaluates its state-dependent policy and original J before installation.',robot_physics_steps=0)
+    identity=json.loads((lib.parent/'identity.json').read_text());receipt.update(native_operator_sha256=identity['native_support_library_sha256'],plant_abi_operator_sha256=identity['execution_library_sha256'],compiled_core_sha256=identity['execution_core_sha256'])
     write(SMALL/'same-input-r56.json',receipt);print(json.dumps(receipt,indent=2))
     if any(not r['matching_native_status'] or not r['matching_progress_status'] or r['E_python_native_max_rad']>1e-8 or r['progress_python_native_max_rad']>1e-8 for r in rows):raise RuntimeError('W56 shared operators differ on the saved state')
     if rows[1]['projection_status']!=0 or rows[1]['new_mapping_excess_rad']!=0 or rows[1]['old_mapping_excess_rad']<=0:raise RuntimeError('Original actuator counterexample remains')

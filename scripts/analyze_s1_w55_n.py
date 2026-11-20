@@ -28,9 +28,9 @@ def read_policy(path):
     return dict(call=call,representation=rep,time_s=meta[0],feedback_scaling=meta[1],
                 reference_J=meta[2],accepted_J=meta[3],**arrays)
 
-def measure(case,stage):
+def measure(case,stage,results_root=None):
     stage_file=case/(stage+'.json');state=json.loads(stage_file.read_text());attempt=state['attempt']
-    out=LARGE/attempt;result=json.loads((SMALL/(attempt+'.json')).read_text())
+    out=LARGE/attempt;result=json.loads(((results_root or SMALL)/(attempt+'.json')).read_text())
     native=out/'w54-n-native';calls=list(records(native/'calls.jsonl'));nominal=list(records(native/'nominal-candidates.jsonl'))
     last=calls[-1];causes=collections.Counter()
     for row in nominal:
@@ -46,6 +46,8 @@ def measure(case,stage):
         legal_route=result.get('legal_route'),peak_recorded_strain=result.get('material',{}).get('max_abs_principal_strain'),
         nominal_recovery_feasible=sum(x['feasible'] for x in nominal if x['generator']=='support_recovery'),
         recovery_installs=sum(x.get('selection_source')=='support_recovery' for x in calls),
+        supported_progress_feasible=sum(x['feasible'] for x in nominal if x['generator']=='supported_progress'),
+        supported_progress_installs=sum(x.get('selection_source')=='supported_progress' for x in calls),
         count_by_generator_and_first_constraint=[dict(generator=k[0],code=int(k[1]),count=v) for k,v in causes.items()],
         solver_calls=len(calls),last_call=dict(call_id=last['call_id'],time_s=last['time_s'],controller_infeasible=last['controller_infeasible'],
             nominal=[{k:r[k] for k in ('slot','generator','feasible','first_constraint_code','first_constraint_time_s')} for r in nominal if r['call_id']==last['call_id']],
