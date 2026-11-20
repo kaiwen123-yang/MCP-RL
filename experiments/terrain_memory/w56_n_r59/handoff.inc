@@ -8,13 +8,13 @@ extern "C" int w59_handoff(const mjModel* m,mjData* d,const double* shifted,
   if(std::hypot(command[0],command[1])<1.e-8 || height<=0. || cadence<=0.)return 0;
   Foot feet[F];geometry(m,d,feet,true);
   Response response_at_state;
-  if(!response(m,d,feet,response_at_state))return 1;
+
   const int trunk=mj_name2id(m,mjOBJ_BODY,"trunk"),home=mj_name2id(m,mjOBJ_KEY,"home");
   const double mass=m->body_subtreemass[trunk],stance=duty/cadence;
   const double* rotation=d->xmat+9*trunk;
   mj_subtreeVel(m,d);const double* com_v=d->subtree_linvel+3*trunk;
   Vec raw_tau{},proposal{},tau{}; QP qp;
-  constraints(m,d,response_at_state,qp,raw_tau,shifted);
+
   const double swing_fraction=1.-duty;
   double share[F]{},sum=0.,angles[F]{};
   for(int i=0;i<F;++i){
@@ -25,7 +25,28 @@ extern "C" int w59_handoff(const mjModel* m,mjData* d,const double* shifted,
     share[i]=feet[i].bearing?ease(std::min(1.,swing)):0.;
     sum+=share[i];
   }
-  double horizon=1./(2*cadence),total_z=mass*(9.81+2*(m->key_qpos[home*m->nq+2]-d->qpos[2])/(horizon*horizon)-2*d->qvel[2]/horizon);
+  // A lifting hard foot cannot be held at J*a+Jdot*v=0. Solve the
+  // proposed unilateral mode only when both diagonal replacements already
+  // bear load. The propagated native contact solver and original E still
+  // decide actual contacts; candidate mode declarations do not reach them.
+  Foot assumed[F];std::copy_n(feet,F,assumed);
+  for(int i=0;i<F;++i){
+    if(feet[i].bearing&&std::abs(angles[i])<mjPI*swing_fraction&&
+       feet[i^1].bearing&&feet[i^2].bearing){
+      assumed[i].bearing=false;
+    }
+  }
+  if(!response(m,d,assumed,response_at_state))return 1;
+  constraints(m,d,response_at_state,qp,raw_tau,shifted);
+  double horizon=1./(2*cadence);
+  double home_z=m->key_qpos[home*m->nq+2];
+  double desired_base[6]={
+    (command[0]-com_v[0])/horizon,(command[1]-com_v[1])/horizon,
+    4*(home_z-d->qpos[2])/(horizon*horizon)-4*d->qvel[2]/horizon,0.,0.,0.};
+  double axis_error[3],yaw=std::atan2(rotation[3],rotation[0]),yaw_axis[3]={0.,0.,1.},upright[4];
+  mju_axisAngle2Quat(upright,yaw_axis,yaw);mju_subQuat(axis_error,upright,d->qpos+3);
+  for(int a=0;a<3;++a)desired_base[3+a]=4*axis_error[a]/(horizon*horizon)-4*d->qvel[3+a]/horizon;
+  double total_z=mass*(9.81+desired_base[2]);
   for(int i=0;i<F;++i){
     const Foot& f=feet[i];int hip=mj_name2id(m,mjOBJ_BODY,(std::string(names[i])+"_hip").c_str());
     int first=m->jnt_dofadr[m->actuator_trnid[6*i]];
@@ -52,6 +73,10 @@ extern "C" int w59_handoff(const mjModel* m,mjData* d,const double* shifted,
     if(mju_cholFactor(G,3,0)!=3)return 1;
     for(int a=0;a<3;++a)rhs[a]=60*error[a]+5*(task_velocity[a]-mju_dot(jac+a*V,d->qvel,V));
     mju_cholSolve(dual,G,rhs,3);mju_mulMatTVec(delta,J,dual,3,3);
+    if(feet[i].bearing&&!assumed[i].bearing && !feet[i].material){
+      Vec lift_a{};for(int j=0;j<U;++j)lift_a[j]=mju_dot(f.J[2].data(),response_at_state.A[j].data(),V);
+      qp.lower(lift_a,-f.drift[2]-mju_dot(f.J[2].data(),response_at_state.a0.data(),V));
+    }
     double weight=sum>0.?share[i]/sum:0.;
     double reaction[3]={weight*mass*(command[0]-com_v[0])/horizon,
                         weight*mass*(command[1]-com_v[1])/horizon,weight*std::max(0.,total_z)};
@@ -60,6 +85,24 @@ extern "C" int w59_handoff(const mjModel* m,mjData* d,const double* shifted,
       for(int a=0;a<3;++a)proposal[3*i+j]-=f.J[a][k]*reaction[a];
     }
   }
+  // Closest torque to the virtual-leg proposal in the six base response
+  // coordinates. Coordinates are scaled in m/s^2, with angular modes scaled
+  // by nominal hip radius; the exact original feasibility check follows.
+  double R[6][U],G[36]={},rhs[6],dual[6];
+  double radius=std::hypot(m->body_pos[3*mj_name2id(m,mjOBJ_BODY,"FL_hip")],m->body_pos[3*mj_name2id(m,mjOBJ_BODY,"FL_hip")+1]);
+  for(int a=0;a<6;++a){
+    double w=a<3?1.:radius;
+    rhs[a]=w*(desired_base[a]-response_at_state.a0[a]);
+    for(int j=0;j<U;++j){R[a][j]=w*response_at_state.A[j][a];rhs[a]-=R[a][j]*proposal[j];}
+  }
+  for(int a=0;a<6;++a)for(int b=0;b<6;++b)G[6*a+b]=mju_dot(R[a],R[b],U);
+  // Joint torque regularization in original units: one body-weight moment
+  // corresponds to one gravity of foot acceleration.
+  double scale=1./(mass*radius);
+  for(int a=0;a<6;++a)G[6*a+a]+=scale*scale;
+  if(mju_cholFactor(G,6,0)!=6)return 1;
+  mju_cholSolve(dual,G,rhs,6);
+  for(int j=0;j<U;++j)for(int a=0;a<6;++a)proposal[j]+=R[a][j]*dual[a];
   if(!qp.project(proposal,tau))return 2;
   return map_and_check(m,d,qp,tau,out)?0:3;
 }

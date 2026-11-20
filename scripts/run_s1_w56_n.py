@@ -24,7 +24,7 @@ def digest(path):
         return hashlib.file_digest(handle, 'sha256').hexdigest()
 
 
-def declaration(build, case):
+def declaration(build, case, round_name='W55'):
     import torch
     revision = build.removeprefix('S5-')
     label = f'N-{case}-{revision}'
@@ -43,11 +43,11 @@ def declaration(build, case):
     assert saved['normalization'] == complete['normalization'] and not saved['buffer'] and not complete['buffer']
     now = time.time()
     stamp = time.strftime('%Y%m%dT%H%M%SZ',time.gmtime(now))
-    job_id = f'job-{stamp}-w55-{label.lower()}'
+    job_id = f'job-{stamp}-{round_name.lower()}-{label.lower()}'
     jobdir = LARGE / 'jobs' / job_id
     jobdir.mkdir(parents=True, exist_ok=False)
     job = dict(job_id=job_id, label=label, route='N', case=case, seed=seed, workers=10,
-               affinity='0-9' if case=='A' else '10-19', started_unix_s=now, deadline=None,
+               affinity=(sorted(os.sched_getaffinity(0)) if round_name=='W56' else ('0-9' if case=='A' else '10-19')), started_unix_s=now, deadline=None,
                wall_deadline_enabled=False, controller_build=build, controller_binary_sha256=identity['binary_sha256'],
                execution_library_sha256=identity['execution_library_sha256'], controller_artifact_identity={k:v for k,v in identity.items() if k not in ('source_files_sha256','compile_commands','runtime_assets_adaptation','link_command')},
                checkpoint=str(checkpoint.relative_to(ROOT)), checkpoint_sha256=digest(checkpoint),
@@ -57,19 +57,22 @@ def declaration(build, case):
                new_PPO_updates=0, donor=0, actor='deterministic mean and frozen exact W44 normalization',
                initial_state='complete original evaluation t=0, virgin terrain', source_commit=commit, plan_commit=PLAN)
     contract = json.loads((ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json').read_text())
-    contract.update(current_task='W55_N_ORIGINAL_TASK', protocol_revision='W55_original_frozen_ladder',
-                    next_authorized_plan='docs/S1_W55_STABILITY_PLAN.md',
+    contract.update(current_task=round_name+'_N_ORIGINAL_TASK', protocol_revision=round_name+'_original_frozen_ladder',
+                    next_authorized_plan=f'docs/S1_{round_name}_STABILITY_PLAN.md',
                     w54_fixed_policy=job, w55_fixed_policy=job)
     contract['reuse'].update(active_controller_build=build, controller_artifact=build)
     contract['outputs']['compact_root'] = str(RESULTS.relative_to(ROOT))
     contract['execution']['deadline'] = None
-    contract['learning'].update(phase_id=job_id, stream_id='w55-'+label.lower(), phase_initial_transitions=14737,
+    contract['learning'].update(phase_id=job_id, stream_id=round_name.lower()+'-'+label.lower(), phase_initial_transitions=14737,
         phase_initial_updates=57, target_cumulative_transitions_per_stream=14737, target_cumulative_updates_per_stream=57,
         training_enabled=False, additional_transitions_from_reviewed_checkpoint=0, additional_updates_from_reviewed_checkpoint=0,
         active_streams=[], evaluation_only=True)
     contract['resources'].update(mpc_workers=10, torch_threads=1, torch_device='cuda')
     contract['execution']['background_job'].update(wall_deadline_enabled=False, default_maximum_wall_s=None)
     contract['control_and_evaluation']['post_training_evaluation'].update(maximum_wall_s=None, wall_deadline_enabled=False)
+    if round_name=='W56':
+        job.update(kill_on_conversation_end=False)
+        contract['execution']['background_job'].update(deadline=None,kill_on_conversation_end=False)
     for directory in (dest, jobdir):
         write(directory/'job.json',job)
         write(directory/'execution-contract.json',contract)
@@ -97,7 +100,7 @@ def launch(build, case, level):
     print(json.dumps(dict(job=job['job_id'],tmux=session,ledger=str(dest))))
 
 
-def run(case_dir, level):
+def run(case_dir, level, finish_stage=True):
     job = json.loads((case_dir/'job.json').read_text())
     raw_job = LARGE/'jobs'/job['job_id']
     attempt = f'{job["job_id"]}-eval-PANN_PPO_S5-s{job["seed"]}-{level}-attempt01'
@@ -132,6 +135,7 @@ def run(case_dir, level):
         state.update(status='technical_interruption',reason='process_exited_without_completed_result')
     write(dest,state)
     write(raw_job/(level+'-runtime.json'),state)
+    if not finish_stage:return process.returncode
     if level=='E30':
         write(ROOT/'work/w55-n-r56/slot-released.json',dict(status='naturally_ended',target='N-A-r56/E30',
             released_unix_s=state['ended_unix_s'],job=job['job_id'],attempt=attempt,child_pid=state['pid'],
