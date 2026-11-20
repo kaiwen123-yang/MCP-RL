@@ -74,6 +74,10 @@ def watch_stage(worktree, label, level):
     branch = subprocess.check_output(['git','-C',str(worktree),'branch','--show-current'],text=True).strip()
     # The existing F collector writes its analysis commit after the full video.
     while True:
+        if not stage.exists() and '-B-' in label:
+            first = stage.parent.with_name(label.replace('-B-', '-A-')) / 'E30.json'
+            if first.is_file() and read(first)['status'] not in ('declared','running','passed'):
+                return False
         if stage.is_file():
             row=read(stage)
             finished_without_result = row.get('reason')=='process_exited_without_completed_result'
@@ -98,6 +102,7 @@ def watch_stage(worktree, label, level):
         deliver_stage(worktree,label,level)
     with (ROOT/'work/w55-integration.lock').open('a') as integration:
         fcntl.flock(integration,fcntl.LOCK_EX)
+        git('merge','--no-edit',branch)
         record()
         compact(navigation()+[receipt.parent],f'Verify W55 {label} {level} complete Release assets')
         push()
