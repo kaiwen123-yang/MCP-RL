@@ -4,7 +4,7 @@
 
 ## W55 原资格执行
 
-W55 的 F/r53 在两个 W44 case 各自通过原 E30。A/E60 在 40.178 s 完成一次合法受载材料往返并在原点附近站稳，随后终点保持失稳，42.676 s 全身控制器达到迭代上限。N/r54 跑满 30 s，最远 x=0.789 m，未贯穿材料。F/r55 和 N/r56 根据各自原件修订，各自重建资格。C 的定向候选在两个独立保留组的最坏恢复误差上升，行走沿用原 B ideal。最新阶段与 Release 回执见本轮索引。
+W55 的 F/r53 在 W44 A、B 各通过原 E30，两次 E60 均受载穿过材料带并沿原路穿回。A 在 40.178 s 满足原回家稳定条件，随后 WBC 于 42.676 s 中断。B 在终点站立期间于 41.254 s 中断，完整往返计数为 0。N/r54 跑满 30 s，最远 x=0.789 m，未贯穿材料。修订后的 F/r55 和 N/r56 均从各自的原 A/E30 独立执行。材料候选在两个独立保留组的最大恢复误差上升，正式任务继续使用原 B ideal。各阶段及原件以本轮结果索引为准。
 
 [W55 结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json) · [任务进度](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json) · [计划与资格条件](docs/S1_W55_STABILITY_PLAN.md) · [本轮原件及全视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55)
 
