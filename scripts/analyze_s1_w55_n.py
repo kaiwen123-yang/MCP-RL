@@ -66,6 +66,31 @@ def measure(case,stage):
             minimum=lambda a:float(np.min(a)) if a.size else None
             maximum=lambda a:float(np.max(a)) if a.size else None
             action_masks=active_tick[:,None] & np.broadcast_to(True,loaded.shape)
+            # Receding-horizon policies are replaced every 20 ms. Only their
+            # first executed interval is a prediction/actual error; the full
+            # 350 ms prediction is reported as the direction the optimizer chose.
+            windows={}
+            for call in calls:
+                now=call['time_s'];key=int(now)
+                if now<2 or not call['installed'] or now+.02>t[-1]+1e-8:continue
+                pi=read_policy(native/f"policy-{call['call_id']:06d}.bin")
+                if not np.isclose(pi['accepted_times'][0],now,atol=1e-8,rtol=0):continue
+                dt_index=np.argmin(np.abs(pi['accepted_times']-now-.02))
+                i=np.argmin(abs(t-now));j=np.argmin(abs(t-now-.02))
+                if abs(t[j]-now-.02)>1e-7:continue
+                px=pi['accepted_states'][:,0]
+                span=px[-1]-px[0]
+                dx=px[dt_index]-px[0];actual=q[j,0]-q[i,0]
+                feasible=[row['dx_m'] for row in call['candidates'] if not row['failure']]
+                windows.setdefault(key,[]).append((dx,actual,dx-actual,span,len(feasible),sum(v>0 for v in feasible)))
+            evidence['same_clock_progress_by_physical_second']=[]
+            for key,rows in sorted(windows.items()):
+                w=np.array(rows)
+                evidence['same_clock_progress_by_physical_second'].append(dict(
+                    start_s=key,installed_intervals=len(w),mean_predicted_20ms_dx_m=float(w[:,0].mean()),
+                    mean_actual_20ms_dx_m=float(w[:,1].mean()),prediction_20ms_dx_RMS_error_m=float(np.sqrt(np.mean(w[:,2]**2))),
+                    mean_installed_full_horizon_dx_m=float(w[:,3].mean()),feasible_recorded_candidates=int(w[:,4].sum()),
+                    feasible_positive_x_candidates=int(w[:,5].sum())))
             evidence.update(max_x_m=float(np.max(q[:,0])),final_position_m=q[-1,:3].tolist(),min_base_z_m=float(np.min(q[:,2])),
                 first_below_0p28_s=float(t[np.flatnonzero(q[:,2]<.28)[0]]) if (q[:,2]<.28).any() else None,
                 stance_changes_per_foot=np.count_nonzero(np.diff((grf[:,:,2]>10).astype(int),axis=0),axis=0).tolist(),
