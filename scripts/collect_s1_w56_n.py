@@ -6,7 +6,7 @@ import subprocess
 import time
 from pathlib import Path
 from publish_s1_go2_w54 import ROOT,LARGE,write
-from run_s1_w55_n import SMALL
+from run_s1_w56_n import SMALL,RESULTS
 
 CASE=SMALL/'N-A-r56'
 STAGE=CASE/'E30.json'
