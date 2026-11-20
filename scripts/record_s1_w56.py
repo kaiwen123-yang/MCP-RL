@@ -60,6 +60,15 @@ def stage_info(label,tree,stage):
         row.update(queue_record=str((case/'queue.json').relative_to(tree)),queue_status=queue.get('status'),queue_tmux=queue.get('tmux'))
     path=case/(stage+'.json')
     if not path.is_file():
+        lane_queue=folder/('queue-'+build+'.json')
+        if stage=='E30' and lane_queue.exists():
+            ticket=read(lane_queue)
+            row.update(queue_record=str(lane_queue.relative_to(tree)),queue_status=ticket['status'],
+                       queue_tmux=ticket.get('tmux'))
+            if ticket['status'].startswith('waiting'):
+                row['status']=ticket['status']
+        if stage=='E30' and row.get('queue_status')=='waiting_for_A_E30':
+            row['status']='waiting_for_A_E30'
         return row
     job=read(path)
     row.update(short(job,['attempt','job','tmux','pid','runner_pid','reason','exit_code','started_unix_s','ended_unix_s']))
@@ -128,12 +137,40 @@ def derive():
             passed_original_levels={l:[r['level'] for r in data if r['label']==l and r['status']=='passed']
                                     for l in sorted({r['label'] for r in data})})
     results=list((WINDOW/'exposure').glob('*.json'))
-    sources={d.name:str(d.relative_to(ROOT)) for d in results}
+    sources={d.stem:str(d.relative_to(ROOT)) for d in sorted(results)}
+    gpu=WINDOW/'c/cpu-gpu-real-histories.json'
+    if gpu.is_file():
+        stats=read(gpu)
+        phase['batch_benchmark_unix_s']=[stats['start_unix'],stats['end_unix']]
+        phase['two_physics_plus_material_benchmark_overlap_s']=sum(
+            max(0.,min(p['end_unix_s'],stats['end_unix'])-max(p['begin_unix_s'],stats['start_unix'])) for p in overlap)
+    receipts={}
+    for p in sorted((WINDOW/'delivery').glob('*/delivery.json')):
+        j=read(p)
+        if j.get('status')=='published':
+            for a in j['assets']:
+                receipts[a['name']]=a
+    publication=dict(release='https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w56',
+        verified_assets=len(receipts),verified_bytes=sum(a['size'] for a in receipts.values()),
+        source='W56 verified per-delivery receipts on main')
+    proofs={}
+    for pattern in ('c/*.json','n/same-input-*.json','n/*original-objective.json','n/queue-*.json',
+                    'f/r57-*-actor-selection.json','f/F-*/E*-paired.json','n/N-*/E*-actual-analysis.json','delivery/*/delivery.json'):
+        for path in sorted(WINDOW.glob(pattern)):
+            proofs[str(path.relative_to(WINDOW))]=str(path.relative_to(ROOT))
+    f_closed=all((tree/REL/'w56/f'/label/'queue.json').is_file() and
+        read(tree/REL/'w56/f'/label/'queue.json').get('status') in ('ladder_ended','not_run_A_E30_did_not_pass')
+        for label,tree,levels in CASES if label.startswith('F-') and not label.endswith('r55'))
+    n_queue=N/REL/'w56/n/queue-r59.json'
+    all_ended=f_closed and n_queue.is_file() and read(n_queue)['status'] in ('published','physics_ended') and all(
+        r.get('publication',{}).get('status')=='published' for r in rows if r['status'] in ('passed','failed')) and all(
+        r['status'] in ('passed','failed','interrupted') for r in windows['w55'] if r['level']=='E600')
+    execution='declared_ladders_concluded_and_delivered' if all_ended else 'executing'
     newer=windows['w56']
     r57=(ROOT/'experiments/terrain_memory/s1-w56-f-r57.json').is_file()
     started=any(r.get('physical_samples',0)>0 or r.get('heartbeat',{}).get('physical_time_s',0)>0 for r in newer)
     index=dict(window='W56',implementation_base='3578b494f05b6a10c64a75cfceaaf5d3d4bc558c',
-        status='executing',snapshot_unix_s=now,phase=str(REL/'w56/phase.json'),frozen_r55_scope='Two W44 nominal cases. E600 stages keep their W55 identities.',
+        status=execution,snapshot_unix_s=now,publication=publication,evidence=proofs,phase=str(REL/'w56/phase.json'),frozen_r55_scope='Two W44 nominal cases. E600 stages keep their W55 identities.',
         workspaces=dict(integration=str(HOST/'MCP-RL-w55-integration'),F=str(F),C=str(MATERIAL),N=str(N)),
         original_qualification=summary,baseline_array_checks={p.stem:str(p.relative_to(ROOT)) for p in sorted((WINDOW/'baseline').glob('*.json'))},actor_query_reconstruction=sources,robot_control_implemented=r57,robot_physics_started=started,
         new_PPO_samples=0,new_PPO_updates=0,donor=0,**BACKGROUND)
@@ -143,8 +180,10 @@ def derive():
     current.update(date=datetime.fromtimestamp(now,timezone.utc).astimezone().isoformat(timespec='seconds'),
         status='W56_execution',latest_executed_window='W56',latest_results=str(REL/'w56/index.json'),
         latest_execution_state=str(REL/'w56/phase.json'),result_source_commit_scope='W55 reviewed baseline. Current W56 per-case results and live process snapshot are in latest_execution_state.')
-    current['W56'].update(status='executing',index=index['phase'].replace('phase.json','index.json'),phase=index['phase'],
+    current['W56'].update(status=execution,publication=publication,index=index['phase'].replace('phase.json','index.json'),phase=index['phase'],
         robot_control_implemented=r57,robot_physics_started=started,original_qualification=summary['w56'])
+    current['continuation']['D57_tmux']['w56_publication']='s1-w56-publish-results'
+    current['continuation']['D57_tmux'].update({r['label']:r['queue_tmux'] for r in newer if r.get('queue_tmux')})
     current['continuation']['lane_workspaces'].update(W56_F=str(F),W56_C=str(MATERIAL),W56_N=str(N))
     current['continuation']['rule']='Resume exact jobs reported in W56 phase and original case records. W55 r55 E600 keeps its original case identity.'
     current['W55']['r55_latest_qualification']=summary['w55']
