@@ -4,7 +4,7 @@
 
 ## W55 原资格执行
 
-W55 的 F/r53 在 W44 A、B 各通过原 E30，两次 E60 均受载穿过材料带并沿原路穿回。A 在 40.178 s 满足回家稳定条件，随后 WBC 于 42.676 s 中断。B 在终点站立期间于 41.254 s 中断，完整往返计数为 0。F/r55 修正终点保持时的质心力矩臂，凭自身原 A/E30 的全程轨迹与视频取得资格。N/r54 跑满 30 s，最远 x=0.789 m，未贯穿材料。最新在途任务为 F/r55 A/E60 和 N/r56 A/E30，阶段进度与原件见本轮索引。
+W55 的 F/r55 在 W44 A/seed1 和 B/seed2 上分别通过原 E30、E60 和 E300。两次 E300 各完成 5 次合法受载材料往返，A 在 231.942 s、B 在 232.696 s 完成第 5 次，随后保持至 300 s。两组原 E600 的物理进度和最终资格见本轮阶段记录。N/r54 和 N/r56 各跑满 30 s，最远 x 分别为 0.789 m 和 0.895 m，均未贯穿材料带。材料线已完成独立保留集评估。
 
 [W55 结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json) · [任务进度](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json) · [计划与资格条件](docs/S1_W55_STABILITY_PLAN.md) · [本轮原件及全视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55)
 

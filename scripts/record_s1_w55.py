@@ -26,11 +26,20 @@ def select(d, fields):
 def cases(worktree, lane):
     compact = worktree / REL / 'w55' / lane
     rows = {}
-    ledger = compact / 'index.json'
-    indexed = {r['attempt']: r for r in read(ledger).get('attempts', [])} if ledger.exists() else {}
-    for p in sorted(compact.glob('**/E*.json')):
+    stage_files = [p for p in sorted(compact.glob('**/E*.json')) if p.stem in LEVELS]
+    # Cases share a stage directory but may declare a separate evaluator result root.
+    result_roots = {compact}
+    for case_dir in {p.parent for p in stage_files}:
+        contract = read(case_dir / 'execution-contract.json')
+        result_roots.add(worktree / contract['outputs']['compact_root'])
+    indexed = {}
+    for root in sorted(result_roots):
+        ledger = root / 'index.json'
+        if ledger.exists():
+            indexed.update((r['attempt'], r) for r in read(ledger).get('attempts', []))
+    for p in stage_files:
         d = read(p)
-        if p.stem not in LEVELS or not d.get('attempt'):
+        if not d.get('attempt'):
             continue
         row = select(d, ('attempt', 'job', 'level', 'status', 'tmux', 'runner_pid', 'pid',
                          'user_cpu_s', 'system_cpu_s', 'exit_code', 'started_unix_s',
@@ -47,7 +56,8 @@ def cases(worktree, lane):
             if live.is_file():
                 row['live'] = read(live)
         rows[row['attempt']] = row
-    for p in sorted(compact.glob('job-*-eval-*-attempt*.json')):
+    results = (p for root in result_roots for p in root.glob('job-*-eval-*-attempt*.json'))
+    for p in sorted(results):
         if p.name.endswith('-resolved.json'):
             continue
         d = read(p)
@@ -198,7 +208,14 @@ def record(args):
                  independent_holdouts=['W46 B with 18 world cells', 'W55 F-A r53 with 5 preselected event families'],
                  GPU=summary['gpu'], training=summary['training'],
                  fit_unix_interval=[fit_start,fit_end], two_physical_plus_GPU_fit_overlap=physical_and_fit)
+    stage_passes = {level:sum(r['level']==level for r in passed) for level in LEVELS}
+    index['original_stage_passes'] = stage_passes
     write(index_path, index)
+    current_path = ROOT / REL / 'current.json'
+    current = read(current_path)
+    current['W55'].update(completed_original_physical_steps=index['completed_physical_steps'],
+                          **{level+'_passes': count for level,count in stage_passes.items()})
+    write(current_path, current)
     print(json.dumps({'status':args.status,'completed':len(done),'highest':highest,
                       'physics_steps':index['completed_physical_steps'],
                       'overlap_wall_s':index['effective_physical_overlap_wall_s']}))
