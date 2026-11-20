@@ -2,7 +2,7 @@
   "schema": "s1_current_handoff_v1",
   "date": "2026-11-20 Asia/Shanghai",
   "result_source_commit": "18821bb2c33ae8987cb38f64d6c41615cbb8406e",
-  "status": "W55_original_stage_results_updated",
+  "status": "W55_r55_A_E60_and_r56_A_E30_running",
   "latest_executed_window": "W55",
   "latest_results": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json",
   "latest_execution_state": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json",
@@ -81,15 +81,19 @@
       "C": "/root/autodl-tmp/MCP-RL-w55-c",
       "integration": "/root/autodl-tmp/MCP-RL-w55-integration",
       "N_r56": "/root/autodl-tmp/MCP-RL-w55-n-r56"
+    },
+    "D57_tmux": {
+      "F-A-r55-E60": "s1-w55-f-a-r55-e60",
+      "N-A-r56-E30": "s1-w55-n-a-r56-e30"
     }
   },
   "W55": {
-    "status": "original_stage_results_updated",
+    "status": "r55_A_E60_and_r56_A_E30_running",
     "plan": "docs/S1_W55_STABILITY_PLAN.md",
     "index": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/index.json",
     "phase": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json",
-    "F": "Frozen r53 passed A and B E30. Both E60 runs crossed the material twice. A met the home-stand rule once; B did not. WBC interrupted the two runs at 42.676 s and 41.254 s. r55 has started its own original A E30.",
-    "N": "r54 A reached 0.788521 m in 30 s and failed its original E30 route. The r56 correction has begun its independent original A E30.",
+    "F": "S5-r55 passed its own original A E30, with full physical records and video review. Its original A E60 is running. B follows its own original ladder after N/r56 finishes.",
+    "N": "r54 A ran 30 s without complete material traversal. r56 A is live under its own original E30 contract.",
     "C": "One targeted GPU material candidate completed. It improved rapid-release diagnostics and increased worst recovery error on both independent held-out episode groups. Formal robot runs retain original B ideal.",
     "robot_physics_started": true,
     "new_PPO_samples": 0,
@@ -97,18 +101,23 @@
     "donor": 0,
     "highest_passed_original_stage": "E30",
     "E30_passes": 3,
-    "selection": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/r53-selection.json",
+    "selection": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/r55-selection.json",
     "published_F_A_E30": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/delivery/f-a-r53-e30/delivery.json",
     "completed_original_attempts": 6,
     "recorded_legal_round_trips": 1,
     "active_stages_at_snapshot": [
       {
+        "attempt": "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E60-attempt01",
+        "pid": 471640,
+        "physical_s": 6.002000000003817
+      },
+      {
         "attempt": "job-20261120T040054Z-w55-n-a-r56-eval-PANN_PPO_S5-s1-E30-attempt01",
         "pid": 467696,
-        "physical_s": 14.50199999999288
+        "physical_s": 18.001999999984722
       }
     ],
-    "snapshot_unix_s": 1795147870.074262,
+    "snapshot_unix_s": 1795148016.8710995,
     "C_summary": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/c/summary.json",
     "N_same_input": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/n/same-input-r54.json",
     "N_slot": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/n/slot-F-B-r53-E30-to-N-A-r54.json",
@@ -124,7 +133,10 @@
       "N_r56_checks": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/n/same-input-r56.json",
       "new_N_case": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/n/N-A-r56/job.json"
     },
-    "stage_results": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json"
+    "stage_results": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/phase.json",
+    "prior_F_selection": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/r53-selection.json",
+    "completed_original_physical_steps": 1019650,
+    "E60_passes": 0
   },
   "publication": {
     "release_url": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55",
