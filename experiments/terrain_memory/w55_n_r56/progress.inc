@@ -5,7 +5,10 @@ extern "C" int w56_progress(const mjModel* m,mjData* d,const double* shifted,dou
   mju_copy(out,shifted,U);
   const double* command=d->userdata+W55Motion;
   const double norm=std::hypot(command[0],command[1]);
-  if(norm<1.e-8)return 0;
+  // A new plan is installed every 20 ms; inject one candidate impulse only
+  // in its executable prefix. The same ordinary policy covers the remaining
+  // 330 ms and must still pass all original horizon checks.
+  if(norm<1.e-8 || d->time-d->userdata[W55Epoch]>=.02-1.e-9)return 0;
   Foot feet[F];geometry(m,d,feet,true);Response s;
   if(!response(m,d,feet,s))return 1;
   if(!s.contacts)return 0; // no controllable rigid reaction during flight/soft-only phase
@@ -32,15 +35,18 @@ extern "C" int w56_progress(const mjModel* m,mjData* d,const double* shifted,dou
   const double horizon=.35, home=m->key_qpos[mj_name2id(m,mjOBJ_KEY,"home")*m->nq+2];
   const double target_vertical=mass*(9.81+2*(home-d->qpos[2])/(horizon*horizon)-2*d->qvel[2]/horizon);
   support.lower(forces[2],std::min(dot(forces[2],baseline),target_vertical-bias[2]));
-  // Keep lateral COM acceleration close to the existing realized command. The
-  // original whole-body viability check judges both angular and joint effects.
+  // Stage one demonstrated that a cheaper joint snapshot can tip the
+  // support and lower the trunk. Keep roll/pitch acceleration equal to the
+  // feasible shifted response and preserve its vertical acceleration margin.
+  for(int k:{3,4}){Vec angular=row_of(s,k);double current=dot(angular,baseline);support.bounds(angular,current,current);}
+  Vec up=row_of(s,2);support.lower(up,dot(up,baseline));
   Vec drive{};for(int j=0;j<U;++j)drive[j]=dir[0]*forces[0][j]+dir[1]*forces[1][j];
   double measured=dir[0]*vcom[0]+dir[1]*vcom[1];
   double demanded=mass*(norm-measured)/horizon-dir[0]*bias[0]-dir[1]*bias[1];
   double now=dot(drive,baseline),preferred=std::max(now,demanded);
   // Minimal supporting torque for a physically available fraction of the
   // requested impulse. The fixed shifted swing actions maintain gait timing.
-  Vec target{};for(int i=0;i<F;++i)if(!feet[i].bearing)for(int j=3*i;j<3*i+3;++j)target[j]=baseline[j];
+  Vec target=baseline; // minimum additional supporting torque for the impulse
   Vec best=baseline;double low=0.,high=1.;bool solved=false;
   for(int it=0;it<9;++it){
     double frac=it==0?1.:(low+high)*.5;
@@ -50,8 +56,11 @@ extern "C" int w56_progress(const mjModel* m,mjData* d,const double* shifted,dou
     else high=frac;
   }
   if(!solved){
-    QP available=support;available.lower(drive,now);
-    if(!available.project(target,best))return 3;
+    // A zero impulse is allowed only when its current supporting baseline
+    // actually satisfies the same constraints; this candidate remains subject
+    // to the common full-horizon selector.
+    for(const auto& r:support.rows)if(dot(r.a,baseline)<r.b-2.e-5)return 3;
+    best=baseline;
   }
   for(int j=0;j<U;++j){
     int joint=m->actuator_trnid[2*j],k=m->jnt_dofadr[joint];
