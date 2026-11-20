@@ -1,6 +1,6 @@
 {
   "status": "original_stage_results_updated",
-  "updated_unix_s": 1795151091.3149388,
+  "updated_unix_s": 1795161524.2527275,
   "deadline": null,
   "wall_deadline_enabled": false,
   "kill_on_conversation_end": false,
@@ -475,11 +475,16 @@
       "attempt": "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E300-attempt01",
       "job": "job-20261120T035811Z-w55-f-a-r55",
       "level": "E300",
-      "status": "running",
+      "status": "passed",
       "tmux": "s1-w55-f-a-r55-e300",
       "runner_pid": 476846,
       "pid": 476854,
+      "user_cpu_s": 9952.2233,
+      "system_cpu_s": 766.196199,
+      "exit_code": 0,
       "started_unix_s": 1795149436.073098,
+      "ended_unix_s": 1795158929.0797985,
+      "reason": "stage_passed",
       "command": [
         "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
         "-u",
@@ -506,20 +511,129 @@
       "record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/F-A-r55/E300.json",
       "lane": "F",
       "physical_started_unix_s": 1795149442.5731506,
-      "pid_running_at_snapshot": true,
-      "live": {
-        "pid": 476854,
-        "physical_time_s": 60.501999999885676,
-        "phase": "outbound",
-        "position_m": [
-          2.366407965732139,
-          -0.05663920365662961,
-          0.2908879231644274
-        ],
-        "unix_s": 1795151080.5047824,
-        "deadline": null,
-        "wall_deadline_enabled": false
-      }
+      "success": true,
+      "stage_status": "passed",
+      "error": null,
+      "simulation_s": 300.0000000077119,
+      "physical_samples": 1500000,
+      "physical_ended_unix_s": 1795158911.3711176,
+      "max_x_m": 2.9999936881978506,
+      "min_body_height_m": 0.28300733088458757,
+      "completed_round_trips": 5,
+      "wall_s": 9474.040330333635,
+      "stage_progress": {
+        "far_arrival_s": 18.921999999982578,
+        "return_start_s": 25.36999999996755,
+        "actual_route_fraction": 4.878375461999326,
+        "full_observation": true,
+        "actual_material_loaded": true,
+        "material_traversal": {
+          "completed": true,
+          "west_entry_s": 6.144000000004117,
+          "east_exit_s": 12.465999999997624,
+          "lateral_exit_s": null,
+          "max_abs_base_y_during_crossing_m": 0.06954539064995335,
+          "material_loaded_during_crossing": true,
+          "original_strip_x_m": [
+            0.8,
+            2.2
+          ],
+          "original_strip_y_m": [
+            -0.6,
+            0.6
+          ],
+          "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+        },
+        "legal_material_roundtrips": {
+          "criterion": "bidirectional_material_roundtrips_v1",
+          "required": 5,
+          "observed": {
+            "completed_roundtrips": 5,
+            "legal_outbound_traversals": 5,
+            "legal_return_traversals": 5
+          },
+          "evidence_available": true,
+          "completed": true
+        }
+      },
+      "case_key": "0fcd6e1f33bfe00d403b1cb6c372e78c07b0680bdab183bfc63dcb15df3b8f05",
+      "source_commit": "5e3b6a700c4410910a7d1dc23e2ab88aa7e58c31",
+      "qualification": {
+        "predecessor_attempt": "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E60-attempt01",
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "d424d29f604cfc93f6a19ce9fb56ca66ef559383b6f9b602bf2fd78692a2e30e",
+        "solver_workers": 1,
+        "worker_setting_checked_against_predecessor": true,
+        "route_criterion": "bidirectional_material_roundtrips_v1",
+        "legacy_stage_criteria_met": true
+      },
+      "samples_500Hz": 150001,
+      "timing": {
+        "startup_planning": null,
+        "planning": null,
+        "feedback": {
+          "count": 150001,
+          "total_s": 1558.3226037584245,
+          "p50_ms": 4.210883751511574,
+          "p95_ms": 51.41437239944935,
+          "max_ms": 512.4420560896397,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 150001
+        },
+        "state_parameter_rpc": null,
+        "physics": {
+          "count": 150000,
+          "total_s": 3127.843556109816,
+          "p50_ms": 17.133086919784546,
+          "p95_ms": 29.798753280192614,
+          "max_ms": 1164.4696686416864,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 150000
+        }
+      },
+      "record_timing": {
+        "stream_compress_write_wall_s": 35.258311193436384,
+        "stream_compress_write_cpu_s": 35.571237291999296,
+        "trajectory_compress_write_wall_s": 7.545490926131606,
+        "trajectory_compress_write_cpu_s": 7.648586532000991
+      },
+      "identity": {
+        "seed": 1,
+        "controller_build": "S5-r55",
+        "job": "job-20261120T035811Z-w55-f-a-r55",
+        "checkpoint_sha256": "aa6cf72950e0f15160a15009813b2a6d976e4f4d31c3ebd198436273dd647c15",
+        "normalizer_sha256": "2180314d860dd936b4775c8e325713466f5dd06ce913f917b88d04f93521ff55",
+        "stream_id": "w55-f-a-r55",
+        "initial_state": {
+          "id": "nominal",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "legal_route": {
+        "legal_outbound_traversals": 5,
+        "legal_return_traversals": 5,
+        "completed_roundtrips": 5,
+        "side_exits": 0
+      },
+      "material": {
+        "max_abs_principal_strain": 0.0032291817081571417,
+        "loaded_ever_cells": 1015,
+        "events": 18488,
+        "domain_exit": null
+      },
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E300-attempt01.json",
+      "server_originals": "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E300-attempt01",
+      "recorded_video": "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E300-attempt01/full-mission-material-overlay.mp4"
     },
     {
       "attempt": "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E60-attempt01",
@@ -684,6 +798,56 @@
       "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E60-attempt01.json",
       "server_originals": "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E60-attempt01",
       "recorded_video": "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E60-attempt01/full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01",
+      "job": "job-20261120T035811Z-w55-f-a-r55",
+      "level": "E600",
+      "status": "running",
+      "tmux": "s1-w55-f-a-r55-e600",
+      "runner_pid": 500821,
+      "pid": 500828,
+      "started_unix_s": 1795158934.2194867,
+      "command": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "scripts/run_s1_go2_r12.py",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261120T035811Z-w55-f-a-r55/execution-contract.json",
+        "--attempt",
+        "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01",
+        "--evaluation-start-unix",
+        "1795147091.3483374",
+        "--checkpoint",
+        "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+        "--level",
+        "E600",
+        "--seed",
+        "1",
+        "--workers",
+        "1",
+        "--build",
+        "S5-r55",
+        "--condition",
+        "nominal"
+      ],
+      "record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/F-A-r55/E600.json",
+      "lane": "F",
+      "physical_started_unix_s": 1795158940.4343376,
+      "pid_running_at_snapshot": true,
+      "live": {
+        "pid": 500828,
+        "physical_time_s": 95.00200000090668,
+        "phase": "turn_home",
+        "position_m": [
+          0.012931231428963163,
+          0.004714269601674998,
+          0.2894798630666563
+        ],
+        "unix_s": 1795161518.6013572,
+        "deadline": null,
+        "wall_deadline_enabled": false
+      }
     },
     {
       "attempt": "job-20261120T032044Z-w55-f-b-r53-eval-PANN_PPO_S5-s2-E30-attempt01",
@@ -1155,11 +1319,16 @@
       "attempt": "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E300-attempt01",
       "job": "job-20261120T042344Z-w55-f-b-r55",
       "level": "E300",
-      "status": "running",
+      "status": "passed",
       "tmux": "s1-w55-f-b-r55-e300",
       "runner_pid": 479381,
       "pid": 479388,
+      "user_cpu_s": 9933.098030000001,
+      "system_cpu_s": 823.723501,
+      "exit_code": 0,
       "started_unix_s": 1795150809.1866176,
+      "ended_unix_s": 1795160205.4889123,
+      "reason": "stage_passed",
       "command": [
         "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
         "-u",
@@ -1186,20 +1355,128 @@
       "record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/F-B-r55/E300.json",
       "lane": "F",
       "physical_started_unix_s": 1795150815.5235777,
-      "pid_running_at_snapshot": true,
-      "live": {
-        "pid": 479388,
-        "physical_time_s": 13.001999999996375,
-        "phase": "outbound",
-        "position_m": [
-          2.330419844778431,
-          -0.06282458559216693,
-          0.2903809891915517
-        ],
-        "unix_s": 1795151091.0135672,
-        "deadline": null,
-        "wall_deadline_enabled": false
-      }
+      "success": true,
+      "stage_status": "passed",
+      "error": null,
+      "simulation_s": 300.0000000077119,
+      "physical_samples": 1500000,
+      "physical_ended_unix_s": 1795160187.7692885,
+      "max_x_m": 2.9999295530523145,
+      "min_body_height_m": 0.28300733088458757,
+      "completed_round_trips": 5,
+      "wall_s": 9377.51696242392,
+      "stage_progress": {
+        "far_arrival_s": 18.763999999982946,
+        "return_start_s": 25.21199999996792,
+        "actual_route_fraction": 4.8753015128720145,
+        "full_observation": true,
+        "actual_material_loaded": true,
+        "material_traversal": {
+          "completed": true,
+          "west_entry_s": 6.088000000003999,
+          "east_exit_s": 12.341999999997913,
+          "lateral_exit_s": null,
+          "max_abs_base_y_during_crossing_m": 0.0854305557380884,
+          "material_loaded_during_crossing": true,
+          "original_strip_x_m": [
+            0.8,
+            2.2
+          ],
+          "original_strip_y_m": [
+            -0.6,
+            0.6
+          ],
+          "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+        },
+        "legal_material_roundtrips": {
+          "criterion": "bidirectional_material_roundtrips_v1",
+          "required": 5,
+          "observed": {
+            "completed_roundtrips": 5,
+            "legal_outbound_traversals": 5,
+            "legal_return_traversals": 5
+          },
+          "evidence_available": true,
+          "completed": true
+        }
+      },
+      "case_key": "8b0c61dc3502cb92733b928ace2c611ff66aeaa107ef4455a8f850d75300c07b",
+      "source_commit": "9896086d7bba2e0b673e935ded98f2521f8ecd72",
+      "qualification": {
+        "predecessor_attempt": "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E60-attempt01",
+        "protocol_revision": "staged_evaluation_30_60_300_600_v2",
+        "evaluator_sha256": "d424d29f604cfc93f6a19ce9fb56ca66ef559383b6f9b602bf2fd78692a2e30e",
+        "solver_workers": 1,
+        "worker_setting_checked_against_predecessor": true,
+        "route_criterion": "bidirectional_material_roundtrips_v1",
+        "legacy_stage_criteria_met": true
+      },
+      "samples_500Hz": 150001,
+      "timing": {
+        "startup_planning": null,
+        "planning": null,
+        "feedback": {
+          "count": 150001,
+          "total_s": 1512.2143676932901,
+          "p50_ms": 3.916459158062935,
+          "p95_ms": 50.64914748072624,
+          "max_ms": 520.050810649991,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 150001
+        },
+        "state_parameter_rpc": null,
+        "physics": {
+          "count": 150000,
+          "total_s": 3162.3038698472083,
+          "p50_ms": 17.3658924177289,
+          "p95_ms": 30.274609941989183,
+          "max_ms": 1105.7091411203146,
+          "logical_deadline_s": 0.002,
+          "deadline_misses": 150000
+        }
+      },
+      "record_timing": {
+        "stream_compress_write_wall_s": 35.05189538933337,
+        "stream_compress_write_cpu_s": 35.448791750001874,
+        "trajectory_compress_write_wall_s": 7.485444052144885,
+        "trajectory_compress_write_cpu_s": 7.561626996999621
+      },
+      "identity": {
+        "seed": 2,
+        "controller_build": "S5-r55",
+        "job": "job-20261120T042344Z-w55-f-b-r55",
+        "checkpoint_sha256": "6b1fcab99f849aaaabc4925dc13391f6ced8e75c419d0f821661417cba6349f7",
+        "normalizer_sha256": "2180314d860dd936b4775c8e325713466f5dd06ce913f917b88d04f93521ff55",
+        "stream_id": "w55-f-b-r55",
+        "initial_state": {
+          "id": "nominal",
+          "initial_yaw_offset_deg": 0,
+          "initial_base_linear_velocity_m_s": [
+            0,
+            0,
+            0
+          ],
+          "initial_base_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "legal_route": {
+        "legal_outbound_traversals": 5,
+        "legal_return_traversals": 5,
+        "completed_roundtrips": 5,
+        "side_exits": 0
+      },
+      "material": {
+        "max_abs_principal_strain": 0.0034056071075751204,
+        "loaded_ever_cells": 1032,
+        "events": 18006,
+        "domain_exit": null
+      },
+      "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E300-attempt01.json",
+      "server_originals": "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E300-attempt01"
     },
     {
       "attempt": "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E60-attempt01",
@@ -1364,6 +1641,56 @@
       "result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E60-attempt01.json",
       "server_originals": "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E60-attempt01",
       "recorded_video": "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E60-attempt01/full-mission-material-overlay.mp4"
+    },
+    {
+      "attempt": "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E600-attempt01",
+      "job": "job-20261120T042344Z-w55-f-b-r55",
+      "level": "E600",
+      "status": "running",
+      "tmux": "s1-w55-f-b-r55-e600",
+      "runner_pid": 502587,
+      "pid": 502596,
+      "started_unix_s": 1795160206.170909,
+      "command": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "scripts/run_s1_go2_r12.py",
+        "--contract",
+        "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/job-20261120T042344Z-w55-f-b-r55/execution-contract.json",
+        "--attempt",
+        "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E600-attempt01",
+        "--evaluation-start-unix",
+        "1795148624.227442",
+        "--checkpoint",
+        "/root/autodl-tmp/MCP-RL-w55-f/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/checkpoint-014737.pt",
+        "--level",
+        "E600",
+        "--seed",
+        "2",
+        "--workers",
+        "1",
+        "--build",
+        "S5-r55",
+        "--condition",
+        "nominal"
+      ],
+      "record": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/F-B-r55/E600.json",
+      "lane": "F",
+      "physical_started_unix_s": 1795160211.91838,
+      "pid_running_at_snapshot": true,
+      "live": {
+        "pid": 502596,
+        "physical_time_s": 53.001999999903155,
+        "phase": "outbound",
+        "position_m": [
+          0.7127033113016495,
+          0.0029264123576109645,
+          0.2946311874396125
+        ],
+        "unix_s": 1795161520.8177814,
+        "deadline": null,
+        "wall_deadline_enabled": false
+      }
     },
     {
       "attempt": "job-20261120T033646Z-w55-n-a-r54-eval-PANN_PPO_S5-s1-E30-attempt01",
@@ -1602,6 +1929,24 @@
     },
     {
       "attempts": [
+        "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E300-attempt01",
+        "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E300-attempt01"
+      ],
+      "start": 1795150815.5235777,
+      "end": 1795158911.3711176,
+      "physical_overlap_wall_s": 8095.847539901733
+    },
+    {
+      "attempts": [
+        "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E300-attempt01",
+        "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E60-attempt01"
+      ],
+      "start": 1795149442.5731506,
+      "end": 1795150798.2217615,
+      "physical_overlap_wall_s": 1355.648610830307
+    },
+    {
+      "attempts": [
         "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E60-attempt01",
         "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E30-attempt01"
       ],
@@ -1703,17 +2048,17 @@
         "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E300-attempt01",
         "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E300-attempt01"
       ],
-      "wall_s": 264.9812047481537,
+      "wall_s": 8095.847539901733,
       "measured_cpu": {
         "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E300-attempt01": {
-          "sampled_wall_s": 260.2322082519531,
-          "cpu_s": 275.31999999999994,
-          "mean_cores": 1.0579781874403458
+          "sampled_wall_s": 8090.227909088135,
+          "cpu_s": 9211.3,
+          "mean_cores": 1.138571138354769
         },
         "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E300-attempt01": {
-          "sampled_wall_s": 250.21366000175476,
-          "cpu_s": 257.65000000000003,
-          "mean_cores": 1.0297199601260503
+          "sampled_wall_s": 8080.093336582184,
+          "cpu_s": 9166.86,
+          "mean_cores": 1.1344992710044004
         }
       },
       "cpu_scope": "Within-overlap adjacent samples with the same live process tree."
@@ -1774,6 +2119,46 @@
           "sampled_wall_s": 115.09102010726929,
           "cpu_s": 118.41000000000001,
           "mean_cores": 1.0288378701451886
+        }
+      },
+      "cpu_scope": "Within-overlap adjacent samples with the same live process tree."
+    },
+    {
+      "attempts": [
+        "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01",
+        "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E300-attempt01"
+      ],
+      "wall_s": 1247.3349509239197,
+      "measured_cpu": {
+        "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01": {
+          "sampled_wall_s": 1241.3459222316742,
+          "cpu_s": 1380.7599999999998,
+          "mean_cores": 1.1123088055243207
+        },
+        "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E300-attempt01": {
+          "sampled_wall_s": 1241.0741307735443,
+          "cpu_s": 1507.800000000001,
+          "mean_cores": 1.2149153403594113
+        }
+      },
+      "cpu_scope": "Within-overlap adjacent samples with the same live process tree."
+    },
+    {
+      "attempts": [
+        "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01",
+        "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E600-attempt01"
+      ],
+      "wall_s": 1306.6829771995544,
+      "measured_cpu": {
+        "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01": {
+          "sampled_wall_s": 1301.4771304130554,
+          "cpu_s": 1462.4199999999998,
+          "mean_cores": 1.1236616962572867
+        },
+        "job-20261120T042344Z-w55-f-b-r55-eval-PANN_PPO_S5-s2-E600-attempt01": {
+          "sampled_wall_s": 1301.4858357906342,
+          "cpu_s": 1431.11,
+          "mean_cores": 1.0995970610241954
         }
       },
       "cpu_scope": "Within-overlap adjacent samples with the same live process tree."
