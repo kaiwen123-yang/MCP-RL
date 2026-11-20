@@ -50,6 +50,47 @@ def replay(bottom, times, cell_queries, half):
     return states
 
 
+def label_revisits(target, raw):
+    """Attach completed-lap and geometric overlap labels to the reconstructed event table."""
+    with np.load(raw/'trajectory.npz') as trace:
+        t, phase = trace['time'], trace['phase']
+    # A return across x=.8 precedes the home hold. Only the subsequent
+    # turn_home starts the next lap; final complete retains the last lap.
+    next_laps = t[1:][(phase[:-1]==7)&(phase[1:]==8)].tolist()
+    half=np.sqrt(.001)/2
+    area_by_kind=defaultdict(float)
+    query_by_kind=defaultdict(set)
+    target_tmp=target.with_suffix('.classifying')
+    with gzip.open(target,'rt',newline='') as src, gzip.open(target_tmp,'wt',newline='') as dst:
+        rows=csv.DictReader(src)
+        fields=['mission_lap','last_true_load_lap','same_world_cell_history','exact_query_next_touch_overlap_m2']
+        out=csv.DictWriter(dst,fieldnames=rows.fieldnames+fields)
+        out.writeheader()
+        for row in rows:
+            xy=[float(row['query_x']),float(row['query_y'])]
+            lap=1+bisect_right(next_laps,float(row['time_s']))
+            prior=1+bisect_right(next_laps,float(row['last_load_s'])) if row['last_load_s'] else None
+            kind='outside' if not row['cell_ix'] else 'never_loaded'
+            if prior is not None:
+                leg='same_foot' if LEGS[int(row['previous_leg'])]==row['leg'] else 'cross_foot'
+                kind=('earlier_lap_' if prior<lap else 'same_lap_')+leg
+            overlap=0.
+            if float(row['next_touch_cell_area_m2'])>0:
+                td=[float(row[k]) for k in ('next_touch_x','next_touch_y')]
+                key=[int(row[k]) for k in ('cell_ix','cell_iy')]
+                width=[max(0.,min(x+half,z+half,(k+1)*.02)-max(x-half,z-half,k*.02))
+                       for x,z,k in zip(xy,td,key)]
+                overlap=width[0]*width[1]
+            out.writerow(dict(row,mission_lap=lap,last_true_load_lap=prior,
+                              same_world_cell_history=kind,exact_query_next_touch_overlap_m2=overlap))
+            area_by_kind[kind]+=overlap
+            query_by_kind[kind].add((row['time_s'],row['leg']))
+    target_tmp.replace(target)
+    return dict(foot_queries_touching_each_history_type={k:len(v) for k,v in query_by_kind.items()},
+                exact_next_touch_overlap_area_m2_by_history=dict(area_by_kind),
+                exact_next_touch_overlap_area_m2=sum(area_by_kind.values()))
+
+
 def collect(case,level):
     begin = time.time()
     compact = F/'results'/REL/'w55/f'
@@ -177,6 +218,7 @@ def collect(case,level):
         max_abs_same_state_cap_delta_m_s=max(abs(d['with_pann_cap']-d['zero_feature_cap']) for d in decisions),
         table=target.name,source_root=str(raw),start_unix_s=begin,end_unix_s=time.time(),
         scope='Actor before same-tick replan. Frozen FP64 CPU material law replays observed endpoints; e/q reconstructed. Actual recovery values read from original transitions. Per-cell shared area is the smaller of the two covered areas in that cell. Reloads are identified by original event ID. Unavailable future touchdown or load is blank.')
+    summary.update(label_revisits(target,raw))
     (SMALL/f'{case}-{level}.json').write_text(json.dumps(summary,indent=2)+'\n')
     print(json.dumps(summary),flush=True)
 
