@@ -148,6 +148,24 @@ def record(args):
         causal_material_memory_benefit_evaluated=False,
         PPO={'new_samples':0, 'new_updates':0, 'donor':0}, deadline=None,
         wall_deadline_enabled=False, kill_on_conversation_end=False)
+    material_summary = WINDOW/'c/summary.json'
+    if material_summary.exists():
+        summary = read(material_summary)
+        fit = read(WINDOW/'c/fit.json')
+        fit_start, fit_end = fit['start_unix'], fit['end_unix']
+        physical_and_fit = []
+        for i, (a, a0, a1) in enumerate(observed):
+            for b, b0, b1 in observed[i+1:]:
+                overlap = min(a1,b1,fit_end)-max(a0,b0,fit_start)
+                if overlap>0:
+                    physical_and_fit.append(dict(attempts=[a,b], overlap_wall_s=overlap))
+        index['material_candidate'] = dict(summary=str(material_summary.relative_to(ROOT)),
+                 candidate_sha256=summary['weights_candidate_sha256'],
+                 adopted_in_robot=summary['decision_path']['candidate_used_in_robot'],
+                 historical_complete=summary['historical_complete'],
+                 independent_holdouts=['W46 B with 18 world cells', 'W55 F-A r53 with 5 preselected event families'],
+                 GPU=summary['gpu'], training=summary['training'],
+                 fit_unix_interval=[fit_start,fit_end], two_physical_plus_GPU_fit_overlap=physical_and_fit)
     write(index_path, index)
     print(json.dumps({'status':args.status,'completed':len(done),'highest':highest,
                       'physics_steps':index['completed_physical_steps'],
