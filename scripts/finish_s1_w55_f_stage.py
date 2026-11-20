@@ -32,8 +32,8 @@ def navigation():
     phase = read(WINDOW/'phase.json')
     current_path = ROOT/REL/'current.json'
     current = read(current_path)
-    current['date'] = time.strftime('%Y-%m-%d Asia/Shanghai')
     if current.get('next_plan') == index['plan']:
+        current['date'] = time.strftime('%Y-%m-%d Asia/Shanghai')
         current['status'] = 'W55_' + index['status']
     info = current['W55']
     info.pop('active_F_stages_at_snapshot',None)

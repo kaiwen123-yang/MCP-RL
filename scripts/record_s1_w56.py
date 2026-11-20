@@ -144,6 +144,13 @@ def derive():
         phase['batch_benchmark_unix_s']=[stats['start_unix'],stats['end_unix']]
         phase['two_physics_plus_material_benchmark_overlap_s']=sum(
             max(0.,min(p['end_unix_s'],stats['end_unix'])-max(p['begin_unix_s'],stats['start_unix'])) for p in overlap)
+    direct=WINDOW/'c/cpu-gpu-direct-single-launch.json'
+    if direct.is_file():
+        timing=read(direct)
+        left=datetime.fromisoformat(timing['start_utc']).timestamp()
+        right=datetime.fromisoformat(timing['end_utc']).timestamp()
+        phase['direct_CPU_GPU_measurement_with_two_original_robots_s']=sum(
+            max(0.,min(p['end_unix_s'],right)-max(p['begin_unix_s'],left)) for p in overlap)
     receipts={}
     for p in sorted((WINDOW/'delivery').glob('*/delivery.json')):
         j=read(p)
@@ -180,6 +187,9 @@ def derive():
     current.update(date=datetime.fromtimestamp(now,timezone.utc).astimezone().isoformat(timespec='seconds'),
         status='W56_execution',latest_executed_window='W56',latest_results=str(REL/'w56/index.json'),
         latest_execution_state=str(REL/'w56/phase.json'),result_source_commit_scope='W55 reviewed baseline. Current W56 per-case results and live process snapshot are in latest_execution_state.')
+    if '/releases/tag/tm-s1-go2-local-readiness-r12-w55' in current.get('publication',{}).get('release',''):
+        current['W55']['publication']=current['publication']
+    current['publication']=publication
     current['W56'].update(status=execution,publication=publication,index=index['phase'].replace('phase.json','index.json'),phase=index['phase'],
         robot_control_implemented=r57,robot_physics_started=started,original_qualification=summary['w56'])
     current['continuation']['D57_tmux']['w56_publication']='s1-w56-publish-results'
@@ -200,6 +210,10 @@ def derive():
         plan.update(status=index['status'],robot_control_implemented=r57,robot_physics_started=started,last_actual_index=str(REL/'w56/index.json'),
                     current_execution_identity=str(REL/'w56/phase.json'),qualification_scope='W55 historical aggregate via current.W55; all W56 stages independently qualified.')
         w55=read(ROOT/REL/'w55/index.json')
+        plan['last_actual_F']='S5-r55' if not any(r.get('physical_samples') or r.get('heartbeat') for r in newer if r['label'].startswith('F')) else 'see W56 phase.json by case'
+        plan['last_actual_N']='S5-r59' if any(r.get('physical_samples') or r.get('heartbeat') for r in newer if r['label']=='N-A-r59') else 'S5-r56'
+        plan['W56_stage_passes']={level:sum(r['level']==level and r['status']=='passed' for r in newer) for level in STAGES}
+        plan['legacy_unprefixed_pass_counts_window']='W55'
         plan.update({level+'_passes':count for level,count in w55['original_stage_passes'].items()})
         plan['highest_passed_original_stage']=w55['highest_passed_original_stage']
         save(config,d)
