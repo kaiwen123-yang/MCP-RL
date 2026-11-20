@@ -19,6 +19,21 @@ def link_runtime_assets():
     linked.append(dict(path=str(rel),retained_source=str(source.resolve()),size=source.stat().st_size))
  return linked
 
+def build_wheel_client():
+ # Python and the MJPC fork both report 3.2.3 with different mjModel
+ # layouts. Compile the same operator against the owner of each pointer.
+ import mujoco
+ wheel=Path(mujoco.__file__).resolve().parent
+ library=DEST/'lib'
+ client=library/'libw55_support_python.so'
+ subprocess.run(['g++','-std=c++17','-O3','-shared','-fPIC','-I'+str(wheel/'include'),
+     str(ROOT/'experiments/terrain_memory/w55_n/support.cc'),'-L'+str(wheel),
+     '-Wl,-rpath,'+str(wheel),'-l:libmujoco.so.3.2.3','-o',str(client)],check=True)
+ return dict(execution_library=str(client.relative_to(ROOT)),execution_library_sha256=sha(client),
+     execution_wheel_mujoco_sha256=sha(wheel/'libmujoco.so.3.2.3'),
+     execution_wheel_header_sha256=sha(wheel/'include/mujoco/mjmodel.h'),
+     native_header_sha256=sha(CACHE/'_deps/mujoco-src/include/mujoco/mjmodel.h'),
+     native_support_library_sha256=sha(library/'libw55_support.so'))
 def main():
  begin=time.time();usage=resource.getrusage(resource.RUSAGE_CHILDREN);DEST.mkdir(exist_ok=True)
  runtime_assets=link_runtime_assets()
@@ -71,6 +86,7 @@ def main():
   build_concurrency_cap=6,translation_units=len(jobs),runtime_assets_adaptation=runtime_assets,compile_commands=jobs,link_command=link,cached_dependencies_read_only=True,
   mujoco_library_sha256=sha(DEST/'lib/libmujoco.so.3.2.3'),qualification='original_E30_not_yet_run',
   source_files_sha256={str(p.relative_to(SOURCE)):sha(p) for p in (SOURCE/'mjpc').rglob('*') if p.suffix in ('.h','.cc')})
+ ident.update(build_wheel_client())
  ident['configuration_overrides']['w54_n_execution'].update(execution_library_sha256=ident['execution_library_sha256'],execution_core_sha256=ident['execution_core_sha256'])
  ident['status']='built_not_run'
  ident['transition_fd_count_semantics']='direct E-composed 2ms evaluations including one nominal per node; terminal sensor evaluations separately included; forward FD mode0'
