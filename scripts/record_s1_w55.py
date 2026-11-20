@@ -45,7 +45,7 @@ def cases(worktree, lane):
         if p.name.endswith('-resolved.json'):
             continue
         d = read(p)
-        if 'physical_samples' not in d:
+        if p.stem != d.get('attempt') or 'evaluation_stage' not in d or 'physical_samples' not in d:
             continue
         row = rows.setdefault(d['attempt'], {'attempt': d['attempt'], 'lane': lane.upper()})
         row.update(select(d, ('success', 'stage_status', 'reason', 'error', 'simulation_s',

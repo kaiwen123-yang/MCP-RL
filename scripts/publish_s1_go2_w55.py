@@ -106,6 +106,13 @@ def prepare(name, roots, directory):
 
 
 def publish(name, roots):
+    STAGING.mkdir(parents=True, exist_ok=True)
+    with (STAGING / 'publication.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        publish_locked(name, roots)
+
+
+def publish_locked(name, roots):
     directory = SMALL / 'delivery' / name
     directory.mkdir(parents=True, exist_ok=True)
     manifest = directory / 'manifest.json'
@@ -142,7 +149,4 @@ if __name__ == '__main__':
     parser.add_argument('--name', required=True)
     parser.add_argument('--source', action='append', default=[], type=Path)
     args = parser.parse_args()
-    STAGING.mkdir(parents=True, exist_ok=True)
-    with (STAGING / 'publication.lock').open('a') as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX)
-        publish(args.name, args.source)
+    publish(args.name, args.source)
