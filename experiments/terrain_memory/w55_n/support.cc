@@ -282,13 +282,18 @@ extern "C" int w55_checks(const mjModel* m,mjData* d,double* min_gap,double* mar
   mj_kinematics(m,d);mj_comPos(m,d);
   int floor=mj_name2id(m,mjOBJ_GEOM,"floor"),base=mj_name2id(m,mjOBJ_BODY,"trunk");
   double floor_z=d->geom_xpos[3*floor+2],clearance=1.e9,closing=0.;
+  XYZ closest_local{}; Dof closing_jac{};
   if(d->qpos[2]<.12 || d->xmat[9*base+8]<=0.)return 1;
   const double* rot=d->xmat+9*base;
   if(std::abs(std::asin(std::clamp(-rot[6],-1.,1.)))>1.2 || std::abs(std::atan2(rot[7],rot[8]))>1.2)return 1;
   for(int g=m->body_geomadr[base];g<m->body_geomadr[base]+m->body_geomnum[base];++g)if(m->geom_contype[g]||m->geom_conaffinity[g]){
     double seg[6];double dist=mj_geomDistance(m,d,floor,g,1.,seg);
     if(dist<=0.)return 2;
-    if(dist<clearance){clearance=dist;double jp[3*V];mj_jac(m,d,jp,nullptr,seg+3,base);closing=std::max(0.,-mju_dot(jp+2*V,d->qvel,V));}
+    if(dist<clearance){
+      clearance=dist;double jp[3*V];mj_jac(m,d,jp,nullptr,seg+3,base);
+      mju_copy(closing_jac.data(),jp+2*V,V);closing=std::max(0.,-mju_dot(closing_jac.data(),d->qvel,V));
+      XYZ rel;mju_sub3(rel.data(),seg+3,d->xpos+3*base);mju_mulMatTVec3(closest_local.data(),d->xmat+9*base,rel.data());
+    }
   }
   for(int j=0;j<U;++j){int jid=m->actuator_trnid[2*j];double q=d->qpos[m->jnt_qposadr[jid]];
     if(q<m->jnt_range[2*jid] || q>m->jnt_range[2*jid+1])return 3;
@@ -304,9 +309,20 @@ extern "C" int w55_checks(const mjModel* m,mjData* d,double* min_gap,double* mar
         touchdown=std::min(touchdown,(f.vel[2]+std::sqrt(f.vel[2]*f.vel[2]+2*9.81*z))/9.81);}
       double free=clearance-closing*touchdown-.5*9.81*touchdown*touchdown;*margin=std::min(*margin,free);if(free<=0)return 6;
     }else{
-      Response s;if(!response(m,d,feet,s))return 7;QP qp;Vec raw{},origin{},x{};constraints(m,d,s,qp,raw,d->ctrl);
-      Vec normal=row_of(s,2);double required=closing*closing/(2*clearance);qp.lower(normal,required-s.a0[2]);
-      if(!qp.project(raw,x))return 7;double available=s.a0[2]+dot(normal,x);
+      Response s;if(!response(m,d,feet,s))return 7;QP qp;Vec raw{},x{},normal{};constraints(m,d,s,qp,raw,d->ctrl);
+      // Close and arrest the same body-fixed point, including its angular
+      // component. Directional kinematics follows that point in world space.
+      double q[19],speed[2],eps=1.e-5;mju_copy(q,d->qpos,m->nq);
+      for(int side=0;side<2;++side){
+        mju_copy(d->qpos,q,m->nq);mj_integratePos(m,d->qpos,d->qvel,side==0?eps:-eps);mj_kinematics(m,d);mj_comPos(m,d);
+        XYZ world;mju_mulMatVec3(world.data(),d->xmat+9*base,closest_local.data());mju_addTo3(world.data(),d->xpos+3*base);
+        double jp[3*V];mj_jac(m,d,jp,nullptr,world.data(),base);speed[side]=mju_dot(jp+2*V,d->qvel,V);
+      }
+      mju_copy(d->qpos,q,m->nq);mj_kinematics(m,d);mj_comPos(m,d);
+      double drift=(speed[0]-speed[1])/(2*eps)+mju_dot(closing_jac.data(),s.a0.data(),V);
+      for(int j=0;j<U;++j)normal[j]=mju_dot(closing_jac.data(),s.A[j].data(),V);
+      double required=closing*closing/(2*clearance);qp.lower(normal,required-drift);
+      if(!qp.project(raw,x))return 7;double available=drift+dot(normal,x);
       *margin=std::min(*margin,clearance-closing*closing/(2*std::max(available,1.e-10)));
     }
   }

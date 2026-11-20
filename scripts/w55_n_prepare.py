@@ -60,6 +60,19 @@ def main():
   if(!trajectory[recovery].failure && (best_nominal<0 ||
        trajectory[recovery].total_return<trajectory[best_nominal].total_return))best_nominal=recovery;
 ''')
+    change(pj,'  w54_nominal_slot=best_nominal;',r'''  if(const char* dir=std::getenv("MJPC_W54_N_RECORD_DIR")){
+    std::ofstream record(std::string(dir)+"/nominal-candidates.jsonl",std::ios::app);
+    record<<std::setprecision(17);
+    for(int i=0;i<=recovery;++i){const auto& tr=trajectory[i];
+      record<<"{\"call_id\":"<<(w53_call+1)<<",\"time_s\":"<<time<<",\"slot\":"<<i
+            <<",\"generator\":\""<<(i==recovery?"support_recovery":"shifted_nominal")<<"\",\"J\":"<<tr.total_return
+            <<",\"feasible\":"<<(tr.failure?"false":"true")<<",\"first_constraint_code\":"<<tr.w55_reason
+            <<",\"first_constraint_time_s\":"<<tr.w55_first_time<<",\"min_arrest_margin_m\":"<<tr.w55_margin<<"}\n";
+    }
+  }
+  w54_nominal_slot=best_nominal;''')
+    change(pj,'num_trajectory_ = mju_min(num_rollouts_gui_, kMaxTrajectory);',
+               'num_trajectory_ = mju_min(num_rollouts_gui_, kMaxTrajectory-1);')
     change(pj,'    feedback_scaling = linesearch_steps[best_nominal];','    feedback_scaling = best_nominal==num_trajectory_?0.:linesearch_steps[best_nominal];')
     f=SRC/'mjpc'/pj;s=f.read_text()
     s=s.replace('int64_t hdr[10]={54,3,','int64_t hdr[10]={55,1,').replace('horizon*40','horizon*(4*W55Diag)').replace('k*40+foot*10','k*(4*W55Diag)+foot*W55Diag')
