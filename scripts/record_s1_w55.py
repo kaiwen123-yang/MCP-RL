@@ -214,6 +214,9 @@ def record(args):
     current_path = ROOT / REL / 'current.json'
     current = read(current_path)
     current['W55'].update(completed_original_physical_steps=index['completed_physical_steps'],
+                          completed_physical_steps=index['completed_physical_steps'],
+                          completed_simulation_s=index['completed_simulation_s'],
+                          completed_process_cpu_s=index['completed_attempt_cpu_s'],
                           **{level+'_passes': count for level,count in stage_passes.items()})
     write(current_path, current)
     print(json.dumps({'status':args.status,'completed':len(done),'highest':highest,
