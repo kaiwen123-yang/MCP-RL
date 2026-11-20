@@ -1,12 +1,11 @@
 """Serial D57 publication of the already qualified W56 branches and their stage evidence."""
 import fcntl
 import json
-from pathlib import Path
 import subprocess
 import time
 
 from check_s1_w56_outcomes import check
-from record_s1_w56 import BASE,CASES,F,HOST,MATERIAL,N,REL,ROOT,WINDOW,derive,read
+from record_s1_w56 import CASES,HOST,N,REL,ROOT,derive,read
 
 BRANCHES=('codex/w56-f','codex/w56-native','codex/w56-material')
 WRITER=HOST/'MCP-RL-w55-integration'
@@ -14,7 +13,8 @@ LOCK=WRITER/'work/w55-integration.lock'
 
 
 def git(*args):
-    return subprocess.check_output(['git',*map(str,args)],cwd=ROOT,text=True).strip()
+    return subprocess.check_output(['git',*map(str,args)],cwd=ROOT,text=True,
+                                   stderr=subprocess.PIPE).strip()
 
 
 def versions():
@@ -78,7 +78,17 @@ def watch():
     while True:
         current=versions()
         if current!=last:
-            index=publish()
+            try:
+                index=publish()
+            except subprocess.CalledProcessError as error:
+                detail=error.stderr or ''
+                transient=any(text in detail.lower() for text in ('timed out','timeout','tls',
+                    'could not resolve','connection reset','connection refused','connection was reset','http 502','http 503','http 504'))
+                if error.cmd[1] not in ('fetch','push') or not transient:
+                    raise
+                print(f'GitHub {error.cmd[1]} transport: {detail.strip()}. The next poll fetches main before any push.',flush=True)
+                time.sleep(30)
+                continue
             last=current
             marker.write_text(json.dumps(current))
             if index['status']=='declared_ladders_concluded_and_delivered':
