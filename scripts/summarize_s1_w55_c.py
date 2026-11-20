@@ -78,6 +78,39 @@ def main():
             candidate_used_in_robot=False,candidate_action_counterfactual_measured=False,closed_loop_memory_benefit_evaluated=False),
         old_replay='reviews/W54-review/pann-replay-summary.json', validation='All cell and family maxima are empirical on the indicated full replay inputs. The two endpoint comparisons separate change of boundary from change of numerical step; their maxima need not add. Selection uses no internal-state labels. The real floor and controller never receive the candidate.',
         new_robot_episodes=0,new_PPO_samples=0,new_PPO_updates=0,donor=0)
+    old=read('known-nine-candidate.json')
+    known=old['paired']['r48']['plant02ms']['rows']
+    output['known_fast_N48_cells']=[r for r in known if r['key'] in ([60,7],[61,8])]
+    independence=read('disjoint-holdouts.json')['confirming_N44_vs_audited_nine']
+    separate=[r for r in independence if not r['near_known_complete_boundaries']]
+    output['N44_independent_confirmation']={
+        'resolved_high_rate_cells_above_15_percent':len(independence),
+        'complete_histories_dissimilar_to_previously_audited_nine':len(separate),
+        'physically_distinct_event_families_after_exclusion':len({tuple(r['family']) for r in separate}),
+        'highest_peak_relative_error':max(r['recovery_error_over_peak'] for r in fit['qualifying_cells']
+                  if key(r) in {v['key'] for v in separate})}
+    output['candidate_decision']='Retain as offline candidate. Both whole-episode holdouts have higher worst post-release displacement error than the frozen model. F1–F6 show mixed transfer. No promotion of this candidate to a walking controller.'
+    output['bridge']={'footprint_m2':.001,'grid_m':.02,'height_m':.05,'pressure_multiplier_Pa_per_MPa':25000.,
+        'ownership':'lowest overlapping eligible foot; integrate freely after release; original failed out-of-domain candidate step excluded',
+        'checked_reference_rows':sum(v['reference_replay_published_rows'] for v in cases.values()),
+        'max_reference_saved_force_difference_N':max(v['max_reference_published_force_N'] for v in cases.values())}
+    output['original_arrays_directory']=str(RAW)
+    files=[f for f in RAW.rglob('*') if f.is_file()]
+    output['original_file_count']=len(files)
+    output['original_bytes']=sum(f.stat().st_size for f in files)
+    output['recorded_d57_commands']=[
+        'bash scripts/build_s1_w55_c.sh',
+        'python scripts/s1_w55_c_data.py N44 F51 N48 F52 B46; python scripts/s1_w55_c_data.py F53',
+        'python scripts/s1_w55_c_replay.py --device cpu N44 F51; python scripts/s1_w55_c_replay.py --device cpu N48 F52',
+        'python scripts/check_s1_w55_c_columns.py frozen work/assets/B_random1000--ideal-potentials.npz N44',
+        'python scripts/train_s1_w55_c.py',
+        'python scripts/s1_w55_c_groups.py; python scripts/s1_w55_c_historical.py prepare',
+        'bash scripts/finish_s1_w55_c.sh (candidate/frozen holdout curves, historical, original JAX and CPU–GPU validation)',
+        'python scripts/s1_w55_c_known.py; python scripts/summarize_s1_w55_c.py']
+    output['workload_notes']={'CPU_initial_reference_assembly_wall_s':{n:read(n+'-inventory.json')['reference_and_assembly_wall_s'] for n in cases},
+        'early_reference_assembly_CPU_s':None,'early_reference_assembly_note':'The first five assembly invocations recorded wall time only. Replay, targeted fit and final F53 assembly carry measured process CPU times.',
+        'GPU_build':'6.481s wall, 5.998s user and .480s system in work/w55-c/build2.log; CPU library .627s; the preceding launcher stopped before compilation because /usr/bin/time was absent.',
+        'memory_sampling':'Fit process NVML via nvidia-smi at 0.5s. Peak includes the CUDA context. Independent concurrent projects are not included.'}
     write(COMPACT/'summary.json',output)
     print('Completed offline assessment:',len(rows),'historical paths and',len(cases),'episode cohorts.',flush=True)
 

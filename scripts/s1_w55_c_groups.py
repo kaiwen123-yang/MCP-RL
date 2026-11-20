@@ -52,12 +52,21 @@ def old_nine():
 
 def main():
     seen=signatures('N44')
+    audited=old_nine()
+    measured=json.loads((COMPACT/'frozen-N44.json').read_text())['fine']
+    confirmed={','.join(map(str,r['key'])) for r in measured if r['unloaded_reference_peak_um']>=1 and
+               r['max_continuous_loading_rate_per_s']>=1 and r['recovery_error_over_peak'] is not None and r['recovery_error_over_peak']>=.15}
+    independence=[]
+    for name,g,shape in seen:
+        k=name.split(':')[-1]
+        if k in confirmed:
+            independence.append(dict(key=k,family=list(g),near_known_complete_boundaries=[peer for peer,_,h in audited if similar(shape,h)]))
     sn,_,_=synthetic()
     seen += [(f'synthetic:{j}',(j,),descriptor(sn[:,j])) for j in range(sn.shape[1])]
     out={}
     for name in ('F51','B46','F53'):
         if name=='B46':
-            seen+=old_nine()+signatures('N48')+signatures('F52')
+            seen+=audited+signatures('N48')+signatures('F52')
         current=signatures(name);matched={}
         for key,g,shape in current:
             for peer,_,saved in seen:
@@ -73,7 +82,7 @@ def main():
     write(COMPACT/'disjoint-holdouts.json',dict(
         split='Entire robot episodes in single cohorts. Use physically connected foot-loading event identities within each episode. If one member resembles a previously seen complete boundary, exclude its whole event family from primary held-out scores.',
         distance='Entire compression-pulse sequence; same pulse count, compare every width and intervening release duration within 10% or 3 fine ticks; peak within 10% or 0.0001 strain; 32-sample waveform RMS within 7.5% or 0.00004 strain. Ignore absolute onset and terminal free-tail duration for conservative duplicate detection. Pulses below 1e-5 strain (0.5 um) are treated as negligible only in grouping. Full measured input retained by all evaluations.',
-        cohorts=out))
+        confirming_N44_vs_audited_nine=independence,cohorts=out))
     print({k:(len(v['kept_complete_history_keys']),v['kept_families']) for k,v in out.items()},flush=True)
 
 
