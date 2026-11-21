@@ -5,9 +5,10 @@ import subprocess
 import time
 
 from check_s1_w56_outcomes import check
+import s1_w60_clock_evidence as r60_progress
 from record_s1_w56 import CASES,HOST,N,REL,ROOT,derive,read
 
-BRANCHES=('codex/w56-f','codex/w56-native','codex/w56-material','codex/w56-r60')
+BRANCHES=('codex/w56-f','codex/w56-native','codex/w56-material','codex/w56-r60','codex/w56-r58-prefix','codex/w60-prefix')
 WRITER=HOST/'MCP-RL-w55-integration'
 LOCK=WRITER/'work/w55-integration.lock'
 
@@ -34,7 +35,8 @@ def versions():
         files[str(path)]=path.stat().st_mtime_ns
     for path in (ROOT/REL/'w55/delivery').glob('f-*-r55-e600/delivery.json'):
         files[str(path)]=path.stat().st_mtime_ns
-    return [refs,files]
+    advancing=[case+'-'+level for case,level,*_ in r60_progress.milestones()]
+    return [refs,files,advancing]
 
 
 def merge_evidence():
@@ -55,9 +57,12 @@ def publish():
         git('merge','--no-edit','origin/main')
         merge_evidence()
         check()
+        r60_progress.record()
         index=derive()
         paths=[REL/'w56/index.json',REL/'w56/phase.json',REL/'w56/baseline',
                REL/'current.json','experiments/terrain_memory/s1-go2-local-readiness-r12.json']
+        if r60_progress.REPORT.is_file():
+            paths.append(r60_progress.REPORT.relative_to(ROOT))
         git('add','--',*paths)
         if subprocess.run(['git','diff','--cached','--quiet','--',*paths],cwd=ROOT).returncode==1:
             git('commit','--only','-m','Derive W56 task qualifications, evidence and active queues from D57 originals','--',*paths)
