@@ -546,8 +546,9 @@ def run(args, c, joint=None):
                     material_info={'force_boundary_bottom':joint.force_boundary_bottom.copy(),
                         'force_N':grf.copy(),'velocity_m_s':joint.velocity.copy(),
                         'instantaneous_stiffness_N_m':f_config['material_stiffness_N_m']}
-                    if c.get('controller_build') == 'S5-r58':
+                    if c.get('controller_build') in ('S5-r58','S5-r60'):
                         material_info['material_observer'] = joint.observer
+                    if c.get('controller_build')=='S5-r60':joint.observer.mark('force_mpc_wbc' if replan_now else 'wbc', t)
                     tf=time.perf_counter()
                     action=agent.update(t,data,mission,contact,grf,joint.soft.copy(),
                         material_info=material_info,replan=replan_now)
@@ -752,6 +753,7 @@ def run(args, c, joint=None):
                     reason = 'stage_horizon_reached'
                     break
                 tp = time.perf_counter()
+                if c.get('controller_build')=='S5-r60':joint.observer.mark('physics_substeps',float(data.time))
                 for _ in range(substeps):
                     sample_t = float(data.time)
                     raw_pd=60*(data.ctrl-data.qpos[qadr])-5*data.qvel[vadr]
@@ -797,7 +799,7 @@ def run(args, c, joint=None):
                     actual_contacts, actual_grf, invalid, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
                     if joint is not None:
                         joint.after_physics(physical_dt,actual_grf)
-                        if c.get('controller_build') == 'S5-r58':
+                        if c.get('controller_build') in ('S5-r58','S5-r60'):
                             joint.observer.completed(sample_t, float(data.time),
                                                      joint.force_boundary_bottom, joint.velocity)
                     if compact:

@@ -74,6 +74,47 @@ def describe(worktree,compact,case,level,mode):
                    max_same_input_recovery_effect_m_s=cap_delta,executed_cap_range_m_s=[float(actor_caps.min()),float(actor_caps.max())] if len(rows) else None))
 
 
+def differences_from_original(on,off):
+    for k in ('checkpoint_sha256','normalizer_sha256','workers'):
+        if on[k]!=off[k]:
+            raise ValueError('Paired case changed '+k)
+    differences=dict(roundtrips=off['roundtrips']-on['roundtrips'],slip_integral=off['slip_integral']-on['slip_integral'],
+        peak_material_strain=off['peak_material_strain']-on['peak_material_strain'])
+    passage=lambda d:{(r['lap'],r['direction']):r for r in d['passages'] if r.get('completed')}
+    ref,change=passage(on),passage(off)
+    differences['matched_passages']=[dict(lap=k[0],direction=k[1],entry_time_change_s=change[k]['entry_s']-ref[k]['entry_s'],
+        exit_time_change_s=change[k]['exit_s']-ref[k]['exit_s']) for k in sorted(ref.keys()&change.keys())]
+    return differences
+
+
+def stage_timing(directory,stage):
+    state=read(directory/(stage+'.json'))
+    result=read(directory.parent/directory.name.rsplit('-',1)[1]/(state['attempt']+'.json'))
+    physics_wall=state['physical_ended_unix_s']-state['physical_started_unix_s']
+    return dict(physical_s=state['physical_s'],physical_wall_s=physics_wall,
+                physical_s_per_wall_s=state['physical_s']/physics_wall,
+                child_cpu_s=state['user_cpu_s']+state['system_cpu_s'],
+                material_observer=result['policy']['observer'])
+
+
+def compare_r60_backend(root,case,level,current):
+    letter=case.name.split('-')[1]
+    r58=root.parent/'MCP-RL-w56-material'/REL/'w56/f'/f'F-{letter}-r58'
+    stage=r58/(level+'.json')
+    if level in ('E30','E60'):
+        previous=read(r58/(level+'-paired.json'))['new']
+        if previous['attempt']!=read(stage)['attempt']:
+            raise ValueError('r58 paired source differs from original stage')
+        return dict(status='paired_originals',r58=previous,
+                    difference_r60_minus_r58=differences_from_original(previous,current),
+                    r58_timing=stage_timing(r58,level),r60_timing=stage_timing(case,level),
+                    intervention='Same causal 10-substep observer and WBC normal reference, CPU FP64 material execution in r60.')
+    interruption=read(r58/'E300.json')
+    return dict(status='no_completed_r58_original_comparator',r58_stage_status=read(stage)['status'] if stage.is_file() else 'not_run',
+                r58_E300_attempt=interruption['attempt'],r58_E300_stage_status=interruption['status'],
+                r58_E300_diagnostics=str(REL/'w56/c/r58-e300-stall.json'))
+
+
 def compare(case,level):
     root=Path(__file__).resolve().parents[1]
     label=case.name
@@ -83,18 +124,12 @@ def compare(case,level):
     original=base/REL/'w55/f'
     off=describe(root,case.parent/label.split('-')[-1],case,level,mode)
     on=describe(base,original,original/f'F-{letter}-r55',level,'learned_history')
-    for k in ('checkpoint_sha256','normalizer_sha256','workers'):
-        if on[k]!=off[k]:
-            raise ValueError('Paired case changed '+k)
-    difference=dict(roundtrips=off['roundtrips']-on['roundtrips'],slip_integral=off['slip_integral']-on['slip_integral'],
-        peak_material_strain=off['peak_material_strain']-on['peak_material_strain'])
-    passage=lambda d:{(r['lap'],r['direction']):r for r in d['passages'] if r.get('completed')}
-    ref,change=passage(on),passage(off)
-    difference['matched_passages']=[dict(lap=k[0],direction=k[1],entry_time_change_s=change[k]['entry_s']-ref[k]['entry_s'],
-        exit_time_change_s=change[k]['exit_s']-ref[k]['exit_s']) for k in sorted(ref.keys()&change.keys())]
     destination=case/(level+'-paired.json')
-    write(destination,dict(case=letter,stage=level,baseline=on,new=off,difference_new_minus_baseline=difference,
+    pair=dict(case=letter,stage=level,baseline=on,new=off,difference_new_minus_baseline=differences_from_original(on,off),
         intervention=('Twelve explicit actor recovery inputs zeroed before frozen actor' if mode=='zero_recovery_features' else
                       'Causal observer window and material normal execution reference together'),
-        scope='One deterministic original case per stage. Event and phase comparisons after closed-loop divergence.'))
+        scope='One deterministic original case per stage. Event and phase comparisons after closed-loop divergence.')
+    if label.endswith('-r60'):
+        pair['r58_material_backend_comparison']=compare_r60_backend(root,case,level,off)
+    write(destination,pair)
     return destination
