@@ -67,6 +67,7 @@ def record():
           event='first original material load' if level=='E30' else 'last solved MPC time of the corresponding interrupted r58 E300',
           solved_packets=after,observed_heartbeat=heart)
         changed=True
+    changed=compare_recorded_arms(data) or changed
     if changed:
         tmp=REPORT.with_suffix('.w60-tmp')
         tmp.write_text(json.dumps(data,indent=2)+'\n')
@@ -114,3 +115,48 @@ def sample_active_calls(previous):
             tmp.replace(file)
             print('Captured a repeated r60 call marker',attempt,op,t,flush=True)
     return active
+
+
+def compare_recorded_arms(data):
+    """Compare original r58 & r60 outputs on their common 500 Hz lattice."""
+    import numpy as np
+    comparisons=data.setdefault('r58_r60_matched_originals',{})
+    changed=False
+    baseline=ROOT.parent/'MCP-RL-w56-material'
+    for case in ('A','B'):
+        for level in ('E30','E60'):
+            tag=case+'-'+level
+            if tag in comparisons:continue
+            pair=[]
+            for tree,build in ((baseline,'r58'),(WORKTREE,'r60')):
+                root=tree/'results'/REL/'w56/f'
+                stage=root/f'F-{case}-{build}'/(level+'.json')
+                if not stage.is_file():break
+                attempt=json.loads(stage.read_text()).get('attempt')
+                if not attempt:break
+                result=root/build/(attempt+'.json')
+                raw=tree/'outputs'/REL/attempt/'trajectory.npz'
+                if not result.is_file() or not raw.is_file():break
+                pair.append((json.loads(result.read_text()),raw))
+            if len(pair)!=2:continue
+            (old,ro),(new,rn)=pair
+            with np.load(ro) as a,np.load(rn) as b:
+                t0,t1=a['time'],b['time']
+                common=min(len(t0),len(t1))
+                different=np.flatnonzero(t0[:common]!=t1[:common])
+                if len(different):common=int(different[0])
+                row=dict(r58_attempt=old['attempt'],r60_attempt=new['attempt'],
+                    r58_wall_s=old['wall_s'],r60_wall_s=new['wall_s'],r58_stage=old['stage_status'],r60_stage=new['stage_status'],
+                    r58_samples=len(t0),r60_samples=len(t1),identical_prefix_clock_samples=common,
+                    common_end_s=float(t0[common-1]) if common else None)
+                if common:
+                    qa=a['qpos'][:common];qb=b['qpos'][:common]
+                    row.update(max_body_position_difference_m=float(np.linalg.norm(qb[:,:3]-qa[:,:3],axis=1).max()),
+                        max_joint_angle_difference_rad=float(abs(qb[:,7:]-qa[:,7:]).max()),
+                        max_torque_difference_Nm=float(abs(b['torque'][:common]-a['torque'][:common]).max()),
+                        max_grf_component_difference_N=float(abs(b['actual_grf'][:common]-a['actual_grf'][:common]).max()),
+                        max_requested_cap_difference_m_s=float(abs(b['requested_speed_cap'][:common]-a['requested_speed_cap'][:common]).max()),
+                        samples_with_different_phase=int(np.count_nonzero(a['phase'][:common]!=b['phase'][:common])),
+                        samples_with_different_contacts=int(np.count_nonzero((a['contact'][:common]!=b['contact'][:common]).any(axis=1))))
+                comparisons[tag]=row;changed=True
+    return changed
