@@ -43,7 +43,10 @@ def declaration(build, case, *, window='W55', small=SMALL, plan=PLAN, results=No
                     physical_model_source='work/r11-frozen/S5-r41',
                     historical_qualification_inherited=False, new_PPO_samples=0,
                     new_PPO_updates=0, donor=0, deadline=None, wall_deadline_enabled=False)
+    contract = json.loads((ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json').read_text())
     if 'material_compiled_artifacts' in spec:
+        weights = contract['resources']['pann_weights_path']
+        identity['material_weights_sha256'] = {weights:digest(ROOT/weights)}
         identity['material_compiled_sha256'] = {p:digest(ROOT/p) for p in spec['material_compiled_artifacts']}
         identity['material_source_sha256'] = {p:digest(ROOT/p) for p in spec['material_execution_sources']}
     frozen = ROOT / 'work/r11-frozen' / build / 'identity.json'
@@ -52,7 +55,7 @@ def declaration(build, case, *, window='W55', small=SMALL, plan=PLAN, results=No
     else:
         frozen_identity = json.loads(frozen.read_text())
         for k in ('configuration_sha256','backend_sha256','inherited_execution_sources',
-                  'material_compiled_sha256','material_source_sha256'):
+                  'material_compiled_sha256','material_source_sha256','material_weights_sha256'):
             if frozen_identity.get(k) != identity.get(k):
                 raise ValueError(f'Frozen controller changed: {k}')
         identity = frozen_identity
@@ -79,7 +82,6 @@ def declaration(build, case, *, window='W55', small=SMALL, plan=PLAN, results=No
                samples=14737, updates=57, tail=0, excluded=145, new_PPO_samples=0,
                new_PPO_updates=0, donor=0, actor='deterministic mean and frozen exact W44 normalization',
                initial_state='complete original evaluation t=0, virgin terrain', source_commit=commit, plan_commit=plan)
-    contract = json.loads((ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json').read_text())
     contract.update(current_task=f'{window}_F_ORIGINAL_TASK', protocol_revision=f'{window}_original_frozen_ladder',
                     next_authorized_plan=f'docs/S1_{window}_STABILITY_PLAN.md', w54_fixed_policy=job)
     contract[window.lower()+'_fixed_policy'] = job

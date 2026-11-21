@@ -52,7 +52,8 @@ def readiness(build, case):
         if build == 'S5-r60':
             config='experiments/terrain_memory/s1-w56-f-r60.json'
             hashes=evidence['source_sha256']
-            for source in [config, *read(ROOT/config)['material_compiled_artifacts']]:
+            weights = read(ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json')['resources']['pann_weights_path']
+            for source in [config, weights, *read(ROOT/config)['material_compiled_artifacts']]:
                 if digest(ROOT/source) != hashes[source]:
                     raise ValueError(f'WBC qualification and original executable differ: {source}')
         if evidence['ready_for_original_E30'] is not True:
