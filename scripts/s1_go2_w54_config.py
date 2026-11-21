@@ -2,7 +2,7 @@
 import copy,json
 from pathlib import Path
 from types import SimpleNamespace
-from s1_go2_r11_protocol import ROOT,stage
+from s1_go2_r11_protocol import ROOT,digest,stage
 RUN='tm-s1-go2-local-readiness-r12'
 def configuration(build,level,cap=.215,terrain='tm02_anchor',training_duration=None,controller_artifact=None):
     artifact=controller_artifact or build
@@ -36,6 +36,13 @@ def configuration(build,level,cap=.215,terrain='tm02_anchor',training_duration=N
     c['w54_execution_sources']=['scripts/'+n for n in names]
     if route == 'F' and identity.get('experiment_window') == 'W56':
         c['w54_execution_sources'] += c['w54_f'].get('material_execution_sources',[])
+        if 'material_compiled_sha256' in identity:
+            declared = {**identity['material_source_sha256'], **identity['material_compiled_sha256']}
+            actual = {path:digest(ROOT/path) for path in declared}
+            if actual != declared:
+                raise ValueError('D57 material implementation differs from the frozen original-task contract')
+            c['material_implementation_sha256'] = actual
+            c['w54_execution_sources'] += list(identity['material_compiled_sha256'])
     c['task']['command_speed_m_s']=cap
     c['task']['maximum_episode_s']=c['r11_stage']['duration_s']
     if c['r11_stage']['task_kind'] in ('continuous_finite','continuing_acquisition'):

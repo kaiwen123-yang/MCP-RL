@@ -11,7 +11,7 @@ from pathlib import Path
 
 import analyze_s1_w55_f as analysis
 import render_s1_go2_r12 as renderer
-from run_s1_w55_f import ROOT, RUN, LARGE, declaration, run, write
+from run_s1_w55_f import ROOT, RUN, LARGE, declaration, digest, run, write
 
 REL = Path('results/terrain_memory/simulation') / RUN
 CASES = ROOT / REL / 'w56/f'
@@ -47,7 +47,14 @@ def readiness(build, case):
         if not evidence['both_modes_verified'] or evidence['case'] != case:
             raise ValueError('Recorded frozen actor did not verify the executed feature selector')
     else:
-        evidence = read(ROOT / REL / 'w56/c/interface-qualification.json')
+        proof = 'r60-interface-qualification.json' if build == 'S5-r60' else 'interface-qualification.json'
+        evidence = read(ROOT / REL / 'w56/c' / proof)
+        if build == 'S5-r60':
+            config='experiments/terrain_memory/s1-w56-f-r60.json'
+            hashes=evidence['source_sha256']
+            for source in [config, *read(ROOT/config)['material_compiled_artifacts']]:
+                if digest(ROOT/source) != hashes[source]:
+                    raise ValueError(f'WBC qualification and original executable differ: {source}')
         if evidence['ready_for_original_E30'] is not True:
             raise ValueError('The window and WBC interface has not met the formal consumption gate')
 
@@ -63,7 +70,7 @@ def queue(build):
         name='s1-w56-'+label.lower()+'-ladder'
         queue_state=dict(job=row['job_id'],case=case,tmux=name,deadline=None,wall_deadline_enabled=False,
                          kill_on_conversation_end=False,levels=(['E30','E60'] if revision=='r57' else ['E30','E60','E300','E600']),
-                         status='waiting_for_original_slot' if case=='A' or revision=='r57' else 'waiting_for_A_E30',
+                         status='waiting_for_A_E30' if label=='F-B-r58' else 'waiting_for_original_slot',
                          registered_unix_s=time.time())
         write(case_dir/'queue.json',queue_state)
         commit([case_dir/'job.json',case_dir/'execution-contract.json',case_dir/'queue.json'],
@@ -132,7 +139,7 @@ def evidence(label,level):
 if __name__ == '__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     sub=parser.add_subparsers(dest='action',required=True)
-    sub.add_parser('queue').add_argument('build',choices=('S5-r57','S5-r58'))
+    sub.add_parser('queue').add_argument('build',choices=('S5-r57','S5-r58','S5-r60'))
     sub.add_parser('ladder').add_argument('label')
     for command in ('physical','evidence'):
         stage=sub.add_parser(command)

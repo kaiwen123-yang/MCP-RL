@@ -43,13 +43,17 @@ def declaration(build, case, *, window='W55', small=SMALL, plan=PLAN, results=No
                     physical_model_source='work/r11-frozen/S5-r41',
                     historical_qualification_inherited=False, new_PPO_samples=0,
                     new_PPO_updates=0, donor=0, deadline=None, wall_deadline_enabled=False)
+    if 'material_compiled_artifacts' in spec:
+        identity['material_compiled_sha256'] = {p:digest(ROOT/p) for p in spec['material_compiled_artifacts']}
+        identity['material_source_sha256'] = {p:digest(ROOT/p) for p in spec['material_execution_sources']}
     frozen = ROOT / 'work/r11-frozen' / build / 'identity.json'
     if case == 'A':
         write(frozen, identity)
     else:
         frozen_identity = json.loads(frozen.read_text())
-        for k in ('configuration_sha256','backend_sha256','inherited_execution_sources'):
-            if frozen_identity[k] != identity[k]:
+        for k in ('configuration_sha256','backend_sha256','inherited_execution_sources',
+                  'material_compiled_sha256','material_source_sha256'):
+            if frozen_identity.get(k) != identity.get(k):
                 raise ValueError(f'Frozen controller changed: {k}')
         identity = frozen_identity
     parent = LARGE / 'training' / f'w44-{case.lower()}' / f'PANN_PPO_S5-seed{seed}'
