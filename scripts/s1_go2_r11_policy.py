@@ -348,11 +348,17 @@ class PolicyMaterial(JointMaterial):
             if stream.controller_build == 'S5-r58':
                 from s1_w56_window import WindowObserver
                 observer_type = WindowObserver
+            elif stream.controller_build == 'S5-r60':
+                from s1_w60_cpu_observer import CPUWindowObserver
+                observer_type = CPUWindowObserver
             self.observer=observer_type(parameters,root/r9['pann']['weights_path'],law=stream.observer_law)
             stream.observer_law=self.observer.ground.law
 
     def attach(self,*args):
         super().attach(*args)
+        if self.stream.controller_build=='S5-r60':
+            from s1_w60_cpu_observer import CallMarker
+            self.observer.marker=CallMarker(self.out)
         self.fk_data=mujoco.MjData(self.native_model)
         self.qa=self.model.jnt_qposadr[self.model.actuator_trnid[:,0]]
         self.va=self.model.jnt_dofadr[self.model.actuator_trnid[:,0]]
