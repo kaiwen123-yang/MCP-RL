@@ -4,7 +4,7 @@
 
 ## W56 原任务与因果对照
 
-F/r55 的两份冻结策略均已在原 E300 完成五次合法材料往返。W56 沿用原 E600 进程，用同一 actor 执行末 12 维屏蔽，并核验材料历史对 WBC 法向参考及动作的影响。N 的修订独立验证数值可行性和 350 ms 支撑交接。
+F/r55 的两份冻结策略各自通过原 E600，完成十次合法材料往返并保持到 600 s。W56 同 actor 消融已完成 E60。r58 的因果窗口与法向执行参考在 A/B 原 E60 通过，E300 出现计算停滞。r60 保留这套接口与原硬界，以独立身份验证 CPU FP64 在线材料求解。N/r59 的原 E30 最远到 x=1.040 m，未达到材料带出口。
 
 [逐 case 资格与进程快照](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/phase.json) · [原数组复算与查询曝光](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/index.json) · [执行计划](docs/S1_W56_STABILITY_PLAN.md) · [W55 原件与全视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55)
 

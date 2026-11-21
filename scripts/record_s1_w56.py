@@ -15,9 +15,11 @@ BASE = HOST/'MCP-RL-w55-f'
 F = HOST/'MCP-RL-w56-f'
 MATERIAL = HOST/'MCP-RL-w56-material'
 N = HOST/'MCP-RL-w56-native'
+R60 = HOST/'MCP-RL-w56-r60'
 CASES = (('F-A-r55',BASE,STAGES),('F-B-r55',BASE,STAGES),
          ('F-A-r57',F,STAGES[:2]),('F-B-r57',F,STAGES[:2]),
-         ('F-A-r58',MATERIAL,STAGES),('F-B-r58',MATERIAL,STAGES),('N-A-r59',N,STAGES[:1]))
+         ('F-A-r58',MATERIAL,STAGES),('F-B-r58',MATERIAL,STAGES),('N-A-r59',N,STAGES[:1]),
+         ('F-A-r60',R60,STAGES),('F-B-r60',R60,STAGES))
 BACKGROUND = dict(deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False)
 
 
@@ -101,10 +103,17 @@ def stage_info(label,tree,stage):
                       'interrupted' if job.get('reason')=='process_exited_without_completed_result' else 'awaiting_evaluator_record')
         for field in ('physical_started_unix_s','physical_ended_unix_s'):
             if field in job: row[field]=job[field]
-        if alive and 'physical_started_unix_s' not in row and (compact/'index.json').exists():
+        if 'physical_started_unix_s' not in row and (compact/'index.json').exists():
             entry=next((x for x in read(compact/'index.json').get('attempts',[]) if x.get('attempt')==attempt),{})
             row.update(short(entry,['physical_started_unix_s']))
-    for receipt_tree in (ROOT,tree,F,MATERIAL,N):
+    if row['status']=='interrupted' and build=='r58' and stage=='E300':
+        recovery=WINDOW/'c/r58-e300-recovery-outcome.json'
+        if recovery.is_file():
+            entry=next(x for x in read(recovery)['cases'] if x['attempt']==attempt)
+            row.update(last_confirmed_mpc_s=entry['last_solved_mpc_s'],
+                       last_mpc_write_unix_s=entry['last_mpc_write_unix_s'],
+                       interruption_evidence=str(recovery.relative_to(ROOT)))
+    for receipt_tree in (ROOT,tree,F,MATERIAL,N,R60):
         delivery=receipt_tree/REL/window/'delivery'/(label+'-'+stage).lower()/'delivery.json'
         if delivery.is_file():
             receipt=read(delivery)
@@ -124,7 +133,7 @@ def derive():
     for i,a in enumerate(rows):
         for b in rows[:i]:
             starts=[r.get('physical_started_unix_s') for r in (a,b)]
-            ends=[r.get('physical_ended_unix_s') or (r.get('heartbeat',{}).get('unix_s') if r['status']=='running' else None) for r in (a,b)]
+            ends=[r.get('physical_ended_unix_s') or r.get('last_mpc_write_unix_s') or (r.get('heartbeat',{}).get('unix_s') if r['status']=='running' else None) for r in (a,b)]
             if None not in starts+ends and min(ends)>max(starts):
                 overlap.append(dict(attempts=[a['attempt'],b['attempt']],begin_unix_s=max(starts),end_unix_s=min(ends),wall_s=min(ends)-max(starts)))
     phase=dict(snapshot_unix_s=now,source='D57 original per-case evaluator and same-attempt child PID; running interval ends at observed physical heartbeat.',
@@ -170,7 +179,7 @@ def derive():
         for label,tree,levels in CASES if label.startswith('F-') and not label.endswith('r55'))
     n_queue=N/REL/'w56/n/queue-r59.json'
     all_ended=f_closed and n_queue.is_file() and read(n_queue)['status'] in ('published','physics_ended') and all(
-        r.get('publication',{}).get('status')=='published' for r in rows if r['status'] in ('passed','failed')) and all(
+        r.get('publication',{}).get('status')=='published' for r in rows if r['status'] in ('passed','failed') or (r['status']=='interrupted' and r.get('interruption_evidence'))) and all(
         r['status'] in ('passed','failed','interrupted') for r in windows['w55'] if r['level']=='E600')
     execution='declared_ladders_concluded_and_delivered' if all_ended else 'executing'
     newer=windows['w56']
@@ -178,7 +187,7 @@ def derive():
     started=any(r.get('physical_samples',0)>0 or r.get('heartbeat',{}).get('physical_time_s',0)>0 for r in newer)
     index=dict(window='W56',implementation_base='3578b494f05b6a10c64a75cfceaaf5d3d4bc558c',
         status=execution,snapshot_unix_s=now,publication=publication,evidence=proofs,phase=str(REL/'w56/phase.json'),frozen_r55_scope='Two W44 nominal cases. E600 stages keep their W55 identities.',
-        workspaces=dict(integration=str(HOST/'MCP-RL-w55-integration'),F=str(F),C=str(MATERIAL),N=str(N)),
+        workspaces=dict(integration=str(HOST/'MCP-RL-w55-integration'),F=str(F),C=str(MATERIAL),N=str(N),F_r60=str(R60)),
         original_qualification=summary,baseline_array_checks={p.stem:str(p.relative_to(ROOT)) for p in sorted((WINDOW/'baseline').glob('*.json'))},actor_query_reconstruction=sources,robot_control_implemented=r57,robot_physics_started=started,
         new_PPO_samples=0,new_PPO_updates=0,donor=0,**BACKGROUND)
     save(WINDOW/'index.json',index)
@@ -194,8 +203,8 @@ def derive():
         robot_control_implemented=r57,robot_physics_started=started,original_qualification=summary['w56'])
     current['continuation']['D57_tmux']['w56_publication']='s1-w56-publish-results'
     current['continuation']['D57_tmux'].update({r['label']:r['queue_tmux'] for r in newer if r.get('queue_tmux')})
-    current['continuation']['lane_workspaces'].update(W56_F=str(F),W56_C=str(MATERIAL),W56_N=str(N))
-    current['continuation']['rule']='Resume exact jobs reported in W56 phase and original case records. W55 r55 E600 keeps its original case identity.'
+    current['continuation']['lane_workspaces'].update(W56_F=str(F),W56_C=str(MATERIAL),W56_N=str(N),W56_F_r60=str(R60))
+    current['continuation']['rule']='The r58 E300 attempts ended after authorized recovery and shutdown. Follow the independent r60 original ladders in the phase records.'
     current['W55']['r55_latest_qualification']=summary['w55']
     current['W55']['active_stages_at_snapshot']=[dict(attempt=r['attempt'],pid=r['pid'],physical_s=r.get('heartbeat',{}).get('physical_time_s')) for r in windows['w55'] if r['status']=='running']
     current['W55']['active_stage_source']=index['phase']

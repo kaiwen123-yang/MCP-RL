@@ -7,7 +7,7 @@ import time
 from check_s1_w56_outcomes import check
 from record_s1_w56 import CASES,HOST,N,REL,ROOT,derive,read
 
-BRANCHES=('codex/w56-f','codex/w56-native','codex/w56-material')
+BRANCHES=('codex/w56-f','codex/w56-native','codex/w56-material','codex/w56-r60')
 WRITER=HOST/'MCP-RL-w55-integration'
 LOCK=WRITER/'work/w55-integration.lock'
 
