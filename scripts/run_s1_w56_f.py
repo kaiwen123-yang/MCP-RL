@@ -50,11 +50,8 @@ def readiness(build, case):
         proof = 'r60-interface-qualification.json' if build == 'S5-r60' else 'interface-qualification.json'
         evidence = read(ROOT / REL / 'w56/c' / proof)
         if build == 'S5-r60':
-            config='experiments/terrain_memory/s1-w56-f-r60.json'
-            hashes=evidence['source_sha256']
-            weights = read(ROOT/'experiments/terrain_memory/s1-go2-local-readiness-r12.json')['resources']['pann_weights_path']
-            for source in [config, weights, *read(ROOT/config)['material_compiled_artifacts']]:
-                if digest(ROOT/source) != hashes[source]:
+            for source, expected in evidence['source_sha256'].items():
+                if digest(ROOT/source) != expected:
                     raise ValueError(f'WBC qualification and original executable differ: {source}')
         if evidence['ready_for_original_E30'] is not True:
             raise ValueError('The window and WBC interface has not met the formal consumption gate')
