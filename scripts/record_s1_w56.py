@@ -113,6 +113,13 @@ def stage_info(label,tree,stage):
             row.update(last_confirmed_mpc_s=entry['last_solved_mpc_s'],
                        last_mpc_write_unix_s=entry['last_mpc_write_unix_s'],
                        interruption_evidence=str(recovery.relative_to(ROOT)))
+    if row['status']=='running' and row.get('queue_status','').startswith('waiting'):
+        row['queue_status_at_registration']=row['queue_status']
+        row['queue_status']='physical_slot_acquired'
+    if build=='r60':
+        trace=tree/LARGE/attempt/'r60-call-stack-evidence.json'
+        if trace.is_file():
+            row['last_repeated_call_diagnostic']=read(trace)
     for receipt_tree in (ROOT,tree,F,MATERIAL,N,R60):
         delivery=receipt_tree/REL/window/'delivery'/(label+'-'+stage).lower()/'delivery.json'
         if delivery.is_file():

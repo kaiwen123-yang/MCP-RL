@@ -35,6 +35,8 @@ def versions():
         files[str(path)]=path.stat().st_mtime_ns
     for path in (ROOT/REL/'w55/delivery').glob('f-*-r55-e600/delivery.json'):
         files[str(path)]=path.stat().st_mtime_ns
+    for trace in (r60_progress.LARGE).glob('job-*-w56-f-*-r60-eval-*-attempt*/r60-call-stack-evidence.json'):
+        files[str(trace)]=trace.stat().st_mtime_ns
     advancing=[case+'-'+level for case,level,*_ in r60_progress.milestones()]
     return [refs,files,advancing]
 
@@ -80,7 +82,9 @@ def watch():
         raise ValueError('Run the stage publisher from the shared W55/W56 integration worktree '+str(WRITER))
     marker=ROOT/'work/w56-published-inputs.json'
     last=read(marker) if marker.exists() else None
+    calls={}
     while True:
+        calls=r60_progress.sample_active_calls(calls)
         current=versions()
         if current!=last:
             try:
