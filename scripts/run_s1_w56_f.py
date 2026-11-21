@@ -122,6 +122,17 @@ def evidence(label,level):
     state=read(stage)
     attempt=state['attempt']
     compact=CASES/label.rsplit('-',1)[1]
+    if label=='F-A-r60' and level=='E30':
+        artifacts=read(case_dir/'job.json')['controller_artifact_identity']['material_compiled_sha256']
+        # Retain one exact executable with its first original, including in the D57 Release ZIP.
+        for relative, expected in artifacts.items():
+            source=ROOT/relative
+            archived=LARGE/attempt/'material-executable'/source.name
+            archived.parent.mkdir(exist_ok=True)
+            if not archived.exists():
+                os.link(source,archived)
+            if digest(archived)!=expected:
+                raise ValueError(f'Original material executable differs from archived file: {archived}')
     renderer.SMALL=compact
     renderer.render(attempt)
     state['video']=read(LARGE/attempt/'video-asset.json')
