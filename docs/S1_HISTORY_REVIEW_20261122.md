@@ -1,0 +1,47 @@
+# MCP-RL 研究与实验沿革复核（2026-11-22）
+
+审查日期：2026-11-22（Asia/Shanghai）。源码与既有计划基点：`640be3d6ed74e2f1d40751e96218c6a689d82ea9`。本文件交叉读取原index/phase关键字段与历史报告，记录方向变化、实际结果与转向依据；没有新增实验，不改写旧结果，不把历史计划当运行。最新执行计划见[S1_W57_RESEARCH_PLAN.md](S1_W57_RESEARCH_PLAN.md)。
+
+## 总体脉络
+
+项目不是从一开始就在训练同一个 S1 算法。10 月中旬先否证了若干“响应共同学习/任务辅助学习”的具体候选，10 月 21 日才选定“同一世界地块被前足、后足和返程反复加载，材料历史改变后续支撑”的主问题。随后依次做公开控制基线、材料辨识、受约束双足 toy、自由 Go2 刚地基线、材料接触/整机执行、真实 cap PPO 联合训练。W45 起冻结旧 cap Actor，把主要实验变量转为控制内核；W55/W56 才在原 Go2/TM02 任务建立 r55/r60 两份 nominal case 的 E600 baseline。现在应从“首先别跌倒”转到“基线之上是否有真实历史曝光、可执行决策权限、材料记忆因果收益”，而不是继续把历史的每轮失败都当作同一算法的收敛曲线。
+
+## 分阶段事实表
+
+下面路径均相对上述仓库；`R12/` 简写为 `results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/`。数字只使用各自阶段分母。
+
+| 阶段 | 实际做过、解决了什么 | 正结果及负结果 | 为什么转向下一步 | 原始入口 / 本轮实际阅读 |
+|---|---|---|---|---|
+| 10/13–14 选题 | 梳理价值进入有限预算 MPC、双 QP、执行响应共同学习等接口及直接前人 | “有限更新终端价值”已在原文顶部降为备选；双 QP 不足以代表独立执行策略与响应共同设计；一般联合训练本身已有直接前人。此时大部分为候选/理论审查，不是算法成功 | 研究对象必须落到真实反馈能力、可预测响应与整程目标，而非模块拼接 | `docs/research-mainline-2026-10-13.md`；`docs/joint-response-learning-proposal-2026-10-14.md`；`docs/direct-neighbor-verdict-2026-10-14.md` |
+| 10/15–17 小型真实学习与闭环接口 | 官方 LayeredRL 组件、真实神经反馈与响应共同更新；随后成熟 PPO、解析可行动作接口；离散接口、梯度与短闭环探针 | 10/15 联合组成本 .03580，经典反馈 .03158；联合组输入响应误差 .08988 超预定 .03，三个 seed 均未胜经典组。10/16 解析中点已几乎复现表现。10/17 12 个短闭环均值成本低 1.8439%，但无权重训练，4 例总成本变差 | 区分数学/接口正确、实际能力改进和新学习贡献；不因短探针改善就扩训 | `docs/learning-pilot-report-2026-10-15.md`；`docs/ppo-realization-report-2026-10-16.md`；`notes/codesign-decision-2026-10-15/abstraction-verdict.md`；`notes/closed-loop-interface-2026-10-17/independent-verdict.md` |
+| 10/19–21 2D 与 Go2 候选否证 | 2D 四组×三 seed 固定预算；Go2 冻结/普通 PPO/伴随辅助 PPO；长任务公共目标修正与规划修复 | 2D codesign 成本比 uniform 高 25.01%，完整成功 0/24，耗时高 82.9%。Go2 三组均 9/9，但伴随 13.9044 s、普通 13.0844 s，伴随慢 6.27%；固定参考 11.48 s。后续 27.32 m 整程修复最好仍来自先验 MPC+冻结 RL；学习检查点未变 | 否定的是具体候选的增量主张，不能证明整个 MPC+RL 不可能；原长任务转为开发/回归基准，不能再冒充未使用泛化测试 | `docs/server-pilot-results-2026-10-19.md`；`notes/go2-adjoint-rerun-2026-10-20/decision.json`；`docs/CURRENT_STATE_HISTORY_2026-10-21.md` |
+| 10/21 最终主线选择 | 曾讨论连续跳跃/低净空/楼梯，核验公开 Go1 检查点身份；最终退出该支线，选地面材料记忆与跨步协同 | Parkour 包源码/配置可得不代表 Go2 已运行；无该支线复杂地形整程成功。当前任务明确围绕同一地块持久状态，不是技能串联 | 需要可测材料恢复、跨足/返程真实因果关系，随后才谈学习与规划收益 | `docs/complex-terrain-research.md` 顶部明确 10/21 退出；`notes/complex-terrain-2026-10-21/public-baseline.json`；当前 `docs/TERRAIN_MEMORY_PLAN.md` |
+| R1 / 10/22 PyMPC | 补 103 个新回合（100 固定频率+3 Fig3）；校验公开基线与强固定频率 | 60 s 各 50 case：1.3 Hz 0、2 Hz 8、2.4 Hz 28、adaptive 22 成功。adaptive 未显著胜最强已测固定 2.4 Hz；R1 完整论文复现仍 false，Fig4/TableI 原协议不全 | 不追着论文成功率调参或制造固定基线失败；材料研究可独立推进，保留复现边界 | `results/terrain_memory/reproduction/pympc/r1-closeout-20261022/index.json` |
+| R2 / 10/23 PANN 单/多历史 | 首轮 50 模型×20000 更新；扩展至 100 条多历史及 20 独立留出 | 理想模型留出 RMSE 中位 .378469→.050402 MPa；已知难路径 2.512729→.212729 MPa。噪声难路径也改善，但 24 重访历史中噪声恢复/探测误差反而恶化；不能用训练拟合等同恢复正确 | 从“前向应力拟合”走向自由恢复、重访、任务后果检验 | `results/terrain_memory/reproduction/material/tm02-rnn-20261023/index.json`；`tm02-multihistory-20261023/index.json` |
+| R2 memory study | A 100随机/B 1000随机/C 混合恢复激励，50 新+10 复用模型，600 条件、700 reference histories、8400 预测 | B ideal 多数族改善，但非所有均值/最坏值；C ideal 六族平均 RMSE 都恶化；45 噪声模型恢复时间 .602–.639 s，对照 1.2 s，系统偏差未消失。F6 60 例严格 early、40 tie、0 late，always-early 零 regret | 冻结 B ideal 为下阶段底座；噪声模型保留负对照。需要任务真的存在历史改变最优决策的机会，而非制造一个总选 early 的检验 | `results/terrain_memory/reproduction/material/tm02-memory-study-20261023/index.json` |
+| S0 / 10/23–24 | 72 deterministic contexts×12 actions×7 predictors=6048 双 pad 预测；无训练，受约束 rig 而非自由整机 | 864 reference 候选全可行；oracle 相对 myopic 最大压入平均少 .00757446 mm，额外等待 .52778 s。相同未来任务条件的常量策略与 oracle 仅 .014027 μm 压入差，而 oracle 多等 .722222 s。没有成功率收益 | S0 说明接口可算，不能支撑强地面记忆价值；转真实自由 Go2、合法整程及支撑切换 | `results/terrain_memory/simulation/tm-s0-contact-oracle-20261023/index.json` |
+| S1 初期 / 10/24–26 | 首轮 85 formal；控制修复 60；接触转移 30；R3执行修复 | 首轮 14 成功/71失败，其中 TM02 0/25；复杂 C2/C3 在刚地也失败。修复阶段有实际进步但不同版本不能拼接；改正后的 B1 刚地 3/5、KV 5/5、TM02 0/5，T1 三类全 0/5。R3仍无可用刚地执行 | 材料前就失稳，不能归因 PANN；先恢复整机动力学/接触/参考/执行一致 | `results/terrain_memory/simulation/tm-s1-go2-contact-20261024/index.json`；`tm-s1-control-repair-20261024/index.json`；`tm-s1-contact-transition-20261025/index.json`；`tm-s1-contact-execution-20261026/index.json` |
+| R6→R8 刚地 | R6 完成路线但 60 s 未能保持2 s；R7均衡/目标修复仍无稳定终点；R8修 2 ms 保持动力学、世界足参考、姿态/力矩平衡 | R8/S3 project 原刚地 9/9，并连续 300 s 3/3；author long 3/3。原任务终点/末30 s零违规。这是曾经真实成立的刚地 baseline；不是材料资格、PANN学习收益或实机证据 | 在已验证刚地基线上接实际材料，不用后续失败抹去 R8 正结果 | `results/terrain_memory/simulation/tm-s1-go2-wb-startup-r6/index.json`；`tm-s1-go2-wb-equilibrium-r7/index.json`；`tm-s1-go2-wb-support-r8/index.json` |
+| R9–R11 材料接入 | R9 8个受限意图适配；R10 9物理/3零初始化；R11 23物理启动；开始观察器回放与 PPO接口 | R9 8/8 在6.55–8.34 s材料域退出。R10无完整任务，但最远进入返程；训练0。R11 20物理/材料失败、1原表passed但失效、1技术中断、1条件未达；有效资格0。步态应用bug使某次30 s及继承E60无效；旁路侧出暴露旧“任何材料加载+到远端”不够 | 修正合法材料条带通行定义与版本资格继承，开始 R12 真联合采样；不能借作废资格推进 | `results/terrain_memory/simulation/tm-s1-go2-joint-r9/index.json`；`tm-s1-go2-soft-landing-r10/index.json`；`tm-s1-go2-material-continuation-r11/index.json` |
+| R12 W34/W35 r24 | W34 +1024/4更新；W35 +2048/8更新，完整实际 PPO、断点、因果观察链 | W34 30物理回合3合法去程、0往返；W35 73回合1合法去程、3原始“绕行往返”均非法、0合法往返，最终E30域退出。材料恢复已进观察，不等于被策略有效利用 | 学习确实发生，但瓶颈仍在控制/落足及任务语义；继续修合法奖励和接触执行 | `R12/index.json:W34_joint_learning_review`；`R12/reviews/W35.json`；W35 原 job 计数/末次E30原表 |
+| W36/W37 | r25发生材料前倒退失稳；r26恢复前移；真实样本/版本交接审计 | W36 27物理回合，26物理失败、1截断，材料加载0，累积4497/17且145条未更新；W37 +2048/8到6545/25，72回合71失败，50材料加载但0合法通行/返程。恢复特征62/2048非零；E30同态清零最大 cap差3.5191e−6 m/s。71自然失败中70还留正进度credit，发现终止结算缺口 | 不能以“域退出变少”认作更鲁棒（曝光变少）；修终止撤销，并分支并行控制/学习 | `R12/reviews/W37.json`（learning/cohort/terminal_credit/final_evaluation） |
+| W38–W41 双流联合 | W38修 terminal settlement；W39躯干风险；W40可实现目标角/力矩投影；W41约束 Riccati。双流各自继承共同祖先 | W38每流7569/29、W39 8593/33、W40 9617/37、W41 11665/45，均0合法往返。W38新增2048 aggregate吞吐145.68条/h，比前单流111.59约1.305倍，不是2倍。W39原件定位材料前反馈过大；W41同起点近同目标预测刚地足力 .007–.013 N、实际114–247 N。W41 130回合127物理失败，固定E30 A14.100/B28.408 s跌倒 | 不能期待窄速率cap修复下层接触模型/反馈；转前向真实接触与代理导数分开。W40最终68回合（63物理失败/3技术/2截断），旧64是未收口快照 | `R12/reviews/W38.json`；`R12/reviews/W39-raw-review/README.md`；`R12/index.json:w38/39/40_policy_counts`；`R12/reviews/W41-cpu-review/README.md`；W44 history原始逐job复算 |
+| W42/W43 驻留 | native前向+soft导数后出现启动阻尼1e6；r32真正修复问题生命周期 | W42每流+2048/8到13713/53，36回合无物理失败但材料0，几乎不动；W43各+512/2到14225/55，10回合仍不前进。W43 λ重置有效，但保存34计划仍后退且节点无离地。GPU G2完成176导数节点耗42.288 h，G4解析/G5类型错误不等于闭环成功 | “不倒”必须与走路分开；数值修复不能代替可产生步态的候选/目标。第三GPU线也必须报真实吞吐与完成层级 | `R12/reviews/W42-final-review/README.md`；`R12/reviews/W43-final-review/README.md` |
+| W44 r33 | 结构候选使前移恢复；各+512/2到14737/57；固定自身末次Actor评价 | 35真实训练回合32物理失败/3有效截断，另2零物理初始化失败。最终E30 A11.934/B12.742 s跌倒且材料未加载；alpha0名义近似平手却替换不同K/反馈倍率的证据出现在刚地2–3 s。全树去重PANN22929，另RAW256，distinct23185；不能两支14737相加 | 冻结旧cap学习，集中改控制器完整策略接纳。训练工程成熟不等于材料任务学成 | `R12/index.json:w44_completion`；`R12/reviews/W44-final-review/README.md`、`cpu-report.md` |
+| W45–W48 固定Actor控制机制 | r34排除新alpha0替换；r35相关反馈修订；r36 quaternion identity/antipode修复 | W45 A13.072/B5.582 s跌倒；W46 A26.432 s非足、B11.638 s跌倒，仍0通行。W47只有8段固定策略诊断，0原任务启动，不能算E30失败；W48修数学后记录轨迹与W46相同，原E30仍失败 | 单点代数/候选代价改善没有转成执行稳定；进一步检查早期支撑、候选实际运动和摆动参考 | `R12/w45/phase.json:final_results/conclusion`；`w46/phase.json:final_results_summary`；`w47/phase.json:actual_new_work/original_evaluation`；`w48/phase.json:conclusion` |
+| W49–W52 支撑与摆足诊断 | K/H候选与真实部署；D8控制机制；发现剩余摆足曲线被连续性项抵消，继而修几何与分支搜索 | W49两个E30都满30 s却未穿越、低姿/异常支撑；W50有限负结果，0原E30，8个后续blocked不是8实验失败。W51 D0跌倒、D1 8 s驻留；W52修摆足后D2/D3仍5.6716/6.6278 s非足接触，材料前失败，原E30启动0 | 几何修复不保证力与承载，停止只修局部求解器；并行比较完整控制族 | `R12/w49/phase.json:stream_results`；`w50/phase.json:scientific_outcome/original_stages`；`w51/paired-results.json`；`w52/paired-results.json`；当前计划历史诊断部分 |
+| W53/W54 N/F 双控制族 | N恢复R8 whole-body iLQG；F独立 force MPC+WBC，第三线有限GPU力QP | W53两真实E30均负，另2零物理初始化；N6.4656 s材料域、F3.120 s不可行，未选胜者。W54九版本E30无通过，含2技术中断、6物理失败、1满时长任务未达，不能全叫物理跌倒。末F/r52 5.600 s跌倒，N/r48 8.3568 s非足；失稳不都始于材料 | 明确真实触地/承载、未来力矩约束、支撑交接/卸载与MPC-WBC目标一致性 | `R12/w53/paired-results.json`；`w54/phase.json:cases`；当前计划对应历史诊断 |
+| W55/W56 真正材料baseline | F/r53各自E30通过；r55/r60各自独立 E30→E60→E300→E600 | r53 A/B E60是execution_error/technical_interruption（42.676/41.254 s），不能改写成跑完60 s自然失败。r55/r60 A/B原E600各10圈和长终点保持成立；r57仅显式12D恢复消融E60；r58 E300为计算停滞后的技术中断。W56细节见[独立复核](S1_W57_REVIEW_20261122.md) | 有稳定 baseline 后可做材料/规划/学习机制，不再把“尚无稳定通行”当最新事实；仍未确证材料历史因果收益、步态质量最优、泛化或实时 | `R12/w55/phase.json:cases`；`R12/w56/phase.json`；[本轮W56复核](S1_W57_REVIEW_20261122.md)及原数组复算 |
+
+## 仍有效与已失效的约束
+
+1. **历史阶段暂停/预算已结案，不是今天的禁止。** 10/21“不训练/不合并PR”、R9八次、R10/R11有限开发数、R2/S0停止追加、W45–W56新增PPO=0，分别描述当时范围。最新W57允许独立timing head的2048首节点及条件式累计4096/8192、必要的等预算显式材料预测盲对照；不能用旧禁令冻结整个未来研究。
+2. **旧时限和归档流程已被新指令覆盖。** 当前后台无固定完成墙钟/到点kill；GitHub核验完成即交付，不再在用户电脑下载/复制/镜像归档。原物理30/60/300/600 s、数值有限预算、合法成功定义、必要网络timeout仍有效。旧W36的预算截断必须照实保留，不能因今天禁墙钟而重写历史。
+3. **旧“当前进程”“下一步”“尚未实施”只对写作时点有效。** W44 review末尾的“W45尚未实施”，W42/43综述的“尚无稳定行走”，已被后续实际结果覆盖。不能从 stale index顶层training状态推出今天仍在训练。
+4. **任务/版本身份与资格继承依然有效。** R8刚地正结果、r24历史合法去程、r55 E600都不能替不同材料模型/控制器/seed/worker的新版自动取得资格；r60已独立走完原链，无须借r55。被bug污染的R11“passed”仍无效。
+5. **真实负结果与原件不可删改。** 候选否证、初始化错误、技术停滞、物理失败、任务条件未达、采集目标截断分别记录。无证据授权重启旧试验/重跑补丢失观测，不能让“全读”变成反复下载巨大档案或全仓hash门槛。
+6. **不变的科学底线：** 可行性/接口自洽不等于任务改进；前向拟合更准不等于历史决策收益；全部已测脚本正常结束不等于算法通过；训练分支共享祖先不等于独立学习seed；逻辑控制频率不等于墙钟实时。
+
+## 覆盖说明
+
+本轮实际语义阅读以表列文件及字段为限；早期若干较长报告读核心定义、结果和决定，R1/R2/S0/R6–R11读取原index的具体结果字段，R12读取原index选定阶段/结果字段并交叉阅读W35/W37/W38原审查JSON及W39–W44关键报告，W45–W55逐阶段phase/paired的实际结果字段。未将 全库结构/标题机器索引等同逐字理解，也未重新打开所有历史Release二进制/视频/检查点张量。W56独立轨迹、选定5 kHz子步、视频帧等实际覆盖另列 [W56本次复核](S1_W57_REVIEW_20261122.md)。无新物理、训练、服务器操作或源库修改。

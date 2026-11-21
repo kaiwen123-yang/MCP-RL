@@ -1,6 +1,6 @@
 {
   "schema": "s1_current_handoff_v1",
-  "date": "2026-11-21",
+  "date": "2026-11-22",
   "result_source_commit": "3590646bc15a59903c9561381368d985963dfe9e",
   "status": "W56_reviewed_W57_research_planned",
   "latest_executed_window": "W56",
@@ -68,6 +68,8 @@
     "entrypoint": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json",
     "review_first": [
       "docs/S1_W57_RESEARCH_PLAN.md",
+      "docs/S1_W57_REVIEW_20261122.md",
+      "docs/S1_W57_LITERATURE_UPDATE_20261122.md",
       "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W56-review/README.md",
       "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W56-review/handoff.json",
       "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W56-review/control.md",
@@ -263,7 +265,7 @@
       "source": "W56 verified per-delivery receipts on main"
     }
   },
-  "date_semantics": "Client review date in Asia/Shanghai; execution snapshot timestamp retained separately.",
+  "date_semantics": "Review/plan update date in Asia/Shanghai; execution_snapshot remains 2026-11-21 and is not a live-server observation.",
   "daily_worklog": "docs/S1_DAILY_WORKLOG.md",
   "execution_snapshot": "2026-11-21T23:35:02+08:00",
   "W57": {
@@ -276,7 +278,20 @@
     "new_PPO_samples": 0,
     "new_PPO_updates": 0,
     "new_PPO_pilot_authorized": true,
-    "declared_new_transition_budget": 2048,
-    "daily_worklog": "docs/S1_DAILY_WORKLOG.md"
-  }
+    "declared_new_transition_budget": 8192,
+    "daily_worklog": "docs/S1_DAILY_WORKLOG.md",
+    "initial_pilot_transition_budget": 2048,
+    "conditional_cumulative_training_nodes": [
+      2048,
+      4096,
+      8192
+    ],
+    "conditional_blind_head_max_transitions": 8192,
+    "conditional_total_max_distinct_transitions": 16384,
+    "training_budget_semantics": "Initial 2048 pilot. Extend only with effective action, historical signal, valid credit/accounting, and fixed identity; blind, when needed, independently matches the final full budget. No wall deadline. A/B are environment cases, not two learning seeds.",
+    "supplement": "docs/S1_W57_REVIEW_20261122.md",
+    "conditional_additional_blind_mechanism_episodes": 4
+  },
+  "review_source_commit": "640be3d6ed74e2f1d40751e96218c6a689d82ea9",
+  "additional_review": "docs/S1_W57_REVIEW_20261122.md"
 }
