@@ -2,7 +2,7 @@
 
 在 D57 按[逐身份资格与进程](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/phase.json)和[执行计划](docs/S1_W56_STABILITY_PLAN.md)续接 Go2/TM02。r55 A、B 均已完成原 E600；r57 消融均已完成 E60。r58 A、B 均通过 E60，两条 E300 在各自最后一次成功 MPC 记录后失去推进，原位恢复未能续接，按用户授权终止并保留原件。N/r59 原 E30 未贯穿材料。
 
-r60 在独立工作树用相同的冻结材料权重、本构、因果窗口和 WBC 法向参考，把在线材料求解移至 CPU FP64 原生批处理。A/seed1 与 B/seed2 各自从原 E30、virgin、t=0 重新取资格。先核当前 job、tmux、实际物理时钟；从[r58 中断与恢复实录](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/c/r58-e300-recovery-outcome.json)和[r60 同输入核验](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/c/r60-interface-qualification.json)区分旧任务中断、新后端数值验证与机器人实际成绩。
+r60 在独立工作树用相同的冻结材料权重、本构、因果窗口和 WBC 法向参考，把在线材料求解移至 CPU FP64 原生批处理。A/seed1 与 B/seed2 各自从原 E30、virgin、t=0 重新取得完整 E600 资格，均完成十次合法材料往返。W56 本轮任务和交付已结束。从[r58 中断与恢复实录](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/c/r58-e300-recovery-outcome.json)和[r60 同输入核验](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/c/r60-interface-qualification.json)区分旧任务中断、新后端数值验证与机器人实际成绩。
 
 最多两条重物理加一条材料计算线，保持冻结 actor、原物理时长和硬界。后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。完整原件在 D57 直传 Release，保留 checkpoint 和被引用原件。
 

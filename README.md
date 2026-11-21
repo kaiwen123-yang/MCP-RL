@@ -4,7 +4,7 @@
 
 ## W56 原任务与因果对照
 
-F/r55 的两份冻结策略各自通过原 E600，完成十次合法材料往返并保持到 600 s。W56 同 actor 消融已完成 E60。r58 的因果窗口与法向执行参考在 A/B 原 E60 通过，E300 出现计算停滞。r60 保留这套接口与原硬界，以独立身份验证 CPU FP64 在线材料求解。N/r59 的原 E30 最远到 x=1.040 m，未达到材料带出口。
+F/r55 的两份冻结策略各自通过原 E600，完成十次合法材料往返并保持到 600 s。W56 同 actor 消融已完成 E60。r58 的因果窗口与法向执行参考在 A/B 原 E60 通过，E300 出现计算停滞。r60 使用 CPU FP64 在线材料求解，A、B 均独立通过原 E30、E60、E300 和 E600。两份 E600 分别于 466.054 s 和 469.820 s 完成第十次合法往返，随后稳定保持到 600 s，原件与视频均已发布。N/r59 的原 E30 最远到 x=1.040 m，未达到材料带出口。
 
 [逐 case 资格与进程快照](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/phase.json) · [原数组复算与查询曝光](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/index.json) · [执行计划](docs/S1_W56_STABILITY_PLAN.md) · [W55 原件与全视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w55)
 

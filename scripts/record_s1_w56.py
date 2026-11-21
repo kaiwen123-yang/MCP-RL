@@ -201,7 +201,7 @@ def derive():
     save(WINDOW/'phase.json',phase)
     current=read(ROOT/REL/'current.json')
     current.update(date=datetime.fromtimestamp(now,timezone.utc).astimezone().isoformat(timespec='seconds'),
-        status='W56_execution',latest_executed_window='W56',latest_results=str(REL/'w56/index.json'),
+        status='W56_completed' if all_ended else 'W56_execution',latest_executed_window='W56',latest_results=str(REL/'w56/index.json'),
         latest_execution_state=str(REL/'w56/phase.json'),result_source_commit_scope='W55 reviewed baseline. Current W56 per-case results and live process snapshot are in latest_execution_state.')
     if '/releases/tag/tm-s1-go2-local-readiness-r12-w55' in current.get('publication',{}).get('release',''):
         current['W55']['publication']=current['publication']
@@ -211,7 +211,7 @@ def derive():
     current['continuation']['D57_tmux']['w56_publication']='s1-w56-publish-results'
     current['continuation']['D57_tmux'].update({r['label']:r['queue_tmux'] for r in newer if r.get('queue_tmux')})
     current['continuation']['lane_workspaces'].update(W56_F=str(F),W56_C=str(MATERIAL),W56_N=str(N),W56_F_r60=str(R60))
-    current['continuation']['rule']='The r58 E300 attempts ended after authorized recovery and shutdown. Follow the independent r60 original ladders in the phase records.'
+    current['continuation']['rule']=('All declared W56 ladders and deliveries have concluded. Read the per-case phase and Release receipts.' if all_ended else 'The r58 E300 attempts ended after authorized recovery and shutdown. Follow the independent r60 original ladders in the phase records.')
     current['W55']['r55_latest_qualification']=summary['w55']
     current['W55']['active_stages_at_snapshot']=[dict(attempt=r['attempt'],pid=r['pid'],physical_s=r.get('heartbeat',{}).get('physical_time_s')) for r in windows['w55'] if r['status']=='running']
     current['W55']['active_stage_source']=index['phase']
