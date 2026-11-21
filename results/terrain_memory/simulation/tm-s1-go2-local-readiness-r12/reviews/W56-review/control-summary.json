@@ -1,0 +1,49 @@
+{
+  "source_commit": "3590646bc15a59903c9561381368d985963dfe9e",
+  "scope": "Code inspection plus read-only published JSON/CSV recomputation; no robot/native/QP/material solves.",
+  "r55_role": "Frozen nominal stable original E600 baseline A/B",
+  "r60_role": "Stable original E600 material-aware normal execution reference A/B, not demonstrated material-aware MPC planning",
+  "benefit_verdict": "No consistent superiority over r55: both E600 pass, slip and peak strain higher in both r60 cases",
+  "key_same_input_record": {
+    "source": "w56/c/interface-qualification.json",
+    "time_s": 5.420000000002589,
+    "history_vs_virgin_reference_m": 8.85887925516915e-11,
+    "history_vs_virgin_mapped_input_rad": 5.891354071252408e-11,
+    "history_vs_virgin_candidate_absolute_delta_m": 6.681385732076379e-07,
+    "boundary": "Single first-soft point, not full-history qualification"
+  },
+  "history_signal_file": "history-signal-recomputed.json",
+  "r58_stall": {
+    "originals_interrupted": 2,
+    "exact_root_cause_confirmed": false,
+    "strong_candidate": "JAX LearnedColumns/free-or-mixed solve/device result readback",
+    "not_proved": [
+      "driver defect",
+      "exact live kernel",
+      "peer contention",
+      "Newton endless loop",
+      "wall-clock deadline"
+    ],
+    "online_mitigation": "r60 CPU FP64 original-law material backend, each case independently requalified"
+  },
+  "N59": {
+    "original_E30_pass": false,
+    "max_x_m": 1.0398349428543632,
+    "material_exit_x_m": 2.2,
+    "handoff_proposed": 1521,
+    "handoff_feasible": 1519,
+    "handoff_installed": 0,
+    "suggested_priority": "retain evidence; no longer occupy main material-science physics slots"
+  },
+  "next_design": {
+    "history_intervention": "Planner-private reset of whole e/q/stress tuple only on previously loaded, currently unloaded candidate cells; preserve currently loaded state, main observer, true plant, measured forces, current WBC and actor inputs. Propagate candidate normally afterward.",
+    "interpretation": "Contribution of persistent unloaded cross-contact map to future planning, not all memory or isolated q.",
+    "required_metadata_fix": "Observer log=False does not maintain ever_loaded/release metadata; create causal own-estimate history mask instead of using true plant or stale fields.",
+    "minimal_MPC": "Original force-QP proposal plus material rollout and one material-geometry linearization proposal, rescored by same original objective and same material/centroidal forecast; original WBC remains.",
+    "supplemental_task": "Separately named short-revisit mechanical task, original plant and hard bounds unchanged, actual unloading/reloading and overlapping world cells; no old E600 label reuse.",
+    "horizon_limit_s": 0.35,
+    "nominal_same_foot_period_s": 0.5
+  },
+  "report": "control.md",
+  "reproducer": "recompute_history_signal.py"
+}

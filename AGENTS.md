@@ -1,4 +1,20 @@
-# W56 执行入口
+# 当前入口：W56已完成审查，W57模块与联合研究待执行
+
+审查基点 `3590646bc15a59903c9561381368d985963dfe9e`。先读 [W57研究计划](docs/S1_W57_RESEARCH_PLAN.md)、[启动提示词](docs/S1_W57_START_PROMPT.md)、[W56证据审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W56-review/README.md) 和 [current.json](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。本次提交仅完成审查、计划与每日记录，W57控制实现、机器人物理和新PPO尚未开始。
+
+r55/r60 A/B各自原E600均通过，稳定名义基线已成立；r57末12维消融双E60通过，r58双E300计算停滞后授权终止，N59原E30未贯穿。不要沿用历史“尚无能走基线”，也不要把接口接通当作材料记忆独立/联合收益。四份全程轨迹和视频支持对角行走，同时存在旧r55已有的前足约2mm再离地；具体根因待接触事件对齐。
+
+本轮按 **M材料估计、P前瞻规划、R学习接口** 并行实施，先分别给出可归因对照，再固定模块做首次联合机制验证。计划允许独立新timing head的有限PPO pilot：一个共享head、一个学习seed、8×256=2048 distinct转移，两个collector同版本各128；旧W44 actor始终冻结、完整resume保留。历史PPO=0不是未来永久禁令，不能用旧stream.training=True启动新head。新控制身份包括更换observer后的零新增动作组，均不能借r60原资格。
+
+至多两条重物理加第三条真实材料批次/数据/学习线，25核先按4+4+14+3共享上限；线上CPU FP64，GPU用于独立真实batch，不凑显存。原plant/材料/硬界和原任务判定保留；独立短重访机制任务单独评分，静站不算重访。条件满足同轮推进B/P/R/PR首批组合，不每个小步骤停下等下一次提问；负结果如实保留。
+
+所有新后台 `deadline=null`、`wall_deadline_enabled=false`、`kill_on_conversation_end=false`，不传deadline-unix，不设置墙钟完成期限。现场先核确切job/PID/tmux与时钟，已有有效工作就续接。GitHub直交后不在用户电脑额外下载、复制、镜像、打包或归档；保留被引用服务器原件，不自动删除，不借电脑VPN/SSH转发。
+
+**每天必须详细追加 [docs/S1_DAILY_WORKLOG.md](docs/S1_DAILY_WORKLOG.md)**，按Asia/Shanghai日期和唯一事件记录目标、假设、实现、运行/训练身份与数量、解决/未解问题、正负证据、资源、commit/Release和续接。已有11/17–21有据回填，缺失日期不补造。多代理各写lane事件，唯一整合者去重发布。
+
+以下内容保留原形成时约定，属于历史，不覆盖本节与W57计划。
+
+## 历史：W56执行入口（已结束）
 
 在 D57 按[逐身份资格与进程](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/phase.json)和[执行计划](docs/S1_W56_STABILITY_PLAN.md)续接 Go2/TM02。r55 A、B 均已完成原 E600；r57 消融均已完成 E60。r58 A、B 均通过 E60，两条 E300 在各自最后一次成功 MPC 记录后失去推进，原位恢复未能续接，按用户授权终止并保留原件。N/r59 原 E30 未贯穿材料。
 
