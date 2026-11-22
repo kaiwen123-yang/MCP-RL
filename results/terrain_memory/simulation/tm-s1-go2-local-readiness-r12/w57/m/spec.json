@@ -1,0 +1,43 @@
+{
+  "schema": "W57-M-force-state-observer-v1",
+  "source_commit": "d321d61fd13ba301b477deaf473101debebb88e5",
+  "r60_legacy_law": "frozen B_random1000--ideal-potentials FP64; 10 x 0.0002 s; 0.02 m world cells",
+  "development_error_band": "complete r60 B/seed2 E60; no fitting of model or adjustment using A",
+  "held_out_for_M1_selection": "complete r60 A/seed1 E60; both historical A/B cases previously known, not new generalization environments",
+  "M0": "same r60 transient and numerics, synchronized within-window ownership/load/release event ledger",
+  "M1": "one scalar signed creep/free prior duration per last-tick owned foot, bounded by the already completed 2ms window. Only cells loaded on the same foot on the last two ticks are eligible. Apply extra admissible zero-traction aging or creep at the former measured strain then re-solve the final actual measured boundary and physical dt. Two endpoints and the projected residual fraction in each physical direction compete, keep prior on a tie. Original frozen potentials and domain. No per-cell residual assignment; no true plant internal states online.",
+  "rank_resolution": "native 1e-7 MPa residual allowance converted with actual supported area and gamma; no force-identifiable change below this value",
+  "correction_time": "once on last completed substep before publication; observed aggregate four-foot GRFs are used only on the measured soft owned foot",
+  "event_sampling": "one first unique actual cell-event per leg continuous positive-soft-force interval and event family; among simultaneous matching cells select largest positive effective area. Families first load, same-foot reload, cross-foot revisit, release, and >=6s true unloaded gap. Count base foot intervals and source cell event IDs. Foot events evaluated on original timelines, excluding unavailable endpoints.",
+  "forward": "from last published state strictly before event, independent 20.2 ms continuation with all intervening real boundary kinematics and ownership but no future force observations; future measured force, archived cell displacement/strain, common-foot inverse at measured future load, tangent against independent reference-law history. This conditional material prediction does not forecast robot kinematics.",
+  "release_to_reload": "when a true matched release is already published, start at that causal observer publication and propagate private free relaxation to the recorded later cell load with no intervening force. Compare preload state/recovery, new cell force and stress-controlled displacement at the actual next measured boundary.",
+  "interval_calibration": "for each family and estimand the absolute-error 95th percentile on complete development B supplies a symmetric held-out A error band, report coverage and unavailable bands",
+  "adoption": "adopt M1 only if heldout pooled non-release 20.2-ms aggregate-foot force MAE improves, released anchor-depth MAE does not increase, and improved output reaches the differential normal reference above the paired r60 numerical repeatability. Missing independent improvement retains M0. No additional PANN weight candidate without isolated evidence of weight-dominated error.",
+  "timing": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_on_conversation_end": false
+  },
+  "new_robot_episodes": 0,
+  "new_policy_transitions": 0,
+  "publication_api": {
+    "time_s": "observer.time",
+    "publication_id": "observer.windows",
+    "causal_last_boundary_m": "observer.published_bottom",
+    "world_state": "observer.ground.e, q, stress ordered by ground.ids",
+    "per_world_key": "observer.history((ix,iy)); prior event ID/time null for virgin cells",
+    "force_innovation": "observer.last_correction[foot,1] in N when the foot owns material area",
+    "correction_columns": [
+      "prior_force_N",
+      "last_completed_observed_minus_prior_force_N",
+      "minimum_valid_probe_force_N",
+      "maximum_valid_probe_force_N",
+      "selected_prior_duration_s",
+      "assimilated_force_N",
+      "eligible_supported_cell_count",
+      "rejected_probe_count"
+    ],
+    "uncertainty": "force range of one physically admissible, bounded reconstruction direction; no confidence or posterior distribution in directions orthogonal to the force. Empirical held-out forecast coverage reported separately."
+  },
+  "released_depth_eligibility": "The selected release-cell must remain truly unloaded through the 20ms state sample. A reloaded target is reported separately and cannot contribute a residual recovery value."
+}

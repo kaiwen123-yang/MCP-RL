@@ -1,0 +1,16 @@
+{
+  "identity": "W57-P2-event-load-distance-v1-saved",
+  "base_controller": "compare low-frequency proposals on the r60 causal gait; inner .35s force MPC and 500Hz WBC stay unchanged",
+  "input": "Completed M0 0.2ms windows. At each already-committed diagonal liftoff, next pair, measured support, current pose and command, known individual swing arcs and most recent published force plan.",
+  "horizon_s": 2.0,
+  "horizon_reason": "Next source transfer about 0.25 s, r60 first E60 short release to cross-foot reload maximum 1.7420/1.7472 s A/B",
+  "additional_authority": "One request for next diagonal transfer at nominal minus .050, nominal or nominal plus .050 s; no change to actual force/support confirmation and residual gates",
+  "target": "Only currently measured loaded source fore/hind feet and forecast later distinct-leg touchdowns with physical footprint overlap and shared world keys in all three proposals. Omit incomparables before scoring. No matched target keeps nominal",
+  "conditional_load": "Most recent frozen force-plan proportions over its existing horizon renormalized to mg on forecast stance, then equal vertical bodyweight shares. Test reload at the same mg/2 for the same 2 ms at each matched destination. Complete ownership and causal footprint state use original unloaded/loaded material law, .2ms event-aligned.",
+  "criterion": "Minimize maximum absolute sole travel in meters between forecast touchdown datum and equilibrium boundary after a common 2ms mg/2 request over identical cross-foot target IDs. One quantity, no additional weighting. The same publicly added criterion is used in full and private-reset arms; not r60's original centroidal objective.",
+  "tie_m": 1e-12,
+  "saved_selection": "All actual committed diagonal liftoffs on initial outbound r60 E30 A/B whose previous source foot is within the original material, including no-target and same-gate arms. A/B are two archived nominal environments.",
+  "history": "Single private reset of detached prior queried world cells only, complete active footprint groups protected. Forward source load after publication remains active in both arms.",
+  "deployment_status": "Saved-event screening. Any later closed loop uses an explicitly new controller identity before launch, P base then once-only R residual, final timing rescored; no existing P1 collector retrofit.",
+  "deadline": null, "wall_deadline_enabled": false, "kill_on_conversation_end": false
+}
