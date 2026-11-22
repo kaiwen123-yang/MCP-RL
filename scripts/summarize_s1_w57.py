@@ -16,6 +16,39 @@ def read(p):
     return json.loads(p.read_text())
 
 
+def sampled_resources(path):
+    if not path.exists():return None
+    records=0;both=0.;covered=0.;long_gaps=0.;host_gpu_peak=0;w57_gpu_peak=0
+    previous=None;gpus=[]
+    for line in path.open():
+        now=json.loads(line)
+        if previous is not None:
+            dt=now['unix_s']-previous['unix_s']
+            if 0 < dt <= 60.:
+                covered+=dt
+                advancing=sum(n in previous['physics'] and a['pid']==previous['physics'][n]['pid']
+                              and a['physical_s']>previous['physics'][n]['physical_s']+1.e-8
+                              for n,a in now['physics'].items())
+                if advancing>=2:both+=dt
+            elif dt>60.:long_gaps+=dt
+        gpu=now['gpu_percent_used_total_MiB']
+        if gpu:
+            host_gpu_peak=max(host_gpu_peak,gpu[1]);gpus.append(gpu[0])
+        pids={x['pid'] for x in now['processes']}
+        w57=0
+        for app in now['gpu_compute_pid_used_MiB']:
+            pair=[v.strip() for v in app.split(',')]
+            if len(pair)==2 and all(v.isdigit() for v in pair) and int(pair[0]) in pids:
+                w57+=int(pair[1])
+        w57_gpu_peak=max(w57_gpu_peak,w57)
+        records+=1;previous=now
+    return dict(samples=records,covered_wall_s=covered,concurrently_advancing_interval_wall_s=both,
+                excluded_monitor_gaps_over_60s=long_gaps,peak_total_GPU_MiB=host_gpu_peak,
+                peak_W57_GPU_process_MiB=w57_gpu_peak,
+                mean_host_GPU_utilization_pct=sum(gpus)/len(gpus) if gpus else None,
+                scope='Physical advancement observed in both neighboring samples (nominal 20 s); different from overlapping process lifetimes. Collection started after the first two mechanism episodes began. Device utilization includes other work.')
+
+
 def combine():
     rows=[read(p) for p in sorted((R/'attempts').glob('*.json'))]
     starts=[];stops=[];attempts=[]
@@ -47,12 +80,16 @@ def combine():
         v['distinct_in_completed_updates']+=metrics['distinct'];v['updates']+=1
     deliveries=[read(p) for p in sorted((R/'delivery').glob('*.json'))]
     mdir=R/'m';pdir=R/'p'
+    live_index=R/'episodes/index.json'
+    raw_index=read(live_index) if live_index.exists() else {}
+    integrated={a['attempt'] for a in raw_index.get('attempts',[]) if a.get('physical_started')}
     out=dict(schema='s1_w57_execution_v1',as_of_shanghai=datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(),
              plan_commit='d321d61fd13ba301b477deaf473101debebb88e5',
              execution_workspace=str(ROOT),baseline=dict(original_E600=['r55 A','r55 B','r60 A','r60 B'],
              original_reruns=0,reference=str(REL/'w56/index.json')), background=dict(deadline=None,
              wall_deadline_enabled=False,kill_on_conversation_end=False),attempts=attempts,
-             distinct_physics_attempts=len(rows),completed_physics_samples=sum(x.get('physical_samples') or 0 for x in rows),
+             distinct_declared_attempts=len(rows),distinct_physics_attempts=len(integrated),
+             measurement=sampled_resources(RAW/'w57/resource-trace.jsonl'),completed_physics_samples=sum(x.get('physical_samples') or 0 for x in rows),
              completed_process_cpu_s=sum((x.get('user_cpu_s') or 0)+(x.get('system_cpu_s') or 0) for x in rows),
              overlap_wall_s_of_finished_physical_intervals=overlap,
              original_qualifications=[dict(arm=x['arm'],case=x['case'],level=x['level'],attempt=x['attempt'],

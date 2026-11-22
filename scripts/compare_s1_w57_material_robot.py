@@ -64,12 +64,13 @@ def trajectories(folder):
 
 
 def common_prefix(traces, starts):
-    d0,d1=traces
-    ticks=np.intersect1d(np.rint(d0['time']/.002).astype(np.int64),np.rint(d1['time']/.002).astype(np.int64))
-    t=ticks*.002
-    if not np.all(np.diff(ticks)==1):
+    recorded=[np.rint(d['time']/.0002).astype(np.int64) for d in traces]
+    ticks=np.intersect1d(*recorded)
+    ticks=ticks[ticks%10==0]
+    t=ticks*.0002
+    if not np.all(np.diff(ticks)==10):
         raise ValueError('Original closed-loop trajectory has a gap in common time.')
-    idx=[np.searchsorted(np.rint(d['time']/.002).astype(int),ticks) for d in traces]
+    idx=[np.searchsorted(clock,ticks) for clock in recorded]
     before=t<min(v for v in starts if v is not None) if any(v is not None for v in starts) else np.ones(len(t),bool)
     pre={};first={}
     for name,slice_,unit in [('qpos',slice(None,3),'base_xyz_m'),('rpy',slice(None),'rpy_rad'),
@@ -79,10 +80,13 @@ def common_prefix(traces, starts):
         v0,v1=(d[name][i] for d,i in zip(traces,idx))
         if slice_ is not None:
             v0,v1=v0[:,slice_],v1[:,slice_]
-        diff=np.abs(v0-v1).reshape(len(t),-1).max(axis=1)
+        difference=v0-v1
+        if name=='rpy':
+            difference=np.arctan2(np.sin(difference),np.cos(difference))
+        diff=np.abs(difference).reshape(len(t),-1).max(axis=1)
         pre[unit]=float(diff[before].max(initial=0.))
         at=np.flatnonzero(diff>0)
-        first[unit]=dict(first_bitwise_difference_time_s=float(t[at[0]]) if len(at) else None,
+        first[unit]=dict(first_nonzero_difference_time_s=float(t[at[0]]) if len(at) else None,
                          maximum_absolute_difference=float(diff.max(initial=0.)))
     data=[]
     for d,i in zip(traces,idx):

@@ -1,6 +1,6 @@
 {
   "schema": "s1_w57_execution_v1",
-  "as_of_shanghai": "2026-11-22T11:26:42.529096+08:00",
+  "as_of_shanghai": "2026-11-22T11:43:39.016386+08:00",
   "plan_commit": "d321d61fd13ba301b477deaf473101debebb88e5",
   "execution_workspace": "/root/autodl-tmp/MCP-RL-w57",
   "baseline": {
@@ -41,9 +41,9 @@
       "physical_samples": null,
       "physical_started_unix_s": null,
       "physical_ended_unix_s": null,
-      "last_recorded_physical_s": 19.00199999998239,
-      "last_recorded_phase": "outbound",
-      "last_progress_unix_s": 1795317985.7453988,
+      "last_recorded_physical_s": 43.501999999925296,
+      "last_recorded_phase": "return",
+      "last_progress_unix_s": 1795318999.101984,
       "receipt": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-mech-b-a-short-a01.json"
     },
     {
@@ -68,21 +68,40 @@
       "physical_samples": null,
       "physical_started_unix_s": null,
       "physical_ended_unix_s": null,
-      "last_recorded_physical_s": 17.501999999985888,
-      "last_recorded_phase": "outbound",
-      "last_progress_unix_s": 1795317998.7740903,
+      "last_recorded_physical_s": 41.00199999993112,
+      "last_recorded_phase": "return",
+      "last_progress_unix_s": 1795319018.740147,
       "receipt": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-mech-b-b-short-a01.json"
     }
   ],
+  "distinct_declared_attempts": 2,
   "distinct_physics_attempts": 2,
+  "measurement": {
+    "samples": 40,
+    "covered_wall_s": 785.0711097717285,
+    "concurrently_advancing_interval_wall_s": 785.0711097717285,
+    "excluded_monitor_gaps_over_60s": 0.0,
+    "peak_total_GPU_MiB": 2003,
+    "peak_W57_GPU_process_MiB": 1984,
+    "mean_host_GPU_utilization_pct": 5.0,
+    "scope": "Physical advancement observed in both neighboring samples (nominal 20 s); different from overlapping process lifetimes. Collection started after the first two mechanism episodes began. Device utilization includes other work."
+  },
   "completed_physics_samples": 0,
   "completed_process_cpu_s": 0,
   "overlap_wall_s_of_finished_physical_intervals": 0.0,
   "original_qualifications": [],
   "material_evidence": [
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/a-M0-replay.json",
     "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/a-M1-replay.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/a-forecast-resources.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/b-M0-replay.json",
     "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/b-M1-replay.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/b-forecast-resources.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/error-band-calibration.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/error-by-event.json",
     "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/recovery-design.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/reproduction.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/selection.json",
     "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/spec.json"
   ],
   "planner_evidence": [
@@ -94,9 +113,12 @@
   "timing_learning": {},
   "frozen_W44_actor_updates": 0,
   "learning_counts_scope": "Closed unique 128+128 event transitions in committed optimizer updates; partial live buffers are separate.",
-  "verified_release_bundles": [],
-  "verified_release_assets": 0,
-  "release_bytes": 0,
+  "verified_release_bundles": [
+    "w57-heldout-material-starts",
+    "w57-pilot02-initial-controller"
+  ],
+  "verified_release_assets": 2,
+  "release_bytes": 864788,
   "declared_mechanism_episodes": 16,
   "additional_matched_blind_if_triggered": 4
 }
