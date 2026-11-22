@@ -399,6 +399,83 @@ P/A 原 E30 共 1504 次重规划，628 个材料候选选优有后续真实物�
 
 用户要求在两个 collector 稳定后结束聊天。首对实际训练 E60 各走满 60 s 后自然退出，A/B 分别形成 129/131 个真实转移，耗时 1378.4/1394.3 s。策略在两例内完成正常同步更新，两例均不计为冻结策略的原 E60 资格。第二对 A/B 已各自在 virgin 初态开始并继续增加样本。首对的完整回合持续合计吞吐约 671 条/墙钟小时。后续学习、条件式 blind、正式 16 个机制回合、原任务资格、必要私有对照、跨日记录、原件直传与最终远端核验均在 D57 的独立 tmux 中接续。日历预计时间只用于进度说明，后台仍按原物理终止条件和样本预算运行。
 
+### W57 当日实验入账（2026-11-22，Asia/Shanghai）
+
+累计账本使用独立 attempt 和 head/case/version/serial。本日启动 65 个自然任务，结束 63 个。结束任务共有 18,850,000 个已记录物理子步、89661.25 CPU 核秒。这两个量按结束日归集，同一跨日任务计一次。
+
+| attempt | 控制 / 环境 case | 任务 | 实际物理时间（s） | 结果 |
+| --- | --- | --- | ---: | --- |
+| `w57-mech-b-a-short-a01` | B/M0 · A | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-mech-b-b-short-a01` | B/M0 · B | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-b-a-original-e30-a01` | B/M1 · A | 原 E30 | 30.0000 | passed · stage_passed |
+| `w57-m1-p-a-original-e30-a01` | P/M1 · A | 原 E30 | 30.0000 | passed · stage_passed |
+| `w57-m1-b-b-original-e30-a01` | B/M1 · B | 原 E30 | 30.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0001` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0001` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0002` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0002` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0003` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0003` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0004` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0004` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0005` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0005` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0006` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0006` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0007` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0007` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0008` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0008` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0009` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0009` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0010` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0010` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0011` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0011` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0012` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0012` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0013` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0013` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0014` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0014` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0015` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0015` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0016` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0016` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0017` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0017` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0018` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0018` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0019` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0019` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0020` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0020` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0021` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0021` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0022` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0022` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0023` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0023` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0024` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0024` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0025` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0025` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0026` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0026` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0027` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0027` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0028` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0028` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-a-e60-0029` | R/M1 · A | training | 60.0000 | passed · stage_passed |
+| `w57-pilot02-full-b-e60-0029` | R/M1 · B | training | 60.0000 | passed · stage_passed |
+
+本日闭合的 on-policy 批次含 7,424 条 distinct 转移，旧 W44 速度策略更新 0。样本以同版本两个 128 段交齐并产生优化更新的日期入账。跨日未闭合段保留原序列编号。
+full 入账 7,424 条、29 次更新，实际改变交接时刻 1942 次，只改变载荷交接斜坡 0 次。
+
+跨日继续的唯一任务为 `w57-pilot02-full-a-e60-0030`、`w57-pilot02-full-b-e60-0030`。
+
+截至入账，按 GitHub size/digest 得到的本日新增资产回执共 76 个，17,648,624,797 B。源码和紧凑记录基线 `38e13650d2d0`。物理槽、前序资格、仍在执行或等待的模块与发布资产详见 [W57 索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
