@@ -1,7 +1,10 @@
 """Paired M0-B/M1-B short-revisit outcomes, separate from the frozen M1 matrix."""
 import argparse
+from datetime import datetime
 import hashlib
 import json
+import sys
+from zoneinfo import ZoneInfo
 
 import numpy as np
 
@@ -184,7 +187,9 @@ def main():
     pairs=[one_pair(args.attempts[:2]),one_pair(args.attempts[2:])]
     if [x['case'] for x in pairs]!=['A','B']:
         raise ValueError('Expected A then B.')
-    write(R/'m/closed-loop-short.json',dict(physical_distinct_episodes=4,extra_M0_diagnostic_episodes=2,
+    completion=datetime.now(ZoneInfo('Asia/Shanghai')).isoformat()
+    write(R/'m/closed-loop-short.json',dict(completed_shanghai=completion,command=sys.argv,
+        physical_distinct_episodes=4,extra_M0_diagnostic_episodes=2,
         selected_M1_primary_matrix_episodes_reused_for_the_contrast=2,new_physics_in_this_analysis=0,
         source_attempts=args.attempts,scope='Two same-case independent closed-loop contrasts of whole M estimators on the declared short revisit task, each from virgin state with frozen W44 speed actor and P0/R0; no original-route qualification awarded, no new learning. Compare work over common exposure and reported task accomplishment.',
         cases=pairs))

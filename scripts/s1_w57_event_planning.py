@@ -102,6 +102,8 @@ def score(c,t,mission,mq,observer,grf,matches,history):
         connected=ext
     included=np.array([[bool(m&connected) for m in row] for row in maps])
     forecast=Forecast(g,grid,grid,feet[:,:,:2],contact & included,observer.published_bottom,controller.measured)
+    if observer.mode=='M1':
+        forecast.workers=4;forecast.backend='equal_columns'
     result=forecast.propagate(loads,SUBSTEP,history)
     distances=[]
     for (src,dst,ordinal),x in chosen:

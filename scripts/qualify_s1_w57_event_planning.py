@@ -47,8 +47,9 @@ def first_permission(raw, ticks, actual, src, due, mass, cfg):
     return None,different_ramp
 
 
-def run(side):
-    saved=Saved(side);folder=ROOT/'work/w57-p'/f'long-event-{side}'
+def run(side,estimator):
+    saved=Saved(side,estimator);label=side if estimator=='M0' else f'{side}-{estimator}'
+    folder=ROOT/'work/w57-p'/f'long-event-{label}'
     folder.mkdir(parents=True,exist_ok=True)
     with np.load(saved.root/'trajectory.npz') as z:
         tr={k:z[k] for k in ('time','qpos','qvel','command_velocity','phase')}
@@ -63,7 +64,7 @@ def run(side):
     m=mujoco.MjModel.from_binary_path(str(saved.root/'model.mjb'));d=mujoco.MjData(m)
     mujoco.mj_resetDataKeyframe(m,d,m.key('home').id);mujoco.mj_forward(m,d)
     c=FController(m,d,[m.geom(l).id for l in LEGS],m.body('trunk').id,folder,CFG)
-    output=OUT/f'long-event-{side}.jsonl'
+    output=OUT/f'long-event-{label}.jsonl'
     out=output.open('x')
     for ev,successor in zip(liftoffs,liftoffs[1:]):
         t=float(ev['time_s']);tick=round(t/.002)
@@ -93,7 +94,7 @@ def run(side):
         end=round(successor['time_s']/.002);ts=range(tick+1,end+1)
         gate,change=first_permission(control,ts,successor,c.next_pair,result['requested_due_s'],c.mass,CFG)
         zero,_=first_permission(control,ts,successor,c.next_pair,c.next_liftoff,c.mass,CFG)
-        record=dict(attempt=saved.root.name,source_event=ev['event'],publication_s=t,material_windows=saved.obs.windows,
+        record=dict(attempt=saved.root.name,estimator=estimator,source_event=ev['event'],publication_s=t,material_windows=saved.obs.windows,
                     source_support=c.next_pair.tolist(),most_recent_qp=plan,
                     actual_next_liftoff_s=successor['time_s'],next_liftoff_event=successor['event'],
                     nominal_gate_on_saved_path_s=zero,proposed_first_gate_on_saved_prefix_s=gate,
@@ -106,4 +107,5 @@ def run(side):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('case',choices=['a','b']);run(p.parse_args().case)
+    p=argparse.ArgumentParser();p.add_argument('case',choices=['a','b']);p.add_argument('--estimator',choices=['M0','M1'],default='M0')
+    a=p.parse_args();run(a.case,a.estimator)
