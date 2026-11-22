@@ -1,4 +1,5 @@
 """Merge distinct W57 attempts, material evidence and policy nodes into the compact run index."""
+import argparse
 from datetime import datetime
 from pathlib import Path
 import json
@@ -49,7 +50,7 @@ def sampled_resources(path):
                 scope='Physical advancement observed in both neighboring samples (nominal 20 s); different from overlapping process lifetimes. Collection started after the first two mechanism episodes began. Device utilization includes other work.')
 
 
-def combine():
+def combine(finished=False):
     rows=[read(p) for p in sorted((R/'attempts').glob('*.json'))]
     starts=[];stops=[];attempts=[]
     for row in rows:
@@ -83,7 +84,9 @@ def combine():
     live_index=R/'episodes/index.json'
     raw_index=read(live_index) if live_index.exists() else {}
     integrated={a['attempt'] for a in raw_index.get('attempts',[]) if a.get('physical_started')}
-    out=dict(schema='s1_w57_execution_v1',as_of_shanghai=datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(),
+    selected=read(R/'m/selection.json').get('selected') if (R/'m/selection.json').exists() else None
+    out=dict(schema='s1_w57_execution_v1',status='finished' if finished else 'executing',
+             selected_estimator=selected,as_of_shanghai=datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(),
              plan_commit='d321d61fd13ba301b477deaf473101debebb88e5',
              execution_workspace=str(ROOT),baseline=dict(original_E600=['r55 A','r55 B','r60 A','r60 B'],
              original_reruns=0,reference=str(REL/'w56/index.json')), background=dict(deadline=None,
@@ -109,6 +112,8 @@ def combine():
 
 
 if __name__=='__main__':
-    idx=combine()
+    cli=argparse.ArgumentParser(description=__doc__)
+    cli.add_argument('--finish',action='store_true')
+    idx=combine(cli.parse_args().finish)
     print(json.dumps({k:idx[k] for k in ('as_of_shanghai','distinct_physics_attempts','completed_physics_samples',
                                         'timing_learning','verified_release_assets')}))

@@ -181,12 +181,125 @@ def summarize(campaign, destination):
     return results
 
 
+def verify_saved_credit(run,version,streams):
+    with np.load(run/f'credit-{version:03d}.npz') as data:
+        stored_adv = data['advantage']
+        stored_returns = data['returns']
+        interrupted = data['interrupted']
+    actual = np.zeros((128,2))
+    returns = np.zeros_like(actual)
+    for col,seq in enumerate(streams):
+        following = 0.
+        for pos in reversed(range(128)):
+            row = seq[pos]
+            gamma = .99**(row['dt_s']/.5)
+            lam = .95**(row['dt_s']/.5)
+            bootstrap = 0. if row['terminated'] else row['next_value']
+            delta = row['reward']+gamma*bootstrap-row['value']
+            if row['terminated'] or row['truncated'] or row['collector_cut'] or interrupted[pos,col]:
+                following = 0.
+            following = delta+gamma*lam*following
+            actual[pos,col]=following
+            returns[pos,col]=following+row['value']
+    return dict(shape=list(stored_adv.shape),
+                max_abs_advantage_vs_independent_f64=float(np.max(np.abs(actual-stored_adv))),
+                max_abs_return_vs_independent_f64=float(np.max(np.abs(returns-stored_returns))))
+
+
+def training_actuals(campaign,output):
+    heads={}
+    for name in ('full','blind'):
+        run=campaign/name
+        if not (run/'run.json').is_file():
+            continue
+        rowids=set()
+        duplicates=0
+        versions=[]
+        totals=Counter()
+        samples=Counter()
+        sources={}
+        costs={}
+        cut_intervals=[]
+        for version in range(33):
+            streams=[read_rows(run/f'batch-{version:03d}-{c}.jsonl') for c in ('A','B')]
+            if not any(streams):
+                continue
+            for c,rows in zip(('A','B'),streams):
+                samples[c]+=len(rows)
+                for r in rows:
+                    event=r['decision_id']
+                    duplicates+=int(event in rowids)
+                    rowids.add(event)
+                    totals['on_policy']+=int(r['sampling']=='on_policy')
+                    totals['dt_s']+=r['dt_s']
+                    totals['terminated']+=r['terminated']
+                    totals['episode_time_limits']+=r['truncated']
+                    totals['collector_cuts']+=r['collector_cut']
+                    actual=r['execution']
+                    classification=('unexecuted' if actual is None else 'liftoff_changed' if actual['effective']
+                        else 'ramp_only' if actual['transfer_fraction_changed'] else 'same_handover_and_ramp')
+                    totals[classification]+=1
+                    sources[r['attempt']]=Path(r['source_dir'])
+            update_path=run/f'update-{version+1:03d}.json'
+            if update_path.is_file() and all(len(s)==128 for s in streams):
+                m=json.loads(update_path.read_text())
+                started=(run/'run.json' if version==0 else run/f'update-{version:03d}.json').stat().st_mtime
+                elapsed=update_path.stat().st_mtime-started
+                versions.append(dict(input_version=version,output_version=version+1,
+                    case_counts=[len(s) for s in streams],physical_logdensity_max_error=m['physical_max_logp_error'],
+                    latent_logdensity_max_error=m['behavior_max_logp_error'],bounded_action_max_error=m['action_max_error'],
+                    resource=m['device'],optimization_wall_s=m['optimization_wall_s'],optimization_cpu_s=m['optimization_cpu_s'],
+                    optimizer_steps=m['optimizer_steps'],peak_gpu_allocated_bytes=m['peak_gpu_bytes'],
+                    actual_256_row_wall_s=elapsed,distinct_rows_per_wall_h=256*3600/elapsed,
+                    **verify_saved_credit(run,version,streams)))
+            elif any(streams):
+                cut_intervals.append(dict(version=version,case_counts=[len(s) for s in streams],updated=False))
+        query_count=Counter()
+        query_publication_max=0.
+        max_sample_delay=0.
+        for attempt,folder in sources.items():
+            receipt=SMALL/'attempts'/(attempt+'.json')
+            facts=json.loads(receipt.read_text()) if receipt.is_file() else {}
+            costs[attempt]=dict(status=facts.get('status'),simulation_s=facts.get('simulation_s'),
+                physical_samples=facts.get('physical_samples'),user_cpu_s=facts.get('user_cpu_s'),
+                system_cpu_s=facts.get('system_cpu_s'),pid=facts.get('pid'))
+            for row in read_rows(folder/'timing-decisions.jsonl'):
+                if row['decision_id'] not in rowids:
+                    continue
+                for q in row['queries']:
+                    query_count[q['status']]+=1
+                    query_publication_max=max(query_publication_max,q['observer_publication_age_s'])
+                    max_sample_delay=max(max_sample_delay,q['publication_time_s']-row['sample_time_s'],
+                                         q['observer_publication_s']-row['sample_time_s'])
+        heads[name]=dict(real_distinct=len(rowids),repeated_identifiers=duplicates,case_counts=dict(samples),
+            exposure_by_foot=dict(query_count),max_observer_age_s=query_publication_max,
+            max_positive_future_publication_s=max_sample_delay,transitions=dict(totals),updates=versions,
+            not_yet_updated=cut_intervals,immutable_identity=json.loads((run/'run.json').read_text())['identity'],
+            natural_physical_attempts=costs,
+            final_checkpoint=(json.loads((run/'frozen-evaluation.json').read_text())['checkpoint']
+                              if (run/'frozen-evaluation.json').is_file() else None))
+    if not any(x['real_distinct'] for x in heads.values()):
+        raise ValueError('No genuine timing transition has closed yet.')
+    count=sum(x['real_distinct'] for x in heads.values())
+    output.parent.mkdir(parents=True,exist_ok=True)
+    atomic_json(output,dict(training_heads=heads,total_distinct=count,old_W44_actor_updates=0,
+        measured_throughput='Elapsed file timestamps between successive completed shared updates; includes collecting both real E60 streams and updating the learner. First interval starts at the frozen run declaration.'))
+    return count
+
+
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--campaign',type=Path,required=True)
-    parser.add_argument('--output',type=Path,default=SMALL/'r/frozen-episode-actions.json')
+    parser.add_argument('--output',type=Path)
+    parser.add_argument('--training',action='store_true')
     args=parser.parse_args()
     torch.set_num_threads(1)
-    rows=summarize(args.campaign,args.output)
-    print(json.dumps(dict(completed_physical_episodes=len(rows),output=str(args.output))))
+    if args.training:
+        output=args.output or SMALL/'r'/args.campaign.name/'training-actuals.json'
+        count=training_actuals(args.campaign,output)
+        print(json.dumps(dict(real_distinct=count,output=str(output))))
+    else:
+        output=args.output or SMALL/'r/frozen-episode-actions.json'
+        rows=summarize(args.campaign,output)
+        print(json.dumps(dict(completed_physical_episodes=len(rows),output=str(output))))
 

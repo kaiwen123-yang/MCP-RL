@@ -6,7 +6,7 @@ import json
 
 import numpy as np
 
-from collect_s1_w57_material import OUT, ART, ROOT
+from collect_s1_w57_material import OUT, ART, ROOT, RAW
 
 
 def read(path):
@@ -23,6 +23,39 @@ def metrics(rows,key):
     ab=np.abs(errors)
     return dict(n=len(errors),signed_mean=float(errors.mean()),mae=float(ab.mean()),rmse=float(np.sqrt(np.mean(errors**2))),
                 abs_p50=float(np.quantile(ab,.50)),abs_p95=float(np.quantile(ab,.95)),abs_max=float(np.max(ab)))
+
+
+def matched_source_history(case, mode, true_events):
+    # Independent event serials have no reason to match numerically. Compare
+    # world key, owner, and physical clocks against the actual source release.
+    rows=[q for q in read(ART/f'{case}-{mode}-starts.json.gz') if 'release_state' in q]
+    same_owner=source_timed=release_timed=0
+    still_loaded=unseen=0
+    release_errors=[]
+    source_errors=[]
+    for q in rows:
+        h=q['source_observed_history']
+        old=q['release']
+        true_load=true_events[old['previous_load_event_id']]
+        good=h['last_owner']==old['leg']
+        same_owner+=good
+        unseen+=not h['ever_loaded']
+        still_loaded+=h['loaded']
+        if good and h['source_load_time_s'] is not None:
+            err=h['source_load_time_s']-true_load['time_s']
+            source_errors.append(err)
+            source_timed+=abs(err)<=.000200001
+        if good and not h['loaded'] and h['release_time_s'] is not None:
+            err=h['release_time_s']-old['time_s']
+            release_errors.append(err)
+            release_timed+=abs(err)<=.000200001
+    qstats=lambda v: np.quantile(np.abs(v),[0,.5,.95,1]).tolist() if v else None
+    return dict(actual_released_cell_queries=len(rows),still_loaded_by_own_observer=still_loaded,
+        never_loaded_by_own_observer=unseen,own_last_owner_matches_actual_source=same_owner,
+        owner_and_source_load_time_within_one_physics_substep=source_timed,
+        owner_free_and_release_time_within_one_physics_substep=release_timed,
+        abs_source_load_time_error_on_matched_owner_s_min_p50_p95_max=qstats(source_errors),
+        abs_release_time_error_on_matched_own_free_cell_s_min_p50_p95_max=qstats(release_errors))
 
 
 def main():
@@ -113,6 +146,15 @@ def main():
         'A_coverage_of_B95_M1_cross_foot_force':calibrations['rows','M1','cross_foot_revisit','future_force_N'],
         'interpretation':'M1 improves the predeclared average short-horizon estimands. The source-release to actual cross-foot reload cell force worsens, and released-depth upper tail worsens. The retained A common-input incremental WBC reference changes subnanometrically; closed-loop effects require independent robot outcomes.'
     }
+    sources={}
+    for c in 'ab':
+        directory=RAW/cases[c]['episode']
+        with (directory/'material-events.jsonl').open() as stream:
+            truth={event['event_id']:event for event in map(json.loads,stream)}
+        sources[c]={m:matched_source_history(c,m,truth) for m in ('M0','M1')}
+    compact['release_publication_event_binding']=dict(
+        scope='Only sampled true release-to-reload event chains; own independently numbered events, matched by world key/leg/physical clock. Offline characterization after the M selection. Does not recalibrate the model.',
+        cases=sources)
     replay_runs=[r for case in replays.values() for r in case.values()]
     wall=max(r['ended_unix_s'] for r in replay_runs)-min(r['started_unix_s'] for r in replay_runs)
     compact['replay_resources']=dict(comparison_processes=len(replay_runs),original_episode_seconds=120.,

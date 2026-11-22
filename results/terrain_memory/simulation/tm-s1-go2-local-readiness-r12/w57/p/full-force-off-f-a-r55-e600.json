@@ -1,0 +1,963 @@
+{
+  "source_attempt": "job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01",
+  "original_result": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w55/f/job-20261120T035811Z-w55-f-a-r55-eval-PANN_PPO_S5-s1-E600-attempt01.json",
+  "physical_files": [
+    {
+      "file": "physical-000.npz",
+      "n": 150000,
+      "start_s": 0.0,
+      "end_s": 29.99999999995676
+    },
+    {
+      "file": "physical-001.npz",
+      "n": 150000,
+      "start_s": 29.99999999995676,
+      "end_s": 59.999999999886846
+    },
+    {
+      "file": "physical-002.npz",
+      "n": 150000,
+      "start_s": 59.999999999886846,
+      "end_s": 90.00000000074063
+    },
+    {
+      "file": "physical-003.npz",
+      "n": 150000,
+      "start_s": 90.00000000074063,
+      "end_s": 120.00000000173652
+    },
+    {
+      "file": "physical-004.npz",
+      "n": 150000,
+      "start_s": 120.00000000173652,
+      "end_s": 150.0000000027324
+    },
+    {
+      "file": "physical-005.npz",
+      "n": 150000,
+      "start_s": 150.0000000027324,
+      "end_s": 180.0000000037283
+    },
+    {
+      "file": "physical-006.npz",
+      "n": 150000,
+      "start_s": 180.0000000037283,
+      "end_s": 210.0000000047242
+    },
+    {
+      "file": "physical-007.npz",
+      "n": 150000,
+      "start_s": 210.0000000047242,
+      "end_s": 240.0000000057201
+    },
+    {
+      "file": "physical-008.npz",
+      "n": 150000,
+      "start_s": 240.0000000057201,
+      "end_s": 270.000000006716
+    },
+    {
+      "file": "physical-009.npz",
+      "n": 150000,
+      "start_s": 270.000000006716,
+      "end_s": 300.0000000077119
+    },
+    {
+      "file": "physical-010.npz",
+      "n": 150000,
+      "start_s": 300.0000000077119,
+      "end_s": 330.0000000087078
+    },
+    {
+      "file": "physical-011.npz",
+      "n": 150000,
+      "start_s": 330.0000000087078,
+      "end_s": 360.0000000097037
+    },
+    {
+      "file": "physical-012.npz",
+      "n": 150000,
+      "start_s": 360.0000000097037,
+      "end_s": 390.0000000106996
+    },
+    {
+      "file": "physical-013.npz",
+      "n": 150000,
+      "start_s": 390.0000000106996,
+      "end_s": 420.0000000116955
+    },
+    {
+      "file": "physical-014.npz",
+      "n": 150000,
+      "start_s": 420.0000000116955,
+      "end_s": 450.0000000126914
+    },
+    {
+      "file": "physical-015.npz",
+      "n": 150000,
+      "start_s": 450.0000000126914,
+      "end_s": 480.00000001368727
+    },
+    {
+      "file": "physical-016.npz",
+      "n": 150000,
+      "start_s": 480.00000001368727,
+      "end_s": 510.00000001468317
+    },
+    {
+      "file": "physical-017.npz",
+      "n": 150000,
+      "start_s": 510.00000001468317,
+      "end_s": 540.0000000077209
+    },
+    {
+      "file": "physical-018.npz",
+      "n": 150000,
+      "start_s": 540.0000000077209,
+      "end_s": 570.0000000001903
+    },
+    {
+      "file": "physical-019.npz",
+      "n": 150000,
+      "start_s": 570.0000000001903,
+      "end_s": 599.9999999926597
+    }
+  ],
+  "physical_rows": 3000000,
+  "physical_seconds": 600.0,
+  "force_threshold_N": 1.0,
+  "radius_m": 0.022,
+  "source_legs": [
+    "FL",
+    "FR",
+    "RL",
+    "RR"
+  ],
+  "old_selected_count": 10,
+  "old_selected_crossmatched": 10,
+  "old_subset_new_classification": {
+    "early_swing_contact_rebound": 10
+  },
+  "definition": "Closed Fz<=1N gap of at least 40ms, excluding high swings when duration exceeds 50ms and sole apex exceeds 5mm. Continuous through all file boundaries; single disconnected initial/final intervals are censored.",
+  "classification": "Confirmed-bearing loss requires a prior positive-force pulse with confirmed load-bearing planned stance and no later committed liftoff before loss. Early rebound requires preceding planned swing, measured impact before committed touchdown, unconfirmed bearing, and downward-to-upward measured vertical velocity. Remaining cases retain their measured mode.",
+  "denominator": "Per-leg 5kHz physical-time exposure and actual load-bearing ticks, by actual sole interior and phase. Counts assigned by loss onset; crossing flags retained. Different original phases included for new stratified census.",
+  "classification_counts": {
+    "early_swing_contact_rebound": 249,
+    "unresolved_or_planned_release": 4
+  },
+  "by_class": {
+    "early_swing_contact_rebound": {
+      "count": 249,
+      "duration_s": {
+        "min": 0.0402,
+        "p05": 0.04148,
+        "p50": 0.0762,
+        "p95": 0.11556,
+        "max": 0.1444
+      },
+      "bottom_apex_m": {
+        "min": 0.00032587428706289806,
+        "p05": 0.00039564226165040434,
+        "p50": 0.0011061500432484259,
+        "p95": 0.0019416996001932597,
+        "max": 0.002510996919097168
+      },
+      "min_support_feet": 2,
+      "longest": {
+        "leg": "FR",
+        "surface_at_loss": "material",
+        "phase_group_at_loss": "straight",
+        "original_phase": 3,
+        "crossed_original_phase": false,
+        "crossed_phase_group": false,
+        "crossed_surface": false,
+        "classification": "early_swing_contact_rebound",
+        "unresolved_subtype": null,
+        "force_on_s": 314.6048000081967,
+        "loss_s": 314.60840000819684,
+        "reload_s": 314.75280000820163,
+        "off_s": 0.1444,
+        "preceding_load_s": 0.0036000000000000003,
+        "apex_bottom_m": 0.002510996919097168,
+        "force_on_minus_planned_s": -0.013199999993787515,
+        "preceding_liftoff_id": 5154,
+        "preceding_liftoff_s": 314.4180000081905,
+        "planned_touchdown_s": 314.6180000081905,
+        "physical_vz_at_on_and_off_m_s": [
+          -0.1458055270509022,
+          0.1285117426285784
+        ],
+        "prior_pulse_peak_N": 182.61632514775167,
+        "prior_pulse_impulse_Ns": 0.4150889301581782,
+        "logged_contact_fraction_while_off": 0.0,
+        "max_force_while_off_N": 0.0,
+        "min_supported_feet": 2,
+        "center_xy_displacement_while_off_m": 0.002192750172777822,
+        "preceding_WBC_bearing_ticks": 0,
+        "prior_pulse_confirmed_event": false,
+        "last_bearing_control": null,
+        "control_at_force_on": {
+          "t_s": 314.604,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 0.0,
+          "mpc_Fz_N": -8.651477251125858e-08,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -1.1139806836930428e-08,
+          "transfer": 0.0,
+          "confirmation_ticks": 0,
+          "requested_acceleration_z_m_s2": 16.925978055825507,
+          "modeled_achieved_center_az_m_s2": 16.540409729729888,
+          "reference_center_z_m": 0.022626604382233788,
+          "applied_hold_torque_Nm": [
+            -2.1712073189010184,
+            4.734549048840784,
+            -4.1057069206465355
+          ]
+        },
+        "control_at_loss": {
+          "t_s": 314.608,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 76.48721767637747,
+          "mpc_Fz_N": -8.651477251125858e-08,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -1.0579873662296096e-08,
+          "transfer": 0.0,
+          "confirmation_ticks": 2,
+          "requested_acceleration_z_m_s2": 5.359677481312225,
+          "modeled_achieved_center_az_m_s2": 5.170564051868759,
+          "reference_center_z_m": 0.02222339555057957,
+          "applied_hold_torque_Nm": [
+            -1.4872810495817084,
+            3.359930694024365,
+            -1.6139586447926604
+          ]
+        }
+      },
+      "highest": {
+        "leg": "FR",
+        "surface_at_loss": "material",
+        "phase_group_at_loss": "straight",
+        "original_phase": 3,
+        "crossed_original_phase": false,
+        "crossed_phase_group": false,
+        "crossed_surface": false,
+        "classification": "early_swing_contact_rebound",
+        "unresolved_subtype": null,
+        "force_on_s": 314.6048000081967,
+        "loss_s": 314.60840000819684,
+        "reload_s": 314.75280000820163,
+        "off_s": 0.1444,
+        "preceding_load_s": 0.0036000000000000003,
+        "apex_bottom_m": 0.002510996919097168,
+        "force_on_minus_planned_s": -0.013199999993787515,
+        "preceding_liftoff_id": 5154,
+        "preceding_liftoff_s": 314.4180000081905,
+        "planned_touchdown_s": 314.6180000081905,
+        "physical_vz_at_on_and_off_m_s": [
+          -0.1458055270509022,
+          0.1285117426285784
+        ],
+        "prior_pulse_peak_N": 182.61632514775167,
+        "prior_pulse_impulse_Ns": 0.4150889301581782,
+        "logged_contact_fraction_while_off": 0.0,
+        "max_force_while_off_N": 0.0,
+        "min_supported_feet": 2,
+        "center_xy_displacement_while_off_m": 0.002192750172777822,
+        "preceding_WBC_bearing_ticks": 0,
+        "prior_pulse_confirmed_event": false,
+        "last_bearing_control": null,
+        "control_at_force_on": {
+          "t_s": 314.604,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 0.0,
+          "mpc_Fz_N": -8.651477251125858e-08,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -1.1139806836930428e-08,
+          "transfer": 0.0,
+          "confirmation_ticks": 0,
+          "requested_acceleration_z_m_s2": 16.925978055825507,
+          "modeled_achieved_center_az_m_s2": 16.540409729729888,
+          "reference_center_z_m": 0.022626604382233788,
+          "applied_hold_torque_Nm": [
+            -2.1712073189010184,
+            4.734549048840784,
+            -4.1057069206465355
+          ]
+        },
+        "control_at_loss": {
+          "t_s": 314.608,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 76.48721767637747,
+          "mpc_Fz_N": -8.651477251125858e-08,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -1.0579873662296096e-08,
+          "transfer": 0.0,
+          "confirmation_ticks": 2,
+          "requested_acceleration_z_m_s2": 5.359677481312225,
+          "modeled_achieved_center_az_m_s2": 5.170564051868759,
+          "reference_center_z_m": 0.02222339555057957,
+          "applied_hold_torque_Nm": [
+            -1.4872810495817084,
+            3.359930694024365,
+            -1.6139586447926604
+          ]
+        }
+      },
+      "highest_preceding_Fz": {
+        "leg": "FR",
+        "surface_at_loss": "rigid",
+        "phase_group_at_loss": "straight",
+        "original_phase": 3,
+        "crossed_original_phase": false,
+        "crossed_phase_group": false,
+        "crossed_surface": false,
+        "classification": "early_swing_contact_rebound",
+        "unresolved_subtype": null,
+        "force_on_s": 35.15519999994475,
+        "loss_s": 35.15799999994474,
+        "reload_s": 35.21599999994461,
+        "off_s": 0.058,
+        "preceding_load_s": 0.0028,
+        "apex_bottom_m": 0.0006252816749826653,
+        "force_on_minus_planned_s": -0.012800000000439127,
+        "preceding_liftoff_id": 557,
+        "preceding_liftoff_s": 34.967999999945185,
+        "planned_touchdown_s": 35.16799999994519,
+        "physical_vz_at_on_and_off_m_s": [
+          -0.140232505660266,
+          0.025339188466752427
+        ],
+        "prior_pulse_peak_N": 263.5946853665411,
+        "prior_pulse_impulse_Ns": 0.25360603384614905,
+        "logged_contact_fraction_while_off": 0.034482758620689655,
+        "max_force_while_off_N": 0.0,
+        "min_supported_feet": 2,
+        "center_xy_displacement_while_off_m": 0.0015290220314231459,
+        "preceding_WBC_bearing_ticks": 0,
+        "prior_pulse_confirmed_event": false,
+        "last_bearing_control": null,
+        "control_at_force_on": {
+          "t_s": 35.154,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 0.0,
+          "mpc_Fz_N": -1.470372372750371e-09,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -1.9228602235603808e-08,
+          "transfer": 0.0,
+          "confirmation_ticks": 0,
+          "requested_acceleration_z_m_s2": 16.961456160275215,
+          "modeled_achieved_center_az_m_s2": 16.578792945927812,
+          "reference_center_z_m": 0.022617943749057914,
+          "applied_hold_torque_Nm": [
+            -2.184733922566163,
+            5.032083798170876,
+            -3.9243321663444264
+          ]
+        },
+        "control_at_loss": {
+          "t_s": 35.158,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 0.0,
+          "mpc_Fz_N": -1.470372372750371e-09,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -1.205353630904253e-08,
+          "transfer": 0.0,
+          "confirmation_ticks": 0,
+          "requested_acceleration_z_m_s2": 9.139014305671463,
+          "modeled_achieved_center_az_m_s2": 8.903395335965028,
+          "reference_center_z_m": 0.022214734917033675,
+          "applied_hold_torque_Nm": [
+            -1.6914981384974928,
+            3.902519002523169,
+            -2.1969891144977103
+          ]
+        }
+      }
+    },
+    "unresolved_or_planned_release": {
+      "count": 4,
+      "duration_s": {
+        "min": 0.041,
+        "p05": 0.04127,
+        "p50": 0.043800000000000006,
+        "p95": 0.0499,
+        "max": 0.050800000000000005
+      },
+      "bottom_apex_m": {
+        "min": 0.00034346737556410073,
+        "p05": 0.00034595095002942224,
+        "p50": 0.00040010695852193273,
+        "p95": 0.0004871241271729276,
+        "max": 0.0004954067299015111
+      },
+      "min_support_feet": 2,
+      "longest": {
+        "leg": "FR",
+        "surface_at_loss": "rigid",
+        "phase_group_at_loss": "straight",
+        "original_phase": 1,
+        "crossed_original_phase": false,
+        "crossed_phase_group": false,
+        "crossed_surface": false,
+        "classification": "unresolved_or_planned_release",
+        "unresolved_subtype": "no_upward_reversal_at_force_off",
+        "force_on_s": 294.8704000075416,
+        "loss_s": 294.8706000075416,
+        "reload_s": 294.9214000075433,
+        "off_s": 0.050800000000000005,
+        "preceding_load_s": 0.0002,
+        "apex_bottom_m": 0.0004954067299015111,
+        "force_on_minus_planned_s": -0.009599999993668007,
+        "preceding_liftoff_id": 4834,
+        "preceding_liftoff_s": 294.6800000075353,
+        "planned_touchdown_s": 294.8800000075353,
+        "physical_vz_at_on_and_off_m_s": [
+          0.018920544329089073,
+          0.01986322222605791
+        ],
+        "prior_pulse_peak_N": 4.758707995898489,
+        "prior_pulse_impulse_Ns": 0.0009517415991796979,
+        "logged_contact_fraction_while_off": 0.05511811023622047,
+        "max_force_while_off_N": 0.6025642376178697,
+        "min_supported_feet": 2,
+        "center_xy_displacement_while_off_m": 0.0014335267492903007,
+        "preceding_WBC_bearing_ticks": 0,
+        "prior_pulse_confirmed_event": false,
+        "last_bearing_control": null,
+        "control_at_force_on": {
+          "t_s": 294.87,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 20.575617400011474,
+          "mpc_Fz_N": -3.989225917664307e-09,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -6.6395372966846485e-09,
+          "transfer": 0.0,
+          "confirmation_ticks": 2,
+          "requested_acceleration_z_m_s2": 9.557207237979485,
+          "modeled_achieved_center_az_m_s2": 9.315094656376896,
+          "reference_center_z_m": 0.022215474556107298,
+          "applied_hold_torque_Nm": [
+            -1.7222329255311208,
+            3.6489371258430654,
+            -2.3787604829909927
+          ]
+        },
+        "control_at_loss": {
+          "t_s": 294.87,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 20.575617400011474,
+          "mpc_Fz_N": -3.989225917664307e-09,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -6.6395372966846485e-09,
+          "transfer": 0.0,
+          "confirmation_ticks": 2,
+          "requested_acceleration_z_m_s2": 9.557207237979485,
+          "modeled_achieved_center_az_m_s2": 9.315094656376896,
+          "reference_center_z_m": 0.022215474556107298,
+          "applied_hold_torque_Nm": [
+            -1.7222329255311208,
+            3.6489371258430654,
+            -2.3787604829909927
+          ]
+        }
+      },
+      "highest": {
+        "leg": "FR",
+        "surface_at_loss": "rigid",
+        "phase_group_at_loss": "straight",
+        "original_phase": 1,
+        "crossed_original_phase": false,
+        "crossed_phase_group": false,
+        "crossed_surface": false,
+        "classification": "unresolved_or_planned_release",
+        "unresolved_subtype": "no_upward_reversal_at_force_off",
+        "force_on_s": 294.8704000075416,
+        "loss_s": 294.8706000075416,
+        "reload_s": 294.9214000075433,
+        "off_s": 0.050800000000000005,
+        "preceding_load_s": 0.0002,
+        "apex_bottom_m": 0.0004954067299015111,
+        "force_on_minus_planned_s": -0.009599999993668007,
+        "preceding_liftoff_id": 4834,
+        "preceding_liftoff_s": 294.6800000075353,
+        "planned_touchdown_s": 294.8800000075353,
+        "physical_vz_at_on_and_off_m_s": [
+          0.018920544329089073,
+          0.01986322222605791
+        ],
+        "prior_pulse_peak_N": 4.758707995898489,
+        "prior_pulse_impulse_Ns": 0.0009517415991796979,
+        "logged_contact_fraction_while_off": 0.05511811023622047,
+        "max_force_while_off_N": 0.6025642376178697,
+        "min_supported_feet": 2,
+        "center_xy_displacement_while_off_m": 0.0014335267492903007,
+        "preceding_WBC_bearing_ticks": 0,
+        "prior_pulse_confirmed_event": false,
+        "last_bearing_control": null,
+        "control_at_force_on": {
+          "t_s": 294.87,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 20.575617400011474,
+          "mpc_Fz_N": -3.989225917664307e-09,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -6.6395372966846485e-09,
+          "transfer": 0.0,
+          "confirmation_ticks": 2,
+          "requested_acceleration_z_m_s2": 9.557207237979485,
+          "modeled_achieved_center_az_m_s2": 9.315094656376896,
+          "reference_center_z_m": 0.022215474556107298,
+          "applied_hold_torque_Nm": [
+            -1.7222329255311208,
+            3.6489371258430654,
+            -2.3787604829909927
+          ]
+        },
+        "control_at_loss": {
+          "t_s": 294.87,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 20.575617400011474,
+          "mpc_Fz_N": -3.989225917664307e-09,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -6.6395372966846485e-09,
+          "transfer": 0.0,
+          "confirmation_ticks": 2,
+          "requested_acceleration_z_m_s2": 9.557207237979485,
+          "modeled_achieved_center_az_m_s2": 9.315094656376896,
+          "reference_center_z_m": 0.022215474556107298,
+          "applied_hold_torque_Nm": [
+            -1.7222329255311208,
+            3.6489371258430654,
+            -2.3787604829909927
+          ]
+        }
+      },
+      "highest_preceding_Fz": {
+        "leg": "FR",
+        "surface_at_loss": "rigid",
+        "phase_group_at_loss": "straight",
+        "original_phase": 1,
+        "crossed_original_phase": false,
+        "crossed_phase_group": false,
+        "crossed_surface": false,
+        "classification": "unresolved_or_planned_release",
+        "unresolved_subtype": "no_upward_reversal_at_force_off",
+        "force_on_s": 294.8704000075416,
+        "loss_s": 294.8706000075416,
+        "reload_s": 294.9214000075433,
+        "off_s": 0.050800000000000005,
+        "preceding_load_s": 0.0002,
+        "apex_bottom_m": 0.0004954067299015111,
+        "force_on_minus_planned_s": -0.009599999993668007,
+        "preceding_liftoff_id": 4834,
+        "preceding_liftoff_s": 294.6800000075353,
+        "planned_touchdown_s": 294.8800000075353,
+        "physical_vz_at_on_and_off_m_s": [
+          0.018920544329089073,
+          0.01986322222605791
+        ],
+        "prior_pulse_peak_N": 4.758707995898489,
+        "prior_pulse_impulse_Ns": 0.0009517415991796979,
+        "logged_contact_fraction_while_off": 0.05511811023622047,
+        "max_force_while_off_N": 0.6025642376178697,
+        "min_supported_feet": 2,
+        "center_xy_displacement_while_off_m": 0.0014335267492903007,
+        "preceding_WBC_bearing_ticks": 0,
+        "prior_pulse_confirmed_event": false,
+        "last_bearing_control": null,
+        "control_at_force_on": {
+          "t_s": 294.87,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 20.575617400011474,
+          "mpc_Fz_N": -3.989225917664307e-09,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -6.6395372966846485e-09,
+          "transfer": 0.0,
+          "confirmation_ticks": 2,
+          "requested_acceleration_z_m_s2": 9.557207237979485,
+          "modeled_achieved_center_az_m_s2": 9.315094656376896,
+          "reference_center_z_m": 0.022215474556107298,
+          "applied_hold_torque_Nm": [
+            -1.7222329255311208,
+            3.6489371258430654,
+            -2.3787604829909927
+          ]
+        },
+        "control_at_loss": {
+          "t_s": 294.87,
+          "event_mode": "swing",
+          "wbc_mode": 0,
+          "confirmed": false,
+          "bearing": false,
+          "planned_stance": false,
+          "observed_Fz_N": 20.575617400011474,
+          "mpc_Fz_N": -3.989225917664307e-09,
+          "redistributed_Fz_N": 0.0,
+          "WBC_Fz_N": -6.6395372966846485e-09,
+          "transfer": 0.0,
+          "confirmation_ticks": 2,
+          "requested_acceleration_z_m_s2": 9.557207237979485,
+          "modeled_achieved_center_az_m_s2": 9.315094656376896,
+          "reference_center_z_m": 0.022215474556107298,
+          "applied_hold_torque_Nm": [
+            -1.7222329255311208,
+            3.6489371258430654,
+            -2.3787604829909927
+          ]
+        }
+      }
+    }
+  },
+  "phase_surface_leg_cells": [
+    {
+      "leg": "FL",
+      "actual_surface": "material",
+      "phase_group": "endpoint",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "FL",
+      "actual_surface": "material",
+      "phase_group": "initial_stand",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "FL",
+      "actual_surface": "material",
+      "phase_group": "straight",
+      "physical_force_evaluations": 623826,
+      "bearing_physical_samples": 378489,
+      "observation_s": 124.76520000000001,
+      "all_closed_force_off_intervals": 874,
+      "qualified_high_swings": 203,
+      "small_force_off_intervals": 77,
+      "same_original_phase_small": 77,
+      "same_substrate_small": 77,
+      "early_swing_contact_rebound": 77
+    },
+    {
+      "leg": "FL",
+      "actual_surface": "material",
+      "phase_group": "turn",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "FL",
+      "actual_surface": "rigid",
+      "phase_group": "endpoint",
+      "physical_force_evaluations": 885690,
+      "bearing_physical_samples": 882618,
+      "observation_s": 177.138,
+      "all_closed_force_off_intervals": 23
+    },
+    {
+      "leg": "FL",
+      "actual_surface": "rigid",
+      "phase_group": "initial_stand",
+      "physical_force_evaluations": 10010,
+      "bearing_physical_samples": 9913,
+      "observation_s": 2.0020000000000002,
+      "left_or_right_censored_off_intervals": 1
+    },
+    {
+      "leg": "FL",
+      "actual_surface": "rigid",
+      "phase_group": "straight",
+      "physical_force_evaluations": 868124,
+      "bearing_physical_samples": 514852,
+      "observation_s": 173.62480000000002,
+      "all_closed_force_off_intervals": 2800,
+      "qualified_high_swings": 327
+    },
+    {
+      "leg": "FL",
+      "actual_surface": "rigid",
+      "phase_group": "turn",
+      "physical_force_evaluations": 612350,
+      "bearing_physical_samples": 378999,
+      "observation_s": 122.47,
+      "all_closed_force_off_intervals": 313,
+      "qualified_high_swings": 228
+    },
+    {
+      "leg": "FR",
+      "actual_surface": "material",
+      "phase_group": "endpoint",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "FR",
+      "actual_surface": "material",
+      "phase_group": "initial_stand",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "FR",
+      "actual_surface": "material",
+      "phase_group": "straight",
+      "physical_force_evaluations": 632573,
+      "bearing_physical_samples": 347268,
+      "observation_s": 126.5146,
+      "all_closed_force_off_intervals": 881,
+      "qualified_high_swings": 208,
+      "small_force_off_intervals": 161,
+      "same_original_phase_small": 161,
+      "same_substrate_small": 161,
+      "early_swing_contact_rebound": 161
+    },
+    {
+      "leg": "FR",
+      "actual_surface": "material",
+      "phase_group": "turn",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "FR",
+      "actual_surface": "rigid",
+      "phase_group": "endpoint",
+      "physical_force_evaluations": 885690,
+      "bearing_physical_samples": 882916,
+      "observation_s": 177.138,
+      "all_closed_force_off_intervals": 1
+    },
+    {
+      "leg": "FR",
+      "actual_surface": "rigid",
+      "phase_group": "initial_stand",
+      "physical_force_evaluations": 10010,
+      "bearing_physical_samples": 9913,
+      "observation_s": 2.0020000000000002,
+      "left_or_right_censored_off_intervals": 1
+    },
+    {
+      "leg": "FR",
+      "actual_surface": "rigid",
+      "phase_group": "straight",
+      "physical_force_evaluations": 859377,
+      "bearing_physical_samples": 499206,
+      "observation_s": 171.8754,
+      "all_closed_force_off_intervals": 2785,
+      "qualified_high_swings": 323,
+      "small_force_off_intervals": 5,
+      "same_original_phase_small": 5,
+      "same_substrate_small": 5,
+      "early_swing_contact_rebound": 1,
+      "unresolved_or_planned_release": 4
+    },
+    {
+      "leg": "FR",
+      "actual_surface": "rigid",
+      "phase_group": "turn",
+      "physical_force_evaluations": 612350,
+      "bearing_physical_samples": 368624,
+      "observation_s": 122.47,
+      "all_closed_force_off_intervals": 1842,
+      "qualified_high_swings": 228
+    },
+    {
+      "leg": "RL",
+      "actual_surface": "material",
+      "phase_group": "endpoint",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "RL",
+      "actual_surface": "material",
+      "phase_group": "initial_stand",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "RL",
+      "actual_surface": "material",
+      "phase_group": "straight",
+      "physical_force_evaluations": 630482,
+      "bearing_physical_samples": 399056,
+      "observation_s": 126.0964,
+      "all_closed_force_off_intervals": 535,
+      "qualified_high_swings": 210
+    },
+    {
+      "leg": "RL",
+      "actual_surface": "material",
+      "phase_group": "turn",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "RL",
+      "actual_surface": "rigid",
+      "phase_group": "endpoint",
+      "physical_force_evaluations": 885690,
+      "bearing_physical_samples": 883007,
+      "observation_s": 177.138,
+      "all_closed_force_off_intervals": 8
+    },
+    {
+      "leg": "RL",
+      "actual_surface": "rigid",
+      "phase_group": "initial_stand",
+      "physical_force_evaluations": 10010,
+      "bearing_physical_samples": 9913,
+      "observation_s": 2.0020000000000002,
+      "left_or_right_censored_off_intervals": 1
+    },
+    {
+      "leg": "RL",
+      "actual_surface": "rigid",
+      "phase_group": "straight",
+      "physical_force_evaluations": 861468,
+      "bearing_physical_samples": 530487,
+      "observation_s": 172.2936,
+      "all_closed_force_off_intervals": 681,
+      "qualified_high_swings": 321
+    },
+    {
+      "leg": "RL",
+      "actual_surface": "rigid",
+      "phase_group": "turn",
+      "physical_force_evaluations": 612350,
+      "bearing_physical_samples": 358135,
+      "observation_s": 122.47,
+      "all_closed_force_off_intervals": 648,
+      "qualified_high_swings": 228
+    },
+    {
+      "leg": "RR",
+      "actual_surface": "material",
+      "phase_group": "endpoint",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "RR",
+      "actual_surface": "material",
+      "phase_group": "initial_stand",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "RR",
+      "actual_surface": "material",
+      "phase_group": "straight",
+      "physical_force_evaluations": 622366,
+      "bearing_physical_samples": 397061,
+      "observation_s": 124.4732,
+      "all_closed_force_off_intervals": 449,
+      "qualified_high_swings": 207,
+      "small_force_off_intervals": 10,
+      "same_original_phase_small": 10,
+      "same_substrate_small": 10,
+      "early_swing_contact_rebound": 10
+    },
+    {
+      "leg": "RR",
+      "actual_surface": "material",
+      "phase_group": "turn",
+      "physical_force_evaluations": 0,
+      "bearing_physical_samples": 0,
+      "observation_s": 0.0
+    },
+    {
+      "leg": "RR",
+      "actual_surface": "rigid",
+      "phase_group": "endpoint",
+      "physical_force_evaluations": 885690,
+      "bearing_physical_samples": 882346,
+      "observation_s": 177.138
+    },
+    {
+      "leg": "RR",
+      "actual_surface": "rigid",
+      "phase_group": "initial_stand",
+      "physical_force_evaluations": 10010,
+      "bearing_physical_samples": 9913,
+      "observation_s": 2.0020000000000002,
+      "left_or_right_censored_off_intervals": 1
+    },
+    {
+      "leg": "RR",
+      "actual_surface": "rigid",
+      "phase_group": "straight",
+      "physical_force_evaluations": 869584,
+      "bearing_physical_samples": 534386,
+      "observation_s": 173.9168,
+      "all_closed_force_off_intervals": 839,
+      "qualified_high_swings": 323
+    },
+    {
+      "leg": "RR",
+      "actual_surface": "rigid",
+      "phase_group": "turn",
+      "physical_force_evaluations": 612350,
+      "bearing_physical_samples": 374295,
+      "observation_s": 122.47,
+      "all_closed_force_off_intervals": 817,
+      "qualified_high_swings": 228
+    }
+  ],
+  "peak_resident_kib": 994448,
+  "cpu_s": 14.456426107,
+  "wall_s": 15.819983156397939
+}
