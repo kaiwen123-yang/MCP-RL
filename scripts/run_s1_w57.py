@@ -75,7 +75,7 @@ def declaration(a):
     if a.history!='full' and planner!='P1':
         raise ValueError('Private history intervention is a P1 candidate condition')
     unchanged=a.arm=='B' and a.material=='M0'
-    backend=base['backend_source'] if unchanged else 'scripts/s1_w57_f_backend.py'
+    backend=base['backend_source'] if a.arm=='B' else 'scripts/s1_w57_f_backend.py'
     observer='r60_cpu_window' if unchanged else 'w57_measured_window'
     w=dict(arm=a.arm,planner=planner,planner_history=a.history,candidate_substep_s=.0002,
            planner_material_backend='equal_columns' if planner=='P1' else 'original',
