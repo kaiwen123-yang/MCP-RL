@@ -218,9 +218,44 @@ def rank(forecast, inputs, inertia, cfg, nominal, solve, h, history, tangents=Fa
                 predictions=[a,b])
 
 
+def published_targets(controller,t,horizon_end,events,observer):
+    targets=[]
+    for leg,sequence in enumerate(events):
+        future=0
+        for start,end,event in sequence:
+            if end<=t+1.e-9:
+                continue
+            if event is controller.swing[leg]:
+                target=controller.pending_touch[leg];source='committed_swing'
+            elif event.get('search'):
+                target=controller.pending_touch[leg] or controller._recontact_id(leg)
+                source='touchdown_search'
+            else:
+                future+=1;target=controller._swing_id(leg,future);source='forecast_pair'
+            xy=np.asarray(event['landing'][:2])
+            m=footprint(observer.ground,xy)
+            targets.append(dict(leg=leg,target_event_id=target,source=source,
+                                target_time_s=float(end),within_material_horizon=bool(end<=horizon_end+1.e-9),
+                                xy=xy.tolist(),soft=bool(m),
+                                query_time_s=float(t),query_valid=True,
+                                cells=[dict(key=[int(k[0]),int(k[1])],area_m2=v,
+                                            **observer.history(k)) for k,v in m.items()]))
+    return targets
+
+
+def no_material_plan(controller,t,reason):
+    obs=controller.current_material_info['material_observer']
+    row=dict(call=controller.plan_count+1,time_s=float(t),observer_time_s=float(obs.time),
+             observer_publication=int(obs.windows),status=reason,selected='nominal',
+             original_objective=None,data=None)
+    with (controller.record_dir/'material-candidates.jsonl').open('a') as stream:
+        stream.write(json.dumps(row)+'\n')
+
+
 def select_online(controller,t,mission,mq,times,foot_plan,contact,inputs,stages,states,forces,status):
     g=controller.current_material_info['material_observer'].ground
     if not any(g.interior(p) for p in foot_plan[:,:,:2].reshape(-1,2)):
+        no_material_plan(controller,t,'outside_material_horizon')
         return stages,states,forces,status
     obs = controller.current_material_info['material_observer']
     if abs(obs.time-t)>1.e-9:
@@ -237,6 +272,7 @@ def select_online(controller,t,mission,mq,times,foot_plan,contact,inputs,stages,
     forecast.workers=controller.cfg['w57'].get('planner_material_workers',1)
     forecast.backend=controller.cfg['w57'].get('planner_material_backend','original')
     if not len(forecast.keys):
+        no_material_plan(controller,t,'no_active_soft_footprint')
         return stages,states,forces,status
     def solve(qp):
         return controller._solve(qp['P'],qp['q'],qp['A'],qp['lower'],qp['upper'],'w57-material-mpc',t)
@@ -245,7 +281,9 @@ def select_online(controller,t,mission,mq,times,foot_plan,contact,inputs,stages,
                 observer_time_s=float(obs.time),current_control_event=int(controller.event_number),
                 history=controller.planner_history,private_substep_max_s=h,material_workers=forecast.workers,material_backend=forecast.backend,
                 independent_footprint_components=len(forecast.components),force_point_clock='interval mean; measured point at k=0',
-                requested_handover_s=controller.next_liftoff,source='nominal_r60_and_one_material_relinearization')
+                requested_handover_s=controller.next_liftoff,request_id=controller.request_count,
+                target_events=published_targets(controller,t,times[-1],events,obs),
+                status='material_evaluated',source='nominal_r60_and_one_material_relinearization')
     try:
         ranking=rank(forecast,inputs,mq['inertia'],controller.cfg,forces,solve,h,controller.planner_history)
     except StanceReferenceInfeasible as exc:

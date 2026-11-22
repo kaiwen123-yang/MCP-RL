@@ -33,7 +33,7 @@ def solve(qp):
 
 
 class Saved:
-    def __init__(self,side):
+    def __init__(self,side,estimator='M0'):
         self.root=next((ROOT.parent/'MCP-RL-w56-r60'/'outputs'/REL).glob(f'*-{side}-r60-*-E30-attempt01'))
         self.raw=self.root/'w55-f'
         self.events=[json.loads(x) for x in (self.root/'material-events.jsonl').open()]
@@ -41,7 +41,8 @@ class Saved:
         with np.load(self.root/'trajectory.npz') as tr:
             phase,time_=tr['phase'],tr['time']
             self.outbound_end=float(time_[np.flatnonzero(phase==2)[0]])
-        self.obs=W57MaterialObserver(PARAM,ROOT/'work/assets/B_random1000--ideal-potentials.npz','M0')
+        self.estimator=estimator
+        self.obs=W57MaterialObserver(PARAM,ROOT/'work/assets/B_random1000--ideal-potentials.npz',estimator)
         self.tick=0
 
     @lru_cache(maxsize=2)
