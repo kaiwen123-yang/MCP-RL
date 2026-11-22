@@ -83,7 +83,13 @@ def episode(row):
         release=np.array([np.linalg.norm(np.asarray(p['release_q'])*[1.,np.sqrt(2)]) for p in matches])
         preload=np.array([np.linalg.norm(np.asarray(p['preload_q'])*[1.,np.sqrt(2)]) for p in matches])
         substantial=release>1.e-8
+        key_cycles={}
+        for pair in matches:
+            key_cycles.setdefault(tuple(pair['key']),set()).add(pair['cycle'])
         res['revisit_measurements']=dict(
+            max_confirmed_cycles_per_single_world_cell=max(map(len,key_cycles.values()),default=0),
+            cells_present_in_all_12_confirmed_cycles=[list(k) for k,v in key_cycles.items() if len(v)==12],
+            distinct_cycles_by_world_key={','.join(map(str,k)):sorted(v) for k,v in sorted(key_cycles.items())},
             matched_unique_plant_load_events=len({p['target_id'] for p in matches}),
             world_cell_count=len({tuple(p['key']) for p in matches}),
             footprint_overlap_mm2=quant([p['exact_overlap_m2']*1.e6 for p in matches]),
