@@ -53,10 +53,11 @@ def replay_wbc(saved,plan,states,forces,clock,row,folder):
     return action,wall
 
 
-def run(side):
-    saved=Saved(side)
-    folder=ROOT/'work/w57-p'/f'wbc-{side}'
-    output=OUT/f'force-execution-{side}.jsonl'
+def run(side,estimator):
+    saved=Saved(side,estimator)
+    label=side if estimator=='M0' else f'{side}-{estimator}'
+    folder=ROOT/'work/w57-p'/f'wbc-{label}'
+    output=OUT/f'force-execution-{label}.jsonl'
     done={json.loads(line)['mpc'] for line in output.open()} if output.exists() else set()
     for i,events in saved.groups():
         if i in done:continue
@@ -67,7 +68,9 @@ def run(side):
         fc=Forecast(saved.obs.ground,plan['times'],plan['times'],plan['foot_center_plan'][:-1,:,:2],
                     plan['contact'],saved.obs.published_bottom,row['observed_contact'])
         if not len(fc.keys):continue
-        record=dict(attempt=saved.root.name,mpc=i,published_s=t,events=events,reset_keys=int(fc.reset.sum()),
+        if estimator=='M1':
+            fc.workers=4;fc.backend='equal_columns'
+        record=dict(attempt=saved.root.name,estimator=estimator,mpc=i,published_s=t,events=events,reset_keys=int(fc.reset.sum()),
                     clock='Archived 25ms kinematic contact/footprint table; both QPs actually solved, .2ms private material without diagnostic tangents.')
         inputs={k:plan[k] for k in ('x0','reference','last_force','contact','feet','force_normal_upper','stage_A','stage_B','stage_c')}
         s=time.perf_counter();z,st=solve(assemble_force_horizon(inputs,CFG));qp0=time.perf_counter()-s
@@ -103,4 +106,4 @@ def run(side):
 
 
 if __name__=='__main__':
-    arg=argparse.ArgumentParser();arg.add_argument('case',choices=['a','b']);a=arg.parse_args();run(a.case)
+    arg=argparse.ArgumentParser();arg.add_argument('case',choices=['a','b']);arg.add_argument('--estimator',choices=['M0','M1'],default='M0');a=arg.parse_args();run(a.case,a.estimator)
