@@ -316,6 +316,7 @@ class FController:
         if self.moving and self.walk_origin is None:
             self.walk_origin=float(t);self.next_liftoff=float(t+.05)
             self.transfer_start=float(t);self._event(t,'walking_requested',range(4))
+            self._new_handover_request(t, mission, mq, material_info, grf)
         if not self.moving:
             self.transfer_start=None;self.transfer_fraction=0.
             return self.event_mode!='swing'
@@ -345,6 +346,7 @@ class FController:
             previous_solved_support_N=solved_pair,previous_released_pair_N=released_pair,
             previous_body_accel_residual=self.last_body_residual,
             previous_angular_accel_residual=self.last_angular_residual)
+        self._record_handover_gate(t, all_ground, support, measured_pair, solved_pair, released_pair)
         if t>=self.next_liftoff-1e-10 and ready:
             pair=self.next_pair.copy()
             for leg in pair:
@@ -356,12 +358,19 @@ class FController:
                 fixed_apex_s=float(t+.10),fixed_touchdown_s=float(t+.20))
             self.last_liftoff=float(t);self.next_liftoff=float(t+.25)
             self.next_pair=support;self.transfer_start=None;self.transfer_fraction=0.
+            self._new_handover_request(t, mission, mq, material_info, grf)
         return self.event_mode!='swing'
 
-    def _future_contact_feet(self,t,times,mq,mission):
-        contact=np.tile(self.measured & (self.event_mode!='swing'),(len(times),1))
-        stance_origin=mq['feet'].copy()
-        feet=np.tile(stance_origin,(len(times),1,1));events=[[] for _ in range(4)]
+    def _new_handover_request(self, t, mission, mq, material_info, grf):
+        # The original gait's request is already installed by _update_schedule.
+        pass
+
+    def _record_handover_gate(self, t, all_ground, support, measured, solved, released):
+        pass
+
+    def _forecast_events(self,t,end_time,mq,mission):
+        stance_origin=mq['feet']
+        events=[[] for _ in range(4)]
         available=np.full(4,t)
         search_speed=self.cfg['contact_events']['search_speed_m_s']
         for leg in range(4):
@@ -384,7 +393,7 @@ class FController:
             due=max(self.next_liftoff,float(available.max()+self.cfg['contact_events']['load_transfer_ramp_s']))
             if np.all(self.confirmed) and self.transfer_start is not None:
                 due=max(self.next_liftoff,self.transfer_start+self.cfg['contact_events']['load_transfer_ramp_s'])
-            while due<=float(times[-1])+1e-9:
+            while due<=end_time+1e-9:
                 for leg in pair:
                     begin=events[leg][-1][2]['landing'].copy() if events[leg] else stance_origin[leg].copy()
                     target=self.model_data_root+mq['R']@self.nominal_feet_body[leg]
@@ -397,6 +406,14 @@ class FController:
                         fall=quintic(mid,vm,np.zeros(3),target,np.zeros(3),np.zeros(3),.10))
                     events[leg].append((due,due+.20,ss))
                 pair=np.array([i for i in range(4) if i not in pair]);due+=.25
+        return events
+
+    def _future_contact_feet(self,t,times,mq,mission):
+        contact=np.tile(self.measured & (self.event_mode!='swing'),(len(times),1))
+        stance_origin=mq['feet'].copy()
+        feet=np.tile(stance_origin,(len(times),1,1))
+        events=self._forecast_events(t,float(times[-1]),mq,mission)
+        search_speed=self.cfg['contact_events']['search_speed_m_s']
         for leg in range(4):
             for k,tk in enumerate(times):
                 pos=stance_origin[leg].copy();ct=bool(self.measured[leg] and self.event_mode[leg]!='swing')

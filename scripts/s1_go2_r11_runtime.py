@@ -165,6 +165,7 @@ def run(args, c, joint=None):
     w53_route = c.get('w54_route',c.get('w53_route'))
     is_w54 = 'w54_route' in c
     f_config = c.get('w54_f',c.get('w53_f'))
+    w57 = c.get('w57')
     training = bool(c.get('r11_training'))
     policy_hook = bool(c.get('r11_policy'))
     compact = training and not joint.full_recording
@@ -365,6 +366,10 @@ def run(args, c, joint=None):
     if campaign and args.mission == 'long':
         from s1_go2_wb_equilibrium import ContinuousMission
         mission = ContinuousMission(c['task'], c['long_mission_protocol'])
+    revisit_task = w57 is not None and w57['task_mode'] in ('short', 'recovered')
+    if revisit_task:
+        from s1_w57_mechanism import RevisitMission
+        mission = RevisitMission(c['task'], w57['mechanism'], w57['task_mode'])
     duration = c['r11_stage']['duration_s']
     first_completion = None
     planning_times, feedback_times, sync_times, physics_times = [], [], [], []
@@ -470,6 +475,9 @@ def run(args, c, joint=None):
         else:
             from s1_w53_f_backend import FController
         external_controller=FController(model,data,feet,base,out,f_config)
+        if c.get('w57_timing'):
+            from s1_w57_timing import attach_timing
+            attach_timing(external_controller,joint,c['w57_timing'],out,args.attempt)
         controller_context=contextlib.nullcontext(external_controller)
     else:
         server_log=(contextlib.nullcontext(None) if training else (out/'agent-server.log').open('w'))
@@ -505,6 +513,8 @@ def run(args, c, joint=None):
                 if joint is not None and not policy_hook:
                     joint.control(t,mission)
                 contact, grf, _ = actual_contact()
+                if revisit_task:
+                    mission.measure_feet(data.geom_xpos[feet, :2], grf[:, 2])
                 body_goal, heading = mission.update(t, dt, data.qpos[:3], velocity, ori, omega, bool(contact.all()))
                 if evaluation_legal_route is not None:
                     # Bottom and geom centre have identical XY; GRF is the actual
@@ -546,9 +556,9 @@ def run(args, c, joint=None):
                     material_info={'force_boundary_bottom':joint.force_boundary_bottom.copy(),
                         'force_N':grf.copy(),'velocity_m_s':joint.velocity.copy(),
                         'instantaneous_stiffness_N_m':f_config['material_stiffness_N_m']}
-                    if c.get('controller_build') in ('S5-r58','S5-r60'):
+                    if w57 or c.get('controller_build') in ('S5-r58','S5-r60'):
                         material_info['material_observer'] = joint.observer
-                    if c.get('controller_build')=='S5-r60':joint.observer.mark('force_mpc_wbc' if replan_now else 'wbc', t)
+                    if w57 or c.get('controller_build')=='S5-r60':joint.observer.mark('force_mpc_wbc' if replan_now else 'wbc', t)
                     tf=time.perf_counter()
                     action=agent.update(t,data,mission,contact,grf,joint.soft.copy(),
                         material_info=material_info,replan=replan_now)
@@ -753,7 +763,7 @@ def run(args, c, joint=None):
                     reason = 'stage_horizon_reached'
                     break
                 tp = time.perf_counter()
-                if c.get('controller_build')=='S5-r60':joint.observer.mark('physics_substeps',float(data.time))
+                if w57 or c.get('controller_build')=='S5-r60':joint.observer.mark('physics_substeps',float(data.time))
                 for _ in range(substeps):
                     sample_t = float(data.time)
                     raw_pd=60*(data.ctrl-data.qpos[qadr])-5*data.qvel[vadr]
@@ -799,7 +809,10 @@ def run(args, c, joint=None):
                     actual_contacts, actual_grf, invalid, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
                     if joint is not None:
                         joint.after_physics(physical_dt,actual_grf)
-                        if c.get('controller_build') in ('S5-r58','S5-r60'):
+                        if w57 and w57['observer_implementation'] == 'w57_measured_window':
+                            joint.observer.completed(sample_t, float(data.time), joint.force_boundary_bottom,
+                                                     joint.velocity, actual_grf[:, 2])
+                        elif w57 or c.get('controller_build') in ('S5-r58','S5-r60'):
                             joint.observer.completed(sample_t, float(data.time),
                                                      joint.force_boundary_bottom, joint.velocity)
                     if compact:
@@ -937,6 +950,8 @@ def run(args, c, joint=None):
                 timestep_s=float(np.median(np.diff(actual_plan_times,axis=1))),planning_origins=len(plans))
     if joint is not None:
         result=joint.finish(result)
+        if getattr(joint, 'w57_timing', None) is not None:
+            joint.w57_timing.finish(result)
     if evaluation_legal_route is not None:
         _, final_grf, _ = actual_contact()
         evaluation_legal_route.update(float(data.time), mission, data.qpos[:2], data.geom_xpos[feet], final_grf)
@@ -948,7 +963,14 @@ def run(args, c, joint=None):
         result.update(samples_500Hz=None,recorded_control_samples=len(hist),control_record_rate_Hz=20,
             recording='Training: 20Hz robot states, 2Hz transitions, per-episode actual physical counters; no full prediction/physics dumps.')
     from s1_go2_r11_protocol import evaluate_stage
-    result=evaluate_stage(result,c,joint,arrays)
+    if revisit_task:
+        from s1_w57_mechanism import score_revisits
+        result=score_revisits(result,c,mission,out)
+    else:
+        result=evaluate_stage(result,c,joint,arrays)
+        if w57 and w57['task_mode']=='training':
+            result['qualification_usable']=False
+            result['qualification'].update(usable=False, role='changing timing policy during on-policy acquisition')
     result['mujoco_warning_counts']={str(mujoco.mjtWarning(i)):dict(
         number=int(data.warning[i].number),lastinfo=int(data.warning[i].lastinfo))
         for i in range(int(mujoco.mjtWarning.mjNWARNING))}

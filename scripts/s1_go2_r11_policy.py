@@ -345,18 +345,24 @@ class PolicyMaterial(JointMaterial):
         if self.group=='PANN_PPO_S5':
             parameters=json.loads((root/'experiments/tm02/r2-multihistory.json').read_text())['reference_material']['parameters']
             observer_type = MaterialObserver
-            if stream.controller_build == 'S5-r58':
+            w57 = stream.contract.get('w57')
+            if w57 and w57['observer_implementation'] == 'w57_measured_window':
+                from s1_w57_material import W57MaterialObserver
+                self.observer = W57MaterialObserver(parameters, root/r9['pann']['weights_path'],
+                                                    mode=w57['material'])
+            elif stream.controller_build == 'S5-r58':
                 from s1_w56_window import WindowObserver
                 observer_type = WindowObserver
-            elif stream.controller_build == 'S5-r60':
+            elif stream.controller_build == 'S5-r60' or w57:
                 from s1_w60_cpu_observer import CPUWindowObserver
                 observer_type = CPUWindowObserver
-            self.observer=observer_type(parameters,root/r9['pann']['weights_path'],law=stream.observer_law)
+            if self.observer is None:
+                self.observer=observer_type(parameters,root/r9['pann']['weights_path'],law=stream.observer_law)
             stream.observer_law=self.observer.ground.law
 
     def attach(self,*args):
         super().attach(*args)
-        if self.stream.controller_build=='S5-r60':
+        if self.stream.controller_build=='S5-r60' or 'w57' in self.stream.contract:
             from s1_w60_cpu_observer import CallMarker
             self.observer.marker=CallMarker(self.out)
         self.fk_data=mujoco.MjData(self.native_model)
@@ -391,7 +397,11 @@ class PolicyMaterial(JointMaterial):
                     feature_nonzero=np.any(feature!=0,axis=1).tolist(),
                     causal_observer_time_s=self.observer.time if self.observer is not None else None,
                     phase=mission.phase,history_grid_source='material events + observer records, offline only'))+'\n')
-        goal=np.array([3.,0.]) if mission.phase in ('outbound','far_hold','turn') else np.zeros(2)
+        if hasattr(mission, 'observation_goal_xy'):
+            goal=mission.observation_goal_xy()
+        else:
+            goal=np.array(mission.task['turnaround_xy_m'] if mission.phase in ('outbound','far_hold','turn')
+                          else mission.task['return_xy_m'])
         phase=np.zeros(len(PHASES));phase[PHASES.index(mission.phase)]=1
         history=np.zeros((20,27));history[-len(self.history):]=np.asarray(self.history)
         d=self.data;mg=15.206408*9.81/4

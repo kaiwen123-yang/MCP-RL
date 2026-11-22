@@ -85,6 +85,9 @@ def evaluate(a, contract):
                          started_unix_s=a.window_start_unix,
                          run_deadline_unix_s=a.deadline_unix,
                          hard_deadline_unix_s=a.deadline_unix))
+    if 'w57' in contract:
+        from run_s1_w57 import configure_episode
+        configure_episode(c, contract)
     c['outputs']['root'] = contract['outputs']['compact_root']
     args = arguments(a.attempt, build, a.condition, 'diagnostic' if a.level=='D8' else 'formal',
                      c['r11_stage']['task_kind'], workers=workers, controller_artifact=artifact)
@@ -128,7 +131,8 @@ def evaluate(a, contract):
                         reward_version=contract['learning']['reward_version'])
         c.update(case_identity=identity, case_key=stable_digest(identity), evaluation_workers=workers)
         with index_file(small, c) as idx:
-            c['predecessor_attempt'] = prerequisite(c, idx, 'formal', 'tm02_anchor')
+            if contract.get('w57', {}).get('task_mode', 'original') == 'original':
+                c['predecessor_attempt'] = prerequisite(c, idx, 'formal', 'tm02_anchor')
         result = run(args, c, joint)
     except Exception as error:
         with index_file(small, c) as idx:

@@ -1,0 +1,27 @@
+{
+  "schema": "W57_cross_foot_revisit_12_v1",
+  "task_modes": ["short", "recovered"],
+  "plant": "virgin original TM02 strip, original robot, actuator and failure limits",
+  "cycles": 12,
+  "target_strip_x_m": [1.34, 1.46],
+  "target_strip_y_m": [-0.6, 0.6],
+  "center_park_x_m": 1.4,
+  "body_reversal_x_m": [1.0, 1.8],
+  "free_target_hold_s": 6.0,
+  "short_gap_upper_s": 3.0,
+  "observation_s": {"short": 100.0, "recovered": 196.0},
+  "first_cycle": "Starts at initial forward departure. Walk into the material from original home. Each of 12 alternating world-x traversals first takes the leading leg across the target then the trailing leg on the same side. Reverse at measured body x=1.8/1.0 with continuous gait. Turn and return to original home after crossing 12.",
+  "short": "Direct continuous trot through center with no requested wait. Count a distinct confirmed release then next feasible other-foot reloading on the same patch within 3 s.",
+  "recovered": "On each traversal park the base at x=1.4 between fore and hind feet. Hold the entire target strip free of measured loaded finite footprints for 6 consecutive seconds, then resume the same traversal and original support gates. An executed release-to-reload gap of at least 6 s must also be documented.",
+  "goal": "Use actual current waypoint in W44 observation, preserve nine phases and the original 658 coordinates. Cap sets moving translational demand. No artificial swing during static hold.",
+  "evaluation": "At most one completed mechanism cycle per traversal, regardless of number of cells. Same world key and previous_load_event_id must bind source, actual release and following opposite-leg load within the traversal. Require positive geometrical overlap of source at its initial or last loaded footprint and target at new load, clipped to that exact cell. Use separate plant clocks and retain raw matches, unique IDs and gaps. Remain at home for the rest of the stated observation after meeting original two-second stable home criterion. Physical failure retains any completed cycles.",
+  "basis": {
+    "existing_release_to_reload": "r60 A/B original E60 same-cell same-load-ID pairs; active cross-foot gaps below 3 s with appreciable release state: A n=89 median=1.2200 s and B n=82 median=1.3309 s.",
+    "recovery": "ReferenceColumns slow volumetric free relaxation time at small strain is 1.2 s. Six seconds is five such time constants. E60 A had ten measured long gaps 12.539–17.9572 s; the largest norm ratio at reload was 6.85e-6.",
+    "geometry": "Original r60 A E30 6–11s, observed front/hind foot x offsets (1st–99th percentiles) +0.119..+0.226 and -0.266..-0.161 m. Center-hold detection also measures actual finite footprints. Target band lies on the original grid.",
+    "horizon": "12 x 0.8 m alternating traversals at frozen rolling speed cap with reversal/approach, final yaw turn, return and 2 s home hold. The recovered observation adds 8 s per target for approach, 6 s clear dwell, and departure. Outcomes are compared by matched task condition and physical event."
+  },
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false
+}
