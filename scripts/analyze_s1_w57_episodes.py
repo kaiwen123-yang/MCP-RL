@@ -65,6 +65,7 @@ def episode(row):
     applied=out/'w55-f/material-execution.jsonl'
     res=dict(attempt=attempt,case=row['case'],arm=row['arm'],task_mode=row['task_mode'],
         material=row['material'],controller=row['controller'],level=row['level'],phase_status=row['status'],
+        planner_history=row['settings'].get('planner_history','full'),
         reason=row.get('reason'),completed_original=bool(row['task_mode']=='original' and result['success']),
         observed_physical_s=float(t[-1]),first_home_stable_s=result.get('first_completion_s'),
         mass_kg=mass_kg,groups=groups,peak_Fz_by_leg_N=peak.tolist(),peak_nonfoot_force_N=nonfoot_peak,
@@ -113,7 +114,8 @@ def compare(allrows,observer):
     table=[]
     for case in ('A','B'):
         for mode in ('short','recovered'):
-            rows={r['arm']:r for r in summaries if r['case']==case and r['task_mode']==mode and r['material']==observer}
+            rows={r['arm']:r for r in summaries if r['case']==case and r['task_mode']==mode and
+                  r['material']==observer and r.get('planner_history','full')=='full'}
             if not rows:continue
             values={}
             for arm,r in rows.items():
