@@ -31,13 +31,24 @@ def sha(path):
 
 
 def gh(*args):
-    return subprocess.check_output(['gh',*map(str,args)],cwd=ROOT,text=True).strip()
+    command=['gh',*map(str,args)]
+    for attempt in range(3):
+        result=subprocess.run(command,cwd=ROOT,text=True,capture_output=True)
+        if result.returncode==0:return result.stdout.strip()
+        message=result.stderr.strip()
+        transient=any(k in message.lower() for k in ('tls handshake timeout','connection reset',
+                      'unexpected eof','http 502','http 503','http 504','i/o timeout'))
+        if not transient or attempt==2:
+            raise RuntimeError(message)
+        print(f'GitHub metadata GET failed on attempt {attempt+1}: {message}',flush=True)
+        time.sleep(2*(attempt+1))
 
 
 def release_assets():
-    rel=json.loads(gh('release','view',TAG,'-R',REPO,'--json','databaseId,url,tagName,targetCommitish'))
-    # The tag is fetched by release view. Query only asset metadata, with pagination.
-    data=json.loads(gh('api','--paginate','--slurp',f'repos/{REPO}/releases/{rel["databaseId"]}/assets?per_page=100'))
+    rel=read(SMALL/'release.json')
+    # Query current asset metadata; the immutable release ID was verified when the tag was created.
+    data=json.loads(gh('api','-H','Cache-Control: no-cache','--paginate','--slurp',
+                       f'repos/{REPO}/releases/{rel["databaseId"]}/assets?per_page=100'))
     return rel,{row['name']:row for page in data for row in page}
 
 
