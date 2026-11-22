@@ -90,7 +90,8 @@ def declaration(a):
         sources += ['scripts/s1_w57_planning.py','scripts/s1_w57_candidate.cc','work/w57-p/candidate.so']
     if uses_timing:
         sources += ['experiments/terrain_memory/s1-w57-timing.json','scripts/s1_w57_timing.py',
-                    'scripts/s1_w57_learning.py','scripts/run_s1_w57_learning.py']
+                    'scripts/s1_w57_learning.py','scripts/run_s1_w57_learning.py',
+                    'scripts/s1_w57_training_evidence.py','src/response_ppo/ppo_backend.py']
     if a.task in ('short','recovered'):
         sources += [MECHANISM,'scripts/s1_w57_mechanism.py']
     hashes={s:digest(ROOT/s) for s in sorted(set(sources))}
@@ -124,7 +125,15 @@ def declaration(a):
               execution=dict(background_job=BACKGROUND,**BACKGROUND),
               control_and_evaluation={'post_training_evaluation':dict(maximum_wall_s=None,wall_deadline_enabled=False)},
               w57_execution_sources=hashes,**BACKGROUND)
-    if opts:spec['w57_timing']=opts
+    if opts:spec['w57_timing']={**opts, 'case':a.case}
+    # Allocate the original once, on D57, and keep its canonical path usable.
+    # Full collectors use local scratch. Matched blind, recovered and long jobs use
+    # the server's personal persistent volume to accommodate full-rate recordings.
+    store=os.environ.get('W57_RAW_STORE')
+    if not store and (a.task=='recovered' or a.level in ('E300','E600') or
+                      a.task=='training' and opts['head']=='blind'):
+        store='/autodl-fs/data/MCP-RL/W57/originals'
+    if store:spec['w57_raw_root']=store
     return spec,artifact,parent,checkpoint,job
 
 

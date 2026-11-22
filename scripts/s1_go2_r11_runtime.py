@@ -159,7 +159,14 @@ def run(args, c, joint=None):
     from mujoco_mpc.agent import Agent
     small = ROOT/c['outputs']['root']
     out = ROOT/'outputs/terrain_memory/simulation'/c['run_id']/args.attempt
-    out.mkdir(parents=True, exist_ok=False)
+    store = c.get('r12_contract', {}).get('w57_raw_root')
+    if store:
+        physical_output = Path(store) / args.attempt
+        physical_output.mkdir(parents=True, exist_ok=False)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.symlink_to(physical_output, target_is_directory=True)
+    else:
+        out.mkdir(parents=True, exist_ok=False)
     campaign = 'campaign_budget' in c
     support = True
     w53_route = c.get('w54_route',c.get('w53_route'))

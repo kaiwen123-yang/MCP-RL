@@ -1,3 +1,7 @@
+# 当前执行入口（W57，2026-11-22）
+
+W57 已从 `d321d61` 在 D57 开始实施。运行与学习计数看 [W57 执行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)、[当前状态](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json) 和 [每日记录](docs/S1_DAILY_WORKLOG.md)。M 使用旧 r60 原件做完整 E60 未来预测保留对照，P 复核真实事件并接入在线候选，R 使用独立 timing head。首次真实短重访 A/B 使用原 r60 B 参考控制，各自从 virgin、t=0 开始。续接时核对 attempt、源码哈希、tmux/PID 和物理时钟。下节保留计划形成时的证据与执行约定。
+
 # 当前入口：W56已完成审查，W57模块与联合研究待执行
 
 结果基点 `3590646bc15a59903c9561381368d985963dfe9e`；2026-11-22在远端`640be3d6`上完成[执行补充复核](docs/S1_W57_REVIEW_20261122.md)。先读 [W57研究计划](docs/S1_W57_RESEARCH_PLAN.md)、[启动提示词](docs/S1_W57_START_PROMPT.md)、[W56证据审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W56-review/README.md) 和 [current.json](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。本次提交仅完成审查、计划与每日记录，W57控制实现、机器人物理和新PPO尚未开始。
