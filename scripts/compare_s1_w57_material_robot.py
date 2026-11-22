@@ -10,7 +10,7 @@ import numpy as np
 
 from analyze_s1_w57_episodes import episode
 from publish_s1_go2_w54 import write
-from summarize_s1_w57 import RAW, R, read
+from summarize_s1_w57 import RAW, R, ROOT, read
 
 
 def metrics(data):
@@ -90,6 +90,7 @@ def common_prefix(traces, starts):
         pre[unit]=float(diff[before].max(initial=0.))
         at=np.flatnonzero(diff>0)
         first[unit]=dict(first_nonzero_difference_time_s=float(t[at[0]]) if len(at) else None,
+                         absolute_difference_at_first_nonzero=float(diff[at[0]]) if len(at) else None,
                          maximum_absolute_difference=float(diff.max(initial=0.)))
     data=[]
     for d,i in zip(traces,idx):
@@ -122,7 +123,11 @@ def reference_onsets(folders):
     keys=sorted(streams[0].keys() & streams[1].keys())
     first_reference=None
     controls_matched=0
+    geometry_matched=0
     largest=0.
+    largest_same_geometry=0.
+    block_id=None
+    boundaries=None
     for time_leg in keys:
         a,b=[v[time_leg] for v in streams]
         if max(abs(a[k]-b[k]) for k in ('measured_N','target_N'))>1e-8:
@@ -133,13 +138,32 @@ def reference_onsets(folders):
         increments=[v['measured_delta_m']-v['target_delta_m'] for v in (a,b)]
         difference=increments[1]-increments[0]
         largest=max(largest,abs(difference))
+        source_tick=10*time_leg[0]-1
+        if source_tick<0:
+            continue
+        idx=source_tick//5000
+        if block_id!=idx:
+            boundaries=[]
+            for d in folders:
+                with np.load(d/f'material-{idx:04d}.npz') as z:
+                    boundaries.append(z['foot'][:,6:18])
+            block_id=idx
+        local=source_tick%5000
+        position_error=float(np.max(np.abs(boundaries[0][local]-boundaries[1][local])))
+        if position_error>1e-11:
+            continue
+        geometry_matched+=1
+        largest_same_geometry=max(largest_same_geometry,abs(difference))
         if abs(difference)>5.21e-17 and first_reference is None:
             first_reference=dict(time_s=.002*time_leg[0],leg=time_leg[1],foot_observations_N=[a['measured_N'],b['measured_N']],
-                target_N=[a['target_N'],b['target_N']],normal_increment_m=increments,difference_m=difference)
+                target_N=[a['target_N'],b['target_N']],all_four_last_boundary_max_delta_m=position_error,
+                normal_increment_m=increments,difference_m=difference)
     return dict(common_foot_and_time_rows=len(keys),matched_force_and_area_rows=controls_matched,
+                also_matched_all_four_last_measured_boundaries=geometry_matched,
                 max_increment_difference_at_matched_force_and_area_m=largest,
-                first_difference_above_paired_r60_numeric_resolution=first_reference,
-                scope='Matched measured force, requested force, and owned area at a common leg/time. Entry-level coincidence does not establish equal prior trajectories after divergence.')
+                max_increment_difference_at_matched_force_area_all_four_boundaries_m=largest_same_geometry,
+                first_matched_geometry_difference_above_paired_r60_numeric_resolution=first_reference,
+                scope='Matched measured force and request to 1e-8 N, owned area to 1e-14 m2, and all four actual previous measured left boundaries to 1e-11 m at the same leg/time. Prior histories can differ after closed-loop divergence.')
 
 
 def one_pair(ids):
@@ -180,10 +204,52 @@ def one_pair(ids):
             delta_home_stable=int(full['M1']['home_stable'])-int(full['M0']['home_stable']))
 
 
+def original_pair(attempt):
+    from collect_s1_w57_material import RAW as LEGACY
+    row=read(R/'attempts'/(attempt+'.json'))
+    if row['material']!='M1' or row['arm']!='B' or row['task_mode']!='original':
+        raise ValueError('Original-route comparison requires an actual M1/B attempt.')
+    case=row['case'];level=row['level']
+    former,=LEGACY.glob(f'job-*-f-{case.lower()}-r60-*-{level}-attempt01')
+    folders=[former,RAW/attempt]
+    sources=[R.parent/'w56/f/r60'/(former.name+'.json'),R/'episodes'/(attempt+'.json')]
+    recorded=[read(p) for p in sources]
+    ids=[d['case_identity'] for d in recorded]
+    identity={k:[d.get(k) for d in ids] for k in ('seed','condition','initial_state','initial_material','terrain',
+                  'checkpoint_sha256','normalizer_sha256','reward_version','controller_build')}
+    result={}
+    for name,d in zip(('r60_M0','W57_M1'),recorded):
+        mat=d['material'];route=d['legal_route']
+        result[name]=dict(attempt=d['attempt'],status=d['stage_status'],reason=d['reason'],
+               physical_s=d['simulation_s'],original_success=d['success'],
+               outbound=route['legal_outbound_traversals'],inbound=route['legal_return_traversals'],
+               legal_roundtrips=route['completed_roundtrips'],maximum_x_m=d['max_x_m'],
+               min_body_height_m=d['min_body_height_m'],maximum_abs_torque_Nm=d['max_abs_torque_Nm'],
+               maximum_joint_limit_excess_rad=d['max_joint_limit_excess_rad'],max_abs_principal_strain=mat['max_abs_principal_strain'],
+               total_slip_integral_s=mat['integral_slip_sq_s'],total_indentation_integral_s=mat['integral_indentation_sq_s'])
+    return dict(case=case,level=level,M1_qualification_source=str(sources[1].relative_to(ROOT)),
+         old_qualification_source=str(sources[0].relative_to(ROOT)),legacy_original_reruns=0,
+         newly_integrated_by_this_analysis=0,input_identities=identity,
+         identical_plant_mjb=sha(folders[0]/'model.mjb')==sha(folders[1]/'model.mjb'),
+         whole_originals=result,shared_physical_prefix=common_prefix([trajectories(d) for d in folders],
+                [first_actual_load(d) for d in folders]),actual_reference_onsets=reference_onsets(folders),
+         scope='New M1 results retain their own original-task qualification. Historical r60 M0 is the same case/seed archived original with no W57 re-run. The independent short-revisit experiment is scored separately.')
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('attempts',nargs=4,metavar='attempt')
+    p.add_argument('--original',action='store_true',help='Compare one M1/B original with the archived matched r60 original.')
+    p.add_argument('attempts',nargs='+',metavar='attempt')
     args=p.parse_args()
+    if args.original:
+        if len(args.attempts)!=1:
+            p.error('--original requires one W57 M1/B attempt')
+        data=original_pair(args.attempts[0])
+        write(R/'m'/f"closed-loop-original-{data['case'].lower()}-{data['level'].lower()}.json",data)
+        print(json.dumps(data['whole_originals']))
+        return
+    if len(args.attempts)!=4:
+        p.error('Give M0 and M1 short attempts for A, then M0 and M1 short attempts for B.')
     pairs=[one_pair(args.attempts[:2]),one_pair(args.attempts[2:])]
     if [x['case'] for x in pairs]!=['A','B']:
         raise ValueError('Expected A then B.')

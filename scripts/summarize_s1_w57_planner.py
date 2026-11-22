@@ -80,6 +80,16 @@ def collect():
              protected_private_history_winner_changes=sum(x['full']['winner']!=x['private_reset']['winner'] for x in matched),
              reduction_vs_nominal_on_changed_choices_um=quant([(x['full']['scores'][0]['score_m']-x['full']['scores'][x['selected']]['score_m'])*1e6 for x in changed]),
              scope='A later timing request changes both predicted recovery and world landing XY under the published common-force scenario. P2 has the same request permission as the new timing head. The archived selection effect does not isolate old detached material history. P2 omitted from B/P/R/PR.')
+    m1=lines('long-event-*-M1.jsonl')
+    if m1:
+        m0={(x['attempt'],x['source_event']):x for x in xs}
+        targets=[x for x in m1 if 'full' in x]
+        low['selected_M1_same_event_replay']=dict(
+            original_events=len(m1),matched=len(targets),later_requests=sum(x['selected']==2 for x in targets),
+            same_prefix_handover_changes=sum(x['changed_handover_on_saved_prefix'] for x in targets if x['selected']),
+            changed_winner_vs_M0=sum(x['selected']!=m0[x['attempt'],x['source_event']]['selected'] for x in m1),
+            full_vs_protected_private_changes=sum(x['full']['winner']!=x['private_reset']['winner'] for x in targets),
+            scope='Only the observer changes on the identical archived r60 prefixes and physical support/kinematic inputs.')
     result=dict(schema='W57_saved_planner_experiments_v1',law=law,force_to_wbc=modes,component_timing=parallel,
                 low_frequency_event_layer=low,physical_and_joint_results='R12/w57/attempts, mechanics, paired-mechanisms and p/physical; tracked separately from saved-input experiments.')
     target=P/'saved-planning-summary.json';target.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')

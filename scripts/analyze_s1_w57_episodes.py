@@ -123,18 +123,30 @@ def compare(allrows,observer):
                 values[arm]=dict(verified_cycles=m['confirmed_cycle_count'],at_home_stable=int(m['home_stable']),
                     slip_integral_s=r['original_slip_integral_s'],motion_positive_CoT=r['groups'].get('motion',{}).get('positive_mechanical_CoT'),
                     peak_Fz_N=max(r['peak_Fz_by_leg_N']),max_principal_strain=r['max_principal_strain'])
+            target_s=100. if mode=='short' else 196.
+            def comparable(selected,metric):
+                if any(values[a][metric] is None for a in selected):return False
+                if metric in ('verified_cycles','at_home_stable'):return True
+                if any(rows[a]['observed_physical_s']<target_s-1.e-6 for a in selected):return False
+                if metric=='motion_positive_CoT':
+                    return all(len(rows[a]['mechanism']['traversals'])==12 and
+                               rows[a]['mechanism']['home_stable'] for a in selected)
+                return True
+            paired={}
+            for a,b in [('P','B'),('R','B'),('PR','B'),('PR','P'),('PR','R'),('R','blind')]:
+                if a in rows and b in rows:
+                    paired[a+'_minus_'+b]={m:values[a][m]-values[b][m] for m in values[a]
+                                          if comparable([a,b],m)}
             names=('B','P','R','PR')
             interaction={}
             if all(a in rows for a in names):
                 for metric in values['B']:
-                    if any(values[a][metric] is None for a in names):continue
-                    # Cumulative work/slip and peaks over different observation lengths
-                    # describe the observed prefix and cannot establish an efficiency benefit.
-                    if metric not in ('verified_cycles','at_home_stable') and any(
-                       rows[a]['phase_status']!='passed' for a in names):continue
-                    interaction[metric]=(values['PR'][metric]-values['P'][metric])-(values['R'][metric]-values['B'][metric])
+                    if comparable(names,metric):
+                        interaction[metric]=(values['PR'][metric]-values['P'][metric])-(values['R'][metric]-values['B'][metric])
             table.append(dict(case=case,condition=mode,attempts={a:r['attempt'] for a,r in rows.items()},
-                              observed=values,interaction_PR_minus_P_minus_R_plus_B=interaction))
+                              observed=values,paired_differences=paired,
+                              interaction_PR_minus_P_minus_R_plus_B=interaction,
+                              comparison_scope='Continuous hit, slip and strain contrasts require equal full physical observation; CoT contrasts also require all body traversals and a stable return. Cycle counts retain genuine task failures.'))
     write(R/'paired-mechanisms.json',dict(observer=observer,cases=table,
          scope='Separate original qualifications; two nominal W44 cases, one timing learning seed. Descriptive matched contrasts only. Blind is a separately trained P0 head with the same action permission, reward and sample budget.'))
     return table

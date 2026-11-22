@@ -1,6 +1,7 @@
 """Join actual P1 candidate, mapped input and next physical load by published event ID."""
 import argparse
 from collections import Counter, defaultdict
+from bisect import bisect_right
 from functools import lru_cache
 import json
 from pathlib import Path
@@ -46,6 +47,63 @@ def overlay(raw,columns,leg_index):
     return vectors
 
 
+class CrossFootLoads:
+    def __init__(self,raw):
+        self.raw=raw;self.index=defaultdict(list);self.loads={};self.releases={}
+        for e in records(raw/'material-events.jsonl'):
+            if e['type']=='release':
+                self.releases[e['previous_load_event_id']]=e
+            else:
+                self.loads[e['event_id']]=e
+                self.index[tuple(e['world_key'])].append(e)
+        self.clocks={key:[e['time_s'] for e in events] for key,events in self.index.items()}
+
+    @lru_cache(maxsize=16)
+    def feet(self,chunk):
+        with np.load(self.raw/f'material-{chunk:04d}.npz') as z:
+            return z['foot'][:,6:18].reshape(-1,4,3).copy()
+
+    def foot(self,clock,leg):
+        chunk,step=divmod(round(clock/.0002)-1,5000)
+        return self.feet(chunk)[step,leg,:2]
+
+    @staticmethod
+    def overlap(xys,key):
+        half=np.sqrt(.001)/2
+        lower=np.maximum.reduce([np.asarray(xy)-half for xy in xys]+[np.asarray(key)*.02])
+        upper=np.minimum.reduce([np.asarray(xy)+half for xy in xys]+[(np.asarray(key)+1)*.02])
+        return float(np.prod(np.maximum(upper-lower,0.)))
+
+    def matches(self,query,when,commit,confirmation,detached):
+        matches=[]
+        for cell in query['cells']:
+            key=tuple(cell['key'])
+            if key not in detached or not cell['ever_loaded'] or cell['loaded'] or key not in self.index:
+                continue
+            j=bisect_right(self.clocks[key],when+1.e-9)
+            if j==len(self.index[key]):continue
+            # The first later actual load at this world key must be this published target leg.
+            e=self.index[key][j]
+            if e['type']!='revisit' or not e['cross_leg'] or e['leg']!=query['leg'] or not (
+                    commit[2]-1.e-9 <= e['time_s'] <= confirmation+1.e-9):
+                continue
+            prev=self.loads.get(e['previous_load_event_id']);release=self.releases.get(e['previous_load_event_id'])
+            if prev is None or release is None or release['time_s']>when+1e-9 or release['event_id']>=e['event_id']:
+                continue
+            if prev['leg']!=cell['last_owner']:continue
+            target_xy=self.foot(e['time_s'],e['leg'])
+            start=self.foot(prev['time_s'],prev['leg'])
+            last=self.foot(release['time_s']-.0002,prev['leg'])
+            area=max(self.overlap([start,target_xy,query['xy']],key),self.overlap([last,target_xy,query['xy']],key))
+            if area<=0.:continue
+            matches.append(dict(world_key=list(key),source_leg=prev['leg'],target_leg=e['leg'],
+                observer_source_load_id=cell['source_load_event_id'],observer_release_id=cell['release_event_id'],
+                true_source_load_id=prev['event_id'],true_release_id=release['event_id'],true_target_load_id=e['event_id'],
+                source_to_reload_s=e['time_s']-prev['time_s'],release_to_reload_s=e['time_s']-release['time_s'],
+                query_to_reload_s=e['time_s']-when,triple_geometric_intersection_m2=area))
+        return matches
+
+
 def analyze(attempt):
     raw=ROOT/'outputs'/REL/attempt
     cdir=raw/'w55-f';r=ROOT/'results'/REL/'w57'
@@ -53,6 +111,8 @@ def analyze(attempt):
     end=float(outcome['physical_samples']*.0002)
     case=json.loads((r/'attempts'/(attempt+'.json')).read_text())
     get=overlay(raw,outcome['physical_columns'],LEGS)
+    history=CrossFootLoads(raw)
+    first_crossfoot={};pairs=set();matched_publications=0
     commits={};touch={}
     for event in records(cdir/'contact-events.jsonl'):
         if event['kind']=='liftoff_committed':
@@ -77,7 +137,17 @@ def analyze(attempt):
                            impulse_next20ms_Ns=float(future[:,1].sum()*.0002))
     applied={row['call']:row for row in records(cdir/'material-execution.jsonl')}
     statuses=Counter();wins=Counter();missing=Counter();aligned=defaultdict(list);uniq={}
-    times=[];obj=[];force_delta=[];readback=[];queries=0;actual_count=0;outside=0
+    times=[];obj=[];force_delta=[];readback=[];read_target=[];read_raw_pd=[];read_actuator=[]
+    queries=0;actual_count=0;outside=0
+    with np.load(raw/'trajectory.npz') as tr:
+        logged_time=tr['time'];logged_target=tr['q_target']
+    cols=outcome['physical_columns']
+    torque_columns=[cols.index(f'actuator_force_{j}') for j in range(12)]
+    pd_columns=[cols.index(f'unclipped_pd_request_{j}') for j in range(12)]
+    @lru_cache(maxsize=2)
+    def physical_command(chunk):
+        with np.load(raw/f'physical-{chunk:03d}.npz') as z:
+            x=z['physical'];return x[:,pd_columns],x[:,torque_columns]
     for row in records(cdir/'material-candidates.jsonl'):
         statuses[row.get('status','material_evaluated')]+=1
         if not row.get('data'):continue
@@ -89,9 +159,22 @@ def analyze(attempt):
         step=round(row['time_s']/.002)
         control_file=cdir/f'control-{step//500+1:05d}.npz'
         if call in applied and control_file.exists():
-            readback.append(float(np.max(np.abs(control(control_file)[step%500]-applied[call]['mapped_input_rad']))))
+            saved_u,requested=control(control_file)
+            applied_u=np.array(applied[call]['mapped_input_rad'])
+            readback.append(float(np.max(np.abs(saved_u[step%500]-applied_u))))
+            if step<len(logged_time) and abs(logged_time[step]-row['time_s'])<1.e-8:
+                read_target.append(float(np.max(np.abs(logged_target[step]-applied_u))))
+            ix=step*10
+            if ix<round(end/.0002):
+                pd,actuator=physical_command(ix//150000)
+                read_raw_pd.append(float(np.max(np.abs(pd[ix%150000]-requested[step%500]))))
+                read_actuator.append(float(np.max(np.abs(actuator[ix%150000]-pd[ix%150000]))))
         current=applied.get(call)
         targets=row.get('target_events',[])
+        if row['detached_history']:
+            with np.load(cdir/row['data']) as z:
+                detached={tuple(key) for key in z['world_keys'][z['detached_history']]}
+        else:detached=set()
         for e in targets:
             key=e['target_event_id'];leg=e['leg'];queries+=1
             if not e['within_material_horizon']:
@@ -111,6 +194,15 @@ def analyze(attempt):
             aligned['same_sole_overlap_m2'].append(overlap)
             existed=any(h.get('ever_loaded') for h in e['cells'])
             if overlap>0 and existed:aligned['overlapping_prior_history_query_to_load_s'].append(first-row['time_s'])
+            matched=history.matches(e,row['time_s'],commits[key],actual['confirmation_s'],detached)
+            if matched:
+                matched_publications+=1
+                for m in matched:pairs.add((m['true_source_load_id'],m['true_target_load_id'],tuple(m['world_key'])))
+                if key not in first_crossfoot:
+                    first_crossfoot[key]=dict(target_event_id=key,leg=leg,call=call,
+                        query_s=row['time_s'],planned_touch_s=e['target_time_s'],measured_first_touch_s=first,
+                        measured_confirmation_s=actual['confirmation_s'],xy=e['xy'],matched=matched,
+                        data_file=row['data'],recorded_selected=row['selected'])
             # Repeated replans do not become independent contacts; retain first, last and nearest call.
             entry=uniq.setdefault(key,dict(**actual,target_event_id=key,matched_plan_count=0,
                          first_call=call,first_query_s=row['time_s'],first_xy=e['xy'],overlap_queries=0,
@@ -138,9 +230,16 @@ def analyze(attempt):
         recorded_substep_s=.0002,installed_candidate_count=actual_count,forecast_replan_status=dict(statuses),
         eligible_winners=dict(wins),candidate_timing_s=q(times),nominal_minus_corrected_objective=q(obj),
         maximum_first_force_difference_N=q(force_delta),installed_input_vs_WBC_max_rad=max(readback) if readback else None,
+        applied_input_vs_trajectory_target_max_rad=max(read_target) if read_target else None,
+        original_PD_at_first_physics_step_vs_WBC_requested_max_Nm=max(read_raw_pd) if read_raw_pd else None,
+        measured_first_actuator_force_vs_raw_PD_max_Nm=max(read_actuator) if read_actuator else None,
+        exact_physics_command_records=len(read_actuator),
         published_targets=queries,touchdown_outside_inner_horizon=outside,missing=dict(missing),
         metrics={key:dict(n=len(value),distribution=q(value)) for key,value in aligned.items()},
         distinct_confirmed_physical_contacts=len(uniq),target_events=list(uniq.values()),
+        true_released_crossfoot_query_target_publications=matched_publications,
+        distinct_world_cell_source_reload_pairs=len(pairs),
+        first_matching_publication_per_true_crossfoot_target=list(first_crossfoot.values()),
         scope='At first sampled force >1N after committed apex and release. WBC confirmation is separate. Contacts with no committed swing remain unmatched. Same physical clock 25ms forecasts include subsequent replans/robot tracking error. Multiple publications for the same leg event are correlated.')
     out=r/'p/physical'/(attempt+'.json');out.parent.mkdir(exist_ok=True,parents=True)
     temp=out.with_suffix('.tmp');temp.write_text(json.dumps(res,indent=2,allow_nan=False,default=clean)+'\n');temp.replace(out)
@@ -149,7 +248,7 @@ def analyze(attempt):
 
 @lru_cache(maxsize=2)
 def control(file):
-    with np.load(file) as z:return z['mapped_u']
+    with np.load(file) as z:return z['mapped_u'],z['requested_pd']
 
 
 if __name__=='__main__':

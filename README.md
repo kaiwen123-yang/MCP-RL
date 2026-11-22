@@ -2,7 +2,13 @@
 
 研究同一世界地块在跨足、跨步和返程重访中的材料恢复，以及它对后续支撑决策的影响。
 
-## 当前：稳定基线已成立，W57转向模块与联合创新
+## W57 实验运行中
+
+W57 自 `d321d61` 开始在 D57 执行。M1 在保留原 E60 A 的 270 次未来整足力预测中将 MAE 从 0.1770 N 降至 0.1294 N；30 次源释放至跨足重载的单格力预测 MAE 则由 0.1023 N 升至 0.1605 N。按事前条件选定 M1，用于原任务、P0 双收集学习和四组机制对照。[材料选择依据](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/selection.json) · [两种预测时距](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/figures/material-held-A.svg)。
+
+新 P1 已将事件切分的 FP64 材料预测接入原力 QP 的在线候选选择，并记录首个实际映射输入。M1+B 与 M1+P1 均已在 A/seed1 自己的原 E30 穿越材料并抵达远端；两例原任务的滑移积分为 0.011198/0.010198 s，峰值主应变为 0.0031134/0.0032002。两个 M0/B 短任务各走完 12 次身体穿越和回家，严格同格跨足周期分别为 6/12、7/12。W57 真实训练、已完成任务和资格取自 [运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。[每日记录](docs/S1_DAILY_WORKLOG.md) · [W57 原件与视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w57)。
+
+## W57 开始前的基线与计划
 
 2026-11-22补充：已在`640be3d6`上重新核对原轨迹/接触、真实F架构与W57执行合同；[新证据及完整说明](docs/S1_W57_REVIEW_20261122.md) · [一手文献补充](docs/S1_W57_LITERATURE_UPDATE_20261122.md)。仍为W57待执行，新增物理/训练0。
 
