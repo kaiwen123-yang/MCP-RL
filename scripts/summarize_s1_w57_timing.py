@@ -169,6 +169,9 @@ def summarize(campaign, destination):
             continue
         if receipt['status'] in ('declared','running'):
             continue
+        if not (LARGE/receipt['attempt']/'timing-summary.json').is_file():
+            results.append(dict(attempt=receipt['attempt'],status=receipt['status'],timing_evidence=None))
+            continue
         results.append(summarize_episode(receipt,models))
     if not results:
         raise ValueError('No completed frozen R, PR or blind physical episode is available.')

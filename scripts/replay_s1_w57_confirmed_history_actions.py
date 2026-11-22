@@ -20,7 +20,7 @@ class Actual(Saved):
         self.obs=W57MaterialObserver(PARAM,ROOT/'work/assets/B_random1000--ideal-potentials.npz',estimator)
 
 
-def nominal_qp(plan,wbc,src):
+def nominal_inputs(plan,wbc):
     inp={k:plan[k].copy() for k in ('x0','reference','last_force','contact','feet','force_normal_upper','stage_A','stage_B','stage_c')}
     points=plan['foot_center_plan'].copy();points[:,:,2]-=.022;points[0]=wbc['contact_force_point']
     inp['feet']=points;n=len(inp['contact']);dt=CFG['mpc']['dt_s']
@@ -28,6 +28,11 @@ def nominal_qp(plan,wbc,src):
     orig=[assemble_centroidal(float(plan['mass']),plan['inertia'],centers[j],points[j],
                               plan['x0'][:3],plan['x0'][6:9],dt,CFG['force_pyramid_slope']) for j in range(n)]
     inp['stage_B']=np.stack([s['B'] for s in orig])
+    return inp
+
+
+def nominal_qp(plan,wbc,src):
+    inp=nominal_inputs(plan,wbc)
     # Re-solve nominal states for a possible nominal winner.
     from s1_w54_f_r52_backend import assemble_force_horizon
     z,_=solve(assemble_force_horizon(inp,CFG));nx=inp['reference'].size
