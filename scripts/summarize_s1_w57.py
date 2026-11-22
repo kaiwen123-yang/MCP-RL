@@ -79,6 +79,20 @@ def combine(finished=False):
         head=metrics['head']
         v=learning.setdefault(head,dict(distinct_in_completed_updates=0,updates=0))
         v['distinct_in_completed_updates']+=metrics['distinct'];v['updates']+=1
+    campaign=ROOT/'work/w57-r/pilot02'
+    live_learning={}
+    for head in ('full','blind'):
+        pub=campaign/head/'published.json'
+        if not pub.exists():continue
+        state=read(pub)
+        version=state['version']
+        buffers={}
+        for case in ('A','B'):
+            path=campaign/head/f'batch-{version:03d}-{case}.jsonl'
+            buffers[case]=sum(line.endswith(b'\n') for line in path.open('rb')) if path.exists() else 0
+        live_learning[head]=dict(version=version,committed=version*256,
+                                 partial_real_transitions=buffers,
+                                 total_distinct=version*256+sum(buffers.values()),finished=state['finished'])
     deliveries=[read(p) for p in sorted((R/'delivery').glob('*.json'))]
     mdir=R/'m';pdir=R/'p'
     live_index=R/'episodes/index.json'
@@ -101,7 +115,7 @@ def combine(finished=False):
              material_evidence=[str(p.relative_to(ROOT)) for p in sorted(mdir.glob('*.json'))],
              planner_evidence=[str(p.relative_to(ROOT)) for p in sorted(pdir.glob('*.json'))
                                if not p.name.startswith('integrator-')],
-             timing_learning=learning,frozen_W44_actor_updates=0,
+             timing_learning=learning,observed_on_policy=live_learning,frozen_W44_actor_updates=0,
              learning_counts_scope='Closed unique 128+128 event transitions in committed optimizer updates; partial live buffers are separate.',
              verified_release_bundles=[r['label'] for r in deliveries if r.get('status')=='verified'],
              verified_release_assets=sum(len(r.get('assets',[])) for r in deliveries),

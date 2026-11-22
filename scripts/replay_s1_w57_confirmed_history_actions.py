@@ -47,7 +47,9 @@ def evidence(attempt):
         raise ValueError('The protected-history closed-loop screen was preselected for P, case A, original/short.')
     raw=ROOT/'outputs'/REL/attempt
     saved=Actual(raw,row['material'])
-    entries=closure['first_matching_publication_per_true_crossfoot_target']
+    selection=('first_matching_publication_per_verified_mechanism_target' if row['task_mode']=='short'
+               else 'first_matching_publication_per_true_crossfoot_target')
+    entries=closure[selection]
     grouped={}
     for target in entries:grouped.setdefault(target['call'],[]).append(target)
     solved=[];base=ROOT/'work/w57-p/closed-action-replay'/attempt
@@ -93,7 +95,7 @@ def evidence(attempt):
             nominated_vs_full_first_mapped_rad=float(np.abs(nominated-first['full']).max()),
             distinct_mapped_above_same_state_reconstruction=bool(resolved)))
     res=dict(attempt=attempt,estimator=row['material'],case='A',task=row['task_mode'],level=row['level'],
-        selection='First published P1 plan with an observed, previously released source, true cross-leg reload at the same cell, actual held footprint overlap, actual target event ID and a detached reset-eligible world key per destination event. All matching target IDs retained; plans de-duplicated.',
+        selection=selection+'. First published P1 plan with an observed, previously released source, true cross-leg reload at the same cell, actual held footprint overlap, actual target event ID and a detached reset-eligible world key per destination event. All matching target IDs retained; plans de-duplicated.',
         distinct_target_events=len(entries),distinct_plans=len(solved),above_reconstruction=sum(x['distinct_mapped_above_same_state_reconstruction'] for x in solved),
         observations=solved,scope='True subsequent loads are from the installed full plan. A private counterfactual next physical outcome requires its own closed-loop episode.')
     temp=dest.with_suffix('.tmp')
