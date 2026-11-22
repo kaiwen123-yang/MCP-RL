@@ -505,6 +505,9 @@ class FController:
         z,status=self._solve(qp['P'],qp['q'],qp['A'],qp['lower'],qp['upper'],'mpc',t)
         self._time('mpc_solve',w,c)
         nx=(n+1)*12;states=z[:nx].reshape(n+1,12);forces=z[nx:].reshape(n,4,3)
+        if getattr(self,'planner_mode',None)=='P1':
+            stages,states,forces,status=self.select_force_plan(
+                t,mission,mq,times,foot_plan,contact,inputs,stages,states,forces,status)
         self.last_plan=dict(time=t,times=times,state=states,reference=ref,forces=forces,
             feet=foot_plan,contact=contact[:-1],blocks=stages[0],status=status)
         self.latest_plan=dict(times=times,query_feet=foot_plan.copy(),source='F causal event horizon; predicted touchdown is not future observation')
