@@ -1,0 +1,199 @@
+{
+  "identity": "W57-R1-event83-v1",
+  "learning_seed": 5701,
+  "selected_observer": "Chosen once via --observer M0 or M1 before the first physical training sample; identical for both heads.",
+  "planner": "P0",
+  "training_task": "original_E60_virgin",
+  "cases": [
+    "A",
+    "B"
+  ],
+  "frozen_speed_actor": "W44 case-specific checkpoint-014737, deterministic and unchanged",
+  "event": "one sample after the first walking_requested initializes next_pair or after the actual committed liftoff switches next_pair. Reuse requested_due until handover or terminal.",
+  "action": {
+    "bound": 1,
+    "from_raw": "tanh(raw Gaussian)",
+    "unit": "s",
+    "scale": 0.05,
+    "use": "P base_due + a * 0.05; same bound for prediction and actual handover. All r60 gates retained."
+  },
+  "normalization": {
+    "schema": "W57-R1-event83-v1",
+    "dimension": 83,
+    "legs": [
+      "FL",
+      "FR",
+      "RL",
+      "RR"
+    ],
+    "layout": [
+      [
+        "measured_Fz_N",
+        4,
+        "mass*g/4"
+      ],
+      [
+        "measured_world_normal_foot_velocity_m_s",
+        4,
+        0.15
+      ],
+      [
+        "confirmed",
+        4,
+        1
+      ],
+      [
+        "load_bearing",
+        4,
+        1
+      ],
+      [
+        "next_pair",
+        4,
+        1
+      ],
+      [
+        "planned_stance",
+        4,
+        1
+      ],
+      [
+        "free_recovery_m, leg-major then horizon",
+        12,
+        0.001
+      ],
+      [
+        "base_due_minus_decision_s",
+        1,
+        0.25
+      ],
+      [
+        "transfer_fraction",
+        1,
+        1
+      ],
+      [
+        "last_body_acceleration_residual_m_s2",
+        1,
+        1.5
+      ],
+      [
+        "last_angular_acceleration_residual_rad_s2",
+        1,
+        4
+      ],
+      [
+        "requested_COM_velocity_world",
+        3,
+        0.25
+      ],
+      [
+        "measured_COM_velocity_world",
+        3,
+        0.25
+      ],
+      [
+        "measured_base_angular_velocity_world",
+        3,
+        1
+      ],
+      [
+        "previous_requested_action",
+        1,
+        1
+      ],
+      [
+        "phase_one_hot",
+        9,
+        1
+      ],
+      [
+        "footprint_state_one_hot, leg-major",
+        24,
+        1
+      ]
+    ],
+    "statuses": [
+      "missing",
+      "outside",
+      "virgin",
+      "recovered",
+      "residual",
+      "loaded"
+    ],
+    "phase_order": [
+      "initial_stand",
+      "outbound",
+      "turn",
+      "return",
+      "terminal_stand",
+      "complete",
+      "far_hold",
+      "home_hold",
+      "turn_home"
+    ],
+    "fitted_statistics": false,
+    "clipping": false,
+    "different_from_59": "Separate per-foot missing, outside, never loaded, recovered, unloaded residual, and loaded. Numeric prediction zero alone is ambiguous.",
+    "recovered_definition": "All previously loaded keys under the whole queried footprint are currently unloaded and each has an observed release at least 6.0 s before the latest publication. The W57 saved physical calibration found <=0.2431% of initial q norm after 6 s in its tested release samples. Actual nonzero recovery values are retained. Any shorter known history remains residual; any currently loaded key has priority.",
+    "terminal_stand_due": "No actionable next handover while standing. At a physical successor in stand the due-time feature is zero and the observed phase identifies stand."
+  },
+  "query": {
+    "coordinate": "First subsequent touchdown of each leg on the controller's published base event schedule. Fixed committed landing first, otherwise search/forecast from current event root and commanded motion within the 0.85 s contact-event forecast. No actual future contact supplied.",
+    "world_keys": "Positive area intersection of the equivalent 0.001 m² sole square with the original world grid; hard-priority edge convention. Unknown cells have virgin state.",
+    "publication": "Use most recent complete M window available at sample time. Retain plan ID/time and independent observer generation/time, plus actual coordinates, area, all source load/release IDs, and predicted target touchdown ID/time.",
+    "horizons_s": [
+      0.002,
+      0.2,
+      0.5
+    ],
+    "relative_to": "Observer publication; all three are independent free-recovery values under no intervening load. They are not the target-event time-to-go or action-conditioned loads.",
+    "missing": "Unpublished/expired target or no completed observer publication yields a missing indicator. Never consume nonfinite WBC residual; the F gate omits that request."
+  },
+  "blind": {
+    "retained": "All non-hidden inputs, shared old speed actor, geometry outside and missing indicators, same architecture/optimizer/seed/initial parameters.",
+    "zeroed": "All 12 explicit free-recovery values and the four material-history categories per leg (virgin/recovered/residual/loaded)."
+  },
+  "ppo": {
+    "rollout_shape": [
+      128,
+      2
+    ],
+    "epochs": 4,
+    "minibatch": 64,
+    "hidden": [
+      64,
+      64
+    ],
+    "learning_rate": 0.0003,
+    "initial_std": 0.35,
+    "clip": 0.2,
+    "value_coef": 0.5,
+    "entropy_coef": 0,
+    "max_grad_norm": 0.5,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "reference_dt_s": 0.5,
+    "advantage": "Time recursion independently per case; full-sample upstream PPO on all legal requests; post-action gate masks separately counted, not used for outcome-dependent gradient selection.",
+    "natural_end": "Original physical failure terminal with zero bootstrap; original E60 time limit truncates with value at actual final observation, episode recursion stops; each collector's 128th transition bootstraps at its successor before loading the next shared policy. No reset at update barrier.",
+    "reward": "Original W38 legal-route settlement: 5 Δlegal route − Δt/60 − Δindentation² integral/60 − 0.1 Δloaded slip² integral/60 − 0.01 Δold cap change + 10 Δcompleted legal circuits − 10 physical failure. The old frozen evaluation has no intrinsic-timeout penalty. No added material reward.",
+    "exploration_rng": "Index-addressed independent torch CPU generator per distinct requested action: seed=5701*2^32+2*(128*version+case_position)+case_index. Save seeds/positions, optimizer permutations and torch/numpy/CUDA RNG state. Full and blind share initialization and matching RNG rules."
+  },
+  "nodes": [
+    2048,
+    4096,
+    8192
+  ],
+  "maximum_distinct_full": 8192,
+  "maximum_distinct_full_plus_blind": 16384,
+  "continuation": "At nodes require witnessed execution-time or implemented handover-ramp authority in both cases, training queries with observable nonzero residual and corresponding actual reload footprint and measured load/indentation, complete reward/dt/GAE/accounting, and fixed M/P/task/schema/reward. Continue only with training-return trend or between-episode uncertainty that additional independent virgin episodes can resolve. Frozen mechanism episodes are never consulted.",
+  "blind_trigger": "Independent matched run from common initialization when measurable history/consequence and timing authority are present and the explicit-material increment requires a control; target the full run's last eligible cumulative count.",
+  "evaluation": "Use final naturally reached node checkpoint; no retained task selection.",
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false,
+  "continuation_numeric_conventions": {
+    "load_signal": "Cross-leg after a witnessed actual release; query and subsequent confirmed landing footprints geometrically intersect the physical reloaded cell; past observer owner agrees with previous plant owner and is unloaded at issue. Both free displacement magnitudes exceed 1 nm (1e-6 of the 1 mm domain scale), and observed target load is positive. Distinct plant load IDs counted once. Numeric detectability does not establish benefit.",
+    "return_trend_or_uncertainty": "At least two naturally ended training episodes in a case; positive second-vs-first-half change or nonzero empirical episode-rate standard error above 1e-6 reward/s. No holdouts and no between-seed inference."
+  }
+}

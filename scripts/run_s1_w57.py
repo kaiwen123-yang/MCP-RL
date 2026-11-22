@@ -31,7 +31,8 @@ def configure_episode(c, contract):
     w=contract['w57']
     c.update(w57=w, implementation_status='W57_force_MPC_WBC_online',material_feature_mode='learned_history')
     cfg=c['w54_f']
-    cfg['w57']={'planner':w['planner'],'material':w['material'],'timing':w['timing_mode']}
+    cfg['w57']={'planner':w['planner'],'material':w['material'],'timing':w['timing_mode'],
+                'candidate_substep_s':w['candidate_substep_s'],'planner_history':w['planner_history']}
     cfg['wbc']['material']=cfg['material_reference']
     cfg.update(identity=c['controller_build'],backend_source=c['w54_backend_source'],
                material_execution_backend='CPU FP64 original frozen potentials; '+w['observer_implementation'])
@@ -69,10 +70,13 @@ def declaration(a):
     if opts and opts.get('case',a.case)!=a.case:
         raise ValueError('Collector case mismatch')
     planner='P1' if a.arm in ('P','PR') else 'P0'
+    if a.history!='full' and planner!='P1':
+        raise ValueError('Private history intervention is a P1 candidate condition')
     unchanged=a.arm=='B' and a.material=='M0'
     backend=base['backend_source'] if unchanged else 'scripts/s1_w57_f_backend.py'
     observer='r60_cpu_window' if unchanged else 'w57_measured_window'
-    w=dict(arm=a.arm,planner=planner,material=a.material,observer_implementation=observer,
+    w=dict(arm=a.arm,planner=planner,planner_history=a.history,candidate_substep_s=.0002,
+           material=a.material,observer_implementation=observer,
            timing_mode=opts['mode'] if opts else 'zero',timing_head=opts['head'] if opts else None,
            task_mode=a.task,force_model='centroidal force QP and articulated inverse-dynamics WBC, original PD60/5',
            training_distribution='original virgin E60' if a.task=='training' else None)
@@ -87,7 +91,8 @@ def declaration(a):
     if not unchanged:
         sources += [backend,'scripts/s1_w57_material.py','scripts/s1_w57_material_columns.cc','work/w57-m/material.so']
     if planner=='P1':
-        sources += ['scripts/s1_w57_planning.py','scripts/s1_w57_candidate.cc','work/w57-p/candidate.so']
+        sources += ['experiments/terrain_memory/s1-w57-planning.json','scripts/s1_w57_planning.py',
+                    'scripts/s1_w57_candidate.cc','scripts/build_s1_w57_candidate.sh','work/w57-p/candidate.so']
     if uses_timing:
         sources += ['experiments/terrain_memory/s1-w57-timing.json','scripts/s1_w57_timing.py',
                     'scripts/s1_w57_learning.py','scripts/run_s1_w57_learning.py',
@@ -96,7 +101,8 @@ def declaration(a):
         sources += [MECHANISM,'scripts/s1_w57_mechanism.py']
     hashes={s:digest(ROOT/s) for s in sorted(set(sources))}
     timing_hash=digest(Path(opts['checkpoint'])) if opts and opts['mode']=='evaluate' else None
-    kernel=dict(arm=a.arm,material=a.material,planner=planner,observer=observer,backend=backend,
+    kernel=dict(arm=a.arm,material=a.material,planner=planner,planner_history=a.history,
+                observer=observer,backend=backend,
                 timing_checkpoint=timing_hash,timing_head=w['timing_head'],executables=hashes)
     build='S5-w57-'+a.arm.lower()+'-'+stable_digest(kernel)[:12]
     artifact=dict(route='F',experiment_window='W57',configuration_source=BASE,backend_source=backend,
@@ -198,6 +204,7 @@ if __name__=='__main__':
     e.add_argument('--level',choices=('E30','E60','E300','E600'),default='E60')
     e.add_argument('--task',choices=('original','short','recovered','training'),required=True)
     e.add_argument('--material',choices=('M0','M1'),default='M0')
+    e.add_argument('--history',choices=('full','private_reset'),default='full')
     e.add_argument('--attempt',required=True)
     e.add_argument('--timing-config',type=Path)
     sys.exit(episode(p.parse_args()))

@@ -56,6 +56,10 @@ class FController(R60):
         return plan
 
     def _new_handover_request(self, t, mission, mq, material_info, grf):
+        if self.timing_agent is not None and not self.timing_agent.has_next_interval(t):
+            self._write_request(dict(stage='natural_horizon_no_interval', time_s=float(t),
+                                     planned_pair=self.next_pair.tolist(), sampled=False))
+            return
         self.request_count += 1
         nominal = float(self.next_liftoff)
         active = self.timing_agent is not None
@@ -157,6 +161,12 @@ class FController(R60):
     def wbc(self, t, data, mq, mission, scheduled, observed, grf, soft, material_info):
         action = super().wbc(t, data, mq, mission, scheduled, observed, grf, soft, material_info)
         self.last_wbc_time_s = float(t)
+        if getattr(self, 'w57_new_plan_call', None) == self.plan_count:
+            with (self.record_dir/'material-execution.jsonl').open('a') as stream:
+                stream.write(json.dumps(dict(call=self.plan_count, time_s=float(t),
+                    event=self.event_number, mapped_input_rad=action.tolist(),
+                    wbc_force_N=self.last_force.tolist()))+'\n')
+            self.w57_new_plan_call=None
         return action
 
     def finish(self, final_time, reason):
@@ -167,8 +177,6 @@ class FController(R60):
                                      gate_blocks=dict(self.gate_blocks), **self.request_record))
         return super().finish(final_time, reason)
 
-    def replan(self, t, data, mq, mission):
-        if self.planner_mode == 'P0':
-            return super().replan(t, data, mq, mission)
-        from s1_w57_planning import material_replan
-        return material_replan(self, t, data, mq, mission)
+    def select_force_plan(self, *args):
+        from s1_w57_planning import select_online
+        return select_online(self, *args)
