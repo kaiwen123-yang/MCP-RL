@@ -2,7 +2,10 @@
   "identity": "W57-P1-FP64-event-split-v1",
   "base": "r60 Contact-force QP MPC, full joint inverse-dynamics WBC and PD60/5",
   "online": {
-    "MPC_nodes": 14, "MPC_node_s": 0.025, "replan_s": 0.020, "WBC_s": 0.002,
+    "MPC_nodes": 14,
+    "MPC_node_s": 0.025,
+    "replan_s": 0.02,
+    "WBC_s": 0.002,
     "nominal": "Original homogeneous-support force QP with identical currently latched contact request and committed swings",
     "trial": "One material relinearization, same QP state cost, original force regularization and difference cost, force cone, active contacts, plant and WBC bounds",
     "integration": "Split at nominal stage boundaries and online predicted contact switches. Piecewise node force, event footprint and common sole/unique world cell ownership. Equal FP64 substeps of each segment with maximum 0.0002 s",
@@ -10,11 +13,23 @@
     "choice": "Propagate each candidate through its own private constitutive response. Re-evaluate both with one common material+centroidal evaluator. Numerical ties within 1e-12 relative objective retain nominal. If only nominal material-feasible, select it and record trial rejection. If no material-feasible nominal and trial generation unavailable, fail explicitly",
     "execution": "Selected original or relinearized QP state/force replaces last_plan before original WBC; every first mapped input recorded. WBC uses its unchanged present material normal law",
     "timing": "P1 base always original nominal handover. The actual and predicted scheduler use the one latched R request if provided",
-    "history_modes": ["full", "private_reset"],
+    "history_modes": [
+      "full",
+      "private_reset"
+    ],
     "private_reset": "Once at publication, reset all six e/q/stress components only for ever-loaded future queried keys outside all current measured/loaded sole geometries and their sharing closure; keep actor, online observer and actual WBC untouched",
-    "unobserved_geometry": "Allowed future keys are virgin, loaded columns fixed once per candidate; inactive target keys recover throughout the candidate"
+    "unobserved_geometry": "Allowed future keys are virgin, loaded columns fixed once per candidate; inactive target keys recover throughout the candidate",
+    "physical_backend": {
+      "identity": "W57-P1-FP64-event-split-equal-columns-4",
+      "workers": 4,
+      "scope": "Disjoint footprint ownership groups run independently; byte-identical within-sole states reuse the exact constitutive evaluation. A shared group is never split; force summation retains input order.",
+      "compiled_sha256": "f85e152296a3604cc01c9e0162a08d825431becea1cd1b94454db16d00c95be4",
+      "qualification": "19 M0 saved states, every cell state, depth, objective, corrected force and winner bitwise equal to serial. 28.6002 s serial and 5.7396 s parallel combined; original QP stays single worker."
+    }
   },
   "saved_event_selection": "All four possible legs x first loading, first release following at least .05 s loaded, first cross-foot reactivation with known prior release, in the first outbound traversals of both original r60 E30. Deduplicate by preceding saved MPC before target minus .04 s. Shared body/force scores, held-out next measured boundary and independent WBC reconstruction.",
   "qualification": "New identity requires original E30 and E60 per actor case. Mechanism episodes scored separately.",
-  "deadline": null, "wall_deadline_enabled": false, "kill_on_conversation_end": false
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false
 }

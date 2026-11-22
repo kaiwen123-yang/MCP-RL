@@ -1,6 +1,7 @@
 // Private force-driven footprints. The r60 model, Newton solve and hard domain are shared.
 #include "s1_w60_columns.cc"
 #include <array>
+#include <cstring>
 #include <numeric>
 #include <vector>
 
@@ -10,6 +11,9 @@ struct Column {int id; double area;};
 struct Sole {double delta, tangent, residual;};
 constexpr double thickness=.05, strain_limit=.02, force_factor=.025e6;
 struct MaterialFailure {int reason;};
+#ifdef W57_IDENTICAL_STATES
+bool same_bits(const State& a,const State& b){return std::memcmp(a.data(),b.data(),6*sizeof(double))==0;}
+#endif
 
 State advance(const Model& model,const State& state,double value,double dt,bool fixed){
     State next;
@@ -29,11 +33,31 @@ Sole invert(const Model& model,const std::vector<State>& state,const std::vector
         min_delta=std::min(min_delta,-thickness*free[c.id][0]);
         area+=c.area;same &= state[c.id]==first;
     }
+#ifdef W57_IDENTICAL_STATES
+    // One original constitutive evaluation per bit-identical column state. Keep the
+    // original footprint ordering for the force sum and original distinct states.
+    std::vector<int> equivalent(cells.size());
+    std::vector<State> calculated(cells.size());
+    for(std::size_t j=0;j<cells.size();++j){
+        equivalent[j]=j;
+        for(std::size_t k=0;k<j;++k){
+            if(same_bits(state[cells[j].id],state[cells[k].id]) && same_bits(free[cells[j].id],free[cells[k].id])){
+                equivalent[j]=equivalent[k];break;
+            }
+        }
+    }
+#endif
     auto response=[&](double delta,bool save){
         double total=0.;
-        for(auto c:cells){
+        for(std::size_t j=0;j<cells.size();++j){
+            const auto c=cells[j];
             if(-delta/thickness>free[c.id][0]){if(save)next[c.id]=free[c.id];continue;}
+#ifdef W57_IDENTICAL_STATES
+            if(equivalent[j]==int(j))calculated[j]=advance(model,state[c.id],-delta/thickness,dt,true);
+            const auto& x=calculated[equivalent[j]];
+#else
             auto x=advance(model,state[c.id],-delta/thickness,dt,true);
+#endif
             if(x[4]<0.){
                 total-=c.area*force_factor*x[4];
                 if(save){domain(x);next[c.id]=x;}
@@ -101,7 +125,16 @@ extern "C" int w57_candidate(const Model* model,int n,int count,const double* sp
         for(int k=0;k<subdivisions[j];++k){
             try{
                 for(int i=0;i<n;++i){
-                    free[i]=settled[i]?state[i]:advance(*model,state[i],0.,dt,false);
+                    if(settled[i])free[i]=state[i];
+                    else {
+#ifdef W57_IDENTICAL_STATES
+                        int previous=0;
+                        while(previous<i && (settled[previous] || !same_bits(state[previous],state[i])))++previous;
+                        free[i]=previous<i?free[previous]:advance(*model,state[i],0.,dt,false);
+#else
+                        free[i]=advance(*model,state[i],0.,dt,false);
+#endif
+                    }
                     domain(free[i]);
                 }
                 std::array<int,4> order={0,1,2,3};

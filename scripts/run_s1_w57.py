@@ -32,7 +32,9 @@ def configure_episode(c, contract):
     c.update(w57=w, implementation_status='W57_force_MPC_WBC_online',material_feature_mode='learned_history')
     cfg=c['w54_f']
     cfg['w57']={'planner':w['planner'],'material':w['material'],'timing':w['timing_mode'],
-                'candidate_substep_s':w['candidate_substep_s'],'planner_history':w['planner_history']}
+                'candidate_substep_s':w['candidate_substep_s'],'planner_history':w['planner_history'],
+                'planner_material_backend':w['planner_material_backend'],
+                'planner_material_workers':w['planner_material_workers']}
     cfg['wbc']['material']=cfg['material_reference']
     cfg.update(identity=c['controller_build'],backend_source=c['w54_backend_source'],
                material_execution_backend='CPU FP64 original frozen potentials; '+w['observer_implementation'])
@@ -76,6 +78,8 @@ def declaration(a):
     backend=base['backend_source'] if unchanged else 'scripts/s1_w57_f_backend.py'
     observer='r60_cpu_window' if unchanged else 'w57_measured_window'
     w=dict(arm=a.arm,planner=planner,planner_history=a.history,candidate_substep_s=.0002,
+           planner_material_backend='equal_columns' if planner=='P1' else 'original',
+           planner_material_workers=4 if planner=='P1' else 1,
            material=a.material,observer_implementation=observer,
            timing_mode=opts['mode'] if opts else 'zero',timing_head=opts['head'] if opts else None,
            task_mode=a.task,force_model='centroidal force QP and articulated inverse-dynamics WBC, original PD60/5',
@@ -92,7 +96,7 @@ def declaration(a):
         sources += [backend,'scripts/s1_w57_material.py','scripts/s1_w57_material_columns.cc','work/w57-m/material.so']
     if planner=='P1':
         sources += ['experiments/terrain_memory/s1-w57-planning.json','scripts/s1_w57_planning.py',
-                    'scripts/s1_w57_candidate.cc','scripts/build_s1_w57_candidate.sh','work/w57-p/candidate.so']
+                    'scripts/s1_w57_candidate.cc','scripts/build_s1_w57_equal_columns.sh','work/w57-p-equal/candidate.so']
     if uses_timing:
         sources += ['experiments/terrain_memory/s1-w57-timing.json','scripts/s1_w57_timing.py',
                     'scripts/s1_w57_learning.py','scripts/run_s1_w57_learning.py',

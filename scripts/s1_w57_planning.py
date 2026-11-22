@@ -1,5 +1,6 @@
 """Force planning with private causal world-cell histories and the unchanged centroidal cost."""
 import ctypes as ct
+from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 import json
 from pathlib import Path
@@ -13,13 +14,38 @@ from s1_w60_cpu_observer import ARRAY, INDEX
 from tm02.s1_contact import StanceReferenceInfeasible
 
 
-@lru_cache(maxsize=1)
-def native():
-    path = Path(__file__).resolve().parents[1]/'work/w57-p/candidate.so'
+@lru_cache(maxsize=2)
+def native(backend):
+    folder={'original':'w57-p','equal_columns':'w57-p-equal'}[backend]
+    path=Path(__file__).resolve().parents[1]/'work'/folder/'candidate.so'
     lib = ct.CDLL(str(path))
     lib.w57_candidate.argtypes = [ARRAY,ct.c_int,ct.c_int,ARRAY,INDEX,ARRAY,ARRAY,ARRAY,
                                   ARRAY,ARRAY,ct.c_int,ARRAY]
     return lib
+
+
+@lru_cache(maxsize=1)
+def material_workers():
+    return ThreadPoolExecutor(max_workers=4,thread_name_prefix='w57-world-component')
+
+
+def footprint_components(maps, rows):
+    # Components join every cell used by one common sole at any future time.
+    # Distinct components never enter the same force sum or ownership tie.
+    parent=list(range(len(rows)))
+    def root(i):
+        while parent[i]!=i:
+            parent[i]=parent[parent[i]];i=parent[i]
+        return i
+    for segment in maps:
+        for foot in segment:
+            ids=[rows[k] for k in foot]
+            if ids:
+                first=root(ids[0])
+                for i in ids[1:]:parent[root(i)]=first
+    groups={}
+    for i in range(len(rows)):groups.setdefault(root(i),[]).append(i)
+    return [np.array(ids,int) for ids in groups.values()]
 
 
 def footprint(g, xy):
@@ -74,6 +100,9 @@ class Forecast:
                 for key, value in m.items():
                     self.area[j,leg,rows[key]] = value
         self.active = self.area.sum(axis=2)>0.
+        self.workers=1
+        self.backend='original'
+        self.components=footprint_components(self.maps,rows)
         self.initial = np.zeros((len(rows),6))
         protected = protected_footprints(g, published_bottom, measured)
         self.protected = np.array([k in protected for k in self.keys],dtype=bool)
@@ -96,10 +125,30 @@ class Forecast:
             raise ValueError(f'Unexpected history intervention {history}')
         answer = np.zeros((len(self.dt),4,4))
         states = np.empty((len(self.dt),len(self.keys),6))
-        detail = np.zeros(3)
-        code = native().w57_candidate(self.g.law.model,len(self.keys),len(self.dt),self.dt,
-                                      subdivisions,self.area,loads,x,answer,states,int(tangents),detail)
-        if code:
+        def advance(area,initial,foot,columns):
+            detail=np.zeros(3)
+            code=native(self.backend).w57_candidate(self.g.law.model,len(initial),len(self.dt),self.dt,
+                                        subdivisions,area,loads,initial,foot,columns,int(tangents),detail)
+            return code,detail
+
+        failures=[]
+        if self.workers==1 or len(self.components)<2:
+            code,detail=advance(self.area,x,answer,states)
+            if code:failures.append((code,detail))
+        elif self.workers==4:
+            def independent(ids):
+                area=np.ascontiguousarray(self.area[:,:,ids])
+                foot=np.zeros_like(answer);columns=np.empty((len(self.dt),len(ids),6))
+                code,detail=advance(area,np.ascontiguousarray(x[ids]),foot,columns)
+                return ids,area.any(axis=2),foot,columns,code,detail
+            for ids,mask,foot,columns,code,detail in material_workers().map(independent,self.components):
+                if code:failures.append((code,detail))
+                else:
+                    answer[mask]=foot[mask];states[:,ids]=columns
+        else:
+            raise ValueError('W57 private material propagation supports the frozen 1 or 4 workers')
+        if failures:
+            code,detail=min(failures,key=lambda failure:tuple(failure[1][:2]))
             labels={1:'constitutive_solve',2:'strain_domain',3:'requested_load_domain_or_inverse',
                     4:'load_residual',5:'no_consistent_footprint_ownership'}
             raise StanceReferenceInfeasible(dict(reason=labels[code],segment=int(detail[0]),
@@ -185,6 +234,8 @@ def select_online(controller,t,mission,mq,times,foot_plan,contact,inputs,stages,
     mids=.5*(grid[:-1]+grid[1:])
     available, feet=controller._future_contact_feet(t,mids,mq,mission)
     forecast=Forecast(g,times,grid,feet[:,:,:2],available,obs.published_bottom,controller.measured,foot_plan[:-1,:,:2])
+    forecast.workers=controller.cfg['w57'].get('planner_material_workers',1)
+    forecast.backend=controller.cfg['w57'].get('planner_material_backend','original')
     if not len(forecast.keys):
         return stages,states,forces,status
     def solve(qp):
@@ -192,7 +243,8 @@ def select_online(controller,t,mission,mq,times,foot_plan,contact,inputs,stages,
     h=controller.cfg['w57']['candidate_substep_s']
     record=dict(call=controller.plan_count+1,time_s=float(t),observer_publication=int(obs.windows),
                 observer_time_s=float(obs.time),current_control_event=int(controller.event_number),
-                history=controller.planner_history,private_substep_max_s=h,force_point_clock='interval mean; measured point at k=0',
+                history=controller.planner_history,private_substep_max_s=h,material_workers=forecast.workers,material_backend=forecast.backend,
+                independent_footprint_components=len(forecast.components),force_point_clock='interval mean; measured point at k=0',
                 requested_handover_s=controller.next_liftoff,source='nominal_r60_and_one_material_relinearization')
     try:
         ranking=rank(forecast,inputs,mq['inertia'],controller.cfg,forces,solve,h,controller.planner_history)

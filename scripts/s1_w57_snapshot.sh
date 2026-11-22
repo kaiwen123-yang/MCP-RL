@@ -14,12 +14,13 @@ git -C "$base" worktree add --detach --no-checkout "$dest" "$rev"
 cd "$dest"
 git sparse-checkout set --no-cone '/scripts/' '/src/' '/experiments/' '/configs/' '/AGENTS.md' '/.gitignore' '/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/f/F-A-r60/job.json' '/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w56/f/F-B-r60/job.json'
 git checkout --detach "$rev"
-mkdir -p work/r11-frozen work/w56-r60 work/w57-m work/w57-p
+mkdir -p work/r11-frozen work/w56-r60 work/w57-m work/w57-p work/w57-p-equal
 for name in assets envs upstreams terrain-memory; do ln -s "$base/work/$name" "work/$name"; done
 ln -s "$base/work/r11-frozen/S5-r41" work/r11-frozen/S5-r41
 cp -L "$base/work/w56-r60/columns.so" work/w56-r60/
 cp -L "$base/work/w57-m/material.so" work/w57-m/
 if [ -e "$base/work/w57-p/candidate.so" ]; then cp -L "$base/work/w57-p/candidate.so" work/w57-p/; fi
+if [ -e "$base/work/w57-p-equal/candidate.so" ]; then cp -L "$base/work/w57-p-equal/candidate.so" work/w57-p-equal/; fi
 ln -s "$base/outputs" outputs
 r12=results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12
 ln -s "$base/$r12/w57" "$r12/w57"
