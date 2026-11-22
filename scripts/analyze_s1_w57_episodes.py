@@ -76,6 +76,23 @@ def episode(row):
         candidate_wall_s_min_median_p95_max=quant([x['candidate_wall_s'] for x in records if 'candidate_wall_s' in x]),
         timing=result.get('w57_timing'),mechanism=result.get('mechanism'),
         measurement='500 Hz positive and absolute joint mechanical work; CoT uses moving path length. 5 kHz true contact-force peaks. Slip integral is the original dimensionless squared-speed integrand integrated over seconds.')
+    if result.get('mechanism'):
+        with (out/'w57-revisit-pairs.jsonl').open() as f:
+            pairs=[json.loads(line) for line in f]
+        matches=[p for p in pairs if p['condition_met'] and p['exact_overlap_m2']>0.]
+        release=np.array([np.linalg.norm(np.asarray(p['release_q'])*[1.,np.sqrt(2)]) for p in matches])
+        preload=np.array([np.linalg.norm(np.asarray(p['preload_q'])*[1.,np.sqrt(2)]) for p in matches])
+        substantial=release>1.e-8
+        res['revisit_measurements']=dict(
+            matched_unique_plant_load_events=len({p['target_id'] for p in matches}),
+            world_cell_count=len({tuple(p['key']) for p in matches}),
+            footprint_overlap_mm2=quant([p['exact_overlap_m2']*1.e6 for p in matches]),
+            source_load_to_target_reload_s=quant([p['target_s']-p['source_s'] for p in matches]),
+            actual_free_release_to_reload_s=quant([p['gap_s'] for p in matches]),
+            measured_target_normal_by_cell_N=quant([p['target_N'] for p in matches]),
+            preloading_q_norm=quant(preload),nonzero_release_norm_threshold=1.e-8,
+            preload_to_release_norm_fraction=quant(preload[substantial]/release[substantial]),
+            scope='Per matching cell load, with positive continuous footprint overlap. A traversal contributes at most one cycle; cells and events are correlated.')
     return res
 
 

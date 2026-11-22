@@ -136,6 +136,7 @@ def main():
     b=sub.add_parser('bundle')
     b.add_argument('name');b.add_argument('paths',nargs='+',type=Path)
     sub.add_parser('ready-episodes')
+    sub.add_parser('follow-episodes')
     args=parser.parse_args()
     lockpath=ROOT/'work/w57/publish.lock'
     lockpath.parent.mkdir(parents=True,exist_ok=True)
@@ -147,13 +148,21 @@ def main():
             originals(args.name,[(str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else path.name,
                                  path.resolve()) for path in args.paths])
         else:
-            for source in sorted((SMALL/'attempts').glob('*.json')):
-                state=read(source)
-                if 'ended_unix_s' not in state or not (SMALL/'episodes'/(source.stem+'.json')).exists():
-                    continue
-                dest=SMALL/'delivery'/source.name
-                if not dest.exists() or read(dest).get('status')!='verified':
-                    deliver_episode(source.stem)
+            while True:
+                for source in sorted((SMALL/'attempts').glob('*.json')):
+                    state=read(source)
+                    if 'ended_unix_s' not in state or not (SMALL/'episodes'/(source.stem+'.json')).exists():
+                        continue
+                    dest=SMALL/'delivery'/source.name
+                    if not dest.exists() or read(dest).get('status')!='verified':
+                        deliver_episode(source.stem)
+                queue=SMALL/'dispatch/frozen-evaluations.json'
+                if args.action=='ready-episodes' or queue.exists() and read(queue)['stage']=='queue_ended':
+                    break
+                # Other completed scientific bundles may publish between physical episodes.
+                fcntl.flock(lock,fcntl.LOCK_UN)
+                time.sleep(30)
+                fcntl.flock(lock,fcntl.LOCK_EX)
 
 
 if __name__=='__main__':main()
