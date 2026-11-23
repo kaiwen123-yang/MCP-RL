@@ -478,6 +478,13 @@ full 入账 7,424 条、29 次更新，实际改变交接时刻 1942 次，只�
 
 ## 2026-11-23：W57 匹配盲策略采样与交付
 
+### 20261123/w57/stop-personal-cleanup-and-continue-frozen-physics｜按用户指示停止存储清理，继续正式冻结测试
+
+2026-11-23T22:04:58+08:00，停止定向清理与两项待办，已确认清理进程组退出、写锁释放。已核验的操作日志与现有目录相互核对，共移除 28138 项归档副本、648636027 字节，个人盘可用 inode 为 28132/200000。剩余清单结束执行。[停止回执与逐文件留据](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/20261123-w57-archived-mpc/receipt.json)。
+
+W57 的 full、blind 均已冻结在 8192 条/32 次更新，两流自然 E60 尾回合结束，最终训练状态及 blind 后续更新包已取得 Release 核验回执。现有本身份原资格为 w57-m1-b-a-original-e30-a01, w57-m1-b-b-original-e30-a01, w57-m1-p-a-original-e30-a01, w57-m1-p-b-original-e30-a01, w57-m1-r-a-original-e30-a01。复查时正在执行 w57-m1-r-b-original-e30-a01 28.502 物理秒, w57-m1-pr-a-original-e30-a01 11.002 物理秒，W57 原两槽资格/机制队列与独立 private-short-A 后继按既定合同推进。W58 统一池等候 W57 自然交接。
+
+
 ### 20261123/storage/w57-personal-verified-plan-reclaim-start｜个人盘归档副本定向清理
 
 21:29:37 D57 个人盘共 200000 个文件节点，剩余 0。初次遍历发现盘上仅有 W57 的 64 个既有训练回合。首次检查容量时 13 条完整交付，逐回合核对期间 0014 于 21:30:07 完成核验，故本次清单固定为盲训练 A 0001–0014。实际训练时身份为 M1/P0、R 收集模式，全部完成 E60。逐回合匹配当前 GitHub Release 中已上传的资产 ID、大小、SHA-256，读取 ZIP 中与实测 manifest 对应的计划成员，在 D57 核对每个本地普通文件与远端成员的字节及 SHA-256 后删除这一份散文件。范围仅为每个回合 w55-f 的 mpc-六位序号.npz。材料轨迹、接触时序、WBC/控制块、完整视频、checkpoint、保留材料样本、两个技术中断前缀和仍需回传的回合均保留。单一后台进程，固定 CPU20、低 I/O 优先级，最多两个并行文件操作，所有后台无墙钟期限。

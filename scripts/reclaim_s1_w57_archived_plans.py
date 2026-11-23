@@ -280,6 +280,8 @@ def main():
     parser.add_argument('action',choices=['inventory','reclaim'])
     args=parser.parse_args()
     WORK.mkdir(parents=True,exist_ok=True)
+    if args.action=='reclaim' and (WORK/'user-stop.json').is_file():
+        parser.exit(0,'This cleanup pass was closed by its owner.\n')
     cohort_path=WORK/'cohort.json'
     with (WORK/'reclaim.lock').open('a') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
