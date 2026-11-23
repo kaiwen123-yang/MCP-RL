@@ -478,6 +478,15 @@ full 入账 7,424 条、29 次更新，实际改变交接时刻 1942 次，只�
 
 ## 2026-11-23：W57 匹配盲策略采样与交付
 
+### 20261123/w57/inode-recovery-and-matched-update-32｜个人盘文件节点耗尽，双槽续训与交付恢复
+
+现场 2026-11-23T21:26:48+08:00。20:42，两条 blind 0032 在 D57 个人盘遇到 ENOSPC；盘上仍有约 156 GiB 可用，但 200000 个 inode 已全用完。A 在写第 662 个 MPC 文件时中断，最后一条已保存决策的后继时钟 13.170 s 作为一次 GAE 序列切断。B 的 0031 已完成原训练 E60，0032 在初始化建目录时中断，尚无物理步。原始前缀和失效记录保存在原路径。
+
+原双槽 owner 942925 继续持有两把 lease。沿冻结源码 99b22099 和同一个 blind policy-031，将新增原件定向到 D57 本地盘；按实际已存 A 41/B 34 条继续同一批次，两个新物理 attempt 是 0033。2026-11-23T21:24:22+08:00 已产出 policy-032 和 update-032，去重 128×2、16 个优化器步、1 次已记录技术序列切断；blind 达到 8192 条/32 次，与 full 匹配。快照为 w57-pilot02-blind-a-e60-0033 26.002 物理秒、w57-pilot02-blind-b-e60-0033 28.002 物理秒。节点诊断及自然尾回合以现场 campaign 记录为准。W57 的冻结评价等待进程在没有物理子进程时重入同一队列以指定新写盘位置（PID 943095→175591），private-short-A PID 968025。两槽继续供 W57 使用。
+
+独立修复 D57 渲染输出并继续逐项核对 GitHub 的 size/digest（79cb5168）。此前失败的 blind-A-0014 已从原轨迹生成完整视频 14682236 字节；该回合交付状态 uploading。W58 物理启动前将文件节点余量计入统一池及下一条录制的准入（be9956b4），仅调整 I/O 和调度，已登记控制及实验源码一致；新等待进程 176250，W58 仍无物理回合和联合 PPO 更新。M2 的两条整段保留轨迹于 20:57 完成，跨足重载 37/30 个事件力 MAE 均下降，非释放 20.2 ms 预测均超出保留界，按冻结条件采用 M1。[事件与滚动交付回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/personal-inodes-20261123.json) · [M2 选择](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m/selection.json)。
+
+
 ### 20261123/w58/material-selected｜保留轨迹与估计器选择
 
 选择 M1。各保留轨迹单列释放→跨足重载、短预测误差、区间覆盖与宽度，见[选择](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m/selection.json)和[分族指标](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m2/errors-and-coverage.json)。
