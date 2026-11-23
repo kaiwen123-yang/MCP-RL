@@ -1,0 +1,42 @@
+{
+  "schema": "s1_w58_p2_committed_support_v1",
+  "native_workers": 1,
+  "native_backend": "equal_columns",
+  "private_material_substep_s": 0.0002,
+  "background": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_on_conversation_end": false
+  },
+  "development_source": "w57-m1-p-a-original-e30-a01. Every handover in the complete existing episode. Preserve empty, rejected and missing outcomes.",
+  "causal_inputs": [
+    "committed incoming pair: actual published landing position, touchdown clock and target event ID",
+    "pre-handover published MPC support forces or current GRF, contact and body weight",
+    "latest published observable world-column estimate and known footprint geometry"
+  ],
+  "force_planning": "All arms solve the same public within-node support availability correction on the original centroidal costs and hard constraints, using the current planned switches on the 14 x 25 ms force horizon. An original solution remains eligible under the same evaluator.",
+  "scenario": "At a newly committed incoming pair, the shared planned contact boundaries split the future forecast. Before their next handover the soles have identical committed XY and scheduled landing clocks for every wait candidate. For each incoming sole use the existing touch-on force (3 N) for one 2 ms WBC tick, then an equal split of the solved pair threshold (40% body weight per foot) for the 6 ms load-confirm interval. Available carrying legs share the remaining weight proportionally to their published forces. Free and reloaded columns evolve on 0.2 ms substeps. This is a prescribed causal load scenario.",
+  "time_score": "Use predicted touchdown and loaded sole heights, the planned landing bottom and original search speed to estimate when all feet can confirm, transfer and bear. The latest bearing or completed ramp defines a predicted handover time. For candidate delay d, score d^2 + max(0,predicted_time - original_due - d)^2 in s^2. Common walking speed scales both terms to squared lost progress. Ties select the first, shortest wait.",
+  "allowed_wait_s": [
+    0,
+    0.002,
+    0.006
+  ],
+  "arms": {
+    "B2": "zero event wait",
+    "P2-full": "minimum score with full causal candidate history",
+    "P2-private": "same scorer and candidates, reset already-released relevant private columns to virgin in the copied forecast; protect currently loaded cells and complete shared soles",
+    "Fixed-wait": "6 ms on every committed pair with at least one soft receiver (the original confirmed-bearing duration), zero otherwise. The W57 source episode precedes the entire W58 development matrix."
+  },
+  "no_material_receiver": "All arms request zero when there is no newly committed material receiver, including rigid, hold and first-walk cases.",
+  "joint_timing": "Preserve original nominal, chosen P2 due, R residual and actual requested/accepted timestamps. Until a timing head is enabled the residual is zero. Counterfactual gate replay holds the actually requested R residual fixed.",
+  "scoring": {
+    "target_ids": "All predeclared v2 targets, exact plant source ID, release ID, reload ID, positive triple overlap, receiver event ID and first later true load in the released forecast cell.",
+    "history_action_evidence": "The named target must account for a full/private wait change, both winners must survive perturbing ready time by the archived and local empirical errors, and the actual selected schedule must witness a different liftoff permission on the recorded gates. Unresolved transfer-only differences are reported separately. The dispatcher additionally evaluates the full development matrix and closed-loop progress, exposure and costs.",
+    "uncertainty": "Whole-support ready-time absolute error calibrated on all observable soft handovers of the archived original episode, plus maximum 0.2/0.1 ms refinement difference and one WBC tick. At evaluation use the larger of this floor and each local full-versus-actual ready-time error. These are empirical development tolerances."
+  },
+  "calibration": {
+    "source": "w57-m1-p-a-original-e30-a01",
+    "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/p2/saved-support-calibration.json"
+  }
+}
