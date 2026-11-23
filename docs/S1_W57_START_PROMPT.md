@@ -1,3 +1,5 @@
+> 2026-11-23状态更新：W57已实际执行，原文为形成时合同，继续约束现有冻结作业；旧“未开始”是历史状态。最新事实见[本轮审查](S1_W57_REVIEW_20261123.md)，续接和后继见[W58完整计划](S1_W58_RESEARCH_PLAN.md)及[新启动提示词](S1_W58_START_PROMPT.md)。不要按旧状态重复启动W57。
+
 # Codex启动提示词：W57模块原型、受控学习与首次联合验证
 
 请直接执行仓库最新main上的W57研究计划（含2026-11-22补充），目标是从已稳定的r55/r60基线推进到可归因的模块与联合改进。先读取 `AGENTS.md`、`docs/S1_W57_RESEARCH_PLAN.md`、`docs/S1_W57_REVIEW_20261122.md`、`docs/S1_W57_LITERATURE_UPDATE_20261122.md`、`results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json`、`reviews/W56-review/README.md`及其control/evidence/module-innovation-roadmap，然后续写 `docs/S1_DAILY_WORKLOG.md`。路径不带根目录的review均位于上述R12目录。不要另开W58重复本轮规划。

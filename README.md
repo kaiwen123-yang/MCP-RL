@@ -1,22 +1,22 @@
 # 四足机器人地面记忆辨识与跨步协同控制
 
-研究同一世界地块在跨足、跨步和返程重访中的材料恢复，以及它对后续支撑决策的影响。
+研究同一世界地块在跨足、跨步和返程重访中的材料恢复，以及它对未来支撑决策的作用。
 
-## W57 实验运行中
+## 当前：稳定名义基线成立，W57仍在执行，下一步计划已发布
 
-W57 自 `d321d61` 开始在 D57 执行。M1 在保留原 E60 A 的 270 次未来整足力预测中将 MAE 从 0.1770 N 降至 0.1294 N；30 次源释放至跨足重载的单格力预测 MAE 则由 0.1023 N 升至 0.1605 N。按事前条件选定 M1，用于原任务、P0 双收集学习和四组机制对照。[材料选择依据](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/m/selection.json) · [两种预测时距](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/figures/material-held-A.svg)。
+2026-11-23对fd4ede8d（19:20:56 +08）的审查确认：旧r55/r60的A/B四条原E600均完成十次合法往返。W57已实装M1、在线P1和83D独立timing PPO；full8192/32updates完成，blind7424/29updates＋6partial继续。新身份原资格目前是M1+B A/B E30及M1+P A E30，最终冻结R/PR和正式机制矩阵仍待队列完成。最新实时发布值请读[运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
 
-新 P1 已将事件切分的 FP64 材料预测接入原力 QP 的在线候选选择，并记录首个实际映射输入。M1+B 与 M1+P1 均已在 A/seed1 自己的原 E30 穿越材料并抵达远端；两例原任务的滑移积分为 0.011198/0.010198 s，峰值主应变为 0.0031134/0.0032002。两个 M0/B 短任务各走完 12 次身体穿越和回家，严格同格跨足周期分别为 6/12、7/12。W57 真实训练、已完成任务和资格取自 [运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。[每日记录](docs/S1_DAILY_WORKLOG.md) · [W57 原件与视频](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w57)。
+[完整进度与步态审查](docs/S1_W57_REVIEW_20261123.md) · [下一步完整计划](docs/S1_W58_RESEARCH_PLAN.md) · [Codex启动提示词](docs/S1_W58_START_PROMPT.md) · [文献更新](docs/S1_W57_LITERATURE_UPDATE_20261123.md) · [每日详细日志](docs/S1_DAILY_WORKLOG.md)
 
-## W57 开始前的基线与计划
+本轮明确了三个后继问题：早触地反弹仍影响接触质量；M1短期预测改善但释放→跨足重载退化；P1滑移积分单对照下降约8.9%，但CoT略升，333次非空私有历史干预无候选翻转，尚未证明材料历史收益。R真实学习和动作权限已成立，回报趋势尚无明确改善。不能把稳定baseline、接口接通或训练样本数直接等同科研贡献。
 
-2026-11-22补充：已在`640be3d6`上重新核对原轨迹/接触、真实F架构与W57执行合同；[新证据及完整说明](docs/S1_W57_REVIEW_20261122.md) · [一手文献补充](docs/S1_W57_LITERATURE_UPDATE_20261122.md)。仍为W57待执行，新增物理/训练0。
+W57按原身份自然收尾，同时独立开发G接触接管、M2重载状态预测、P2历史动作价值。新机制先修实际足印几何，再做16条开发矩阵；有机制信号后按计划做三学习seed的联合full/private-blind及独立冻结验证。W58默认3物理槽，依据实测条件扩4–6，训练双槽原子预留；当前W57双槽不热改。后台无墙钟截止、对话结束不kill；GitHub核验后不做用户电脑二次归档。
 
-截至提交 `3590646`，r55和r60 A/B均独立完成原E600十次合法材料往返并保持到600s。本次四份全轨迹、精选5kHz接触和视频复核支持稳定名义基线；实际是约1.85Hz、3cm摆足的对角小跑，仍有前足落脚后约2mm再离地。r60尚未显示一致滑移/应变改善，材料历史尚未真正进入MPC未来候选选择，独立模块与联合科研收益仍待建立。
+[原始视频/日志复算及小图](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W57-review/evidence/README.md) · [机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W57-review/handoff.json) · [W57原件与视频Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w57) · [项目记忆](docs/TERRAIN_MEMORY_PLAN.md)
 
-W57按M材料状态估计、P材料前瞻规划、R独立timing策略并行推进，先做单模块对照，再做冻结组合与机制验证。允许明确预算的新head学习，原W44策略保持冻结。两物理槽加材料/数据/训练第三线；后台无墙钟截止，GitHub交付后无用户电脑二次归档。**目前W57仅已规划，没有新实验成功声明。**
+## 历史计划入口
 
-[W56完整审查与步态图](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W56-review/README.md) · [W57研究计划](docs/S1_W57_RESEARCH_PLAN.md) · [启动提示词](docs/S1_W57_START_PROMPT.md) · [每日详细工作日志](docs/S1_DAILY_WORKLOG.md) · [机器状态](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)
+[W56完整审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W56-review/README.md)、[W57形成时计划](docs/S1_W57_RESEARCH_PLAN.md)、[11/22执行补充](docs/S1_W57_REVIEW_20261122.md)保留当时事实。旧“W57未执行/材料未进候选”已由本轮实际证据更新；旧资格、失败和未运行记录不删除。
 
 ## W56原任务与因果对照（已执行历史）
 
