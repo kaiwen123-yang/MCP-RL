@@ -478,6 +478,13 @@ full 入账 7,424 条、29 次更新，实际改变交接时刻 1942 次，只�
 
 ## 2026-11-23：W57 匹配盲策略采样与交付
 
+### 20261123/w58/stable-tmux-and-delivery｜D57 后台续行与 Release 核验
+
+现场时间 2026-11-23T20:29:33.939330+08:00。W57 原双槽仍在 `w57-r-pilot02-pair` PID 942925 下工作。`w57-pilot02-blind-a-e60-0031` PID 134212，52.502 物理秒、`w57-pilot02-blind-b-e60-0031` PID 144716，34.002 物理秒。在两个 PID 的真实 cwd 核对了源码/动态库及速度 actor，执行树为 99b22099，build 均为 S5-w57-r-e34d34e02cd7。full 共 8192 条/32 次更新，blind 共 7936 条/31 次已更新，另外 A/B 各 1/18 条保存在下一批；当前 blind checkpoint SHA-256 为 4457b0909fe980c9197453ab2868fbda410a7e25bfc469ccb8a252a4a5b5a613。[W57 正式评价队列](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/frozen-evaluations.json)（PID 943095）和独立 private-short-A（PID 968025）继续等各自证据。累计实际双物理时钟同时推进占采样覆盖时间 90.00%。
+
+W58 无新机器人物理及 PPO 更新，G/M2/P2 的离线新结果已进入 main。独立执行源码 `5134099b53da4b1e0db4d554a40188a883cf5b91`；`w58-unified-dispatch` PID 153001，状态 `waiting_W57_natural_release`，交付与整合 PID 153013/153007。M2 的整回合重放已落盘 ['w57-pilot02-full-a-e60-0009-replay.json']，完成成批预测计时 ['w57-pilot02-full-a-e60-0009-forecast-cost.json']，其余保留回合继续由 CPU21/GPU 消费。三项后台约定为 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。W58 首批 2 项 Release 资产实核 647595 字节及远端 SHA-256，包含全触地/同状态回放与首个 M2 校准原件。[W58 回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/delivery)。后继自然释放后由统一池先执行 G1 的 A/B 原 E30，再按各 case 原 E60 和共同冻结结果调度。
+
+
 ### 20261123/w58/stage/waiting_W57_natural_release｜调度与实测进度
 
 stage=waiting_W57_natural_release，slots=2，running=[]，attempts=0，completed=0，joint_distinct={}。W57 两个物理槽归原配对采样、冻结评价及独立 private-short-A dispatcher 使用。。运行快照 {"time_shanghai": "2026-11-23T20:20:41.039657+08:00", "primary": "waiting_for_natural_final_R_node", "private_short_A": "waiting_for_full_short_A_evidence", "pair": "two_leases_held_learner_running", "final": false, "panes": {"s1-w57-M-paired-analysis": 942992, "w57-actual-resources": 938043, "w57-direct-delivery-d57-route": 121176, "w57-frozen-evaluations": 943095, "w57-github-integration-eof": 120544, "w57-p-physical-outcomes-v2": 966437, "w57-pilot02-checkpoint-delivery": 969222, "w57-private-short-A": 968025, "w57-r-pilot02-pair": 942925, "w57-shanghai-worklog": 946149}, "attempts": ["w57-pilot02-blind-a-e60-0031", "w57-pilot02-blind-b-e60-0031"], "clocks": {"w57-pilot02-blind-a-e60-0031": 34.00199999994744, "w57-pilot02-blind-b-e60-0031": 25.001999999968408}, "committed": {"full": 8192, "blind": 7680}, "updates": {"full": 32, "blind": 30}, "uncommitted": {"full": {"A": 0, "B": 0}, "blind": {"A": 115, "B": 117}}}。
