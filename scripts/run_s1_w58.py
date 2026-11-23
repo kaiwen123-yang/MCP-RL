@@ -51,12 +51,12 @@ def declaration(a):
         *base['material_execution_sources'],*base['material_compiled_artifacts']]
     backend=('scripts/s1_w58_gait.py' if not p2 else
              'scripts/s1_w58_p2_gait_backend.py' if a.gait=='G1' else 'scripts/s1_w58_p2_backend.py')
-    if a.gait=='G1':base_paths+=['scripts/s1_w58_gait.py']
+    if a.gait=='G1':base_paths+=['scripts/s1_w58_gait.py','experiments/terrain_memory/s1-w58-gait.json']
     if p2:
         base_paths += [backend,'scripts/s1_w58_p2.py',P2_CONFIG,
                        'scripts/s1_w57_planning.py','scripts/s1_w57_candidate.cc',
                        'scripts/build_s1_w57_equal_columns.sh','work/w57-p-equal/candidate.so']
-    if a.material=='M2':base_paths+=['scripts/s1_w58_material.py']
+    if a.material=='M2':base_paths+=['scripts/s1_w58_material.py','experiments/terrain_memory/w58/material.json']
     if opts:
         base_paths += [JOINT,'experiments/terrain_memory/s1-w57-timing.json','scripts/run_s1_w58_joint.py',
             'scripts/s1_w57_learning.py','scripts/s1_w57_timing.py','scripts/s1_w57_training_evidence.py',

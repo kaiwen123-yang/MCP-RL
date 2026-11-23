@@ -15,7 +15,12 @@ STATUSES = SPEC['normalization']['statuses']
 def blind_observation(observation):
     selected = observation.copy()
     selected[24:36] = 0.
-    selected[59:].reshape(4, 6)[:, 2:] = 0.
+    status = selected[59:].reshape(4, 6)
+    if SPEC.get('experiment') == 'W58':
+        status[:, 2] = status[:, 2:5].sum(axis=1)
+        status[:, 3:5] = 0.
+    else:
+        status[:, 2:] = 0.
     return selected
 
 

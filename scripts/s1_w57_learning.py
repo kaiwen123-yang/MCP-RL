@@ -16,6 +16,17 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC_PATH = ROOT/'experiments/terrain_memory/s1-w57-timing.json'
 SPEC = json.loads(SPEC_PATH.read_text())
 SPEC_HASH = hashlib.sha256(SPEC_PATH.read_bytes()).hexdigest()
+if 'S1_W58_JOINT_SEED' in os.environ:
+    joint_path = ROOT/'experiments/terrain_memory/s1-w58-joint.json'
+    joint = json.loads(joint_path.read_text())
+    seed = int(os.environ['S1_W58_JOINT_SEED'])
+    if seed not in joint['learning_seeds']:
+        raise ValueError('Seed outside the frozen W58 joint contract')
+    SPEC = dict(SPEC, **{k: joint[k] for k in ('identity','experiment','training_distribution','nodes')})
+    SPEC.update(learning_seed=seed, planner='P2', training_task='joint_P2_original_E60_virgin',
+                joint_contract=joint, inherited_spec_sha256=SPEC_HASH)
+    SPEC['normalization'] = dict(SPEC['normalization'],schema=joint['identity'])
+    SPEC_HASH = hashlib.sha256(json.dumps(SPEC, sort_keys=True, separators=(',',':')).encode()).hexdigest()
 STEPS = SPEC['ppo']['rollout_shape'][0]
 
 
