@@ -20,6 +20,8 @@ def metrics(name):
     path=R/'episodes'/(name+'.json')
     if not path.exists():return dict(attempt=name,status='not_run_or_no_physical_result',targets=[])
     episode=read(path)
+    if not (raw/'trajectory.npz').is_file():
+        return dict(attempt=name,status=episode.get('stage_status','technical_interruption'),reason=episode.get('reason'),targets=[])
     mech=episode.get('mechanism',{})
     targets=mech.get('all_target_rows',[])
     groups={}

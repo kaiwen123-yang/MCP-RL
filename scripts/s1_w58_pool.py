@@ -55,9 +55,10 @@ def snapshot():
     for proc in Path('/proc').iterdir():
         if not proc.name.isdecimal():continue
         try:
-            if '/MCP-RL-w58' not in os.readlink(proc/'cwd'):continue
+            cwd=os.readlink(proc/'cwd')
+            if '/MCP-RL-w58' not in cwd:continue
             stat=(proc/'stat').read_text().rsplit(') ',1)[1].split()
-            project[int(proc.name)]=dict(cpu=(int(stat[11])+int(stat[12]))/hz,
+            project[int(proc.name)]=dict(auxiliary=cwd!=str(ROOT) or int(proc.name)==os.getpid(),cpu=(int(stat[11])+int(stat[12]))/hz,
                                         rss=int(stat[21])*os.sysconf('SC_PAGE_SIZE'),gpu_MiB=apps.get(int(proc.name),0))
         except (OSError,IndexError):
             continue
@@ -76,10 +77,11 @@ def load_delta(prev,cur):
     dt=cur['t']-prev['t']
     used=max(0.,cur['cpu_seconds']-prev['cpu_seconds'])/dt
     own=sum(max(0.,r['cpu']-prev['project'][p]['cpu']) for p,r in cur['project'].items() if p in prev['project'])/dt
+    aux=sum(max(0.,r['cpu']-prev['project'][p]['cpu']) for p,r in cur['project'].items() if r['auxiliary'] and p in prev['project'])/dt
     other=max(0.,used-own)
     iowait=(cur['io_wait_ticks']-prev['io_wait_ticks'])/max(1,cur['host_ticks']-prev['host_ticks'])
-    return dict(total_core_s_per_s=used,w58_core_s_per_s=own,other_core_s_per_s=other,
-                host_iowait_fraction=iowait,available_cpu_cores=max(0.,min(18.,cur['cpu_quota']-3.-other)))
+    return dict(total_core_s_per_s=used,w58_core_s_per_s=own,auxiliary_core_s_per_s=aux,other_core_s_per_s=other,
+                host_iowait_fraction=iowait,available_cpu_cores=max(0.,min(18.,cur['cpu_quota']-3.-other-aux)))
 
 
 def worker(a):
@@ -111,10 +113,10 @@ class Pool:
         self.free_ids=[]
         self.last_tick=0.
         self.last_progress={}
+        self.last_distinct={}
 
     def submit(self,job,slots,store):
         record=self.records/(job['id']+'.json')
-        cpus=list(sorted(os.sched_getaffinity(0)))
         # The dispatch tmux is bound to the auxiliary pool. Worker affinities are drawn
         # from the explicit physics partition recorded at launch, within the cgroup.
         available=list(map(int,os.environ['W58_PHYSICS_CPUS'].split(',')))
@@ -199,12 +201,14 @@ class Pool:
                 p=WORK/'campaigns'/('seed-'+str(r['seed']))/r['head']/'published.json'
                 if p.exists():distinct[r['id']]=read(p).get('cumulative_distinct',0)
         now=dict(time_shanghai=datetime.now(SH).isoformat(),unix_s=cur['unix_s'],count=count,kind=next(iter(kinds)) if len(kinds)==1 else None,
-                 dt_s=dt,physics_s_per_wall_s=progress,clock_s=clocks,distinct_committed=distinct,**load,
+                 dt_s=dt,physics_s_per_wall_s=progress,clock_s=clocks,distinct_committed=distinct,
+                 committed_distinct_per_wall_hour={k:3600*(v-self.last_distinct[k])/dt for k,v in distinct.items() if k in self.last_distinct},**load,
                  gpu=cur['gpu'],project_gpu_MiB=sum(p['gpu_MiB'] for p in cur['project'].values()),
                  project_rss_bytes=sum(p['rss'] for p in cur['project'].values()),
                  ram_available_bytes=cur['available_ram_bytes'],io_pressure_pct=cur['io_pressure_pct'],
                  host_disk_outstanding_io=cur['disk_outstanding_io'],dirty_writeback_bytes=cur['dirty_plus_writeback'],
                  scratch_free_bytes=cur['scratch_free_bytes'],personal_free_bytes=cur['personal_free_bytes'])
+        self.last_distinct=distinct
         self.samples.append(now)
         self.metrics=now
         with (WORK/'throughput.jsonl').open('a') as f:f.write(json.dumps(now,separators=(',',':'))+'\n')
@@ -263,7 +267,7 @@ class Pool:
                 if (len(available)<n or (len(in_use)+n)*PER_STREAM_CORES>ms['available_cpu_cores']
                         or ms['ram_available_bytes']<(len(in_use)+n)*2.5*2**30
                         or ms['io_pressure_pct']>15 or not ms['gpu'] or ms['gpu'][2]-ms['gpu'][1]<n*1100):
-                    break
+                    continue
                 store=None
                 # Relocate only a future raw allocation, never existing originals.
                 scratch=shutil.disk_usage(RAW.parent).free

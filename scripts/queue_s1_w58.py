@@ -172,7 +172,10 @@ def run():
     if decision['joint_eligible']:
         stage('matched_joint_learning','按 5801/5802/5803 逐个 head 原子预留两槽。full 的已冻结节点决定各自 blind 预算。',**shared)
         full=[head_job(s,'full',gait,material) for s in SEEDS]
-        pool.batch(full,pulse)
+        # Independent B2/fixed validation uses the spare slot. No validation score enters
+        # the learner's initialization, reward, node selection or matched budget.
+        singleton_validation=mechanism([('B2',None),('Fixed-wait',None)],gait,material,'validation')
+        pool.batch(full+ready_table(singleton_validation,qual),pulse)
         def complete(s,h):
             path=R/'learning'/f'seed-{s}'/h/'final.json'
             return read(path) if path.is_file() else dict(complete=False,distinct=0)
