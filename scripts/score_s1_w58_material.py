@@ -36,7 +36,7 @@ def release_information(groups, blocks):
             result[mode, eid] = dict(source_leg=source['leg'], target_leg=q['leg'],
                 cross_foot=bool(source['leg'] != q['leg']), source_release_s=source['time_s'],
                 physical_free_s=q['event']['time_s']-source['time_s'], source_binding_one_tick=matched,
-                source_foot_normal_force_before_N=source['normal_before_N'],
+                source_cell_normal_force_before_N=source['normal_before_N'],
                 target_cell_normal_force_N=q['event']['normal_N'],
                 source_depth_error_m=float(-.05*(prior[0]-true_state[0])),
                 source_q11_error=float(prior[2]-true_state[2]))
