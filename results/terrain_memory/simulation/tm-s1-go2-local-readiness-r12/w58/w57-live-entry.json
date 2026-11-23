@@ -1,0 +1,511 @@
+{
+  "observed_at": "2026-11-23T20:02:53.638476+08:00",
+  "workspace": "/root/autodl-tmp/MCP-RL-w57",
+  "panes": {
+    "s1-w57-M-paired-analysis": {
+      "pid": 942992,
+      "cwd": "/root/autodl-tmp/MCP-RL-w57",
+      "args": [
+        "python",
+        "-u",
+        "work/w57-m/observe-pairs.py"
+      ],
+      "start_ticks": 1137628528
+    },
+    "w57-actual-resources": {
+      "pid": 938043,
+      "cwd": "/root/autodl-tmp/MCP-RL-w57",
+      "args": [
+        "python",
+        "-u",
+        "scripts/record_s1_w57_resources.py"
+      ],
+      "start_ticks": 1137558185
+    },
+    "w57-direct-delivery-d57-route": {
+      "pid": 121176,
+      "cwd": "/root/autodl-tmp/MCP-RL-w57",
+      "args": [
+        "python",
+        "-u",
+        "scripts/publish_s1_w57.py",
+        "follow-episodes"
+      ],
+      "start_ticks": 1149053941
+    },
+    "w57-frozen-evaluations": {
+      "pid": 943095,
+      "cwd": "/root/autodl-tmp/MCP-RL-w57",
+      "args": [
+        "python",
+        "-u",
+        "scripts/queue_s1_w57_evaluations.py"
+      ],
+      "start_ticks": 1137629667
+    },
+    "w57-github-integration-eof": {
+      "pid": 120544,
+      "cwd": "/root/autodl-tmp/MCP-RL-w57",
+      "args": [
+        "python",
+        "-u",
+        "scripts/integrate_s1_w57.py"
+      ],
+      "start_ticks": 1149022245
+    },
+    "w57-p-physical-outcomes-v2": {
+      "pid": 966437,
+      "cwd": "/root/autodl-tmp/MCP-RL-w57",
+      "args": [
+        "bash",
+        "-c",
+        "cd /root/autodl-tmp/MCP-RL-w57 && source scripts/autodl_d57_env.sh && python -u scripts/collect_s1_w57_planner_physics.py --follow > work/w57-p/physical-outcomes-v2.log 2>&1"
+      ],
+      "start_ticks": 1137993962
+    },
+    "w57-pilot02-checkpoint-delivery": {
+      "pid": 969222,
+      "cwd": "/root/autodl-tmp/MCP-RL-w57",
+      "args": [
+        "python",
+        "-u",
+        "scripts/publish_s1_w57_learning.py"
+      ],
+      "start_ticks": 1138097291
+    },
+    "w57-private-short-A": {
+      "pid": 968025,
+      "cwd": "/root/autodl-tmp/MCP-RL-w57",
+      "args": [
+        "python",
+        "-u",
+        "scripts/run_s1_w57_private_pair.py"
+      ],
+      "start_ticks": 1138057209
+    },
+    "w57-r-pilot02-pair": {
+      "pid": 942925,
+      "cwd": "/root/autodl-tmp/MCP-RL-w57-pilot02",
+      "args": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "/root/autodl-tmp/MCP-RL-w57/work/w57-r/pilot02/await-pair.py",
+        "own"
+      ],
+      "start_ticks": 1137627714
+    },
+    "w57-shanghai-worklog": {
+      "pid": 946149,
+      "cwd": "/root/autodl-tmp/MCP-RL-w57",
+      "args": [
+        "python",
+        "-u",
+        "scripts/append_s1_w57_day.py",
+        "--follow"
+      ],
+      "start_ticks": 1137682101
+    }
+  },
+  "heads": {
+    "full": {
+      "version": 32,
+      "finished": true,
+      "cumulative_distinct": 8192,
+      "checkpoint": "/root/autodl-tmp/MCP-RL-w57/work/w57-r/pilot02/full/policy-032.pt",
+      "observed_unix_s": 1795366770.8319616,
+      "uncommitted_rows": {
+        "A": 0,
+        "B": 0
+      },
+      "checkpoint_sha256": "5f23f3e4a4c0f9572b0f5e4d05154cd5230551d040c81dcacddea2e7d1fa0dd4",
+      "collector_exits": [
+        {
+          "exit_code": 0,
+          "ended_unix_s": 1795368146.6131494
+        },
+        {
+          "exit_code": 0,
+          "ended_unix_s": 1795367465.4222894
+        }
+      ]
+    },
+    "blind": {
+      "version": 30,
+      "finished": false,
+      "cumulative_distinct": 7680,
+      "checkpoint": "/root/autodl-tmp/MCP-RL-w57/work/w57-r/pilot02/blind/policy-030.pt",
+      "observed_unix_s": 1795434644.5959997,
+      "uncommitted_rows": {
+        "A": 23,
+        "B": 33
+      },
+      "checkpoint_sha256": "ccdd1854068a576aec1bb40b3c07059c6ed41dd00e46b322c1c8da4e5d0c9420",
+      "collector_exits": []
+    }
+  },
+  "active_physics": [
+    {
+      "attempt": "w57-pilot02-blind-b-e60-0030",
+      "status": "running",
+      "controller": "S5-w57-r-e34d34e02cd7",
+      "case": "B",
+      "source_commit": "99b2209967195f1061ccf59de8faef45d4ac69bf",
+      "pid": 122177,
+      "runner_pid": 122175,
+      "slot": "B",
+      "tmux": "w57-r-pilot02-pair",
+      "checkpoint_sha256": "6b1fcab99f849aaaabc4925dc13391f6ced8e75c419d0f821661417cba6349f7",
+      "started_unix_s": 1795433743.7919774,
+      "settings": {
+        "arm": "R",
+        "planner": "P0",
+        "planner_history": "full",
+        "candidate_substep_s": 0.0002,
+        "material": "M1",
+        "observer_implementation": "w57_measured_window",
+        "timing_mode": "collect",
+        "timing_head": "blind",
+        "task_mode": "training",
+        "force_model": "centroidal force QP and articulated inverse-dynamics WBC, original PD60/5",
+        "training_distribution": "original virgin E60"
+      },
+      "physics_process": {
+        "pid": 122177,
+        "cwd": "/root/autodl-tmp/MCP-RL-w57-pilot02",
+        "args": [
+          "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+          "-u",
+          "scripts/run_s1_go2_r12.py",
+          "--contract",
+          "/root/autodl-tmp/MCP-RL-w57-pilot02/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/w57-pilot02-blind-b-e60-0030/execution-contract.json",
+          "--attempt",
+          "w57-pilot02-blind-b-e60-0030",
+          "--evaluation-start-unix",
+          "1795433743.7919774",
+          "--level",
+          "E60",
+          "--checkpoint",
+          "/root/autodl-tmp/MCP-RL-w57-pilot02/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/checkpoint-014737.pt",
+          "--seed",
+          "2",
+          "--workers",
+          "1",
+          "--build",
+          "S5-w57-r-e34d34e02cd7",
+          "--condition",
+          "nominal"
+        ],
+        "start_ticks": 1149111109
+      },
+      "launcher_process": {
+        "pid": 122175,
+        "cwd": "/root/autodl-tmp/MCP-RL-w57-pilot02",
+        "args": [
+          "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+          "-u",
+          "scripts/run_s1_w57.py",
+          "episode",
+          "--case",
+          "B",
+          "--arm",
+          "R",
+          "--task",
+          "training",
+          "--level",
+          "E60",
+          "--material",
+          "M1",
+          "--attempt",
+          "w57-pilot02-blind-b-e60-0030",
+          "--timing-config",
+          "/root/autodl-tmp/MCP-RL-w57/work/w57-r/pilot02/blind/collector-B.json"
+        ],
+        "start_ticks": 1149111096
+      },
+      "last_physics": {
+        "pid": 122177,
+        "physical_time_s": 44.00199999992413,
+        "phase": "complete",
+        "position_m": [
+          0.009844502545638144,
+          0.004229186303916329,
+          0.291445235128571
+        ],
+        "unix_s": 1795435359.8686528,
+        "deadline": null,
+        "wall_deadline_enabled": false
+      },
+      "worktree_HEAD": "99b2209967195f1061ccf59de8faef45d4ac69bf",
+      "sources_and_compiled_count": 33,
+      "source_or_binary_mismatches": [],
+      "compiled_sha256": {
+        "work/w56-r60/columns.so": "bc46e1911de0d6bd408e4c69779ee2c0b1c2b3d66632af1f9d46ee448280d9b4",
+        "work/w57-m/material.so": "5024afc3a4226faa112994b0d81582660132e5a33062e4dc51178d690822f8c6"
+      },
+      "installed_speed_checkpoint": {
+        "path": "/root/autodl-tmp/MCP-RL-w57-pilot02/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-b/PANN_PPO_S5-seed2/checkpoint-014737.pt",
+        "sha256": "6b1fcab99f849aaaabc4925dc13391f6ced8e75c419d0f821661417cba6349f7"
+      }
+    },
+    {
+      "attempt": "w57-pilot02-blind-a-e60-0031",
+      "status": "running",
+      "controller": "S5-w57-r-e34d34e02cd7",
+      "case": "A",
+      "source_commit": "99b2209967195f1061ccf59de8faef45d4ac69bf",
+      "pid": 134212,
+      "runner_pid": 134210,
+      "slot": "A",
+      "tmux": "w57-r-pilot02-pair",
+      "checkpoint_sha256": "aa6cf72950e0f15160a15009813b2a6d976e4f4d31c3ebd198436273dd647c15",
+      "started_unix_s": 1795435178.3748271,
+      "settings": {
+        "arm": "R",
+        "planner": "P0",
+        "planner_history": "full",
+        "candidate_substep_s": 0.0002,
+        "material": "M1",
+        "observer_implementation": "w57_measured_window",
+        "timing_mode": "collect",
+        "timing_head": "blind",
+        "task_mode": "training",
+        "force_model": "centroidal force QP and articulated inverse-dynamics WBC, original PD60/5",
+        "training_distribution": "original virgin E60"
+      },
+      "physics_process": {
+        "pid": 134212,
+        "cwd": "/root/autodl-tmp/MCP-RL-w57-pilot02",
+        "args": [
+          "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+          "-u",
+          "scripts/run_s1_go2_r12.py",
+          "--contract",
+          "/root/autodl-tmp/MCP-RL-w57-pilot02/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/jobs/w57-pilot02-blind-a-e60-0031/execution-contract.json",
+          "--attempt",
+          "w57-pilot02-blind-a-e60-0031",
+          "--evaluation-start-unix",
+          "1795435178.3748271",
+          "--level",
+          "E60",
+          "--checkpoint",
+          "/root/autodl-tmp/MCP-RL-w57-pilot02/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+          "--seed",
+          "1",
+          "--workers",
+          "1",
+          "--build",
+          "S5-w57-r-e34d34e02cd7",
+          "--condition",
+          "nominal"
+        ],
+        "start_ticks": 1149254567
+      },
+      "launcher_process": {
+        "pid": 134210,
+        "cwd": "/root/autodl-tmp/MCP-RL-w57-pilot02",
+        "args": [
+          "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+          "-u",
+          "scripts/run_s1_w57.py",
+          "episode",
+          "--case",
+          "A",
+          "--arm",
+          "R",
+          "--task",
+          "training",
+          "--level",
+          "E60",
+          "--material",
+          "M1",
+          "--attempt",
+          "w57-pilot02-blind-a-e60-0031",
+          "--timing-config",
+          "/root/autodl-tmp/MCP-RL-w57/work/w57-r/pilot02/blind/collector-A.json"
+        ],
+        "start_ticks": 1149254554
+      },
+      "last_physics": {
+        "pid": 134212,
+        "physical_time_s": 7.502000000006983,
+        "phase": "outbound",
+        "position_m": [
+          1.1076185559618836,
+          -0.022586430681530382,
+          0.28890123706187626
+        ],
+        "unix_s": 1795435343.5835776,
+        "deadline": null,
+        "wall_deadline_enabled": false
+      },
+      "worktree_HEAD": "99b2209967195f1061ccf59de8faef45d4ac69bf",
+      "sources_and_compiled_count": 33,
+      "source_or_binary_mismatches": [],
+      "compiled_sha256": {
+        "work/w56-r60/columns.so": "bc46e1911de0d6bd408e4c69779ee2c0b1c2b3d66632af1f9d46ee448280d9b4",
+        "work/w57-m/material.so": "5024afc3a4226faa112994b0d81582660132e5a33062e4dc51178d690822f8c6"
+      },
+      "installed_speed_checkpoint": {
+        "path": "/root/autodl-tmp/MCP-RL-w57-pilot02/outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/training/w44-a/PANN_PPO_S5-seed1/checkpoint-014737.pt",
+        "sha256": "aa6cf72950e0f15160a15009813b2a6d976e4f4d31c3ebd198436273dd647c15"
+      }
+    }
+  ],
+  "primary": "waiting_for_natural_final_R_node",
+  "private_short_A": "waiting_for_full_short_A_evidence",
+  "dispatcher_files": {
+    "b-m1-entry-queue-replacement.json": {
+      "event": "withdrawn_waiting_ticket_before_physics",
+      "planned_label": "w57-m1-b-a-original-e30-a01",
+      "waiting_pid": 940713,
+      "queue_ticket": "F-1795318608982793500-940713.waiting",
+      "tmux": "w57-m1-b-original-entry",
+      "original_argv": [
+        "python",
+        "-u",
+        "scripts/s1_w56_slot.py",
+        "--priority",
+        "F",
+        "--label",
+        "w57-m1-b-a-original-e30-a01",
+        "--",
+        "python",
+        "-u",
+        "scripts/run_s1_w57.py",
+        "episode",
+        "--case",
+        "A",
+        "--arm",
+        "B",
+        "--level",
+        "E30",
+        "--task",
+        "original",
+        "--material",
+        "M1",
+        "--attempt",
+        "w57-m1-b-a-original-e30-a01"
+      ],
+      "physical_samples": 0,
+      "raw_episode_allocated": false,
+      "replacement_reason": "Isolate M1 in the original r60 F controller, with only the material observer changed.",
+      "time_shanghai": "2026-11-22T11:39:19.750038+08:00",
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "kill_on_conversation_end": false
+    },
+    "frozen-evaluations.json": {
+      "command": [
+        "scripts/queue_s1_w57_evaluations.py"
+      ],
+      "stage": "waiting_for_natural_final_R_node",
+      "common_observer": "M1",
+      "source_snapshots": {
+        "B": [
+          "MCP-RL-w57-m1-b",
+          "5209716d8185b37c7437f9c43a6702b2961ed6c0"
+        ],
+        "P": [
+          "MCP-RL-w57-p1-final",
+          "c4b80ec573e8fa01e6544d8843ef384aa78dcb98"
+        ],
+        "R": [
+          "MCP-RL-w57-pilot02",
+          "99b2209967195f1061ccf59de8faef45d4ac69bf"
+        ]
+      },
+      "full_and_blind_campaign": "/root/autodl-tmp/MCP-RL-w57/work/w57-r/pilot02",
+      "mechanism_cycle_target": 12,
+      "attempted_conditions": [
+        "short",
+        "recovered"
+      ],
+      "primary_arms": [
+        "B",
+        "P",
+        "R",
+        "PR"
+      ],
+      "cases": [
+        "A",
+        "B"
+      ],
+      "original": "Every genuinely new physical controller gets its own A/B E30 followed by E60 only after own E30 passes. Training and mechanism trials have no original qualification.",
+      "final_candidate": "Frozen PR, independently by case, after own E60 passes, both mechanism durations complete and at least one observed target cross-foot cycle, an actually selected material candidate and a witnessed timing change (handover or transfer ramp). These are execution information and task eligibility, not evidence of superior average performance. Continue that case E300 and then E600 only after its own E300 passes.",
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "kill_on_conversation_end": false
+    },
+    "private-short-A.json": {
+      "case": "A",
+      "mode": "short",
+      "observer": "M1",
+      "planning": "P1",
+      "timing": "R0",
+      "alternative": "private_reset",
+      "paired_full_attempt": "w57-m1-p-a-short-a01",
+      "required_evidence": "p/physical/private-short-A-eligibility.json",
+      "scope": "Secondary causal intervention, outside 16 and outside matched blind.",
+      "origin": "Preselected A before any official P/A short outcome. Require matched real subsequent loads and mapped differences exceeding same-input repeatability in original A and short A.",
+      "status": "waiting_for_full_short_A_evidence",
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "kill_on_conversation_end": false
+    }
+  },
+  "pair_dispatch": "two_leases_held_learner_running",
+  "pair_owner": {
+    "pid": 942925,
+    "cwd": "/root/autodl-tmp/MCP-RL-w57-pilot02",
+    "args": [
+      "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+      "-u",
+      "/root/autodl-tmp/MCP-RL-w57/work/w57-r/pilot02/await-pair.py",
+      "own"
+    ],
+    "start_ticks": 1137627714
+  },
+  "final": false,
+  "distinct_attempts": 131,
+  "status": "executing",
+  "original_qualifications": [
+    {
+      "arm": "B",
+      "case": "A",
+      "level": "E30",
+      "attempt": "w57-m1-b-a-original-e30-a01",
+      "controller": "S5-w57-b-8998af3e7b17"
+    },
+    {
+      "arm": "B",
+      "case": "B",
+      "level": "E30",
+      "attempt": "w57-m1-b-b-original-e30-a01",
+      "controller": "S5-w57-b-8998af3e7b17"
+    },
+    {
+      "arm": "P",
+      "case": "A",
+      "level": "E30",
+      "attempt": "w57-m1-p-a-original-e30-a01",
+      "controller": "S5-w57-p-56b53ddc5b73"
+    }
+  ],
+  "overlap_measurement": {
+    "samples": 5785,
+    "covered_wall_s": 117081.87772035599,
+    "concurrently_advancing_interval_wall_s": 105386.57811880112,
+    "excluded_monitor_gaps_over_60s": 0.0,
+    "peak_total_GPU_MiB": 31165,
+    "peak_W57_GPU_process_MiB": 2130,
+    "mean_host_GPU_utilization_pct": 5.42057044079516,
+    "scope": "Physical advancement observed in both neighboring samples (nominal 20 s); different from overlapping process lifetimes. Collection started after the first two mechanism episodes began. Device utilization includes other work."
+  },
+  "publication": {
+    "verified_assets": 102,
+    "verified_bytes": 22753788012
+  },
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false
+}

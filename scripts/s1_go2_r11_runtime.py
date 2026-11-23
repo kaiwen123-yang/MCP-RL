@@ -375,7 +375,10 @@ def run(args, c, joint=None):
         mission = ContinuousMission(c['task'], c['long_mission_protocol'])
     revisit_task = w57 is not None and w57['task_mode'] in ('short', 'recovered')
     if revisit_task:
-        from s1_w57_mechanism import RevisitMission
+        if c.get('w58'):
+            from s1_w58_revisit import ForwardRevisitMission as RevisitMission
+        else:
+            from s1_w57_mechanism import RevisitMission
         mission = RevisitMission(c['task'], w57['mechanism'], w57['task_mode'])
     duration = c['r11_stage']['duration_s']
     first_completion = None
@@ -971,7 +974,10 @@ def run(args, c, joint=None):
             recording='Training: 20Hz robot states, 2Hz transitions, per-episode actual physical counters; no full prediction/physics dumps.')
     from s1_go2_r11_protocol import evaluate_stage
     if revisit_task:
-        from s1_w57_mechanism import score_revisits
+        if c.get('w58'):
+            from s1_w58_revisit import score_targets as score_revisits
+        else:
+            from s1_w57_mechanism import score_revisits
         result=score_revisits(result,c,mission,out)
     else:
         result=evaluate_stage(result,c,joint,arrays)

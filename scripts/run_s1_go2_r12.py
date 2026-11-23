@@ -86,7 +86,10 @@ def evaluate(a, contract):
                          run_deadline_unix_s=a.deadline_unix,
                          hard_deadline_unix_s=a.deadline_unix))
     if 'w57' in contract:
-        from run_s1_w57 import configure_episode
+        if 'w58' in contract:
+            from run_s1_w58 import configure_episode
+        else:
+            from run_s1_w57 import configure_episode
         configure_episode(c, contract)
     c['outputs']['root'] = contract['outputs']['compact_root']
     args = arguments(a.attempt, build, a.condition, 'diagnostic' if a.level=='D8' else 'formal',

@@ -147,10 +147,10 @@ def declaration(a):
     return spec,artifact,parent,checkpoint,job
 
 
-def episode(a):
+def episode(a, *, declare=declaration, small=SMALL):
     if not a.attempt or Path(a.attempt).name!=a.attempt:
         raise ValueError('Give each natural attempt a unique basename')
-    spec, artifact, parent, checkpoint, job=declaration(a)
+    spec, artifact, parent, checkpoint, job=declare(a)
     raw_job=LARGE/'jobs'/a.attempt
     raw_job.mkdir(parents=True,exist_ok=False)
     config=raw_job/'execution-contract.json'
@@ -163,14 +163,16 @@ def episode(a):
     receipt=dict(attempt=a.attempt,job_id=job,case=a.case,seed=parent['seed'],level=a.level,
                  task_mode=a.task,arm=a.arm,material=a.material,controller=artifact['controller_build'],
                  source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-                 plan_commit=PLAN,execution_contract_sha256=digest(config),active_sources=spec['w57_execution_sources'],
+                 plan_commit=spec.get('plan_commit',PLAN),execution_contract_sha256=digest(config),active_sources=spec['w57_execution_sources'],
                  checkpoint_sha256=parent['checkpoint_sha256'],normalization_sha256=parent['normalization_sha256'],
                  retained_resume=parent['resume_checkpoint'],retained_resume_sha256=parent['resume_sha256'],
                  timing_checkpoint_sha256=artifact['timing_checkpoint'],settings=spec['w57'],old_actor_updates=0,
-                 command=command,launcher_command=sys.argv,tmux=os.environ.get('W57_TMUX'),
-                 slot=os.environ.get('S1_W56_SLOT'),runner_pid=os.getpid(),started_unix_s=now,
+                 command=command,launcher_command=sys.argv,tmux=os.environ.get('W58_TMUX') or os.environ.get('W57_TMUX'),
+                 slot=os.environ.get('S1_W58_SLOT') or os.environ.get('S1_W56_SLOT'),runner_pid=os.getpid(),started_unix_s=now,
                  cpu_affinity=sorted(os.sched_getaffinity(0)),status='declared',**BACKGROUND)
-    target=SMALL/'attempts'/(a.attempt+'.json')
+    if 'w58' in spec:
+        receipt.update(w58=spec['w58'])
+    target=small/'attempts'/(a.attempt+'.json')
     write(target,receipt)
     from run_s1_go2_w54 import resource_sample
     usage0=resource.getrusage(resource.RUSAGE_CHILDREN)
@@ -185,7 +187,7 @@ def episode(a):
     usage=resource.getrusage(resource.RUSAGE_CHILDREN)
     receipt.update(ended_unix_s=time.time(),exit_code=proc.returncode,
                    user_cpu_s=usage.ru_utime-usage0.ru_utime,system_cpu_s=usage.ru_stime-usage0.ru_stime)
-    path=SMALL/'episodes'/(a.attempt+'.json')
+    path=small/'episodes'/(a.attempt+'.json')
     if path.is_file():
         result=read(path)
         receipt.update({k:result.get(k) for k in ('stage_status','success','reason','simulation_s','physical_samples',
