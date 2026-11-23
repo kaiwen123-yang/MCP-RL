@@ -13,7 +13,6 @@ import stat
 import struct
 import subprocess
 import tempfile
-import threading
 import time
 from urllib.parse import urlsplit
 import zipfile
@@ -28,7 +27,9 @@ REL = Path('terrain_memory/simulation/tm-s1-go2-local-readiness-r12')
 R = ROOT/'results'/REL/'w57'
 RAW = ROOT/'outputs'/REL
 EVENT = '20261123-w57-archived-mpc'
-CUTOFF = datetime.fromisoformat('2026-11-23T21:29:37+08:00').timestamp()
+# The volume first reported zero free inodes at 21:29:37. Episode 0014's
+# receipt closed at 21:30:07, before the initial per-episode receipt inventory.
+CUTOFF = datetime.fromisoformat('2026-11-23T21:30:08+08:00').timestamp()
 WORK = ROOT/'work/w57'/EVENT
 RESULT = R/'storage'/EVENT
 REPO = 'kaiwen123-yang/MCP-RL'
@@ -283,8 +284,22 @@ def main():
     with (WORK/'reclaim.lock').open('a') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         if args.action=='inventory':
-            if not cohort_path.exists():write(cohort_path,inventory())
-            data=read(cohort_path);print(len(data['cohort']),sum(x['manifest_entries'] for x in data['cohort']));return
+            if not cohort_path.exists():
+                write(cohort_path,inventory())
+            previous=read(cohort_path)
+            stamp=datetime.fromtimestamp(CUTOFF,LOCAL).isoformat()
+            if previous['cutoff_shanghai']!=stamp:
+                updated=inventory()
+                first={r['attempt']:r for r in previous['cohort']}
+                newer={r['attempt']:r for r in updated['cohort']}
+                if not all(newer.get(n)==v for n,v in first.items()) or set(newer)-set(first)!={'w57-pilot02-blind-a-e60-0014'}:
+                    raise ValueError('Cohort differs from the fourteen verified episodes in the receipt inventory')
+                write(WORK/'mount-check-cohort.json',previous)
+                updated.update(resource_before=previous['resource_before'],
+                               mount_check_cutoff=previous['cutoff_shanghai'])
+                write(cohort_path,updated)
+            data=read(cohort_path)
+            print(len(data['cohort']),sum(x['manifest_entries'] for x in data['cohort']));return
         frozen=read(cohort_path)
         token=subprocess.check_output(['gh','auth','token'],text=True).strip()
         remote=release_rows()
@@ -295,7 +310,9 @@ def main():
                 scope='Only full_mpc_files from previously delivered P0/seed5701 blind training episodes on the D57 personal volume.',
                 local_record_root=str(WORK),planned_files=sum(x['manifest_entries'] for x in frozen['cohort']),
                 closed_episodes={},**BG)
-        report['status']='running';write(report_path,report)
+        report.update(status='running',cutoff_shanghai=frozen['cutoff_shanghai'],
+                      planned_files=sum(x['manifest_entries'] for x in frozen['cohort']))
+        write(report_path,report)
         try:
             with ThreadPoolExecutor(max_workers=2) as pool:
                 for entry in frozen['cohort']:
