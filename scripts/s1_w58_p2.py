@@ -201,7 +201,7 @@ def decide(controller, t, mission, mq, obs, grf, arm, substep=.0002):
                    for key in ('touch_row', 'bearing_row')]
         row[history] = window_scores(targets, *heights, nominal, offsets, cfg)
     if arm in ('B2', 'Fixed-wait'):
-        chosen = 0 if arm=='B2' else 2
+        chosen = 0 if arm=='B2' else 1
     else:
         chosen = row['full' if arm=='P2-full' else 'private_reset']['winner']
     row.update(selected=chosen, selected_wait_s=None if chosen is None else offsets[chosen])
