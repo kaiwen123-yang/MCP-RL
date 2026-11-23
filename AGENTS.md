@@ -1,24 +1,21 @@
-# 当前执行入口（W57，2026-11-22）
+# 当前执行入口：W57正在收尾，W58三线后继已规划（2026-11-23）
 
-W57 已从 `d321d61` 在 D57 开始实施。运行与学习计数看 [W57 执行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)、[当前状态](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json) 和 [每日记录](docs/S1_DAILY_WORKLOG.md)。M 使用旧 r60 原件做完整 E60 未来预测保留对照，P 复核真实事件并接入在线候选，R 使用独立 timing head。首次真实短重访 A/B 使用原 r60 B 参考控制，各自从 virgin、t=0 开始。续接时核对 attempt、源码哈希、tmux/PID 和物理时钟。下节保留计划形成时的证据与执行约定。
+先读[本轮完整审查](docs/S1_W57_REVIEW_20261123.md)、[W57收尾与W58完整计划](docs/S1_W58_RESEARCH_PLAN.md)、[新启动提示词](docs/S1_W58_START_PROMPT.md)、[机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W57-review/handoff.json)，再核最新[current.json](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)、[w57/index.json](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)及现场确切job/PID/tmux/物理时钟。审查快照fd4ede8d（2026-11-23 19:20:56 +08）仍为executing；full8192/32updates完成，blind7424/29updates＋6partial，后续冻结评估等待。不要用下文历史“未执行”覆盖真实进展，不把快照当现场当前值。
 
-# 当前入口：W56已完成审查，W57模块与联合研究待执行
+稳定名义F为接触力QP MPC＋WBC；旧r55/r60 A/B各自原E600十往返成立。W57新资格目前是M1+B A/B原E30、M1+P A原E30；训练E60不代替最终冻结资格。M1短预测改善但释放→跨足重载退化；P1已在线消费材料，但333次非空私有历史干预0候选排序翻转；R真实学习且有交接权限，收益尚待冻结对照。小幅离力首因已定位到末摆动早触反弹，新P原E30也存在，不按已确认承载后失载来修。
 
-结果基点 `3590646bc15a59903c9561381368d985963dfe9e`；2026-11-22在远端`640be3d6`上完成[执行补充复核](docs/S1_W57_REVIEW_20261122.md)。先读 [W57研究计划](docs/S1_W57_RESEARCH_PLAN.md)、[启动提示词](docs/S1_W57_START_PROMPT.md)、[W56证据审查](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W56-review/README.md) 和 [current.json](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)。本次提交仅完成审查、计划与每日记录，W57控制实现、机器人物理和新PPO尚未开始。
+## 本轮执行顺序与边界
 
-r55/r60 A/B各自原E600均通过，稳定名义基线已成立；r57末12维消融双E60通过，r58双E300计算停滞后授权终止，N59原E30未贯穿。不要沿用历史“尚无能走基线”，也不要把接口接通当作材料记忆独立/联合收益。四份全程轨迹和视频支持对角行走，同时存在旧r55已有的前足约2mm再离地；具体根因待接触事件对齐。
+1. **保持W57正在运行的身份与双物理槽。** 让匹配blind、自然collector末段、B/P/R/PR原资格与16机制、匹配blind4机制、条件长资格和独立private-short-A后继按原合同自然完成。83D W57-R1-event83-v1、同版本128×2、旧W44冻结不变；不重启有效job、热换M/P或热加collector。PR是P0训练冻结R＋P1，不叫联合on-policy训练。
+2. **并行开发G/M2/P2。** G处理真实早触、参考连续接管与承载建立；M2处理源释放→跨足重载预测及可辨识低维状态；P2分离接触可用时长与历史作用，以同候选/同权限比较full/private。保留原plant/材料/摩擦/总力矩/非足接触等硬界，不调软材料或造oracle。已做2s事件层仍无历史赢家差，不能只延长horizon。
+3. **新v2机制先声明真实几何。** 旧6/12、7/12保留；身体穿越不算同格重访，不事后删无交叠事件。冻结共同G/M/P/路线后做16条开发矩阵，开发用于选方法就不可再当held-out。历史有可用动作/任务信号后，按完整计划同轮推进新联合runner及5801/5802/5803三学习seed的full/private-blind；每head累计最高8192，条件总上限49152 distinct。当前P0/5701 runner不能直接复制充当三seed；独立验证三seed最少32机制episode，另取各身份原资格。
+4. **W57全部dispatcher及后继自然释放后迁移统一池。** W58默认3物理槽，实测总吞吐/每流/其他项目余量支持时扩4–6；双collector原子取得2槽，禁止各campaign占1槽互等。4个显式native材料worker计入配额，数学线程=1不足以限制它们。25核/96GB按实际可用资源使用，不占用其他项目，不为满显存造计算。24路数据迁移不是24物理槽，本计划不启动迁移或删除。
+5. **连续完成已授权且具条件的后继。** 一次探针/一个小修补不是轮次终点；不原样重跑已定负版本，不做无依据参数网格；新身份逐case自己取得原E30→E60→条件E300/E600，不借旧资格。现场事实变化时先核来源，仍运行就如实记running。
+6. 所有新后台deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false，不传deadline-unix、不设固定墙钟完成时刻。原模拟时长、路线资格时限及物理/数值终止保留；不因对话结束kill后台。
+7. 小代码/协议/结果及时合并最新main推GitHub，完整必要原件/视频/checkpoint由D57增量直传Release并核size/digest，不强推、不覆盖动态索引。GitHub核验成功后，不在用户电脑额外下载、复制、镜像、打包或归档；保留被引用/续训所需原件，不自动删除，不借用户电脑VPN/SSH转发。
+8. 每天在唯一[docs/S1_DAILY_WORKLOG.md](docs/S1_DAILY_WORKLOG.md)按Asia/Shanghai、事件ID详细追加目标/假设、身份/修改、实际物理/训练新增、解决/未解、正负证据、资源/并发、GitHub回执及续接。跨日不重复计数，多代理由唯一整合者合并。
 
-本轮按 **M材料估计、P前瞻规划、R学习接口** 并行实施，先分别给出可归因对照，再固定模块做首次联合机制验证。当前稳定F是接触力QP MPC＋WBC，不是N线全身iLQG。计划允许独立新timing head：一个共享head、一个学习seed、首节点8×256=2048 distinct转移，两个collector同版本各128；有真实权限/材料信号且身份稳定时按计划累计到4096/8192，必要的显式材料预测盲head独立同预算训练，最多合计16384，不以保留任务挑版本。旧W44 actor始终冻结、完整resume保留。历史PPO=0不是未来永久禁令，不能用旧stream.training=True启动新head。新控制身份包括更换observer后的零新增动作组，均不能借r60原资格。
-
-先落实query→target-load与source-load→reload的时距区分、25ms候选积分/细步误差核对，以及新策略查询地块/事件/时距/缺失语义。已审查r55 E300中精确足印交集>0的同圈跨足query-cell行，其query→next-load均在0.35s内；该结论不外推全部查询或r60。优先接通在线候选消费，不笼统归因时域不足。M0供P/R先行，M1无收益不阻塞。
-
-至多两条重物理加第三条真实材料批次/数据/学习线，25核先按4+4+14+3共享上限；线上CPU FP64，GPU用于独立真实batch，不凑显存。原plant/材料/硬界和原任务判定保留；独立短重访机制任务单独评分，静站不算重访。条件满足同轮推进B/P/R/PR首批组合，不每个小步骤停下等下一次提问；负结果如实保留。
-
-所有新后台 `deadline=null`、`wall_deadline_enabled=false`、`kill_on_conversation_end=false`，不传deadline-unix，不设置墙钟完成期限。现场先核确切job/PID/tmux与时钟，已有有效工作就续接。GitHub直交后不在用户电脑额外下载、复制、镜像、打包或归档；保留被引用服务器原件，不自动删除，不借电脑VPN/SSH转发。
-
-**每天必须详细追加 [docs/S1_DAILY_WORKLOG.md](docs/S1_DAILY_WORKLOG.md)**，按Asia/Shanghai日期和唯一事件记录目标、假设、实现、运行/训练身份与数量、解决/未解问题、正负证据、资源、commit/Release和续接。已有11/17–21有据回填，11/22追加复核与计划修订，缺失日期不补造。多代理各写lane事件，唯一整合者去重发布。
-
-以下内容保留原形成时约定，属于历史，不覆盖本节与W57计划。
+[W57原计划](docs/S1_W57_RESEARCH_PLAN.md)及其旧提示词继续约束已运行W57身份；后继以[W58计划](docs/S1_W58_RESEARCH_PLAN.md)为准。以下所有旧“当前/下一步”、PPO禁令、并发数和截止/归档约定仅属历史，不覆盖本入口。计划发布不是新实验成功。
 
 ## 历史：W56执行入口（已结束）
 
