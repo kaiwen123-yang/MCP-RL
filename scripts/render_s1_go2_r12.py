@@ -10,8 +10,10 @@ ROOT=Path(__file__).resolve().parents[1]
 CONTRACT=json.loads((ROOT/"experiments/terrain_memory/s1-go2-local-readiness-r12.json").read_text())
 from s1_go2_r11_runtime import PHASES
 SMALL=ROOT/CONTRACT['outputs']['compact_root'];LARGE=ROOT/CONTRACT['outputs']['large_root']
-def render(name):
+def render(name, output_dir=None):
     out=LARGE/name
+    dest=out if output_dir is None else Path(output_dir)
+    dest.mkdir(parents=True,exist_ok=True)
     result=json.loads((SMALL/(name+'.json')).read_text())
     resolved=json.loads((SMALL/(name+'-resolved.json')).read_text())
     terrain='tm02_anchor'
@@ -22,7 +24,7 @@ def render(name):
     renderer=mujoco.Renderer(m,height=720,width=1280)
     camera=mujoco.MjvCamera();camera.azimuth=125;camera.elevation=-23;camera.distance=4.8
     sample=np.unique(np.r_[np.searchsorted(a['time'],np.arange(0,a['time'][-1],1/30)),len(a['time'])-1])
-    target=out/('full-mission-qualification-noted.mp4' if mismatch else 'full-mission-material-overlay.mp4')
+    target=dest/('full-mission-qualification-noted.mp4' if mismatch else 'full-mission-material-overlay.mp4')
     with imageio.get_writer(target,fps=30,codec='libx264',quality=8,ffmpeg_params=['-threads','2']) as writer:
         for i in sample:
             d.time=float(a['time'][i]);d.qpos[:]=a['qpos'][i];d.qvel[:]=a['qvel'][i]
@@ -50,7 +52,7 @@ def render(name):
     renderer.close()
     record=dict(attempt=name,path=str(target),size=target.stat().st_size,
         scope='Full recorded robot trajectory, visual-only strip overlay; no new integration or exaggerated deformation')
-    (out/'video-asset.json').write_text(json.dumps(record,indent=2)+'\n')
+    (dest/'video-asset.json').write_text(json.dumps(record,indent=2)+'\n')
     print(json.dumps(record),flush=True)
 def main():
     p=argparse.ArgumentParser();p.add_argument('--attempt',required=True);a=p.parse_args()
