@@ -107,7 +107,7 @@ class W57MaterialObserver(CPUWindowObserver):
             trace = np.empty((10,n), dtype='u1')
             stats = np.zeros((10,4))
             bad = self.native.w57_packet(g.law.model,n,10,dt,normal,area,owner,g.gamma,
-                                         state,settled,loaded,forces,stats,trace,int(self.mode=='M1'),
+                                         state,settled,loaded,forces,stats,trace,int(self.mode in ('M1','M2')),
                                          self.force_measurements[-1],diagnostics)
             if bad>=0:
                 raise IntegrationFailure(bad%n, stats[bad//n,3], 30)

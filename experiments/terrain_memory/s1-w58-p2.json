@@ -1,0 +1,56 @@
+{
+  "schema": "s1_w58_p2_committed_support_v1",
+  "native_workers": 1,
+  "native_backend": "equal_columns",
+  "private_material_substep_s": 0.0002,
+  "background": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_on_conversation_end": false
+  },
+  "development_source": "w57-m1-p-a-original-e30-a01. Every handover in the complete existing episode. Preserve empty, rejected and missing outcomes.",
+  "causal_inputs": [
+    "committed incoming pair: actual published landing position, touchdown clock and target event ID",
+    "pre-handover published MPC support forces or current GRF, contact and body weight",
+    "latest published observable world-column estimate and known footprint geometry"
+  ],
+  "force_planning": "All arms solve the same public within-node support availability correction on the original centroidal costs and hard constraints, using the current planned switches on the 14 x 25 ms force horizon. An original solution remains eligible under the same evaluator.",
+  "scenario": "At a newly committed incoming pair, the shared planned contact boundaries split the future forecast. Before their next handover the soles have identical committed XY and scheduled landing clocks for every wait candidate. For each incoming sole use the existing touch-on force (3 N) for one 2 ms WBC tick, then an equal split of the solved pair threshold (40% body weight per foot) for the 6 ms load-confirm interval. Available carrying legs share the remaining weight proportionally to their published forces. Free and reloaded columns evolve on 0.2 ms substeps. This is a prescribed causal load scenario.",
+  "time_score": "Use predicted touchdown and loaded sole heights, the planned landing bottom and original search speed to estimate when all feet can confirm, transfer and bear. The latest bearing or completed ramp defines a predicted handover time. For candidate delay d, score d^2 + max(0,predicted_time - original_due - d)^2 in s^2. Common walking speed scales both terms to squared lost progress. Ties select the first, shortest wait.",
+  "allowed_wait_s": [
+    0,
+    0.002,
+    0.006
+  ],
+  "arms": {
+    "B2": "zero event wait",
+    "P2-full": "minimum score with full causal candidate history",
+    "P2-private": "same scorer and candidates, reset already-released relevant private columns to virgin in the copied forecast; protect currently loaded cells and complete shared soles",
+    "Fixed-wait": "One original WBC tick (2 ms) on every committed pair with a material receiver and zero otherwise. All 40 such requests in the saved W57 P/A development episode selected 2 ms. This single modal rule is shared across A/B and validation."
+  },
+  "no_material_receiver": "All arms request zero when there is no newly committed material receiver, including rigid, hold and first-walk cases.",
+  "joint_timing": "Preserve original nominal, chosen P2 due, R residual and actual requested/accepted timestamps. Until a timing head is enabled the residual is zero. Counterfactual gate replay holds the actually requested R residual fixed.",
+  "scoring": {
+    "target_ids": "All predeclared v2 targets, exact plant source ID, release ID, reload ID, positive triple overlap, receiver event ID and first later true load in the released forecast cell.",
+    "history_action_evidence": "Require release/target binding, target-attributable robust wait change and either witnessed change of liftoff gate or repeated physically resolved transfer commands. On a diverging ramp the frozen WBC also solves both requests against identical actual inputs in disposable control copies. Compare mapped controls on the actual ten held PD samples and original actuator limits. A continuous difference is resolved when mean delivered torque difference on a joint exceeds actual within-hold ripple plus same-state reconstruction error on two consecutive holds. All planning, gates and uncertainty are additionally reported separately. The dispatcher evaluates the full matrix and matched progress, exposure and costs.",
+    "uncertainty": "Report the archival whole-gait ready error separately. Check both rankings against the local material error and a common shift to the actually observed support-ready clock. Local error includes the larger of the W57 5 kHz same-force P95 depth error and both observed threshold errors on the realized W58 target, divided by the controller search speed. Floor includes maximum temporal step-halving error plus one 0.2 ms physical sample. Require the full/private ready difference to exceed this uncertainty and both winners to survive that interval. Missing actual threshold observations are reported."
+  },
+  "calibration": {
+    "source": "w57-m1-p-a-original-e30-a01",
+    "evidence": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/p2/saved-support-calibration.json",
+    "archived_development_p95_ready_error_s": 0.103999999999278,
+    "maximum_step_halving_error_s": 1.5678942588692735e-09,
+    "observed_original_ready_events": 39,
+    "original_physical_record": "5 kHz same-force threshold crossings; 500 Hz touchdown confirmation + load-bearing gates",
+    "archived_p95_threshold_depth_error_m": 7.553065292098263e-06
+  },
+  "fixed_wait_freeze": {
+    "source": "w57-m1-p-a-original-e30-a01",
+    "source_role": "W57 development",
+    "soft_requests": 40,
+    "original_trial_candidate_s": 0.006,
+    "frozen_s": 0.002,
+    "selection": "Before the first W58 physical use, set the fixed control to the most frequent full wait on all W57 original P/A soft handovers. All 40 requested one WBC tick. This matches the observed generic wait.",
+    "W58_robot_episodes_before_freeze": 0
+  }
+}

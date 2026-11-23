@@ -346,7 +346,10 @@ class PolicyMaterial(JointMaterial):
             parameters=json.loads((root/'experiments/tm02/r2-multihistory.json').read_text())['reference_material']['parameters']
             observer_type = MaterialObserver
             w57 = stream.contract.get('w57')
-            if w57 and w57['observer_implementation'] == 'w57_measured_window':
+            if w57 and w57.get('material') == 'M2':
+                from s1_w58_material import W58MaterialObserver
+                self.observer = W58MaterialObserver(parameters, root/r9['pann']['weights_path'])
+            elif w57 and w57['observer_implementation'] == 'w57_measured_window':
                 from s1_w57_material import W57MaterialObserver
                 self.observer = W57MaterialObserver(parameters, root/r9['pann']['weights_path'],
                                                     mode=w57['material'])

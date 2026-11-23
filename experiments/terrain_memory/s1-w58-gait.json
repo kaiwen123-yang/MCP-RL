@@ -1,0 +1,21 @@
+{
+  "schema": "s1_w58_gait_v1",
+  "gait": "G1",
+  "case_reference": "Own original M1, P0, frozen W44 actor A/B and zero timing action. Compare separately with W57 M1+B same case/level.",
+  "development_sources": [
+    "w57-m1-b-a-original-e30-a01",
+    "w57-m1-b-b-original-e30-a01",
+    "w57-m1-p-a-original-e30-a01"
+  ],
+  "release_to_search": "On the first causal 5 kHz positive contact > existing touch_off_N between committed apex and end, latch point/time/velocity; next 2 ms WBC consumes contact or searches the actual point if force already vanished. Use current observed force for reactions.",
+  "approach": "Once per committed decelerating descent, if the foot is below reference and moving downward faster, uniform deceleration to zero over the remaining swing would cross the committed causal surface. Transfer a positive offset equal to the measured vertical tracking deficit extrapolated one WBC hold with a C2 quintic through the unchanged scheduled end. Use the same offset on the committed horizon.",
+  "reference_transfer": "On planned search or early touch, carry the incoming position and velocity into each new search/unconfirmed/confirmed WBC reference. A quintic additive offset with zero terminal position, velocity and acceleration attenuates over the original 50 ms load-transfer time. Measured foot p/v and original contact/bearing debounce, friction, torque and task limits apply.",
+  "primary_metric": "Seconds under Fz <= 1 N between first post-apex contact and confirmed bearing per committed leg swing. Retain no-flight, no-touch and unconfirmed/censored events separately.",
+  "selection": "Score all available rows and all four same-case A/B E30/E60 pairs. For each case E60, G1 needs its own pass at both stages, lower off-time per swing by at least one 0.2 ms sample and no lower fraction of swings reaching bearing. Require no increases in moving time fraction with fewer than two supporting feet beyond one 5 kHz sample, in motion positive CoT or in original slip integral per metre. Censored last swings remain in both denominators. Inspect short and long results separately. Missing evidence yields a reason and provisional G0. A failed G1 gate yields G0.",
+  "quantity_semantics": "Centroidal force MPC, articulated WBC and CPU FP64 material. 5 kHz force-evaluation contact clock, 500 Hz control/confirmation clock. CoT is positive joint mechanical work divided by weight times moving base path.",
+  "background": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_on_conversation_end": false
+  }
+}

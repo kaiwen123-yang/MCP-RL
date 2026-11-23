@@ -1,0 +1,44 @@
+{
+  "experiment": "W58",
+  "identity": "W58-P2-event83-v2",
+  "learning_seeds": [
+    5801,
+    5802,
+    5803
+  ],
+  "cases": [
+    "A",
+    "B"
+  ],
+  "paired_heads": [
+    "full",
+    "blind"
+  ],
+  "nodes": [
+    2048,
+    4096,
+    8192
+  ],
+  "maximum_six_head_distinct": 49152,
+  "display_seed": 5801,
+  "inherits": "experiments/terrain_memory/s1-w57-timing.json",
+  "training_distribution": "Two virgin original E60 collectors. Frozen case-specific W44 speed policies, common selected G/M. P2-full or P2-private is active at actual handovers, followed by the learned bounded timing residual. Validation geometry is excluded.",
+  "reward": "W38 event integrals, unchanged signed legal progress, elapsed time, indentation, loaded slip, old cap changes, laps and physical failures. dt is measured from actual adjacent decisions.",
+  "planner_blind": "Private released cells relevant to predicted load are set to the frozen constitutive prior only in the P2 forecast. The whole current footprint and shared current owners stay protected.",
+  "actor_blind": "Withhold the 12 forecast heights including mixed-footprint aggregates. Merge unloaded virgin, recovered and residual into one known unloaded category. Preserve current measured forces, kinematics, current confirmation/bearing, footprint loaded, outside/missing, geometry, schedule, phase and residual history. Full and blind use the same candidates and action bounds.",
+  "credit": "Two independent 128-transition streams, distinct batch 256, realized elapsed-time GAE, request raw log-density and real successor bootstrap. All masked requests stay in the update. At each node record all training decision outcomes including masked/ramp-only rows.",
+  "selection": "At cumulative nodes use observed both-case action authority, measured cross-foot consequence, fixed identity and finite valid credit plus within-case return uncertainty/improvement from the training episodes. Full's last eligible node is chosen before validation. Private independently trains to exactly that seed's full node. Failure yields an incomplete pair.",
+  "development_gate": "Score all twelve target events for every run. Require comparable realized targets and complete physical routes across arms in both histories, repeatable above-error actions bound to actual short reloads in A and B, and independent original A/B E60 for full/private. In both cases require lower moving slip per metre or positive mechanical CoT vs private and fixed wait with a larger difference under short history than recovery, without slower home arrival beyond one 2 ms control tick. Report both costs and all pairs.",
+  "validation": {
+    "learned_per_head_and_seed": 4,
+    "learned": 24,
+    "shared_controls": 8,
+    "total": 32,
+    "no_learning": 16
+  },
+  "background": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_on_conversation_end": false
+  }
+}

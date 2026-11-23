@@ -1,0 +1,19 @@
+{
+  "schema": "W58-M2-released-cell-prior-v1",
+  "base_commit": "457e0b92492a2c280f282cf9d2f96d14821d3d6b",
+  "background": {"deadline": null, "wall_deadline_enabled": false, "kill_on_conversation_end": false},
+  "recorded_episodes": {
+    "development": ["job-20261121T030212Z-w56-f-a-r60-eval-PANN_PPO_S5-s1-E60-attempt01", "job-20261121T030212Z-w56-f-b-r60-eval-PANN_PPO_S5-s2-E60-attempt01"],
+    "calibration": ["w57-pilot02-full-a-e60-0009"],
+    "retained": ["w57-pilot02-full-b-e60-0023", "w57-pilot02-blind-a-e60-0027"]
+  },
+  "split_unit": "Whole episodes with complete virgin-to-final world-cell histories. Both W56 trajectories are development. The separate calibration and retained recordings are different W57 timing acquisitions on two nominal robot cases in the same domain. Episode IDs were selected from completed receipts before inspecting their M2 predictions. Report prefix overlap. These splits concern material estimation and conditional forecasts only.",
+  "candidate": "M0 propagates the original frozen response through every observed loading and release. M1 estimates one footprint-shared signed creep duration under sustained load. M2 maintains both causal states. It publishes M0 on previously released cells when both paths report unloaded, retaining M1 on supported cells. The physical loading history, shared owner and event clock persist. Weights and material parameters are frozen.",
+  "comparison": "Compare M0, M1 and M2 at identical publications and true target events. Use the W57 one-per-foot-interval/family representative and count all eligible raw events, source mismatches and late or missing publications. Offline scoring alone reads future measured foot kinematics and actual future load for conditional inversions. The observer receives only completed measured feet and force.",
+  "primary": "From release publication through next actual positive loading by another foot on the same cell. Report all sampled cross-foot events including those in the six-second recovery category. Force in N, depth in m and q11 dimensionless. Record direction separately for each episode.",
+  "adoption": "Both retained episodes must individually (1) strictly improve cross-foot release-to-reload force MAE over M1, (2) keep cross-foot preload depth MAE at most M1, and (3) preserve short-horizon force accuracy: pooled nonrelease 20.2 ms foot-force MAE at most M1 plus 10% of the absolute M0-M1 difference. Current-contact force maximum discrepancy from M1 at most 1e-10 N. Missing primary pairs select M1. Record distance from M0. One selection only.",
+  "uncertainty": "Absolute-error empirical 95th percentile per estimand, model and family on the separate complete calibration episode supplies a symmetric band. Report full width, count and coverage per retained episode. Missing calibration produces null width/coverage. Report path spread on released cells. Quantiles describe conditional error on correlated observations within a complete history.",
+  "observability": "One measured resultant constrains at most one scalar direction per footprint publication. The difference of both paths measures sensitivity to contact-duration assimilation on released cells.",
+  "raw_hosts": {"development": "MCP-RL-w56-r60/outputs", "calibration_and_retained": "MCP-RL-w57/outputs"},
+  "independent_W58_mechanism_validation": false
+}

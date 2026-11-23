@@ -478,6 +478,26 @@ full 入账 7,424 条、29 次更新，实际改变交接时刻 1942 次，只�
 
 ## 2026-11-23：W57 匹配盲策略采样与交付
 
+### 20261123/w58/stage/waiting_W57_natural_release｜调度与实测进度
+
+stage=waiting_W57_natural_release，slots=2，running=[]，attempts=0，completed=0，joint_distinct={}。W57 两个物理槽归原配对采样、冻结评价及独立 private-short-A dispatcher 使用。。运行快照 {"time_shanghai": "2026-11-23T20:20:41.039657+08:00", "primary": "waiting_for_natural_final_R_node", "private_short_A": "waiting_for_full_short_A_evidence", "pair": "two_leases_held_learner_running", "final": false, "panes": {"s1-w57-M-paired-analysis": 942992, "w57-actual-resources": 938043, "w57-direct-delivery-d57-route": 121176, "w57-frozen-evaluations": 943095, "w57-github-integration-eof": 120544, "w57-p-physical-outcomes-v2": 966437, "w57-pilot02-checkpoint-delivery": 969222, "w57-private-short-A": 968025, "w57-r-pilot02-pair": 942925, "w57-shanghai-worklog": 946149}, "attempts": ["w57-pilot02-blind-a-e60-0031", "w57-pilot02-blind-b-e60-0031"], "clocks": {"w57-pilot02-blind-a-e60-0031": 34.00199999994744, "w57-pilot02-blind-b-e60-0031": 25.001999999968408}, "committed": {"full": 8192, "blind": 7680}, "updates": {"full": 32, "blind": 30}, "uncommitted": {"full": {"A": 0, "B": 0}, "blind": {"A": 115, "B": 117}}}。
+
+
+### 20261123/w58/p2-committed-support-and-factorization｜P2 时长/历史分解与冻结等待
+
+提交 a35ba4cd，11 个 MPC 发布点的四个相同力候选交叉评分。时长修正 10/11 次获选，首个 WBC 映射差中位 5.60335e-4 rad，单独高度/历史项中位 4.377e-9 rad。四种评分均为 0/11 个历史赢家翻转。P2 回放另覆盖原 P/A/E30 全部 101 个交接请求，40 个存在已承诺材料接收足、17 个非空私有干预、10 个请求绑定 40 个真实跨足加载事件。full/private 在 40/40 个可行动请求均选 2 ms，承载就绪时钟差最大 0.139 ms，细分误差最大 1.57 ns。39 个实测承载时钟的绝对误差中位 40.0 ms、P95 104.0 ms。按同力压陷和采样换算的局部不确定性约 0.452 ms。CPU22 单 native 同步回放 281.99 s。开发与保留所有组共享 0/2/6 ms 候选，在 W58 首个资格启动前按这 40 项独立开发记录统一冻结 Fixed-wait=2 ms（初案 6 ms）。后续从 A 的同身份 availability-off 配对分离一般时长收益；历史门读取真实 v2 加载、动作和闭环收益。此次新增物理与 PPO 均为 0。[全请求与校准](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/p2/saved-support-calibration.json)。
+
+
+### 20261123/w58/m2-release-development｜释放传播误差与完整回合保留采集
+
+独立提交 3164877e、d51adfdc、282b2d73、e93dbaf9、006c4022、d2359b42。M2 将当前支撑足单方向校正保留在承载段，对已释放且两套因果估计均无当前承载的格使用同一实测运动传播的 M0 先验。开发 A/B 的 35/31 个跨足重载（含长间隔）单格法向力 MAE 从 M1 的 0.138035/0.121810 N 降至 0.089537/0.079424 N，M0 为 0.088104/0.075598 N。从真实释放态开始做离线分解，模型在自由恢复后产生 +0.128366/+0.113645 N 的后继偏差。M0 源状态误差反向抵消的样本 35/35、31/31；M1 为 10/35、6/31。真实材料 GPU 批次 66 条路径、778546 个柱步并与 CPU 路径核对。CPU21 正在处理已事前登记的 full-A-0009 校准、full-B-0023 与 blind-A-0027 整段保留轨迹。同域保留误差和区间覆盖出齐后选 M2/M1。此次新增物理与 PPO 均为 0。[误差分解](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m2/development-free-propagation.json)。
+
+
+### 20261123/w58/g-causal-contact-and-all-swings｜G1 实装与三个原 E30 的全部摆动
+
+在独立树提交 d5a85bff、d0539eca。按 5 kHz 原始力记录锁存末摆动首次触地，下一次 2 ms WBC 连续接管位置与速度参考，保留原承载确认计数。重算 M1+B A/B 和 M1+P1 A 的 450000 个物理样本，三个回合各 200 个已承诺腿摆动、198 个窗内建立承载、2 个右截尾。B 的 A/B 每个已承诺摆动在首次接触至承载间的平均离力时间为 11.932/11.884 ms。P/A 的 FR 在 9.6518 s 碰地、峰值 167.490 N，随后离力 102.4 ms。完整控制数组首次确认/承载为 9.762/9.766 s；旧审查引用的后续采样分别为 9.764/9.770 s。G1 实际冲击与资格待新 A/B 原 E30→E60。新增机器人回合及 PPO 更新均为 0。[全摆动记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/g)。
+
+
 ### 20:02｜20261123/w58/d57-entry-and-geometry
 
 D57 延续 W57 的两槽 campaign。现场记录时间 2026-11-23T20:02:53.638476+08:00，full 已提交 8192 条/32 次更新，blind 已提交 7680 条/30 次更新，当前缓冲 {'A': 23, 'B': 33}。正在执行 w57-pilot02-blind-b-e60-0030（44.002 物理秒）、w57-pilot02-blind-a-e60-0031（7.502 物理秒）。逐进程核对 cwd、源码、动态库、冻结速度 actor 和当前 timing checkpoint 的摘要。记录包含全部活跃 W57 pane、进程启动 tick、两个评价 dispatcher 和共享 pair owner。精确值在 [D57 现场](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/w57-live-entry.json)。冻结资格沿用 M1+B A/B E30、M1+P1 A E30。

@@ -14,7 +14,7 @@ from s1_go2_r11_protocol import stable_digest
 SMALL=ROOT/REL/'w58'
 SPEC='experiments/terrain_memory/s1-w58-revisit-v2.json'
 JOINT='experiments/terrain_memory/s1-w58-joint.json'
-ARMS=('G1','B2','P2-full','P2-private','Fixed-wait')
+ARMS=('availability-off','G1','B2','P2-full','P2-private','Fixed-wait')
 PLAN='fe320346'
 P2_CONFIG='experiments/terrain_memory/s1-w58-p2.json'
 
@@ -23,7 +23,7 @@ def configure_episode(c, contract):
     configure_base(c,contract)
     setting=contract['w58']
     c.update(w58=setting,implementation_status='W58 original plant, frozen force MPC/WBC and causal feedback')
-    c['w54_f']['w58']=dict(setting)
+    c['w54_f']['w58']=dict(setting,arm='B2' if setting['arm']=='availability-off' else setting['arm'])
     if setting['split'] in ('development','validation'):
         c['r11_stage']['target_cycles']=12
 
@@ -51,12 +51,12 @@ def declaration(a):
         *base['material_execution_sources'],*base['material_compiled_artifacts']]
     backend=('scripts/s1_w58_gait.py' if not p2 else
              'scripts/s1_w58_p2_gait_backend.py' if a.gait=='G1' else 'scripts/s1_w58_p2_backend.py')
-    if a.gait=='G1':base_paths+=['scripts/s1_w58_gait.py']
+    if a.gait=='G1':base_paths+=['scripts/s1_w58_gait.py','experiments/terrain_memory/s1-w58-gait.json']
     if p2:
         base_paths += [backend,'scripts/s1_w58_p2.py',P2_CONFIG,
                        'scripts/s1_w57_planning.py','scripts/s1_w57_candidate.cc',
                        'scripts/build_s1_w57_equal_columns.sh','work/w57-p-equal/candidate.so']
-    if a.material=='M2':base_paths+=['scripts/s1_w58_material.py']
+    if a.material=='M2':base_paths+=['scripts/s1_w58_material.py','experiments/terrain_memory/w58/material.json']
     if opts:
         base_paths += [JOINT,'experiments/terrain_memory/s1-w57-timing.json','scripts/run_s1_w58_joint.py',
             'scripts/s1_w57_learning.py','scripts/s1_w57_timing.py','scripts/s1_w57_training_evidence.py',
@@ -77,7 +77,7 @@ def declaration(a):
     if digest(checkpoint)!=parent['checkpoint_sha256'] or digest(ROOT/parent['resume_checkpoint'])!=parent['resume_sha256']:
         raise ValueError('W44 case actor or retained state differs from its qualified parent')
     job=f'w58-{a.case}-{build}'
-    w=dict(arm=a.arm,planner='P1' if p2 else 'P0',planner_history='private_reset' if a.arm=='P2-private' else 'full',
+    w=dict(arm=a.arm,planner='P1' if p2 and a.arm!='availability-off' else 'P0',planner_history='private_reset' if a.arm=='P2-private' else 'full',
         planner_material_workers=workers,planner_material_backend='equal_columns',candidate_substep_s=.0002,
         material=a.material,observer_implementation='w57_measured_window',
         timing_mode=opts['mode'] if opts else 'zero',timing_head=opts['head'] if opts else None,
@@ -124,5 +124,12 @@ if __name__=='__main__':
         os.environ['S1_W58_JOINT_SEED']=str(args.learning_seed)
     if bool(args.learning_seed)!=bool(args.timing_config):
         raise ValueError('Joint evaluation and collection require both a real learning seed and its timing policy')
-    sys.exit(execute_physics(args,declare=declaration,small=SMALL))
+    from s1_w58_pool import allocate_original
+    duration=read(ROOT/SPEC)['splits'][args.split]['observation_s'][args.task] if args.task in ('short','recovered') else int(args.level[1:])
+    reservation=allocate_original(args.attempt,duration)
+    try:
+        exit_code=execute_physics(args,declare=declaration,small=SMALL)
+    finally:
+        write(reservation,dict(read(reservation),state='closed'))
+    sys.exit(exit_code)
 
