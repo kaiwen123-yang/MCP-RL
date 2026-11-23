@@ -32,8 +32,8 @@
   "joint_timing": "Preserve original nominal, chosen P2 due, R residual and actual requested/accepted timestamps. Until a timing head is enabled the residual is zero. Counterfactual gate replay holds the actually requested R residual fixed.",
   "scoring": {
     "target_ids": "All predeclared v2 targets, exact plant source ID, release ID, reload ID, positive triple overlap, receiver event ID and first later true load in the released forecast cell.",
-    "history_action_evidence": "The named target must account for a full/private wait change, both winners must survive perturbing ready time by the archived and local empirical errors, and the actual selected schedule must witness a different liftoff permission on the recorded gates. Unresolved transfer-only differences are reported separately. The dispatcher additionally evaluates the full development matrix and closed-loop progress, exposure and costs.",
-    "uncertainty": "Whole-support ready-time absolute error calibrated on all observable soft handovers of the archived original episode, plus maximum 0.2/0.1 ms refinement difference and one WBC tick. At evaluation use the larger of this floor and each local full-versus-actual ready-time error. These are empirical development tolerances."
+    "history_action_evidence": "Require release/target binding, target-attributable robust wait change and either witnessed change of liftoff gate or repeated physically resolved transfer commands. On a diverging ramp the frozen WBC also solves both requests against identical actual inputs in disposable control copies. Compare mapped controls on the actual ten held PD samples and original actuator limits. A continuous difference is resolved when mean delivered torque difference on a joint exceeds actual within-hold ripple plus same-state reconstruction error on two consecutive holds. All planning, gates and uncertainty are additionally reported separately. The dispatcher evaluates the full matrix and matched progress, exposure and costs.",
+    "uncertainty": "Report the archival whole-gait ready error separately. Check both rankings against the local material error and a common shift to the actually observed support-ready clock. Local error includes the larger of the W57 5 kHz same-force P95 depth error and both observed threshold errors on the realized W58 target, divided by the controller search speed. Floor includes maximum temporal step-halving error plus one 0.2 ms physical sample. Require the full/private ready difference to exceed this uncertainty and both winners to survive that interval. Missing actual threshold observations are reported."
   },
   "calibration": {
     "source": "w57-m1-p-a-original-e30-a01",
@@ -41,7 +41,8 @@
     "archived_development_p95_ready_error_s": 0.103999999999278,
     "maximum_step_halving_error_s": 1.5678942588692735e-09,
     "observed_original_ready_events": 39,
-    "original_physical_record": "5 kHz same-force threshold crossings; 500 Hz touchdown confirmation + load-bearing gates"
+    "original_physical_record": "5 kHz same-force threshold crossings; 500 Hz touchdown confirmation + load-bearing gates",
+    "archived_p95_threshold_depth_error_m": 7.553065292098263e-06
   },
   "fixed_wait_freeze": {
     "source": "w57-m1-p-a-original-e30-a01",

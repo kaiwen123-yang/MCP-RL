@@ -39,6 +39,20 @@ class Observed:
         self.executed = {q['decision_id']:q for q in records(path/'handover-requests.jsonl')
                          if q['stage']=='executed'}
         self.history = CrossFootLoads(raw)
+        self.shadows = defaultdict(list)
+        for row in records(path/'w58-transfer-actions.jsonl'):
+            self.shadows[row['decision_id']].append(row)
+        if self.shadows:
+            import mujoco
+            model = mujoco.MjModel.from_binary_path(str(raw/'model.mjb'))
+            self.force_range = model.actuator_forcerange.copy()
+            with np.load(raw/'trajectory.npz') as trace:
+                self.applied_target = trace['q_target']
+                self.command_clock = trace['time']
+            compact = ROOT/'results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/episodes'/(raw.name+'.json')
+            cols = json.loads(compact.read_text())['physical_columns']
+            self.pd = [cols.index(f'unclipped_pd_request_{i}') for i in range(12)]
+            self.delivered = [cols.index(f'actuator_force_{i}') for i in range(12)]
 
     @lru_cache(maxsize=3)
     def control(self, chunk):
@@ -94,6 +108,49 @@ class Observed:
                     break
         return current, observed_ready, q
 
+    @lru_cache(maxsize=1)
+    def actuator_trace(self, chunk):
+        with np.load(self.raw/f'physical-{chunk:03d}.npz') as z:
+            x = z['physical']
+            return x[:,self.pd],x[:,self.delivered]
+
+    def transfer_evidence(self, decision):
+        samples = []
+        previous = set()
+        previous_time = None
+        repeated = set()
+        for tick in self.shadows.get(decision,[]):
+            if any(tick[h]['mapped_rad'] is None for h in ('full','private_reset')):
+                previous = set()
+                continue
+            t = tick['time_s']
+            block,step = divmod(round(t/.0002),150000)
+            pd,delivered = self.actuator_trace(block)
+            pd,delivered = pd[step:step+10],delivered[step:step+10]
+            if len(pd)!=10:
+                continue
+            index = round(t/DT)
+            if abs(self.command_clock[index]-t)>1.e-8:
+                raise ValueError(f'Physical/WBC decision clock differs at {t}')
+            real = self.applied_target[index]
+            readback = float(abs(real-np.array(tick['actual_mapped_rad'])).max())
+            lo,hi = self.force_range.T
+            alt = [np.clip(pd+60.*(np.array(tick[h]['mapped_rad'])-real),lo,hi)
+                   for h in ('full','private_reset')]
+            own = alt[0 if tick['active_arm']=='P2-full' else 1]
+            reconstruction = abs(own-delivered).max(axis=0)
+            # A physically resolved joint change exceeds both measured hold ripple
+            # and same-state reconstruction error, on two consecutive WBC holds.
+            spread = np.ptp(delivered,axis=0)
+            effect = abs(alt[0]-alt[1]).mean(axis=0)
+            affected = set(np.flatnonzero(effect > spread+reconstruction))
+            if previous_time is not None and abs(t-previous_time-DT)<1e-8:
+                repeated.update(affected & previous)
+            previous,previous_time = affected,t
+            samples.append(dict(time_s=t,peak_mean_alternate_torque_difference_Nm=float(effect.max()),
+                                reconstruction_error_Nm=float(reconstruction.max()),applied_command_readback_error_rad=readback,above_hold_ripple_joints=sorted(map(int,affected))))
+        return dict(transfer_command_changes=bool(repeated),repeated_joints=sorted(map(int,repeated)),samples=samples)
+
     def gate_evidence(self,row, q):
         if q is None or any(row[h]['winner'] is None for h in ('full','private_reset')):
             return dict(reason='unexecuted_or_infeasible',release_changes=False)
@@ -115,15 +172,15 @@ class Observed:
             results[own]['first_eligible_s']-stop)<DT/2
         witness = results['full']['first_eligible_s']!=results['private_reset']['first_eligible_s']
         return dict(release_changes=bool(witness and actual_reconstructed),actual_reconstructed=bool(actual_reconstructed),
-                    actual_liftoff_s=stop,R_residual_held_s=residual,**results)
+                    actual_liftoff_s=stop,R_residual_held_s=residual,**self.transfer_evidence(row['decision_id']),**results)
 
 
-def margins(row, uncertainty_s):
+def margins(row, uncertainty_s, common_shift=0.):
     waits = np.asarray(row['offsets_s'])
     def winner(ready):
         scores = waits**2 + np.maximum(0.,ready-row['nominal_due_s']-waits)**2
         return int(np.argmin(scores))
-    return {h: all(winner(row[h]['predicted_ready_s']+eps)==row[h]['winner']
+    return {h: all(winner(row[h]['predicted_ready_s']+common_shift+eps)==row[h]['winner']
                    for eps in (-uncertainty_s, uncertainty_s)) for h in ('full','private_reset')}
 
 
@@ -197,7 +254,8 @@ def score_episode(raw, target_events):
     counts = Counter()
     max_effect = 0.
     calibration = json.loads(SPEC.read_text())['calibration']
-    floor = calibration['archived_development_p95_ready_error_s']+calibration['maximum_step_halving_error_s']+DT
+    floor = (calibration['archived_p95_threshold_depth_error_m']/CFG['contact_events']['search_speed_m_s']
+             + calibration['maximum_step_halving_error_s']+.0002)
     requested = []
     for row in records(path):
         counts['requests']+=1
@@ -221,18 +279,28 @@ def score_episode(raw, target_events):
                 triplet = (pair['true_source_load_id'], pair['true_release_id'], pair['true_target_load_id'])
                 for target_id in ids.get(triplet,()):
                     matched[target_id].append(pair)
-        uncertainty = None if ready is None else max(floor, abs(ready-a['predicted_ready_s']))
-        robust = uncertainty is not None and all(margins(row,uncertainty).values())
         counts['observed_gate_switches']+=bool(gate['release_changes'])
         for key,pairs in matched.items():
-            attribution = switched and target_attribution(row,{p['target_leg'] for p in pairs})
-            supported = bool(attribution and robust and gate['release_changes'])
+            legs = {p['target_leg'] for p in pairs}
+            errors = [abs(item[label]['bottom_m']-a[quantity][i]) if item[label] else None
+                      for i,item in enumerate(current) if item['leg'] in legs
+                      for label,quantity in (('touch_threshold','touch_bottom_m'),('bearing_threshold','loaded_bottom_m'))]
+            uncertainty = max(floor,max(errors)/row['search_speed_m_s']) if errors and None not in errors else None
+            # Whole-gait error can shift both candidates together. Re-evaluate both
+            # rankings under the actual shared readiness and the local material error.
+            common_shift = None if ready is None else ready-a['predicted_ready_s']
+            robust = (uncertainty is not None and common_shift is not None
+                      and abs(a['predicted_ready_s']-b['predicted_ready_s'])>uncertainty
+                      and all(margins(row,uncertainty).values())
+                      and all(margins(row,uncertainty,common_shift).values()))
+            attribution = switched and target_attribution(row,legs)
+            supported = bool(attribution and robust and (gate['release_changes'] or gate.get('transfer_command_changes')))
             defined[key]['binding_decisions'].append(dict(decision_id=row['decision_id'],time_s=row['time_s'],
                 true_ids=[[p['true_source_load_id'],p['true_release_id'],p['true_target_load_id']] for p in pairs],
                 target_loads=current,actual_earliest_support_s=ready,applied_arm=row['arm'],
                 full_ready_s=a['predicted_ready_s'],private_ready_s=b['predicted_ready_s'],
                 wait_full_s=row['offsets_s'][a['winner']],wait_private_s=row['offsets_s'][b['winner']],
-                uncertainty_s=uncertainty,robust_winners=bool(robust),attributable_to_target=bool(attribution),
+                common_ready_shift_s=common_shift,uncertainty_s=uncertainty,robust_winners=bool(robust),attributable_to_target=bool(attribution),
                 gate=gate,history_action_evidence=supported))
             defined[key]['history_action_evidence']|=supported
         if switched:
