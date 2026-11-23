@@ -69,6 +69,7 @@ def snapshot():
                 available_ram_bytes=available,gpu=dev,io_pressure_pct=pressure('io'),cpu_pressure_pct=pressure('cpu'),
                 io_wait_ticks=host[4],host_ticks=sum(host),disk_outstanding_io=queues,
                 dirty_plus_writeback=mem['file_dirty']+mem['file_writeback'],
+                scratch_free_inodes=os.statvfs(RAW.parent).f_favail,personal_free_inodes=os.statvfs(PERSONAL).f_favail,
                 scratch_free_bytes=shutil.disk_usage(RAW.parent).free,
                 personal_free_bytes=shutil.disk_usage(PERSONAL).free)
 
@@ -83,12 +84,24 @@ def load_delta(prev,cur):
     return dict(total_core_s_per_s=used,w58_core_s_per_s=own,auxiliary_core_s_per_s=aux,other_core_s_per_s=other,
                 host_iowait_fraction=iowait,available_cpu_cores=max(0.,min(18.,cur['cpu_quota']-3.-other-aux)))
 
+def space_for_original(mount, bytes_needed, file_count):
+    stats=os.statvfs(mount)
+    return stats.f_bavail*stats.f_frsize>=bytes_needed and stats.f_favail>=file_count
+
+
+def recording_inodes(duration):
+    # Actual W57 originals used 3212 entries for E60 and 2249 for P/E30.
+    # Reserve at the higher observed cadence, plus job and rendering metadata.
+    return 100+math.ceil(80*duration)
+
+
 def allocate_original(attempt,duration):
     """Reserve enough space for the next real episode, including each natural collector tail."""
     root=POOL/'raw-reservations'
     root.mkdir(parents=True,exist_ok=True)
     path=root/(attempt+'.json')
     size=int((1.+duration*.03)*2**30)
+    entries=recording_inodes(duration)
     preferred=os.environ.get('W58_RAW_STORE','')
     volumes=[('',RAW.parent),(str(PERSONAL/'MCP-RL/W58/originals'),PERSONAL)]
     volumes.sort(key=lambda v:v[0]!=preferred)
@@ -97,6 +110,7 @@ def allocate_original(attempt,duration):
         with (POOL/'raw-admission.lock').open('a') as lock:
             fcntl.flock(lock,fcntl.LOCK_EX)
             used={key:0 for key,_ in volumes}
+            inodes={key:0 for key,_ in volumes}
             for p in root.glob('*.json'):
                 if p==path:continue
                 row=read(p)
@@ -104,15 +118,17 @@ def allocate_original(attempt,duration):
                     live=proc_info(row['pid'])
                     if live and live['start_ticks']==row['start_ticks']:
                         used[row['store']]+=row['reserved_bytes']
+                        inodes[row['store']]+=row.get('reserved_inodes',0)
             for store,mount in volumes:
-                if shutil.disk_usage(mount).free>used[store]+size+5*2**30:
-                    write(path,dict(state='allocated',attempt=attempt,store=store,reserved_bytes=size,
+                if space_for_original(mount,used[store]+size+5*2**30,inodes[store]+entries):
+                    write(path,dict(state='allocated',attempt=attempt,store=store,reserved_bytes=size,reserved_inodes=entries,
                                     pid=owner['pid'],start_ticks=owner['start_ticks'],**BG))
                     if store:os.environ['W58_RAW_STORE']=store
                     else:os.environ.pop('W58_RAW_STORE',None)
                     return path
             if not path.exists():
                 write(path,dict(state='waiting_storage',attempt=attempt,required_bytes=size,
+                                required_inodes=entries,free_inodes={str(v):os.statvfs(v).f_favail for _,v in volumes},
                                 free_bytes={str(v):shutil.disk_usage(v).free for _,v in volumes},**BG))
         time.sleep(20)
 
@@ -241,7 +257,8 @@ class Pool:
                  project_rss_bytes=sum(p['rss'] for p in cur['project'].values()),
                  ram_available_bytes=cur['available_ram_bytes'],io_pressure_pct=cur['io_pressure_pct'],
                  host_disk_outstanding_io=cur['disk_outstanding_io'],dirty_writeback_bytes=cur['dirty_plus_writeback'],
-                 scratch_free_bytes=cur['scratch_free_bytes'],personal_free_bytes=cur['personal_free_bytes'])
+                 scratch_free_bytes=cur['scratch_free_bytes'],personal_free_bytes=cur['personal_free_bytes'],
+                 scratch_free_inodes=cur['scratch_free_inodes'],personal_free_inodes=cur['personal_free_inodes'])
         self.last_distinct=distinct
         self.samples.append(now)
         self.metrics=now
@@ -304,13 +321,16 @@ class Pool:
                     continue
                 store=None
                 # Relocate only a future raw allocation, never existing originals.
-                scratch=shutil.disk_usage(RAW.parent).free
-                personal=shutil.disk_usage(PERSONAL).free
-                need=sum(r['disk_GiB'] for r in active if not r.get('raw_store'))+job['disk_GiB']+5
-                if scratch < need*2**30:
-                    other=sum(r['disk_GiB'] for r in active if r.get('raw_store'))
-                    if personal<(other+job['disk_GiB']+5)*2**30:break
-                    store=str(PERSONAL/'MCP-RL/W58/originals')
+                entries=recording_inodes(job['disk_GiB']/.03)
+                for volume, mount in ((None,RAW.parent),(str(PERSONAL/'MCP-RL/W58/originals'),PERSONAL)):
+                    same=[r for r in active if r.get('raw_store')==volume]
+                    gib=5+job['disk_GiB']+sum(r['disk_GiB'] for r in same)
+                    reserved=sum(recording_inodes(r['disk_GiB']/.03) for r in same)
+                    if space_for_original(mount,gib*2**30,entries+reserved):
+                        store=volume
+                        break
+                else:
+                    continue
                 chosen=available[:n]
                 if not self.submit(job,chosen,store):break
                 in_use.update(chosen)
