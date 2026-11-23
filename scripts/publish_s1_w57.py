@@ -36,8 +36,9 @@ def gh(*args):
         result=subprocess.run(command,cwd=ROOT,text=True,capture_output=True)
         if result.returncode==0:return result.stdout.strip()
         message=result.stderr.strip()
-        transient=any(k in message.lower() for k in ('tls handshake timeout','connection reset',
-                      'unexpected eof','http 502','http 503','http 504','i/o timeout'))
+        transient=message.lower().endswith(': eof') or any(k in message.lower() for k in (
+            'tls handshake timeout','connection reset','unexpected eof','http 502','http 503',
+            'http 504','i/o timeout'))
         if not transient or attempt==2:
             raise RuntimeError(message)
         print(f'GitHub metadata GET failed on attempt {attempt+1}: {message}',flush=True)
@@ -151,29 +152,30 @@ def main():
     args=parser.parse_args()
     lockpath=ROOT/'work/w57/publish.lock'
     lockpath.parent.mkdir(parents=True,exist_ok=True)
-    with lockpath.open('a') as lock:
-        fcntl.flock(lock,fcntl.LOCK_EX)
-        if args.action=='episode':
-            deliver_episode(args.attempt)
-        elif args.action=='bundle':
-            originals(args.name,[(str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else path.name,
-                                 path.resolve()) for path in args.paths])
-        else:
-            while True:
-                for source in sorted((SMALL/'attempts').glob('*.json')):
-                    state=read(source)
-                    if 'ended_unix_s' not in state or not (SMALL/'episodes'/(source.stem+'.json')).exists():
-                        continue
-                    dest=SMALL/'delivery'/source.name
-                    if not dest.exists() or read(dest).get('status')!='verified':
-                        deliver_episode(source.stem)
-                queue=SMALL/'dispatch/frozen-evaluations.json'
-                if args.action=='ready-episodes' or queue.exists() and read(queue)['stage']=='queue_ended':
-                    break
-                # Other completed scientific bundles may publish between physical episodes.
-                fcntl.flock(lock,fcntl.LOCK_UN)
-                time.sleep(30)
+    if args.action in ('episode','bundle'):
+        with lockpath.open('a') as lock:
+            fcntl.flock(lock,fcntl.LOCK_EX)
+            if args.action=='episode':
+                deliver_episode(args.attempt)
+            else:
+                originals(args.name,[(str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else path.name,
+                                     path.resolve()) for path in args.paths])
+        return
+    while True:
+        for source in sorted((SMALL/'attempts').glob('*.json')):
+            state=read(source)
+            if 'ended_unix_s' not in state or not (SMALL/'episodes'/(source.stem+'.json')).exists():
+                continue
+            dest=SMALL/'delivery'/source.name
+            # Let a finished PPO node publish between complete episodes, even with a backlog.
+            with lockpath.open('a') as lock:
                 fcntl.flock(lock,fcntl.LOCK_EX)
+                if not dest.exists() or read(dest).get('status')!='verified':
+                    deliver_episode(source.stem)
+        queue=SMALL/'dispatch/frozen-evaluations.json'
+        if args.action=='ready-episodes' or queue.exists() and read(queue)['stage']=='queue_ended':
+            break
+        time.sleep(30)
 
 
 if __name__=='__main__':main()

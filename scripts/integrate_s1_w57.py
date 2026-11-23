@@ -90,7 +90,8 @@ def recover_publication():
     if active_publisher() or read(R/'dispatch/frozen-evaluations.json')['stage']=='queue_ended':return
     log=WORK/'direct-delivery.log'
     tail=log.read_bytes()[-5500:].decode(errors='replace') if log.exists() else ''
-    if any(k in tail.lower() for k in ('tls handshake timeout','http 422','http 502','connection reset','i/o timeout')):
+    if tail.rstrip().lower().endswith(': eof') or any(k in tail.lower() for k in (
+            'tls handshake timeout','http 422','http 502','connection reset','i/o timeout')):
         command=('source scripts/autodl_d57_env.sh && source scripts/autodl_network.sh clash >/dev/null'
                  ' && exec taskset -c 16-19 python -u scripts/publish_s1_w57.py follow-episodes >>work/w57/direct-delivery.log 2>&1')
         subprocess.run(['tmux','new-session','-d','-s','w57-direct-delivery-d57-route','-c',str(ROOT),command],check=True)
