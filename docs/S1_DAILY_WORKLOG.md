@@ -478,6 +478,11 @@ full 入账 7,424 条、29 次更新，实际改变交接时刻 1942 次，只�
 
 ## 2026-11-23：W57 匹配盲策略采样与交付
 
+### 20261123/w58/material-selected｜保留轨迹与估计器选择
+
+选择 M1。各保留轨迹单列释放→跨足重载、短预测误差、区间覆盖与宽度，见[选择](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m/selection.json)和[分族指标](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m2/errors-and-coverage.json)。
+
+
 ### 20261123/w58/stable-tmux-and-delivery｜D57 后台续行与 Release 核验
 
 现场时间 2026-11-23T20:29:33.939330+08:00。W57 原双槽仍在 `w57-r-pilot02-pair` PID 942925 下工作。`w57-pilot02-blind-a-e60-0031` PID 134212，52.502 物理秒、`w57-pilot02-blind-b-e60-0031` PID 144716，34.002 物理秒。在两个 PID 的真实 cwd 核对了源码/动态库及速度 actor，执行树为 99b22099，build 均为 S5-w57-r-e34d34e02cd7。full 共 8192 条/32 次更新，blind 共 7936 条/31 次已更新，另外 A/B 各 1/18 条保存在下一批；当前 blind checkpoint SHA-256 为 4457b0909fe980c9197453ab2868fbda410a7e25bfc469ccb8a252a4a5b5a613。[W57 正式评价队列](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/frozen-evaluations.json)（PID 943095）和独立 private-short-A（PID 968025）继续等各自证据。累计实际双物理时钟同时推进占采样覆盖时间 90.00%。
