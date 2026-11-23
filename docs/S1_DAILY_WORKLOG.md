@@ -478,6 +478,12 @@ full 入账 7,424 条、29 次更新，实际改变交接时刻 1942 次，只�
 
 ## 2026-11-23：W57 匹配盲策略采样与交付
 
+### 20261123/storage/project-H-incremental-and-throughput｜本轮专项 H 盘归档与真实吞吐
+
+本次用户指定 H:/MPC+RL 存放新原件并清理已归档的 AutoDL 项目文件。沿用 H 盘 11 月 22 日按内容索引，逐文件绑定 SHA-256 与当前外接卷；在 D57 对旧目录、全部注册工作树和个人盘做独立盘点。共 999657 个常规文件、11533 个链接、41580 个目录、2 个运行端特殊对象，逻辑字节 335110375244。384129 项旧文件身份精确命中。按已复核的 H 归档授权，D57 在解链前即时复核路径、文件身份、实时占用和 SHA-256。历史重复/已完成记录可清，G/M/P 后继、正式原件发布输入、W44 权重、保留材料历史、r55/r60 基线以及共享运行环境按实际依赖留用。23:58:20 已清理 46844 个已核验文件（46148646024 逻辑字节），新写并读回核验 54 包、7382309431 个归档字节。全批 running，H 盘索引持续更新。
+
+同一 case 的 B/B 原 E30 用时 664.1 s，P/B 为 946.1 s，其中反馈 171.7/431.8 s。每 30 模拟秒执行约 150000 个物理子步与 15001 次关节控制。full/blind 各 32 个真实 CUDA PPO 更新，优化耗时分别 5.26/5.14 s。W57 的两个物理槽持续执行正式机制；M1+B A/B 短重访均跑满 100 s 并稳定回家，各命中 8/12 目标；旧 M0 的 6/12、7/12 单列。P A/B 自然接槽。数据核验、SSH 传输与研究作业并发，按实际吞吐、CPU/RAM/I/O 余量调节。W58 等待原 W57 调度自然结束。[执行快照](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-20261123/progress.json)。
+
 ### 20261123/w58/day-end｜跨日实测续接
 
 stage=waiting_W57_natural_release，selected_material=M1，slots=2，running=[]，attempts=0，completed=0，joint_distinct={}。最后观察 2026-11-23T23:59:44.762100+08:00。W57 同时段现场 {"time_shanghai": "2026-11-23T23:59:39.938519+08:00", "primary": "frozen_evaluations_running", "private_short_A": "waiting_for_full_short_A_evidence", "pair": "series_finished_after_natural_episodes", "final": true, "panes": {"w57-actual-resources": 938043, "w57-direct-delivery-scratch-inodes": 175631, "w57-frozen-evaluations": 175591, "w57-github-integration-eof": 120544, "w57-p-physical-outcomes-v2": 966437, "w57-private-short-A": 968025, "w57-shanghai-worklog": 946149}, "attempts": ["w57-m1-p-a-short-a01", "w57-m1-p-b-short-a01"], "clocks": {"w57-m1-p-a-short-a01": 23.00199999997307, "w57-m1-p-b-short-a01": 23.00199999997307}, "committed": {"full": 8192, "blind": 8192}, "updates": {"full": 32, "blind": 32}, "uncommitted": {"full": {"A": 0, "B": 0}, "blind": {"A": 0, "B": 0}}}。
