@@ -2,7 +2,7 @@
   "schema": "s1_w57_execution_v1",
   "status": "executing",
   "selected_estimator": "M1",
-  "as_of_shanghai": "2026-11-23T20:35:12.743957+08:00",
+  "as_of_shanghai": "2026-11-23T20:42:33.965069+08:00",
   "plan_commit": "d321d61fd13ba301b477deaf473101debebb88e5",
   "execution_workspace": "/root/autodl-tmp/MCP-RL-w57",
   "baseline": {
@@ -898,20 +898,17 @@
       "pid": 160906,
       "tmux": "w57-r-pilot02-pair",
       "slot": "A",
-      "status": "running",
+      "status": "technical_interruption",
       "simulation_s": null,
-      "reason": null,
+      "reason": "no_final_physics_result",
       "source_commit": "99b2209967195f1061ccf59de8faef45d4ac69bf",
       "started_unix_s": 1795437138.6798565,
-      "ended_unix_s": null,
-      "user_cpu_s": null,
-      "system_cpu_s": null,
+      "ended_unix_s": 1795437735.6818585,
+      "user_cpu_s": 321.514631,
+      "system_cpu_s": 5.158710999999999,
       "physical_samples": null,
       "physical_started_unix_s": null,
       "physical_ended_unix_s": null,
-      "last_recorded_physical_s": 7.502000000006983,
-      "last_recorded_phase": "outbound",
-      "last_progress_unix_s": 1795437294.9417913,
       "receipt": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-pilot02-blind-a-e60-0032.json"
     },
     {
@@ -1645,21 +1642,42 @@
       "pid": 144716,
       "tmux": "w57-r-pilot02-pair",
       "slot": "B",
-      "status": "running",
-      "simulation_s": null,
-      "reason": null,
+      "status": "passed",
+      "simulation_s": 59.999999999886846,
+      "reason": "stage_passed",
       "source_commit": "99b2209967195f1061ccf59de8faef45d4ac69bf",
       "started_unix_s": 1795435695.1130002,
-      "ended_unix_s": null,
-      "user_cpu_s": null,
-      "system_cpu_s": null,
+      "ended_unix_s": 1795437727.1177628,
+      "user_cpu_s": 1512.446018,
+      "system_cpu_s": 18.681405,
+      "physical_samples": 300000,
+      "physical_started_unix_s": 1795435702.6070056,
+      "physical_ended_unix_s": 1795437717.921194,
+      "receipt": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-pilot02-blind-b-e60-0031.json"
+    },
+    {
+      "attempt": "w57-pilot02-blind-b-e60-0032",
+      "case": "B",
+      "arm": "R",
+      "material": "M1",
+      "task_mode": "training",
+      "level": "E60",
+      "controller": "S5-w57-r-e34d34e02cd7",
+      "pid": 165479,
+      "tmux": "w57-r-pilot02-pair",
+      "slot": "B",
+      "status": "technical_interruption",
+      "simulation_s": null,
+      "reason": "no_final_physics_result",
+      "source_commit": "99b2209967195f1061ccf59de8faef45d4ac69bf",
+      "started_unix_s": 1795437727.3146412,
+      "ended_unix_s": 1795437735.1030703,
+      "user_cpu_s": 6.402701,
+      "system_cpu_s": 1.291775,
       "physical_samples": null,
       "physical_started_unix_s": null,
       "physical_ended_unix_s": null,
-      "last_recorded_physical_s": 42.50199999992763,
-      "last_recorded_phase": "complete",
-      "last_progress_unix_s": 1795437308.6525345,
-      "receipt": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-pilot02-blind-b-e60-0031.json"
+      "receipt": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-pilot02-blind-b-e60-0032.json"
     },
     {
       "attempt": "w57-pilot02-full-a-e60-0001",
@@ -3222,21 +3240,21 @@
       "receipt": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-pilot02-full-b-e60-0032.json"
     }
   ],
-  "distinct_declared_attempts": 133,
+  "distinct_declared_attempts": 134,
   "distinct_physics_attempts": 133,
   "measurement": {
-    "samples": 5884,
-    "covered_wall_s": 119088.09743452072,
-    "concurrently_advancing_interval_wall_s": 107109.31488204002,
+    "samples": 5906,
+    "covered_wall_s": 119533.89097476006,
+    "concurrently_advancing_interval_wall_s": 107433.85205125809,
     "excluded_monitor_gaps_over_60s": 0.0,
     "peak_total_GPU_MiB": 31165,
     "peak_W57_GPU_process_MiB": 2130,
-    "mean_host_GPU_utilization_pct": 6.967199184228416,
+    "mean_host_GPU_utilization_pct": 7.310023704707078,
     "scope": "Physical advancement observed in both neighboring samples (nominal 20 s); different from overlapping process lifetimes. Collection started after the first two mechanism episodes began. Device utilization includes other work."
   },
-  "completed_physics_samples": 39250000,
-  "completed_process_cpu_s": 191313.160301,
-  "overlap_wall_s_of_finished_physical_intervals": 115351.10276198387,
+  "completed_physics_samples": 39550000,
+  "completed_process_cpu_s": 193178.655542,
+  "overlap_wall_s_of_finished_physical_intervals": 116777.80731654167,
   "original_qualifications": [
     {
       "arm": "B",
@@ -3315,10 +3333,10 @@
       "version": 31,
       "committed": 7936,
       "partial_real_transitions": {
-        "A": 23,
-        "B": 33
+        "A": 41,
+        "B": 34
       },
-      "total_distinct": 7992,
+      "total_distinct": 8011,
       "finished": false
     }
   },
@@ -3370,8 +3388,8 @@
     "w57-pilot02-full-updates-17-32",
     "w57-pilot02-initial-controller"
   ],
-  "verified_release_assets": 117,
-  "release_bytes": 26247082401,
+  "verified_release_assets": 118,
+  "release_bytes": 26729563203,
   "declared_mechanism_episodes": 16,
   "additional_matched_blind_if_triggered": 4
 }
