@@ -496,6 +496,7 @@ def run(args, c, joint=None):
             extra_flags=[f'--mjpc_workers={args.workers}'],
             subprocess_kwargs=dict(stdout=server_log,stderr=subprocess.STDOUT,env=diagnostic_env),run_init=False))
     with controller_context as agent:
+        sample_swing_touch = getattr(agent, "sample_swing_touch", None) if w53_route == "F" else None
         try:
             if w53_route != 'F':
                 agent.model = prediction_model
@@ -817,6 +818,8 @@ def run(args, c, joint=None):
                                 joint.deadline=min(joint.deadline,idx['campaign_started_unix_s']+24*3600,
                                     idx['campaign_deadline_unix_s']-reserve)
                     actual_contacts, actual_grf, invalid, total_grf, nonfoot_grf, nonfoot_count = actual_contact(full=True)
+                    if sample_swing_touch is not None:
+                        sample_swing_touch(sample_t, data, actual_contacts, actual_grf)
                     if joint is not None:
                         joint.after_physics(physical_dt,actual_grf)
                         if w57 and w57['observer_implementation'] == 'w57_measured_window':

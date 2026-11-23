@@ -384,9 +384,10 @@ class FController:
                 available[leg]=t+self.cfg['contact_events']['touch_confirm_s']
                 events[leg].append((t,t,dict(landing=mq['feet'][leg].copy())))
             elif not self.confirmed[leg]:
-                gap=max(0.,mq['feet'][leg,2]-(s['landing'][2] if s is not None else self.radius[leg]))
+                target=(s.get('contact_point',s['landing']) if s is not None else self.initial_landing[leg])
+                ground_z=target[2] if s is not None else self.radius[leg]
+                gap=max(0.,mq['feet'][leg,2]-ground_z)
                 available[leg]=t+gap/search_speed+self.cfg['contact_events']['touch_confirm_s']
-                target=s['landing'] if s is not None else self.initial_landing[leg]
                 events[leg].append((t,available[leg],dict(search=True,landing=target.copy())))
         if self.moving and self.next_liftoff is not None:
             pair=self.next_pair.copy()
@@ -590,6 +591,7 @@ class FController:
         pref=np.zeros((4,3));vref=np.zeros((4,3));aref=np.zeros((4,3))
         mode=np.zeros(4,dtype=np.int8)
         task_J=mq['J'].copy();task_Jdotv=mq['Jdotv'].copy()
+        bridge = getattr(self, "contact_reference", None)
         for leg in range(4):
             pos=mq['feet'][leg];vel=mq['foot_velocity'][leg]
             if not scheduled[leg]:
@@ -635,6 +637,9 @@ class FController:
                     mode[leg]=3
                 else:mode[leg]=1
                 weight=self.cfg['wbc']['stance_weight']
+            if bridge is not None:
+                pref[leg], vref[leg], target = bridge(
+                    t, leg, mode[leg], pref[leg], vref[leg], target, mq)
             aref[leg]=target
             Af=np.zeros((3,nz));Af[:,:nv]=task_J[leg]
             task(Af,target-task_Jdotv[leg],weight)
