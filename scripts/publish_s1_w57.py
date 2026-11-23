@@ -75,6 +75,16 @@ def transfer(path, name, release, existing):
 def originals(label, paths, video=None):
     dest=SMALL/'delivery'/(label+'.json')
     release,existing=release_assets()
+    prior=read(dest) if dest.exists() else None
+    if prior and prior.get('local_retention',{}).get('removed_mpc_files'):
+        # This episode's published ZIPs precede the verified local inode cleanup.
+        # Reuse those exact assets when finalizing or explicitly republishing it.
+        for receipt in prior['assets']:
+            actual=existing.get(receipt['name'])
+            if actual is None or (actual['size'],actual.get('digest'),actual['state'])!=(
+                    receipt['size'],receipt['digest'],'uploaded'):
+                raise ValueError('The exact archived asset must be recovered before republishing '+receipt['name'])
+        return
     canonical=[]
     for prefix,path in paths:
         if path.is_dir():
@@ -91,7 +101,7 @@ def originals(label, paths, video=None):
             groups.append(part);part=[];size=0
         part.append((name,f));size+=n
     if part:groups.append(part)
-    recorded=read(dest) if dest.exists() else dict(label=label,tag=TAG,assets=[],
+    recorded=prior if prior is not None else dict(label=label,tag=TAG,assets=[],
         roots={k:str(p) for k,p in paths},original_file_count=len(canonical),originals_retained=True,
         compact_source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip())
     done={a['name']:a for a in recorded['assets']}
