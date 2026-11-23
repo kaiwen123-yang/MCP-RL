@@ -83,6 +83,40 @@ def load_delta(prev,cur):
     return dict(total_core_s_per_s=used,w58_core_s_per_s=own,auxiliary_core_s_per_s=aux,other_core_s_per_s=other,
                 host_iowait_fraction=iowait,available_cpu_cores=max(0.,min(18.,cur['cpu_quota']-3.-other-aux)))
 
+def allocate_original(attempt,duration):
+    """Reserve enough space for the next real episode, including each natural collector tail."""
+    root=POOL/'raw-reservations'
+    root.mkdir(parents=True,exist_ok=True)
+    path=root/(attempt+'.json')
+    size=int((1.+duration*.03)*2**30)
+    preferred=os.environ.get('W58_RAW_STORE','')
+    volumes=[('',RAW.parent),(str(PERSONAL/'MCP-RL/W58/originals'),PERSONAL)]
+    volumes.sort(key=lambda v:v[0]!=preferred)
+    owner=proc_info(os.getpid())
+    while True:
+        with (POOL/'raw-admission.lock').open('a') as lock:
+            fcntl.flock(lock,fcntl.LOCK_EX)
+            used={key:0 for key,_ in volumes}
+            for p in root.glob('*.json'):
+                if p==path:continue
+                row=read(p)
+                if row['state']=='allocated':
+                    live=proc_info(row['pid'])
+                    if live and live['start_ticks']==row['start_ticks']:
+                        used[row['store']]+=row['reserved_bytes']
+            for store,mount in volumes:
+                if shutil.disk_usage(mount).free>used[store]+size+5*2**30:
+                    write(path,dict(state='allocated',attempt=attempt,store=store,reserved_bytes=size,
+                                    pid=owner['pid'],start_ticks=owner['start_ticks'],**BG))
+                    if store:os.environ['W58_RAW_STORE']=store
+                    else:os.environ.pop('W58_RAW_STORE',None)
+                    return path
+            if not path.exists():
+                write(path,dict(state='waiting_storage',attempt=attempt,required_bytes=size,
+                                free_bytes={str(v):shutil.disk_usage(v).free for _,v in volumes},**BG))
+        time.sleep(20)
+
+
 
 def worker(a):
     record=Path(a.record)

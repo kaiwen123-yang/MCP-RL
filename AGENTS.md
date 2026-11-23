@@ -4,6 +4,10 @@
 
 稳定名义F为接触力QP MPC＋WBC；旧r55/r60 A/B各自原E600十往返成立。W57新资格目前是M1+B A/B原E30、M1+P A原E30；训练E60不代替最终冻结资格。M1短预测改善但释放→跨足重载退化；P1已在线消费材料，但333次非空私有历史干预0候选排序翻转；R真实学习且有交接权限，收益尚待冻结对照。小幅离力首因已定位到末摆动早触反弹，新P原E30也存在，不按已确认承载后失载来修。
 
+## W58 D57 实际续接（2026-11-23，Asia/Shanghai）
+
+W57 冻结采样和后继沿原两槽运行。W58 已在独立树完成 G1、M2、P2 和 v2 几何实装，保存状态复算与原件回执见 [W58 运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/index.json)。M2 整回合保留、W57 的实际时钟与 dispatcher 优先查现场。D57 整合目录为 `/root/autodl-tmp/MCP-RL-w58`，`work/w58/runtime.json` 指向执行源码快照。tmux `w58-unified-dispatch` 独占 W58 物理调度；`w58-github-integration` 与 `w58-d57-delivery` 负责跨日事件和直接交付。下方计划形成时的数量保留审查日期。
+
 ## 本轮执行顺序与边界
 
 1. **保持W57正在运行的身份与双物理槽。** 让匹配blind、自然collector末段、B/P/R/PR原资格与16机制、匹配blind4机制、条件长资格和独立private-short-A后继按原合同自然完成。83D W57-R1-event83-v1、同版本128×2、旧W44冻结不变；不重启有效job、热换M/P或热加collector。PR是P0训练冻结R＋P1，不叫联合on-policy训练。

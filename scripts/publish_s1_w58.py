@@ -68,7 +68,8 @@ def publish_ready():
     identity()
     label='w58-g-p2-complete-development-replays'
     if not verified(label):
-        files=[*sorted((R/'g').rglob('*-landings.jsonl.gz')),R/'p2/saved-requests.jsonl.gz',
+        files=[*sorted((R/'g/g0').glob('*-e30-*-landings.jsonl.gz')),
+               *sorted((R/'g/p1-5khz').glob('*-landings.jsonl.gz')),R/'p2/saved-requests.jsonl.gz',
                R/'p2/saved-support-calibration.json',R/'p2/common-force-candidates.json']
         release.originals(label,[(str(p.relative_to(R)),p) for p in files])
     # Submit the complete release-state extraction of each completed history as soon as ready.

@@ -124,5 +124,12 @@ if __name__=='__main__':
         os.environ['S1_W58_JOINT_SEED']=str(args.learning_seed)
     if bool(args.learning_seed)!=bool(args.timing_config):
         raise ValueError('Joint evaluation and collection require both a real learning seed and its timing policy')
-    sys.exit(execute_physics(args,declare=declaration,small=SMALL))
+    from s1_w58_pool import allocate_original
+    duration=read(ROOT/SPEC)['splits'][args.split]['observation_s'][args.task] if args.task in ('short','recovered') else int(args.level[1:])
+    reservation=allocate_original(args.attempt,duration)
+    try:
+        exit_code=execute_physics(args,declare=declaration,small=SMALL)
+    finally:
+        write(reservation,dict(read(reservation),state='closed'))
+    sys.exit(exit_code)
 
