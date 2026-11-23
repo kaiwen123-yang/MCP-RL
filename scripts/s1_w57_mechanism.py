@@ -24,6 +24,9 @@ class RevisitMission(Mission):
         self.returning_home = False
         self.active_goal = np.zeros(2)
 
+    def requires_parking(self, direction):
+        return self.mode == 'recovered'
+
     def measure_feet(self, xy, fz):
         covered = (xy[:, 0] + self.half_foot > self.bounds[0]) & (xy[:, 0] - self.half_foot < self.bounds[1])
         ylo, yhi = self.spec['target_strip_y_m']
@@ -55,7 +58,7 @@ class RevisitMission(Mission):
             self.cycle_start = t
         sign = 1 if len(self.completed) % 2 == 0 else -1
         end_x = self.edges[int(sign > 0)]
-        parking = self.mode == 'recovered' and not self.parked_this_cycle
+        parking = self.requires_parking(sign) and not self.parked_this_cycle
         target = self.center if parking else end_x
         self.active_goal = np.array([target, 0.])
         moving = 'outbound' if sign > 0 else 'return'
@@ -87,7 +90,7 @@ class RevisitMission(Mission):
                 self.change_phase('turn', *state)
                 return super().update(t, dt, pos, velocity, ori, omega, standing)
             sign = -sign
-            target = self.center if self.mode == 'recovered' else self.edges[int(sign > 0)]
+            target = self.center if self.requires_parking(sign) else self.edges[int(sign > 0)]
             self.active_goal[0] = target
             self.change_phase('outbound' if sign > 0 else 'return', *state)
         if self.phase == 'far_hold':
@@ -97,7 +100,7 @@ class RevisitMission(Mission):
         else:
             cap = self.task['command_speed_m_s']
             vx = float(np.clip(.8*(target-pos[0]), -cap, cap)) if (
-                self.mode == 'recovered' and not self.parked_this_cycle) else sign*cap
+                self.requires_parking(sign) and not self.parked_this_cycle) else sign*cap
             desired = np.array([vx, np.clip(-.8*pos[1], -.1, .1), 0.])
             self.v += np.clip(desired-self.v, -.5*dt, .5*dt)
             self.w[2] += np.clip(np.clip(-1.5*ori[2], -.5, .5)-self.w[2], -dt, dt)
