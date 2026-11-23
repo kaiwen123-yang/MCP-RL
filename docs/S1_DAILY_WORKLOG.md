@@ -478,6 +478,11 @@ full 入账 7,424 条、29 次更新，实际改变交接时刻 1942 次，只�
 
 ## 2026-11-23：W57 匹配盲策略采样与交付
 
+### 20261123/w58/day-end｜跨日实测续接
+
+stage=waiting_W57_natural_release，selected_material=M1，slots=2，running=[]，attempts=0，completed=0，joint_distinct={}。最后观察 2026-11-23T23:59:44.762100+08:00。W57 同时段现场 {"time_shanghai": "2026-11-23T23:59:39.938519+08:00", "primary": "frozen_evaluations_running", "private_short_A": "waiting_for_full_short_A_evidence", "pair": "series_finished_after_natural_episodes", "final": true, "panes": {"w57-actual-resources": 938043, "w57-direct-delivery-scratch-inodes": 175631, "w57-frozen-evaluations": 175591, "w57-github-integration-eof": 120544, "w57-p-physical-outcomes-v2": 966437, "w57-private-short-A": 968025, "w57-shanghai-worklog": 946149}, "attempts": ["w57-m1-p-a-short-a01", "w57-m1-p-b-short-a01"], "clocks": {"w57-m1-p-a-short-a01": 23.00199999997307, "w57-m1-p-b-short-a01": 23.00199999997307}, "committed": {"full": 8192, "blind": 8192}, "updates": {"full": 32, "blind": 32}, "uncommitted": {"full": {"A": 0, "B": 0}, "blind": {"A": 0, "B": 0}}}。
+
+
 ### 20261123/w57/stop-personal-cleanup-and-continue-frozen-physics｜按用户指示停止存储清理，继续正式冻结测试
 
 2026-11-23T22:04:58+08:00，停止定向清理与两项待办，已确认清理进程组退出、写锁释放。已核验的操作日志与现有目录相互核对，共移除 28138 项归档副本、648636027 字节，个人盘可用 inode 为 28132/200000。剩余清单结束执行。[停止回执与逐文件留据](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/20261123-w57-archived-mpc/receipt.json)。
@@ -578,6 +583,17 @@ D57 延续 W57 的两槽 campaign。现场记录时间 2026-11-23T20:02:53.63847
 ### 同一审查事件的发布前增量核验
 
 main更新至cf2c7521（2026-11-23 19:36:06 +08）后已安全fast-forward，未覆盖执行端新增attempt/发布/动态索引。130真实启动、126passed/2机制未达标/2running、完成38,350,000子步；full8192，blind7424committed+82partial，仍executing，冻结资格未变。核心分析继续固定fd4快照，单独保存publication-refresh.json，避免把运行中快照静默替换为已结束。新增代码/报告文件的JSON、Python语法、相对链接、证据SHA清单和差异格式核对完成后发布；未重跑仿真、训练或旧证据实验。
+
+## 2026-11-24｜W58 执行
+
+### 20261124/w58/material-selected｜保留轨迹与估计器选择
+
+选择 M1。各保留轨迹单列释放→跨足重载、短预测误差、区间覆盖与宽度，见[选择](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m/selection.json)和[分族指标](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m2/errors-and-coverage.json)。
+
+
+### 20261124/w58/stage/waiting_W57_natural_release｜调度与实测进度
+
+stage=waiting_W57_natural_release，selected_material=M1，slots=2，running=[]，attempts=0，completed=0，joint_distinct={}。W57 两个物理槽归原配对采样、冻结评价及独立 private-short-A dispatcher 使用。。运行快照 {"time_shanghai": "2026-11-24T00:00:09.969369+08:00", "primary": "frozen_evaluations_running", "private_short_A": "waiting_for_full_short_A_evidence", "pair": "series_finished_after_natural_episodes", "final": true, "panes": {"w57-actual-resources": 938043, "w57-direct-delivery-scratch-inodes": 175631, "w57-frozen-evaluations": 175591, "w57-github-integration-eof": 120544, "w57-p-physical-outcomes-v2": 966437, "w57-private-short-A": 968025, "w57-shanghai-worklog": 946149}, "attempts": ["w57-m1-p-a-short-a01", "w57-m1-p-b-short-a01"], "clocks": {"w57-m1-p-a-short-a01": 23.501999999971904, "w57-m1-p-b-short-a01": 23.501999999971904}, "committed": {"full": 8192, "blind": 8192}, "updates": {"full": 32, "blind": 32}, "uncommitted": {"full": {"A": 0, "B": 0}, "blind": {"A": 0, "B": 0}}}。
 
 ## 以后每天如何追加
 
