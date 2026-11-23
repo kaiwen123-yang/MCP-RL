@@ -76,7 +76,7 @@ class EarlyTouchGait:
         """Latch the first force at its actual evaluation time. The 2 ms actuator hold is unchanged."""
         for leg, swing in enumerate(self.swing):
             if (self.event_mode[leg] == 'swing' and self.first_force[leg] is None and
-                    swing['apex'] <= force_time < swing['end'] and contacts[leg] and
+                    swing['apex'] - 1.e-9 <= force_time < swing['end'] - 1.e-9 and contacts[leg] and
                     grf[leg, 2] > self.cfg['contact_events']['touch_off_N']):
                 twist = np.empty(6)
                 mujoco.mj_objectVelocity(self.model, data, mujoco.mjtObj.mjOBJ_GEOM,
