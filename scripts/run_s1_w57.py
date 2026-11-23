@@ -177,7 +177,8 @@ def episode(a, *, declare=declaration, small=SMALL):
     from run_s1_go2_w54 import resource_sample
     usage0=resource.getrusage(resource.RUSAGE_CHILDREN)
     with (raw_job/'physics.log').open('w') as log:
-        proc=subprocess.Popen(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
+        lease_fds=tuple(int(n) for n in os.environ.get('S1_W58_LEASE_FDS','').split(',') if n)
+        proc=subprocess.Popen(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,pass_fds=lease_fds)
         receipt.update(pid=proc.pid,status='running')
         write(target,receipt)
         while proc.poll() is None:

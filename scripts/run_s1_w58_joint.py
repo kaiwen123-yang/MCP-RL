@@ -28,6 +28,7 @@ def collect(a):
     run,_=paths(a.seed,a.head)
     scope=read(run/'run.json')
     case=a.case
+    fds=tuple(map(int,os.environ['S1_W58_LEASE_FDS'].split(',')))
     ledger=run/f'episodes-{case}.jsonl'
     ends=run/f'episode-ends-{case}.jsonl'
     existing=read_rows(ledger)
@@ -48,7 +49,7 @@ def collect(a):
              '--gait',a.gait,'--material',a.material,'--split','training','--task','training','--level','E60',
              '--learning-seed',str(a.seed),'--timing-config',str(run/f'collector-{case}.json')]
         jsonline(ledger,dict(attempt=name,case=case,version_at_start=v,unix_s=time.time(),command=cmd,**BG))
-        code=subprocess.call(cmd,cwd=ROOT)
+        code=subprocess.call(cmd,cwd=ROOT,pass_fds=fds)
         path=R/'attempts'/(name+'.json')
         row=read(path) if path.is_file() else {}
         jsonline(ends,dict(attempt=name,status=row.get('status'),code=code,simulation_s=row.get('simulation_s'),
@@ -110,7 +111,8 @@ def run_head(a):
                      'collector','--seed',str(a.seed),'--head',a.head,'--case',case,
                      '--gait',a.gait,'--material',a.material]
                 with (run/f'collector-{case}.log').open('a') as out:
-                    children[case]=subprocess.Popen(cmd,cwd=ROOT,stdout=out,stderr=subprocess.STDOUT)
+                    children[case]=subprocess.Popen(cmd,cwd=ROOT,stdout=out,stderr=subprocess.STDOUT,
+                        pass_fds=tuple(map(int,os.environ['S1_W58_LEASE_FDS'].split(','))))
         state=read(run/'published.json')
         while not state['finished']:
             version=state['version']

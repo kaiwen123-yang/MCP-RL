@@ -14,7 +14,7 @@ from s1_go2_r11_protocol import stable_digest
 SMALL=ROOT/REL/'w58'
 SPEC='experiments/terrain_memory/s1-w58-revisit-v2.json'
 JOINT='experiments/terrain_memory/s1-w58-joint.json'
-ARMS=('G1','B2','P2-full','P2-private','Fixed-wait')
+ARMS=('availability-off','G1','B2','P2-full','P2-private','Fixed-wait')
 PLAN='fe320346'
 P2_CONFIG='experiments/terrain_memory/s1-w58-p2.json'
 
@@ -23,7 +23,7 @@ def configure_episode(c, contract):
     configure_base(c,contract)
     setting=contract['w58']
     c.update(w58=setting,implementation_status='W58 original plant, frozen force MPC/WBC and causal feedback')
-    c['w54_f']['w58']=dict(setting)
+    c['w54_f']['w58']=dict(setting,arm='B2' if setting['arm']=='availability-off' else setting['arm'])
     if setting['split'] in ('development','validation'):
         c['r11_stage']['target_cycles']=12
 
@@ -77,7 +77,7 @@ def declaration(a):
     if digest(checkpoint)!=parent['checkpoint_sha256'] or digest(ROOT/parent['resume_checkpoint'])!=parent['resume_sha256']:
         raise ValueError('W44 case actor or retained state differs from its qualified parent')
     job=f'w58-{a.case}-{build}'
-    w=dict(arm=a.arm,planner='P1' if p2 else 'P0',planner_history='private_reset' if a.arm=='P2-private' else 'full',
+    w=dict(arm=a.arm,planner='P1' if p2 and a.arm!='availability-off' else 'P0',planner_history='private_reset' if a.arm=='P2-private' else 'full',
         planner_material_workers=workers,planner_material_backend='equal_columns',candidate_substep_s=.0002,
         material=a.material,observer_implementation='w57_measured_window',
         timing_mode=opts['mode'] if opts else 'zero',timing_head=opts['head'] if opts else None,
