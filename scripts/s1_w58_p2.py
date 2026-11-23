@@ -1,4 +1,5 @@
 """W58 common support availability and causal handover planning."""
+from copy import copy, deepcopy
 import json
 import time
 
@@ -7,6 +8,7 @@ import numpy as np
 from s1_w54_f_r52_backend import ControllerNumericalFailure, assemble_force_horizon
 from s1_w57_planning import Forecast, footprint, original_cost
 from tm02.s1_contact import StanceReferenceInfeasible
+from tm02.reference import IntegrationFailure
 
 ARMS = ('B2', 'P2-full', 'P2-private', 'Fixed-wait')
 
@@ -214,6 +216,7 @@ class P2ControlMixin:
         super().__init__(model, data, feet, base, out, config)
         self.p2_arm = config['w58']['arm']
         self.p2_active = None
+        self.p2_shadow = {}
         self.manifest.update(w58_planner=self.p2_arm, w58_force_horizon='public contact availability',
                              w58_decision_records='w58-handover.jsonl')
         self._write_manifest()
@@ -223,6 +226,7 @@ class P2ControlMixin:
 
     def _new_handover_request(self, t, mission, mq, material_info, grf):
         if self.timing_agent is not None and not self.timing_agent.has_next_interval(t):
+            self.p2_shadow = {}
             return super()._new_handover_request(t, mission, mq, material_info, grf)
         start, cpu = time.perf_counter(), time.process_time()
         row = decide(self, t, mission, mq, material_info['material_observer'], grf, self.p2_arm)
@@ -235,8 +239,57 @@ class P2ControlMixin:
         self.p2_active = dict(p2_decision_id=row['decision_id'], original_due_s=row['nominal_due_s'],
                               p2_wait_s=row['selected_wait_s'], p2_due_s=self.next_liftoff)
         super()._new_handover_request(t, mission, mq, material_info, grf)
+        self.p2_shadow = {}
+        outcomes = [row.get(h, {}).get('winner') for h in ('full','private_reset')]
+        if self.p2_arm in ('P2-full','P2-private') and None not in outcomes and outcomes[0]!=outcomes[1]:
+            residual = self.next_liftoff-self.p2_active['p2_due_s']
+            for h,i in zip(('full','private_reset'),outcomes):
+                self.p2_shadow[h] = dict(due=row['nominal_due_s']+row['offsets_s'][i]+residual,
+                                         fraction=0.,start=self.transfer_start)
 
     def _write_request(self, record):
         if self.p2_active is not None and record.get('decision_id')==self.p2_active['p2_decision_id']:
             record = dict(record, **self.p2_active)
         return super()._write_request(record)
+
+    def _record_handover_gate(self, t, all_ground, support, measured, solved, released):
+        super()._record_handover_gate(t, all_ground, support, measured, solved, released)
+        for state in self.p2_shadow.values():
+            if all_ground and state['start'] is None:
+                state['start'] = max(t, state['due']-.05)
+            if state['start'] is not None:
+                u = np.clip((t-state['start'])/self.cfg['contact_events']['load_transfer_ramp_s'],0.,1.)
+                state['fraction'] = float(u**3*(10.-15.*u+6.*u*u))
+
+    def wbc(self, t, data, mq, mission, scheduled, observed, grf, soft, material_info):
+        args = (t, data, mq, mission, scheduled, observed, grf, soft, material_info)
+        branches = self.p2_shadow
+        compare = (self.moving and len(branches)==2 and bool(np.all(scheduled & observed)) and
+                   abs(branches['full']['fraction']-branches['private_reset']['fraction'])>1.e-10)
+        if not compare:
+            return super().wbc(*args)
+        # Record a real mapped-command comparison only at diverging transfer ticks.
+        # Each temporary controller solves the unchanged articulated WBC; its contact
+        # bridge, rows, clocks and on-disk diagnostics belong to the shadow alone.
+        commands = {}
+        for h,state in branches.items():
+            ref = copy(self)
+            ref.contact_bridge = deepcopy(getattr(self, 'contact_bridge', None))
+            ref.rows = []
+            ref.timing = deepcopy(self.timing)
+            ref.w57_new_plan_call = None
+            ref.transfer_start = state['start']
+            ref.transfer_fraction = state['fraction']
+            ref.record_dir = self.record_dir/'w58-shadow'/h
+            ref.record_dir.mkdir(parents=True, exist_ok=True)
+            try:
+                u = super(P2ControlMixin, ref).wbc(*args)
+                commands[h] = dict(mapped_rad=u.tolist(), fraction=state['fraction'])
+            except (ControllerNumericalFailure, StanceReferenceInfeasible, IntegrationFailure, ValueError) as error:
+                commands[h] = dict(mapped_rad=None, rejection=str(error), fraction=state['fraction'])
+        action = super().wbc(*args)
+        record = dict(decision_id=self.p2_active['p2_decision_id'],time_s=float(t),
+                      active_arm=self.p2_arm, actual_mapped_rad=action.tolist(), **commands)
+        with (self.record_dir/'w58-transfer-actions.jsonl').open('a') as stream:
+            stream.write(json.dumps(record,allow_nan=False)+'\n')
+        return action
