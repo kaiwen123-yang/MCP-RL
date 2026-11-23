@@ -132,10 +132,19 @@ def deliver_episode(attempt):
     renderer.SMALL=SMALL/'episodes'
     with open(ROOT/'work/w57/render.lock','a') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX)
-        if not (out/'video-asset.json').exists():
-            renderer.render(attempt)
-    video=out/'full-mission-material-overlay.mp4'
+        alternate=ROOT/'work/w57/rendered'/attempt
+        # On D57 the personal mount can exhaust its inode quota with bytes still free.
+        # Keep the original trajectory read-only and place new derived files on scratch.
+        dest=out
+        if not (out/'video-asset.json').exists() and (
+                (alternate/'video-asset.json').exists() or os.statvfs(out).f_favail<2):
+            dest=alternate
+        if not (dest/'video-asset.json').exists():
+            renderer.render(attempt,output_dir=dest)
+    video=dest/'full-mission-material-overlay.mp4'
     paths=[('episode',out),('job',LARGE/'jobs'/attempt)]
+    if dest!=out:
+        paths.append(('episode/video-asset.json',dest/'video-asset.json'))
     actor=LARGE/'evaluation-policy'/attempt
     if actor.exists():paths.append(('frozen-speed-policy',actor))
     originals(attempt,paths,video)
