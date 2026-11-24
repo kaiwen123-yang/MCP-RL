@@ -2,13 +2,16 @@
 
 The original dispatcher owns scoring, its two inherited leases, the private fork and the
 long gates. Later eligible jobs enter under the same dispatch mutex and canonical attempt
-names. Two still-unclaimed predecessors form an adoption barrier for its two workers.
+names. Same-stage lookahead leaves two unclaimed predecessors. A direct, live recovered
+child also holds the primary dispatcher in its mechanism stage until that child exits.
 """
 from collections import deque
+from contextlib import ExitStack
 from datetime import datetime
 import fcntl
 import json
 import os
+import select
 from pathlib import Path
 import shutil
 import struct
@@ -20,7 +23,7 @@ from zoneinfo import ZoneInfo
 ROOT = Path('/root/autodl-tmp/MCP-RL-w57')
 sys.path.insert(0, str(ROOT/'scripts'))
 from queue_s1_w57_evaluations import source_for, CAMPAIGN, R, WORK, BACKGROUND
-from s1_w56_slot import QUEUE
+from s1_w56_slot import QUEUE, old_task
 from publish_s1_go2_w54 import write
 
 RAW = ROOT/'outputs/terrain_memory/simulation/tm-s1-go2-local-readiness-r12'
@@ -62,6 +65,33 @@ def rows_live():
         row=read(p)
         if 'ended_unix_s' not in row and row['status'] in ('declared','running'): result[row['attempt']]=row
     return result
+def primary_recovery(live, handles):
+    """Find the real child that the primary run_episode is synchronously waiting for."""
+    for name, row in live.items():
+        if row['task_mode'] != 'recovered' or row['status'] != 'running':
+            continue
+        pid = row['runner_pid']
+        proc = Path('/proc') / str(pid)
+        try:
+            fd = os.pidfd_open(pid)
+        except ProcessLookupError:
+            continue
+        handles.callback(os.close, fd)
+        try:
+            parent = int((proc/'stat').read_text().rsplit(') ', 1)[1].split()[1])
+            owner = Path('/proc') / str(parent)
+            parent_args = (owner/'cmdline').read_bytes().split(b'\0')
+            args = (proc/'cmdline').read_bytes().split(b'\0')
+            if (b'scripts/queue_s1_w57_evaluations.py' in parent_args and
+                    os.readlink(owner/'cwd') == str(ROOT) and b'scripts/run_s1_w57.py' in args and
+                    b'--attempt' in args and args[args.index(b'--attempt')+1] == os.fsencode(name) and
+                    not select.select([fd], [], [], 0)[0]):
+                return dict(attempt=name, runner_pid=pid, primary_pid=parent), fd
+        except (FileNotFoundError, ProcessLookupError):
+            continue
+    return None
+
+
 def cpu_cost(arm):return 5 if arm in ('P','PR') else 1
 def memory_budget(row):
     # The two completed 196s cases peaked at 2.62 GiB; current P/PR recordings use the same arrays.
@@ -187,7 +217,7 @@ class Evaluations:
                     self.state.update(limit=6 if keep else 4,six_validated=keep,phase_review=dict(at=now(),headroom=healthy,**result))
                     self.save()
         return rates
-    def launch(self,slot,job,cores,mutex,seq):
+    def launch(self,slot,job,cores,barrier):
         name,arm,case,mode=job
         # Two earlier *unclaimed* jobs cannot be bypassed by both legacy threads
         # while this very same dispatch mutex is held. A legacy worker already past
@@ -197,9 +227,16 @@ class Evaluations:
         if name in active_names or receipt(name) or (RAW/'jobs'/name).exists():return False
         elig=sequence()
         pending=[n for n,*_ in elig if not receipt(n) and not (RAW/'jobs'/n).exists() and n not in active_names]
-        if name not in pending or pending.index(name)<2:return False
-        predecessors=pending[:pending.index(name)][:2]
-        if not all(not receipt(n) for n in predecessors):return False
+        if name not in pending:
+            return False
+        predecessors = pending[:pending.index(name)][:2]
+        use_barrier = slot < 2 or len(predecessors) < 2
+        if use_barrier:
+            if mode != 'original' or not barrier or select.select([barrier[1]], [], [], 0)[0]:
+                return False
+            predecessors = [barrier[0]['attempt']]
+        elif any(receipt(n) for n in predecessors):
+            return False
         lease=(QUEUE/f'slot-{slot}.lock').open('a')
         try:
             try:fcntl.flock(lease,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -223,17 +260,28 @@ class Evaluations:
                 published=receipt(name)
                 if published is None:time.sleep(.1)
             if published is None:raise RuntimeError(f'{name} exited before recording its actual attempt; see {WORK/name}.log')
+            if use_barrier:
+                held = not select.select([barrier[1]], [], [], 0)[0]
+                record_event('original_stage_registration', attempt=name,
+                             held_through_receipt=held, recovery=barrier[0])
+                if not held:
+                    # A legacy ticket could have read the slot before this receipt existed.
+                    # Keep its admission mutex until it can only observe the completed result.
+                    proc.wait()
+                    published = receipt(name)
             fields=('source_commit','controller','checkpoint_sha256','normalization_sha256','timing_checkpoint_sha256','active_sources')
             if published.get('runner_pid')!=proc.pid or any(published.get(k)!=parent.get(k) for k in fields):
                 raise RuntimeError('Different frozen execution identity; retain actual result and stop additional admission: '+name)
             self.state['dispatched'][name]=dict(slot=slot,cores=cores,pid=proc.pid,controller=published['controller'],
                      source=published['source_commit'],timing_sha256=published.get('timing_checkpoint_sha256'),
                      borrowed_qualification=False,admission_fence=predecessors,started=published['started_unix_s'])
+            if use_barrier:
+                self.state['dispatched'][name]['primary_wait'] = dict(**barrier[0], held_through_receipt=held)
             self.save()
             return True
         finally:lease.close()
     def admit(self,v,lim):
-        with (QUEUE/'dispatch.lock').open('a') as mux:
+        with (QUEUE/'dispatch.lock').open('a') as mux, ExitStack() as handles:
             fcntl.flock(mux,fcntl.LOCK_EX)
             if any((Path('/proc')/f.stem.rsplit('-',1)[-1]).exists() for f in QUEUE.glob('*.waiting')):return
             live=rows_live();cap=self.state['limit'];existing=len(live)
@@ -242,7 +290,11 @@ class Evaluations:
             used_cores=set().union(*(set(x.get('cpu_affinity',[])) for x in live.values())) if live else set()
             free_cores=[c for c in EXTRA_CPUS if c not in used_cores]
             idle=[i for i in range(2,cap) if i not in slots_used]
-            if not idle:return
+            barrier = primary_recovery(live, handles)
+            # While the primary waits for its direct mechanism child, its other lease
+            # can carry an already-earned original at the usual four-core affinity.
+            primary_idle = [i for i in (0, 1) if barrier and i not in slots_used and not old_task(i)]
+            if not idle and not primary_idle:return
             seq=sequence()
             # Add the matched blind restores first; both use the already-trained frozen blind checkpoint.
             def priority(j):
@@ -250,21 +302,37 @@ class Evaluations:
                 return (0 if mode=='recovered' and arm=='blind' else 1 if mode=='recovered' else 2,ARMS.index(arm),case)
             for j in sorted(seq,key=priority):
                 name,arm,case,mode=j
-                if not idle or len(live)>=cap:break
+                if (not idle and not primary_idle) or len(live)>=cap:break
                 if name in live or name in self.state['dispatched'] or receipt(name):continue
                 cores=cpu_cost(arm);reserve=memory_budget(dict(task_mode=mode))
                 # Either legacy slot can naturally transition to a four-worker P/PR.
                 # Reserve its owner plus all four native workers across that transition.
                 legacy=[x for x in live.values() if str(x.get('slot')) in ('0','1')]
                 extra_cost=sum(cpu_cost(x['arm']) for x in live.values() if str(x.get('slot')) not in ('0','1'))
-                if 10+extra_cost+cores>lim['cpu_budget'] or len(free_cores)<cores:continue
+                use_primary = bool(primary_idle and mode == 'original' and barrier and
+                                   not select.select([barrier[1]], [], [], 0)[0])
+                if use_primary:
+                    slot = primary_idle[0]
+                    start = 10 if slot == 0 else 0
+                    cpus = list(range(start, start + 4))
+                    if used_cores.intersection(cpus) or 10+extra_cost>lim['cpu_budget']:
+                        continue
+                else:
+                    if not idle or 10+extra_cost+cores>lim['cpu_budget'] or len(free_cores)<cores:
+                        continue
+                    cpus, slot = free_cores[:cores], idle[0]
                 missing_growth=sum(max(0.,memory_budget(x)-v['live'].get(n,{}).get('rss_GiB',0.)) for n,x in live.items())
-                if (lim['ram']<7.0+reserve+missing_growth+3.25*max(0,2-len(legacy)) or lim['gpu_free_MiB']<1800+850*max(1,len(live)-existing+1)
+                if (lim['ram']<7.0+reserve+missing_growth+3.25*max(0,2-len(legacy)-int(use_primary)) or lim['gpu_free_MiB']<1800+850*max(1,len(live)-existing+1)
                         or lim['io_pressure']>12 or lim['cpu_pressure']>12 or lim['memory_pressure']>4
                         or lim['scratch_free_GiB']<12+6*(len(live)+1)):continue
-                cpus=free_cores[:cores];slot=idle[0]
-                if not self.launch(slot,j,cpus,mux,seq):continue
-                live[name]=receipt(name);idle.remove(slot);free_cores=free_cores[cores:]
+                if not self.launch(slot,j,cpus,barrier):continue
+                live[name]=receipt(name)
+                used_cores.update(cpus)
+                if use_primary:
+                    primary_idle.remove(slot)
+                else:
+                    idle.remove(slot)
+                    free_cores=free_cores[cores:]
     def run(self):
         base=self.state['initial_pair'];record_event('entry',baseline_pair=base)
         if not base:raise ValueError('Original P A/B throughput window missing')
