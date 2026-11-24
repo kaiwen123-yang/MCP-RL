@@ -688,6 +688,11 @@ full 入账 768 条、3 次更新，实际改变交接时刻 305 次，只改变
 截至入账，按 GitHub size/digest 得到的本日新增资产回执共 95 个，20,920,677,002 B。源码和紧凑记录基线 `e4d923c7deee`。物理槽、前序资格、仍在执行或等待的模块与发布资产详见 [W57 索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
 ## 2026-11-24｜W58 执行
 
+### 20261124/w58/day-end｜跨日实测续接
+
+stage=waiting_W57_natural_release，selected_material=M1，slots=2，running=[]，attempts=0，completed=0，joint_distinct={}。最后观察 2026-11-24T23:59:21.189823+08:00。W57 同时段现场 {"time_shanghai": "2026-11-24T23:59:06.802100+08:00", "primary": "frozen_evaluations_running", "private_short_A": "ended", "pair": "series_finished_after_natural_episodes", "final": true, "panes": {"w57-actual-resources": 938043, "w57-direct-delivery-d57-route": 471161, "w57-frozen-evaluations": 175591, "w57-github-integration-reconciled": 471166, "w57-p-physical-outcomes-v2": 966437, "w57-shanghai-worklog": 946149}, "attempts": ["w57-m1-pr-a-original-e300-a01", "w57-m1-pr-b-original-e300-a01"], "clocks": {"w57-m1-pr-a-original-e300-a01": 206.00200000459148, "w57-m1-pr-b-original-e300-a01": 202.5020000044753}, "committed": {"full": 8192, "blind": 8192}, "updates": {"full": 32, "blind": 32}, "uncommitted": {"full": {"A": 0, "B": 0}, "blind": {"A": 0, "B": 0}}}。
+
+
 ### 20261124/storage/D57-H-final｜归档最终核对
 
 D57 项目归档状态 completed；H 盘接收观测 2026-11-24T12:27:54+08:00，已核验新包 777 个、104136460669 字节，已凭 H 回执并复核 D57 源后清理 423775 个文件、131334857325 逻辑字节。接收实测并发任务峰值 24，D57 实测同时写出有效数据的进程峰值 23。一致 Git 快照核对了 29 个工作树和 64 个引用。W57 冻结双槽依自己的调度推进；首组 B 的 A/B 正式短重访分别为 8/12、8/12。已归档的活动输入、共享别名、四条 E600 基线、最终 checkpoint 与研究队列按引用保留。核验和逐路径索引位于 H:/MPC+RL/00_catalog/migration-20261123。[本次实测](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-20261123/latest.json)。
@@ -776,6 +781,17 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 四个主线身份 16 条及独立学习的匹配 blind 4 条均已形成结果，20 条达到 12/12 的数量为 0。独立 private P/A 短重访和早期 M0 的 6/12、7/12 保留原判。新表同时给出各组原滑移积分、运动段正机械 CoT、峰值力、应变及描述性配对差；W58 的 v2 验证与三学习 seed 此时均未启动。[M1 完整配对结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/paired-mechanisms.json)。
 
 本次估时采用 D57 的真实计时。相近 P/A、P/B、PR/A 的原 E60 分别需 30.49、29.33、30.03 分钟；历史 r60 的原 E300 约 2.03–2.07 小时、E600 约 4.14–4.19 小时；用本轮 E60 同身份耗时及分相位速度外推，两个长阶段在并行时合计约 8.5–9.4 小时。近期两条 196 s 对照在串行发布器上从上一条核验完成到本条核验完成分别用约 30、32 分钟。估算用于交付安排，后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false；每条长任务和 Release 仍分别以自然终态和远端 size/digest 回执入账。
+
+## 2026-11-25｜W58 执行
+
+### 20261125/w58/material-selected｜保留轨迹与估计器选择
+
+选择 M1。各保留轨迹单列释放→跨足重载、短预测误差、区间覆盖与宽度，见[选择](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m/selection.json)和[分族指标](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m2/errors-and-coverage.json)。
+
+
+### 20261125/w58/stage/waiting_W57_natural_release｜调度与实测进度
+
+stage=waiting_W57_natural_release，selected_material=M1，slots=2，running=[]，attempts=0，completed=0，joint_distinct={}。W57 两个物理槽归原配对采样、冻结评价及独立 private-short-A dispatcher 使用。。运行快照 {"time_shanghai": "2026-11-24T23:59:36.854836+08:00", "primary": "frozen_evaluations_running", "private_short_A": "ended", "pair": "series_finished_after_natural_episodes", "final": true, "panes": {"w57-actual-resources": 938043, "w57-direct-delivery-d57-route": 471161, "w57-frozen-evaluations": 175591, "w57-github-integration-reconciled": 471166, "w57-p-physical-outcomes-v2": 966437, "w57-shanghai-worklog": 946149}, "attempts": ["w57-m1-pr-a-original-e300-a01", "w57-m1-pr-b-original-e300-a01"], "clocks": {"w57-m1-pr-a-original-e300-a01": 207.50200000464127, "w57-m1-pr-b-original-e300-a01": 203.0020000044919}, "committed": {"full": 8192, "blind": 8192}, "updates": {"full": 32, "blind": 32}, "uncommitted": {"full": {"A": 0, "B": 0}, "blind": {"A": 0, "B": 0}}}。
 
 ## 以后每天如何追加
 
