@@ -712,6 +712,10 @@ stage=waiting_W57_natural_release，selected_material=M1，slots=2，running=[]�
 
 此前主线五身份 A/B 共 10 条原 E30 均通过。旧机制 P 的 A/B 短重访各跑满 100 s，分别确认 7/12、6/12，分别在物理 79.012 s、79.394 s 完成回家，两个机制目标都未达标。独立 private P/A 为 6/12，自有原 E30、E60 均通过。B 恢复重访 A/B 分别为 6/12、11/12。R 的 full、blind 各 8192 条、32 次更新和自然尾回合已完成，冻结 PR 的短重访为 5/12、10/12。当前 PR 使用两个冻结模块，W58 三 seed 的联合训练仍为 0。[六槽实测与各臂身份](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/nov24-six-slot-observation.json) · [实时调度](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/evaluation-parallelism.json) · [各回合结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/episodes/index.json)。
 
+### 20261124/w57/first-natural-six-slot-refill｜原 E60 完成及自动补位
+
+12:06:01，B/A 原 E60 在 60 个物理秒自然通过。12:06:05，同组 B/B 取到刚释放的槽 5，间隔 3.15 个墙钟秒。新物理 PID 403719、runner 403715；12:07:17 写入 7.196 个物理秒。在途其余五条的物理 PID 全数延续，实测并发重新达到六条。[补位回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/nov24-six-slot-observation.json)。
+
 ### 20261124/storage/H-receiver-reboot-and-direct-release｜H 盘接续及 D57 原件发布
 
 上海时间 02:01 起 H 盘 USB 存储出现重置，07:39 Windows 重新启动。原接收后台退出，D57 的冻结物理继续。重新确认 H 盘 NTFS 卷 6063F4DA，沿用原清单和路径，逐个核验成员，11:21:32 完成 777 个本轮新包共 104,136,460,669 字节，剩余新传输 0 字节。重启后重新从 H 盘读取 777 个新包，并复读本次获准清理涉及的 4 个既有包，共 781 个 SHA-256 及 105,196,094,294 字节。12:04:56 后台处于 verified_retirement，累计移除 261,012 个已核验且此刻无依赖的源文件，已释放分配字节 112,304,443,904。最终逐路径清单、仍在用原件和 D57 核对以归档收尾回执为准。
