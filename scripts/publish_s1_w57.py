@@ -40,11 +40,13 @@ def transient_transfer(message):
     message = message.lower()
     return message.rstrip().endswith('eof') or any(reason in message for reason in (
         'tls handshake timeout', 'connection reset', 'unexpected eof', 'http 502',
-        'http 503', 'http 504', 'i/o timeout', 'connection timed out'))
+        'http 503', 'http 504', 'i/o timeout', 'connection timed out',
+        'error connecting to api.github.com', 'error connecting to uploads.github.com'))
 
 
 def gh(*args):
-    for route in ('direct', 'academic', 'direct'):
+    # The PC tunnel is only for authenticated small GETs after D57 route failures.
+    for route in ('direct', 'academic', 'direct', 'pc'):
         result = network_gh(route, *args)
         if result.returncode == 0:
             return result.stdout.strip()
