@@ -169,7 +169,8 @@ def originals(label, paths, video=None):
     dest=SMALL/'delivery'/(label+'.json')
     release,existing=release_assets()
     prior=read(dest) if dest.exists() else None
-    if prior and prior.get('local_retention',{}).get('removed_mpc_files'):
+    retention = (prior or {}).get('local_retention', {})
+    if retention.get('removed_mpc_files') or retention.get('H_process_20261124'):
         # This episode's published ZIPs precede the verified local inode cleanup.
         # Reuse those exact assets when finalizing or explicitly republishing it.
         for receipt in prior['assets']:
