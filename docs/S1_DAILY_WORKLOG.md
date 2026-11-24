@@ -747,6 +747,16 @@ P/B 在 13:51:56、P/A 在 13:59:26 自然跑满 196 物理秒。按 A/B 顺序�
 
 D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留。清单改为逐页读取，单个新分片找到后立即核对 size、SHA-256 及 uploaded 状态；仅在远端确认同名对象缺失且遇到传输中断时才在另一条 D57 路线上继续。D57 原生直连、学术加速均遇到断连时，小型元数据 GET 可使用既有电脑代理的回环 SSH 隧道。该通道随 W57 发布收尾自然结束，原件与视频通过 D57 直接上传。恢复后 blind/A 196 s 原件已续至 5 个资产回执，第 2 至 4 片分别核对 523,275,812、463,776,289 和 529,991,718 字节。时间与计数仅归属此观测。H 盘前一轮归档已于中午闭合。[D57 直传回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/delivery/w57-m1-blind-a-recovered-a01.json)。
 
+### 20261124/w57/p-e60-ab-passed-and-blind-b-originals｜P 的 A/B 原 E60 通过，PR/B 持续推进，blind/B 原件按摘要续传
+
+上海时间 17:59:04 同时开始的两个 P 自有冻结资格均自然通过。B 于 18:28:32、A 于 18:29:42 结束，各记录 60 个物理秒。A、B 首次完成任务分别为物理 40.00 s 和 40.48 s，结束时距原点 7.74 mm 和 6.99 mm。主线五身份的 A/B 原 E30 共 10/10 通过，原 E60 共 9/10 通过，余下 PR/B；独立 private P/A 的原 E60 另计。机制正式回合已完成 19/20，所有已完成回合的同格跨足评分均低于 12/12。
+
+两个 E60 都与同 case、同一物理结束时刻且同样成功的 B 作配对，采样时钟最大差为 0 s。P 的材料候选实际接上后续物理的次数为 A 838、B 840。相对 B，原任务滑移积分分别变化 -3.15%、-2.57%，运动段正机械 CoT 变化 -0.13%、-0.42%，峰值主应变变化 +2.79%、-13.79%。两组确定性配对给出方向和量级。材料历史的独立贡献仍由另行冻结的 full/private-blind 机制检验。[A 原 E60 配对](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/p/physical/w57-m1-p-a-original-e60-a01-paired-B.json) · [B 原 E60 配对](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/p/physical/w57-m1-p-b-original-e60-a01-paired-B.json)。
+
+18:55:53 实开一个物理槽，恢复后重访 w57-m1-pr-b-recovered-a01 仍用原 PID 420634，已达 105.08/196 s。P 的两个槽随各自回合自然释放。调度上限仍为六；下一个常规物理任务是 PR/B 自身原 E60。原调度 w57-frozen-evaluations（PID 175591）在整组资格就绪后判定 E300，后续 E600 取决于本 case 的 E300。此时二者实际启动数均为 0。W58 物理为 0，未产生新 PPO 转移，后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。[实际调度](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/evaluation-parallelism.json)。
+
+18:35:13，GitHub 为 blind/B 恢复重访的首片登记 ID 786741793，上传中断后状态一直为 starter，digest 为空。D57 独占原发布锁，按已完成原回合重建同一分片，核对卷大小、所有者和同一远端 ID，保留旧对象及其独立名称。代码将这种未完成对象和真正的已上传字节不匹配分开处理。D57 从保存原件恢复正式名称，新资产 ID 786794465，大小 523,073,880 B，摘要 sha256:98490bbc9d0c9f0aa0cf6295f04bd2963d784bd3d8638b5c36cb51b320416436。18:54:45 复核新对象的大小、摘要及 uploaded 状态，后续分片继续。物理 worker、冻结控制器和原资格调度均持续运行。本次没有新增 H 盘迁移。[原对象及替换回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/release-interruptions/w57-m1-blind-b-recovered-a01-originals-001.zip.json) · [W57 Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w57)。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
