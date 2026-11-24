@@ -1,5 +1,7 @@
 # 地面材料记忆项目 · W57实际进展与W58后继入口
 
+2026-11-24 并发修订。W57 的 full/blind 均完成 8192 条及自然尾回合，用户随后要求在条件允许时将独立冻结评价扩到六个物理槽。当前 W57 评价按同一共享租约做 2→4→条件 6 的实测扩容，保留原 dispatcher 的资格判定及逐 case 身份。此前要求等待 W57 自然结束的条款继续适用于 W58 物理迁移。[评价调度合同](../experiments/terrain_memory/s1-w57-frozen-evaluation-slots.json) · [实际物理进度](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/evaluation-parallelism.json)。
+
 更新：2026-11-23，Asia/Shanghai。固定审查fd4ede8d、19:20:56 +08；真实现场继续核current/index/job。本次新增算法执行、机器人物理和PPO为0，完成的是审查与后继计划发布。
 
 11 月 23 日 D57 已进入 W58 独立开发。v2 的 12 个前向真实同格事件和独立验证路线均已冻结。新资格、已完成回放、共同 G/M 选择及 W57 当前后继的实测状态见[W58 索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/index.json)与[每日实验记录](S1_DAILY_WORKLOG.md)。
