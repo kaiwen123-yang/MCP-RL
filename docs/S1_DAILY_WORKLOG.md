@@ -688,6 +688,11 @@ full 入账 768 条、3 次更新，实际改变交接时刻 305 次，只改变
 截至入账，按 GitHub size/digest 得到的本日新增资产回执共 95 个，20,920,677,002 B。源码和紧凑记录基线 `e4d923c7deee`。物理槽、前序资格、仍在执行或等待的模块与发布资产详见 [W57 索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
 ## 2026-11-24｜W58 执行
 
+### 20261124/storage/D57-H-final｜归档最终核对
+
+D57 项目归档状态 completed；H 盘接收观测 2026-11-24T12:27:54+08:00，已核验新包 777 个、104136460669 字节，已凭 H 回执并复核 D57 源后清理 423775 个文件、131334857325 逻辑字节。接收实测并发任务峰值 24，D57 实测同时写出有效数据的进程峰值 23。一致 Git 快照核对了 29 个工作树和 64 个引用。W57 冻结双槽依自己的调度推进；首组 B 的 A/B 正式短重访分别为 8/12、8/12。已归档的活动输入、共享别名、四条 E600 基线、最终 checkpoint 与研究队列按引用保留。核验和逐路径索引位于 H:/MPC+RL/00_catalog/migration-20261123。[本次实测](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-20261123/latest.json)。
+
+
 ### 20261124/storage/D57-H-parallel-running｜跨日归档、训练与实际并发
 
 D57 项目归档状态 running；H 盘接收观测 2026-11-24T00:29:30+08:00，已核验新包 267 个、38374662726 字节，已凭 H 回执并复核 D57 源后清理 74773 个文件、90153680564 逻辑字节。接收实测并发任务峰值 12，D57 实测同时写出有效数据的进程峰值 8。一致 Git 快照核对了 29 个工作树和 64 个引用。W57 冻结双槽依自己的调度推进；首组 B 的 A/B 正式短重访分别为 8/12、8/12。已归档的活动输入、共享别名、四条 E600 基线、最终 checkpoint 与研究队列按引用保留。核验和逐路径索引位于 H:/MPC+RL/00_catalog/migration-20261123。[本次实测](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-20261123/latest.json)。
