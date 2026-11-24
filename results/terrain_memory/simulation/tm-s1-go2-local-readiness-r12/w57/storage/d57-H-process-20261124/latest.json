@@ -1,7 +1,7 @@
 {
-  "event_id": "20261125/storage/process-H-20261124-running",
-  "state": "running",
-  "as_of_shanghai": "2026-11-25T00:05:52+08:00",
+  "event_id": "20261125/storage/process-H-20261124-final",
+  "state": "completed",
+  "as_of_shanghai": "2026-11-25T01:34:42+08:00",
   "watermark": "2026-11-24T22:52:14+08:00",
   "selected": 251203,
   "selected_logical_bytes": 107887511720,
@@ -33,31 +33,31 @@
     "new_verified_source_bytes": 45360007528,
     "remaining_new_source_bytes": 0
   },
-  "H_receiver": "final_H_readback_before_deletion",
+  "H_receiver": "archive_and_retirement_complete; publishing_compact_receipt",
   "D57_measured_peak_concurrent_payload_writers": 15,
   "latest_D57_sample": {
-    "at": "2026-11-25T00:06:20+08:00",
+    "at": "2026-11-25T01:34:53+08:00",
     "payload_writer_pids": [],
     "writing_in_both_samples": 0,
     "alive_pack_processes": 0,
     "D57_pipe_MiB_s": 0.0,
-    "cpu_cores_used": 4.61,
+    "cpu_cores_used": 6.17,
     "physics": {
-      "w57-m1-pr-a-original-e300-a01": [
-        218.50200000500644,
+      "w57-m1-pr-b-original-e600-a01": [
+        83.00200000050832,
         "return"
       ],
-      "w57-m1-pr-b-original-e300-a01": [
-        218.50200000500644,
+      "w57-m1-pr-a-original-e600-a01": [
+        82.00200000047512,
         "return"
       ]
     },
     "deadline": null,
     "wall_deadline_enabled": false,
     "kill_on_conversation_end": false,
-    "md0_read_await_ms": 0.46,
-    "md0_write_await_ms": 1.86,
-    "md0_device_busy_pct": 5.49,
+    "md0_read_await_ms": 0.0,
+    "md0_write_await_ms": 7.01,
+    "md0_device_busy_pct": 3.49,
     "md0_io_in_flight": 0
   },
   "D57_transfer_tmux": "mcp-rl-process-transfer-20261124",
@@ -198,5 +198,55 @@
   ],
   "deadline": null,
   "wall_deadline_enabled": false,
-  "kill_on_conversation_end": false
+  "kill_on_conversation_end": false,
+  "final": {
+    "status": "completed",
+    "finished_shanghai": "2026-11-25T01:34:42+08:00",
+    "watermark": "2026-11-24T22:52:14+08:00",
+    "archived_files": 251203,
+    "archive_logical_bytes": 107887511720,
+    "verified_groups": [
+      [
+        "new_D57_pack",
+        200278,
+        45726872157
+      ],
+      [
+        "reused_H_archive",
+        50925,
+        62160639563
+      ]
+    ],
+    "verified_new_H_bytes": 44050766949,
+    "new_packs": 321,
+    "reused_H_archives": 579,
+    "removed_files": 251203,
+    "removed_logical_bytes": 107887511720,
+    "released_allocated_bytes": 108215533056,
+    "released_per_mount": {
+      "scratch": 85113163776,
+      "personal": 23102369280
+    },
+    "server_outcomes": [
+      [
+        "removed",
+        251203,
+        107887511720
+      ]
+    ],
+    "protected_path_unlinks": 0,
+    "regenerated_paths": [],
+    "checked_reference_trees": 20,
+    "unverified_versions": 0,
+    "remaining_new_transfer_bytes": 0,
+    "scratch_free_bytes": 170852327424,
+    "personal_free_bytes": 148928245760,
+    "personal_free_nodes": 194810,
+    "catalog": "H:\\MPC+RL\\00_catalog\\migration-20261124-process\\archive-index.sqlite",
+    "catalog_sha256": "7a060e98e9e5ee0888edcc83e83ff1e3d3c60c01b71eb7114f09fe7857af2284",
+    "restore": "读取原件.py",
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_on_conversation_end": false
+  }
 }
