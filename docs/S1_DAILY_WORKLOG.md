@@ -785,6 +785,50 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 
 截至这次核验，D57 核对了 550 个不同 Release 资产，原件和视频仍在连续直传。E300 前 15 个物理秒分别耗时约 8.84、8.53 分钟，同一 PR 身份原 E60 的对应时段约 9.07、8.42 分钟。后续 ETA 参考历史原 E300/E600 的分阶段成本、当前 A/B 的实测速率及串行 Release 吞吐。物理终态与完整发布分别入账。[执行与交付索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
 
+### W57 当日实验入账（2026-11-24，Asia/Shanghai）
+
+累计账本使用独立 attempt 和 head/case/version/serial。本日启动 31 个自然任务，结束 31 个。结束任务共有 17,750,000 个已记录物理子步、269087.08 CPU 核秒。这两个量按结束日归集，同一跨日任务计一次。
+
+| attempt | 控制 / 环境 case | 任务 | 实际物理时间（s） | 结果 |
+| --- | --- | --- | ---: | --- |
+| `w57-m1-p-a-short-a01` | P/M1 · A | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-p-b-short-a01` | P/M1 · B | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-r-a-short-a01` | R/M1 · A | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-r-b-short-a01` | R/M1 · B | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-p-a-private-original-e30-a01` | P/M1 · A | 原 E30 | 30.0000 | passed · stage_passed |
+| `w57-m1-pr-a-short-a01` | PR/M1 · A | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-pr-b-short-a01` | PR/M1 · B | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-blind-a-short-a01` | blind/M1 · A | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-p-a-private-short-a01` | P/M1 · A | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-p-a-private-original-e60-a01` | P/M1 · A | 原 E60 | 60.0000 | passed · stage_passed |
+| `w57-m1-blind-b-short-a01` | blind/M1 · B | short | 100.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-b-a-recovered-a01` | B/M1 · A | recovered | 196.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-b-b-recovered-a01` | B/M1 · B | recovered | 196.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-b-a-original-e60-a01` | B/M1 · A | 原 E60 | 60.0000 | passed · stage_passed |
+| `w57-m1-b-b-original-e60-a01` | B/M1 · B | 原 E60 | 60.0000 | passed · stage_passed |
+| `w57-m1-blind-a-recovered-a01` | blind/M1 · A | recovered | 196.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-blind-b-recovered-a01` | blind/M1 · B | recovered | 196.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-p-b-recovered-a01` | P/M1 · B | recovered | 196.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-p-a-recovered-a01` | P/M1 · A | recovered | 196.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-blind-a-original-e60-a01` | blind/M1 · A | 原 E60 | 60.0000 | passed · stage_passed |
+| `w57-m1-blind-b-original-e60-a01` | blind/M1 · B | 原 E60 | 60.0000 | passed · stage_passed |
+| `w57-m1-r-a-recovered-a01` | R/M1 · A | recovered | 196.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-r-b-recovered-a01` | R/M1 · B | recovered | 196.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-r-a-original-e60-a01` | R/M1 · A | 原 E60 | 60.0000 | passed · stage_passed |
+| `w57-m1-r-b-original-e60-a01` | R/M1 · B | 原 E60 | 60.0000 | passed · stage_passed |
+| `w57-m1-pr-a-recovered-a01` | PR/M1 · A | recovered | 196.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-pr-a-original-e60-a01` | PR/M1 · A | 原 E60 | 60.0000 | passed · stage_passed |
+| `w57-m1-p-b-original-e60-a01` | P/M1 · B | 原 E60 | 60.0000 | passed · stage_passed |
+| `w57-m1-p-a-original-e60-a01` | P/M1 · A | 原 E60 | 60.0000 | passed · stage_passed |
+| `w57-m1-pr-b-recovered-a01` | PR/M1 · B | recovered | 196.0000 | mechanism_criteria_unmet · stage_horizon_reached |
+| `w57-m1-pr-b-original-e60-a01` | PR/M1 · B | 原 E60 | 60.0000 | passed · stage_passed |
+
+本日闭合的 on-policy 批次含 0 条 distinct 转移，旧 W44 速度策略更新 0。样本以同版本两个 128 段交齐并产生优化更新的日期入账。跨日未闭合段保留原序列编号。
+
+跨日继续的唯一任务为 `w57-m1-pr-a-original-e300-a01`、`w57-m1-pr-b-original-e300-a01`。
+
+截至入账，按 GitHub size/digest 得到的本日新增资产回执共 409 个，109,565,024,259 B。源码和紧凑记录基线 `f5f195a1b2d2`。物理槽、前序资格、仍在执行或等待的模块与发布资产详见 [W57 索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
