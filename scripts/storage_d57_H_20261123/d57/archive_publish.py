@@ -49,10 +49,17 @@ def publish(record,final=False):
             q=COMPACT/'delivery'/(name+'.json');rel=str(q.relative_to(BASE/'MCP-RL-w57'))
             prior=blob(parent,rel)
             if prior:
-                d=json.loads(prior);src=read(q)
-                if d['assets']==src['assets']:
-                    for k in ('originals_retained','originals_retained_at_verification','local_retention'):d[k]=src[k]
-                    updates[rel]=(json.dumps(d,indent=2,ensure_ascii=False)+'\n').encode()
+                upstream=json.loads(prior)
+                local_bytes=q.read_bytes()
+                local=json.loads(local_bytes)
+                if upstream['assets']==local['assets']:
+                    for key in ('originals_retained','originals_retained_at_verification','local_retention'):
+                        upstream[key]=local[key]
+                    # Keep the live receipt byte-for-byte when only the order of its fields differs.
+                    if upstream==local:
+                        updates[rel]=local_bytes
+                    else:
+                        updates[rel]=(json.dumps(upstream,indent=2,ensure_ascii=False)+'\n').encode()
     for path,content in updates.items():
         oid=git('hash-object','-w','--stdin',inp=content).stdout.decode().strip()
         git('update-index','--add','--cacheinfo','100644,'+oid+','+path,env=env)
