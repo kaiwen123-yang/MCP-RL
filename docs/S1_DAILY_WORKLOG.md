@@ -590,7 +590,6 @@ D57 延续 W57 的两槽 campaign。现场记录时间 2026-11-23T20:02:53.63847
 
 main更新至cf2c7521（2026-11-23 19:36:06 +08）后已安全fast-forward，未覆盖执行端新增attempt/发布/动态索引。130真实启动、126passed/2机制未达标/2running、完成38,350,000子步；full8192，blind7424committed+82partial，仍executing，冻结资格未变。核心分析继续固定fd4快照，单独保存publication-refresh.json，避免把运行中快照静默替换为已结束。新增代码/报告文件的JSON、Python语法、相对链接、证据SHA清单和差异格式核对完成后发布；未重跑仿真、训练或旧证据实验。
 
-<<<<<<< HEAD
 ### W57 当日实验入账（2026-11-23，Asia/Shanghai）
 
 累计账本使用独立 attempt 和 head/case/version/serial。本日启动 82 个自然任务，结束 82 个。结束任务共有 23,350,000 个已记录物理子步、119789.37 CPU 核秒。这两个量按结束日归集，同一跨日任务计一次。
@@ -687,7 +686,6 @@ full 入账 768 条、3 次更新，实际改变交接时刻 305 次，只改变
 跨日继续的唯一任务为 `w57-m1-p-a-short-a01`、`w57-m1-p-b-short-a01`。
 
 截至入账，按 GitHub size/digest 得到的本日新增资产回执共 95 个，20,920,677,002 B。源码和紧凑记录基线 `e4d923c7deee`。物理槽、前序资格、仍在执行或等待的模块与发布资产详见 [W57 索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
-=======
 ## 2026-11-24｜W58 执行
 
 ### 20261124/storage/D57-H-parallel-running｜跨日归档、训练与实际并发
@@ -703,7 +701,26 @@ D57 项目归档状态 running；H 盘接收观测 2026-11-24T00:29:30+08:00，�
 ### 20261124/w58/stage/waiting_W57_natural_release｜调度与实测进度
 
 stage=waiting_W57_natural_release，selected_material=M1，slots=2，running=[]，attempts=0，completed=0，joint_distinct={}。W57 两个物理槽归原配对采样、冻结评价及独立 private-short-A dispatcher 使用。。运行快照 {"time_shanghai": "2026-11-24T00:00:09.969369+08:00", "primary": "frozen_evaluations_running", "private_short_A": "waiting_for_full_short_A_evidence", "pair": "series_finished_after_natural_episodes", "final": true, "panes": {"w57-actual-resources": 938043, "w57-direct-delivery-scratch-inodes": 175631, "w57-frozen-evaluations": 175591, "w57-github-integration-eof": 120544, "w57-p-physical-outcomes-v2": 966437, "w57-private-short-A": 968025, "w57-shanghai-worklog": 946149}, "attempts": ["w57-m1-p-a-short-a01", "w57-m1-p-b-short-a01"], "clocks": {"w57-m1-p-a-short-a01": 23.501999999971904, "w57-m1-p-b-short-a01": 23.501999999971904}, "committed": {"full": 8192, "blind": 8192}, "updates": {"full": 32, "blind": 32}, "uncommitted": {"full": {"A": 0, "B": 0}, "blind": {"A": 0, "B": 0}}}。
->>>>>>> origin/main
+
+### 20261124/w57/frozen-evaluation-six-slots｜W57 冻结评价由两槽逐级扩到六槽
+
+上海时间 11:41:25，原 P/A、P/B 的 196 s 恢复重访继续在原槽 0/1 运行，新增匹配 blind/A、blind/B。11:43:39，四流的真实物理时钟通过吞吐检查后，槽 4 接入冻结 PR/A 恢复重访，槽 5 接入 B/A 自己的原 E60。新增任务均沿用既有 attempt 编号、源码、构建、checkpoint、标准化和路线，原 dispatcher PID 175591 负责资格及后继。六条流首次都测到正物理时钟为 11:43:51，至 12:04:03 同一批 PID 已连续推进超过 20 分钟。最后物理时钟为 P/A 101.30 s（PID 375037）、P/B 107.66 s（PID 375136）、BLIND/A 38.80 s（PID 397333）、BLIND/B 38.18 s（PID 397337）、PR/A 21.82 s（PID 397926）、B/A 51.00 s（PID 397930）。前五条目标 196 s，B/A 原资格目标 60 s。新训练转移 0。
+
+单纯相加物理秒会混入早期刚地和后续材料段的成本差异。以同 case、同模拟时段的存档成本折算，四槽参考窗口为 11:41:37 至 11:43:38。最近两段互不重叠的六槽窗口总吞吐分别提高 36.3% 和 36.4%，共同四条流合计保留 91.1% 和 86.5% 的参考速率。11:49 至 11:54 的两段里 P/A 的折算速率曾降到四槽的约 74%，调度器临时暂停额外补位，六条仿真继续前进。补齐 B/A 超过 30 s 后的 r60 原 E60 日志引用并按同一门槛复核，12:02:50 恢复六槽补位。参考身份和实际轨迹之间仍有差异。结果用于调度，控制/材料效果继续按各自完整回合评价。
+
+12:04:03 的整组 CPU 使用 11.0/25 核，计入可回收文件缓存的 RAM 余量 19.9 GiB，GPU 可用 92825 MiB，CPU/内存/I/O 压力采样分别为 0.00%、0.00%、2.20%。调度器工作树为 MCP-RL-w57，tmux 会话 w57-frozen-wide，PID 402172，代码版本 6183f46ad635。共享原调度锁和编号租约，规划器四个原生材料 worker 计入预算。条件不足时在途回合自然结束。W58 仍等 W57 全部物理和 dispatcher 自然结束，再按自己的实测启用 3 至 6 槽。
+
+此前主线五身份 A/B 共 10 条原 E30 均通过。旧机制 P 的 A/B 短重访各跑满 100 s，分别确认 7/12、6/12，分别在物理 79.012 s、79.394 s 完成回家，两个机制目标都未达标。独立 private P/A 为 6/12，自有原 E30、E60 均通过。B 恢复重访 A/B 分别为 6/12、11/12。R 的 full、blind 各 8192 条、32 次更新和自然尾回合已完成，冻结 PR 的短重访为 5/12、10/12。当前 PR 使用两个冻结模块，W58 三 seed 的联合训练仍为 0。[六槽实测与各臂身份](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/nov24-six-slot-observation.json) · [实时调度](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/evaluation-parallelism.json) · [各回合结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/episodes/index.json)。
+
+### 20261124/w57/first-natural-six-slot-refill｜原 E60 完成及自动补位
+
+12:06:01，B/A 原 E60 在 60 个物理秒自然通过。12:06:05，同组 B/B 取到刚释放的槽 5，间隔 3.15 个墙钟秒。新物理 PID 403719、runner 403715；12:07:17 写入 7.196 个物理秒。在途其余五条的物理 PID 全数延续，实测并发重新达到六条。[补位回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/nov24-six-slot-observation.json)。
+
+### 20261124/storage/H-receiver-reboot-and-direct-release｜H 盘接续及 D57 原件发布
+
+上海时间 02:01 起 H 盘 USB 存储出现重置，07:39 Windows 重新启动。原接收后台退出，D57 的冻结物理继续。重新确认 H 盘 NTFS 卷 6063F4DA，沿用原清单和路径，逐个核验成员，11:21:32 完成 777 个本轮新包共 104,136,460,669 字节，剩余新传输 0 字节。重启后重新从 H 盘读取 777 个新包，并复读本次获准清理涉及的 4 个既有包，共 781 个 SHA-256 及 105,196,094,294 字节。12:04:56 后台处于 verified_retirement，累计移除 261,012 个已核验且此刻无依赖的源文件，已释放分配字节 112,304,443,904。最终逐路径清单、仍在用原件和 D57 核对以归档收尾回执为准。
+
+D57 发布器从原件直传。PR/A 短重访的第 2 片曾在 GitHub 留下无 digest 的 starter，保留旧对象并恢复原名发布后，11:24:58 已核验全部四片和 MP4 的 size/digest。物理回合沿用原 attempt。[H 盘复读回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-20261123/post-usb-readback-20261124.json) · [PR/A Release 资产回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/release-starter-20261124.json)。
 
 ## 以后每天如何追加
 
