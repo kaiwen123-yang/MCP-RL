@@ -14,7 +14,11 @@ def when(s):return datetime.fromisoformat(s).timestamp()
 @lru_cache(maxsize=32)
 def curve(name,historical=False):
     base=ROOT.parent/'MCP-RL-w56-r60/outputs/terrain_memory/simulation'/RAW.name if historical else RAW
-    p=base/'jobs'/name/'physics.log'
+    if historical:
+        job=name.split('-eval-',1)[0]
+        p=base/'jobs'/job/(name+'.log')
+    else:
+        p=base/'jobs'/name/'physics.log'
     if not p.is_file():return [],[]
     rows=[]
     for line in p.read_text(errors='replace').splitlines():
@@ -34,6 +38,12 @@ def cost(name,t,historical=False):
 class PhaseComparison:
     def __init__(self):
         grants=[json.loads(l) for l in (LOG/'events.jsonl').read_text().splitlines() if '"lease_granted"' in l]
+        calibration=LOG/'initial-route-cost.json'
+        if calibration.is_file():
+            saved=read(calibration)
+            self.calibration=saved['factor']
+            self.pair_end=saved['pair_end']
+            return
         cutoff=when(grants[0]['at'])
         names=['w57-m1-p-'+c+'-recovered-a01' for c in 'ab']
         with (RAW/'w57/resource-trace.jsonl').open('rb') as f:
@@ -48,6 +58,11 @@ class PhaseComparison:
             b=n.replace('-p-','-b-')
             self.calibration[n]=(end['unix_s']-start['unix_s'])/(cost(b,t1)-cost(b,t0))
             self.pair_end[n]=t1
+        saved=dict(first_grant=grants[0]['at'],start_unix=start['unix_s'],end_unix=end['unix_s'],
+                   factor=self.calibration,pair_end=self.pair_end)
+        temporary=calibration.with_suffix('.tmp')
+        temporary.write_text(json.dumps(saved,indent=2)+'\n')
+        temporary.replace(calibration)
     def interval(self,n,t0,t1):
         _,_,arm,c,mode,*_=n.split('-')
         if mode=='recovered':
