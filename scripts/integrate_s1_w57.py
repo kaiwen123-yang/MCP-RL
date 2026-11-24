@@ -90,8 +90,10 @@ def recover_publication():
     if active_publisher() or read(R/'dispatch/frozen-evaluations.json')['stage']=='queue_ended':return
     log=WORK/'direct-delivery.log'
     tail=log.read_bytes()[-5500:].decode(errors='replace') if log.exists() else ''
-    last_error=next((s for s in reversed(tail.splitlines()) if s.startswith('RuntimeError:')), '')
-    if transient_transfer(last_error) or 'http 422' in last_error.lower():
+    last_error=next((s for s in reversed(tail.splitlines())
+                     if s.partition(':')[0].endswith('Error')), '')
+    if (transient_transfer(last_error) or 'http 422' in last_error.lower() or
+            last_error.startswith('RuntimeError: Interrupted GitHub upload pending a new D57 connection:')):
         command=('source scripts/autodl_d57_env.sh && source scripts/autodl_network.sh direct >/dev/null'
                  ' && exec taskset -c 16-19 python -u scripts/publish_s1_w57.py follow-episodes >>work/w57/direct-delivery.log 2>&1')
         subprocess.run(['tmux','new-session','-d','-s','w57-direct-delivery-d57-route','-c',str(ROOT),command],check=True)
