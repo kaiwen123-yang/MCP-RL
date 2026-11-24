@@ -1,5 +1,6 @@
 """Direct D57 publication of W57 originals, videos and verified GitHub Release receipts."""
 import argparse
+from datetime import datetime
 import fcntl
 import hashlib
 import json
@@ -72,28 +73,96 @@ def release_assets(name=None):
         page += 1
 
 
+def asset_by_id(asset_id):
+    endpoint = f'repos/{REPO}/releases/assets/{asset_id}'
+    return json.loads(gh('api', '-H', 'Cache-Control: no-cache', endpoint))
+
+
+def preserve_starter(row, name, size, checksum):
+    """Release this name only for the unfinished upload of the exact local part."""
+    if row is None or row['state'] != 'starter' or row.get('digest'):
+        return row
+    asset_id = row['id']
+    part = Path(name)
+    retained = f'{part.stem}-incomplete-upload-{asset_id}{part.suffix}'
+    endpoint = f'repos/{REPO}/releases/assets/{asset_id}'
+    # Every W57 sender holds publish.lock and waits synchronously for its upload client.
+    # Give a fresh server-side state one normal publisher poll to settle, then reread the ID.
+    current = asset_by_id(asset_id)
+    while current['name'] == name and current['state'] == 'starter' and not current.get('digest'):
+        updated = datetime.fromisoformat(current['updated_at'].replace('Z', '+00:00')).timestamp()
+        wait = 30 - (time.time()-updated)
+        if wait <= 0:
+            break
+        time.sleep(min(30, wait + 0.1))
+        current = asset_by_id(asset_id)
+    if current['name'] == retained:
+        return release_assets(name)[1].get(name)
+    if current['name'] != name:
+        raise ValueError(f'Unexpected name for GitHub asset {asset_id}: {current["name"]}')
+    if current['state'] != 'starter' or current.get('digest'):
+        return current
+    if current['size'] not in (0, size) or current['uploader']['login'] != REPO.split('/')[0]:
+        raise ValueError(f'Unfinished asset differs from the declared W57 upload: {name} ({asset_id})')
+    note = SMALL/'dispatch'/'release-interruptions'/(name+'.json')
+    receipt = read(note) if note.exists() else dict(name=name, expected_size=size, expected_digest=checksum,
+                                                    retained={}, deadline=None, wall_deadline_enabled=False,
+                                                    kill_on_conversation_end=False)
+    if (receipt['expected_size'], receipt['expected_digest']) != (size, checksum):
+        raise ValueError(f'Original bytes changed during W57 publication: {name}')
+    receipt['retained'][str(asset_id)] = dict(before={k:current.get(k) for k in
+        ('name','state','size','digest','created_at','updated_at')}, retained_name=retained,
+        observed_unix_s=time.time(), confirmed=False)
+    write(note, receipt)
+    for route in ('direct', 'academic'):
+        edit = network_gh(route, 'api', '--method', 'PATCH', endpoint, '-f', f'name={retained}')
+        final = asset_by_id(asset_id)
+        if final['name'] == retained:
+            receipt['retained'][str(asset_id)].update(confirmed=True, confirmed_unix_s=time.time(),
+                                                      state=final['state'], digest=final.get('digest'))
+            write(note, receipt)
+            print(f'Preserved interrupted asset {asset_id} as {retained}', flush=True)
+            return None
+        if final['name'] == name and (final['state'] != 'starter' or final.get('digest')):
+            return final
+        if final['name'] != name or route == 'academic' or not transient_transfer(edit.stderr):
+            raise RuntimeError(f'Could not preserve incomplete GitHub asset {asset_id}: {edit.stderr.strip()}')
+
+
 def transfer(path, name, release, existing):
-    size=path.stat().st_size
-    checksum='sha256:'+sha(path)
-    row=existing.get(name)
+    size = path.stat().st_size
+    checksum = 'sha256:'+sha(path)
+    original = existing.get(name)
+    row = preserve_starter(original, name, size, checksum)
     if row is None:
-        # gh uses the actual basename for an asset. A symlink in the transfer
-        # spool gives the separately playable MP4 its unique download filename.
-        for route in ('direct', 'academic'):
+        # An earlier native upload can leave a digestless reservation. Try the other D57 route first.
+        routes = ('academic','direct') if original and original['state']=='starter' else ('direct','academic')
+        for route in routes:
             proc = network_gh(route, 'release', 'upload', TAG, str(path), '-R', REPO)
             _, assets = release_assets(name)
-            row = assets.get(name)
+            fresh = assets.get(name)
+            row = preserve_starter(fresh, name, size, checksum)
             if row is not None:
                 break
+            if fresh is not None and fresh['state'] == 'starter':
+                if route == routes[-1]:
+                    raise RuntimeError(f'Interrupted GitHub upload pending a new D57 connection: {name}')
+                continue
             error = proc.stderr.strip()
-            if proc.returncode == 0 or not transient_transfer(error) or route == 'academic':
+            if proc.returncode == 0 or not transient_transfer(error) or route == routes[-1]:
                 raise RuntimeError(f'GitHub has no asset {name} after upload on {route}: {error}')
             print(f'{name} absent after interrupted upload on {route}: {error}', flush=True)
-        existing[name]=row
+        existing[name] = row
     if row['size']!=size or row.get('digest')!=checksum or row['state']!='uploaded':
         raise ValueError(f'Size/digest/state do not match the local original: {name}')
-    return dict(name=name,size=size,digest=checksum,url=row['browser_download_url'],
-                asset_id=row['id'],release=release['url'],verified_unix_s=time.time())
+    verified = dict(name=name,size=size,digest=checksum,url=row['browser_download_url'],
+                    asset_id=row['id'],release=release['url'],verified_unix_s=time.time())
+    note = SMALL/'dispatch'/'release-interruptions'/(name+'.json')
+    if note.exists():
+        receipt = read(note)
+        receipt['replacement'] = verified
+        write(note, receipt)
+    return verified
 
 
 def originals(label, paths, video=None):
