@@ -777,6 +777,14 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 
 本次估时采用 D57 的真实计时。相近 P/A、P/B、PR/A 的原 E60 分别需 30.49、29.33、30.03 分钟；历史 r60 的原 E300 约 2.03–2.07 小时、E600 约 4.14–4.19 小时；用本轮 E60 同身份耗时及分相位速度外推，两个长阶段在并行时合计约 8.5–9.4 小时。近期两条 196 s 对照在串行发布器上从上一条核验完成到本条核验完成分别用约 30、32 分钟。估算用于交付安排，后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false；每条长任务和 Release 仍分别以自然终态和远端 size/digest 回执入账。
 
+### 20261124/w57/pr-ab-e300-admitted｜PR/B 原 E60 通过，A/B 长资格正式放行
+
+上海时间 21:19:08，冻结 PR/B 在自己的原 E60 跑满 60 个物理秒并通过；从启动到终态耗时 29.46 分钟。物理 40.402 s 首次完成回家，终点距原点 7.48 mm。至此 B、P、R、冻结 PR 与匹配 blind 的 A/B 自有原 E30、E60 各 10/10 通过。已闭合的 20 条机制中 0 条达到 12/12；PR/B 恢复重访仍为 8/12。独立 private P/A 的资格另计，新增 PPO 转移 0。[原 E60 回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-m1-pr-b-original-e60-a01.json) · [机制配对表](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/paired-mechanisms.json)。
+
+原调度已写出 A、B 两份正式 eligible=true。两例分别满足自身原 E60、两个完整观察时长、实际同格跨足事件、实际材料候选及实际时序权限这五项条件。21:19:09，两条 E300 在原槽同时自然起步，共用冻结构建 S5-w57-pr-eaf3907797d2。21:29:05 按执行端物理记录实测为 A 17.65/300 s（槽 0，物理 PID 531095），B 18.31/300 s（槽 1，物理 PID 531097）；相隔两个以上墙钟分钟的两次记录中，两条均以原 PID 向前推进。补位调度器已自然退出，原资格 dispatcher w57-frozen-evaluations（PID 175591）持续接续，每个 case 通过自身 E300 后才可运行 E600。此时 E600 启动数 0，W58 物理回合 0。后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。[正式准入](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/final-qualification.json) · [A 原 E300](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-m1-pr-a-original-e300-a01.json) · [B 原 E300](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-m1-pr-b-original-e300-a01.json)。
+
+截至这次核验，D57 核对了 550 个不同 Release 资产，原件和视频仍在连续直传。E300 前 15 个物理秒分别耗时约 8.84、8.53 分钟，同一 PR 身份原 E60 的对应时段约 9.07、8.42 分钟。后续 ETA 参考历史原 E300/E600 的分阶段成本、当前 A/B 的实测速率及串行 Release 吞吐。物理终态与完整发布分别入账。[执行与交付索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
