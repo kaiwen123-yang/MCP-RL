@@ -29,7 +29,11 @@
     "additional_recovered_stream_peak_reservation_GiB": 3.25,
     "evaluation_ceiling_selection": "Select only additional work that fits sampled CPU/RAM/GPU/disk/I/O headroom after other projects and auxiliary jobs."
   },
-  "evidence": "At least 115 s of matched advancing physical clocks per trial. Use the running P pair as its own incumbent reference. A six-slot trial requires four real streams, aggregate increase of at least 15%, and incumbent pair retaining at least 85% of measured progress. Report the arm mix, variance with route phase and actual per-stream rates.",
+  "evidence": {
+    "four_to_six_trial": "Observe four real physical streams for at least 115 wall seconds. Require at least 15% more total physical progress than the initial pair and at least 85% retention of the original P pair rate.",
+    "six_readmission": "Compare two disjoint windows of at least 115 seconds against the actual four-slot window. Sum historical single-stream work at matched route, case and simulated time. Both totals must increase, common streams together must retain 85% in both, and a common stream must not fall below 75% in both. Record the raw rates, each individual ratio, reference attempts and resource headroom.",
+    "phase_references": "Recovered B traces define costs at the same physical clock. P estimates use calibration from the original P pair before the first expansion. PR uses its observed P reference where available. Original E60 uses its own E30 through 30 s, then the recorded private P or W56 r60 E60 cost. These are scheduling estimates, not timed comparisons between identical controllers."
+  },
   "drain": "On detected material throughput loss, stop extra admissions and allow existing qualified attempts to end naturally. The W58 pool still waits for the whole W57 campaign.",
   "background": {
     "deadline": null,
