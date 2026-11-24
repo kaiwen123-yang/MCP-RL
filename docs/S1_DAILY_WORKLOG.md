@@ -727,6 +727,16 @@ stage=waiting_W57_natural_release，selected_material=M1，slots=2，running=[]�
 
 D57 发布器从原件直传。PR/A 短重访的第 2 片曾在 GitHub 留下无 digest 的 starter，保留旧对象并恢复原名发布后，11:24:58 已核验全部四片和 MP4 的 size/digest。物理回合沿用原 attempt。[H 盘复读回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-20261123/post-usb-readback-20261124.json) · [PR/A Release 资产回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/release-starter-20261124.json)。
 
+### 20261124/w57/recovered-ab-and-release-receipt-reconciliation｜恢复后同格跨足评分、归档收尾与发布接续
+
+P/B 在 13:51:56、P/A 在 13:59:26 自然跑满 196 物理秒。按 A/B 顺序，两条各走完 12 次穿越、分别在物理 163.370 s 和 164.002 s 完成回家，满足同格跨足评分的为 5/12、7/12。此前短重访为 7/12、6/12。B、R、匹配 blind 的 196 s 恢复重访 A/B 分别为 6/12 与 11/12、6/12 与 7/12、11/12 与 11/12。五个主线身份的 20 条短/恢复机制中，18 条已完成，均未达到 12/12；独立 private P/A 另记。原 E60 中 B 与 blind 的 A/B 都通过，R 的 A/B 为 A 16:14:36 通过、B 16:18:40 通过。P 的原 E60 尚在队列，PR 仍是冻结组合。新增 PPO 转移为 0。W58 的 v2 矩阵与三 seed 联合训练都等前置。
+
+在 16:18:46，实开 2 个物理槽，调度上限 6。PR/A 153.40 s（PID 397926，槽 4），PR/B 23.76 s（PID 420634，槽 0）。累计 18 个物理 CPU 预算包含 P/PR 每流四个原生材料 worker，原调度保留 0/1 号槽。尚在跑的 PR 机制与其自己的 E60、E300、E600 有顺序条件；各 case 最终可运行哪些长资格由原调度 PID 175591 判定。[正式回合](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/episodes/index.json) · [物理时钟与 PID](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/evaluation-parallelism.json)。
+
+12:25:14 完成 H 盘最终清单核验，12:28:46 取得最终 GitHub 回执。1,001,626/1,001,626 个文件版本均有 H 盘验证记录，逻辑字节 335,890,683,239，不可用项 0。D57 实际移除 423,775 个已核验且允许清理的源文件，收回 131,718,642,176 个分配字节。后查保留了四条 E600 基线轨迹，点名受保护路径移除数为 0，个人盘空闲节点 190,812/200,000。对归档总表自动附带的“双槽”字样作时点更正：H 最终回执对应的 12:27:55 物理资源采样实开六槽。[归档最终回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-20261123/latest.json)。
+
+12:29 的 Git 合并因 116 份既有 Release 回执字段顺序不同而产生文本冲突，12:30 和 12:33 的索引与上传进程分别退出。16 时从 Git 两侧逐份比较，116/116 份完整 JSON 对象、资产及本地保留说明均相等。D57 从 GitHub 回读元数据，167 份既有 verified 回执中的 500 个不同资产全部匹配 size、SHA-256 和 uploaded 状态。逐个恢复有效 JSON，索引发布与 D57 直传分别在 w57-github-integration-reconciled（PID 422931）和 w57-direct-delivery-reconciled（PID 422926）续接。归档发布端为相同对象保留 D57 原文件字节，116 对真实输入逐一复核。GitHub 已重新接收 W57 紧凑结果；恢复后的 blind/A 原 E60 第 1 片为 483,115,244 字节，SHA-256 为 ee3cdcf1fab4cbd481d13c2d9cdc8cce320b575876db99ccfa996913834cbf1c。物理和调度 attempt 全部沿用既有身份，后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
