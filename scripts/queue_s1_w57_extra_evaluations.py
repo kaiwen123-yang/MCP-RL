@@ -243,9 +243,13 @@ class Evaluations:
                 if not idle or len(live)>=cap:break
                 if name in live or name in self.state['dispatched'] or receipt(name):continue
                 cores=cpu_cost(arm);reserve=memory_budget(dict(task_mode=mode))
-                if (sum(cpu_cost(x['arm']) for x in live.values())+cores>lim['cpu_budget'] or len(free_cores)<cores):continue
+                # Either legacy slot can naturally transition to a four-worker P/PR.
+                # Reserve its owner plus all four native workers across that transition.
+                legacy=[x for x in live.values() if str(x.get('slot')) in ('0','1')]
+                extra_cost=sum(cpu_cost(x['arm']) for x in live.values() if str(x.get('slot')) not in ('0','1'))
+                if 10+extra_cost+cores>lim['cpu_budget'] or len(free_cores)<cores:continue
                 missing_growth=sum(max(0.,memory_budget(x)-v['live'].get(n,{}).get('rss_GiB',0.)) for n,x in live.items())
-                if (lim['ram']<7.0+reserve+missing_growth or lim['gpu_free_MiB']<1800+850*max(1,len(live)-existing+1)
+                if (lim['ram']<7.0+reserve+missing_growth+3.25*max(0,2-len(legacy)) or lim['gpu_free_MiB']<1800+850*max(1,len(live)-existing+1)
                         or lim['io_pressure']>12 or lim['cpu_pressure']>12 or lim['memory_pressure']>4
                         or lim['scratch_free_GiB']<12+6*(len(live)+1)):continue
                 cpus=free_cores[:cores];slot=idle[0]
