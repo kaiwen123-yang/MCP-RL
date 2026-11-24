@@ -2,12 +2,12 @@
   "schema": "W57_additional_frozen_evaluation_leases_v1",
   "status": "running",
   "source": "scripts/queue_s1_w57_extra_evaluations.py",
-  "coordinator_pid": 402172,
+  "coordinator_pid": 456352,
   "legacy_primary": "w57-frozen-evaluations",
   "lease_directory": "/root/autodl-tmp/MCP-RL/work/w56-physical-slots",
   "max_physics_slots": 6,
   "statistics": {
-    "at": "2026-11-24T17:07:04+08:00",
+    "at": "2026-11-24T18:16:28+08:00",
     "active": {
       "w57-m1-pr-b-recovered-a01": {
         "pid": 420634,
@@ -20,15 +20,30 @@
           12,
           13
         ],
-        "clock": 50.67999999990857,
+        "clock": 86.17600000061368,
         "worker_budget": 5,
-        "rss_GiB": 2.0292129516601562
+        "rss_GiB": 2.1486968994140625
       },
-      "w57-m1-pr-a-original-e60-a01": {
-        "pid": 426238,
-        "runner_pid": 426236,
+      "w57-m1-p-a-original-e60-a01": {
+        "pid": 456476,
+        "runner_pid": 456474,
+        "slot": "1",
+        "arm": "P",
+        "cpu": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "clock": 30.811999999954867,
+        "worker_budget": 5,
+        "rss_GiB": 2.007556915283203
+      },
+      "w57-m1-p-b-original-e60-a01": {
+        "pid": 456490,
+        "runner_pid": 456488,
         "slot": "2",
-        "arm": "PR",
+        "arm": "P",
         "cpu": [
           4,
           5,
@@ -36,27 +51,28 @@
           7,
           8
         ],
-        "clock": 59.999999999886846,
+        "clock": 31.77999999995261,
         "worker_budget": 5,
-        "rss_GiB": 2.1319236755371094
+        "rss_GiB": 2.0427894592285156
       }
     },
     "admission_limit": 6,
-    "observed_total_cores": 3.274419544037688,
-    "external_cores": 0.31576306630978745,
-    "aux_cores": 0.01320092126147232,
+    "observed_total_cores": 6.393262854389537,
+    "external_cores": 0.0,
+    "aux_cores": 1.457895082980838,
     "cpu_budget": 18.0,
-    "ram": 49.99100112915039,
-    "gpu_free_MiB": 95826,
+    "ram": 45.647281646728516,
+    "gpu_free_MiB": 94959,
     "gpu_util": 0,
     "io_pressure": 0.0,
     "cpu_pressure": 0.0,
     "memory_pressure": 0.0,
-    "scratch_free_GiB": 177.9808349609375
+    "scratch_free_GiB": 175.6417999267578
   },
   "progress_window_rates": {
-    "w57-m1-pr-b-recovered-a01": 0.008992249755867788,
-    "w57-m1-pr-a-original-e60-a01": 0.06605956940394783
+    "w57-m1-p-b-original-e60-a01": 0.017359415594512113,
+    "w57-m1-p-a-original-e60-a01": 0.014605184293483377,
+    "w57-m1-pr-b-recovered-a01": 0.00781658601657757
   },
   "initial_pair": {
     "w57-m1-p-a-recovered-a01": 0.009157624772657564,
@@ -569,6 +585,57 @@
         "w57-m1-p-b-original-e60-a01"
       ],
       "started": 1795509418.216358
+    },
+    "w57-m1-p-a-original-e60-a01": {
+      "slot": 1,
+      "cores": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "pid": 456474,
+      "controller": "S5-w57-p-56b53ddc5b73",
+      "source": "c4b80ec573e8fa01e6544d8843ef384aa78dcb98",
+      "timing_sha256": null,
+      "borrowed_qualification": false,
+      "admission_fence": [
+        "w57-m1-pr-b-recovered-a01"
+      ],
+      "started": 1795514344.729777,
+      "primary_wait": {
+        "attempt": "w57-m1-pr-b-recovered-a01",
+        "runner_pid": 420632,
+        "primary_pid": 175591,
+        "runner_start_ticks": 1156429194,
+        "held_through_receipt": true
+      }
+    },
+    "w57-m1-p-b-original-e60-a01": {
+      "slot": 2,
+      "cores": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "pid": 456488,
+      "controller": "S5-w57-p-56b53ddc5b73",
+      "source": "c4b80ec573e8fa01e6544d8843ef384aa78dcb98",
+      "timing_sha256": null,
+      "borrowed_qualification": false,
+      "admission_fence": [
+        "w57-m1-pr-b-recovered-a01"
+      ],
+      "started": 1795514344.9381402,
+      "primary_wait": {
+        "attempt": "w57-m1-pr-b-recovered-a01",
+        "runner_pid": 420632,
+        "primary_pid": 175591,
+        "runner_start_ticks": 1156429194,
+        "held_through_receipt": true
+      }
     }
   },
   "tested_six": false,
