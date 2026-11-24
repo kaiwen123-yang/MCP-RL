@@ -1,5 +1,7 @@
 # 当前执行入口：W57正在收尾，W58三线后继已规划（2026-11-23）
 
+2026-11-24 并发修订。W57 的 full/blind 均完成 8192 条及自然尾回合，用户随后要求在条件允许时将独立冻结评价扩到六个物理槽。当前 W57 评价按同一共享租约做 2→4→条件 6 的实测扩容，保留原 dispatcher 的资格判定及逐 case 身份。此前要求等待 W57 自然结束的条款继续适用于 W58 物理迁移。[评价调度合同](experiments/terrain_memory/s1-w57-frozen-evaluation-slots.json) · [实际物理进度](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/evaluation-parallelism.json)。
+
 先读[本轮完整审查](docs/S1_W57_REVIEW_20261123.md)、[W57收尾与W58完整计划](docs/S1_W58_RESEARCH_PLAN.md)、[新启动提示词](docs/S1_W58_START_PROMPT.md)、[机器交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W57-review/handoff.json)，再核最新[current.json](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/current.json)、[w57/index.json](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)及现场确切job/PID/tmux/物理时钟。审查快照fd4ede8d（2026-11-23 19:20:56 +08）仍为executing；full8192/32updates完成，blind7424/29updates＋6partial，后续冻结评估等待。不要用下文历史“未执行”覆盖真实进展，不把快照当现场当前值。
 
 稳定名义F为接触力QP MPC＋WBC；旧r55/r60 A/B各自原E600十往返成立。W57新资格目前是M1+B A/B原E30、M1+P A原E30；训练E60不代替最终冻结资格。M1短预测改善但释放→跨足重载退化；P1已在线消费材料，但333次非空私有历史干预0候选排序翻转；R真实学习且有交接权限，收益尚待冻结对照。小幅离力首因已定位到末摆动早触反弹，新P原E30也存在，不按已确认承载后失载来修。
