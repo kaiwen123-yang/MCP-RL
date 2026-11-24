@@ -30,27 +30,46 @@ def sha(path):
     with path.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 
 
+def network_gh(route, *args):
+    command = ['bash', '-c', 'source scripts/autodl_network.sh "$1" >/dev/null && shift && exec gh "$@"',
+               'w57-release', route, *map(str, args)]
+    return subprocess.run(command, cwd=ROOT, text=True, capture_output=True)
+
+
+def transient_transfer(message):
+    message = message.lower()
+    return message.rstrip().endswith('eof') or any(reason in message for reason in (
+        'tls handshake timeout', 'connection reset', 'unexpected eof', 'http 502',
+        'http 503', 'http 504', 'i/o timeout', 'connection timed out',
+        'error connecting to api.github.com', 'error connecting to uploads.github.com'))
+
+
 def gh(*args):
-    command=['gh',*map(str,args)]
-    for attempt in range(3):
-        result=subprocess.run(command,cwd=ROOT,text=True,capture_output=True)
-        if result.returncode==0:return result.stdout.strip()
-        message=result.stderr.strip()
-        transient=message.lower().endswith(': eof') or any(k in message.lower() for k in (
-            'tls handshake timeout','connection reset','unexpected eof','http 502','http 503',
-            'http 504','i/o timeout'))
-        if not transient or attempt==2:
-            raise RuntimeError(message)
-        print(f'GitHub metadata GET failed on attempt {attempt+1}: {message}',flush=True)
-        time.sleep(2*(attempt+1))
+    # The PC tunnel is only for authenticated small GETs after D57 route failures.
+    for route in ('direct', 'academic', 'direct', 'pc'):
+        result = network_gh(route, *args)
+        if result.returncode == 0:
+            return result.stdout.strip()
+        error = result.stderr.strip()
+        if not transient_transfer(error):
+            raise RuntimeError(error)
+        print(f'GitHub metadata GET on {route} failed: {error}', flush=True)
+    raise RuntimeError(error)
 
 
-def release_assets():
-    rel=read(SMALL/'release.json')
-    # Query current asset metadata; the immutable release ID was verified when the tag was created.
-    data=json.loads(gh('api','-H','Cache-Control: no-cache','--paginate','--slurp',
-                       f'repos/{REPO}/releases/{rel["databaseId"]}/assets?per_page=100'))
-    return rel,{row['name']:row for page in data for row in page}
+def release_assets(name=None):
+    release = read(SMALL/'release.json')
+    endpoint = f'repos/{REPO}/releases/{release["databaseId"]}/assets'
+    assets = {}
+    page = 1
+    while True:
+        # Keep successful pages when only a later GET loses its connection.
+        batch = json.loads(gh('api', '-H', 'Cache-Control: no-cache',
+                              f'{endpoint}?per_page=100&page={page}'))
+        assets.update((row['name'], row) for row in batch)
+        if (name and name in assets) or len(batch) < 100:
+            return release, assets
+        page += 1
 
 
 def transfer(path, name, release, existing):
@@ -60,11 +79,16 @@ def transfer(path, name, release, existing):
     if row is None:
         # gh uses the actual basename for an asset. A symlink in the transfer
         # spool gives the separately playable MP4 its unique download filename.
-        proc=subprocess.run(['gh','release','upload',TAG,str(path),'-R',REPO],cwd=ROOT)
-        _, assets=release_assets()
-        row=assets.get(name)
-        if row is None:
-            raise RuntimeError(f'Upload exit {proc.returncode}; GitHub has no asset {name}')
+        for route in ('direct', 'academic'):
+            proc = network_gh(route, 'release', 'upload', TAG, str(path), '-R', REPO)
+            _, assets = release_assets(name)
+            row = assets.get(name)
+            if row is not None:
+                break
+            error = proc.stderr.strip()
+            if proc.returncode == 0 or not transient_transfer(error) or route == 'academic':
+                raise RuntimeError(f'GitHub has no asset {name} after upload on {route}: {error}')
+            print(f'{name} absent after interrupted upload on {route}: {error}', flush=True)
         existing[name]=row
     if row['size']!=size or row.get('digest')!=checksum or row['state']!='uploaded':
         raise ValueError(f'Size/digest/state do not match the local original: {name}')
