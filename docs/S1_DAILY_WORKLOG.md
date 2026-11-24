@@ -757,6 +757,26 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 
 18:35:13，GitHub 为 blind/B 恢复重访的首片登记 ID 786741793，上传中断后状态一直为 starter，digest 为空。D57 独占原发布锁，按已完成原回合重建同一分片，核对卷大小、所有者和同一远端 ID，保留旧对象及其独立名称。代码将这种未完成对象和真正的已上传字节不匹配分开处理。D57 从保存原件恢复正式名称，新资产 ID 786794465，大小 523,073,880 B，摘要 sha256:98490bbc9d0c9f0aa0cf6295f04bd2963d784bd3d8638b5c36cb51b320416436。18:54:45 复核新对象的大小、摘要及 uploaded 状态，后续分片继续。物理 worker、冻结控制器和原资格调度均持续运行。本次没有新增 H 盘迁移。[原对象及替换回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/release-interruptions/w57-m1-blind-b-recovered-a01-originals-001.zip.json) · [W57 Release](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w57)。
 
+### 20261124/w57/pr-b-recovered-terminal-and-mechanism-matrix｜PR/B 恢复重访自然结束，正式机制矩阵齐全
+
+上海时间 15:55:24 至 20:49:40，w57-m1-pr-b-recovered-a01（物理 PID 420634）运行 4.90 个墙钟小时，跑满 196 个物理秒，走完 12 次穿越。首次完成回家时间为 164.032 物理秒，最终距原点 6.84 mm。按原同格跨足判据确认 8/12，终态为 mechanism_criteria_unmet。该回合材料候选获选 4,491 次，执行映射 7,706 行，时序 head 改变离足 74 次，仅改变承载斜坡 0 次。冻结 PR 是已有材料规划与已学时序的组合，本事件新增训练转移 0。[PR/B 回合回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-m1-pr-b-recovered-a01.json) · [冻结评分](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/mechanics/w57-m1-pr-b-recovered-a01.json)。
+
+20:49:40，原调度在前一条结束后自然接入 PR/B 自身的原 E60，物理 PID 527264、runner 527261。21:00:11 物理时钟为 20.55/60 s，实际一条在跑。主线原 E30 为 10/10 通过，原 E60 为 9/10 通过、1 条运行，独立 private P/A 资格另计。A 已有 E300 的五项准入证据，B 的两段机制、真实同格事件、材料动作映射和时序权限均有实测，自己的 E60 尚在运行。E300/E600 的逐 case 正式决策与启动均留给原调度，未启动的长任务计数为 0。
+
+20 条冻结机制全部自然结束后，使用原命令 scripts/analyze_s1_w57_episodes.py --material M1 在 D57 独立分析核对已结束轨迹计分，复用已有 6 份评分，本次新形成 38 份完整回合描述。20:58:10 写出 A/B × 短/恢复四组配对表。以下按短 A、短 B、恢复 A、恢复 B 排列，分母各为 12。
+
+| 身份 | 短 A | 短 B | 恢复 A | 恢复 B |
+|---|---:|---:|---:|---:|
+| B | 8 | 8 | 6 | 11 |
+| P | 7 | 6 | 5 | 7 |
+| R | 6 | 9 | 6 | 7 |
+| PR | 5 | 10 | 7 | 8 |
+| blind | 5 | 10 | 11 | 11 |
+
+四个主线身份 16 条及独立学习的匹配 blind 4 条均已形成结果，20 条达到 12/12 的数量为 0。独立 private P/A 短重访和早期 M0 的 6/12、7/12 保留原判。新表同时给出各组原滑移积分、运动段正机械 CoT、峰值力、应变及描述性配对差；W58 的 v2 验证与三学习 seed 此时均未启动。[M1 完整配对结果](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/paired-mechanisms.json)。
+
+本次估时采用 D57 的真实计时。相近 P/A、P/B、PR/A 的原 E60 分别需 30.49、29.33、30.03 分钟；历史 r60 的原 E300 约 2.03–2.07 小时、E600 约 4.14–4.19 小时；用本轮 E60 同身份耗时及分相位速度外推，两个长阶段在并行时合计约 8.5–9.4 小时。近期两条 196 s 对照在串行发布器上从上一条核验完成到本条核验完成分别用约 30、32 分钟。估算用于交付安排，后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false；每条长任务和 Release 仍分别以自然终态和远端 size/digest 回执入账。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
