@@ -37,7 +37,7 @@ def publish(record,final=False):
     eid=date.replace('-','')+'/storage/'+('D57-H-final' if final else 'D57-H-parallel-running')
     if eid not in doc:
         typ='归档最终核对' if final else '跨日归档、训练与实际并发'
-        text=f"\n### {eid}｜{typ}\n\nD57 项目归档状态 {out['status']}；H 盘接收观测 {at}，已核验新包 {record.get('verified_packs',0)} 个、{record.get('new_H_bytes',0)} 字节，已凭 H 回执并复核 D57 源后清理 {record.get('removed_files',0)} 个文件、{record.get('removed_bytes',0)} 逻辑字节。接收实测并发任务峰值 {record.get('peak_streams')}，D57 实测同时写出有效数据的进程峰值 {out['measured_D57_concurrent_payload_writers']}。一致 Git 快照核对了 29 个工作树和 64 个引用。W57 冻结双槽依自己的调度推进；首组 B 的 A/B 正式短重访分别为 8/12、8/12。已归档的活动输入、共享别名、四条 E600 基线、最终 checkpoint 与研究队列按引用保留。核验和逐路径索引位于 H:/MPC+RL/00_catalog/migration-20261123。[本次实测](../{REL}/latest.json)。\n"
+        text=f"\n### {eid}｜{typ}\n\nD57 项目归档状态 {out['status']}；H 盘接收观测 {at}，已核验新包 {record.get('verified_packs',0)} 个、{record.get('new_H_bytes',0)} 字节，已凭 H 回执并复核 D57 源后清理 {record.get('removed_files',0)} 个文件、{record.get('removed_bytes',0)} 逻辑字节。接收实测并发任务峰值 {record.get('peak_streams')}，D57 实测同时写出有效数据的进程峰值 {out['measured_D57_concurrent_payload_writers']}。一致 Git 快照核对了 29 个工作树和 64 个引用。首组 B 的 A/B 正式短重访分别为 8/12、8/12。已归档的活动输入、共享别名、四条 E600 基线、最终 checkpoint 与研究队列按引用保留。核验和逐路径索引位于 H:/MPC+RL/00_catalog/migration-20261123。[本次实测](../{REL}/latest.json)。\n"
         if '## '+date in doc:
             pos=doc.index('\n',doc.index('## '+date))+1;doc=doc[:pos]+text+'\n'+doc[pos:]
         else:
