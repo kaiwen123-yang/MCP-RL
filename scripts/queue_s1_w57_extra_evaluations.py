@@ -11,7 +11,6 @@ from datetime import datetime
 import fcntl
 import json
 import os
-import select
 from pathlib import Path
 import shutil
 import struct
@@ -65,6 +64,19 @@ def rows_live():
         row=read(p)
         if 'ended_unix_s' not in row and row['status'] in ('declared','running'): result[row['attempt']]=row
     return result
+def recovery_alive(barrier):
+    # The open /proc directory remains bound to this process even if Linux reuses its PID.
+    identity, proc_dir = barrier
+    try:
+        stat_fd = os.open('stat', os.O_RDONLY, dir_fd=proc_dir)
+        with os.fdopen(stat_fd) as source:
+            fields = source.read().rsplit(') ', 1)[1].split()
+    except (FileNotFoundError, ProcessLookupError):
+        return False
+    return (fields[0] not in ('Z', 'X') and int(fields[1]) == identity['primary_pid'] and
+            int(fields[19]) == identity['runner_start_ticks'])
+
+
 def primary_recovery(live, handles):
     """Find the real child that the primary run_episode is synchronously waiting for."""
     for name, row in live.items():
@@ -73,20 +85,22 @@ def primary_recovery(live, handles):
         pid = row['runner_pid']
         proc = Path('/proc') / str(pid)
         try:
-            fd = os.pidfd_open(pid)
-        except ProcessLookupError:
+            fd = os.open(proc, os.O_RDONLY | os.O_DIRECTORY)
+        except (FileNotFoundError, ProcessLookupError):
             continue
         handles.callback(os.close, fd)
         try:
-            parent = int((proc/'stat').read_text().rsplit(') ', 1)[1].split()[1])
+            fields = (proc/'stat').read_text().rsplit(') ', 1)[1].split()
+            parent = int(fields[1])
+            identity = dict(attempt=name, runner_pid=pid, primary_pid=parent, runner_start_ticks=int(fields[19]))
             owner = Path('/proc') / str(parent)
             parent_args = (owner/'cmdline').read_bytes().split(b'\0')
             args = (proc/'cmdline').read_bytes().split(b'\0')
             if (b'scripts/queue_s1_w57_evaluations.py' in parent_args and
                     os.readlink(owner/'cwd') == str(ROOT) and b'scripts/run_s1_w57.py' in args and
                     b'--attempt' in args and args[args.index(b'--attempt')+1] == os.fsencode(name) and
-                    not select.select([fd], [], [], 0)[0]):
-                return dict(attempt=name, runner_pid=pid, primary_pid=parent), fd
+                    recovery_alive((identity, fd))):
+                return identity, fd
         except (FileNotFoundError, ProcessLookupError):
             continue
     return None
@@ -232,7 +246,7 @@ class Evaluations:
         predecessors = pending[:pending.index(name)][:2]
         use_barrier = slot < 2 or len(predecessors) < 2
         if use_barrier:
-            if mode != 'original' or not barrier or select.select([barrier[1]], [], [], 0)[0]:
+            if mode != 'original' or not barrier or not recovery_alive(barrier):
                 return False
             predecessors = [barrier[0]['attempt']]
         elif any(receipt(n) for n in predecessors):
@@ -261,7 +275,7 @@ class Evaluations:
                 if published is None:time.sleep(.1)
             if published is None:raise RuntimeError(f'{name} exited before recording its actual attempt; see {WORK/name}.log')
             if use_barrier:
-                held = not select.select([barrier[1]], [], [], 0)[0]
+                held = recovery_alive(barrier)
                 record_event('original_stage_registration', attempt=name,
                              held_through_receipt=held, recovery=barrier[0])
                 if not held:
@@ -310,7 +324,7 @@ class Evaluations:
                 legacy=[x for x in live.values() if str(x.get('slot')) in ('0','1')]
                 extra_cost=sum(cpu_cost(x['arm']) for x in live.values() if str(x.get('slot')) not in ('0','1'))
                 use_primary = bool(primary_idle and mode == 'original' and barrier and
-                                   not select.select([barrier[1]], [], [], 0)[0])
+                                   recovery_alive(barrier))
                 if use_primary:
                     slot = primary_idle[0]
                     start = 10 if slot == 0 else 0
