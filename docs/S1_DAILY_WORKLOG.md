@@ -737,6 +737,16 @@ P/B 在 13:51:56、P/A 在 13:59:26 自然跑满 196 物理秒。按 A/B 顺序�
 
 12:29 的 Git 合并因 116 份既有 Release 回执字段顺序不同而产生文本冲突，12:30 和 12:33 的索引与上传进程分别退出。16 时从 Git 两侧逐份比较，116/116 份完整 JSON 对象、资产及本地保留说明均相等。D57 从 GitHub 回读元数据，167 份既有 verified 回执中的 500 个不同资产全部匹配 size、SHA-256 和 uploaded 状态。逐个恢复有效 JSON，索引发布与 D57 直传分别在 w57-github-integration-reconciled（PID 422931）和 w57-direct-delivery-reconciled（PID 422926）续接。归档发布端为相同对象保留 D57 原文件字节，116 对真实输入逐一复核。GitHub 已重新接收 W57 紧凑结果；恢复后的 blind/A 原 E60 第 1 片为 483,115,244 字节，SHA-256 为 ee3cdcf1fab4cbd481d13c2d9cdc8cce320b575876db99ccfa996913834cbf1c。物理和调度 attempt 全部沿用既有身份，后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。
 
+### 20261124/w57/pr-a-qualification-and-earned-p-e60-overlap｜PR/A 原资格、三条并行物理与原件直传
+
+上海时间 16:36:57，冻结 PR/A 的恢复后重访跑满 196 s，12 次穿越均完成，物理 163.938 s 到家，同格跨足评分 7/12。先前短重访为 5/12。17:07:07，该身份自己的原 E60 跑满 60 s 并通过。主线五身份机制 19/20 已结束，19 条均未到 12/12，最后一条为 PR/B。主线自有原 E30 仍为 10/10 通过，自有原 E60 目前 7/10 通过，另有独立 private P/A 原 E60 通过。
+
+按原调度长任务条件核对 PR/A 的已存轨迹。短/恢复末物理时钟分别为 100/196 s，真实选择材料候选 3,427/4,338 次，映射到执行的记录为 3,431/7,695 行，同一门序列上实际改变离足时刻 51/73 次，单独改变承载斜坡 0/2 次。配合各 5/7 个确认跨足循环及该身份自己的 E60，A 的五项进入条件均已有数据。正式 E300 决策仍由原 dispatcher 在资格阶段完成后写出；此时 E300、E600 实际启动数均为 0。当前 PR 是冻结组合。W58 仍等待 W57 自然结束，新联合训练为 0。
+
+17:59:04，已完成各自 E30、短重访和恢复重访的 P/A、P/B 按原冻结资格同时取槽。原调度 PID 175591 的子进程 420632 正在同步等待 PR/B。空闲原槽按原四核亲和性接收 P/A，扩展槽按五核预算接收 P/B。用仍打开的 /proc 目录、真实父进程和启动 ticks 1156429194 在登记前后核对同一子进程；原调度随后可直接认领同名官方回执。首次行政程序调用的 pidfd 接口在 D57 Python 中不可用，未取任何物理槽；换用已核实的进程目录后两条各启动一次。源码、执行构建、checkpoint 和标准化逐项匹配各 case 自己的 E30。18:04:20 核对为 PR/B 恢复 80.74 s（物理 PID 420634，槽 0），P/A 原 E60 10.64 s（物理 PID 456476，槽 1），P/B 原 E60 10.66 s（物理 PID 456490，槽 2）。三条均在推进。原 PR/B 和原总调度全程延续；三条重规划流各计入主进程与四个原生材料 worker，计费共 15 核，低于 18 核预算。后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。[在途物理与登记凭据](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/evaluation-parallelism.json) · [冻结调度约定](../experiments/terrain_memory/s1-w57-frozen-evaluation-slots.json) · [各身份原资格](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
+
+D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留。清单改为逐页读取，单个新分片找到后立即核对 size、SHA-256 及 uploaded 状态；仅在远端确认同名对象缺失且遇到传输中断时才在另一条 D57 路线上继续。D57 原生直连、学术加速均遇到断连时，小型元数据 GET 可使用既有电脑代理的回环 SSH 隧道。该通道随 W57 发布收尾自然结束，原件与视频通过 D57 直接上传。恢复后 blind/A 196 s 原件已续至 5 个资产回执，第 2 至 4 片分别核对 523,275,812、463,776,289 和 529,991,718 字节。时间与计数仅归属此观测。H 盘前一轮归档已于中午闭合。[D57 直传回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/delivery/w57-m1-blind-a-recovered-a01.json)。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
