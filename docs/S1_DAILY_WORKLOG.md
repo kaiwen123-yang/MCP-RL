@@ -791,6 +791,11 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/storage/process-H-20261124-final｜D57 过程文件增量归档
+
+本次 H 盘增量已收尾。251,203 个过程文件共 107,887,511,720 逻辑字节完成核验。本轮新写入 321 个包、44,050,766,949 字节。D57 复查原文件身份、摘要、占用和依赖后逐文件释放 251,203 个文件、108,215,533,056 个分配字节。命名保护路径误删数 0。四个 E600 基线、冻结 checkpoint、源码和队列后继输入已复核。原路径可通过 H 盘归档索引找回。 [执行回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-process-20261124/latest.json)。
+
+
 ### 20261125/w58/material-selected｜保留轨迹与估计器选择
 
 选择 M1。各保留轨迹单列释放→跨足重载、短预测误差、区间覆盖与宽度，见[选择](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m/selection.json)和[分族指标](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m2/errors-and-coverage.json)。
