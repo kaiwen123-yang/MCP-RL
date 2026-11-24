@@ -126,6 +126,8 @@ class Evaluations:
             four_validated=False,six_validated=False,decisions=[],dispatched={},tested_six=False)
         self.recent=deque(maxlen=31)
         self.previous=None
+        self.phase_comparison=None
+        self.reviewed_until=None
     def save(self):write(LOG/'decisions.json',self.state)
     def limits(self,v,prev):
         dt=v['t']-prev['t'];total=max(0.,v['total_cpu']-prev['total_cpu'])/dt
@@ -166,16 +168,24 @@ class Evaluations:
             elif len(common)==2 and original>0 and incumbent<.75*original:
                 self.state.update(limit=2)
                 self.state['decisions'].append(dict(kind='no_further_admissions_after_four_stream_degradation',**details));self.save()
-        if n==6 and not self.state['six_validated'] and self.state['limit']==6:
-            ref=self.state.get('four_reference',{});overlap=set(ref)&set(rates)
-            if not overlap:return rates
-            held=sum(rates[k] for k in overlap);old=sum(ref[k] for k in overlap)
-            if all(x>0 for x in rates.values()) and sum(rates.values())>sum(ref.values()) and held>=.85*old:
-                self.state['six_validated']=True;self.state['decisions'].append(dict(kind='six_streams_advancing',**details));self.save()
-                record_event('six streams measured',aggregate=details['aggregate'])
-            elif held<.75*old or sum(rates.values())<=sum(ref.values()):
-                self.state['limit']=4;self.state['decisions'].append(dict(kind='stop_new_admissions_above_four',**details));self.save()
-                record_event('six-slot trial withdrew future extra admissions')
+        if n==6:
+            from s1_w57_evaluation_throughput import PhaseComparison
+            if self.phase_comparison is None:self.phase_comparison=PhaseComparison()
+            result=self.phase_comparison.six_decision()
+            if result:
+                end=result['two_disjoint_six_windows'][-1]['end']
+                if end!=self.reviewed_until:
+                    self.reviewed_until=end
+                    healthy=(lim['ram']>=7 and lim['io_pressure']<=12 and lim['cpu_pressure']<=12 and lim['memory_pressure']<=4
+                             and lim['observed_total_cores']<=live['quota']-3 and lim['gpu_free_MiB']>1800)
+                    keep=result['keep_six'] and healthy
+                    decision='six_supported_by_phase_matched_work' if keep else 'drain_to_four_after_phase_matched_review'
+                    if (not self.state.get('phase_review') or self.state['six_validated']!=keep):
+                        self.state['decisions'].append(dict(at=now(),kind=decision,raw_total=details['aggregate'],
+                                                           per_stream=details['rate_by_attempt'],shared_headroom=healthy,**result))
+                        record_event(decision,adjusted_ratios=result['phase_adjusted_aggregate_ratios'],retention=result['previous_stream_retention'])
+                    self.state.update(limit=6 if keep else 4,six_validated=keep,phase_review=dict(at=now(),headroom=healthy,**result))
+                    self.save()
         return rates
     def launch(self,slot,job,cores,mutex,seq):
         name,arm,case,mode=job
