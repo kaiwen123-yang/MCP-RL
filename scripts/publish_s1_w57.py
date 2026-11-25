@@ -1,5 +1,7 @@
 """Direct D57 publication of W57 originals, videos and verified GitHub Release receipts."""
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import contextmanager
 from datetime import datetime
 import fcntl
 import hashlib
@@ -12,6 +14,7 @@ import time
 import zipfile
 
 from publish_s1_go2_w54 import write
+from s1_w57_release_parts import episode_paths, groups_for, prepare_part
 
 ROOT=Path(__file__).resolve().parents[1]
 RUN='tm-s1-go2-local-readiness-r12'
@@ -86,7 +89,7 @@ def preserve_starter(row, name, size, checksum):
     part = Path(name)
     retained = f'{part.stem}-incomplete-upload-{asset_id}{part.suffix}'
     endpoint = f'repos/{REPO}/releases/assets/{asset_id}'
-    # Every W57 sender holds publish.lock and waits synchronously for its upload client.
+    # The label lease serializes this name; its uploader has returned before reconciliation.
     # Give a fresh server-side state one normal publisher poll to settle, then reread the ID.
     current = asset_by_id(asset_id)
     while current['name'] == name and current['state'] == 'starter' and not current.get('digest'):
@@ -179,51 +182,53 @@ def originals(label, paths, video=None):
                     receipt['size'],receipt['digest'],'uploaded'):
                 raise ValueError('The exact archived asset must be recovered before republishing '+receipt['name'])
         return
-    canonical=[]
-    for prefix,path in paths:
-        if path.is_dir():
-            canonical += [(prefix+'/'+str(f.relative_to(path)),f) for f in sorted(path.rglob('*'))
-                          if f.is_file() and f!=video]
-        elif path.is_file():
-            canonical.append((prefix,path))
-        else:
-            raise FileNotFoundError(path)
-    groups=[];part=[];size=0
-    for name,f in canonical:
-        n=f.stat().st_size
-        if size+n>PART and part:
-            groups.append(part);part=[];size=0
-        part.append((name,f));size+=n
-    if part:groups.append(part)
+    groups, file_count = groups_for(paths, video, PART)
     recorded=prior if prior is not None else dict(label=label,tag=TAG,assets=[],
-        roots={k:str(p) for k,p in paths},original_file_count=len(canonical),originals_retained=True,
+        roots={k:str(p) for k,p in paths},original_file_count=file_count,originals_retained=True,
         compact_source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip())
     done={a['name']:a for a in recorded['assets']}
     def already_verified(name):
         if name not in done or name not in existing:return False
         old=done[name];cur=existing[name]
         return old['size']==cur['size'] and old['digest']==cur.get('digest') and cur['state']=='uploaded'
+    names = [f'{label}-originals-{i:03d}.zip' for i in range(1,len(groups)+1)]
+    if video:
+        names.append(label+'-full.mp4')
     def save(receipt):
         done[receipt['name']]=receipt
-        recorded['assets']=list(done.values())
+        recorded['assets']=[done[n] for n in dict.fromkeys(names+list(done)) if n in done]
         write(dest,recorded)
         print(receipt['name'],receipt['size'],receipt['digest'],flush=True)
-    with tempfile.TemporaryDirectory(prefix='w57-upload-',dir=SPOOL) as tmp:
-        for number,group in enumerate(groups,1):
-            name=f'{label}-originals-{number:03d}.zip'
-            if already_verified(name):continue
-            temporary=Path(tmp)/name
-            with zipfile.ZipFile(temporary,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=1,allowZip64=True) as z:
-                for member,f in group:
-                    z.write(f,member)
-            save(transfer(temporary,name,release,existing))
-            temporary.unlink()  # Temporary upload spool; every source stays at the recorded D57 path.
-        if video:
-            name=label+'-full.mp4'
-            if not already_verified(name):
-                link=Path(tmp)/name
-                link.symlink_to(video.resolve())
-                save(transfer(link,name,release,existing))
+    directory = ROOT/'work/w57/prepared-release-parts'/label
+    lanes = int(os.environ.get('W57_RELEASE_STREAMS','4'))
+    lanes = max(1,min(lanes,6,len(os.sched_getaffinity(0))))
+    def submit_part(item):
+        name,group=item
+        if group is None:
+            # GitHub uses the basename for the separately playable MP4.
+            with tempfile.TemporaryDirectory(prefix='w57-video-',dir=SPOOL) as temp:
+                target=Path(temp)/name
+                target.symlink_to(video.resolve())
+                return transfer(target,name,release,{name:existing.get(name)})
+        path=prepare_part(directory,name,group)
+        return transfer(path,name,release,{name:existing.get(name)})
+    todo=[(name,group) for name,group in zip(names,groups+([None] if video else [])) if not already_verified(name)]
+    with ThreadPoolExecutor(max_workers=lanes) as workers:
+        futures=[workers.submit(submit_part,item) for item in todo]
+        first_error=None
+        for future in as_completed(futures):
+            try:
+                receipt=future.result()
+            except (OSError,RuntimeError,ValueError,subprocess.SubprocessError) as exc:
+                if first_error is None:
+                    first_error=exc
+                continue
+            save(receipt)
+            if receipt['name'].endswith('.zip'):
+                # Only the temporary pack is retired, and only after the durable verified receipt.
+                (directory/receipt['name']).unlink(missing_ok=True)
+        if first_error is not None:
+            raise first_error
     recorded.update(status='verified',release=release['url'],verified_unix_s=time.time())
     write(dest,recorded)
 
@@ -234,11 +239,11 @@ def deliver_episode(attempt):
     if not (out/'trajectory.npz').exists():
         raise FileNotFoundError(f'No recorded trajectory for {attempt}')
     renderer.SMALL=SMALL/'episodes'
-    with open(ROOT/'work/w57/render.lock','a') as lock:
+    render_locks=ROOT/'work/w57/replay-locks'
+    render_locks.mkdir(exist_ok=True)
+    with (render_locks/(attempt+'.lock')).open('a') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX)
         alternate=ROOT/'work/w57/rendered'/attempt
-        # On D57 the personal mount can exhaust its inode quota with bytes still free.
-        # Keep the original trajectory read-only and place new derived files on scratch.
         dest=out
         if not (out/'video-asset.json').exists() and (
                 (alternate/'video-asset.json').exists() or os.statvfs(out).f_favail<2):
@@ -246,12 +251,20 @@ def deliver_episode(attempt):
         if not (dest/'video-asset.json').exists():
             renderer.render(attempt,output_dir=dest)
     video=dest/'full-mission-material-overlay.mp4'
-    paths=[('episode',out),('job',LARGE/'jobs'/attempt)]
-    if dest!=out:
-        paths.append(('episode/video-asset.json',dest/'video-asset.json'))
-    actor=LARGE/'evaluation-policy'/attempt
-    if actor.exists():paths.append(('frozen-speed-policy',actor))
+    paths=episode_paths(LARGE,attempt,dest)
     originals(attempt,paths,video)
+
+
+@contextmanager
+def publication(label):
+    work=ROOT/'work/w57'
+    per_episode=work/'publication-locks'
+    per_episode.mkdir(exist_ok=True)
+    # Maintenance clients take publish.lock exclusively; different labels may publish together.
+    with (work/'publish.lock').open('a') as global_lock, (per_episode/(label+'.lock')).open('a') as label_lock:
+        fcntl.flock(global_lock,fcntl.LOCK_SH)
+        fcntl.flock(label_lock,fcntl.LOCK_EX)
+        yield
 
 
 def main():
@@ -266,10 +279,12 @@ def main():
     lockpath=ROOT/'work/w57/publish.lock'
     lockpath.parent.mkdir(parents=True,exist_ok=True)
     if args.action in ('episode','bundle'):
-        with lockpath.open('a') as lock:
-            fcntl.flock(lock,fcntl.LOCK_EX)
+        label=args.attempt if args.action=='episode' else args.name
+        with publication(label):
             if args.action=='episode':
-                deliver_episode(args.attempt)
+                dest=SMALL/'delivery'/(label+'.json')
+                if not dest.exists() or read(dest).get('status')!='verified':
+                    deliver_episode(args.attempt)
             else:
                 originals(args.name,[(str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else path.name,
                                      path.resolve()) for path in args.paths])
@@ -281,8 +296,9 @@ def main():
                 continue
             dest=SMALL/'delivery'/source.name
             # Let a finished PPO node publish between complete episodes, even with a backlog.
-            with lockpath.open('a') as lock:
-                fcntl.flock(lock,fcntl.LOCK_EX)
+            if dest.exists() and read(dest).get('status')=='verified':
+                continue
+            with publication(source.stem):
                 if not dest.exists() or read(dest).get('status')!='verified':
                     deliver_episode(source.stem)
         queue=SMALL/'dispatch/frozen-evaluations.json'
