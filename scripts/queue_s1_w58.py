@@ -147,23 +147,31 @@ def run():
         raise RuntimeError('Dispatcher and frozen physics must use the same D57 campaign')
     wait_w57()
     pool=Pool(physics_root)
-    stage('G1_original_qualification','W57 两份物理 dispatcher、自然 collector 尾段和发布后继已结束，旧槽已核空闲。',slots=3)
     pulse=lambda:None  # The independent integration pane consumes atomic job and stage receipts.
-    g30=[job('G1',c,'G1','M1') for c in 'AB']
-    pool.batch(g30,pulse)
-    g60=[job('G1',j['data']['case'],'G1','M1',level='E60') for j in g30 if passed(j)]
-    pool.batch(g60,pulse)
-    g_result=score_gait(g30+g60)
-    gait=g_result['selected']
-    stage('freeze_common','按原资格和全摆动接管、代价核对选用共同步态。等候已登记整段 M2 保留评估。',selected_gait=gait)
-    while not (R/'m/selection.json').is_file():time.sleep(30)
-    material=read(R/'m/selection.json')['selected']
-    shared=dict(selected_gait=gait,selected_material=material)
-    write(R/'common-freeze.json',dict(gait=gait,material=material,source=runtime,development_route='s1-w58-revisit-v2',
-        arms=list(ARMS),fixed_wait=read(ROOT/'experiments/terrain_memory/s1-w58-p2.json')['arms'] if
-        'arms' in read(ROOT/'experiments/terrain_memory/s1-w58-p2.json') else read(ROOT/'experiments/terrain_memory/s1-w58-p2.json'),
-        registered_before_physical_matrix=True,**BG))
-    stage('original_qualifications','四个开发身份逐 case 取得原资格，另有预选 A 的时长修正开关配对。',**shared)
+    resume=STAGE.is_file() and read(STAGE)['stage']=='development_matrix'
+    if resume:
+        frozen=read(R/'common-freeze.json')
+        if frozen['source']['commit']!=runtime['commit']:
+            raise RuntimeError('Development freeze and physical runtime disagree')
+        gait,material=frozen['gait'],frozen['material']
+        shared=dict(selected_gait=gait,selected_material=material)
+    else:
+        stage('G1_original_qualification','W57 两份物理 dispatcher、自然 collector 尾段和发布后继已结束，旧槽已核空闲。',slots=3)
+        g30=[job('G1',c,'G1','M1') for c in 'AB']
+        pool.batch(g30,pulse)
+        g60=[job('G1',j['data']['case'],'G1','M1',level='E60') for j in g30 if passed(j)]
+        pool.batch(g60,pulse)
+        g_result=score_gait(g30+g60)
+        gait=g_result['selected']
+        stage('freeze_common','按原资格和全摆动接管、代价核对选用共同步态。等候已登记整段 M2 保留评估。',selected_gait=gait)
+        while not (R/'m/selection.json').is_file():time.sleep(30)
+        material=read(R/'m/selection.json')['selected']
+        shared=dict(selected_gait=gait,selected_material=material)
+        write(R/'common-freeze.json',dict(gait=gait,material=material,source=runtime,development_route='s1-w58-revisit-v2',
+            arms=list(ARMS),fixed_wait=read(ROOT/'experiments/terrain_memory/s1-w58-p2.json')['arms'] if
+            'arms' in read(ROOT/'experiments/terrain_memory/s1-w58-p2.json') else read(ROOT/'experiments/terrain_memory/s1-w58-p2.json'),
+            registered_before_physical_matrix=True,**BG))
+        stage('original_qualifications','四个开发身份逐 case 取得原资格，另有预选 A 的时长修正开关配对。',**shared)
     q30=[job(a,c,gait,material) for a in ARMS for c in 'AB']
     off=job('availability-off','A',gait,material)
     pool.batch(q30+[off],pulse)

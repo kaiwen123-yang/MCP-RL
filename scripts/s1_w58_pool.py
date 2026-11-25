@@ -14,6 +14,7 @@ import time
 
 from inspect_s1_w58_predecessor import BG, REL, SH, proc_info, read
 from publish_s1_go2_w54 import write
+from s1_w58_evaluation_capacity import EvaluationCapacity
 
 ROOT=Path(__file__).resolve().parents[1]
 WORK=ROOT/'work/w58'
@@ -42,7 +43,7 @@ def pressure(resource):
     return float((CG/(resource+'.pressure')).read_text().splitlines()[0].split()[1].split('=')[1])
 
 
-def snapshot():
+def snapshot(physics_root):
     now=time.monotonic()
     cpu_file=dict(line.split() for line in (CG/'cpu.stat').read_text().splitlines())
     cpu=float(cpu_file['usage_usec'])/1e6
@@ -58,7 +59,7 @@ def snapshot():
             cwd=os.readlink(proc/'cwd')
             if '/MCP-RL-w58' not in cwd:continue
             stat=(proc/'stat').read_text().rsplit(') ',1)[1].split()
-            project[int(proc.name)]=dict(auxiliary=cwd!=str(ROOT) or int(proc.name)==os.getpid(),cpu=(int(stat[11])+int(stat[12]))/hz,
+            project[int(proc.name)]=dict(auxiliary=cwd!=str(physics_root) or int(proc.name)==os.getpid(),cpu=(int(stat[11])+int(stat[12]))/hz,
                                         rss=int(stat[21])*os.sysconf('SC_PAGE_SIZE'),gpu_MiB=apps.get(int(proc.name),0))
         except (OSError,IndexError):
             continue
@@ -150,6 +151,7 @@ def worker(a):
 class Pool:
     def __init__(self, runtime):
         self.runtime=Path(runtime)
+        self.evaluation=EvaluationCapacity(ROOT,STATE,WORK)
         self.records=POOL/'jobs'
         self.records.mkdir(parents=True,exist_ok=True)
         self.children={}
@@ -234,7 +236,7 @@ class Pool:
         return rows
 
     def physical_progress(self,active):
-        clocks={};families={}
+        clocks={};families={};phases={}
         for job in active:
             width=job['slots_needed']
             group=families.setdefault(job['kind'],dict(width=width,count=0,owners=[],attempts=[]))
@@ -257,8 +259,9 @@ class Pool:
                     # complete outer object can contribute a measured throughput interval.
                     heartbeat=p.read_text()
                     if heartbeat.endswith('\n}\n'):
-                        clocks[name]=json.loads(heartbeat)['physical_time_s']
-        return clocks,families
+                        parsed=json.loads(heartbeat)
+                        clocks[name]=parsed['physical_time_s'];phases[name]=parsed['phase']
+        return clocks,families,phases
 
     @staticmethod
     def sample_head(run):
@@ -329,11 +332,11 @@ class Pool:
 
     def tick(self,active):
         previous=self.last
-        cur=snapshot()
+        cur=snapshot(self.runtime)
         self.last=cur
         if previous is None:return
         load=load_delta(previous,cur)
-        clocks,families=self.physical_progress(active)
+        clocks,families,phases=self.physical_progress(active)
         count=sum(len(r['slots']) for r in active)
         kinds={r['kind'] for r in active}
         dt=cur['t']-previous['t']
@@ -351,7 +354,7 @@ class Pool:
                                   if n in collected and n in self.last_collected)
         self.last_collected=collected
         now=dict(time_shanghai=datetime.now(SH).isoformat(),unix_s=cur['unix_s'],count=count,kind=next(iter(kinds)) if len(kinds)==1 else None,
-                 dt_s=dt,physics_s_per_wall_s=progress,clock_s=clocks,distinct_committed=distinct,
+                 dt_s=dt,physics_s_per_wall_s=progress,clock_s=clocks,physics_phases=phases,distinct_committed=distinct,
                  collected_including_current_version=collected,families=families,
                  committed_distinct_per_wall_hour={k:3600*(v-self.last_distinct[k])/dt for k,v in distinct.items() if k in self.last_distinct},**load,
                  gpu=cur['gpu'],project_gpu_MiB=sum(p['gpu_MiB'] for p in cur['project'].values()),
@@ -364,15 +367,36 @@ class Pool:
         self.samples.append(now)
         self.metrics=now
         with (WORK/'throughput.jsonl').open('a') as f:f.write(json.dumps(now,separators=(',',':'))+'\n')
+        self.evaluation.observe(now,active)
+        use_eval=self.evaluation.applies(active)
         for kind,group in families.items():
-            self.review_family(kind,group)
-        self.limit=max([3,*self.family_limits.values()])
+            if not use_eval:self.review_family(kind,group)
+        eval_cap=self.evaluation.state['admission_limit'] if use_eval else 3
+        self.limit=max([eval_cap,*self.family_limits.values()])
         write(STATE/'pool.json',dict(limit=self.limit,initial_limit=3,conditional_max=6,active=active,
-             latest=now,family_limits=self.family_limits,references=[dict(kind=k[0],**v) for k,v in self.reference.items()],throughput_trace=str(WORK/'throughput.jsonl'),
+             latest=now,independent_evaluation=dict(applicable_now=use_eval,admission_limit=eval_cap,
+                 retained=self.evaluation.state['retained'],record=str(self.evaluation.path)),
+             family_limits=self.family_limits,references=[dict(kind=k[0],**v) for k,v in self.reference.items()],throughput_trace=str(WORK/'throughput.jsonl'),
              certified=[list(k) for k in self.qualified],rejected=[list(k) for k in sorted(self.rejected)],**BG))
 
+    def storage_claim(self,job,live=False):
+        if job['slots_needed']!=1:
+            return job.get('raw_store'),job['disk_GiB']*2**30,recording_inodes(job['disk_GiB']/.03)
+        if live:
+            path=POOL/'raw-reservations'/(job['id']+'.json')
+            if path.is_file():
+                row=read(path)
+                if row['state']=='allocated' and (p:=proc_info(row['pid'])) and p['start_ticks']==row['start_ticks']:
+                    return row['store'] or None,row['reserved_bytes'],row['reserved_inodes']
+        data=job['data']
+        duration=int(data['level'][1:]) if data['task']=='original' else (168 if data['task']=='short' else 288)
+        return job.get('raw_store'),int((1+duration*.03)*2**30),recording_inodes(duration)
+
     def batch(self,jobs,pulse):
-        pending=list(jobs)
+        job_ids={j['id'] for j in jobs}
+        pending=[j for j in jobs if not (self.records/(j['id']+'.json')).exists()]
+        if not pending and not any(r['id'] in job_ids for r in self.running()):
+            return
         while pending or self.running():
             active=self.running()
             if self.last is None or time.monotonic()-self.last['t']>=SAMPLE:self.tick(active)
@@ -387,7 +411,7 @@ class Pool:
                 if (self.records/(job['id']+'.json')).exists():
                     pending.remove(job)
                     continue
-                cap=self.family_limits.get(job['kind'],3)
+                cap=self.evaluation.cap(job,active,self.family_limits.get(job['kind'],3))
                 n=job['slots_needed'];ms=self.metrics
                 available=[i for i in range(cap) if i not in in_use and (n==2 or i not in reserved_for_pair)]
                 if ((len(in_use)+n)*PER_STREAM_CORES>ms['available_cpu_cores'] or
@@ -401,12 +425,12 @@ class Pool:
                     continue
                 store=None
                 # Relocate only a future raw allocation, never existing originals.
-                entries=recording_inodes(job['disk_GiB']/.03)
+                _,needed,entries=self.storage_claim(job)
+                claims=[self.storage_claim(r,live=True) for r in active]
                 for volume, mount in ((None,RAW.parent),(str(PERSONAL/'MCP-RL/W58/originals'),PERSONAL)):
-                    same=[r for r in active if r.get('raw_store')==volume]
-                    gib=5+job['disk_GiB']+sum(r['disk_GiB'] for r in same)
-                    reserved=sum(recording_inodes(r['disk_GiB']/.03) for r in same)
-                    if space_for_original(mount,gib*2**30,entries+reserved):
+                    reserved=sum(size for store_,size,_ in claims if store_==volume)
+                    reserved_nodes=sum(nodes for store_,_,nodes in claims if store_==volume)
+                    if space_for_original(mount,5*2**30+needed+reserved,entries+reserved_nodes):
                         store=volume
                         break
                 else:
