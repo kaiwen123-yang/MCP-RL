@@ -791,6 +791,16 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/attempt/w58-g0-m1-b2-a-original-e60-a01｜物理回合结束
+
+w58-g0-m1-b2-a-original-e60-a01，original / original / A，控制器 S5-w58-f7727bc878def3db58，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 300000 个物理子步，模拟 59.999999999886846 s，结论 passed，终止原因 stage_passed。机制曝光 —/—，本回合进入采样账本 0 条，CPU 用户/系统秒 1388.1761099999999/9.66217。物理槽 0。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-b2-a-original-e60-a01.json)。
+
+
+### 20261125/w58/short-matrix-complete-storage-admission｜短重访八条完成，原资格恢复实际物理推进
+
+Fixed-wait B 的 a02 在 18:57:24 完成 168 秒，命中 10/12，缺 F03、F07。开发短重访八条均稳定返家，达到 12/12 的为 0/8。B2 与 Fixed-wait 的 A/B 各为 10/12、10/12，P2-full 与 P2-private 均为 9/12、10/12，两个 case 各自的命中集合相同。八条按冻结评分器生成逐目标 mechanics 回执，两条 full 短重访均未检出材料历史引起的有效动作。恢复重访继续，联合学习尚未触发。18:57 分配的 B2 A 原 E60 因输出空间等待，在 H 盘可验证归档开始释放数据盘后于 20:02:48 声明自己的物理回合并有连续心跳。开发回合与原资格分别计数。
+
+
 ### 20261125/w58/attempt/w58-g0-m1-fixed-wait-b-development-short-a02｜物理回合结束
 
 w58-g0-m1-fixed-wait-b-development-short-a02，development / short / B，控制器 S5-w58-1fed5698ca861ce349，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 840000 个物理子步，模拟 168.00000000332994 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 10/12，本回合进入采样账本 0 条，CPU 用户/系统秒 6565.67691/33.137996。物理槽 0。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-fixed-wait-b-development-short-a02.json)。
