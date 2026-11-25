@@ -1,8 +1,8 @@
 {
   "schema": "s1_w57_execution_v1",
-  "status": "executing",
+  "status": "finished",
   "selected_estimator": "M1",
-  "as_of_shanghai": "2026-11-25T09:13:53.839582+08:00",
+  "as_of_shanghai": "2026-11-25T10:21:58.588000+08:00",
   "plan_commit": "d321d61fd13ba301b477deaf473101debebb88e5",
   "execution_workspace": "/root/autodl-tmp/MCP-RL-w57",
   "baseline": {
@@ -4368,13 +4368,13 @@
   "distinct_declared_attempts": 180,
   "distinct_physics_attempts": 179,
   "measurement": {
-    "samples": 12423,
-    "covered_wall_s": 250999.6901357174,
+    "samples": 12626,
+    "covered_wall_s": 255099.754570961,
     "concurrently_advancing_interval_wall_s": 217097.43534326553,
     "excluded_monitor_gaps_over_60s": 0.0,
     "peak_total_GPU_MiB": 96719,
     "peak_W57_GPU_process_MiB": 4236,
-    "mean_host_GPU_utilization_pct": 14.725750623842872,
+    "mean_host_GPU_utilization_pct": 16.023126881039126,
     "scope": "Physical advancement observed in both neighboring samples (nominal 20 s); different from overlapping process lifetimes. Collection started after the first two mechanism episodes began. Device utilization includes other work."
   },
   "completed_physics_samples": 68950000,
@@ -4630,6 +4630,7 @@
   "frozen_W44_actor_updates": 0,
   "learning_counts_scope": "Closed unique 128+128 event transitions in committed optimizer updates; partial live buffers are separate.",
   "verified_release_bundles": [
+    "w57-final-episode-metadata-and-credit",
     "w57-heldout-material-starts",
     "w57-m1-b-a-original-e30-a01",
     "w57-m1-b-a-original-e60-a01",
@@ -4661,11 +4662,13 @@
     "w57-m1-pr-a-original-e30-a01",
     "w57-m1-pr-a-original-e300-a01",
     "w57-m1-pr-a-original-e60-a01",
+    "w57-m1-pr-a-original-e600-a01",
     "w57-m1-pr-a-recovered-a01",
     "w57-m1-pr-a-short-a01",
     "w57-m1-pr-b-original-e30-a01",
     "w57-m1-pr-b-original-e300-a01",
     "w57-m1-pr-b-original-e60-a01",
+    "w57-m1-pr-b-original-e600-a01",
     "w57-m1-pr-b-recovered-a01",
     "w57-m1-pr-b-short-a01",
     "w57-m1-r-a-original-e30-a01",
@@ -4709,6 +4712,7 @@
     "w57-pilot02-blind-a-e60-0029",
     "w57-pilot02-blind-a-e60-0030",
     "w57-pilot02-blind-a-e60-0031",
+    "w57-pilot02-blind-a-e60-0032-retained-prefix",
     "w57-pilot02-blind-a-e60-0033",
     "w57-pilot02-blind-b-e60-0001",
     "w57-pilot02-blind-b-e60-0002",
@@ -4741,6 +4745,7 @@
     "w57-pilot02-blind-b-e60-0029",
     "w57-pilot02-blind-b-e60-0030",
     "w57-pilot02-blind-b-e60-0031",
+    "w57-pilot02-blind-b-e60-0032-retained-prefix",
     "w57-pilot02-blind-b-e60-0033",
     "w57-pilot02-blind-updates-01-08",
     "w57-pilot02-blind-updates-09-16",
@@ -4816,8 +4821,246 @@
     "w57-pilot02-full-updates-17-32",
     "w57-pilot02-initial-controller"
   ],
-  "verified_release_assets": 603,
-  "release_bytes": 158018527991,
+  "verified_release_assets": 651,
+  "release_bytes": 179377649697,
   "declared_mechanism_episodes": 16,
-  "additional_matched_blind_if_triggered": 4
+  "additional_matched_blind_if_triggered": 4,
+  "completion": {
+    "primary_mechanisms": {
+      "attempted": 16,
+      "declared": 16,
+      "passed": 0
+    },
+    "blind_mechanisms": {
+      "attempted": 4,
+      "declared": 4,
+      "passed": 0
+    },
+    "distinct_transitions": {
+      "full": 8192,
+      "blind": 8192
+    },
+    "paired_results": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/paired-mechanisms.json",
+    "private_intervention": {
+      "case": "A",
+      "mode": "short",
+      "observer": "M1",
+      "planning": "P1",
+      "timing": "R0",
+      "alternative": "private_reset",
+      "paired_full_attempt": "w57-m1-p-a-short-a01",
+      "required_evidence": "p/physical/private-short-A-eligibility.json",
+      "scope": "Secondary causal intervention, outside 16 and outside matched blind.",
+      "origin": "Preselected A before any official P/A short outcome. Require matched real subsequent loads and mapped differences exceeding same-input repeatability in original A and short A.",
+      "status": "ended",
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "kill_on_conversation_end": false,
+      "eligibility": {
+        "selected_case": "A",
+        "task": "short",
+        "paired_episodes": {
+          "original": {
+            "attempt": "w57-m1-p-a-original-e30-a01",
+            "physical_status": "passed",
+            "original_pass_or_complete_mechanism_observation": true,
+            "mechanism_confirmed_cycles": null,
+            "exact_revisit_criterion_met_for_every_matched_short_target": null,
+            "distinct_matched_targets": 10,
+            "mapped_changes_above_reconstruction": 9
+          },
+          "short": {
+            "attempt": "w57-m1-p-a-short-a01",
+            "physical_status": "mechanism_criteria_unmet",
+            "original_pass_or_complete_mechanism_observation": true,
+            "mechanism_confirmed_cycles": 7,
+            "exact_revisit_criterion_met_for_every_matched_short_target": true,
+            "distinct_matched_targets": 12,
+            "mapped_changes_above_reconstruction": 12
+          }
+        },
+        "eligible_for_separate_physics": true,
+        "private_physics_separate_from_16": true,
+        "deadline": null,
+        "wall_deadline_enabled": false,
+        "kill_on_conversation_end": false
+      },
+      "original_E30": {
+        "attempt": "w57-m1-p-a-private-original-e30-a01",
+        "status": "passed",
+        "reason": "stage_passed"
+      },
+      "short": {
+        "attempt": "w57-m1-p-a-private-short-a01",
+        "status": "mechanism_criteria_unmet",
+        "reason": "stage_horizon_reached",
+        "mechanism": {
+          "mode": "short",
+          "cycles_requested": 12,
+          "traversals": [
+            {
+              "cycle": 1,
+              "start_s": 2.0019999999998124,
+              "end_s": 10.64000000000188,
+              "direction": 1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 2,
+              "start_s": 10.64000000000188,
+              "end_s": 15.45399999999066,
+              "direction": -1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 3,
+              "start_s": 15.45399999999066,
+              "end_s": 20.253999999979474,
+              "direction": 1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 4,
+              "start_s": 20.253999999979474,
+              "end_s": 25.34399999996761,
+              "direction": -1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 5,
+              "start_s": 25.34399999996761,
+              "end_s": 30.08599999995656,
+              "direction": 1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 6,
+              "start_s": 30.08599999995656,
+              "end_s": 34.94399999994524,
+              "direction": -1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 7,
+              "start_s": 34.94399999994524,
+              "end_s": 39.863999999933775,
+              "direction": 1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 8,
+              "start_s": 39.863999999933775,
+              "end_s": 45.01199999992178,
+              "direction": -1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 9,
+              "start_s": 45.01199999992178,
+              "end_s": 49.73599999991077,
+              "direction": 1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 10,
+              "start_s": 49.73599999991077,
+              "end_s": 54.90199999989873,
+              "direction": -1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 11,
+              "start_s": 54.90199999989873,
+              "end_s": 59.939999999886986,
+              "direction": 1,
+              "free_hold_start_s": null
+            },
+            {
+              "cycle": 12,
+              "start_s": 59.939999999886986,
+              "end_s": 64.94999999990905,
+              "direction": -1,
+              "free_hold_start_s": null
+            }
+          ],
+          "achieved_cycles": [
+            1,
+            3,
+            5,
+            7,
+            9,
+            11
+          ],
+          "confirmed_cycle_count": 6,
+          "positive_overlap_event_rows": 30,
+          "home_stable": true,
+          "gap_min_median_max_s": [
+            1.1287999999973692,
+            1.1937999999972178,
+            1.2699999999970402
+          ],
+          "pair_evidence": "w57-revisit-pairs.jsonl",
+          "raw_pairs": 39
+        }
+      },
+      "original_E60": {
+        "attempt": "w57-m1-p-a-private-original-e60-a01",
+        "status": "passed",
+        "reason": "stage_passed"
+      }
+    },
+    "technical_interruptions": [
+      "w57-pilot02-blind-a-e60-0032",
+      "w57-pilot02-blind-b-e60-0032"
+    ],
+    "original_long_decision": {
+      "candidate": "PR",
+      "case": {
+        "A": {
+          "eligible": true,
+          "conditions": {
+            "own_original_E60": true,
+            "both_observation_horizons": true,
+            "actual_cross_foot_cycle": true,
+            "actual_material_candidate": true,
+            "actual_timing_authority": true
+          }
+        },
+        "B": {
+          "eligible": true,
+          "conditions": {
+            "own_original_E60": true,
+            "both_observation_horizons": true,
+            "actual_cross_foot_cycle": true,
+            "actual_material_candidate": true,
+            "actual_timing_authority": true
+          }
+        }
+      },
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "kill_on_conversation_end": false
+    },
+    "publication": {
+      "release": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w57",
+      "release_id": 454178461,
+      "asset_count": 651,
+      "bytes": 179377649697,
+      "verified_unix_s": 1795573299.9708757
+    },
+    "matched_A_short_history": {
+      "full": {
+        "phase_status": "mechanism_criteria_unmet",
+        "observed_physical_s": 100.00000000107259,
+        "original_slip_integral_s": 0.05526317081051403,
+        "max_principal_strain": 0.0049607819045628665
+      },
+      "private_reset": {
+        "phase_status": "mechanism_criteria_unmet",
+        "observed_physical_s": 100.00000000107259,
+        "original_slip_integral_s": 0.056728249351609056,
+        "max_principal_strain": 0.004333900770610161
+      }
+    }
+  }
 }
