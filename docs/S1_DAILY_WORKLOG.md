@@ -791,6 +791,11 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/attempt/w58-g0-m1-b2-a-development-recovered-a02｜物理回合结束
+
+w58-g0-m1-b2-a-development-recovered-a02，development / recovered / A，控制器 S5-w58-f7727bc878def3db58，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 7/12，本回合进入采样账本 0 条，CPU 用户/系统秒 11012.729766/72.953622。物理槽 1。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-b2-a-development-recovered-a02.json)。
+
+
 ### 20261125/w58/scratch-evaluation-scale-registration｜含个人盘四槽结果与纯数据盘队列的独立资格
 
 三条恢复重访和随后四条的两个观测窗口，合计每墙钟分钟分别推进 3.313、4.738、4.721 个仿真秒。三槽含两条个人盘 B2 与一条数据盘 P2-private，四槽增加数据盘 P2-private B。总物理吞吐增加 43.0% 和 42.5%，同任务/同数据盘的折算每流效率分别为低档的 83.9% 和 83.0%。该存储条件按两个不重叠窗口降回三槽补位；四个已开任务均在原 PID 接续。P2-private A 在基准和首个四槽窗口都约占一个 CPU 核，单位物理秒 CPU 开销从约 37.1 提高到 43.9 核秒；不同物理区间及求解负担随任务变化。两个个人盘 B2 均自然完成后，若三条真实在途和新增工作全部写 D57 数据盘，后台将按新登记的同卷同 case 曲线重新测三、四、六槽，沿用 240 秒窗口、90% 阈值和资源余量门槛。当前登记时纯数据盘扩容和六槽均未运行。当前 dispatcher 325750；实际进程、冻结身份与时钟见[交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-handoff-20261125.json)，CPU、候选与 MPC 分位时延见[实测回读](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-throughput-readback.json)。
