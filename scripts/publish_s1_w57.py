@@ -14,7 +14,7 @@ import time
 import zipfile
 
 from publish_s1_go2_w54 import write
-from s1_w57_release_parts import episode_paths, groups_for, prepare_part
+from s1_w57_release_parts import episode_paths, groups_for, prepare_part, source_signature
 
 ROOT=Path(__file__).resolve().parents[1]
 RUN='tm-s1-go2-local-readiness-r12'
@@ -168,7 +168,7 @@ def transfer(path, name, release, existing):
     return verified
 
 
-def originals(label, paths, video=None):
+def originals(label, paths, video=None, *, before_movie=False):
     dest=SMALL/'delivery'/(label+'.json')
     release,existing=release_assets()
     prior=read(dest) if dest.exists() else None
@@ -183,9 +183,24 @@ def originals(label, paths, video=None):
                 raise ValueError('The exact archived asset must be recovered before republishing '+receipt['name'])
         return
     groups, file_count = groups_for(paths, video, PART)
+    if before_movie:
+        # A later video receipt may be inserted in the episode file order. A part whose
+        # *next* part also starts before that marker is already completely determined.
+        marker = Path('episode/video-asset.json')
+        groups = [group for index,group in enumerate(groups[:-1])
+                  if Path(groups[index+1][0][0]).parts[0]=='episode' and
+                  Path(groups[index+1][0][0]) < marker]
+        video = None
+        if not groups:
+            return
     recorded=prior if prior is not None else dict(label=label,tag=TAG,assets=[],
         roots={k:str(p) for k,p in paths},original_file_count=file_count,originals_retained=True,
         compact_source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip())
+    if before_movie:
+        recorded.pop('original_file_count',None)
+        recorded['status']='partial'
+    else:
+        recorded.update(original_file_count=file_count,roots={k:str(p) for k,p in paths})
     done={a['name']:a for a in recorded['assets']}
     def already_verified(name):
         if name not in done or name not in existing:return False
@@ -194,7 +209,14 @@ def originals(label, paths, video=None):
     names = [f'{label}-originals-{i:03d}.zip' for i in range(1,len(groups)+1)]
     if video:
         names.append(label+'-full.mp4')
+    prepublished=recorded.setdefault('prepublished_member_signatures',{}) if before_movie else recorded.get('prepublished_member_signatures',{})
+    if not before_movie:
+        for name,group in zip(names,groups):
+            if name in prepublished and source_signature(group)!=prepublished[name]:
+                raise ValueError('Frozen source membership changed before full publication: '+name)
     def save(receipt):
+        if before_movie:
+            prepublished[receipt['name']]=read(directory/(receipt['name']+'.source.json'))['source']
         done[receipt['name']]=receipt
         recorded['assets']=[done[n] for n in dict.fromkeys(names+list(done)) if n in done]
         write(dest,recorded)
@@ -229,6 +251,8 @@ def originals(label, paths, video=None):
                 (directory/receipt['name']).unlink(missing_ok=True)
         if first_error is not None:
             raise first_error
+    if before_movie:
+        return
     recorded.update(status='verified',release=release['url'],verified_unix_s=time.time())
     write(dest,recorded)
 
@@ -242,7 +266,13 @@ def deliver_episode(attempt):
     render_locks=ROOT/'work/w57/replay-locks'
     render_locks.mkdir(exist_ok=True)
     with (render_locks/(attempt+'.lock')).open('a') as lock:
-        fcntl.flock(lock,fcntl.LOCK_EX)
+        try:
+            fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        except BlockingIOError:
+            if not (out/'video-asset.json').is_file():
+                originals(attempt,episode_paths(LARGE,attempt,out),
+                          out/'full-mission-material-overlay.mp4',before_movie=True)
+            fcntl.flock(lock,fcntl.LOCK_EX)
         alternate=ROOT/'work/w57/rendered'/attempt
         dest=out
         if not (out/'video-asset.json').exists() and (
