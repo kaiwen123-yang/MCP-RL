@@ -267,7 +267,7 @@ class Pool:
     def review_family(self,kind,group):
         count=group['count'];width=group['width'];first=2 if width==2 else 3
         levels=(first,4,6)
-        if count not in levels:return
+        if count not in levels or (kind,count) in self.rejected or (count==6 and (kind,4) in self.rejected):return
         recent=list(self.samples)[-4:]
         if len(recent)<4 or recent[0]['unix_s']<=self.last_review.get((kind,count),0):return
         observations=[]
@@ -294,7 +294,8 @@ class Pool:
             if not keep:
                 self.lower_windows[kind,count]=self.lower_windows.get((kind,count),0)+1
                 if self.lower_windows[kind,count]>=2:
-                    self.rejected.add((kind,count));self.family_limits[kind]=max(3,older)
+                    self.rejected.add((kind,count));self.qualified.pop((kind,count),None)
+                    self.family_limits[kind]=max(3,older)
                 return
             self.lower_windows[kind,count]=0
             self.qualified[kind,count]=True
