@@ -1,7 +1,6 @@
 """Measured capacity for independent W58 original/recovered E60 evaluations."""
 from bisect import bisect_right
 from collections import defaultdict, deque
-from pathlib import Path
 import json
 
 from inspect_s1_w58_predecessor import BG, REL, read
@@ -52,6 +51,7 @@ class EvaluationCapacity:
         self.history=deque(load_history(work/'throughput.jsonl')[-48:],maxlen=48)
         self.state=(read(self.path) if self.path.exists() else
                     dict(admission_limit=3,retained=3,windows={},last_end={},bad={},blocked=[],events=[],**BG))
+        self.state.setdefault('storage_stratum','scratch' if local else 'with_personal')
 
     def freeze_scratch_reference(self):
         # Same-volume measured shapes are fixed before considering a first local-only expansion.
@@ -67,7 +67,7 @@ class EvaluationCapacity:
                 points=[]
                 with path.open() as log:
                     for line in log:
-                        if not line.startswith('{') or not line.endswith('\\n'):continue
+                        if not line.startswith('{') or not line.endswith('\n'):continue
                         row=json.loads(line)
                         if 'time_s' not in row or 'wall_s' not in row:continue
                         t=round(row['time_s'],6)
@@ -199,7 +199,9 @@ class EvaluationCapacity:
                 s['admission_limit']=prev;s['retained']=prev;s['blocked'].append(width)
                 action='drain_to_'+str(prev)
         event=dict(at=sample['end'],action=action,measurement=sample,comparison=cmp)
-        if action!='measured' or not s['events']:s['events'].append(event)
+        routine=action=='measured' or action.startswith('retain_')
+        if not s['events'] or not routine or s['events'][-1]['action']!=action:
+            s['events'].append(event)
         s['latest']=event
         write(self.path,s)
 

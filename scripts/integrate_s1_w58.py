@@ -135,8 +135,31 @@ def refresh():
         material_forecasts=sorted(p.name for p in (R/'m2').glob('*-forecast-cost.json')),
         geometry=(R/'m2/source-footprint-strata.json.gz').is_file(),
         w57_heads=observed.get('committed'),w57_active=observed.get('attempts'),w57_phase=observed.get('primary'))
+    scales={}
+    for medium,filename in [('with_personal','evaluation-capacity.json'),('scratch','evaluation-scratch-capacity.json')]:
+        path=R/'dispatch'/filename
+        if path.is_file():
+            scales[medium]=(path,read(path))
+    if scales:
+        fingerprint['evaluation_scale']={medium:[v['admission_limit'],v['retained'],v['blocked'],len(v['events'])]
+                                         for medium,(_,v) in scales.items()}
+        s['evaluation_slot_evidence']={medium:str(path.relative_to(ROOT)) for medium,(path,_) in scales.items()}
     last=WORK/'git-fingerprint.json'
-    if not last.is_file() or read(last)!=fingerprint:
+    previous_fingerprint=read(last) if last.is_file() else {}
+    if previous_fingerprint!=fingerprint:
+        if scales and (previous_fingerprint.get('evaluation_scale')!=fingerprint['evaluation_scale'] or s['stage']=='finished'):
+            from summarize_s1_w58_evaluation_capacity import summarize as summarize_slots
+            summarize_slots()
+            for medium,(path,v) in scales.items():
+                for event in v['events']:
+                    action=event['action']
+                    if not action.startswith(('open_trial_','drain_to_','retain_')):continue
+                    m=event['measurement'];comparison=event['comparison'] or {}
+                    append_event(event['at'][:10],f'evaluation-slots/{medium}/{action}','正式物理流并发测量',
+                        f"{medium}，{action}。从 {m['start']} 至 {m['end']} 实测 {m['width']} 条物理流，"
+                        f"合计 {m['physics_s_per_wall_s']:.5f} 仿真秒/墙秒。总工作量、每流和各同任务/卷比较："
+                        f"{json.dumps(comparison,ensure_ascii=False)}。在途回合自然完成；"
+                        f"[逐流时钟与资源比较](../{path.relative_to(ROOT)})。")
         if not old or s['stage']!=old['stage'] or old['observed_at'][:10]!=now.date().isoformat():
             append_event(now.date().isoformat(),'stage/'+s['stage'],'调度与实测进度',summary(s)+'。'+s.get('detail','')+
                 '。运行快照 '+json.dumps(observed,ensure_ascii=False)+'。')
