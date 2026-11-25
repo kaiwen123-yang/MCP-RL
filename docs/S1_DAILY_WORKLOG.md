@@ -791,6 +791,11 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/stage/G1_original_qualification｜调度与实测进度
+
+stage=G1_original_qualification，selected_material=M1，slots=3，running=[]，attempts=0，completed=0，joint_distinct={}。W57 两份物理 dispatcher、自然 collector 尾段和发布后继已结束，旧槽已核空闲。。运行快照 {}。
+
+
 ### 20261125/storage/process-H-20261124-final｜D57 过程文件增量归档
 
 本次 H 盘增量已收尾。251,203 个过程文件共 107,887,511,720 逻辑字节完成核验。本轮新写入 321 个包、44,050,766,949 字节。D57 复查原文件身份、摘要、占用和依赖后逐文件释放 251,203 个文件、108,215,533,056 个分配字节。命名保护路径误删数 0。四个 E600 基线、冻结 checkpoint、源码和队列后继输入已复核。原路径可通过 H 盘归档索引找回。 [执行回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-process-20261124/latest.json)。
