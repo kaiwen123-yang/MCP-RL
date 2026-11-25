@@ -1127,6 +1127,11 @@ W58 学习 head 原子占两槽，旧扩容逻辑要求同类占用三槽才建�
 
 ## 2026-11-26｜W58 执行
 
+### 20261126/w58/attempt/w58-g0-m1-p2-private-a-original-e60-a01｜物理回合结束
+
+w58-g0-m1-p2-private-a-original-e60-a01，original / original / A，控制器 S5-w58-9ab3242e8c573151cc，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 300000 个物理子步，模拟 59.999999999886846 s，结论 passed，终止原因 stage_passed。机制曝光 —/—，本回合进入采样账本 0 条，CPU 用户/系统秒 1383.46578/8.603237。物理槽 0。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-p2-private-a-original-e60-a01.json)。
+
+
 ### 20261126/w58/material-selected｜保留轨迹与估计器选择
 
 选择 M1。各保留轨迹单列释放→跨足重载、短预测误差、区间覆盖与宽度，见[选择](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m/selection.json)和[分族指标](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m2/errors-and-coverage.json)。
