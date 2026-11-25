@@ -18,7 +18,12 @@ def render(name, output_dir=None):
     resolved=json.loads((SMALL/(name+'-resolved.json')).read_text())
     terrain='tm02_anchor'
     mismatch=False
-    a=np.load(out/'trajectory.npz')
+    fields = ['time', 'qpos', 'qvel', 'mocap_pos', 'mocap_quat', 'phase']
+    if '-w51-' in name:
+        fields.extend(['actual_grf', 'nonfoot_ground_force'])
+    # Each access to an NPZ member decompresses the complete array. Read each used member once.
+    with np.load(out/'trajectory.npz') as recorded:
+        a = {field: recorded[field] for field in fields}
     m=mujoco.MjModel.from_binary_path(str(out/'model.mjb'));d=mujoco.MjData(m)
     m.vis.global_.offwidth=1280;m.vis.global_.offheight=720
     renderer=mujoco.Renderer(m,height=720,width=1280)
