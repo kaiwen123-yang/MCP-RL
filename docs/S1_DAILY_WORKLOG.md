@@ -1127,6 +1127,11 @@ W58 学习 head 原子占两槽，旧扩容逻辑要求同类占用三槽才建�
 
 ## 2026-11-26｜W58 执行
 
+### 20261126/w58/stage/independent_validation｜调度与实测进度
+
+stage=independent_validation，selected_gait=G0，selected_material=M1，joint_eligible=False，running=['w58-g0-m1-p2-private-a-validation-short-a01', 'w58-g0-m1-b2-b-validation-short-a01', 'w58-g0-m1-b2-a-validation-short-a01']，attempts=43，completed=40，joint_distinct={}。按预先冻结的独立路线对全部身份和未运行格逐项入账。。运行快照 {}。
+
+
 ### 20261126/w58/attempt/w58-g0-m1-fixed-wait-b-development-recovered-a01｜物理回合结束
 
 w58-g0-m1-fixed-wait-b-development-recovered-a01，development / recovered / B，控制器 S5-w58-1fed5698ca861ce349，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 5/12，本回合进入采样账本 0 条，CPU 用户/系统秒 10418.590056/49.985694。物理槽 5。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-fixed-wait-b-development-recovered-a01.json)。
