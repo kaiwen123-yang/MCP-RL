@@ -791,6 +791,21 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/attempt/w58-g1-m1-g1-b-original-e60-a01｜物理回合结束
+
+w58-g1-m1-g1-b-original-e60-a01，original / original / B，控制器 S5-w58-ce54d129bb2963f747，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 300000 个物理子步，模拟 59.999999999886846 s，结论 passed，终止原因 stage_passed。机制曝光 —/—，本回合进入采样账本 0 条，CPU 用户/系统秒 1299.50616/8.981156。物理槽 1。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g1-m1-g1-b-original-e60-a01.json)。
+
+
+### 20261125/w58/attempt/w58-g1-m1-g1-a-original-e60-a01｜物理回合结束
+
+w58-g1-m1-g1-a-original-e60-a01，original / original / A，控制器 S5-w58-ce54d129bb2963f747，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 300000 个物理子步，模拟 59.999999999886846 s，结论 passed，终止原因 stage_passed。机制曝光 —/—，本回合进入采样账本 0 条，CPU 用户/系统秒 1294.300319/9.778323。物理槽 0。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g1-m1-g1-a-original-e60-a01.json)。
+
+
+### 20261125/w58/stage/original_qualifications｜调度与实测进度
+
+stage=original_qualifications，selected_gait=G0，selected_material=M1，running=['w58-g0-m1-b2-b-original-e30-a01', 'w58-g0-m1-p2-private-a-original-e30-a01', 'w58-g0-m1-b2-a-original-e30-a01']，attempts=7，completed=4，joint_distinct={}。四个开发身份逐 case 取得原资格，另有预选 A 的时长修正开关配对。。运行快照 {}。
+
+
 ### 20261125/w58/attempt/w58-g1-m1-g1-b-original-e30-a01｜物理回合结束
 
 w58-g1-m1-g1-b-original-e30-a01，original / original / B，控制器 S5-w58-ce54d129bb2963f747，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 150000 个物理子步，模拟 29.99999999995676 s，结论 passed，终止原因 stage_passed。机制曝光 —/—，本回合进入采样账本 0 条，CPU 用户/系统秒 673.042945/5.250488000000001。物理槽 1。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g1-m1-g1-b-original-e30-a01.json)。
