@@ -791,6 +791,11 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/scratch-evaluation-scale-registration｜含个人盘四槽结果与纯数据盘队列的独立资格
+
+三条恢复重访和随后四条的两个观测窗口，合计每墙钟分钟分别推进 3.313、4.738、4.721 个仿真秒。三槽含两条个人盘 B2 与一条数据盘 P2-private，四槽增加数据盘 P2-private B。总物理吞吐增加 43.0% 和 42.5%，同任务/同数据盘的折算每流效率分别为低档的 83.9% 和 83.0%。该存储条件按两个不重叠窗口降回三槽补位；四个已开任务均在原 PID 接续。P2-private A 在基准和首个四槽窗口都约占一个 CPU 核，单位物理秒 CPU 开销从约 37.1 提高到 43.9 核秒；不同物理区间及求解负担随任务变化。两个个人盘 B2 均自然完成后，若三条真实在途和新增工作全部写 D57 数据盘，后台将按新登记的同卷同 case 曲线重新测三、四、六槽，沿用 240 秒窗口、90% 阈值和资源余量门槛。当前登记时纯数据盘扩容和六槽均未运行。当前 dispatcher 325750；实际进程、冻结身份与时钟见[交接](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-handoff-20261125.json)，CPU、候选与 MPC 分位时延见[实测回读](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-throughput-readback.json)。
+
+
 ### 20261125/w58/evaluation-slots/with_personal/drain_to_3｜正式物理流并发测量
 
 with_personal，drain_to_3。从 2026-11-25T21:04:26.197189+08:00 至 2026-11-25T21:08:40.968722+08:00 实测 4 条物理流，合计 0.07868 仿真秒/墙秒。总工作量、每流和各同任务/卷比较：{"passed": false, "raw_total_ratio": 1.4248450194686155, "raw_comparable": true, "total_work_ratio": 1.3852753005972673, "per_stream_work_ratio": 1.0389564754479506, "common_class_ratios": {"p2-recovered-E60/scratch": 0.8303899272123841, "p2-recovered-E60/personal": 1.1174916733488378}, "continuing_stream_ratio": 0.9809671023472324, "external_cpu_comparable": true}。在途回合自然完成；[逐流时钟与资源比较](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-capacity.json)。
