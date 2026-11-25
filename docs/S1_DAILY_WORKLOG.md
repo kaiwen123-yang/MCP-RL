@@ -791,6 +791,11 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/attempt/w58-g0-m1-b2-b-original-e60-a01｜物理回合结束
+
+w58-g0-m1-b2-b-original-e60-a01，original / original / B，控制器 S5-w58-f7727bc878def3db58，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 300000 个物理子步，模拟 59.999999999886846 s，结论 passed，终止原因 stage_passed。机制曝光 —/—，本回合进入采样账本 0 条，CPU 用户/系统秒 1414.5118420000001/9.650446。物理槽 0。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-b2-b-original-e60-a01.json)。
+
+
 ### 20261125/w58/h-archive-process-complete｜H 盘归档完成，D57 退役已结回合的过程文件
 
 19:43:20 实测数据盘可用 2.56 GiB，两条 288 秒恢复重访在推进，第三槽的 B2 A 原 E60 等待存储。先行 XFS 共享等字节数据后，可用配额仍约 2.56 GiB。20:01 起三条传输流将本项目的已结过程数据传到 H 盘，逐批执行 H 介质读回、成员 SHA-256 和 D57 源版本核对。首次盘点 24 个已结且有 Release 回执的 W58 回合，收尾补入 20:26:06 通过并完成发布的 B2 A 原 E60，共 25 个回合。H 盘共 74 批，新增 ZIP 6.49 GiB，索引覆盖 106132 个原路径，已按 D57 原路径抽取并核验一份实际删除的 MPC 记录。D57 删除 101508 个过程文件（3.08 GiB），3264 份已封存的等字节副本改用硬链接保留原访问路径（11.79 GiB）。归并与删除的逻辑占用合计 14.88 GiB。20:33 后核查数据盘可用 27.64 GiB，个人盘可用 18.36 GiB；盘面同时计入其他作业的写入和释放。八条开发短重访的评分及各自十二个目标、65 个完整回合物理分块、在跑回合的 2 个不同 checkpoint 已查验。B2 A 原 E60 自 20:02:48 起执行并通过，B2 B 原 E60 已接上；两条恢复重访 A/B 的物理时钟均越过 175 秒。W58 联合学习新增采样 0。[清理与物理回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/storage/20261125-H-process-archive.json)。H 盘目录为 H:/MPC+RL/40_support_evidence/20261125-w58-process，按源路径检索的 SQLite 目录和读取工具位于 H:/MPC+RL/00_catalog/migration-20261125-w58-process，索引 SHA-256 为 e9d6cda019540e6cf170afaea2455a00dac7fb6d0060a19194c39f191d7f6840。
