@@ -43,7 +43,7 @@ def old_pool_free():
         fcntl.flock(mux,fcntl.LOCK_EX)
         if any(Path('/proc',t.stem.rsplit('-',1)[-1]).exists() for t in queue.glob('*.waiting')):return False
         try:
-            for i in (0,1):
+            for i in range(6):
                 f=(queue/f'slot-{i}.lock').open('a')
                 held.append(f)
                 fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -66,12 +66,12 @@ def wait_w57():
             return
         key=(tuple(view['attempts']),view['primary'],view['private_short_A'],tuple(view['committed'].values()))
         if key!=last:
-            stage('waiting_W57_natural_release','W57 两个物理槽归原配对采样、冻结评价及独立 private-short-A dispatcher 使用。',
-                  w57_live=view,w58_physics_admitted=False,slots=2)
+            stage('waiting_W57_natural_release','等待 W57 的后继与交付调度自然结束。',
+                  w57_live=view,w58_physics_admitted=False,slots=0,w57_active_physics=len(view['attempts']))
             last=key
         else:
             current=read(STAGE)
-            current.update(w57_live=view,updated_at=datetime.now(SH).isoformat())
+            current.update(w57_live=view,w57_active_physics=len(view['attempts']),updated_at=datetime.now(SH).isoformat())
             write(STAGE,current)
         time.sleep(30)
 

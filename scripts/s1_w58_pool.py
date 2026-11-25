@@ -164,6 +164,10 @@ class Pool:
         self.last_tick=0.
         self.last_progress={}
         self.last_distinct={}
+        self.last_collected={}
+        self.family_limits={}
+        self.last_review={}
+        self.lower_windows={}
 
     def submit(self,job,slots,store):
         record=self.records/(job['id']+'.json')
@@ -218,20 +222,92 @@ class Pool:
         return rows
 
     def physical_progress(self,active):
-        clocks={}
-        for r in active:
-            if r['slots_needed']==1:names=[r['id']]
+        clocks={};families={}
+        for job in active:
+            width=job['slots_needed']
+            group=families.setdefault(job['kind'],dict(width=width,count=0,owners=[],attempts=[]))
+            group['count']+=len(job['slots'])
+            group['owners'].append(job['id'])
+            if width==1:
+                names=[job['id']]
             else:
                 names=[]
-                run=WORK/'campaigns'/('seed-'+str(r['seed']))/r['head']
+                run=WORK/'campaigns'/('seed-'+str(job['seed']))/job['head']
                 for case in 'AB':
-                    p=run/f'episodes-{case}.jsonl'
-                    if p.exists() and (lines:=p.read_text().splitlines()):
+                    ledger=run/f'episodes-{case}.jsonl'
+                    if ledger.exists() and (lines:=ledger.read_text().splitlines()):
                         names.append(json.loads(lines[-1])['attempt'])
+            group['attempts'].extend(names)
             for name in names:
                 p=RAW/name/'live.json'
                 if p.is_file():clocks[name]=read(p)['physical_time_s']
-        return clocks
+        return clocks,families
+
+    @staticmethod
+    def sample_head(run):
+        """Count actual current-version rows separately from committed PPO transitions."""
+        path=run/'published.json'
+        if not path.is_file():return 0,0
+        state=read(path)
+        committed=state.get('cumulative_distinct',0)
+        if state.get('finished'):return committed,committed
+        partial=0
+        for case in 'AB':
+            batch=run/f"batch-{state['version']:03d}-{case}.jsonl"
+            if batch.is_file():
+                with batch.open('rb') as source:
+                    partial+=sum(line.endswith(b'\n') for line in source)
+        latest=read(path)
+        if latest['version']!=state['version']:
+            # The optimizer published the batch while it was read; the new version owns those rows.
+            committed=latest.get('cumulative_distinct',0)
+            return committed,committed
+        return committed,committed+partial
+
+    def review_family(self,kind,group):
+        count=group['count'];width=group['width'];first=2 if width==2 else 3
+        levels=(first,4,6)
+        if count not in levels:return
+        recent=list(self.samples)[-4:]
+        if len(recent)<4 or recent[0]['unix_s']<=self.last_review.get((kind,count),0):return
+        observations=[]
+        for sample in recent:
+            item=sample['families'].get(kind)
+            if (not item or item['count']!=count or item['owners']!=group['owners'] or
+                    len(item['rates'])!=count or min(item['rates'].values(),default=0)<=0):
+                return
+            observations.append(item)
+        seconds=sum(s['dt_s'] for s in recent)
+        speed=sum(sum(g['rates'].values())*s['dt_s'] for g,s in zip(observations,recent))/seconds
+        collected=3600*sum(g['new_rows'] for g in observations)/seconds
+        if width==2 and collected<=0:return
+        self.last_review[kind,count]=recent[-1]['unix_s']
+        other=sum(s['other_core_s_per_s']*s['dt_s'] for s in recent)/seconds
+        older=levels[levels.index(count)-1] if count!=first else None
+        if older is not None:
+            old=self.reference.get((kind,older))
+            if old is None:return
+            keep=(speed>old['physics'] and speed/count>=.90*old['physics']/older and
+                  not (other+1<old['external'] and old['external']>2))
+            if width==2:
+                keep=keep and collected>old['rows_per_hour'] and collected/count>=.90*old['rows_per_hour']/older
+            if not keep:
+                self.lower_windows[kind,count]=self.lower_windows.get((kind,count),0)+1
+                if self.lower_windows[kind,count]>=2:
+                    self.rejected.add((kind,count));self.family_limits[kind]=max(3,older)
+                return
+            self.lower_windows[kind,count]=0
+            self.qualified[kind,count]=True
+        if (kind,count) in self.rejected:return
+        self.reference.setdefault((kind,count),dict(physics=speed,external=other,rows_per_hour=collected,
+                                                    observed_slots=count,width=width,at=recent[-1]['time_shanghai']))
+        if count==6:return
+        target=4 if count==first else 6
+        clean=all(s['available_cpu_cores']>=target*PER_STREAM_CORES and s['ram_available_bytes']>10*2**30 and
+                  s['io_pressure_pct']<5 and s['host_iowait_fraction']<.05 and s['gpu'] and
+                  s['gpu'][0]<85 and s['gpu'][2]-s['gpu'][1]>6000 for s in recent)
+        if clean and (kind,target) not in self.rejected:
+            self.family_limits[kind]=max(self.family_limits.get(kind,3),target)
 
     def tick(self,active):
         previous=self.last
@@ -239,19 +315,26 @@ class Pool:
         self.last=cur
         if previous is None:return
         load=load_delta(previous,cur)
-        clocks=self.physical_progress(active)
+        clocks,families=self.physical_progress(active)
         count=sum(len(r['slots']) for r in active)
         kinds={r['kind'] for r in active}
         dt=cur['t']-previous['t']
         progress={k:(v-self.last_progress[k])/dt for k,v in clocks.items() if k in self.last_progress}
         self.last_progress=clocks
-        distinct={}
-        for r in active:
-            if r['slots_needed']==2:
-                p=WORK/'campaigns'/('seed-'+str(r['seed']))/r['head']/'published.json'
-                if p.exists():distinct[r['id']]=read(p).get('cumulative_distinct',0)
+        distinct={};collected={}
+        for job in active:
+            if job['slots_needed']==2:
+                run=WORK/'campaigns'/('seed-'+str(job['seed']))/job['head']
+                distinct[job['id']],collected[job['id']]=self.sample_head(run)
+        for group in families.values():
+            group['owners'].sort()
+            group['rates']={n:progress[n] for n in group['attempts'] if n in progress}
+            group['new_rows']=sum(max(0,collected[n]-self.last_collected[n]) for n in group['owners']
+                                  if n in collected and n in self.last_collected)
+        self.last_collected=collected
         now=dict(time_shanghai=datetime.now(SH).isoformat(),unix_s=cur['unix_s'],count=count,kind=next(iter(kinds)) if len(kinds)==1 else None,
                  dt_s=dt,physics_s_per_wall_s=progress,clock_s=clocks,distinct_committed=distinct,
+                 collected_including_current_version=collected,families=families,
                  committed_distinct_per_wall_hour={k:3600*(v-self.last_distinct[k])/dt for k,v in distinct.items() if k in self.last_distinct},**load,
                  gpu=cur['gpu'],project_gpu_MiB=sum(p['gpu_MiB'] for p in cur['project'].values()),
                  project_rss_bytes=sum(p['rss'] for p in cur['project'].values()),
@@ -263,34 +346,11 @@ class Pool:
         self.samples.append(now)
         self.metrics=now
         with (WORK/'throughput.jsonl').open('a') as f:f.write(json.dumps(now,separators=(',',':'))+'\n')
-        # Compare like formal work, complete short windows, actual advancing streams.
-        same=list(self.samples)[-4:]
-        kind=now['kind']
-        if kind and len(same)==4 and all(
-                v['kind']==kind and v['count']==count and len(v['physics_s_per_wall_s'])==count
-                and min(v['physics_s_per_wall_s'].values(),default=0)>0 for v in same):
-            total=sum(sum(v['physics_s_per_wall_s'].values()) for v in same)/4
-            ext=sum(v['other_core_s_per_s'] for v in same)/4
-            clean=all(v['available_cpu_cores'] >= min(18,(count+1)*PER_STREAM_CORES) and
-                      v['ram_available_bytes']>10*2**30 and v['io_pressure_pct']<5. and
-                      v['host_iowait_fraction']<.05 and v['gpu'] and v['gpu'][0]<85 and
-                      v['gpu'][2]-v['gpu'][1]>6000 for v in same)
-            previous_cap={4:3,6:4}.get(count)
-            if previous_cap and (kind,previous_cap) in self.reference:
-                old,other=self.reference[kind,previous_cap]
-                if (total<=old or total/count<.90*old/previous_cap or
-                        ext+1<other and other>2):
-                    self.rejected.add((kind,count))
-                    self.limit=previous_cap
-                else:
-                    self.qualified[kind,count]=True
-            if (kind,count) not in self.rejected:
-                self.reference.setdefault((kind,count),(total,ext))
-                if count in (3,4) and clean and (count==3 or self.qualified.get((kind,4))):
-                    nxt=4 if count==3 else 6
-                    if (kind,nxt) not in self.rejected:self.limit=nxt
+        for kind,group in families.items():
+            self.review_family(kind,group)
+        self.limit=max([3,*self.family_limits.values()])
         write(STATE/'pool.json',dict(limit=self.limit,initial_limit=3,conditional_max=6,active=active,
-             latest=now,throughput_trace=str(WORK/'throughput.jsonl'),
+             latest=now,family_limits=self.family_limits,references=[dict(kind=k[0],**v) for k,v in self.reference.items()],throughput_trace=str(WORK/'throughput.jsonl'),
              certified=[list(k) for k in self.qualified],rejected=[list(k) for k in sorted(self.rejected)],**BG))
 
     def batch(self,jobs,pulse):
@@ -304,20 +364,22 @@ class Pool:
             if not self.metrics:
                 time.sleep(2)
                 continue
+            reserved_for_pair=set()
             for job in pending[:]:
                 if (self.records/(job['id']+'.json')).exists():
                     pending.remove(job)
                     continue
-                cap=self.limit
-                # Larger caps apply only to the measured task family, and are trialled
-                # on real jobs from the same family as the stored baseline.
-                if cap>3 and (job['kind'],3) not in self.reference:cap=3
-                available=[i for i in range(cap) if i not in in_use]
-                n=job['slots_needed']
-                ms=self.metrics
-                if (len(available)<n or (len(in_use)+n)*PER_STREAM_CORES>ms['available_cpu_cores']
-                        or ms['ram_available_bytes']<(len(in_use)+n)*2.5*2**30
-                        or ms['io_pressure_pct']>15 or not ms['gpu'] or ms['gpu'][2]-ms['gpu'][1]<n*1100):
+                cap=self.family_limits.get(job['kind'],3)
+                n=job['slots_needed'];ms=self.metrics
+                available=[i for i in range(cap) if i not in in_use and (n==2 or i not in reserved_for_pair)]
+                if ((len(in_use)+n)*PER_STREAM_CORES>ms['available_cpu_cores'] or
+                        ms['ram_available_bytes']<(len(in_use)+n)*2.5*2**30 or
+                        ms['io_pressure_pct']>15 or not ms['gpu'] or ms['gpu'][2]-ms['gpu'][1]<n*1100):
+                    continue
+                if len(available)<n or len(in_use)+n>cap:
+                    if n==2 and cap>=4:
+                        # Let a qualified next pair use the next two free places. No partial lease is taken.
+                        reserved_for_pair.update(available[:n])
                     continue
                 store=None
                 # Relocate only a future raw allocation, never existing originals.
