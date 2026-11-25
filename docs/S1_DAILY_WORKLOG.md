@@ -791,6 +791,11 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/attempt/w58-g0-m1-b2-b-development-recovered-a02｜物理回合结束
+
+w58-g0-m1-b2-b-development-recovered-a02，development / recovered / B，控制器 S5-w58-f7727bc878def3db58，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 5/12，本回合进入采样账本 0 条，CPU 用户/系统秒 11099.563741/74.026071。物理槽 2。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-b2-b-development-recovered-a02.json)。
+
+
 ### 20261125/w58/attempt/w58-g0-m1-b2-a-development-recovered-a02｜物理回合结束
 
 w58-g0-m1-b2-a-development-recovered-a02，development / recovered / A，控制器 S5-w58-f7727bc878def3db58，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 7/12，本回合进入采样账本 0 条，CPU 用户/系统秒 11012.729766/72.953622。物理槽 1。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-b2-a-development-recovered-a02.json)。
