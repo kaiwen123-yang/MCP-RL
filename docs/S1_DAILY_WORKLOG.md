@@ -791,6 +791,11 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/evaluation-slots/scratch/open_trial_6｜正式物理流并发测量
+
+scratch，open_trial_6。从 2026-11-25T22:36:00.782241+08:00 至 2026-11-25T22:40:15.315171+08:00 实测 4 条物理流，合计 0.09713 仿真秒/墙秒。总工作量、每流和各同任务/卷比较：{"passed": true, "raw_total_ratio": 1.508881740050128, "raw_comparable": true, "total_work_ratio": 1.4714801260944774, "per_stream_work_ratio": 1.103610094570858, "common_class_ratios": {"p2-recovered-E60/scratch": 1.103610094570858}, "continuing_stream_ratio": 1.115186870630906, "external_cpu_comparable": true}。在途回合自然完成；[逐流时钟与资源比较](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-scratch-capacity.json)。
+
+
 ### 20261125/w58/evaluation-slots/scratch/open_trial_4｜正式物理流并发测量
 
 scratch，open_trial_4。从 2026-11-25T22:28:56.406811+08:00 至 2026-11-25T22:33:10.910620+08:00 实测 3 条物理流，合计 0.06437 仿真秒/墙秒。总工作量、每流和各同任务/卷比较：{}。在途回合自然完成；[逐流时钟与资源比较](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-scratch-capacity.json)。
