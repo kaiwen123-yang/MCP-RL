@@ -895,6 +895,16 @@ H 盘归档与服务器释放已独立结单。251,203 个文件全部核验，�
 
 截至入账，按 GitHub size/digest 得到的本日新增资产回执共 71 个，31,243,323,639 B。源码和紧凑记录基线 `dfabb05e37fb`。物理槽、前序资格、仍在执行或等待的模块与发布资产详见 [W57 索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
 
+### 20261125/w57/encoded-prefix-reuse-parallel-release-and-w58-pair-admission｜复用 B 的真实视频前段，原件分片与视频尾段重叠，W58 按实际任务宽度扩槽
+
+09:36 实测 D57 容器 CPU 约 2.4/25 核。B 的原发布进程用约 1 核逐帧重复解压整组 NPZ 数组，原 FFmpeg 约 1.67 帧/秒，渲染期独占发布锁。另一项目的 GPU 计算进程实测 99% SM、显存 66,160 MiB。当前工作使用已完成的 E600 源轨迹，物理重跑 0，新增 PPO 0。
+
+09:50:33 起，六个 CPU 工作者按原文件顺序和 512 MiB 上限准备 A 的 22 个 ZIP，09:51:41 已写完。包记录绑定成员名、大小、设备、inode、mtime 与 ctime。09:58:01 核对 B 的原生产者 PID 471161、编码器 664922、独立进程组、实际输送管道和输出 inode；在整帧边界交接离线生产者，FFmpeg 自然收完已输入的全部帧并写完 MP4。原前段单独保存为 133,560,173 字节、12,527 帧，SHA-256 为 825bdb338b42f8f209fae17b2fa5d864611ea5dfb0658aa3210d55d95202f333。从实际物理 417.568 s 对应的第 12,527 个零基帧继续原相机、EGL、30 fps 和 x264 设置；GPU 同板计算繁忙时按同步读回开销降低绘制频率。10:09:23 完成 5,474 帧尾段的交接、合并及复核。前段的编码包原样保留，尾段以关键帧开始。逐一验证前段和尾段合计 18,001 个 H.264 包的 SHA-256、每个显示时间戳及整片解码。B 正式视频 153,844,130 字节，SHA-256 为 3fb52da7ca8793fc83a05034f42e2cdef057e22cbb4be6b8b0b8670f8ed46172。B 的原预测约 10:55–11:00 才编完。[原帧与交接证据](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/e600-b-replay-continuation.json)。
+
+不同回合各自持有发布锁，维护操作仍有全局排他锁。A 与 B 独立分片由单一回执写入者分别记录；名次和压缩参数与原格式一致。B 的录像尚在生成时已能发布位于最终视频元数据之前、边界已定的原件分片，完整发布时按原成员签名复核。10:05:32 同时观察到 7 个不同分片的 gh release upload 进程（A 四条、B 三条），10:17:37 的 6 秒窗口中三条 B 上传均实际发送，共 15.43 MiB/s。10:22:35 已核验 A 23 件、B 22 件，共 21,208,191,110 字节；从第一件到最后一件回执扣除首件的实测吞吐约 16.4 MB/s。此前原 E300 的 A/B 同口径分别为 7.2、7.0 MB/s，网络条件随时段变化。两个历史技术中断前缀以及最终逐回合元数据与 credit 包均已核验。[A 的 Release 回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/delivery/w57-m1-pr-a-original-e600-a01.json) · [B 的 Release 回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/delivery/w57-m1-pr-b-original-e600-a01.json)。
+
+W58 学习 head 原子占两槽，旧扩容逻辑要求同类占用三槽才建立参照，与成对采样的占用数不相容。已把单回合的 3→4→6 与双采样实际 2→4→6 分别测量，混跑时归到各自类型。学习负载还需实际采集的 distinct/h、每流物理进度和资源余量同时支持；写入中的当前版本行只用于吞吐，正式更新预算继续按发布版本。等待新一对采样时不拆分租约，更新屏障和两流自然尾段均持有原槽。新执行快照 4f7e006aa34fbfca0b83f4ec614348f948a99295 与原 be9956b4 仅有调度入口和资源池两份文件不同，切换时实际 W58 收据 0、pool 任务 0，旧等待 PID 176250 接续为 681345。W58 继续等待 W57 所有后继自然结束。W58 的实际扩容与科学收益仍待其正式任务。deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。[W58 调度合同](../docs/S1_W58_RESEARCH_PLAN.md)。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
