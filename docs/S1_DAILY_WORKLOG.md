@@ -791,6 +791,11 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/attempt/w58-g0-m1-p2-private-a-development-recovered-a01｜物理回合结束
+
+w58-g0-m1-p2-private-a-development-recovered-a01，development / recovered / A，控制器 S5-w58-9ab3242e8c573151cc，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 7/12，本回合进入采样账本 0 条，CPU 用户/系统秒 10421.662382/52.54557。物理槽 0。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-p2-private-a-development-recovered-a01.json)。
+
+
 ### 20261125/w58/evaluation-slots/scratch/retain_6｜正式物理流并发测量
 
 scratch，retain_6。从 2026-11-25T22:43:26.311278+08:00 至 2026-11-25T22:47:41.105166+08:00 实测 6 条物理流，合计 0.14347 仿真秒/墙秒。总工作量、每流和各同任务/卷比较：{"passed": true, "raw_total_ratio": 1.4771174204489506, "raw_comparable": true, "total_work_ratio": 1.4630201692946911, "per_stream_work_ratio": 0.9753467795297941, "common_class_ratios": {"p2-recovered-E60/scratch": 0.9753467795297942}, "continuing_stream_ratio": 0.9524166228285628, "external_cpu_comparable": true}。在途回合自然完成；[逐流时钟与资源比较](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-scratch-capacity.json)。
