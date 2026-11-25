@@ -865,6 +865,21 @@ stage=waiting_W57_natural_release，selected_material=M1，slots=2，running=[]�
 从 D57 的 2026-11-24T22:52:14+08:00 有限源清单中选出 251,203 个过程文件，共 107,887,511,720 逻辑字节。按 H 盘既有内容索引去重，需新传 45,360,007,528 字节，复用旧容器 579 个。2026-11-25T00:01:06+08:00 已核验新包 321 个、44,050,766,949 字节。D57 实测同时写出有效数据的进程峰值 15。W57 运行回合及其输入、W58 指定回放、四条 E600 基线、工作树、环境和 checkpoint 保留原位。整份清单完成 H 盘校验之后，才对仍无依赖的普通文件执行释放。 [执行回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-process-20261124/latest.json)。
 >>>>>>> origin/main
 
+### 20261125/w57/frozen-pr-e600-both-physics-complete｜冻结 PR 的 A/B 原 E600 均通过，物理队列自然结束
+
+上海时间 A/B 的原 E300 分别于 00:38:31、00:40:51 通过，各完成 5 次往返。原调度在 00:40:52 并行接入对应 case 的 E600。两例沿用同一冻结组合、各自的速度策略和独立 case。完整结果如下。
+
+| Case | E600 终态时间 | 仿真时长 | 完成往返 | 首次完成回家 | 终点距原点 | 运动段正机械 CoT |
+|---|---|---:|---:|---:|---:|---:|
+| A | 07:56:06 通过 | 600 s | 10 | 466.128 s | 7.40 mm | 0.56780 |
+| B | 07:53:32 通过 | 600 s | 10 | 469.982 s | 6.64 mm | 0.56873 |
+
+07:56:06 原物理队列写出 queue_ended。主线五身份的 A/B 原 E30、E60 各 10/10 通过，冻结 PR 的原 E300、E600 各 2/2 通过。E600 的 A/B 分别有 8,348、8,484 次材料候选获选并接上后续物理，动作记录中离足时刻分别实际改变 730、753 次。先前正式机制 20 回合均已评分，达到 12/12 的仍为 0；PR/B 恢复重访仍为 8/12。R 的 full/blind 各 8,192 条、32 次更新。本轮 PR 将已冻结的规划与时序模块组合，W58 的三 seed 联合训练仍待其自己的前置。W58 当时尚未接手物理。[A 的原 E600 回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-m1-pr-a-original-e600-a01.json) · [B 的原 E600 回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/attempts/w57-m1-pr-b-original-e600-a01.json) · [机制比较](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/paired-mechanisms.json)。
+
+截至 09:14:45，已核验 603 个不同的 Release 资产，E300 两例的完整视频和原件均有回执。E600 视频沿用实际记录的全部帧、原相机与相同编码设置。回放程序改为一次读取实际使用的轨迹数组，E600 中六个数组约占 105 MiB。A 在空闲核心执行完整回放并原子交接到既有发布器的备用目录，09:11:23 已核验 18,001 帧、1280×720、30 fps、152,982,814 字节。B 的原始渲染进程 PID 664922 持续工作，FFmpeg 原始输入计数折合约 8,193/18,001 帧，A 的并行处理没有重启它。最后两份 E600、保留的技术中断前缀及综合索引按现有发布器继续核验。物理终态和 GitHub Release 交付分别入账，后台 deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。[发布索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
+
+H 盘归档与服务器释放已独立结单。251,203 个文件全部核验，对应 107,887,511,720 个逻辑字节，D57 实际收回 108,215,533,056 个分配字节。受保护路径移除数和未核验版本数均为 0。最终归档回执于 01:35:42 在 GitHub 核验。[H 盘归档与复核回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-process-20261124/final.json)。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
