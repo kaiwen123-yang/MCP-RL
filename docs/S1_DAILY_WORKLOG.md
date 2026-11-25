@@ -791,6 +791,11 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/day-end｜跨日实测续接
+
+stage=development_matrix，selected_gait=G0，selected_material=M1，running=['w58-g0-m1-p2-full-b-development-recovered-a01', 'w58-g0-m1-fixed-wait-a-development-recovered-a01', 'w58-g0-m1-fixed-wait-b-development-recovered-a01', 'w58-g0-m1-p2-private-a-original-e60-a01', 'w58-g0-m1-p2-private-b-original-e60-a01', 'w58-g0-m1-p2-full-a-development-recovered-a01']，attempts=36，completed=30，joint_distinct={}。最后观察 2026-11-25T23:59:16.024693+08:00。W57 同时段现场 {}。
+
+
 ### 20261125/w58/attempt/w58-g0-m1-p2-private-b-development-recovered-a01｜物理回合结束
 
 w58-g0-m1-p2-private-b-development-recovered-a01，development / recovered / B，控制器 S5-w58-9ab3242e8c573151cc，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 5/12，本回合进入采样账本 0 条，CPU 用户/系统秒 10456.607098999999/54.543797。物理槽 3。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-p2-private-b-development-recovered-a01.json)。
@@ -1119,6 +1124,17 @@ H 盘归档与服务器释放已独立结单。251,203 个文件全部核验，�
 不同回合各自持有发布锁，维护操作仍有全局排他锁。A 与 B 独立分片由单一回执写入者分别记录；名次和压缩参数与原格式一致。B 的录像尚在生成时已能发布位于最终视频元数据之前、边界已定的原件分片，完整发布时按原成员签名复核。10:05:32 同时观察到 7 个不同分片的 gh release upload 进程（A 四条、B 三条），10:17:37 的 6 秒窗口中三条 B 上传均实际发送，共 15.43 MiB/s。10:22:35 已核验 A 23 件、B 22 件，共 21,208,191,110 字节；从第一件到最后一件回执扣除首件的实测吞吐约 16.4 MB/s。此前原 E300 的 A/B 同口径分别为 7.2、7.0 MB/s，网络条件随时段变化。两个历史技术中断前缀以及最终逐回合元数据与 credit 包均已核验。[A 的 Release 回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/delivery/w57-m1-pr-a-original-e600-a01.json) · [B 的 Release 回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/delivery/w57-m1-pr-b-original-e600-a01.json)。
 
 W58 学习 head 原子占两槽，旧扩容逻辑要求同类占用三槽才建立参照，与成对采样的占用数不相容。已把单回合的 3→4→6 与双采样实际 2→4→6 分别测量，混跑时归到各自类型。学习负载还需实际采集的 distinct/h、每流物理进度和资源余量同时支持；写入中的当前版本行只用于吞吐，正式更新预算继续按发布版本。等待新一对采样时不拆分租约，更新屏障和两流自然尾段均持有原槽。新执行快照 4f7e006aa34fbfca0b83f4ec614348f948a99295 与原 be9956b4 仅有调度入口和资源池两份文件不同，切换时实际 W58 收据 0、pool 任务 0，旧等待 PID 176250 接续为 681345。W58 继续等待 W57 所有后继自然结束。W58 的实际扩容与科学收益仍待其正式任务。deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false。[W58 调度合同](../docs/S1_W58_RESEARCH_PLAN.md)。
+
+## 2026-11-26｜W58 执行
+
+### 20261126/w58/material-selected｜保留轨迹与估计器选择
+
+选择 M1。各保留轨迹单列释放→跨足重载、短预测误差、区间覆盖与宽度，见[选择](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m/selection.json)和[分族指标](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/m2/errors-and-coverage.json)。
+
+
+### 20261126/w58/stage/development_matrix｜调度与实测进度
+
+stage=development_matrix，selected_gait=G0，selected_material=M1，running=['w58-g0-m1-p2-full-b-development-recovered-a01', 'w58-g0-m1-fixed-wait-a-development-recovered-a01', 'w58-g0-m1-fixed-wait-b-development-recovered-a01', 'w58-g0-m1-p2-private-a-original-e60-a01', 'w58-g0-m1-p2-private-b-original-e60-a01', 'w58-g0-m1-p2-full-a-development-recovered-a01']，attempts=36，completed=30，joint_distinct={}。合格 case 执行预登记开发任务及各自原 E60。。运行快照 {}。
 
 ## 以后每天如何追加
 
