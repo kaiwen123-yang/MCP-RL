@@ -221,9 +221,11 @@ def originals(label, paths, video=None, *, before_movie=False):
         recorded['assets']=[done[n] for n in dict.fromkeys(names+list(done)) if n in done]
         write(dest,recorded)
         print(receipt['name'],receipt['size'],receipt['digest'],flush=True)
-    directory = ROOT/'work/w57/prepared-release-parts'/label
+    directory = ROOT/'work'/SMALL.name/'prepared-release-parts'/label
     lanes = int(os.environ.get('W57_RELEASE_STREAMS','4'))
-    lanes = max(1,min(lanes,6,len(os.sched_getaffinity(0))))
+    # The actual CPU affinity still bounds compression. Concurrent network waits also help
+    # an auxiliary publisher assigned a single CPU, including W58.
+    lanes = max(1,min(lanes,6))
     def submit_part(item):
         name,group=item
         if group is None:
