@@ -44,11 +44,11 @@ launch() {
   fi
   local prefix=
   if test "$network" != none; then prefix="source scripts/autodl_network.sh $network >/dev/null &&"; fi
-  tmux new-session -d -s "$session" -c "$source_dir" "source scripts/autodl_d57_env.sh && $prefix export W58_TMUX=$session W58_PHYSICS_CPUS=$physics && exec taskset -c $cpu python -u scripts/$program >>'$root/work/w58/$log' 2>&1"
+  tmux new-session -d -s "$session" -c "$source_dir" "source scripts/autodl_d57_env.sh && $prefix export W58_TMUX=$session W58_PHYSICS_CPUS=$physics S1_RELEASE_STREAMS=${S1_RELEASE_STREAMS:-3} && exec taskset -c $cpu python -u scripts/$program >>'$root/work/w58/$log' 2>&1"
 }
 physics=$(python -c 'import json,sys; print(",".join(map(str,json.load(open(sys.argv[1]))["physics_cpu_ids"])))' "$record")
 read -ra aux <<< "$(python -c 'import json,sys; print(*json.load(open(sys.argv[1]))["auxiliary_cpu_ids"])' "$record")"
 launch w58-unified-dispatch "$snapshot" "${aux[0]}" queue_s1_w58.py dispatch.log none
 launch w58-github-integration "$root" "${aux[1]}" integrate_s1_w58.py integration.log academic
-launch w58-d57-delivery "$root" "${aux[2]}" publish_s1_w58.py delivery.log clash
+S1_RELEASE_STREAMS=3 launch w58-d57-delivery "$root" "${aux[2]},${aux[3]}" publish_s1_w58.py delivery.log direct
 

@@ -222,7 +222,7 @@ def originals(label, paths, video=None, *, before_movie=False):
         write(dest,recorded)
         print(receipt['name'],receipt['size'],receipt['digest'],flush=True)
     directory = ROOT/'work'/SMALL.name/'prepared-release-parts'/label
-    lanes = int(os.environ.get('W57_RELEASE_STREAMS','4'))
+    lanes = int(os.environ.get('S1_RELEASE_STREAMS') or os.environ.get('W57_RELEASE_STREAMS','4'))
     # The actual CPU affinity still bounds compression. Concurrent network waits also help
     # an auxiliary publisher assigned a single CPU, including W58.
     lanes = max(1,min(lanes,6))
