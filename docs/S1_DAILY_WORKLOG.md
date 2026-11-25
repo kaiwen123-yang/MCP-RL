@@ -880,6 +880,21 @@ stage=waiting_W57_natural_release，selected_material=M1，slots=2，running=[]�
 
 H 盘归档与服务器释放已独立结单。251,203 个文件全部核验，对应 107,887,511,720 个逻辑字节，D57 实际收回 108,215,533,056 个分配字节。受保护路径移除数和未核验版本数均为 0。最终归档回执于 01:35:42 在 GitHub 核验。[H 盘归档与复核回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/storage/d57-H-process-20261124/final.json)。
 
+### W57 当日实验入账（2026-11-25，Asia/Shanghai）
+
+累计账本使用独立 attempt 和 head/case/version/serial。本日启动 2 个自然任务，结束 4 个。结束任务共有 9,000,000 个已记录物理子步、108515.43 CPU 核秒。这两个量按结束日归集，同一跨日任务计一次。
+
+| attempt | 控制 / 环境 case | 任务 | 实际物理时间（s） | 结果 |
+| --- | --- | --- | ---: | --- |
+| `w57-m1-pr-a-original-e300-a01` | PR/M1 · A | 原 E300 | 300.0000 | passed · stage_passed |
+| `w57-m1-pr-b-original-e300-a01` | PR/M1 · B | 原 E300 | 300.0000 | passed · stage_passed |
+| `w57-m1-pr-b-original-e600-a01` | PR/M1 · B | 原 E600 | 600.0000 | passed · stage_passed |
+| `w57-m1-pr-a-original-e600-a01` | PR/M1 · A | 原 E600 | 600.0000 | passed · stage_passed |
+
+本日闭合的 on-policy 批次含 0 条 distinct 转移，旧 W44 速度策略更新 0。样本以同版本两个 128 段交齐并产生优化更新的日期入账。跨日未闭合段保留原序列编号。
+
+截至入账，按 GitHub size/digest 得到的本日新增资产回执共 71 个，31,243,323,639 B。源码和紧凑记录基线 `dfabb05e37fb`。物理槽、前序资格、仍在执行或等待的模块与发布资产详见 [W57 索引](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
