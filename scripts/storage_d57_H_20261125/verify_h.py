@@ -18,7 +18,8 @@ def main():
         b=proof.get('bundle')
         if b and (ROOT/b['path']).stat().st_size!=b['size']:raise ValueError('H final size '+b['path'])
     catalogs=CAT/'archive-index.sqlite'
-    with sqlite3.connect(catalogs.as_uri()+'?mode=ro',uri=True) as db:
+    with sqlite3.connect(catalogs.as_uri()+'?mode=ro',uri=True) as source, sqlite3.connect(':memory:') as db:
+        source.backup(db)
         if db.execute('pragma integrity_check').fetchone()[0]!='ok':raise ValueError('H catalog integrity')
         paths,logical=db.execute('select count(*),sum(bytes) from archive_lookup where archive_verified=1').fetchone()
         count,unique=db.execute('select count(*),sum(n) from objects').fetchone()

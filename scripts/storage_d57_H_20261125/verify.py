@@ -4,8 +4,9 @@ import json
 import os
 from pathlib import Path
 import sys
+import subprocess
 
-from d57 import BG, CTL, RAW, SMALL, free, now, read, save, sha
+from d57 import BG, CTL, RAW, ROOT, SMALL, free, now, read, save, sha
 
 def main():
     h=json.load(sys.stdin)
@@ -13,7 +14,9 @@ def main():
         raise ValueError('The final H verification is incomplete')
     counts=collections.defaultdict(lambda:[0,0]);mounts=collections.defaultdict(lambda:collections.defaultdict(lambda:[0,0]))
     absent=collections.defaultdict(set);expected=set();ids=set();retained={}
-    for stage in ('duplicates','process'):
+    stages=['duplicates','process']
+    if (CTL/'followup/index.json').is_file():stages.append('followup')
+    for stage in stages:
         base=CTL/stage
         index=read(base/'index.json');ids.update(index['closed_attempts'])
         for group in index['packs']:
@@ -63,16 +66,36 @@ def main():
     for name in ids:
         if not (SMALL/'attempts'/(name+'.json')).is_file() or read(SMALL/'delivery'/(name+'.json'))['status']!='verified':
             raise ValueError('Missing immutable scientific or Release receipt '+name)
+    scored=[];physics_chunks=0
+    for name in sorted(ids):
+        a=read(SMALL/'attempts'/(name+'.json'))
+        if a['status']=='technical_interruption':continue
+        result=read(SMALL/'episodes'/(name+'.json'))
+        raw=RAW/name
+        if (raw/'trajectory.npz').stat().st_size!=result['trajectory']['size']:
+            raise ValueError('Trajectory membership changed '+name)
+        for part in result['chunks']:
+            if part['stream']=='physical':
+                if (raw/Path(part['path']).name).stat().st_size!=part['size']:
+                    raise ValueError('Missing recorded physics chunk '+name)
+                physics_chunks+=1
+        if a['w58']['split']=='development' and a['task_mode']=='short':
+            metrics=read(SMALL/'mechanics'/(name+'.json'))
+            if not metrics['full_window'] or len(metrics['targets'])!=12:
+                raise ValueError('Incomplete frozen short scoring '+name)
+            scored.append(name)
     condensed={k:h[k] for k in ('packs','new_payload_bytes','previously_archived_objects','catalog_path','catalog_sha256','new_zip_bytes','verified_catalog_paths','unique_content_objects','restore_member_verified','serial')}
     report=dict(event='20261125/w58/h-archive-process-complete',status='completed',verified_shanghai=now(),
         scopes=['Completed or technically closed W58 attempts with D57 Release receipts at the archive inventory cut',
                 'Exact duplicate sealed W58 chunks share a local inode after media readback. Distinct scientific inputs retain a local copy.',
                 'Only explicitly numbered solver and drift diagnostics, plus bulk of a delivered interrupted prefix, qualify for unlink.'],
-        closed_attempts=sorted(ids),verified_action_paths=len(expected),actions=dict(counts),
+        closed_attempts=sorted(ids),scored_short_episodes=scored,retained_physical_chunks_checked=physics_chunks,
+        verified_action_paths=len(expected),actions=dict(counts),
         actions_by_volume={k:dict(v) for k,v in mounts.items()},retained_open_or_changed=retained,
         H=condensed,free_bytes=free(),active_physics=physics,active_checkpoints_verified=len(weights),
         pool_sample_shanghai=v['time_shanghai'],distinct_learning=read(SMALL/'index.json')['joint_distinct'],
-        source_revision='662299057a8d7d3732bba80dc3e899b1b3e4cf6c',**BG)
+        initial_source_revision='662299057a8d7d3732bba80dc3e899b1b3e4cf6c',
+        source_revision=subprocess.check_output(['git','log','-1','--format=%H','--','scripts/storage_d57_H_20261125'],cwd=ROOT,text=True).strip(),**BG)
     target=SMALL/'storage/20261125-H-process-archive.json'
     save(target,report);print(json.dumps(report,ensure_ascii=False))
 if __name__=='__main__':main()

@@ -75,8 +75,10 @@ def prepare(stage):
         if stage=='duplicates':
             z=add(groups,h,n,src)
             if b not in z['links'] and b!=z['source']:z['links'].append(b)
-    if stage=='process':
+    previous=set(read(CTL/'process/index.json')['closed_attempts']) if stage=='followup' else set()
+    if stage in ('process','followup'):
         for root,a in rows.items():
+            if root.name in previous:continue
             pats=['w55-f/mpc-*.npz','w55-f/drift-*.npz']
             if a.get('status')=='technical_interruption':
                 pats+=['physical-[0-9]*.npz','material-[0-9]*.npz','w55-f/control-*.npz']
@@ -104,11 +106,11 @@ def prepare(stage):
             flush();batch=[];size=0
         batch.append(o);size+=o['n']
     flush()
-    save(info,dict(stage=stage,created=now(),packs=packs,closed_attempts=sorted(p.name for p in rows),**BG))
+    save(info,dict(stage=stage,created=now(),packs=packs,closed_attempts=sorted(p.name for p in rows if p.name not in previous),**BG))
     print(stage,len(packs),sum(x['bytes'] for x in packs),flush=True)
 
 def pack(key):
-    if not re.fullmatch(r'(?:duplicates|process)-[0-9]{4}',key):raise ValueError(key)
+    if not re.fullmatch(r'(?:duplicates|process|followup)-[0-9]{4}',key):raise ValueError(key)
     return read(CTL/key.split('-')[0]/(key+'.json'))
 
 def open_inodes():
@@ -186,10 +188,10 @@ def main():
     action=sys.argv[1]
     if action=='prepare':
         stage=sys.argv[2]
-        if stage not in ('duplicates','process'):raise ValueError(stage)
+        if stage not in ('duplicates','process','followup'):raise ValueError(stage)
         prepare(stage);return
     if action=='index':
-        if sys.argv[2] not in ('duplicates','process'):raise ValueError(sys.argv[2])
+        if sys.argv[2] not in ('duplicates','process','followup'):raise ValueError(sys.argv[2])
         p=CTL/sys.argv[2]/'index.json'
         print(json.dumps(read(p) if p.is_file() else None));return
     key=sys.argv[2];items=pack(key)

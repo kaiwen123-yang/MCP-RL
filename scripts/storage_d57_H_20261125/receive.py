@@ -169,7 +169,8 @@ def main():
     reader=ROOT/'00_catalog/migration-20261124-process'/('\u8bfb\u53d6\u539f\u4ef6.py')
     target=CAT/reader.name
     if not target.exists():shutil.copyfile(reader,target)
-    for stage in ['duplicates','process']:
+    stages=['followup'] if sys.argv[1:]==['--closing-sweep'] else ['duplicates','process']
+    for stage in stages:
         index=call('index',stage)
         while index is None:
             time.sleep(4);index=call('index',stage)
