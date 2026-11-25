@@ -1,5 +1,5 @@
 {
-  "admission_limit": 4,
+  "admission_limit": 3,
   "retained": 3,
   "windows": {
     "3": {
@@ -56,12 +56,16 @@
     }
   },
   "last_end": {
-    "3": 1795611441.9436605
+    "3": 1795611441.9436605,
+    "4": 1795612120.9656024
   },
   "bad": {
-    "3": 0
+    "3": 0,
+    "4": 2
   },
-  "blocked": [],
+  "blocked": [
+    4
+  ],
   "events": [
     {
       "at": "2026-11-25T20:57:21.948289+08:00",
@@ -119,66 +123,240 @@
         "min_gpu_free_MiB": 95749
       },
       "comparison": null
+    },
+    {
+      "at": "2026-11-25T21:04:26.197189+08:00",
+      "action": "below_reference",
+      "measurement": {
+        "width": 4,
+        "start": "2026-11-25T21:00:11.517718+08:00",
+        "end": "2026-11-25T21:04:26.197189+08:00",
+        "end_unix": 1795611866.1812744,
+        "wall_s": 254.68791556358337,
+        "observations": 13,
+        "streams": {
+          "w58-g0-m1-p2-private-b-development-recovered-a01": {
+            "kind": "p2-recovered-E60",
+            "store": "scratch",
+            "first_s": 10.002000000003367,
+            "last_s": 16.501999999988218,
+            "physics_s_per_wall_s": 0.025889885831246375,
+            "reference_work_per_wall_s": 1.8716024714971315
+          },
+          "w58-g0-m1-b2-a-development-recovered-a02": {
+            "kind": "p2-recovered-E60",
+            "store": "personal",
+            "first_s": 198.0020000043259,
+            "last_s": 201.5020000044421,
+            "physics_s_per_wall_s": 0.01540462576888648,
+            "reference_work_per_wall_s": 1.107041333168756
+          },
+          "w58-g0-m1-b2-b-development-recovered-a02": {
+            "kind": "p2-recovered-E60",
+            "store": "personal",
+            "first_s": 198.0020000043259,
+            "last_s": 202.0020000044587,
+            "physics_s_per_wall_s": 0.014886645260617422,
+            "reference_work_per_wall_s": 1.0532597380447237
+          },
+          "w58-g0-m1-p2-private-a-development-recovered-a01": {
+            "kind": "p2-recovered-E60",
+            "store": "scratch",
+            "first_s": 21.00199999997773,
+            "last_s": 26.501999999964912,
+            "physics_s_per_wall_s": 0.02278346407977757,
+            "reference_work_per_wall_s": 1.4154453328540235
+          }
+        },
+        "physics_s_per_wall_s": 0.07896462094052785,
+        "reference_work_per_wall_s": 5.447348875564635,
+        "classes": {
+          "p2-recovered-E60/scratch": {
+            "n": 2,
+            "mean": 1.6435239021755774
+          },
+          "p2-recovered-E60/personal": {
+            "n": 2,
+            "mean": 1.08015053560674
+          }
+        },
+        "other_cpu": 0.04851343400383278,
+        "min_available_cpu": 18.0,
+        "min_available_ram_GiB": 107.90522003173828,
+        "max_io_pressure_pct": 0.0,
+        "max_host_iowait": 1.1357570388542482e-05,
+        "min_gpu_free_MiB": 95038
+      },
+      "comparison": {
+        "passed": false,
+        "raw_total_ratio": 1.430035286925355,
+        "raw_comparable": true,
+        "total_work_ratio": 1.371296712305651,
+        "per_stream_work_ratio": 1.0284725342292382,
+        "common_class_ratios": {
+          "p2-recovered-E60/scratch": 0.839399113228579,
+          "p2-recovered-E60/personal": 1.0724128292630786
+        },
+        "continuing_stream_ratio": 0.9001459976121444,
+        "external_cpu_comparable": true
+      }
+    },
+    {
+      "at": "2026-11-25T21:08:40.968722+08:00",
+      "action": "drain_to_3",
+      "measurement": {
+        "width": 4,
+        "start": "2026-11-25T21:04:26.197189+08:00",
+        "end": "2026-11-25T21:08:40.968722+08:00",
+        "end_unix": 1795612120.9656024,
+        "wall_s": 254.7843279838562,
+        "observations": 13,
+        "streams": {
+          "w58-g0-m1-p2-private-b-development-recovered-a01": {
+            "kind": "p2-recovered-E60",
+            "store": "scratch",
+            "first_s": 16.501999999988218,
+            "last_s": 22.501999999974235,
+            "physics_s_per_wall_s": 0.023551596488674182,
+            "reference_work_per_wall_s": 1.606076780725186
+          },
+          "w58-g0-m1-b2-a-development-recovered-a02": {
+            "kind": "p2-recovered-E60",
+            "store": "personal",
+            "first_s": 201.5020000044421,
+            "last_s": 205.50200000457488,
+            "physics_s_per_wall_s": 0.015399197459113825,
+            "reference_work_per_wall_s": 1.1066512319499606
+          },
+          "w58-g0-m1-b2-b-development-recovered-a02": {
+            "kind": "p2-recovered-E60",
+            "store": "personal",
+            "first_s": 202.0020000044587,
+            "last_s": 206.00200000459148,
+            "physics_s_per_wall_s": 0.01617563093127987,
+            "reference_work_per_wall_s": 1.1444580359860907
+          },
+          "w58-g0-m1-p2-private-a-development-recovered-a01": {
+            "kind": "p2-recovered-E60",
+            "store": "scratch",
+            "first_s": 26.501999999964912,
+            "last_s": 32.50199999995093,
+            "physics_s_per_wall_s": 0.023551596488674192,
+            "reference_work_per_wall_s": 1.6456914710903203
+          }
+        },
+        "physics_s_per_wall_s": 0.07867802136774207,
+        "reference_work_per_wall_s": 5.502877519751557,
+        "classes": {
+          "p2-recovered-E60/scratch": {
+            "n": 2,
+            "mean": 1.6258841259077532
+          },
+          "p2-recovered-E60/personal": {
+            "n": 2,
+            "mean": 1.1255546339680258
+          }
+        },
+        "other_cpu": 0.09620321862284595,
+        "min_available_cpu": 18.0,
+        "min_available_ram_GiB": 107.75301361083984,
+        "max_io_pressure_pct": 0.04,
+        "max_host_iowait": 0.00012241011923652356,
+        "min_gpu_free_MiB": 95038
+      },
+      "comparison": {
+        "passed": false,
+        "raw_total_ratio": 1.4248450194686155,
+        "raw_comparable": true,
+        "total_work_ratio": 1.3852753005972673,
+        "per_stream_work_ratio": 1.0389564754479506,
+        "common_class_ratios": {
+          "p2-recovered-E60/scratch": 0.8303899272123841,
+          "p2-recovered-E60/personal": 1.1174916733488378
+        },
+        "continuing_stream_ratio": 0.9809671023472324,
+        "external_cpu_comparable": true
+      }
     }
   ],
   "deadline": null,
   "wall_deadline_enabled": false,
   "kill_on_conversation_end": false,
   "latest": {
-    "at": "2026-11-25T20:57:21.948289+08:00",
-    "action": "open_trial_4",
+    "at": "2026-11-25T21:08:40.968722+08:00",
+    "action": "drain_to_3",
     "measurement": {
-      "width": 3,
-      "start": "2026-11-25T20:53:07.633298+08:00",
-      "end": "2026-11-25T20:57:21.948289+08:00",
-      "end_unix": 1795611441.9436605,
-      "wall_s": 254.31885409355164,
+      "width": 4,
+      "start": "2026-11-25T21:04:26.197189+08:00",
+      "end": "2026-11-25T21:08:40.968722+08:00",
+      "end_unix": 1795612120.9656024,
+      "wall_s": 254.7843279838562,
       "observations": 13,
       "streams": {
+        "w58-g0-m1-p2-private-b-development-recovered-a01": {
+          "kind": "p2-recovered-E60",
+          "store": "scratch",
+          "first_s": 16.501999999988218,
+          "last_s": 22.501999999974235,
+          "physics_s_per_wall_s": 0.023551596488674182,
+          "reference_work_per_wall_s": 1.606076780725186
+        },
         "w58-g0-m1-b2-a-development-recovered-a02": {
           "kind": "p2-recovered-E60",
           "store": "personal",
-          "first_s": 192.00200000412673,
-          "last_s": 195.50200000424292,
-          "physics_s_per_wall_s": 0.013610399702011848,
-          "reference_work_per_wall_s": 0.978100685932077
+          "first_s": 201.5020000044421,
+          "last_s": 205.50200000457488,
+          "physics_s_per_wall_s": 0.015399197459113825,
+          "reference_work_per_wall_s": 1.1066512319499606
         },
         "w58-g0-m1-b2-b-development-recovered-a02": {
           "kind": "p2-recovered-E60",
           "store": "personal",
-          "first_s": 192.50200000414333,
-          "last_s": 196.00200000425951,
-          "physics_s_per_wall_s": 0.014647359234915803,
-          "reference_work_per_wall_s": 1.036329776167073
+          "first_s": 202.0020000044587,
+          "last_s": 206.00200000459148,
+          "physics_s_per_wall_s": 0.01617563093127987,
+          "reference_work_per_wall_s": 1.1444580359860907
         },
         "w58-g0-m1-p2-private-a-development-recovered-a01": {
           "kind": "p2-recovered-E60",
           "store": "scratch",
-          "first_s": 10.002000000003367,
-          "last_s": 17.001999999987053,
-          "physics_s_per_wall_s": 0.026960893121865667,
-          "reference_work_per_wall_s": 1.9579766957986113
+          "first_s": 26.501999999964912,
+          "last_s": 32.50199999995093,
+          "physics_s_per_wall_s": 0.023551596488674192,
+          "reference_work_per_wall_s": 1.6456914710903203
         }
       },
-      "physics_s_per_wall_s": 0.05521865205879332,
-      "reference_work_per_wall_s": 3.972407157897761,
+      "physics_s_per_wall_s": 0.07867802136774207,
+      "reference_work_per_wall_s": 5.502877519751557,
       "classes": {
+        "p2-recovered-E60/scratch": {
+          "n": 2,
+          "mean": 1.6258841259077532
+        },
         "p2-recovered-E60/personal": {
           "n": 2,
-          "mean": 1.007215231049575
-        },
-        "p2-recovered-E60/scratch": {
-          "n": 1,
-          "mean": 1.9579766957986113
+          "mean": 1.1255546339680258
         }
       },
-      "other_cpu": 0.1827095055809404,
+      "other_cpu": 0.09620321862284595,
       "min_available_cpu": 18.0,
-      "min_available_ram_GiB": 104.71003341674805,
-      "max_io_pressure_pct": 0.0,
-      "max_host_iowait": 2.722965490950678e-05,
-      "min_gpu_free_MiB": 95749
+      "min_available_ram_GiB": 107.75301361083984,
+      "max_io_pressure_pct": 0.04,
+      "max_host_iowait": 0.00012241011923652356,
+      "min_gpu_free_MiB": 95038
     },
-    "comparison": null
+    "comparison": {
+      "passed": false,
+      "raw_total_ratio": 1.4248450194686155,
+      "raw_comparable": true,
+      "total_work_ratio": 1.3852753005972673,
+      "per_stream_work_ratio": 1.0389564754479506,
+      "common_class_ratios": {
+        "p2-recovered-E60/scratch": 0.8303899272123841,
+        "p2-recovered-E60/personal": 1.1174916733488378
+      },
+      "continuing_stream_ratio": 0.9809671023472324,
+      "external_cpu_comparable": true
+    }
   }
 }

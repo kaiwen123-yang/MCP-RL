@@ -791,6 +791,21 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/evaluation-slots/with_personal/drain_to_3｜正式物理流并发测量
+
+with_personal，drain_to_3。从 2026-11-25T21:04:26.197189+08:00 至 2026-11-25T21:08:40.968722+08:00 实测 4 条物理流，合计 0.07868 仿真秒/墙秒。总工作量、每流和各同任务/卷比较：{"passed": false, "raw_total_ratio": 1.4248450194686155, "raw_comparable": true, "total_work_ratio": 1.3852753005972673, "per_stream_work_ratio": 1.0389564754479506, "common_class_ratios": {"p2-recovered-E60/scratch": 0.8303899272123841, "p2-recovered-E60/personal": 1.1174916733488378}, "continuing_stream_ratio": 0.9809671023472324, "external_cpu_comparable": true}。在途回合自然完成；[逐流时钟与资源比较](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-capacity.json)。
+
+
+### 20261125/w58/evaluation-slots/with_personal/open_trial_4｜正式物理流并发测量
+
+with_personal，open_trial_4。从 2026-11-25T20:53:07.633298+08:00 至 2026-11-25T20:57:21.948289+08:00 实测 3 条物理流，合计 0.05522 仿真秒/墙秒。总工作量、每流和各同任务/卷比较：{}。在途回合自然完成；[逐流时钟与资源比较](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-capacity.json)。
+
+
+### 20261125/w58/recovered-three-to-four｜恢复重访三槽实测与第四槽接入
+
+20:49 仅交接统一调度器，两个在途 B2 恢复回合沿原物理 PID 279871、279873 继续；原 B2 B E60 在原 PID 自然通过。依次接入 P2-private A/B 的正式恢复重访，冻结物理源码 4f7e006aa34f、独立回合时限及评分不变。数据预留按在途任务实际写入卷核算。2026-11-25T20:53:07.633298+08:00 至 2026-11-25T20:57:21.948289+08:00 的三个 288 秒恢复流合计 0.05522 仿真秒/墙秒；在 20:57:21 允许第四槽，随即实测四个不同仿真 PID。三槽时延与资源见[实测回读](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-throughput-readback.json)，分卷、每流与后续采纳记录见[槽位实测](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/evaluation-capacity.json)。此前 E30 与短重访的四槽阴性原判保留。
+
+
 ### 20261125/w58/attempt/w58-g0-m1-b2-b-original-e60-a01｜物理回合结束
 
 w58-g0-m1-b2-b-original-e60-a01，original / original / B，控制器 S5-w58-f7727bc878def3db58，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 300000 个物理子步，模拟 59.999999999886846 s，结论 passed，终止原因 stage_passed。机制曝光 —/—，本回合进入采样账本 0 条，CPU 用户/系统秒 1414.5118420000001/9.650446。物理槽 0。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-b2-b-original-e60-a01.json)。
