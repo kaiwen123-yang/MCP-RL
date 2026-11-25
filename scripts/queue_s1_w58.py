@@ -80,6 +80,14 @@ def job(arm,case,gait,material,task='original',level='E30',split='original',seed
     key=f'w58-{gait.lower()}-{material.lower()}-{arm.lower()}'
     if seed:key+=f'-s{seed}'
     key+=f'-{case.lower()}-{split}-{level.lower() if task=="original" else task}-a01'
+    # Only a documented technical interruption can nominate another attempt for this cell.
+    receipt=R/'attempts'/(key+'.json')
+    while receipt.is_file():
+        prior=read(receipt)
+        if prior.get('status')!='technical_interruption' or not prior.get('replacement_attempt'):
+            break
+        key=prior['replacement_attempt']
+        receipt=R/'attempts'/(key+'.json')
     args=['--attempt',key,'--arm',arm,'--case',case,'--gait',gait,'--material',material,'--task',task,'--split',split,'--level',level]
     if seed:
         head='full' if arm=='P2-full' else 'blind'
@@ -134,9 +142,11 @@ def mechanism(arms,gait,material,split):
 
 def run():
     runtime=read(WORK/'runtime.json')
-    if Path(runtime['path']).resolve()!=ROOT:raise RuntimeError('Start the dispatcher from its frozen physics snapshot')
+    physics_root=Path(runtime['path']).resolve()
+    if (physics_root/'work/w58/runtime.json').resolve()!=(WORK/'runtime.json').resolve():
+        raise RuntimeError('Dispatcher and frozen physics must use the same D57 campaign')
     wait_w57()
-    pool=Pool(ROOT)
+    pool=Pool(physics_root)
     stage('G1_original_qualification','W57 两份物理 dispatcher、自然 collector 尾段和发布后继已结束，旧槽已核空闲。',slots=3)
     pulse=lambda:None  # The independent integration pane consumes atomic job and stage receipts.
     g30=[job('G1',c,'G1','M1') for c in 'AB']

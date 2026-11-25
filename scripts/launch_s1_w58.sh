@@ -48,7 +48,7 @@ launch() {
 }
 physics=$(python -c 'import json,sys; print(",".join(map(str,json.load(open(sys.argv[1]))["physics_cpu_ids"])))' "$record")
 read -ra aux <<< "$(python -c 'import json,sys; print(*json.load(open(sys.argv[1]))["auxiliary_cpu_ids"])' "$record")"
-launch w58-unified-dispatch "$snapshot" "${aux[0]}" queue_s1_w58.py dispatch.log none
+launch w58-unified-dispatch "$root" "${aux[0]}" queue_s1_w58.py dispatch.log none
 launch w58-github-integration "$root" "${aux[1]}" integrate_s1_w58.py integration.log academic
 S1_RELEASE_STREAMS=3 launch w58-d57-delivery "$root" "${aux[2]},${aux[3]}" publish_s1_w58.py delivery.log direct
 

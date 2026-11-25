@@ -168,6 +168,16 @@ class Pool:
         self.family_limits={}
         self.last_review={}
         self.lower_windows={}
+        previous=STATE/'pool.json'
+        if previous.is_file():
+            saved=read(previous)
+            self.family_limits.update(saved.get('family_limits',{}))
+            self.rejected.update(map(tuple,saved.get('rejected',[])))
+            self.qualified.update((tuple(pair),True) for pair in saved.get('certified',[]))
+            for reference in saved.get('references',[]):
+                kind=reference.pop('kind')
+                self.reference[kind,reference['observed_slots']]=reference
+            self.limit=max([3,*self.family_limits.values()])
 
     def submit(self,job,slots,store):
         record=self.records/(job['id']+'.json')
@@ -199,8 +209,10 @@ class Pool:
                 cores=','.join(str(c) for g in groups for c in g)
                 with (POOL/(job['id']+'.log')).open('a') as log:
                     command=['taskset','-c',cores,sys.executable,'-u',str(self.runtime/'scripts/s1_w58_pool.py'),'--record',str(record)]
+                    # The lease owner and its physical children must survive loss of the dispatcher PTY.
                     self.children[job['id']]=subprocess.Popen(command,env=env,cwd=self.runtime,stdout=log,
-                                                              stderr=subprocess.STDOUT,pass_fds=fds)
+                                                              stderr=subprocess.STDOUT,pass_fds=fds,
+                                                              start_new_session=True)
             finally:
                 for f in leases:f.close()
         return True
@@ -240,7 +252,12 @@ class Pool:
             group['attempts'].extend(names)
             for name in names:
                 p=RAW/name/'live.json'
-                if p.is_file():clocks[name]=read(p)['physical_time_s']
+                if p.is_file():
+                    # The frozen simulator rewrites its indented heartbeat in place. Only a
+                    # complete outer object can contribute a measured throughput interval.
+                    heartbeat=p.read_text()
+                    if heartbeat.endswith('\n}\n'):
+                        clocks[name]=json.loads(heartbeat)['physical_time_s']
         return clocks,families
 
     @staticmethod
