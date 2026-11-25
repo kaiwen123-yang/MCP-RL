@@ -4,7 +4,7 @@ from collections import defaultdict, deque
 from pathlib import Path
 import json
 
-from inspect_s1_w58_predecessor import BG, read
+from inspect_s1_w58_predecessor import BG, REL, read
 from publish_s1_go2_w54 import write
 
 
@@ -39,15 +39,54 @@ def room(rows,width):
 
 
 class EvaluationCapacity:
-    def __init__(self,root,state,work):
+    def __init__(self,root,state,work,local=False):
         self.spec=read(root/'experiments/terrain_memory/s1-w58-evaluation-scaling.json')
         self.directory=state/'dispatch'
-        self.profiles=read(self.directory/'evaluation-work-reference.json')['profiles']
-        self.path=self.directory/'evaluation-capacity.json'
+        self.root=root
+        self.local=local
+        ref='evaluation-scratch-work-reference.json' if local else 'evaluation-work-reference.json'
+        self.reference_path=self.directory/ref
+        self.profiles=read(self.reference_path)['profiles'] if self.reference_path.is_file() else None
+        self.path=self.directory/('evaluation-scratch-capacity.json' if local else 'evaluation-capacity.json')
         self.work=work
         self.history=deque(load_history(work/'throughput.jsonl')[-48:],maxlen=48)
         self.state=(read(self.path) if self.path.exists() else
                     dict(admission_limit=3,retained=3,windows={},last_end={},bad={},blocked=[],events=[],**BG))
+
+    def freeze_scratch_reference(self):
+        # Same-volume measured shapes are fixed before considering a first local-only expansion.
+        raw=self.root/'outputs'/REL
+        profiles={}
+        for task in ('original','recovered'):
+            for case in 'AB':
+                arm='b2' if task=='original' else 'p2-private'
+                ending='original-e60' if task=='original' else 'development-recovered'
+                name=f'w58-g0-m1-{arm}-{case.lower()}-{ending}-a01'
+                path=raw/'jobs'/name/'physics.log'
+                if not path.is_file() or (raw/name).resolve().parent!=raw.resolve():return False
+                points=[]
+                with path.open() as log:
+                    for line in log:
+                        if not line.startswith('{') or not line.endswith('\\n'):continue
+                        row=json.loads(line)
+                        if 'time_s' not in row or 'wall_s' not in row:continue
+                        t=round(row['time_s'],6)
+                        if task=='recovered' and (t>180 or row.get('phase') in ('terminal_stand','final_hold','complete')):break
+                        points.append([t,row['wall_s']])
+                if len(points)<7:return False
+                if task=='original':
+                    ep=self.directory.parent/'episodes'/(name+'.json')
+                    if not ep.is_file():return False
+                    result=read(ep)
+                    if result['simulation_s']<60-1.e-6:return False
+                    if points[-1][0]<60:
+                        points.append([60.,result['physical_ended_unix_s']-result['physical_started_unix_s']])
+                profiles[f'p2-{task}-E60/{case}']=dict(attempt=name,log=str(path),points=points)
+        write(self.reference_path,dict(storage='scratch',units=['physics_s','reference_wall_s'],profiles=profiles,
+              scope='G0/M1, same-volume B2 original and P2-private recovered case curves before all-local expansion',
+              continuation='Use the last 30 s mean beyond the measured prefix; exclude terminal recovery.'))
+        self.profiles=profiles
+        return True
 
     def applies(self,active):
         return (any(r['kind']=='p2-recovered-E60' for r in active) and
@@ -130,6 +169,8 @@ class EvaluationCapacity:
         s=self.state;width=len(active)
         if not self.applies(active) or width not in self.spec['widths'] or width>s['admission_limit']:return
         if width<s['retained'] or width in s['blocked']:return
+        if self.profiles is None and (not self.local or not self.freeze_scratch_reference()):return
+        s['storage_stratum']='scratch' if self.local else 'with_personal'
         candidate=self.window(active,now)
         if candidate is None:return
         sample,rows=candidate
@@ -161,3 +202,40 @@ class EvaluationCapacity:
         if action!='measured' or not s['events']:s['events'].append(event)
         s['latest']=event
         write(self.path,s)
+
+
+class EvaluationCapacityByStore:
+    def __init__(self,root,state,work):
+        self.with_personal=EvaluationCapacity(root,state,work)
+        self.scratch=EvaluationCapacity(root,state,work,local=True)
+        self.work=work
+        self.current=self.with_personal
+
+    @property
+    def state(self):
+        return self.current.state
+
+    @property
+    def path(self):
+        return self.current.path
+
+    def applies(self,active):
+        return self.with_personal.applies(active)
+
+    def cohort(self,active,extra_store=None):
+        if extra_store:return self.with_personal
+        for job in active:
+            path=self.work/'pool/raw-reservations'/(job['id']+'.json')
+            record=read(path) if path.is_file() else {}
+            volume=record.get('store') if record.get('state')=='allocated' else job.get('raw_store')
+            if volume:return self.with_personal
+        return self.scratch
+
+    def cap(self,job,active,ordinary,store=None):
+        if not self.applies([*active,job]):return ordinary
+        group=self.cohort(active,store)
+        return group.cap(job,active,ordinary)
+
+    def observe(self,now,active):
+        self.current=self.cohort(active)
+        self.current.observe(now,active)

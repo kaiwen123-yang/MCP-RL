@@ -14,7 +14,7 @@ import time
 
 from inspect_s1_w58_predecessor import BG, REL, SH, proc_info, read
 from publish_s1_go2_w54 import write
-from s1_w58_evaluation_capacity import EvaluationCapacity
+from s1_w58_evaluation_capacity import EvaluationCapacityByStore
 
 ROOT=Path(__file__).resolve().parents[1]
 WORK=ROOT/'work/w58'
@@ -151,7 +151,7 @@ def worker(a):
 class Pool:
     def __init__(self, runtime):
         self.runtime=Path(runtime)
-        self.evaluation=EvaluationCapacity(ROOT,STATE,WORK)
+        self.evaluation=EvaluationCapacityByStore(ROOT,STATE,WORK)
         self.records=POOL/'jobs'
         self.records.mkdir(parents=True,exist_ok=True)
         self.children={}
@@ -375,7 +375,7 @@ class Pool:
         self.limit=max([eval_cap,*self.family_limits.values()])
         write(STATE/'pool.json',dict(limit=self.limit,initial_limit=3,conditional_max=6,active=active,
              latest=now,independent_evaluation=dict(applicable_now=use_eval,admission_limit=eval_cap,
-                 retained=self.evaluation.state['retained'],record=str(self.evaluation.path)),
+                 retained=self.evaluation.state['retained'],storage_stratum=self.evaluation.state.get('storage_stratum'),record=str(self.evaluation.path)),
              family_limits=self.family_limits,references=[dict(kind=k[0],**v) for k,v in self.reference.items()],throughput_trace=str(WORK/'throughput.jsonl'),
              certified=[list(k) for k in self.qualified],rejected=[list(k) for k in sorted(self.rejected)],**BG))
 
@@ -435,7 +435,9 @@ class Pool:
                         break
                 else:
                     continue
+                destination_cap=self.evaluation.cap(job,active,self.family_limits.get(job['kind'],3),store)
                 chosen=available[:n]
+                if len(in_use)+n>destination_cap or max(chosen)>=destination_cap:continue
                 if not self.submit(job,chosen,store):break
                 in_use.update(chosen)
                 active=self.running()
