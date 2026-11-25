@@ -791,6 +791,26 @@ D57 直传曾卡在 GitHub 六页资产清单的中途 EOF，已有分片保留�
 <<<<<<< HEAD
 ## 2026-11-25｜W58 执行
 
+### 20261125/w58/dispatch-clock-interruption-161657｜物理调度中断与原冻结身份恢复
+
+W58 在 16:16:57 因读取正在更新的心跳退出；7 条已完成开发回合保留。P2-full A/B 的短重访覆盖 9/12 和 10/12，与各自 P2-private 的命中集合相同。仅 Fixed-wait B 短重访、B2 A/B 恢复重访登记 a02，旧 a01 及部分证据保留。调度改为读取完整心跳，物理租约进程独立于调度终端；沿用已有吞吐判定，仿真仍在冻结源码 4f7e006aa34f 执行。[调度修复](https://github.com/kaiwen123-yang/MCP-RL/commit/f019a875a24e0d634d3765c01c3988503ad10427)。
+
+
+### 20261125/w58/attempt/w58-g0-m1-b2-b-development-recovered-a01｜开发回合技术中断
+
+w58-g0-m1-b2-b-development-recovered-a01，B2，case B。D57 在 16:16:57 记录物理槽监测读取写入中的 live.json 后退出；2026-11-25T17:07:05+08:00 复核租约、启动器、仿真 PID 均已退出。最后直接观测的物理时钟 12.002 s，位姿与材料流原件原址保留。整机物理、材料及求解器无共同步内续算状态，按原冻结身份由 w58-g0-m1-b2-b-development-recovered-a02 从初始态完整重取。终局、达标与学习样本均未计入。
+
+
+### 20261125/w58/attempt/w58-g0-m1-b2-a-development-recovered-a01｜开发回合技术中断
+
+w58-g0-m1-b2-a-development-recovered-a01，B2，case A。D57 在 16:16:57 记录物理槽监测读取写入中的 live.json 后退出；2026-11-25T17:07:05+08:00 复核租约、启动器、仿真 PID 均已退出。最后直接观测的物理时钟 58.002 s，位姿与材料流原件原址保留。整机物理、材料及求解器无共同步内续算状态，按原冻结身份由 w58-g0-m1-b2-a-development-recovered-a02 从初始态完整重取。终局、达标与学习样本均未计入。
+
+
+### 20261125/w58/attempt/w58-g0-m1-fixed-wait-b-development-short-a01｜开发回合技术中断
+
+w58-g0-m1-fixed-wait-b-development-short-a01，Fixed-wait，case B。D57 在 16:16:57 记录物理槽监测读取写入中的 live.json 后退出；2026-11-25T17:07:05+08:00 复核租约、启动器、仿真 PID 均已退出。最后直接观测的物理时钟 87.002 s，位姿与材料流原件原址保留。整机物理、材料及求解器无共同步内续算状态，按原冻结身份由 w58-g0-m1-fixed-wait-b-development-short-a02 从初始态完整重取。终局、达标与学习样本均未计入。
+
+
 ### 20261125/w58/attempt/w58-g0-m1-fixed-wait-a-development-short-a01｜物理回合结束
 
 w58-g0-m1-fixed-wait-a-development-short-a01，development / short / A，控制器 S5-w58-1fed5698ca861ce349，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 840000 个物理子步，模拟 168.00000000332994 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 10/12，本回合进入采样账本 0 条，CPU 用户/系统秒 7003.916602/44.687933。物理槽 0。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-fixed-wait-a-development-short-a01.json)。
