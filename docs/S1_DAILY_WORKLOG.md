@@ -1490,6 +1490,14 @@ Git HTTPS 连续返回 503 或 TLS 握手关闭。D57 对已提交的紧凑内�
 
 19:42:53。Fixed-action / B / recovered / E60，控制器 S5-w59-research-fec5a508b81b5fa67b，源码 ed16e456759f。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
 
+### 20261126/storage/H-process-finite-archive｜已封口过程文件的 H 盘归档
+
+上海时间 19:36:24 冻结过程文件清单，实际选入 641137 条路径，31373356596 个逻辑字节、330654 种内容。清单 SHA-256 为 05224206ee3fcefd158fade51e81000e6c6bd5bd97c5d79466eebe20642420c8。H 盘目录为 H:/MPC+RL/00_catalog/migration-20261126-process，D57 现场入口为 work/w59/archive-process-20261126，tmux 会话为 mcp-h-archive-20261126。H 端独立接收进程并行传输及回读；全部路径、内容数、字节数和清单摘要与 H 的完整回执吻合后，D57 再核对源 inode、文件大小、修改时间、SHA-256 和打开状态，释放清单中合格路径。最终动作与实际分配字节见该目录的 D57-final.json。归档运行期间 PPO、资格和评价继续，归档不增加物理或学习样本。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0005｜自然终局或技术中断
+
+19:58:55。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
