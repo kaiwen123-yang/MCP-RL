@@ -3,7 +3,7 @@ import argparse
 import json
 import os
 from pathlib import Path
-import subprocess
+import tempfile
 
 import publish_s1_w57 as release
 from publish_s1_go2_w54 import write
@@ -47,6 +47,39 @@ def ensure_release():
     return info
 
 
+def publish(label, paths, video=None):
+    # The canonical data stay on D57. Stage one upload part at a time in RAM.
+    # This avoids a second persistent copy of every physical trajectory.
+    info, assets = release.release_assets()
+    groups, count = release.groups_for(paths, video, release.PART)
+    target = STATE/'delivery'/(label+'.json')
+    old = json.loads(target.read_text()) if target.exists() else {}
+    done = {v['name']:v for v in old.get('assets',[])}
+    receipts = []
+    def send(name, group=None):
+        remote = assets.get(name,{})
+        past = done.get(name)
+        signature = release.source_signature(group) if group else None
+        if past and past.get('source_signature')==signature and remote.get('digest')==past['digest'] and remote.get('size')==past['size'] and remote.get('state')=='uploaded':
+            return past
+        with tempfile.TemporaryDirectory(prefix='w59-part-',dir='/dev/shm') as tmp:
+            if group is None:
+                file = Path(tmp)/name
+                file.symlink_to(video.resolve())
+            else:
+                file = release.prepare_part(Path(tmp),name,group)
+            return dict(release.transfer(file,name,info,assets), source_signature=signature)
+    def receipt(state):
+        write(target,dict(label=label,release=info['url'],status=state,original_file_count=count,
+                          roots={k:str(v) for k,v in paths},assets=receipts,originals_retained=True))
+    for i,group in enumerate(groups,1):
+        receipts.append(send(f'{label}-originals-{i:03d}.zip',group))
+        receipt('partial')
+    if video is not None:
+        receipts.append(send(label+'-full.mp4'))
+    receipt('verified')
+
+
 def episode(name):
     receipt = json.loads((STATE/'attempts'/(name+'.json')).read_text())
     if not receipt.get('ended_unix_s'):
@@ -69,7 +102,7 @@ def episode(name):
         if not (raw/'video-asset.json').is_file():
             renderer.render(name)
         video = raw/'full-mission-material-overlay.mp4'
-    release.originals(name,paths,video)
+    publish(name,paths,video)
 
 
 if __name__ == '__main__':
@@ -83,4 +116,4 @@ if __name__ == '__main__':
     if args.episode:
         episode(args.episode)
     elif args.label and args.files:
-        release.originals(args.label,[(path.name,path) for path in args.files])
+        publish(args.label,[(path.name,path) for path in args.files])

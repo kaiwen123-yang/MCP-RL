@@ -32,7 +32,8 @@ INTERVAL, NI = layout([
     ('load_peak',4), ('sink_peak',4), ('slip_m',4), ('work_J',1),
     ('z_min',1), ('tilt_max_rad',1), ('torque_peak_Nm',1), ('request',1),
     ('handover',1), ('handover_at',1), ('hard_failure',1), ('truncated',1),
-    ('complete',1), ('hold_broken',1), ('progress_delta',1)
+    ('complete',1), ('hold_broken',1), ('progress_delta',1),
+    ('indentation_sq_s',1), ('old_slip_sq_s',1), ('cap_change',1), ('task_reward',1)
 ])
 ACTION_NAMES = ('due_offset_s','transfer_ramp_s','rho')
 NOMINAL = np.array([0,.05,0], dtype=np.float32)

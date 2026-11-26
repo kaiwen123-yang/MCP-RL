@@ -1,0 +1,27 @@
+{
+  "seed": [
+    5901,
+    5902,
+    5903
+  ],
+  "kinds": [
+    "blackbox",
+    "structured"
+  ],
+  "width": 128,
+  "optimizer": "AdamW",
+  "lr": 0.0003,
+  "weight_decay": 0.0001,
+  "global_grad_norm": 2,
+  "batch": 64,
+  "frames": 8,
+  "transitions": 7,
+  "starts": "half uniform unique, half touch/bearing/request; cross-case duplicates removed",
+  "fixed_whole_episode_validation": "case B historical model development; deterministic 4096 evenly spaced starts across eligible unique case-B intervals",
+  "advance": "10000 vs 5000, 30000 vs 10000: strict improvement in both common validation loss and Brier, otherwise stop each seed/structure separately; 50000 terminal",
+  "operator": "structured uses known current articulated 18x25 inverse dynamic map frozen across 7-step training window, total constrained held PD, learned actual contact impulse and acceleration residual; neither variant uses future real requests",
+  "private_sealed_states_used": 0,
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false
+}
