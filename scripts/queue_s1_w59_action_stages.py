@@ -41,8 +41,12 @@ def run(script,*args,cwd=ROOT):
     subprocess.run([sys.executable,str(ROOT/'scripts'/script),*map(str,args)],cwd=cwd,check=True)
 
 
-def checkpoints():
-    return [ROOT/'work/w59/model/action-checkpoints/structured'/f'{s}-node-10000.pt' for s in SEEDS]
+def checkpoints(kind='structured'):
+    return [ROOT/'work/w59/model/action-checkpoints'/kind/f'{s}-node-10000.pt' for s in SEEDS]
+
+
+def historical_ready(kind):
+    return all((SMALL/'model'/f'{kind}-{seed}-open-loop.json').is_file() for seed in SEEDS)
 
 
 def closed(role):
@@ -50,9 +54,9 @@ def closed(role):
     return len(paths),sum(read(p).get('stage_status')=='technical_interruption' for p in paths)
 
 
-def score(reg,role,paths,target,recipe=None):
+def score(reg,role,paths,target,recipe=None,kind='structured'):
     if target.exists():return
-    args=['--registry',reg,'--role',role,'--material','M1','--output',target]
+    args=['--registry',reg,'--role',role,'--material','M1','--model-kind',kind,'--output',target]
     for p in paths:args+=['--wm-checkpoint',p]
     if recipe:args+=['--wm-recipe',recipe]
     run('score_s1_w59_interventions.py',*args)
@@ -94,21 +98,41 @@ def main(runtime):
             status('technical_block',reason='A charged development branch has a technical interruption.')
             return
         time.sleep(20)
-    score(REG,'development',paths,DEV)
-    development=read(DEV)
-    if development['summary']['measured_branches']!=96:
-        raise ValueError('The development comparison lacks a complete physical denominator')
-    result=development['fixed_horizon_comparisons']
-    eligible=[int(k) for k,v in result.items() if v['ordering_eligible']]
-    # Model fitting uses these actual development branches. This choice only specifies the
-    # prospective method for independent confirmation; it is never reported as held-out benefit.
-    horizon=max(eligible) if eligible else 32
+    choices=[]
+    for kind in ('structured','blackbox'):
+        model_paths=checkpoints(kind)
+        while not all(p.is_file() for p in model_paths) or not historical_ready(kind):time.sleep(15)
+        path=OUT/('development-'+kind+'-scored.json')
+        score(REG,'development',model_paths,path,kind=kind)
+        data=read(path)
+        if data['summary']['measured_branches']!=96:
+            raise ValueError('The development comparison lacks a complete physical denominator')
+        windows=data['fixed_horizon_comparisons']
+        eligible=[int(k) for k,v in windows.items() if v['ordering_eligible']]
+        supported=[int(k) for k,v in windows.items() if v['historical_forward_domain']['pass_gate'] and
+                   v['evaluated_states']==v['denominator_states']==12]
+        choices.append((kind,model_paths,data,eligible,supported))
+        if eligible:break
+    kind,paths,development,eligible,supported=next((c for c in choices if c[3]),
+        max(choices,key=lambda c:max(c[4],default=0)))
+    horizon=max(eligible or supported or [1])
+    for row in development['states']:
+        row.pop('comparison',None)
+        specific=row.get('horizons',{}).get(str(horizon),{})
+        if specific.get('usable'):row['comparison']=specific
+    development['frozen_planning_substeps']=horizon
+    development['method_selection']=dict(selected_kind=kind,
+        fallback=(kind=='blackbox'),rank_eligible_substeps=sorted(eligible),forward_supported_substeps=sorted(supported),
+        alternatives=[dict(kind=c[0],rank_eligible=c[3],forward_supported=c[4]) for c in choices])
+    immutable(DEV,development)
     base=dict(schema='W59_frozen_candidate_recipe_v1',model_paths=list(map(str,paths)),
-        model_sha256=[sha(p) for p in paths],material='M1',planning_substeps=horizon,
+        model_sha256=[sha(p) for p in paths],material='M1',planning_substeps=horizon,model_kind=kind,
+        model_identity=('structured_execution' if kind=='structured' else 'blackbox_execution_fallback'),
+        observed_normal_max_N=development['observed_normal_max_N'],forward_supported_substeps=sorted(supported),
         ranking_development_eligible=bool(eligible),eligible_development_substeps=sorted(eligible),
         development_score_sha256=sha(DEV),source_registry_sha256=sha(REG),
         fixed_day_recipe='64 candidates twice; first request held to its next model-predicted legal event; later nominal requests.',
-        selector='longest registered horizon with real ranking above the replay floor and no excess hard failure; 0.64s prospective negative comparator otherwise')
+        selector='longest registered horizon with real ranking above the replay floor and no excess hard failure; shortest registered node if all models lack physical support')
     immutable(P3,base)
     with ThreadPoolExecutor(2) as pool:
         futures=[pool.submit(original,runtime,case,paths) for case in ('A','B')] if eligible else []
@@ -137,7 +161,7 @@ def main(runtime):
         horizons=OUT/'r3-development-horizons.json'
         while not horizons.exists():time.sleep(10)
         grad=read(horizons);critic=ROOT/'work/w59/learner/historical-task-critic.pt'
-        freeze=dict(**base,source_registry_v3_sha256=sha(V3),r3_substeps=grad['chosen_substeps'],
+        freeze=dict(**base,source_registry_v3_sha256=sha(V3),r3_substeps=(grad['chosen_substeps'] if grad['chosen_substeps'] in supported else 0),
             critic_sha256=sha(critic),learner_rule_sha256=sha(ROOT/'experiments/terrain_memory/s1-w59-gradient-admission.json'),
             online_recipe_sha256=sha(ROOT/'experiments/terrain_memory/s1-w59-online-wm.json'),
             r3_development_horizons_sha256=sha(horizons),frozen_before_sealed=True,**BG)
@@ -145,7 +169,7 @@ def main(runtime):
         status('sealed_admission_running',registry=str(V3),freeze=str(FREEZE),sealed_budget=96)
         run('run_s1_w59_interventions.py','--registry',V3,'--runtime',runtime,'--role','sealed_admission',
             '--freeze',FREEZE,'--workers',3)
-        score(V3,'sealed_admission',paths,SEALED,FREEZE)
+        score(V3,'sealed_admission',paths,SEALED,FREEZE,kind)
         sealed=read(SEALED)
         status('sealed_scored',role='independent',sealed_score=str(SEALED),registry=str(V3),
             physics=sealed['summary']['observed_mj_steps'],horizon=horizon,

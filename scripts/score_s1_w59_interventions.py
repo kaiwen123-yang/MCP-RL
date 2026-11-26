@@ -242,6 +242,7 @@ def main():
     p.add_argument('--registry',type=Path,required=True);p.add_argument('--role',choices=('development','sealed_admission'),required=True)
     p.add_argument('--wm-checkpoint',action='append',default=[]);p.add_argument('--material',choices=('M1','M3'),default='M1')
     p.add_argument('--wm-recipe',type=Path)
+    p.add_argument('--model-kind',choices=('structured','blackbox'),default='structured')
     p.add_argument('--output',type=Path,required=True)
     args=p.parse_args()
     if args.role=='sealed_admission' and args.wm_checkpoint and not args.wm_recipe:
@@ -257,6 +258,18 @@ def main():
     if wm is not None and (args.material=='M3' or any(s.get('source_material')=='M3' for s in reg['states'][args.role])):
         from s1_w59_action_publications import source_publications
         pubs=source_publications(reg['states'][args.role])
+    from s1_w59_forward_domain import historical
+    if args.wm_recipe:
+        original=json.loads(args.wm_recipe.read_text());normal_max=original['observed_normal_max_N']
+    else:
+        # Fixed once from the complete enrolled B3/Fixed originals used for method development.
+        normal_max=0.
+        for arm in ('b3','fixed-action'):
+            for case in ('a','b'):
+                d=LARGE/f'w59-{arm}-{case}-original-e30-a02'
+                with np.load(d/'physical-000.npz') as f:
+                    normal_max=max(normal_max,float(f['physical'][:,32:42:3].max()))
+    allowed=historical(SMALL/'model',args.model_kind,NODES,normal_max)
     out=[]
     for state,records,snap in physical_rows(reg,args.role):
         row={'state_id':state['snapshot_id'],'stratum':state['stratum'],'records':{}}
@@ -276,13 +289,13 @@ def main():
         if wm and all('cost' in r for r in records.values()):
             pub=pubs.get(state['snapshot_id'])
             if args.material=='M3':wm.bind_material_publication(pub)
-            row['first_request_comparison']=fit_state(state,records,snap,wm,reg,args.material,args.role)
+            # The actual pending interval is still reported in physical_effects.
             source=job_name(state,args.role,'nominal1')
             # Re-read the saved table because starting_state advances the completed causal observation once.
             clean=pickle.loads(gzip.decompress(Path(state['snapshot']).read_bytes()))
             x,table=starting_state(LARGE/source,state,clean)
-            row['horizons']=horizon_comparisons(x,table,records,wm,reg,args.material,state,pub)
-            row['comparison']=row['horizons'][str(fixed)]
+            row['horizons']=horizon_comparisons(x,table,records,wm,reg,args.material,state,pub,allowed=allowed,normal_max=normal_max)
+            if row['horizons'][str(fixed)].get('usable'):row['comparison']=row['horizons'][str(fixed)]
         out.append(row)
     summary=summarize(out)
     measured_records=[r for state in out for r in state['records'].values() if 'measured' in r]
@@ -296,19 +309,24 @@ def main():
     summary['by_stratum']={k:summarize([r for r in out if r['stratum']==k]) for k in sorted({r['stratum'] for r in out})}
     by_horizon={}
     for n in NODES:
-        selected=[dict(v,comparison=v['horizons'][str(n)]) if 'horizons' in v else v for v in out]
+        selected=[]
+        for v in out:
+            item={k:w for k,w in v.items() if k!='comparison'}
+            measure=v.get('horizons',{}).get(str(n),{})
+            if measure.get('usable'):item['comparison']=measure
+            selected.append(item)
         graded=summarize(selected)
         finite=[dict(v,comparison=dict(v['comparison'],directions=[
             dict(d,gradient_correct=d['rank_correct']) for d in v['comparison']['directions']]))
             if 'comparison' in v else v for v in selected]
         rank=summarize(finite)
         observed=[v['comparison']['actual_coverage'] for v in selected if 'comparison' in v]
-        graded.update(ordering_eligible=rank['admitted'],rank_bootstrap_lower95=rank.get('gradient_state_bootstrap_lower95'),
+        graded.update(historical_forward_domain=allowed[str(n)],ordering_eligible=rank['admitted'] and allowed[str(n)]['pass_gate'],rank_bootstrap_lower95=rank.get('gradient_state_bootstrap_lower95'),
             states_with_cross_foot_reload=sum(any(v['cells']>0 for v in a.values()) for a in observed),
             states_with_candidate_source_then_cross_foot_reload=sum(any(v['source_in_branch']>0 for v in a.values()) for a in observed))
         by_horizon[str(n)]=graded
     result=dict(registry_sha256=sha(args.registry),role=args.role,
-        frozen_planning_substeps=fixed,fixed_horizon_comparisons=by_horizon,
+        model_kind=args.model_kind,observed_normal_max_N=normal_max,frozen_planning_substeps=fixed,fixed_horizon_comparisons=by_horizon,
         terminal_continuation='after the first absolute perturbation, use the source B3/Fixed/P3 policy at its next model-predicted legal events',checkpoints=[dict(path=str(p),sha256=sha(Path(p))) for p in args.wm_checkpoint],
         bootstrap_unit='initial legal request, 10000 resamples; states within a source case/episode share history',
         source_episodes=sorted(set(v['snapshot_id'].split('/')[0] for v in reg['states'][args.role])),

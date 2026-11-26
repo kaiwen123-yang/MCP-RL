@@ -94,7 +94,9 @@ def prediction(wm,state,requests,world,material,private,substeps):
     evidence=dict(predicted_next_legal_requests=((result['interval'][...,INTERVAL['request']].squeeze(-1)>=.5)*valid).sum(-1),
         cross_cell_count=(crossings*valid).sum(-1) if crossings is not None else None,
         cross_from_branch=(own*valid).sum(-1) if own is not None else None)
-    return (flowing*valid,hazard*valid),evidence
+    from s1_w59_forward_domain import candidate_mask
+    allowed=candidate_mask(result,getattr(wm,'normal_envelope_N',float('inf')))
+    return (flowing*valid,hazard*valid),evidence,allowed
 
 
 @torch.no_grad()
@@ -108,23 +110,26 @@ def select_one(wm,state,world,private,material,substeps):
     # A deterministic 3D Sobol sequence gives the same fixed candidate budgets to all arms.
     points=torch.quasirandom.SobolEngine(3,scramble=False).draw(129)[1:].to(state)
     c1=torch.cat((axis, low+(high-low)*points[:57]),0)
-    first,events1=prediction(wm,state,c1,world,material,private,substeps)
+    first,events1,legal1=prediction(wm,state,c1,world,material,private,substeps)
     rank=value(first,substeps)
-    elite=c1[torch.argsort(rank,stable=True)[:8]]
+    allowed1=legal1&torch.isfinite(rank)
+    if not allowed1.any():raise FloatingPointError('P3 generation 1 has no physically supported finite candidate')
+    valid_ids=torch.where(allowed1)[0]
+    elite=c1[valid_ids[torch.argsort(rank[valid_ids],stable=True)[:8]]]
     center=elite.mean(0)
     sig=elite.std(0,unbiased=False).clamp_min(.02*(high-low))
     z=1.4142135623730951*torch.erfinv(2*points[64:126].clamp(.001,.999)-1)
     c2=torch.cat((nom[None],elite[:1],(center+sig*z).clamp(low,high)),0)
-    second,events2=prediction(wm,state,c2,world,material,private,substeps)
+    second,events2,legal2=prediction(wm,state,c2,world,material,private,substeps)
     common=substeps
     candidates=torch.cat((c1,c2))
     scores=torch.cat((value(first,common),value(second,common)))
-    if not torch.isfinite(scores).all():
-        raise FloatingPointError('W59 candidate model produced a nonfinite physical score')
-    winner=int(scores.argmin())
-    eps=8*torch.finfo(dtype).eps*max(1.,abs(float(scores[0])))
-    if not common or float(scores[0]-scores[winner])<=eps:
-        winner=0
+    allowed=torch.cat((legal1,legal2))&torch.isfinite(scores)
+    if not allowed.any():raise FloatingPointError('P3 has no physically supported finite candidate')
+    winner=int(scores.masked_fill(~allowed,torch.inf).argmin())
+    if allowed[0]:
+        eps=8*torch.finfo(dtype).eps*max(1.,abs(float(scores[0])))
+        if float(scores[0]-scores[winner])<=eps:winner=0
     coverage={}
     for name,v in events1.items():
         if v is not None:
@@ -134,8 +139,8 @@ def select_one(wm,state,world,private,material,substeps):
     return candidates[winner],dict(coverage=coverage,successor_rule='nominal at each subsequent predicted legal request',
         count=128,search_iterations=2,common_substeps=common,
         common_s=float(common*DT),winner=winner,selected_score=float(scores[winner]),
-        nominal_score=float(scores[0]),removed_released_cells=deleted,
-        predicted_costs=scores.cpu().tolist(),requests=candidates.cpu().tolist())
+        nominal_score=float(scores[0]) if allowed[0] else None,removed_released_cells=deleted,
+        rejected_domain_or_nonfinite=int((~allowed).sum()),predicted_costs=[v if ok else None for v,ok in zip(scores.cpu().tolist(),allowed.cpu().tolist())],requests=candidates.cpu().tolist())
 
 
 @torch.no_grad()
@@ -154,6 +159,7 @@ class EventPlanner:
         self.device=torch.device('cuda')
         self.wm=ExecutionEnsemble.load(settings['model_paths'],self.device)
         self.wm.planning_substeps=settings.get('planning_substeps',32)
+        self.wm.normal_envelope_N=settings['normal_envelope_N']
         self.material=settings['material']
         self.private=settings['arm']=='P3-private'
 

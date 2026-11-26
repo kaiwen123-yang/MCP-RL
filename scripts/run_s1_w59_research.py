@@ -52,6 +52,7 @@ def declaration(a):
         sources.add('scripts/s1_w59_planning.py')
         sources.update('scripts/s1_w59_model_'+key+'.py' for key in (
             'cells','fields','bank','rigid','calibration','reload','recovery'))
+        sources.add('scripts/s1_w59_forward_domain.py')
         sources.add('scripts/s1_w59_model.py')
     if a.material=='M3':
         sources.update(['scripts/s1_w59_model_material.py','experiments/terrain_memory/w59-recovery-parameters.json'])
@@ -82,7 +83,8 @@ def declaration(a):
     setting=dict(arm=a.arm,split=a.split,gait='G0',material=a.material,learner_config=learner,
         model_paths=list(map(str,models)),model_sha256=wm_hashes,legacy_timing_head=False,
         initial_search_candidates=64,search_iterations=2,native_workers=1,
-        planning_substeps=int(planning_recipe['planning_substeps']) if planner else None)
+        planning_substeps=int(planning_recipe['planning_substeps']) if planner else None,
+        normal_envelope_N=planning_recipe.get('observed_normal_max_N') if planner else None)
     w=dict(arm=a.arm,planner='P0',planner_history='private_reset' if a.arm=='P3-private' else 'full',
         candidate_substep_s=.02,planner_material_backend='original',planner_material_workers=1,
         material='M1',observer_implementation='w57_measured_window',timing_mode='zero',timing_head=None,

@@ -22,6 +22,7 @@ def successor_settings(source,wm,publication=None):
     if arm not in ('P3-full','P3-private'):raise ValueError('Unregistered source event policy')
     settings=source['source_settings']
     controller=frozen_policy(tuple(settings['model_paths']),str(wm.device))
+    controller.normal_envelope_N=settings['normal_envelope_N']
     if settings['material']=='M3':controller.bind_material_publication(publication)
     def replanner(states,worlds):
         return select_batch(controller,states,worlds,private=(arm=='P3-private'),material=settings['material'],
@@ -29,27 +30,44 @@ def successor_settings(source,wm,publication=None):
     return dict(successor='policy',successor_policy=replanner)
 
 
-def horizon_comparisons(state,world,records,wm,reg,material,source,publication=None):
+def horizon_comparisons(state,world,records,wm,reg,material,source,publication=None,*,allowed,normal_max):
+    out={}
+    for n in NODES:
+        if not allowed[str(n)]['pass_gate']:
+            out[str(n)]={'usable':False,'reason':'historical_frontend_finite_force_or_foot_calibration'}
+            continue
+        try:
+            out.update(_node(state,world,records,wm,reg,material,source,publication,(n,),normal_max))
+        except FloatingPointError as error:
+            out[str(n)]={'usable':False,'reason':str(error)}
+    return out
+
+
+def _node(state,world,records,wm,reg,material,source,publication,nodes,normal_max):
     labels=list(reg['signed'])
     x=torch.tensor(state,device=wm.device)
     acts=torch.tensor([reg['signed'][s] for s in labels],device=x.device,dtype=x.dtype)
     successor=successor_settings(source,wm,publication)
     with torch.no_grad():
-        result=wm.predict_candidates(x,acts,steps=max(NODES),world=world,material=material,
+        result=wm.predict_candidates(x,acts,steps=max(nodes),world=world,material=material,
                                      private=False,**successor)
+        from s1_w59_forward_domain import candidate_mask
+        supported=candidate_mask(result,normal_max)
+        if not supported[0] or not supported[1]:raise FloatingPointError('nominal is nonfinite or outside the physical domain')
+        support=dict(zip(labels,supported.cpu().tolist()))
         masks=result['valid_steps'].to(x.dtype)
         flow,hazard=components(result['interval'])
         parts=(flow*masks,hazard*masks)
     nominal=acts[:1].detach().clone().requires_grad_(True)
-    path=wm.predict_candidates(x,nominal,steps=max(NODES),world=world,material=material,
+    path=wm.predict_candidates(x,nominal,steps=max(nodes),world=world,material=material,
                                private=False,**successor)
     nm=path['valid_steps'].to(x.dtype)
     flow,fail=components(path['interval'])
     derivatives=(flow*nm,fail*nm)
     out={}
-    for n in NODES:
+    for n in nodes:
         p=dict(zip(labels,value(parts,n).cpu().tolist()))
-        g=torch.autograd.grad(value(derivatives,n).sum(),nominal,retain_graph=(n<NODES[-1]))[0][0]
+        g=torch.autograd.grad(value(derivatives,n).sum(),nominal,retain_graph=(n<nodes[-1]))[0][0]
         derivative_ok=bool(torch.isfinite(g).all());g=g.detach().cpu().numpy()
         # A natural hard terminal absorbs. A technical short branch is excluded earlier as unobserved.
         true={k:float(v['cost'][:n].sum())+10.*(v['measured']['hard_failure'] and v['measured']['time_s']<=n*DT+1e-8)
@@ -58,17 +76,17 @@ def horizon_comparisons(state,world,records,wm,reg,material,source,publication=N
         mean=.5*(true['nominal1']+true['nominal2'])
         rows=[]
         for s in SIGNED:
-            real=true[s]-mean;delta=p[s]-p['nominal1']
+            real=true[s]-mean;delta=p[s]-p['nominal1'] if support[s] else None
             signed_action=np.array(reg['signed'][s])-np.array(reg['signed']['nominal1'])
             jac=float(g@signed_action) if derivative_ok else None
             resolved=abs(real)>max(floor,1e-12)
             hard=records[s]['measured']['hard_failure']
             rows.append(dict(signed=s,observed=real,predicted=delta,linearized=jac,resolvable=resolved,
-                rank_correct=bool(resolved and delta*real>0.),
-                gradient_correct=bool(resolved and derivative_ok and jac*real>0.),
+                model_supported=support[s],rank_correct=bool(resolved and support[s] and delta*real>0.),
+                gradient_correct=bool(resolved and support[s] and derivative_ok and jac*real>0.),
                 hard_failure=hard,excess_hard=hard and not (
                     records['nominal1']['measured']['hard_failure'] or records['nominal2']['measured']['hard_failure'])))
-        best=min(['nominal1',*SIGNED],key=p.get)
+        best=min([s for s in ['nominal1',*SIGNED] if support[s]],key=p.get)
         actual_coverage={}
         for s,v in records.items():
             events=[e for e in v['measured']['physical_cross_foot_reload'] if e['offset_s']<=n*DT+1e-8]
@@ -79,7 +97,7 @@ def horizon_comparisons(state,world,records,wm,reg,material,source,publication=N
             if k in result:
                 vals=(result[k][...,:n]*masks[...,:n]).sum(-1)
                 forecast_coverage[k]={s:vals[:,j].cpu().tolist() for j,s in enumerate(labels)}
-        out[str(n)]=dict(common_s=n*DT,nominal_replay_floor=floor,nominal_gradient=g.tolist() if derivative_ok else None,
+        out[str(n)]=dict(usable=True,common_s=n*DT,nominal_replay_floor=floor,nominal_gradient=g.tolist() if derivative_ok else None,
             gradient_finite=derivative_ok, directions=rows,best=best,best_real_gain=mean-true[best],
             best_new_hard_fail=records[best]['measured']['hard_failure'] and
                 not (records['nominal1']['measured']['hard_failure'] or records['nominal2']['measured']['hard_failure']),
