@@ -1127,6 +1127,16 @@ W58 学习 head 原子占两槽，旧扩容逻辑要求同类占用三槽才建�
 
 ## 2026-11-26｜W58 执行
 
+### 20261126/w58/attempt/w58-g0-m1-p2-private-a-validation-recovered-a01｜物理回合结束
+
+w58-g0-m1-p2-private-a-validation-recovered-a01，validation / recovered / A，控制器 S5-w58-9ab3242e8c573151cc，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 6/12，本回合进入采样账本 0 条，CPU 用户/系统秒 10179.116886/50.665494。物理槽 0。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-p2-private-a-validation-recovered-a01.json)。
+
+
+### 20261126/w58/attempt/w58-g0-m1-p2-full-a-validation-recovered-a01｜物理回合结束
+
+w58-g0-m1-p2-full-a-validation-recovered-a01，validation / recovered / A，控制器 S5-w58-4f978238d554d6944c，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 6/12，本回合进入采样账本 0 条，CPU 用户/系统秒 10172.056318/51.13478。物理槽 4。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-p2-full-a-validation-recovered-a01.json)。
+
+
 ### 20261126/w58/attempt/w58-g0-m1-p2-private-b-validation-recovered-a01｜物理回合结束
 
 w58-g0-m1-p2-private-b-validation-recovered-a01，validation / recovered / B，控制器 S5-w58-9ab3242e8c573151cc，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 5/12，本回合进入采样账本 0 条，CPU 用户/系统秒 10140.733697/50.261281999999994。物理槽 3。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-p2-private-b-validation-recovered-a01.json)。
