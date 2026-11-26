@@ -1,3 +1,19 @@
+# 当前入口：W57/W58已结束，W59官方方法融合研究待执行（2026-11-26）
+
+先读[最新完整审查](docs/S1_W58_REVIEW_20261126.md)、[W59研究计划](docs/S1_W59_RESEARCH_PLAN.md)、[官方SuperMimic与近邻](docs/S1_W59_OFFICIAL_METHODS_20261126.md)、[新启动提示词](docs/S1_W59_START_PROMPT.md)、[机器合同](experiments/terrain_memory/s1-w59-research-contract.json)与[交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W58-review/handoff.json)。以下旧“当前”、W57/W58未完成、并发数及旧学习预算属于历史，不覆盖本入口。
+
+固定审查 `ef500f31`：W57 full/blind各8192去重转移/32updates，PR A/B各自原E600通过；PR仍是P0训练R与P1冻结组合。W58 finished，56attempts=53自然终局+3技术中断，最终G0/M1，joint训练0。G1改善off-time却恶化slip；M2恢复链存在误差抵消；P2八条正式full机制中3413次非空历史干预0赢家改变。稳定基线成立，材料历史因果收益未成立。`current.json`中W58旧isolated_development片段滞后，查日期较新的w58/index/outcome；启动前仍须核现场确切job/PID/时钟，不以静态文档冒充现场。
+
+W59只依据官方SuperMimic论文v3与官方源码，不使用用户个人复现记录/权重/数据。连续并行推进M3物理记忆+执行WM、P3动作条件规划、R3短想象与真实critic、固定足印机制/原路线评价。四学习臂PPO-full/Diff-full/Diff-private/Diff-fixedWM，三个学习seed5901/5902/5903，条件预算及独立保留集按机器合同，不把计划数量算已运行。
+
+物理默认3槽，依当前实测和其他项目余量扩4–6；双collector原子持2槽，6槽最多3campaign。GPU用于批量模型拟合/候选预测/想象，不为显存占满做无效工作。后台deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false；原模拟时长、物理终止和用户停止有效。GitHub非强推整合、D57原件直传并核验后不在用户电脑二次归档；不自动迁移/删除数据、不动其他项目。唯一[每日工作日志](docs/S1_DAILY_WORKLOG.md)按上海日期详细追加，事件ID去重。
+
+本次仅审查、离线证据复算与计划发布，W59代码/物理/模型/策略更新=0。具条件的后继按完整合同同轮推进，不仅交框架或一次探针；无效模型/动作的阴性证据保留，不重复旧负版本、不放宽plant硬界。旧已运行身份仍遵守其原合同，新W59以本入口及计划为准。
+
+---
+
+## 历史入口：2026-11-23形成的W57/W58续接说明
+
 # 当前执行入口：W57正在收尾，W58三线后继已规划（2026-11-23）
 
 2026-11-24 并发修订。W57 的 full/blind 均完成 8192 条及自然尾回合，用户随后要求在条件允许时将独立冻结评价扩到六个物理槽。当前 W57 评价按同一共享租约做 2→4→条件 6 的实测扩容，保留原 dispatcher 的资格判定及逐 case 身份。此前要求等待 W57 自然结束的条款继续适用于 W58 物理迁移。[评价调度合同](experiments/terrain_memory/s1-w57-frozen-evaluation-slots.json) · [实际物理进度](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/evaluation-parallelism.json)。

@@ -1,3 +1,5 @@
+> 2026-11-26续接说明：W57/W58已结束，以下为已执行的历史合同。W58最终G0/M1，联合准入未通过，不能把条件计划写成已运行。当前新工作请读[W59计划](S1_W59_RESEARCH_PLAN.md)、[启动提示词](S1_W59_START_PROMPT.md)及[最新审查](S1_W58_REVIEW_20261126.md)。原结果和判据不改。
+
 # S1：完成 W57 证据闭合，推进 W58 接触质量与材料历史决策
 
 2026-11-24 并发修订。W57 的 full/blind 均完成 8192 条及自然尾回合，用户随后要求在条件允许时将独立冻结评价扩到六个物理槽。当前 W57 评价按同一共享租约做 2→4→条件 6 的实测扩容，保留原 dispatcher 的资格判定及逐 case 身份。此前要求等待 W57 自然结束的条款继续适用于 W58 物理迁移。[评价调度合同](../experiments/terrain_memory/s1-w57-frozen-evaluation-slots.json) · [实际物理进度](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/evaluation-parallelism.json)。

@@ -2,7 +2,18 @@
 
 研究同一世界地块在跨足、跨步和返程重访中的材料恢复，以及它对未来支撑决策的作用。
 
-## 当前：稳定名义基线成立，W57仍在执行，下一步计划已发布
+## 当前：W57/W58结束，稳定基线已确认，W59方法研究待执行
+
+2026-11-26审查固定`ef500f31`：W57 full/blind各8192去重转移、32updates；新PR A/B均完成自己的原E600十往返并保持到600秒。W58 56attempts结束，最终G0/M1，联合训练0。当前科研阻塞是材料恢复误差、微弱历史效应、动作兑现和同足印曝光，不能以长程稳定代替材料历史增益。
+
+[本轮详细审查](docs/S1_W58_REVIEW_20261126.md) · [W59完整研究与实验计划](docs/S1_W59_RESEARCH_PLAN.md) · [官方方法及最新论文](docs/S1_W59_OFFICIAL_METHODS_20261126.md) · [Codex启动提示词](docs/S1_W59_START_PROMPT.md) · [机器合同](experiments/terrain_memory/s1-w59-research-contract.json) · [每日详细日志](docs/S1_DAILY_WORKLOG.md)
+
+W59以官方SuperMimic为方法参考，将可恢复材料记忆、动作条件执行WM、MPC与RL连接到同一预测系统。三模块与联合算法分别设对照，条件满足时推进三学习seed。可按当前实际吞吐使用六物理槽并让GPU承担模型拟合/短想象；无墙钟deadline，GitHub直交后无用户电脑二次归档。计划发布不等于新实验成功。
+
+[本次视频、原始接触与分母复算](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W58-review/README.md) · [最新W58实际结果](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/index.json)
+
+## 历史审查：2026-11-23的W57执行快照
+
 
 2026-11-23对fd4ede8d（19:20:56 +08）的审查确认：旧r55/r60的A/B四条原E600均完成十次合法往返。W57已实装M1、在线P1和83D独立timing PPO；full8192/32updates完成，blind7424/29updates＋6partial继续。新身份原资格目前是M1+B A/B E30及M1+P A E30，最终冻结R/PR和正式机制矩阵仍待队列完成。最新实时发布值请读[运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/index.json)。
 

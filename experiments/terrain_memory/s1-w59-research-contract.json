@@ -1,0 +1,241 @@
+{
+  "schema": "s1_w59_research_plan_v1",
+  "status": "planned_not_implemented_not_running",
+  "date_shanghai": "2026-11-26",
+  "review_source_commit": "ef500f31c7a96d94f83c9afb5c7a880864b447dc",
+  "documents": {
+    "plan": "docs/S1_W59_RESEARCH_PLAN.md",
+    "start_prompt": "docs/S1_W59_START_PROMPT.md",
+    "review": "docs/S1_W58_REVIEW_20261126.md",
+    "official_methods": "docs/S1_W59_OFFICIAL_METHODS_20261126.md",
+    "daily_log": "docs/S1_DAILY_WORKLOG.md"
+  },
+  "official_supermimic": {
+    "repo": "https://github.com/HybridRobotics/supermimic",
+    "commit": "5fb92297ab4fe3d86629d9f0c635334791bb0d5f",
+    "paper": "https://arxiv.org/pdf/2610.28480v3",
+    "user_reproduction_in_scope": false,
+    "copy_G1_weights": false
+  },
+  "initial_science": {
+    "W57_PR_cases_original_E600": [
+      "A",
+      "B"
+    ],
+    "W57_full_used_transitions": 8192,
+    "W57_blind_used_transitions": 8192,
+    "W57_is_joint_training": false,
+    "W58_ended_attempts": 56,
+    "W58_natural_terminal_attempts": 53,
+    "W58_technical_interruptions": 3,
+    "W58_selected": [
+      "G0",
+      "M1"
+    ],
+    "W58_joint_used_transitions": 0
+  },
+  "background": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_on_conversation_end": false
+  },
+  "model_state": [
+    "robot_observables",
+    "causal_world_cell_belief",
+    "controller_internal_state",
+    "mission_hold_state",
+    "controller_action_model_versions"
+  ],
+  "model_comparators": [
+    "M1_analytic",
+    "blackbox_same_causal_inputs",
+    "M3_structured_execution_WM"
+  ],
+  "model_fit_seeds": [
+    5901,
+    5902,
+    5903
+  ],
+  "model_fit_update_nodes": [
+    10000,
+    30000,
+    50000
+  ],
+  "model_budget_comparison": "Compare common cumulative nodes; no hidden cross-arm online replay.",
+  "macro_action": {
+    "issue_at": "legal_handover_request_boundary_only",
+    "fields": [
+      "due_offset_s",
+      "transfer_ramp_s",
+      "pair_load_preference_rho"
+    ],
+    "nominal": [
+      0,
+      0.05,
+      0
+    ],
+    "bounds": [
+      [
+        -0.05,
+        0.05
+      ],
+      [
+        0.04,
+        0.08
+      ],
+      [
+        -0.1,
+        0.1
+      ]
+    ],
+    "residual_scale": [
+      0.05,
+      0.03,
+      0.1
+    ],
+    "composition": "Project_A(a_P3 + Scale*tanh(r_theta(s,a_P3,margin)))",
+    "rho_definition": "Equal and opposite normal force reference offsets rho*m*g, sorted incoming leg IDs, only when both contacts can bear; original QP/WBC feasibility remains. Not a multiplicative weight.",
+    "disable_legacy_timing_head": true,
+    "post_PD_residual_torque": false,
+    "XY_first_identity": "unchanged; future pre-liftoff landing identity requires separate qualification"
+  },
+  "clocks": {
+    "plant_s": 0.0002,
+    "WBC_s": 0.002,
+    "force_MPC_replan_s": 0.02,
+    "force_horizon_nodes": 14,
+    "force_horizon_node_s": 0.025,
+    "nominal_WM_substep_s": 0.02,
+    "nominal_imagination_substeps": 32,
+    "nominal_imagination_duration_s": 0.64,
+    "macro_action_in_substeps": "held until next legal request; no repeated residual addition"
+  },
+  "action_calibration": {
+    "states": 24,
+    "selection": "legal request states stratified by ensuing unperturbed event, labels fixed before candidate outcomes",
+    "development_states": 12,
+    "sealed_admission_states": 12,
+    "strata": [
+      "rigid_steady",
+      "early_touch_or_search",
+      "cross_foot_reload"
+    ],
+    "states_per_stratum_per_split": 4,
+    "nominal_repeats_per_state": 2,
+    "signed_perturbations_per_state": 6,
+    "branches_max": 192,
+    "sim_seconds_per_branch_max": 2,
+    "sim_seconds_max": 384,
+    "no_effect": "retain all denominator; distinguish non-resolvable from wrong direction",
+    "sealed_policy": "unseal only after model/action/recipe freeze; after adaptation becomes development"
+  },
+  "learning": {
+    "seeds": [
+      5901,
+      5902,
+      5903
+    ],
+    "arms": [
+      "PPO-full",
+      "Diff-full",
+      "Diff-private",
+      "Diff-fixedWM"
+    ],
+    "used_transition_nodes": [
+      2048,
+      4096,
+      8192
+    ],
+    "first_node_seed": 5901,
+    "max_heads": 12,
+    "max_used_distinct_transitions": 98304,
+    "statistical_independence": false,
+    "same_seed_budget": "All four arms reach common N_s selected from Diff-full development before heldout; incomplete comparisons explicit.",
+    "batch_streams": 2,
+    "unique_events_per_stream_batch": 128,
+    "batch_total": 256,
+    "actor_updates": "At sealed event batch barrier; source/plant unchanged; no held-PD midstep update.",
+    "WM_publish": "Nonblocking pending model; only after predeclared node, sealed batch and both natural tails; keep old WM while any batch incomplete.",
+    "online_replay": "isolated per arm/seed",
+    "optimizer_state": "independent copies; include optimizer when rejecting/restoring updates",
+    "tail_cost": "Count all physical interaction; any tail data used in model/critic counts toward learning-data budget.",
+    "private_scope": "Remove new released-world-cell history including its new recurrent/latent channels; preserve common current sensing and controller memory.",
+    "fallback": "new marked algorithm identity; not pure Diff"
+  },
+  "actor_first_update_check": {
+    "states_per_head": 8,
+    "continuations_per_state": 2,
+    "max_heads": 12,
+    "branches_max": 192,
+    "sim_seconds_per_branch_max": 2,
+    "sim_seconds_max": 384,
+    "state_scope": "additional locked legal-request states disjoint from model-development/admission; future legal events rerun real P3"
+  },
+  "mechanism": {
+    "development_planning_arms": [
+      "B3",
+      "P3-full-R0",
+      "P3-private-R0",
+      "Fixed-action"
+    ],
+    "cases": [
+      "A",
+      "B"
+    ],
+    "histories": [
+      "short",
+      "recovered"
+    ],
+    "planning_development_episodes": 16,
+    "extra_material_development_episodes": 4,
+    "heldout_learned_episodes": 48,
+    "heldout_planning_episodes": 16,
+    "heldout_main_total": 64,
+    "optional_extra_M1_M3_heldout_episodes": 4,
+    "heldout_with_material_total": 68,
+    "without_learning_heldout_total": 16,
+    "without_learning_with_material_total": 20,
+    "qualification_excluded_from_these_counts": true,
+    "old_W58_validation_role": "W59 development only",
+    "new_geometry": "original-route full opportunity denominator plus separately declared fixed-footprint mechanism task; preserve all old v1/v2 outcomes"
+  },
+  "qualification": {
+    "new_identity": "own A/B original E30 then E60 before formal mechanism/heldout; exact identical qualified identities may reuse",
+    "long": [
+      "E300",
+      "E600"
+    ],
+    "display_learning_seed": 5901,
+    "changed_interface_inherits_old_qualification": false
+  },
+  "concurrency": {
+    "initial_physical_slots": 3,
+    "conditional_physical_slots": [
+      4,
+      6
+    ],
+    "max_physical_slots": 6,
+    "dual_collector_atomic_slots": 2,
+    "max_simultaneous_dual_collector_campaigns": 3,
+    "physics_CPU_pool_max": 18,
+    "auxiliary_CPU_max": 4,
+    "reserve_CPU_min": 3,
+    "math_threads": 1,
+    "explicit_native_workers_counted": true,
+    "GPU": "batch model fits, candidate prediction and imagination; one or two trainers only as measured productive; no memory-fill target",
+    "other_projects": "check and respect current load; downshift new admission rather than kill valid jobs"
+  },
+  "delivery": {
+    "git": "integrate latest main with non-force lease",
+    "originals": "D57 directly to Release; verify size/digest",
+    "user_PC_secondary_archive": false,
+    "raw_migration_or_deletion": false,
+    "daily_log_single_file": "docs/S1_DAILY_WORKLOG.md"
+  },
+  "this_publication_executed": {
+    "W59_code": 0,
+    "W59_physics": 0,
+    "W59_model_updates": 0,
+    "W59_policy_updates": 0
+  }
+}

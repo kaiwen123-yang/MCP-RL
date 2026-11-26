@@ -1291,6 +1291,24 @@ w58-g0-m1-p2-private-a-original-e60-a01，original / original / A，控制器 S5
 
 stage=development_matrix，selected_gait=G0，selected_material=M1，running=['w58-g0-m1-p2-full-b-development-recovered-a01', 'w58-g0-m1-fixed-wait-a-development-recovered-a01', 'w58-g0-m1-fixed-wait-b-development-recovered-a01', 'w58-g0-m1-p2-private-a-original-e60-a01', 'w58-g0-m1-p2-private-b-original-e60-a01', 'w58-g0-m1-p2-full-a-development-recovered-a01']，attempts=36，completed=30，joint_distinct={}。合格 case 执行预登记开发任务及各自原 E60。。运行快照 {}。
 
+
+### 20261126/review/W58-official-SuperMimic-W59-plan｜独立审查、文献与后继合同
+
+- 日期：2026-11-26，Asia/Shanghai；仓库固定基点`ef500f31c7a96d94f83c9afb5c7a880864b447dc`。本次是文档/只读分析与保存数据复算，没有连接D57启动新物理、模型或策略训练。以下W57/W58数量是已有结果的审查，不在当日新增样本中重复计数。
+- 用户明确纠正：SuperMimic只看官方论文与官方源码，个人复现仅为学习，与MCP-RL设计无关。本轮方案不使用个人复现权重、结果或数据。
+- 状态更新：W57 finished，两头各8192去重事件/32updates；新PR A/B自己的原E600完成十往返，466.128/469.982s回家，保持133.872/130.018s。旧入口中仍running的11/23数字仅为历史。W58 56attempts结束=21原资格通过+32完整机制+3技术中断；53自然终局8226模拟秒/41130000物理子步。最终G0/M1，joint样本/更新0。
+- 步态实证：8个真实视频逐SHA验证，72 overview+18 contact面板实际查看；G1 A E30 ZIP独立SHA验证后复算150000×85物理行及15001控制行。FR10.9192s早触12.8ms、183.97N峰值、72ms连续off、1.113mm回弹，11.006s bearing；G1 off均值下降但slip全面恶化。视频不用于推断毫秒载荷。
+- 材料实证：M2跨足MAE改善约32%但短期预测变差；free law与初态误差存在抵消，明确M3必须分解release初态/free/reload。
+- 规划实证：P2八条full正式机制共3817请求、3592材料请求、3413非空private reset，0赢家/实际门变化；full/private任务指标相同。保存校准ready误差40ms中位/104ms P95，大于历史影响。
+- 机制曝光：重建384目标全分母=258realized+82无pair+44零交面积；全部body traversal完成，recovered清空6s成立。按HTTP Range读取两代表任务原事件，成员CRC/SHA验证、未冒称整个ZIP重新验证；已定位窄ROI与落脚相位错位实例，旧判据不改。
+- 官方研究：SuperMimic v3(11/19)与源码5fb92297(11/21)已审核心表示、WM/actor/critic/collector路径；DynaMimic(11/24)、Trust What Repeats(11/20)、DiffContact、LocoWM、RWM-U、DMO、PWM及Coupled Local/Global等一手来源进入比较。明确物理残差、WM+PPO、BPTT、梯度clip和双模型融合各自已有近邻，不能冒称原创。
+- 新计划：M3持久材料/执行世界模型，P3动作条件候选，R3官方启发短想象与真实critic；合法request一次发布due/ramp/load偏好，总请求一次投影，控制器记忆/版本纳入WM。真实刚体/材料/接触硬界保留。4学习臂×3seed的条件上限98304条用于优化的去重转移；独立机制64条，材料配对另4可到68，所有资格、方向检查、自然尾与物理成本另记。此为计划，不是实际训练量。
+- 独立审阅修正：开发/准入12+12状态、nominal重复与分支预算、actor首更真实方向检验、private隐状态信息泄漏、PPO匹配预算、Diff-fixedWM对照、参数及optimizer回滚、宏事件与20ms子步、actor batch边界与WM非阻塞发布均补入正式合同。避免旧终止目标、宏步漏峰与KL早停问题。
+- 资源方案：复核W58真实6流0.14347sim-s/wall-s，比可比4流约+47.7%；下一轮模型GPU拟合/想象与3→4→6物理槽配合，六槽最多3个双collector campaign。显式worker与其他项目实际占用计入，不以显存占满为目标。
+- 实际新增：W59代码0、W59物理0、WM训练0、PPO/BPTT更新0；新增计划、合同、审查、可重算脚本、轻量图/分母/源manifest。10,904条tracked path只是库存范围，不宣称逐字阅读全部原始字节。
+- 交付：本次Git提交包含docs/S1_W58_REVIEW_20261126.md、S1_W59_RESEARCH_PLAN.md、S1_W59_OFFICIAL_METHODS_20261126.md、S1_W59_START_PROMPT.md、s1-w59-research-contract.json及R12/reviews/W58-review证据；确切发布SHA由本文件Git历史及最终远端回读核对。原大视频/ZIP引用已有Release，无用户电脑二次归档，不迁移或删除任何原件。
+- 续接：按新AGENTS和W59启动提示词核现场后持续推进所有具条件分支；后台deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false，保留原模拟时长、数值/物理终止和用户停止。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记

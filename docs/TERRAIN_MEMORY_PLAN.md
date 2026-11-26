@@ -1,3 +1,13 @@
+# 地面材料记忆项目：2026-11-26当前状态
+
+长期目标仍是可恢复世界地块材料状态的跨足、跨步、返程协同。W57/W58已结束；旧r55/r60及新W57 PR的A/B原E600成立。W57两头各8192/32updates，PR为冻结组合。W58最终G0/M1、联合学习0；56attempts中53自然终局、3技术中断。当前瓶颈为材料恢复链、动作条件执行预测、历史效应与同足印机制曝光。
+
+后继以[W59完整计划](S1_W59_RESEARCH_PLAN.md)、[启动提示词](S1_W59_START_PROMPT.md)、[新审查](S1_W58_REVIEW_20261126.md)及[机器合同](../experiments/terrain_memory/s1-w59-research-contract.json)为准。只参考官方SuperMimic，不使用用户个人复现。模型M3/WM、规划P3、学习R3与联合算法分别对照，GPU批量训练与最多6物理槽相配；新计划尚未执行。无后台墙钟截止，无GitHub后用户电脑二次归档；唯一详细日记为[S1_DAILY_WORKLOG.md](S1_DAILY_WORKLOG.md)。
+
+以下所有旧“当前/下一步”保留形成时事实，不覆盖本入口；旧资格、阴性结果和原合同均保留。
+
+---
+
 # 地面材料记忆项目 · W57实际进展与W58后继入口
 
 2026-11-24 并发修订。W57 的 full/blind 均完成 8192 条及自然尾回合，用户随后要求在条件允许时将独立冻结评价扩到六个物理槽。当前 W57 评价按同一共享租约做 2→4→条件 6 的实测扩容，保留原 dispatcher 的资格判定及逐 case 身份。此前要求等待 W57 自然结束的条款继续适用于 W58 物理迁移。[评价调度合同](../experiments/terrain_memory/s1-w57-frozen-evaluation-slots.json) · [实际物理进度](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w57/dispatch/evaluation-parallelism.json)。
