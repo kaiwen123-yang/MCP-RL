@@ -1,5 +1,6 @@
 """Train/evaluate the fixed W61-A coupon family and matched adaptation baselines on D57."""
 import json
+from pathlib import Path
 import os
 import platform
 import resource
@@ -163,7 +164,10 @@ def main():
     identity=dict(started_shanghai=stamp(),source_commit=subprocess.check_output(
         ['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),config_sha256=digest(CONFIG),
         environment=environment(),deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False)
-    create(cfg)
+    if not (WORK/'coupons.npz').exists():
+        create(cfg)
+    elif digest(WORK/'coupons.npz') != json.loads((COMPACT/'samples.json').read_text())['dataset_sha256']:
+        raise ValueError('Coupon fingerprint differs from the recorded sample index')
     raw = np.load(WORK/'coupons.npz')
     splits = {s: load_split(raw,s,cfg) for s in cfg['material_ids']}
     probe_e, probe_dt = map(np.stack,unlabeled_probes(cfg))
@@ -176,6 +180,9 @@ def main():
             label = f'{method}_{seed}'
             model, loss, info = train_model(method,seed,splits['train'],probe,cfg)
             models[label] = model.state_dict()
+            torch.save(dict(method=method,seed=seed,config=cfg,state_dict=models[label],
+                       curve=loss.tolist(),training=info,source_commit=identity['source_commit']),
+                       WORK / (label+'.pt'))
             curves[label], trained[label] = loss, info
             for split in ('validation','holdout'):
                 data = splits[split]
@@ -225,5 +232,4 @@ def main():
 
 
 if __name__=='__main__':
-    from pathlib import Path
     main()

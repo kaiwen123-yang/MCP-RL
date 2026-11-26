@@ -61,7 +61,7 @@ class MaterialResponse:
                             self.strain_scale) @ self.coefficients
         excess = step[:, 0] - equilibrium(hydro)[0]
         return dict(relaxed_bulk_MPa=float(k), relaxed_shear_MPa=float(g),
-                    hydro_relaxation_area_time_0_to_12_s=float(np.trapezoid(excess / excess[0], t)))
+                    hydro_relaxation_area_time_0_to_12_s=float(np.trapz(excess / excess[0], t)))
 
 
 def features(strain, dt, config):
