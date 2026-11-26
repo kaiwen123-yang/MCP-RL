@@ -78,6 +78,18 @@ def main(a):
                        S1_W59_PAIR_CPUS=json.dumps(groups), OMP_NUM_THREADS='1',
                        OPENBLAS_NUM_THREADS='1', MKL_NUM_THREADS='1', NUMEXPR_NUM_THREADS='1',
                        W59_TMUX=os.environ.get('W59_TMUX','w59-'+a.job))
+            recorder_manifest = POOL/'recording.json'
+            if recorder_manifest.is_file():
+                recording = json.loads(recorder_manifest.read_text())
+                if a.job in recording['natural_episodes']:
+                    import hashlib
+                    directory = Path(recording['directory'])
+                    source = directory/'sitecustomize.py'
+                    if hashlib.sha256(source.read_bytes()).hexdigest() != recording['sha256']:
+                        raise ValueError('The predeclared passive recorder differs')
+                    env['W59_RECORD_FROZEN_LEGAL_REQUESTS'] = '1'
+                    env['PYTHONPATH'] = str(directory)+':'+env['PYTHONPATH']
+                    data['passive_recorder'] = recording['sha256']
             cpus = ','.join(str(c) for g in groups for c in g)
             data.update(state='running', slots=[i for i,_ in slots], cpu_groups=groups, started_at=stamp())
             write(record, data)
