@@ -146,18 +146,28 @@ def run(args):
             requested_velocity=mission.v.copy(),body_rpy=body_orient,actuator_force=data.actuator_force.copy(),
             scheduled_torso=ctl.last_plan['reference'][0].copy(),
             slip_velocity=ctl.current_mq['contact_velocity'][:,:2].copy(), ctrl_wall_s=ctrl_elapsed))
+        hold_work=0.
+        hold_torque=[]
         for _ in range(substeps):
             mujoco.mj_step(model,data)
             real, f, invalid, _, nf,_ = contact_state(model,data,feet,allowed,True)
             actual = data.actuator_force
             torque_violation=max(torque_violation,float(np.max(np.maximum(
                 actual-model.actuator_forcerange[:,1],model.actuator_forcerange[:,0]-actual))))
-            work+=float(np.abs(actual*data.qvel[ctl.va]).sum())*physical
+            hold_torque.append(actual.copy())
+            hold_work+=float(np.abs(actual*data.qvel[ctl.va]).sum())*physical
             impact=max(impact,float(f[:,2].max()))
             nonfoot_peak=max(nonfoot_peak,float(np.linalg.norm(nf)))
             if invalid:
                 reason='invalid_ground_contact'
                 break
+        work += hold_work
+        if hasattr(ctl,'after_physics'):
+            end_state=Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz')
+            physical_end=reason != 'horizon' or max(abs(end_state[:2]))>1.2 or data.qpos[2]<.12
+            ctl.after_physics(t=t, data=data, mission=mission, command=action.copy(),
+                              grf=f.copy(), contact=real.copy(), torque=np.asarray(hold_torque),
+                              work_J=hold_work, terminal=bool(physical_end or n+1==num))
         length+=float(np.linalg.norm(data.qpos[:2]-last_pos))
         last_pos=data.qpos[:2].copy()
         slip+=float((np.linalg.norm(ctl.current_mq['contact_velocity'][:,:2],axis=1)*contact).sum())*DT
@@ -169,6 +179,8 @@ def run(args):
             if reason=='horizon':
                 reason='body_fall'
             break
+    if hasattr(ctl,'at_rollout_end'):
+        ctl.at_rollout_end(t=float(data.time), data=data, mission=mission, reason=reason)
     ctl.flush()
     arrays={k:np.asarray([r[k] for r in trajectory]) for k in trajectory[0]} if trajectory else {}
     np.savez_compressed(out/'trajectory.npz',**arrays)
