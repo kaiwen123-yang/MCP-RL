@@ -86,7 +86,9 @@ def evaluate(a, contract):
                          run_deadline_unix_s=a.deadline_unix,
                          hard_deadline_unix_s=a.deadline_unix))
     if 'w57' in contract:
-        if 'w58' in contract:
+        if 'w59' in contract:
+            from run_s1_w59_research import configure_episode
+        elif 'w58' in contract:
             from run_s1_w58 import configure_episode
         else:
             from run_s1_w57 import configure_episode

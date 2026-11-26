@@ -325,7 +325,7 @@ class FController:
         support=np.array([i for i in range(4) if i not in self.next_pair])
         all_ground=bool(np.all(self.confirmed) and np.all(self.event_mode=='stance'))
         if all_ground and self.transfer_start is None:
-            self.transfer_start=max(float(t),float(self.next_liftoff-.05))
+            self.transfer_start=max(float(t),float(self.next_liftoff-cfg['load_transfer_ramp_s']))
         if self.transfer_start is not None:
             z=np.clip((t-self.transfer_start)/cfg['load_transfer_ramp_s'],0.,1.)
             self.transfer_fraction=float(z*z*z*(10.-15.*z+6.*z*z))
@@ -757,6 +757,8 @@ class FController:
             friction_compensation=dry,actual_friction_constraint=actual_dry[self.va],
             inverse_dynamics_h=h))
         self.control_count+=1
+        if hasattr(self,'record_macro_force'):
+            self.record_macro_force(self.rows[-1], grf)
         if len(self.rows)>=500:self.flush()
         return action
 

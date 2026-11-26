@@ -1,0 +1,83 @@
+{
+  "schema": "W59-R3-request-v1",
+  "contract": "experiments/terrain_memory/s1-w59-research-contract.json",
+  "arms": [
+    "PPO-full",
+    "Diff-full",
+    "Diff-private",
+    "Diff-fixedWM"
+  ],
+  "seeds": [
+    5901,
+    5902,
+    5903
+  ],
+  "nodes": [
+    2048,
+    4096,
+    8192
+  ],
+  "reward": "W38 legal route event reward, absorbed at the first original 500 Hz task completion; zero bootstrap on success or original physical failure, bootstrap on time limit.",
+  "critic": {
+    "input": [
+      "elapsed_s / 60",
+      "LegalRoute.progress",
+      "mission phase one-hot (9, original order)",
+      "current measured Fz in leg order / (mass * g / 4)",
+      "consecutive qualifying hold_s / 2"
+    ],
+    "hidden": [
+      64,
+      64
+    ],
+    "standalone_fit": {
+      "source": "W57 pilot02 full and blind. Full episode raw ledgers including tails as target context only; perform supervision only on originally on-policy rows in naturally closed episodes with a known terminal.",
+      "split": "case and original episode ordinal shared across full and blind; every fifth serial is validation; all others training; virgin episodes.",
+      "seed": 5901,
+      "epochs": 60,
+      "batch": 256,
+      "lr": 0.001,
+      "target": "actual duration-discounted returns until original task completion. Bound missing split of nonpositive contact costs within final action, report interval width. Outputs and errors in original reward units.",
+      "selection": "fixed final epoch, no W59 holdout"
+    }
+  },
+  "actor": {
+    "hidden": [
+      64,
+      64
+    ],
+    "residual_init": "zero output for all arms",
+    "exploration_raw_std": [
+      0.25,
+      0.25,
+      0.25
+    ],
+    "entropy_coef": 0,
+    "distribution": "Gaussian pre-tanh latent, fixed exploration scale, log probability of the same sampled latent for PPO",
+    "optimizer": "Adam",
+    "lr": 0.0003,
+    "max_grad_norm": 0.5,
+    "epochs": 4,
+    "minibatch": 64,
+    "clip_epsilon": 0.2,
+    "analytic_kl_max": 0.01,
+    "kl_rule": "Check exact mean KL of fixed-std old versus new Gaussian on the full sealed batch after every proposed step, revert parameters and Adam state and stop actor steps on violation."
+  },
+  "discount_per_half_second": 0.99,
+  "gae_lambda_per_half_second": 0.95,
+  "imagination": {
+    "substep_s": 0.02,
+    "substeps": 32,
+    "states_per_minibatch": 64,
+    "real_critic_weight": 1,
+    "imagined_critic_weight": 0.1,
+    "lambda_per_half_second": 0.95,
+    "wm_differentiation": "fixed ensembling parameters, preserve gradients to held input and state. Issue at true initial request. Learned future request flag selects detached P3 base and triggers a fresh actor action; hard mode changes have no local derivative."
+  },
+  "admission": "validated action gradient direction with replay floor and no extra real hard failures in sealed states; separately validate first actor proposal with eight locked states before/after per head. Failed check restores optimizer and actor. A fallback needs a distinct explicit identity.",
+  "background": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_on_conversation_end": false
+  }
+}

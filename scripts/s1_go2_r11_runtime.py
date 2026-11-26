@@ -375,7 +375,9 @@ def run(args, c, joint=None):
         mission = ContinuousMission(c['task'], c['long_mission_protocol'])
     revisit_task = w57 is not None and w57['task_mode'] in ('short', 'recovered')
     if revisit_task:
-        if c.get('w58'):
+        if c.get('w59'):
+            from s1_w59_geometry import FootprintMission as RevisitMission
+        elif c.get('w58'):
             from s1_w58_revisit import ForwardRevisitMission as RevisitMission
         else:
             from s1_w57_mechanism import RevisitMission
@@ -485,9 +487,15 @@ def run(args, c, joint=None):
         else:
             from s1_w53_f_backend import FController
         external_controller=FController(model,data,feet,base,out,f_config)
+        if c.get('w59'):
+            external_controller.w59_joint=joint
         if c.get('w57_timing'):
             from s1_w57_timing import attach_timing
             attach_timing(external_controller,joint,c['w57_timing'],out,args.attempt)
+        w59_learner_config = (c.get('w59') or {}).get('learner_config')
+        if w59_learner_config:
+            from s1_w59_learning import attach
+            attach(external_controller, joint, w59_learner_config, out, args.attempt)
         controller_context=contextlib.nullcontext(external_controller)
     else:
         server_log=(contextlib.nullcontext(None) if training else (out/'agent-server.log').open('w'))
@@ -516,7 +524,24 @@ def run(args, c, joint=None):
                     if c.get('controller_build') in ('S5-r38','S5-r39','S5-r40','S5-r41'):resolved['w50_native_process']=resolved['w48_native_process']
                     if w53_route == 'N':resolved['w53_native_process']=resolved['w48_native_process']
                     dump(small/f'{args.attempt}-resolved.json',resolved)
-            for step in range(round(duration/dt)+1):
+            first_step, stop_step = 0, round(duration/dt)
+            w59 = c.get('w59') or {}
+            w59_branch = c.get('r12_contract',{}).get('w59_branch')
+            capture_requests = (w59.get('arm') == 'B3' and w57['task_mode'] == 'original'
+                                and c['r11_stage']['level'] == 'E30')
+            if w59_branch:
+                from s1_w59_snapshots import restore
+                restored = restore(w59_branch,agent,joint,mission)
+                first_step = restored['step']
+                stop_step = first_step + round(w59_branch['duration_s']/dt)
+                first_completion, previous_phase = restored['first_completion'], restored['previous_phase']
+                evaluation_legal_route = restored['evaluation_route']
+                del restored
+            if capture_requests:
+                from s1_w59_snapshots import pre_tick
+            for step in range(first_step,stop_step+1):
+                if capture_requests:
+                    pre_tick(agent,joint,mission,step,previous_phase,first_completion,evaluation_legal_route)
                 t = float(data.time)
                 mujoco.mj_forward(model, data)
                 ori = Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz')
@@ -557,6 +582,8 @@ def run(args, c, joint=None):
                 previous_phase = mission.phase
                 if mission.phase == 'complete' and first_completion is None:
                     first_completion = t
+                    if getattr(joint, 'w59_learner', None) is not None:
+                        joint.w59_learner.complete(t, mission, grf)
                 standing = mission.phase in ('initial_stand', 'terminal_stand', 'complete', 'far_hold', 'home_hold')
                 settings = 'stand_settings' if standing else 'move_and_turn_settings'
                 ts = time.perf_counter()
@@ -770,7 +797,7 @@ def run(args, c, joint=None):
                     if step>0 and step%15000==0:save_streams()
                 if c.get('r11_contact_completion'):
                     hist[-1]['anchor_observation_kind']=anchor_kind.copy()
-                if ((not campaign or (training and args.mission=='single')) and mission.phase == 'complete') or step >= round(duration/dt):
+                if ((not campaign or (training and args.mission=='single')) and mission.phase == 'complete') or step >= stop_step:
                     reason = 'stage_horizon_reached'
                     break
                 tp = time.perf_counter()
@@ -858,7 +885,11 @@ def run(args, c, joint=None):
                     hist.append(row)
                     break
                 if w53_route and step%250==0:
-                    dump(out/'live.json',dict(pid=os.getpid(),physical_time_s=float(data.time),
+                    if w59:
+                        from publish_s1_go2_w54 import write as write_progress
+                    else:
+                        write_progress = dump
+                    write_progress(out/'live.json',dict(pid=os.getpid(),physical_time_s=float(data.time),
                         phase=mission.phase,position_m=data.qpos[:3],unix_s=time.time(),
                         deadline=None,wall_deadline_enabled=False))
                 if step % 2500 == 0:
@@ -965,6 +996,8 @@ def run(args, c, joint=None):
         result=joint.finish(result)
         if getattr(joint, 'w57_timing', None) is not None:
             joint.w57_timing.finish(result)
+        if getattr(joint, 'w59_learner', None) is not None:
+            joint.w59_learner.finish(result)
     if evaluation_legal_route is not None:
         _, final_grf, _ = actual_contact()
         evaluation_legal_route.update(float(data.time), mission, data.qpos[:2], data.geom_xpos[feet], final_grf)
@@ -976,8 +1009,20 @@ def run(args, c, joint=None):
         result.update(samples_500Hz=None,recorded_control_samples=len(hist),control_record_rate_Hz=20,
             recording='Training: 20Hz robot states, 2Hz transitions, per-episode actual physical counters; no full prediction/physics dumps.')
     from s1_go2_r11_protocol import evaluate_stage
-    if revisit_task:
-        if c.get('w58'):
+    if c.get('r12_contract',{}).get('w59_branch'):
+        registration=c['r12_contract']['w59_branch']
+        result.update(qualification_usable=False, success=None, case_key=c['case_key'],
+            case_identity=c['case_identity'], evaluation_stage=c['r11_stage'],
+            qualification=dict(usable=False,role='registered legal-action continuation'),
+            stage_status=('technical_interruption' if result['error'] else 'branch_horizon'
+                          if reason=='stage_horizon_reached' else 'physical_failure'),
+            branch=dict(registration=registration, elapsed_s=result['physical_samples']*physical_dt,
+                        start_s=float(arrays['time'][0]), end_s=float(data.time),
+                        applied=agent.branch_override is None))
+    elif revisit_task:
+        if c.get('w59'):
+            from s1_w59_geometry import score_targets as score_revisits
+        elif c.get('w58'):
             from s1_w58_revisit import score_targets as score_revisits
         else:
             from s1_w57_mechanism import score_revisits

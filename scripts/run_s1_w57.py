@@ -172,6 +172,9 @@ def episode(a, *, declare=declaration, small=SMALL):
                  cpu_affinity=sorted(os.sched_getaffinity(0)),status='declared',**BACKGROUND)
     if 'w58' in spec:
         receipt.update(w58=spec['w58'])
+    if 'w59' in spec:
+        receipt.update(w59=spec['w59'],branch=spec.get('w59_branch'),
+            slot=os.environ.get('S1_W59_SLOT') or receipt['slot'],tmux=os.environ.get('W59_TMUX') or receipt['tmux'])
     target=small/'attempts'/(a.attempt+'.json')
     write(target,receipt)
     from run_s1_go2_w54 import resource_sample

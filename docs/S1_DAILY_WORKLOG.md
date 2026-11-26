@@ -1309,6 +1309,14 @@ stage=development_matrix，selected_gait=G0，selected_material=M1，running=['w
 - 交付：本次Git提交包含docs/S1_W58_REVIEW_20261126.md、S1_W59_RESEARCH_PLAN.md、S1_W59_OFFICIAL_METHODS_20261126.md、S1_W59_START_PROMPT.md、s1-w59-research-contract.json及R12/reviews/W58-review证据；确切发布SHA由本文件Git历史及最终远端回读核对。原大视频/ZIP引用已有Release，无用户电脑二次归档，不迁移或删除任何原件。
 - 续接：按新AGENTS和W59启动提示词核现场后持续推进所有具条件分支；后台deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false，保留原模拟时长、数值/物理终止和用户停止。
 
+### 20261126/w59/entry-offline-gait-critic｜执行树、历史步态与任务价值
+
+上海时间 13:58 现场核对。GitHub main 与 D57 origin/main 均为 f11cd7c8。W57、W58 已自然收尾，未见 W59 的 PID、tmux 或推进中的物理时钟。保留旧树改动，新执行树为 /root/autodl-tmp/MCP-RL-w59。D57 25 核 / 120 GiB cgroup，scratch 约 329 GiB 可用。其他项目正使用四个 CPU worker 与 GPU，W59 从 3 个物理槽起，辅助核 18–21。现场核对四次迁移目录的只读 SQLite 清单，最近一批有 106132 条路径、38415 个内容对象、74 包。可直接读取上一轮 56 个原件目录和 W44 两个 case 的 checkpoint/resume。
+
+目标是在相同动作权限下检验真实跨足作用。首先接入三维请求、分支快照和共享租约，保持 0.2 ms plant、2 ms WBC、20 ms 力 MPC 与原关节和接触约束。B3 用 (0, 0.05, 0)，固定动作对照用 (0, 0.06, 0.05)。原资格从新身份 A/B 原 E30 开始，经该 case 自身通过再进入 E60。新 W59 物理与策略样本截至本事件均为 0。
+
+用 12 条历史原资格重算 270 万行 5 kHz 物理数据。2,421 个刚性接触与保存姿态重建的 MuJoCo 接触点对齐。相对原选择使用的 W57 G0，G1 的单次 A/E30、A/E60、B/E30、B/E60 接触点滑移路程/整体路程变化为 −10.64%、−4.62%、−13.24%、−9.44%。旧平方滑移判定及 G0 冻结选择保留。12 条中另含 4 条 W58 B2 对照，按原件逐条列在 w59/gait。历史任务 critic 使用 129 条成功 W57 E60 数据，500 Hz 判定任务完成，排除累计 2541.588 模拟秒的完成后观察。13273 训练、3072 验证、218 尾部事件作历史回报上下文。3120 次历史 critic 更新，验证 MAE 0.09891；新动作和失败价值待新物理校准。事件、原件和后继入口见 w59/index.json。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
