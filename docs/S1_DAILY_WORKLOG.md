@@ -1638,6 +1638,17 @@ Git HTTPS 连续返回 503 或 TLS 握手关闭。D57 对已提交的紧凑内�
 
 23:59:29。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
 
+
+## 2026-11-27｜W59 执行
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0007｜自然终局或技术中断
+
+00:05:56。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0007｜自然终局或技术中断
+
+00:06:39。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
