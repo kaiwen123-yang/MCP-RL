@@ -1,0 +1,18 @@
+{
+  "schema":"W59-real-action-residual-calibration-v1",
+  "base_model_node":10000,
+  "gradient_optimizer_steps":0,
+  "fit_groups":["all 12 legal request snapshots and 8 branches per state from the B3-A development episode as one history chain","Fixed-action-A original E60 (its E30 prefix excluded); paired B3-A E60 factual baseline"],
+  "development_evaluation":["Fixed-action-B and B3-B original E60 as separate full histories; all 8 branches remain together"],
+  "sealed_admission_used_for_fit":false,
+  "future_actor_validation_used_for_fit":false,
+  "target":"One-step real-minus-backbone residual difference between signed and nominal factual continuations of the same snapshot at the same elapsed 20ms. For the fixed-action exercise compare own-state one-step residuals at matched phases and physical time of A, report it as unpaired state evidence.",
+  "features":["1","clipped nominal due-in / 0.25","last completed transfer_fraction","current soft-footprint coverage fraction","normalized incoming measured-normal-force imbalance"],
+  "request_basis":"Three normalized physical axes plus their three squares. Centered at zero; analytic derivatives through the state-dependent features and action.",
+  "normalization":[0.05,0.03,0.10],
+  "ridge_penalty":0.01,
+  "weights":"Each of the 12 initial states has equal aggregate weight; all complete Fixed-A support receives the aggregate weight of one initial state. Two nominal repeats define replay floor; retain all six signed directions, including zero effects.",
+  "window":"Only complete hold intervals with no interior new request; from signed branch issue to its next legal request for direct action supervision. Continue rollout through later nominal via predicted state. W59 sealed outcomes and first actor updates never fit this operator.",
+  "solver":"One FP64 linear least-squares factorization per common 10k model member with shared features, masks and data. Count fits separately. No extra backbone or policy gradient steps.",
+  "claims":"A whole B3-A trajectory supplies development only. Current-row correction is local, multi-axis interactions beyond signed individual perturbations remain unverified."
+}

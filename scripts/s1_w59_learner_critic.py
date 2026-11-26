@@ -82,7 +82,7 @@ def correction(rows, result):
     return finish, lower, upper, tail
 
 
-def episode_arrays(rows, result):
+def episode_arrays(rows, result, *, score_frozen=False):
     end, lower, upper, post_task = correction(rows, result)
     last = rows[-1]
     ids = {row["decision_id"] for row in rows}
@@ -99,7 +99,7 @@ def episode_arrays(rows, result):
             decay = math.exp(-BETA * row["dt_s"])
             lower, upper = row["reward"] + decay * lower, row["reward"] + decay * upper
         progress -= row["metrics"]["signed_legal_route"]
-        if row["sampling"] != "on_policy":
+        if row["sampling"] != "on_policy" and not score_frozen:
             continue
         obs = row["obs"]
         phase = PHASES[np.argmax(obs[50:59])]

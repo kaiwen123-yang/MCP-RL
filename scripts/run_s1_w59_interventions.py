@@ -26,15 +26,23 @@ def immutable(path,record):
         with path.open('x') as out:json.dump(record,out,indent=2);out.write('\n')
 
 
+def job_name(state,role,signed):
+    suffix=('-'+hashlib.sha256(state['snapshot_id'].split('/')[0].encode()).hexdigest()[:8]
+            if role=='sealed_admission' and state.get('source_arm') else '')
+    return f'w59-action-{role.split("_")[0]}-{state["case"].lower()}-r{state["request_id"]:05d}{suffix}-{signed}-a01'
+
+
 def materialize(path,role,freeze):
     reg=json.loads(path.read_text())
     if reg['status']!='locked':raise ValueError('Incomplete action-state registration')
+    if role=='sealed_admission' and reg.get('schema')!='W59_locked_requests_v3_disjoint_source':
+        raise ValueError('B3-B v2 reproduces the W57 validation prefix. Use the independent v3 admission sources.')
     if role=='sealed_admission' and not freeze:
         raise ValueError('Sealed action admission requires the recipe/checkpoint freeze before any candidate result')
     digest=sha(path)
     for state in reg['states'][role]:
         for signed,value in reg['signed'].items():
-            job=f'w59-action-{role.split("_")[0]}-{state["case"].lower()}-r{state["request_id"]:05d}-{signed}-a01'
+            job=job_name(state,role,signed)
             record=dict(**state,role=role,signed=signed,replacement=value,duration_s=reg['duration_s'],
                 registry_sha256=digest,model_recipe_sha256=sha(freeze) if freeze else None,
                 rng_key=state['sha256']+'/stored',actor_digest=None,job=job)
@@ -44,9 +52,14 @@ def materialize(path,role,freeze):
 
 
 def launch(job,case,config,runtime):
+    record=json.loads(config.read_text())
     cmd=[sys.executable,str(ROOT/'scripts/s1_w59_lease.py'),'--runtime',str(runtime),'--job',job,'--slots','1','--',
-        sys.executable,'-u','scripts/run_s1_w59_research.py','--case',case,'--arm','B3','--level','E30',
+        sys.executable,'-u','scripts/run_s1_w59_research.py','--case',case,'--arm',record.get('source_arm','B3'),'--material',record.get('source_material','M1'),'--level','E30',
         '--task','branch','--branch',str(config),'--attempt',job]
+    for checkpoint in record.get('source_settings',{}).get('model_paths',[]):
+        cmd.extend(['--wm-checkpoint',str(checkpoint)])
+    if record.get('source_recipe_path'):
+        cmd.extend(['--wm-recipe',record['source_recipe_path']])
     path=SMALL/'episodes'/(job+'.json')
     if not path.exists():
         rc=subprocess.run(cmd,cwd=runtime).returncode

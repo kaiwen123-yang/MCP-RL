@@ -91,7 +91,7 @@ class FController(R60):
         if record is None:
             return
         cfg = self.cfg['contact_events']
-        ramp_s = cfg['load_transfer_ramp_s']
+        ramp_s = .05 if 'w59' in self.cfg else cfg['load_transfer_ramp_s']
         if all_ground and self.zero_transfer_start is None:
             self.zero_transfer_start = max(float(t), record['nominal_due_s'] - .05)
         z = (np.clip((t - self.zero_transfer_start) / ramp_s, 0., 1.)

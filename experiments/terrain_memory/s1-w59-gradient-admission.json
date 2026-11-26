@@ -1,0 +1,29 @@
+{
+  "schema": "W59-registered-real-action-utility-v1",
+  "role": "Fixed before opening any signed W59 action outcome. Shares the registered 12 development/12 sealed source states and the exact source-state bootstrap with score_s1_w59_interventions.py.",
+  "planning": "Use the published matched first-request P3 cost and its existing acquisition decision. Directions and ranking remain separate.",
+  "actor": {
+    "horizon_s": 0.64,
+    "substeps": 32,
+    "substep_s": 0.02,
+    "real_comparison": "Original W38 reward through the physical .64 s window, discounted across 20 ms subwindows with 0.99 per 0.5 s. Failure incurs original -10 with terminal settlement. Task completion absorbs subsequent reward. Never use a value-head forecast as an observed return.",
+    "model_objective": "Short model rollout using the final original request, B3 nominal again at a predicted subsequent legal request, and the same frozen real-data critic bootstrap used by R3. Both model reward-only and reward-plus-value are logged. Local action gradient is compared to measured return differences.",
+    "replay_floor": "Absolute difference in the same achieved real utility between two identical nominal continuations at the same state, with a 1e-12 reward arithmetic floor. A signed change not exceeding the noise remains in the six-direction denominator as unresolved.",
+    "aggregate": "All 72 sealed signed directions; use score_s1_w59_interventions.summarize to resample the 12 initial states 10000 times (seed 5901, lower 2.5th percentile). Local sign accuracy lower bound >0.5, model-selected real gain above noise, no new hard failure. Report per-stratum, fixed-mode and switched-mode results. One sealed case/trajectory limits generality.",
+    "data_validity": "Missing/censored records or zero scored horizon cannot remove a state from the registered denominator. Never tune on sealed outcomes. Historical validation remains W59 development.",
+    "long_window": "Two seconds of undiscounted actual W38 reward at each registered nominal duplicate provides the replay floor for the distinct first-parameter check; all interventions and hard faults remain charged."
+  },
+  "first_actor": {
+    "states_per_seed": 8,
+    "roles": [
+      "before",
+      "after"
+    ],
+    "horizon_s": 2,
+    "future_actions": "Rerun the actual P3/actor at each future legal request. Compare true W38 path credit until task absorption within 2 s. Retain each physical failure.",
+    "method": "Complete 8 paired states. Accept when mean real W38 gain exceeds the same-unit sealed duplicate replay floor and count of actual hard failures does not increase. Paired state-bootstrap percentile interval descriptive only. Rejection restores actor, critic and both optimizers; annotate the scientific identity."
+  },
+  "matched_N_s": "Use only Diff-full sealed acquisition and development data, before heldout. Other arms match the same cumulative node. No learning-data transfer between arms.",
+  "v3_sealed_successor": "The initial tested absolute action remains fixed in all branches. At subsequent legal requests use the untouched registered source controller: B3 nominal, Fixed-action (0,.060,+.05), or recompute the exact registered P3 with its own model and recipe. This source correction follows the audit that the W59 B3 qualification was identical to historical W57. The existing A development branch remains B3. No sealed v3 outcome was seen.",
+  "presealed_horizon_selection": "Nominal 32x20ms. Before any sealed action outcome, assess 1/5/17/32 substeps on the same A development states with the same full-denominator direction signatures (17 gives 340ms, not 350). Freeze the longest supported horizon for one sealed comparison, or record no trusted path if none qualifies. This rule was added before seeing a learned direction or a v3 sealed outcome."
+}

@@ -373,7 +373,9 @@ def run(args, c, joint=None):
     if campaign and args.mission == 'long':
         from s1_go2_wb_equilibrium import ContinuousMission
         mission = ContinuousMission(c['task'], c['long_mission_protocol'])
-    revisit_task = w57 is not None and w57['task_mode'] in ('short', 'recovered')
+    w59_source_task=(c.get('r12_contract',{}).get('w59_branch') or {}).get('source_task')
+    route_mode=w59_source_task or (w57['task_mode'] if w57 else None)
+    revisit_task = route_mode in ('short', 'recovered')
     if revisit_task:
         if c.get('w59'):
             from s1_w59_geometry import FootprintMission as RevisitMission
@@ -381,7 +383,7 @@ def run(args, c, joint=None):
             from s1_w58_revisit import ForwardRevisitMission as RevisitMission
         else:
             from s1_w57_mechanism import RevisitMission
-        mission = RevisitMission(c['task'], w57['mechanism'], w57['task_mode'])
+        mission = RevisitMission(c['task'], w57['mechanism'], route_mode)
     duration = c['r11_stage']['duration_s']
     first_completion = None
     planning_times, feedback_times, sync_times, physics_times = [], [], [], []
@@ -527,8 +529,9 @@ def run(args, c, joint=None):
             first_step, stop_step = 0, round(duration/dt)
             w59 = c.get('w59') or {}
             w59_branch = c.get('r12_contract',{}).get('w59_branch')
-            capture_requests = (w59.get('arm') == 'B3' and w57['task_mode'] == 'original'
-                                and c['r11_stage']['level'] == 'E30')
+            capture_requests = (w59 and not w59_branch and not w59.get('learner_config') and
+                (w57['task_mode']=='original' and c['r11_stage']['level']=='E30'
+                 or w57['task_mode'] in ('short','recovered') and w59.get('split')=='development'))
             if w59_branch:
                 from s1_w59_snapshots import restore
                 restored = restore(w59_branch,agent,joint,mission)

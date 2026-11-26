@@ -20,7 +20,9 @@ class FController(R55):
         if abs(obs.time-t) > 1e-9:
             raise ValueError(f'Material publication {obs.time} is stale at {t}')
         try:
-            increment, detail = normal_reference(obs.ground, material_info['force_boundary_bottom'],
+            boundary=material_info['force_boundary_bottom']
+            ground=(obs.ground_for_leg(leg,boundary[leg,:2],t) if hasattr(obs,'ground_for_leg') else obs.ground)
+            increment, detail = normal_reference(ground, boundary,
                                                  leg, target, measured, self.cfg['wbc']['dt_s'])
         except (StanceReferenceInfeasible, IntegrationFailure, ValueError) as exc:
             failure = dict(leg=leg, consume_s=t, publication_s=obs.time, target_N=target,

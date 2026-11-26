@@ -48,7 +48,9 @@ def pre_tick(agent,joint,mission,step,previous_phase,first_completion,evaluation
         model_state=integration(joint.model,joint.data),
         contype=joint.model.geom_contype.copy(),conaffinity=joint.model.geom_conaffinity.copy(),
         ground=fields(joint.ground,GROUND_LOGS),belief=fields(observer.ground,GROUND_LOGS),
-        observer=fields(observer,{'ground','native','marker'}),
+        observer=fields(observer,{'ground','native','marker','m0','m1_ground'}),
+        secondary_belief=(dict(observer=fields(observer.m0,{'ground','native','marker'}),
+                               ground=fields(observer.m0.ground,GROUND_LOGS)) if hasattr(observer,'m0') else None),
         joint=fields(joint,JOINT_EXCLUDE),
         stream_serial=joint.stream.transition_serial,stream_last_obs=joint.stream.last_observation,
         controller=fields(agent,CONTROLLER_EXCLUDE), current_ramp=agent.cfg['contact_events']['load_transfer_ramp_s'],
@@ -68,7 +70,9 @@ def save_request(agent,t):
     with (folder/'manifest.jsonl').open('a') as stream:
         stream.write(json.dumps(dict(request_id=agent.request_count,request_s=float(t),file=name,
             size=len(blob),sha256=hashlib.sha256(blob).hexdigest(),incoming=agent.preference_pair.tolist(),
-            source=agent.out.name,source_build=agent.cfg['identity']))+'\n')
+            source=agent.out.name,source_build=agent.cfg['identity'],source_arm=agent.settings['arm'],
+            source_request=agent.macro_request.tolist(),source_material=agent.settings['material'],
+            source_model_sha256=agent.settings['model_sha256']))+'\n')
     agent.snapshot_buffer = None
 
 
@@ -91,6 +95,11 @@ def restore(config,agent,joint,mission):
     vars(joint.ground).update(state['ground'])
     vars(joint.observer.ground).update(state['belief'])
     vars(joint.observer).update(state['observer'])
+    if state.get('secondary_belief') is not None:
+        shadow=state['secondary_belief']
+        vars(joint.observer.m0).update(shadow['observer'])
+        vars(joint.observer.m0.ground).update(shadow['ground'])
+        joint.observer.m1_ground=joint.observer.ground
     vars(joint).update(state['joint'])
     vars(agent).update(state['controller'])
     agent.cfg['contact_events']['load_transfer_ramp_s']=state['current_ramp']

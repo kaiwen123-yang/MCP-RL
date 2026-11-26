@@ -32,9 +32,12 @@ def declaration(a):
         raise ValueError('P3 needs the frozen calibrated three-seed WM ensemble')
     if a.material=='M3' and not planner:
         raise ValueError('M3 material comparison uses the matched P3 execution predictor')
+    planning_recipe=read(a.wm_recipe) if a.wm_recipe else {'planning_substeps':32,'successor':'nominal_at_next_legal_request'}
     learner = read(a.learner_config) if a.learner_config else None
-    if learner and not planner:
-        raise ValueError('R3 receives the per-event P3 base')
+    nominal_ppo=bool(learner and a.arm=='B3' and learner.get('head')=='PPO-full' and
+        learner.get('science_role')=='fallback-ppo' and learner.get('nominal_fallback'))
+    if learner and not planner and not nominal_ppo:
+        raise ValueError('R3 receives the per-event P3 base; only explicitly marked real PPO can use B3')
     sources = {BASE, CONTRACT, BACKEND,'scripts/run_s1_w59_research.py','scripts/s1_w59_snapshots.py',
         'scripts/run_s1_w57.py','scripts/run_s1_go2_r12.py','scripts/s1_go2_w54_config.py',
         'scripts/s1_go2_r11_protocol.py','scripts/s1_go2_r11_runtime.py','scripts/s1_w57_f_backend.py',
@@ -47,17 +50,23 @@ def declaration(a):
     # Post-run contact metrics do not change controller identity or trajectories.
     if planner:
         sources.add('scripts/s1_w59_planning.py')
-        sources.update(str(p.relative_to(ROOT)) for p in (ROOT/'scripts').glob('s1_w59_model*.py')
-                       if p.name in ('s1_w59_model.py','s1_w59_model_cells.py','s1_w59_model_fields.py'))
+        sources.update('scripts/s1_w59_model_'+key+'.py' for key in (
+            'cells','fields','bank','rigid','calibration','reload','recovery'))
+        sources.add('scripts/s1_w59_model.py')
+    if a.material=='M3':
+        sources.update(['scripts/s1_w59_model_material.py','experiments/terrain_memory/w59-recovery-parameters.json'])
+    if nominal_ppo:sources.add('scripts/s1_w59_planning.py')
     if learner:
-        sources.update(['scripts/s1_w59_learning.py','scripts/s1_w59_learner_critic.py'])
+        sources.update(['scripts/s1_w59_learning.py','scripts/s1_w59_learner_critic.py',
+                        'experiments/terrain_memory/s1-w59-learner.json'])
     if a.task in ('short','recovered'):
         sources.add('scripts/s1_w59_geometry.py')
     hashes={p:digest(ROOT/p) for p in sorted(sources)}
     wm_hashes=[digest(p) for p in models]
     actor_sha=digest(Path(learner['checkpoint'])) if learner and learner.get('checkpoint') else None
     kernel=dict(arm=a.arm,material=a.material,gait='G0',backend=BACKEND,executables=hashes,
-                wm_sha256=wm_hashes,actor_sha256=actor_sha,learner=learner,material_workers=1)
+                wm_sha256=wm_hashes,actor_sha256=actor_sha,learner=learner,material_workers=1,
+                planning_recipe=planning_recipe if planner else None)
     # Mechanism selection changes the task, not the controller.
     kernel['executables'] = {p:v for p,v in hashes.items() if p!='scripts/s1_w59_geometry.py'}
     build='S5-w59-research-'+stable_digest(kernel)[:18]
@@ -72,7 +81,8 @@ def declaration(a):
         raise ValueError('Original W44 actor or resume differs from its A/B parent')
     setting=dict(arm=a.arm,split=a.split,gait='G0',material=a.material,learner_config=learner,
         model_paths=list(map(str,models)),model_sha256=wm_hashes,legacy_timing_head=False,
-        initial_search_candidates=64,search_iterations=2,native_workers=1)
+        initial_search_candidates=64,search_iterations=2,native_workers=1,
+        planning_substeps=int(planning_recipe['planning_substeps']) if planner else None)
     w=dict(arm=a.arm,planner='P0',planner_history='private_reset' if a.arm=='P3-private' else 'full',
         candidate_substep_s=.02,planner_material_backend='original',planner_material_workers=1,
         material='M1',observer_implementation='w57_measured_window',timing_mode='zero',timing_head=None,
@@ -95,7 +105,11 @@ def declaration(a):
         execution=dict(background_job=BACKGROUND,**BACKGROUND),
         control_and_evaluation={'post_training_evaluation':dict(maximum_wall_s=None,wall_deadline_enabled=False)},
         w57_execution_sources=hashes,**BACKGROUND)
-    if a.branch:spec['w59_branch']=read(a.branch)
+    if a.branch:
+        registration=read(a.branch)
+        spec['w59_branch']=registration
+        if registration.get('source_task') in ('short','recovered'):
+            w['mechanism']=registration['mechanism']
     if os.environ.get('W59_RAW_STORE'):spec['w57_raw_root']=os.environ['W59_RAW_STORE']
     return spec,artifact,parent,checkpoint,job
 
@@ -109,6 +123,7 @@ def main():
     p.add_argument('--task',choices=('original','training','short','recovered','branch'),default='original')
     p.add_argument('--split',choices=('original','training','development','heldout'),default='original')
     p.add_argument('--attempt',required=True)
+    p.add_argument('--wm-recipe',type=Path)
     p.add_argument('--wm-checkpoint',action='append',default=[])
     p.add_argument('--learner-config',type=Path)
     p.add_argument('--branch',type=Path)

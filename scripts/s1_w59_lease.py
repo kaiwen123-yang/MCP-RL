@@ -29,6 +29,20 @@ def admit(slots):
     with (POOL/'admission.lock').open('a') as gate:
         fcntl.flock(gate, fcntl.LOCK_EX)
         config = json.loads((POOL/'capacity.json').read_text())
+        health_path = ROOT/'work/w59/last-resource.json'
+        if health_path.is_file():
+            sample = json.loads(health_path.read_text())
+            quota, period = Path('/sys/fs/cgroup/cpu.max').read_text().split()
+            mem = dict(line.split() for line in Path('/sys/fs/cgroup/memory.stat').read_text().splitlines())
+            available = int(Path('/sys/fs/cgroup/memory.max').read_text()) - int(Path('/sys/fs/cgroup/memory.current').read_text()) + int(mem['inactive_file'])
+            observed_rss = max([2 * 2**30]+[v['rss_bytes'] for v in sample.get('usage',{}).values()])
+            # Existing owners keep their slots. New admission uses actual cgroup room,
+            # the largest observed collector RSS, and the project's three-core reserve.
+            if available < slots * observed_rss + 3 * 2**30:
+                return None
+            other = sample.get('total_cpu_cores')
+            if other is not None and other + slots > int(quota)/int(period) - 3:
+                return None
         count = int(config['physical_slots'])
         if not 1 <= count <= 6:
             raise ValueError(count)

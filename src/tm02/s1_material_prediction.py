@@ -42,6 +42,9 @@ def inverse(ground, columns, load, dt):
         boundary = -delta / ground.h
         _, _, stress, _ = ground.law.step(e, q, np.full(len(ids), boundary), dt, fixed)
         pressure = np.where(boundary <= free, np.maximum(-stress[:, 0], 0), 0.)
+        if hasattr(ground,'w59_reload_contact'):
+            index,gain=ground.w59_reload_contact
+            pressure=np.where(ids==index,gain*pressure,pressure)
         return float(np.dot(area, pressure) * 1e6 * ground.gamma - load)
 
     upper = ground.h * .02
@@ -62,7 +65,10 @@ def normal_reference(ground, feet, leg, target, measured, dt):
     columns = owned_columns(branch, feet, order)[leg]
     d1, r1 = inverse(branch, columns, target, dt)
     d0, r0 = inverse(branch, columns, measured, dt)
-    return d0 - d1, dict(measured_N=measured, target_N=target, measured_delta_m=d0,
+    details=({'published_reload_column':int(ground.w59_reload_contact[0]),
+               'published_positive_contact_gain':float(ground.w59_reload_contact[1])}
+             if hasattr(ground,'w59_reload_contact') else {})
+    return d0 - d1, dict(**details,measured_N=measured, target_N=target, measured_delta_m=d0,
                          target_delta_m=d1, measured_residual_N=r0, target_residual_N=r1,
                          owned_area_m2=float(columns[1].sum()))
 
