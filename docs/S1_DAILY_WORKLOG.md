@@ -1127,6 +1127,11 @@ W58 学习 head 原子占两槽，旧扩容逻辑要求同类占用三槽才建�
 
 ## 2026-11-26｜W58 执行
 
+### 20261126/w58/attempt/w58-g0-m1-fixed-wait-a-validation-recovered-a01｜物理回合结束
+
+w58-g0-m1-fixed-wait-a-validation-recovered-a01，validation / recovered / A，控制器 S5-w58-1fed5698ca861ce349，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 6/12，本回合进入采样账本 0 条，CPU 用户/系统秒 10216.480703/54.771091。物理槽 2。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-fixed-wait-a-validation-recovered-a01.json)。
+
+
 ### 20261126/w58/independent-tail-material-verified｜最后两条原件与物理运行重叠，首批分卷已在 Release 核验
 
 原发布者 682583 已完成前面全部终局回合，在空闲时交接至 D57 发布者 406462；物理调度器 325750 和 GitHub 整合者 325756 保持。在 2026-11-26T10:27:31+08:00 对已提前上传的 2 个 ZIP 逐一按远端 asset ID 读取 GitHub 元数据，与本地不可变原件组签名及 size/SHA-256 匹配，共 1048579007 字节。两条正式 Fixed-wait 保留原 PID、构建、checkpoint 与连续物理时钟。当前仅签收已封口材料，收齐其余原件与完整视频后复核完整成员清单。其余五条已完成的恢复重访的发布已经收齐，14 条独立验证终局评分也已生成。[交接与实测](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/validation-tail-overlap-20261126.json)。
