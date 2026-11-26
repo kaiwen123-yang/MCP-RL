@@ -1,0 +1,348 @@
+{
+  "scope": "12 NEW learning-algorithm sources beyond v2; broad actor-update design, no training",
+  "access_date": "2026-11-26",
+  "source_count": 12,
+  "deep_method_sources": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B08",
+    "B10",
+    "B12"
+  ],
+  "source_count_excludes_v2": true,
+  "sources": [
+    {
+      "id": "B01",
+      "title": "Simple Policy Optimization",
+      "short": "SPO",
+      "venue": "ICML 2025 / PMLR 267",
+      "publication_date": "2025-07-13/2025-07-19",
+      "read_version": "PMLR proceedings PDF",
+      "primary_urls": [
+        "https://proceedings.mlr.press/v267/xie25m.html",
+        "https://raw.githubusercontent.com/mlresearch/v267/main/assets/xie25m/xie25m.pdf"
+      ],
+      "read_scope": [
+        "Full method sections 3–5",
+        "Section 6 experiments and comparisons",
+        "Official MuJoCo trainer policy loss"
+      ],
+      "physical_robot_scope": "No physical robot experiment identified in reviewed article; MuJoCo and Atari.",
+      "method_and_limits": [
+        "Ratio objective rA-|A|(r-1)^2/(2 epsilon).",
+        "Per-sample ratio alignment is not a global guarantee for approximate neural optimization.",
+        "Suitable low-cost direct replacement baseline; paper says only loss differs in matched comparisons."
+      ],
+      "official_code": "https://github.com/MyRepositories-hub/Simple-Policy-Optimization",
+      "code_pin": "9fdeda315b00cee82d1dc4e10c01db200c97e909",
+      "code_audit": "mujoco/trainer.py compute_policy_loss inspected; no execution"
+    },
+    {
+      "id": "B02",
+      "title": "Absolute Policy Optimization: Enhancing Lower Probability Bound of Performance with High Confidence",
+      "short": "APO/PAPO",
+      "venue": "ICML 2024 / PMLR 235",
+      "publication_date": "2024-07-21/2024-07-27",
+      "read_version": "PMLR proceedings PDF",
+      "primary_urls": [
+        "https://proceedings.mlr.press/v235/zhao24i.html",
+        "https://raw.githubusercontent.com/mlresearch/v235/main/assets/zhao24i/zhao24i.pdf"
+      ],
+      "read_scope": [
+        "Sections 2–4 objective, bounds, practical approximations",
+        "Section 5.7 PAPO and computational comparisons"
+      ],
+      "physical_robot_scope": "Continuous-control, GUARD and Atari benchmarks; no physical deployment claimed here.",
+      "method_and_limits": [
+        "Objective is J-k Var(return), not CVaR(cost).",
+        "Probability guarantee uses variance assumptions; practical maxima/constants are approximated.",
+        "PAPO implementation described in article as multiple SGD steps with mean-KL early stopping."
+      ],
+      "official_code": null,
+      "code_pin": null,
+      "code_audit": "not audited in this round"
+    },
+    {
+      "id": "B03",
+      "title": "Model-based Reinforcement Learning with Scalable Composite Policy Gradient Estimators",
+      "short": "TPX",
+      "venue": "ICML 2023 / PMLR 202",
+      "publication_date": "2023-07-23/2023-07-29",
+      "read_version": "PMLR proceedings PDF",
+      "primary_urls": [
+        "https://proceedings.mlr.press/v202/parmas23a.html",
+        "https://proceedings.mlr.press/v202/parmas23a/parmas23a.pdf"
+      ],
+      "read_scope": [
+        "Sections 3–4 estimator derivation and intermediate-node covariance combination",
+        "Sections 5–6 experiments",
+        "Discussion of Dreamer-specific gradient bias and comparison metric"
+      ],
+      "physical_robot_scope": "DreamerV1 visual-control simulations and synthetic systems; no physical robot result claimed.",
+      "method_and_limits": [
+        "Combines local likelihood-ratio and reparameterization estimators coordinatewise, including covariance.",
+        "Avoids computing all per-sample full-parameter gradients.",
+        "Dreamer LR/RP variants need not have identical means due to implementation bias.",
+        "Sample-dependent variance weights do not imply finite-sample unbiasedness."
+      ],
+      "official_code": null,
+      "code_pin": null,
+      "code_audit": "not audited in this round"
+    },
+    {
+      "id": "B04",
+      "title": "Policy Optimization in Hybrid Discrete-Continuous Action Spaces via Mixed Gradients",
+      "short": "HPO / MGPO",
+      "venue": "arXiv v1; official NeurIPS 2026 manuscript available",
+      "publication_date": "2026-05-14",
+      "read_version": "Deep read arXiv 2605.14297v1 (HPO); official NeurIPS manuscript uses MGPO name",
+      "primary_urls": [
+        "https://arxiv.org/abs/2605.14297",
+        "https://arxiv.org/pdf/2605.14297",
+        "https://nips.cc/media/neurips-2026/Slides/151120_LYhDiJP.pdf"
+      ],
+      "read_scope": [
+        "Sections 2–3 full formulation, gradient theorem and pseudocode",
+        "Sections 4–5 experiments, cross-term ablation and near-best-response conditions",
+        "Official source structure and log-probability entry points located"
+      ],
+      "physical_robot_scope": "Joint inventory replenishment and switched LQR; no legged hardware experiments.",
+      "method_and_limits": [
+        "Discrete score gradient, continuous pathwise term, plus continuous-to-future-discrete-probability cross term.",
+        "Theory needs differentiable fixed-mode dynamics and regularity.",
+        "Dropping cross term justified only under near-best-response/sensitivity assumptions, not arbitrary contact switching.",
+        "Practical version uses PPO epochs for discrete component and one continuous mixed-gradient update."
+      ],
+      "official_code": "https://github.com/MatiasAlvo/hybrid-rl",
+      "code_pin": "4633626d78b8d649fdaac7e6d4cae3e409b2fbd1",
+      "code_audit": "Repository pinned; hybrid_agent log-probability and output paths located, not a full training-loop audit"
+    },
+    {
+      "id": "B05",
+      "title": "Rectified Robust Policy Optimization for Model-Uncertain Constrained Reinforcement Learning without Strong Duality",
+      "short": "RRPO",
+      "venue": "Transactions on Machine Learning Research",
+      "publication_date": "2025-08",
+      "read_version": "arXiv 2508.17448v2, 2025-09-19; marked published TMLR 08/2025",
+      "primary_urls": [
+        "https://openreview.net/forum?id=7l63xwAgAW",
+        "https://arxiv.org/abs/2508.17448",
+        "https://arxiv.org/pdf/2508.17448"
+      ],
+      "read_scope": [
+        "Section 3 nonzero duality gap example",
+        "Section 4 algorithms, natural policy update, assumptions and corrected convergence bound",
+        "Sections 5–6 gridworld and extended robust-control experiments"
+      ],
+      "physical_robot_scope": "Gridworld and Robust HalfCheetah with energy constraint; no real robot.",
+      "method_and_limits": [
+        "Primal-only threshold/constraint/objective rectification.",
+        "Requires robust-value approximation accuracy and worst-case exploration/coverage.",
+        "Corrected convergence rate retains O(uncertainty-set diameter), not exact general convergence.",
+        "Nonzero duality gap does not mean all practical primal-dual procedures necessarily fail."
+      ],
+      "official_code": null,
+      "code_pin": null,
+      "code_audit": "not audited in this round"
+    },
+    {
+      "id": "B06",
+      "title": "ContractionPPO: Certified Reinforcement Learning via Differentiable Contraction Layers",
+      "short": "ContractionPPO",
+      "venue": "arXiv; Caltech publication list says RA-L to appear 2026",
+      "publication_date": "2026-03-20",
+      "read_version": "Downloaded arXiv PDF on 2026-11-26; Theorem 1 visually verified on page 5",
+      "primary_urls": [
+        "https://contractionppo.github.io/",
+        "https://arxiv.org/abs/2603.19632",
+        "https://arxiv.org/pdf/2603.19632",
+        "https://aerospacerobotics.caltech.edu/publications"
+      ],
+      "read_scope": [
+        "Sections III–V full method and hardware experiments",
+        "PDF page 5 rendered and visually checked for theorem inconsistencies",
+        "Official contraction_metric.py and contraction_ppo.py core update paths"
+      ],
+      "physical_robot_scope": "Unitree Go1, handstand/moving platform and disturbance experiments; not general hybrid-locomotion certification.",
+      "method_and_limits": [
+        "Theorem 1 contains +alpha residual versus -alpha upper bound, general eigenvalue/norm equality error, and differing m_min factors. Do not inherit certification theorem as written.",
+        "Official metric code uses positive diagonal softplus plus floor; strict PD is actually handled.",
+        "Actor uses detached contraction-shaped rollout reward; direct contraction loss addend in PPO update is commented out in audited pin.",
+        "No implementation execution or reproduction performed."
+      ],
+      "official_code": "https://github.com/contractionppo/ContractionPPO",
+      "code_pin": "e63ed83516e46a2630ad203115d069d83de98f4b",
+      "code_audit": "Core metric parameterization, detached metric optimizer, PPO loss and process_env_step reward integration inspected"
+    },
+    {
+      "id": "B07",
+      "title": "Contraction-Aware Reinforcement Learning for Nonlinear Control with Statistical Robustness",
+      "short": "CARL",
+      "venue": "IEEE Transactions on Robotics, Early Access",
+      "publication_date": "2026-08-24",
+      "read_version": "arXiv 2506.15700v2, 2026-08-16; IEEE DOI 10.1109/TRO.2026.3727138",
+      "primary_urls": [
+        "https://ieeexplore.ieee.org/abstract/document/11664333",
+        "https://arxiv.org/abs/2506.15700",
+        "https://arxiv.org/pdf/2506.15700",
+        "https://mgineer117.github.io/publication/2025-05-28-CAC"
+      ],
+      "read_scope": [
+        "Section IV algorithm, pretrained dynamics, metric generator and freeze-and-learn",
+        "Section V deterministic-optimum and statistical robustness assumptions",
+        "Experimental settings and baseline distinctions"
+      ],
+      "physical_robot_scope": "Simulated and real nonlinear path tracking, as reported; not a contact-rich gait-switching theorem.",
+      "method_and_limits": [
+        "Pretrained dynamics used for metric generator, not directly for actor policy optimization.",
+        "Metric generator is stochastic and entropy-regulated; policy learns metric-conditioned tracking reward.",
+        "Theory assumes a contracting reference policy and ideal optimal policy; statistical claims need exchangeable calibration.",
+        "Finite PPO training does not establish these ideal properties."
+      ],
+      "official_code": "https://github.com/Mgineer117/CARL",
+      "code_pin": null,
+      "code_audit": "not audited in this round"
+    },
+    {
+      "id": "B08",
+      "title": "Dream-MPC: Gradient-Based Model Predictive Control with Latent Imagination",
+      "short": "Dream-MPC",
+      "venue": "ICML 2026 / PMLR 306",
+      "publication_date": "2026-07-06/2026-07-11",
+      "read_version": "PMLR proceedings PDF",
+      "primary_urls": [
+        "https://proceedings.mlr.press/v306/spieler26a.html",
+        "https://raw.githubusercontent.com/mlresearch/v306/main/assets/spieler26a/spieler26a.pdf",
+        "https://dream-mpc.github.io/"
+      ],
+      "read_scope": [
+        "Section 4 full method and algorithm",
+        "Section 5 comparisons, ablations and inference times",
+        "Interpretation of TD-MPC2 versus BMPC proposal quality"
+      ],
+      "physical_robot_scope": "24 simulated DMC/Meta-World/HumanoidBench tasks, plus visual control; no physical robot benchmark in reviewed paper.",
+      "method_and_limits": [
+        "Few policy-generated sequences refined by model gradient, action reuse, Q-ensemble uncertainty regularization.",
+        "Fewer forward evaluations are not proportional wall-clock savings because gradients and execution overhead matter.",
+        "Official results: strong with BMPC; cannot consistently match MPPI with TD-MPC2.",
+        "RTX 4090 inference measurements do not establish onboard hard-real-time performance."
+      ],
+      "official_code": null,
+      "code_pin": null,
+      "code_audit": "not audited in this round"
+    },
+    {
+      "id": "B09",
+      "title": "Reusing Trajectories in Policy Gradients Enables Fast Convergence",
+      "short": "RT-PG",
+      "venue": "ICML 2026 / PMLR 306",
+      "publication_date": "2026-07-06/2026-07-11",
+      "read_version": "PMLR proceedings PDF",
+      "primary_urls": [
+        "https://proceedings.mlr.press/v306/montenegro26a.html",
+        "https://raw.githubusercontent.com/mlresearch/v306/main/assets/montenegro26a/montenegro26a.pdf"
+      ],
+      "read_scope": [
+        "Sections 3–4 dependence, target/cross-time bias and MPM estimator",
+        "Sections 5–7 regularity, divergence, complexity and experiments",
+        "Appendix environment/policy configuration selectively read"
+      ],
+      "physical_robot_scope": "CartPole, Swimmer and HalfCheetah simulations; no robot.",
+      "method_and_limits": [
+        "Power-mean corrected importance weights bounded by inverse correction coefficient.",
+        "Controls bias with concentration/covering arguments; does not assert generic adaptive replay is unbiased.",
+        "Needs bounded log-policy derivatives and trajectory-distribution chi-square divergence assumptions.",
+        "Theory for stationary-gradient accuracy is not PPO monotonic-improvement guarantee."
+      ],
+      "official_code": null,
+      "code_pin": null,
+      "code_audit": "not audited in this round"
+    },
+    {
+      "id": "B10",
+      "title": "Bootstrapped Model Predictive Control",
+      "short": "BMPC",
+      "venue": "ICLR 2025",
+      "publication_date": "2025",
+      "read_version": "ICLR proceedings PDF; arXiv first submission 2025-03-24",
+      "primary_urls": [
+        "https://proceedings.iclr.cc/paper_files/paper/2025/hash/8636419dea1aa9fbd25fc4248e702da4-Abstract-Conference.html",
+        "https://proceedings.iclr.cc/paper_files/paper/2025/file/8636419dea1aa9fbd25fc4248e702da4-Paper-Conference.pdf",
+        "https://arxiv.org/abs/2503.18871"
+      ],
+      "read_scope": [
+        "Section 4 full algorithm, imitation objective, model-based TD and lazy reanalyze",
+        "Section 5 ablations and wall time",
+        "Official policy KL, critic target and reanalyze implementation"
+      ],
+      "physical_robot_scope": "DMC/HumanoidBench and other simulated control; no physical robot result attributed.",
+      "method_and_limits": [
+        "Planner imitator improves policy prior, which improves subsequent planner.",
+        "Model-generated TD uses current policy; practical TD horizon 1 limits model compounding error.",
+        "Lazy reanalyze keeps planner distributions in replay.",
+        "Paper expert-to-policy KL versus audited code policy-to-expert KL must be distinguished."
+      ],
+      "official_code": "https://github.com/wertyuilife2/bmpc",
+      "code_pin": "d5dabc6cb58d463829571548c47711dff074f5af",
+      "code_audit": "bmpc/bmpc.py update_pi/_td_target_V/reanalyze and common/math.py kl_div inspected; no execution"
+    },
+    {
+      "id": "B11",
+      "title": "CrossQ: Batch Normalization in Deep Reinforcement Learning for Greater Sample Efficiency and Simplicity",
+      "short": "CrossQ",
+      "venue": "ICLR 2024 Spotlight",
+      "publication_date": "2024",
+      "read_version": "Official ICLR proceedings PDF",
+      "primary_urls": [
+        "https://proceedings.iclr.cc/paper_files/paper/2024/hash/f381114cf5aba4e45552869863deaaa7-Abstract-Conference.html",
+        "https://proceedings.iclr.cc/paper_files/paper/2024/file/f381114cf5aba4e45552869863deaaa7-Paper-Conference.pdf"
+      ],
+      "read_scope": [
+        "Introduction and method structure",
+        "UTD/computation comparisons and benchmark scope",
+        "Not full appendix/proof audit"
+      ],
+      "physical_robot_scope": "Continuous-control benchmarks; citations to earlier SAC/DroQ real robots do not constitute CrossQ hardware evidence.",
+      "method_and_limits": [
+        "Careful batch normalization and no target network with wider critic support low UTD=1.",
+        "Use as modern off-policy compute baseline, not claim all additional gains require model learning."
+      ],
+      "official_code": "https://github.com/adityab/CrossQ",
+      "code_pin": null,
+      "code_audit": "not audited in this round"
+    },
+    {
+      "id": "B12",
+      "title": "Risk-Aware Reinforcement Learning with Bandit-Based Adaptation for Quadrupedal Locomotion",
+      "short": "Risk-CVaR PPO + bandit",
+      "venue": "ICRA 2026; publisher and author lab confirm",
+      "publication_date": "arXiv 2025-10-16; conference 2026",
+      "read_version": "arXiv 2510.14338v1; publication verified separately",
+      "primary_urls": [
+        "https://ieeexplore.ieee.org/abstract/document/11695854",
+        "https://arxiv.org/abs/2510.14338",
+        "https://arxiv.org/pdf/2510.14338",
+        "https://practice-lab-ucla.github.io/publications/"
+      ],
+      "read_scope": [
+        "Sections III–V CVaR, PPO/Lagrange update and empirical-Bernstein UCB",
+        "Sections VI–VII training, OOD settings, Go2 outcomes",
+        "Section VIII limitations"
+      ],
+      "physical_robot_scope": "Unitree Go2 flat ground, ramp and grass/hidden soft cones; risk level varies mobility and survival.",
+      "method_and_limits": [
+        "Family of return-CVaR constrained policies, selected online by episodic return UCB.",
+        "Very conservative policy can stop progressing on ramp or hidden cones.",
+        "Bandit assumes sufficiently stable returns and does not optimize execution risk directly.",
+        "Mean reward, failure cost, progress and CVaR must be distinct project metrics."
+      ],
+      "official_code": null,
+      "code_pin": null,
+      "code_audit": "not audited in this round"
+    }
+  ]
+}

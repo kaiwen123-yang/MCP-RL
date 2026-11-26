@@ -1,0 +1,754 @@
+{
+  "schema_version": "1.0",
+  "prepared_on": "2026-11-26",
+  "scope": "MPC+RL 独立自适应步态完整改造第三轮；论文方法/实验研究和候选算法设计，无训练或活动仓库代码修改",
+  "report_path": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait.md",
+  "counting": {
+    "new_method_readings": 11,
+    "major_method_and_experiment_deep_reads": 7,
+    "targeted_method_and_experiment_reads": 4,
+    "new_full_deep_read_after_prior_abstract_only": [
+      "G3-01"
+    ],
+    "previous_round_method_reads_counted_again": 0,
+    "code_repositories_selected_audit": 2,
+    "count_note": "新增指本轮首次做该论文的方法阅读；不等于所有论文此前完全未被发现。Science Raibo 上轮只有索引/摘要。定向阅读不宣称逐字全文通读。"
+  },
+  "source_priority_and_cautions": [
+    "Nature/Science 系优先；本轮 Science Robotics 完成实质新深读，继承原有 Nature 系阅读。",
+    "然后补 IJRR、CoRL、ICRA 及直接相关 2026 预印本；未用不相关高影响论文凑数。",
+    "未取得可核验的完整 2025 中科院分区及 Top 清单，不把 JCR 或声誉替代它。",
+    "预印本的 submitted、作者接收标注与已核实正式 proceedings 分开记录。",
+    "代码审计为指定关键文件，不是运行验证或整个仓库逐字审计。"
+  ],
+  "inherited_sources_not_recounted": {
+    "prior_report": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/gait.md",
+    "prior_source_ledger": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/gait_sources.json",
+    "examples": [
+      "BGS (Nature Machine Intelligence 2025)",
+      "DeepTransition (Nature Communications 2024)",
+      "WTW (CoRL 2022)",
+      "DTC (Science Robotics 2024)",
+      "Grandia NMPC (T-RO 2023)",
+      "STANCE (T-RO 2019)",
+      "Gaitor",
+      "AllGaits",
+      "Non-Gaited MCTS",
+      "Feasible Transitions (L4DC 2025)",
+      "AugMPC",
+      "2026 terrain-gaits",
+      "2026 natural behaviour skill work"
+    ],
+    "status": "用于近邻比较；本轮不重复计新增全文阅读"
+  },
+  "parent_owned_sources_not_recounted": [
+    {
+      "title": "Reference-Free Sampling-Based MPC",
+      "official_url": "https://arxiv.org/abs/2511.19204",
+      "reported_venue": "ICRA 2026",
+      "doi": "10.1109/ICRA57385.2026.11696779",
+      "status": "主代理本轮负责方法深读；本报告作为 B 的直接强基线，不计本子任务新全文数"
+    },
+    {
+      "title": "LLA-MPPI",
+      "official_url": "https://lla-control.github.io",
+      "arxiv": "2610.10465",
+      "status": "主代理负责；本子任务未重复读取全文"
+    }
+  ],
+  "sources": [
+    {
+      "id": "G3-01",
+      "title": "High-speed control and navigation for quadrupedal robots on complex and discrete terrain",
+      "venue_or_outlet": "Science Robotics 10(102): eads6192",
+      "publication_status": "正式发表；本轮主要读取作者 arXiv 全文及内含补充材料",
+      "date_and_version": {
+        "published": "2025-05-28",
+        "arxiv": "2506.02835v1, 2025-06-03"
+      },
+      "official_urls": [
+        {
+          "kind": "doi",
+          "url": "https://doi.org/10.1126/scirobotics.ads6192"
+        },
+        {
+          "kind": "author_fulltext",
+          "url": "https://arxiv.org/abs/2506.02835"
+        },
+        {
+          "kind": "read_pdf",
+          "url": "https://arxiv.org/pdf/2506.02835v1"
+        },
+        {
+          "kind": "author_project",
+          "url": "https://awesomericky.github.io/projects/Quadruped_parkour/index.html"
+        },
+        {
+          "kind": "dataset_not_read",
+          "url": "https://datadryad.org/dataset/doi%3A10.5061/dryad.vmcvdnd48"
+        }
+      ],
+      "reading": {
+        "depth": "major_method_and_experiment_deep_read",
+        "scope": [
+          "Results",
+          "Materials and methods",
+          "supplementary network architecture, training, CVAE, sampling/filtering and rollout planning"
+        ],
+        "not_done": [
+          "未下载原始实验数据",
+          "未审计官方代码",
+          "未逐帧量化全部项目视频"
+        ]
+      },
+      "mechanism_evidence": [
+        "PPO foothold tracker 输出 12 关节位置，100 Hz；含接触估计网络、GRU 速度估计和目标历史。",
+        "CVAE 根据近期落足布局生成训练地形，利用成功轨迹更新地形难度。",
+        "明确使用 bounding 奖励；左右脚成对、前后脚分开的目标进度；后脚使用前脚曾落足位置。",
+        "部署先做性能箱、尖峰和碰撞筛选，再用 8 个 CPU 线程对 8 条候选进行物理 rollout。",
+        "27.4 kg Raibo 实机演示复杂离散地形，高速达 4 m/s；需要与不同演示场景、跟踪/规划方式区分。"
+      ],
+      "limitations_and_do_not_claim": [
+        "不是无模板自由接触拓扑：存在 bound 先验、成对落足和后脚跟随前脚。",
+        "实机使用预先构建地图及规划启动时 Vicon 位姿；不能描述为完全机载在线感知。",
+        "墙面运动展示使用预设跟踪目标，2.5D 规划器本身未规划垂直墙面。",
+        "报告的计算余量是具体实验中相对下一个目标时刻的裕量，非通用硬实时证明。",
+        "特定扰动情形 5 次试验成功不能当作全面概率保证。"
+      ],
+      "prior_round_status": "上一轮仅一级检索/官方摘要；本轮第一次读取完整方法、实验和补充方法，因此是新全文深读，不是首次发现论文。",
+      "code": {
+        "status": "未确认可审计官方实现，未把摘要中的代码开放措辞当作已发布证据"
+      },
+      "local_reading_copy": {
+        "pdf": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/science_raibo.pdf",
+        "text": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/science_raibo.txt"
+      }
+    },
+    {
+      "id": "G3-02",
+      "title": "Exciting families of passive gaits in an elastic quadruped via natural motion manifold control",
+      "venue_or_outlet": "The International Journal of Robotics Research 45(2):233–258",
+      "publication_status": "正式发表；online 2025，卷期 2026",
+      "date_and_version": {
+        "online": "2025-06-25",
+        "issue_year": 2026,
+        "doi": "10.1177/02783649251347305"
+      },
+      "official_urls": [
+        {
+          "kind": "doi",
+          "url": "https://journals.sagepub.com/doi/10.1177/02783649251347305"
+        },
+        {
+          "kind": "institutional_record",
+          "url": "https://repository.tudelft.nl/record/uuid:16048132-0a52-4533-ad74-687c7afdfbad"
+        },
+        {
+          "kind": "read_published_pdf",
+          "url": "https://repository.tudelft.nl/file/File_0ab3897f-8c99-49f6-8e82-3e30c00f05ff"
+        }
+      ],
+      "reading": {
+        "depth": "major_method_and_experiment_deep_read",
+        "scope": [
+          "Sections 3–6",
+          "discussion and limitations",
+          "Appendix B on invariant manifolds/control construction"
+        ],
+        "not_done": [
+          "未取得作者原始实验数据",
+          "未审计作者代码"
+        ]
+      },
+      "mechanism_evidence": [
+        "保守周期轨道构成二维自然运动流形；能量参数化轨道族，Poincaré 截面区分能量与横向坐标。",
+        "初始 shooting 周期解经过能量 continuation，控制把横向轨道稳定和能量注入分开，局部 DLQR 与能量 PI 调节。",
+        "BERT 约 3 kg 串联弹性四足，主要矢状面 bound；弹簧储放能与低带宽伺服是重要物理条件。",
+        "报告约 0.14/0.20 m/s 轨道与低矮障碍试验；机械 CoT/峰值功率对比用于说明弹性与轨道利用。"
+      ],
+      "limitations_and_do_not_claim": [
+        "输入矩阵秩、横向可控性、局部邻域、接触结构与能量调度前提不能省略。",
+        "点态冻结参数 Schur 稳定不自动等于任意快速调度稳定。",
+        "数据和系统集中于弹性、近矢状、较低速度机器人；不能推出任意刚驱动 3D 四足通用结果。",
+        "真实耗散轨道靠近所设计流形，不应当作真实系统严格保守自然运动。",
+        "跨不同轨道家族/分岔的广泛转换尚非其完成的实机结论。"
+      ],
+      "prior_round_status": "此前专题账本未做方法深读；本轮新增方法阅读",
+      "code": {
+        "status": "未确认公开官方实现；论文注明数据所有权/可用性限制，未获取数据"
+      },
+      "local_reading_copy": {
+        "pdf": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/nmm.pdf",
+        "text": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/nmm.txt"
+      }
+    },
+    {
+      "id": "G3-03",
+      "title": "Motion Priors Reimagined: Adapting Flat-Terrain Skills for Complex Quadruped Mobility",
+      "venue_or_outlet": "CoRL 2025; PMLR 305:3762–3777",
+      "publication_status": "正式会议论文",
+      "date_and_version": {
+        "conference": "2025-09-27 to 2025-09-30",
+        "arxiv": "2505.16084"
+      },
+      "official_urls": [
+        {
+          "kind": "formal_proceedings",
+          "url": "https://proceedings.mlr.press/v305/zhang25j.html"
+        },
+        {
+          "kind": "read_formal_pdf",
+          "url": "https://raw.githubusercontent.com/mlresearch/v305/main/assets/zhang25j/zhang25j.pdf"
+        },
+        {
+          "kind": "author_project",
+          "url": "https://anymalprior.github.io/"
+        }
+      ],
+      "reading": {
+        "depth": "major_method_and_experiment_deep_read",
+        "scope": [
+          "Sections 3–6",
+          "Appendices 7.1–7.3 and 8.1–8.5: architecture, training, reward, energy, additional experiments"
+        ],
+        "not_done": [
+          "未复现实验",
+          "未确认并审计官方代码"
+        ]
+      },
+      "mechanism_evidence": [
+        "动物平地 walk/pace/canter 重定向至机器人；FLD 四个 latent 通道形成 16 维 phase/frequency/amplitude/offset 表示。",
+        "先训练低层动作模仿，再冻结低层；高层输出 16 维 latent 加 12 维关节 residual。",
+        "特权教师向含噪本体/地形输入 GRU 学生蒸馏，以避免部署直接读取真实摩擦和接触等训练信息。",
+        "ANYmal-D 实机完成地形适应与局部导航；仿真包括台阶、斜坡与障碍。"
+      ],
+      "limitations_and_do_not_claim": [
+        "作者明确讨论高层只用单一 gait 的 mode collapse。",
+        "residual 权重改变会在风格保留与地形能力之间取舍；无限 residual 可绕过先验。",
+        "能效对照承认缺少合适的竖直运动约束/直接能耗优化，不能把全部收益解释为先验必然更优。",
+        "本轮没有核实可直接引用的完整端到端实机 p99 延迟。"
+      ],
+      "prior_round_status": "此前专题账本未做方法深读；本轮新增方法阅读",
+      "code": {
+        "status": "未确认可审计官方实现，未把摘要中的代码开放措辞当作已发布证据"
+      },
+      "local_reading_copy": {
+        "pdf": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/motion_priors.pdf",
+        "text": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/motion_priors.txt"
+      }
+    },
+    {
+      "id": "G3-04",
+      "title": "ManyQuadrupeds: Learning a Single Locomotion Policy for Diverse Quadruped Robots",
+      "venue_or_outlet": "ICRA 2024",
+      "publication_status": "作者版本声明已接收；IEEE 文献记录可查",
+      "date_and_version": {
+        "arxiv_v1": "2023-10-16",
+        "read_version": "2310.10486v2, 2024-03-08",
+        "ieee_document": "10610155"
+      },
+      "official_urls": [
+        {
+          "kind": "author_fulltext",
+          "url": "https://arxiv.org/abs/2310.10486"
+        },
+        {
+          "kind": "read_pdf",
+          "url": "https://arxiv.org/pdf/2310.10486v2"
+        },
+        {
+          "kind": "ieee_record",
+          "url": "https://ieeexplore.ieee.org/document/10610155/"
+        },
+        {
+          "kind": "author_project",
+          "url": "https://miladshafiee.github.io/ManyQuadrupeds/"
+        }
+      ],
+      "reading": {
+        "depth": "major_method_and_experiment_deep_read",
+        "scope": [
+          "CPG formulation",
+          "MDP observations/actions/rewards",
+          "training",
+          "simulation and hardware experiments",
+          "discussion"
+        ],
+        "not_done": [
+          "未审计代码",
+          "未复现全部 16 平台"
+        ]
+      },
+      "mechanism_evidence": [
+        "策略输出四腿的幅值与频率共 8 维，不使用显式相位耦合；100 Hz 策略、1 kHz CPG/IK/PD。",
+        "以足端 FK 和其他本体量减少对关节数量的依赖，PF 与机器人特定 IK 转成关节目标。",
+        "16 类机器人涵盖不同体重、尺度和关节布局；训练/留出机器人主要以仿真验证。",
+        "Go1/A1 实机，包括 A1 负载试验；显示周期结构可支持跨平台控制。"
+      ],
+      "limitations_and_do_not_claim": [
+        "每个机器人的 nominal height、clearance、step/penetration 等 PF 参数仍有人工缩放。",
+        "主要训练/评价目标是向前运动；全向与复杂不平地形明确留作后续。",
+        "不能把 16 机器人仿真说成 16 种硬件零样本成功。",
+        "FK 输入仍依赖关节传感，不能因不直接输入 q 就说不需关节编码器。",
+        "所写 reward 中功率代理与标准绝对机械功定义不同，引用时不能混为电池能耗。"
+      ],
+      "prior_round_status": "此前专题账本未做方法深读；本轮新增方法阅读",
+      "code": {
+        "status": "未确认可审计官方实现，未把摘要中的代码开放措辞当作已发布证据"
+      },
+      "local_reading_copy": {
+        "pdf": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/manyquadrupeds.pdf",
+        "text": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/manyquadrupeds.txt"
+      }
+    },
+    {
+      "id": "G3-05",
+      "title": "Learning Quadruped Walking from Seconds of Demonstration",
+      "venue_or_outlet": "ICRA 2026",
+      "publication_status": "会议 PDF 和官方代码 README 确认 ICRA 2026；主要读 arXiv v1",
+      "date_and_version": {
+        "arxiv": "2603.06961v1, 2026-03-07"
+      },
+      "official_urls": [
+        {
+          "kind": "author_fulltext",
+          "url": "https://arxiv.org/abs/2603.06961"
+        },
+        {
+          "kind": "read_pdf",
+          "url": "https://arxiv.org/pdf/2603.06961v1"
+        },
+        {
+          "kind": "conference_pdf",
+          "url": "https://events.infovaya.com/uploads/documents/8f/d1/218135-1358.pdf"
+        },
+        {
+          "kind": "author_project",
+          "url": "https://latent-variation-regularization.github.io/"
+        },
+        {
+          "kind": "official_code",
+          "url": "https://github.com/ruipengZ/Latent-Variation-Regularization"
+        }
+      ],
+      "reading": {
+        "depth": "major_method_and_experiment_deep_read",
+        "scope": [
+          "Sections III–VII",
+          "local Poincare/stability motivation",
+          "kNN local variation graph and projected latent regularization",
+          "simulation and hardware",
+          "selected minimal official training implementation"
+        ],
+        "not_done": [
+          "未运行代码",
+          "未全面逐文件审计仓库",
+          "未将动机推导当作已验证闭环稳定定理"
+        ]
+      },
+      "mechanism_evidence": [
+        "BC 加局部差分正则：kNN 图提取状态邻近点，用最后线性层的行空间投影比较动作与 latent 的局部变化方向分布。",
+        "少量秒级示范数据、三层小 MLP，与同数据 BC 比较仿真和 Go2 实机。",
+        "局部线性闭环/Poincare 分析提供学习动机，但实际训练未直接约束全部闭环 Floquet 乘子。"
+      ],
+      "limitations_and_do_not_claim": [
+        "有效局部邻域、专家覆盖与状态/事件导数条件仍必需，latent 对齐不是稳定证书。",
+        "混合事件时间灵敏度需要 saltation 等处理，不能只用重置 Jacobian 替代完整事件导数。",
+        "官方 minimal 示例 KL(action||latent) 与论文 Eq.3 的 KL(latent||action) 方向不同；实际实现需要注明版本。",
+        "官方 minimal 示例直接 inverse(WW^T)，论文写伪逆；退化矩阵条件下两者不同。"
+      ],
+      "prior_round_status": "此前专题账本未做方法深读；本轮新增方法阅读",
+      "code": {
+        "status": "官方浅克隆；仅关键最小训练函数定向审计；未运行",
+        "url": "https://github.com/ruipengZ/Latent-Variation-Regularization",
+        "commit": "e68ab0622c550e0809f77af707cd7b2fefd43dbb",
+        "local_path": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/lvr_code",
+        "files_read": [
+          "examples/train_LVR_minimal.py (projection and KL regularization function)"
+        ],
+        "verified_discrepancies": [
+          "KL direction in minimal code differs from paper Eq.3",
+          "inverse in minimal code versus pseudoinverse in paper"
+        ]
+      },
+      "local_reading_copy": {
+        "pdf": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/lvr.pdf",
+        "text": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/lvr.txt"
+      }
+    },
+    {
+      "id": "G3-06",
+      "title": "PROMO: Preference-conditioned Multi-Objective Reinforcement Learning for Quadrupedal Robots",
+      "venue_or_outlet": "arXiv; author project lists HART Workshop at TAROS 2026",
+      "publication_status": "预印本；提交 T-RO 不等于已接收",
+      "date_and_version": {
+        "arxiv": "2610.01260v1, 2026-10-01"
+      },
+      "official_urls": [
+        {
+          "kind": "author_fulltext",
+          "url": "https://arxiv.org/abs/2610.01260"
+        },
+        {
+          "kind": "read_pdf",
+          "url": "https://arxiv.org/pdf/2610.01260v1"
+        },
+        {
+          "kind": "author_project",
+          "url": "https://amrmousa.com/promo/"
+        }
+      ],
+      "reading": {
+        "depth": "major_method_and_experiment_deep_read",
+        "scope": [
+          "Method",
+          "simulation and hardware experiments",
+          "limitations",
+          "reward, architecture and training appendices"
+        ],
+        "not_done": [
+          "未运行实现",
+          "项目代码尚未确认发布"
+        ]
+      },
+      "mechanism_evidence": [
+        "一个偏好条件 actor，三类语义目标 critic；本体历史编码与特权表示对齐，动作 KL 多样性正则鼓励偏好响应。",
+        "偏好在 rollouts 内固定，来自带下界的 Dirichlet 采样；输出关节位置，Go2 50 Hz。",
+        "在 tracking/stability/effort 之间扫描偏好，以 sampled nondominated set 评价策略。",
+        "硬件四个偏好锚点在多个速度/运动情境测试；不同设置形成实际权衡。"
+      ],
+      "limitations_and_do_not_claim": [
+        "保留 airtime、接触均衡、姿态等固定先验，不能归类无 gait prior 发现。",
+        "effort reward 主要为力矩平方、关节加速度与动作变化，非直接电池功耗。",
+        "线性标量化只覆盖受支持 Pareto 解；有限采样非支配点并非真实完整 Pareto front。",
+        "CVaR 为诊断，不是已优化风险约束。",
+        "语义 critic 不含固定先验 baseline，GAE 的对应偏差在论文讨论；不宜忽略。",
+        "各指标最佳改进出现在不同情境/偏好，不应合并成同一运行的全面提升。"
+      ],
+      "prior_round_status": "此前专题账本未做方法深读；本轮新增方法阅读",
+      "code": {
+        "status": "作者项目显示代码待发布；本轮未确认已发布官方实现"
+      },
+      "local_reading_copy": {
+        "pdf": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/promo.pdf",
+        "text": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/promo.txt"
+      }
+    },
+    {
+      "id": "G3-07",
+      "title": "LoComposition: Terrain-Adaptive Energy-Efficient Quadruped Locomotion without Gait Priors",
+      "venue_or_outlet": "作者页面标 CoRL 2026；读取 arXiv v2",
+      "publication_status": "作者标注会议；本轮未独立核对正式 proceedings",
+      "date_and_version": {
+        "arxiv_v1": "2606.15896v1, 2026-06-14",
+        "read_version": "2606.15896v2, 2026-10-12"
+      },
+      "official_urls": [
+        {
+          "kind": "author_fulltext",
+          "url": "https://arxiv.org/abs/2606.15896"
+        },
+        {
+          "kind": "read_pdf",
+          "url": "https://arxiv.org/pdf/2606.15896v2"
+        },
+        {
+          "kind": "author_project",
+          "url": "https://www.loukaskordos.de/publications/locomposition/"
+        },
+        {
+          "kind": "official_code",
+          "url": "https://github.com/LouKordos/locomposition"
+        },
+        {
+          "kind": "author_venue_listing",
+          "url": "https://oliver.hausdoerfer.de/"
+        }
+      ],
+      "reading": {
+        "depth": "major_method_and_experiment_deep_read",
+        "scope": [
+          "Sections 3–5",
+          "main ablations and limitations",
+          "Appendices H/I and selected training/deployment settings",
+          "selected official power reward, environment configuration and curriculum implementation"
+        ],
+        "not_done": [
+          "未逐行阅读全部附录与整个代码库",
+          "未运行训练或评测",
+          "未核验正式会议 proceedings"
+        ]
+      },
+      "mechanism_evidence": [
+        "velocity tracking 加绝对机械功率项，并用 CaT 将物理运行限制分开；energy curriculum 避免早期站立退化。",
+        "取消 airtime/contact count/clearance gait targets，利用局部高度图学习地形相关足轨迹。",
+        "12 seeds 的主要受控消融覆盖能耗、地形输入和手工 gait priors。",
+        "论文显示接触同步与抬脚随地形改变，硬件 Go2 地形任务与延迟外推；其他形态另训策略。"
+      ],
+      "limitations_and_do_not_claim": [
+        "所测速度范围均呈 trot，不能宣称已发现完整速度依赖多 gait 系列。",
+        "跨 Spot/ANYmal 是分别训练，非一个策略跨形态。",
+        "实机 LiDAR 在线高度图使用 Vicon 位姿；机载计算能力不等于已经验证完全机载里程计。",
+        "CaT 是风险/违例学习机制，不是运行时硬安全保证。",
+        "机械 CoT 来自力矩/关节速度遥测，不能当电池电量精确指标。",
+        "盲视变体在论文地形失败，不构成所有 blind 方法不可能节能的证明。"
+      ],
+      "prior_round_status": "此前专题账本未做方法深读；本轮新增方法阅读",
+      "code": {
+        "status": "官方浅克隆；部分关键实现审计，未运行",
+        "url": "https://github.com/LouKordos/locomposition",
+        "commit": "b1149c8074f7df84450fe67649ee5e14dc971042",
+        "local_path": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/locomposition_code",
+        "files_read": [
+          "exts/locomposition/locomposition/tasks/utils/mdp/rewards.py",
+          "exts/locomposition/locomposition/tasks/locomotion/velocity/config/solo12/locomposition_go2_rough_terrain_env_cfg.py (reward/constraint configuration)",
+          "exts/locomposition/locomposition/tasks/utils/cleanrl/ppo.py (selected energy curriculum block)"
+        ],
+        "verified_points": [
+          "joint_power uses abs(applied_torque * joint_vel)",
+          "airtime/two-foot constraint entries in examined config are commented",
+          "power coefficient adjusted by curriculum; selected files alone do not establish exact settings for every published run"
+        ]
+      },
+      "local_reading_copy": {
+        "pdf": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/locomposition.pdf",
+        "text": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/locomposition.txt"
+      }
+    },
+    {
+      "id": "G3-08",
+      "title": "SG-CPG: Severity-Gated Central Pattern Generators for Adaptive Quadruped Locomotion under Continuous Actuator Degradation",
+      "venue_or_outlet": "arXiv",
+      "publication_status": "预印本；未确认正式期刊/会议",
+      "date_and_version": {
+        "arxiv": "2609.25687v1, 2026-09-22"
+      },
+      "official_urls": [
+        {
+          "kind": "author_fulltext",
+          "url": "https://arxiv.org/abs/2609.25687"
+        },
+        {
+          "kind": "read_pdf",
+          "url": "https://arxiv.org/pdf/2609.25687v1"
+        }
+      ],
+      "reading": {
+        "depth": "targeted_method_and_experiment_read",
+        "scope": [
+          "Sections III–VI: CPG, residual gates, severity parameterization, estimator, ablations, hardware"
+        ],
+        "not_done": [
+          "未逐段通读全部相关工作",
+          "未审计代码",
+          "未复现实验"
+        ]
+      },
+      "mechanism_evidence": [
+        "冻结健康 CPG，故障触发残差门控，按逐腿能力降低幅值；残差同时改变 CPG、足几何和关节目标。",
+        "区分真实 torque ceiling 削减与 PD gain/efficiency 缩放，研究不同估计器。",
+        "仿真主要单关节固定严重度，实机 Go2 通过位置误差约束模拟上限，报告行走/转向。"
+      ],
+      "limitations_and_do_not_claim": [
+        "主要结果依赖 true/manual severity；不能改写为完全无 oracle 自适应。",
+        "ceiling 未触发时不可由当前轨迹准确辨识，估计器精度在不同退化定义间不可混用。",
+        "硬件实际电机力矩存在超过名义 cap 的时刻；名义严重度不是准确实际物理损失。",
+        "主要训练 seed 数有限、平地任务为主；幸存者跟踪误差必须与跌倒共同阅读。",
+        "表/正文对特定前腿标签有不一致，未据此推断确定故障腿。"
+      ],
+      "prior_round_status": "此前专题账本未做方法深读；本轮新增方法阅读",
+      "code": {
+        "status": "未确认可审计官方实现，未把摘要中的代码开放措辞当作已发布证据"
+      },
+      "local_reading_copy": {
+        "pdf": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/sg_cpg.pdf",
+        "text": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/sg_cpg.txt"
+      }
+    },
+    {
+      "id": "G3-09",
+      "title": "Learning Fault-Tolerant Locomotion with Adaptive Gait Timing",
+      "venue_or_outlet": "arXiv",
+      "publication_status": "预印本；未确认正式会议/期刊",
+      "date_and_version": {
+        "arxiv": "2608.07328v1, 2026-08-07"
+      },
+      "official_urls": [
+        {
+          "kind": "author_fulltext",
+          "url": "https://arxiv.org/abs/2608.07328"
+        },
+        {
+          "kind": "read_pdf",
+          "url": "https://arxiv.org/pdf/2608.07328v1"
+        }
+      ],
+      "reading": {
+        "depth": "targeted_method_and_experiment_read",
+        "scope": [
+          "Sections III–IV: model, actor/critic adaptation, fault curriculum, gait timing, simulation ablations and real robot"
+        ],
+        "not_done": [
+          "未审计代码",
+          "未实现其假设的地形感知模块"
+        ]
+      },
+      "mechanism_evidence": [
+        "历史编码与特权故障表示对齐；actor 12 关节位置加 1 个共享 gait 频率。",
+        "健康腿参考 phase 结构保持，故障腿从 phase 一致性奖励中排除；逐步增加故障程度课程。",
+        "68 kg Kyon 实机，MJX/MJWarp 训练；包含多 seed 仿真和频率/对齐消融。"
+      ],
+      "limitations_and_do_not_claim": [
+        "共享频率改变不等于任意接触拓扑生成。",
+        "仿真 actor 地形观测假设高度图可用，论文未给完整实际感知实现；硬件仅平地。",
+        "故障采用 torque efficiency 缩放，不能与真实未触发 torque ceiling 的辨识混为一谈。",
+        "特权 critic/teacher 训练可用不意味着部署可以读取 fault mask 真值。"
+      ],
+      "prior_round_status": "此前专题账本未做方法深读；本轮新增方法阅读",
+      "code": {
+        "status": "未确认可审计官方实现，未把摘要中的代码开放措辞当作已发布证据"
+      },
+      "local_reading_copy": {
+        "pdf": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/fault_timing.pdf",
+        "text": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/fault_timing.txt"
+      }
+    },
+    {
+      "id": "G3-10",
+      "title": "Versatile Loco-Manipulation through Flexible Interlimb Coordination",
+      "venue_or_outlet": "CoRL 2025; PMLR 305:610–632",
+      "publication_status": "正式会议论文",
+      "date_and_version": {
+        "conference": "2025-09-27 to 2025-09-30",
+        "arxiv": "2506.07876"
+      },
+      "official_urls": [
+        {
+          "kind": "formal_proceedings",
+          "url": "https://proceedings.mlr.press/v305/zhu25a.html"
+        },
+        {
+          "kind": "read_formal_pdf",
+          "url": "https://raw.githubusercontent.com/mlresearch/v305/main/assets/zhu25a/zhu25a.pdf"
+        },
+        {
+          "kind": "author_project",
+          "url": "https://relic-locoman.github.io/"
+        },
+        {
+          "kind": "official_code_not_audited",
+          "url": "https://github.com/rai-opensource/relic"
+        }
+      ],
+      "reading": {
+        "depth": "targeted_method_and_experiment_read",
+        "scope": [
+          "Section 3",
+          "hardware experimental setup",
+          "Section 6 limitations",
+          "Appendix D controller/reward details"
+        ],
+        "not_done": [
+          "未逐任务重算全部实验统计",
+          "未审计官方代码"
+        ]
+      },
+      "mechanism_evidence": [
+        "任务指定 limb-role mask，模型控制器负责操纵、RL 负责移动，通过角色合成动作。",
+        "离线采样并筛选可执行操纵姿态用于训练，支持手脚角色切换。",
+        "Spot+arm 19 个执行器，多个实机移动操纵任务。"
+      ],
+      "limitations_and_do_not_claim": [
+        "四腿 trot 与三腿 bouncing 有规定结构/时序先验，不是完全自由 gait discovery。",
+        "任务 mask 已指定，不是从连续能力信念自主发现全角色分配。",
+        "全部计算在外部 PC 通过 Ethernet，不能当机载实时已证实。",
+        "高层目标基本开环；用机械臂支撑 locomotion 是后续方向。"
+      ],
+      "prior_round_status": "此前专题账本未做方法深读；本轮新增方法阅读",
+      "code": {
+        "status": "确认官方开源链接，未克隆/审计",
+        "url": "https://github.com/rai-opensource/relic"
+      },
+      "local_reading_copy": {
+        "pdf": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/relic.pdf",
+        "text": "/workspace/scratch/94b0fc3f6100/research_broad_v3/gait_sources/relic.txt"
+      }
+    },
+    {
+      "id": "G3-11",
+      "title": "GRoQ-LoCO: Generalist and Robot-agnostic Quadruped Locomotion Control using Offline Datasets",
+      "venue_or_outlet": "arXiv",
+      "publication_status": "预印本；本轮未确认正式会议/期刊",
+      "date_and_version": {
+        "arxiv_v1": "2505.10973v1, 2025-05-16",
+        "read_version": "2505.10973v3, 2025-05-24"
+      },
+      "official_urls": [
+        {
+          "kind": "read_author_html",
+          "url": "https://arxiv.org/html/2505.10973v3"
+        },
+        {
+          "kind": "arxiv_record",
+          "url": "https://arxiv.org/abs/2505.10973"
+        },
+        {
+          "kind": "author_pdf_not_downloaded",
+          "url": "https://narayananpp.github.io/assets/pdf/groqloco.pdf"
+        }
+      ],
+      "reading": {
+        "depth": "targeted_method_and_experiment_read",
+        "scope": [
+          "Section 2 full method",
+          "Section 3 cross-robot and missing-behaviour combinations",
+          "Section 4 limitations"
+        ],
+        "not_done": [
+          "未审计官方代码",
+          "未读取/下载未暴露的原始轨迹数据",
+          "未验证精确推理延迟"
+        ]
+      },
+      "mechanism_evidence": [
+        "离线汇总多个机器人平地周期与楼梯非周期专家，不给 robot identity；attention、GRU、history attention 处理本体历史。",
+        "robust adaptive BC loss 和短序列 TBPTT 训练关节动作生成器。",
+        "已经测试不完整 robot×behaviour 组合，以及未见机器人；Go1 实机楼梯与较大 Stoch5 初步硬件。"
+      ],
+      "limitations_and_do_not_claim": [
+        "主要机器人具有可比较的关节布局，不能推广为任意拓扑/关节数。",
+        "许多指标是特定楼梯成功判定，统计范围与置信区间有限。",
+        "作者低延迟措辞本轮未找到可直接引用的完整 p99 测量。",
+        "缺失组合泛化本身已经是其任务，后续 C 需证明物理迁移机制带来同数据额外收益。"
+      ],
+      "prior_round_status": "此前专题账本未做方法深读；本轮新增方法阅读",
+      "code": {
+        "status": "未确认可审计官方实现，未把摘要中的代码开放措辞当作已发布证据"
+      },
+      "local_reading_copy": null
+    }
+  ],
+  "candidate_mapping": {
+    "A_controlled_orbit_atlas": [
+      "G3-02",
+      "G3-05",
+      "G3-06",
+      "G3-07",
+      "inherited Gaitor/AllGaits/terrain-gaits"
+    ],
+    "B_nonperiodic_contact_program": [
+      "G3-01",
+      "parent Reference-Free Sampling-Based MPC",
+      "inherited Non-Gaited MCTS/Feasible Transitions/AugMPC"
+    ],
+    "C_coordination_skill_transport": [
+      "G3-03",
+      "G3-04",
+      "G3-08",
+      "G3-09",
+      "G3-10",
+      "G3-11"
+    ]
+  },
+  "evidence_boundary": "三条候选均为待实现、待证明、待验证的设计。来源不能证明本项目方案已优于原方法；不承诺首创、完整理论或录用。"
+}
