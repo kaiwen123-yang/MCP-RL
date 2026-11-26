@@ -1450,6 +1450,13 @@ Git HTTPS 连续返回 503 或 TLS 握手关闭。D57 对已提交的紧凑内�
 - 未解决：执行器/材料在真实可测数据下的可分离程度；新 gait 独立收益；GPU 端到端实时性；hybrid WBC 条件理论；模型方向可信区间；联合泛化和硬件证据。当前无首创或 T-RO 录用保证。
 - 下一步：执行代理使用新启动提示词，先读取最新 main 与现场状态，G0 后开展独立小实验；阴性结果按各模块否定条件处理，不无限扩大网络、并发或训练时长。
 
+### 20261126/w59/attempt/w59-b3-m1-a-development-recovered-a01｜自然终局或技术中断
+
+18:16:43。B3 / A / recovered / E60，控制器 S5-w59-research-f2a4d138a792e8997b，源码 ed16e456759f。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-fixed-action-m1-a-development-recovered-a01｜自然终局或技术中断
+
+18:20:37。Fixed-action / A / recovered / E60，控制器 S5-w59-research-fec5a508b81b5fa67b，源码 ed16e456759f。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
 
 ## 以后每天如何追加
 
