@@ -3,12 +3,13 @@ import fcntl
 import hashlib
 import json
 import os
+import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import zipfile
 
 
-def groups_for(paths, video, part_size):
+def groups_for(paths, video, part_size, *, material_first=False):
     members = []
     for prefix, path in paths:
         if path.is_dir():
@@ -18,6 +19,11 @@ def groups_for(paths, video, part_size):
             members.append((prefix,path))
         else:
             raise FileNotFoundError(path)
+    if material_first:
+        # Chronological, write-once chunks precede all later episode metadata. Keep
+        # the original traversal order and original ZIP member names for the rest.
+        chunk_name=re.compile(r'episode/material-[0-9]{4}\.npz')
+        members.sort(key=lambda item: (0,item[0]) if chunk_name.fullmatch(item[0]) else (1,''))
     groups, group, size = [], [], 0
     for member, path in members:
         n = path.stat().st_size

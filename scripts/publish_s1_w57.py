@@ -168,7 +168,7 @@ def transfer(path, name, release, existing):
     return verified
 
 
-def originals(label, paths, video=None, *, before_movie=False):
+def originals(label, paths, video=None, *, before_movie=False, material_first=False):
     dest=SMALL/'delivery'/(label+'.json')
     release,existing=release_assets()
     prior=read(dest) if dest.exists() else None
@@ -182,7 +182,9 @@ def originals(label, paths, video=None, *, before_movie=False):
                     receipt['size'],receipt['digest'],'uploaded'):
                 raise ValueError('The exact archived asset must be recovered before republishing '+receipt['name'])
         return
-    groups, file_count = groups_for(paths, video, PART)
+    if prior and material_first != (prior.get('archive_order')=='material_chunks_first'):
+        raise ValueError('Existing Release part layout differs for '+label)
+    groups, file_count = groups_for(paths, video, PART, material_first=material_first)
     if before_movie:
         # A later video receipt may be inserted in the episode file order. A part whose
         # *next* part also starts before that marker is already completely determined.
@@ -196,7 +198,11 @@ def originals(label, paths, video=None, *, before_movie=False):
     recorded=prior if prior is not None else dict(label=label,tag=TAG,assets=[],
         roots={k:str(p) for k,p in paths},original_file_count=file_count,originals_retained=True,
         compact_source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip())
+    if material_first:
+        recorded['archive_order']='material_chunks_first'
     if before_movie:
+        if material_first:
+            recorded['roots']={'sealed_material_prefix':str(paths[0][1].parent)}
         recorded.pop('original_file_count',None)
         recorded['status']='partial'
     else:
@@ -211,6 +217,8 @@ def originals(label, paths, video=None, *, before_movie=False):
         names.append(label+'-full.mp4')
     prepublished=recorded.setdefault('prepublished_member_signatures',{}) if before_movie else recorded.get('prepublished_member_signatures',{})
     if not before_movie:
+        if material_first and not set(prepublished).issubset(names):
+            raise ValueError('A prepublished material part is absent from the terminal manifest: '+label)
         for name,group in zip(names,groups):
             if name in prepublished and source_signature(group)!=prepublished[name]:
                 raise ValueError('Frozen source membership changed before full publication: '+name)

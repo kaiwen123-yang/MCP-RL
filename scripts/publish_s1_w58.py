@@ -16,6 +16,7 @@ WORK=ROOT/'work/w58'
 R=ROOT/'results'/REL/'w58'
 RAW=ROOT/'outputs'/REL
 TAG=REL.name+'-w58'
+TAIL_EVALUATIONS=tuple(f'w58-g0-m1-fixed-wait-{case}-validation-recovered-a01' for case in 'ab')
 release.SMALL=R
 release.LARGE=RAW
 release.TAG=TAG
@@ -44,6 +45,31 @@ def verified(name):
     return p.exists() and read(p).get('status')=='verified'
 
 
+def material_first(name):
+    if name not in TAIL_EVALUATIONS:return False
+    receipt=R/'delivery'/(name+'.json')
+    return not receipt.is_file() or read(receipt).get('archive_order')=='material_chunks_first'
+
+
+def publish_sealed_material(name):
+    attempt=R/'attempts'/(name+'.json')
+    if not attempt.is_file() or read(attempt).get('status')!='running' or not material_first(name):
+        return
+    out=RAW/name
+    # The recorder finishes and closes each NPZ before creating its successor.
+    # Omit the newest file and the last (potentially underfilled) ZIP group.
+    numbered=sorted(out.glob('material-[0-9][0-9][0-9][0-9].npz'))
+    paths=[]
+    for index,path in enumerate(numbered[:-1]):
+        if path.name!=f'material-{index:04d}.npz':break
+        paths.append(('episode/'+path.name,path))
+    groups,_=release.groups_for(paths,None,release.PART,material_first=True)
+    receipt=R/'delivery'/(name+'.json')
+    done=read(receipt).get('prepublished_member_signatures',{}) if receipt.is_file() else {}
+    if any(f'{name}-originals-{i:03d}.zip' not in done for i in range(1,len(groups))):
+        release.originals(name,paths,before_movie=True,material_first=True)
+
+
 def episode(name):
     out=RAW/name
     small=R/'episodes'
@@ -61,7 +87,7 @@ def episode(name):
         renderer.LARGE=RAW
         if not (out/'video-asset.json').is_file():renderer.render(name)
         video=out/'full-mission-material-overlay.mp4'
-    release.originals(name,paths,video)
+    release.originals(name,paths,video,material_first=material_first(name))
 
 
 def publish_ready():
@@ -87,6 +113,8 @@ def publish_ready():
     for p in sorted((R/'attempts').glob('*.json')):
         state=read(p)
         if 'ended_unix_s' in state and not verified(p.stem):episode(p.stem)
+    for name in TAIL_EVALUATIONS:
+        publish_sealed_material(name)
     completed=R/'outcome.json'
     if completed.exists() and not verified('w58-final-execution'):
         files=[(name,WORK/name) for name in ('runtime.json','throughput.jsonl') if (WORK/name).is_file()]
