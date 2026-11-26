@@ -62,18 +62,30 @@ def horizons(rt):
     base=read(DEV)
     if len(base.get("checkpoints",[]))!=3 or base.get("summary",{}).get("measured_branches")!=96:return
     hashes=[c["sha256"] for c in base["checkpoints"]]
-    if read(ans).get("wm_sha256")==hashes:return
+    supported=base["method_selection"]["forward_supported_substeps"]
+    previous=read(ans)
+    if previous.get("wm_sha256")==hashes and previous.get("forward_supported_substeps")==supported:return
     comp={}
     for n in (1,5,17,32):
         path=LEARN/f"development-r3-{n:02d}-substeps.json"
-        if [c for c in read(path).get("wm_sha256",[])]!=hashes:
+        cached=read(path)
+        if cached.get("wm_sha256")!=hashes:
+            if n not in supported:
+                # This exact model and horizon already failed forward admission. Keep
+                # its complete physical denominator; no synthetic derivative replaces it.
+                comp[n]=dict(admitted=False,forward_supported=False,gradient_score_available=False,
+                             denominator_states=base["summary"]["denominator_states"],
+                             denominator_directions=6*base["summary"]["denominator_states"],
+                             reason="outside frozen forward support",source=str(DEV))
+                continue
             mark("scoring_development_horizon",substeps=n,wm_sha256=hashes)
             use(rt,"s1_w59_learner_admission.py","--role","development","--planning",DEV,"--registry",REG2,
                 "--critic",CRITIC,"--substeps",n,"--output",path)
-        comp[n]=read(path)["summary"]
-    chosen=max((k for k,v in comp.items() if v.get("admitted")),default=0)
+            cached=read(path)
+        comp[n]=dict(cached["summary"],forward_supported=n in supported,gradient_score_available=True)
+    chosen=max((k for k,v in comp.items() if v.get("admitted") and k in supported),default=0)
     from hashlib import sha256
-    write(ans,dict(chosen_substeps=chosen,r3_substeps=chosen,wm_sha256=hashes,checks=comp,
+    write(ans,dict(chosen_substeps=chosen,r3_substeps=chosen,wm_sha256=hashes,checks=comp,forward_supported_substeps=supported,
          status="development_admitted" if chosen else "development_no_trusted_path",
          critic_sha256=sha256(CRITIC.read_bytes()).hexdigest(),
          learner_rule_sha256=sha256((rt/"experiments/terrain_memory/s1-w59-gradient-admission.json").read_bytes()).hexdigest(),
