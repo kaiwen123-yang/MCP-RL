@@ -1,0 +1,452 @@
+{
+  "scope": "Adaptive gait independent module; new or substantively deepened sources beyond prior BGS/DeepTransition/WTW/DTC/Grandia/STANCE review",
+  "date": "2026-11-26",
+  "counts": {
+    "total": 12,
+    "deep_methods_and_experiments": 8,
+    "targeted_methods_and_experiments": 3,
+    "metadata_and_abstract_only": 1
+  },
+  "notes": [
+    "Reading depth refers to methods/results focus, not every byte or full supplemental video viewing.",
+    "No training, no active code modification, no remote mutation.",
+    "Downloaded fulltexts are research scratch artifacts; official repository code partially inspected only where listed.",
+    "Source priorities followed Nature/Science then specialist journals/top conferences; CAS2025 journal quartiles not guessed."
+  ],
+  "sources": [
+    {
+      "id": "G01",
+      "title": "Learning diverse natural behaviors for enhancing the agility of quadrupedal robots",
+      "authors": "Huiqiao Fu et al.",
+      "venue": "Nature Communications",
+      "publication": "17, 5857 (2026)",
+      "publication_date": "2026-04-29",
+      "version": "正式出版 PDF；Nature 页面另列 version of record 2026-07-06",
+      "doi": "10.1038/s41467-026-72475-9",
+      "urls": [
+        "https://www.nature.com/articles/s41467-026-72475-9",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC13333834/",
+        "https://www.nature.com/articles/s41467-026-72475-9.pdf",
+        "https://arxiv.org/abs/2505.09979",
+        "https://nju-rlc.github.io/quadrupedal_agility/"
+      ],
+      "depth": "deep_methods_and_experiments",
+      "read": [
+        "正式正文 Results：agility challenge, multimodal BBC, TSC, EASI",
+        "Methods：semi-supervised InfoGAIL, latent style, imbalanced prior/RIM, deployable observation estimators, EASI, teacher/student Hybrid-PPO",
+        "Discussion；未完整审阅所有supplement；未逐帧看视频",
+        "官方README、BBC gail.py discriminator/latent更新、TSC actor_critic.py hybrid distribution实现"
+      ],
+      "local_pdf": "natural_behaviors_2026.pdf",
+      "code": {
+        "official_url": "https://github.com/NJU-RLC/quadrupedal-agility",
+        "commit": "15d16ea99bc23e5d401b0b0e3b88a8edcc28f0ed",
+        "audited_files": [
+          "README.md",
+          "bbc/rsl_rl/algorithms/gail.py",
+          "tsc/rsl_rl/modules/actor_critic.py"
+        ],
+        "scope": "部分关键代码阅读；未运行、未完成逐文件审计"
+      },
+      "limits": [
+        "真实狗动作数据和少量标签是训练资源，不能拿无示范方法直接对比样本成本",
+        "EASI耗时不能代表整体训练耗时",
+        "TSC teacher privileged输入经student替代，部署不得直接使用teacher oracle"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false,
+      "local_pdf_sha256": "9ba72d24322f7e0b11ac9a4934bed78ad05df4096a48b2f21e4683137dc780c3"
+    },
+    {
+      "id": "G02",
+      "title": "Contact Planning for Multi-Legged Robots Under Constraints Through Parallel MCTS",
+      "authors": "Peng Xu et al.",
+      "venue": "IEEE Transactions on Robotics",
+      "publication": "41:6102–6122 (2025)",
+      "publication_date": null,
+      "version": "官方出版社/作者机构元数据与摘要",
+      "doi": "10.1109/TRO.2025.3619054",
+      "urls": [
+        "https://doi.org/10.1109/TRO.2025.3619054",
+        "https://ieeexplore.ieee.org/abstract/document/11197014",
+        "https://research.aalto.fi/en/publications/contact-planning-for-multi-legged-robots-under-constraints-throug/"
+      ],
+      "depth": "metadata_and_abstract_only",
+      "read": [
+        "作者机构正式摘要和发表信息"
+      ],
+      "local_pdf": null,
+      "code": {
+        "status": "本轮未确认官方源码，未审阅"
+      },
+      "limits": [
+        "全文未取得，不能计全文阅读",
+        "摘要硬件验证对象为六足/人形，不能推成四足高速结果",
+        "不据摘要推断运行时间、GPU实现或可达性证明细节"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false
+    },
+    {
+      "id": "G03",
+      "title": "CPG-RL: Learning Central Pattern Generators for Quadruped Locomotion",
+      "authors": "Guillaume Bellegarda; Auke Ijspeert",
+      "venue": "IEEE Robotics and Automation Letters",
+      "publication": "7(4):12547–12554 (2022)",
+      "publication_date": "2022",
+      "version": "arXiv2211.00458v1，2022-11-01；accepted September2022 preprint",
+      "doi": "10.1109/LRA.2022.3218167",
+      "urls": [
+        "https://ieeexplore.ieee.org/document/9932888/",
+        "https://arxiv.org/abs/2211.00458",
+        "https://arxiv.org/pdf/2211.00458"
+      ],
+      "depth": "targeted_methods_and_experiments",
+      "read": [
+        "III动作空间、去耦合与方向调制",
+        "III观测空间full/medium/minimal、训练随机化和控制频率",
+        "IV附加载荷实验及Joint-PD对照"
+      ],
+      "local_pdf": "cpg_rl.pdf",
+      "code": {
+        "status": "未确认并审阅官方源码"
+      },
+      "limits": [
+        "最少观测只支持特定前进速度任务，不可泛化成全向命令跟踪",
+        "模型训练主地形为平地；部分无DR测试不能推为任意OOD保证",
+        "未逐页审阅全部方法/实验段，不计本轮deep全文数"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false,
+      "local_pdf_sha256": "ecda991faa95383338ba4bc5b441cba54acae530a9a1676c567ed474436c52af"
+    },
+    {
+      "id": "G04",
+      "title": "Learning Free Gait Transition for Quadruped Robots via Phase-Guided Controller",
+      "authors": "Yecheng Shao et al.",
+      "venue": "IEEE Robotics and Automation Letters",
+      "publication": "7(2):1230–1237 (2022)",
+      "publication_date": "2022",
+      "version": "arXiv2201.00206，2022-01-01；accepted December2021 preprint",
+      "doi": null,
+      "urls": [
+        "https://arxiv.org/abs/2201.00206",
+        "https://arxiv.org/pdf/2201.00206"
+      ],
+      "depth": "targeted_methods_and_experiments",
+      "read": [
+        "III四独立相位、Hopf oscillator、transition overshoot、polynomial foot reference",
+        "41维观测、LSTM actor、目标关节位置/PD",
+        "IV三腿转换及复杂节律实验"
+      ],
+      "local_pdf": "free_transition.pdf",
+      "code": {
+        "status": "未确认并审阅官方源码"
+      },
+      "limits": [
+        "指定gait/phase generator提供参考，不能称自主gait发现",
+        "相位光滑不等同浮动基全局稳定",
+        "未逐页审阅附加视频或完整补充内容"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false,
+      "local_pdf_sha256": "17136274dc3d69a8dad7105377c39c2133d4617310fb096775ba9bba34f7d34a"
+    },
+    {
+      "id": "G05",
+      "title": "Online Optimization of Central Pattern Generators for Quadruped Locomotion",
+      "authors": "Zewei Zhang; Guillaume Bellegarda; Milad Shafiee; Auke Ijspeert",
+      "venue": "IEEE/RSJ IROS 2024",
+      "publication": "IROS2024，作者主页列oral",
+      "publication_date": "2024",
+      "version": "arXiv2410.16417v1，2024-10-21",
+      "doi": null,
+      "urls": [
+        "https://arxiv.org/html/2410.16417v1",
+        "https://arxiv.org/pdf/2410.16417",
+        "https://takui9.github.io/"
+      ],
+      "depth": "deep_methods_and_experiments",
+      "read": [
+        "II CPG、Tegotae力反馈、VMC、BO/CBO",
+        "III八参数优化、CoT目标、数据复用、load/slope估计",
+        "IV仿真/跑步机Go1载荷坡度实验与feedback/VMC消融"
+      ],
+      "local_pdf": "online_cpg.pdf",
+      "code": {
+        "status": "本轮未确认官方代码，未审阅"
+      },
+      "limits": [
+        "每次1.5秒参数过渡+3秒稳态；目标只用稳态段",
+        "固定trot coupling；重点是分钟级在线调参，并非每步自主gait类别规划",
+        "跑步机硬件与自由野外运动条件不同"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false,
+      "local_pdf_sha256": "525b6f83dc0271023f6d7ce5d3d4dc705a2ad4549dde14884d666b3f286a1781"
+    },
+    {
+      "id": "G06",
+      "title": "Non-Gaited Legged Locomotion with Monte-Carlo Tree Search and Supervised Learning",
+      "authors": "Ilyass Taouil et al.",
+      "venue": "IEEE Robotics and Automation Letters",
+      "publication": "10(2):1265–1272 (2025)",
+      "publication_date": "2024-12-18",
+      "version": "arXiv2408.07508v2，2024-12-31；作者实验室正式PDF",
+      "doi": "10.1109/LRA.2024.3519908",
+      "urls": [
+        "https://arxiv.org/html/2408.07508v2",
+        "https://iit-dlslab.github.io/papers/taouil2025ral.pdf",
+        "https://ieeexplore.ieee.org/abstract/document/10806593"
+      ],
+      "depth": "deep_methods_and_experiments",
+      "read": [
+        "II接触序列MCTS、最短swing/stance约束、SRB-QP rollout cost",
+        "III replanning/discretization参数",
+        "IV value function数据集/混合rollout评估",
+        "V ID/OOD比较与Aliengo punching-bag实机实验"
+      ],
+      "local_pdf": "nongaited_mcts.pdf",
+      "code": {
+        "status": "本轮未确认官方代码，未审阅"
+      },
+      "limits": [
+        "SRB不含腿动力学，需要额外swing-time参考代价",
+        "VF/QP混合权重0.75是启发式固定值",
+        "实机pipeline在外部12th-gen Intel i7运行；不能据此宣称完全机载",
+        "minimum12.5Hz是文中场景经验，不是普适实时阈值"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false,
+      "local_pdf_sha256": "38df8459bc511e683ecc1619468f0693597d19f45ebdf5ef290e8a1e072ae054"
+    },
+    {
+      "id": "G07",
+      "title": "Gaitor: Learning a Unified Representation Across Gaits for Real-World Quadruped Locomotion",
+      "authors": "Alexander Luis Mitchell et al.",
+      "venue": "CoRL2024；PMLR2025",
+      "publication": "PMLR270:780–793",
+      "publication_date": "2025",
+      "version": "正式PMLR PDF（正文注明8th CoRL2024）",
+      "doi": null,
+      "urls": [
+        "https://proceedings.mlr.press/v270/mitchell25a.html",
+        "https://raw.githubusercontent.com/mlresearch/v270/main/assets/mitchell25a/mitchell25a.pdf"
+      ],
+      "depth": "deep_methods_and_experiments",
+      "read": [
+        "III VAE/terrain encoder/latent planner/BC训练/deployment",
+        "IV latent结构、地形适应、WBC可行性比较",
+        "V limitations",
+        "附录A.1-A.4 dataset、相机/heightmap、网络与CPU400Hz部署；A.5局部结果核对"
+      ],
+      "local_pdf": "gaitor.pdf",
+      "code": {
+        "status": "未确认官方公开实现，不使用同名无关GitHub仓库"
+      },
+      "limits": [
+        "二维指2个操纵轴；robot latent10维+terrain latent10维",
+        "需要高质量专家；约30分钟RLOC/DynamicGaits数据",
+        "pace专家真实机器人不稳定，正文附录明确没有部署pace",
+        "低WBC reference/output RMSE不等于完整动力学安全证书"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false,
+      "local_pdf_sha256": "80ac62e0e57edf1429ed68ffb5117ac065e5a5cf248c976d36da737551b731a3"
+    },
+    {
+      "id": "G08",
+      "title": "AllGaits: Learning All Quadruped Gaits and Transitions",
+      "authors": "Guillaume Bellegarda; Milad Shafiee; Auke Ijspeert",
+      "venue": "ICRA2025",
+      "publication": "IEEE ICRA2025",
+      "publication_date": "2025",
+      "version": "arXiv2411.04787v1，2024-11-07；此前只做摘要级，此轮方法实验加深",
+      "doi": "10.1109/ICRA55743.2025.11127285",
+      "urls": [
+        "https://arxiv.org/html/2411.04787v1",
+        "https://arxiv.org/pdf/2411.04787",
+        "https://graphsearch.epfl.ch/en/publication/2f2ae3c0-26c7-4167-83c0-deca1db1287d"
+      ],
+      "depth": "deep_methods_and_experiments",
+      "read": [
+        "II耦合CPG、pattern formation、8维动作、obs/reward/train",
+        "III样式COT网格、最佳gait指标比较、转换和锁腿qualitative实验"
+      ],
+      "local_pdf": "allgaits.pdf",
+      "code": {
+        "status": "未确认原作者公开代码；搜索返回用户学习仓库，未使用"
+      },
+      "limits": [
+        "gait coupling由外部指定，非自主learned coupling",
+        "主要训练flat terrain；100style×28速度性能网格测试无观测噪声",
+        "锁腿/new gait结果主要定性展示，不能当完整故障统计验证"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false,
+      "local_pdf_sha256": "3dffecb5fcdf572b86c517c1729201142a6c29ec343eecef5fc3a08fec9ae13e"
+    },
+    {
+      "id": "G09",
+      "title": "Learning Feasible Transitions for Efficient Contact Planning",
+      "authors": "Rikhat Akizhanov; Victor Dhedin; Majid Khadiv; Ivan Laptev",
+      "venue": "L4DC2025",
+      "publication": "PMLR283:431–442",
+      "publication_date": "2025-06",
+      "version": "正式PMLR PDF及arXiv2407.11788v2（2024-12-04）",
+      "doi": null,
+      "urls": [
+        "https://proceedings.mlr.press/v283/akizhanov25a.html",
+        "https://raw.githubusercontent.com/mlresearch/v283/main/assets/akizhanov25a/akizhanov25a.pdf",
+        "https://arxiv.org/html/2407.11788v2"
+      ],
+      "depth": "deep_methods_and_experiments",
+      "read": [
+        "III transition数据、feasibility classifier、state predictor、target correction、search heuristic",
+        "IV数据量/网络、随机stones评估、RL比较、时间/成功率",
+        "V未来实机与gait planning限制；关键方法和结果在正式PDF核对"
+      ],
+      "local_pdf": "feasible_transitions.pdf",
+      "code": {
+        "status": "本轮未确认官方实现，未审阅"
+      },
+      "limits": [
+        "仅仿真；实机写在future work",
+        "训练数据用predefined gait，state predictor仅成功transition样本",
+        "Table2完整contact plan搜索4.61–14.5秒，不是每控制周期实时",
+        "分类confidence不是经证明的全局feasibility证书"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false,
+      "local_pdf_sha256": "d1ed4271b7c1efff6b2464af2eb6a912b91eb3c14671a5246277cad9ab9afaa6"
+    },
+    {
+      "id": "G10",
+      "title": "RL-Augmented MPC for Non-Gaited Legged and Hybrid Locomotion",
+      "authors": "Andrea Patrizi et al.",
+      "venue": "arXiv preprint",
+      "publication": "arXiv2603.10878",
+      "publication_date": "2026-03-11",
+      "version": "v1",
+      "doi": null,
+      "urls": [
+        "https://arxiv.org/html/2603.10878v1",
+        "https://arxiv.org/abs/2603.10878",
+        "https://github.com/AndrePatri/AugMPC"
+      ],
+      "depth": "deep_methods_and_experiments",
+      "read": [
+        "IV MPC dynamics/constraints、flight injection、RTI delay、partial/open-loop state",
+        "V动作/观测/reward/SAC；VI CPU parallel architecture",
+        "VII训练算力、4Hz/20Hz Centauro实例、sim2sim/实机与nonflat扩展",
+        "VIII limitations/future work"
+      ],
+      "local_pdf": null,
+      "code": {
+        "official_url": "https://github.com/AndrePatri/AugMPC",
+        "status": "官方仓库已确认，代码尚未审阅；不能称完成源码复现"
+      },
+      "limits": [
+        "无joint torque limit约束，强持续扰动评价列future work",
+        "flat任务固定swing duration/clearance；nonflat扩展开放参数",
+        "Centauro真机用open-loop MPC训练策略且使用MPC估计位置；不等于任意观测偏差鲁棒",
+        "论文有real hardware；不应按聚合摘要错误写成仅仿真"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false
+    },
+    {
+      "id": "G11",
+      "title": "Learning optimal gaits and styles for terrain-adaptive quadruped locomotion",
+      "authors": "Guillaume Bellegarda; Auke Ijspeert",
+      "venue": "arXiv preprint",
+      "publication": "arXiv2611.25958",
+      "publication_date": "2026-11-19",
+      "version": "实际下载/阅读v2，2026-11-21",
+      "doi": null,
+      "urls": [
+        "https://arxiv.org/abs/2611.25958",
+        "https://arxiv.org/pdf/2611.25958v2",
+        "https://guillaume10.github.io/terrain-gaits"
+      ],
+      "depth": "deep_methods_and_experiments",
+      "read": [
+        "Results：gait/style/metric评价、硬件与泛化",
+        "Discussion：coupling/实际contact差异及局限",
+        "Methods：Stage1 11维动作、Stage2 selectors、depth-heightmap encoder、training/evaluation",
+        "supplementary对no-coupling基线/metrics解释、网络与评价定义；未逐张重绘全部figure"
+      ],
+      "local_pdf": "terrain_gaits_2026.pdf",
+      "code": {
+        "status": "官方项目页确认；本轮未取得并审阅官方代码"
+      },
+      "limits": [
+        "每指标单独训练Stage2，不是一个通用preference-conditioned selector",
+        "strong coupling约束phase而非实际接触，广沟下存在计划/真实时序差异",
+        "仅矢状面动作导致mixed-block偏心失败；learnable coupling列futurework",
+        "除success外指标只算成功episode，须识别幸存者评价口径",
+        "预印本最新结果，不能称已同行评议接受"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false,
+      "local_pdf_sha256": "be7e37e4aa46bb239c715bde8090b21d3492f453ddd3b9bc7a7c7a6b7f893c6d"
+    },
+    {
+      "id": "G12",
+      "title": "Discovery of skill-switching criteria for learning agile quadruped locomotion",
+      "authors": "Wanming Yu et al.",
+      "venue": "Frontiers in Robotics and AI",
+      "publication": "13:1697159 (2026)",
+      "publication_date": "2026-02-18",
+      "version": "正式开放HTML",
+      "doi": "10.3389/frobt.2026.1697159",
+      "urls": [
+        "https://www.frontiersin.org/journals/robotics-and-ai/articles/10.3389/frobt.2026.1697159/full",
+        "https://ora.ox.ac.uk/objects/uuid%3A37eaf151-9489-4816-97c7-3cdb566fa892"
+      ],
+      "depth": "targeted_methods_and_experiments",
+      "read": [
+        "2.1五个技能/SAC/乘法Gaussian组合/25Hz+1kHz",
+        "2.2 CMA-ES外循环switch criteria",
+        "3.5 transition与velocity/CMA/primitive composition消融",
+        "4 Discussion sim2real gallop与goal feedback局限"
+      ],
+      "local_pdf": null,
+      "code": {
+        "status": "本轮未确认并审阅官方代码"
+      },
+      "limits": [
+        "接触模板写入技能reward；不是完全无gait先验",
+        "fall-recovery为可组合技能，不是恢复域保证",
+        "真实gallop长期成功率不保证；joystick相对goal不能完全复现仿真world-goal轨迹",
+        "此刊不冒充Nature/Science或已核验2025CAS档次"
+      ],
+      "accessed_on": "2026-11-26",
+      "cas_2025_partition": "not independently verified",
+      "reproduced": false,
+      "video_frame_audit": false
+    }
+  ]
+}

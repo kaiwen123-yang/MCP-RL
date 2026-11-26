@@ -1,0 +1,389 @@
+{
+  "scope": "Learning/PPO module frontier expansion; no experiments executed",
+  "access_date": "2026-11-26",
+  "source_count": 12,
+  "sources": [
+    {
+      "id": "L01",
+      "title": "Mastering diverse control tasks through world models",
+      "short": "DreamerV3",
+      "venue": "Nature 640, 647–653",
+      "status": "published journal article",
+      "publication_date": "2025-04-02",
+      "version": "Nature version of record",
+      "urls": [
+        "https://www.nature.com/articles/s41586-025-08744-2",
+        "https://www.nature.com/articles/s41586-025-08744-2.pdf"
+      ],
+      "read_scope": [
+        "Learning algorithm: world model, critic, actor",
+        "Robust predictions",
+        "Benchmarks, ablations, discussion",
+        "Methods baseline selection"
+      ],
+      "depth": "full-method and selected experiment read",
+      "code_repo": "https://github.com/danijar/dreamerv3",
+      "code_pin": null,
+      "code_audit": "not inspected this round",
+      "hardware_scope": "No physical robot demonstration in the reviewed Nature article",
+      "critical_boundary": "Both continuous/discrete actor use REINFORCE; do not conflate with pathwise differentiation through WM.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/dreamerv3.pdf",
+        "sha256": "b34e999951cb5b8b84594f3936b1c395e9d51e563e0932273e9197cee66e37ef",
+        "bytes": 23580846
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L02",
+      "title": "Adaptive-Gradient Policy Optimization: Enhancing Policy Learning in Non-Smooth Differentiable Simulations",
+      "short": "AGPO",
+      "venue": "ICML 2024, PMLR 235:14844–14858",
+      "status": "peer-reviewed conference paper",
+      "publication_date": "2024-07",
+      "version": "PMLR proceedings PDF",
+      "urls": [
+        "https://proceedings.mlr.press/v235/gao24m.html",
+        "https://raw.githubusercontent.com/mlresearch/v235/main/assets/gao24m/gao24m.pdf"
+      ],
+      "read_scope": [
+        "Sections 3.1–3.3 gradient estimators",
+        "Section 4 Algorithm 1 and assumptions",
+        "Section 4.2 implementation",
+        "Section 5 setup, results and ablations"
+      ],
+      "depth": "deep method/experiment read",
+      "code_repo": null,
+      "code_pin": null,
+      "code_audit": "official implementation not located/audited in this pass",
+      "hardware_scope": "Brax/DFlex-style simulated continuous-control tasks",
+      "critical_boundary": "Mixes SG with QG via inverse variance at action nodes; QG is not PPO likelihood-ratio gradient, and low variance does not establish low bias.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/agpo.pdf",
+        "sha256": "fde252c0ee01ded93c3fd33846d96750078d5f8c294336f5ea4545312f62cbb6",
+        "bytes": 2078886
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L03",
+      "title": "Adaptive Horizon Actor-Critic for Policy Learning in Contact-Rich Differentiable Simulation",
+      "short": "AHAC",
+      "venue": "ICML 2024, PMLR 235:15418–15437",
+      "status": "peer-reviewed conference paper",
+      "publication_date": "2024-07",
+      "version": "PMLR proceedings PDF",
+      "urls": [
+        "https://proceedings.mlr.press/v235/georgiev24a.html",
+        "https://raw.githubusercontent.com/mlresearch/v235/main/assets/georgiev24a/georgiev24a.pdf",
+        "https://adaptive-horizon-actor-critic.github.io/"
+      ],
+      "read_scope": [
+        "Section 3 contact gradients",
+        "Section 4.1 AHAC-1",
+        "Section 4.2 synchronous vectorized AHAC",
+        "Section 5 setup/ablation and theoretical assumptions"
+      ],
+      "depth": "deep method/experiment read",
+      "code_repo": "https://github.com/Qianzhong-Chen/DiffRL_AHAC",
+      "code_pin": null,
+      "code_audit": "project-linked implementation not inspected",
+      "hardware_scope": "Five locomotion simulation tasks; ten seeds",
+      "critical_boundary": "AHAC-1 per-contact asynchronous truncation is not identical to final synchronized parallel algorithm; horizon relates to gait period.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/ahac.pdf",
+        "sha256": "8f5624c8a3ec43e05d1c01159c82a6d72563064d671035036032b0a4ed92dae7",
+        "bytes": 7975149
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L04",
+      "title": "Stabilizing Reinforcement Learning in Differentiable Multiphysics Simulation",
+      "short": "SAPO/Rewarped",
+      "venue": "ICLR 2025 Spotlight",
+      "status": "peer-reviewed conference paper",
+      "publication_date": "2025",
+      "version": "arXiv:2412.12089v2, 2025-02-27",
+      "urls": [
+        "https://arxiv.org/html/2412.12089v2",
+        "https://arxiv.org/pdf/2412.12089v2",
+        "https://rewarped.github.io/"
+      ],
+      "read_scope": [
+        "Sections 3–4 maximum-entropy objective and five design choices",
+        "Section 5 parallel differentiable simulator",
+        "Sections 6.1–6.2 task results/ablations",
+        "Appendix headings and algorithm pointers"
+      ],
+      "depth": "deep method/experiment read",
+      "code_repo": "https://github.com/rewarped/rewarped",
+      "code_pin": "8500e645e2404a44bb6e83d112b1ec2b400ab792",
+      "code_audit": "HEAD pin via git ls-remote only; implementation not audited",
+      "hardware_scope": "Rigid/deformable simulation, six tasks, ten seeds; no hardware",
+      "critical_boundary": "Analytic entropy gradients and soft critic improve stability, not a certificate for incorrect model Jacobians.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/sapo.pdf",
+        "sha256": "8d5a5e9f801f31b5aa5477b994b5013a4212af836ac37bc5d86496a49f6c5d22",
+        "bytes": 14566526
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L05",
+      "title": "Differentiable Information Enhanced Model-Based Reinforcement Learning",
+      "short": "MB-MIX",
+      "venue": "AAAI 2025",
+      "status": "peer-reviewed conference paper; publisher direct page blocked in final open, search metadata retrieved",
+      "publication_date": "2025-04-11",
+      "version": "arXiv:2503.01178v1, 2025-03-03",
+      "urls": [
+        "https://arxiv.org/html/2503.01178v1",
+        "https://arxiv.org/pdf/2503.01178v1",
+        "https://ojs.aaai.org/index.php/AAAI/article/view/34419"
+      ],
+      "read_scope": [
+        "Section 3.2 trajectory length mixture",
+        "Section 3.3 Sobolev model loss",
+        "Section 3.4 theorem scope",
+        "Sections 4.1–4.5 experiments",
+        "Section 6 limitations"
+      ],
+      "depth": "deep method/experiment read",
+      "code_repo": null,
+      "code_pin": null,
+      "code_audit": "not located/audited in this pass",
+      "hardware_scope": "DiffRL/Brax/DaXBench; Bruce imported into DiffRL; no verified physical Bruce deployment in read results",
+      "critical_boundary": "Variance theorem limited to differentiable-environment setting, not learned-model setting; derivative supervision is prior art.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/mbmix.pdf",
+        "sha256": "38924059211d65676c5be8cfb2719d1495978e9112fa12beb006539b1485fb8e",
+        "bytes": 7462036
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L06",
+      "title": "A Multi-Fidelity Control Variate Approach for Policy Gradient Estimation",
+      "short": "MFPG",
+      "venue": "Transactions on Machine Learning Research",
+      "status": "published 02/2026; J2C NeurIPS 2026 per author project",
+      "publication_date": "2026-02",
+      "version": "arXiv:2503.05696v4, 2026-02-12",
+      "urls": [
+        "https://arxiv.org/pdf/2503.05696v4",
+        "https://openreview.net/forum?id=zAo0L7Dcqt",
+        "https://xinjie-liu.github.io/mfpg-rl/"
+      ],
+      "read_scope": [
+        "Section 4 estimator, Lemma 1, coupling",
+        "Section 5 assumptions and theorem",
+        "Experiment setup/limits targeted"
+      ],
+      "depth": "method deep read; experiment targeted read",
+      "code_repo": "https://github.com/CLeARoboticsLab/MultiFidelityPolicyGradients",
+      "code_pin": "44eac5ce154e1739b9cfc92df64dccfab56460c9",
+      "code_audit": "HEAD pin only; not audited and not a substitute for MFPG-PPO implementation",
+      "hardware_scope": "Simulated robotics benchmark experiments",
+      "critical_boundary": "Ideal zero-mean control variate requires matching LF expectation and coefficient assumptions; REINFORCE theorem cannot be transferred wholesale to PPO.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/mfpg.pdf",
+        "sha256": "72f8f9d8d9a5f77a3fe8b0f288c06e0c17fa37f01ab99793587ff05131b6adf2",
+        "bytes": 3628965
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L07",
+      "title": "Multi-Fidelity Policy Gradients Stabilize Data-Scarce Reinforcement Learning",
+      "short": "MFPG-PPO",
+      "venue": "arXiv preprint",
+      "status": "preprint; no accepted venue asserted",
+      "publication_date": "2026-10-01",
+      "version": "arXiv:2610.02505v1",
+      "urls": [
+        "https://arxiv.org/abs/2610.02505",
+        "https://arxiv.org/pdf/2610.02505v1",
+        "https://xinjie-liu.github.io/mfpg-ppo/"
+      ],
+      "read_scope": [
+        "Sections 3–4.2 exact clipped objectives/three critics/coupling/coefficient monitoring",
+        "Section 5 setup and hardware results",
+        "Section 6 limitations",
+        "Appendix A.2 conditional versus free-reset bias/variance"
+      ],
+      "depth": "deep method/experiment/critical appendix read",
+      "code_repo": null,
+      "code_pin": null,
+      "code_audit": "official project says Code coming soon on access date",
+      "hardware_scope": "H1 and ANYmal-D locomotion in simulation; physical Franka cube picking, three seeds, 80 iterations x four episodes each, LF warm start",
+      "critical_boundary": "Practical coupled/uncoupled LF start-distribution mismatch introduces bias; explicit App A.2. Zero-mean correction is not automatic.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/mfpgppo.pdf",
+        "sha256": "c97e661a59fb82d6489aa605551b18c5e9374cfca7a262d2d3c7206897d5dd1d",
+        "bytes": 2989678
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L08",
+      "title": "Actor-Critic Model Predictive Control: Differentiable Optimization meets Reinforcement Learning for Agile Flight",
+      "short": "AC-MPC",
+      "venue": "IEEE Transactions on Robotics, Vol.42, pp.673–692; DOI 10.1109/TRO.2025.3644945",
+      "status": "accepted author PDF; IEEE online publication metadata",
+      "publication_date": "2025-12-16",
+      "version": "author accepted TRO25 PDF",
+      "urls": [
+        "https://rpg.ifi.uzh.ch/docs/TRO25_ACMPC_Romero.pdf",
+        "https://ieeexplore.ieee.org/document/11301631/"
+      ],
+      "read_scope": [
+        "Sections III.E–III.H actor/PPO/Gaussian/MPVE",
+        "Sections IV–V experimental setup and OOD/exploration discussion",
+        "Official policy implementation complete"
+      ],
+      "depth": "deep method/selected experiment plus code read",
+      "code_repo": "https://github.com/uzh-rpg/acmpc_public",
+      "code_pin": "c59e53aec11c1fffa8b69d99b0ee7879ba7ccb28",
+      "code_audit": "training_modules/mlp_mpc_policy.py read in full; submodules not audited",
+      "hardware_scope": "Real agile quadrotor racing; no legged contact benchmark",
+      "critical_boundary": "Gaussian mean is MPC output, so solver parameters are inside likelihood. Current code architecture differs in details from paper text; pin is current HEAD, not asserted publication snapshot.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/acmpc.pdf",
+        "sha256": "55e2ef720ddcae7ae0e00c358d5ddf907cb3f0408173bcc9045322a1e7af4332",
+        "bytes": 5552834
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L09",
+      "title": "Efficient Learning of Differentiable MPC Policies on the GPU via Smoothed ADMM and First-Order Reinforcement Learning",
+      "short": "SmoothedTurboMPC",
+      "venue": "arXiv preprint",
+      "status": "preprint; no accepted venue asserted",
+      "publication_date": "2026-10-13 per PDF; unresolved mismatch with 2611 arXiv identifier month",
+      "version": "arXiv:2611.09937v1",
+      "urls": [
+        "https://arxiv.org/pdf/2611.09937v1",
+        "https://arxiv.org/abs/2611.09937",
+        "https://github.com/ToyotaResearchInstitute/turbompc"
+      ],
+      "read_scope": [
+        "Sections II–III KKT/IFT, log barrier, smoothed ADMM",
+        "Section IV actor Gaussian and retained-solve SHAC",
+        "Section V training cost comparisons and hardware",
+        "Convergence/exact Hessian conditions"
+      ],
+      "depth": "deep method/experiment read",
+      "code_repo": "https://github.com/ToyotaResearchInstitute/turbompc",
+      "code_pin": "e968d12bcea7c1d79797e3edfc52fee31cadab4e",
+      "code_audit": "HEAD pin only; solver implementation not audited in this pass",
+      "hardware_scope": "Full-scale Lexus race car; four documented learned-controller trials across entry/exit puddle cases",
+      "critical_boundary": "Exact sensitivity of smoothed converged NLP, not arbitrary early-stopped hard MPC. Foot contact explicitly left for future work. 46x claim compares its setup/horizons, not universal PPO speed.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/smoothedmpc.pdf",
+        "sha256": "0643fc33aa8e7bc553476cff83c43650fea5e85fe0c0c28b9ce9e559c347461c",
+        "bytes": 1449311
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L10",
+      "title": "Open-DiffLoco: Open-Source Differentiable Learning for Deployable Blind Quadruped Locomotion",
+      "short": "Open-DiffLoco/JAVE",
+      "venue": "arXiv preprint",
+      "status": "preprint; project Nature Conference presentation is not Nature journal publication",
+      "publication_date": "2026-08-03",
+      "version": "arXiv:2608.02069v1",
+      "urls": [
+        "https://arxiv.org/pdf/2608.02069v1",
+        "https://diffloco.martin-opat.com/",
+        "https://github.com/MartinOpat/open-diffloco"
+      ],
+      "read_scope": [
+        "Sections II.D–V, methods/comparison caveats/hardware/limits",
+        "Appendices I–II bias and derivative error",
+        "Official implementation targeted LDM/gradient-Bellman/actor update sections"
+      ],
+      "depth": "deep method/experiment/appendix plus targeted code read",
+      "code_repo": "https://github.com/MartinOpat/open-diffloco",
+      "code_pin": "35256b6c8e243d658d6379ff8d17cde8e01d8211",
+      "code_audit": "src/algorithms/jave/algorithm.py targeted: LDM squared residual loss, compute_gradient_bellman_targets, gradient_bellman_loss, train_step; actions_sg=stop_gradient explicitly verified; full 1250-line file not claimed read",
+      "hardware_scope": "Unitree Go2 with Jetson AGX Orin; 50Hz policy/250Hz physics in evaluation",
+      "critical_boundary": "Frozen-action target omits actor-feedback; current code confirms. L2 model accuracy alone does not control model Jacobians. PPO comparison rewards/references differ; final gain mainly early training stability.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/jave.pdf",
+        "sha256": "8009bfa290f2939857f1cef974640efbe64c189c628d1ae4ffb74cfc08ba2e56",
+        "bytes": 4230312
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L11",
+      "title": "FastTD3: Simple, Fast, and Capable Reinforcement Learning for Humanoid Control",
+      "short": "FastTD3",
+      "venue": "arXiv technical report",
+      "status": "technical report; no later journal venue asserted",
+      "publication_date": "2025-05-28",
+      "version": "arXiv:2505.22642v3, 2025-06-01",
+      "urls": [
+        "https://arxiv.org/pdf/2505.22642v3",
+        "https://younggyo.me/fast_td3/"
+      ],
+      "read_scope": [
+        "Sections 2.1–2.2 design/implementation",
+        "Section 3 benchmark and hardware discussion",
+        "Baseline and reward limitation notes"
+      ],
+      "depth": "method and selected experiment read",
+      "code_repo": "https://github.com/younggyoseo/FastTD3",
+      "code_pin": "229ed59bbf43ea2f7a2d5d90d1076314839944d7",
+      "code_audit": "HEAD pin only; implementation not audited",
+      "hardware_scope": "Booster T1 simulation-to-real transfer",
+      "critical_boundary": "Equal wall time, environment samples and resource conditions matter; huge replay minibatches or UTD are not universal prescriptions.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/fasttd3.pdf",
+        "sha256": "19a40811f254bdc930d34407ca5151ce5c07bf3f62d253cb098ce4003a7c36fe",
+        "bytes": 4292309
+      },
+      "accessed": "2026-11-26"
+    },
+    {
+      "id": "L12",
+      "title": "TD-MPC2: Scalable, Robust World Models for Continuous Control",
+      "short": "TD-MPC2",
+      "venue": "ICLR 2024",
+      "status": "peer-reviewed conference paper",
+      "publication_date": "2024",
+      "version": "ICLR proceedings; arXiv:2310.16828v2 2024-03-21",
+      "urls": [
+        "https://proceedings.iclr.cc/paper_files/paper/2024/file/cf73d57b6dcda32b293df7c2d5341f49-Paper-Conference.pdf",
+        "https://arxiv.org/html/2310.16828v2",
+        "https://www.tdmpc2.com/"
+      ],
+      "read_scope": [
+        "Sections 3.1–3.3 objectives, SimNorm and MPPI",
+        "Sections 4–5 experiment and limits",
+        "Appendix A improvement summary"
+      ],
+      "depth": "method and selected experiment read",
+      "code_repo": "https://github.com/nicklashansen/tdmpc2",
+      "code_pin": null,
+      "code_audit": "not inspected this round",
+      "hardware_scope": "104 simulated continuous-control benchmarks; no hardware claim from this paper",
+      "critical_boundary": "Deployment action planning uses derivative-free MPPI; policy prior uses learned Q gradient. Not a proof of accurate physical dynamics Jacobians or real-time WBC.",
+      "downloaded_pdf": {
+        "path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/learning_papers/tdmpc2.pdf",
+        "sha256": "bd610738b6611b021060d3aea227cc833339376a70835dcbb317dd626b9c65ba",
+        "bytes": 7609127
+      },
+      "accessed": "2026-11-26"
+    }
+  ],
+  "notes": [
+    "No Chinese Academy of Sciences 2025 journal rank independently verified.",
+    "GitHub current HEAD pins are evidence snapshots, not publication release commitments.",
+    "Raw downloaded papers and audit clones are scratch working material; do not push them as project deliverables.",
+    "NeuralActuator causal-observer/generative split integrated from parent agent verified reading, not counted in these 12 newly reviewed papers."
+  ]
+}

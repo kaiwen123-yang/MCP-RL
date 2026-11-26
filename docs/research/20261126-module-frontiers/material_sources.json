@@ -1,0 +1,400 @@
+{
+  "review_date": "2026-11-26",
+  "scope": "PANN material family adaptation, uncertainty and independent experimental design",
+  "new_material_papers_count": 10,
+  "deep_fulltext_methods_experiments_count": 6,
+  "partial_fulltext_count": 1,
+  "official_abstract_or_preview_count": 3,
+  "claims": "Research proposals, not implemented innovations or established results. No training run. Active repo unchanged.",
+  "cross_module_prior_art_not_counted": [
+    {
+      "title": "Planning to Learn: Real-Time Robust Adaptive Control on the GPU with Guaranteed Future Learning",
+      "url": "https://arxiv.org/abs/2610.20925",
+      "provenance": "parent agent inspected methods IV-A to IV-C; this material subtask did not repeat fulltext read",
+      "implication": "Sensitivity SVD observable-subspace learning and planning for future information are prior art; proposed differences must concern history-dependent constitutive structure, actuator/material confounding and update energy."
+    },
+    {
+      "title": "NeuralActuator: Neural Actuation Modeling for Robot Dynamics and External Force Perception",
+      "url": "https://arxiv.org/abs/2607.11734",
+      "provenance": "parent agent independently auditing official paper/code",
+      "implication": "Do not double count external interaction by adding contact force to a torque surrogate already absorbing it; material identification needs separately attributable actuation/contact effects."
+    }
+  ],
+  "sources": [
+    {
+      "id": "MAT01",
+      "title": "A multi-fidelity Bayesian neural operator for mechanics of spinodal metamaterial",
+      "authors": [
+        "Pu You",
+        "Hongshun Chen",
+        "Bahador Bahmani",
+        "Horacio D. Espinosa"
+      ],
+      "venue": "npj Computational Materials",
+      "volume": "12",
+      "article": "247",
+      "published": "2026-05-13",
+      "doi": "10.1038/s41524-026-02112-y",
+      "official_url": "https://www.nature.com/articles/s41524-026-02112-y",
+      "fulltext_url": "https://arxiv.org/html/2602.13257v1",
+      "read_version": "arXiv:2602.13257v1 (2026-02-03); journal metadata checked",
+      "read_depth": "fulltext_methods_and_experiments",
+      "read_sections": [
+        "2.2 low-fidelity FE",
+        "2.3 high-fidelity experiments",
+        "2.4 active learning and ablations",
+        "2.5 multi-fidelity comparison",
+        "3.1-3.6 methods",
+        "Algorithm 1"
+      ],
+      "local_pdf": "mfbno2026.pdf",
+      "code_sha": null,
+      "code_audit": "not inspected",
+      "facts": "Bayesian DeepONet low-fidelity predictor plus high-fidelity residual. Hybrid acquisition combines uncertainty and geometric diversity; uncertainty-only acquisition concentrated on lamellar structures. Predicts loading/unloading stress curves; no hard thermodynamic constitutive guarantee established in this read.",
+      "limits": "Microstructure response prediction, not inverse online material estimation; 50 MC forwards in reported uncertainty evaluation are not a demonstrated robot control latency.",
+      "web_refs": [
+        "turn776436488search4",
+        "turn238693027view0"
+      ],
+      "cas_2025_partition_verified": false,
+      "local_pdf_path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/papers/mfbno2026.pdf",
+      "local_pdf_bytes": 11591371,
+      "local_pdf_sha256": "55a13fb85c60f3762ad525c0bd9c028ba66f3b3607cd9851418767328ff36a03"
+    },
+    {
+      "id": "MAT02",
+      "title": "Material-embedding Physics-Augmented Neural Networks: A first application to constitutive law parameterization",
+      "authors": [
+        "Clément Jailin",
+        "Emmanuel Baranger"
+      ],
+      "venue": "Computer Methods in Applied Mechanics and Engineering",
+      "volume": "445",
+      "article": "118188",
+      "published": "2025-10-01 (issue date)",
+      "doi": "10.1016/j.cma.2025.118188",
+      "official_url": "https://www.sciencedirect.com/science/article/pii/S0045782525004608",
+      "author_record_url": "https://lmps.ens-paris-saclay.fr/fr/publications/material-embedding-physics-augmented-neural-networks-first-application-constitutive",
+      "fulltext_url": "https://hal.science/hal-05148853/document",
+      "read_depth": "official_abstract_only",
+      "read_sections": [
+        "publisher abstract",
+        "author laboratory publication record"
+      ],
+      "local_pdf": null,
+      "code_sha": null,
+      "code_audit": "not obtained",
+      "access_limit": "Publisher fulltext/HAL document access failed. HAL metadata was read but is not fulltext. Laboratory date differs from publisher issue year; publisher metadata retained.",
+      "facts": "Trainable low-dimensional material embeddings are concatenated with inputs at each dense layer. Shared weights and embedding-only adaptation provide a direct precedent for material-conditioned PANN. Synthetic isotropic hyperelastic datasets; real experimental validation presented as future work in abstract.",
+      "limits": "No full-method comparison, hyperparameters, or released implementation could be independently assessed.",
+      "web_refs": [
+        "turn489276704search1",
+        "turn466828579view0"
+      ],
+      "cas_2025_partition_verified": false
+    },
+    {
+      "id": "MAT03",
+      "title": "Neural operators solve inverse problems for constitutive model discovery",
+      "authors": [
+        "Moritz Flaschel",
+        "Burigede Liu",
+        "Ellen Kuhl"
+      ],
+      "venue": "Computer Methods in Applied Mechanics and Engineering",
+      "volume": "463 Part B",
+      "article": "119435",
+      "published": "online 2026; issue 2027-01-01",
+      "doi": "10.1016/j.cma.2026.119435",
+      "official_url": "https://www.sciencedirect.com/science/article/pii/S0045782526007085",
+      "fulltext_url": "https://arxiv.org/pdf/2607.15049",
+      "read_version": "arXiv:2607.15049v1 (2026-07-16)",
+      "read_depth": "fulltext_methods_and_experiments_plus_selected_code",
+      "read_sections": [
+        "2.1-2.5 operator spaces, architectures, training",
+        "3.1-3.4 tests, noise and missing data",
+        "4 identifiability discussion"
+      ],
+      "local_pdf": "pano2026.pdf",
+      "code_url": "https://github.com/Inverse-Neural-Operators/hyperelasticity",
+      "code_sha": "cf1374f7872da1fa57c5e90262d548a98648ca62",
+      "code_files_read": [
+        "neural_operators/nn_architectures.py",
+        "main_train_gpu.py"
+      ],
+      "facts": "PANO/CANO infer a hyperelastic energy function from full-field displacement and reaction-force data. Laplacian preprocessing plus positive branch coefficients and constrained trunk features. CANO uses six polynomial constitutive terms. 3000 synthetic simulations, 80/10/10 split.",
+      "limits": "Isotropic incompressible hyperelastic material, standardized geometry and protocol. Geometry transfer preserves specified shape ratios. Finite observations cannot uniquely identify an arbitrary energy function outside observed deformation ranges.",
+      "web_refs": [
+        "turn988335810search1"
+      ],
+      "cas_2025_partition_verified": false,
+      "local_pdf_path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/papers/pano2026.pdf",
+      "local_pdf_bytes": 10768676,
+      "local_pdf_sha256": "6f9954c69628b2f8cb63487456cafb45300d17719b8b14244f2d583e09294d3b"
+    },
+    {
+      "id": "MAT04",
+      "title": "Discovering uncertainty: Bayesian constitutive artificial neural networks",
+      "authors": [
+        "Kevin Linka",
+        "Gerhard A. Holzapfel",
+        "Ellen Kuhl"
+      ],
+      "venue": "Computer Methods in Applied Mechanics and Engineering",
+      "volume": "433 Part A",
+      "article": "117517",
+      "published": "online 2024-11-07; issue 2025-01-01",
+      "doi": "10.1016/j.cma.2024.117517",
+      "official_url": "https://www.sciencedirect.com/science/article/pii/S0045782524007710",
+      "fulltext_url": "https://biomechanics.stanford.edu/paper/CMAME25.pdf",
+      "read_version": "published paper",
+      "read_depth": "fulltext_methods_and_experiments",
+      "read_sections": [
+        "2 variational inference and regularization",
+        "3 synthetic isotropic complete/incomplete tests",
+        "4 experimental application scope",
+        "Figures 3-6"
+      ],
+      "local_pdf": "bayes_cann2025.pdf",
+      "code_url": "https://github.com/LivingMatterLab/CANN",
+      "code_sha": "a639ea97acfa1064005381645c1a2fda74bcbfcd",
+      "code_audit": "BCANN directory confirmed; BCANN full source not read. Same repository GCANN partial source read under MAT05.",
+      "facts": "Probabilistic outer constitutive weights with deterministic internal features; variational NLL, KL and sparsity terms. Synthetic noisy/incomplete data and healthy/diseased arterial tests.",
+      "limits": "Distribution output is not automatically calibrated under robot deployment shift; exact recovery of constitutive coefficients is not implied by a good stress fit.",
+      "web_refs": [
+        "turn776436488view1",
+        "turn116832537search40"
+      ],
+      "cas_2025_partition_verified": false,
+      "local_pdf_path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/papers/bayes_cann2025.pdf",
+      "local_pdf_bytes": 2292029,
+      "local_pdf_sha256": "b1605abee89fce250fffd6f5a9ab1e2794e52f7b5958ae72ca63f057eac164dc"
+    },
+    {
+      "id": "MAT05",
+      "title": "Discovering uncertainty: Gaussian constitutive neural networks with correlated weights",
+      "authors": [
+        "Jeremy A. McCulloch",
+        "Ellen Kuhl"
+      ],
+      "venue": "Computational Mechanics",
+      "volume": "76",
+      "pages": "1527-1539",
+      "published": "2025-07-15 (online)",
+      "doi": "10.1007/s00466-025-02660-y",
+      "official_url": "https://doi.org/10.1007/s00466-025-02660-y",
+      "fulltext_url": "https://biomechanics.stanford.edu/paper/CMECH25a.pdf",
+      "preprint_url": "https://arxiv.org/html/2503.12679v1",
+      "read_version": "arxiv v1 methods/results, then published methods and discussion checked",
+      "read_depth": "fulltext_methods_and_experiments_plus_selected_code",
+      "read_sections": [
+        "2.1 model and analytic moments",
+        "2.2 likelihood",
+        "2.3 probability-limited polyconvexity",
+        "2.4 sparsity",
+        "2.5 data split",
+        "3.1-3.3 comparison",
+        "4 distribution limitations"
+      ],
+      "local_pdf": "gaussian_cann2025_vor.pdf",
+      "code_url": "https://github.com/LivingMatterLab/CANN",
+      "code_sha": "a639ea97acfa1064005381645c1a2fda74bcbfcd",
+      "code_files_read": [
+        "GCANN/src/gcann.py lines 1-300"
+      ],
+      "facts": "Correlated Gaussian outer weights yield analytic stress means/variances with sparse constitutive features. Biaxial experiments are held out by curve rather than randomly scattered points.",
+      "limits": "Gaussian weights with nonzero variance cannot be nonnegative almost surely; Section 2.3 uses a probability bound. Positive-support alternatives lose the general exact Gaussian moment simplification.",
+      "web_refs": [
+        "turn238693027view2",
+        "turn646052862view0",
+        "turn794724858search8"
+      ],
+      "cas_2025_partition_verified": false,
+      "local_pdf_path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/papers/gaussian_cann2025_vor.pdf",
+      "local_pdf_bytes": 3424068,
+      "local_pdf_sha256": "df2a19481e1819e80b410593256121f378e551916ad298e70b544f9147fd1161"
+    },
+    {
+      "id": "MAT06",
+      "title": "Adaptive Material Fingerprinting for the fast discovery of polyconvex feature combinations in isotropic and anisotropic hyperelasticity",
+      "authors": [
+        "Moritz Flaschel",
+        "Hagen Holthusen",
+        "Denisa Martonová",
+        "Ellen Kuhl"
+      ],
+      "venue": "International Journal of Engineering Science",
+      "volume": "227",
+      "article": "104594",
+      "published": "2026; arXiv v1 2026-04-07, v2 2026-08-03",
+      "doi": "10.1016/j.ijengsci.2026.104594",
+      "official_url": "https://www.sciencedirect.com/science/article/pii/S0020722526001321",
+      "fulltext_url": "https://arxiv.org/pdf/2604.05698",
+      "read_version": "arxiv2604.05698v2",
+      "read_depth": "fulltext_methods_and_experiments",
+      "read_sections": [
+        "2.1-2.4 feature database, masking, Algorithm 1",
+        "3.1 rubber",
+        "3.2 anisotropic skin",
+        "polyconvex feature admissibility"
+      ],
+      "local_pdf": "fingerprint2026.pdf",
+      "code_sha": null,
+      "code_audit": "not inspected",
+      "facts": "Greedy residual correlation selects and scales positive energy features from a precomputed response database. Experimental rubber and anisotropic skin data, optional polyconvex feature filtering.",
+      "limits": "Adaptive means adaptive model combination, not time-varying physical material parameters; standardized measurement protocols and hyperelastic assumptions remain.",
+      "web_refs": [
+        "turn776436488search1",
+        "turn776436488search2",
+        "turn238693027view1"
+      ],
+      "cas_2025_partition_verified": false,
+      "local_pdf_path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/papers/fingerprint2026.pdf",
+      "local_pdf_bytes": 3857755,
+      "local_pdf_sha256": "ef8c57c0a55078d3ba82c782d5190870f997c964f420334c1bd8aee8febc7512"
+    },
+    {
+      "id": "MAT07",
+      "title": "Towards Rapid Constitutive Model Discovery from Multi-Modal Data: Physics Augmented Finite Element Model Updating (paFEMU)",
+      "authors": [
+        "Jingye Tan",
+        "Govinda Anantha Padmanabha",
+        "Steven J. Yang",
+        "Nikolaos Bouklas"
+      ],
+      "venue": "arXiv preprint",
+      "published": "2026-04-09",
+      "doi": "10.48550/arXiv.2604.07746",
+      "official_url": "https://arxiv.org/abs/2604.07746",
+      "fulltext_url": "https://arxiv.org/pdf/2604.07746",
+      "read_version": "v1",
+      "read_depth": "fulltext_methods_and_experiments",
+      "read_sections": [
+        "3.1 constraint relaxation",
+        "3.2 normalization",
+        "3.3 hard-concrete sparsification",
+        "4-4.1 FE adjoint",
+        "6.2-6.4 sparsification, transfer and deployment"
+      ],
+      "local_pdf": "pafemu2026.pdf",
+      "code_sha": null,
+      "code_audit": "not located/inspected",
+      "facts": "Pretrain and sparsify a constitutive energy network, then update low-dimensional parameters using FE adjoint on full-field displacements and resultant force. Synthetic transfer across Gent-type, Neo-Hookean and Ogden behavior.",
+      "limits": "Relaxed monotonicity versions are not polyconvex by construction; observed Newton convergence does not prove global admissibility. Not an online foot-contact estimator.",
+      "web_refs": [
+        "turn794724858academia9"
+      ],
+      "cas_2025_partition_verified": false,
+      "local_pdf_path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/papers/pafemu2026.pdf",
+      "local_pdf_bytes": 11784131,
+      "local_pdf_sha256": "a7e0b041a5b7521fcd4b88a05e8170d5f5ae5a4b04f2cbc015539111992bc819"
+    },
+    {
+      "id": "MAT08",
+      "title": "A dual-stage constitutive modeling framework based on finite strain data-driven identification and physics-augmented neural networks",
+      "authors": [
+        "Lennart Linden",
+        "Karl A. Kalina",
+        "Jörg Brummund",
+        "Brain Riemer",
+        "Markus Kästner"
+      ],
+      "venue": "Computer Methods in Applied Mechanics and Engineering",
+      "volume": "447",
+      "article": "118289",
+      "published": "2025-12-01 (issue)",
+      "doi": "10.1016/j.cma.2025.118289",
+      "official_url": "https://www.sciencedirect.com/science/article/pii/S0045782525005614",
+      "fulltext_url": "https://arxiv.org/pdf/2504.15492",
+      "read_version": "arXiv:2504.15492v1 (2025-04-21); manuscript dated 2025-04-23",
+      "read_depth": "partial_fulltext_methods_and_experiment_setup",
+      "read_sections": [
+        "3.3 PANN representation and calibration",
+        "4.1 ground truth",
+        "4.2 benchmark setup/results excerpts",
+        "4.3 noise-generation excerpts"
+      ],
+      "local_pdf": "dualpann2025.pdf",
+      "code_sha": null,
+      "code_audit": "not inspected",
+      "facts": "Data-Driven Identification produces strain/stress material states before PANN fitting, with finite-strain formulations and pseudo-stiffness choices. Numerical and synthetic-noise studies.",
+      "limits": "Not counted among six deep reads; full derivation and complete noisy-test outcomes not audited.",
+      "web_refs": [
+        "turn988335810search4"
+      ],
+      "cas_2025_partition_verified": false,
+      "local_pdf_path": "/workspace/scratch/94b0fc3f6100/research_frontiers_v2/papers/dualpann2025.pdf",
+      "local_pdf_bytes": 5319027,
+      "local_pdf_sha256": "5bff8f342cdf5e983f633caa29af5751d4bbafbe69b0dd9d0853bdc2e24c9b52"
+    },
+    {
+      "id": "MAT09",
+      "title": "A material-embedded physically recurrent neural network framework for surrogate-assisted multiscale modeling of composite structures",
+      "authors": [
+        "Xiaolong Lyu",
+        "Kailong Xu",
+        "Dan Huang",
+        "Zeyang Yu"
+      ],
+      "venue": "Composite Structures",
+      "volume": "397",
+      "article": "120819",
+      "published": "2026-10 (issue)",
+      "doi": "10.1016/j.compstruct.2026.120819",
+      "official_url": "https://www.sciencedirect.com/science/article/abs/pii/S0263822326007841",
+      "preprint_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6550140",
+      "read_depth": "official_abstract_and_section_previews",
+      "read_sections": [
+        "abstract",
+        "theoretical basis preview",
+        "constructing FMP through MERNN preview",
+        "conclusions preview"
+      ],
+      "local_pdf": null,
+      "code_sha": null,
+      "code_audit": "not obtained",
+      "access_limit": "SSRN PDF fetch failed 403; no bypass attempted.",
+      "facts": "Material embeddings and multi-task recurrent constitutive models form path-dependent fictitious material points for PRNN/FE2 surrogate modeling.",
+      "limits": "Detailed loss/architecture, exact thermodynamic constraints and complete empirical claims not verified; do not claim our material-embedding recurrence is new.",
+      "web_refs": [
+        "turn116832537search0",
+        "turn116832537search4"
+      ],
+      "cas_2025_partition_verified": false
+    },
+    {
+      "id": "MAT10",
+      "title": "Unsupervised learning of history-dependent constitutive material laws with thermodynamically-consistent neural networks in the modified Constitutive Relation Error framework",
+      "authors": [
+        "Antoine Benady",
+        "Emmanuel Baranger",
+        "Ludovic Chamoin"
+      ],
+      "venue": "Computer Methods in Applied Mechanics and Engineering",
+      "volume": "425",
+      "article": "116967",
+      "published": "2024-05-15 (issue)",
+      "doi": "10.1016/j.cma.2024.116967",
+      "official_url": "https://www.sciencedirect.com/science/article/pii/S0045782524002238",
+      "author_record_url": "https://lmps.ens-paris-saclay.fr/en/node/3753",
+      "fulltext_url": "https://hal.science/hal-04368755/document",
+      "read_depth": "official_abstract_and_method_experiment_previews",
+      "read_sections": [
+        "abstract",
+        "method summary",
+        "section 4 scope summary",
+        "author laboratory record"
+      ],
+      "local_pdf": null,
+      "code_sha": null,
+      "code_audit": "not inspected",
+      "facts": "Dual ICNN potentials, modified Constitutive Relation Error learning from partial displacement/strain with uncertain boundary conditions; adaptive learning-rate/loss weighting for history-dependent models.",
+      "limits": "Full derivation, all algorithm settings and runtime not audited. Automatic training hyperparameters do not mean physically changing material parameters.",
+      "web_refs": [
+        "turn794724858search2",
+        "turn794724858search6"
+      ],
+      "cas_2025_partition_verified": false
+    }
+  ]
+}
