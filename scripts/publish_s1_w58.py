@@ -115,11 +115,18 @@ def publish_ready():
         if 'ended_unix_s' in state and not verified(p.stem):episode(p.stem)
     for name in TAIL_EVALUATIONS:
         publish_sealed_material(name)
-    completed=R/'outcome.json'
-    if completed.exists() and not verified('w58-final-execution'):
+    # A live material receipt is partial. Close the run only when the entire
+    # terminal episode roster, including the final video and residual parts, is verified.
+    if not (R/'outcome.json').is_file():
+        return False
+    for path in (R/'attempts').glob('*.json'):
+        if not read(path).get('ended_unix_s') or not verified(path.stem):
+            return False
+    if not verified('w58-final-execution'):
         files=[(name,WORK/name) for name in ('runtime.json','throughput.jsonl') if (WORK/name).is_file()]
         files.append(('pool-jobs',WORK/'pool/jobs'))
         release.originals('w58-final-execution',files)
+    return verified('w58-final-execution')
 
 
 def main():
@@ -128,7 +135,7 @@ def main():
     fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     while True:
         try:
-            publish_ready()
+            ready_to_close=publish_ready()
             receipts=[read(p) for p in (R/'delivery').glob('*.json')]
             assets={a['name']:a for r in receipts for a in r['assets']}
             data=dict(verified_bundles=sum(r.get('status')=='verified' for r in receipts),
@@ -137,7 +144,7 @@ def main():
             p=R/'publication.json'
             if not p.exists() or any(read(p).get(k)!=v for k,v in data.items()):
                 write(p,dict(data,last_verified_unix_s=time.time()))
-            if (R/'outcome.json').exists():
+            if ready_to_close:
                 _,remote=release.release_assets()
                 for name,a in assets.items():
                     if (remote[name]['state'],remote[name]['size'],remote[name].get('digest'))!=('uploaded',a['size'],a['digest']):
