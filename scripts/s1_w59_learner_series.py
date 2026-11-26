@@ -259,7 +259,11 @@ class Series:
                 if path and path.exists():
                     s=read_json(path);attempts[f"{seed}/{h}"]=dict(role=self.role,used=s["used_events"],mode=s["mode"])
                 else:attempts[f"{seed}/{h}"]=dict(role=self.role,used=0,mode="unrun")
-        out=dict(gate=file_digest(self.a.admission),reason=reason,matched=self.role=="matched",
+        unfinished={k:v["mode"] for k,v in attempts.items() if v["mode"] in ("incomplete","rejected")}
+        achieved=any(v["mode"]=="closed_node" for v in attempts.values())
+        if not achieved and unfinished:reason=f"All enrolled reference heads stopped before a deployable common node: {unfinished}"
+        status="blocked" if not achieved else "partial" if unfinished else "complete_earned_scope"
+        out=dict(state=status,unfinished_heads=unfinished,gate=file_digest(self.a.admission),reason=reason,matched=self.role=="matched",
             common_N_s=self.budgets,heads=attempts,nodes=self.denominators,evaluations=self.evaluations,
             nominal_matched_heldout_denominator=48,
             actual_learned_heldout_attempts=sum(bool(t.get("ran")) for r in self.evaluations.values() for t in r["heldout"].values()),
@@ -279,4 +283,7 @@ if __name__=="__main__":
     p.add_argument("--critic",type=Path,default=ROOT/"work/w59/learner/historical-task-critic.pt")
     a=p.parse_args();result=Series(a).execute()
     print(json.dumps({k:v for k,v in result.items() if k not in ("heads","nodes","evaluations")}),flush=True)
+    if result["state"]=="blocked":
+        raise SystemExit(result["reason"])
+
 

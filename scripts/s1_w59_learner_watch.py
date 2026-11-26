@@ -149,7 +149,8 @@ def main(a):
             use(rt,"s1_w59_learner_series.py","--runtime",rt,"--admission",GATE,"--first-states",STATES,"--critic",CRITIC)
             result=read(LEARN/"learning-series.json")
             if not result:raise RuntimeError("Series ended without a scientific outcome")
-            mark("terminal",reason=result["reason"],outcome=str(LEARN/"learning-series.json"));return
+            final_state=result.get("state","terminal")
+            mark(final_state,reason=result["reason"],outcome=str(LEARN/"learning-series.json"));return
     except Exception as e:
         mark("blocked",reason=repr(e),action_evidence=str(STAGE),recover_from="Retain original jobs and charged event ledgers; fix the verified cause and adopt the same identity.")
         raise

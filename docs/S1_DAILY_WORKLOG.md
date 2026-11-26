@@ -1347,6 +1347,24 @@ B3、Fixed-action 各 A/B 的 a01 四条在 0.002 s 记录第一条进度时中�
 
 首次两次 CUDA graph 采集遇到流依赖错误。技术尝试与梯度热身成本记入 w59/model/fit-technical.json；正式身份在相同离线数据、同初始化、相同 FP32 目标下使用 CUDA eager。黑盒 seed5901 在 5k/10k 的固定开发损失 0.20800/0.17031，事件 Brier 0.01782/0.01572，达到继续的双条件。早期双 trainer 自然重叠约 90 个黑盒更新/秒和 21 个结构模型更新/秒；物理池从 3 试到 4 再至 6 个槽，见 w59/dispatch。另有 6 条旧冻结 E60 的 764 个真实事件复核历史 critic，误差 MAE 0.09589，没有 W59 actor 更新。原资格及技术中断的源文件、视频和旧 critic checkpoint 已从 D57 交付 W59 Release；分支、模型节点与新资格分别累计。
 
+### 20261126/w59/tmux-natural-continuation｜上海时间 14:52 持续执行
+
+按用户指示，D57 tmux 稳定后结束本次对话。B3 与 Fixed-action 已分别通过 A、B 原 E30；B3 A/B 和 Fixed-action A 的原 E60 已通过，Fixed-action B 的同身份原 E60 仍在推进。4 次 a01 进度序列化中断保留。96 个正式开发分支中已有 68 个自然观察到 2 秒，其余在六槽统一租约内继续。多次快照中的原资格时钟和 GPU 优化步数持续增加，工作树、执行指针与实测状态见 w59/index.json、w59/action/stage.json 和 w59/learning/dispatch.json。
+
+共同 10k 的结构模型 seed5901 于 547 个历史 B 开发起点测得 0.02/0.10/0.35/0.64 秒足底法向力 MAE 为 9.70、20.64、14946.20、1.3430×10¹¹ N。2 秒仍有限的起点仅 215/547。相同节点黑盒为 7.27、11.18、20.58、19.90 N，2 秒 547/547 有限。模型长期展开失稳需按有效时距限制前瞻和路径梯度，候选辅助与真实 PPO 分支依各自记录准入。W59 新 actor 已使用的真实/想象转移、参数更新均为零。3 个结构 seed 的 10k checkpoint 均已在 D57 产生，旧数据拟合、新动作响应校准和 Release 逐包核验分开记录。所有新后台无墙钟截止，物理子步与原失败条件继续生效。
+
+### 20261126/w59/attempt/w59-b3-a-original-e60-a01｜自然终局或技术中断
+
+14:46:59。B3 / A / original / E60，控制器 S5-w59-research-f2a4d138a792e8997b，源码 d584eb827c92。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-b3-a-original-e30-a02，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-b3-b-original-e60-a01｜自然终局或技术中断
+
+14:47:28。B3 / B / original / E60，控制器 S5-w59-research-f2a4d138a792e8997b，源码 d584eb827c92。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-b3-b-original-e30-a02，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-fixed-action-a-original-e60-a01｜自然终局或技术中断
+
+14:47:40。Fixed-action / A / original / E60，控制器 S5-w59-research-fec5a508b81b5fa67b，源码 d584eb827c92。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-fixed-action-a-original-e30-a02，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记

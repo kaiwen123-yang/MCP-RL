@@ -62,7 +62,7 @@ def main():
                     primary=a;break
             if primary is None or not recipe.is_file():
                 final=SMALL/'action/stage.json'
-                if final.exists() and read(final).get('state') in ('technical_block','independent_sources_unavailable','sealed_scored') and not primary:
+                if final.exists() and read(final).get('state') in ('technical_block','blocked_independent_sources','sealed_scored') and not primary:
                     write(SMALL/'mechanism/planning-series.json',dict(status='blocked_by_action_model',source=str(final),**BG))
                     return
                 time.sleep(20)

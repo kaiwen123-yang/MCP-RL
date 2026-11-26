@@ -43,6 +43,11 @@ def tick():
         reg=json.loads(registry.read_text())
         for source in reg['states']['development']:
             publish_source(source,'development',reg['signed'])
+    sealed=STATE/'action/registry-v3.json'
+    if sealed.is_file():
+        reg=json.loads(sealed.read_text())
+        for source in reg['states']['sealed_admission']:
+            publish_source(source,'sealed_admission',reg['signed'])
     collect_locked()
 
 
