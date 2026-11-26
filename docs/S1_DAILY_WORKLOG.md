@@ -1127,6 +1127,11 @@ W58 学习 head 原子占两槽，旧扩容逻辑要求同类占用三槽才建�
 
 ## 2026-11-26｜W58 执行
 
+### 20261126/w58/verified-delivery｜GitHub 完成交付
+
+{"verified_bundles": 61, "verified_assets": 335, "verified_bytes": 121557127453, "release": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w58", "deadline": null, "wall_deadline_enabled": false, "kill_on_conversation_end": false, "final_verification_unix_s": 1795668167.3293576, "all_remote_digests_matched": true}
+
+
 ### 20261126/w58/attempt/w58-g0-m1-fixed-wait-b-validation-recovered-a01｜物理回合结束
 
 w58-g0-m1-fixed-wait-b-validation-recovered-a01，validation / recovered / B，控制器 S5-w58-1fed5698ca861ce349，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 5/12，本回合进入采样账本 0 条，CPU 用户/系统秒 10292.837144000001/60.210437。物理槽 1。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-fixed-wait-b-validation-recovered-a01.json)。
