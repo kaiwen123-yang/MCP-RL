@@ -1127,6 +1127,16 @@ W58 学习 head 原子占两槽，旧扩容逻辑要求同类占用三槽才建�
 
 ## 2026-11-26｜W58 执行
 
+### 20261126/w58/attempt/w58-g0-m1-fixed-wait-b-validation-recovered-a01｜物理回合结束
+
+w58-g0-m1-fixed-wait-b-validation-recovered-a01，validation / recovered / B，控制器 S5-w58-1fed5698ca861ce349，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 5/12，本回合进入采样账本 0 条，CPU 用户/系统秒 10292.837144000001/60.210437。物理槽 1。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-fixed-wait-b-validation-recovered-a01.json)。
+
+
+### 20261126/w58/stage/finished｜调度与实测进度
+
+stage=finished，selected_gait=G0，selected_material=M1，joint_eligible=False，running=[]，attempts=56，completed=56，joint_distinct={}。全部已具条件的物理后继已自然结束，交付进程逐件比对远端 size/digest。。运行快照 {}。
+
+
 ### 20261126/w58/attempt/w58-g0-m1-fixed-wait-a-validation-recovered-a01｜物理回合结束
 
 w58-g0-m1-fixed-wait-a-validation-recovered-a01，validation / recovered / A，控制器 S5-w58-1fed5698ca861ce349，源码 4f7e006aa34fbfca0b83f4ec614348f948a99295。本次 1440000 个物理子步，模拟 288.00000000731353 s，结论 mechanism_criteria_unmet，终止原因 stage_horizon_reached。机制曝光 6/12，本回合进入采样账本 0 条，CPU 用户/系统秒 10216.480703/54.771091。物理槽 2。[执行记录](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/attempts/w58-g0-m1-fixed-wait-a-validation-recovered-a01.json)。
