@@ -1127,6 +1127,11 @@ W58 学习 head 原子占两槽，旧扩容逻辑要求同类占用三槽才建�
 
 ## 2026-11-26｜W58 执行
 
+### 20261126/w58/independent-tail-material-verified｜最后两条原件与物理运行重叠，首批分卷已在 Release 核验
+
+原发布者 682583 已完成前面全部终局回合，在空闲时交接至 D57 发布者 406462；物理调度器 325750 和 GitHub 整合者 325756 保持。在 2026-11-26T10:27:31+08:00 对已提前上传的 2 个 ZIP 逐一按远端 asset ID 读取 GitHub 元数据，与本地不可变原件组签名及 size/SHA-256 匹配，共 1048579007 字节。两条正式 Fixed-wait 保留原 PID、构建、checkpoint 与连续物理时钟。当前仅签收已封口材料，收齐其余原件与完整视频后复核完整成员清单。其余五条已完成的恢复重访的发布已经收齐，14 条独立验证终局评分也已生成。[交接与实测](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/validation-tail-overlap-20261126.json)。
+
+
 ### 20261126/w58/independent-tail-overlap｜独立验证终局提前评分，与末两条连续物理回合重叠
 
 09:43–09:45 五条恢复重访先后自然结束，Fixed-wait B 于 09:43:16 接入空槽。两条 Fixed-wait 均运行原冻结身份，D57 资源日志显示各自约用 1.00 个 CPU 核。10:03:21–10:04:05 在辅助核用两个评分进程调用原 compare_s1_w58.metrics，完成 14 个已结束回合的终局缓存，逐回合保留 12 个目标；开发门和四个身份均已冻结。独立短重访 A 各为 10/12、B 各为 12/12；恢复重访 B2、P2-private、P2-full 的 A 均为 6/12、B 均为 5/12。full/private 在两种历史、两个 case 的移动受载足滑/米、正机械 CoT、首次返家时间差均为零，full 的历史动作判据均为 false。Fixed-wait A 自然结束后提前计分，最后 B 由主队列完成。末两条按完整关闭的连续编号材料块排列 ZIP 前缀，每批仅在下一文件已出现且分卷成员确定后才使用。正常发布者从 D57 直传并核 GitHub size/SHA-256，终局再核同一成员签名、所有剩余原件与全程视频。源文件、控制器、物理步长和当前进程保留。[评分与交接回执](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w58/dispatch/validation-tail-overlap-20261126.json)。
