@@ -168,7 +168,7 @@ def main(runtime):
         immutable(FREEZE,freeze)
         status('sealed_admission_running',registry=str(V3),freeze=str(FREEZE),sealed_budget=96)
         run('run_s1_w59_interventions.py','--registry',V3,'--runtime',runtime,'--role','sealed_admission',
-            '--freeze',FREEZE,'--workers',3)
+            '--freeze',FREEZE,'--workers',6)
         score(V3,'sealed_admission',paths,SEALED,FREEZE,kind)
         sealed=read(SEALED)
         status('sealed_scored',role='independent',sealed_score=str(SEALED),registry=str(V3),

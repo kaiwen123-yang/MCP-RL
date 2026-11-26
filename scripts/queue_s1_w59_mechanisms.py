@@ -41,7 +41,8 @@ def main():
     p.add_argument('--split',required=True,choices=('development','heldout'))
     p.add_argument('--build',required=True)
     p.add_argument('--wm-checkpoint',action='append',default=[],type=Path)
-    p.add_argument('--workers',type=int,choices=(1,2,3,4),default=2)
+    p.add_argument('--workers',type=int,choices=(1,2,3,4),default=4)
+    p.add_argument('--mode',choices=('short','recovered'),help='Admit a missing mode alongside an existing four-episode coordinator')
     p.add_argument('--freeze',type=Path)
     p.add_argument('--wm-recipe',type=Path)
     a=p.parse_args()
@@ -79,8 +80,10 @@ assert declaration(a)[1]['controller_build']==sys.argv[4]"""
     subprocess.run([sys.executable,'-c',check,a.arm,a.material,a.split,a.build,str(a.wm_recipe or ''),*map(str,a.wm_checkpoint)],cwd=a.runtime,env=env,check=True)
     with ThreadPoolExecutor(a.workers) as pool:
         pending=[pool.submit(execute,a.runtime,a.arm,a.material,a.split,c,m,a.wm_checkpoint,a.build,a.wm_recipe)
-                 for m in ('short','recovered') for c in 'AB']
+                 for m in ((a.mode,) if a.mode else ('short','recovered')) for c in 'AB']
         result=[f.result() for f in pending]
+    if a.mode:
+        return
     name=f'{a.arm.lower()}-{a.material.lower()}-{a.split}'
     write(SMALL/'mechanism'/(name+'.json'),dict(arm=a.arm,material=a.material,split=a.split,build=a.build,
           episodes=result,denominator=4,freeze=str(a.freeze) if a.freeze else None))

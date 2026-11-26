@@ -30,6 +30,7 @@ def admit(slots):
         fcntl.flock(gate, fcntl.LOCK_EX)
         config = json.loads((POOL/'capacity.json').read_text())
         health_path = ROOT/'work/w59/last-resource.json'
+        claims = None
         if health_path.is_file():
             sample = json.loads(health_path.read_text())
             quota, period = Path('/sys/fs/cgroup/cpu.max').read_text().split()
@@ -38,11 +39,18 @@ def admit(slots):
             observed_rss = max([2 * 2**30]+[v['rss_bytes'] for v in sample.get('usage',{}).values()])
             # Existing owners keep their slots. New admission uses actual cgroup room,
             # the largest observed collector RSS, and the project's three-core reserve.
-            if available < slots * observed_rss + 3 * 2**30:
+            # Two coordinators may obtain slots before the next resource sample sees
+            # either worker. Reserve those in-flight starts within this sample.
+            claims_path = POOL/'starts-at-resource-sample.json'
+            claims = json.loads(claims_path.read_text()) if claims_path.is_file() else {}
+            pending = claims.get('slots', 0) if claims.get('sample') == sample['unix_s'] else 0
+            demand = pending + slots
+            if available < demand * observed_rss + 3 * 2**30:
                 return None
-            other = sample.get('total_cpu_cores')
-            if other is not None and other + slots > int(quota)/int(period) - 3:
+            total_usage = sample.get('total_cpu_cores')
+            if total_usage is not None and total_usage + demand > int(quota)/int(period) - 3:
                 return None
+            claims = {'sample':sample['unix_s'], 'slots':demand}
         count = int(config['physical_slots'])
         if not 1 <= count <= 6:
             raise ValueError(count)
@@ -61,6 +69,8 @@ def admit(slots):
                 if any(len(g) != 3 for g in groups):
                     handles.close()
                     raise ValueError('Each physical slot needs its registered CPU partition')
+                if claims is not None:
+                    write(claims_path, claims)
                 return handles, chosen, groups
         handles.close()
     return None
@@ -71,13 +81,16 @@ def main(a):
     record = POOL/'jobs'/(a.job+'.json')
     record.parent.mkdir(exist_ok=True)
     with (record.with_suffix('.lock')).open('a') as job_lock:
-        try:
-            fcntl.flock(job_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            return 0
-        if record.is_file() and json.loads(record.read_text())['state'] in ('running','ended'):
-            return 0
+        # Another coordinator can reach the same already admitted episode. Join its
+        # terminal receipt before returning; the physical slot remains held only once.
+        fcntl.flock(job_lock, fcntl.LOCK_EX)
         cmd = a.command[1:] if a.command[:1] == ['--'] else a.command
+        if record.is_file():
+            previous = json.loads(record.read_text())
+            if previous['state'] == 'ended':
+                return previous['exit_code']
+            if previous['state'] == 'running':
+                return 0
         data = dict(job=a.job, requested_slots=a.slots, command=cmd, runtime=str(a.runtime),
                     owner_pid=os.getpid(), registered_at=stamp(), state='queued', **BG)
         write(record, data)

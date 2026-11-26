@@ -44,7 +44,7 @@ def drive(rt,arm,material,model_paths,recipe):
                 return
             build=read(a)['controller']
     cmd=[sys.executable,str(ROOT/'scripts/queue_s1_w59_mechanisms.py'),'--runtime',str(rt),'--arm',arm,
-         '--material',material,'--split','development','--build',build,'--workers','2','--wm-recipe',str(recipe)]
+         '--material',material,'--split','development','--build',build,'--workers','4','--wm-recipe',str(recipe)]
     for m in model_paths: cmd+=['--wm-checkpoint',m]
     subprocess.run(cmd,cwd=ROOT,check=True)
 

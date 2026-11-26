@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 
 from collect_s1_w59 import R, ROOT, collect
 from publish_s1_go2_w54 import write
+from publish_s1_w59_git import api, publish
 
 WORK=ROOT/'work/w59'
 ZONE=ZoneInfo('Asia/Shanghai')
@@ -27,14 +28,12 @@ def integrate():
             ':(exclude)**/*.lock',':(exclude)**/*.tmp*',':(exclude)**/*.pending')
         if subprocess.call(['git','diff','--cached','--quiet'],cwd=ROOT)==1:
             git('commit','-m','Publish W59 measured results and Shanghai worklog')
-    git('fetch','origin','main')
-    git('merge','--no-edit','origin/main')
-    git('push','origin','HEAD:refs/heads/main')
-    head=git('rev-parse','HEAD')
-    tip=git('ls-remote','origin','refs/heads/main').split()[0]
-    if head!=tip:
+    remote=api('/git/ref/heads/main','.object.sha')
+    if subprocess.run(['git','cat-file','-e',remote+'^{commit}'],cwd=ROOT,stderr=subprocess.DEVNULL).returncode:
         git('fetch','origin','main')
-        subprocess.run(['git','merge-base','--is-ancestor',head,'origin/main'],cwd=ROOT,check=True)
+    if subprocess.run(['git','merge-base','--is-ancestor',remote,'HEAD'],cwd=ROOT).returncode:
+        git('merge','--no-edit',remote)
+    head,tip=publish('HEAD')
     write(WORK/'last-push.json',dict(commit=head,remote_head=tip,checked_shanghai=datetime.now(ZONE).isoformat(timespec='seconds')))
 
 
@@ -44,7 +43,7 @@ def signature():
     d={}
     for folder in ('attempts','delivery','model','action','learning','mechanism','dispatch'):
         for p in (R/folder).glob('**/*.json'):
-            if p.name.endswith('-progress.json') or p.name.startswith('live'):
+            if p.name.endswith(('-progress.json','-live.json')) or p.name.startswith('live'):
                 continue
             s=p.stat()
             d[str(p.relative_to(R))]=(s.st_size,s.st_mtime_ns)
