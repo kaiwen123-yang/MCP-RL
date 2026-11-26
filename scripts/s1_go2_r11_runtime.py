@@ -890,7 +890,7 @@ def run(args, c, joint=None):
                     else:
                         write_progress = dump
                     write_progress(out/'live.json',dict(pid=os.getpid(),physical_time_s=float(data.time),
-                        phase=mission.phase,position_m=data.qpos[:3],unix_s=time.time(),
+                        phase=mission.phase,position_m=data.qpos[:3].tolist(),unix_s=time.time(),
                         deadline=None,wall_deadline_enabled=False))
                 if step % 2500 == 0:
                     print(json.dumps(dict(attempt=args.attempt, time_s=t, phase=mission.phase,
