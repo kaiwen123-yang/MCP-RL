@@ -1,59 +1,36 @@
 {
   "seed": 5901,
-  "node": 4096,
+  "node": 8192,
   "source": "PPO-full",
   "role": "fallback-ppo",
   "heldout_used": false,
   "original_training": {
     "A": {
-      "n": 16,
-      "success": 16,
+      "n": 23,
+      "success": 23,
       "hard_failure": 0
     },
     "B": {
-      "n": 16,
-      "success": 16,
+      "n": 23,
+      "success": 22,
       "hard_failure": 0
     }
   },
-  "allow_next": true,
-  "reason": [],
+  "allow_next": false,
+  "reason": [
+    "reference did not complete this node",
+    "no independently accepted actor update"
+  ],
   "authorized_nodes": [
     2048,
     4096,
     8192
   ],
   "source_report": {
-    "arm": "PPO-full",
-    "seed": 5901,
-    "science_role": "fallback-ppo",
-    "used_events": 4096,
-    "observed_completed": 4141,
-    "on_policy_rows": 4096,
-    "by_case": {
-      "A": 2048,
-      "B": 2048
-    },
-    "excluded_natural_tail": 45,
-    "requested": 4141,
-    "technical_unclosed": 0,
-    "physical_seconds": {
-      "training": 1919.9999999963782,
-      "branch": 32.0
-    },
-    "imagined_20ms_transitions": 0,
-    "verified_actor_steps": 205,
-    "rejected_first_update": false,
-    "complete_common_node": true,
-    "checkpoint": "/root/autodl-tmp/MCP-RL-w59-runtime-4ad3a5f28b99/work/w59/learning/seed-5901/PPO-full-fallback/policy-016.pt",
-    "checkpoint_sha256": "a870c1550f3dae64016f2a9f1014951b638793978f6b2f4260c9dfb5a16a90e2",
-    "wm_sha256": [],
-    "unix_s": 1795710165.0940971,
-    "background": {
-      "deadline": null,
-      "wall_deadline_enabled": false,
-      "kill_on_conversation_end": false
-    }
+    "complete_common_node": false,
+    "reason": "RuntimeError('Physical attempt w59-r3-5901-ppo-full-fallback-b-e60-0023 ended without a natural result: execution_error')",
+    "actual_used": 5888,
+    "exit_code": 1
   },
   "recipe_sha256": "8baf891e263a7d86e5c518933b6ffff5a98f09993c5b45fd840855aa0fb31885"
 }
