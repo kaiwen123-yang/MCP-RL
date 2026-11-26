@@ -1,0 +1,477 @@
+{
+  "review_date": "2026-11-26",
+  "scope": "Independent PANN research expansion, third round",
+  "counting": {
+    "new_papers_not_in_previous_45_paper_ledger": 10,
+    "deep_fulltext_core_methods_theory_and_major_experiments": 6,
+    "targeted_fulltext_methods_and_experiments": 4,
+    "official_code_repositories_selectively_read": 3,
+    "training_runs": 0,
+    "active_project_source_modifications": 0
+  },
+  "boundaries": [
+    "Deep read means the explicitly named core methods, conditions and experiments; not every appendix proof, supplement or reference.",
+    "Previous PANN, finite-strain PANN, ME-PANN, PANO/CANO, MERNN-PRNN, GSMN and identifiability papers are prior context and are not newly counted.",
+    "No verified 2025 CAS partition source was obtained. Venue descriptions are not CAS tier claims.",
+    "Code SHA values below are Git blob SHAs of inspected files, not repository commit SHAs. No implementation was run.",
+    "Raw papers and selected source snapshots are scratch-only research evidence and are not intended for repository upload."
+  ],
+  "sources": [
+    {
+      "id": "BM01",
+      "title": "Fully data-driven inverse characterization of heterogeneous materials with hyper-network neural ODEs",
+      "authors": [
+        "Vahidullah Taç",
+        "Amirhossein Amiri-Hezaveh",
+        "Grace N. Bechtel",
+        "Titus Loftin",
+        "Manuel K. Rausch",
+        "Francisco Sahli Costabal",
+        "Adrian Buganza Tepole"
+      ],
+      "venue": "npj Computational Materials 12, 165",
+      "published": "2026-03-10; version of record dated 2026-04-23 on publisher page",
+      "doi": "10.1038/s41524-026-02027-8",
+      "official_url": "https://www.nature.com/articles/s41524-026-02027-8",
+      "fulltext_url": "https://www.nature.com/articles/s41524-026-02027-8.pdf",
+      "read_version": "Publisher PDF available 2026-11-26",
+      "read_depth": "deep_fulltext_core_methods_theory_and_major_experiments",
+      "sections_read": [
+        "Results: method overview, P/X synthetic material fields, anisotropy",
+        "Results: measurement noise, repeated observations, Gaussian fields and DIC elastomer experiment",
+        "Discussion: inverse nonuniqueness, noise and model restrictions",
+        "Methods: inverse problem, NODE architecture and equations 9-18; training-loss description"
+      ],
+      "local_pdf": "papers/hypernode2026.pdf",
+      "method_fact": "Spatial hypernetwork generates NODE constitutive parameters; deformation interpolation and two pretraining stages precede equilibrium/traction inversion.",
+      "limitations": [
+        "Primarily polyconvex hyperelasticity; second-order structural tensors and selected invariant decomposition",
+        "Rich full-field input; not an online foot-force-only identification result",
+        "NODE integration coordinate is network depth, not material physical time"
+      ],
+      "code_url": "https://github.com/tajtac/node_inv",
+      "commit_sha": null,
+      "code_inspection": {
+        "status": "partial_selected_file",
+        "file": "utils_hyperelasticity.py",
+        "git_blob_sha": "660d92bdf5336c571dfe069da3b43f349e89578b",
+        "local_snapshot": "papers/hypernode_utils.py",
+        "read_scope": "Initialization; shared/sample weights; NODE scan; RK4 forward pass; isotropic/anisotropic energy derivatives and beginning of parameter splitting",
+        "not_read": "All inverse-training notebooks, full file remainder and all dataset generation",
+        "not_run": true
+      },
+      "retrieval_refs": [
+        "turn408374102search0",
+        "turn585323658search0",
+        "turn170321861search0"
+      ],
+      "local_pdf_sha256": "11d92d59f20e386f2c5c0bdd22254a3fcdeff501bfd1aae93bf05fd13ebbe9dc",
+      "local_pdf_bytes": 3603406
+    },
+    {
+      "id": "BM02",
+      "title": "Beyond empirical models: Discovering constitutive laws in solids with graph-based equation discovery",
+      "authors": [
+        "Hao Xu",
+        "Yuntian Chen",
+        "Dongxiao Zhang"
+      ],
+      "venue": "Science Advances 12(37), eaec0989",
+      "published": "2026-09-11",
+      "doi": "10.1126/sciadv.aec0989",
+      "official_url": "https://www.science.org/doi/10.1126/sciadv.aec0989",
+      "fulltext_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13564832/",
+      "preprint_url": "https://arxiv.org/abs/2511.09906",
+      "read_version": "Published full text on PMC; preprint PDF retained as supplementary reading evidence, not treated as identical to final",
+      "read_depth": "targeted_fulltext_methods_and_experiments",
+      "sections_read": [
+        "Results: Proposed GraphED framework, graph representation, inner parameter fits and outer evolution",
+        "Results: DIF dataset setup, integrated strain-hardening model, lithium selected results",
+        "Filled-rubber extension: selected equation and temperature-dependence discussion",
+        "Materials and Methods: graph representation, templates, graph evaluation with 20 multistarts, crossover and mutation",
+        "Discussion: scalar-response and template-bias limitations"
+      ],
+      "local_pdf": "papers/graphed2026.pdf",
+      "method_fact": "A shared symbolic graph with case-specific free parameters is optimized over multiple experimental datasets; graph structure search is coupled to separate parameter fits.",
+      "limitations": [
+        "Published method is primarily scalar response discovery",
+        "Graph templates impose structural bias",
+        "Explicit expression fit is not a complete tensorial thermodynamic state model"
+      ],
+      "code_url": "https://github.com/woshixuhao/Discovery_of_soild_consititutive",
+      "archive_url": "https://doi.org/10.5281/zenodo.18491393",
+      "commit_sha": null,
+      "code_inspection": {
+        "status": "not_read",
+        "not_run": true
+      },
+      "retrieval_refs": [
+        "turn545446356view0",
+        "turn514309856view0",
+        "turn298546845view0"
+      ],
+      "local_pdf_sha256": "1d7422737044eb00cd498962499dded3515f5c46a3a10216ecddaa7192072c49",
+      "local_pdf_bytes": 1731248
+    },
+    {
+      "id": "BM03",
+      "title": "HyperCAN: Hypernetwork-driven deep parameterized constitutive models for metamaterials",
+      "authors": [
+        "Li Zheng",
+        "Dennis M. Kochmann",
+        "Siddhant Kumar"
+      ],
+      "venue": "Extreme Mechanics Letters 72, 102243",
+      "published": "2024-11",
+      "doi": "10.1016/j.eml.2024.102243",
+      "official_url": "https://www.sciencedirect.com/science/article/pii/S2352431624001238",
+      "fulltext_url": "https://arxiv.org/pdf/2408.06017",
+      "read_version": "Publication-formatted paper served by arXiv on review date",
+      "read_depth": "deep_fulltext_core_methods_theory_and_major_experiments",
+      "sections_read": [
+        "Section 2: constitutive requirements, ICNN, geometry/load generation and hypernetwork mapping",
+        "Section 3.1 and 3.2: held-out geometry/loading and combined generalization, selected results",
+        "Appendix A: architecture and Algorithm 1 joint training",
+        "Appendices B/C: selected data splits, energy-loss and computational-cost tables"
+      ],
+      "local_pdf": "papers/hypercan2024.pdf",
+      "method_fact": "Hypernetwork maps truss geometry/topology to ICNN energy-network weights, trained jointly on stress and energy, with separate geometry/loading test axes.",
+      "limitations": [
+        "Known microstructural descriptors are inputs",
+        "Hyperelastic constitutive family, not history-aware online material identification",
+        "Convexity in Green-Lagrange strain is not a blanket finite-strain polyconvexity guarantee"
+      ],
+      "code_url": "https://github.com/li-zhengz/HyperCAN",
+      "archive_url": "https://doi.org/10.5281/zenodo.13947082",
+      "commit_sha": null,
+      "code_inspection": {
+        "status": "one_selected_file_read_in_full",
+        "file": "src/icnn.py",
+        "git_blob_sha": "c829b4dd979543af6e6f6e8047d3444e5f1d6303",
+        "local_snapshot": "papers/hypercan_icnn.py",
+        "read_scope": "Full 9192-character file: multi_task_learner, custom convex layers, constitutiveNN",
+        "not_read": "Complete training driver, stress/energy zero-reference corrections outside this file and full dataset code",
+        "not_run": true
+      },
+      "retrieval_refs": [
+        "turn585323658search1",
+        "turn170321861academia26",
+        "turn170321861search1"
+      ],
+      "local_pdf_sha256": "973989867521fd9c9518a0e0b3d4bcd646647f28ddb95e84f8248fdf53a12fe5",
+      "local_pdf_bytes": 7929821
+    },
+    {
+      "id": "BM04",
+      "title": "Microstructure-Conditioned Surrogate Models for Graded Multiscale Optimization of Mycelium Composites",
+      "authors": [
+        "J. Storm",
+        "I. B. C. M. Rocha",
+        "S. Schyck",
+        "K. Masania",
+        "F. P. van der Meer"
+      ],
+      "venue": "2026 preprint; journal acceptance not verified",
+      "published": "2026; inspected arXiv v2 dated 2026-10-18",
+      "doi": null,
+      "official_url": "https://arxiv.org/abs/2607.13688",
+      "fulltext_url": "https://arxiv.org/pdf/2607.13688v2",
+      "read_version": "arXiv:2607.13688v2",
+      "read_depth": "targeted_fulltext_methods_and_experiments",
+      "sections_read": [
+        "4.1 finite-strain PRNN, nonlinear encoder and energy PRNN",
+        "4.2 hypernetwork conditioning",
+        "5.1.2 and 5.1.3 training and FE2 setup",
+        "5.2 selected conditioning comparisons",
+        "5.3 cost table and FE2 numerical-validation discussion"
+      ],
+      "local_pdf": "papers/hyprnn2026.pdf",
+      "method_fact": "Microstructure-conditioned encoder/decoder; an energy version uses log-strain encoding, matrix exponential and nonnegative energy weights.",
+      "limitations": [
+        "Section 5.1.2 explicitly says no history dependence is considered in these experiments",
+        "Underlying point material law is supplied",
+        "Energy-based version does not guarantee polyconvexity or rank-one convexity",
+        "FE2 comparison uses finite-difference tangent in the reference implementation"
+      ],
+      "code_url": "https://github.com/SLIMM-Lab/hyprnn",
+      "commit_sha": null,
+      "code_inspection": {
+        "status": "partial_selected_file",
+        "file": "scripts_surrogates/EnergyHyPRNN.py",
+        "git_blob_sha": "6408e732469d5295ba067ca3080c72f0096fcf06",
+        "local_snapshot": "papers/hyprnn_energy.py",
+        "read_scope": "First 18000 characters of 28999: regularized 2x2 matrix functions, energy/stress maps, shared hypernetwork, energy decoder, major forward path",
+        "not_read": "Remaining convenience/configuration code, training driver and FEM implementation",
+        "not_run": true
+      },
+      "retrieval_refs": [
+        "turn399708107search0",
+        "turn399708107search6"
+      ],
+      "local_pdf_sha256": "73cd1151176c486db46d479c6ed0a1be81dd640029986047727527b41ac02154",
+      "local_pdf_bytes": 16615608
+    },
+    {
+      "id": "BM05",
+      "title": "History-aware neural operator: Robust data-driven constitutive modeling of path-dependent materials",
+      "authors": [
+        "Binyao Guo",
+        "Zihan Lin",
+        "QiZhi He"
+      ],
+      "venue": "Computer Methods in Applied Mechanics and Engineering 447, 118358",
+      "published": "2025-12-01 issue; inspected author v2 dated 2025-09-01",
+      "doi": "10.1016/j.cma.2025.118358",
+      "official_url": "https://www.sciencedirect.com/science/article/pii/S0045782525006309",
+      "fulltext_url": "https://arxiv.org/pdf/2506.10352v2",
+      "read_version": "arXiv:2506.10352v2; journal metadata checked",
+      "read_depth": "deep_fulltext_core_methods_theory_and_major_experiments",
+      "sections_read": [
+        "3.3 architecture, input/output, autoregressive rollouts, loss and scheduled-sampling/noise training",
+        "4.1 dataset and fair RNN input variants",
+        "4.2/4.3 selected unknown-state and discretization setup",
+        "4.4 multiple-cycle extrapolation and 4.5 noisy initial window",
+        "Paper introduction and conclusion on thermodynamic scope and damage benchmark"
+      ],
+      "local_pdf": "papers/hano2025.pdf",
+      "method_fact": "Short observable strain-stress history plus next strain increment drives an attention/U-Net/Fourier autoregressive operator; teacher forcing is phased out.",
+      "limitations": [
+        "Finite history window is not a general sufficient-statistic theorem",
+        "Rate-independent benchmarks do not establish rate-dependent viscoelastic transfer",
+        "Observed initial stress history is richer than unknown local stresses in robot contact",
+        "No blanket structural thermodynamic guarantee inferred from low trajectory error"
+      ],
+      "code_url": "https://github.com/IntelligentMechanicsLab/HANO_inelasticity",
+      "commit_sha": null,
+      "code_inspection": {
+        "status": "not_read",
+        "not_run": true
+      },
+      "retrieval_refs": [
+        "turn820913987academia37",
+        "turn820913987search9"
+      ],
+      "local_pdf_sha256": "45c1056e8fd6335e44dc59fd16536c4fbfa51b2fd802c8909f085c9121e60eac",
+      "local_pdf_bytes": 3003251
+    },
+    {
+      "id": "BM06",
+      "title": "Learning Memory And Material Dependent Constitutive Laws",
+      "authors": [
+        "Kaushik Bhattacharya",
+        "Lianghao Cao",
+        "George Stepaniants",
+        "Andrew M. Stuart",
+        "Margaret Trautner"
+      ],
+      "venue": "The SMAI Journal of computational mathematics 12, 219-267",
+      "published": "2026; inspected author v2 dated 2025-05-05",
+      "doi": "10.5802/smai-jcm.148",
+      "official_url": "https://smai-jcm.centre-mersenne.org/articles/10.5802/smai-jcm.148/",
+      "fulltext_url": "https://arxiv.org/pdf/2502.05463v2",
+      "read_version": "arXiv:2502.05463v2; journal title/volume/pages checked",
+      "read_depth": "deep_fulltext_core_methods_theory_and_major_experiments",
+      "sections_read": [
+        "2.1 and 2.2 homogenized material law and FNM-RNO",
+        "3.2 material dependence, assumptions and exponential-memory representation",
+        "4.3 theorem 4.7, assumptions and main proof structure; not every proof line",
+        "5.2 architecture/training and selected generalization settings",
+        "5.4 elasto-viscoplastic experiment and section 6 limitations"
+      ],
+      "local_pdf": "papers/memory2026.pdf",
+      "method_fact": "Function-valued microstructure conditions recurrent ODE state and stress mappings; 1D Kelvin-Voigt homogenization supplies a uniform-approximation result.",
+      "limitations": [
+        "Theory requires positive bounded material fields, bounded variation and bounded strain/rate classes",
+        "Main theorem concerns 1D linear viscoelasticity, not arbitrary finite-strain plasticity",
+        "Forward-Euler training and zero-state penalty are not structural discrete passivity",
+        "Microstructure is provided as input"
+      ],
+      "code_url": null,
+      "commit_sha": null,
+      "code_inspection": {
+        "status": "not_located_or_read_in_this_round",
+        "not_run": true
+      },
+      "retrieval_refs": [
+        "turn408374102search1"
+      ],
+      "local_pdf_sha256": "28f841361ee306b4ba4498ce0b8b1a035f9f148cf635b2d022cb9b42eab8d781",
+      "local_pdf_bytes": 1836894
+    },
+    {
+      "id": "BM07",
+      "title": "Monotone peridynamic neural operator for nonlinear material modeling with conditionally unique solutions",
+      "authors": [
+        "Jihong Wang",
+        "Xiaochuan Tian",
+        "Zhongqiang Zhang",
+        "Stewart Silling",
+        "Siavash Jafarzadeh",
+        "Yue Yu"
+      ],
+      "venue": "Computer Methods in Applied Mechanics and Engineering 453, 118792",
+      "published": "2026-02-11 online; 2026-05-01 issue",
+      "doi": "10.1016/j.cma.2026.118792",
+      "official_url": "https://www.sciencedirect.com/science/article/pii/S0045782526000666",
+      "fulltext_url": "https://arxiv.org/pdf/2505.01060v1",
+      "published_fulltext_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13289669/",
+      "read_version": "arXiv:2505.01060v1, 2025-05-02; published metadata verified but journal methods not line-by-line reconciled",
+      "read_depth": "deep_fulltext_core_methods_theory_and_major_experiments",
+      "sections_read": [
+        "3.1 small-deformation uniqueness statement and proof",
+        "3.2 monotone-gradient and positive-kernel architecture",
+        "3.3 training loss and quadrature",
+        "3.5 large-deformation two-phase solve",
+        "5 molecular-dynamics coarse-graining, train/test domains and loading setup",
+        "6 conclusion and theoretical boundary"
+      ],
+      "local_pdf": "papers/mpno2026.pdf",
+      "method_fact": "Nonnegative nonlocal kernel and monotone learned bond response induce conditional energy convexity; training uses observed displacement/body-force pairs.",
+      "limitations": [
+        "Uniqueness applies under the stated small-deformation setting and boundary/rigid-mode qualifications",
+        "Read version uses synthetic and MD-generated evidence, not robot hardware",
+        "Not a dissipative history or irreversible-compaction model",
+        "Large-deformation initialization is not a global uniqueness theorem"
+      ],
+      "code_url": null,
+      "commit_sha": null,
+      "code_inspection": {
+        "status": "not_located_or_read_in_this_round",
+        "not_run": true
+      },
+      "retrieval_refs": [
+        "turn326060516search1",
+        "turn326060516search2"
+      ],
+      "local_pdf_sha256": "27ce76fb42ab7b5c0bafdb4b410d2439cc3de24a4982cf5708fc7ba246d55505",
+      "local_pdf_bytes": 4513900
+    },
+    {
+      "id": "BM08",
+      "title": "Automatically Differentiable Model Updating (ADiMU): Conventional, hybrid, and neural network material model discovery including history-dependency",
+      "authors": [
+        "Bernardo P. Ferreira",
+        "Miguel A. Bessa"
+      ],
+      "venue": "Journal of the Mechanics and Physics of Solids 206, Part B, 106408",
+      "published": "2026-01 issue",
+      "doi": "10.1016/j.jmps.2025.106408",
+      "official_url": "https://www.sciencedirect.com/science/article/pii/S0022509625003825",
+      "fulltext_url": "https://arxiv.org/pdf/2505.07801v1",
+      "read_version": "arXiv:2505.07801v1, 2025-05-12; published metadata checked",
+      "read_depth": "targeted_fulltext_methods_and_experiments",
+      "sections_read": [
+        "2 full workflow, dimensionless force-equilibrium loss and vectorization",
+        "3 selected local-discovery architecture and noise/coverage discussion",
+        "4.2 global neural/hybrid discovery and rich material-patch dataset",
+        "5 conclusions and limitations"
+      ],
+      "local_pdf": "papers/adimu2026.pdf",
+      "method_fact": "Full displacement histories make force-equilibrium training possible without solving the global equilibrium forward problem; local constitutive return maps may still be implicit.",
+      "limitations": [
+        "Predominantly synthetic examples in inspected version",
+        "Rich full-field measurements and boundary assumptions",
+        "Vectorized autodiff is an implementation advance already present, not an empty novelty slot",
+        "No full review of all appendices or every material-model experiment"
+      ],
+      "code_url": "https://github.com/bessagroup/hookeai",
+      "documentation_url": "https://bessagroup.github.io/hookeai/",
+      "commit_sha": null,
+      "code_inspection": {
+        "status": "official_repository_confirmed_not_source_audited",
+        "not_run": true
+      },
+      "retrieval_refs": [
+        "turn326060516search0",
+        "turn326060516search10"
+      ],
+      "local_pdf_sha256": "47ff6bcb99067ef259fab1d0c2c9e8880d27596aae1a06f6228cbe79719f5ad2",
+      "local_pdf_bytes": 14515865
+    },
+    {
+      "id": "BM09",
+      "title": "Thermodynamically consistent neural constitutive models for elastoplasticity via eigen-representations",
+      "authors": [
+        "Harikrishnan Vijayakumaran",
+        "Shunyu Yin",
+        "Martin Abendroth",
+        "Miguel A. Bessa",
+        "Karl A. Kalina"
+      ],
+      "venue": "2026 preprint; journal acceptance not verified",
+      "published": "2026-11-09",
+      "doi": null,
+      "official_url": "https://arxiv.org/abs/2611.13162",
+      "fulltext_url": "https://arxiv.org/pdf/2611.13162v1",
+      "read_version": "arXiv:2611.13162v1",
+      "read_depth": "deep_fulltext_core_methods_theory_and_major_experiments",
+      "sections_read": [
+        "2.1-2.5 energy, thermodynamic forces, associative/non-associative flow, yield and backward-Euler return mapping",
+        "4.1 stress-only constrained training, converged implicit gradients and temporal scan",
+        "4.2 repeated-eigenvalue Hessian and degeneracy handling",
+        "5 result organization and 5.3 open-cell foam RVE comparison",
+        "6 conclusion; appendix proof statements cross-referenced but not all proofs reproduced"
+      ],
+      "local_pdf": "papers/eigenplastic2026.pdf",
+      "method_fact": "Joint energy/yield/flow/hardening learning with a thermodynamic relation between flow potential and yield surface, plus implicit gradients and custom spectral Hessians.",
+      "limitations": [
+        "Infinitesimal strain, rate-independent, isotropic plasticity",
+        "Known classical laws, synthetic specimen data and foam RVE in inspected evidence",
+        "Does not by itself establish finite-strain viscoelastic memory or online adaptation",
+        "Implicit differentiation assumes a suitable converged nonsingular local solution branch"
+      ],
+      "code_url": null,
+      "commit_sha": null,
+      "code_inspection": {
+        "status": "paper_implementation_description_only_no_official_source_located_in_this_round",
+        "not_run": true
+      },
+      "retrieval_refs": [
+        "turn170321861academia24"
+      ],
+      "local_pdf_sha256": "401965dc03be7c4c0a3688ac11ec198d7cc6af0de4feb548de181689ad7a08ab",
+      "local_pdf_bytes": 3176108
+    },
+    {
+      "id": "BM10",
+      "title": "Learning the Constitutive Behavior of Materials via Neural Operators and Causal Attention: Case Studies in Plasticity and Damage",
+      "authors": [
+        "Rishabh Arora",
+        "Lisa Scheunemann",
+        "Tim Brepols",
+        "Shahed Rezaei"
+      ],
+      "venue": "2026 preprint; journal acceptance not verified",
+      "published": "2026-09-02",
+      "doi": null,
+      "official_url": "https://arxiv.org/abs/2609.02194",
+      "fulltext_url": "https://arxiv.org/pdf/2609.02194v1",
+      "read_version": "arXiv:2609.02194v1",
+      "read_depth": "targeted_fulltext_methods_and_experiments",
+      "sections_read": [
+        "3.1 full-path operator, FNO/SIREN, masked attention, equation 10 and training",
+        "5 accuracy/runtime tables and work-based comparison setup",
+        "6 growing-prefix deployment discussion"
+      ],
+      "local_pdf": "papers/causalattention2026.pdf",
+      "method_fact": "Sequence-to-sequence FNO-SIREN combines masked attention with global temporal spectral convolution; prefix evaluation is recomputed independently.",
+      "limitations": [
+        "Our analysis: equation 10's spectral convolution after masked attention does not establish strict whole-network causality",
+        "No code or numerical prefix-invariance audit performed",
+        "Prefix-only last-value evaluation is causal as an online procedure but differs from full-trajectory parallel prediction",
+        "Work-curve agreement is not a thermodynamic storage/dissipation proof"
+      ],
+      "code_url": null,
+      "commit_sha": null,
+      "code_inspection": {
+        "status": "not_located_or_read_in_this_round",
+        "not_run": true
+      },
+      "retrieval_refs": [
+        "turn399708107academia31"
+      ],
+      "local_pdf_sha256": "a4ff9fe1ffb37fafbe2ae74481c0c8e1037dc5594a8090dc82f0b2c7b625e793",
+      "local_pdf_bytes": 1396961
+    }
+  ]
+}
