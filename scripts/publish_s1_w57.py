@@ -45,7 +45,7 @@ def transient_transfer(message):
     return message.rstrip().endswith('eof') or any(reason in message for reason in (
         'tls handshake timeout', 'connection reset', 'unexpected eof', 'http 502',
         'http 503', 'http 504', 'i/o timeout', 'connection timed out',
-        'error connecting to api.github.com', 'error connecting to uploads.github.com'))
+        'http 500', 'error connecting to api.github.com', 'error connecting to uploads.github.com'))
 
 
 def gh(*args):

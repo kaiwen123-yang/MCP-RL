@@ -41,12 +41,15 @@ def signature():
     # A node, an attempt ending or a verified asset is a publication event.
     # Live physical-clock ticks do not create a stream of Git commits.
     d={}
-    for folder in ('attempts','delivery','model','action','learning','mechanism','dispatch'):
+    for folder in ('attempts','delivery','model','action','learning','mechanism','dispatch','storage'):
         for p in (R/folder).glob('**/*.json'):
             if p.name.endswith(('-progress.json','-live.json')) or p.name.startswith('live'):
                 continue
             s=p.stat()
             d[str(p.relative_to(R))]=(s.st_size,s.st_mtime_ns)
+    for p in (R/'outcome.json', R/'delivery-ended.json'):
+        if p.is_file():
+            st=p.stat(); d[p.name]=(st.st_size,st.st_mtime_ns)
     return d
 
 
@@ -67,7 +70,7 @@ def main():
                     print('Git integration pending',e,flush=True)
                 else:
                     previous=now
-            if (R/'outcome.json').exists() and (R/'delivery-ended.json').exists():
+            if previous==now and (R/'outcome.json').exists() and (R/'delivery-ended.json').exists():
                 return
             time.sleep(120)
 
