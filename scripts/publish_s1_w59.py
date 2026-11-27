@@ -1,12 +1,15 @@
 """Publish W59 artifacts on D57 and check the server's size, state and SHA-256."""
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import fcntl
 import subprocess
 import sys
 import json
 import os
 from pathlib import Path
+import shutil
 import tempfile
+import time
 
 import publish_s1_w57 as release
 from publish_s1_go2_w54 import write
@@ -50,36 +53,105 @@ def ensure_release():
     return info
 
 
+def bundle_assets(name=None):
+    info = ensure_release()
+    endpoint = f'repos/{release.REPO}/releases/{info["databaseId"]}'
+    header = ('-H', 'Cache-Control: no-cache')
+    try:
+        rows = json.loads(github('api',*header,endpoint,'--jq','.assets'))
+        assets = {r['name']:r for r in rows}
+        if name is not None and name in assets:
+            return info, assets
+        # The embedded list may be capped. Verify that there is no additional
+        # REST asset before using this snapshot to conclude that a name is absent.
+        beyond = f'{endpoint}/assets?per_page=1&page={len(assets)+1}'
+        if github('api',*header,beyond,'--jq','length') == '0':
+            return info, assets
+    except RuntimeError as error:
+        print('Release detail unavailable; using the paginated asset list:',error,flush=True)
+    return release.release_assets(name)
+
+
 def publish(label, paths, video=None):
-    # The canonical data stay on D57. Stage one upload part at a time in RAM.
-    # This avoids a second persistent copy of every physical trajectory.
-    info, assets = release.release_assets()
+    # ZIP bytes, asset order and remote verification stay identical to the serial publisher.
+    info, assets = bundle_assets()
     groups, count = release.groups_for(paths, video, release.PART)
     target = STATE/'delivery'/(label+'.json')
     old = json.loads(target.read_text()) if target.exists() else {}
     done = {v['name']:v for v in old.get('assets',[])}
     receipts = []
-    def send(name, group=None):
-        remote = assets.get(name,{})
-        past = done.get(name)
-        signature = release.source_signature(group) if group else None
-        if past and past.get('source_signature')==signature and remote.get('digest')==past['digest'] and remote.get('size')==past['size'] and remote.get('state')=='uploaded':
-            return past
-        with tempfile.TemporaryDirectory(prefix='w59-part-',dir='/dev/shm') as tmp:
-            if group is None:
-                file = Path(tmp)/name
-                file.symlink_to(video.resolve())
-            else:
-                file = release.prepare_part(Path(tmp),name,group)
-            return dict(release.transfer(file,name,info,assets), source_signature=signature)
+    parts = [(f'{label}-originals-{i:03d}.zip', group) for i,group in enumerate(groups,1)]
+    if video is not None:
+        parts.append((label+'-full.mp4', None))
+
     def receipt(state):
         write(target,dict(label=label,release=info['url'],status=state,original_file_count=count,
                           roots={k:str(v) for k,v in paths},assets=receipts,originals_retained=True))
-    for i,group in enumerate(groups,1):
-        receipts.append(send(f'{label}-originals-{i:03d}.zip',group))
-        receipt('partial')
-    if video is not None:
-        receipts.append(send(label+'-full.mp4'))
+
+    def prepare(directory, part):
+        name, group = part
+        previous = done.get(name)
+        signature = release.source_signature(group) if group else None
+        remote = assets.get(name,{})
+        if (previous and previous.get('source_signature')==signature
+                and remote.get('digest')==previous['digest'] and remote.get('size')==previous['size']
+                and remote.get('state')=='uploaded'):
+            return previous, None, signature, None
+        if group is None:
+            path = directory/name
+            path.symlink_to(video.resolve())
+            return None, path, signature, None
+        start = time.monotonic()
+        path = release.prepare_part(directory,name,group)
+        return None, path, signature, (start,time.monotonic())
+
+    def room_for_next(directory, group):
+        if group is None:
+            return True
+        # Current ZIP is already charged to tmpfs. Keep serial staging when there is
+        # not room for a second ZIP, including ZIP headers and incompressible data.
+        size = sum(p.stat().st_size + 2*len(member.encode()) + 256 for member,p in group)
+        budget = size + size//100 + 1024**2
+        sample = WORK/'last-resource.json'
+        if sample.is_file():
+            room = json.loads(sample.read_text()).get('usable_memory_bytes')
+            if room is not None and room < budget + 3*1024**3:
+                return False
+        return shutil.disk_usage(directory).free >= budget
+
+    with tempfile.TemporaryDirectory(prefix='w59-parts-',dir='/dev/shm') as tmp:
+        directory = Path(tmp)
+        with ThreadPoolExecutor(max_workers=1) as packer:
+            pending = None
+            previous_transfer = None
+            for i,part in enumerate(parts):
+                name, group = part
+                cached, path, signature, packing = (pending.result() if pending is not None
+                                                    else prepare(directory,part))
+                pending = None
+                if i+1 < len(parts) and room_for_next(directory,parts[i+1][1]):
+                    pending = packer.submit(prepare,directory,parts[i+1])
+                if cached is None:
+                    start = time.monotonic()
+                    result = release.transfer(path,name,info,assets,lookup_assets=bundle_assets)
+                    end = time.monotonic()
+                    result['source_signature'] = signature
+                    if packing is not None:
+                        overlap = 0.
+                        if previous_transfer is not None:
+                            overlap = max(0., min(packing[1],previous_transfer[1])
+                                          - max(packing[0],previous_transfer[0]))
+                        result.update(prepare_wall_s=packing[1]-packing[0],
+                                      preparation_overlapped_transfer_s=overlap,
+                                      transfer_verify_wall_s=end-start)
+                    previous_transfer = (start,end)
+                    path.unlink()
+                else:
+                    result = cached
+                    previous_transfer = None
+                receipts.append(result)
+                if group is not None:
+                    receipt('partial')
     receipt('verified')
 
 
