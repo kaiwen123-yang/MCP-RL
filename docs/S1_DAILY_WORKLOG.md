@@ -1975,6 +1975,14 @@ GPU 在 FP64 下按生产用的中心差分牛顿法连续推进世界固定地�
 
 22:13:06。B3 / A / original / E30，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 150000 个 0.2 ms 子步，30.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
 
+### 20261127/w59/attempt/w59-ppo-full-fallback-5902-a-original-e60-a01｜自然终局或技术中断
+
+22:36:23。B3 / A / original / E60，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5902-a-original-e30-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5902-b-original-e60-a01｜自然终局或技术中断
+
+22:36:35。B3 / B / original / E60，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5902-b-original-e30-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
