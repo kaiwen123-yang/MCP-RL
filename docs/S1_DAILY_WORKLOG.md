@@ -2038,6 +2038,10 @@ GPU 在 FP64 下按生产用的中心差分牛顿法连续推进世界固定地�
 
 02:49:49。B3 / B / original / E300，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 1500000 个 0.2 ms 子步，300.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5901-b-original-e60-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
 
+### 20261128/w59/attempt/w59-fixed-action-m1-a-heldout-short-a01｜自然终局或技术中断
+
+02:56:41。Fixed-action / A / short / E60，控制器 S5-w59-research-fec5a508b81b5fa67b，源码 ed16e456759f。实际 840000 个 0.2 ms 子步，168.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
