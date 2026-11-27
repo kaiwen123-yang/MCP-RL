@@ -1,0 +1,215 @@
+{
+  "measured_shanghai": "2026-11-27T18:19:50+08:00",
+  "recent_real_ppo_batches": [
+    {
+      "update": "update-021",
+      "sealed_batch": 256,
+      "optimization_wall_s": 0.10270407982170582,
+      "wall_since_previous_update_s": 1431.9913086891174
+    },
+    {
+      "update": "update-022",
+      "sealed_batch": 256,
+      "optimization_wall_s": 0.06311612017452717,
+      "wall_since_previous_update_s": 1416.5626912117004
+    },
+    {
+      "update": "update-023",
+      "sealed_batch": 256,
+      "optimization_wall_s": 0.07401967607438564,
+      "wall_since_previous_update_s": 1423.000679731369
+    }
+  ],
+  "real_E60": {
+    "attempt": "w59-r3-5902-ppo-full-fallback-a-e60-0021",
+    "wall_s": 1422.805732946843,
+    "observer_wall_s": 553.6837779227644,
+    "physical_loop_wall_s": 480.1123610846698,
+    "feedback_wall_s": 357.82186208851635,
+    "material_inside_physics_wall_s": 363.03868497908115,
+    "production_observer": "CPU FP64 frozen potentials; central finite-difference Newton"
+  },
+  "recorded_video": {
+    "attempt": "w59-ppo-full-fallback-5901-a-original-e60-a01",
+    "full_rerender": true,
+    "new_physical_steps": 0,
+    "processors": [
+      18,
+      19
+    ],
+    "cpu": {
+      "wall_s": 39.469151651486754,
+      "bytes": 14609210,
+      "video": {
+        "codec_name": "h264",
+        "width": 1280,
+        "height": 720,
+        "pix_fmt": "yuv420p",
+        "avg_frame_rate": "30/1",
+        "duration": "60.033333",
+        "nb_frames": "1801"
+      },
+      "ffmpeg": "/root/autodl-tmp/MCP-RL/work/envs/d57/lib/python3.12/site-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2"
+    },
+    "gpu": {
+      "wall_s": 21.106495594605803,
+      "bytes": 16806286,
+      "video": {
+        "codec_name": "h264",
+        "width": 1280,
+        "height": 720,
+        "pix_fmt": "yuv420p",
+        "avg_frame_rate": "30/1",
+        "duration": "60.033333",
+        "nb_frames": "1801"
+      },
+      "ffmpeg": "/usr/bin/ffmpeg"
+    },
+    "similarity_to_existing_published_video": {
+      "cpu": 0.999975,
+      "gpu": 0.999239
+    },
+    "wall_speedup": 1.8700002316620437
+  },
+  "normal_video_entry": {
+    "attempt": "w59-ppo-full-fallback-5901-b-original-e60-a01",
+    "size": 16962987,
+    "scope": "Full recorded robot trajectory, visual-only strip overlay; no new integration or exaggerated deformation",
+    "encoder": "h264_nvenc",
+    "preset": "p4",
+    "cq": 15,
+    "fps": 30,
+    "frame_count": 1801,
+    "wall_s": 21.066409058868885,
+    "frames_read_back": 1801
+  },
+  "material_packets": {
+    "source": "12 registered W59 B3 development legal-request snapshots, one real 10x0.2 ms observer window each. Empty-material windows stay in the denominator. Timings are warm medians over five calls.",
+    "scope": "The existing CPU/CUDA forecast pair gets identical initial e/q, observed position histories and constant mean physical dt. It returns state, peak strain and residual. Production CPU additionally uses per-tick measured dt, load trace, forces and the M1 assimilation correction. The CUDA operator does not implement that full ABI.",
+    "GPU_timing": "Warm context, resident weights and preallocated output. Includes copying packet data to device and results to CPU. Python state construction excluded from both sides.",
+    "run_device": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "results": [
+      {
+        "id": "w59-b3-a-original-e30-a02/r00006",
+        "stratum": "rigid_steady",
+        "columns": 0
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00049",
+        "stratum": "rigid_steady",
+        "columns": 243,
+        "production_M1_ms": 25.20010992884636,
+        "forecast_CPU_ms": 16.187524423003197,
+        "forecast_GPU_ms": 5.6499578058719635,
+        "forecast_GPU_kernel_ms": 5.4339518547058105,
+        "max_abs_forecast_e_q_error": 1.176698170325674e-17
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00012",
+        "stratum": "rigid_steady",
+        "columns": 0
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00044",
+        "stratum": "rigid_steady",
+        "columns": 243,
+        "production_M1_ms": 27.75494195520878,
+        "forecast_CPU_ms": 18.00047792494297,
+        "forecast_GPU_ms": 8.063806220889091,
+        "forecast_GPU_kernel_ms": 7.525152206420898,
+        "max_abs_forecast_e_q_error": 2.2632720350634905e-17
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00024",
+        "stratum": "early_touch_or_search",
+        "columns": 92,
+        "production_M1_ms": 18.339751288294792,
+        "forecast_CPU_ms": 10.823752731084824,
+        "forecast_GPU_ms": 15.095356851816177,
+        "forecast_GPU_kernel_ms": 14.609984397888184,
+        "max_abs_forecast_e_q_error": 8.538092108323347e-18
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00036",
+        "stratum": "early_touch_or_search",
+        "columns": 218,
+        "production_M1_ms": 31.821275129914284,
+        "forecast_CPU_ms": 19.09235119819641,
+        "forecast_GPU_ms": 14.740345999598503,
+        "forecast_GPU_kernel_ms": 14.52121639251709,
+        "max_abs_forecast_e_q_error": 1.4799359654427136e-17
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00018",
+        "stratum": "early_touch_or_search",
+        "columns": 25,
+        "production_M1_ms": 5.69465197622776,
+        "forecast_CPU_ms": 3.586629405617714,
+        "forecast_GPU_ms": 12.898040935397148,
+        "forecast_GPU_kernel_ms": 12.775615692138672,
+        "max_abs_forecast_e_q_error": 2.3852447794681098e-18
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00040",
+        "stratum": "early_touch_or_search",
+        "columns": 243,
+        "production_M1_ms": 33.80068205296993,
+        "forecast_CPU_ms": 20.570658147335052,
+        "forecast_GPU_ms": 15.361523255705833,
+        "forecast_GPU_kernel_ms": 14.753215789794922,
+        "max_abs_forecast_e_q_error": 1.294197687413729e-17
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00030",
+        "stratum": "cross_foot_reload",
+        "columns": 170,
+        "production_M1_ms": 32.06274285912514,
+        "forecast_CPU_ms": 18.47751811146736,
+        "forecast_GPU_ms": 15.767037868499756,
+        "forecast_GPU_kernel_ms": 15.619711875915527,
+        "max_abs_forecast_e_q_error": 1.5476986012230576e-17
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00027",
+        "stratum": "cross_foot_reload",
+        "columns": 132,
+        "production_M1_ms": 23.709064349532127,
+        "forecast_CPU_ms": 14.202551916241646,
+        "forecast_GPU_ms": 14.556095004081726,
+        "forecast_GPU_kernel_ms": 14.424511909484863,
+        "max_abs_forecast_e_q_error": 1.1980434005964824e-17
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00033",
+        "stratum": "cross_foot_reload",
+        "columns": 208,
+        "production_M1_ms": 36.48384474217892,
+        "forecast_CPU_ms": 20.966041833162308,
+        "forecast_GPU_ms": 15.496719628572464,
+        "forecast_GPU_kernel_ms": 15.339455604553223,
+        "max_abs_forecast_e_q_error": 1.1999068730804419e-17
+      },
+      {
+        "id": "w59-b3-a-original-e30-a02/r00031",
+        "stratum": "cross_foot_reload",
+        "columns": 181,
+        "production_M1_ms": 32.40241855382919,
+        "forecast_CPU_ms": 18.42205971479416,
+        "forecast_GPU_ms": 16.313906759023666,
+        "forecast_GPU_kernel_ms": 15.717087745666504,
+        "max_abs_forecast_e_q_error": 1.832979297858306e-17
+      }
+    ],
+    "new_physical_steps": 0,
+    "active_controller_switched": false
+  },
+  "matched_forecast": {
+    "nonempty": 10,
+    "GPU_faster": 7,
+    "CPU_median_ms": 18.211268819868565,
+    "GPU_median_ms": 14.91785142570734,
+    "sum_CPU_over_sum_GPU": 1.197000338812461,
+    "max_abs_delta_e_q": 2.2632720350634905e-17
+  },
+  "training_backend_changed": false
+}

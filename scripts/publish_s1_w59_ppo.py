@@ -164,11 +164,10 @@ class Publisher:
             paths.extend(members);maps[name]=info
         if video_name:
             # Render only the preselected first naturally completed A/E60 for each head.
-            import render_s1_go2_r12 as renderer
-            renderer.SMALL,renderer.LARGE=STATE/'episodes',RAW
+            from publish_s1_w59 import render_video
             dest=AREA/'videos'/video_name;dest.mkdir(parents=True,exist_ok=True)
             marker=dest/'video-asset.json'
-            if not marker.exists():renderer.render(video_name,output_dir=dest)
+            if not marker.exists():render_video(video_name,dest)
             movie=dest/'full-mission-material-overlay.mp4'
             if read(marker)['size']!=movie.stat().st_size:raise ValueError('Incomplete representative video')
             paths.append((video_name+'/video-asset.json',marker))

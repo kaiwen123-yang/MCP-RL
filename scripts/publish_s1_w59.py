@@ -1,5 +1,8 @@
 """Publish W59 artifacts on D57 and check the server's size, state and SHA-256."""
 import argparse
+import fcntl
+import subprocess
+import sys
 import json
 import os
 from pathlib import Path
@@ -80,6 +83,18 @@ def publish(label, paths, video=None):
     receipt('verified')
 
 
+def render_video(name, dest):
+    # The publisher and ahead-of-upload renderer can both reach the same closed trial.
+    # Keep one writer of its complete movie. The recorder is never invoked.
+    locks=WORK/'video-locks'
+    locks.mkdir(parents=True,exist_ok=True)
+    with (locks/(name+'.lock')).open('a') as lock:
+        fcntl.flock(lock,fcntl.LOCK_EX)
+        if not (dest/'video-asset.json').exists():
+            subprocess.run([sys.executable,str(ROOT/'scripts/render_s1_go2_r12.py'),
+                '--attempt',name,'--output-dir',str(dest),'--w59-nvenc'],cwd=ROOT,check=True)
+
+
 def episode(name):
     receipt = json.loads((STATE/'attempts'/(name+'.json')).read_text())
     if not receipt.get('ended_unix_s'):
@@ -97,10 +112,7 @@ def episode(name):
         paths.append(('frozen-speed-policy',actor))
     video = None
     if (raw/'trajectory.npz').is_file() and result.is_file() and receipt.get('task_mode') != 'branch':
-        import render_s1_go2_r12 as renderer
-        renderer.SMALL, renderer.LARGE = STATE/'episodes', RAW
-        if not (raw/'video-asset.json').is_file():
-            renderer.render(name)
+        render_video(name,raw)
         video = raw/'full-mission-material-overlay.mp4'
     publish(name,paths,video)
 
