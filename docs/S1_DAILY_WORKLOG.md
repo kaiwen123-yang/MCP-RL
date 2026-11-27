@@ -1843,6 +1843,14 @@ H 端两份完整回读证明、D57 两份删除回执和接收端索引已闭�
 
 17:13:54。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
 
+### 20261127/w59/attempt/w59-ppo-full-fallback-5901-a-original-e60-a01｜自然终局或技术中断
+
+17:24:45。B3 / A / original / E60，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5901-a-original-e30-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5901-b-original-e60-a01｜自然终局或技术中断
+
+17:24:54。B3 / B / original / E60，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5901-b-original-e30-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
