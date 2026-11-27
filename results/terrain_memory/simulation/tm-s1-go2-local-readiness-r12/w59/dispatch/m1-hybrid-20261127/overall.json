@@ -1,0 +1,435 @@
+{
+  "source_runtime": "4ad3a5f28b99ad9ccc84455915fdffa9dfcb57af",
+  "paired_shared_gpu_samples": {
+    "hardware": {
+      "name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "driver_version": "595.71.05",
+      "memory.total": "97887",
+      "compute_cap": "12.0"
+    },
+    "scope": "Device-wide 30 s samples during the overlapping A/B workload; includes other jobs.",
+    "count": 30,
+    "first": "2026-11-27T19:12:15+08:00",
+    "last": "2026-11-27T19:26:49+08:00",
+    "sm_percentiles_0_50_100": [
+      26.0,
+      70.0,
+      100.0
+    ],
+    "memory_used_MiB_range": [
+      5575.0,
+      47272.0
+    ]
+  },
+  "measured_libraries_sha256": {
+    "frozen_cpu_m1": "5024afc3a4226faa112994b0d81582660132e5a33062e4dc51178d690822f8c6",
+    "host_correction": "2e092e696e5d5b49dfe4875345cc7bda7bffd33178f0bd46c136b8c00f48821a",
+    "device_layout_16": "d0099f5517952c4ac708e00e78b2a9811a6a5d7ea910b04682ea4d712790a8ab",
+    "device_layout_1": "11d3ea3fdc4ba133bb6afd17d1c927bdb1a7d7784a1fb61e17dedd91bbe3b174"
+  },
+  "registration": "Twelve W59 development snapshots and two completed 5902 PPO-full fallback E60 recordings, A/B 0021. No policy or model was fitted.",
+  "offline_schedule": "Single-worker A then B on CPU 19 for the initial layout. Matched 12-snapshot layout selection. Final A and B each alternate CPU/GPU on identical real inputs and run together on CPUs 19 and 20. Original extra physics slots used: zero. Math threads: one per worker. GPU shared.",
+  "paired_gpu_library": "11d3ea3fdc4ba133bb6afd17d1c927bdb1a7d7784a1fb61e17dedd91bbe3b174",
+  "frozen_material_weights": {
+    "archive": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-memory-study-evidence-20261023",
+    "member": "selected/B_random1000--ideal-potentials.npz",
+    "sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7"
+  },
+  "recording_layout": "In the W59 measurement Release asset, inputs/<case>-inputs.npz provides every original substep start/end, sole bottom positions, sole velocities and physical contact flags. paired-workers/<case>-packets.npz stores actual_Fz and is_material on the same clocks. The query JSON contains every original query time, four xy positions, archived and both recomputed heights. The input folder also contains the original plant and controller contact ledgers.",
+  "cases": {
+    "A": {
+      "episode": "w59-r3-5902-ppo-full-fallback-a-e60-0021",
+      "complete": true,
+      "initial_single_worker_M1_publication": {
+        "n": 30000,
+        "cpu_s": 579.4263634660044,
+        "hybrid_s": 266.1001765280023,
+        "speedup": 2.1774745549822287,
+        "median_ms": [
+          20.6106135,
+          5.359920499999999
+        ],
+        "p95_ms": [
+          38.9259595,
+          23.13520195
+        ]
+      },
+      "full_M1": {
+        "n": 30000,
+        "cpu_s": 561.126052132007,
+        "hybrid_s": 338.1102073870054,
+        "speedup": 1.659595125709218,
+        "median_ms": [
+          20.6647325,
+          6.836202999999999
+        ],
+        "p95_ms": [
+          38.6899471,
+          36.838614
+        ]
+      },
+      "actor_query_check": {
+        "original_queries": 120,
+        "completed": 120,
+        "different_times": 0,
+        "different_footprints": 0,
+        "height_values": 1440,
+        "original_nonzero": 171,
+        "different_values_at_original_publication_precision": {
+          "cpu": 0,
+          "hybrid": 0
+        }
+      },
+      "contact_threshold_edge_differences": [
+        0,
+        0,
+        0
+      ],
+      "max_abs_interbackend_Fz_N": 4.0668979295332974e-09,
+      "material_cell_tick_comparison": {
+        "different": 0,
+        "tested_cell_ticks": 54058320,
+        "cpu_loaded": 1043309,
+        "hybrid_loaded": 1043309
+      },
+      "query_count": 120,
+      "final_publication_by_column_count": {
+        "empty": {
+          "windows": 6258,
+          "cpu_s": 0.41188188499999995,
+          "hybrid_s": 0.4151075479999988,
+          "total_speedup": 0.992229331854985,
+          "hybrid_faster_windows": 3136
+        },
+        "1_to_32": {
+          "windows": 1152,
+          "cpu_s": 4.161719023000002,
+          "hybrid_s": 21.62416674199997,
+          "total_speedup": 0.19245685036810317,
+          "hybrid_faster_windows": 0
+        },
+        "33_to_64": {
+          "windows": 964,
+          "cpu_s": 7.391550839999989,
+          "hybrid_s": 18.695124391,
+          "total_speedup": 0.3953731831577621,
+          "hybrid_faster_windows": 107
+        },
+        "65_to_128": {
+          "windows": 1339,
+          "cpu_s": 17.066881632999973,
+          "hybrid_s": 23.031407348999984,
+          "total_speedup": 0.7410264329218688,
+          "hybrid_faster_windows": 715
+        },
+        "129_and_above": {
+          "windows": 20287,
+          "cpu_s": 531.027009149003,
+          "hybrid_s": 273.2670305159998,
+          "total_speedup": 1.9432531181909678,
+          "hybrid_faster_windows": 17970
+        }
+      },
+      "soft_force_MAE_N": [
+        0.09203943232591982,
+        0.09203943230980703
+      ],
+      "original_vs_observer_event_counts": {
+        "cpu": {
+          "first_load": {
+            "plant": 587,
+            "observer": 587,
+            "matched": 587
+          },
+          "release": {
+            "plant": 1807,
+            "observer": 1766,
+            "matched": 1215
+          },
+          "same_foot_reload": {
+            "plant": 1168,
+            "observer": 1127,
+            "matched": 763
+          },
+          "cross_foot_revisit": {
+            "plant": 52,
+            "observer": 52,
+            "matched": 47
+          },
+          "cross_revisit_with_previous_load": {
+            "plant": 52,
+            "observer": 52,
+            "matched": 37
+          },
+          "cross_revisit_arrival_clocks": {
+            "same_cell_and_foot_pair": 52,
+            "plant": 52,
+            "observer": 52,
+            "unique_pair_groups": 52,
+            "exact_tick_in_unique_groups": 47,
+            "within_one_tick_in_unique_groups": 52,
+            "max_abs_ticks_in_unique_groups": 1
+          }
+        },
+        "hybrid": {
+          "first_load": {
+            "plant": 587,
+            "observer": 587,
+            "matched": 587
+          },
+          "release": {
+            "plant": 1807,
+            "observer": 1766,
+            "matched": 1215
+          },
+          "same_foot_reload": {
+            "plant": 1168,
+            "observer": 1127,
+            "matched": 763
+          },
+          "cross_foot_revisit": {
+            "plant": 52,
+            "observer": 52,
+            "matched": 47
+          },
+          "cross_revisit_with_previous_load": {
+            "plant": 52,
+            "observer": 52,
+            "matched": 37
+          },
+          "cross_revisit_arrival_clocks": {
+            "same_cell_and_foot_pair": 52,
+            "plant": 52,
+            "observer": 52,
+            "unique_pair_groups": 52,
+            "exact_tick_in_unique_groups": 47,
+            "within_one_tick_in_unique_groups": 52,
+            "max_abs_ticks_in_unique_groups": 1
+          }
+        }
+      },
+      "projection": {
+        "original_E60_s": 1422.805732946843,
+        "original_observe_s": 553.6837779227644,
+        "original_query_s": 1.0438070055097342,
+        "projected_observe_s": 332.7853457316116,
+        "projected_query_s": 1.0539017257830152,
+        "projected_E60_s": 1201.9173954759633,
+        "projected_s_saved": 220.8883374708796,
+        "projected_whole_E60_speedup": 1.1837799654970524
+      }
+    },
+    "B": {
+      "episode": "w59-r3-5902-ppo-full-fallback-b-e60-0021",
+      "complete": true,
+      "initial_single_worker_M1_publication": {
+        "n": 30000,
+        "cpu_s": 524.7563843800077,
+        "hybrid_s": 276.87923898300056,
+        "speedup": 1.8952536358720127,
+        "median_ms": [
+          19.7173435,
+          5.828813
+        ],
+        "p95_ms": [
+          36.410420699999996,
+          24.08803855
+        ]
+      },
+      "full_M1": {
+        "n": 30000,
+        "cpu_s": 522.2012632599988,
+        "hybrid_s": 328.09391347499815,
+        "speedup": 1.5916213066226,
+        "median_ms": [
+          19.7444615,
+          6.804033499999999
+        ],
+        "p95_ms": [
+          36.3435802,
+          35.1850032
+        ]
+      },
+      "actor_query_check": {
+        "original_queries": 120,
+        "completed": 120,
+        "different_times": 0,
+        "different_footprints": 0,
+        "height_values": 1440,
+        "original_nonzero": 165,
+        "different_values_at_original_publication_precision": {
+          "cpu": 0,
+          "hybrid": 0
+        }
+      },
+      "contact_threshold_edge_differences": [
+        0,
+        0,
+        0
+      ],
+      "max_abs_interbackend_Fz_N": 3.258648462178826e-09,
+      "material_cell_tick_comparison": {
+        "different": 0,
+        "tested_cell_ticks": 50228060,
+        "cpu_loaded": 969957,
+        "hybrid_loaded": 969957
+      },
+      "query_count": 120,
+      "final_publication_by_column_count": {
+        "empty": {
+          "windows": 6326,
+          "cpu_s": 0.42601925999999923,
+          "hybrid_s": 0.4238293319999999,
+          "total_speedup": 1.0051670043450398,
+          "hybrid_faster_windows": 3177
+        },
+        "1_to_32": {
+          "windows": 1126,
+          "cpu_s": 3.817047398999999,
+          "hybrid_s": 22.194413525999988,
+          "total_speedup": 0.17198235017692448,
+          "hybrid_faster_windows": 1
+        },
+        "33_to_64": {
+          "windows": 973,
+          "cpu_s": 6.442362657000008,
+          "hybrid_s": 14.946788254000008,
+          "total_speedup": 0.4310198651055303,
+          "hybrid_faster_windows": 205
+        },
+        "65_to_128": {
+          "windows": 1381,
+          "cpu_s": 18.020344818999995,
+          "hybrid_s": 23.25036375900002,
+          "total_speedup": 0.7750564681821148,
+          "hybrid_faster_windows": 723
+        },
+        "129_and_above": {
+          "windows": 20194,
+          "cpu_s": 492.57288141399846,
+          "hybrid_s": 266.3516908890003,
+          "total_speedup": 1.8493326615271004,
+          "hybrid_faster_windows": 17783
+        }
+      },
+      "soft_force_MAE_N": [
+        0.0903711441349351,
+        0.09037114412578091
+      ],
+      "original_vs_observer_event_counts": {
+        "cpu": {
+          "first_load": {
+            "plant": 540,
+            "observer": 540,
+            "matched": 540
+          },
+          "release": {
+            "plant": 1619,
+            "observer": 1578,
+            "matched": 1124
+          },
+          "same_foot_reload": {
+            "plant": 1019,
+            "observer": 978,
+            "matched": 644
+          },
+          "cross_foot_revisit": {
+            "plant": 60,
+            "observer": 60,
+            "matched": 45
+          },
+          "cross_revisit_with_previous_load": {
+            "plant": 60,
+            "observer": 60,
+            "matched": 35
+          },
+          "cross_revisit_arrival_clocks": {
+            "same_cell_and_foot_pair": 60,
+            "plant": 60,
+            "observer": 60,
+            "unique_pair_groups": 60,
+            "exact_tick_in_unique_groups": 45,
+            "within_one_tick_in_unique_groups": 60,
+            "max_abs_ticks_in_unique_groups": 1
+          }
+        },
+        "hybrid": {
+          "first_load": {
+            "plant": 540,
+            "observer": 540,
+            "matched": 540
+          },
+          "release": {
+            "plant": 1619,
+            "observer": 1578,
+            "matched": 1124
+          },
+          "same_foot_reload": {
+            "plant": 1019,
+            "observer": 978,
+            "matched": 644
+          },
+          "cross_foot_revisit": {
+            "plant": 60,
+            "observer": 60,
+            "matched": 45
+          },
+          "cross_revisit_with_previous_load": {
+            "plant": 60,
+            "observer": 60,
+            "matched": 35
+          },
+          "cross_revisit_arrival_clocks": {
+            "same_cell_and_foot_pair": 60,
+            "plant": 60,
+            "observer": 60,
+            "unique_pair_groups": 60,
+            "exact_tick_in_unique_groups": 45,
+            "within_one_tick_in_unique_groups": 60,
+            "max_abs_ticks_in_unique_groups": 1
+          }
+        }
+      },
+      "projection": {
+        "original_E60_s": 1404.4103452470154,
+        "original_observe_s": 515.7809973433614,
+        "original_query_s": 0.9081060625612736,
+        "projected_observe_s": 323.32997633308685,
+        "projected_query_s": 0.9122636908891405,
+        "projected_E60_s": 1211.9634818650688,
+        "projected_s_saved": 192.4468633819465,
+        "projected_whole_E60_speedup": 1.158789325141871
+      }
+    }
+  },
+  "full_M1_combined": {
+    "cpu_s": 1083.3273153920059,
+    "hybrid_s": 666.2041208620035,
+    "speedup": 1.6261192050122497,
+    "percentiles_50_95_ms_cpu_hybrid": [
+      [
+        19.937680999999998,
+        6.821145
+      ],
+      [
+        37.535261799999994,
+        35.93446109999999
+      ]
+    ]
+  },
+  "physical_event_comparison": "Exact 0.2 ms right-boundary tick, global world-cell key, event kind and leg. Cross-foot lineage additionally requires the preceding load on the same key at the same tick and with the same previous foot.",
+  "projection_scope": "Each underlying recorded E60 keeps its own original plant, controller and I/O time. Only its measured observation and recovery query times are scaled using matching paired internal timers. This estimates a possible online wall change; the plant and the live policy were not rerun.",
+  "paired_wave_projection": {
+    "original_s": 1422.805732946843,
+    "projected_s": 1211.9634818650688,
+    "projected_s_saved": 210.84225108177407,
+    "projected_paired_waves_to_save_one_hour": 18
+  },
+  "layout_probe": {
+    "full_M1_candidate_over_reference_speedup": 1.0404444750204807,
+    "differing_fields": 0
+  },
+  "new_physics_steps": 0,
+  "new_training_events": 0,
+  "backend_5902": "unchanged production CPU M1"
+}

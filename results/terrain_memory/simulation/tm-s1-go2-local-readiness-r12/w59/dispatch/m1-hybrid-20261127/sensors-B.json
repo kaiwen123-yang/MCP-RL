@@ -1,0 +1,477 @@
+{
+  "episode": "w59-r3-5902-ppo-full-fallback-b-e60-0021",
+  "created": "2026-11-27T19:26:57+08:00",
+  "original_plant_record": true,
+  "raw_input_rows": 300000,
+  "feet": [
+    "FL",
+    "FR",
+    "RL",
+    "RR"
+  ],
+  "threshold_N": {
+    "touch_off_N": 1.0,
+    "touch_on_N": 3.0,
+    "load_on_N": 14.917486248000003
+  },
+  "definition": "M1 reports material force. All spans both rigid and material feet. Material includes all ticks with sole on TM02. Material contact also requires the recorded physical contact flag. Every signed edge uses two consecutive eligible foot-ticks, with no invented initial edge.",
+  "force_error_vs_actual": {
+    "all": {
+      "cpu": {
+        "foot_ticks": 1200000,
+        "MAE_N": 29.43284011523274,
+        "RMSE_N": 40.330158588219774,
+        "max_abs_N": 285.90427790163
+      },
+      "hybrid": {
+        "foot_ticks": 1200000,
+        "MAE_N": 29.432840115230817,
+        "RMSE_N": 40.33015858821976,
+        "max_abs_N": 285.90427790163
+      }
+    },
+    "material": {
+      "cpu": {
+        "foot_ticks": 252666,
+        "MAE_N": 0.0903711441349351,
+        "RMSE_N": 0.197928479825484,
+        "max_abs_N": 1.4740317242147967
+      },
+      "hybrid": {
+        "foot_ticks": 252666,
+        "MAE_N": 0.09037114412578091,
+        "RMSE_N": 0.1979284798042742,
+        "max_abs_N": 1.4740317242143703
+      }
+    },
+    "material_contact": {
+      "cpu": {
+        "foot_ticks": 154918,
+        "MAE_N": 0.1473466901627308,
+        "RMSE_N": 0.25276028851273297,
+        "max_abs_N": 1.4740317242147967
+      },
+      "hybrid": {
+        "foot_ticks": 154918,
+        "MAE_N": 0.14734669014780108,
+        "RMSE_N": 0.25276028848564486,
+        "max_abs_N": 1.4740317242143703
+      }
+    },
+    "material_final_corrected_boundary": {
+      "cpu": {
+        "foot_ticks": 25269,
+        "MAE_N": 0.08313293705744063,
+        "RMSE_N": 0.1944925557282288,
+        "max_abs_N": 1.4281965387975504
+      },
+      "hybrid": {
+        "foot_ticks": 25269,
+        "MAE_N": 0.08313293704792594,
+        "RMSE_N": 0.1944925557067345,
+        "max_abs_N": 1.4281965387969535
+      }
+    },
+    "material_other_nine_boundaries": {
+      "cpu": {
+        "foot_ticks": 227397,
+        "MAE_N": 0.09117547424765081,
+        "RMSE_N": 0.19830661425969473,
+        "max_abs_N": 1.4740317242147967
+      },
+      "hybrid": {
+        "foot_ticks": 227397,
+        "MAE_N": 0.09117547423853666,
+        "RMSE_N": 0.19830661423851562,
+        "max_abs_N": 1.4740317242143703
+      }
+    },
+    "material_per_foot": {
+      "FL": {
+        "cpu": {
+          "foot_ticks": 64558,
+          "MAE_N": 0.10120713727682197,
+          "RMSE_N": 0.21317287610818378,
+          "max_abs_N": 0.7413570386749768
+        },
+        "hybrid": {
+          "foot_ticks": 64558,
+          "MAE_N": 0.1012071372651164,
+          "RMSE_N": 0.2131728760919848,
+          "max_abs_N": 0.7413570386750337
+        }
+      },
+      "FR": {
+        "cpu": {
+          "foot_ticks": 62510,
+          "MAE_N": 0.10663405410247062,
+          "RMSE_N": 0.23004055651740274,
+          "max_abs_N": 1.4740317242147967
+        },
+        "hybrid": {
+          "foot_ticks": 62510,
+          "MAE_N": 0.10663405408779214,
+          "RMSE_N": 0.2300405564856172,
+          "max_abs_N": 1.4740317242143703
+        }
+      },
+      "RL": {
+        "cpu": {
+          "foot_ticks": 61817,
+          "MAE_N": 0.07476269432971357,
+          "RMSE_N": 0.16155865458586435,
+          "max_abs_N": 0.8127142168315151
+        },
+        "hybrid": {
+          "foot_ticks": 61817,
+          "MAE_N": 0.07476269433876641,
+          "RMSE_N": 0.16155865460793636,
+          "max_abs_N": 0.812714216831349
+        }
+      },
+      "RR": {
+        "cpu": {
+          "foot_ticks": 63781,
+          "MAE_N": 0.07859213462245966,
+          "RMSE_N": 0.17898356785305491,
+          "max_abs_N": 0.8438666730603614
+        },
+        "hybrid": {
+          "foot_ticks": 63781,
+          "MAE_N": 0.07859213460365577,
+          "RMSE_N": 0.17898356780039723,
+          "max_abs_N": 0.8438666731069588
+        }
+      }
+    }
+  },
+  "instantaneous_contact": {
+    "positive_force_vs_contact_flag": {
+      "all": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 222,
+          "first_falling": 222,
+          "second_rising": 222,
+          "second_falling": 222,
+          "matched_rising_same_tick": 222,
+          "matched_falling_same_tick": 222,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 761201,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 222,
+          "first_falling": 222,
+          "second_rising": 1048,
+          "second_falling": 1044,
+          "matched_rising_same_tick": 185,
+          "matched_falling_same_tick": 167,
+          "signed_edge_mismatch": 1832
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 761201,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 222,
+          "first_falling": 222,
+          "second_rising": 1048,
+          "second_falling": 1044,
+          "matched_rising_same_tick": 185,
+          "matched_falling_same_tick": 167,
+          "signed_edge_mismatch": 1832
+        }
+      },
+      "material": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 252666,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 222,
+          "first_falling": 222,
+          "second_rising": 222,
+          "second_falling": 222,
+          "matched_rising_same_tick": 222,
+          "matched_falling_same_tick": 222,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 252666,
+          "state_mismatch": 127,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 222,
+          "first_falling": 222,
+          "second_rising": 225,
+          "second_falling": 225,
+          "matched_rising_same_tick": 185,
+          "matched_falling_same_tick": 167,
+          "signed_edge_mismatch": 190
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 252666,
+          "state_mismatch": 127,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 222,
+          "first_falling": 222,
+          "second_rising": 225,
+          "second_falling": 225,
+          "matched_rising_same_tick": 185,
+          "matched_falling_same_tick": 167,
+          "signed_edge_mismatch": 190
+        }
+      }
+    },
+    "force_over_touch_off": {
+      "all": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 257,
+          "first_falling": 257,
+          "second_rising": 257,
+          "second_falling": 257,
+          "matched_rising_same_tick": 257,
+          "matched_falling_same_tick": 257,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 757510,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 257,
+          "first_falling": 257,
+          "second_rising": 1251,
+          "second_falling": 1247,
+          "matched_rising_same_tick": 202,
+          "matched_falling_same_tick": 177,
+          "signed_edge_mismatch": 2254
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 757510,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 257,
+          "first_falling": 257,
+          "second_rising": 1251,
+          "second_falling": 1247,
+          "matched_rising_same_tick": 202,
+          "matched_falling_same_tick": 177,
+          "signed_edge_mismatch": 2254
+        }
+      },
+      "material": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 252666,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 257,
+          "first_falling": 257,
+          "second_rising": 257,
+          "second_falling": 257,
+          "matched_rising_same_tick": 257,
+          "matched_falling_same_tick": 257,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 252666,
+          "state_mismatch": 180,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 257,
+          "first_falling": 257,
+          "second_rising": 259,
+          "second_falling": 259,
+          "matched_rising_same_tick": 202,
+          "matched_falling_same_tick": 177,
+          "signed_edge_mismatch": 274
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 252666,
+          "state_mismatch": 180,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 257,
+          "first_falling": 257,
+          "second_rising": 259,
+          "second_falling": 259,
+          "matched_rising_same_tick": 202,
+          "matched_falling_same_tick": 177,
+          "signed_edge_mismatch": 274
+        }
+      }
+    },
+    "force_at_touch_on": {
+      "all": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 274,
+          "first_falling": 274,
+          "second_rising": 274,
+          "second_falling": 274,
+          "matched_rising_same_tick": 274,
+          "matched_falling_same_tick": 274,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 753316,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 274,
+          "first_falling": 274,
+          "second_rising": 1114,
+          "second_falling": 1110,
+          "matched_rising_same_tick": 216,
+          "matched_falling_same_tick": 185,
+          "signed_edge_mismatch": 1970
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 753316,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 274,
+          "first_falling": 274,
+          "second_rising": 1114,
+          "second_falling": 1110,
+          "matched_rising_same_tick": 216,
+          "matched_falling_same_tick": 185,
+          "signed_edge_mismatch": 1970
+        }
+      },
+      "material": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 252666,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 274,
+          "first_falling": 274,
+          "second_rising": 274,
+          "second_falling": 274,
+          "matched_rising_same_tick": 274,
+          "matched_falling_same_tick": 274,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 252666,
+          "state_mismatch": 160,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 274,
+          "first_falling": 274,
+          "second_rising": 271,
+          "second_falling": 271,
+          "matched_rising_same_tick": 216,
+          "matched_falling_same_tick": 185,
+          "signed_edge_mismatch": 288
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 252666,
+          "state_mismatch": 160,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 274,
+          "first_falling": 274,
+          "second_rising": 271,
+          "second_falling": 271,
+          "matched_rising_same_tick": 216,
+          "matched_falling_same_tick": 185,
+          "signed_edge_mismatch": 288
+        }
+      }
+    },
+    "force_at_load_on": {
+      "all": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 410,
+          "first_falling": 410,
+          "second_rising": 410,
+          "second_falling": 410,
+          "matched_rising_same_tick": 410,
+          "matched_falling_same_tick": 410,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 737238,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 410,
+          "first_falling": 410,
+          "second_rising": 948,
+          "second_falling": 944,
+          "matched_rising_same_tick": 355,
+          "matched_falling_same_tick": 347,
+          "signed_edge_mismatch": 1308
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 737238,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 410,
+          "first_falling": 410,
+          "second_rising": 948,
+          "second_falling": 944,
+          "matched_rising_same_tick": 355,
+          "matched_falling_same_tick": 347,
+          "signed_edge_mismatch": 1308
+        }
+      },
+      "material": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 252666,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 410,
+          "first_falling": 410,
+          "second_rising": 410,
+          "second_falling": 410,
+          "matched_rising_same_tick": 410,
+          "matched_falling_same_tick": 410,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 252666,
+          "state_mismatch": 177,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 410,
+          "first_falling": 410,
+          "second_rising": 414,
+          "second_falling": 414,
+          "matched_rising_same_tick": 355,
+          "matched_falling_same_tick": 347,
+          "signed_edge_mismatch": 244
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 252666,
+          "state_mismatch": 177,
+          "adjacent_foot_tick_pairs": 252658,
+          "first_rising": 410,
+          "first_falling": 410,
+          "second_rising": 414,
+          "second_falling": 414,
+          "matched_rising_same_tick": 355,
+          "matched_falling_same_tick": 347,
+          "signed_edge_mismatch": 244
+        }
+      }
+    }
+  },
+  "recorded_closed_loop_controller_events": {
+    "actual_touchdown": 269,
+    "walking_requested": 1,
+    "liftoff_committed": 129,
+    "touchdown_search": 258
+  },
+  "original_recovery_queries": {
+    "count": 120,
+    "cpu_wall_s": 0.9081060625612736,
+    "included_in_publication_only_timing": false,
+    "included_in_reported_complete_M1_timing": true,
+    "complementary_timing_path": "recovery.complete_M1_including_queries"
+  },
+  "paired_timing_instrumentation": "Both backend ledgers receive the same single Python wrapper and three reference assignments. Tap clearing, data loading, and validation run outside the measured interval. The wrapper copies no arrays.",
+  "new_plant_steps": 0
+}

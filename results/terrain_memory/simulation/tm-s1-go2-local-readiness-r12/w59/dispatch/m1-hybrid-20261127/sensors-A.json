@@ -1,0 +1,477 @@
+{
+  "episode": "w59-r3-5902-ppo-full-fallback-a-e60-0021",
+  "created": "2026-11-27T19:26:56+08:00",
+  "original_plant_record": true,
+  "raw_input_rows": 300000,
+  "feet": [
+    "FL",
+    "FR",
+    "RL",
+    "RR"
+  ],
+  "threshold_N": {
+    "touch_off_N": 1.0,
+    "touch_on_N": 3.0,
+    "load_on_N": 14.917486248000003
+  },
+  "definition": "M1 reports material force. All spans both rigid and material feet. Material includes all ticks with sole on TM02. Material contact also requires the recorded physical contact flag. Every signed edge uses two consecutive eligible foot-ticks, with no invented initial edge.",
+  "force_error_vs_actual": {
+    "all": {
+      "cpu": {
+        "foot_ticks": 1200000,
+        "MAE_N": 29.49700372523326,
+        "RMSE_N": 40.311221999999994,
+        "max_abs_N": 285.90427790163
+      },
+      "hybrid": {
+        "foot_ticks": 1200000,
+        "MAE_N": 29.4970037252299,
+        "RMSE_N": 40.31122199999995,
+        "max_abs_N": 285.90427790163
+      }
+    },
+    "material": {
+      "cpu": {
+        "foot_ticks": 249972,
+        "MAE_N": 0.09203943232591982,
+        "RMSE_N": 0.19973298846608906,
+        "max_abs_N": 1.2517135820283727
+      },
+      "hybrid": {
+        "foot_ticks": 249972,
+        "MAE_N": 0.09203943230980703,
+        "RMSE_N": 0.1997329884304589,
+        "max_abs_N": 1.2517135820280032
+      }
+    },
+    "material_contact": {
+      "cpu": {
+        "foot_ticks": 152379,
+        "MAE_N": 0.150921198716566,
+        "RMSE_N": 0.25579876579419136,
+        "max_abs_N": 1.2517135820283727
+      },
+      "hybrid": {
+        "foot_ticks": 152379,
+        "MAE_N": 0.15092119869013282,
+        "RMSE_N": 0.25579876574855215,
+        "max_abs_N": 1.2517135820280032
+      }
+    },
+    "material_final_corrected_boundary": {
+      "cpu": {
+        "foot_ticks": 24996,
+        "MAE_N": 0.08485298819289327,
+        "RMSE_N": 0.19628368329436996,
+        "max_abs_N": 1.2242409968132222
+      },
+      "hybrid": {
+        "foot_ticks": 24996,
+        "MAE_N": 0.08485298817647251,
+        "RMSE_N": 0.19628368325837026,
+        "max_abs_N": 1.2242409968135632
+      }
+    },
+    "material_other_nine_boundaries": {
+      "cpu": {
+        "foot_ticks": 224976,
+        "MAE_N": 0.0928378835275997,
+        "RMSE_N": 0.20011255433663108,
+        "max_abs_N": 1.2517135820283727
+      },
+      "hybrid": {
+        "foot_ticks": 224976,
+        "MAE_N": 0.0928378835115211,
+        "RMSE_N": 0.20011255430104052,
+        "max_abs_N": 1.2517135820280032
+      }
+    },
+    "material_per_foot": {
+      "FL": {
+        "cpu": {
+          "foot_ticks": 61395,
+          "MAE_N": 0.10181671983855195,
+          "RMSE_N": 0.212811157953691,
+          "max_abs_N": 0.9662453716719313
+        },
+        "hybrid": {
+          "foot_ticks": 61395,
+          "MAE_N": 0.10181671978904856,
+          "RMSE_N": 0.21281115784260762,
+          "max_abs_N": 0.9662453716717465
+        }
+      },
+      "FR": {
+        "cpu": {
+          "foot_ticks": 62229,
+          "MAE_N": 0.10684067358039491,
+          "RMSE_N": 0.23150334076513673,
+          "max_abs_N": 1.2517135820283727
+        },
+        "hybrid": {
+          "foot_ticks": 62229,
+          "MAE_N": 0.10684067359994628,
+          "RMSE_N": 0.2315033408092897,
+          "max_abs_N": 1.2517135820280032
+        }
+      },
+      "RL": {
+        "cpu": {
+          "foot_ticks": 61051,
+          "MAE_N": 0.07978826510967556,
+          "RMSE_N": 0.16747162186451514,
+          "max_abs_N": 0.7474457476538987
+        },
+        "hybrid": {
+          "foot_ticks": 61051,
+          "MAE_N": 0.07978826507549751,
+          "RMSE_N": 0.1674716217805023,
+          "max_abs_N": 0.7474457477296852
+        }
+      },
+      "RR": {
+        "cpu": {
+          "foot_ticks": 65297,
+          "MAE_N": 0.08019513627642522,
+          "RMSE_N": 0.18121738671824247,
+          "max_abs_N": 0.7827480526001409
+        },
+        "hybrid": {
+          "foot_ticks": 65297,
+          "MAE_N": 0.0801951362746097,
+          "RMSE_N": 0.18121738670939674,
+          "max_abs_N": 0.7827480526051147
+        }
+      }
+    }
+  },
+  "instantaneous_contact": {
+    "positive_force_vs_contact_flag": {
+      "all": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 234,
+          "first_falling": 234,
+          "second_rising": 234,
+          "second_falling": 234,
+          "matched_rising_same_tick": 234,
+          "matched_falling_same_tick": 234,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 763504,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 234,
+          "first_falling": 234,
+          "second_rising": 1058,
+          "second_falling": 1054,
+          "matched_rising_same_tick": 193,
+          "matched_falling_same_tick": 172,
+          "signed_edge_mismatch": 1850
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 763504,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 234,
+          "first_falling": 234,
+          "second_rising": 1058,
+          "second_falling": 1054,
+          "matched_rising_same_tick": 193,
+          "matched_falling_same_tick": 172,
+          "signed_edge_mismatch": 1850
+        }
+      },
+      "material": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 249972,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 233,
+          "first_falling": 234,
+          "second_rising": 233,
+          "second_falling": 234,
+          "matched_rising_same_tick": 233,
+          "matched_falling_same_tick": 234,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 249972,
+          "state_mismatch": 149,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 233,
+          "first_falling": 234,
+          "second_rising": 236,
+          "second_falling": 237,
+          "matched_rising_same_tick": 193,
+          "matched_falling_same_tick": 172,
+          "signed_edge_mismatch": 210
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 249972,
+          "state_mismatch": 149,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 233,
+          "first_falling": 234,
+          "second_rising": 236,
+          "second_falling": 237,
+          "matched_rising_same_tick": 193,
+          "matched_falling_same_tick": 172,
+          "signed_edge_mismatch": 210
+        }
+      }
+    },
+    "force_over_touch_off": {
+      "all": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 263,
+          "first_falling": 263,
+          "second_rising": 263,
+          "second_falling": 263,
+          "matched_rising_same_tick": 263,
+          "matched_falling_same_tick": 263,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 759808,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 263,
+          "first_falling": 263,
+          "second_rising": 1305,
+          "second_falling": 1301,
+          "matched_rising_same_tick": 219,
+          "matched_falling_same_tick": 192,
+          "signed_edge_mismatch": 2310
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 759808,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 263,
+          "first_falling": 263,
+          "second_rising": 1305,
+          "second_falling": 1301,
+          "matched_rising_same_tick": 219,
+          "matched_falling_same_tick": 192,
+          "signed_edge_mismatch": 2310
+        }
+      },
+      "material": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 249972,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 262,
+          "first_falling": 263,
+          "second_rising": 262,
+          "second_falling": 263,
+          "matched_rising_same_tick": 262,
+          "matched_falling_same_tick": 263,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 249972,
+          "state_mismatch": 153,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 262,
+          "first_falling": 263,
+          "second_rising": 263,
+          "second_falling": 264,
+          "matched_rising_same_tick": 219,
+          "matched_falling_same_tick": 192,
+          "signed_edge_mismatch": 230
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 249972,
+          "state_mismatch": 153,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 262,
+          "first_falling": 263,
+          "second_rising": 263,
+          "second_falling": 264,
+          "matched_rising_same_tick": 219,
+          "matched_falling_same_tick": 192,
+          "signed_edge_mismatch": 230
+        }
+      }
+    },
+    "force_at_touch_on": {
+      "all": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 296,
+          "first_falling": 296,
+          "second_rising": 296,
+          "second_falling": 296,
+          "matched_rising_same_tick": 296,
+          "matched_falling_same_tick": 296,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 755666,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 296,
+          "first_falling": 296,
+          "second_rising": 1214,
+          "second_falling": 1210,
+          "matched_rising_same_tick": 237,
+          "matched_falling_same_tick": 222,
+          "signed_edge_mismatch": 2098
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 755666,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 296,
+          "first_falling": 296,
+          "second_rising": 1214,
+          "second_falling": 1210,
+          "matched_rising_same_tick": 237,
+          "matched_falling_same_tick": 222,
+          "signed_edge_mismatch": 2098
+        }
+      },
+      "material": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 249972,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 295,
+          "first_falling": 296,
+          "second_rising": 295,
+          "second_falling": 296,
+          "matched_rising_same_tick": 295,
+          "matched_falling_same_tick": 296,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 249972,
+          "state_mismatch": 153,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 295,
+          "first_falling": 296,
+          "second_rising": 292,
+          "second_falling": 293,
+          "matched_rising_same_tick": 237,
+          "matched_falling_same_tick": 222,
+          "signed_edge_mismatch": 258
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 249972,
+          "state_mismatch": 153,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 295,
+          "first_falling": 296,
+          "second_rising": 292,
+          "second_falling": 293,
+          "matched_rising_same_tick": 237,
+          "matched_falling_same_tick": 222,
+          "signed_edge_mismatch": 258
+        }
+      }
+    },
+    "force_at_load_on": {
+      "all": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 387,
+          "first_falling": 387,
+          "second_rising": 387,
+          "second_falling": 387,
+          "matched_rising_same_tick": 387,
+          "matched_falling_same_tick": 387,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 738788,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 387,
+          "first_falling": 387,
+          "second_rising": 1053,
+          "second_falling": 1049,
+          "matched_rising_same_tick": 349,
+          "matched_falling_same_tick": 328,
+          "signed_edge_mismatch": 1522
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 1200000,
+          "state_mismatch": 738788,
+          "adjacent_foot_tick_pairs": 1199996,
+          "first_rising": 387,
+          "first_falling": 387,
+          "second_rising": 1053,
+          "second_falling": 1049,
+          "matched_rising_same_tick": 349,
+          "matched_falling_same_tick": 328,
+          "signed_edge_mismatch": 1522
+        }
+      },
+      "material": {
+        "cpu_vs_hybrid": {
+          "foot_ticks": 249972,
+          "state_mismatch": 0,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 387,
+          "first_falling": 387,
+          "second_rising": 387,
+          "second_falling": 387,
+          "matched_rising_same_tick": 387,
+          "matched_falling_same_tick": 387,
+          "signed_edge_mismatch": 0
+        },
+        "cpu_vs_recorded": {
+          "foot_ticks": 249972,
+          "state_mismatch": 112,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 387,
+          "first_falling": 387,
+          "second_rising": 384,
+          "second_falling": 384,
+          "matched_rising_same_tick": 349,
+          "matched_falling_same_tick": 328,
+          "signed_edge_mismatch": 188
+        },
+        "hybrid_vs_recorded": {
+          "foot_ticks": 249972,
+          "state_mismatch": 112,
+          "adjacent_foot_tick_pairs": 249964,
+          "first_rising": 387,
+          "first_falling": 387,
+          "second_rising": 384,
+          "second_falling": 384,
+          "matched_rising_same_tick": 349,
+          "matched_falling_same_tick": 328,
+          "signed_edge_mismatch": 188
+        }
+      }
+    }
+  },
+  "recorded_closed_loop_controller_events": {
+    "actual_touchdown": 270,
+    "walking_requested": 1,
+    "liftoff_committed": 129,
+    "touchdown_search": 257
+  },
+  "original_recovery_queries": {
+    "count": 120,
+    "cpu_wall_s": 1.0438070055097342,
+    "included_in_publication_only_timing": false,
+    "included_in_reported_complete_M1_timing": true,
+    "complementary_timing_path": "recovery.complete_M1_including_queries"
+  },
+  "paired_timing_instrumentation": "Both backend ledgers receive the same single Python wrapper and three reference assignments. Tap clearing, data loading, and validation run outside the measured interval. The wrapper copies no arrays.",
+  "new_plant_steps": 0
+}
