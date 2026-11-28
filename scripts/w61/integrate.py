@@ -65,6 +65,18 @@ def step(force=False):
     rows=joint_rows()
     formal,abl,paths=evidence()
     used=sum(r['used'] for r in formal.values())
+    final_ledger=AUX/E_STUDY/'final-evaluation'
+    frozen_progress=final_ledger/'parallel-progress.json'
+    frozen={}
+    if frozen_progress.is_file():
+        dispatch=read(frozen_progress)
+        mechanism=[read(path) for path in final_ledger.glob('*/*-summary.json')
+                   if '-v032-' in path.name and ('-short-' in path.name or '-recovered-' in path.name)]
+        frozen=dict(registered=dispatch['registered_long'],ready_8192_heads=dispatch['checkpoint_heads_8192'],
+                    remote_receipts=dispatch['long'].get('verified',0),reported_outcomes=dict(Counter(r['stage_status'] for r in mechanism)),
+                    actual_simulated_seconds=sum(r['physical_s'] for r in mechanism),
+                    compact_progress='learning/'+E_STUDY+'/final-evaluation/parallel-progress.json',
+                    completed=dispatch['completed'])
     jobs=[read(f) for f in (ROOT/'work/w61/pool/jobs').glob('*.json')]
     counts=Counter(v['state'] for v in jobs)
     active={r['job']:r['slots'] for r in jobs if r['state']=='running'}
@@ -80,11 +92,12 @@ def step(force=False):
                 F_eval=len(rows['unseen']),F_factorial=len(rows['factorial']), F_release=rows['originals_verified']//4,
                 E={k:(v['used']//2048,bool(v['updates']),bool(v.get('terminal'))) for k,v in formal.items()},
                 ablation={k:v['used']//2048 for k,v in abl.items()}, storage=list(storage),H_products=nH//10)
+    marker['frozen_final']=frozen
     signature=hashlib.sha256(json.dumps(marker,sort_keys=True).encode()).hexdigest()[:13]
     stamp=WORK/'integration-state.json'
     event=now.strftime('%Y%m%d')+'/w61/execution-'+signature
     if not force and stamp.is_file() and read(stamp)['signature']==signature and remote==git('rev-parse','HEAD'):
-        return bool((AUX/E_STUDY/'lifecycle.json').is_file() and len(rows['factorial'])==8 and not counts.get('running') and not counts.get('waiting'))
+        return bool((AUX/E_STUDY/'lifecycle.json').is_file() and len(rows['factorial'])==8 and not counts.get('running') and not counts.get('waiting') and (not frozen or frozen['completed']))
     snap=resources()
     F_OUT.mkdir(parents=True,exist_ok=True)
     write(F_OUT/'result.json',rows)
@@ -93,7 +106,7 @@ def step(force=False):
         W59='c8378beae4be371eb4f104782b75e5d295b6f59a',W59_handoff='results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W59-review/handoff.json',
         branches=lanes,F_runtime=rows['runtime'],F_pairs=rows['training_pairs'],F_training_real_queries=rows['training_real_queries'],
         F_joint_updates=rows['actual_simultaneous_two_head_updates'],F_unseen_frozen_heads=len(rows['unseen']),F_factorial_queries=len(rows['factorial']),
-        formal_E= formal,E_used=used,E_target=73728,E_extra_geometry_ablation=abl,physical_pool=counts,leased_slots=active,resources=snap,
+        formal_E= formal,E_used=used,E_target=73728,E_extra_geometry_ablation=abl,frozen_final=frozen,physical_pool=counts,leased_slots=active,resources=snap,
         storage=storage,release='https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w61',
         runtime_policy=dict(deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False),
         run_commands={'F':'python -m w61.joint.train schedule under W61_F_RUNTIME_COMMIT with the registered single-slot leases',
@@ -109,6 +122,11 @@ def step(force=False):
         lines+=['E 正式九头训练累计使用 '+str(used)+' / 73,728 个去重真实事件。已结束更新的 requested 为 '+str(sum(r['requested'] for r in formal.values()))+'，累计接受 actor 步 '+str(sum(r['actor_steps'] for r in formal.values()))+'，critic 更新 '+str(sum(r['critic_updates'] for r in formal.values()))+'，想象事件 '+str(sum(r['imagined'] for r in formal.values()))+'。单头 used 为 '+', '.join(k+' '+str(r['used']) for k,r in formal.items())+'。无几何附加臂单计。',
                 'F 已完成 '+str(rows['training_pairs'])+' 对相同实测支撑的正负候选，实际独立查询 '+str(rows['training_real_queries'])+' 次、查询物理子步 '+str(rows['training_real_query_substeps'])+'。同一轮 A 与 C 参数均发生非零变化的更新 '+str(rows['actual_simultaneous_two_head_updates'])+' 次。独立未见材料查询完成的冻结头 '+str(len(rows['unseen']))+'/12，2×2 完整结果数 '+str(len(rows['factorial']))+'/8。逐对列出实际回报、物理终止、支持集摘要及足端命令差。累计真实CPU '+format(rows['summed_rollout_cpu_hours'],'.3f')+' 核时。',
                 '物理池此刻占用 '+str(sum(map(len,active.values())))+'/6 槽，等待 '+str(counts.get('waiting',0))+' 项。cgroup 实测 '+format(snap['total_cpu_cores'],'.1f')+'/25 核，可用 RAM '+format(snap['available_ram_gib'],'.1f')+' GiB，GPU 利用率 '+str(snap['gpu_util_percent'])+'%，空余显存 '+str(snap['free_gpu_mib'])+' MiB，scratch 空间 '+format(snap['scratch_free_gib'],'.1f')+' GiB。此处为共享设备同时刻读数。']
+        if frozen:
+            lines+=['96 条冻结材料长回合按各头的 8192 节点并行调度。目前 '+str(frozen['ready_8192_heads'])+
+                    ' 个头达到节点，已核验原件 '+str(frozen['remote_receipts'])+'/96。已有原始终止类型 '+
+                    json.dumps(frozen['reported_outcomes'],ensure_ascii=False)+'，累计 '+format(frozen['actual_simulated_seconds'],'.2f')+
+                    ' 物理秒。零策略 A/B 资格和曲线评估各自单计。']
         if rows['matched_unseen']:lines+=['F 未见材料四臂完整评价汇总 '+json.dumps(rows['matched_unseen'],ensure_ascii=False)+'。']
         if storage:lines+=['H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。']
         lines+=['后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。','']
@@ -126,9 +144,9 @@ def step(force=False):
     print(now.isoformat(timespec='seconds'),seen,used,rows['training_pairs'],rows['actual_simultaneous_two_head_updates'],flush=True)
     return False
 
-def main(watch):
+def main(watch,after_current):
     with (WORK/'integrator.lock').open('a') as lock:
-        fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        fcntl.flock(lock,fcntl.LOCK_EX if after_current else fcntl.LOCK_EX|fcntl.LOCK_NB)
         while True:
             try:
                 done=step()
@@ -141,4 +159,5 @@ def main(watch):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--watch',action='store_true')
-    main(p.parse_args().watch)
+    p.add_argument('--after-current',action='store_true',help='acquire the one existing writer lock after its previous owner leaves')
+    args=p.parse_args(); main(args.watch,args.after_current)
