@@ -21,12 +21,18 @@ def digest(path):
         return hashlib.file_digest(f,'sha256').hexdigest()
 
 
-def render(folder,output):
+def render(folder,output,label=None):
     result=json.loads((folder/'result.json').read_text())
     with np.load(folder/'trajectory.npz') as d:
-        clock=d['time'].astype(float)
-        qpos=d['qpos']
-        qvel=d['qvel']
+        if 'time' in d:
+            clock=d['time'].astype(float)
+            qpos=d['qpos']
+            qvel=d['qvel']
+        else:
+            # Joint forefoot logger records [time, qpos(19), qvel(18), ...].
+            states=d['state']
+            clock,qpos,qvel=states[:,0],states[:,1:20],states[:,20:38]
+    label=label or (str(result.get('role',result.get('arm','')))+' | '+str(result.get('case','')))
     fps=25
     # Last displayed frame is the last regular presentation instant preceding termination.
     times=np.arange(int(np.ceil((clock[-1]+.002)*fps-1e-7)))/fps
@@ -51,7 +57,7 @@ def render(folder,output):
             img=Image.fromarray(renderer.render())
             draw=ImageDraw.Draw(img)
             draw.rectangle((0,0,width,24),fill=(22,29,35))
-            draw.text((7,5),f"{result['role']} | {result['case']} | {t:.2f} s",fill=(255,255,255))
+            draw.text((7,5),f"{label} | {t:.2f} s",fill=(255,255,255))
             proc.stdin.write(img.tobytes())
     proc.stdin.close()
     if proc.wait():
