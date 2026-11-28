@@ -2546,3 +2546,13 @@ F 已完成 20 对相同实测支撑的正负候选，实际独立查询 40 次�
 H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
 后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
 
+
+### 20261128/w61/execution-2f48990226a25 · 2026-11-28 14:51 上海
+六线仍使用现有 material、gait、mpc、wbc、learning、joint 工作树。运行固化源码与权重。此次核对的各分支提交为 material 8819974b, gait 6467c79f, mpc 18a10855, wbc 51c60840, learning 7e1589ef，F 正式训练使用 0a400893e40d。
+本次整合的实现及实际证据包括 8819974b Record completed W61 material runs and checked release assets: w61-a1-forefoot-controls-v1 11/24, w61-a-m1-full-chain-v1 6/6, w61-a2-physical-response-v1 16/16 / 18a10855 Record completed W61 mpc runs and checked release assets: w61-c-transfer-wall-v1 8/8, w61-c-material-history-v1 2/8, w61-c-mppi-candidates-v2 0/6, w61-c-mppi-wall-v2 0/4 / a7c498b7 Publish measured W61 research and Shanghai worklog 97e7dd3b9a468 / 9f86cb63 Record completed W61 mpc runs and checked release assets: w61-c-transfer-wall-v1 8/8, w61-c-material-history-v1 2/8, w61-c-mppi-candidates-v2 0/6, w61-c-mppi-wall-v2 0/4 / 6467c79f Publish w61-b-m1-16-v1-a-style6112-fixed evidence and verified native originals / dd6bc1ac Record measured B by D route and shared-clock effects for case A。
+E 正式九头训练累计使用 1024 / 73,728 个去重真实事件。已结束更新的 requested 为 1024，累计接受 actor 步 34，critic 更新 64，想象事件 0。单头 used 为 e-score-s6001 256, e-score-s6002 256, e-score-s6003 0, ppo-s6001 256, ppo-s6002 0, ppo-s6003 0, spo-s6001 256, spo-s6002 0, spo-s6003 0。无几何附加臂单计。
+F 已完成 22 对相同实测支撑的正负候选，实际独立查询 44 次、查询物理子步 167200。同一轮 A 与 C 参数均发生非零变化的更新 4 次。独立未见材料查询完成的冻结头 0/12，2×2 完整结果数 0/8。逐对列出实际回报、物理终止、支持集摘要及足端命令差。累计真实CPU 0.165 核时。
+物理池此刻占用 6/6 槽，等待 7 项。cgroup 实测 13.7/25 核，可用 RAM 8.8 GiB，GPU 利用率 30%，空余显存 62062 MiB，scratch 空间 570.2 GiB。此处为共享设备同时刻读数。
+H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
+后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
+
