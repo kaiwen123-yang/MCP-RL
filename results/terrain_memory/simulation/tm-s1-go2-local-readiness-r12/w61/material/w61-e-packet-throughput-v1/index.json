@@ -1,43 +1,19 @@
 {
-  "stage": "registered",
+  "stage": "collecting_prefix",
   "production_eligible": false,
   "production_backend": "cpu",
+  "adoption": "Only after a positive complete result may policy/gait/integrator register a new immutable runtime at a natural boundary.",
   "windows": {
     "prefix12": {
-      "version": 0,
-      "weights": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/ppo-s6001/policy-000.pt",
-      "checkpoint_sha256": "f8f971be4672248fd74e4f1ae63bb524691e94913e6f81dfbdc211453e5336d6",
-      "prefix_s": 12.0,
-      "phase": "soft_prefix",
-      "order": [
-        "cpu",
-        "gpu_batch"
-      ]
-    },
-    "full0": {
-      "version": 0,
-      "weights": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/ppo-s6001/policy-000.pt",
-      "checkpoint_sha256": "f8f971be4672248fd74e4f1ae63bb524691e94913e6f81dfbdc211453e5336d6",
-      "prefix_s": null,
-      "phase": "full_training_collector_work",
-      "order": [
-        "gpu_batch",
-        "cpu"
-      ]
-    },
-    "full1": {
-      "version": 1,
-      "weights": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/ppo-s6001/policy-001.pt",
-      "checkpoint_sha256": "c10d36789a4165c280dc4f4bb015394a46827cd5d507fe4a78435f3ef2f854fb",
-      "prefix_s": null,
-      "phase": "full_training_collector_work",
-      "order": [
-        "cpu",
-        "gpu_batch"
-      ]
+      "cpu": {
+        "status": "technical",
+        "group_wall_s": 6.324206817895174,
+        "complete_events_s": 0.0
+      }
     }
   },
-  "result_file_pattern": "<window>-<arm>.json",
+  "comparisons": {},
+  "config": "/root/autodl-tmp/MCP-RL-w61-material/experiments/terrain_memory/w61/material/e-packet-v1.json",
   "soft_windows_s": [
     [
       6,
@@ -47,5 +23,16 @@
       8,
       10
     ]
-  ]
+  ],
+  "admission": {
+    "require_full_paired_windows": 2,
+    "minimum_each_group_speedup": 1.05,
+    "maximum_worse_full_p95_ratio": 1.05,
+    "maximum_state_stress_or_force_same_input_abs": 1e-06,
+    "maximum_physical_qpos_abs_m_or_rad": 1e-05,
+    "require_identical_event_modes_rng_and_terminal": true,
+    "require_multiple_true_fused_calls": true,
+    "production_requires_new_frozen_controller_identity_and_integrator_approval": true
+  },
+  "new_formal_used": 0
 }
