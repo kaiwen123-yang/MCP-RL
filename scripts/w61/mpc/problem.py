@@ -28,8 +28,8 @@ def build_problem(obs, speed, capacity, probabilities, preload, swing_duration=.
     """
     if not np.asarray(obs['contact'][0]).all():
         raise ValueError('A prospective transfer begins on four confirmed feet')
-    if not np.isclose(sum(probabilities), 1.) or min(probabilities) <= 0:
-        raise ValueError('The common belief must be an interior probability vector')
+    if not np.isclose(sum(probabilities), 1.) or min(probabilities) < 0:
+        raise ValueError('The common belief must be a normalized probability vector')
     x = np.asarray(obs['x0'], dtype=float)
     feet = np.asarray(obs['feet'][0], dtype=float)
     direction = np.array([np.cos(x[2]), np.sin(x[2])])
