@@ -1,0 +1,15 @@
+"""Construct one fixed W61 gait and WBC treatment on the frozen W59 B3 stack."""
+from s1_w59_f_backend import FController as B3
+from w61_support_bridge import SupportBridge
+from w61_wbc_internal_model import HybridWBC
+
+
+def FController(model,data,feet,base,out,config):
+    assignment=config['w61']
+    classes=[]
+    if assignment['gait_role']=='orbit':
+        classes.append(SupportBridge)
+    if assignment['role']=='hybrid':
+        classes.append(HybridWBC)
+    cls=type('W61AssignedB3',tuple(classes+[B3]),{})
+    return cls(model,data,feet,base,out,config)
