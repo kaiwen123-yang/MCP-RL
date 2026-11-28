@@ -73,7 +73,7 @@ class Packets:
         return code
 
 
-def run(out,arm,case,config):
+def run(out,arm,case,config,*,controller_factory=FController,observer_factory=W57MaterialObserver):
     out.mkdir(exist_ok=False,parents=True)
     spec=json.loads(config.read_text())
     p=spec['cases'][case]
@@ -85,10 +85,10 @@ def run(out,arm,case,config):
     allowed={0}|{i for i in range(1,model.nbody) if i!=trunk and model.body_mocapid[i]<0}
     mat=JointMaterial(FROZEN,{})
     mat.attach(model,d,feet,allowed,out,model)
-    obs=W57MaterialObserver(json.loads(PARAMS.read_text())['reference_material']['parameters'],WEIGHTS,mode='M1')
+    obs=observer_factory(json.loads(PARAMS.read_text())['reference_material']['parameters'],WEIGHTS,mode='M1')
     router=Packets(obs.native,obs.ground.law.model,arm,spec['historical_A_batch_bin_prior_ms'])
     obs.native=router
-    ctrl=FController(model,d,feet,trunk,out,json.loads(CFG.read_text()))
+    ctrl=controller_factory(model,d,feet,trunk,out,json.loads(CFG.read_text()))
     mission=SimpleNamespace(task={'turnaround_xy_m':[p['x_m']+.4,0],'return_xy_m':[p['x_m'],0]},
             phase='initial_stand',v=np.zeros(3),w=np.zeros(3),heading=0.,body_target=np.array([p['x_m'],0,.27]))
     reason='horizon';trace=[];timing=[];force_rows=[];steps=0
@@ -131,6 +131,8 @@ def run(out,arm,case,config):
         force_rows.append(last_fz.copy())
         timing.append((t,(b-a)*1000,(c-b)*1000,(time.perf_counter()-wall)*1000))
         if reason!='horizon':break
+    if hasattr(ctrl,'at_rollout_end'):
+        ctrl.at_rollout_end(t=float(d.time),data=d,mission=mission,reason=reason)
     ctrl.flush();mat.flush();mat.events_file.close();mat.failures_file.close()
     wall=time.perf_counter()-start
     logs=np.asarray(timing)
