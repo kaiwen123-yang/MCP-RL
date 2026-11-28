@@ -135,20 +135,29 @@ def main():
             member=ExecutionMember.load(cp,'cuda').eval()
             torch.cuda.reset_peak_memory_stats()
             rows=[]
+            omitted=[]
+            max_defect=0.
             with torch.inference_mode():
                 for source in origins:
+                    if args.variant in ('configuration','kinematics') and not (roots[source['episode']]/'model.mjb').is_file():
+                        omitted.append(dict(episode=source['episode'], origins=source['n'], reason='original per-episode model binary unavailable on D57'))
+                        continue
                     if args.variant=='frozen50k':
                         step=lambda m,x,a,d,active:m(x,a,d)
                     else:
                         from discrete import DiscreteExecution
                         step=DiscreteExecution(args.variant,roots[source['episode']]/'model.mjb')
                     rows.extend(score_episode(member,source,step,'cuda'))
+                    max_defect=max(max_defect,getattr(step,'torque_defect_max',0.))
             detail=raw/(name+'.jsonl.gz')
             with gzip.open(detail,'wt') as f:
                 for r in rows:
                     f.write(json.dumps(r,allow_nan=False)+'\n')
             write(out/(name+'.json'),dict(run=run,kind=kind,seed=seed,backbone_step=50000,
                 checkpoint=str(cp),checkpoint_sha256=sha(cp),runtime=rev,per_horizon=summary(rows),
+                registered_origins=sum(r['n'] for r in origins),omitted_sources=omitted,
+                max_projected_torque_equation_defect_Nm=max_defect if args.variant!='frozen50k' else None,
+                differentiation='inference only; configuration and FK use detached CPU MuJoCo, no path-gradient claim',
                 wall_s=time.perf_counter()-start,cpu_core_s=time.process_time()-cpu,
                 peak_allocated_GPU_MiB=torch.cuda.max_memory_allocated()/2**20,
                 peak_process_RSS_MiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024,
