@@ -21,7 +21,7 @@ class Task:
 
 def simulate(*, now, width, heads, seats, versions, nodes, last, batch_wall, in_flight,
              curves_done, curve_wall, native_jobs, done_native, native_wall, render_rate,
-             asset_bytes, upload_rate, long_rate, nominal_render_backlog=0., upload_backlog=0., curve_bytes_per_s=0.):
+             asset_bytes, upload_rate, long_rate, nominal_render_backlog=0., upload_backlog=0., curve_bytes_per_s=0., initial_ready=None):
     """Submit head continuations, one paired curve and independent single native episodes.
 
     The widths are scenarios for the capacity available to this E study. Existing
@@ -56,6 +56,15 @@ def simulate(*, now, width, heads, seats, versions, nodes, last, batch_wall, in_
             if v[h]>=node and key not in curves:
                 curves.add(key);curve_ready.append(key)
 
+    ready_at={h:(initial_ready or {}).get(h,0.) for h in heads}
+    # Already running paired leases occupy physical slots at the snapshot.
+    # When projecting a smaller effective width, start its oldest running pairs first.
+    running_heads=[h for h,version in in_flight if h in v and v[h]==version]
+    running_heads.sort(key=lambda h:-in_flight[h,v[h]])
+    for h in running_heads[:width//2]:
+        node=v[h];remaining=max(1.,batch_wall[h]-in_flight.pop((h,node)))
+        queue.append(Task("train",h,str(node),2,remaining));trains.add(h)
+        if h not in logical:logical.append(h)
     for h in heads:scan_curves(h)
     scan_native()
     while True:
@@ -67,7 +76,7 @@ def simulate(*, now, width, heads, seats, versions, nodes, last, batch_wall, in_
         for h in heads:
             if len(logical)>=pairs:break
             if h not in logical and v[h]<last:logical.append(h)
-        for h in logical:
+        for h in sorted(logical,key=lambda h:(ready_at[h],logical.index(h))):
             if len(trains)>=pairs:break
             if h in trains:continue
             node=v[h]
@@ -104,7 +113,7 @@ def simulate(*, now, width, heads, seats, versions, nodes, last, batch_wall, in_
             break
         clock,_,task=heappop(running);free+=task.slots;counts[task.kind]+=1;slot_seconds+=task.wall*task.slots
         if task.kind=="train":
-            h=task.head;v[h]+=1;trains.remove(h);scan_curves(h)
+            h=task.head;v[h]+=1;trains.remove(h);ready_at[h]=clock;scan_curves(h)
             if v[h]>=last:eligible[h]=clock
         elif task.kind=="curve":
             curves_out=0;last_curve_end=clock
@@ -123,8 +132,10 @@ def simulate(*, now, width, heads, seats, versions, nodes, last, batch_wall, in_
     total=max(clock,render_end,upload_end)
     return dict(effective_slots=width,modeled_physical_work_items=required,charged_slot_hours=slot_seconds/3600,
                 mean_physical_slots=slot_seconds/clock if clock else 0.,first_8192=date(first),first_long_start=date(min(physics_started.values())) if physics_started else None,
-                first_heads=sorted(h for h,s in eligible.items() if s==first),all_primary_8192=date(primary_end),
-                all_12_training_8192=date(max(eligible.values())),all_long_physics=date(latest_long_end) if latest_long_end else None,
+                first_heads=sorted(h for h,s in eligible.items() if s==first),selected_heads=len(heads),selected_primary_heads=len(primary),
+                all_selected_primary_8192=date(primary_end),all_selected_training_8192=date(max(eligible.values())),
+                all_primary_8192=date(primary_end) if len(primary)==9 else None,
+                all_12_training_8192=date(max(eligible.values())) if len(heads)==12 else None,all_long_physics=date(latest_long_end) if latest_long_end else None,
                 all_physics=date(clock),last_curve_physics=date(last_curve_end) if last_curve_end else None,all_required_media=date(render_end),
                 modeled_finish=date(total),hours_remaining=total/3600,
                 media_and_upload_tail_h=max(0.,total-clock)/3600,
