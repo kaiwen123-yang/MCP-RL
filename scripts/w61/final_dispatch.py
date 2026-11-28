@@ -148,11 +148,14 @@ def transfer_legacy(pid,ticks,zero_settled,stack,ownership):
         proc=Path(f"/proc/{pid}")
         with open(proc/"wchan") as channel: sleeping="nanosleep" in channel.read()
         if sleeping and not any(f.read_text().strip() for f in (proc/"task").glob("*/children")):
-            fd=os.pidfd_open(pid)
-            try:
-                if is_serial(pid,ticks):signal.pidfd_send_signal(fd,signal.SIGTERM)
-            finally:
-                os.close(fd)
+            # This D57 Python exposes POSIX kill but no pidfd wrappers. The four
+            # reference receipts are closed and the owner has no worker or upload
+            # child. Recheck its recorded start ticks, argv and cwd before signalling.
+            if is_serial(pid,ticks):
+                try:
+                    os.kill(pid,signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
         return False
     handle=(RUN/"final-evaluator.lock").open("a")
     try:
