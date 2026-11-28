@@ -113,6 +113,9 @@ def close_media(node):
             rec=native.read(p);delivery=published_for_case(h,v,c['case'],name,rec,physics)
             rows.append(dict(case=c['case'],attempt=name,render_receipt=str(p),render_wall_s=rec['render_wall_s'],
                   render_started_unix=rec['render_started_unix'],render_closed_unix=rec['render_closed_unix'],
+                  physical_closed_unix=rec['physical_closed_unix'],physics_wall_s=rec['physics_wall_s'],
+                  child_exited_unix=rec['child_exited_unix'],slots_released_unix=rec['slots_released_unix'],
+                  lease_released_observed_unix=rec['lease_released_observed_unix'],
                   lease_ended=rec['lease_ended'],pts=rec['pts'],video_sha256=rec['video_sha256'],verified=delivery))
     status='verified' if rows else 'technical_no_renderable_trajectory'
     atomic_json(aggregate,dict(head=h,version=v,used=0,checkpoint_sha256=result['checkpoint_sha'],physics_status=result['status'],

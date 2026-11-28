@@ -1,7 +1,6 @@
 """Render recorded E trajectories off the physical pool and verify each displayed frame clock."""
 import argparse
 from contextlib import contextmanager
-from datetime import datetime
 import fcntl
 from fractions import Fraction
 import hashlib
@@ -118,7 +117,16 @@ def lease_end(item):
     p=POOL/(item['lease']+'.json')
     if not p.is_file():return None
     r=native.read(p)
-    return r if r.get('state')=='ended' else None
+    if r.get('state')!='ended':return None
+    # In the legacy pool the seconds-resolution ended record is written just
+    # before slot-fd cleanup. This per-job guard encloses all of that cleanup.
+    # Checking it does not take any slot, even if the slot has a new owner.
+    with (POOL/(item['lease']+'.lock')).open('a') as guard:
+        try:fcntl.flock(guard,fcntl.LOCK_SH|fcntl.LOCK_NB)
+        except BlockingIOError:return None
+        r['release_observed_unix']=time.time()
+        r['receipt_written_unix']=p.stat().st_mtime
+    return r
 
 
 def render_one(item,proof=False):
@@ -130,13 +138,21 @@ def render_one(item,proof=False):
     with tempfile.TemporaryDirectory(prefix='w61-media-',dir=raw.parent) as tmp:
         d=Path(tmp);movie,marker,probe,pts=encode(item,d,pace);sha=file_digest(movie)
         original=raw/movie.name
+        phy=Path(item['physical_result']);physical=native.read(phy)
         rec=dict(id=item['id'],kind=item['kind'],lease=item['lease'],lease_state=lease['state'],lease_ended=lease['ended'],
-             lease_exit_code=lease['exit_code'],physical_receipt=str(receipt),source=str(raw/'trajectory.npz'),
+             lease_receipt_written_unix=lease['receipt_written_unix'],child_exited_unix=lease.get('child_exited_unix'),
+             slots_released_unix=lease.get('slots_released_unix'),
+             lease_released_observed_unix=lease['release_observed_unix'],lease_exit_code=lease['exit_code'],
+             physical_receipt=str(receipt),physical_closed_unix=phy.stat().st_mtime,
+             physical_simulation_s=physical.get('simulation_s',physical.get('physical_s')),
+             final_integration_unix=physical.get('physical_ended_unix_s'),physics_wall_s=physical.get('wall_s'),
+             source=str(raw/'trajectory.npz'),
              source_sha256=file_digest(raw/'trajectory.npz'),actor_sha256=item.get('actor_sha256'),
              render_pid=os.getpid(),physical_slots=[],render_started_unix=started,render_closed_unix=time.time(),
              render_wall_s=time.time()-started,video=str(original),bytes=movie.stat().st_size,video_sha256=sha,
              true_fps_pts=probe,pts=pts,pace=pace.facts())
-        if started<datetime.fromisoformat(lease['ended']).timestamp():raise ValueError('Draw preceded the released physical lease')
+        if started<lease['release_observed_unix'] or (rec['slots_released_unix'] is not None and started<rec['slots_released_unix']):
+            raise ValueError('Draw preceded the released physical lease')
         if proof:
             rec['retained_original']=str(original)
             rec['retained_original_sha256']=file_digest(original)
@@ -156,7 +172,8 @@ def render_one(item,proof=False):
         if item['kind']=='native':
             physical=native.read(receipt)
             atomic_json(receipt.parent/(item['id']+'-summary.json'),dict(physical,true_fps_pts=probe,video_sha256=sha,
-                media={k:rec[k] for k in ('render_started_unix','render_closed_unix','render_wall_s','lease_ended','pts')}))
+                media={k:rec[k] for k in ('physical_closed_unix','child_exited_unix','slots_released_unix','lease_released_observed_unix',
+                     'render_started_unix','render_closed_unix','render_wall_s','lease_ended','pts')}))
         atomic_json(DONE/(item['id']+'.json'),rec)
         return rec
 
