@@ -50,7 +50,7 @@ def send(label,folders,records,remote):
                 for p in sorted(folder.rglob('*')):
                     if p.is_file():z.write(p,folder.name+'/'+p.relative_to(folder).as_posix())
             for node in records:z.write(node,'training/'+node.name)
-            z.writestr('trajectory-columns.json',json.dumps(dict(state=['time_s','qpos[19]','qvel[18]','measured_GRF_world_N[4,3]','contact[4]','position_command[12]','planned_force_world_N[4,3]'],cadence_Hz=500,material_boundary_rate_Hz=5000,trajectory_order='time-major',energy='absolute mechanical joint work')))
+            z.writestr(zipfile.ZipInfo('trajectory-columns.json',date_time=(2000,1,1,0,0,0)),json.dumps(dict(state=['time_s','qpos[19]','qvel[18]','measured_GRF_world_N[4,3]','contact[4]','position_command[12]','planned_force_world_N[4,3]'],cadence_Hz=500,material_boundary_rate_Hz=5000,trajectory_order='time-major',energy='absolute mechanical joint work')))
         tmp.replace(package)
     n=package.stat().st_size;h=digest(package)
     if name not in remote:
