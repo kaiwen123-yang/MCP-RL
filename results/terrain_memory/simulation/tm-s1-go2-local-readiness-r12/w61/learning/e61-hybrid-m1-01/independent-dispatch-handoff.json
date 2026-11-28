@@ -1,0 +1,161 @@
+{
+  "study": "e61-hybrid-m1-01",
+  "previous_feeder": {
+    "pid": 258644,
+    "state": "S",
+    "start_ticks": 1190375607,
+    "argv": [
+      "python",
+      "-u",
+      "scripts/w61/dispatch_learning.py",
+      "--replace-feeder",
+      "230308"
+    ]
+  },
+  "new_feeder": {
+    "pid": 363884,
+    "state": "R",
+    "start_ticks": 1191094777,
+    "argv": [
+      "python",
+      "-u",
+      "scripts/w61/dispatch_independent_heads.py",
+      "--takeover",
+      "258644"
+    ]
+  },
+  "quiesced_unix": 1795853583.298781,
+  "inherited": [
+    {
+      "job": "w61-e61-hybrid-m1-01-ppo-s6002-train-v001",
+      "registered": "2026-11-28T16:03:58+08:00",
+      "started": "2026-11-28T16:03:59+08:00",
+      "owner_pid": 359425,
+      "pid": 359428,
+      "slots": [
+        1,
+        2
+      ],
+      "state": "running"
+    },
+    {
+      "job": "w61-e61-hybrid-m1-01-spo-s6002-train-v001",
+      "registered": "2026-11-28T16:05:48+08:00",
+      "started": "2026-11-28T16:05:49+08:00",
+      "owner_pid": 360320,
+      "pid": 360327,
+      "slots": [
+        3,
+        4
+      ],
+      "state": "running"
+    }
+  ],
+  "original_children": [
+    {
+      "pid": 359425,
+      "state": "S",
+      "start_ticks": 1191040564,
+      "argv": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "/root/autodl-tmp/MCP-RL-w61-joint/scripts/w61/lease.py",
+        "--runtime",
+        "/root/autodl-tmp/MCP-RL-w61-learning",
+        "--job",
+        "w61-e61-hybrid-m1-01-ppo-s6002-train-v001",
+        "--slots",
+        "2",
+        "--cores",
+        "2",
+        "--ram-gib",
+        "5.5",
+        "--gpu-mib",
+        "1500",
+        "--scratch-gib",
+        "1.0",
+        "--",
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/campaign.py",
+        "paired",
+        "PPO",
+        "6002",
+        "1",
+        "train"
+      ]
+    },
+    {
+      "pid": 360320,
+      "state": "S",
+      "start_ticks": 1191051607,
+      "argv": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "/root/autodl-tmp/MCP-RL-w61-joint/scripts/w61/lease.py",
+        "--runtime",
+        "/root/autodl-tmp/MCP-RL-w61-learning",
+        "--job",
+        "w61-e61-hybrid-m1-01-spo-s6002-train-v001",
+        "--slots",
+        "2",
+        "--cores",
+        "2",
+        "--ram-gib",
+        "5.5",
+        "--gpu-mib",
+        "1500",
+        "--scratch-gib",
+        "1.0",
+        "--",
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/campaign.py",
+        "paired",
+        "SPO",
+        "6002",
+        "1",
+        "train"
+      ]
+    }
+  ],
+  "old_dispatch_status": {
+    "study": "e61-hybrid-m1-01",
+    "feeder_pid": 258644,
+    "updated_unix": 1795853578.7133079,
+    "target_active_pairs": 2,
+    "physically_running_pairs": 2,
+    "other_physical_demand": [
+      "w61-b-m1-16-B-6113"
+    ],
+    "third_eligible": false,
+    "actual_resources": {
+      "total_cpu_cores": 7.231544540098169,
+      "quota_cores": 25.0,
+      "available_ram_gib": 11.884105682373047,
+      "free_gpu_mib": 76694,
+      "gpu_util_percent": 7,
+      "io_pressure_pct": 0.0,
+      "scratch_free_gib": 555.3166046142578,
+      "scratch_free_inodes": 1472285162
+    },
+    "measured_matched_throughput": [],
+    "registered_job_count": 9,
+    "unadmitted_in_wave": 3,
+    "launched": [
+      [
+        "PPO",
+        6002,
+        "train",
+        1
+      ],
+      [
+        "SPO",
+        6002,
+        "train",
+        1
+      ]
+    ],
+    "follows_up_without_additional_study": true
+  },
+  "status": "old admission quiesced; original leases continue independently",
+  "wall_deadline_enabled": false
+}
