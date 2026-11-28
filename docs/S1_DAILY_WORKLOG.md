@@ -2506,3 +2506,13 @@ F 已完成 18 对相同实测支撑的正负候选，实际独立查询 36 次�
 H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
 后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
 
+
+### 20261128/w61/execution-e5c45acb10b03 · 2026-11-28 14:42 上海
+六线仍使用现有 material、gait、mpc、wbc、learning、joint 工作树。运行固化源码与权重。此次核对的各分支提交为 material e69baa0a, gait 606ed865, mpc 94faf3eb, wbc 51c60840, learning 7e1589ef，F 正式训练使用 0a400893e40d。
+本次整合的实现及实际证据包括 94faf3eb Record completed W61 mpc runs and checked release assets: w61-c-transfer-wall-v1 8/8, w61-c-material-history-v1 1/8, w61-c-mppi-candidates-v2 0/6, w61-c-mppi-wall-v2 0/4 / e6d40f8a Publish measured W61 research and Shanghai worklog ca64b95c6b592 / e69baa0a Record completed W61 material runs and checked release assets: w61-a1-forefoot-controls-v1 9/24, w61-a-m1-full-chain-v1 6/6, w61-a2-physical-response-v1 16/16 / f3e44a94 Record completed W61 material runs and checked release assets: w61-a1-forefoot-controls-v1 9/24, w61-a-m1-full-chain-v1 6/6, w61-a2-physical-response-v1 16/16 / 991b6a81 Publish measured W61 research and Shanghai worklog b7ce458f92aa6 / 4cd1525f Record completed W61 mpc runs and checked release assets: w61-c-transfer-wall-v1 8/8, w61-c-material-history-v1 0/8, w61-c-mppi-candidates-v2 0/6, w61-c-mppi-wall-v2 0/4 / 36b149e2 Record completed W61 material runs and checked release assets: w61-a1-forefoot-controls-v1 8/24, w61-a-m1-full-chain-v1 6/6, w61-a2-physical-response-v1 16/16 / 175b35c8 Record completed W61 mpc runs and checked release assets: w61-c-transfer-wall-v1 8/8, w61-c-material-history-v1 0/8, w61-c-mppi-candidates-v2 0/6, w61-c-mppi-wall-v2 0/4 / 8d6a6e30 Record completed W61 material runs and checked release assets: w61-a1-forefoot-controls-v1 8/24, w61-a-m1-full-chain-v1 6/6, w61-a2-physical-response-v1 12/16。
+E 正式九头训练累计使用 1024 / 73,728 个去重真实事件。已结束更新的 requested 为 1024，累计接受 actor 步 34，critic 更新 64，想象事件 0。单头 used 为 e-score-s6001 256, e-score-s6002 256, e-score-s6003 0, ppo-s6001 256, ppo-s6002 0, ppo-s6003 0, spo-s6001 256, spo-s6002 0, spo-s6003 0。无几何附加臂单计。
+F 已完成 20 对相同实测支撑的正负候选，实际独立查询 40 次、查询物理子步 152000。同一轮 A 与 C 参数均发生非零变化的更新 3 次。独立未见材料查询完成的冻结头 0/12，2×2 完整结果数 0/8。逐对列出实际回报、物理终止、支持集摘要及足端命令差。累计真实CPU 0.151 核时。
+物理池此刻占用 6/6 槽，等待 6 项。cgroup 实测 12.6/25 核，可用 RAM 28.8 GiB，GPU 利用率 30%，空余显存 56029 MiB，scratch 空间 567.9 GiB。此处为共享设备同时刻读数。
+H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
+后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
+
