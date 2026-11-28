@@ -1,0 +1,59 @@
+{
+  "id": "w61-a-m1-full-chain-v1",
+  "historical_A_batch_bin_prior_ms": {
+    "2": [
+      0.6407915,
+      4.444122
+    ],
+    "3": [
+      1.3043259999999999,
+      4.76961
+    ],
+    "4": [
+      5.497723,
+      28.2189695
+    ],
+    "5": [
+      7.197327,
+      20.241837999999998
+    ],
+    "6": [
+      10.821423,
+      5.508446
+    ],
+    "7": [
+      22.9805555,
+      22.699932999999998
+    ],
+    "8": [
+      23.273922999999996,
+      7.29359
+    ]
+  },
+  "prior_source": "/root/autodl-tmp/MCP-RL-w59/work/w59/m1-gpu-study/full-queries/A-packets.npz",
+  "inputs": "published force, world footprint and measured bottom for each ten completed .2ms ticks",
+  "backend": "batched GPU layout 1/column plus original CPU force correction, or original CPU native full packet. Adaptive routes by floor(log2(cell count)) and synchronous native recent times in that bin; periodic alternate observation.",
+  "cases": {
+    "entry": {
+      "x_m": 0.67,
+      "speed_m_s": 0.18,
+      "turn_s": null,
+      "duration_s": 2.4
+    },
+    "retrace": {
+      "x_m": 0.65,
+      "speed_m_s": 0.2,
+      "turn_s": 2.2,
+      "duration_s": 4.8
+    }
+  },
+  "arms": [
+    "cpu",
+    "gpu",
+    "adaptive"
+  ],
+  "scope": "actual independent closed-loop MuJoCo runs with nominal R60 MPC/WBC consuming M1 inverse normal references",
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false
+}

@@ -28,7 +28,14 @@ def main():
         for method,seed in methods:
             name=f"s{case['specimen']}-{method}-{seed}"
             fn=dest/(name+'.json')
-            if fn.is_file():continue
+            if fn.is_file():
+                previous=json.loads(fn.read_text())
+                if previous['exit_code']==0:continue
+                # The first A attempt stopped at startup with an omitted coupon config.
+                if name!='s612241-ordinary_KV-0':raise RuntimeError('Review failed physical attempt '+name)
+                name+='-a02'
+                fn=dest/(name+'.json')
+                if fn.exists():continue
             out=RAW/name
             cmd=[sys.executable,'-u',str(ROOT/'scripts/w61/material/forefoot.py'),
                  str(CFG),str(i),method,str(seed),str(out)]
