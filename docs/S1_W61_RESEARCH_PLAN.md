@@ -267,6 +267,14 @@ H = F_joint + λE E[J_E^T W J_E] + λ0 I。
 
 先读现场已有吞吐，不强制重新跑一堆无关容量测试。若任务混合变化使资源风险具体出现，用有限窗口测总有效吞吐和峰值；不要只有 GPU 利用率截图。
 
+#### 2026-11-28 的冻结长回合动态调度
+
+E 线以每个训练头自己的 8,192 distinct real used 回执和冻结权重 SHA256 为释放条件。该头的 A/B × short/recovered × U1/U2 共八条未见材料长回合独立进入现有共享池。九个正式头给出 72 条，三个 E-Fisher 消融头给出 24 条。48 条 short 各 168 物理秒，48 条 recovered 各 288 物理秒。原路线 A/B 的 E30 各自启动，只有同模型、同 case 的 E30 通过才释放相应 E60。零策略参照与 2,048/4,096/8,192 学习曲线都按原协议单计。
+
+训练双 collector 原子占两个物理槽，冻结评测每条占一个，所有线路合计上限六槽。新评测有余量时可独立填满六槽。只有一个空槽且队首是资源可行的双 collector 时，为它凑齐下一槽。准入使用 cgroup CPU/RAM、GPU 余量、I/O 压力和在途原件的磁盘额度。每条物理任务有唯一租约。完整视频随原控制和物理日志保留，上传在物理租约释放后进行。正式评测沿用原 native evaluator 与归一化、材料、路线、扰动、时长和终止规则。
+
+[评测身份清单](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/learning/e61-hybrid-m1-01/final-evaluation/parallel-plan.json) · [实际进度](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/learning/e61-hybrid-m1-01/final-evaluation/parallel-progress.json) · [实测吞吐与预计工期](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/learning/e61-hybrid-m1-01/final-evaluation/parallel-throughput-estimate.json)
+
 ### 10.2 加速有价值的路径
 
 W61 将已有 hybrid observer 做成按 batch/队列选择 CPU/GPU 的后端，在同输入核验基础上测一次完整闭环与生产吞吐。它不是 W59 热替换；等价仅证明同输入数值，不证明新标签与真实 plant 状态一致。
