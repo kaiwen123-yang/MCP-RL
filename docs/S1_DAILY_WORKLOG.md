@@ -2752,3 +2752,13 @@ H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 
 旧 A/E60 的 PID 310277 在切换前后推进到完整 60 物理秒。B/E30 由新调度器提交，PID 326711 与原 A/E60 在不同物理槽同时推进，原始 index 中每条身份各注册一次。两个参照回合共有的四个独立计时窗共 104.37 墙秒，实走 13.00 物理秒。15:16 B 已至 12.002 物理秒。双 collector 训练及其他线路同期继续占用原租约。旧参照的完整发布由原 watcher 自然收尾，新管理器在它空闲后接管同一个最终评测所有者锁。正式物理、渲染和发布的结果均由原身份回执核对。tmux w61-e-parallel-final 同时记录真实时钟与动态工期，学习矩阵和原始评测合同未修改。
 
 截至 15:15:56，七份已完成的双 collector 训练租约共实际使用 1,792/73,728 个正式事件，每批 256 个，平均 833.3 墙秒。按 W59 的全部 24 个已完成同长度机制回合重算，连续 >=180 s、整个窗口在槽的均为同一组长物理回合。四路有 9 窗、六路有 65 窗，聚合吞吐分别为 0.091154、0.157678 物理秒/墙秒。21,888 物理秒相应需约 66.7/38.6 小时。含剩余正式训练、三消融、曲线与原路线资格的合并工作量，平均四槽情形约 120.9 小时，平均六槽约 74.7 小时，两个阶段共用槽时，上传可重叠。可用并行度与共享负载会变化。实测原件见 final-evaluation/parallel-throughput-estimate.json，D57 上的 parallel-final/eta-live.json 将采用后续真实 W61 长回合时钟更新。
+
+### 20261128/w61/execution-6689cf47d36c5 · 2026-11-28 15:17 上海
+六线仍使用现有 material、gait、mpc、wbc、learning、joint 工作树。运行固化源码与权重。此次核对的各分支提交为 material 3f433317, gait dfe0447b, mpc 6c6797d8, wbc 51c60840, learning 85626a00，F 正式训练使用 0a400893e40d。
+本次整合的实现及实际证据包括 dfe0447b Publish w61-b-m1-16-v1-a-orbit-fixed evidence and verified native originals / 85626a00 Record W61 concurrent frozen evaluations and verified episode identities / aea27e6b Record the 96-episode parallel schedule, real overlap, and measured Shanghai completion estimate。
+E 正式九头训练累计使用 1792 / 73,728 个去重真实事件。已结束更新的 requested 为 1792，累计接受 actor 步 57，critic 更新 112，想象事件 0。单头 used 为 e-score-s6001 256, e-score-s6002 256, e-score-s6003 256, ppo-s6001 256, ppo-s6002 256, ppo-s6003 0, spo-s6001 256, spo-s6002 256, spo-s6003 0。无几何附加臂单计。
+F 已完成 32 对相同实测支撑的正负候选，实际独立查询 64 次、查询物理子步 243200。同一轮 A 与 C 参数均发生非零变化的更新 6 次。独立未见材料查询完成的冻结头 0/12，2×2 完整结果数 0/8。逐对列出实际回报、物理终止、支持集摘要及足端命令差。累计真实CPU 0.239 核时。
+物理池此刻占用 5/6 槽，等待 6 项。cgroup 实测 9.1/25 核，可用 RAM 9.7 GiB，GPU 利用率 6%，空余显存 76862 MiB，scratch 空间 564.3 GiB。此处为共享设备同时刻读数。
+H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
+后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
+
