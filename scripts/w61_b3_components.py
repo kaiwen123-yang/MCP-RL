@@ -7,9 +7,18 @@ from w61_wbc_internal_model import HybridWBC
 def FController(model,data,feet,base,out,config):
     assignment=config['w61']
     classes=[]
-    if assignment['gait_role']=='orbit':
+    if assignment['gait_role'] in ('library','cpg'):
+        from w61_controlled_orbits import ControlledOrbit
+        classes.append(ControlledOrbit)
+    if assignment.get('orbit_decoder_seed') is not None:
+        from w61_orbit_decoder import LearnedOrbit
+        classes.append(LearnedOrbit)
+    elif assignment['gait_role']=='orbit':
         classes.append(SupportBridge)
     if assignment['role']=='hybrid':
         classes.append(HybridWBC)
+    if assignment['role']=='reduced':
+        from w61_equality_wbc import EqualityReducedWBC
+        classes.append(EqualityReducedWBC)
     cls=type('W61AssignedB3',tuple(classes+[B3]),{})
     return cls(model,data,feet,base,out,config)

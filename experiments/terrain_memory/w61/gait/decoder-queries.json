@@ -1,0 +1,76 @@
+{
+  "id": "w61-orbit-decoder-unseen-v1",
+  "units": "SI",
+  "task": {
+    "start_move_s": 0.6,
+    "kind": "standing start, then bounded straight velocity, speed change at 2.55 s, lateral pulse",
+    "outcome": "report full-horizon survival, tracking ISE and progress separately. No original S1 promotion criterion.",
+    "reference": "rigid G1 on the original 0.2 ms plant; r55 F controller; historical W57 PR/E600 on M1 has a different identity"
+  },
+  "cases": {
+    "lateral-entry": {
+      "speed_m_s": 0.215,
+      "target_speed_m_s": 0.192,
+      "switch_s": 2.23,
+      "duration_s": 5.4,
+      "yaw_deg": 3.6,
+      "lateral_push_N": -13.0,
+      "push_start_s": 2.16,
+      "push_duration_s": 0.09
+    },
+    "brake-recovery": {
+      "speed_m_s": 0.23,
+      "target_speed_m_s": 0.155,
+      "switch_s": 2.23,
+      "duration_s": 5.4,
+      "yaw_deg": -0.8,
+      "lateral_push_N": 8.5,
+      "push_start_s": 2.64,
+      "push_duration_s": 0.09
+    },
+    "heading-entry": {
+      "speed_m_s": 0.165,
+      "target_speed_m_s": 0.222,
+      "switch_s": 2.23,
+      "duration_s": 5.4,
+      "yaw_deg": -3.2,
+      "lateral_push_N": 7.5,
+      "push_start_s": 1.83,
+      "push_duration_s": 0.09
+    }
+  },
+  "design": [
+    "W59 B3 A/B development short",
+    "W59 B3 A development recovered",
+    "W61 bridge query0/query1 (now training only)"
+  ],
+  "fresh_query": [
+    "heading-entry",
+    "lateral-entry",
+    "brake-recovery"
+  ],
+  "controller": {
+    "excitation": [
+      0,
+      0.0015,
+      -0.0015,
+      0.00075,
+      -0.00075
+    ],
+    "heading_length_m": 0.25
+  },
+  "source_refs": [
+    "https://doi.org/10.1177/02783649251347305",
+    "https://www.loukaskordos.de/publications/locomposition/",
+    "https://amrmousa.com/promo/"
+  ],
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false,
+  "split": "Rigid on-policy deployment on three previously unexecuted yaw, speed, push and timing combinations. No incline or hardware tests.",
+  "training_seeds": [
+    6111,
+    6112,
+    6113
+  ]
+}
