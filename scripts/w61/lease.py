@@ -51,6 +51,7 @@ def claim(args):
         fcntl.flock(gate, fcntl.LOCK_EX)
         config = json.loads((POOL/"capacity.json").read_text())
         locks, reserved = [], [0., 0., 0.]
+        scratch_claim = 0.
         for n in range(config["physical_slots"]):
             lock = (POOL/f"slot-{n}.lock").open("a+")
             try:
@@ -61,38 +62,50 @@ def claim(args):
                 if time.time() - entry["start"] < config["startup_s"]:
                     for i, name in enumerate(("cores", "ram", "gpu")):
                         reserved[i] += entry[name]
+                # The per-slot amount is a remaining upper bound until the holder exits.
+                # Previous-version holders still have their declared demand in the job receipt.
+                if "scratch_gib" in entry:
+                    scratch_claim += entry["scratch_gib"]
+                else:
+                    owner = json.loads((POOL/"jobs"/(entry["job"]+".json")).read_text())
+                    scratch_claim += owner.get("demand",{}).get("scratch_gib",1.)/owner["slots_requested"]
                 lock.close()
             else:
                 held.enter_context(lock)
                 locks.append((n,lock))
         snap = resources()
-        # A fast campaign returning after a closed batch must not repeatedly take
-        # the last free slot ahead of an older eligible single or paired job.
+        snap["scratch_claims_gib"] = scratch_claim
+        available_cpu = snap["quota_cores"]-snap["total_cpu_cores"]-config["spare_cpu"]-reserved[0]
+        available_ram = snap["available_ram_gib"]-config["spare_ram_gib"]-reserved[1]
+        available_gpu = snap["free_gpu_mib"]-config["spare_gpu_mib"]-reserved[2]
+        available_disk = snap["scratch_free_gib"]-config["spare_scratch_gib"]-scratch_claim
+        if not locks or snap["io_pressure_pct"]>config["max_io_pressure_pct"] or snap["scratch_free_inodes"]<config["spare_inodes"]:
+            return None, snap
         waiting=[]
         for row in (POOL/"jobs").glob("*.json"):
             job=json.loads(row.read_text())
-            if job["state"]!="waiting" or job["slots_requested"]>len(locks):continue
-            if not Path(f"/proc/{job['owner_pid']}").exists():continue
+            if job["state"]!="waiting" or not Path(f"/proc/{job['owner_pid']}").exists():
+                continue
             demands=job.get("demand",dict(cores=job['slots_requested'],ram_gib=2*job['slots_requested'],gpu_mib=0,scratch_gib=1))
-            if (snap["quota_cores"]-snap["total_cpu_cores"]>=config["spare_cpu"]+demands["cores"]+reserved[0] and
-                snap["available_ram_gib"]>=config["spare_ram_gib"]+demands["ram_gib"]+reserved[1] and
-                snap["free_gpu_mib"]>=demands["gpu_mib"]+(config["spare_gpu_mib"] if demands["gpu_mib"] else 0)+reserved[2] and
-                snap["scratch_free_gib"]>=config["spare_scratch_gib"]+demands["scratch_gib"]):
-                waiting.append((job["registered"],job["job"]))
-        if (waiting and min(waiting)[1]!=args.job) or (len(locks) < args.slots or
-            snap["quota_cores"] - snap["total_cpu_cores"] < config["spare_cpu"] + args.cores + reserved[0] or
-            snap["available_ram_gib"] < config["spare_ram_gib"] + args.ram_gib + reserved[1] or
-            (args.gpu_mib and snap["free_gpu_mib"] < config["spare_gpu_mib"] + args.gpu_mib + reserved[2]) or
-            snap["io_pressure_pct"] > config["max_io_pressure_pct"] or
-            snap["scratch_free_gib"] < config["spare_scratch_gib"] + args.scratch_gib or
-            snap["scratch_free_inodes"] < config["spare_inodes"]):
-            return None, snap
+            if (available_cpu>=demands["cores"] and available_ram>=demands["ram_gib"] and
+                (not demands["gpu_mib"] or available_gpu>=demands["gpu_mib"]) and available_disk>=demands["scratch_gib"]):
+                waiting.append((job["registered"],job["job"],job["slots_requested"]))
+        if not waiting:
+            return None,snap
+        _,first,width=min(waiting)
+        if first!=args.job or len(locks)<width:
+            # Assemble the oldest feasible double claim atomically. With one vacancy
+            # a later multi-hour evaluation must not keep the learner waiting forever.
+            if len(locks)<width:
+                snap["assembling_pair"]=first
+            return None,snap
         chosen = locks[:args.slots]
         for n, lock in chosen:
             lock.seek(0)
             lock.truncate()
             json.dump(dict(job=args.job, start=time.time(), cores=args.cores/args.slots,
-                           ram=args.ram_gib/args.slots, gpu=args.gpu_mib/args.slots), lock)
+                           ram=args.ram_gib/args.slots, gpu=args.gpu_mib/args.slots,
+                           scratch_gib=args.scratch_gib/args.slots), lock)
             lock.flush()
         # Preserve exactly the selected locks until the entire child group returns.
         for _, lock in locks[args.slots:]:
