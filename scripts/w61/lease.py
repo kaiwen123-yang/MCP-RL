@@ -113,6 +113,39 @@ def claim(args):
         return (held.pop_all(), chosen, config["cpu_ids"]), snap
 
 
+def material_execution(args, command, previous):
+    """Bind only immutable W61 E collector jobs to a measured CPU implementation."""
+    if previous is not None:return previous.get("material_execution")
+    marker=POOL/"e-cpu-execution.json"
+    if not marker.is_file() or len(command)<4 or command[1]!="-u":return None
+    config=json.loads(marker.read_text());runtime=config["runtime"];root=Path(runtime["root"])
+    if args.runtime.resolve()!=root:return None
+    source=Path(command[2]).resolve()
+    if args.job.startswith("w61-e61-hybrid-m1-01-"):
+        if source==root/"scripts/w61/resume_learning_batch.py" and command[3]=="resume":
+            # A supplemental episode belongs to its original attempted batch.
+            original=POOL/"jobs"/(args.job.removesuffix("-solver-continuation")+".json")
+            return json.loads(original.read_text()).get("material_execution")
+        if source==root/"scripts/w61/learning/campaign.py" and command[3]=="paired" and command[-1]=="train":
+            return runtime if config["training_enabled"] else None
+        if source==root/"scripts/w61/evaluation_physics.py" and command[3]=="curve":
+            return runtime if config["curve_enabled"] else None
+    if source!=root/"scripts/w61/evaluation_physics.py" or command[3]!="native" or len(command)!=10:return None
+    method,seed,version=command[4:7]
+    if version!="32":return None
+    head=f"w61-e-final-{method.lower()}-s{seed}-v032"
+    if not args.job.startswith(head+"-"):return None
+    pins=POOL/"frozen-material-execution";pins.mkdir(exist_ok=True)
+    with (pins/(head+".lock")).open("a") as lock:
+        fcntl.flock(lock,fcntl.LOCK_EX)
+        pin=pins/(head+".json")
+        if pin.exists():return json.loads(pin.read_text())["material_execution"]
+        jobs=sorted((POOL/"jobs").glob(head+"-*.json"))
+        chosen=json.loads(jobs[0].read_text()).get("material_execution") if jobs else (runtime if config["native_enabled"] else None)
+        write(pin,dict(head=head,material_execution=chosen,registered=stamp()))
+        return chosen
+
+
 def main(args):
     jobs = POOL/"jobs"
     jobs.mkdir(parents=True, exist_ok=True)
@@ -120,6 +153,7 @@ def main(args):
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     with (jobs/(args.job+".lock")).open("a") as guard:
         fcntl.flock(guard, fcntl.LOCK_EX)
+        prev=None
         if record.exists():
             prev = json.loads(record.read_text())
             if prev["command"] != command or prev["runtime"] != str(args.runtime.resolve()):
@@ -131,6 +165,9 @@ def main(args):
         data = dict(job=args.job, runtime=str(args.runtime.resolve()), command=command, slots_requested=args.slots,
                     registered=stamp(), owner_pid=os.getpid(), state="waiting", deadline=None,
                     wall_deadline_enabled=False, kill_on_conversation_end=False)
+        backend=material_execution(args,command,prev)
+        executed=[*command[:2],backend["driver"],*command[2:]] if backend else command
+        if backend:data.update(material_execution=backend,executed_command=executed)
         data["demand"]=dict(cores=args.cores,ram_gib=args.ram_gib,gpu_mib=args.gpu_mib,scratch_gib=args.scratch_gib)
         write(record,data)
         while True:
@@ -149,7 +186,8 @@ def main(args):
             env = dict(os.environ, W61_SLOTS=",".join(map(str,ids)), W61_PAIR_CPUS=json.dumps(groups),
                        S1_W58_PAIR_CPUS=json.dumps(groups), S1_W59_PAIR_CPUS=json.dumps(groups),
                        OPENBLAS_NUM_THREADS="1", OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", NUMEXPR_NUM_THREADS="1")
-            child = subprocess.Popen(["taskset","-c",cpus,*command], cwd=args.runtime, env=env, pass_fds=fd)
+            if backend:env.update(W61_EXACT_BUILD=backend["build"],W61_EXACT_ROOT=backend["root"])
+            child = subprocess.Popen(["taskset","-c",cpus,*executed], cwd=args.runtime, env=env, pass_fds=fd)
             data.update(state="running", pid=child.pid, slots=ids, cpu_groups=groups, started=stamp())
             write(record,data)
             rc = child.wait()
