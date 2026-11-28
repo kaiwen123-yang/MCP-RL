@@ -6,7 +6,6 @@ from pathlib import Path
 
 import numpy as np
 from scipy.spatial.transform import Rotation
-from w61_controlled_orbits import segment, ZERO
 from w61_support_bridge import SupportBridge
 
 LEGS=['FL','FR','RL','RR']
@@ -109,7 +108,7 @@ class LearnedOrbit(SupportBridge):
         fitted=json.loads(Path(self.cfg['w61']['artifact']).read_text())
         self.decode_W=np.asarray(fitted['W']);self.decode_b=np.asarray(fitted['b'])
         self.decode_beta=np.asarray(fitted['beta'])
-        self.learned_phase={};self.learned_heave=.0012;self.learned_load_s=.05
+        self.learned_heave=.0012;self.learned_load_s=.05
 
     def _coordinates(self,t,leg,mq,mission,p):
         target,duration,height,normal=super()._coordinates(t,leg,mq,mission,p)
@@ -134,6 +133,12 @@ class LearnedOrbit(SupportBridge):
         response=(features(x[None,:],self.decode_W,self.decode_b)@self.decode_beta)[0]*SCALE
         self.learned_load_s=.05+.2*np.clip(response[5]-.022,-.025,.03)
         self.learned_heave=.25*np.clip(response[6],.002,.012)
+
+    def _event(self,t,kind,legs,**extra):
+        if kind=='liftoff_committed':
+            extra['per_leg_committed_apex_s']=[self.swing[int(i)]['apex'] for i in legs]
+            extra['per_leg_committed_touch_s']=[self.swing[int(i)]['end'] for i in legs]
+        super()._event(t,kind,legs,**extra)
 
     def _new_handover_request(self,t,mission,mq,material_info,grf):
         super()._new_handover_request(t,mission,mq,material_info,grf)
