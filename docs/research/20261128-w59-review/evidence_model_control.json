@@ -1,0 +1,2853 @@
+{
+  "schema": "w59_readonly_model_control_audit_20261128_v1",
+  "repository": "kaiwen123-yang/MCP-RL",
+  "snapshot": "c8378beae4be371eb4f104782b75e5d295b6f59a",
+  "boundaries": {
+    "new_training": false,
+    "new_physics_rollouts": false,
+    "repository_modified": false,
+    "formal_proofs_completed": false,
+    "hardware_test": false,
+    "paper_code_executed": false,
+    "source_audit": "Static read; measured results are repository receipts, not reproduced here",
+    "video_audit": "Delegated to parent/gait agent; this file does not claim independent video review"
+  },
+  "terminal": {
+    "state": "earned_chain_terminal",
+    "finished_shanghai": "2026-11-28T07:25:58+08:00",
+    "learning_scope": "partial",
+    "matched_four_arms": false,
+    "attempts": 400,
+    "active": [],
+    "reasons": {
+      "stage_horizon_reached": 264,
+      "execution_error": 5,
+      "stage_passed": 129,
+      "storage_enospc": 2
+    },
+    "deadline": null
+  },
+  "exact_sources": {
+    "outcome": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/outcome.json",
+    "model/fit-completion.json": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/model/fit-completion.json",
+    "model/recovery.json": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/model/recovery.json",
+    "model/recipe.json": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/model/recipe.json",
+    "action/model-recipe-freeze.json": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/action/model-recipe-freeze.json",
+    "action/p3-development-recipe.json": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/action/p3-development-recipe.json",
+    "action/r3-development-horizons.json": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/action/r3-development-horizons.json",
+    "dispatch/gpu-time-20261127.json": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/dispatch/gpu-time-20261127.json",
+    "dispatch/m1-hybrid-20261127/overall.json": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/dispatch/m1-hybrid-20261127/overall.json",
+    "dispatch/mechanism-overlap.json": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/dispatch/mechanism-overlap.json"
+  },
+  "measurements": {
+    "wbc_failure_receipt": {
+      "source_path": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/attempts/w59-r3-5901-ppo-full-fallback-b-e60-0023.json",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/attempts/w59-r3-5901-ppo-full-fallback-b-e60-0023.json",
+      "attempt": "w59-r3-5901-ppo-full-fallback-b-e60-0023",
+      "runtime_commit": "4ad3a5f28b99ad9ccc84455915fdffa9dfcb57af",
+      "simulation_s": 36.773999999940976,
+      "error": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL-w59-runtime-4ad3a5f28b99/scripts/s1_go2_r11_runtime.py\", line 604, in run\n    action=agent.update(t,data,mission,contact,grf,joint.soft.copy(),\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w59-runtime-4ad3a5f28b99/scripts/s1_w59_f_backend.py\", line 45, in update\n    return super().update(t,data,mission,contact,grf,soft,material_info,replan)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w59-runtime-4ad3a5f28b99/scripts/s1_w54_f_r52_backend.py\", line 775, in update\n    return self.wbc(t,data,mq,mission,scheduled,observed,np.asarray(grf),np.asarray(soft),material_info)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w59-runtime-4ad3a5f28b99/scripts/s1_w57_f_backend.py\", line 162, in wbc\n    action = super().wbc(t, data, mq, mission, scheduled, observed, grf, soft, material_info)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w59-runtime-4ad3a5f28b99/scripts/s1_w54_f_r52_backend.py\", line 707, in wbc\n    z,status=self._solve(P,q,A,lo,hi,'wbc',t)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w59-runtime-4ad3a5f28b99/scripts/s1_w59_f_backend.py\", line 126, in _solve\n    return super()._solve(P,q,A,lo,hi,kind,t,warm)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w59-runtime-4ad3a5f28b99/scripts/s1_w54_f_r52_backend.py\", line 458, in _solve\n    raise ControllerNumericalFailure(f'{kind}: {sol.info.status} at physical time {t:.6f}')\ns1_w54_f_r52_backend.ControllerNumericalFailure: wbc: maximum iterations reached at physical time 36.774000\n",
+      "exact_state_solver_counterfactual_run": false,
+      "root_cause_boundary": "The receipt proves maximum-iterations status; it does not prove primal infeasibility, scaling cause, or that increasing iteration count is sufficient."
+    },
+    "action": {
+      "development": {
+        "denominator_states": 12,
+        "evaluated_states": 0,
+        "admitted": false,
+        "physical_states_complete": 12,
+        "registered_branches": 96,
+        "measured_branches": 96,
+        "observed_mj_steps": 960000,
+        "actual_hard_failures": 0,
+        "replay_vs_unperturbed_max_abs": {
+          "qpos": 0,
+          "qvel": 0,
+          "actual_grf": 0,
+          "q_target": 0,
+          "actuator_force": 0
+        },
+        "by_stratum": {
+          "cross_foot_reload": {
+            "denominator_states": 4,
+            "evaluated_states": 0,
+            "admitted": false
+          },
+          "early_touch_or_search": {
+            "denominator_states": 4,
+            "evaluated_states": 0,
+            "admitted": false
+          },
+          "rigid_steady": {
+            "denominator_states": 4,
+            "evaluated_states": 0,
+            "admitted": false
+          }
+        }
+      },
+      "independent_sealed": {
+        "denominator_states": 12,
+        "evaluated_states": 12,
+        "denominator_directions": 72,
+        "resolved": 26,
+        "unresolved": 46,
+        "gradient_correct": 0,
+        "gradient_all": 0,
+        "gradient_resolved": 0,
+        "rank_all": 0,
+        "gradient_state_bootstrap_lower95": 0,
+        "gain_above_replay_floor_mean": 0,
+        "winner_excess_hard": 0,
+        "directional_hard_failures": 0,
+        "directional_excess_hard_failures": 0,
+        "admitted": false,
+        "physical_states_complete": 12,
+        "registered_branches": 96,
+        "measured_branches": 96,
+        "observed_mj_steps": 960000,
+        "actual_hard_failures": 0,
+        "replay_vs_unperturbed_max_abs": {
+          "qpos": 0,
+          "qvel": 0,
+          "actual_grf": 0,
+          "q_target": 0,
+          "actuator_force": 0
+        },
+        "by_stratum": {
+          "cross_foot_reload": {
+            "denominator_states": 4,
+            "evaluated_states": 4,
+            "denominator_directions": 24,
+            "resolved": 9,
+            "unresolved": 15,
+            "gradient_correct": 0,
+            "gradient_all": 0,
+            "gradient_resolved": 0,
+            "rank_all": 0,
+            "gradient_state_bootstrap_lower95": 0,
+            "gain_above_replay_floor_mean": 0,
+            "winner_excess_hard": 0,
+            "directional_hard_failures": 0,
+            "directional_excess_hard_failures": 0,
+            "admitted": false
+          },
+          "early_touch_or_search": {
+            "denominator_states": 4,
+            "evaluated_states": 4,
+            "denominator_directions": 24,
+            "resolved": 8,
+            "unresolved": 16,
+            "gradient_correct": 0,
+            "gradient_all": 0,
+            "gradient_resolved": 0,
+            "rank_all": 0,
+            "gradient_state_bootstrap_lower95": 0,
+            "gain_above_replay_floor_mean": 0,
+            "winner_excess_hard": 0,
+            "directional_hard_failures": 0,
+            "directional_excess_hard_failures": 0,
+            "admitted": false
+          },
+          "rigid_steady": {
+            "denominator_states": 4,
+            "evaluated_states": 4,
+            "denominator_directions": 24,
+            "resolved": 9,
+            "unresolved": 15,
+            "gradient_correct": 0,
+            "gradient_all": 0,
+            "gradient_resolved": 0,
+            "rank_all": 0,
+            "gradient_state_bootstrap_lower95": 0,
+            "gain_above_replay_floor_mean": 0,
+            "winner_excess_hard": 0,
+            "directional_hard_failures": 0,
+            "directional_excess_hard_failures": 0,
+            "admitted": false
+          }
+        }
+      },
+      "frozen_prediction_substeps": 1,
+      "ranking_admitted": false,
+      "r3_gradient_admitted": false,
+      "r3_gradient_test_substeps": 0,
+      "true_ppo_admitted": true,
+      "true_action_authority": {
+        "registered_directions": 72,
+        "observed_directions": 72,
+        "above_repeat_without_failure": 60
+      }
+    },
+    "model": {
+      "fits": {
+        "blackbox": {
+          "5901": {
+            "nodes": [
+              {
+                "kind": "blackbox",
+                "seed": 5901,
+                "updates": 5000,
+                "validation_loss": 0.2080019610002637,
+                "validation_event_brier": 0.017816407256759703,
+                "continue_next_node": true,
+                "wall_s": 55.878785610198975,
+                "mean_updates_per_s": 89.4793882400136,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5901/node-5000.pt",
+                "bytes": 931329
+              },
+              {
+                "kind": "blackbox",
+                "seed": 5901,
+                "updates": 10000,
+                "validation_loss": 0.1703050034120679,
+                "validation_event_brier": 0.015719713526777923,
+                "continue_next_node": true,
+                "wall_s": 112.08614492416382,
+                "mean_updates_per_s": 89.21708830526386,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5901/node-10000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "blackbox",
+                "seed": 5901,
+                "updates": 30000,
+                "validation_loss": 0.14015761483460665,
+                "validation_event_brier": 0.01402664283523336,
+                "continue_next_node": true,
+                "wall_s": 333.87904810905457,
+                "mean_updates_per_s": 89.85289693974667,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5901/node-30000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "blackbox",
+                "seed": 5901,
+                "updates": 50000,
+                "validation_loss": 0.12915374897420406,
+                "validation_event_brier": 0.013473284023348242,
+                "continue_next_node": false,
+                "wall_s": 555.8326725959778,
+                "mean_updates_per_s": 89.9551288040102,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5901/node-50000.pt",
+                "bytes": 931381
+              }
+            ],
+            "evaluated_checkpoint_step": 10000,
+            "development_force_error": [
+              {
+                "horizon_s": 0.02,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 7.27008641417036
+              },
+              {
+                "horizon_s": 0.1,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 11.180875149705527
+              },
+              {
+                "horizon_s": 0.35,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 20.576574428377718
+              },
+              {
+                "horizon_s": 0.64,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 19.89671881169382
+              },
+              {
+                "horizon_s": 1.3,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 23.226828899061505
+              },
+              {
+                "horizon_s": 2,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 25.973358467234593
+              }
+            ]
+          },
+          "5902": {
+            "nodes": [
+              {
+                "kind": "blackbox",
+                "seed": 5902,
+                "updates": 5000,
+                "validation_loss": 0.20484949462115765,
+                "validation_event_brier": 0.01718875381629914,
+                "continue_next_node": true,
+                "wall_s": 56.027238845825195,
+                "mean_updates_per_s": 89.24230421873543,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5902/node-5000.pt",
+                "bytes": 931329
+              },
+              {
+                "kind": "blackbox",
+                "seed": 5902,
+                "updates": 10000,
+                "validation_loss": 0.173674242105335,
+                "validation_event_brier": 0.015565459878416732,
+                "continue_next_node": true,
+                "wall_s": 111.9079577922821,
+                "mean_updates_per_s": 89.35914935863605,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5902/node-10000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "blackbox",
+                "seed": 5902,
+                "updates": 30000,
+                "validation_loss": 0.1408953913487494,
+                "validation_event_brier": 0.01408819406060502,
+                "continue_next_node": true,
+                "wall_s": 333.37563586235046,
+                "mean_updates_per_s": 89.98857963776629,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5902/node-30000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "blackbox",
+                "seed": 5902,
+                "updates": 50000,
+                "validation_loss": 0.129882957553491,
+                "validation_event_brier": 0.013534426921978593,
+                "continue_next_node": false,
+                "wall_s": 553.9322996139526,
+                "mean_updates_per_s": 90.26373795188405,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5902/node-50000.pt",
+                "bytes": 931381
+              }
+            ],
+            "evaluated_checkpoint_step": 10000,
+            "development_force_error": [
+              {
+                "horizon_s": 0.02,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 7.341716874570987
+              },
+              {
+                "horizon_s": 0.1,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 11.044031804941747
+              },
+              {
+                "horizon_s": 0.35,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 17.98846945830364
+              },
+              {
+                "horizon_s": 0.64,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 21.99362453247847
+              },
+              {
+                "horizon_s": 1.3,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 27.827149577636735
+              },
+              {
+                "horizon_s": 2,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 35.40262480377574
+              }
+            ]
+          },
+          "5903": {
+            "nodes": [
+              {
+                "kind": "blackbox",
+                "seed": 5903,
+                "updates": 5000,
+                "validation_loss": 0.20795291103422642,
+                "validation_event_brier": 0.017213924933457747,
+                "continue_next_node": true,
+                "wall_s": 55.71773838996887,
+                "mean_updates_per_s": 89.73802665910269,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5903/node-5000.pt",
+                "bytes": 931329
+              },
+              {
+                "kind": "blackbox",
+                "seed": 5903,
+                "updates": 10000,
+                "validation_loss": 0.17385218804702163,
+                "validation_event_brier": 0.01592432672623545,
+                "continue_next_node": true,
+                "wall_s": 112.50486993789673,
+                "mean_updates_per_s": 88.88503913128169,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5903/node-10000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "blackbox",
+                "seed": 5903,
+                "updates": 30000,
+                "validation_loss": 0.14150728611275554,
+                "validation_event_brier": 0.01442965940805152,
+                "continue_next_node": true,
+                "wall_s": 337.7954754829407,
+                "mean_updates_per_s": 88.81113531641039,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5903/node-30000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "blackbox",
+                "seed": 5903,
+                "updates": 50000,
+                "validation_loss": 0.12771667214110494,
+                "validation_event_brier": 0.013162881834432483,
+                "continue_next_node": false,
+                "wall_s": 561.5050241947174,
+                "mean_updates_per_s": 89.04639767605424,
+                "checkpoint": "work/w59/model/checkpoints/blackbox/5903/node-50000.pt",
+                "bytes": 931381
+              }
+            ],
+            "evaluated_checkpoint_step": 10000,
+            "development_force_error": [
+              {
+                "horizon_s": 0.02,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 7.259148567474596
+              },
+              {
+                "horizon_s": 0.1,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 11.906634812281942
+              },
+              {
+                "horizon_s": 0.35,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 17.47749642993562
+              },
+              {
+                "horizon_s": 0.64,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 22.458907549258697
+              },
+              {
+                "horizon_s": 1.3,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 21.51864207193608
+              },
+              {
+                "horizon_s": 2,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 25.464112779160768
+              }
+            ]
+          }
+        },
+        "structured": {
+          "5901": {
+            "nodes": [
+              {
+                "kind": "structured",
+                "seed": 5901,
+                "updates": 5000,
+                "validation_loss": 1.512060061097145,
+                "validation_event_brier": 0.03029467409942299,
+                "continue_next_node": true,
+                "wall_s": 130.6369137763977,
+                "mean_updates_per_s": 38.27402093394862,
+                "checkpoint": "work/w59/model/checkpoints/structured/5901/node-5000.pt",
+                "bytes": 931329
+              },
+              {
+                "kind": "structured",
+                "seed": 5901,
+                "updates": 10000,
+                "validation_loss": 1.1549485325813293,
+                "validation_event_brier": 0.025975985336117446,
+                "continue_next_node": true,
+                "wall_s": 261.6118836402893,
+                "mean_updates_per_s": 38.22456317163881,
+                "checkpoint": "work/w59/model/checkpoints/structured/5901/node-10000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "structured",
+                "seed": 5901,
+                "updates": 30000,
+                "validation_loss": 0.15516973100602627,
+                "validation_event_brier": 0.015224263799609616,
+                "continue_next_node": true,
+                "wall_s": 798.0449779033661,
+                "mean_updates_per_s": 37.59186610509521,
+                "checkpoint": "work/w59/model/checkpoints/structured/5901/node-30000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "structured",
+                "seed": 5901,
+                "updates": 50000,
+                "validation_loss": 0.12768528307788074,
+                "validation_event_brier": 0.0136399160255678,
+                "continue_next_node": false,
+                "wall_s": 1332.3862822055817,
+                "mean_updates_per_s": 37.52665470523277,
+                "checkpoint": "work/w59/model/checkpoints/structured/5901/node-50000.pt",
+                "bytes": 931381
+              }
+            ],
+            "evaluated_checkpoint_step": 10000,
+            "development_force_error": [
+              {
+                "horizon_s": 0.02,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 9.703576725744735
+              },
+              {
+                "horizon_s": 0.1,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 20.636055659296897
+              },
+              {
+                "horizon_s": 0.35,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 14946.202267221373
+              },
+              {
+                "horizon_s": 0.64,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 134301466957.48979
+              },
+              {
+                "horizon_s": 1.3,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 1.336640254898831e+27
+              },
+              {
+                "horizon_s": 2,
+                "origins": 547,
+                "finite": 215,
+                "mean_Fz_MAE_N": 1.678114559855469e+35
+              }
+            ]
+          },
+          "5902": {
+            "nodes": [
+              {
+                "kind": "structured",
+                "seed": 5902,
+                "updates": 5000,
+                "validation_loss": 1.4542344957590103,
+                "validation_event_brier": 0.03019768465310335,
+                "continue_next_node": true,
+                "wall_s": 239.4696967601776,
+                "mean_updates_per_s": 20.879468457736227,
+                "checkpoint": "work/w59/model/checkpoints/structured/5902/node-5000.pt",
+                "bytes": 931329
+              },
+              {
+                "kind": "structured",
+                "seed": 5902,
+                "updates": 10000,
+                "validation_loss": 1.2908143922686577,
+                "validation_event_brier": 0.026727171440143138,
+                "continue_next_node": true,
+                "wall_s": 491.40131187438965,
+                "mean_updates_per_s": 20.349965973019454,
+                "checkpoint": "work/w59/model/checkpoints/structured/5902/node-10000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "structured",
+                "seed": 5902,
+                "updates": 30000,
+                "validation_loss": 0.1589668313972652,
+                "validation_event_brier": 0.015333605813793838,
+                "continue_next_node": true,
+                "wall_s": 526.3880634307861,
+                "mean_updates_per_s": 37.994782295834675,
+                "checkpoint": "work/w59/model/checkpoints/structured/5902/node-30000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "structured",
+                "seed": 5902,
+                "updates": 50000,
+                "validation_loss": 0.1344327130354941,
+                "validation_event_brier": 0.014152724528685212,
+                "continue_next_node": false,
+                "wall_s": 1060.343585729599,
+                "mean_updates_per_s": 37.72362128127808,
+                "checkpoint": "work/w59/model/checkpoints/structured/5902/node-50000.pt",
+                "bytes": 931381
+              }
+            ],
+            "evaluated_checkpoint_step": 10000,
+            "development_force_error": [
+              {
+                "horizon_s": 0.02,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 10.844311781366919
+              },
+              {
+                "horizon_s": 0.1,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 21.90829672910594
+              },
+              {
+                "horizon_s": 0.35,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 51512.66709321043
+              },
+              {
+                "horizon_s": 0.64,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 818531488426.3724
+              },
+              {
+                "horizon_s": 1.3,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 3.3068554052483137e+28
+              },
+              {
+                "horizon_s": 2,
+                "origins": 547,
+                "finite": 365,
+                "mean_Fz_MAE_N": 4.024734321536559e+35
+              }
+            ]
+          },
+          "5903": {
+            "nodes": [
+              {
+                "kind": "structured",
+                "seed": 5903,
+                "updates": 5000,
+                "validation_loss": 1.3987250626087189,
+                "validation_event_brier": 0.030111278174445033,
+                "continue_next_node": true,
+                "wall_s": 176.9948890209198,
+                "mean_updates_per_s": 28.249403136540842,
+                "checkpoint": "work/w59/model/checkpoints/structured/5903/node-5000.pt",
+                "bytes": 931329
+              },
+              {
+                "kind": "structured",
+                "seed": 5903,
+                "updates": 10000,
+                "validation_loss": 1.0225255489349365,
+                "validation_event_brier": 0.025401271297596395,
+                "continue_next_node": true,
+                "wall_s": 354.6448314189911,
+                "mean_updates_per_s": 28.197224585656404,
+                "checkpoint": "work/w59/model/checkpoints/structured/5903/node-10000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "structured",
+                "seed": 5903,
+                "updates": 30000,
+                "validation_loss": 0.14899466605857015,
+                "validation_event_brier": 0.014949419244658202,
+                "continue_next_node": true,
+                "wall_s": 522.353245973587,
+                "mean_updates_per_s": 38.28826577201928,
+                "checkpoint": "work/w59/model/checkpoints/structured/5903/node-30000.pt",
+                "bytes": 931381
+              },
+              {
+                "kind": "structured",
+                "seed": 5903,
+                "updates": 50000,
+                "validation_loss": 0.12806236022152007,
+                "validation_event_brier": 0.013757518434431404,
+                "continue_next_node": false,
+                "wall_s": 1043.0433824062347,
+                "mean_updates_per_s": 38.34931567632424,
+                "checkpoint": "work/w59/model/checkpoints/structured/5903/node-50000.pt",
+                "bytes": 931381
+              }
+            ],
+            "evaluated_checkpoint_step": 10000,
+            "development_force_error": [
+              {
+                "horizon_s": 0.02,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 9.344120792268582
+              },
+              {
+                "horizon_s": 0.1,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 14.595727614357784
+              },
+              {
+                "horizon_s": 0.35,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 957.9191931340148
+              },
+              {
+                "horizon_s": 0.64,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 5765588969.216829
+              },
+              {
+                "horizon_s": 1.3,
+                "origins": 547,
+                "finite": 547,
+                "mean_Fz_MAE_N": 1.1635713898621996e+26
+              },
+              {
+                "horizon_s": 2,
+                "origins": 547,
+                "finite": 263,
+                "mean_Fz_MAE_N": 4.481157893081816e+35
+              }
+            ]
+          }
+        }
+      },
+      "bank": {
+        "processed": 241,
+        "total": 241,
+        "episodes_with_windows": 76,
+        "intervals": 634800,
+        "current": "w58-g1-m1-g1-b-original-e60-a01",
+        "elapsed_s": 476.76522183418274,
+        "deadline": null,
+        "wall_deadline_enabled": false,
+        "kill_on_conversation_end": false
+      },
+      "technical_preparation_attempts": [
+        {
+          "label": "a01",
+          "member": "blackbox/5901",
+          "retained_updates": 0,
+          "executed_pre_capture_updates": 3,
+          "reason": "host scalar creation while CUDA stream capture active",
+          "log": "work/w59/model/fit.log"
+        },
+        {
+          "label": "a02",
+          "member": "blackbox/5901",
+          "retained_updates": 0,
+          "executed_pre_capture_updates": 3,
+          "reason": "autograd legacy stream dependency while capturing",
+          "log": "work/w59/model/fit-a02.log"
+        }
+      ],
+      "material": {
+        "offline_candidate_accepted": true,
+        "accepted_physical": false,
+        "fitted": true,
+        "fit_rows": 67,
+        "parameters": {
+          "release_prior_blend": 0.0899047771366178,
+          "positive_recovery_rate_s_inv": 0.99735344928719,
+          "contact_gain": 1.054129997868099
+        },
+        "by_recording": {
+          "job-20261121T030212Z-w56-f-a-r60-eval-PANN_PPO_S5-s1-E60-attempt01": {
+            "m1_foot_force_error_N": {
+              "n": 35,
+              "bias": 0.18554180956408783,
+              "MAE": 0.20236080709698587,
+              "p95": 0.6376989155898777
+            },
+            "m3_foot_force_error_N": {
+              "n": 35,
+              "bias": 0.02160356625319214,
+              "MAE": 0.0773611790294549,
+              "p95": 0.24918050638543449
+            },
+            "short_M1": {
+              "n": 270,
+              "bias": -0.05675791450962858,
+              "MAE": 0.12941052694065008,
+              "p95": 0.40471103530440217
+            },
+            "short_M3": {
+              "n": 270,
+              "bias": -0.07801040020465635,
+              "MAE": 0.1262155321973802,
+              "p95": 0.39875005416323067
+            }
+          },
+          "job-20261121T030212Z-w56-f-b-r60-eval-PANN_PPO_S5-s2-E60-attempt01": {
+            "m1_foot_force_error_N": {
+              "n": 31,
+              "bias": 0.11259405137634249,
+              "MAE": 0.1519637370741291,
+              "p95": 0.49548014874444846
+            },
+            "m3_foot_force_error_N": {
+              "n": 31,
+              "bias": -0.027039428397990263,
+              "MAE": 0.07001709938025551,
+              "p95": 0.15677424777088433
+            },
+            "short_M1": {
+              "n": 312,
+              "bias": -0.07209934702496795,
+              "MAE": 0.11928699817829055,
+              "p95": 0.4074342744415911
+            },
+            "short_M3": {
+              "n": 312,
+              "bias": -0.08738160839316082,
+              "MAE": 0.12379553758596029,
+              "p95": 0.39773516240059076
+            }
+          },
+          "w57-pilot02-full-a-e60-0009": {
+            "m1_foot_force_error_N": {
+              "n": 32,
+              "bias": 0.042979863638507684,
+              "MAE": 0.11404994673380674,
+              "p95": 0.4731207706716458
+            },
+            "m3_foot_force_error_N": {
+              "n": 32,
+              "bias": -0.03780107700805698,
+              "MAE": 0.06760820778324858,
+              "p95": 0.1770652144283022
+            },
+            "short_M1": {
+              "n": 295,
+              "bias": -0.09252567638728833,
+              "MAE": 0.12333890063626249,
+              "p95": 0.4174017377955487
+            },
+            "short_M3": {
+              "n": 295,
+              "bias": -0.10322829132466267,
+              "MAE": 0.1300014072745916,
+              "p95": 0.4174017377955487
+            }
+          },
+          "w57-pilot02-full-b-e60-0023": {
+            "m1_foot_force_error_N": {
+              "n": 37,
+              "bias": 0.08890992470490332,
+              "MAE": 0.1792220246585176,
+              "p95": 0.5650800736057522
+            },
+            "m3_foot_force_error_N": {
+              "n": 37,
+              "bias": -0.050766341538386925,
+              "MAE": 0.10312651210335608,
+              "p95": 0.32560890259082026
+            },
+            "short_M1": {
+              "n": 313,
+              "bias": -0.07170186277233456,
+              "MAE": 0.12277070534968193,
+              "p95": 0.42223144616665276
+            },
+            "short_M3": {
+              "n": 313,
+              "bias": -0.08998423719052766,
+              "MAE": 0.12467378354222038,
+              "p95": 0.42106648286654574
+            }
+          },
+          "w57-pilot02-blind-a-e60-0027": {
+            "m1_foot_force_error_N": {
+              "n": 30,
+              "bias": 0.06825797819212047,
+              "MAE": 0.13895577982880217,
+              "p95": 0.4595229142772207
+            },
+            "m3_foot_force_error_N": {
+              "n": 30,
+              "bias": -0.04456507335580939,
+              "MAE": 0.07528237822546345,
+              "p95": 0.19959012321536057
+            },
+            "short_M1": {
+              "n": 301,
+              "bias": -0.074327190433267,
+              "MAE": 0.11772208522111473,
+              "p95": 0.42213244348459966
+            },
+            "short_M3": {
+              "n": 301,
+              "bias": -0.08649968731340858,
+              "MAE": 0.119194029423203,
+              "p95": 0.4119388511262798
+            }
+          }
+        }
+      }
+    },
+    "final_fit": {
+      "heads": [
+        {
+          "kind": "blackbox",
+          "seed": 5901,
+          "updates": 50000,
+          "validation_loss": 0.12915374897420406,
+          "validation_event_brier": 0.013473284023348242,
+          "continue_next_node": false,
+          "wall_s": 555.8326725959778,
+          "mean_updates_per_s": 89.9551288040102,
+          "checkpoint": "work/w59/model/checkpoints/blackbox/5901/node-50000.pt",
+          "bytes": 931381
+        },
+        {
+          "kind": "structured",
+          "seed": 5901,
+          "updates": 50000,
+          "validation_loss": 0.12768528307788074,
+          "validation_event_brier": 0.0136399160255678,
+          "continue_next_node": false,
+          "wall_s": 1332.3862822055817,
+          "mean_updates_per_s": 37.52665470523277,
+          "checkpoint": "work/w59/model/checkpoints/structured/5901/node-50000.pt",
+          "bytes": 931381
+        },
+        {
+          "kind": "blackbox",
+          "seed": 5902,
+          "updates": 50000,
+          "validation_loss": 0.129882957553491,
+          "validation_event_brier": 0.013534426921978593,
+          "continue_next_node": false,
+          "wall_s": 553.9322996139526,
+          "mean_updates_per_s": 90.26373795188405,
+          "checkpoint": "work/w59/model/checkpoints/blackbox/5902/node-50000.pt",
+          "bytes": 931381
+        },
+        {
+          "kind": "structured",
+          "seed": 5902,
+          "updates": 50000,
+          "validation_loss": 0.1344327130354941,
+          "validation_event_brier": 0.014152724528685212,
+          "continue_next_node": false,
+          "wall_s": 1060.343585729599,
+          "mean_updates_per_s": 37.72362128127808,
+          "checkpoint": "work/w59/model/checkpoints/structured/5902/node-50000.pt",
+          "bytes": 931381
+        },
+        {
+          "kind": "blackbox",
+          "seed": 5903,
+          "updates": 50000,
+          "validation_loss": 0.12771667214110494,
+          "validation_event_brier": 0.013162881834432483,
+          "continue_next_node": false,
+          "wall_s": 561.5050241947174,
+          "mean_updates_per_s": 89.04639767605424,
+          "checkpoint": "work/w59/model/checkpoints/blackbox/5903/node-50000.pt",
+          "bytes": 931381
+        },
+        {
+          "kind": "structured",
+          "seed": 5903,
+          "updates": 50000,
+          "validation_loss": 0.12806236022152007,
+          "validation_event_brier": 0.013757518434431404,
+          "continue_next_node": false,
+          "wall_s": 1043.0433824062347,
+          "mean_updates_per_s": 38.34931567632424,
+          "checkpoint": "work/w59/model/checkpoints/structured/5903/node-50000.pt",
+          "bytes": 931381
+        }
+      ],
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "kill_on_conversation_end": false
+    },
+    "material_recovery": {
+      "schema": "W59-first-cross-foot-reload-FP64",
+      "fitted": true,
+      "fit_rows": 67,
+      "parameters": {
+        "release_prior_blend": 0.0899047771366178,
+        "positive_recovery_rate_s_inv": 0.99735344928719,
+        "contact_gain": 1.054129997868099
+      },
+      "bounds": [
+        [
+          0,
+          1
+        ],
+        [
+          0.25,
+          10
+        ],
+        [
+          0.8607079764250578,
+          1.161834242728283
+        ]
+      ],
+      "law": "interpolate two causal released estimates; positive common free-mode rate; unmodified PANN unilateral solve with bounded positive contact gain at first cross-foot reload",
+      "fit_target": "measured whole-foot resultant, other footprint cells predicted by contemporaneous M1; no true cell force or true internal strain in fit",
+      "scope": "One identified released anchor per saved footprint; short prediction explicitly rescored through the remaining measured 5kHz boundary. Non-cross-foot and loaded-only paths retain M1.",
+      "diagnostics_truth_only": [
+        "source and free initial state",
+        "preload depth",
+        "single cell normal component"
+      ],
+      "fit_nfev": 9,
+      "fit_jacobian_singular_values": [
+        19.54332736097227,
+        3.462821806521027,
+        0.13703230525371096
+      ],
+      "per_episode": {
+        "job-20261121T030212Z-w56-f-a-r60-eval-PANN_PPO_S5-s1-E60-attempt01": {
+          "role": "fit",
+          "events": 35,
+          "source_depth_error_m": {
+            "n": 35,
+            "bias": -1.521674208179483e-7,
+            "MAE": 1.8004729361902703e-7,
+            "p95": 3.86176820779196e-7
+          },
+          "m1_preload_depth_error_m": {
+            "n": 35,
+            "bias": -5.460221960073609e-7,
+            "MAE": 5.460222186948502e-7,
+            "p95": 8.171932337688156e-7
+          },
+          "m3_preload_depth_error_m": {
+            "n": 35,
+            "bias": 1.6958732261308057e-7,
+            "MAE": 1.6959511122056744e-7,
+            "p95": 2.9889923042109684e-7
+          },
+          "m1_foot_force_error_N": {
+            "n": 35,
+            "bias": 0.18554180956408783,
+            "MAE": 0.20236080709698587,
+            "p95": 0.6376989155898777
+          },
+          "m3_foot_force_error_N": {
+            "n": 35,
+            "bias": 0.02160356625319214,
+            "MAE": 0.0773611790294549,
+            "p95": 0.24918050638543449
+          },
+          "m1_cell_force_error_N": {
+            "n": 35,
+            "bias": 0.13718372974016738,
+            "MAE": 0.1380351474472176,
+            "p95": 0.3399970528352618
+          },
+          "m3_cell_force_error_N": {
+            "n": 35,
+            "bias": -0.026754513570728094,
+            "MAE": 0.036075695300411985,
+            "p95": 0.10910817782279328
+          },
+          "source_component_N": {
+            "n": 35,
+            "bias": 0.0076381181542422225,
+            "MAE": 0.009454236721405758,
+            "p95": 0.03540399754022642
+          },
+          "free_component_N": {
+            "n": 35,
+            "bias": -0.055826228864011514,
+            "MAE": 0.05582717410910791,
+            "p95": 0.14062537714018633
+          },
+          "reload_component_N": {
+            "n": 35,
+            "bias": 0.0214335971390412,
+            "MAE": 0.0214335971390412,
+            "p95": 0.05792640554054119
+          },
+          "short_M0": {
+            "n": 270,
+            "bias": -0.14814732867046096,
+            "MAE": 0.1770020592186778,
+            "p95": 0.8642575530135207
+          },
+          "short_M1": {
+            "n": 270,
+            "bias": -0.05675791450962858,
+            "MAE": 0.12941052694065008,
+            "p95": 0.40471103530440217
+          },
+          "short_M3": {
+            "n": 270,
+            "bias": -0.07801040020465635,
+            "MAE": 0.1262155321973802,
+            "p95": 0.39875005416323067
+          },
+          "opposite_initial_vs_free": 25
+        },
+        "job-20261121T030212Z-w56-f-b-r60-eval-PANN_PPO_S5-s2-E60-attempt01": {
+          "role": "development_validation",
+          "events": 31,
+          "source_depth_error_m": {
+            "n": 31,
+            "bias": -2.1687772699079183e-8,
+            "MAE": 3.048074035762612e-7,
+            "p95": 0.0000011549557598453366
+          },
+          "m1_preload_depth_error_m": {
+            "n": 31,
+            "bias": -5.389158282817229e-7,
+            "MAE": 5.540685213269131e-7,
+            "p95": 8.401183855754078e-7
+          },
+          "m3_preload_depth_error_m": {
+            "n": 31,
+            "bias": 1.989757908223782e-7,
+            "MAE": 1.989757908223782e-7,
+            "p95": 3.863580723219143e-7
+          },
+          "m1_foot_force_error_N": {
+            "n": 31,
+            "bias": 0.11259405137634249,
+            "MAE": 0.1519637370741291,
+            "p95": 0.49548014874444846
+          },
+          "m3_foot_force_error_N": {
+            "n": 31,
+            "bias": -0.027039428397990263,
+            "MAE": 0.07001709938025551,
+            "p95": 0.15677424777088433
+          },
+          "m1_cell_force_error_N": {
+            "n": 31,
+            "bias": 0.11494484168863388,
+            "MAE": 0.12180958173513633,
+            "p95": 0.3546584949425964
+          },
+          "m3_cell_force_error_N": {
+            "n": 31,
+            "bias": -0.024688638085698756,
+            "MAE": 0.031571451730597846,
+            "p95": 0.09024799388125937
+          },
+          "source_component_N": {
+            "n": 31,
+            "bias": 0.0005058908509323271,
+            "MAE": 0.016574404021642824,
+            "p95": 0.06274211434568358
+          },
+          "free_component_N": {
+            "n": 31,
+            "bias": -0.04917175863086745,
+            "MAE": 0.04917175863086745,
+            "p95": 0.1488661829822781
+          },
+          "reload_component_N": {
+            "n": 31,
+            "bias": 0.023977229694236362,
+            "MAE": 0.023977229694236362,
+            "p95": 0.07895481669858306
+          },
+          "short_M0": {
+            "n": 312,
+            "bias": -0.17948034862023873,
+            "MAE": 0.1897698050576953,
+            "p95": 0.8770032985833669
+          },
+          "short_M1": {
+            "n": 312,
+            "bias": -0.07209934702496795,
+            "MAE": 0.11928699817829055,
+            "p95": 0.4074342744415911
+          },
+          "short_M3": {
+            "n": 312,
+            "bias": -0.08738160839316082,
+            "MAE": 0.12379553758596029,
+            "p95": 0.39773516240059076
+          },
+          "opposite_initial_vs_free": 23
+        },
+        "w57-pilot02-full-a-e60-0009": {
+          "role": "fit",
+          "events": 32,
+          "source_depth_error_m": {
+            "n": 32,
+            "bias": -5.806532180067617e-8,
+            "MAE": 2.4082918523456336e-7,
+            "p95": 6.5655407219432e-7
+          },
+          "m1_preload_depth_error_m": {
+            "n": 32,
+            "bias": -3.7049869847495914e-7,
+            "MAE": 3.821383926757101e-7,
+            "p95": 7.825825635659386e-7
+          },
+          "m3_preload_depth_error_m": {
+            "n": 32,
+            "bias": 1.488499682463273e-7,
+            "MAE": 1.488514699921544e-7,
+            "p95": 2.963091021381279e-7
+          },
+          "m1_foot_force_error_N": {
+            "n": 32,
+            "bias": 0.042979863638507684,
+            "MAE": 0.11404994673380674,
+            "p95": 0.4731207706716458
+          },
+          "m3_foot_force_error_N": {
+            "n": 32,
+            "bias": -0.03780107700805698,
+            "MAE": 0.06760820778324858,
+            "p95": 0.1770652144283022
+          },
+          "m1_cell_force_error_N": {
+            "n": 32,
+            "bias": 0.07229729965596482,
+            "MAE": 0.07391603038009355,
+            "p95": 0.2632279760534158
+          },
+          "m3_cell_force_error_N": {
+            "n": 32,
+            "bias": -0.008483640990599483,
+            "MAE": 0.027926039393158245,
+            "p95": 0.10108085848762817
+          },
+          "source_component_N": {
+            "n": 32,
+            "bias": -0.0009056449949740031,
+            "MAE": 0.008138265669472622,
+            "p95": 0.04368814122540049
+          },
+          "free_component_N": {
+            "n": 32,
+            "bias": -0.031760251572724704,
+            "MAE": 0.03176040331988346,
+            "p95": 0.10984297115801918
+          },
+          "reload_component_N": {
+            "n": 32,
+            "bias": 0.02418225557709923,
+            "MAE": 0.02418225557709923,
+            "p95": 0.05543765718786213
+          },
+          "short_M0": {
+            "n": 295,
+            "bias": -0.22487590652754227,
+            "MAE": 0.22765233914831484,
+            "p95": 1.0054625272731494
+          },
+          "short_M1": {
+            "n": 295,
+            "bias": -0.09252567638728833,
+            "MAE": 0.12333890063626249,
+            "p95": 0.4174017377955487
+          },
+          "short_M3": {
+            "n": 295,
+            "bias": -0.10322829132466267,
+            "MAE": 0.1300014072745916,
+            "p95": 0.4174017377955487
+          },
+          "opposite_initial_vs_free": 16
+        },
+        "w57-pilot02-full-b-e60-0023": {
+          "role": "development_validation",
+          "events": 37,
+          "source_depth_error_m": {
+            "n": 37,
+            "bias": -3.2458399700608496e-8,
+            "MAE": 2.2371026329968813e-7,
+            "p95": 5.986738662965216e-7
+          },
+          "m1_preload_depth_error_m": {
+            "n": 37,
+            "bias": -5.550515797721473e-7,
+            "MAE": 5.550515797721473e-7,
+            "p95": 8.207634307040579e-7
+          },
+          "m3_preload_depth_error_m": {
+            "n": 37,
+            "bias": 2.099541588727107e-7,
+            "MAE": 2.099541588727107e-7,
+            "p95": 2.9310909800023825e-7
+          },
+          "m1_foot_force_error_N": {
+            "n": 37,
+            "bias": 0.08890992470490332,
+            "MAE": 0.1792220246585176,
+            "p95": 0.5650800736057522
+          },
+          "m3_foot_force_error_N": {
+            "n": 37,
+            "bias": -0.050766341538386925,
+            "MAE": 0.10312651210335608,
+            "p95": 0.32560890259082026
+          },
+          "m1_cell_force_error_N": {
+            "n": 37,
+            "bias": 0.12039314154998113,
+            "MAE": 0.12039370961831675,
+            "p95": 0.3604755189676276
+          },
+          "m3_cell_force_error_N": {
+            "n": 37,
+            "bias": -0.019283124693309266,
+            "MAE": 0.03421692794842011,
+            "p95": 0.09031670427809031
+          },
+          "source_component_N": {
+            "n": 37,
+            "bias": -0.0012281892164104369,
+            "MAE": 0.013437281348300998,
+            "p95": 0.04216423927182257
+          },
+          "free_component_N": {
+            "n": 37,
+            "bias": -0.04883226927115973,
+            "MAE": 0.04883226927115973,
+            "p95": 0.14607124421300594
+          },
+          "reload_component_N": {
+            "n": 37,
+            "bias": 0.03077733379426091,
+            "MAE": 0.03077733379426091,
+            "p95": 0.09317820268142582
+          },
+          "short_M0": {
+            "n": 313,
+            "bias": -0.17721123665272895,
+            "MAE": 0.19330816725427558,
+            "p95": 0.9349128727578682
+          },
+          "short_M1": {
+            "n": 313,
+            "bias": -0.07170186277233456,
+            "MAE": 0.12277070534968193,
+            "p95": 0.42223144616665276
+          },
+          "short_M3": {
+            "n": 313,
+            "bias": -0.08998423719052766,
+            "MAE": 0.12467378354222038,
+            "p95": 0.42106648286654574
+          },
+          "opposite_initial_vs_free": 24
+        },
+        "w57-pilot02-blind-a-e60-0027": {
+          "role": "same_case_diagnostic",
+          "events": 30,
+          "source_depth_error_m": {
+            "n": 30,
+            "bias": -9.543444017620799e-8,
+            "MAE": 1.8371780073227594e-7,
+            "p95": 5.823151877740445e-7
+          },
+          "m1_preload_depth_error_m": {
+            "n": 30,
+            "bias": -4.648199327241218e-7,
+            "MAE": 4.6954392055774344e-7,
+            "p95": 8.489111025524784e-7
+          },
+          "m3_preload_depth_error_m": {
+            "n": 30,
+            "bias": 1.6566004526797996e-7,
+            "MAE": 1.6566006648593292e-7,
+            "p95": 3.1668951672664437e-7
+          },
+          "m1_foot_force_error_N": {
+            "n": 30,
+            "bias": 0.06825797819212047,
+            "MAE": 0.13895577982880217,
+            "p95": 0.4595229142772207
+          },
+          "m3_foot_force_error_N": {
+            "n": 30,
+            "bias": -0.04456507335580939,
+            "MAE": 0.07528237822546345,
+            "p95": 0.19959012321536057
+          },
+          "m1_cell_force_error_N": {
+            "n": 30,
+            "bias": 0.10211711581291147,
+            "MAE": 0.10494533030742546,
+            "p95": 0.30599450383672333
+          },
+          "m3_cell_force_error_N": {
+            "n": 30,
+            "bias": -0.010705935735018757,
+            "MAE": 0.03232057090014739,
+            "p95": 0.0792128624130956
+          },
+          "source_component_N": {
+            "n": 30,
+            "bias": 0.0055399832617738926,
+            "MAE": 0.008861557081060834,
+            "p95": 0.035137404728989324
+          },
+          "free_component_N": {
+            "n": 30,
+            "bias": -0.042441660822238506,
+            "MAE": 0.04244166298875576,
+            "p95": 0.13296792888041223
+          },
+          "reload_component_N": {
+            "n": 30,
+            "bias": 0.026195741825445863,
+            "MAE": 0.026195741825445863,
+            "p95": 0.08456701103593801
+          },
+          "short_M0": {
+            "n": 301,
+            "bias": -0.14088402428732577,
+            "MAE": 0.1564895782857508,
+            "p95": 0.722378749834462
+          },
+          "short_M1": {
+            "n": 301,
+            "bias": -0.074327190433267,
+            "MAE": 0.11772208522111473,
+            "p95": 0.42213244348459966
+          },
+          "short_M3": {
+            "n": 301,
+            "bias": -0.08649968731340858,
+            "MAE": 0.119194029423203,
+            "p95": 0.4119388511262798
+          },
+          "opposite_initial_vs_free": 20
+        }
+      },
+      "acceptance": "per B recording: improve cross-foot whole force and cell force, preserve preload depth and original short-force allowance 0.1*abs(M0-M1)",
+      "offline_candidate_accepted": true,
+      "accepted_physical": false,
+      "elapsed_s": 639.9279978275299,
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "kill_on_conversation_end": false
+    },
+    "model_recipe": {
+      "seed": [
+        5901,
+        5902,
+        5903
+      ],
+      "kinds": [
+        "blackbox",
+        "structured"
+      ],
+      "width": 128,
+      "optimizer": "AdamW",
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "global_grad_norm": 2,
+      "batch": 64,
+      "frames": 8,
+      "transitions": 7,
+      "starts": "half uniform unique, half touch/bearing/request; cross-case duplicates removed",
+      "fixed_whole_episode_validation": "case B historical model development; deterministic 4096 evenly spaced starts across eligible unique case-B intervals",
+      "advance": "10000 vs 5000, 30000 vs 10000: strict improvement in both common validation loss and Brier, otherwise stop each seed/structure separately; 50000 terminal",
+      "operator": "structured uses known current articulated 18x25 inverse dynamic map frozen across 7-step training window, total constrained held PD, learned actual contact impulse and acceleration residual; neither variant uses future real requests",
+      "private_sealed_states_used": 0,
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "kill_on_conversation_end": false
+    },
+    "model_freeze": {
+      "schema": "W59_frozen_candidate_recipe_v1",
+      "model_paths": [
+        "/root/autodl-tmp/MCP-RL-w59/work/w59/model/action-checkpoints/structured/5901-node-10000.pt",
+        "/root/autodl-tmp/MCP-RL-w59/work/w59/model/action-checkpoints/structured/5902-node-10000.pt",
+        "/root/autodl-tmp/MCP-RL-w59/work/w59/model/action-checkpoints/structured/5903-node-10000.pt"
+      ],
+      "model_sha256": [
+        "bbdf787cb5cf827fc3e56bc10695a1c54affa003513e0327062c78085d14f588",
+        "341797e08f791f6b0ef325c103512eabd862c2cb4fa0cd6c30fe88d6a584e5a1",
+        "2a85f45d68f0c00d29651d382a54d35c5e6e30c619a38cb743f36115144ced6f"
+      ],
+      "material": "M1",
+      "planning_substeps": 1,
+      "model_kind": "structured",
+      "model_identity": "structured_execution",
+      "observed_normal_max_N": 285.90427790163,
+      "forward_supported_substeps": [
+        1
+      ],
+      "ranking_development_eligible": false,
+      "eligible_development_substeps": [],
+      "development_score_sha256": "675f0efe02231662a589612d7fc0b598bd762fc73d355480c230f661462287b2",
+      "source_registry_sha256": "9c647edbb9638ba0464a05759fc7a220cb2c589f3476f1a73642846492a3e84e",
+      "fixed_day_recipe": "64 candidates twice; first request held to its next model-predicted legal event; later nominal requests.",
+      "selector": "longest registered horizon with real ranking above the replay floor and no excess hard failure; shortest registered node if all models lack physical support",
+      "source_registry_v3_sha256": "15be27a98e90aa42691d3726a82c08da443ec8bc874239be1fd5c1b8ae624f3b",
+      "r3_substeps": 0,
+      "critic_sha256": "f455cc07f8b8da88c98fbb710b81c73cd3f69e7e545e4350e2f871e589e131d6",
+      "learner_rule_sha256": "ba2bda105c52818395ad6415492218775862292f2206e557f14874d652551f91",
+      "online_recipe_sha256": "e009c905689199c4ddf23d8f903f90041a7ab35e01ed7f1e0584f8915ef684cc",
+      "r3_development_horizons_sha256": "35cc0c0f3fdabfe2f296cd6bbf75d4041cbb2e4601a9b4bf9fde2e8554c4d271",
+      "frozen_before_sealed": true,
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "kill_on_conversation_end": false
+    },
+    "r3_development_horizons": {
+      "chosen_substeps": 0,
+      "r3_substeps": 0,
+      "wm_sha256": [
+        "bbdf787cb5cf827fc3e56bc10695a1c54affa003513e0327062c78085d14f588",
+        "341797e08f791f6b0ef325c103512eabd862c2cb4fa0cd6c30fe88d6a584e5a1",
+        "2a85f45d68f0c00d29651d382a54d35c5e6e30c619a38cb743f36115144ced6f"
+      ],
+      "checks": {
+        "1": {
+          "denominator_states": 12,
+          "evaluated_states": 12,
+          "denominator_directions": 72,
+          "resolved": 29,
+          "unresolved": 43,
+          "gradient_correct": 9,
+          "gradient_all": 0.125,
+          "gradient_resolved": 0.3103448275862069,
+          "rank_all": 0.29166666666666663,
+          "gradient_state_bootstrap_lower95": 0.08333333333333333,
+          "gain_above_replay_floor_mean": 8.250897596925328e-8,
+          "winner_excess_hard": 0,
+          "directional_hard_failures": 0,
+          "directional_excess_hard_failures": 0,
+          "admitted": false,
+          "forward_supported": true,
+          "gradient_score_available": true
+        },
+        "5": {
+          "denominator_states": 12,
+          "evaluated_states": 12,
+          "denominator_directions": 72,
+          "resolved": 36,
+          "unresolved": 36,
+          "gradient_correct": 28,
+          "gradient_all": 0.388888888888889,
+          "gradient_resolved": 0.777777777777778,
+          "rank_all": 0.34722222222222227,
+          "gradient_state_bootstrap_lower95": 0.3055555555555555,
+          "gain_above_replay_floor_mean": 0.000008329285760773323,
+          "winner_excess_hard": 0,
+          "directional_hard_failures": 0,
+          "directional_excess_hard_failures": 0,
+          "admitted": false,
+          "forward_supported": false,
+          "gradient_score_available": true
+        },
+        "17": {
+          "denominator_states": 12,
+          "evaluated_states": 12,
+          "denominator_directions": 72,
+          "resolved": 60,
+          "unresolved": 12,
+          "gradient_correct": 26,
+          "gradient_all": 0.36111111111111116,
+          "gradient_resolved": 0.4333333333333334,
+          "rank_all": 0.375,
+          "gradient_state_bootstrap_lower95": 0.24999999999999997,
+          "gain_above_replay_floor_mean": -0.00010116102147914984,
+          "winner_excess_hard": 0,
+          "directional_hard_failures": 0,
+          "directional_excess_hard_failures": 0,
+          "admitted": false,
+          "forward_supported": false,
+          "gradient_score_available": true
+        },
+        "32": {
+          "admitted": false,
+          "forward_supported": false,
+          "gradient_score_available": false,
+          "denominator_states": 12,
+          "denominator_directions": 72,
+          "reason": "outside frozen forward support",
+          "source": "/root/autodl-tmp/MCP-RL-w59/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/action/development-scored.json"
+        }
+      },
+      "forward_supported_substeps": [
+        1
+      ],
+      "status": "development_no_trusted_path",
+      "critic_sha256": "f455cc07f8b8da88c98fbb710b81c73cd3f69e7e545e4350e2f871e589e131d6",
+      "learner_rule_sha256": "ba2bda105c52818395ad6415492218775862292f2206e557f14874d652551f91",
+      "online_recipe_sha256": "e009c905689199c4ddf23d8f903f90041a7ab35e01ed7f1e0584f8915ef684cc",
+      "deadline": null,
+      "wall_deadline_enabled": false,
+      "kill_on_conversation_end": false
+    },
+    "gpu_time": {
+      "measured_shanghai": "2026-11-27T18:19:50+08:00",
+      "recent_real_ppo_batches": [
+        {
+          "update": "update-021",
+          "sealed_batch": 256,
+          "optimization_wall_s": 0.10270407982170582,
+          "wall_since_previous_update_s": 1431.9913086891174
+        },
+        {
+          "update": "update-022",
+          "sealed_batch": 256,
+          "optimization_wall_s": 0.06311612017452717,
+          "wall_since_previous_update_s": 1416.5626912117004
+        },
+        {
+          "update": "update-023",
+          "sealed_batch": 256,
+          "optimization_wall_s": 0.07401967607438564,
+          "wall_since_previous_update_s": 1423.000679731369
+        }
+      ],
+      "real_E60": {
+        "attempt": "w59-r3-5902-ppo-full-fallback-a-e60-0021",
+        "wall_s": 1422.805732946843,
+        "observer_wall_s": 553.6837779227644,
+        "physical_loop_wall_s": 480.1123610846698,
+        "feedback_wall_s": 357.82186208851635,
+        "material_inside_physics_wall_s": 363.03868497908115,
+        "production_observer": "CPU FP64 frozen potentials; central finite-difference Newton"
+      },
+      "recorded_video": {
+        "attempt": "w59-ppo-full-fallback-5901-a-original-e60-a01",
+        "full_rerender": true,
+        "new_physical_steps": 0,
+        "processors": [
+          18,
+          19
+        ],
+        "cpu": {
+          "wall_s": 39.469151651486754,
+          "bytes": 14609210,
+          "video": {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "avg_frame_rate": "30/1",
+            "duration": "60.033333",
+            "nb_frames": "1801"
+          },
+          "ffmpeg": "/root/autodl-tmp/MCP-RL/work/envs/d57/lib/python3.12/site-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2"
+        },
+        "gpu": {
+          "wall_s": 21.106495594605803,
+          "bytes": 16806286,
+          "video": {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "avg_frame_rate": "30/1",
+            "duration": "60.033333",
+            "nb_frames": "1801"
+          },
+          "ffmpeg": "/usr/bin/ffmpeg"
+        },
+        "similarity_to_existing_published_video": {
+          "cpu": 0.999975,
+          "gpu": 0.999239
+        },
+        "wall_speedup": 1.8700002316620437
+      },
+      "normal_video_entry": {
+        "attempt": "w59-ppo-full-fallback-5901-b-original-e60-a01",
+        "size": 16962987,
+        "scope": "Full recorded robot trajectory, visual-only strip overlay; no new integration or exaggerated deformation",
+        "encoder": "h264_nvenc",
+        "preset": "p4",
+        "cq": 15,
+        "fps": 30,
+        "frame_count": 1801,
+        "wall_s": 21.066409058868885,
+        "frames_read_back": 1801
+      },
+      "material_packets": {
+        "source": "12 registered W59 B3 development legal-request snapshots, one real 10x0.2 ms observer window each. Empty-material windows stay in the denominator. Timings are warm medians over five calls.",
+        "scope": "The existing CPU/CUDA forecast pair gets identical initial e/q, observed position histories and constant mean physical dt. It returns state, peak strain and residual. Production CPU additionally uses per-tick measured dt, load trace, forces and the M1 assimilation correction. The CUDA operator does not implement that full ABI.",
+        "GPU_timing": "Warm context, resident weights and preallocated output. Includes copying packet data to device and results to CPU. Python state construction excluded from both sides.",
+        "run_device": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "results": [
+          {
+            "id": "w59-b3-a-original-e30-a02/r00006",
+            "stratum": "rigid_steady",
+            "columns": 0
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00049",
+            "stratum": "rigid_steady",
+            "columns": 243,
+            "production_M1_ms": 25.20010992884636,
+            "forecast_CPU_ms": 16.187524423003197,
+            "forecast_GPU_ms": 5.6499578058719635,
+            "forecast_GPU_kernel_ms": 5.4339518547058105,
+            "max_abs_forecast_e_q_error": 1.176698170325674e-17
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00012",
+            "stratum": "rigid_steady",
+            "columns": 0
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00044",
+            "stratum": "rigid_steady",
+            "columns": 243,
+            "production_M1_ms": 27.75494195520878,
+            "forecast_CPU_ms": 18.00047792494297,
+            "forecast_GPU_ms": 8.063806220889091,
+            "forecast_GPU_kernel_ms": 7.525152206420898,
+            "max_abs_forecast_e_q_error": 2.2632720350634905e-17
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00024",
+            "stratum": "early_touch_or_search",
+            "columns": 92,
+            "production_M1_ms": 18.339751288294792,
+            "forecast_CPU_ms": 10.823752731084824,
+            "forecast_GPU_ms": 15.095356851816177,
+            "forecast_GPU_kernel_ms": 14.609984397888184,
+            "max_abs_forecast_e_q_error": 8.538092108323347e-18
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00036",
+            "stratum": "early_touch_or_search",
+            "columns": 218,
+            "production_M1_ms": 31.821275129914284,
+            "forecast_CPU_ms": 19.09235119819641,
+            "forecast_GPU_ms": 14.740345999598503,
+            "forecast_GPU_kernel_ms": 14.52121639251709,
+            "max_abs_forecast_e_q_error": 1.4799359654427136e-17
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00018",
+            "stratum": "early_touch_or_search",
+            "columns": 25,
+            "production_M1_ms": 5.69465197622776,
+            "forecast_CPU_ms": 3.586629405617714,
+            "forecast_GPU_ms": 12.898040935397148,
+            "forecast_GPU_kernel_ms": 12.775615692138672,
+            "max_abs_forecast_e_q_error": 2.3852447794681098e-18
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00040",
+            "stratum": "early_touch_or_search",
+            "columns": 243,
+            "production_M1_ms": 33.80068205296993,
+            "forecast_CPU_ms": 20.570658147335052,
+            "forecast_GPU_ms": 15.361523255705833,
+            "forecast_GPU_kernel_ms": 14.753215789794922,
+            "max_abs_forecast_e_q_error": 1.294197687413729e-17
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00030",
+            "stratum": "cross_foot_reload",
+            "columns": 170,
+            "production_M1_ms": 32.06274285912514,
+            "forecast_CPU_ms": 18.47751811146736,
+            "forecast_GPU_ms": 15.767037868499756,
+            "forecast_GPU_kernel_ms": 15.619711875915527,
+            "max_abs_forecast_e_q_error": 1.5476986012230576e-17
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00027",
+            "stratum": "cross_foot_reload",
+            "columns": 132,
+            "production_M1_ms": 23.709064349532127,
+            "forecast_CPU_ms": 14.202551916241646,
+            "forecast_GPU_ms": 14.556095004081726,
+            "forecast_GPU_kernel_ms": 14.424511909484863,
+            "max_abs_forecast_e_q_error": 1.1980434005964824e-17
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00033",
+            "stratum": "cross_foot_reload",
+            "columns": 208,
+            "production_M1_ms": 36.48384474217892,
+            "forecast_CPU_ms": 20.966041833162308,
+            "forecast_GPU_ms": 15.496719628572464,
+            "forecast_GPU_kernel_ms": 15.339455604553223,
+            "max_abs_forecast_e_q_error": 1.1999068730804419e-17
+          },
+          {
+            "id": "w59-b3-a-original-e30-a02/r00031",
+            "stratum": "cross_foot_reload",
+            "columns": 181,
+            "production_M1_ms": 32.40241855382919,
+            "forecast_CPU_ms": 18.42205971479416,
+            "forecast_GPU_ms": 16.313906759023666,
+            "forecast_GPU_kernel_ms": 15.717087745666504,
+            "max_abs_forecast_e_q_error": 1.832979297858306e-17
+          }
+        ],
+        "new_physical_steps": 0,
+        "active_controller_switched": false
+      },
+      "matched_forecast": {
+        "nonempty": 10,
+        "GPU_faster": 7,
+        "CPU_median_ms": 18.211268819868565,
+        "GPU_median_ms": 14.91785142570734,
+        "sum_CPU_over_sum_GPU": 1.197000338812461,
+        "max_abs_delta_e_q": 2.2632720350634905e-17
+      },
+      "training_backend_changed": false
+    },
+    "m1_hybrid": {
+      "source_runtime": "4ad3a5f28b99ad9ccc84455915fdffa9dfcb57af",
+      "paired_shared_gpu_samples": {
+        "hardware": {
+          "name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "driver_version": "595.71.05",
+          "memory.total": "97887",
+          "compute_cap": "12.0"
+        },
+        "scope": "Device-wide 30 s samples during the overlapping A/B workload; includes other jobs.",
+        "count": 30,
+        "first": "2026-11-27T19:12:15+08:00",
+        "last": "2026-11-27T19:26:49+08:00",
+        "sm_percentiles_0_50_100": [
+          26,
+          70,
+          100
+        ],
+        "memory_used_MiB_range": [
+          5575,
+          47272
+        ]
+      },
+      "measured_libraries_sha256": {
+        "frozen_cpu_m1": "5024afc3a4226faa112994b0d81582660132e5a33062e4dc51178d690822f8c6",
+        "host_correction": "2e092e696e5d5b49dfe4875345cc7bda7bffd33178f0bd46c136b8c00f48821a",
+        "device_layout_16": "d0099f5517952c4ac708e00e78b2a9811a6a5d7ea910b04682ea4d712790a8ab",
+        "device_layout_1": "11d3ea3fdc4ba133bb6afd17d1c927bdb1a7d7784a1fb61e17dedd91bbe3b174"
+      },
+      "registration": "Twelve W59 development snapshots and two completed 5902 PPO-full fallback E60 recordings, A/B 0021. No policy or model was fitted.",
+      "offline_schedule": "Single-worker A then B on CPU 19 for the initial layout. Matched 12-snapshot layout selection. Final A and B each alternate CPU/GPU on identical real inputs and run together on CPUs 19 and 20. Original extra physics slots used: zero. Math threads: one per worker. GPU shared.",
+      "paired_gpu_library": "11d3ea3fdc4ba133bb6afd17d1c927bdb1a7d7784a1fb61e17dedd91bbe3b174",
+      "frozen_material_weights": {
+        "archive": "https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm02-memory-study-evidence-20261023",
+        "member": "selected/B_random1000--ideal-potentials.npz",
+        "sha256": "743c6f3694b482a0b1b667f1d3a14d171269a1eb6b517eb3181e8042459563f7"
+      },
+      "recording_layout": "In the W59 measurement Release asset, inputs/<case>-inputs.npz provides every original substep start/end, sole bottom positions, sole velocities and physical contact flags. paired-workers/<case>-packets.npz stores actual_Fz and is_material on the same clocks. The query JSON contains every original query time, four xy positions, archived and both recomputed heights. The input folder also contains the original plant and controller contact ledgers.",
+      "cases": {
+        "A": {
+          "episode": "w59-r3-5902-ppo-full-fallback-a-e60-0021",
+          "complete": true,
+          "initial_single_worker_M1_publication": {
+            "n": 30000,
+            "cpu_s": 579.4263634660044,
+            "hybrid_s": 266.1001765280023,
+            "speedup": 2.1774745549822287,
+            "median_ms": [
+              20.6106135,
+              5.359920499999999
+            ],
+            "p95_ms": [
+              38.9259595,
+              23.13520195
+            ]
+          },
+          "full_M1": {
+            "n": 30000,
+            "cpu_s": 561.126052132007,
+            "hybrid_s": 338.1102073870054,
+            "speedup": 1.659595125709218,
+            "median_ms": [
+              20.6647325,
+              6.836202999999999
+            ],
+            "p95_ms": [
+              38.6899471,
+              36.838614
+            ]
+          },
+          "actor_query_check": {
+            "original_queries": 120,
+            "completed": 120,
+            "different_times": 0,
+            "different_footprints": 0,
+            "height_values": 1440,
+            "original_nonzero": 171,
+            "different_values_at_original_publication_precision": {
+              "cpu": 0,
+              "hybrid": 0
+            }
+          },
+          "contact_threshold_edge_differences": [
+            0,
+            0,
+            0
+          ],
+          "max_abs_interbackend_Fz_N": 4.0668979295332974e-9,
+          "material_cell_tick_comparison": {
+            "different": 0,
+            "tested_cell_ticks": 54058320,
+            "cpu_loaded": 1043309,
+            "hybrid_loaded": 1043309
+          },
+          "query_count": 120,
+          "final_publication_by_column_count": {
+            "empty": {
+              "windows": 6258,
+              "cpu_s": 0.41188188499999995,
+              "hybrid_s": 0.4151075479999988,
+              "total_speedup": 0.992229331854985,
+              "hybrid_faster_windows": 3136
+            },
+            "1_to_32": {
+              "windows": 1152,
+              "cpu_s": 4.161719023000002,
+              "hybrid_s": 21.62416674199997,
+              "total_speedup": 0.19245685036810317,
+              "hybrid_faster_windows": 0
+            },
+            "33_to_64": {
+              "windows": 964,
+              "cpu_s": 7.391550839999989,
+              "hybrid_s": 18.695124391,
+              "total_speedup": 0.3953731831577621,
+              "hybrid_faster_windows": 107
+            },
+            "65_to_128": {
+              "windows": 1339,
+              "cpu_s": 17.066881632999973,
+              "hybrid_s": 23.031407348999984,
+              "total_speedup": 0.7410264329218688,
+              "hybrid_faster_windows": 715
+            },
+            "129_and_above": {
+              "windows": 20287,
+              "cpu_s": 531.027009149003,
+              "hybrid_s": 273.2670305159998,
+              "total_speedup": 1.9432531181909678,
+              "hybrid_faster_windows": 17970
+            }
+          },
+          "soft_force_MAE_N": [
+            0.09203943232591982,
+            0.09203943230980703
+          ],
+          "original_vs_observer_event_counts": {
+            "cpu": {
+              "first_load": {
+                "plant": 587,
+                "observer": 587,
+                "matched": 587
+              },
+              "release": {
+                "plant": 1807,
+                "observer": 1766,
+                "matched": 1215
+              },
+              "same_foot_reload": {
+                "plant": 1168,
+                "observer": 1127,
+                "matched": 763
+              },
+              "cross_foot_revisit": {
+                "plant": 52,
+                "observer": 52,
+                "matched": 47
+              },
+              "cross_revisit_with_previous_load": {
+                "plant": 52,
+                "observer": 52,
+                "matched": 37
+              },
+              "cross_revisit_arrival_clocks": {
+                "same_cell_and_foot_pair": 52,
+                "plant": 52,
+                "observer": 52,
+                "unique_pair_groups": 52,
+                "exact_tick_in_unique_groups": 47,
+                "within_one_tick_in_unique_groups": 52,
+                "max_abs_ticks_in_unique_groups": 1
+              }
+            },
+            "hybrid": {
+              "first_load": {
+                "plant": 587,
+                "observer": 587,
+                "matched": 587
+              },
+              "release": {
+                "plant": 1807,
+                "observer": 1766,
+                "matched": 1215
+              },
+              "same_foot_reload": {
+                "plant": 1168,
+                "observer": 1127,
+                "matched": 763
+              },
+              "cross_foot_revisit": {
+                "plant": 52,
+                "observer": 52,
+                "matched": 47
+              },
+              "cross_revisit_with_previous_load": {
+                "plant": 52,
+                "observer": 52,
+                "matched": 37
+              },
+              "cross_revisit_arrival_clocks": {
+                "same_cell_and_foot_pair": 52,
+                "plant": 52,
+                "observer": 52,
+                "unique_pair_groups": 52,
+                "exact_tick_in_unique_groups": 47,
+                "within_one_tick_in_unique_groups": 52,
+                "max_abs_ticks_in_unique_groups": 1
+              }
+            }
+          },
+          "projection": {
+            "original_E60_s": 1422.805732946843,
+            "original_observe_s": 553.6837779227644,
+            "original_query_s": 1.0438070055097342,
+            "projected_observe_s": 332.7853457316116,
+            "projected_query_s": 1.0539017257830152,
+            "projected_E60_s": 1201.9173954759633,
+            "projected_s_saved": 220.8883374708796,
+            "projected_whole_E60_speedup": 1.1837799654970524
+          }
+        },
+        "B": {
+          "episode": "w59-r3-5902-ppo-full-fallback-b-e60-0021",
+          "complete": true,
+          "initial_single_worker_M1_publication": {
+            "n": 30000,
+            "cpu_s": 524.7563843800077,
+            "hybrid_s": 276.87923898300056,
+            "speedup": 1.8952536358720127,
+            "median_ms": [
+              19.7173435,
+              5.828813
+            ],
+            "p95_ms": [
+              36.410420699999996,
+              24.08803855
+            ]
+          },
+          "full_M1": {
+            "n": 30000,
+            "cpu_s": 522.2012632599988,
+            "hybrid_s": 328.09391347499815,
+            "speedup": 1.5916213066226,
+            "median_ms": [
+              19.7444615,
+              6.804033499999999
+            ],
+            "p95_ms": [
+              36.3435802,
+              35.1850032
+            ]
+          },
+          "actor_query_check": {
+            "original_queries": 120,
+            "completed": 120,
+            "different_times": 0,
+            "different_footprints": 0,
+            "height_values": 1440,
+            "original_nonzero": 165,
+            "different_values_at_original_publication_precision": {
+              "cpu": 0,
+              "hybrid": 0
+            }
+          },
+          "contact_threshold_edge_differences": [
+            0,
+            0,
+            0
+          ],
+          "max_abs_interbackend_Fz_N": 3.258648462178826e-9,
+          "material_cell_tick_comparison": {
+            "different": 0,
+            "tested_cell_ticks": 50228060,
+            "cpu_loaded": 969957,
+            "hybrid_loaded": 969957
+          },
+          "query_count": 120,
+          "final_publication_by_column_count": {
+            "empty": {
+              "windows": 6326,
+              "cpu_s": 0.42601925999999923,
+              "hybrid_s": 0.4238293319999999,
+              "total_speedup": 1.0051670043450398,
+              "hybrid_faster_windows": 3177
+            },
+            "1_to_32": {
+              "windows": 1126,
+              "cpu_s": 3.817047398999999,
+              "hybrid_s": 22.194413525999988,
+              "total_speedup": 0.17198235017692448,
+              "hybrid_faster_windows": 1
+            },
+            "33_to_64": {
+              "windows": 973,
+              "cpu_s": 6.442362657000008,
+              "hybrid_s": 14.946788254000008,
+              "total_speedup": 0.4310198651055303,
+              "hybrid_faster_windows": 205
+            },
+            "65_to_128": {
+              "windows": 1381,
+              "cpu_s": 18.020344818999995,
+              "hybrid_s": 23.25036375900002,
+              "total_speedup": 0.7750564681821148,
+              "hybrid_faster_windows": 723
+            },
+            "129_and_above": {
+              "windows": 20194,
+              "cpu_s": 492.57288141399846,
+              "hybrid_s": 266.3516908890003,
+              "total_speedup": 1.8493326615271004,
+              "hybrid_faster_windows": 17783
+            }
+          },
+          "soft_force_MAE_N": [
+            0.0903711441349351,
+            0.09037114412578091
+          ],
+          "original_vs_observer_event_counts": {
+            "cpu": {
+              "first_load": {
+                "plant": 540,
+                "observer": 540,
+                "matched": 540
+              },
+              "release": {
+                "plant": 1619,
+                "observer": 1578,
+                "matched": 1124
+              },
+              "same_foot_reload": {
+                "plant": 1019,
+                "observer": 978,
+                "matched": 644
+              },
+              "cross_foot_revisit": {
+                "plant": 60,
+                "observer": 60,
+                "matched": 45
+              },
+              "cross_revisit_with_previous_load": {
+                "plant": 60,
+                "observer": 60,
+                "matched": 35
+              },
+              "cross_revisit_arrival_clocks": {
+                "same_cell_and_foot_pair": 60,
+                "plant": 60,
+                "observer": 60,
+                "unique_pair_groups": 60,
+                "exact_tick_in_unique_groups": 45,
+                "within_one_tick_in_unique_groups": 60,
+                "max_abs_ticks_in_unique_groups": 1
+              }
+            },
+            "hybrid": {
+              "first_load": {
+                "plant": 540,
+                "observer": 540,
+                "matched": 540
+              },
+              "release": {
+                "plant": 1619,
+                "observer": 1578,
+                "matched": 1124
+              },
+              "same_foot_reload": {
+                "plant": 1019,
+                "observer": 978,
+                "matched": 644
+              },
+              "cross_foot_revisit": {
+                "plant": 60,
+                "observer": 60,
+                "matched": 45
+              },
+              "cross_revisit_with_previous_load": {
+                "plant": 60,
+                "observer": 60,
+                "matched": 35
+              },
+              "cross_revisit_arrival_clocks": {
+                "same_cell_and_foot_pair": 60,
+                "plant": 60,
+                "observer": 60,
+                "unique_pair_groups": 60,
+                "exact_tick_in_unique_groups": 45,
+                "within_one_tick_in_unique_groups": 60,
+                "max_abs_ticks_in_unique_groups": 1
+              }
+            }
+          },
+          "projection": {
+            "original_E60_s": 1404.4103452470154,
+            "original_observe_s": 515.7809973433614,
+            "original_query_s": 0.9081060625612736,
+            "projected_observe_s": 323.32997633308685,
+            "projected_query_s": 0.9122636908891405,
+            "projected_E60_s": 1211.9634818650688,
+            "projected_s_saved": 192.4468633819465,
+            "projected_whole_E60_speedup": 1.158789325141871
+          }
+        }
+      },
+      "full_M1_combined": {
+        "cpu_s": 1083.3273153920059,
+        "hybrid_s": 666.2041208620035,
+        "speedup": 1.6261192050122497,
+        "percentiles_50_95_ms_cpu_hybrid": [
+          [
+            19.937680999999998,
+            6.821145
+          ],
+          [
+            37.535261799999994,
+            35.93446109999999
+          ]
+        ]
+      },
+      "physical_event_comparison": "Exact 0.2 ms right-boundary tick, global world-cell key, event kind and leg. Cross-foot lineage additionally requires the preceding load on the same key at the same tick and with the same previous foot.",
+      "projection_scope": "Each underlying recorded E60 keeps its own original plant, controller and I/O time. Only its measured observation and recovery query times are scaled using matching paired internal timers. This estimates a possible online wall change; the plant and the live policy were not rerun.",
+      "paired_wave_projection": {
+        "original_s": 1422.805732946843,
+        "projected_s": 1211.9634818650688,
+        "projected_s_saved": 210.84225108177407,
+        "projected_paired_waves_to_save_one_hour": 18
+      },
+      "layout_probe": {
+        "full_M1_candidate_over_reference_speedup": 1.0404444750204807,
+        "differing_fields": 0
+      },
+      "new_physics_steps": 0,
+      "new_training_events": 0,
+      "backend_5902": "unchanged production CPU M1"
+    },
+    "six_slot_comparison": {
+      "scope": "Two 240 s natural scratch windows. Interpolated at common absolute wall boundaries from actual plant clock publications. The four incumbent PIDs/attempts did not change. New tasks are the already registered recovered-A cases. Different contact phases and external workload remain visible.",
+      "before_four": {
+        "start_shanghai": "2026-11-26T15:22:57+08:00",
+        "end_shanghai": "2026-11-26T15:26:57+08:00",
+        "wall_s": 240,
+        "streams": {
+          "w59-b3-m1-a-development-short-a01": {
+            "start_sim_s": 42.77418728362012,
+            "end_sim_s": 47.87201776805342,
+            "sim_s_per_wall_s": 0.021240960351805397,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          },
+          "w59-b3-m1-b-development-short-a01": {
+            "start_sim_s": 38.78716334651084,
+            "end_sim_s": 43.951814175698566,
+            "sim_s_per_wall_s": 0.02151937845494887,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          },
+          "w59-fixed-action-m1-a-development-short-a01": {
+            "start_sim_s": 38.54471091667518,
+            "end_sim_s": 43.50196016187907,
+            "sim_s_per_wall_s": 0.020655205188349544,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          },
+          "w59-fixed-action-m1-b-development-short-a01": {
+            "start_sim_s": 38.90780141577265,
+            "end_sim_s": 44.24045318876195,
+            "sim_s_per_wall_s": 0.022219382387455393,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          }
+        },
+        "aggregate_sim_s_per_wall_s": 0.0856349263825592,
+        "cpu_W59": 5.030479676218703,
+        "cpu_other": 10.09023834419219,
+        "gpu_board_median_pct": 92.5,
+        "min_usable_ram_GiB": 5.460071563720703,
+        "min_free_scratch_GiB": 281.226375579834
+      },
+      "after_six": {
+        "start_shanghai": "2026-11-26T15:32:39+08:00",
+        "end_shanghai": "2026-11-26T15:36:39+08:00",
+        "wall_s": 240,
+        "streams": {
+          "w59-b3-m1-a-development-recovered-a01": {
+            "start_sim_s": 14.094465282187208,
+            "end_sim_s": 20.68300870402004,
+            "sim_s_per_wall_s": 0.027452264257636798,
+            "phases": [
+              "far_hold",
+              "outbound",
+              "return"
+            ]
+          },
+          "w59-b3-m1-a-development-short-a01": {
+            "start_sim_s": 55.30770833270314,
+            "end_sim_s": 60.67627796066294,
+            "sim_s_per_wall_s": 0.02236904011649914,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          },
+          "w59-b3-m1-b-development-short-a01": {
+            "start_sim_s": 51.38322484120455,
+            "end_sim_s": 56.74673501208859,
+            "sim_s_per_wall_s": 0.022347959045350172,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          },
+          "w59-fixed-action-m1-a-development-recovered-a01": {
+            "start_sim_s": 10.416761477760057,
+            "end_sim_s": 16.803028764452137,
+            "sim_s_per_wall_s": 0.026609447027883665,
+            "phases": [
+              "far_hold",
+              "outbound"
+            ]
+          },
+          "w59-fixed-action-m1-a-development-short-a01": {
+            "start_sim_s": 50.515649036170934,
+            "end_sim_s": 55.55925300978697,
+            "sim_s_per_wall_s": 0.021015016556733487,
+            "phases": [
+              "return"
+            ]
+          },
+          "w59-fixed-action-m1-b-development-short-a01": {
+            "start_sim_s": 51.54613126954854,
+            "end_sim_s": 56.71322336952472,
+            "sim_s_per_wall_s": 0.021529550416567417,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          }
+        },
+        "aggregate_sim_s_per_wall_s": 0.1413232774206707,
+        "cpu_W59": 7.038228201738173,
+        "cpu_other": 9.985924093056914,
+        "gpu_board_median_pct": 85.5,
+        "min_usable_ram_GiB": 3.5948143005371094,
+        "min_free_scratch_GiB": 275.5428161621094
+      },
+      "raw_total_change_pct": 65.02995143515791,
+      "incumbent_four_change_pct": 1.8995050516237733,
+      "physical_steps_added_for_measurement": 0,
+      "official_denominator_changed": false,
+      "following_six": {
+        "start_shanghai": "2026-11-26T15:36:39+08:00",
+        "end_shanghai": "2026-11-26T15:40:39+08:00",
+        "wall_s": 240,
+        "streams": {
+          "w59-b3-m1-a-development-recovered-a01": {
+            "start_sim_s": 20.68300870402004,
+            "end_sim_s": 26.27021306957399,
+            "sim_s_per_wall_s": 0.02328001818980813,
+            "phases": [
+              "far_hold",
+              "outbound",
+              "return"
+            ]
+          },
+          "w59-b3-m1-a-development-short-a01": {
+            "start_sim_s": 60.67627796066294,
+            "end_sim_s": 66.03576624918806,
+            "sim_s_per_wall_s": 0.022331201202188004,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          },
+          "w59-b3-m1-b-development-short-a01": {
+            "start_sim_s": 56.74673501208859,
+            "end_sim_s": 61.868362620481754,
+            "sim_s_per_wall_s": 0.021340115034971508,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          },
+          "w59-fixed-action-m1-a-development-recovered-a01": {
+            "start_sim_s": 16.803028764452137,
+            "end_sim_s": 22.76828676338125,
+            "sim_s_per_wall_s": 0.024855241662204645,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          },
+          "w59-fixed-action-m1-a-development-short-a01": {
+            "start_sim_s": 55.55925300978697,
+            "end_sim_s": 60.70850077603835,
+            "sim_s_per_wall_s": 0.02145519902604741,
+            "phases": [
+              "outbound"
+            ]
+          },
+          "w59-fixed-action-m1-b-development-short-a01": {
+            "start_sim_s": 56.71322336952472,
+            "end_sim_s": 61.86894282730514,
+            "sim_s_per_wall_s": 0.02148216440741842,
+            "phases": [
+              "outbound",
+              "return"
+            ]
+          }
+        },
+        "aggregate_sim_s_per_wall_s": 0.1347439395226381,
+        "cpu_W59": 7.038279489808994,
+        "cpu_other": 9.881790342162615,
+        "gpu_board_median_pct": 88,
+        "min_usable_ram_GiB": 3.662059783935547,
+        "min_free_scratch_GiB": 273.2417449951172
+      },
+      "following_total_change_pct": 57.346943840055275,
+      "following_incumbent_change_pct": 1.1370982952867426
+    },
+    "failure_index": [
+      {
+        "attempt": "w59-b3-a-original-e30-a01",
+        "arm": "B3",
+        "case": "A",
+        "task": "original",
+        "level": "E30",
+        "source_commit": "4eac346d3ae60c37f51341bdc4cf9bba81ede35b",
+        "controller": "S5-w59-research-3d4d7cd8e40dca8d92",
+        "stage_status": "technical_interruption",
+        "reason": "execution_error",
+        "physical_rows": 10,
+        "executed_s": 0.002,
+        "terminal_clock_s": 0.0020000000000000005,
+        "wall_s": 1.136535331606865,
+        "end": 1795673530.0757637,
+        "predecessor": null,
+        "full_stable_s": null,
+        "min_height_m": 0.2901877759330667,
+        "task_result": {
+          "far_arrival_s": null,
+          "return_start_s": null,
+          "actual_route_fraction": 0,
+          "full_observation": false,
+          "actual_material_loaded": false,
+          "material_traversal": {
+            "completed": false,
+            "west_entry_s": null,
+            "east_exit_s": null,
+            "lateral_exit_s": null,
+            "max_abs_base_y_during_crossing_m": null,
+            "material_loaded_during_crossing": false,
+            "original_strip_x_m": [
+              0.8,
+              2.2
+            ],
+            "original_strip_y_m": [
+              -0.6,
+              0.6
+            ],
+            "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+          }
+        },
+        "branch": null
+      },
+      {
+        "attempt": "w59-b3-b-original-e30-a01",
+        "arm": "B3",
+        "case": "B",
+        "task": "original",
+        "level": "E30",
+        "source_commit": "4eac346d3ae60c37f51341bdc4cf9bba81ede35b",
+        "controller": "S5-w59-research-3d4d7cd8e40dca8d92",
+        "stage_status": "technical_interruption",
+        "reason": "execution_error",
+        "physical_rows": 10,
+        "executed_s": 0.002,
+        "terminal_clock_s": 0.0020000000000000005,
+        "wall_s": 0.3350402694195509,
+        "end": 1795673538.663756,
+        "predecessor": null,
+        "full_stable_s": null,
+        "min_height_m": 0.2901877759330667,
+        "task_result": {
+          "far_arrival_s": null,
+          "return_start_s": null,
+          "actual_route_fraction": 0,
+          "full_observation": false,
+          "actual_material_loaded": false,
+          "material_traversal": {
+            "completed": false,
+            "west_entry_s": null,
+            "east_exit_s": null,
+            "lateral_exit_s": null,
+            "max_abs_base_y_during_crossing_m": null,
+            "material_loaded_during_crossing": false,
+            "original_strip_x_m": [
+              0.8,
+              2.2
+            ],
+            "original_strip_y_m": [
+              -0.6,
+              0.6
+            ],
+            "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+          }
+        },
+        "branch": null
+      },
+      {
+        "attempt": "w59-fixed-action-a-original-e30-a01",
+        "arm": "Fixed-action",
+        "case": "A",
+        "task": "original",
+        "level": "E30",
+        "source_commit": "4eac346d3ae60c37f51341bdc4cf9bba81ede35b",
+        "controller": "S5-w59-research-a2ca00fff5c8b0e35a",
+        "stage_status": "technical_interruption",
+        "reason": "execution_error",
+        "physical_rows": 10,
+        "executed_s": 0.002,
+        "terminal_clock_s": 0.0020000000000000005,
+        "wall_s": 0.9125622063875198,
+        "end": 1795673530.18262,
+        "predecessor": null,
+        "full_stable_s": null,
+        "min_height_m": 0.2901877759330667,
+        "task_result": {
+          "far_arrival_s": null,
+          "return_start_s": null,
+          "actual_route_fraction": 0,
+          "full_observation": false,
+          "actual_material_loaded": false,
+          "material_traversal": {
+            "completed": false,
+            "west_entry_s": null,
+            "east_exit_s": null,
+            "lateral_exit_s": null,
+            "max_abs_base_y_during_crossing_m": null,
+            "material_loaded_during_crossing": false,
+            "original_strip_x_m": [
+              0.8,
+              2.2
+            ],
+            "original_strip_y_m": [
+              -0.6,
+              0.6
+            ],
+            "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+          }
+        },
+        "branch": null
+      },
+      {
+        "attempt": "w59-fixed-action-b-original-e30-a01",
+        "arm": "Fixed-action",
+        "case": "B",
+        "task": "original",
+        "level": "E30",
+        "source_commit": "4eac346d3ae60c37f51341bdc4cf9bba81ede35b",
+        "controller": "S5-w59-research-a2ca00fff5c8b0e35a",
+        "stage_status": "technical_interruption",
+        "reason": "execution_error",
+        "physical_rows": 10,
+        "executed_s": 0.002,
+        "terminal_clock_s": 0.0020000000000000005,
+        "wall_s": 1.2047683745622635,
+        "end": 1795673530.097535,
+        "predecessor": null,
+        "full_stable_s": null,
+        "min_height_m": 0.2901877759330667,
+        "task_result": {
+          "far_arrival_s": null,
+          "return_start_s": null,
+          "actual_route_fraction": 0,
+          "full_observation": false,
+          "actual_material_loaded": false,
+          "material_traversal": {
+            "completed": false,
+            "west_entry_s": null,
+            "east_exit_s": null,
+            "lateral_exit_s": null,
+            "max_abs_base_y_during_crossing_m": null,
+            "material_loaded_during_crossing": false,
+            "original_strip_x_m": [
+              0.8,
+              2.2
+            ],
+            "original_strip_y_m": [
+              -0.6,
+              0.6
+            ],
+            "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+          }
+        },
+        "branch": null
+      },
+      {
+        "attempt": "w59-r3-5901-ppo-full-fallback-b-e60-0023",
+        "arm": "B3",
+        "case": "B",
+        "task": "training",
+        "level": "E60",
+        "source_commit": "4ad3a5f28b99ad9ccc84455915fdffa9dfcb57af",
+        "controller": "S5-w59-research-395862a3801ab989da",
+        "stage_status": "technical_interruption",
+        "reason": "execution_error",
+        "physical_rows": 183870,
+        "executed_s": 36.774,
+        "terminal_clock_s": 36.773999999940976,
+        "wall_s": 1008.8075060341507,
+        "end": 1795719635.1068742,
+        "predecessor": null,
+        "full_stable_s": null,
+        "min_height_m": 0.28300733088458757,
+        "task_result": {
+          "far_arrival_s": 16.353999999988563,
+          "return_start_s": 22.813999999973507,
+          "actual_route_fraction": 0.9473355256724408,
+          "full_observation": false,
+          "actual_material_loaded": true,
+          "material_traversal": {
+            "completed": true,
+            "west_entry_s": 6.156000000004142,
+            "east_exit_s": 12.373999999997839,
+            "lateral_exit_s": null,
+            "max_abs_base_y_during_crossing_m": 0.07084359568855446,
+            "material_loaded_during_crossing": true,
+            "original_strip_x_m": [
+              0.8,
+              2.2
+            ],
+            "original_strip_y_m": [
+              -0.6,
+              0.6
+            ],
+            "measurement": "First outbound base-projection passage from the west to east strip boundary without a side exit, with actual material-loaded feet during that passage. Uses original strip geometry and500Hz recorded states; no extra physical termination threshold or route change."
+          },
+          "legal_material_roundtrips": {
+            "criterion": "bidirectional_material_roundtrips_v1",
+            "required": 1,
+            "observed": {
+              "completed_roundtrips": 0,
+              "legal_outbound_traversals": 1,
+              "legal_return_traversals": 1
+            },
+            "evidence_available": true,
+            "completed": false
+          }
+        },
+        "branch": null
+      },
+      {
+        "attempt": "w59-r3-5902-ppo-full-fallback-a-e60-0020",
+        "arm": "B3",
+        "case": "A",
+        "task": "training",
+        "level": "E60",
+        "source_commit": "4ad3a5f28b99ad9ccc84455915fdffa9dfcb57af",
+        "controller": "S5-w59-research-764ae3dff7b4d550ff",
+        "stage_status": "technical_interruption",
+        "reason": "storage_enospc",
+        "physical_rows": 88200,
+        "executed_s": 17.64,
+        "terminal_clock_s": 17.639999999985566,
+        "wall_s": null,
+        "end": 1795726428.2071261,
+        "predecessor": null,
+        "full_stable_s": null,
+        "min_height_m": null,
+        "task_result": null,
+        "branch": null
+      },
+      {
+        "attempt": "w59-r3-5902-ppo-full-fallback-b-e60-0020",
+        "arm": "B3",
+        "case": "B",
+        "task": "training",
+        "level": "E60",
+        "source_commit": "4ad3a5f28b99ad9ccc84455915fdffa9dfcb57af",
+        "controller": "S5-w59-research-b68f10659c16cd10dc",
+        "stage_status": "technical_interruption",
+        "reason": "storage_enospc",
+        "physical_rows": 81600,
+        "executed_s": 16.32,
+        "terminal_clock_s": 16.319999999988642,
+        "wall_s": null,
+        "end": 1795726427.9111123,
+        "predecessor": null,
+        "full_stable_s": null,
+        "min_height_m": null,
+        "task_result": null,
+        "branch": null
+      }
+    ]
+  },
+  "interpretation_guards": [
+    "All six model members trained to 50000; reported long-rollout development_force_error and frozen action assessment used 10000. Long-rollout failure at 10000 is not evidence of failure at 50000.",
+    "r3_gradient_test_substeps=0 means no qualified gradient horizon was selected, not measured gradient accuracy zero.",
+    "M3 fits three released-cell recovery parameters on 67 event rows. Offline acceptance is not physical closed-loop acceptance or material-family adaptation.",
+    "Six-slot total throughput gains are 65.029951% and 57.346944%; 1.899505% and 1.137098% are the original four incumbent streams only.",
+    "GPU hybrid observer 1.626119x is matched offline replay, with no new physics and no production backend change; full E60 1.16-1.18x values are projections.",
+    "Current WBC already has nonlinear-model M,h,J,Jdotv and floating-base dynamics constraints. Adding these equations is not a new contribution.",
+    "Source-code explanations for model instability are hypotheses pending controlled ablations.",
+    "Residual MPC 100 Hz describes simulated policy/control schedule. 1000 environments require about 0.5 s wall clock per simulation step in the read preprint."
+  ],
+  "code_read_scope": [
+    {
+      "path": "scripts/s1_w59_model.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w59_model.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w59_model_rigid.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w59_model_rigid.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w59_model_material.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w59_model_material.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w59_planning.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w59_planning.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w59_f_backend.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w59_f_backend.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w59_model_train.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w59_model_train.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/score_s1_w59_interventions.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/score_s1_w59_interventions.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w57_f_backend.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w57_f_backend.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w57_material.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w57_material.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w56_f_r60_backend.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w56_f_r60_backend.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w56_f_r58_backend.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w56_f_r58_backend.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w55_f_r55_backend.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w55_f_r55_backend.py",
+      "scope": "Relevant core functions and imports; not claiming every repository byte"
+    },
+    {
+      "path": "scripts/s1_w54_f_r52_backend.py",
+      "url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/scripts/s1_w54_f_r52_backend.py",
+      "scope": "Full WBC/model_quantities, force-horizon assembly, relevant replan/solver interfaces"
+    }
+  ],
+  "papers": [
+    {
+      "id": "HyperNODE",
+      "title": "Fully data-driven inverse characterization of heterogeneous materials with hyper-network neural ODEs",
+      "venue": "npj Computational Materials 12, 165 (2026)",
+      "url": "https://www.nature.com/articles/s41524-026-02027-8",
+      "doi": "10.1038/s41524-026-02027-8",
+      "read_scope": "Official full PDF downloaded; Methods equations 9–19, model architecture, field interpolation, loss/training stages, synthetic and printed-specimen experiments, Discussion. Static source read utils_hyperelasticity.py and repo tree; no replication.",
+      "code": "https://github.com/tajtac/node_inv/blob/85d551a4dd8dc2777fdb18fa1aa1a8886a6ee132/utils_hyperelasticity.py",
+      "limits": "Hyperelastic field identification from full-field displacement; NODE depth is not physical relaxation time; cannot import as proven viscoelastic online estimator."
+    },
+    {
+      "id": "HANO",
+      "title": "History-Aware Neural Operator: Robust Data-Driven Constitutive Modeling of Path-Dependent Materials",
+      "url": "https://arxiv.org/html/2506.10352v2",
+      "read_scope": "Full PDF, architecture/training Section 3, comparison Section 4, history-length Section 5.4, limitations Section 6. No official code reproduction.",
+      "limits": "Observable stress/strain histories and scheduled autoregression useful; no universal history length or universal thermodynamic certificate. Formal journal metadata not used without fresh verification."
+    },
+    {
+      "id": "ResidualMPC",
+      "title": "Residual MPC: Blending Reinforcement Learning With GPU-Parallelized Model Predictive Control",
+      "venue": "IEEE Transactions on Robotics 42, 3469–3488 (2026)",
+      "doi": "10.1109/TRO.2026.3721669",
+      "official_metadata": "https://ieeexplore.ieee.org/abstract/document/11644391/media",
+      "url": "https://arxiv.org/html/2510.12717v1",
+      "read_scope": "Author preprint full PDF and HTML: Sections III–V, Alg.1–2, Tables I–II, hardware paragraph and limitations. Formal 2026 venue/date verified on IEEE and author page; no claim that final 20-page version was fully read.",
+      "code": "https://github.com/se-hwan/cusadi/blob/bffea25849a901277a8f8dc4db16748e629f9053/src/CusadiFunction.py",
+      "additional_code": "https://github.com/se-hwan/cusadi/blob/bffea25849a901277a8f8dc4db16748e629f9053/src/generateCUDACode.py",
+      "limits": "CusADi public core is not verified complete Residual MPC stack, nor automatic torch backward. 100Hz control discretization is not 100Hz wall-clock batch throughput."
+    },
+    {
+      "id": "VRMPPI",
+      "title": "Variance-Reduced Model Predictive Path Integral via Quadratic Model Approximation",
+      "venue": "RSS 2026",
+      "url": "https://roboticsproceedings.org/rss22/p108.html",
+      "pdf": "https://arxiv.org/pdf/2602.03639",
+      "doi": "10.15607/RSS.2026.XXII.108",
+      "read_scope": "Full PDF downloaded; Sections II–IV, Algorithm1, quadratic proposal and importance correction, Hessian approximations, static/cart-pole/contact experiments and TableII.",
+      "limits": "Contact example model construction about 1412 ms + sample computation706 ms; not proof of real-time quadruped operation. Count auxiliary smoothing samples and curvature time."
+    },
+    {
+      "id": "NaturalTaskDecoupling",
+      "title": "Robot Tracking Control With Natural Task-Space Decoupling",
+      "venue": "IEEE Transactions on Robotics 42,734–749 (2026)",
+      "doi": "10.1109/TRO.2025.3647777",
+      "url": "https://elib.dlr.de/221903/1/main_final_with_CCBY.pdf",
+      "read_scope": "Official full PDF; Sections II–IV and VI–VIII, assumptions, desired block-diagonal inertia, Coriolis consistency, passivity/tracking proof conditions, simulations and Rollin Justin hardware.",
+      "limits": "Fully actuated locally invertible task map; cannot directly transplant proof to underactuated floating base with soft switching contact. Hardware force observer lacked independent ground-truth force validation."
+    },
+    {
+      "id": "TRMPC_optional",
+      "title": "Sampling-based Model Predictive Control Using Trust Regions",
+      "venue": "Accepted CDC 2026 per current arXiv metadata",
+      "url": "https://arxiv.org/abs/2605.07801",
+      "pdf": "https://arxiv.org/pdf/2605.07801v2",
+      "read_scope": "Full PDF; Sections II–VI, dual eta/alpha, importance weights, Gaussian projection, deterministic Gaussian samples, buffer/warmstart, experiments/timings.",
+      "limits": "KL/entropy distribution optimization worth a strong comparison; finite-sample projection is approximate, and reported cart-pole/truck timings are not kilohertz."
+    }
+  ]
+}

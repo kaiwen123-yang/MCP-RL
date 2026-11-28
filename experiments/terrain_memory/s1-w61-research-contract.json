@@ -1,0 +1,405 @@
+{
+  "schema": "s1-w61-research-contract-v1",
+  "created_date": "2026-11-28",
+  "timezone": "Asia/Shanghai",
+  "repository": "kaiwen123-yang/MCP-RL",
+  "stage": "planned_not_executed_by_this_review",
+  "audit_snapshot": "c8378beae4be371eb4f104782b75e5d295b6f59a",
+  "active_plan": "docs/S1_W61_RESEARCH_PLAN.md",
+  "prompt": "docs/S1_W61_START_PROMPT.md",
+  "review": "docs/S1_W59_REVIEW_20261128.md",
+  "inherited_research_map": "docs/S1_ALGORITHM_REDESIGN_RESEARCH_20261126.md",
+  "baseline_manifest": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W59-review/handoff.json",
+  "runtime_policy": {
+    "W59": "frozen_terminal; no method, protocol, score or checkpoint hot replacement",
+    "new_stage": "w61",
+    "result_root": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61",
+    "runtime_identity": [
+      "source_commit",
+      "build",
+      "config_digest",
+      "controller",
+      "plant",
+      "material",
+      "actor",
+      "normalizer",
+      "optimizer",
+      "RNG",
+      "data_split",
+      "evaluator",
+      "workers",
+      "device",
+      "backend"
+    ],
+    "existing_legacy_paths_preserve": [
+      "scripts/s1_w60_columns.cc",
+      "scripts/s1_w60_cpu_observer.py",
+      "scripts/build_s1_w60_columns.sh"
+    ],
+    "shared_raw": "read_only; do not duplicate complete datasets per worktree",
+    "main_updates_apply_to_live_runs": false,
+    "control_authority": "keep original task limits; explicitly version new ability tasks",
+    "existing_worktrees": {
+      "source": "docs/S1_DAILY_WORKLOG.md at d6802d35, post-terminal storage event",
+      "reported_count": 6,
+      "reported_stage": "W61",
+      "actual_paths_and_runtime_verified_by_review": false,
+      "policy": "inspect and reuse existing worktrees; do not create duplicate W60/W61 queues"
+    }
+  },
+  "lanes": [
+    {
+      "id": "A",
+      "primary": "conditional_PANN_material_identity_and_history_adaptation",
+      "parallel_tasks": [
+        "evaluate_existing_50k_models",
+        "consistent_discrete_execution_world_model"
+      ],
+      "dependencies_initial": [
+        "frozen_M1",
+        "fixed_controller"
+      ],
+      "strong_controls": [
+        "frozen_PANN",
+        "M3",
+        "ordinary_parameter_adaptation",
+        "conditional_blackbox_or_embedding",
+        "HANO_or_matched_RNN"
+      ],
+      "outputs": [
+        "material_belief",
+        "history_state",
+        "force_recovery_tangent_predictions",
+        "uncertainty",
+        "fixed_controller_closed_loop"
+      ]
+    },
+    {
+      "id": "B",
+      "primary": "controlled_orbit_family_true_contact_feedback_feasible_transitions",
+      "initial_modes": [
+        2,
+        3
+      ],
+      "dependencies_initial": [
+        "frozen_MPC",
+        "frozen_WBC",
+        "frozen_material"
+      ],
+      "strong_controls": [
+        "fixed_switchable_orbit_library",
+        "matched_CPG_style",
+        "system_level_LoComposition_optional"
+      ],
+      "outputs": [
+        "3D_foot_trajectory",
+        "body_trajectory",
+        "contact_modes",
+        "duration",
+        "touchdown_loading_profile"
+      ]
+    },
+    {
+      "id": "C",
+      "primary": "topology_preserving_GPU_sampling_and_finite_step_sparse_refinement",
+      "dependencies_initial": [
+        "known_rigid_body",
+        "frozen_M1",
+        "frozen_feasible_motion_library"
+      ],
+      "strong_controls": [
+        "original_QP",
+        "matched_MPPI",
+        "VR_MPPI_or_TRMPC",
+        "multistart_local_solver"
+      ],
+      "budgets": [
+        "equal_candidates",
+        "equal_end_to_end_wall_budget"
+      ],
+      "outputs": [
+        "feasible_plan",
+        "feedforward",
+        "solver_response",
+        "constraint_residuals",
+        "timing"
+      ]
+    },
+    {
+      "id": "D",
+      "primary": "feasible_task_inertia_partial_decoupling_hybrid_internal_model",
+      "parallel_tasks": [
+        "reconstruct_W59_36_774s_QP_failure_or_record_missing_snapshot"
+      ],
+      "dependencies_initial": [
+        "frozen_gait",
+        "frozen_MPC",
+        "existing_actuator_authority"
+      ],
+      "strong_controls": [
+        "original_inverse_dynamics_WBC",
+        "matched_disturbance_observer_or_IMC",
+        "inertia_without_internal_model"
+      ],
+      "outputs": [
+        "total_command",
+        "closed_loop_response",
+        "validity_domain",
+        "mode_transition_conditions",
+        "timing"
+      ]
+    },
+    {
+      "id": "E",
+      "primary": "event_time_hybrid_policy_execution_response_geometry_score_update",
+      "dependencies_initial": [
+        "common_frozen_feasible_motion_library",
+        "fixed_controller_versions"
+      ],
+      "conditional_followups": [
+        "score_compensated_model_control_variate",
+        "trusted_path_and_mode_cross_credit"
+      ],
+      "strong_controls": [
+        "PPO",
+        "SPO",
+        "same_update_without_execution_geometry"
+      ],
+      "outputs": [
+        "hybrid_policy",
+        "learning_curves",
+        "paired_frozen_evaluations",
+        "gradient_cost_and_validity"
+      ]
+    },
+    {
+      "id": "F",
+      "primary": "adaptation_control_objective_joint_training_with_shared_execution_response",
+      "start_immediately": [
+        "baseline_interface",
+        "common_feasible_motion_library",
+        "benchmark",
+        "single_module_evaluations"
+      ],
+      "pair_order": [
+        [
+          "A",
+          "C"
+        ],
+        [
+          "B",
+          "D"
+        ]
+      ],
+      "joint_controls": [
+        "same_components_separately_trained",
+        "sequential_adaptation",
+        "joint_training"
+      ],
+      "outputs": [
+        "versioned_interfaces",
+        "2x2_component_studies",
+        "unseen_combination_evaluation",
+        "deployment_budget_evidence"
+      ],
+      "joint_first_algorithm": {
+        "trainable": [
+          "A_low_rank_material_adaptation_mapping_and_initial_belief",
+          "C_state_conditioned_proposal_warm_start_or_finite_budget_head"
+        ],
+        "frozen": [
+          "material_energy_backbone",
+          "feasible_motion_library",
+          "MPC_WBC_structure",
+          "actuator_authority",
+          "data_splits"
+        ],
+        "loop": [
+          "fixed_policy_support_collection",
+          "candidate_K_step_material_adaptation",
+          "actual_finite_step_planning",
+          "paired_positive_negative_candidates_real_query",
+          "physical_cost_and_material_calibration_constraints",
+          "antithetic_blackbox_outer_update"
+        ],
+        "objective": "Gaussian-smoothed real support+query adaptation-control objective; no claim of pathwise unbiasedness through parameter-dependent planner",
+        "comparisons": [
+          "independent_A_calibration_C_reference_training",
+          "A_then_C",
+          "alternating_blocks_same_joint_objective",
+          "simultaneous_joint_update"
+        ],
+        "training_seeds": 3,
+        "finite_workload": "preregister outer rounds, direction pairs, adaptation K, query duration after one development cost measurement; same data/physics/compute matching across comparators",
+        "model_gradients_required": false,
+        "later": "evaluate trustworthy finite-K gradients/control variates; open B/D/E parameters in new identities"
+      }
+    }
+  ],
+  "learning_first_batch": {
+    "status": "planned",
+    "algorithms": [
+      "PPO",
+      "SPO",
+      "E-score"
+    ],
+    "learning_seeds": [
+      6001,
+      6002,
+      6003
+    ],
+    "distinct_real_used_per_head": 8192,
+    "planned_heads": 9,
+    "total_planned_distinct_real_used": 73728,
+    "curve_nodes": [
+      2048,
+      4096,
+      8192
+    ],
+    "action_interface": "common frozen executable discrete mode + continuous trajectory/foothold variables + duration",
+    "old_3D_macro_interface": "targeted implementation checks only; separately accounted, not full hybrid contribution",
+    "common_information_and_budgets": true,
+    "share_on_policy_trajectories_between_different_policies": false,
+    "first_update_mean_sign_stopping": false,
+    "hard_failure_KL_nonfinite_stops": true,
+    "change_identity_on_algorithm_fix": true,
+    "different_seed_exploration_streams_independent": true,
+    "RNG_validation": "check actual AutoDL torch CPU generator; old high-32 scheme vs full-mixed/persistent streams; store fingerprints/state",
+    "three_seed_interpretation": "initial screening; not adequate evidence by itself for final statistical power or hardware generalization",
+    "additional_geometry_ablation": "required before attributing effect to execution geometry; separately preregister matched budget",
+    "model_gradient_required_for_score": false,
+    "execution_geometry": {
+      "local_mode_conditioned_derivatives": true,
+      "mode_probability": "enumerated joint Fisher/score and explicit probability-response embedding",
+      "response": "recomputable nominal frozen-controller output, not privileged future truth",
+      "W_positive_semidefinite": true,
+      "lambda_E_nonnegative": true,
+      "lambda_0_positive": true,
+      "actual_duration_discount": true,
+      "physical_time_integrated_running_cost": true,
+      "query_cost_separately_accounted": true
+    }
+  },
+  "evidence_policy": {
+    "W59_heldout_used_for_design": "not untouched W61 final test",
+    "W59_F01_and_12_target_scores": "preserved",
+    "new_mechanism": [
+      "predeclared_dynamic_reachability",
+      "source_coverage",
+      "qualified_pair_rate",
+      "conditional_material_response",
+      "end_to_end_success"
+    ],
+    "statistical_units": [
+      "independent_training_seed",
+      "scenario_or_whole_history"
+    ],
+    "nested_observations": [
+      "within_episode_cells",
+      "adjacent_ticks"
+    ],
+    "model_roles": [
+      "critic_imagination",
+      "candidate_ranking",
+      "pathwise_gradient"
+    ],
+    "WM50k_evaluation": "use existing checkpoint identity, origins, inputs and split; record as W61 supplement; do not rewrite W59 10k result",
+    "video": "full video, log identity, true fps/PTS and source-clock mapping; include failures",
+    "conclusions": [
+      "implemented",
+      "actually_run",
+      "positive",
+      "negative",
+      "technical_interruption",
+      "running",
+      "not_run"
+    ],
+    "simulation_is_hardware": false
+  },
+  "resources": {
+    "nominal_cpu_cores": 25,
+    "nominal_gpu_memory_GB": 96,
+    "exclusive_hardware_assumed": false,
+    "maximum_total_physical_slots": 6,
+    "current_admission": "actual CPU/RAM/GPU/IO/storage and other-project headroom",
+    "dual_collector_atomic_slots": 2,
+    "maximum_dual_campaigns_at_six_slots": 3,
+    "single_shared_lease_pool": true,
+    "native_threads_count_toward_quota": true,
+    "six_flow_evidence_total_gain_pct": [
+      65.029951,
+      57.346944
+    ],
+    "original_four_flows_own_change_pct": [
+      1.899505,
+      1.137098
+    ],
+    "hybrid_observer": "new W61 identity; measured replay1.626119x, full-loop gain unverified",
+    "real_time_targets_are_design_ranges_only": {
+      "WBC_Hz": [
+        250,
+        500
+      ],
+      "MPC_Hz": [
+        50,
+        100
+      ]
+    },
+    "throughput_and_deployment_latency_separate": true
+  },
+  "lifecycle": {
+    "deadline": null,
+    "wall_deadline_enabled": false,
+    "kill_on_conversation_end": false,
+    "natural_workload_and_episode_limits": true,
+    "controller_cycle_compute_budget": true,
+    "numerical_and_physical_stops": true,
+    "no_blanket_other_project_kill": true,
+    "completed_stage_evidence": [
+      "runnable_algorithm",
+      "strong_control",
+      "independent_split",
+      "necessary_ablation",
+      "actual_results_and_video",
+      "resource_cost",
+      "supported_positive_or_negative_conclusion"
+    ]
+  },
+  "delivery": {
+    "integration": "single_integrator; latest-parent expected-SHA nonforce",
+    "daily_file": "docs/S1_DAILY_WORKLOG.md",
+    "daily_timezone": "Asia/Shanghai",
+    "daily_unique_event_id": true,
+    "daily_fields": [
+      "goal_hypothesis",
+      "version_identity",
+      "actual_change",
+      "run_and_physics_progress",
+      "samples_and_updates",
+      "metrics_denominators",
+      "solved_unsolved",
+      "positive_negative",
+      "resource_overlap",
+      "sources_read_scope",
+      "GitHub_receipt",
+      "next_action"
+    ],
+    "raw_assets": "incremental direct upload from execution host; verify size/digest and resume references",
+    "local_user_PC_archive": false,
+    "automatic_data_migration": false,
+    "automatic_raw_deletion": false,
+    "existing_storage_operation": {
+      "receipt": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/storage/20261128-process-archive.json",
+      "source_commit": "d6802d3554d7f51d6f0807002570a5913d73b540",
+      "do_not_repeat": true,
+      "retrieve_required_members_by_index_if_needed": true
+    }
+  },
+  "this_publication": {
+    "new_training": 0,
+    "new_plant_steps": 0,
+    "new_hardware_tests": 0,
+    "new_algorithm_implementation": false
+  },
+  "integration_parent_observed": "d6802d3554d7f51d6f0807002570a5913d73b540"
+}
