@@ -2917,3 +2917,14 @@ H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 
 以此截点重算，六槽 74.43 h（12 月 1 日 18:18），四槽 120.51 h（12 月 3 日 16:23）。过去一小时 E 训练加参照评测平均获得 3.515 槽，若全程维持这一份额，按四路已测每槽吞吐近似约 137.15 h（12 月 4 日 09:01）。四条零策略 A/B 原资格全部通过且原件均已核验。四条在物理落盘至视频回执间另消耗约 15–28 s/条，占其合计租约约 2.2%。
 
 15:48:45 源程序准备结束无子进程的旧 watcher 时，D57 的 Conda Python 缺少 os.pidfd_open，新的并行评测进程在交接处退出。11 个 E 更新和真实参考物理均保留。提交 81b1bf86 改用本机支持的 POSIX 接口，在核对旧进程启动标识、命令、目录、空闲状态及无子进程后，仅结束该空闲旧 owner。15:54:17 新进程已取得唯一 final-evaluator 锁，四份零策略原件已逐项复用。没有正式长回合达到启动条件或错过节点。GPU 吞吐预测、训练、Release 和 Git 整合继续在 tmux 运行。
+
+### 20261128/w61/execution-038e702ef1614 · 2026-11-28 15:55 上海
+六线仍使用现有 material、gait、mpc、wbc、learning、joint 工作树。运行固化源码与权重。此次核对的各分支提交为 material de6efba1, gait d8c41d0e, mpc 5823152a, wbc 51c60840, learning 4d30f873，F 正式训练使用 0a400893e40d。
+本次整合的实现及实际证据包括 9cbad33f Record the 2816-event live status, shared-slot estimate and verified evaluator lock handoff / 4d30f873 Record W61 concurrent frozen evaluations and verified episode identities / 53f8c394 Record W61 concurrent frozen evaluations and verified episode identities。
+E 正式九头训练累计使用 2816 / 73,728 个去重真实事件。已结束更新的 requested 为 2816，累计接受 actor 步 104，critic 更新 176，想象事件 0。单头 used 为 e-score-s6001 512, e-score-s6002 256, e-score-s6003 256, ppo-s6001 512, ppo-s6002 256, ppo-s6003 256, spo-s6001 256, spo-s6002 256, spo-s6003 256。无几何附加臂单计。
+F 已完成 48 对相同实测支撑的正负候选，实际独立查询 96 次、查询物理子步 364800。同一轮 A 与 C 参数均发生非零变化的更新 12 次。独立未见材料查询完成的冻结头 5/12，2×2 完整结果数 0/8。逐对列出实际回报、物理终止、支持集摘要及足端命令差。累计真实CPU 0.359 核时。
+物理池此刻占用 6/6 槽，等待 3 项。cgroup 实测 13.9/25 核，可用 RAM 12.5 GiB，GPU 利用率 26%，空余显存 61837 MiB，scratch 空间 559.9 GiB。此处为共享设备同时刻读数。
+96 条冻结材料长回合按各头的 8192 节点并行调度。目前 0 个头达到节点，已核验原件 0/96。已有原始终止类型 {}，累计 0.00 物理秒。零策略 A/B 资格和曲线评估各自单计。
+H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
+后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
+
