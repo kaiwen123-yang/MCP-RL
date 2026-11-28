@@ -39,6 +39,8 @@ class NaturalWBCMixin:
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.d_role = self.cfg['w61']['role']
+        if self.d_role == 'hybrid':
+            self.d_role = 'decoupled'
         if self.d_role not in ('coupled','decoupled','hierarchy'):
             raise ValueError('Choose coupled, decoupled, or hierarchy')
         self.d_chart = None
