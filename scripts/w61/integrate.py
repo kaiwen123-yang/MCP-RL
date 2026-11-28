@@ -104,6 +104,17 @@ def step(force=False):
         exp=read(gpu_receipt)
         packet=dict(stage=exp.get('stage'),production_backend=exp.get('production_backend'),production_eligible=exp.get('production_eligible'),
                     comparisons=exp.get('comparisons',{}),receipt='material/w61-e-packet-throughput-v1/index.json')
+    cpu_dir=AUX/'w61-e-cpu-exact-v1'
+    cpu={}
+    if (cpu_dir/'production.json').is_file():
+        selection=read(cpu_dir/'production.json')
+        cpu=dict(selected_shanghai=selection['registered_shanghai'],binary_sha256=selection['runtime']['binary_sha256'],
+                 training=selection['training_enabled'],curve=selection['curve_enabled'],native=selection['native_enabled'],
+                 full_pair_speedup=selection['training_evidence']['full']['speedup'],
+                 native_E30_speedup=(selection.get('frozen_evaluation_evidence') or {}).get('speedup'),
+                 receipts='learning/w61-e-cpu-exact-v1')
+        for name,key in [('first-production','first_formal_lease'),('first-production-update','first_formal_update')]:
+            if (cpu_dir/(name+'.json')).is_file():cpu[key]=read(cpu_dir/(name+'.json'))
     jobs=[read(f) for f in (ROOT/'work/w61/pool/jobs').glob('*.json')]
     counts=Counter(v['state'] for v in jobs)
     active={r['job']:r['slots'] for r in jobs if r['state']=='running'}
@@ -120,6 +131,7 @@ def step(force=False):
                 E={k:(v['used']//2048,bool(v['updates']),bool(v.get('terminal'))) for k,v in formal.items()},
                 ablation={k:v['used']//2048 for k,v in abl.items()}, storage=list(storage),H_products=nH//10)
     marker['frozen_final']=frozen
+    marker['cpu_sampling']=(cpu.get('binary_sha256'),bool(cpu.get('first_formal_lease')),bool(cpu.get('first_formal_update')))
     signature=hashlib.sha256(json.dumps(marker,sort_keys=True).encode()).hexdigest()[:13]
     stamp=WORK/'integration-state.json'
     event=now.strftime('%Y%m%d')+'/w61/execution-'+signature
@@ -133,7 +145,7 @@ def step(force=False):
         W59='c8378beae4be371eb4f104782b75e5d295b6f59a',W59_handoff='results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W59-review/handoff.json',
         branches=lanes,F_runtime=rows['runtime'],F_pairs=rows['training_pairs'],F_training_real_queries=rows['training_real_queries'],
         F_joint_updates=rows['actual_simultaneous_two_head_updates'],F_unseen_frozen_heads=len(rows['unseen']),F_factorial_queries=len(rows['factorial']),
-        formal_E= formal,E_used=used,E_target=73728,E_extra_geometry_ablation=abl,frozen_final=frozen,independent_head_dispatch=independent,material_collector_batching=packet,physical_pool=counts,leased_slots=active,resources=snap,
+        formal_E= formal,E_used=used,E_target=73728,E_extra_geometry_ablation=abl,frozen_final=frozen,independent_head_dispatch=independent,material_collector_batching=packet,exact_cpu_sampler=cpu,physical_pool=counts,leased_slots=active,resources=snap,
         storage=storage,release='https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w61',
         runtime_policy=dict(deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False),
         run_commands={'F':'python -m w61.joint.train schedule under W61_F_RUNTIME_COMMIT with the registered single-slot leases',
@@ -158,6 +170,8 @@ def step(force=False):
             lines+=['独立头调度当前保留的接续位置为 '+', '.join(independent['logical_heads'])+'，物理闭合、完整成片与远端核验分别统计。']
         if packet:
             lines+=['真实跨 collector 材料试验阶段 '+str(packet['stage'])+'，正式采样材料后端 '+str(packet['production_backend'])+'。']
+        if cpu:
+            lines+=['正式采样启用精确 CPU 材料内核 '+cpu['binary_sha256'][:12]+'。每流 128 事件的同槽完整对照吞吐为原版的 '+format(cpu['full_pair_speedup'],'.3f')+' 倍。']
         if rows['matched_unseen']:lines+=['F 未见材料四臂完整评价汇总 '+json.dumps(rows['matched_unseen'],ensure_ascii=False)+'。']
         if storage:lines+=['H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。']
         lines+=['后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。','']
