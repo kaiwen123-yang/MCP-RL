@@ -1,0 +1,103 @@
+{
+  "study": "w61-e-packet-throughput-v1",
+  "original_collector": "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/collect.py",
+  "original_collector_sha256": "48735c1d1dcd5dfb43465f907b7f2bee11d653c5c4c8cc2c526a56a34df2dd5c",
+  "frozen_collector": "/root/autodl-tmp/MCP-RL-w61-material/work/w61/material/w61-e-packet-throughput-v1/frozen_collect.py",
+  "frozen_collector_sha256": "ebd1857588f9d29bdf71d4ebcbbdd433301dc5bfd45203a7423c1bb247e376e5",
+  "original_dependencies": {
+    "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/hybrid.py": "502b76335c7fa6b2c668c94b69696662c23ce82d32cd46ffb504d6b7944f161a",
+    "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/orbits.py": "95377aff8458120b3d6982fe37d82c3f06b28587c57b557c480c22e01e9fcaa7"
+  },
+  "source_manifests": [
+    "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/manifest.json"
+  ],
+  "material_weights": "/root/autodl-tmp/MCP-RL/work/assets/B_random1000--ideal-potentials.npz",
+  "fused_binary": "/root/autodl-tmp/MCP-RL-w61-material/work/w61/material/w61-e-packet-throughput-v1/fused-m1.so",
+  "fused_sha256": "a925e913a95f42097b1b3e2ad8a4de9393c5e89611d3e061a73da201eacbc3ce",
+  "build": {
+    "command": [
+      "/usr/local/cuda-12.8/bin/nvcc",
+      "-O3",
+      "-std=c++17",
+      "-arch=sm_120",
+      "--fmad=false",
+      "-DW59_ONE_COLUMN_BLOCK",
+      "-I",
+      "/root/autodl-tmp/MCP-RL-w59/scripts",
+      "-shared",
+      "-Xcompiler=-fPIC",
+      "/root/autodl-tmp/MCP-RL-w61-material/work/w61/material/w61-e-packet-throughput-v1/fused-m1.cu",
+      "-o",
+      "/root/autodl-tmp/MCP-RL-w61-material/work/w61/material/w61-e-packet-throughput-v1/fused-m1.so"
+    ],
+    "original_sha256": "e59421025cd4f95d87af25e6a550b3da5386304dd4f533598b98821a4c4eb679",
+    "constitutive_sha256": "158d9135a4d669a9d99578dcfca167ae78bb20a91e0902827c7092f8c153d715",
+    "batch_source_sha256": "89dd48ad1cc7c3f603c4de970ba04f97ac98312ef346f8499a93bfd88d00cc78",
+    "compiled_source_sha256": "9be2c44ec4d98fc9ad48d8f607bb32a04eef1a485c04444371df7e31176f8816",
+    "binary_sha256": "a925e913a95f42097b1b3e2ad8a4de9393c5e89611d3e061a73da201eacbc3ce"
+  },
+  "windows": {
+    "prefix12": {
+      "version": 0,
+      "weights": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/ppo-s6001/policy-000.pt",
+      "checkpoint_sha256": "f8f971be4672248fd74e4f1ae63bb524691e94913e6f81dfbdc211453e5336d6",
+      "prefix_s": 12.0,
+      "phase": "soft_prefix",
+      "order": [
+        "cpu",
+        "gpu_batch"
+      ]
+    },
+    "full0": {
+      "version": 0,
+      "weights": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/ppo-s6001/policy-000.pt",
+      "checkpoint_sha256": "f8f971be4672248fd74e4f1ae63bb524691e94913e6f81dfbdc211453e5336d6",
+      "prefix_s": null,
+      "phase": "full_training_collector_work",
+      "order": [
+        "gpu_batch",
+        "cpu"
+      ]
+    },
+    "full1": {
+      "version": 1,
+      "weights": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/ppo-s6001/policy-001.pt",
+      "checkpoint_sha256": "c10d36789a4165c280dc4f4bb015394a46827cd5d507fe4a78435f3ef2f854fb",
+      "prefix_s": null,
+      "phase": "full_training_collector_work",
+      "order": [
+        "cpu",
+        "gpu_batch"
+      ]
+    }
+  },
+  "soft_windows_s": [
+    [
+      6,
+      8
+    ],
+    [
+      8,
+      10
+    ]
+  ],
+  "coalesce_max_s": 0.002,
+  "minimum_joint_columns": 64,
+  "quota_per_case": 128,
+  "mission_horizon_s": 60,
+  "actor": "actual PPO 6001 checkpoints 0 and 1, paired A/B, real training RNG role and event sequence",
+  "scope": "Timing benchmark: no data enters an on-policy head. Singleton/under-64 packets return to original local CPU; true joint GPU dispatch only when both independent collectors are pending.",
+  "admission": {
+    "require_full_paired_windows": 2,
+    "minimum_each_group_speedup": 1.05,
+    "maximum_worse_full_p95_ratio": 1.05,
+    "maximum_state_stress_or_force_same_input_abs": 1e-06,
+    "maximum_physical_qpos_abs_m_or_rad": 1e-05,
+    "require_identical_event_modes_rng_and_terminal": true,
+    "require_multiple_true_fused_calls": true,
+    "production_requires_new_frozen_controller_identity_and_integrator_approval": true
+  },
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false
+}
