@@ -2,8 +2,13 @@
 set -eu
 source scripts/autodl_d57_env.sh
 repo=$PWD
-out="$repo/work/w61/gait/b3-heatmap-v1"; pool=/root/autodl-tmp/MCP-RL-w61-joint/scripts/w61/lease.py
-for method in fixed library cpg orbit 6111 6112 6113; do
+if [ "${1:-decoder}" = style ]; then
+    study=b3-style-16-v1;methods=(style6111 style6112 style6113)
+else
+    study=b3-heatmap-v1;methods=(fixed library cpg orbit 6111 6112 6113)
+fi
+out="$repo/work/w61/gait/$study"; pool=/root/autodl-tmp/MCP-RL-w61-joint/scripts/w61/lease.py
+for method in "${methods[@]}"; do
     for case in A B; do
         condition=yaw_plus5
         [ "$case" = A ] || condition=yaw_minus5
