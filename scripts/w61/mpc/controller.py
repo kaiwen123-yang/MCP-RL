@@ -23,6 +23,10 @@ class TopologyMPC:
         self.c_cfg=self.cfg['w61']['mpc_transfer']
         self.c_commands=(self.c_dir/'c-plans.jsonl').open('a')
 
+    def search_transfer(self,problem):
+        return search(problem,self.c_method,self.c_cfg['seed']+self.c_count,self.c_warm,
+                      candidates=self.c_cfg['samples'],iterations=self.c_cfg['rounds'],mode_ids=(0,1))
+
     def _update_schedule(self,t,data,mq,mission,soft,material_info,observed,grf):
         # Close the decision as soon as a transfer starts; an airborne foot never
         # becomes an alternative liftoff. Only simultaneous diagonals are
@@ -37,8 +41,7 @@ class TopologyMPC:
                      torque_lower=self.model.actuator_forcerange[:,0],torque_upper=self.model.actuator_forcerange[:,1],
                      last_force=self.last_force)
             problem=build_problem(obs,float(np.linalg.norm(mission.v[:2])),np.ones(4),self.c_cfg['belief'],0.)
-            sol=search(problem,self.c_method,self.c_cfg['seed']+self.c_count,self.c_warm,
-                       candidates=self.c_cfg['samples'],iterations=self.c_cfg['rounds'],mode_ids=(0,1))
+            sol=self.search_transfer(problem)
             self.c_warm=sol['per_mode']
             self.next_pair=np.asarray(((0,3),(1,2))[sol['mode']])
             self.c_solution=(float(t),sol['force_reference'])
