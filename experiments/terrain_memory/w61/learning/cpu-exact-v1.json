@@ -1,0 +1,33 @@
+{
+  "study": "w61-e-cpu-exact-v1",
+  "source_identity": "a99932bbe49fd0a8953e6009f85b4f8de0676309",
+  "fixed_backend": "43693ba584730f3c7dcecfbc6464d4bc11945b8f8663364ac75b1ba65e25fb75",
+  "changes": "Exact bit-keyed reuse of the same FP64 constitutive solve within one measured feedback packet; return the converged stress already evaluated in the identical Newton step. Identical original owner/force reduction, physics, dt, solves, rewards, model and RNG.",
+  "minimum_end_to_end_speedup": 1.05,
+  "required_parity": "recorded trajectories byte equal, exact event/reward/observations, requests, planned swings and end reason; all 58 captured packet outputs byte equal",
+  "stages": {
+    "entry": {
+      "version": 0,
+      "duration_s": 12.0,
+      "quota": 128,
+      "order": [
+        "original",
+        "exact"
+      ],
+      "checkpoint_sha256": "f8f971be4672248fd74e4f1ae63bb524691e94913e6f81dfbdc211453e5336d6"
+    },
+    "full": {
+      "version": 1,
+      "duration_s": 60.0,
+      "quota": 128,
+      "order": [
+        "exact",
+        "original"
+      ],
+      "checkpoint_sha256": "c10d36789a4165c280dc4f4bb015394a46827cd5d507fe4a78435f3ef2f854fb"
+    }
+  },
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false
+}
