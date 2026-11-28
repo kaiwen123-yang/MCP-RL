@@ -6,13 +6,14 @@ from pathlib import Path
 
 from publish_s1_w59 import STATE, RAW, WORK, ensure_release, publish
 from publish_s1_go2_w54 import write
+from run_s1_w59_interventions import job_name
 
 
 def publish_source(state,role,actions):
-    prefix=f'w59-action-{role.split("_")[0]}-{state["case"].lower()}-r{state["request_id"]:05d}'
+    prefix=job_name(state,role,"nominal1").removesuffix("-nominal1-a01")
     completed=[]
     for axis in actions:
-        name=prefix+'-'+axis+'-a01'
+        name=job_name(state,role,axis)
         source=STATE/'attempts'/(name+'.json')
         if not source.exists():
             return False

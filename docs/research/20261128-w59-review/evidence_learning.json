@@ -1,0 +1,317 @@
+{
+  "schema": "W59_learning_readonly_review_20261128",
+  "ref": "c8378beae4be371eb4f104782b75e5d295b6f59a",
+  "base_url": "https://github.com/kaiwen123-yang/MCP-RL/blob/c8378beae4be371eb4f104782b75e5d295b6f59a/",
+  "finished_shanghai": "2026-11-28T07:25:58+08:00",
+  "terminal_state": "earned_chain_terminal",
+  "learning_state": "partial",
+  "matched_four_arms": false,
+  "totals": {
+    "distinct_used": 14336,
+    "accepted_actor_steps": 638,
+    "real_critic_steps": 896,
+    "optimizer_batches": 56,
+    "imagined_transitions": 0,
+    "observed_completed": 14634,
+    "requested": 14637,
+    "tail_excluded": 274,
+    "optimization_inner_wall_s": 6.114169621840119
+  },
+  "heads": {
+    "5901/PPO-full": {
+      "algorithm": "real-PPO-fallback",
+      "arm": "PPO-full",
+      "state": "incomplete",
+      "actual_used": 5888,
+      "used": 5888,
+      "requested": 5958,
+      "observed": 5957,
+      "tail_excluded": 45,
+      "eligible_barrier_rows": 5912,
+      "technical_data_cut": 1,
+      "unknown_observation_counts": [],
+      "observations_known_through_receipts": 46,
+      "imagined_transitions": 0,
+      "real_critic_steps": 368,
+      "imagined_critic_steps": 0,
+      "accepted_actor_steps": 272,
+      "optimizer_batches": 23,
+      "frozen_node": 4096,
+      "frozen_actor_sha256": "a870c1550f3dae64016f2a9f1014951b638793978f6b2f4260c9dfb5a16a90e2",
+      "first_update": {
+        "accepted": true,
+        "marginal_mean_delta": 0.0011049398612350408,
+        "mean_replay_floor": 0,
+        "before_failures": 0,
+        "after_failures": 0
+      },
+      "closed_nodes": [
+        2048,
+        4096
+      ]
+    },
+    "5902/PPO-full": {
+      "algorithm": "real-PPO-fallback",
+      "arm": "PPO-full",
+      "state": "closed_node",
+      "actual_used": 8192,
+      "used": 8192,
+      "requested": 8419,
+      "observed": 8417,
+      "tail_excluded": 225,
+      "eligible_barrier_rows": 8192,
+      "technical_data_cut": 2,
+      "unknown_observation_counts": [],
+      "observations_known_through_receipts": 66,
+      "imagined_transitions": 0,
+      "real_critic_steps": 512,
+      "imagined_critic_steps": 0,
+      "accepted_actor_steps": 366,
+      "optimizer_batches": 32,
+      "frozen_node": 8192,
+      "frozen_actor_sha256": "0073814da158722078464fdd728bb0e2585dc2d8cc472042cc521169b7665e9c",
+      "first_update": {
+        "accepted": true,
+        "marginal_mean_delta": 0.00018038290742570726,
+        "mean_replay_floor": 0,
+        "before_failures": 0,
+        "after_failures": 0
+      },
+      "closed_nodes": [
+        2048,
+        4096,
+        8192
+      ]
+    },
+    "5903/PPO-full": {
+      "algorithm": "real-PPO-fallback",
+      "arm": "PPO-full",
+      "state": "rejected",
+      "actual_used": 256,
+      "used": 256,
+      "requested": 260,
+      "observed": 260,
+      "tail_excluded": 4,
+      "eligible_barrier_rows": 256,
+      "technical_data_cut": 0,
+      "unknown_observation_counts": [],
+      "observations_known_through_receipts": 2,
+      "imagined_transitions": 0,
+      "real_critic_steps": 16,
+      "imagined_critic_steps": 0,
+      "accepted_actor_steps": 0,
+      "optimizer_batches": 1,
+      "frozen_node": null,
+      "frozen_actor_sha256": null,
+      "first_update": {
+        "accepted": false,
+        "marginal_mean_delta": -0.00004021447445111143,
+        "mean_replay_floor": 0,
+        "before_failures": 0,
+        "after_failures": 0
+      },
+      "closed_nodes": []
+    }
+  },
+  "frozen_selections": {
+    "role": "fallback-ppo",
+    "display_seed": 5901,
+    "N_s": {
+      "5901": 4096,
+      "5902": 8192,
+      "5903": null
+    },
+    "selections": [
+      {
+        "actor_config": "/root/autodl-tmp/MCP-RL-w59/work/w59/learning/seed-5901/PPO-full-fallback/freeze-04096.json",
+        "actor_sha256": "a870c1550f3dae64016f2a9f1014951b638793978f6b2f4260c9dfb5a16a90e2",
+        "wm": [],
+        "wm_sha256": [],
+        "seed": 5901,
+        "arm": "PPO-full",
+        "node": 4096,
+        "algo_identity": "fallback-ppo"
+      },
+      {
+        "actor_config": "/root/autodl-tmp/MCP-RL-w59/work/w59/learning/seed-5902/PPO-full-fallback/freeze-08192.json",
+        "actor_sha256": "0073814da158722078464fdd728bb0e2585dc2d8cc472042cc521169b7665e9c",
+        "wm": [],
+        "wm_sha256": [],
+        "seed": 5902,
+        "arm": "PPO-full",
+        "node": 8192,
+        "algo_identity": "fallback-ppo"
+      }
+    ],
+    "heldout_protocol_sha256": "b25f3bf77f1bd2c54c3726038aa8504e8141491ab8c77bb7588e83023bc1298d"
+  },
+  "qualification": {
+    "both_frozen_heads_A_B_E30_E60": "passed",
+    "seed5901_B_E300_E600": "passed",
+    "seed5901_A_long": "not run: both costs deteriorated",
+    "seed5902_long": "not preselected; not run"
+  },
+  "heldout": {
+    "learned_episodes": 8,
+    "natural_terminals": 8,
+    "strict_mechanism_pass": 0,
+    "body_traversals_each": 23,
+    "home_stable_each": true,
+    "targets": {
+      "seed5901": [
+        2,
+        4,
+        4,
+        3
+      ],
+      "seed5902": [
+        3,
+        3,
+        3,
+        0
+      ]
+    },
+    "order": [
+      "A/short",
+      "A/recovered",
+      "B/short",
+      "B/recovered"
+    ],
+    "achieved": 22,
+    "requested": 96,
+    "relative_slip_pct_range": [
+      -1.741458680330848,
+      0.9014901016223755
+    ],
+    "relative_CoT_pct_range": [
+      -0.4904060313476893,
+      0.21630236576954145
+    ]
+  },
+  "first_update_5903": {
+    "mean": -0.00004021447445111143,
+    "paired95": [
+      -0.00023637200962439795,
+      0.00018499276602046205
+    ],
+    "hard_failure_before": 0,
+    "hard_failure_after": 0,
+    "accepted": false,
+    "criterion": "mean_delta > replay_floor(0), not CI or practical significance"
+  },
+  "failure5901": {
+    "attempt": "w59-r3-5901-ppo-full-fallback-b-e60-0023",
+    "at_s": 36.774,
+    "source_commit": "4ad3a5f28b99ad9ccc84455915fdffa9dfcb57af",
+    "classification": "technical_interruption",
+    "reason": "ControllerNumericalFailure: wbc: maximum iterations reached",
+    "not": "not ENOSPC; not observed physical fall"
+  },
+  "recovery5902": {
+    "cause": "ENOSPC",
+    "version": 19,
+    "old_closed_rows": 118,
+    "new_rows": 138,
+    "first_resumed_used": 5120,
+    "first_resumed_accepted_actor": 8,
+    "duplicate_charge": false,
+    "optimizer_preserved": true
+  },
+  "code_boundaries": [
+    {
+      "path": "scripts/s1_w59_learning.py",
+      "finding": "request after absorbed returns base; complete sets absorbed; reward is W38 route/penalties; raw Gaussian logp stored; actor old W44 digest differs new request head digest"
+    },
+    {
+      "path": "scripts/s1_w59_learner_update.py",
+      "finding": "256 unique rows per batch; duration GAE; post-step exact Gaussian KL with rollback; first-update gate only mean sign and hard failures"
+    },
+    {
+      "path": "scripts/s1_w59_learner_series.py",
+      "finding": "checkpoint node chosen before heldout; long only seed5901 and exposure/cost criteria"
+    },
+    {
+      "path": "scripts/s1_go2_r11_runtime.py",
+      "finding": "first mission complete calls learner.complete; result first_completion_s needed for exact absorbed time"
+    },
+    {
+      "path": "scripts/s1_go2_wb_equilibrium.py",
+      "finding": "final_stable_s=final continuous stable streak, not completion timestamp"
+    }
+  ],
+  "seed_alias": {
+    "project_code": "learning_seed*2**32+2*serial+case_index -> torch.Generator() CPU",
+    "official_source": [
+      "https://github.com/pytorch/pytorch/blob/main/aten/src/ATen/core/MT19937RNGEngine.h",
+      "https://github.com/pytorch/pytorch/blob/main/aten/src/ATen/CPUGeneratorImpl.cpp"
+    ],
+    "official_mechanism": "init_with_uint32: state_[0] = seed & 0xffffffff; CPUGenerator set_current_seed uses mt19937(seed)",
+    "observation": "all three first update return_mean=8.678703308105469 and saturated_by_axis=[0,17,0]",
+    "qualification": "conditional on matching AutoDL CPU generator implementation; exact installed version/raw samples not checked; no Torch runtime reproduction here; different network initialization/updates remain"
+  },
+  "artifact_paths": [
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/outcome.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/learning/learning-series.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/learning/pre-heldout-frozen.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/learning/seed-5903/PPO-full-fallback/first-update-real.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/attempts/w59-r3-5901-ppo-full-fallback-b-e60-0023.json",
+    "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w59/learning/recovery-20261127.json"
+  ],
+  "papers": [
+    {
+      "title": "Mastering diverse control tasks through world models",
+      "venue": "Nature 2025",
+      "url": "https://www.nature.com/articles/s41586-025-08744-2",
+      "pdf": "https://www.nature.com/articles/s41586-025-08744-2.pdf",
+      "scope": "Main world model/actor/critic, ablations, methods distributions/optimizer/replay",
+      "key": "REINFORCE for continuous/discrete actor, RSSM imagination still model-biased"
+    },
+    {
+      "title": "Simple Policy Optimization",
+      "venue": "ICML 2025",
+      "url": "https://proceedings.mlr.press/v267/xie25m.html",
+      "pdf": "https://raw.githubusercontent.com/mlresearch/v267/main/assets/xie25m/xie25m.pdf",
+      "scope": "Sections4–6, Algorithm1 and main comparative experiments",
+      "key": "quadratic restoring-ratio objective; strong controlled update baseline"
+    },
+    {
+      "title": "Policy Optimization in Hybrid Discrete-Continuous Action Spaces via Mixed Gradients",
+      "venue": "2026 arXiv; official NeurIPS material uses MGPO name",
+      "url": "https://arxiv.org/abs/2605.14297",
+      "pdf": "https://arxiv.org/pdf/2605.14297",
+      "scope": "Sections2–5, gradient pseudocode, Appendix C.2 implementation",
+      "key": "pathwise + discrete score + continuous-to-future-discrete cross term; true smooth model assumptions"
+    },
+    {
+      "title": "Dream-MPC: Gradient-Based Model Predictive Control with Latent Imagination",
+      "venue": "ICML 2026",
+      "url": "https://proceedings.mlr.press/v306/spieler26a.html",
+      "pdf": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/spieler26a/spieler26a.pdf",
+      "scope": "Section4–5, Algorithm1, ablations, timings, AppendixA limitations",
+      "key": "strong policy proposals, gradient refinement, reuse, uncertainty; few model calls not proportional wall speed"
+    }
+  ],
+  "new_E_plan": {
+    "arms": 3,
+    "seeds": 3,
+    "distinct_per_head": 8192,
+    "total_distinct_used_planned": 73728,
+    "nodes": [
+      2048,
+      4096,
+      8192
+    ],
+    "first_step_sign_gate": false,
+    "model_gradient_required_for_score": false
+  },
+  "E600_actual": {
+    "artifact": "originals-021.zip",
+    "sha256_prefix": "ed334703",
+    "first_completion_s": 471.44400001340324,
+    "evaluation_requests": 1534,
+    "qualification_continuation_s": 128.55599997925646,
+    "final_stable_s": 130.55599997932285,
+    "learner_source": "episode/w59-learner-result.json",
+    "actor_digest": "a870c1550f3dae64016f2a9f1014951b638793978f6b2f4260c9dfb5a16a90e2"
+  }
+}

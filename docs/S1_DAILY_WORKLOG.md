@@ -1466,6 +1466,700 @@ Git HTTPS 连续返回 503 或 TLS 握手关闭。D57 对已提交的紧凑内�
 
 18:49:17。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
 
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0003｜自然终局或技术中断
+
+19:12:40。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0003｜自然终局或技术中断
+
+19:12:55。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0004｜自然终局或技术中断
+
+19:35:09。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0004｜自然终局或技术中断
+
+19:35:41。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-b3-m1-b-development-recovered-a01｜自然终局或技术中断
+
+19:41:15。B3 / B / recovered / E60，控制器 S5-w59-research-f2a4d138a792e8997b，源码 ed16e456759f。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-fixed-action-m1-b-development-recovered-a01｜自然终局或技术中断
+
+19:42:53。Fixed-action / B / recovered / E60，控制器 S5-w59-research-fec5a508b81b5fa67b，源码 ed16e456759f。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/storage/H-process-finite-archive｜已封口过程文件的 H 盘归档
+
+上海时间 19:36:24 冻结过程文件清单，实际选入 641137 条路径，31373356596 个逻辑字节、330654 种内容。清单 SHA-256 为 05224206ee3fcefd158fade51e81000e6c6bd5bd97c5d79466eebe20642420c8。H 盘目录为 H:/MPC+RL/00_catalog/migration-20261126-process，D57 现场入口为 work/w59/archive-process-20261126，tmux 会话为 mcp-h-archive-20261126。H 端独立接收进程并行传输及回读；全部路径、内容数、字节数和清单摘要与 H 的完整回执吻合后，D57 再核对源 inode、文件大小、修改时间、SHA-256 和打开状态，释放清单中合格路径。最终动作与实际分配字节见该目录的 D57-final.json。归档运行期间 PPO、资格和评价继续，归档不增加物理或学习样本。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0005｜自然终局或技术中断
+
+19:58:55。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0005｜自然终局或技术中断
+
+19:59:43。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0006｜自然终局或技术中断
+
+20:22:36。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0006｜自然终局或技术中断
+
+20:23:24。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0007｜自然终局或技术中断
+
+20:45:34。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0007｜自然终局或技术中断
+
+20:46:13。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.27491360754597116 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0008｜自然终局或技术中断
+
+21:09:19。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0008｜自然终局或技术中断
+
+21:10:41。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0009｜自然终局或技术中断
+
+21:33:16。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5903-ppo-full-fallback-a-e60-0001｜自然终局或技术中断
+
+21:33:39。B3 / A / training / E60，控制器 S5-w59-research-280a4d2c737f1fa9cb，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0001｜自然终局或技术中断
+
+21:33:44。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0001｜自然终局或技术中断
+
+21:33:49。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5903-ppo-full-fallback-b-e60-0001｜自然终局或技术中断
+
+21:33:51。B3 / B / training / E60，控制器 S5-w59-research-79f7e4c550b52127c8，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0009｜自然终局或技术中断
+
+21:34:30。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0010｜自然终局或技术中断
+
+21:56:22。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0010｜自然终局或技术中断
+
+22:03:59。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0002｜自然终局或技术中断
+
+22:10:11。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0002｜自然终局或技术中断
+
+22:10:21。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0011｜自然终局或技术中断
+
+22:18:59。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0011｜自然终局或技术中断
+
+22:27:19。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0003｜自然终局或技术中断
+
+22:33:15。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0003｜自然终局或技术中断
+
+22:33:25。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0012｜自然终局或技术中断
+
+22:42:26。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0012｜自然终局或技术中断
+
+22:50:25。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0004｜自然终局或技术中断
+
+22:56:21。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0004｜自然终局或技术中断
+
+22:56:56。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0013｜自然终局或技术中断
+
+23:05:04。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0013｜自然终局或技术中断
+
+23:13:02。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0005｜自然终局或技术中断
+
+23:19:26。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0005｜自然终局或技术中断
+
+23:19:58。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0014｜自然终局或技术中断
+
+23:27:59。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0014｜自然终局或技术中断
+
+23:36:33。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0006｜自然终局或技术中断
+
+23:42:34。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0006｜自然终局或技术中断
+
+23:43:10。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0015｜自然终局或技术中断
+
+23:57:10。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261126/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0015｜自然终局或技术中断
+
+23:59:29。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+
+## 2026-11-27｜W59 执行
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0007｜自然终局或技术中断
+
+00:05:56。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0007｜自然终局或技术中断
+
+00:06:39。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0016｜自然终局或技术中断
+
+00:19:52。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0016｜自然终局或技术中断
+
+00:22:44。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0008｜自然终局或技术中断
+
+00:28:44。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0008｜自然终局或技术中断
+
+00:29:49。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0017｜自然终局或技术中断
+
+00:46:24。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0017｜自然终局或技术中断
+
+00:46:27。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0009｜自然终局或技术中断
+
+00:52:15。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0009｜自然终局或技术中断
+
+00:52:16。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0018｜自然终局或技术中断
+
+01:09:43。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0018｜自然终局或技术中断
+
+01:09:46。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0010｜自然终局或技术中断
+
+01:15:10。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0010｜自然终局或技术中断
+
+01:15:30。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0019｜自然终局或技术中断
+
+01:32:59。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0019｜自然终局或技术中断
+
+01:33:18。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.20441147038222945 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0011｜自然终局或技术中断
+
+01:38:14。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0011｜自然终局或技术中断
+
+01:38:14。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0020｜自然终局或技术中断
+
+01:56:22。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0020｜自然终局或技术中断
+
+01:56:38。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0012｜自然终局或技术中断
+
+02:01:39。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0012｜自然终局或技术中断
+
+02:01:53。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0021｜自然终局或技术中断
+
+02:19:18。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0021｜自然终局或技术中断
+
+02:19:56。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0013｜自然终局或技术中断
+
+02:24:40。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0013｜自然终局或技术中断
+
+02:25:23。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0022｜自然终局或技术中断
+
+02:43:09。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0022｜自然终局或技术中断
+
+02:43:37。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0014｜自然终局或技术中断
+
+02:47:47。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0014｜自然终局或技术中断
+
+02:48:34。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-b-e60-0023｜自然终局或技术中断
+
+03:00:35。B3 / B / training / E60，控制器 S5-w59-research-395862a3801ab989da，源码 4ad3a5f28b99。实际 183870 个 0.2 ms 子步，36.774 模拟秒。判定 technical_interruption，原因 execution_error。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5901-ppo-full-fallback-a-e60-0023｜自然终局或技术中断
+
+03:07:00。B3 / A / training / E60，控制器 S5-w59-research-4bb3d77c40c22d1b1c，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0015｜自然终局或技术中断
+
+03:10:57。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0015｜自然终局或技术中断
+
+03:11:50。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0016｜自然终局或技术中断
+
+03:33:50。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.27634713408838923 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0016｜自然终局或技术中断
+
+03:35:25。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0017｜自然终局或技术中断
+
+03:59:20。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0017｜自然终局或技术中断
+
+03:59:32。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0018｜自然终局或技术中断
+
+04:23:17。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0018｜自然终局或技术中断
+
+04:23:57。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0019｜自然终局或技术中断
+
+04:47:07。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0019｜自然终局或技术中断
+
+04:47:42。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/storage-recovery-start｜磁盘满中断、增量归档与合法续接
+
+16:17:14（上海时间）冻结本次可迁过程文件。D57 的 W59 磁盘当前已扩容，个人挂载盘本轮盘点为空。上轮 H 盘释放记录已核实，未在本次重复计数。主批 295927 路径、12270771479 个逻辑字节，独立封存行动的补充批 10476 路径、393888340 字节。H 的两份完整回读证明均产生后才允许释放源文件，接收端两份完成回执回传后才放行训练。封存分支归档前按带来源摘要的实际名称对齐其 12 组 Release 回执。
+
+5901 最后完整学习节点为4096，后续5888已用事件的原WBC求解失败保留；5903的256事件和首更拒绝保留。5902 v19有4864个已优化事件，A/B各另有59条真实已闭合转移尚未进入优化。两条20号物理记录因 ENOSPC 停止，已从原记录逐项核对，现存的未封口批次与策略/优化器不重置。续训进程只等待本次真实归档释放标记，沿冻结的控制器、动作权限、case和预算使用21号新回合。第一阶段仅归档与修复，未新增学习样本。
+
+### 20261127/w59/H-incremental-archive-and-recovery｜过程归档核验与原节点续接
+
+H 端两份完整回读证明、D57 两份删除回执和接收端索引已闭合。冻结边界 2026-11-27T16:17:14+08:00，共释放 306403 个过程文件路径，逻辑字节 12664659819，最后硬链接的分配字节 13040553984。上次已归档项目不重复计数。训练、原资格输入、评估原件、W44 resume、5901/5902/5903 的策略与优化器保留。现场 scratch 总容量已变化，个人盘本轮未迁出文件。对 5902 按既有合同从版本19的4864个已用事件及每流59个有效未封口事件接续；5901在5888的WBC迭代上限终局与5903首更拒绝保留。实际样本继续由 learner 账本核算。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0020｜自然终局或技术中断
+
+04:53:47。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 81600 个 0.2 ms 子步，16.32 模拟秒。判定 technical_interruption，原因 storage_enospc。原前置回合 None，最低机身高度 None m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0020｜自然终局或技术中断
+
+04:53:48。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 88200 个 0.2 ms 子步，17.64 模拟秒。判定 technical_interruption，原因 storage_enospc。原前置回合 None，最低机身高度 None m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5901-a-original-e30-a01｜自然终局或技术中断
+
+17:01:27。B3 / A / original / E30，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 150000 个 0.2 ms 子步，30.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5901-b-original-e30-a01｜自然终局或技术中断
+
+17:01:29。B3 / B / original / E30，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 150000 个 0.2 ms 子步，30.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0021｜自然终局或技术中断
+
+17:13:36。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0021｜自然终局或技术中断
+
+17:13:54。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5901-a-original-e60-a01｜自然终局或技术中断
+
+17:24:45。B3 / A / original / E60，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5901-a-original-e30-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5901-b-original-e60-a01｜自然终局或技术中断
+
+17:24:54。B3 / B / original / E60，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5901-b-original-e30-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0022｜自然终局或技术中断
+
+17:37:47。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0022｜自然终局或技术中断
+
+17:38:14。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0023｜自然终局或技术中断
+
+18:00:57。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0023｜自然终局或技术中断
+
+18:01:52。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/online-cpu-and-gpu-video-timing｜真实 PPO 采集与 GPU 交付耗时
+
+D57 对 5902-A 复跑后的已封口 E60 计时，60 模拟秒耗时 1422.81 墙钟秒，M1 因果观测累计 553.68 秒，控制反馈 357.82 秒，物理循环 480.11 秒（内含材料 363.04 秒）。真实 PPO 更新仅为亚秒级。12 个已登记开发状态内有 10 个非空材料窗口，含 25–243 列。相同 FP64 短预测的 CPU/GPU 各窗口中位延迟取总比为 1.197，GPU 在 7/10 个非空窗口较快；e/q 最大绝对差 2.27e−17。该 CUDA 函数未实现线上 M1 逐步力、接触轨迹及最终力校正；本次保持正在进行的 5902 控制、采样与版本，全体测量新增物理子步为 0。
+
+用 5901-A 的完整原 E60 归档状态重渲染，同一机位、标注、1280×720、30 fps、1801 帧。原 CPU x264 全链 39.47 秒，EGL + 系统 FFmpeg NVENC 全链 21.11 秒。两者相对既有发布画面的 SSIM 分别为 0.999975、0.999239，GPU 文件约大 15%。5901-B 用新正常入口独立回读 1801 帧。后续新发表的 W59 原资格和独立机制全程视频采用 NVENC，可与已有资产上传并行。实测见 w59/dispatch/gpu-time-20261127.json；训练完成时间继续由实采事件速率估算。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0024｜自然终局或技术中断
+
+18:25:05。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0024｜自然终局或技术中断
+
+18:26:11。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0025｜自然终局或技术中断
+
+18:49:06。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0025｜自然终局或技术中断
+
+18:50:11。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0026｜自然终局或技术中断
+
+19:13:34。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0026｜自然终局或技术中断
+
+19:14:24。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/m1-gpu-paired-e60-0021｜M1 混合后端完整 A/B 回放
+
+持续运行的 5902 使用 4ad3a5f28b99 冻结运行时及原 CPU M1。针对 5902 的 A/B 原 E60-0021，复用各 300,000 个已落盘的 0.2 ms 物理步和各 120 次真实恢复查询。另取注册的 12 个开发快照，包括 10 个非空快照。两次回放使用相同的 600,000 个物理步，本项新增仿真步、学习事件和资格回合均为 0。
+
+GPU 在 FP64 下按生产用的中心差分牛顿法连续推进世界固定地块，CPU 用最后一个子步的状态、持续承载的足底面积及实测足力执行原校正。恢复查询和事件登记沿用现行实现。相同输入下，13 次实际足力校正的独立 CPU 核对逐位一致。
+
+单工作进程依次运行 A/B 时，16 列布局的采集与发布分别耗时 579.43 → 266.10 s、524.76 → 276.88 s。两种 GPU 布局在 12 个开发快照上的状态、足力与事件逐位一致。单列单块的开发集净倍率为 1.0404。最终双路并行均使用登记的所选库，完整测量纳入传输、同步、CPU 足力校正、事件、发布、全部恢复查询和生产调用标记。
+
+完整 A/B 同时回放的测量如下。A 的 CPU 561.13 s，混合 338.11 s，加速 1.660 倍。 B 的 CPU 522.20 s，混合 328.09 s，加速 1.592 倍。 两路累计观测器用时 1083.33 → 666.20 s。原 E60 整场匹配计时投影每条约节省 3.68/3.21 分钟。两路并行墙钟取较长者，估算节省 3.51 分钟。整场数值均为外推。
+
+240 万个足时刻的后端最大力差 4.067e-09 N。104,286,380 个地块子步中承载或归属差异 0，两个后端在 1、3、14.9175 N 三个阈值的有向翻转差异合计 0。A/B 的 3532/3156 条有序观测事件包括 52/60 次跨足重访。按地块及前后足对照原 TM02，112/112 次对应，92 次时刻完全一致，其余相差最多 1 个物理步。材料区对原足力的平均绝对误差 A/B 为 0.09204/0.09037 N。恢复高度 2880 个值按原 actor FP32 发布精度与原档逐位一致，CPU/混合最大差 3.29e-14 m，混合/原先已落盘的 actor 特征最大差 2.047e-12 m。
+
+计算在 D57 RTX PRO 6000 上进行，辅助核 19、20 各一个数学线程，物理槽新增 0。原始足底运动与接触、共享设备的采样、三份实测二进制和两阶段逐包数据由 D57 直发本轮 Release，1 个资产已核对字节数与 SHA-256。当前 PPO-full-fallback 5902 已封 6656 个事件，版本 26。建议下一轮新建运行身份时启用经完整回放的混合后端。 本轮真实决策收益、闭环行为和原资格沿用冻结研究结果。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0027｜自然终局或技术中断
+
+19:36:39。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0027｜自然终局或技术中断
+
+19:38:02。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.24105170016137653 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0028｜自然终局或技术中断
+
+20:00:42。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0028｜自然终局或技术中断
+
+20:02:05。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0029｜自然终局或技术中断
+
+20:24:37。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0029｜自然终局或技术中断
+
+20:25:46。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0030｜自然终局或技术中断
+
+20:48:10。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0030｜自然终局或技术中断
+
+20:49:23。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0031｜自然终局或技术中断
+
+21:11:14。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0031｜自然终局或技术中断
+
+21:13:24。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0032｜自然终局或技术中断
+
+21:34:56。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0032｜自然终局或技术中断
+
+21:37:15。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-a-e60-0033｜自然终局或技术中断
+
+21:58:20。B3 / A / training / E60，控制器 S5-w59-research-764ae3dff7b4d550ff，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-r3-5902-ppo-full-fallback-b-e60-0033｜自然终局或技术中断
+
+22:01:28。B3 / B / training / E60，控制器 S5-w59-research-b68f10659c16cd10dc，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5902-b-original-e30-a01｜自然终局或技术中断
+
+22:13:00。B3 / B / original / E30，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 150000 个 0.2 ms 子步，30.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5902-a-original-e30-a01｜自然终局或技术中断
+
+22:13:06。B3 / A / original / E30，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 150000 个 0.2 ms 子步，30.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 None，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5902-a-original-e60-a01｜自然终局或技术中断
+
+22:36:23。B3 / A / original / E60，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5902-a-original-e30-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5902-b-original-e60-a01｜自然终局或技术中断
+
+22:36:35。B3 / B / original / E60，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 300000 个 0.2 ms 子步，60.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5902-b-original-e30-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/release-pipeline-qualification｜资格和独立评价交付加速
+
+目标是缩短 D57 的资格与保留评价交付。六个物理槽沿用当前身份和原 CPU M1。观察到的六个物理主线程在3秒窗口占用各约100%单核。5902 原 A/B 的 E30 各自完成后直接衔接 E60，两路间隔分别为 0.21 和 0.28 秒。
+
+同一 Release 的 W59 交付进程以一个辅助工作线程提前在 /dev/shm 准备下一分卷，依次上传并保留已有逐件字节数、SHA-256、GitHub 状态核验。资格与保留评价发布器可用辅助核20、21，物理、采集和判断保持原运行时。已有回执继续按源清单与远端摘要复用；空间不足时仍按单分卷顺序准备。
+
+原分页目录共 449 项，读取耗时 52.87 秒。仅查最后一页的尝试漏掉位于第 2 页的最新项，已舍弃。改用 Release 自身资产清单，并检查有无额外 REST 项后再下不存在的结论。新清单 451 项耗时 23.00 秒。同一已上传资产的精确核验 30.41 → 11.52 秒，ID、状态、字节数和 SHA-256 一致。
+
+5902 A/E60-0029 的两个真实已交付 ZIP 从原记录重建后逐包得到相同大小与摘要。正式原资格 E60 A/B 的新分卷共 1328.5 MiB，实测打包 42.59 秒，11.35 秒与上一分卷的上传核验真正重叠。两条 E60 回执的全部资产已由 GitHub 再读核对。分卷并行带来的节时属于交付阶段。
+
+检查了 5901 原 E60 的门槛。A 的移动正机械运输成本和滑移均高于对应 B3，按合同已不能延长。B 的两项指标均低于 B3，长资格仍取决于自身两条完整保留任务的真实目标暴露。调度优化新增学习事件、物理步和资格尝试均为0。后续用同一正式入口处理已登记保留评价和可能获准的 B 长资格。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5901-b-short-e60-a01｜自然终局或技术中断
+
+23:38:39。B3 / B / short / E60，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 840000 个 0.2 ms 子步，168.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261127/w59/attempt/w59-ppo-full-fallback-5901-a-short-e60-a01｜自然终局或技术中断
+
+23:40:07。B3 / A / short / E60，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 840000 个 0.2 ms 子步，168.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+
+## 2026-11-28｜W59 执行
+
+### 20261128/w59/attempt/w59-ppo-full-fallback-5902-a-short-e60-a01｜自然终局或技术中断
+
+00:15:16。B3 / A / short / E60，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 840000 个 0.2 ms 子步，168.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-ppo-full-fallback-5901-b-recovered-e60-a01｜自然终局或技术中断
+
+00:43:00。B3 / B / recovered / E60，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.28042553710731466 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-ppo-full-fallback-5901-a-recovered-e60-a01｜自然终局或技术中断
+
+00:45:34。B3 / A / recovered / E60，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-ppo-full-fallback-5902-b-short-e60-a01｜自然终局或技术中断
+
+01:17:38。B3 / B / short / E60，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 840000 个 0.2 ms 子步，168.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-b3-m1-b-heldout-recovered-a01｜自然终局或技术中断
+
+01:20:13。B3 / B / recovered / E60，控制器 S5-w59-research-f2a4d138a792e8997b，源码 ed16e456759f。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-b3-m1-b-heldout-short-a01｜自然终局或技术中断
+
+02:21:41。B3 / B / short / E60，控制器 S5-w59-research-f2a4d138a792e8997b，源码 ed16e456759f。实际 840000 个 0.2 ms 子步，168.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2626538044719542 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-ppo-full-fallback-5902-b-recovered-e60-a01｜自然终局或技术中断
+
+02:21:58。B3 / B / recovered / E60，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-ppo-full-fallback-5901-b-original-e300-a01｜自然终局或技术中断
+
+02:49:49。B3 / B / original / E300，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 1500000 个 0.2 ms 子步，300.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5901-b-original-e60-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-fixed-action-m1-a-heldout-short-a01｜自然终局或技术中断
+
+02:56:41。Fixed-action / A / short / E60，控制器 S5-w59-research-fec5a508b81b5fa67b，源码 ed16e456759f。实际 840000 个 0.2 ms 子步，168.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-ppo-full-fallback-5902-a-recovered-e60-a01｜自然终局或技术中断
+
+02:59:12。B3 / A / recovered / E60，控制器 S5-w59-research-1c111741564a79baea，源码 4ad3a5f28b99。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-fixed-action-m1-b-heldout-short-a01｜自然终局或技术中断
+
+03:58:15。Fixed-action / B / short / E60，控制器 S5-w59-research-fec5a508b81b5fa67b，源码 ed16e456759f。实际 840000 个 0.2 ms 子步，168.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-b3-m1-a-heldout-short-a01｜自然终局或技术中断
+
+03:59:25。B3 / A / short / E60，控制器 S5-w59-research-f2a4d138a792e8997b，源码 ed16e456759f。实际 840000 个 0.2 ms 子步，168.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-b3-m1-a-heldout-recovered-a01｜自然终局或技术中断
+
+03:59:45。B3 / A / recovered / E60，控制器 S5-w59-research-f2a4d138a792e8997b，源码 ed16e456759f。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-fixed-action-m1-a-heldout-recovered-a01｜自然终局或技术中断
+
+05:38:22。Fixed-action / A / recovered / E60，控制器 S5-w59-research-fec5a508b81b5fa67b，源码 ed16e456759f。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-fixed-action-m1-b-heldout-recovered-a01｜自然终局或技术中断
+
+05:44:02。Fixed-action / B / recovered / E60，控制器 S5-w59-research-fec5a508b81b5fa67b，源码 ed16e456759f。实际 1440000 个 0.2 ms 子步，288.0 模拟秒。判定 mechanism_criteria_unmet，原因 stage_horizon_reached。原前置回合 None，最低机身高度 0.2830072487275847 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/attempt/w59-ppo-full-fallback-5901-b-original-e600-a01｜自然终局或技术中断
+
+07:02:59。B3 / B / original / E600，控制器 S5-w59-research-a524ade8e770798e46，源码 4ad3a5f28b99。实际 3000000 个 0.2 ms 子步，600.0 模拟秒。判定 passed，原因 stage_passed。原前置回合 w59-ppo-full-fallback-5901-b-original-e300-a01，最低机身高度 0.28300733088458757 m。完整任务、步态和发布回执分别在 w59/episodes、w59/gait、w59/delivery，训练成本按独立 head 学习账本计。
+
+### 20261128/w59/terminal-physical-release｜W59 科学终局与原件交付
+
+2026-11-28T07:25:58+08:00。独立机制实际完成学习身份 8 条、规划对照 8 条。真实学习使用 14336 个不同事件，四臂匹配比较为 False。封存模型排序与路径梯度准入分别为 False、False。按 D57 原件逐项核实 GitHub Release 的 624 个资产、175749405063 字节。逐头节点、资格、未运行原因和配对结果见 w59/outcome.json。
+
+### 20261128/w59/process-files-H-post-terminal｜W59 过程文件迁入 H 盘并释放 D57 源文件
+
+以 W59 科学终局 c8378beae4be 为基点，在 D57 核对 400 条已结束尝试及其交付。冻结选择时刻为 2026-11-28T11:30:00+08:00。六个 W61 工作树的已登记引用、物理/材料/控制时序、发布记录、actor/critic/optimizer、冻结基线与环境保留。7 条技术中断的故障诊断留在原路径。此次存储作业新增物理步与学习事件均为 0。
+
+H 盘六路接收、旧包独立回读。源清单 330,939 条、逻辑 14,941,184,899 字节，经内容去重为 307,139 个对象。新传 14,035,244,826 字节，复用 H 上 271 个已核验对象。新载荷为 188 个包和 31 个可直接播放的视频。H 盘索引在 H:\MPC+RL\00_catalog\migration-20261128-w59-process\archive-index.sqlite，源清单 SHA-256 为 7e244a56c765d4b9f1cef6ad563739cf5b1b47de6871035764b4855b1a2c185b。
+
+整批 H 回读通过后，D57 再核对精确路径、设备/inode、大小、时间、打开状态和 SHA-256，并逐文件释放。330,939 个原路径已再次检查，剩余 0。按最后一个硬链接计，原过程数据实际释放 15,327,535,104 字节。另将本轮生成的 8 个中转工作文件压缩到 H 并核验后清理，占用 254,308,352 字节，单列计量。删除窗口内共享数据盘可用空间由 528,742,842,368 变为 544,212,508,672 字节。
+
+迁移前后 42,368 个训练与复现实验输入的路径、大小、时间和文件身份摘要一致，248 项关键内容摘要一致。A/B 各 120 个原 M1 查询在 D57 从同一足印和时刻重建。H SQLite 完整性检查通过，已按 D57 原路径实际提取一个归档成员并重核摘要。原科学终局和最终 Release 的证据仍以其冻结提交为准。对照或恢复其他 MPC 诊断可用新 H 目录内的读取原件.py。
+
+
+### 20261128/review/w59-terminal-and-w61-six-lanes｜最终证据复核与下一轮研究发布
+
+事件 ID：20261128/review/w59-terminal-and-w61-six-lanes  
+日期：2026-11-28，Asia/Shanghai；状态：只读仓库审查、原件/视频核验、文献方法分析与计划发布。  
+审查基点：c8378beae4be371eb4f104782b75e5d295b6f59a；发布采用最新远端父提交，提交SHA由本事件所在Git历史与交付回执解析。
+
+#### 用户目标与决定
+
+用户确认W59本轮结果已推送、六条新算法尚未开工，要求结合日志和视频判断稳定基线/步态、进一步研究论文并尽可能并行推进，推送下一步计划和启动提示词，持续详细每日记录。保留不设后台墙钟截止、不在用户电脑二次归档、保护续训/测试/其他项目的要求。
+
+结论：W59已自然结束，固定其方法和结果；新任务用W61身份并行研发。已有稳定运动底座和两个真实PPO冻结头，尚无一致步态收益、材料历史因果收益、完整模型梯度四臂比较或实机/实时泛化证明。不为把旧gate全变绿而继续改W59。
+
+#### 本轮实际读取和核对
+
+三条并行审查覆盖学习、步态/目标机制、模型/控制/资源。核对最终outcome/index、56批学习账本/冻结选择、24机制窗288目标、各原资格与phase/gait、M3/50k模型完成表、10k准入、实际W59→W57→r60→r58→r52控制继承链、数值异常原文、并发与GPU回放。
+
+SHA核验5个媒体资产：B3/5901/5902 A/E60片段包、5901 B/E600全片、B3 A/E60全片；另核E600 originals-021数据ZIP。主审实际观察124帧：三份A/E60各六阶段四帧、E600全程16时刻、三个局部12帧序列；没有宣称看完全部原片或重新下载175GB。B3与E600完整源片实测30fps；三份片段25fps/12.24s，B3拼接PTS起点0/2.04/4.08/6.12/8.16/10.20。片段播放时钟不代替物理事件时钟。
+
+本轮核心方法复核15篇正文方法/实验范围＋1篇仅官方摘要，含复读；来源覆盖Nature/Science系列、TRO/IJRR、RSS/ICML及2026预印本。E设计另补TRPO/Q-Prop/LAX基础正文指定范围及CAPO引言/动机；不计作近期新增文献，不重算既有89条，不杜撰2025中科院分区。最新11-gait/style实际PDF为2611.25958v2、2026-11-21。SuperMimic个人复现未参与。
+
+#### 确定的完成量与资格
+
+W59终局400 attempts：129 passed、264 horizon、5 execution_error、2 ENOSPC。构成为240个动作/首更新分支、114训练回合、22原资格、24机制窗；累计71,513,710物理子步、14,302.742模拟秒，不当400个长任务。
+
+5901 used5888/23批/272 accepted actor/368 critic，冻结4096；5902 used8192/32批/366 actor/512 critic，冻结8192；5903 used256/1批/0 actor/16 critic。合计14336 used、638 actor、896 critic、imagined0。未运行Diff分支不计失败或成功。
+
+名义B3和Fixed-action各A/B E60；5901 A E60/B E600；5902 A/B E60。5901B原件确认十次合法往返、471.444s首次任务完成、最后request469.228–471.444s、随后128.556s保持。final_stable_s=130.556不是完成timestamp。保留每个完整head，不按case拼最优策略。
+
+#### 步态与机制：解决了哪些判断问题
+
+抽样内体态总体平稳、往返/收尾可见，没有足够大的视觉差异支持“PPO明显更自然”。E600材料直行周期0.628–0.631s vs硬地0.528s；建立承载前累计off均值26.201 vs5.541ms；首次20ms峰值p95 157.211 vs82.610N。off不等于整段腾空，也不能由此说普遍支撑失败。CoT/滑移按统一moving掩码比较，不混phase另一指标。
+
+E60相对B3：5901A滑移+1.853%/CoT+0.558%，B−1.725%/−0.799%；5902A−2.730%/−0.877%，B+3.156%/−0.150%。收益混合，不能只报最好case。
+
+24机制窗均完成23次body traversal并回家，严格通过0。288目标44达成、168无指定FR source、61有source无合格RR pair、15有pair最终未匹配、0身体未完成。F01全部失败；heldout16个F01均无source。判据要求指定2cm cell、指定forward traversal、FR后立即下一load来自同traversal RR等；环境整体有大量历史机会。结合旧actor无直接XY脚位与奖励未优化十二目标，明确覆盖/权限/奖励错位是重要解释，尚非唯一因果定论。no-pair/最终filter子因仍需原始ledger细分。
+
+三份cross_foot_reload片段不是相同事件：5902是RR→FL，B3/5901是FR→RR，cell与gap不同；不能当12目标因果通过视频。completion序列468.50–470.70s还在任务完成前，471.444精度来自receipt，599s帧属于保持段。
+
+#### 模型、学习与资源的更正
+
+1. 六个WM确已训练50k；长rollout和准入为10k。不得把10k发散写成最终50k已证伪。A0补测现有50k与条件PANN/新离散模型同时推进。
+2. M3只在67行拟合3系数，跨足力MAE局部下降但整体短误差略增，physical=false，未构成材料族自适应。
+3. 5901训练在36.774s报WBC maximum iterations reached，原文已核，尚未定位不可行/条件/缩放/warm start。5902 ENOSPC恢复保留118旧闭合行+138新行，不重复计样本。
+4. 5903八状态均值−0.0000402145、区间跨零、无硬失败；原均值符号拒绝如实保留，新轮不按该规则筛seed。
+5. 源码高32位seed与官方CPU MT19937低32初始化存在别名风险，三头首批统计相同；AutoDL实际torch版本/原噪声尚未现场重现，不写已实证。W61采用定向版本核验和少量独立持久RNG。
+6. 现有WBC已含18+12变量、浮动基六行、滚动接触、总扭矩/位置hold界等；新WBC要改任务惯量/内模/实现关系，不能把M/J重包装。
+7. **更正六槽解释**：四路0.085634926→六路0.141323277/0.134743940总仿真秒/墙钟秒，即+65.03%/+57.35%；旧+1.90%/+1.14%只指原四路自身，不是总增益。此更正支持在真实资源余量下使用六槽。
+8. hybrid观察器1.626倍为同输入回放，完整E60 1.159–1.184倍仅投影，未实测闭环或500Hz。小batch GPU更慢；PPO优化极短，采样链才是主要瓶颈。共享CPU/RAM/整卡指标不能当独占机器余量。
+
+#### 新计划的实质内容和完成边界
+
+A条件PANN材料身份/历史分离与一致离散执行WM；B完整脚位/触地/承载轨道族与真实相位反馈/过渡；C拓扑保留GPU搜索与有限步稀疏精化；D可实现任务惯量/混合内模；E混合事件策略/执行响应几何；F适配后真实任务目标共同训练。每线一个首选主实现，强对照和归因消融配套，不把十五方向都列成本轮义务。
+
+E正式PPO/SPO/E-score×3独立seed×8192=73728 planned used，统一真实模式/连续轨迹/持续时间。旧3D只另记定向验证。分叉后各自on-policy采样，2048/4096不筛seed，同自然梯度无执行几何是必要后续消融。新几何额外控制查询成本明确计费，不能套用W59优化仅几秒的成本。
+
+F首版明确A适配映射与C状态条件提议/有限预算头，共同support→有限适配→当前候选真实query→反对称黑箱外层更新；固定骨干/控制器，约束材料预测质量，比较独立/顺序/同目标交替/共同训练，匹配support/query和计算。模型梯度可信后才做加速消融，未宣称五模块已联合成功。
+
+先单模块可信测量，再A+C/B+D的2×2和E固定组合，准备好的组件对无需等全部成熟。六研发线独立工作区，统一最多六物理槽，双collector原子两槽最多三campaign；GPU材料/模型/规划与物理按瓶颈并行。
+
+#### 发布前并发更新与命名衔接
+
+整合前main新增d6802d3554d7f51d6f0807002570a5913d73b540存储回执。它以W59科学终局为基点，记录11:50:41完成H盘迁移及D57源释放：330939个路径、逻辑14.941GB、按最后硬链接释放15.328GB；42368个训练/复现输入及248项关键摘要、两冻结actor和7条技术故障原件保留。这是读取到的另一存储作业回执，本审查没有执行该迁移、删除或用户电脑归档。
+
+回执还明确引用六个已登记W61工作树；仓库尚未见w61结果目录，不能推断已训练，也不能忽视工作树存在。为避免重复开一套，把尚未发布的W60草稿统一改名W61，优先核实并续接既有工作区；新算法是否已有现场实现以具体commit/日志为准。保留并合并对方新增日记和index指针，未覆盖其迁移记录。科学统计仍固定c8378bea不回改；后继读取已迁移诊断时按索引取需要成员，不假定旧源路径仍存在。
+
+#### 本轮真实新增、发布与未解决
+
+本轮新增算法实现0、新训练0、新plant步0、新实机0；未连接AutoDL修改运行、未创建新的基线tag或研发分支，未迁移/删除原件。已形成最终审查、W61计划、启动提示词、机器合同、基线交接、专题/来源/视频/学习设计和可审查帧图；更新AGENTS当前入口并让旧研究地图/旧启动词指向W61，旧内容保留。
+
+独立审阅纠正Dreamer“真实critic”的误导词，补模式内导数/PSD度量、实际持续时间折扣、F最小共同训练及单模块阴性仍可检验交互的边界。发布前核JSON、计数、路径/链接、原文保留和文件摘要；非强推整合，发布后核远端提交/内容。发布SHA以Git历史和本轮回执为准，不在提交正文循环写尚未产生的SHA。
+
+仍未解决：新算法未实现/验证，材料适应/完整步态/模型梯度/全栈联合创新仍是候选；新任务统计功效、机载时延、实机和未见组合泛化需要后续实证。下一执行入口为docs/S1_W61_START_PROMPT.md。无墙钟后台截止、无对话结束kill；GitHub成功后不在用户电脑二次归档，本唯一日记继续逐日详细追加。
+
+
+
 ## 以后每天如何追加
 
 ### 一天一个日期标题，按事件而不是聊天轮次记
@@ -1593,4 +2287,3 @@ CPU/GPU 与真实并行：
 一个只读审查代理独立审查版本/依赖边界，主代理核验最新远端合同和学习证据。发布采用最新父提交、expected SHA非强推，并逐文件回读。提交SHA见包含本事件的Git历史及交付回执。
 
 下一步：现场执行者按更新后的启动词核对实际runtime与已登记W59后继，在现有index内整理收尾；并在独立工作区开展六线首批研究。最终基准只选已取得对应资格的具体身份，不为给W59贴“稳定”标签而无限修全部负分支。
-

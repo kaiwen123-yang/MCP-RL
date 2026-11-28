@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Render full recorded R12 trajectories with a visual-only material strip."""
-import argparse,json,subprocess,sys
+import argparse,json,os,subprocess,sys
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 import imageio.v2 as imageio
@@ -10,7 +10,7 @@ ROOT=Path(__file__).resolve().parents[1]
 CONTRACT=json.loads((ROOT/"experiments/terrain_memory/s1-go2-local-readiness-r12.json").read_text())
 from s1_go2_r11_runtime import PHASES
 SMALL=ROOT/CONTRACT['outputs']['compact_root'];LARGE=ROOT/CONTRACT['outputs']['large_root']
-def render(name, output_dir=None, *, first_frame=0, pace=None):
+def render(name, output_dir=None, *, first_frame=0, pace=None, nvenc=False):
     out=LARGE/name
     dest=out if output_dir is None else Path(output_dir)
     dest.mkdir(parents=True,exist_ok=True)
@@ -30,7 +30,12 @@ def render(name, output_dir=None, *, first_frame=0, pace=None):
     camera=mujoco.MjvCamera();camera.azimuth=125;camera.elevation=-23;camera.distance=4.8
     sample=np.unique(np.r_[np.searchsorted(a['time'],np.arange(0,a['time'][-1],1/30)),len(a['time'])-1])
     target=dest/('full-mission-qualification-noted.mp4' if mismatch else 'full-mission-material-overlay.mp4')
-    with imageio.get_writer(target,fps=30,codec='libx264',quality=8,ffmpeg_params=['-threads','2']) as writer:
+    if nvenc:
+        video_options=dict(codec='h264_nvenc',quality=None,ffmpeg_params=[
+            '-filter_threads','1','-threads','1','-preset','p4','-rc','vbr','-cq','15','-b:v','0'])
+    else:
+        video_options=dict(codec='libx264',quality=8,ffmpeg_params=['-threads','2'])
+    with imageio.get_writer(target,fps=30,**video_options) as writer:
         for i in sample[first_frame:]:
             d.time=float(a['time'][i]);d.qpos[:]=a['qpos'][i];d.qvel[:]=a['qvel'][i]
             d.mocap_pos[:]=a['mocap_pos'][i];d.mocap_quat[:]=a['mocap_quat'][i]
@@ -61,6 +66,8 @@ def render(name, output_dir=None, *, first_frame=0, pace=None):
     renderer.close()
     record=dict(attempt=name,path=str(target),size=target.stat().st_size,
         scope='Full recorded robot trajectory, visual-only strip overlay; no new integration or exaggerated deformation')
+    if nvenc:
+        record.update(encoder='h264_nvenc', preset='p4', cq=15, fps=30, frame_count=len(sample)-first_frame)
     if first_frame:
         record.update(first_frame=first_frame, frame_count=len(sample)-first_frame)
         marker='video-segment.json'
@@ -69,6 +76,14 @@ def render(name, output_dir=None, *, first_frame=0, pace=None):
     (dest/marker).write_text(json.dumps(record,indent=2)+'\n')
     print(json.dumps(record),flush=True)
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--attempt',required=True);a=p.parse_args()
-    render(a.attempt)
+    global SMALL,LARGE
+    p=argparse.ArgumentParser();p.add_argument('--attempt',required=True)
+    p.add_argument('--w59-nvenc',action='store_true');p.add_argument('--output-dir',type=Path)
+    a=p.parse_args()
+    if a.w59_nvenc:
+        from publish_s1_w59 import STATE,RAW
+        SMALL,LARGE=STATE/'episodes',RAW
+        # The bundled imageio FFmpeg lacks the NVENC codec. Only this render subprocess uses the system binary.
+        os.environ['IMAGEIO_FFMPEG_EXE']='/usr/bin/ffmpeg'
+    render(a.attempt,output_dir=a.output_dir,nvenc=a.w59_nvenc)
 if __name__=='__main__':main()

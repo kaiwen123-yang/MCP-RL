@@ -1,3 +1,29 @@
+# 当前入口：W59已结束并固定，W61六线研发待执行（2026-11-28）
+
+发布前main的d6802d35存储回执已记六个W61工作树；优先核实其分支/修改/运行与引用并续接，不创建第二套W60或重复W61。该回执和同期每日条目保留。W59科学结果仍以c8378bea冻结；工作树被引用不等于已训练，现场状态待核。
+
+先读[W59最终审查](docs/S1_W59_REVIEW_20261128.md)、[W61当前计划](docs/S1_W61_RESEARCH_PLAN.md)、[W61启动提示词](docs/S1_W61_START_PROMPT.md)、[机器合同](experiments/terrain_memory/s1-w61-research-contract.json)、[基线交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W59-review/handoff.json)、[方法与视频证据](docs/research/20261128-w59-review/README.md)。[2026-11-26研究地图](docs/S1_ALGORITHM_REDESIGN_RESEARCH_20261126.md)保留更广路线；当前执行统一由W61入口管理，不把旧文档中“W59待执行/运行中”当最新事实。
+
+固定审查c8378bea：W59于2026-11-28 07:25:58+08自然终局，400 attempts、active=[]；129 passed、264 horizon、5 execution_error、2 ENOSPC。真实PPO used14336，imagined0，四臂未匹配。名义B3/Fixed-action各A/B E60；5901@4096为A E60、B E600；5902@8192为A/B E60。5901B在471.444s完成十往返，随后128.556s保持，总窗600s；不跨身份借资格、不说PPO连续行走600s。24机制窗都完成路线回家，但0个12/12；288目标中168无指定source，不能当24次摔倒。六个WM训到50k，现有长滚动/准入证据来自10k，不能外推最终50k已评。
+
+W59方法、actor、plant、原合同和结果冻结，不为全gate变绿继续迭代。50k补测、RNG修正、36.774s WBC失败诊断与新算法均用W61新身份；它们与主算法开发并行。当前本轮仅审查/设计发布，未启动W61训练、物理或实机。启动前核实际job/PID/tmux/物理时钟及资源，保留有效任务，不以仓库快照冒充现场。原件/配置/normalizer/build/RNG按原receipt解析，缺字段先取证，不编造。
+
+A条件PANN/一致离散WM，B受控轨道族/真实接触/过渡，C拓扑保留GPU采样与有限步精化，D可实现任务惯量/混合内模，E混合事件策略/执行几何更新，F实际联合训练。每模块先一个主实现，不要求十五条候选同时完成。六线隔离worktree与固定依赖，公共接口/配置/日记单一整合者。仓库已有s1_w60_columns等历史r60文件，禁止覆盖当新模块。
+
+E首批正式PPO/SPO/E-score×6001/6002/6003×8192=73728 planned distinct real used，统一真实模式+连续轨迹+持续时间接口；旧3D仅定向开发检查。实际torch验证高32位seed风险，使用少量独立持久RNG并保存状态。2048/4096是曲线节点，不以八状态首步均值符号筛seed。F首版固定骨干/控制器，联合A适配映射和C状态条件提议头，执行support→有限适配→当前候选真实query→明确黑箱或可信梯度外层；不能只交接口或将依赖参数的planner漏出梯度。
+
+先单模块可信测量，再A+C/B+D的2×2与E固定组合，最后同组件分别/共同训练。单模块未正收益不妨碍有依据的预注册交互研究；不改奖励/seed追正、不把W59已用heldout当W61独立最终集。SuperMimic只用官方论文与源码，排除个人学习复现；NeuralActuator不限制整体设计。
+
+统一最多六物理槽，实测六路总吞吐较四路+57%–65%；原四路自身+1%–2%不是总提升。依据当前CPU/RAM/显存/IO/他项目余量准入，双collector原子持两槽，六槽最多三campaign，native workers全计量。GPU材料/模型/规划与物理按瓶颈并行。hybrid observer1.626倍是回放，完整闭环尚待W61实测；训练吞吐不冒充机载实时。
+
+所有新后台deadline=null、wall_deadline_enabled=false、kill_on_conversation_end=false，不传墙钟完成时刻；自然数据/回合工作量、有限控制周期预算、数值/物理终止及用户停止保留。GitHub非强推整合，原件运行端增量直传并核size/digest；交付后不在用户电脑二次下载、复制、镜像或归档。本计划不自动迁移/删除原始数据、不影响其他项目。
+
+唯一[docs/S1_DAILY_WORKLOG.md](docs/S1_DAILY_WORKLOG.md)按上海日期、事件ID详细记录目标/假设、具体改变/身份、真实采样/更新/进度、解决/未解、正负证据、资源并行、论文范围、发布和下一步；不另建竞争日记。具条件后继同轮持续推进，计划/文献/局部probe不算完整算法。
+
+---
+
+## 以下入口与原合同属于历史，仅约束相应旧身份
+
 # 当前入口：W57/W58已结束，W59官方方法融合研究待执行（2026-11-26）
 
 先读[最新完整审查](docs/S1_W58_REVIEW_20261126.md)、[W59研究计划](docs/S1_W59_RESEARCH_PLAN.md)、[官方SuperMimic与近邻](docs/S1_W59_OFFICIAL_METHODS_20261126.md)、[新启动提示词](docs/S1_W59_START_PROMPT.md)、[机器合同](experiments/terrain_memory/s1-w59-research-contract.json)与[交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W58-review/handoff.json)。以下旧“当前”、W57/W58未完成、并发数及旧学习预算属于历史，不覆盖本入口。

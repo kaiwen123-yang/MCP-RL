@@ -45,7 +45,7 @@ def transient_transfer(message):
     return message.rstrip().endswith('eof') or any(reason in message for reason in (
         'tls handshake timeout', 'connection reset', 'unexpected eof', 'http 502',
         'http 503', 'http 504', 'i/o timeout', 'connection timed out',
-        'error connecting to api.github.com', 'error connecting to uploads.github.com'))
+        'http 500', 'error connecting to api.github.com', 'error connecting to uploads.github.com'))
 
 
 def gh(*args):
@@ -132,7 +132,7 @@ def preserve_starter(row, name, size, checksum):
             raise RuntimeError(f'Could not preserve incomplete GitHub asset {asset_id}: {edit.stderr.strip()}')
 
 
-def transfer(path, name, release, existing):
+def transfer(path, name, release, existing, *, lookup_assets=None):
     size = path.stat().st_size
     checksum = 'sha256:'+sha(path)
     original = existing.get(name)
@@ -142,7 +142,7 @@ def transfer(path, name, release, existing):
         routes = ('academic','direct') if original and original['state']=='starter' else ('direct','academic')
         for route in routes:
             proc = network_gh(route, 'release', 'upload', TAG, str(path), '-R', REPO)
-            _, assets = release_assets(name)
+            _, assets = (lookup_assets or release_assets)(name)
             fresh = assets.get(name)
             row = preserve_starter(fresh, name, size, checksum)
             if row is not None:
