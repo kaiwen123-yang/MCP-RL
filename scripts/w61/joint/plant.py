@@ -1,7 +1,7 @@
 """Short Go2 forefoot-entry support/query in the existing reference TM02 strip."""
 from pathlib import Path
 from types import SimpleNamespace
-import hashlib, json, os, pickle, resource, subprocess, time
+import hashlib, json, os, resource, subprocess, time
 import mujoco
 import numpy as np
 from s1_go2_joint_material import JointMaterial
@@ -49,7 +49,7 @@ class Controller(FController):
                   fall=quintic(mid,vmid,np.zeros(3),landing,np.zeros(3),np.zeros(3),.10))
 
 
-def rollout(folder,theta,case,noise_seed,arm='joint',record=True):
+def rollout(folder,theta,case,noise_seed,arm='joint',record=True,head_factory=MaterialHead):
     spec=json.loads(CONTRACT.read_text())
     folder.mkdir(parents=True,exist_ok=False)
     wall=time.monotonic(); cpu=time.process_time()
@@ -71,16 +71,16 @@ def rollout(folder,theta,case,noise_seed,arm='joint',record=True):
     mat.attach(model,data,feet,allowed,folder,model)
     mission=SimpleNamespace(task={'turnaround_xy_m':[case['x_m']+3,0.],'return_xy_m':[case['x_m'],0.]},
         phase='initial_stand',v=np.zeros(3),w=np.zeros(3),heading=0.,body_target=np.array([case['x_m'],0.,.27]))
-    head=MaterialHead(MATERIAL,spec['frozen_fit_seed'])
+    head=head_factory(MATERIAL,spec['frozen_fit_seed'])
     noise_rng=np.random.default_rng(noise_seed)
     k=spec['reference_k_N_m']; cal=None;code=None
     support=[];trace=[];plans=[];timing=[];grf_ticks=[];end_reason='horizon'
     energy=0.;slip=0.;track=0.;query_steps=0;prefix_x=float(data.qpos[0]);pretime=0.
     support_ticks=round(spec['support_s']/DT)
     total=support_ticks+round(spec['query_s']/DT)
-    commit=subprocess.check_output(['git','-C',str(ROOT),'rev-parse','HEAD'],text=True).strip()
+    commit=os.environ.get('W61_F_RUNTIME_COMMIT') or subprocess.check_output(['git','-C',str(ROOT),'rev-parse','HEAD'],text=True).strip()
     identity=dict(case=case,noise_seed=int(noise_seed),theta=np.asarray(theta).tolist(),arm=arm,
-                  source=commit,contract_sha256=digest(CONTRACT),plant_sha256=digest(G1),
+                  source=commit,plant_runner_sha256=digest(__file__),head_sha256=digest(Path(__file__).with_name('heads.py')),contract_sha256=digest(CONTRACT),plant_sha256=digest(G1),
                   A_checkpoint=digest(MATERIAL),cpu_affinity=sorted(os.sched_getaffinity(0)),
                   pid=os.getpid(),mujoco=mujoco.__version__,physics_step_s=TICK,control_s=DT,
                   deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False)
@@ -92,7 +92,7 @@ def rollout(folder,theta,case,noise_seed,arm='joint',record=True):
         if tick==support_ticks:
             saved=[(s['bottom'],s['fz'],s['soft']) for s in support]
             np.savez_compressed(folder/'support.npz',bottom=np.stack([r[0] for r in saved]),fz=np.stack([r[1] for r in saved]),
-                                soft=np.stack([r[2] for r in saved]),dt_s=np.array([s['dt'] for s in support]))
+                                soft=np.stack([r[2] for r in saved]),xy=np.stack([r['xy'] for r in support]),dt_s=np.array([s['dt'] for s in support]))
             flag=mujoco.mjtState.mjSTATE_INTEGRATION
             state=np.empty(mujoco.mj_stateSize(model,flag));mujoco.mj_getState(model,data,state,flag)
             np.savez_compressed(folder/'support-end.npz',state=state,ground_e=mat.ground.e,ground_q=mat.ground.q,
@@ -138,7 +138,7 @@ def rollout(folder,theta,case,noise_seed,arm='joint',record=True):
                 end_reason='nonfoot_or_body_fall';break
         if tick<support_ticks and (tick+1)%spec['support_decimation']==0:
             support.append(dict(dt=DT*spec['support_decimation'],bottom=mat.force_boundary_bottom[:,2].copy(),
-                    fz=mat.force[:,2].copy(),soft=mat.soft.copy()))
+                    xy=mat.force_boundary_bottom[:,:2].copy(),fz=mat.force[:,2].copy(),soft=mat.soft.copy()))
         timing.append((time.perf_counter()-begin)*1000)
         if end_reason!='horizon':break
     ctl.flush()

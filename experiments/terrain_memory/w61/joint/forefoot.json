@@ -1,5 +1,5 @@
 {
-  "id": "w61-joint-forefoot-entry-1",
+  "id": "w61-joint-forefoot-entry-world-cells-v2",
   "description": "New Go2 ability task on the existing TM02 strip. No original-task qualification.",
   "support_s": 0.36,
   "query_s": 0.76,
@@ -53,8 +53,40 @@
   ],
   "actions": "two load-transfer styles, continuous x landing shift and COM height. Original force MPC, inverse dynamics WBC and hard plant bounds.",
   "observation": "measured sole bottom, force, known flat strip geometry, base velocity, target; plant strain internal state is logged only.",
-  "limits": "support fit uses a per-sole A1 projection during stationary interior contact; walking-query ground is full world-cell TM02",
+  "limits": "Material fit uses area-weighted world-cell traction-free response and separate zero-load recovery at 8ms observation spacing; walking plant is the original 0.2ms reference material.",
   "deadline": null,
   "wall_deadline_enabled": false,
-  "kill_on_conversation_end": false
+  "kill_on_conversation_end": false,
+  "study": {
+    "id": "w61-f-ac-joint-real-v2",
+    "development": "f-forefoot-cost-v1: 10.8033 wall s, 2330 query integration steps, WBC maximum iterations at 0.826 s; measured footprint translated during support so the formal observer tracks world cells.",
+    "rounds": 4,
+    "pairs_per_round": 1,
+    "training_seeds": [
+      6181,
+      6182,
+      6183
+    ],
+    "sigma": 0.14,
+    "step_size": 0.065,
+    "max_block_delta": 0.17,
+    "theta_bound": 1.2,
+    "arms": [
+      "independent",
+      "A_then_C",
+      "alternating",
+      "simultaneous"
+    ],
+    "initial_theta": "deterministic seed-specific N(0,.08) paired across arms",
+    "paired_cost": "Each sign repeats identical deterministic support and runs its own true query. Absorbing failure charges unexecuted physical time, wall/steps are reported as observed.",
+    "histories": "three full training specimens in registered cycle; two new specimens for evaluation. Fixed checkpoint before unseen rollout. No W59 heldout to select.",
+    "fixed_pair_controls": [
+      "frozen_both",
+      "frozen_A",
+      "frozen_C",
+      "joint"
+    ],
+    "compute": "one real Go2 episode per sign, support/query duration, K two material steps and one finite refinement equal; report actual termination and exposure",
+    "optimizer": "paired Gaussian perturbation estimate of smoothed objective, Euclidean bounded per-step norm. Independent A-only calibration and C-only control with a reference A; sequential first two A then two C; alternating same joint objective with alternating blocks; simultaneous A+C every round."
+  }
 }

@@ -1,6 +1,5 @@
 """Support-only material identification and a state-conditioned finite deployment-budget proposal."""
 import numpy as np
-from scipy.special import expit
 from w61.mpc.proposal import finite_proposal
 
 # Three initial material coordinates, a rank-one learned preconditioner in the encoder
@@ -40,17 +39,31 @@ class MaterialHead:
         return float(9*k*g/(3*k+g)*1e6*.025*.001/.05)
 
     def predict(self, code, support):
-        # Support is a standing, non-sliding sole on the interior of the strip.
-        # Reuse A's traction-free column boundary, complete per-foot support history,
-        # gamma, area and thickness. No plant parameter or internal strain is observed.
+        # Reconstruct the measured footprint in world coordinates. Each cell sees
+        # one sole displacement; unloaded cells recover between foot visits.
         from tm02.w61_material import MaterialResponse
         from tm02.w61_material_columns import FamilyColumns
         columns=FamilyColumns(MaterialResponse(self.coefficients(code),self.tau,self.strain_scale))
-        history=columns.virgin(4)
-        force=[]
+        frames=[];index={};half=np.sqrt(.001)/2
         for row in support:
-            history,f,_=columns.contact(history,row['bottom'],.001*row['soft'],row['dt'])
-            force.append(f)
+            legs=[];keys=[];areas=[]
+            for leg in np.flatnonzero(row['soft']):
+                lo,hi=row['xy'][leg]-half,row['xy'][leg]+half
+                for x in range(int(np.floor(lo[0]/.02)),int(np.floor(hi[0]/.02))+1):
+                    for y in range(int(np.floor(lo[1]/.02)),int(np.floor(hi[1]/.02))+1):
+                        corner=np.array([x,y])*.02
+                        area=np.maximum(0.,np.minimum(hi,corner+.02)-np.maximum(lo,corner)).prod()
+                        if area>0:
+                            keys.append(index.setdefault((x,y),len(index)));legs.append(leg);areas.append(area)
+            frames.append((np.array(keys,int),np.array(legs,int),areas))
+        history=columns.virgin(len(index));force=[]
+        for row,(keys,legs,areas) in zip(support,frames):
+            # Distinct feet do not share a cell in this observed support.
+            if len(np.unique(keys))!=len(keys):raise ValueError('Overlapping world-cell support in the F protocol')
+            disp=np.zeros(len(index));a=np.zeros(len(index))
+            disp[keys]=row['bottom'][legs];a[keys]=areas
+            history,f,_=columns.contact(history,disp,a,row['dt'])
+            force.append(np.bincount(legs,weights=f[keys],minlength=4))
         return np.asarray(force)
 
     def adapt(self, theta, support, steps):
