@@ -40,8 +40,17 @@ def api(args,env=None):
 
 
 def inventory():
-    pages=json.loads(api(['--paginate','--slurp',f'{PREFIX}/{RID}/assets?per_page=100']))
-    return {x['name']:x for page in pages for x in page}
+    for attempt in range(4):
+        env=dict(os.environ)
+        if attempt==3:
+            for key in ('HTTP_PROXY','HTTPS_PROXY','http_proxy','https_proxy'):
+                env[key]='http://127.0.0.1:17897'
+        try:
+            pages=json.loads(api(['--paginate','--slurp',f'{PREFIX}/{RID}/assets?per_page=100'],env))
+            return {x['name']:x for page in pages for x in page}
+        except subprocess.CalledProcessError as exc:
+            print('inventory',attempt+1,exc.stderr.strip()[:200],flush=True)
+            if attempt==3:raise
 
 
 def push(path):
