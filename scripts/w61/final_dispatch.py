@@ -16,6 +16,7 @@ import time
 from zoneinfo import ZoneInfo
 
 import evaluate_learning as native
+import evaluation_physics as detached
 from campaign import SMALL, RUN, head_name
 from develop import admitted_call
 from hybrid import ROOT, SPEC
@@ -58,6 +59,10 @@ class Episode:
 
     def summary(self):
         return self.path("-summary.json")
+
+    def physical_record(self):
+        physical=self.path("-physical.json")
+        return physical if physical.exists() else self.summary()
 
     def predecessor(self):
         return Episode(self.method,self.seed,self.version,self.case,"E30","nominal")
@@ -170,7 +175,7 @@ def transfer_legacy(pid,ticks,zero_settled,stack,ownership):
 
 
 def physical(ep):
-    cmd=[sys.executable,"-u",str(native.SELF),"native",*ep.args()]
+    cmd=[sys.executable,"-u",str(Path(detached.__file__).resolve()),"native",*ep.args()]
     return admitted_call(ep.name,1,cmd,ram=5.,gpu=800,disk=BUDGETS[ep.kind])
 
 
@@ -236,9 +241,9 @@ def run(legacy):
             for ep,future in list(physics.items()):
                 if not future.done():continue
                 rc=future.result();del physics[ep]
-                if rc or not ep.summary().exists():
+                if rc or not ep.physical_record().exists():
                     atomic_json(ep.path("-technical.json"),dict(attempt=ep.name,exit_code=rc,status="technical_interruption",
-                        reason="native evaluator did not leave a complete rendered result; originals retained",used=0))
+                        reason="native evaluator did not close its physics receipt; originals retained",used=0))
             for ep,future in list(uploads.items()):
                 if not future.done():continue
                 del uploads[ep]
@@ -257,22 +262,30 @@ def run(legacy):
                 key=(ep.method,ep.seed,ep.version)
                 if key not in heads:
                     states[ep]="awaiting_8192";continue
-                summary=ep.summary()
+                summary=ep.physical_record()
                 if summary.exists():
                     row=native.read(summary)
                     if row["actor_sha256"]!=heads[key]["sha256"] or row["case"]!=ep.case or row["stage"]!=ep.kind or row["condition"]!=ep.condition:
                         raise ValueError("Frozen episode receipt mismatch: "+ep.name)
-                    states[ep]="verified" if verified(ep.name) else "publication_pending"
+                    if ep.summary().exists():
+                        states[ep]="verified" if verified(ep.name) else "publication_pending"
+                    elif row.get("physical_samples")==0:
+                        states[ep]="technical_interruption"
+                    else:
+                        states[ep]="physical_closed_render_pending"
                     if states[ep]=="publication_pending":send.append(ep)
                     counts[key]+=1;continue
                 if ep.path("-technical.json").exists():
                     states[ep]="technical_interruption";continue
                 if ep.kind=="E60":
                     pred=ep.predecessor()
-                    if not pred.summary().exists():
+                    if pred.path("-technical.json").exists() and not pred.physical_record().exists():
+                        states[ep]="E30_did_not_qualify";continue
+                    if not pred.physical_record().exists():
                         states[ep]="waiting_for_E30";continue
-                    prior=native.read(pred.summary())
-                    if prior["actor_sha256"]!=heads[key]["sha256"]:raise ValueError("E30 actor mismatch")
+                    prior=native.read(pred.physical_record())
+                    if (prior["actor_sha256"],prior["case"],prior["head"])!=(heads[key]["sha256"],ep.case,ep.head):
+                        raise ValueError("E30 exact head or case mismatch")
                     if prior["stage_status"]!="passed" or not prior["qualification_usable"]:
                         states[ep]="E30_did_not_qualify";continue
                 rec=by_name.get(ep.name)
@@ -284,9 +297,11 @@ def run(legacy):
                 if ep in physics:
                     states[ep]="submitted";counts[key]+=1;continue
                 if rec and rec["state"]=="ended":
-                    # A scheduler can restart between the native exit and writing its technical receipt.
+                    if ep.path(".json").exists() and (native.DATA/ep.name/"trajectory.npz").exists():
+                        detached.native_closure(ep.method,ep.seed,ep.version,ep.case,ep.kind,ep.condition)
+                        states[ep]="physical_closed_render_pending";continue
                     atomic_json(ep.path("-technical.json"),dict(attempt=ep.name,exit_code=rec["exit_code"],
-                        status="technical_interruption",used=0,reason="closed original lease without rendered summary"))
+                        status="technical_interruption",used=0,reason="closed original lease without a native physics result"))
                     states[ep]="technical_interruption";continue
                 states[ep]="ready";candidates.append(ep)
 
@@ -313,7 +328,7 @@ def run(legacy):
                 physics[ep]=workers.submit(physical,ep);states[ep]="submitted"
             long=Counter(states[e] for e in episodes if e.kind in ("short","recovered"))
             all_counts=Counter(states.values())
-            end=all_counts["verified"]+all_counts["E30_did_not_qualify"]==len(episodes)
+            end=all_counts["verified"]+all_counts["E30_did_not_qualify"]+all_counts["technical_interruption"]==len(episodes)
             snapshot=dict(shanghai=now(),pid=os.getpid(),registered_long=96,primary_long=72,ablation_long=24,
                 long=long,all_cases=all_counts,checkpoint_heads_8192=sum(k[2]==32 for k in heads),
                 legacy_pid=pid,legacy_active=is_serial(pid,ticks),single_dispatch_owner=owns,capacity=capacity,
@@ -322,11 +337,11 @@ def run(legacy):
                 completed=end,deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False)
             atomic_json(WORK/"live.json",snapshot)
             changed=(len(heads),all_counts["verified"],all_counts["publication_pending"]+all_counts["verified"],
-                     all_counts["technical_interruption"],owns,end)
+                     all_counts["technical_interruption"],all_counts["physical_closed_render_pending"],owns,end)
             if changed!=signature:
                 atomic_json(summary_path,snapshot)
                 files=[plan,summary_path,*LEDGER.glob("*/parallel-freeze-*.json"),
-                       *LEDGER.glob("*/*-summary.json"),*LEDGER.glob("*/*-technical.json")]
+                       *LEDGER.glob("*/*-physical.json"),*LEDGER.glob("*/*-summary.json"),*LEDGER.glob("*/*-technical.json")]
                 files.extend(DELIVERY/(e.name+".json") for e in episodes if states[e]=="verified")
                 compact_commit(files,"Record W61 concurrent frozen evaluations and verified episode identities")
                 signature=changed
