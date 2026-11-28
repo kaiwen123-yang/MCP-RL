@@ -1,0 +1,60 @@
+{
+  "id": "w61-joint-forefoot-entry-1",
+  "description": "New Go2 ability task on the existing TM02 strip. No original-task qualification.",
+  "support_s": 0.36,
+  "query_s": 0.76,
+  "support_decimation": 4,
+  "decision_ticks": 40,
+  "inner_steps": 2,
+  "search_rounds": 1,
+  "candidates": 5,
+  "reference_k_N_m": 1227272.7272727273,
+  "calibration_weight": 0.3,
+  "frozen_fit_seed": 6111,
+  "development": {
+    "specimen": 612101,
+    "x_m": 0.67,
+    "speed_m_s": 0.18,
+    "lateral_N": 0
+  },
+  "train": [
+    {
+      "specimen": 612111,
+      "x_m": 0.664,
+      "speed_m_s": 0.18,
+      "lateral_N": 2
+    },
+    {
+      "specimen": 612112,
+      "x_m": 0.683,
+      "speed_m_s": 0.22,
+      "lateral_N": -2
+    },
+    {
+      "specimen": 612113,
+      "x_m": 0.65,
+      "speed_m_s": 0.16,
+      "lateral_N": 3
+    }
+  ],
+  "unseen": [
+    {
+      "specimen": 612231,
+      "x_m": 0.658,
+      "speed_m_s": 0.2,
+      "lateral_N": -3
+    },
+    {
+      "specimen": 612232,
+      "x_m": 0.674,
+      "speed_m_s": 0.19,
+      "lateral_N": 4
+    }
+  ],
+  "actions": "two load-transfer styles, continuous x landing shift and COM height. Original force MPC, inverse dynamics WBC and hard plant bounds.",
+  "observation": "measured sole bottom, force, known flat strip geometry, base velocity, target; plant strain internal state is logged only.",
+  "limits": "support fit uses a per-sole A1 projection during stationary interior contact; walking-query ground is full world-cell TM02",
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false
+}
