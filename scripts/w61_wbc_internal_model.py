@@ -42,6 +42,7 @@ class WBCObserver:
         spec=self.cfg['w61'];model=json.loads(Path(spec['artifact']).read_text())
         self.obs_bound=np.asarray(model['bound']);self.periodic=np.asarray(model['periodic'])
         self.use_phase=spec['role']=='hybrid'
+        self.tracking_gain=spec.get('tracking_adaptation_s_inv',0.) if self.use_phase else 0.
         self.obs_bias=np.zeros(6);self.obs_amp=np.zeros(6)
         self.obs_cycle=None;self.obs_period=.52;self.obs_last_event=0
         self.obs_prev=None;self.obs_mq=None;self.obs_data=None;self.obs_applied=[]
@@ -68,6 +69,13 @@ class WBCObserver:
                 innovation=np.clip((v-prev_v)/elapsed-prev_acc,-self.obs_bound,self.obs_bound)
                 estimate=self.obs_bias+(self.obs_amp*prev_phase if self.use_phase else 0.)
                 error=innovation-estimate
+                if self.tracking_gain:
+                    plan=self.last_plan
+                    u=np.clip((t-plan['time'])/self.cfg['mpc']['dt_s'],0.,1.)
+                    xd=(1-u)*plan['state'][0]+u*plan['state'][1]
+                    tracking=np.r_[mq['com_velocity']-xd[9:12],mq['R'].T@(mq['omega']-xd[6:9])]
+                    # Persistent signed velocity error provides an additional bounded adaptation drive.
+                    error+=np.clip(self.tracking_gain*tracking,-self.obs_bound,self.obs_bound)
                 self.obs_bias=np.clip(self.obs_bias+(1-np.exp(-elapsed/.12))*error,-self.obs_bound,self.obs_bound)
                 if self.use_phase:
                     gain=prev_phase/(.2*self.obs_bound**2+prev_phase**2)

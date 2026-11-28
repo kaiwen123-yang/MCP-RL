@@ -64,6 +64,14 @@ def run(args):
         sources.append(identity(mod.__file__))
     controller_cls = type('InstalledF',tuple([*mixins,StableF]),{})
     model = mujoco.MjModel.from_xml_path(str(args.model))
+    perturb=case.get('execution_perturbation',{})
+    if 'floor_friction' in perturb:
+        floor=model.geom('floor').id
+        model.geom_friction[floor,0]=perturb['floor_friction']
+        # MuJoCo combines equal-priority friction by pairwise maximum.
+        # Set both colliding native surfaces while the planner keeps its frozen cone.
+        for name in LEGS:
+            model.geom_friction[model.geom(name).id,0]=perturb['floor_friction']
     data = mujoco.MjData(model)
     mujoco.mj_resetDataKeyframe(model,data,model.key('home').id)
     initial_yaw = np.deg2rad(case['yaw_deg'])
@@ -75,6 +83,9 @@ def run(args):
     ctl = controller_cls(model,data,feet,base,out,conf)
     mission = SimpleNamespace(task={'turnaround_xy_m':[3,0],'return_xy_m':[0,0]}, phase='initial_stand',
                               v=np.zeros(3),w=np.zeros(3),heading=0.,body_target=np.array([0.,0.,.27]))
+    lag=perturb.get('command_delay_ticks',0)
+    delayed=[ctl.home_q.copy() for _ in range(lag)]
+    bias=np.asarray(perturb.get('position_bias_rad',[0.]*12))
     trajectory = []
     timings,sections,events,clocks = [],[],[],[]
     torque_violation,nonfoot_peak,impact,work,slip,length = 0.,0.,0.,0.,0.,0.
@@ -85,7 +96,7 @@ def run(args):
     if not np.isclose(physical,.0002) or substeps!=10:
         raise ValueError('W61 requires the fixed G1 hold/physics ratio')
     runtime = {'status':'running','contract_sha256':digest(args.contract),'case':args.case,
-               'run_id':out.name, 'role':args.role, 'mixins':sources,
+               'run_id':out.name, 'role':args.role, 'execution_perturbation':perturb, 'mixins':sources,
                'runner':identity(__file__),'baseline':identity(sys.modules[StableF.__module__].__file__),
                'baseline_config_sha256':digest(ROOT/'experiments/terrain_memory/s1-w55-f-r55.json'),
                'fit_sha256':digest(args.fit) if args.fit else None,
@@ -117,6 +128,11 @@ def run(args):
         data.xfrc_applied[base] = 0.
         if case['push_start_s'] <= t < case['push_start_s']+case['push_duration_s']:
             data.xfrc_applied[base,1] = case['lateral_push_N']
+        if 'hanging_mass_kg' in perturb and t>=program_time:
+            weight=np.array([0.,0.,-9.81*perturb['hanging_mass_kg']])
+            offset=data.xmat[base].reshape(3,3)@np.asarray(perturb['load_offset_body_m'])
+            data.xfrc_applied[base,:3]+=weight
+            data.xfrc_applied[base,3:]+=np.cross(offset,weight)
         old_event = ctl.event_number
         try:
             action = ctl.update(t,data,mission,contact,grf,np.zeros(4,bool),
@@ -125,7 +141,12 @@ def run(args):
             reason = str(err)
             break
         ctrl_elapsed = time.perf_counter()-begin
-        data.ctrl[:] = action
+        if lag:
+            delayed.append(action.copy())
+            applied=delayed.pop(0)
+        else:
+            applied=action
+        data.ctrl[:]=applied+bias
         for event in ctl.events[last_ev:]:
             events.append(event)
             if event['kind']=='liftoff_committed' and event['legs']==['FR','RL']:
@@ -140,6 +161,7 @@ def run(args):
         last_ev = len(ctl.events)
         body_orient = Rotation.from_quat(data.qpos[[4,5,6,3]]).as_euler('xyz')
         trajectory.append(dict(time=t,qpos=data.qpos.copy(),qvel=data.qvel.copy(),ctrl=action.copy(),
+            applied_ctrl=data.ctrl.copy(),applied_trunk_wrench=data.xfrc_applied[base].copy(),
             foot_xyz=data.geom_xpos[feet].copy(),contact=contact.copy(),force=grf.copy(),
             planned_force=ctl.last_force.copy(),planned_contact=(ctl.event_mode!='swing').copy(),
             foot_target=np.asarray([ctl._swing_reference(t,i)[0] if ctl.event_mode[i]=='swing' else ctl.anchor[i] for i in range(4)]),

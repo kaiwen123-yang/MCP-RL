@@ -1,0 +1,121 @@
+{
+  "id": "w61-wbc-prescribed-execution-perturbations-v1",
+  "task": {
+    "start_move_s": 0.6,
+    "kind": "paired rigid stride and push",
+    "metric": "full 4.8 s then tracking ISE, work, contact and dynamics residuals; shorter failed costs are not comparable"
+  },
+  "cases": {
+    "load": {
+      "speed_m_s": 0.19,
+      "target_speed_m_s": 0.22,
+      "switch_s": 2.7,
+      "duration_s": 5.6,
+      "yaw_deg": -2,
+      "lateral_push_N": 9,
+      "push_start_s": 2.3,
+      "push_duration_s": 0.1,
+      "execution_perturbation": {
+        "hanging_mass_kg": 0.9,
+        "load_offset_body_m": [
+          0.08,
+          0.07,
+          0.03
+        ]
+      }
+    },
+    "friction": {
+      "speed_m_s": 0.19,
+      "target_speed_m_s": 0.22,
+      "switch_s": 2.7,
+      "duration_s": 5.6,
+      "yaw_deg": 2,
+      "lateral_push_N": -9,
+      "push_start_s": 2.3,
+      "push_duration_s": 0.1,
+      "execution_perturbation": {
+        "floor_friction": 0.3
+      }
+    },
+    "delay-bias": {
+      "speed_m_s": 0.19,
+      "target_speed_m_s": 0.22,
+      "switch_s": 2.7,
+      "duration_s": 5.6,
+      "yaw_deg": -2,
+      "lateral_push_N": 9,
+      "push_start_s": 2.3,
+      "push_duration_s": 0.1,
+      "execution_perturbation": {
+        "command_delay_ticks": 1,
+        "position_bias_rad": [
+          0.008,
+          0.0,
+          0.0,
+          -0.008,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "combined": {
+      "speed_m_s": 0.19,
+      "target_speed_m_s": 0.22,
+      "switch_s": 2.7,
+      "duration_s": 5.6,
+      "yaw_deg": 2,
+      "lateral_push_N": -9,
+      "push_start_s": 2.3,
+      "push_duration_s": 0.1,
+      "execution_perturbation": {
+        "hanging_mass_kg": 0.65,
+        "load_offset_body_m": [
+          0.05,
+          -0.08,
+          0.03
+        ],
+        "floor_friction": 0.32,
+        "command_delay_ticks": 1,
+        "position_bias_rad": [
+          0.0,
+          0.009,
+          -0.012,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "comparators": [
+    "frozen original",
+    "bounded ordinary bias observer",
+    "partially decoupled inertia",
+    "inertia+hybrid internal model with bounded tracking and prediction adaptation"
+  ],
+  "physics": "Mechanism benchmark on original rigid Go2 XML. Hanging weight is a specified downward force and its moment, not added payload inertia. Perturb actual native friction, original bounded position actuator and physical command delay; planner and controls use the original model settings.",
+  "model_scope": "Loaded hard contacts define local coordinates; exclude soft normals. No claim of global passivity or DLR verbatim reproduction. External wrench is causal force residual, not privileged external load.",
+  "sources": [
+    "https://elib.dlr.de/221903/",
+    "https://elib.dlr.de/204082/"
+  ],
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false,
+  "controller": {
+    "tracking_adaptation_s_inv": 1.6
+  },
+  "split": "Predeclared new execution conditions, after rigid v1 query results. Four deterministic scenario units; learned phase basis is frozen from the prior fixed design."
+}
