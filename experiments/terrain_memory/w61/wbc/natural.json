@@ -1,0 +1,55 @@
+{
+  "id": "w61-chart-body-1",
+  "task": {
+    "start_move_s": 0.6,
+    "kind": "paired rigid stride and push",
+    "metric": "full 4.8 s then tracking ISE, work, contact and dynamics residuals; shorter failed costs are not comparable"
+  },
+  "cases": {
+    "design": {
+      "speed_m_s": 0.18,
+      "target_speed_m_s": 0.18,
+      "switch_s": 2.55,
+      "duration_s": 4.8,
+      "yaw_deg": 0,
+      "lateral_push_N": 0,
+      "push_start_s": 2.04,
+      "push_duration_s": 0.08
+    },
+    "query0": {
+      "speed_m_s": 0.19,
+      "target_speed_m_s": 0.235,
+      "switch_s": 2.55,
+      "duration_s": 4.8,
+      "yaw_deg": -1.5,
+      "lateral_push_N": 11,
+      "push_start_s": 2.04,
+      "push_duration_s": 0.08
+    },
+    "query1": {
+      "speed_m_s": 0.225,
+      "target_speed_m_s": 0.175,
+      "switch_s": 2.55,
+      "duration_s": 4.8,
+      "yaw_deg": 2.5,
+      "lateral_push_N": -10,
+      "push_start_s": 2.04,
+      "push_duration_s": 0.08
+    }
+  },
+  "comparators": [
+    "fixed r55",
+    "two-level hierarchy on common contact chart",
+    "coupled natural inertia",
+    "partially decoupled natural inertia"
+  ],
+  "physics": "Original G1 0.2 ms, native rigid floor only. Joint and contact limits of r55. Same actuators and MPC.",
+  "model_scope": "Loaded hard contacts define local coordinates; exclude soft normals. No claim of global passivity or DLR verbatim reproduction. External wrench is causal force residual, not privileged external load.",
+  "sources": [
+    "https://elib.dlr.de/221903/",
+    "https://elib.dlr.de/204082/"
+  ],
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false
+}
