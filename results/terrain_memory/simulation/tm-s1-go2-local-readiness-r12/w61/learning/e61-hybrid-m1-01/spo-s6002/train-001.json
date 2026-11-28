@@ -49,30 +49,179 @@
           "actor_sha": "b8938ecbeb62ab4860caec36432af85d19be62df2f7e09463e77665574e77cc6"
         }
       ],
-      "observed": 128
+      "observed": 128,
+      "closed_events_retained": 128,
+      "new_real_episodes": 0,
+      "real_added": 0
     },
     {
-      "status": "technical",
+      "status": "observed",
       "case": "B",
-      "attempt": "e61-hybrid-m1-01-spo-s6002-train-v001-B-e000",
-      "raw": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/spo-s6002/train-001-B/e61-hybrid-m1-01-spo-s6002-train-v001-B-e000",
-      "observed": 109,
-      "reason": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/collect.py\", line 205, in collect\n    command=ctl.update(t,data,mission,contact,grf,joint.soft.copy(),info,replan)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w59_f_backend.py\", line 45, in update\n    return super().update(t,data,mission,contact,grf,soft,material_info,replan)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w54_f_r52_backend.py\", line 775, in update\n    return self.wbc(t,data,mq,mission,scheduled,observed,np.asarray(grf),np.asarray(soft),material_info)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w57_f_backend.py\", line 162, in wbc\n    action = super().wbc(t, data, mq, mission, scheduled, observed, grf, soft, material_info)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w54_f_r52_backend.py\", line 707, in wbc\n    z,status=self._solve(P,q,A,lo,hi,'wbc',t)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w59_f_backend.py\", line 126, in _solve\n    return super()._solve(P,q,A,lo,hi,kind,t,warm)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w54_f_r52_backend.py\", line 458, in _solve\n    raise ControllerNumericalFailure(f'{kind}: {sol.info.status} at physical time {t:.6f}')\ns1_w54_f_r52_backend.ControllerNumericalFailure: wbc: maximum iterations reached at physical time 31.510000\n"
+      "episodes": [
+        {
+          "run": "e61-hybrid-m1-01-spo-s6002-train-v001-B-e000",
+          "reason": "technical",
+          "requested": 110,
+          "observed": 109,
+          "open_cut": 1,
+          "physical_s": 31.50999999995324,
+          "physical_steps": 157550,
+          "wall_s": 640.4491085428745,
+          "cpu_h": 0.17805501017055558,
+          "max_rss_gib": 1.6998786926269531,
+          "cuda_peak_allocated_bytes": 9953792,
+          "progress": 0.7673603268064099,
+          "complete": false,
+          "physical_failure": false,
+          "absolute_mechanical_work_J": 532.3095694304661,
+          "force_peak_percentiles": [
+            70.02656883661068,
+            112.76467146915506,
+            132.0688639031284
+          ],
+          "control_full_ms_p50_p95_p99": [
+            [
+              4.710100591182709,
+              35.221464931964874
+            ],
+            [
+              44.99821681529282,
+              77.17633321881293
+            ],
+            [
+              56.44063185900449,
+              103.34294416010376
+            ]
+          ],
+          "actor_sha": "b8938ecbeb62ab4860caec36432af85d19be62df2f7e09463e77665574e77cc6",
+          "recovery_evidence": {
+            "kind": "wbc",
+            "status": "maximum iterations reached",
+            "iterations": 4000,
+            "physical_s": 31.50999999995324,
+            "primal_residual": 0.0003544829390114689,
+            "dual_residual": 0.14135316638274956,
+            "raw": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/spo-s6002/train-001-B/e61-hybrid-m1-01-spo-s6002-train-v001-B-e000",
+            "raw_result_sha256": "15e48d5f4f4a1a8eb493fc25d6cf1428a7e714424503efdd77df987cb9550077",
+            "solver_sha256": "9bfc778895f694e1697cbd128dd85aab714189aa23c010f5a098c7e0585a0733",
+            "qp_sha256": {
+              "failed-wbc-31.510000-P.npz": "6d370cc4be44320a98be50a45a4f2821d378005811ab10b7fb4293ae2468df36",
+              "failed-wbc-31.510000-A.npz": "3758a16bd709087a6f74f7f31ce81960d704f3ffd1d985ed63bebe6dfe50824c",
+              "failed-wbc-31.510000.npz": "19f8e7c73665f2156489d35a4e59594079401fa75c11cf5685cfc4004b1d7477"
+            },
+            "fingerprint": "1c1aa4663fca27b2ffed4e55cdf7f805f0437e813b244d1b6884efd45a7f2a01",
+            "archived_events_sha256": "ce84a0aea158392f8e659f3d33939f8c447c373cf6ee53f0f20723adee112c31",
+            "open_excluded": [
+              "e61-hybrid-m1-01-spo-s6002-train-v001-B-e000/00109"
+            ],
+            "boundary": {
+              "event_id": "e61-hybrid-m1-01-spo-s6002-train-v001-B-e000/00108",
+              "time_s": 31.443999999953395,
+              "next_value": 0.14684940874576569,
+              "true_successor_request": "e61-hybrid-m1-01-spo-s6002-train-v001-B-e000/00109",
+              "raw_next_obs_persisted": false,
+              "next_obs_source": "original live true successor at event close; its critic value is retained; no observation from reset",
+              "previous_truncated": false,
+              "truncated": true,
+              "bootstrap": 0.14684940874576569
+            }
+          }
+        },
+        {
+          "run": "e61-hybrid-m1-01-spo-s6002-train-v001-B-e001-solver-continuation",
+          "reason": "batch_cut",
+          "requested": 19,
+          "observed": 19,
+          "open_cut": 0,
+          "physical_s": 6.886000000005683,
+          "physical_steps": 34430,
+          "wall_s": 56.756475515663624,
+          "cpu_h": 0.01579446004138889,
+          "max_rss_gib": 1.6550140380859375,
+          "cuda_peak_allocated_bytes": 9953792,
+          "progress": 0.1598581739309426,
+          "complete": false,
+          "physical_failure": false,
+          "absolute_mechanical_work_J": 84.74759810308291,
+          "force_peak_percentiles": [
+            61.71839105756489,
+            110.45025862081874,
+            125.49687254358697
+          ],
+          "control_full_ms_p50_p95_p99": [
+            [
+              3.736458718776703,
+              7.040549069643021
+            ],
+            [
+              43.71780101209878,
+              47.31875509023666
+            ],
+            [
+              49.581132754683495,
+              69.08757884055372
+            ]
+          ],
+          "actor_sha": "b8938ecbeb62ab4860caec36432af85d19be62df2f7e09463e77665574e77cc6"
+        }
+      ],
+      "observed": 128,
+      "closed_events_retained": 109,
+      "new_real_episodes": 1,
+      "real_added": 19
     }
   ],
-  "slots": "3,4",
+  "slots": "1,2",
   "groups": [
     [
-      9,
-      10,
-      11
+      3,
+      4,
+      5
     ],
     [
-      12,
-      13,
-      14
+      6,
+      7,
+      8
     ]
   ],
   "checkpoint_sha": "476401cb61299deee3112918254aa5263de81dbec251f40de7cd7fd6b1ab07a9",
-  "status": "technical_or_starved"
+  "status": "updated",
+  "used": 512,
+  "data_hash": "3bc1de673f58a6687c5030539ff282b496c60dfdc56903024cf92ed45181c5af",
+  "updated_checkpoint": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/spo-s6002/policy-002.pt",
+  "updated_checkpoint_sha256": "51465ea65140644cbff5c2e45ad4a3faa28716de62d67003b6eb7bc646cf93d4",
+  "algorithm": {
+    "method": "SPO",
+    "seed": 6002,
+    "old_version": 1,
+    "distinct_real_used": 256,
+    "requested": 256,
+    "accepted_actor_steps": 16,
+    "proposed_actor_steps": 16,
+    "critic_updates": 16,
+    "final_kl": 0.001126226270571351,
+    "final_surrogate": 0.014903630129992962,
+    "original_advantage_std": 0.2872404158115387,
+    "critic_mse": 0.3639876861125231,
+    "elapsed_mean_s": 0.27042968749961055,
+    "hold_count": 36,
+    "physical_failures": 0,
+    "imagined": 0,
+    "raw_event_reward_mean": 0.03206593326748995,
+    "optimizer_wall_s": 0.11769728921353817
+  },
+  "scientific_update": "unchanged campaign.paired and update kernel",
+  "numerical_continuation": {
+    "original_receipt": "/root/autodl-tmp/MCP-RL-w61-learning/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/learning/e61-hybrid-m1-01/spo-s6002/train-001-original-technical.json",
+    "original_sha256": "cd2650f9e4da978914835330d98d4d03ab3467c6d3043f6a3237494eb3e28c9d",
+    "old_job": "w61-e61-hybrid-m1-01-spo-s6002-train-v001",
+    "original_lease_sha256": "37070649062fca91b29b072b219db5612f66a07f5aba17f4b20c59e0616ec1af",
+    "continuation_job": "w61-e61-hybrid-m1-01-spo-s6002-train-v001-solver-continuation",
+    "canonical_updated_receipt": "/root/autodl-tmp/MCP-RL-w61-learning/results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/learning/e61-hybrid-m1-01/spo-s6002/train-001-solver-continuation.json",
+    "input_checkpoint_sha256": "476401cb61299deee3112918254aa5263de81dbec251f40de7cd7fd6b1ab07a9",
+    "recovery_wrapper_sha256": "ee0088b1a9afce80331eed8295dfdaf800321bbcc6d45f8a1b5fa4d1bb46ff67",
+    "hard_bounds_changed": false,
+    "train_seed_changed": false,
+    "numerical_iterations_changed": false
+  }
 }
