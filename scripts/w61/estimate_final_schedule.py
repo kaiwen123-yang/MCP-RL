@@ -238,6 +238,16 @@ def estimate():
             native_wall=native_wall,render_rate=render_rates,asset_bytes=byte_budget,upload_rate=median(upload_rates),long_rate=rate,
             nominal_render_backlog=sum(render_pending[k]*render_rates[k] for k in render_pending),
             upload_backlog=upload_pending/median(upload_rates),curve_bytes_per_s=curve_bytes_per_phys)
+        sealed={h:(E/h/f"train-{budget//batch-1:03d}.json").stat().st_mtime for h,v in training.items() if v>=budget}
+        for h,t in sealed.items():
+            timeline["head_freeze_dates"][h]=datetime.fromtimestamp(t,SH).isoformat(timespec="minutes")
+        if sealed:
+            earliest=min(sealed.values())
+            timeline["first_8192"]=datetime.fromtimestamp(earliest,SH).isoformat(timespec="minutes")
+            timeline["first_heads"]=[h for h,t in sealed.items() if t==earliest]
+        actual_long_starts=[datetime.fromisoformat(pool_jobs[e["id"]]["started"]) for e in registered
+                           if e["stage"] in ("short","recovered") and e["id"] in pool_jobs and pool_jobs[e["id"]].get("started")]
+        if actual_long_starts:timeline["first_long_start"]=min(actual_long_starts).isoformat(timespec="minutes")
         forecasts[str(width)]=dict(effective_slots=width,source=source,independent_head_timeline=timeline,training_all_slot_hours=train_slot_h,
             remaining_primary_training_net_h=primary_h,long_eval_net_h=long_hours,actual_long_rate=rate,
             original_and_curve_upper_slot_hours=nominal_slot_hours,parallel_upload_estimated_h=bundle_hours,
@@ -282,9 +292,9 @@ def write_forecast(path):
     print(json.dumps({k:r[k] for k in ("as_of_shanghai","primary_used","remaining_long","completed_training_batch_wall_s","scenarios")}),flush=True)
 
 
-def watch():
+def watch(after_current=False):
     with (WORK/"forecast.lock").open("a") as lock:
-        fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        fcntl.flock(lock,fcntl.LOCK_EX if after_current else fcntl.LOCK_EX|fcntl.LOCK_NB)
         signature=None
         while True:
             status=read(WORK/"live.json")
@@ -309,5 +319,7 @@ def watch():
 
 if __name__=="__main__":
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--watch",action="store_true")
-    if p.parse_args().watch:watch()
+    p.add_argument("--after-current",action="store_true",help="Wait for the existing read-only forecast owner to release its lock")
+    args=p.parse_args()
+    if args.watch:watch(args.after_current)
     else:write_forecast(E/"final-evaluation/parallel-throughput-estimate.json")
