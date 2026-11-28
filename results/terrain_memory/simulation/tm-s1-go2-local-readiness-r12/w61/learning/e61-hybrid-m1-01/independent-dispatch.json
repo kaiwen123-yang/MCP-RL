@@ -1,0 +1,44 @@
+{
+  "study": "e61-hybrid-m1-01",
+  "registered_unix": 1795853583.3035305,
+  "scientific_runtime": "W61-E-engineering-v2",
+  "dispatcher": "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/dispatch_independent_heads.py",
+  "dispatcher_sha256": "12861a2f28d82f501443faea58940db5cf433106809d996c91303b3f0f3c9a06",
+  "physical_slots": 6,
+  "atomic_pair_slots": 2,
+  "initial_logical_positions": [
+    "ppo-s6002",
+    "spo-s6002"
+  ],
+  "primary_order": [
+    "e-score-s6001",
+    "ppo-s6001",
+    "spo-s6001",
+    "e-score-s6002",
+    "ppo-s6002",
+    "spo-s6002",
+    "e-score-s6003",
+    "ppo-s6003",
+    "spo-s6003"
+  ],
+  "ablation_order": [
+    "e-fisher-s6001",
+    "e-fisher-s6002",
+    "e-fisher-s6003"
+  ],
+  "allocation": "An incumbent retains priority until its own 8192 or hard terminal. Every batch relinquishes its real pair lease before re-queuing. Unassigned active primary heads receive vacant logical positions ahead of the E-Fisher ablations.",
+  "third_position": "At most three; unchanged shared resource and four/six-flow admission, no reserved physics cores while waiting.",
+  "no_cross_head_version_barrier": true,
+  "primary_budget": 73728,
+  "geometry_ablation_budget": 24576,
+  "curve_nodes": [
+    2048,
+    4096,
+    8192
+  ],
+  "curve_ready_queue": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/render-queue/curve-ready",
+  "final_matrix_primary_and_ablation": 96,
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false
+}
