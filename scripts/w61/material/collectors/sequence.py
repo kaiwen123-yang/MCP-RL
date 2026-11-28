@@ -16,7 +16,7 @@ def main():
             subprocess.run([sys.executable,'-u',str(HERE/'paired.py'),w,arm],check=True)
         return
     for w in cfg['windows']:
-        cmd=[sys.executable,str(POOL),'--runtime',str(SITE),'--job','w61-e-packet-joint-'+w,'--slots','2','--cores','2',
+        cmd=[sys.executable,str(POOL),'--runtime',str(SITE),'--job','w61-e-packet-joint-'+w+('-a02' if w=='prefix12' else ''),'--slots','2','--cores','2',
              '--ram-gib','3.0','--gpu-mib','600','--scratch-gib','.45','--',sys.executable,'-u',str(HERE/'sequence.py'),w]
         subprocess.run(cmd,check=True)
 
