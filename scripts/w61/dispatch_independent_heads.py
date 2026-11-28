@@ -32,6 +32,10 @@ PRIMARY = [k for k,(m,s) in METHOD.items() if m in SPEC["methods"]]
 ABLATION = [k for k in METHOD if k not in PRIMARY]
 BATCH = 2 * SPEC["batch_per_case"]
 VERSIONS = SPEC["used_per_head"] // BATCH
+# Paired collector peak RSS, the simultaneous trainer parent and 0.50 GiB growth,
+# rounded upward. The pool adds its shared 3 GiB reserve independently.
+TRAIN_PAIR_RAM_GIB = 4.75
+RECOVERY_PAIR_RAM_GIB = 5.5
 NODES = [n // BATCH for n in SPEC["curve_nodes"]]
 PREFIX = "w61-"+campaign.STUDY+"-"
 
@@ -147,8 +151,9 @@ def start_pair(head,hist):
         name+="-solver-continuation"
         command=[str(Path(recovery.__file__).resolve()),"resume",method,str(seed),str(version)]
     ck,sha,source=checkpoint(head,version)
+    ram=RECOVERY_PAIR_RAM_GIB if hist["numerical_continuation"] else TRAIN_PAIR_RAM_GIB
     args=[sys.executable,str(previous.LEASE),"--runtime",str(ROOT),"--job",name,"--slots","2",
-        "--cores","2","--ram-gib","5.5","--gpu-mib","1500","--scratch-gib","1.0","--",sys.executable,
+        "--cores","2","--ram-gib",str(ram),"--gpu-mib","1500","--scratch-gib","1.0","--",sys.executable,
         "-u",*command]
     log=STATE/"logs"/(name+".log")
     with log.open("a") as out:
@@ -181,7 +186,7 @@ def third_permitted(jobs,resources,speed):
     nontraining=[r["job"] for r in jobs if not identify(r)]
     caps=read(pool.POOL/"capacity.json")
     enough=(resources["quota_cores"]-resources["total_cpu_cores"]>=caps["spare_cpu"]+2
-        and resources["available_ram_gib"]>=caps["spare_ram_gib"]+5.5
+        and resources["available_ram_gib"]>=caps["spare_ram_gib"]+TRAIN_PAIR_RAM_GIB
         and resources["free_gpu_mib"]>=caps["spare_gpu_mib"]+1500
         and resources["io_pressure_pct"]<=caps["max_io_pressure_pct"]
         and resources["scratch_free_gib"]>=caps["spare_scratch_gib"]+1.
@@ -371,7 +376,7 @@ def run(old_pid):
             time.sleep(3)
 
 
-def replace_independent(pid):
+def replace_independent(pid, memory_calibration=False):
     old=pid_record(pid)
     if not old or not any(Path(a).name==SELF.name for a in old["argv"]) or Path(f"/proc/{pid}/cwd").resolve()!=ROOT:
         raise ValueError("Specified old server PID is not the independent E admission feeder")
@@ -391,7 +396,10 @@ def replace_independent(pid):
         replaces_admission_only=True,changed_scientific_files=[],scheduler_sha256=file_digest(SELF),
         continuation_wrapper_sha256=file_digest(Path(recovery.__file__)),handed_over_unix=time.time(),
         solver_recovery="Only saved finite WBC/MPC max-iterations episodes. Preserve all complete events and real bootstrap, cut open decision. Fresh preassigned reset under the same actor, different QP fingerprint, existing finite episode bound. Other hard failures terminate normally.")
-    dest=SMALL/"independent-dispatch-numerical-recovery.json"
+    if memory_calibration:
+        snap.update(normal_pair_ram_gib=TRAIN_PAIR_RAM_GIB,recovery_pair_ram_gib=RECOVERY_PAIR_RAM_GIB,
+                    memory_evidence="../w61-e-cpu-exact-v1/paired-memory.json")
+    dest=SMALL/("independent-dispatch-memory.json" if memory_calibration else "independent-dispatch-numerical-recovery.json")
     atomic_json(dest,snap)
     os.kill(pid,signal.SIGTERM)
     os.kill(pid,signal.SIGCONT)
@@ -403,6 +411,7 @@ if __name__=="__main__":
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--takeover",type=int)
     p.add_argument("--replace-independent",type=int)
+    p.add_argument("--memory-calibration",action="store_true")
     a=p.parse_args()
-    if a.replace_independent:replace_independent(a.replace_independent)
+    if a.replace_independent:replace_independent(a.replace_independent,a.memory_calibration)
     else:run(a.takeover)
