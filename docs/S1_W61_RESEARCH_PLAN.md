@@ -275,6 +275,16 @@ E 线以每个训练头自己的 8,192 distinct real used 回执和冻结权重 
 
 [评测身份清单](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/learning/e61-hybrid-m1-01/final-evaluation/parallel-plan.json) · [实际进度](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/learning/e61-hybrid-m1-01/final-evaluation/parallel-progress.json) · [实测吞吐与预计工期](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/learning/e61-hybrid-m1-01/final-evaluation/parallel-throughput-estimate.json)
 
+#### 每个头的连续采样与独立成片（2026-11-28）
+
+一个头完成 256 个 distinct real used 的更新后，下一批使用该头刚发布的 checkpoint、独立 RNG 和 A/B 两条原始轨迹。实际双槽每批归还并重新申请。已取得训练位置的头可一直接续到 8,192，出现规定终局时封存该身份。其他就绪头在位置可用时开始。正式九头优先，新消融头可在正式头均占位或闭合后使用空出的训练位置。2,048、4,096 和 8,192 的曲线评价读固定权重，8,192 的终评也随每个头独立释放。每个版本仅按一份科学更新与去重事件清单计数。
+
+原任务与长回合在原 native evaluator 封存轨迹、关闭 actor 流后写出对应的物理回执。相同 case 的 E30 物理资格释放 E60，完整编码由独立渲染 worker 按 GPU 余量和 I/O 负载执行。物理租约归还时刻、开始/结束渲染时刻、帧数、PTS 和原件摘要分别记录；曲线两条轨迹均保留。在源轨迹仍供渲染、资格追溯或训练/恢复读取时继续保持在线。
+
+跨 collector 材料测时在原 E 采样器、M1、MPC/WBC 与 0.2 ms 物理链上使用独立 A/B 进程，CPU 与融合 GPU 对照使用同一原子双槽、同一算力分组和相应冻结策略。入口开销、凑批等待、H2D/D2H、GPU 同步、控制、实际物理终止和完整合法事件均计入。生产选用通过净吞吐、尾延迟与动作/轨迹一致性比较的后端。当前实测前缀选用 CPU，具体原件和后续量测随实验封存更新。
+
+[独立头调度](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/learning/e61-hybrid-m1-01/independent-dispatch.json) · [槽外完整视频的实测时钟](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/learning/e61-hybrid-m1-01/media-boundary-recorded-replay.json) · [CPU/GPU 跨 collector 比较](../results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/material/w61-e-packet-throughput-v1/index.json)
+
 ### 10.2 加速有价值的路径
 
 W61 将已有 hybrid observer 做成按 batch/队列选择 CPU/GPU 的后端，在同输入核验基础上测一次完整闭环与生产吞吐。它不是 W59 热替换；等价仅证明同输入数值，不证明新标签与真实 plant 状态一致。
