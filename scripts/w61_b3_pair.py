@@ -31,7 +31,7 @@ def main(args):
     inherited=raw/'jobs'/parent/'execution-contract.json'
     contract=json.loads(inherited.read_text())
     output=args.out.resolve()
-    attempt=f'w61-bd-v1-{args.case.lower()}-{args.gait}-{args.wbc}'
+    attempt=f'{args.series}-{args.case.lower()}-{args.gait}-{args.wbc}'
     small=output/'episodes'; large=output/'streams'
     for path in (small,large,output/'raw'):
         path.mkdir(parents=True,exist_ok=True)
@@ -53,6 +53,8 @@ def main(args):
         c['w54_f']['w61']=spec['w61'];c['r11_stage']['qualification_usable']=False
         added=['w61_b3_components.py','w61_controlled_orbits.py','w61_support_bridge.py',
                'w61_wbc_internal_model.py','w61_natural_wbc.py','w61_b3_pair.py']
+        if args.wbc=='reduced':
+            added.append('w61_equality_wbc.py')
         c['w54_execution_sources']+=['scripts/'+name for name in added]
         c['w54_execution_source_names']+=added
     run_s1_w59_research.configure_episode=configure_pair
@@ -73,6 +75,7 @@ if __name__=='__main__':
     p=argparse.ArgumentParser()
     p.add_argument('--case',choices=['A','B'],required=True)
     p.add_argument('--gait',choices=['fixed','orbit'],required=True)
-    p.add_argument('--wbc',choices=['fixed','hybrid'],required=True)
+    p.add_argument('--wbc',choices=['fixed','hybrid','reduced'],required=True)
+    p.add_argument('--series',default='w61-bd-v1')
     p.add_argument('--source',required=True,type=Path);p.add_argument('--out',required=True,type=Path)
     main(p.parse_args())

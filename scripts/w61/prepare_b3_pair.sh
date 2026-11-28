@@ -4,7 +4,9 @@ root=$(git rev-parse --show-toplevel)
 base=d584eb827c9253df9f888049579235f1e336e593
 dver=b2557568df5324c6fe0997a51623f6b0f520e416
 bver=$(git rev-parse HEAD)
-dest="$root/work/w61/gait/b3-pair-v1/runtime"
+series=${1:-b3-pair-v1}
+dest="$root/work/w61/gait/$series/runtime"
+solver=48c72d6f9cd8f5ec300e61f01362e47398456743
 shared=/root/autodl-tmp/MCP-RL-w59
 mkdir -p "$(dirname "$dest")"
 mkdir "$dest"
@@ -16,14 +18,17 @@ for f in w61_natural_wbc.py w61_wbc_internal_model.py; do
     git show "$dver:scripts/$f" >"$dest/scripts/$f"
 done
 git show "$dver:results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/wbc/phase-design-v1/basis.json" >"$dest/phase-basis.json"
+if [ "$series" = "b3-reduced-v1" ]; then
+    git show "$solver:scripts/w61_equality_wbc.py" >"$dest/scripts/w61_equality_wbc.py"
+fi
 mkdir "$dest/work"
 for f in envs assets upstreams r11-frozen w56-r60 w57-m terrain-memory; do
     ln -s "$shared/work/$f" "$dest/work/$f"
 done
-python - "$dest" "$base" "$bver" "$dver" <<'PY'
+python - "$dest" "$base" "$bver" "$dver" "$solver" <<'PY'
 from pathlib import Path
 import json,sys
-root,base,b,d=sys.argv[1:]
-(Path(root)/'pair-runtime.json').write_text(json.dumps(dict(base=base,gait=b,wbc=d,
+root,base,b,d,solver=sys.argv[1:]
+(Path(root)/'pair-runtime.json').write_text(json.dumps(dict(base=base,gait=b,wbc=d,equality_solver=solver if (Path(root)/"scripts/w61_equality_wbc.py").is_file() else None,
     raw_dependencies='read-only links to existing W59 weights, model and native observer'),indent=2)+'\n')
 PY

@@ -11,5 +11,8 @@ def FController(model,data,feet,base,out,config):
         classes.append(SupportBridge)
     if assignment['role']=='hybrid':
         classes.append(HybridWBC)
+    if assignment['role']=='reduced':
+        from w61_equality_wbc import EqualityReducedWBC
+        classes.append(EqualityReducedWBC)
     cls=type('W61AssignedB3',tuple(classes+[B3]),{})
     return cls(model,data,feet,base,out,config)
