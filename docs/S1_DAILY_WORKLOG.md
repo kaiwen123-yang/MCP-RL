@@ -2714,3 +2714,13 @@ F 已完成 32 对相同实测支撑的正负候选，实际独立查询 64 次�
 H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
 后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
 
+
+### 20261128/w61/execution-8cbea17f4c83d · 2026-11-28 15:14 上海
+六线仍使用现有 material、gait、mpc、wbc、learning、joint 工作树。运行固化源码与权重。此次核对的各分支提交为 material 3f433317, gait 5b3d0eeb, mpc 6c6797d8, wbc 51c60840, learning 07a438e6，F 正式训练使用 0a400893e40d。
+本次整合的实现及实际证据包括 b7f351f0 Keep the single W61 publisher alive through all frozen outcomes and their Release receipts / 6c6797d8 Record completed W61 mpc runs and checked release assets: w61-c-transfer-wall-v1 8/8, w61-c-material-history-v1 8/8, w61-c-mppi-candidates-v2 0/6, w61-c-mppi-wall-v2 0/4。
+E 正式九头训练累计使用 1792 / 73,728 个去重真实事件。已结束更新的 requested 为 1792，累计接受 actor 步 57，critic 更新 112，想象事件 0。单头 used 为 e-score-s6001 256, e-score-s6002 256, e-score-s6003 256, ppo-s6001 256, ppo-s6002 256, ppo-s6003 0, spo-s6001 256, spo-s6002 256, spo-s6003 0。无几何附加臂单计。
+F 已完成 32 对相同实测支撑的正负候选，实际独立查询 64 次、查询物理子步 243200。同一轮 A 与 C 参数均发生非零变化的更新 6 次。独立未见材料查询完成的冻结头 0/12，2×2 完整结果数 0/8。逐对列出实际回报、物理终止、支持集摘要及足端命令差。累计真实CPU 0.239 核时。
+物理池此刻占用 6/6 槽，等待 6 项。cgroup 实测 15.3/25 核，可用 RAM 16.4 GiB，GPU 利用率 35%，空余显存 80509 MiB，scratch 空间 565.1 GiB。此处为共享设备同时刻读数。
+H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
+后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
+
