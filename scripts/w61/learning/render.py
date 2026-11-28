@@ -47,7 +47,7 @@ def render(out):
     renderer.close()
     probe=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","stream=nb_frames,r_frame_rate,avg_frame_rate,duration,time_base",
                                              "-of","json",str(video)],text=True))["streams"][0]
-    rec=dict(file=str(video),bytes=video.stat().st_size(),sha256=file_digest(video),source=file_digest(out/"trajectory.npz"),
+    rec=dict(file=str(video),bytes=video.stat().st_size,sha256=file_digest(video),source=file_digest(out/"trajectory.npz"),
         rendered_frames=len(frame_times),physical_clock_s=[0.,result["physical_s"]],sample_clock="post-step t; nearest following measured pose, clamp at end",
         largest_time_error_s=float(np.abs(physical[sample]-frame_times).max()),probe=probe)
     atomic_json(out/"video.json",rec)

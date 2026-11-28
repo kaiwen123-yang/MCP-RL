@@ -73,6 +73,21 @@ def source_identities():
     return sources
 
 
+def verified_runtime(manifest):
+    actual=source_identities()
+    if actual==manifest["sources"]:
+        return "v1"
+    revision=read(SMALL/"runtime-v2.json")
+    allowed=dict(manifest["sources"])
+    for name,change in revision["files"].items():
+        if allowed[name]!=change["before"]:
+            raise ValueError(f"Prior runtime source disagrees: {name}")
+        allowed[name]=change["after"]
+    if actual!=allowed:
+        raise ValueError("Source change outside the registered RNG/receipt revision")
+    return revision["id"]
+
+
 def prepare(method,seed):
     directory=head_runtime(method,seed)
     directory.mkdir(parents=True,exist_ok=True)
@@ -143,8 +158,7 @@ def case_rollouts(method,seed,version,case,role,group):
 
 def paired(method,seed,version,role):
     manifest=read(RUN/"manifest.json")
-    if source_identities()!=manifest["sources"]:
-        raise ValueError("Immutable W61 study source/dataset changed, register a new runtime before sampling")
+    runtime=verified_runtime(manifest)
     groups=json.loads(os.environ["W61_PAIR_CPUS"])
     if len(groups)!=2 or len(os.environ["W61_SLOTS"].split(","))!=2:
         raise ValueError("A physical A/B collection requires two atomic shared leases")
@@ -154,7 +168,7 @@ def paired(method,seed,version,role):
         futures=[workers.submit(case_rollouts,method,seed,version,c,role,g) for c,g in zip(CASES,groups)]
         outcomes=[f.result() for f in futures]
     compact=[{k:v for k,v in o.items() if k!="rows"} for o in outcomes]
-    receipt=dict(study=STUDY,role=role,method=method,seed=seed,version=version,requested_per_case=BATCH if role=="train" else None,
+    receipt=dict(study=STUDY,runtime_revision=runtime,role=role,method=method,seed=seed,version=version,requested_per_case=BATCH if role=="train" else None,
         cases=compact,slots=os.environ["W61_SLOTS"],groups=groups,checkpoint_sha=file_digest(folder/f"policy-{version:03d}.pt"))
     if any(o["status"]!="observed" for o in outcomes):
         receipt["status"]="technical_or_starved"
@@ -209,8 +223,7 @@ def matrix():
         sources=source_identities()
         if register.exists():
             manifest=read(register)
-            if manifest["sources"]!=sources:
-                raise ValueError("Saved study source hashes changed")
+            verified_runtime(manifest)
         else:
             manifest=dict(study=STUDY,sources=sources,source_commit=subprocess.check_output(
                 ["git","-C",str(ROOT),"rev-parse","HEAD"],text=True).strip(),contract_sha256=file_digest(CONFIG),
