@@ -37,7 +37,10 @@ def blobs_and_merge(remote):
 def evidence():
     formal={};ablation={};copies=[]
     for folder in sorted((AUX/E_STUDY).glob('*-s6*')):
-        receipts=[read(p) for p in sorted(folder.glob('train-*.json'))]
+        # Recovery keeps both its interrupted attempt and its final update for
+        # reproducibility. Only the canonical version receipt contributes scientific steps.
+        canonical=sorted(folder.glob('train-[0-9][0-9][0-9].json'))
+        receipts=[read(p) for p in canonical]
         updates=[r for r in receipts if r.get('status')=='updated']
         e=dict(used=max((n['used'] for n in updates),default=0),updates=len(updates),
                requested=sum(n['algorithm']['requested'] for n in updates),
@@ -46,7 +49,8 @@ def evidence():
                imagined=sum(n['algorithm']['imagined'] for n in updates))
         if (folder/'terminal.json').exists():e['terminal']=read(folder/'terminal.json')
         (formal if folder.name.split('-s6')[0] in ('ppo','spo','e-score') else ablation)[folder.name]=e
-        copies.extend(folder.glob('train-*.json'));copies.extend(folder.glob('evaluate-*.json'));copies.extend(folder.glob('terminal.json'))
+        copies.extend(p for p,row in zip(canonical,receipts) if row.get('status')=='updated')
+        copies.extend(folder.glob('evaluate-[0-9][0-9][0-9].json'));copies.extend(folder.glob('terminal.json'))
     # final_dispatch commits its own frozen receipts. Importing them a second time
     # can publish an intermediate upload into the integration parent before that merge.
     delivery=AUX/'delivery'
@@ -75,13 +79,31 @@ def step(force=False):
     frozen={}
     if frozen_progress.is_file():
         dispatch=read(frozen_progress)
-        mechanism=[read(path) for path in final_ledger.glob('*/*-summary.json')
-                   if '-v032-' in path.name and ('-short-' in path.name or '-recovered-' in path.name)]
+        outcomes={};movies=set()
+        for suffix in ('-summary.json','-physical.json'):
+            for path in final_ledger.glob('*/*'+suffix):
+                if '-v032-' not in path.name or ('-short-' not in path.name and '-recovered-' not in path.name):continue
+                name=path.name.removesuffix(suffix);outcomes[name]=read(path)
+                if suffix=='-summary.json':movies.add(name)
         frozen=dict(registered=dispatch['registered_long'],ready_8192_heads=dispatch['checkpoint_heads_8192'],
-                    remote_receipts=dispatch['long'].get('verified',0),reported_outcomes=dict(Counter(r['stage_status'] for r in mechanism)),
-                    actual_simulated_seconds=sum(r['physical_s'] for r in mechanism),
+                    physical_closed=len(outcomes),full_video_closed=len(movies),awaiting_full_video=len(outcomes)-len(movies),
+                    remote_receipts=dispatch['long'].get('verified',0),reported_outcomes=dict(Counter(r['stage_status'] for r in outcomes.values())),
+                    actual_simulated_seconds=sum(r['physical_s'] for r in outcomes.values()),
                     compact_progress='learning/'+E_STUDY+'/final-evaluation/parallel-progress.json',
                     completed=dispatch['completed'])
+    current=AUX/E_STUDY/'independent-dispatch-live.json'
+    independent={}
+    if current.is_file():
+        scheduler=read(current)
+        independent=dict(logical_heads=scheduler.get('logical_positions',[]),batch_distinct=256,
+            receipt='learning/'+E_STUDY+'/independent-dispatch.json',current_admissions=scheduler.get('training_admissions',{}),
+            admission_owner=scheduler.get('feeder_pid'),manager_lock_transferred=scheduler.get('manager_lock_transferred'))
+    gpu_receipt=BASE/'MCP-RL-w61-material'/REL/'material/w61-e-packet-throughput-v1/index.json'
+    packet={}
+    if gpu_receipt.is_file():
+        exp=read(gpu_receipt)
+        packet=dict(stage=exp.get('stage'),production_backend=exp.get('production_backend'),production_eligible=exp.get('production_eligible'),
+                    comparisons=exp.get('comparisons',{}),receipt='material/w61-e-packet-throughput-v1/index.json')
     jobs=[read(f) for f in (ROOT/'work/w61/pool/jobs').glob('*.json')]
     counts=Counter(v['state'] for v in jobs)
     active={r['job']:r['slots'] for r in jobs if r['state']=='running'}
@@ -111,7 +133,7 @@ def step(force=False):
         W59='c8378beae4be371eb4f104782b75e5d295b6f59a',W59_handoff='results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W59-review/handoff.json',
         branches=lanes,F_runtime=rows['runtime'],F_pairs=rows['training_pairs'],F_training_real_queries=rows['training_real_queries'],
         F_joint_updates=rows['actual_simultaneous_two_head_updates'],F_unseen_frozen_heads=len(rows['unseen']),F_factorial_queries=len(rows['factorial']),
-        formal_E= formal,E_used=used,E_target=73728,E_extra_geometry_ablation=abl,frozen_final=frozen,physical_pool=counts,leased_slots=active,resources=snap,
+        formal_E= formal,E_used=used,E_target=73728,E_extra_geometry_ablation=abl,frozen_final=frozen,independent_head_dispatch=independent,material_collector_batching=packet,physical_pool=counts,leased_slots=active,resources=snap,
         storage=storage,release='https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w61',
         runtime_policy=dict(deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False),
         run_commands={'F':'python -m w61.joint.train schedule under W61_F_RUNTIME_COMMIT with the registered single-slot leases',
@@ -132,6 +154,10 @@ def step(force=False):
                     ' 个头达到节点，已核验原件 '+str(frozen['remote_receipts'])+'/96。已有原始终止类型 '+
                     json.dumps(frozen['reported_outcomes'],ensure_ascii=False)+'，累计 '+format(frozen['actual_simulated_seconds'],'.2f')+
                     ' 物理秒。零策略 A/B 资格和曲线评估各自单计。']
+        if independent:
+            lines+=['独立头调度当前保留的接续位置为 '+', '.join(independent['logical_heads'])+'，物理闭合、完整成片与远端核验分别统计。']
+        if packet:
+            lines+=['真实跨 collector 材料试验阶段 '+str(packet['stage'])+'，正式采样材料后端 '+str(packet['production_backend'])+'。']
         if rows['matched_unseen']:lines+=['F 未见材料四臂完整评价汇总 '+json.dumps(rows['matched_unseen'],ensure_ascii=False)+'。']
         if storage:lines+=['H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。']
         lines+=['后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。','']
