@@ -2,7 +2,13 @@
 
 研究同一世界地块在跨足、跨步和返程重访中的材料恢复，以及它对未来支撑决策的作用。
 
-## 当前：W57/W58结束，稳定基线已确认，W59方法研究待执行
+## W59 已冻结，W61 六线正在执行
+
+W59 在 2026-11-28 07:25:58（上海）自然结束。名义 B3 和 Fixed-action 的 A/B 资格均为 E60。PPO 5901@4096 的 A 为 E60、B 为 E600；PPO 5902@8192 的 A/B 均为 E60。W61 复用 D57 已有的六个工作树。各线源码、真实采样量和已公开原件随自然完成的实验更新。
+
+[W59 基线交接](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W59-review/handoff.json) · [W61 运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/index.json) · [唯一每日记录](docs/S1_DAILY_WORKLOG.md) · [实验原件](https://github.com/kaiwen123-yang/MCP-RL/releases/tag/tm-s1-go2-local-readiness-r12-w61)
+
+## 2026-11-26 的 W57/W58 收尾与 W59 计划
 
 2026-11-26审查固定`ef500f31`：W57 full/blind各8192去重转移、32updates；新PR A/B均完成自己的原E600十往返并保持到600秒。W58 56attempts结束，最终G0/M1，联合训练0。当前科研阻塞是材料恢复误差、微弱历史效应、动作兑现和同足印曝光，不能以长程稳定代替材料历史增益。
 

@@ -1,4 +1,8 @@
-# 当前入口：W59已结束并固定，W61六线研发待执行（2026-11-28）
+# 当前入口 · W61 六线实验已在 D57 原工作树执行
+
+按 [W61 运行索引](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/index.json)、[上海日期的工作记录](docs/S1_DAILY_WORKLOG.md)与 [W61 合同](experiments/terrain_memory/s1-w61-research-contract.json)续接相应的固定运行。研究数据和实际运行的资格按[具体基线身份](results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W59-review/handoff.json)追溯。现有六条线共用 D57 六个物理槽，双采集任务原子持两个。按用户 2026-11-28 的新指令，已关闭、后继不再读取的项目过程文件可并行归档至 H 盘，目标端逐项读回并复核源身份后释放相应 D57 副本。正在采样、恢复、训练、验证或被其他工作树引用的输入继续在线。
+
+## 2026-11-28 发布前的计划入口
 
 发布前main的d6802d35存储回执已记六个W61工作树；优先核实其分支/修改/运行与引用并续接，不创建第二套W60或重复W61。该回执和同期每日条目保留。W59科学结果仍以c8378bea冻结；工作树被引用不等于已训练，现场状态待核。
 
