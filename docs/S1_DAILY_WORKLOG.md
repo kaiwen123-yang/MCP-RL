@@ -2383,3 +2383,13 @@ H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 
 第二批检查 W41/W44/W49 中已经结束使用的搜索轨迹和候选枚举，在 H 盘原包核对了 214 条、838,043,550 字节。随后原 D57 路径释放 838,324,224 字节。两批历史数据合计 2,806 个源文件，实际释放 19,632,648,192 字节。另对归档自身中转数据库、临时列表按成员校验后释放 1,789,952 字节。复核每一批 H/D57 索引行摘要一致，两个原路径的提取样本均重现原 SHA256，42,368 个训练/复现输入和 248 个关键内容摘要再次相符。H 盘打开 00_catalog/20261128_W61归档入口.md 可定位原文件或查看新实验成品。
 
 F 原件上传器曾因整合工作树的稀疏检出省略受版本管理的上传回执，重新打包一份已交付的开发录像。已将 W61 结果目录纳入该树的固定检出，恢复所有已验回执，固定新 ZIP 的元数据时间。两份开发容器 63 个成员的完整内容相同，仅 4 字节的容器时间戳不同。H 保存了可逐字节重建的差分并验证两个摘要，额外中转占用单列，开发任务计数仍为一次。正式训练进程和原始物理记录均继续使用已冻结版本。
+
+### 20261128/w61/execution-e2dff593fcefc · 2026-11-28 14:24 上海
+六线仍使用现有 material、gait、mpc、wbc、learning、joint 工作树。运行固化源码与权重。此次核对的各分支提交为 material 7dcf6d75, gait 926d89c1, mpc bf9f3d97, wbc 51c60840, learning 7e1589ef，F 正式训练使用 0a400893e40d。
+本次整合的实现及实际证据包括 eeb214ef Record both verified H archive waves and the measured scope of released D57 files / 926d89c1 Calculate factorial effects on route success and observed common-clock motion and cost / e018c76e Publish w61-b-m1-16-v1-a-fixed-fixed evidence and verified native originals。
+E 正式九头训练累计使用 512 / 73,728 个去重真实事件。已结束更新的 requested 为 512，累计接受 actor 步 17，critic 更新 32，想象事件 0。单头 used 为 e-score-s6001 256, e-score-s6002 0, e-score-s6003 0, ppo-s6001 256, ppo-s6002 0, ppo-s6003 0, spo-s6001 0, spo-s6002 0, spo-s6003 0。无几何附加臂单计。
+F 已完成 14 对相同实测支撑的正负候选，实际独立查询 28 次、查询物理子步 106400。同一轮 A 与 C 参数均发生非零变化的更新 3 次。独立未见材料查询完成的冻结头 0/12，2×2 完整结果数 0/8。逐对列出实际回报、物理终止、支持集摘要及足端命令差。累计真实CPU 0.106 核时。
+物理池此刻占用 6/6 槽，等待 9 项。cgroup 实测 18.2/25 核，可用 RAM 36.5 GiB，GPU 利用率 42%，空余显存 52477 MiB，scratch 空间 560.8 GiB。此处为共享设备同时刻读数。
+H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
+后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
+
