@@ -1,0 +1,231 @@
+{
+  "id": "w61-kinematic-reach-strip-v1",
+  "plant": "original W59 G1 0->3->home, unchanged .02m TM02 cells",
+  "scope": "New fixed first-outbound score for development. Legacy F01\u2013F12 unchanged. No target or phase is selected using candidate scores.",
+  "x_strata_m": [
+    0.93,
+    1.025,
+    1.12,
+    1.2149999999999999,
+    1.31,
+    1.4049999999999998,
+    1.5,
+    1.5949999999999998,
+    1.69,
+    1.7849999999999997,
+    1.88,
+    1.9749999999999996,
+    2.07
+  ],
+  "y_interval_m": [
+    -0.1646313883008419,
+    -0.10988861169915809
+  ],
+  "right_stance_offsets_m": [
+    [
+      0.16535,
+      -0.13382
+    ],
+    [
+      -0.21185,
+      -0.1407
+    ]
+  ],
+  "foot_area_m2": 0.001,
+  "lateral_reference_range_m": 0.015,
+  "projection": "right-leg lateral reachable intersection of both nominal centers +/- .015 m commanded placement plus square-sole half-width; x from interior strata",
+  "RNG": "numpy PCG64/611128; one independent x,y draw per predeclared stratum; project down to original 2cm world grid",
+  "incoming_phase": "Record phase at first FR source normalized between consecutive true FR liftoffs; report four bins [0,.25,.50,.75,1]. This observation does not manipulate route startup phase.",
+  "split": "W59 A/B nominal are calibration references; W61 A/B factorial is development, not independent final test",
+  "source": "FR source during first outbound; immediate subsequent RR load in the same cell within that outbound",
+  "legal": "source released, 0<free gap<3s, exact intersection of the finite sole footprints >0",
+  "denominator": [
+    "all twelve targets per route including missed targets",
+    "FR source opportunities",
+    "source-to-RR immediate pair",
+    "matched physical overlap",
+    "completed route"
+  ],
+  "targets": [
+    {
+      "id": "R01",
+      "world_key": [
+        49,
+        -8
+      ],
+      "center_m": [
+        0.99,
+        -0.15
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        0.8227278763948656,
+        1.1999278763948655
+      ]
+    },
+    {
+      "id": "R02",
+      "world_key": [
+        53,
+        -6
+      ],
+      "center_m": [
+        1.07,
+        -0.11
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        0.9079390620927096,
+        1.2851390620927097
+      ]
+    },
+    {
+      "id": "R03",
+      "world_key": [
+        60,
+        -7
+      ],
+      "center_m": [
+        1.21,
+        -0.13
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        1.0388476297047067,
+        1.4160476297047069
+      ]
+    },
+    {
+      "id": "R04",
+      "world_key": [
+        60,
+        -8
+      ],
+      "center_m": [
+        1.21,
+        -0.15
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        1.050984385388574,
+        1.4281843853885743
+      ]
+    },
+    {
+      "id": "R05",
+      "world_key": [
+        69,
+        -7
+      ],
+      "center_m": [
+        1.3900000000000001,
+        -0.13
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        1.2254451727010371,
+        1.6026451727010373
+      ]
+    },
+    {
+      "id": "R06",
+      "world_key": [
+        71,
+        -8
+      ],
+      "center_m": [
+        1.43,
+        -0.15
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        1.2618048200537069,
+        1.639004820053707
+      ]
+    },
+    {
+      "id": "R07",
+      "world_key": [
+        79,
+        -7
+      ],
+      "center_m": [
+        1.59,
+        -0.13
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        1.42121505099862,
+        1.7984150509986203
+      ]
+    },
+    {
+      "id": "R08",
+      "world_key": [
+        82,
+        -7
+      ],
+      "center_m": [
+        1.6500000000000001,
+        -0.13
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        1.4919448676400462,
+        1.8691448676400464
+      ]
+    },
+    {
+      "id": "R09",
+      "world_key": [
+        88,
+        -8
+      ],
+      "center_m": [
+        1.77,
+        -0.15
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        1.6087060286827648,
+        1.9859060286827648
+      ]
+    },
+    {
+      "id": "R10",
+      "world_key": [
+        93,
+        -8
+      ],
+      "center_m": [
+        1.87,
+        -0.15
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        1.7013366432540846,
+        2.078536643254085
+      ]
+    },
+    {
+      "id": "R11",
+      "world_key": [
+        95,
+        -7
+      ],
+      "center_m": [
+        1.9100000000000001,
+        -0.13
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        1.7530249268907019,
+        2.130224926890702
+      ]
+    },
+    {
+      "id": "R12",
+      "world_key": [
+        103,
+        -6
+      ],
+      "center_m": [
+        2.07,
+        -0.11
+      ],
+      "FR_RR_nominal_body_crossing_x_m": [
+        1.8998065083830484,
+        2.2770065083830486
+      ]
+    }
+  ]
+}
