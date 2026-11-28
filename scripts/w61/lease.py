@@ -66,7 +66,20 @@ def claim(args):
                 held.enter_context(lock)
                 locks.append((n,lock))
         snap = resources()
-        if (len(locks) < args.slots or
+        # A fast campaign returning after a closed batch must not repeatedly take
+        # the last free slot ahead of an older eligible single or paired job.
+        waiting=[]
+        for row in (POOL/"jobs").glob("*.json"):
+            job=json.loads(row.read_text())
+            if job["state"]!="waiting" or job["slots_requested"]>len(locks):continue
+            if not Path(f"/proc/{job['owner_pid']}").exists():continue
+            demands=job.get("demand",dict(cores=job['slots_requested'],ram_gib=2*job['slots_requested'],gpu_mib=0,scratch_gib=1))
+            if (snap["quota_cores"]-snap["total_cpu_cores"]>=config["spare_cpu"]+demands["cores"]+reserved[0] and
+                snap["available_ram_gib"]>=config["spare_ram_gib"]+demands["ram_gib"]+reserved[1] and
+                snap["free_gpu_mib"]>=demands["gpu_mib"]+(config["spare_gpu_mib"] if demands["gpu_mib"] else 0)+reserved[2] and
+                snap["scratch_free_gib"]>=config["spare_scratch_gib"]+demands["scratch_gib"]):
+                waiting.append((job["registered"],job["job"]))
+        if (waiting and min(waiting)[1]!=args.job) or (len(locks) < args.slots or
             snap["quota_cores"] - snap["total_cpu_cores"] < config["spare_cpu"] + args.cores + reserved[0] or
             snap["available_ram_gib"] < config["spare_ram_gib"] + args.ram_gib + reserved[1] or
             (args.gpu_mib and snap["free_gpu_mib"] < config["spare_gpu_mib"] + args.gpu_mib + reserved[2]) or
@@ -105,6 +118,8 @@ def main(args):
         data = dict(job=args.job, runtime=str(args.runtime.resolve()), command=command, slots_requested=args.slots,
                     registered=stamp(), owner_pid=os.getpid(), state="waiting", deadline=None,
                     wall_deadline_enabled=False, kill_on_conversation_end=False)
+        data["demand"]=dict(cores=args.cores,ram_gib=args.ram_gib,gpu_mib=args.gpu_mib,scratch_gib=args.scratch_gib)
+        write(record,data)
         while True:
             leased, snap = claim(args)
             data.update(resource_sample=snap, sampled=stamp())
