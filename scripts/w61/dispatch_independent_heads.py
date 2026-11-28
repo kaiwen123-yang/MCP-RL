@@ -380,8 +380,15 @@ def replace_independent(pid, memory_calibration=False):
     old=pid_record(pid)
     if not old or not any(Path(a).name==SELF.name for a in old["argv"]) or Path(f"/proc/{pid}/cwd").resolve()!=ROOT:
         raise ValueError("Specified old server PID is not the independent E admission feeder")
-    os.kill(pid,signal.SIGSTOP)
-    while (p:=pid_record(pid)) and p["state"] not in ("T","t"):time.sleep(.05)
+    # tmux can resume its foreground process between two polls for T. For the
+    # memory-only admission handoff use the feeder's ordinary idle point and
+    # detach check. Its start_pair always starts real leases in their own session.
+    if memory_calibration:
+        while (Path(f"/proc/{pid}/wchan").read_text().strip()!="hrtimer_nanosleep"):
+            time.sleep(.05)
+    else:
+        os.kill(pid,signal.SIGSTOP)
+        while (p:=pid_record(pid)) and p["state"] not in ("T","t"):time.sleep(.05)
     detached=[]
     for child in previous.children(pid):
         p=pid_record(child)
@@ -401,8 +408,9 @@ def replace_independent(pid, memory_calibration=False):
                     memory_evidence="../w61-e-cpu-exact-v1/paired-memory.json")
     dest=SMALL/("independent-dispatch-memory.json" if memory_calibration else "independent-dispatch-numerical-recovery.json")
     atomic_json(dest,snap)
+    if pid_record(pid)["start_ticks"]!=old["start_ticks"]:raise RuntimeError("Admission owner changed during handoff")
     os.kill(pid,signal.SIGTERM)
-    os.kill(pid,signal.SIGCONT)
+    if not memory_calibration:os.kill(pid,signal.SIGCONT)
     while (p:=pid_record(pid)) and p["start_ticks"]==old["start_ticks"] and p["state"]!="Z":time.sleep(.1)
     run(None)
 
