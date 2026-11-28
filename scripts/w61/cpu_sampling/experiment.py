@@ -108,7 +108,7 @@ def matrix():
             save(OUT/'status.json',dict(stage=stage,production_selected=False,reason='measured contrast does not qualify',
                                         shanghai=now(),retained='existing CPU'))
             return 0
-    save(OUT/'status.json',dict(stage='qualified_full',production_selected=False,shanghai=now(),
+    save(OUT/'status.json',dict(stage='qualified_full',deployment_receipt='production.json',shanghai=now(),
                                 validated_binary=read(WORK/'build/identity.json')['sha256'],
                                 reason='two real fixed-policy contrasts closed; ready for the next natural batch registration'))
     return 0
