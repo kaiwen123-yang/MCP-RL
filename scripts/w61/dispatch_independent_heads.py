@@ -12,6 +12,7 @@ import sys
 import time
 
 import dispatch_learning as previous
+import resume_learning_batch as recovery
 from dispatch_learning import campaign, pool
 from hybrid import ROOT, SPEC
 from s1_w59_learner_critic import atomic_json, file_digest
@@ -67,6 +68,7 @@ def history(head):
     else:
         terminal=None
     latest=0
+    recover_from=None
     last=directory/"initial.json"
     for v in range(VERSIONS):
         receipt=directory/f"train-{v:03d}.json"
@@ -74,12 +76,19 @@ def history(head):
             break
         row=read(receipt)
         if row["status"]!="updated":
-            terminal={"failed_version":v,"status":row["status"],"source":str(receipt)}
+            failed_job=head_job(head,v)
+            if recovery.recoverable(row) and (not terminal or terminal.get("job")==failed_job):
+                terminal=None
+                recover_from=str(receipt)
+            else:
+                terminal={"failed_version":v,"status":row["status"],"source":str(receipt)}
             break
+        if terminal and terminal.get("job")==head_job(head,v) and row.get("numerical_continuation"):
+            terminal=None
         latest=v+1
         last=receipt
     return dict(head=head,version=latest,used=BATCH*latest,ready_at=last.stat().st_mtime,
-        source=str(last),terminal=terminal,frozen=latest==VERSIONS)
+        source=str(last),terminal=terminal,frozen=latest==VERSIONS,numerical_continuation=bool(recover_from),recovery_source=recover_from)
 
 
 def checkpoint(head,version):
@@ -125,7 +134,7 @@ def active_jobs():
 def identify(row):
     name=row["job"]
     if not name.startswith(PREFIX) or "-train-v" not in name:return None
-    head,version=name[len(PREFIX):].rsplit("-train-v",1)
+    head,version=name[len(PREFIX):].removesuffix("-solver-continuation").rsplit("-train-v",1)
     return (head,int(version)) if head in METHOD else None
 
 
@@ -133,17 +142,21 @@ def start_pair(head,hist):
     method,seed=METHOD[head]
     version=hist["version"]
     name=head_job(head,version)
+    command=[str(campaign.SELF),"paired",method,str(seed),str(version),"train"]
+    if hist["numerical_continuation"]:
+        name+="-solver-continuation"
+        command=[str(Path(recovery.__file__).resolve()),"resume",method,str(seed),str(version)]
     ck,sha,source=checkpoint(head,version)
     args=[sys.executable,str(previous.LEASE),"--runtime",str(ROOT),"--job",name,"--slots","2",
         "--cores","2","--ram-gib","5.5","--gpu-mib","1500","--scratch-gib","1.0","--",sys.executable,
-        "-u",str(campaign.SELF),"paired",method,str(seed),str(version),"train"]
+        "-u",*command]
     log=STATE/"logs"/(name+".log")
     with log.open("a") as out:
         child=subprocess.Popen(args,cwd=ROOT,stdin=subprocess.DEVNULL,stdout=out,stderr=subprocess.STDOUT,start_new_session=True)
     note=STATE/"admissions"/(name+".json")
     atomic_json(note,dict(study=campaign.STUDY,head=head,method=method,seed=seed,version=version,
         new_used_target=(version+1)*BATCH,train_job=name,pair_owner_pid=child.pid,
-        checkpoint=str(ck),checkpoint_sha256=sha,previous_training_receipt=str(source),
+        checkpoint=str(ck),checkpoint_sha256=sha,previous_training_receipt=str(source),numerical_continuation=hist["numerical_continuation"],
         prior_published_unix=hist["ready_at"],requested_unix=time.time(),command=args))
     return child
 
@@ -305,29 +318,35 @@ def run(old_pid):
                     active[h]=name
                 else:
                     del children[name]
-                    h,vs=name[len(PREFIX):].rsplit("-train-v",1)
+                    h,vs=name[len(PREFIX):].removesuffix("-solver-continuation").rsplit("-train-v",1)
                     prior=SMALL/h/f"train-{int(vs):03d}.json"
-                    if rc and (not prior.exists() or read(prior)["status"]!="updated"):
+                    if rc and (not prior.exists() or (read(prior)["status"]!="updated" and (name.endswith("-solver-continuation") or not recovery.recoverable(read(prior))))):
                         atomic_json(SMALL/h/"terminal.json",dict(job=name,role="train",returncode=rc,independent=True))
             heads={h:history(h) for h in METHOD}
             for h,rec in heads.items():deliver_nodes(h,rec["version"])
             resources=pool.resources()
-            if any(r["job"].startswith(PREFIX) and not identify(r) for r in jobs):
+            if any(r["job"].startswith(PREFIX) and (not identify(r) or r["job"].endswith("-solver-continuation")) for r in jobs):
                 speed.last=None
             else:
                 speed.record(jobs,resources)
             third,other,matched=third_permitted(jobs,resources,speed)
             target=3 if third else 2
+            # The earlier dispatcher had already released this numerical episode's logical
+            # position before the author directed continuation of its still-valid actor.
+            # Restore the original head while preserving all acquired leases and the FIFO physics pool.
+            for h in METHOD:
+                if heads[h]["numerical_continuation"] and h not in seated:seated.append(h)
             seated=refresh_slots(active,seated,heads,target)
             if not SEATS.exists() or read(SEATS)["heads"]!=seated:
                 atomic_json(SEATS,dict(heads=seated,at=time.time()))
             # An existing third logical head can wait for a physical pair when the resource pool shrinks.
             ready=sorted((h for h in seated if h not in active and not heads[h]["frozen"] and not heads[h]["terminal"]),
-                         key=lambda h:(heads[h]["ready_at"],seated.index(h)))
+                         key=lambda h:(not heads[h]["numerical_continuation"],heads[h]["ready_at"],seated.index(h)))
             for h in ready:
-                if len(active)>=target:break
+                limit=3 if heads[h]["numerical_continuation"] else target
+                if len(active)>=limit:continue
                 v=heads[h]["version"]
-                name=head_job(h,v)
+                name=head_job(h,v)+("-solver-continuation" if heads[h]["numerical_continuation"] else "")
                 prior=pool.POOL/"jobs"/(name+".json")
                 if prior.is_file():
                     rec=read(prior)
@@ -352,7 +371,38 @@ def run(old_pid):
             time.sleep(3)
 
 
+def replace_independent(pid):
+    old=pid_record(pid)
+    if not old or not any(Path(a).name==SELF.name for a in old["argv"]) or Path(f"/proc/{pid}/cwd").resolve()!=ROOT:
+        raise ValueError("Specified old server PID is not the independent E admission feeder")
+    os.kill(pid,signal.SIGSTOP)
+    while (p:=pid_record(pid)) and p["state"] not in ("T","t"):time.sleep(.05)
+    detached=[]
+    for child in previous.children(pid):
+        p=pid_record(child)
+        if p and p["state"]!="Z" and any(Path(a).name=="lease.py" for a in p["argv"]):
+            if os.getsid(child)==os.getsid(pid):
+                os.kill(pid,signal.SIGCONT)
+                raise ValueError("Active physics lease is attached to the feeder terminal")
+            detached.append(dict(pid=child,process_session=os.getsid(child),argv=p["argv"]))
+    snap=dict(previous_feeder=old,new_feeder=pid_record(os.getpid()),old_session=os.getsid(pid),
+        detached_leases=detached,live_scientific_processes=[{k:r.get(k) for k in ("job","owner_pid","pid","state","slots")}
+            for r in active_jobs() if identify(r)],
+        replaces_admission_only=True,changed_scientific_files=[],scheduler_sha256=file_digest(SELF),
+        continuation_wrapper_sha256=file_digest(Path(recovery.__file__)),handed_over_unix=time.time(),
+        solver_recovery="Only saved finite WBC/MPC max-iterations episodes. Preserve all complete events and real bootstrap, cut open decision. Fresh preassigned reset under the same actor, different QP fingerprint, existing finite episode bound. Other hard failures terminate normally.")
+    dest=SMALL/"independent-dispatch-numerical-recovery.json"
+    atomic_json(dest,snap)
+    os.kill(pid,signal.SIGTERM)
+    os.kill(pid,signal.SIGCONT)
+    while (p:=pid_record(pid)) and p["start_ticks"]==old["start_ticks"] and p["state"]!="Z":time.sleep(.1)
+    run(None)
+
+
 if __name__=="__main__":
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--takeover",type=int)
-    run(p.parse_args().takeover)
+    p.add_argument("--replace-independent",type=int)
+    a=p.parse_args()
+    if a.replace_independent:replace_independent(a.replace_independent)
+    else:run(a.takeover)
