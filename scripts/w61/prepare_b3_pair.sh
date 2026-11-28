@@ -21,7 +21,13 @@ git show "$dver:results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/
 if [ "$series" = "b3-reduced-v1" ]; then
     git show "$solver:scripts/w61_equality_wbc.py" >"$dest/scripts/w61_equality_wbc.py"
 fi
-mkdir "$dest/work"
+if [ "$series" = "b3-heatmap-v1" ]; then
+    git show "$bver:scripts/w61_orbit_decoder.py" >"$dest/scripts/w61_orbit_decoder.py"
+    for seed in 6111 6112 6113; do
+        git show "$bver:results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/gait/orbit-decoder-v1/seed-$seed.json" >"$dest/orbit-seed-$seed.json"
+    done
+fi
+mkdir "$dest/work" 
 for f in envs assets upstreams r11-frozen w56-r60 w57-m terrain-memory; do
     ln -s "$shared/work/$f" "$dest/work/$f"
 done
