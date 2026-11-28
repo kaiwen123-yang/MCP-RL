@@ -1,5 +1,5 @@
 {
-  "observed_shanghai": "2026-11-28T16:34:34+08:00",
+  "observed_shanghai": "2026-11-28T16:35:02+08:00",
   "contract": "experiments/terrain_memory/s1-w61-research-contract.json",
   "W59": "c8378beae4be371eb4f104782b75e5d295b6f59a",
   "W59_handoff": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W59-review/handoff.json",
@@ -8,7 +8,7 @@
     "gait": "9e711ae664a88c7cbce34b3ac5c978c5ef05c393",
     "mpc": "9121be0bbf38f7b7ee2a7c5006aa31950e0940a2",
     "wbc": "51c60840cc21bd561ae390b3793c8744ed88433e",
-    "learning": "414d26bb6a1ff7e3abf2b151362590a7969ddeae"
+    "learning": "6e621265c8d59fc1cfd3f54277f426f0f5337761"
   },
   "F_runtime": "0a400893e40d129807be490340914fd67429b72f",
   "F_pairs": 48,
@@ -75,10 +75,10 @@
     },
     "spo-s6002": {
       "used": 512,
-      "updates": 3,
-      "requested": 768,
-      "actor_steps": 48,
-      "critic_updates": 48,
+      "updates": 2,
+      "requested": 512,
+      "actor_steps": 32,
+      "critic_updates": 32,
       "imagined": 0
     },
     "spo-s6003": {
@@ -121,11 +121,49 @@
   "frozen_final": {
     "registered": 96,
     "ready_8192_heads": 0,
+    "physical_closed": 0,
+    "full_video_closed": 0,
+    "awaiting_full_video": 0,
     "remote_receipts": 0,
     "reported_outcomes": {},
     "actual_simulated_seconds": 0,
     "compact_progress": "learning/e61-hybrid-m1-01/final-evaluation/parallel-progress.json",
     "completed": false
+  },
+  "independent_head_dispatch": {
+    "logical_heads": [
+      "ppo-s6002",
+      "e-score-s6001",
+      "spo-s6002"
+    ],
+    "batch_distinct": 256,
+    "receipt": "learning/e61-hybrid-m1-01/independent-dispatch.json",
+    "current_admissions": {
+      "spo-s6002": "w61-e61-hybrid-m1-01-spo-s6002-train-v002",
+      "e-score-s6001": "w61-e61-hybrid-m1-01-e-score-s6001-train-v003"
+    },
+    "admission_owner": 371261,
+    "manager_lock_transferred": true
+  },
+  "material_collector_batching": {
+    "stage": "complete_prefix_full_pending",
+    "production_backend": "cpu",
+    "production_eligible": false,
+    "comparisons": {
+      "prefix12": {
+        "path": "prefix12-comparison.json",
+        "speedup": 0.9630540752420553,
+        "fused_fraction": 0.07284476428256718,
+        "checks": {
+          "same_input": true,
+          "physical_trajectory": false,
+          "tails": false,
+          "net_speedup": false,
+          "multiple_batch": true
+        }
+      }
+    },
+    "receipt": "material/w61-e-packet-throughput-v1/index.json"
   },
   "physical_pool": {
     "ended": 202,
@@ -146,14 +184,14 @@
     ]
   },
   "resources": {
-    "total_cpu_cores": 7.9703529049650745,
+    "total_cpu_cores": 9.657581067502507,
     "quota_cores": 25.0,
-    "available_ram_gib": 9.438434600830078,
-    "free_gpu_mib": 68702,
-    "gpu_util_percent": 45,
+    "available_ram_gib": 5.471488952636719,
+    "free_gpu_mib": 61803,
+    "gpu_util_percent": 26,
     "io_pressure_pct": 0.0,
-    "scratch_free_gib": 554.5400924682617,
-    "scratch_free_inodes": 1472281526
+    "scratch_free_gib": 554.5182304382324,
+    "scratch_free_inodes": 1472281442
   },
   "storage": {
     "historical_process": {
