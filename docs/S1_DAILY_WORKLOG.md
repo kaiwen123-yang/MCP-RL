@@ -2848,3 +2848,14 @@ H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 
 15:45 用原计时脚本刷新正式预计工期，96 条完整物理时长共 21,888 s。终点模型还没有自己的长回合吞吐，沿用 D57 的 24 个同型已完成长回合及四槽 9 窗、六槽 65 窗。四槽测算 121.2 小时、六槽 74.9 小时，含剩余训练、消融、曲线、原任务和冻结评测。可用槽时及尾部上传决定实际交付日期。
 
 检查发现整合器同时收录了 B/E30 的中间回执与学习分支的最终回执，Git 因文件冲突停在发布步骤。根据 GitHub 资产 803657169 和 803659198 的上传状态、字节数及 SHA256 核实完整包和视频，完成合并。a5d530c5 将该类最终回执交回学习分支单独提交，其余接收回执仅在 verified 状态纳入整合。已在 D57 恢复单一发布进程，GitHub 已非强推核验，独立训练和评测进程贯穿这一修复。
+
+### 20261128/w61/execution-7efdb58717ef5 · 2026-11-28 15:48 上海
+六线仍使用现有 material、gait、mpc、wbc、learning、joint 工作树。运行固化源码与权重。此次核对的各分支提交为 material de6efba1, gait d8c41d0e, mpc fa36b3d2, wbc 51c60840, learning 7eb9d69c，F 正式训练使用 0a400893e40d。
+本次整合的实现及实际证据包括 fa36b3d2 Record completed W61 mpc runs and checked release assets: w61-c-transfer-wall-v1 8/8, w61-c-material-history-v1 8/8, w61-c-mppi-candidates-v2 6/6, w61-c-mppi-wall-v2 1/4 / cdb82413 Record D57 measured slot occupancy, GPU utilisation, learner throughput and current forecast / c24cc7c6 Record completed W61 mpc runs and checked release assets: w61-c-transfer-wall-v1 8/8, w61-c-material-history-v1 8/8, w61-c-mppi-candidates-v2 6/6, w61-c-mppi-wall-v2 1/4 / 95888b99 Publish measured W61 research and Shanghai worklog 3ea49a60959cc / 7eb9d69c Record W61 concurrent frozen evaluations and verified episode identities。
+E 正式九头训练累计使用 2304 / 73,728 个去重真实事件。已结束更新的 requested 为 2304，累计接受 actor 步 87，critic 更新 144，想象事件 0。单头 used 为 e-score-s6001 256, e-score-s6002 256, e-score-s6003 256, ppo-s6001 256, ppo-s6002 256, ppo-s6003 256, spo-s6001 256, spo-s6002 256, spo-s6003 256。无几何附加臂单计。
+F 已完成 48 对相同实测支撑的正负候选，实际独立查询 96 次、查询物理子步 364800。同一轮 A 与 C 参数均发生非零变化的更新 12 次。独立未见材料查询完成的冻结头 0/12，2×2 完整结果数 0/8。逐对列出实际回报、物理终止、支持集摘要及足端命令差。累计真实CPU 0.359 核时。
+物理池此刻占用 6/6 槽，等待 3 项。cgroup 实测 10.5/25 核，可用 RAM 14.7 GiB，GPU 利用率 48%，空余显存 62430 MiB，scratch 空间 560.6 GiB。此处为共享设备同时刻读数。
+96 条冻结材料长回合按各头的 8192 节点并行调度。目前 0 个头达到节点，已核验原件 0/96。已有原始终止类型 {}，累计 0.00 物理秒。零策略 A/B 资格和曲线评估各自单计。
+H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
+后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
+
