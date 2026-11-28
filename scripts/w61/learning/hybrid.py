@@ -1,5 +1,7 @@
 """Common bounded two-chart policy, analytic mixed KL and independently keyed random streams."""
 import hashlib
+from bisect import bisect_right
+from functools import lru_cache
 import json
 import math
 from pathlib import Path
@@ -21,9 +23,45 @@ ACTIVE = torch.tensor([[1., 1., 1., 1.], [0., 0., 0., 1.]])
 SIGMA = SPEC["normal_std"]
 
 
-def key(seed, *identity):
+def original_key(seed, *identity):
     material = json.dumps([int(seed), *identity], separators=(",", ":")).encode()
     return int.from_bytes(hashlib.blake2b(material, digest_size=8).digest(), "little")
+
+
+MASK32 = (1<<32)-1
+MULTIPLIER = 0x9E3779B1
+SHIFT = 0x85EBCA6B
+
+
+@lru_cache(maxsize=1)
+def reserved_ordinals():
+    # Keep all original primary/restart-1 draws. Invert an odd affine permutation to
+    # count the unused 32-bit slots in a fixed, reproducible order.
+    occupied = {original_key(seed,"train","explore",case,version,episode,n) & MASK32
+        for seed in SPEC["seeds"] for case in SPEC["scenarios"] for version in range(32)
+        for episode in (0,1) for n in range(128)}
+    if len(occupied)!=49152:
+        raise ValueError("Registered primary and first restart no longer have 49152 distinct effective keys")
+    inverse=pow(MULTIPLIER,-1,1<<32)
+    return tuple(sorted(((k-SHIFT)*inverse)&MASK32 for k in occupied))
+
+
+def key(seed, *identity):
+    old=original_key(seed,*identity)
+    if len(identity)!=6 or identity[:2]!=("train","explore") or identity[4]<2:
+        return old
+    _,_,case,version,episode,number=identity
+    if not (0<=version<32 and 2<=episode<=130 and 0<=number<128):
+        raise ValueError("Training request exceeds its preregistered distinct stream domain")
+    rank=((((SPEC["seeds"].index(seed)*2+SPEC["scenarios"].index(case))*32+version)*129+episode-2)*128+number)
+    reserve=reserved_ordinals()
+    slot=rank
+    while True:
+        advanced=rank+bisect_right(reserve,slot)
+        if advanced==slot:
+            break
+        slot=advanced
+    return (old & ~MASK32) | ((MULTIPLIER*slot+SHIFT)&MASK32)
 
 
 def stream(seed, *identity):
