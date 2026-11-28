@@ -1,0 +1,333 @@
+{
+  "study": "w61-e-cpu-exact-v1",
+  "status": "closed",
+  "stage": "full",
+  "arms": {
+    "exact": {
+      "arm": "exact",
+      "stage": "full",
+      "shanghai": "2026-11-28T19:54:11+08:00",
+      "slots": "0,5",
+      "cpus": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          15,
+          16,
+          17
+        ]
+      ],
+      "cases": [
+        {
+          "case": "A",
+          "rc": 0,
+          "command": [
+            "taskset",
+            "-c",
+            "0,1,2",
+            "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+            "-u",
+            "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/cpu_sampling/entry.py",
+            "--out",
+            "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/cpu-exact-v1/full/exact/A",
+            "--weights",
+            "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/ppo-s6001/policy-001.pt",
+            "--method",
+            "PPO",
+            "--seed",
+            "6001",
+            "--version",
+            "1",
+            "--episode",
+            "0",
+            "--case",
+            "A",
+            "--role",
+            "train",
+            "--offset",
+            "0",
+            "--quota",
+            "128",
+            "--duration",
+            "60.0"
+          ],
+          "actor": "c10d36789a4165c280dc4f4bb015394a46827cd5d507fe4a78435f3ef2f854fb",
+          "physical_s": 33.92399999994762,
+          "observed": 128,
+          "physical_steps": 169620,
+          "reason": "batch_cut",
+          "full_ms": [
+            [
+              7.8255850821733475,
+              26.05985850095749
+            ],
+            [
+              45.151703897863584,
+              63.42502096667882
+            ],
+            [
+              56.533201802521916,
+              88.10289852321145
+            ]
+          ],
+          "wall_s": 544.9069489371032,
+          "cpu_h": 0.15140374594333333
+        },
+        {
+          "case": "B",
+          "rc": 0,
+          "command": [
+            "taskset",
+            "-c",
+            "15,16,17",
+            "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+            "-u",
+            "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/cpu_sampling/entry.py",
+            "--out",
+            "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/cpu-exact-v1/full/exact/B",
+            "--weights",
+            "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/ppo-s6001/policy-001.pt",
+            "--method",
+            "PPO",
+            "--seed",
+            "6001",
+            "--version",
+            "1",
+            "--episode",
+            "0",
+            "--case",
+            "B",
+            "--role",
+            "train",
+            "--offset",
+            "0",
+            "--quota",
+            "128",
+            "--duration",
+            "60.0"
+          ],
+          "actor": "c10d36789a4165c280dc4f4bb015394a46827cd5d507fe4a78435f3ef2f854fb",
+          "physical_s": 35.74199999994338,
+          "observed": 128,
+          "physical_steps": 178710,
+          "reason": "batch_cut",
+          "full_ms": [
+            [
+              7.087811827659607,
+              28.014229610562325
+            ],
+            [
+              46.34030908346176,
+              66.75632391124964
+            ],
+            [
+              56.43693786114454,
+              88.11667170375574
+            ]
+          ],
+          "wall_s": 581.5189942028373,
+          "cpu_h": 0.16158568136833334
+        }
+      ],
+      "wall_s": 587.0373128913343,
+      "events_per_s": 0.43608812315374545,
+      "linux_process_per_case": true
+    },
+    "original": {
+      "arm": "original",
+      "stage": "full",
+      "shanghai": "2026-11-28T20:07:12+08:00",
+      "slots": "0,5",
+      "cpus": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          15,
+          16,
+          17
+        ]
+      ],
+      "cases": [
+        {
+          "case": "A",
+          "rc": 0,
+          "command": [
+            "taskset",
+            "-c",
+            "0,1,2",
+            "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+            "-u",
+            "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/collect.py",
+            "--out",
+            "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/cpu-exact-v1/full/original/A",
+            "--weights",
+            "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/ppo-s6001/policy-001.pt",
+            "--method",
+            "PPO",
+            "--seed",
+            "6001",
+            "--version",
+            "1",
+            "--episode",
+            "0",
+            "--case",
+            "A",
+            "--role",
+            "train",
+            "--offset",
+            "0",
+            "--quota",
+            "128",
+            "--duration",
+            "60.0"
+          ],
+          "actor": "c10d36789a4165c280dc4f4bb015394a46827cd5d507fe4a78435f3ef2f854fb",
+          "physical_s": 33.92399999994762,
+          "observed": 128,
+          "physical_steps": 169620,
+          "reason": "batch_cut",
+          "full_ms": [
+            [
+              7.827394641935825,
+              39.57550320774317
+            ],
+            [
+              45.184583496302295,
+              82.13769439607859
+            ],
+            [
+              56.83122891932725,
+              109.40650017932055
+            ]
+          ],
+          "wall_s": 744.9147115219384,
+          "cpu_h": 0.20713447581805555
+        },
+        {
+          "case": "B",
+          "rc": 0,
+          "command": [
+            "taskset",
+            "-c",
+            "15,16,17",
+            "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+            "-u",
+            "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/collect.py",
+            "--out",
+            "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/cpu-exact-v1/full/original/B",
+            "--weights",
+            "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/ppo-s6001/policy-001.pt",
+            "--method",
+            "PPO",
+            "--seed",
+            "6001",
+            "--version",
+            "1",
+            "--episode",
+            "0",
+            "--case",
+            "B",
+            "--role",
+            "train",
+            "--offset",
+            "0",
+            "--quota",
+            "128",
+            "--duration",
+            "60.0"
+          ],
+          "actor": "c10d36789a4165c280dc4f4bb015394a46827cd5d507fe4a78435f3ef2f854fb",
+          "physical_s": 35.74199999994338,
+          "observed": 128,
+          "physical_steps": 178710,
+          "reason": "batch_cut",
+          "full_ms": [
+            [
+              7.023625075817108,
+              40.55884666740894
+            ],
+            [
+              44.73532736301422,
+              80.13618644326925
+            ],
+            [
+              55.23437466472387,
+              107.03288707882164
+            ]
+          ],
+          "wall_s": 774.9850724022835,
+          "cpu_h": 0.21553884345666666
+        }
+      ],
+      "wall_s": 780.6558812148869,
+      "events_per_s": 0.32792938112706316,
+      "linux_process_per_case": true
+    }
+  },
+  "parity": {
+    "A": {
+      "trajectory_float32_bitwise": true,
+      "frames": [
+        16962,
+        16962
+      ],
+      "max_qpos_difference": 0.0,
+      "max_measured_GRF_difference_N": 0.0,
+      "exact_events_and_rewards": true,
+      "exact_requests": true,
+      "event_ids_ordered": true,
+      "exact_swing_references": true,
+      "same_end": true
+    },
+    "B": {
+      "trajectory_float32_bitwise": true,
+      "frames": [
+        17871,
+        17871
+      ],
+      "max_qpos_difference": 0.0,
+      "max_measured_GRF_difference_N": 0.0,
+      "exact_events_and_rewards": true,
+      "exact_requests": true,
+      "event_ids_ordered": true,
+      "exact_swing_references": true,
+      "same_end": true
+    }
+  },
+  "bitwise_and_event_match": true,
+  "registered_work_closed": true,
+  "wall_speedup": 1.3298232737028644,
+  "qualifies_for_stage": true,
+  "formal_used": 0,
+  "source_commit": "a99932bbe49fd0a8953e6009f85b4f8de0676309",
+  "base_collector_sha256": "48735c1d1dcd5dfb43465f907b7f2bee11d653c5c4c8cc2c526a56a34df2dd5c",
+  "runtime_build": {
+    "compiler": "11.4.0",
+    "command": [
+      "g++",
+      "-O3",
+      "-std=c++17",
+      "-fPIC",
+      "-shared",
+      "-I/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/cpu_sampling",
+      "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/cpu-exact-v1/build/s1_w57_material_columns.cc",
+      "-o",
+      "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/cpu-exact-v1/build/exact-material.so"
+    ],
+    "source_files": {
+      "scripts/s1_w55_c_column.cu": "158d9135a4d669a9d99578dcfca167ae78bb20a91e0902827c7092f8c153d715",
+      "scripts/s1_w60_columns.cc": "8e0cbc7b87f996870b1f4e728641eca2fc7cbc637a65f6197d2b65daca77641f",
+      "scripts/s1_w57_material_columns.cc": "8affbf56119d6116cdd500a40acbe693774f32f3c0ec6f2bd3f5423312b76a69",
+      "scripts/w61/cpu_sampling/exact_packet.hh": "7ff1604cd49b0ea31d5a8b9585b0c40212cc1da1e63c4d11569f1dbe5e48dca2",
+      "scripts/w61/cpu_sampling/build.py": "322901b1aeee481543e28c8fc1bea69ab6ff9e9212e00679867b9129d3ead4f1"
+    },
+    "binary": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/cpu-exact-v1/build/exact-material.so",
+    "sha256": "43693ba584730f3c7dcecfbc6464d4bc11945b8f8663364ac75b1ba65e25fb75"
+  }
+}
