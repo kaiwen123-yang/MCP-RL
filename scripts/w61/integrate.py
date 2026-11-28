@@ -47,12 +47,17 @@ def evidence():
         if (folder/'terminal.json').exists():e['terminal']=read(folder/'terminal.json')
         (formal if folder.name.split('-s6')[0] in ('ppo','spo','e-score') else ablation)[folder.name]=e
         copies.extend(folder.glob('train-*.json'));copies.extend(folder.glob('evaluate-*.json'));copies.extend(folder.glob('terminal.json'))
-    copies.extend((AUX/'delivery').glob('*.json'));copies.extend((AUX/E_STUDY).glob('lifecycle.json'))
+    # final_dispatch commits its own frozen receipts. Importing them a second time
+    # can publish an intermediate upload into the integration parent before that merge.
+    delivery=AUX/'delivery'
+    copies.extend(p for p in delivery.glob('*.json') if not p.name.startswith('w61-e-final-'))
+    copies.extend((AUX/E_STUDY).glob('lifecycle.json'))
     copied=[]
     for f in copies:
         target=ROOT/REL/'learning'/f.relative_to(AUX)
         source=f.read_bytes()
-        json.loads(source)
+        receipt=json.loads(source)
+        if f.parent==delivery and receipt.get('status')!='verified':continue
         if not target.exists() or target.read_bytes()!=source:
             target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(source)
         copied.append(str(target.relative_to(ROOT)))
