@@ -215,6 +215,11 @@ class ControlledOrbit:
         return state,ref
 
     def flush(self):
+        # Each support set has two or three legs. A four-leg membership mask
+        # retains the actual topology through rigid-array chunk boundaries.
+        for row in self.rows:
+            legs=row.pop('transfer_support_pair')
+            row['w61_transfer_support_FL_FR_RL_RR']=np.isin(np.arange(4),legs)
         super().flush()
         out=self.out/'controlled-orbit.json'
         out.write_text(json.dumps(dict(role=self.gait_role,issued_segments=self.segment_count,
