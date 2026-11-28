@@ -1,5 +1,5 @@
 {
-  "observed_shanghai": "2026-11-28T17:23:54+08:00",
+  "observed_shanghai": "2026-11-28T17:56:44+08:00",
   "contract": "experiments/terrain_memory/s1-w61-research-contract.json",
   "W59": "c8378beae4be371eb4f104782b75e5d295b6f59a",
   "W59_handoff": "results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/reviews/W59-review/handoff.json",
@@ -18,12 +18,18 @@
   "F_factorial_queries": 8,
   "formal_E": {
     "e-score-s6001": {
-      "used": 1280,
-      "updates": 5,
-      "requested": 1280,
-      "actor_steps": 5,
-      "critic_updates": 80,
-      "imagined": 0
+      "used": 1792,
+      "updates": 7,
+      "requested": 1792,
+      "actor_steps": 7,
+      "critic_updates": 112,
+      "imagined": 0,
+      "terminal": {
+        "job": "w61-e61-hybrid-m1-01-e-score-s6001-train-v007",
+        "role": "train",
+        "returncode": 1,
+        "independent": true
+      }
     },
     "e-score-s6002": {
       "used": 512,
@@ -50,11 +56,11 @@
       "imagined": 0
     },
     "ppo-s6002": {
-      "used": 1280,
-      "updates": 5,
-      "requested": 1280,
-      "actor_steps": 62,
-      "critic_updates": 80,
+      "used": 1536,
+      "updates": 6,
+      "requested": 1536,
+      "actor_steps": 78,
+      "critic_updates": 96,
       "imagined": 0
     },
     "ppo-s6003": {
@@ -74,11 +80,11 @@
       "imagined": 0
     },
     "spo-s6002": {
-      "used": 1024,
-      "updates": 4,
-      "requested": 1024,
-      "actor_steps": 64,
-      "critic_updates": 64,
+      "used": 1792,
+      "updates": 7,
+      "requested": 1792,
+      "actor_steps": 112,
+      "critic_updates": 112,
       "imagined": 0
     },
     "spo-s6003": {
@@ -90,7 +96,7 @@
       "imagined": 0
     }
   },
-  "E_used": 5888,
+  "E_used": 7424,
   "E_target": 73728,
   "E_extra_geometry_ablation": {
     "e-fisher-s6001": {
@@ -133,15 +139,15 @@
   "independent_head_dispatch": {
     "logical_heads": [
       "ppo-s6002",
-      "e-score-s6001",
-      "spo-s6002"
+      "spo-s6002",
+      "ppo-s6001"
     ],
     "batch_distinct": 256,
     "receipt": "learning/e61-hybrid-m1-01/independent-dispatch.json",
     "current_admissions": {
-      "e-score-s6001": "w61-e61-hybrid-m1-01-e-score-s6001-train-v005",
-      "ppo-s6002": "w61-e61-hybrid-m1-01-ppo-s6002-train-v005",
-      "spo-s6002": "w61-e61-hybrid-m1-01-spo-s6002-train-v004"
+      "ppo-s6002": "w61-e61-hybrid-m1-01-ppo-s6002-train-v006",
+      "spo-s6002": "w61-e61-hybrid-m1-01-spo-s6002-train-v007",
+      "ppo-s6001": "w61-e61-hybrid-m1-01-ppo-s6001-train-v002"
     },
     "admission_owner": 371261,
     "manager_lock_transferred": true
@@ -191,32 +197,32 @@
     "receipt": "material/w61-e-packet-throughput-v1/index.json"
   },
   "physical_pool": {
-    "ended": 210,
+    "ended": 218,
     "running": 3
   },
   "leased_slots": {
-    "w61-e61-hybrid-m1-01-e-score-s6001-train-v005": [
-      3,
-      4
-    ],
-    "w61-e61-hybrid-m1-01-ppo-s6002-train-v005": [
+    "w61-e61-hybrid-m1-01-ppo-s6002-train-v006": [
       1,
       2
     ],
-    "w61-e61-hybrid-m1-01-spo-s6002-train-v004": [
+    "w61-e61-hybrid-m1-01-spo-s6002-train-v007": [
       0,
       5
+    ],
+    "w61-e61-hybrid-m1-01-ppo-s6001-train-v002": [
+      3,
+      4
     ]
   },
   "resources": {
-    "total_cpu_cores": 7.062744386672472,
+    "total_cpu_cores": 8.125149349108234,
     "quota_cores": 25.0,
-    "available_ram_gib": 33.58412170410156,
-    "free_gpu_mib": 55373,
-    "gpu_util_percent": 35,
+    "available_ram_gib": 16.286239624023438,
+    "free_gpu_mib": 72860,
+    "gpu_util_percent": 42,
     "io_pressure_pct": 0.0,
-    "scratch_free_gib": 549.0719375610352,
-    "scratch_free_inodes": 1472266173
+    "scratch_free_gib": 546.1980018615723,
+    "scratch_free_inodes": 1472257838
   },
   "storage": {
     "historical_process": {
