@@ -46,8 +46,14 @@ def collect(args):
     target=score(raw,src,args.protocol)
     out=args.out/name;out.mkdir(exist_ok=True,parents=True)
     samples=dict(force_samples=len(physical),control_samples=len(t))
+    assignment=json.loads((root/'jobs'/name/'contract.json').read_text())
+    reg=assignment['w61']
     legals=r['legal_route']
     row=dict(attempt=name,runtime=json.loads((root/'runtime/pair-runtime.json').read_text()),
+        assignment=dict(protocol=assignment['protocol_revision'],case=reg['case'],gait=reg['gait_role'],
+          wbc=reg['role'],decoder_seed=reg.get('orbit_decoder_seed'),initial_condition=reg.get('initial_condition','nominal'),
+          physical_window_s=reg.get('observation_window_s') or 60.,
+          qualification=r['qualification'].get('role'),observed_stage_progress=r.get('stage_progress')),
         command_contract_sha256=digest(root/'jobs'/name/'contract.json'),actor_scope='Original W44 cap actor for named W59 baseline case',
         reason=r['reason'],status=r['stage_status'],success=r['success'],terminal_error=(r.get('error') or '').splitlines()[-1:],
         physics_s=r['simulation_s'],x_max=r['max_x_m'],trunk_z_min=r['min_body_height_m'],wall_s=r['wall_s'],samples=samples,
