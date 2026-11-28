@@ -39,7 +39,7 @@ def emit(receipt,directory,destination):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('gait',type=Path);p.add_argument('wbc',type=Path);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('gait',type=Path);p.add_argument('wbc',type=Path);p.add_argument('--matched-style',action='store_true');a=p.parse_args()
     gait=a.gait.resolve();wbc=a.wbc.resolve()
     cases=[candidate(gait,'gait','rigid-orbits-v1'),candidate(gait,'gait','decoder-closed-v1'),
            candidate(wbc,'wbc','rigid-all-v1'),candidate(wbc,'wbc','perturbations-v1')]
@@ -49,6 +49,12 @@ if __name__=='__main__':
         for m in ['fixed','library','cpg','orbit','6111','6112','6113']:
             n=f'w61-b-m1-16-v1-{c}-{m}-fixed';cases.append(candidate(gait,'gait',None,(n,'m1-first-traverse-v1','b3-heatmap-v1')))
     n='w61-bd-reduced-v1-a-orbit-reduced';cases.append(candidate(gait,'gait',None,(n,'bd-reduced-v1','b3-reduced-v1')))
+    if a.matched_style:
+        cases=[candidate(gait,'gait','style-maneuvers-v1')]
+        for c in ('a','b'):
+            for seed in (6111,6112,6113):
+                n=f'w61-b-m1-16-v1-{c}-style{seed}-fixed'
+                cases.append(candidate(gait,'gait',None,(n,'m1-matched-style-v1','b3-style-16-v1')))
     while cases:
         cases=[c for c in cases if not emit(*c)]
         if cases:time.sleep(12)
