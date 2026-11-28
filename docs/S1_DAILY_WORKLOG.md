@@ -3174,3 +3174,15 @@ F 未见材料四臂完整评价汇总 {"independent": {"queries": 6, "complete"
 H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
 后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
 
+
+### 20261128/w61/execution-187853961a3c7 · 2026-11-28 16:30 上海
+六线仍使用现有 material、gait、mpc、wbc、learning、joint 工作树。运行固化源码与权重。此次核对的各分支提交为 material d555f820, gait 9e711ae6, mpc 9121be0b, wbc 51c60840, learning 06f87d97，F 正式训练使用 0a400893e40d。
+本次整合的实现及实际证据包括 06f87d97 Verify D57 direct release of preserved solver failure, recovery originals and both policy checkpoints。
+E 正式九头训练累计使用 4096 / 73,728 个去重真实事件。已结束更新的 requested 为 4352，累计接受 actor 步 167，critic 更新 272，想象事件 0。单头 used 为 e-score-s6001 768, e-score-s6002 512, e-score-s6003 256, ppo-s6001 512, ppo-s6002 512, ppo-s6003 256, spo-s6001 512, spo-s6002 512, spo-s6003 256。无几何附加臂单计。
+F 已完成 48 对相同实测支撑的正负候选，实际独立查询 96 次、查询物理子步 364800。同一轮 A 与 C 参数均发生非零变化的更新 12 次。独立未见材料查询完成的冻结头 12/12，2×2 完整结果数 8/8。逐对列出实际回报、物理终止、支持集摘要及足端命令差。累计真实CPU 0.359 核时。
+物理池此刻占用 6/6 槽，等待 0 项。cgroup 实测 8.0/25 核，可用 RAM 31.2 GiB，GPU 利用率 29%，空余显存 54856 MiB，scratch 空间 554.6 GiB。此处为共享设备同时刻读数。
+96 条冻结材料长回合按各头的 8192 节点并行调度。目前 0 个头达到节点，已核验原件 0/96。已有原始终止类型 {}，累计 0.00 物理秒。零策略 A/B 资格和曲线评估各自单计。
+F 未见材料四臂完整评价汇总 {"independent": {"queries": 6, "complete": 3, "mean_real_cost": 9.202621950307122, "mean_force_RMSE_N": 1.6045497967716769, "progress_mean_m": 0.15362896316612257, "actual_query_steps": 14261, "natural_terminations": {"material_domain_exit": 3, "horizon": 3}}, "A_then_C": {"queries": 6, "complete": 3, "mean_real_cost": 9.209801052291324, "mean_force_RMSE_N": 1.6089195963944867, "progress_mean_m": 0.15456959931698955, "actual_query_steps": 14264, "natural_terminations": {"material_domain_exit": 3, "horizon": 3}}, "alternating": {"queries": 6, "complete": 3, "mean_real_cost": 9.23890572809776, "mean_force_RMSE_N": 1.554587435346664, "progress_mean_m": 0.15802598252437178, "actual_query_steps": 14715, "natural_terminations": {"wbc: maximum iterations reached": 1, "horizon": 3, "nonfoot_or_body_fall": 1, "material_domain_exit": 1}}, "simultaneous": {"queries": 6, "complete": 3, "mean_real_cost": 9.547502132570218, "mean_force_RMSE_N": 1.5505750443960429, "progress_mean_m": 0.1627662763640433, "actual_query_steps": 14600, "natural_terminations": {"material_domain_exit": 1, "horizon": 3, "wbc: maximum iterations reached": 1, "nonfoot_or_body_fall": 1}}}。
+H 盘从已写完的过程原件和发布中转件逐项回读，GitHub Release 每个原件由执行端核对 size/digest。具体本轮和历史 H/D57 回执列于 w61/index.json，原件退役按内容与运行身份核对。
+后继按既定工作量继续各独立种子、正式冻结评价及已登记的控制对照。具条件的终局、数值中断和负结果都写回原运行身份。
+
