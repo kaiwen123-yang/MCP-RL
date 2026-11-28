@@ -19,7 +19,8 @@ CONTACT_AREA = .001
 CELL = .02
 
 
-def build_problem(obs, speed, capacity, probabilities, preload, swing_duration=.20):
+def build_problem(obs, speed, capacity, probabilities, preload, swing_duration=.20, *, memory=None,
+                  stiffness=(8000.,8000.,3500.), compliant=(False,True,True)):
     """Construct one fixed transfer from four measured contacts at publication.
 
     x0 = [world RPY, COM m, world omega rad/s, COM velocity m/s]. Input J
@@ -61,6 +62,7 @@ def build_problem(obs, speed, capacity, probabilities, preload, swing_duration=.
     half = np.sqrt(CONTACT_AREA)/2
     masks = np.zeros((4, 2, 20))
     soft = np.zeros((4, 2), bool)
+    history=np.zeros((4,20))
     for leg in range(4):
         ids = {}
         for endpoint, xy in enumerate((feet[leg, :2], feet[leg, :2]+step)):
@@ -75,6 +77,8 @@ def build_problem(obs, speed, capacity, probabilities, preload, swing_duration=.
                     if a > 0:
                         k = ids.setdefault((i,j), len(ids))
                         masks[leg, endpoint, k] = a / CONTACT_AREA
+                        if memory is not None:
+                            history[leg,k]=memory(leg,(i,j))
     jac = np.asarray(obs['J_contact_force'])
     jac = np.stack([jac[l, :, 6+3*l:9+3*l] for l in range(4)])
     lo = np.asarray(obs['torque_lower']).reshape(4,3)*np.asarray(capacity)[:,None]
@@ -83,7 +87,8 @@ def build_problem(obs, speed, capacity, probabilities, preload, swing_duration=.
     if np.any(bias < lo) or np.any(bias > hi):
         raise ValueError('Posture bias is outside the declared joint authority')
     return dict(x=x, ref=refs, feet=points, contact=contacts, landed=landed,
-                area=masks, soft=soft, initial_delta=(masks[:,0]>0)*preload,
+                area=masks, soft=soft, initial_delta=history+(masks[:,0]>0)*preload,
+                stiffness=np.array(stiffness),compliant=np.array(compliant),
                 J=jac, bias=bias, lo=lo, hi=hi, I=np.asarray(obs['inertia']),
                 invI=np.linalg.inv(obs['inertia']), mass=float(obs['mass']),
                 prev=np.asarray(obs['last_force']), belief=np.array(probabilities),
@@ -100,7 +105,7 @@ def _world_euler_rate(rpy, omega):
 def rollout(p, z, mode, scenario):
     # z is sampled before tanh; prior and actual proposal densities use these
     # identical coordinates. Clipped actuator outputs never acquire Gaussian density.
-    k = jnp.array([8000., 8000., 3500.])[scenario]
+    k = p['stiffness'][scenario]
     d = 400.
     kleg = 24000.
     side = jnp.array([1., -1., 1., -1.])
@@ -110,7 +115,7 @@ def rollout(p, z, mode, scenario):
         on = p['contact'][mode, t]
         idx = p['landed'][mode, t].astype(jnp.int32)
         areas = p['area'][jnp.arange(4), idx]
-        soft = p['soft'][jnp.arange(4), idx] & (scenario != 0)
+        soft = p['soft'][jnp.arange(4), idx] & p['compliant'][scenario]
         points = p['feet'][mode,t]
         a = end[0] + (end[1]-end[0])*(t/(H-1))
         f0 = p['mass'] * jnp.maximum(0., 9.81 + 45.*(p['height']-x[5])-8.*x[11]) / on.sum()
@@ -120,7 +125,7 @@ def rollout(p, z, mode, scenario):
         # using the hidden scenario. Nominal inverse KV adds command feedforward.
         mapped_soft = p['soft'][jnp.arange(4),idx]
         # KV with a virgin reference state; the rollout itself retains history.
-        compliance = (p['belief'][1]/(8000.+d/DT) + p['belief'][2]/(3500.+d/DT))
+        compliance = jnp.sum(p['belief']*p['compliant']/(p['stiffness']+d/DT))
         command = desired*(1./kleg + mapped_soft*compliance)
         free = delta/(1.+k*DT/d)
         # Per-sole monotone balance with one common displacement at all
