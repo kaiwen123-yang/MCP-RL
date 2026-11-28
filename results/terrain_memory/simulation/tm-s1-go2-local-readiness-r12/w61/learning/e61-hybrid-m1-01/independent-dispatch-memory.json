@@ -1,0 +1,123 @@
+{
+  "previous_feeder": {
+    "pid": 371261,
+    "state": "S",
+    "start_ticks": 1191155028,
+    "argv": [
+      "python",
+      "-u",
+      "scripts/w61/dispatch_independent_heads.py",
+      "--replace-independent",
+      "363884"
+    ]
+  },
+  "new_feeder": {
+    "pid": 427462,
+    "state": "R",
+    "start_ticks": 1192510150,
+    "argv": [
+      "python",
+      "-u",
+      "scripts/w61/dispatch_independent_heads.py",
+      "--replace-independent",
+      "371261",
+      "--memory-calibration"
+    ]
+  },
+  "old_session": 371261,
+  "detached_leases": [
+    {
+      "pid": 421936,
+      "process_session": 421936,
+      "argv": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "/root/autodl-tmp/MCP-RL-w61-joint/scripts/w61/lease.py",
+        "--runtime",
+        "/root/autodl-tmp/MCP-RL-w61-learning",
+        "--job",
+        "w61-e61-hybrid-m1-01-ppo-s6001-train-v009",
+        "--slots",
+        "2",
+        "--cores",
+        "2",
+        "--ram-gib",
+        "5.5",
+        "--gpu-mib",
+        "1500",
+        "--scratch-gib",
+        "1.0",
+        "--",
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/campaign.py",
+        "paired",
+        "PPO",
+        "6001",
+        "9",
+        "train"
+      ]
+    },
+    {
+      "pid": 426893,
+      "process_session": 426893,
+      "argv": [
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "/root/autodl-tmp/MCP-RL-w61-joint/scripts/w61/lease.py",
+        "--runtime",
+        "/root/autodl-tmp/MCP-RL-w61-learning",
+        "--job",
+        "w61-e61-hybrid-m1-01-ppo-s6002-train-v014",
+        "--slots",
+        "2",
+        "--cores",
+        "2",
+        "--ram-gib",
+        "5.5",
+        "--gpu-mib",
+        "1500",
+        "--scratch-gib",
+        "1.0",
+        "--",
+        "/root/autodl-tmp/MCP-RL/work/envs/d57/bin/python",
+        "-u",
+        "/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/campaign.py",
+        "paired",
+        "PPO",
+        "6002",
+        "14",
+        "train"
+      ]
+    }
+  ],
+  "live_scientific_processes": [
+    {
+      "job": "w61-e61-hybrid-m1-01-ppo-s6001-train-v009",
+      "owner_pid": 421936,
+      "pid": 426387,
+      "state": "running",
+      "slots": [
+        0,
+        1
+      ]
+    },
+    {
+      "job": "w61-e61-hybrid-m1-01-ppo-s6002-train-v014",
+      "owner_pid": 426893,
+      "pid": 426970,
+      "state": "running",
+      "slots": [
+        2,
+        3
+      ]
+    }
+  ],
+  "replaces_admission_only": true,
+  "changed_scientific_files": [],
+  "scheduler_sha256": "6a7ccdcf451021c3d9d4fb464f99ad5277c2cfe15087ad896c57f27d15b56ca4",
+  "continuation_wrapper_sha256": "ee0088b1a9afce80331eed8295dfdaf800321bbcc6d45f8a1b5fa4d1bb46ff67",
+  "handed_over_unix": 1795867736.1880238,
+  "solver_recovery": "Only saved finite WBC/MPC max-iterations episodes. Preserve all complete events and real bootstrap, cut open decision. Fresh preassigned reset under the same actor, different QP fingerprint, existing finite episode bound. Other hard failures terminate normally.",
+  "normal_pair_ram_gib": 4.75,
+  "recovery_pair_ram_gib": 5.5,
+  "memory_evidence": "../w61-e-cpu-exact-v1/paired-memory.json"
+}
