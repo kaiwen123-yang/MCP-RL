@@ -21,7 +21,7 @@ from develop import admitted_call
 from hybrid import ROOT, SPEC
 from publish_learning import verified, DELIVERY
 from s1_w59_learner_critic import atomic_json, file_digest
-from w61 import lease
+from dispatch_learning import pool as lease
 
 LEDGER = native.LEDGER
 WORK = RUN / "parallel-final"
@@ -128,7 +128,8 @@ def process(pid):
 
 
 def is_serial(pid,ticks):
-    if not pid or not process(pid) or process(pid)[0]!=ticks:return False
+    state=process(pid) if pid else None
+    if not state or state[0]!=ticks:return False
     proc=Path(f"/proc/{pid}")
     try:
         argv=proc.joinpath("cmdline").read_bytes().split(b"\0")
@@ -212,9 +213,9 @@ def run(legacy):
     ownership=native.read(record) if record.exists() else {}
     if legacy:
         st=process(legacy)
-        if not st or not is_serial(legacy,st[0]):raise ValueError("Specified PID is not the existing serial evaluation watcher")
         if ownership and ownership.get("pid")!=legacy:raise ValueError("Another legacy handoff is already registered")
         if not ownership:
+            if not st or not is_serial(legacy,st[0]):raise ValueError("Specified PID is not the existing serial evaluation watcher")
             ownership=dict(pid=legacy,start_ticks=st[0],registered=now(),
                 policy="leave every existing worker, reference run and upload alive; retire only the old idle watcher")
             atomic_json(record,ownership)
