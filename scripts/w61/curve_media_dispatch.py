@@ -8,7 +8,7 @@ import sys
 import time
 
 import evaluate_learning as native
-from evaluation_physics import POOL, QUEUE, INTENTS, curve_closure, curve_id
+from evaluation_physics import POOL, QUEUE, INTENTS, curve_closure, curve_id, all_trained_curves_closed
 from campaign import RUN, SMALL, STUDY, head_name
 from develop import admitted_call
 from hybrid import ROOT, SPEC
@@ -68,10 +68,11 @@ def run_scheduler():
                     continue
                 if future is None:
                     current=item;future=pool.submit(physical,item)
+            if future is None and all_trained_curves_closed(''):return
             time.sleep(5)
 
 
-def published_for_case(h,s,v,case,id,media,receipt):
+def published_for_case(h,v,case,id,media,receipt):
     label=f'w61-E-{STUDY}-{h}-frozen-{v*256:05d}-{case}'
     raw=Path(media['video']).parent
     if not verified(label):
@@ -88,7 +89,18 @@ def close_media(node):
     m,s,v,h=assignment(node)
     folder=SMALL/h;physics=folder/f'evaluate-{v:03d}.json';aggregate=folder/f'evaluate-{v:03d}-media.json'
     if aggregate.is_file():return
-    if not physics.is_file():return
+    if not physics.is_file():
+        issue=QUEUE/'curve-technical'/(curve_id(m,s,v)+'.json')
+        if not issue.exists():return
+        roots=[RUN/h/f'evaluate-{v:03d}-{case}' for case in SPEC['scenarios']]
+        original=[p for d in roots for p in d.glob('*/trajectory.npz')]
+        if original:
+            atomic_json(QUEUE/'curve-review'/(curve_id(m,s,v)+'.json'),dict(issue=str(issue),
+               preserved_trajectories=[str(p) for p in original],reason='no canonical physical receipt; inspect original, no new simulation'))
+            return
+        atomic_json(physics,dict(study=STUDY,method=m,seed=s,version=v,role='evaluate',used=0,
+            cases=[],status='technical_or_starved',checkpoint_sha=node.get('checkpoint_sha256',node.get('updated_checkpoint_sha256')),
+            reason='closed lease without a renderable physical trajectory',lease_failure=native.read(issue)))
     result=curve_closure(m,s,v);rows=[]
     for c in result['cases']:
         names=[e['run'] for e in c.get('episodes',[]) if e.get('physical_steps')]
@@ -98,7 +110,7 @@ def close_media(node):
         for name in dict.fromkeys(names):
             p=DONE/(name+'.json')
             if not p.is_file():return
-            rec=native.read(p);delivery=published_for_case(h,s,v,c['case'],name,rec,physics)
+            rec=native.read(p);delivery=published_for_case(h,v,c['case'],name,rec,physics)
             rows.append(dict(case=c['case'],attempt=name,render_receipt=str(p),render_wall_s=rec['render_wall_s'],
                   render_started_unix=rec['render_started_unix'],render_closed_unix=rec['render_closed_unix'],
                   lease_ended=rec['lease_ended'],pts=rec['pts'],video_sha256=rec['video_sha256'],verified=delivery))
@@ -123,6 +135,7 @@ def publish_loop():
                 except (OSError,subprocess.SubprocessError,RuntimeError) as err:
                     atomic_json(QUEUE/'publish-pending'/n.name,dict(when=time.time(),error=str(err)))
                     retry[n]=time.time()+90
+            if all_trained_curves_closed('-media'):return
             time.sleep(6)
 
 
