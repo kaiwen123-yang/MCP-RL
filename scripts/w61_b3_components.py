@@ -7,7 +7,10 @@ from w61_wbc_internal_model import HybridWBC
 def FController(model,data,feet,base,out,config):
     assignment=config['w61']
     classes=[]
-    if assignment['gait_role'] in ('library','cpg'):
+    if assignment.get('style_cpg_seed') is not None:
+        from w61_style_orbit import StyleOscillator
+        classes.append(StyleOscillator)
+    elif assignment['gait_role'] in ('library','cpg'):
         from w61_controlled_orbits import ControlledOrbit
         classes.append(ControlledOrbit)
     if assignment.get('orbit_decoder_seed') is not None:

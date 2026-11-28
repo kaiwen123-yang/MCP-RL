@@ -32,9 +32,12 @@ def main(args):
     contract=json.loads(inherited.read_text())
     output=args.out.resolve()
     attempt=f'{args.series}-{args.case.lower()}-{args.gait}-{args.wbc}'
+    style_seed=int(args.gait[5:]) if args.gait.startswith('style') else None
     decoder_seed=int(args.gait) if args.gait in ('6111','6112','6113') else None
     fitted=root/f'orbit-seed-{decoder_seed}.json' if decoder_seed else root/'phase-basis.json'
-    gait='orbit' if decoder_seed else args.gait
+    if style_seed:
+        fitted=root/f'style-seed-{style_seed}.json'
+    gait='orbit' if decoder_seed else 'cpg' if style_seed else args.gait
     small=output/'episodes'; large=output/'streams'
     for path in (small,large,output/'raw'):
         path.mkdir(parents=True,exist_ok=True)
@@ -43,7 +46,7 @@ def main(args):
     contract.update(run_id='w61-bd-m1-e60-v1', current_task='W61_BD_M1_E60',
         protocol_revision='W61_FROZEN_B3_BD_E60_V1',w57_raw_root=str(output/'raw'),
         outputs={'large_root':str(large),'compact_root':str(small)},w61=dict(case=args.case,
-            gait_role=gait,role=args.wbc,orbit_decoder_seed=decoder_seed,artifact=str(fitted),
+            gait_role=gait,role=args.wbc,orbit_decoder_seed=decoder_seed,style_cpg_seed=style_seed,artifact=str(fitted),
             observation_window_s=args.window_s,initial_condition=args.condition,source_identity=identity,
             original_attempt=parent,original_actor_sha256=sha(parent_ck),
             original_contract_sha256=sha(inherited),frozen_original_qualification=False))
@@ -60,8 +63,10 @@ def main(args):
         c['w54_f']['w61']=spec['w61'];c['r11_stage']['qualification_usable']=False
         added=['w61_b3_components.py','w61_controlled_orbits.py','w61_support_bridge.py',
                'w61_wbc_internal_model.py','w61_natural_wbc.py','w61_b3_pair.py']
-        if decoder_seed:
+        if decoder_seed or style_seed:
             added.append('w61_orbit_decoder.py')
+        if style_seed:
+            added.append('w61_style_orbit.py')
         if args.window_s:
             c['r11_stage'].update(level='W61_FIRST_OUTBOUND16',task_kind='first_outbound_observation',
                                  duration_s=args.window_s,qualification_usable=False)
@@ -106,7 +111,7 @@ def main(args):
 if __name__=='__main__':
     p=argparse.ArgumentParser()
     p.add_argument('--case',choices=['A','B'],required=True)
-    p.add_argument('--gait',choices=['fixed','library','cpg','orbit','6111','6112','6113'],required=True)
+    p.add_argument('--gait',choices=['fixed','library','cpg','orbit','6111','6112','6113','style6111','style6112','style6113'],required=True)
     p.add_argument('--wbc',choices=['fixed','hybrid','reduced'],required=True)
     p.add_argument('--series',default='w61-bd-v1')
     p.add_argument('--window-s',type=float,choices=[16.])
