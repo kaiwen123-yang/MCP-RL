@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 
 ROOT=Path(__file__).resolve().parents[3]
 COMPACT=Path('results/terrain_memory/simulation/tm-s1-go2-local-readiness-r12/w61/mpc')
@@ -20,6 +21,10 @@ def main():
     parser.add_argument('--wall',action='store_true')
     parser.add_argument('--weighted',action='store_true')
     args=parser.parse_args()
+    if args.weighted:
+        prior=ROOT/COMPACT/'w61-c-material-history-v1'
+        names=[f'{case}-{arm}.json' for case in ('entry','retrace') for arm in ('virgin','private','shared','posterior')]
+        while not all((prior/name).exists() for name in names):time.sleep(15)
     runtime=args.runtime.resolve()
     cfg_rel=Path('experiments/terrain_memory/w61/mpc')/('transfer-wall-v1.json' if args.wall else 'transfer-v1.json')
     if args.weighted:
