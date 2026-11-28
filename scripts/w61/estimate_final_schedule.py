@@ -1,8 +1,11 @@
 """Estimate W61 makespan using clocked, disjoint physics windows and whole training leases."""
 from collections import defaultdict
 from datetime import datetime, timedelta
+import argparse
+import fcntl
 import hashlib
 import json
+import time
 from pathlib import Path
 from statistics import mean, median
 from zoneinfo import ZoneInfo
@@ -85,12 +88,19 @@ def estimate():
     ref=read(ref_case)
     name=ref_case.name.removesuffix("-summary.json");reference_wall=seconds(read(POOL/(name+".json")))
     wall_ratio=reference_wall/ref["physical_s"]
-    speeds_live=defaultdict(list)
+    speeds_live=defaultdict(list); reference_windows=defaultdict(list)
     recorded=WORK/"throughput.jsonl"
     if recorded.is_file():
         for line in recorded.open():
             w=json.loads(line)
-            if w["endpoint_long"]==w["width"] and w["seconds"]>0:speeds_live[w["width"]].append(w)
+            if w["endpoint_long"]==w["width"] and w["seconds"]>0:
+                speeds_live[w["width"]].append(w)
+            elif all("-v000-" in name for name in w["episodes"]) and w["seconds"]>0:
+                reference_windows[w["width"]].append(w)
+    observed_reference={str(k):dict(windows=len(v),wall_s=sum(x["seconds"] for x in v),
+        simulated_s=sum(x["physical_s"] for x in v),
+        aggregate_sim_s_per_wall_s=sum(x["physical_s"] for x in v)/sum(x["seconds"] for x in v))
+        for k,v in reference_windows.items()}
     forecasts={}; train_slot_h=sum(budget-v for v in training.values())/batch*mean(train_times)*2/3600
     nominal_sim=sum(int(x["stage"][1:]) for x in remaining if x["stage"] in ("E30","E60"))
     curve_sim=sum(2*60 for m,s in heads for n in curves if
@@ -123,7 +133,7 @@ def estimate():
         registered_long=plan["long_count"],remaining_long=long_count,full_horizon_physical_s=long_sim,
         frozen_8192_heads=study["checkpoint_heads_8192"],head_used=training,completed_training_batch_wall_s=train_times,
         E30_reference_physical_s=ref["physical_s"],E30_reference_wall_s=reference_wall,
-        historical_complete_long_episodes=len(material),historical_raw_clock_log=str(old_clocks),
+        W61_reference_windows=observed_reference,historical_complete_long_episodes=len(material),historical_raw_clock_log=str(old_clocks),
         historical_clock_sha256=hashlib.sha256(old_clocks.read_bytes()).hexdigest(),
         window_rule="non-overlapping >=180s with identical W59 long job set throughout, no other project-lane physics in slots; reset on membership change/missing clock/monitor gap >90s; zero progress retained",
         measured_historical_concurrency=windows,current_W61_endpoint_window_counts={k:len(v) for k,v in speeds_live.items()},
@@ -136,7 +146,36 @@ def head(ep):
     return f"{ep['method'].lower()}-s{ep['seed']}"
 
 
+def write_forecast(path):
+    r=estimate();tmp=path.with_suffix(".pending")
+    tmp.write_text(json.dumps(r,indent=2)+"\n");tmp.replace(path)
+    print(json.dumps({k:r[k] for k in ("as_of_shanghai","primary_used","remaining_long","completed_training_batch_wall_s","scenarios")}),flush=True)
+
+
+def watch():
+    with (WORK/"forecast.lock").open("a") as lock:
+        fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        signature=None
+        while True:
+            status=read(WORK/"live.json")
+            log=WORK/"throughput.jsonl"
+            sizes=defaultdict(float)
+            if log.is_file():
+                for line in log.read_text().splitlines():
+                    row=json.loads(line)
+                    if row["endpoint_long"]==row["width"]:sizes[row["width"]]+=row["seconds"]
+            # Recharge the estimate at real checkpoints, completed episodes, or
+            # sustained new evidence about concurrent endpoint performance.
+            nodes=sum(len(list(h.glob("train-*.json"))) for h in E.glob("*-s6*"))
+            key=(datetime.now(SH).date(),nodes//3,status["checkpoint_heads_8192"],status["completed"],
+                 status["long"].get("verified",0),tuple(sorted((n,int(sec>=180),int(sec//1800)) for n,sec in sizes.items())))
+            if key!=signature:
+                write_forecast(WORK/"eta-live.json");signature=key
+            if status["completed"]:return
+            time.sleep(60)
+
+
 if __name__=="__main__":
-    r=estimate();p=E/"final-evaluation/parallel-throughput-estimate.json"
-    tmp=p.with_suffix(".pending");tmp.write_text(json.dumps(r,indent=2)+"\n");tmp.replace(p)
-    print(json.dumps({k:r[k] for k in ("as_of_shanghai","primary_used","remaining_long","completed_training_batch_wall_s","scenarios")}))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument("--watch",action="store_true")
+    if p.parse_args().watch:watch()
+    else:write_forecast(E/"final-evaluation/parallel-throughput-estimate.json")
