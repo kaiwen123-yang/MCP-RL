@@ -1,0 +1,18 @@
+{
+  "id":"w61-a1-forefoot-controls-v1",
+  "frozen_joint":"f93a512f58c415c6927f7d730d0cfbc948802f88",
+  "fixed_controller":"forefoot rollout arm frozen_C; identical r55 MPC/WBC, unshifted stance body/foot and 50ms transfer",
+  "observations":"causal sole world XY/bottom, resultant normal foot force and known strip footprint; two-thirds support for fit, last third independently scored at retained parameters",
+  "cases":[
+    {"specimen":612241,"x_m":0.658,"speed_m_s":0.20,"lateral_N":-3},
+    {"specimen":612242,"x_m":0.674,"speed_m_s":0.19,"lateral_N":4},
+    {"specimen":612243,"x_m":0.669,"speed_m_s":0.21,"lateral_N":-2}
+  ],
+  "learned_methods":["lowrank_response","embedding_response"],
+  "fit_seeds":[6111,6112,6113],
+  "analytic_methods":["ordinary_KV","frozen_PANN"],
+  "matched_query_rng":61330,
+  "M3_scope":"The W59 M3 changes only explicitly queried cross-foot, previously released world cells. Frozen C receives a single observed tangent here. Its transfer cannot evaluate the M3 correction; original M3 cross-foot measured comparison is retained separately.",
+  "RNN_scope":"Matched support-GRU remains in the 24-path coupon benchmark; scalar normal-force transport below includes only models with defined traction-free boundary response.",
+  "deadline":null,"wall_deadline_enabled":false,"kill_on_conversation_end":false
+}
