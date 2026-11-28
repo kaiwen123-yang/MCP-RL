@@ -1,0 +1,78 @@
+{
+  "study": "e61-hybrid-m1-01",
+  "runtime_revision": "W61-E-engineering-v2",
+  "role": "train",
+  "method": "SPO",
+  "seed": 6002,
+  "version": 1,
+  "requested_per_case": 128,
+  "cases": [
+    {
+      "status": "observed",
+      "case": "A",
+      "episodes": [
+        {
+          "run": "e61-hybrid-m1-01-spo-s6002-train-v001-A-e000",
+          "reason": "batch_cut",
+          "requested": 128,
+          "observed": 128,
+          "open_cut": 0,
+          "physical_s": 36.911999999940655,
+          "physical_steps": 184560,
+          "wall_s": 824.550988048315,
+          "cpu_h": 0.22931470715194444,
+          "max_rss_gib": 1.7142333984375,
+          "cuda_peak_allocated_bytes": 9953792,
+          "progress": 0.9617109970027454,
+          "complete": false,
+          "physical_failure": false,
+          "absolute_mechanical_work_J": 634.6907405581975,
+          "force_peak_percentiles": [
+            70.27386057005992,
+            113.84197815777418,
+            132.482258870867
+          ],
+          "control_full_ms_p50_p95_p99": [
+            [
+              6.7047663033008575,
+              42.02173091471195
+            ],
+            [
+              45.380198396742344,
+              83.49206112325191
+            ],
+            [
+              56.370911840349436,
+              108.66588279604919
+            ]
+          ],
+          "actor_sha": "b8938ecbeb62ab4860caec36432af85d19be62df2f7e09463e77665574e77cc6"
+        }
+      ],
+      "observed": 128
+    },
+    {
+      "status": "technical",
+      "case": "B",
+      "attempt": "e61-hybrid-m1-01-spo-s6002-train-v001-B-e000",
+      "raw": "/root/autodl-tmp/MCP-RL-w61-learning/work/w61/learning/W61-E-M1-hybrid-v1/e61-hybrid-m1-01/spo-s6002/train-001-B/e61-hybrid-m1-01-spo-s6002-train-v001-B-e000",
+      "observed": 109,
+      "reason": "Traceback (most recent call last):\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/w61/learning/collect.py\", line 205, in collect\n    command=ctl.update(t,data,mission,contact,grf,joint.soft.copy(),info,replan)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w59_f_backend.py\", line 45, in update\n    return super().update(t,data,mission,contact,grf,soft,material_info,replan)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w54_f_r52_backend.py\", line 775, in update\n    return self.wbc(t,data,mq,mission,scheduled,observed,np.asarray(grf),np.asarray(soft),material_info)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w57_f_backend.py\", line 162, in wbc\n    action = super().wbc(t, data, mq, mission, scheduled, observed, grf, soft, material_info)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w54_f_r52_backend.py\", line 707, in wbc\n    z,status=self._solve(P,q,A,lo,hi,'wbc',t)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w59_f_backend.py\", line 126, in _solve\n    return super()._solve(P,q,A,lo,hi,kind,t,warm)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/MCP-RL-w61-learning/scripts/s1_w54_f_r52_backend.py\", line 458, in _solve\n    raise ControllerNumericalFailure(f'{kind}: {sol.info.status} at physical time {t:.6f}')\ns1_w54_f_r52_backend.ControllerNumericalFailure: wbc: maximum iterations reached at physical time 31.510000\n"
+    }
+  ],
+  "slots": "3,4",
+  "groups": [
+    [
+      9,
+      10,
+      11
+    ],
+    [
+      12,
+      13,
+      14
+    ]
+  ],
+  "checkpoint_sha": "476401cb61299deee3112918254aa5263de81dbec251f40de7cd7fd6b1ab07a9",
+  "status": "technical_or_starved"
+}
