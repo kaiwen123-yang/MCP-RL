@@ -13,6 +13,7 @@ class DiscreteExecution:
         self.engine=RigidLinearization(binary) if variant in ('configuration','kinematics') else None
         self.torque_defect_max=0.
         self.steps=0
+        self.singular=[]
 
     def operators(self,x,origin,active):
         if self.engine is None:
@@ -21,7 +22,13 @@ class DiscreteExecution:
         ok=active.cpu().numpy() & np.isfinite(state).all(axis=1)
         matrices=origin.detach().cpu().numpy().copy()
         for i in np.flatnonzero(ok):
-            matrices[i]=self.engine(state[i])
+            try:
+                matrices[i]=self.engine(state[i])
+            except np.linalg.LinAlgError:
+                # An undefined operator terminates this origin; preserve it in
+                # the denominator and retain the other independent trajectories.
+                matrices[i].fill(np.nan)
+                self.singular.append((int(i),self.steps+1))
         return origin.new_tensor(matrices)
 
     def fk(self,state,active):

@@ -103,7 +103,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--variant',choices=['frozen50k','implicit','configuration','kinematics'],default='frozen50k')
     args=parser.parse_args()
-    run='w61-a0-backbones-50k-v1' if args.variant=='frozen50k' else 'w61-a2-'+args.variant+'-v1'
+    run='w61-a0-backbones-50k-v1' if args.variant=='frozen50k' else 'w61-a2-'+args.variant+('-v1' if args.variant=='implicit' else '-v2')
     out=ROOT / REL / 'w61/material' / run
     raw=WORK/run
     raw.mkdir(parents=True,exist_ok=True)
@@ -137,6 +137,7 @@ def main():
             rows=[]
             omitted=[]
             max_defect=0.
+            undefined=[]
             with torch.inference_mode():
                 for source in origins:
                     if args.variant in ('configuration','kinematics') and not (roots[source['episode']]/'model.mjb').is_file():
@@ -149,13 +150,14 @@ def main():
                         step=DiscreteExecution(args.variant,roots[source['episode']]/'model.mjb')
                     rows.extend(score_episode(member,source,step,'cuda'))
                     max_defect=max(max_defect,getattr(step,'torque_defect_max',0.))
+                    undefined+= [dict(episode=source['episode'],source_row=i,first_undefined_tick=n) for i,n in getattr(step,'singular',[])]
             detail=raw/(name+'.jsonl.gz')
             with gzip.open(detail,'wt') as f:
                 for r in rows:
                     f.write(json.dumps(r,allow_nan=False)+'\n')
             write(out/(name+'.json'),dict(run=run,kind=kind,seed=seed,backbone_step=50000,
                 checkpoint=str(cp),checkpoint_sha256=sha(cp),runtime=rev,per_horizon=summary(rows),
-                registered_origins=sum(r['n'] for r in origins),omitted_sources=omitted,
+                registered_origins=sum(r['n'] for r in origins),omitted_sources=omitted,undefined_local_operators=undefined,
                 max_projected_torque_equation_defect_Nm=max_defect if args.variant!='frozen50k' else None,
                 differentiation='inference only; configuration and FK use detached CPU MuJoCo, no path-gradient claim',
                 wall_s=time.perf_counter()-start,cpu_core_s=time.process_time()-cpu,
