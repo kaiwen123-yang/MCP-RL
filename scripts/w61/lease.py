@@ -153,8 +153,13 @@ def main(args):
             data.update(state="running", pid=child.pid, slots=ids, cpu_groups=groups, started=stamp())
             write(record,data)
             rc = child.wait()
-            write(record,dict(data,state="ended",exit_code=rc,ended=stamp()))
-            return rc
+            child_exited = time.time()
+        # The physical flocks have been returned; the outer job lock still binds
+        # this one definitive receipt to its native process and immutable job ID.
+        released = time.time()
+        write(record,dict(data,state="ended",exit_code=rc,ended=stamp(),child_exited_unix=child_exited,
+                          slots_released_unix=released))
+        return rc
 
 
 if __name__ == "__main__":
