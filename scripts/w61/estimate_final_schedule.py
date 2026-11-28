@@ -107,7 +107,7 @@ def estimate():
     heads=[(m,s) for s in hybrid["seeds"] for m in [*hybrid["methods"],hybrid["geometry_ablation"]]]
     budget=hybrid["used_per_head"];batch=2*hybrid["batch_per_case"]
     training={}
-    train_times=[]; ref_batches=[]; exact_batches=[]; inflight={}; current_seats=[]; wait_seconds=[]
+    train_times=[]; ref_batches=[]; exact_batches=[]; inflight={}; original_inflight=set(); current_seats=[]; wait_seconds=[]
     for method,seed in heads:
         h=f"{method.lower()}-s{seed}";p=E/h
         recs=[read(f) for f in p.glob("train-[0-9][0-9][0-9].json")]
@@ -131,6 +131,7 @@ def estimate():
         live=pool_jobs.get(f"w61-e61-hybrid-m1-01-{h}-train-v{v:03d}")
         if live and live.get("state")=="running":
             inflight[h,v]=max(0.,now.timestamp()-datetime.fromisoformat(live["started"]).timestamp())
+            if not live.get("material_execution"):original_inflight.add((h,v))
     status=E/"independent-dispatch-live.json"
     dispatch=read(status) if status.is_file() else {}
     current_seats=dispatch.get("logical_positions",[])
@@ -209,10 +210,16 @@ def estimate():
         simulated_s=sum(x["physical_s"] for x in v),
         aggregate_sim_s_per_wall_s=sum(x["physical_s"] for x in v)/sum(x["seconds"] for x in v))
         for k,v in reference_windows.items()}
+    # Existing original jobs finish at their original speed before a new lease can switch.
+    projection_inflight=dict(inflight)
+    if selection and ref_batches:
+        for key in original_inflight:
+            projection_inflight[key]=batch_wall-max(0.,mean(ref_batches)-inflight[key])
+    ready={h:row.get("ready_at",now.timestamp())-now.timestamp() for h,row in dispatch.get("heads",{}).items()}
     nominal_native_wall={stage:wall/qualification_speed for stage,wall in native_wall.items()}
     curve_ratio=wall_ratio/full_speed
     forecasts={}
-    spent=sum(min(s,batch_wall) for s in inflight.values())
+    spent=sum(min(s,batch_wall) for s in projection_inflight.values())
     train_slot_h=(sum(budget-v for v in training.values())/batch*batch_wall-spent)*2/3600
     nominal_sim=sum(j["duration"] for j in remaining if j["stage"] in ("E30","E60"))
     curves_done=set()
@@ -258,7 +265,7 @@ def estimate():
         def project(selected_heads,selected_native):
             return simulate(now=now,width=width,heads=selected_heads,seats=current_seats,
                 versions={h:training[h]//batch for h in selected_heads},nodes=[i//batch for i in curves],
-                last=budget//batch,batch_wall={h:batch_wall for h in selected_heads},in_flight=dict(inflight),
+                last=budget//batch,batch_wall={h:batch_wall for h in selected_heads},in_flight=dict(projection_inflight),initial_ready=ready,
                 curves_done=curves_done,curve_wall=60*curve_ratio,native_jobs=selected_native,done_native=done_native,
                 native_wall=nominal_native_wall,render_rate=render_rates,asset_bytes=byte_budget,
                 upload_rate=median(upload_rates),long_rate=rate,
