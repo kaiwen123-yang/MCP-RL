@@ -176,9 +176,9 @@ def collect(a):
     where = dict(role=a.role,method=a.method,seed=a.seed,case=a.case,version=a.version,
         offset=a.offset,quota=a.quota,episode=a.episode,variant=a.variant,run=out.name,actor_sha=session.actor_sha,
         source_commit=subprocess.check_output(["git","-C",str(ROOT),"rev-parse","HEAD"],text=True).strip(),
-        source_files={p.name:file_digest(p) for p in Path(__file__).parent.glob("*.py")},
+        source_files={n:file_digest(Path(__file__).with_name(n)) for n in ("collect.py","orbits.py","hybrid.py")},
         contract_sha256=file_digest(CONFIG),baseline_contract_sha=file_digest(BASE/SOURCE_REL/"jobs"/ref/"execution-contract.json"),
-        original=ref,plant_xml_sha=file_digest(xml),w44_sha=file_digest(ck),normalizer=parent["normalization_sha256"],
+        original=ref,execution_reference=f"w59-r3-5902-ppo-full-fallback-{a.case.lower()}-e60-0001",plant_xml_sha=file_digest(xml),w44_sha=file_digest(ck),normalizer=parent["normalization_sha256"],
         referenced_dependencies={p:file_digest(ROOT/p) for p in source["w57_execution_sources"]},
         worker_cpus=sorted(os.sched_getaffinity(0)),torch=torch.__version__,mujoco=mujoco.__version__,
         physical_dt=physics,feedback_dt=DT,deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False)

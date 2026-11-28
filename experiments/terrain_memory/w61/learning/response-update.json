@@ -1,0 +1,10 @@
+{
+  "id": "W61-E-score-positive-metric-v2",
+  "base_response_metric_weight": 1.0,
+  "ablation_weight": 0.0,
+  "response_scales": {"duration_s":0.05,"fore_aft_m":0.004,"lateral_m":0.002,"apex_m":0.002,"normal_load":"bodyweight/4; force group RMS"},
+  "dual_multipliers": [0,0.01,0.1,1,10],
+  "rationale": "At the four original development trajectories the response Jacobian was nonzero but the ordinary KL solution satisfied both bounds. Pure dual selection gave zero multiplier and exactly reproduced E-Fisher. The registered primary direction now includes a unit execution metric even when the second inequality is slack. The same five nonnegative dual multipliers add to that metric and E-Fisher removes both. Formal on-policy data available at decision: zero.",
+  "response_scope": "Original nominal C2 trajectory offsets and measured-state frozen WBC wrench-redistribution targets. Post-QP actuator torque and unknown future forces are outside this local metric.",
+  "diagnostic_predecessor": "development-update-v1.json"
+}

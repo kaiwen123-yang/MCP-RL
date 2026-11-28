@@ -1,5 +1,6 @@
 """Finite, measured updates of a common event-time critic and mixed policy."""
 from copy import deepcopy
+import json
 import math
 import time
 
@@ -7,11 +8,13 @@ import numpy as np
 import torch
 from torch.nn.utils import parameters_to_vector, vector_to_parameters
 
-from hybrid import ACTIVE, DIMS, SIGMA, SPEC, joint_logp, mixed_kl, stream
+from hybrid import ACTIVE, CONFIG, DIMS, SIGMA, SPEC, joint_logp, mixed_kl, stream
 from orbits import nominal_response
 from s1_w59_model_fields import STATE
 
 OPT = SPEC["algorithm"]
+RESPONSE_CONFIG=CONFIG.with_name("response-update.json")
+RESPONSE=json.loads(RESPONSE_CONFIG.read_text())
 
 
 def targets(streams):
@@ -210,7 +213,8 @@ def update(actor,critic,actopt,critopt,streams,method,seed,version):
         best=None
         candidates=[]
         for multiplier in OPT["geometry_multipliers"] if geometry else [0.]:
-            def op(v): return F(v)+multiplier*C(v)+OPT["damping"]*v
+            metric=RESPONSE["base_response_metric_weight"]+multiplier if geometry else 0.
+            def op(v): return F(v)+metric*C(v)+OPT["damping"]*v
             v,it,res=conjugate(op,g)
             fg=max(0.,float(v.dot(F(v))))
             cg=max(0.,float(v.dot(C(v))))
@@ -218,10 +222,11 @@ def update(actor,critic,actopt,critopt,streams,method,seed,version):
                 math.sqrt(2*OPT["response_budget"]/max(cg,1.e-20)) if geometry else 1.e9)
             d=scale*v
             gain=float(g.dot(d))
-            candidates.append(dict(multiplier=multiplier,predicted_gain=gain,cg_iterations=it,residual=res,fisher_quadratic=fg,response_quadratic=cg))
+            candidates.append(dict(multiplier=multiplier,effective_response_weight=metric,predicted_gain=gain,cg_iterations=it,residual=res,fisher_quadratic=fg,response_quadratic=cg))
             if best is None or gain>best[0]: best=gain,d,multiplier
         gain,d,multiplier=best
-        info.update(geometry_candidates=candidates,chosen_multiplier=multiplier,gradient_norm=float(g.norm()),
+        info.update(geometry_candidates=candidates,chosen_multiplier=multiplier,
+                    effective_response_weight=RESPONSE["base_response_metric_weight"]+multiplier if geometry else 0.,gradient_norm=float(g.norm()),
                     score_direction_cosine=float(torch.nn.functional.cosine_similarity(g[None],d[None])[0]))
         before=float(obj.detach())
         for k in range(OPT["backtracks"]):
