@@ -11,6 +11,7 @@ import time
 
 import numpy as np
 import torch
+from scipy import sparse
 
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE/"learning"))
@@ -47,6 +48,17 @@ def witness(out):
         return None
     inputs=[out/"w55-f"/f"failed-{kind}-{end:.6f}{suffix}.npz" for suffix in ("-P","-A","")]
     if not all(p.exists() for p in inputs):return None
+    if not np.isfinite([end,s["time_s"],s["primal_residual"],s["dual_residual"],s["objective"]]).all():
+        return None
+    if any(not np.isfinite(sparse.load_npz(p).data).all() for p in inputs[:2]):
+        return None
+    with np.load(inputs[2]) as qp:
+        lo,hi=qp["lower"],qp["upper"]
+        # Signed infinities encode the original one-sided constraints; NaN and
+        # invalid bound directions are numerical hard stops, never recovery.
+        if (not np.isfinite(qp["q"]).all() or np.isnan(lo).any() or np.isnan(hi).any()
+                or np.isposinf(lo).any() or np.isneginf(hi).any() or (lo>hi).any()):
+            return None
     hashes={p.name:file_digest(p) for p in inputs}
     return dict(kind=kind,status=s["status"],iterations=s["iterations"],physical_s=end,
         primal_residual=s["primal_residual"],dual_residual=s["dual_residual"],raw=str(out),
