@@ -23,8 +23,14 @@ def run(window,arm):
     groups=json.loads(os.environ['W61_PAIR_CPUS'])
     if len(groups)!=2 or len(os.environ['W61_SLOTS'].split(','))!=2:raise RuntimeError('Need two atomically reserved physical slots')
     done=DEST/f'{window}-{arm}.json'
-    if done.exists():return
-    out=RAW/f'{window}-{arm}';out.mkdir(exist_ok=False)
+    name=f'{window}-{arm}'
+    if done.exists():
+        old=json.loads(done.read_text())
+        if old['status']=='complete':return
+        if name!='prefix12-cpu' or old['cases']:raise RuntimeError('Inspect technical attempt '+name)
+        name+='-a02';done=DEST/(name+'.json')
+        if done.exists():return
+    out=RAW/name;out.mkdir(exist_ok=False)
     env=dict(os.environ,PYTHONPATH=f"{LEARN}/src:{LEARN}/scripts:{LEARN}/scripts/w61/learning")
     start=time.monotonic();service=None
     with tempfile.TemporaryDirectory(dir='/dev/shm',prefix='w61-ep-') as tmp:

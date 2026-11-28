@@ -101,6 +101,8 @@ def main():
             rows={}
             for arm in ('cpu','gpu_batch'):
                 f=DEST/f'{w}-{arm}.json'
+                corrected=DEST/f'{w}-{arm}-a02.json'
+                if corrected.is_file():f=corrected
                 if f.is_file():rows[arm]=json.loads(f.read_text())
             if rows:latest[w]={k:dict(status=v['status'],group_wall_s=v['group_wall_s'],complete_events_s=v['complete_events_s']) for k,v in rows.items()}
             file=DEST/f'{w}-comparison.json'
