@@ -208,7 +208,7 @@ def record_throughput(previous, active, episodes, hardware):
     return dict(time=at,clocks=clocks)
 
 
-def run(legacy):
+def run(legacy,after_current=False):
     WORK.mkdir(parents=True,exist_ok=True)
     episodes=programme()
     names={e.name:e for e in episodes}
@@ -233,7 +233,7 @@ def run(legacy):
     summary_path=LEDGER/"parallel-progress.json"
     with ExitStack() as stack:
         service=stack.enter_context((WORK/"dispatcher.lock").open("a"))
-        fcntl.flock(service,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        fcntl.flock(service,fcntl.LOCK_EX if after_current else fcntl.LOCK_EX|fcntl.LOCK_NB)
         workers=stack.enter_context(ThreadPoolExecutor(max_workers=6))
         sender=stack.enter_context(ThreadPoolExecutor(max_workers=1))
         while True:
@@ -326,8 +326,14 @@ def run(legacy):
             # One standby at a full pool establishes a fair place for the first new
             # checkpoint; additional admissions consume only actual spare slots.
             offers=max(0,max(1,capacity-reserved-others)-queued-in_transit)
+            long_kinds=("short","recovered")
+            long_begun={e.head for e in episodes if e.kind in long_kinds and states[e] not in ("awaiting_8192","ready","terminal_without_8192")}
             for _ in range(min(offers,capacity-len(physics),len(candidates))):
-                ep=min(candidates,key=lambda e:(counts[e.method,e.seed,e.version],episodes.index(e)))
+                # Release that checkpoint's first independent long run into the existing
+                # fair queue before its own nominal E30 tasks. Other jobs keep their leases.
+                ep=min(candidates,key=lambda e:(counts[e.method,e.seed,e.version],
+                    0 if e.version==32 and e.kind in long_kinds and e.head not in long_begun else 1,episodes.index(e)))
+                if ep.kind in long_kinds:long_begun.add(ep.head)
                 candidates.remove(ep);counts[ep.method,ep.seed,ep.version]+=1
                 physics[ep]=workers.submit(physical,ep);states[ep]="submitted"
             long=Counter(states[e] for e in episodes if e.kind in ("short","recovered"))
@@ -338,7 +344,9 @@ def run(legacy):
                 legacy_pid=pid,legacy_active=is_serial(pid,ticks),single_dispatch_owner=owns,capacity=capacity,
                 active_pool={r["job"]:r["slots"] for r in active if r["state"]=="running"},
                 other_waiting_slots=others,resources=hardware,evaluations={e.name:s for e,s in states.items() if s!="awaiting_8192"},
-                completed=end,deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False)
+                completed=end and long["verified"]==96,all_96_verified=long["verified"]==96,
+                settled_with_blockers=end and long["verified"]!=96,
+                deadline=None,wall_deadline_enabled=False,kill_on_conversation_end=False)
             atomic_json(WORK/"live.json",snapshot)
             changed=(len(heads),all_counts["verified"],all_counts["publication_pending"]+all_counts["verified"],
                      all_counts["technical_interruption"],all_counts["physical_closed_render_pending"],owns,end)
@@ -351,11 +359,12 @@ def run(legacy):
                 signature=changed
                 print(snapshot["shanghai"],"8192 heads",snapshot["checkpoint_heads_8192"],"long counts",dict(long),
                       "reference",[(e.name,states[e]) for e in episodes if e.version==0],"legacy",snapshot["legacy_active"],flush=True)
-            if end:return
+            if snapshot["completed"]:return
             time.sleep(8)
 
 
 if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--legacy-pid",type=int)
-    run(parser.parse_args().legacy_pid)
+    parser.add_argument("--after-current",action="store_true",help="Take the existing unique dispatcher lock after its owner exits")
+    args=parser.parse_args();run(args.legacy_pid,args.after_current)

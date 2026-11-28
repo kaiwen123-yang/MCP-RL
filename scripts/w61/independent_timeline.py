@@ -38,6 +38,7 @@ def simulate(*, now, width, heads, seats, versions, nodes, last, batch_wall, in_
     render_end=nominal_render_backlog;upload_end=upload_backlog;latest_long_end=0.
     native_by_id={j["id"]:j for j in native_jobs}
     assigned=Counter(j["head"] for j in native_jobs if j["id"] in done)
+    first_long_offered={j["head"] for j in native_jobs if j["id"] in done and j["stage"] in ("short","recovered")}
     physics_started={}; last_curve_end=0.; counts=Counter(); slot_seconds=0.
     required=dict(train=sum(last-v[h] for h in heads),curve=sum((h,n) not in curves_done for h in heads for n in nodes),
                   native=sum(j["id"] not in done_native for j in native_jobs))
@@ -81,8 +82,12 @@ def simulate(*, now, width, heads, seats, versions, nodes, last, batch_wall, in_
         earlier=sum(x.slots for x in queue if x.kind!="native")
         offers=max(0,max(1,free-earlier)-queued_native)
         for _ in range(min(offers,len(native_ready))):
-            name=min(native_ready,key=lambda k:(assigned[native_by_id[k]["head"]],native_ready[k]))
+            def order(k):
+                j=native_by_id[k];new_long=j["stage"] in ("short","recovered") and j["head"] not in first_long_offered
+                return (assigned[j["head"]],0 if new_long else 1,native_ready[k])
+            name=min(native_ready,key=order)
             t=native_by_id[name];del native_ready[name];native_enqueued.add(name)
+            if t["stage"] in ("short","recovered"):first_long_offered.add(t["head"])
             h,stage=t["head"],t["stage"];physical=t["duration"]
             long=stage in ("short","recovered")
             wall=physical*width/long_rate if long else native_wall[stage]*(physical/int(stage[1:]))
