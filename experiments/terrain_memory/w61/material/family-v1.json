@@ -1,0 +1,106 @@
+{
+  "id": "w61-material-family-v1",
+  "base": "3a736f64ef5c6662f20c2c66971165495b78f97f",
+  "teacher": "src/tm02/reference.py:Reference.path; parameter multipliers change the coupon family only",
+  "material_ids": {
+    "train": [
+      610100,
+      610123
+    ],
+    "validation": [
+      610200,
+      610203
+    ],
+    "holdout": [
+      610300,
+      610305
+    ]
+  },
+  "holdout_role": "Independent W61 synthetic material specimens, fixed once before fitting; no W59 data",
+  "reference_config": "experiments/tm02/r2-rnn.json",
+  "history_seed_offset": 481037,
+  "support_measurement_sd_MPa": 0.08,
+  "length": 49,
+  "support_paths": 4,
+  "query_paths": [
+    "fast_ramp_hold",
+    "slow_cycle",
+    "double_revisit",
+    "mixed_hold_unload"
+  ],
+  "support_counts": [
+    1,
+    4
+  ],
+  "train_seeds": [
+    6111,
+    6112,
+    6113
+  ],
+  "updates": 240,
+  "batch_materials": 6,
+  "optimizer": "Adam",
+  "learning_rate": 0.008,
+  "selection": "Final update 240 for every method and seed; validation reports only",
+  "inner_steps": 2,
+  "latent_dim": 3,
+  "conditional_rank": 3,
+  "probe_metric_lambda": 0.35,
+  "probe_step_rms_limit_in_10MPa": 0.35,
+  "inner_damping": 0.0003,
+  "finite_difference": "analytical material-code derivatives",
+  "tau_s": [
+    0.02,
+    0.055,
+    0.15,
+    0.4,
+    1.1,
+    3
+  ],
+  "strain_scale": 0.015,
+  "stress_scale_MPa": 10,
+  "stiffness_scale_MPa": [
+    500,
+    300,
+    25,
+    20,
+    150,
+    120,
+    150,
+    120,
+    150,
+    120,
+    150,
+    120,
+    150,
+    120,
+    150,
+    120
+  ],
+  "run_entry": "scripts/w61/material/train.py",
+  "models": [
+    "lowrank_response",
+    "lowrank_isotropic_gn",
+    "lowrank_anil",
+    "embedding_response",
+    "support_gru",
+    "spectrum_nnls",
+    "frozen_tm02_pann"
+  ],
+  "frozen_pann": "/root/autodl-tmp/MCP-RL/work/assets/B_random1000--ideal-potentials.npz",
+  "budget": "One CPU core 30; zero GPU; all native threading one; whole-run timing under shared host",
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false,
+  "sources": {
+    "material_design": "docs/research/20261126-broad-algorithms/material.md",
+    "me_pann": "https://hal.science/hal-05148853/document",
+    "hypercan": "https://doi.org/10.1016/j.eml.2024.102243",
+    "hypercan_code": "https://github.com/li-zhengz/HyperCAN/blob/main/src/icnn.py",
+    "hypercan_blob": "c829b4dd979543af6e6f6e8047d3444e5f1d6303",
+    "hano": "https://arxiv.org/html/2506.10352v2",
+    "hano_repository": "https://github.com/IntelligentMechanicsLab/HANO_inelasticity",
+    "hano_readme_blob": "d076f71573aea8c368f261192d64306194a374de",
+    "scope": "HyperCAN conditional positive ICNN weights and ME-PANN embedding inform the comparisons. HANO section 3.3 and Appendix D guided the recurrent history baseline. The HANO official tree contains a README, license and two material data files. The GRU is our history baseline, not an implementation of HANO."
+  }
+}

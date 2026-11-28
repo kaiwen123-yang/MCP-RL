@@ -1,0 +1,101 @@
+{
+  "train": {
+    "specimen_ids": [
+      610100,
+      610101,
+      610102,
+      610103,
+      610104,
+      610105,
+      610106,
+      610107,
+      610108,
+      610109,
+      610110,
+      610111,
+      610112,
+      610113,
+      610114,
+      610115,
+      610116,
+      610117,
+      610118,
+      610119,
+      610120,
+      610121,
+      610122,
+      610123
+    ],
+    "independent_histories": 192,
+    "support_programs": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "query_programs": {
+      "4": "fast_ramp_hold",
+      "5": "slow_cycle",
+      "6": "double_revisit",
+      "7": "mixed_hold_unload"
+    },
+    "seed_rule": "history_seed_offset + 100*specimen_id + program",
+    "steps_per_history": 48
+  },
+  "validation": {
+    "specimen_ids": [
+      610200,
+      610201,
+      610202,
+      610203
+    ],
+    "independent_histories": 32,
+    "support_programs": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "query_programs": {
+      "4": "fast_ramp_hold",
+      "5": "slow_cycle",
+      "6": "double_revisit",
+      "7": "mixed_hold_unload"
+    },
+    "seed_rule": "history_seed_offset + 100*specimen_id + program",
+    "steps_per_history": 48
+  },
+  "holdout": {
+    "specimen_ids": [
+      610300,
+      610301,
+      610302,
+      610303,
+      610304,
+      610305
+    ],
+    "independent_histories": 48,
+    "support_programs": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "query_programs": {
+      "4": "fast_ramp_hold",
+      "5": "slow_cycle",
+      "6": "double_revisit",
+      "7": "mixed_hold_unload"
+    },
+    "seed_rule": "history_seed_offset + 100*specimen_id + program",
+    "steps_per_history": 48
+  },
+  "dataset_sha256": "3829809e832048d066c8a54d1b56ad3f7661281234b3c730d116cfd8a233a2d5",
+  "bytes": 1745238,
+  "generator": "scripts/w61/material/coupons.py",
+  "command": "python scripts/w61/material/train.py",
+  "initial_condition": "Independently virgin per physical trajectory",
+  "stress": "Six nominal tensor components in MPa, physical shear. Truth withheld from support except noisy measurements.",
+  "geometry": "homogeneous strain-controlled coupon; no force/indentation conversion",
+  "independent_teacher": "TM02 analytical nonlinear overstress-dependent viscosity and implicit Newton solver; unmodified."
+}
