@@ -37,6 +37,7 @@ class TimedTopologyMPC(TopologyMPC):
     def search_transfer(self,problem):
         start=time.perf_counter()
         run=0
+        state=None
         warm=self.c_warm
         total=0
         costs=[]
@@ -45,7 +46,8 @@ class TimedTopologyMPC(TopologyMPC):
         while (run==0 or (time.perf_counter()-self.begin_cycle+reserve+self.rate<budget and run<self.c_cfg['finite_round_ceiling'])):
             before=time.perf_counter()
             result=search(problem,self.c_method,self.c_cfg['seed']+self.c_count*36+run,warm,
-                          candidates=self.c_cfg['samples'],iterations=1,mode_ids=(0,1))
+                          candidates=self.c_cfg['samples'],iterations=1,mode_ids=(0,1),proposal_state=state)
+            state=result.get('proposal_state')
             elapsed=time.perf_counter()-before
             self.round_wall.append(elapsed)
             self.rate=float(np.quantile(self.round_wall[-24:],.90))
@@ -66,6 +68,6 @@ class TimedTopologyMPC(TopologyMPC):
             decision_controller_p50_p95_p99_ms=np.percentile(data[targets,1],[50,95,99]).tolist() if targets.any() else [],
             decision_controller_deadline_misses=int((data[targets,1]>budget).sum()),
             all_tick_controller_p50_p95_p99_ms=np.percentile(data[:,1],[50,95,99]).tolist(),
-            round_wall_ms=np.asarray(self.round_wall).tolist(),round_wall_units='seconds',
+            round_wall_ms=(1000*np.asarray(self.round_wall)).tolist(),round_wall_units='milliseconds',
             scope='includes observation/model, transfers, synchronized GPU predictions, refinement and same-tick force QP/WBC; outside C simulator stepping and transport to hardware are measured by base runner/untested respectively'),indent=2)+'\n')
         np.savez_compressed(self.c_dir/'timed-ticks.npz',time_s=data[:,0],controller_ms=data[:,1],decision=targets)
