@@ -1,5 +1,6 @@
 """Explicit launcher for new, certified W61 physics leases; the controller and update are unchanged."""
-import json,os,runpy,sys
+import json,os,runpy,subprocess,sys
+from types import SimpleNamespace
 from pathlib import Path
 from entry import ROOT,SCIENCE,FIXED,install,sha
 
@@ -33,7 +34,6 @@ def main():
         sys.argv[0]=str(src);runpy.run_path(str(src),run_name='__main__');return
     original=Path(sys.argv[1]).resolve();args=sys.argv[2:]
     import campaign
-    from s1_w59_learner_critic import file_digest
     validator=campaign.verified_runtime
     def backend_revision(manifest):
         return validator(manifest)+'+CPU-exact-'+build['sha256'][:12]
@@ -44,8 +44,12 @@ def main():
         return campaign.paired(method,int(seed),int(version),role)
     if original==SCRIPTS/'w61/resume_learning_batch.py' and args[0]=='resume':
         import resume_learning_batch as recovery
-        # case_continuation uses this module's filename for every newly required child.
-        recovery.__file__=str(Path(__file__).resolve())
+        # Preserve both the original recovery-source digest and the separate CPU
+        # backend identity. Only its explicitly spawned collector uses this launcher.
+        def run_recovery_child(cmd,**kwargs):
+            if cmd[5:7]!=[str(original),'collect']:raise ValueError('Unexpected recovery collector command')
+            return subprocess.run([*cmd[:5],str(Path(__file__).resolve()),*cmd[6:]],**kwargs)
+        recovery.subprocess=SimpleNamespace(run=run_recovery_child,STDOUT=subprocess.STDOUT)
         return recovery.resume(args[1],int(args[2]),int(args[3]))
     if original==SCRIPTS/'w61/evaluation_physics.py':
         import evaluation_physics as physics
