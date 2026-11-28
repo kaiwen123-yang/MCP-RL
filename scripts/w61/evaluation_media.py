@@ -7,6 +7,8 @@ from fractions import Fraction
 import hashlib
 import json
 import os
+import re
+import shutil
 from pathlib import Path
 import subprocess
 import tempfile
@@ -16,7 +18,7 @@ import mujoco
 import numpy as np
 import evaluate_learning as native
 from campaign import RUN, SMALL
-from evaluation_physics import INTENTS, POOL, QUEUE
+from evaluation_physics import INTENTS, POOL, QUEUE, all_trained_curves_closed
 from hybrid import ROOT
 from s1_w59_learner_critic import atomic_json, file_digest
 
@@ -31,7 +33,7 @@ def system_load():
     free,utilization=map(int,gpu.split(','))
     fields=Path('/sys/fs/cgroup/io.pressure').read_text().splitlines()[0].split()
     io=next(float(s.split('=')[1]) for s in fields if s.startswith('avg10='))
-    return dict(free_gpu_mib=free,gpu_utilization_percent=utilization,io_some_avg10=io)
+    return dict(free_gpu_mib=free,gpu_utilization_percent=utilization,io_some_avg10=io,free_scratch_gib=shutil.disk_usage(QUEUE).free/2**30)
 
 
 class Pace:
@@ -43,7 +45,7 @@ class Pace:
         if now<self.next_measure:return
         while True:
             r=system_load();self.samples.append(r)
-            if r['free_gpu_mib']>=GPU_HEADROOM_MIB and r['io_some_avg10']<=IO_MAX_SOME_AVG10:break
+            if r['free_gpu_mib']>=GPU_HEADROOM_MIB and r['io_some_avg10']<=IO_MAX_SOME_AVG10 and r['free_scratch_gib']>=1.:break
             before=time.monotonic();time.sleep(5);self.resource_wait_s+=time.monotonic()-before
         self.next_measure=time.monotonic()+5
 
@@ -141,6 +143,12 @@ def render_one(item,proof=False):
             rec['original_stream'],rec['original_pts']=metadata(original,pts['frames'],int(Fraction(probe['avg_frame_rate'])))
             rec['same_frame_count_and_pts']=rec['original_pts']['sha256']==pts['sha256']
             rec['byte_identical']=rec['retained_original_sha256']==sha
+            # Compare all displayed images in presentation order independently of the encoder/container bytes.
+            ff=subprocess.run(['ffmpeg','-nostdin','-hide_banner','-threads','1','-i',str(original),
+                 '-threads','1','-i',str(movie),'-filter_complex_threads','1','-lavfi','ssim','-f','null','-'],
+                 stdout=subprocess.DEVNULL,stderr=subprocess.PIPE,text=True,check=True)
+            measure=re.search(r'All:([0-9.]+)',ff.stderr)
+            rec['decoded_full_video_mean_SSIM']=float(measure.group(1))
             return rec
         m=native.read(d/marker)
         field='path' if item['kind']=='native' else 'file';m[field]=str(original)
@@ -155,13 +163,27 @@ def render_one(item,proof=False):
 
 def worker():
     QUEUE.mkdir(exist_ok=True,parents=True)
-    with (QUEUE/'render.lock').open('a') as lk:
+    with (QUEUE/'renderer-owner.lock').open('a') as lk:
         fcntl.flock(lk,fcntl.LOCK_EX|fcntl.LOCK_NB)
         while True:
             pending=sorted((p for p in INTENTS.glob('*.json') if not (DONE/p.name).is_file()),key=lambda p:p.stat().st_mtime)
             for p in pending:
-                rec=render_one(native.read(p))
-                if rec:print(json.dumps({k:rec[k] for k in ('id','lease_ended','render_wall_s','bytes')}),flush=True)
+                item=native.read(p)
+                failed=QUEUE/'render-errors'/p.name
+                stamp=[p.stat().st_mtime_ns,Path(__file__).stat().st_mtime_ns]
+                if failed.exists() and native.read(failed).get('input_revision')==stamp:continue
+                try:
+                    with (QUEUE/'render.lock').open('a') as rendering:
+                        fcntl.flock(rendering,fcntl.LOCK_EX)
+                        rec=render_one(item)
+                    if rec:print(json.dumps({k:rec[k] for k in ('id','lease_ended','render_wall_s','bytes')}),flush=True)
+                except (OSError,RuntimeError,ValueError,subprocess.SubprocessError) as err:
+                    atomic_json(failed,dict(id=item['id'],input_revision=stamp,source=item['source_file'],
+                        error=repr(err),raw_retained=True,failed_unix=time.time()))
+                    print('render error',item['id'],repr(err),flush=True)
+            final_status=RUN/'parallel-final/live.json'
+            if (not pending and all_trained_curves_closed('-media') and final_status.is_file()
+                    and native.read(final_status).get('completed')):return
             time.sleep(3)
 
 

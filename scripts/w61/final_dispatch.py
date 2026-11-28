@@ -258,10 +258,14 @@ def run(legacy):
             hardware=lease.resources()
             previous=record_throughput(previous,active,names,hardware)
             states={};candidates=[];send=[];counts=Counter()
+            training_end=SMALL/"training-lifecycle.json"
+            terminated=native.read(training_end)["heads"] if training_end.is_file() else {}
             for ep in episodes:
                 key=(ep.method,ep.seed,ep.version)
                 if key not in heads:
-                    states[ep]="awaiting_8192";continue
+                    own=terminated.get(ep.head,{})
+                    states[ep]="terminal_without_8192" if own.get("terminal") and own["version"]<32 else "awaiting_8192"
+                    continue
                 summary=ep.physical_record()
                 if summary.exists():
                     row=native.read(summary)
@@ -328,7 +332,7 @@ def run(legacy):
                 physics[ep]=workers.submit(physical,ep);states[ep]="submitted"
             long=Counter(states[e] for e in episodes if e.kind in ("short","recovered"))
             all_counts=Counter(states.values())
-            end=all_counts["verified"]+all_counts["E30_did_not_qualify"]+all_counts["technical_interruption"]==len(episodes)
+            end=all_counts["verified"]+all_counts["E30_did_not_qualify"]+all_counts["technical_interruption"]+all_counts["terminal_without_8192"]==len(episodes)
             snapshot=dict(shanghai=now(),pid=os.getpid(),registered_long=96,primary_long=72,ablation_long=24,
                 long=long,all_cases=all_counts,checkpoint_heads_8192=sum(k[2]==32 for k in heads),
                 legacy_pid=pid,legacy_active=is_serial(pid,ticks),single_dispatch_owner=owns,capacity=capacity,

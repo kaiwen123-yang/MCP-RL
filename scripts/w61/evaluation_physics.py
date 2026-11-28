@@ -76,6 +76,14 @@ def physical_native(method,seed,version,case,kind,condition):
     return native_closure(method,seed,version,case,kind,condition)
 
 
+def all_trained_curves_closed(suffix):
+    lifecycle=SMALL/'training-lifecycle.json'
+    if not lifecycle.is_file():return False
+    heads=native.read(lifecycle)['heads']
+    return all((SMALL/head/f'evaluate-{v:03d}{suffix}.json').is_file()
+               for head,state in heads.items() for v in (8,16,32) if v<=state['version'])
+
+
 def curve_id(method,seed,version):
     return f'w61-{STUDY}-{head_name(method,seed)}-evaluate-v{version:03d}'
 
