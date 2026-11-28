@@ -18,9 +18,12 @@ def main():
     parser.add_argument('--runtime',type=Path,required=True)
     parser.add_argument('--source-commit',required=True)
     parser.add_argument('--wall',action='store_true')
+    parser.add_argument('--weighted',action='store_true')
     args=parser.parse_args()
     runtime=args.runtime.resolve()
     cfg_rel=Path('experiments/terrain_memory/w61/mpc')/('transfer-wall-v1.json' if args.wall else 'transfer-v1.json')
+    if args.weighted:
+        cfg_rel=cfg_rel.with_name('mppi-wall-v2.json' if args.wall else 'mppi-candidates-v2.json')
     cfg=json.loads((runtime/cfg_rel).read_text())
     run_id=cfg['id']
     cache=ROOT/'work/w61/mpc'/run_id
@@ -29,7 +32,8 @@ def main():
     env=dict(os.environ, PYTHONPATH=str(runtime/'scripts'), JAX_COMPILATION_CACHE_DIR=str(cache/'jax-cache'),
              JAX_PERSISTENT_CACHE_MIN_COMPILE_TIME_SECS='0',GIT_DIR=str(runtime/'.git'),GIT_WORK_TREE=str(runtime))
     for case in cfg['registered_physical_cases']:
-        for method in (('hybrid','mppi','local','vr_mppi') if args.wall else ('hybrid','qp','mppi','local','vr_mppi')):
+        methods=cfg['methods'] if args.weighted else (('hybrid','mppi','local','vr_mppi') if args.wall else ('hybrid','qp','mppi','local','vr_mppi'))
+        for method in methods:
             name=f'{case}-{method}'
             out=cache/name
             receipt=compact/(name+'.json')
@@ -39,7 +43,7 @@ def main():
                  '--contract',str(runtime/cfg_rel),'--case',case,'--out',str(out),'--role',method]
             if method!='qp':
                 cmd+=['--mixin','w61.mpc.timed:TimedTopologyMPC' if args.wall else 'w61.mpc.controller:TopologyMPC']
-            lease=('c-wall-v1-' if args.wall else 'c-transfer-v1-')+name
+            lease=(run_id+'-'+name) if args.weighted else ('c-wall-v1-' if args.wall else 'c-transfer-v1-')+name
             run=subprocess.run([sys.executable,str(LEASE),'--runtime',str(runtime),'--job',lease,
                                 '--slots','1','--cores','1','--ram-gib','2','--gpu-mib','1800' if method!='qp' else '0',
                                 '--scratch-gib','.18','--',*cmd],env=env)

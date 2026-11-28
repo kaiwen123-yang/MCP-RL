@@ -1,0 +1,135 @@
+{
+  "id": "w61-c-mppi-candidates-v2",
+  "units": "SI",
+  "task": {
+    "start_move_s": 0.6,
+    "kind": "standing start, then bounded straight velocity, speed change at 2.55 s, lateral pulse",
+    "outcome": "report full-horizon survival, tracking ISE and progress separately. No original S1 promotion criterion.",
+    "reference": "rigid G1 on the original 0.2 ms plant; r55 F controller; historical W57 PR/E600 on M1 has a different identity"
+  },
+  "cases": {
+    "dev0": {
+      "speed_m_s": 0.18,
+      "target_speed_m_s": 0.18,
+      "switch_s": 2.55,
+      "duration_s": 4.8,
+      "yaw_deg": 0,
+      "lateral_push_N": 0,
+      "push_start_s": 2.04,
+      "push_duration_s": 0.08
+    },
+    "dev1": {
+      "speed_m_s": 0.23,
+      "target_speed_m_s": 0.23,
+      "switch_s": 2.55,
+      "duration_s": 4.8,
+      "yaw_deg": 2,
+      "lateral_push_N": 8,
+      "push_start_s": 2.04,
+      "push_duration_s": 0.08
+    },
+    "dev2": {
+      "speed_m_s": 0.16,
+      "target_speed_m_s": 0.16,
+      "switch_s": 2.55,
+      "duration_s": 4.8,
+      "yaw_deg": -2,
+      "lateral_push_N": -8,
+      "push_start_s": 2.04,
+      "push_duration_s": 0.08
+    },
+    "dev3": {
+      "speed_m_s": 0.21,
+      "target_speed_m_s": 0.21,
+      "switch_s": 2.55,
+      "duration_s": 4.8,
+      "yaw_deg": 1,
+      "lateral_push_N": -6,
+      "push_start_s": 2.04,
+      "push_duration_s": 0.08
+    },
+    "query0": {
+      "speed_m_s": 0.19,
+      "target_speed_m_s": 0.235,
+      "switch_s": 2.55,
+      "duration_s": 4.8,
+      "yaw_deg": -1.5,
+      "lateral_push_N": 11,
+      "push_start_s": 2.04,
+      "push_duration_s": 0.08
+    },
+    "query1": {
+      "speed_m_s": 0.225,
+      "target_speed_m_s": 0.175,
+      "switch_s": 2.55,
+      "duration_s": 4.8,
+      "yaw_deg": 2.5,
+      "lateral_push_N": -10,
+      "push_start_s": 2.04,
+      "push_duration_s": 0.08
+    }
+  },
+  "design": [
+    "dev0",
+    "dev1",
+    "dev2",
+    "dev3"
+  ],
+  "fresh_query": [
+    "query0",
+    "query1"
+  ],
+  "controller": {
+    "excitation": [
+      0,
+      0.0015,
+      -0.0015,
+      0.00075,
+      -0.00075
+    ],
+    "heading_length_m": 0.25,
+    "mpc_transfer": {
+      "seed": 6120,
+      "samples": 12,
+      "rounds": 2,
+      "force_tracking_weight": 0.0001,
+      "belief": [
+        1.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "source_refs": [
+    "https://doi.org/10.1177/02783649251347305",
+    "https://www.loukaskordos.de/publications/locomposition/",
+    "https://amrmousa.com/promo/"
+  ],
+  "deadline": null,
+  "wall_deadline_enabled": false,
+  "kill_on_conversation_end": false,
+  "parent_protocol": "experiments/terrain_memory/w61/gait/orbit.json",
+  "offline_topologies": [
+    "FL_RR",
+    "FR_RL",
+    "FL_then_RR",
+    "FR_then_RL"
+  ],
+  "physical_topologies": [
+    "FL_RR",
+    "FR_RL"
+  ],
+  "methods": [
+    "mppi_mean",
+    "quadratic_mppi"
+  ],
+  "registered_physical_cases": [
+    "dev0",
+    "query0",
+    "query1"
+  ],
+  "quota": "same 2 rounds x 2 modes x (12+2) commands per non-QP actual decision, shared actual physical limits",
+  "scope": "rigid-surface complete 4.8s stride task first; fixed original r55 actuator/WBC. No W59 full-route equivalence.",
+  "change": "Return the weighted mean command, score it per topology, and carry a quadratic Gaussian proposal and exact importance ratio across every finite sampling round, including anytime chunks.",
+  "same_physics_controls": "w61-c-transfer-closed-v1"
+}
